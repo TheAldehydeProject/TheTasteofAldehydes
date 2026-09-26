@@ -519,6 +519,22 @@
       one.addEventListener("input", () => {
         capAt(one); pairUp(one); recalc(which); refreshReset();
       });
+      // THE WHEEL SCROLLS, it does not count. A browser steps a number
+      // field up or down when the wheel turns over it while it has the
+      // caret — the owner (2026-09-26): "when you scroll in the
+      // calculator in the places where you can input a number, it
+      // shouldnt change it". So the step is refused and the turn is
+      // handed to whatever scrolls round the field, which keeps the
+      // caret where it was.
+      one.addEventListener("wheel", (e) => {
+        if (document.activeElement !== one) return;
+        e.preventDefault();
+        let box = one.parentElement;
+        while (box && !(box.scrollHeight > box.clientHeight &&
+          /(auto|scroll)/.test(getComputedStyle(box).overflowY))) box = box.parentElement;
+        const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
+        (box || document.scrollingElement).scrollBy(0, e.deltaY * unit);
+      }, { passive: false });
     });
     const picks = [...shell.querySelectorAll(".calc-sign-pick")];
     picks.forEach((one) => {

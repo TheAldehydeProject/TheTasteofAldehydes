@@ -412,3 +412,41 @@ test("the introduction is the owner's two paragraphs", async ({ page }) => {
   await expect(paras.first()).toContainText("such as Fanghorn II, which smells like something from J.R. Tolkeins Works).");
   await expect(paras.nth(1)).toHaveText(/\(both of which I feel they have done quite well\)\.$/);
 });
+
+/* THE GALLERY'S VIEWER NEVER GOES BLANK, however fast it is stepped
+   through. "The pictures of pineward at the very bottom in the gallery
+   can get stuck if you scroll too quickly" (2026-09-26). Reproduced:
+   pressing → a few times inside the 420ms a change takes left one of the
+   viewer's two layers marked both on show and on its way out — drawn at
+   nothing — and the viewer stayed blank until it was shut. */
+test("the gallery's viewer shows a picture however fast it is stepped through", async ({ page }) => {
+  test.setTimeout(60000);
+  const errors = collectPageErrors(page);
+  await page.goto(PAGE);
+  await page.evaluate(() => document.querySelector(".pine-gallery").scrollIntoView());
+  await page.waitForTimeout(600);
+  await page.locator(".pine-shot").first().click();
+  await expect(page.locator(".pine-viewer")).toBeVisible();
+  await page.waitForTimeout(700);
+  for (const gap of [300, 160, 90]) {
+    for (let k = 0; k < 7; k++) { await page.keyboard.press("ArrowRight"); await page.waitForTimeout(gap); }
+    for (let k = 0; k < 3; k++) { await page.keyboard.press("ArrowLeft"); await page.waitForTimeout(gap); }
+    await page.waitForTimeout(1200);
+    const layers = await page.$$eval(".pine-viewer-img", (ls) => ls.map((l) => ({
+      src: !!l.getAttribute("src"), shown: +getComputedStyle(l).opacity, cls: l.className })));
+    expect(layers.filter((l) => l.src && l.shown > 0.95).length, "one picture on show after steps " + gap + "ms apart: " + JSON.stringify(layers)).toBe(1);
+    expect(layers.some((l) => /is-on/.test(l.cls) && /to-(back|on)/.test(l.cls)), "no layer both on show and going out").toBe(false);
+  }
+  expect(errors).toEqual([]);
+});
+
+/* AND THE STRIP'S PICTURES ARE THERE BEFORE THEY SLIDE IN. They are lazy,
+   and a lazy picture clipped by the strip's window is never fetched until
+   it has slid into it — so running along the strip showed empty squares.
+   They are fetched once the gallery comes near. */
+test("the gallery strip's pictures are all fetched once the gallery is near", async ({ page }) => {
+  await page.goto(PAGE);
+  await page.evaluate(() => document.querySelector(".pine-gallery").scrollIntoView());
+  await expect.poll(() => page.$$eval(".pine-shot img", (ls) => ls.filter((i) => i.complete && i.naturalWidth > 0).length),
+    { timeout: 10000 }).toBe(await page.locator(".pine-shot img").count());
+});

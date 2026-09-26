@@ -501,3 +501,73 @@ test("the graph has a logarithmic version, and a reading of 0 is left off it",
   await page.waitForTimeout(500);
   await expect(page.locator(".calc-scale")).toHaveAttribute("aria-pressed", "true");
 });
+
+/* THE WHEEL SCROLLS, IT DOES NOT COUNT: "when you scroll in the calculator
+   in the places where you can input a number, it shouldnt change it"
+   (2026-09-26). A browser steps a number field when the wheel turns over
+   it while it has the caret; here the number stays, the caret stays, and
+   the turn scrolls what is round it. */
+test("turning the wheel over a number field leaves the number alone", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.setViewportSize({ width: 1280, height: 640 });
+  await open(page);
+  await page.locator('.calc-model[data-model="plain"]').click();
+  await page.waitForTimeout(400);
+  await put(page, "ic-One", 10);
+  const field = page.locator("#ic-One");
+  await field.focus();
+  const box = await field.boundingBox();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  const scrolled = () => page.evaluate(() => {
+    let most = window.scrollY;
+    document.querySelectorAll(".calc, .calc *").forEach((el) => { most = Math.max(most, el.scrollTop); });
+    return most;
+  });
+  const before = await scrolled();
+  for (let k = 0; k < 4; k++) { await page.mouse.wheel(0, -120); await page.waitForTimeout(60); }
+  for (let k = 0; k < 6; k++) { await page.mouse.wheel(0, 120); await page.waitForTimeout(60); }
+  await page.waitForTimeout(300);
+  await expect(field, "the number as it was typed").toHaveValue("10");
+  expect(await page.evaluate(() => document.activeElement && document.activeElement.id), "the caret still in it").toBe("ic-One");
+  expect(await scrolled(), "and the turn scrolled the page instead").toBeGreaterThan(before);
+  expect(errors).toEqual([]);
+});
+
+/* THE PIECE ITSELF, as the owner asked for it on 2026-09-26:
+   - the graph of Amber Zero drawn twice, the second on a logarithmic scale
+     "like in the calculator" — whole decades, the fainter lines inside
+     them, the thresholds, and the three readings where they fall;
+   - "For the 5-note Xerjoff" and the like set bold, in the writing's own
+     face rather than the mono in spaced capitals;
+   - the blue subheadings a little larger than they were (13px). */
+test("the piece draws its graph twice, the second on a logarithmic scale", async ({ page }) => {
+  await page.goto(THEORY);
+  const graphs = page.locator(".essay-section svg.graph");
+  await expect(graphs).toHaveCount(2);
+  const log = graphs.nth(1);
+  await expect(log.locator(".graph-tick").filter({ hasText: /^0\.1$/ })).toHaveCount(1);
+  await expect(log.locator(".graph-tick").filter({ hasText: /^10$/ })).toHaveCount(1);
+  expect(await log.locator(".graph-grid-fine").count(), "the fainter lines inside each decade").toBe(16);
+  await expect(log.locator(".graph-axis-name").last()).toHaveText("Log(Modified IBR)");
+  const dots = await log.locator(".graph-dot").evaluateAll((ds) => ds.map((d) => +d.getAttribute("cy")));
+  const at = (v) => 394 + (34 - 394) * (Math.log10(v) + 1) / 2;
+  [0.136, 0.513, 4.36].forEach((v, i) => expect(Math.abs(dots[i] - at(v)), v + " where it falls").toBeLessThan(0.5));
+  // The first graph is still the linear one.
+  await expect(graphs.nth(0).locator(".graph-tick").filter({ hasText: /^5$/ })).toHaveCount(1);
+});
+
+test("the pairs' names are bold in the writing's face, and the blue subheadings larger", async ({ page }) => {
+  await page.goto(THEORY);
+  const name = await page.locator(".zone-pair-name").first().evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { family: s.fontFamily, weight: +s.fontWeight, upper: s.textTransform, size: parseFloat(s.fontSize), text: el.textContent };
+  });
+  expect(name.text).toBe("For the 5-note Xerjoff");
+  expect(name.family).toMatch(/Archivo/);
+  expect(name.weight).toBeGreaterThanOrEqual(700);
+  expect(name.upper).toBe("none");
+  expect(name.size).toBeGreaterThan(15);
+  const sub = await page.locator(".essay-sub").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  expect(sub).toBeGreaterThan(13);
+  expect(sub).toBeLessThanOrEqual(16);
+});

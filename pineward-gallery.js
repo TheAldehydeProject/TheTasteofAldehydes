@@ -262,7 +262,14 @@
       // A press that landed while this one was being decoded wins.
       if (swapping !== mine || !viewing) return;
       front = 1 - front;
-      into.classList.remove("from-back", "from-on");
+      // THE LAYER COMING IN MAY STILL BE MARKED AS GOING OUT. Its own
+      // clean-up is only run by the change that sent it out, and a press
+      // inside that change's 420ms cancels it — so stepping through the
+      // pictures quickly left a layer both on show and on its way out,
+      // which the stylesheet draws at nothing: the viewer went blank and
+      // stayed blank ("can get stuck if you scroll too quickly",
+      // 2026-09-26). Whatever it was doing, it is only coming in now.
+      into.classList.remove("to-back", "to-on", "from-back", "from-on");
       into.classList.add(going > 0 ? "from-on" : "from-back");
       void into.offsetWidth;
       into.classList.add("is-on");
@@ -342,6 +349,26 @@
       if (viewing) markNumber();
     }, SETTLE);
   });
+
+  // THE STRIP'S PICTURES ARE FETCHED ONCE THE STRIP IS NEAR. They are
+  // lazy in the page, and a lazy picture standing outside the strip's
+  // window — clipped by it, off to the right — is never fetched until it
+  // has slid in, so running along the strip quickly showed empty squares
+  // standing where the pictures should be. Warmed once the gallery comes
+  // within a screen or so of the window, every one of them is there
+  // before it is needed.
+  const warmStrip = () => shots.forEach((shot) => {
+    const img = shot.querySelector("img");
+    if (img && img.loading === "lazy") img.loading = "eager";
+  });
+  if ("IntersectionObserver" in window) {
+    const near = new IntersectionObserver((seen) => {
+      if (!seen.some((one) => one.isIntersecting)) return;
+      warmStrip();
+      near.disconnect();
+    }, { rootMargin: "1200px 0px" });
+    near.observe(gallery);
+  } else warmStrip();
 
   place(false);
   start();

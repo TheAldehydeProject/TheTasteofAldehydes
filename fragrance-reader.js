@@ -113,13 +113,17 @@
   const BLANK_MS = 560;         // the page going blank when one is opened
   const COME_MS = 700;          // and the fragrance arriving on it
 
-  // THE WAY BACK, slower again at the owner's word — "make it a bit
-  // slower too", and "the fading away can be made slower too".
-  const CLEAR_MS = 640;         // the writing going
-  const TRAVEL_MS = 1500;       // squaring up and travelling home: ONE clock
-  const REST_MS = 220;          // sitting in its square for a moment
-  const GONE_MS = 1200;         // then all of them fading, together
-  const LEAVE_MS = 1000;        // the reader's own ground going, under them
+  // THE WAY BACK, about half as long as it was: "the animation after the
+  // go back to fragrances in fragrances in SD should be shorter"
+  // (2026-09-26). It had been made slower twice before ("make it a bit
+  // slower too", "the fading away can be made slower too") and came to
+  // three and a half seconds; it is under two now, every beat of it
+  // still there.
+  const CLEAR_MS = 360;         // the writing going
+  const TRAVEL_MS = 820;        // squaring up and travelling home: ONE clock
+  const REST_MS = 120;          // sitting in its square for a moment
+  const GONE_MS = 520;          // then all of them fading, together
+  const LEAVE_MS = 560;         // the reader's own ground going, under them
 
   // ONE EASE FOR THE WHOLE MOVEMENT, soft at both ends. It is the
   // reason the path is straight: the place, the size and the squaring

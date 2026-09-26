@@ -704,6 +704,119 @@ test("Qimu & Musicians keeps a quiet score in its margins, carried with the page
   expect(before.filter((y) => after.includes(y - 200)).length, `before ${before}, after ${after}`).toBeGreaterThan(0);
 });
 
+/* AND IT IS MUSIC THAT CAN BE PLAYED: "make sure that whatever generated is
+   logical and can be played" (2026-09-26). Read off the score itself, at
+   three sizes of window: every bar lasts exactly what its time signature
+   says, in each hand; the time signatures written on a stave are the ones
+   its bars are in, in order; every note is in the stave's key (a minor
+   key's raised leading note allowed); nothing a hand plays at once spans
+   more than an octave; and it stays where a piano's middle lies. */
+test("Qimu & Musicians' score is real music: bars that add up, in key, within a hand", async ({ page }) => {
+  const LENGTH = { "4/4": 16, "3/4": 12, "2/4": 8, "5/4": 20, "7/4": 28, "6/4": 24, "2/2": 16, "3/2": 24,
+    "6/8": 12, "9/8": 18, "12/8": 24, "3/8": 6, "5/8": 10, "7/8": 14 };
+  const SEMIS = [0, 2, 4, 5, 7, 9, 11];
+  let bars = 0, meters = new Set();
+  for (const [w, h] of [[1440, 900], [1920, 1080], [390, 844]]) {
+    await page.setViewportSize({ width: w, height: h });
+    await page.goto(QIMU);
+    await page.waitForTimeout(600);
+    const staves = await page.evaluate(() => window.QimuScore.staves());
+    expect(staves.length, "staves down the page").toBeGreaterThan(2);
+    staves.forEach((s, i) => {
+      // The key's own notes, and a minor key's raised leading note.
+      const inKey = new Set(SEMIS.map((v, l) => (v + s.key.sig[l] + 12) % 12));
+      if (s.key.minor) inKey.add((SEMIS[(s.key.tonic + 6) % 7] + s.key.sig[(s.key.tonic + 6) % 7] + 1 + 12) % 12);
+      const expected = [s.bars[0].meter];
+      s.bars.forEach((b, j) => {
+        bars++; meters.add(b.meter);
+        if (j && b.meter !== s.bars[j - 1].meter) expected.push(b.meter);
+        expect(b.units, `stave ${i} bar ${j} is a whole ${b.meter}`).toBe(LENGTH[b.meter]);
+        expect(b.right, `stave ${i} bar ${j}, the right hand fills its ${b.meter}`).toBeCloseTo(b.units, 5);
+        if (s.grand) expect(b.left, `stave ${i} bar ${j}, the left hand fills its ${b.meter}`).toBeCloseTo(b.units, 5);
+        b.pitches.forEach((chord) => {
+          chord.forEach((m) => {
+            expect(inKey.has(m % 12), `stave ${i} bar ${j}: ${m} in the key`).toBe(true);
+            expect(m, "no lower than a piano's E1").toBeGreaterThanOrEqual(28);
+            expect(m, "no higher than C6").toBeLessThanOrEqual(84);
+          });
+          expect(Math.max(...chord) - Math.min(...chord), `stave ${i} bar ${j}: within a hand`).toBeLessThanOrEqual(12);
+        });
+      });
+      expect(s.written, `stave ${i}: the time signatures written are the ones its bars are in`).toEqual(expected);
+    });
+  }
+  expect(bars, "bars written").toBeGreaterThan(20);
+  expect(meters.size, "in several metres, not always 4/4").toBeGreaterThan(3);
+});
+
+/* THE SOUND: "a button on top that allows you to mute and unmute. it
+   should be a square and relatively obvious. I also want you whn you
+   hover the notes in qimu and musicians, it plays them as piano notes"
+   (2026-09-26). The button is a square at the top of the window, starting
+   silent (a browser lets no page sound until it is pressed); with the
+   sound off a note pointed at plays nothing; turned on, a note pointed at
+   is struck at exactly its own pitches — read off what the page asks the
+   browser's audio to play — and turned off again, silence. */
+test("Qimu & Musicians has a square sound button, and a note pointed at plays its own pitch", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.addInitScript(() => {
+    window.__struck = [];
+    const start = OscillatorNode.prototype.start;
+    OscillatorNode.prototype.start = function () { window.__struck.push(this.frequency.value); return start.apply(this, arguments); };
+  });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(QIMU);
+  await page.waitForTimeout(3200);
+  const button = page.locator(".qimu-sound");
+  await expect(button).toBeVisible();
+  await expect(button).toHaveAttribute("aria-pressed", "false");
+  await expect(button).toContainText("Sound off");
+  const box = await page.locator(".qimu-sound-box").boundingBox();
+  expect(Math.abs(box.width - box.height), "a square").toBeLessThan(1);
+  expect(box.width, "and big enough to see").toBeGreaterThanOrEqual(36);
+  expect(box.y, "at the top").toBeLessThan(40);
+
+  const notes = async () => (await page.evaluate(() => window.QimuScore.notes()))
+    .filter((n) => n.y > 80 && n.y < 860 && n.x > 30 && n.x < 1410);
+  const pointAt = async (n) => { await page.mouse.move(n.x - 30, n.y - 30); await page.mouse.move(n.x, n.y, { steps: 3 }); await page.waitForTimeout(150); };
+  const struckHz = () => page.evaluate(() => window.__struck.slice());
+  const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+
+  // Silent while it is off.
+  let seen = await notes();
+  expect(seen.length, "notes on the window to point at").toBeGreaterThan(3);
+  await pointAt(seen[0]);
+  expect(await struckHz(), "nothing sounds while it is off").toEqual([]);
+
+  // On.
+  await button.click();
+  await expect(button).toHaveAttribute("aria-pressed", "true");
+  await expect(button).toContainText("Sound on");
+  await page.waitForTimeout(200);
+  await page.evaluate(() => { window.__struck = []; });
+  seen = await notes();
+  const target = seen[Math.floor(seen.length / 2)];
+  await pointAt(target);
+  const played = await struckHz();
+  // Two strings to a note, the second a hair sharp: each pitch's first.
+  target.pitches.forEach((m) => {
+    expect(played.some((f) => Math.abs(f - hz(m)) < 0.01), `${m} (${hz(m).toFixed(2)}Hz) struck: ${played.join(", ")}`).toBe(true);
+  });
+  // The same note held under the hand is not struck again.
+  const count = (await struckHz()).length;
+  await page.mouse.move(target.x + 1, target.y);
+  await page.waitForTimeout(150);
+  expect((await struckHz()).length, "held, it is not struck again").toBe(count);
+
+  // Off again: silence.
+  await button.click();
+  await expect(button).toHaveAttribute("aria-pressed", "false");
+  await page.evaluate(() => { window.__struck = []; });
+  await pointAt(seen[seen.length - 1]);
+  expect(await struckHz(), "silent once it is off again").toEqual([]);
+  expect(errors).toEqual([]);
+});
+
 /* WITH MOTION TURNED OFF each of the four still draws its ground, and
    draws it still. */
 test("with motion turned off the four new grounds are drawn and stand still", async ({ browser }) => {
@@ -1327,4 +1440,48 @@ test("Guitarist's dry down ends on the fig leaf merging into the rest", async ({
   await expect(guitarist.locator(".human-text > p").last()).toHaveText(
     "It eventually turns quite abrasive as all the notes merge together. The fig leaf is there, but it would not have been recognized had you not smelled it in the top and/or mid.");
   await expect(guitarist).not.toContainText("summer scent");
+});
+
+/* AND BACK AGAIN: "in SD when you open a house, i want you to have the
+   option to go back a house as well as forward a house" (2026-09-26).
+   Every house carries a way back to the one before it beside its way on,
+   the first wrapping round to the ninth — and the two are the same chain
+   read either way. */
+test("every house leads back to the one before it, and the first wraps round to the last", async ({ page }) => {
+  const order = ["pineward", "adar", "almost-human", "ataraxia", "grande-parfums",
+    "les-abstraits", "tale-parfums", "tombstone", "qimu-and-musicians"];
+  for (let i = 0; i < order.length; i++) {
+    await page.goto(`/houses/${order[i]}.html`);
+    const back = page.locator(".house-prev");
+    await expect(back, `${order[i]} has one way back a house`).toHaveCount(1);
+    await expect(back).toBeVisible();
+    expect(await back.getAttribute("href"), `${order[i]} leads back`).toBe(`${order[(i + order.length - 1) % order.length]}.html`);
+    await expect(back).toContainText(String((i + order.length - 1) % order.length + 1).padStart(2, "0"));
+    // Beside the way on, in the same foot.
+    const foot = page.locator("footer").last();
+    await expect(foot.locator(".house-prev")).toHaveCount(1);
+    await expect(foot.locator(".human-on, .pine-on, .adar-on")).toHaveCount(1);
+  }
+});
+
+/* ADAR'S CREDIT CAN BE READ on its black page: "the sentence Pictures
+   The photograph standing with each fragrance is ADAR's own, from
+   adarperfumes.com. is not entirely visibile on the black background"
+   (2026-09-26). It was drawn in the paper pages' ink. */
+test("ADAR's picture credit stands out plainly from its black page", async ({ page }) => {
+  await page.goto("/houses/adar.html");
+  const read = await page.evaluate(() => {
+    const lum = (c) => {
+      const [r, g, b] = c.match(/\d+(\.\d+)?/g).slice(0, 3).map(Number).map((v) => {
+        v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const ground = lum(getComputedStyle(document.body).backgroundColor);
+    const contrast = (el) => { const l = lum(getComputedStyle(el).color); return (Math.max(l, ground) + 0.05) / (Math.min(l, ground) + 0.05); };
+    const credit = document.querySelector(".house-credit");
+    return { text: contrast(credit), say: contrast(credit.querySelector(".house-credit-say")), link: contrast(credit.querySelector("a")) };
+  });
+  expect(read.text, "the sentence").toBeGreaterThan(7);
+  expect(read.say, "the word Pictures").toBeGreaterThan(7);
+  expect(read.link, "and the link").toBeGreaterThan(7);
 });

@@ -158,8 +158,9 @@ test("going back sends the picture into the grid, and the list is behind it",
     .map((el) => el.getBoundingClientRect().width)));
 
   await page.locator(".frag-back").click();
-  // Past the writing's 640ms and some way into the 1500ms travel.
-  await page.waitForTimeout(1300);
+  // Past the writing's 360ms and some way into the 820ms travel — the way
+  // back was made about half as long on 2026-09-26 ("should be shorter").
+  await page.waitForTimeout(700);
 
   // MID-FLIGHT. The picture is out of the article and on the window.
   const flying = await page.evaluate(() => {
@@ -188,10 +189,10 @@ test("going back sends the picture into the grid, and the list is behind it",
   // AND IT COMES TO REST ON A SQUARE OF THAT GRID, which is the whole
   // of "recede into one of the squares of the background": both its
   // corners land on a multiple of the cell, and it is one cell big.
-  // Long enough for the recede to have finished — it is 1500ms after a
-  // 640ms clearing, and the owner has asked twice for all of it to be
-  // slower — and before the 1200ms fade has finished taking it away.
-  await page.waitForTimeout(1050);
+  // Long enough for the recede to have finished — it is 820ms after a
+  // 360ms clearing — and before the 520ms fade has finished taking it
+  // away.
+  await page.waitForTimeout(600);
   const cell = parseFloat(ruled.cell);
   const home = await page.evaluate(() => {
     const f = document.querySelector(".frag-flier");
@@ -206,7 +207,7 @@ test("going back sends the picture into the grid, and the list is behind it",
   expect(home.top % cell, `top ${home.top} is not on the grid`).toBeLessThan(1.5);
 
   // AND IT ALL CLEARS UP.
-  await page.waitForTimeout(1900);
+  await page.waitForTimeout(1000);
   await expect(page.locator(".frag-flier")).toHaveCount(0);
   await expect(page.locator(".frag-reader")).toBeHidden();
   await expect(page.locator(".index-table")).toBeVisible();
@@ -287,8 +288,8 @@ test("a picture goes home to the right of centre, every time",
     await page.locator('.index-what a[href*="part-' + no + '"]').click();
     await page.waitForTimeout(1500);
     await page.locator(".frag-back").click();
-    // Landed: 640ms of clearing and 1500ms of travel.
-    await page.waitForTimeout(2350);
+    // Landed: 360ms of clearing and 820ms of travel.
+    await page.waitForTimeout(1300);
     const at = await page.evaluate(() => {
       const f = document.querySelector(".frag-flier");
       if (!f) return null;
@@ -396,6 +397,9 @@ test("scrolling during the way back moves nothing, and is let go after",
     const seen = [];
     const began = performance.now();
     (function tick() {
+      // For as long as the way back lasts — it is under two seconds
+      // since 2026-09-26, and a wheel turned after it is an ordinary one.
+      if (document.querySelector(".frag-reader").hidden) { done(seen); return; }
       seen.push({
         reader: document.querySelector(".frag-reader").scrollTop,
         list: document.querySelector(".index-scroll").scrollTop,
@@ -407,10 +411,12 @@ test("scrolling during the way back moves nothing, and is let go after",
   }));
   await page.locator(".frag-back").click();
   for (let i = 0; i < 24; i++) {
+    if (await page.locator(".frag-reader").isHidden()) break;
     await page.mouse.wheel(0, i % 2 ? -260 : 260);
     await page.waitForTimeout(60);
   }
   const seen = await watching;
+  expect(seen.length, "the way back should have been watched").toBeGreaterThan(20);
 
   const readers = [...new Set(seen.map((s) => s.reader))];
   const lists = [...new Set(seen.map((s) => s.list))];
@@ -500,4 +506,29 @@ test("the reader carries the picture's credit under it", async ({ page }) => {
   // and it is Haxan's, not Matca's left over from the one before.
   await expect(page.locator(".frag-plate .frag-plate-credit")).toHaveText("Pictures: my own");
   await expect(page.locator(".frag-plate .frag-plate-credit a")).toHaveCount(0);
+});
+
+/* THE WAY BACK IS SHORT: "the animation after the go back to fragrances in
+   fragrances in SD should be shorter" (2026-09-26). It had come to three
+   and a half seconds; from the arrow to the reader being gone is under
+   two now, with every beat of it still there. */
+test("the way back from a fragrance is over in under two seconds", async ({ page }) => {
+  await toTheList(page);
+  await page.locator('.index-what a[href*="part-01"]').click();
+  await page.waitForTimeout(1600);
+  const took = await page.evaluate(() => new Promise((done) => {
+    const t0 = performance.now();
+    let flew = false;
+    document.querySelector(".frag-back").click();
+    (function tick() {
+      if (document.querySelector(".frag-flier")) flew = true;
+      const gone = document.querySelector(".frag-reader").hidden && !document.querySelector(".frag-flier");
+      if (gone) done({ ms: performance.now() - t0, flew });
+      else if (performance.now() - t0 > 6000) done({ ms: Infinity, flew });
+      else requestAnimationFrame(tick);
+    })();
+  }));
+  expect(took.flew, "the picture still flies home").toBe(true);
+  expect(took.ms).toBeLessThan(2000);
+  expect(took.ms, "and it is still a movement, not a cut").toBeGreaterThan(1200);
 });

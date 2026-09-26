@@ -818,3 +818,82 @@ motifs](2026-09-23-the-chain-and-its-motifs.md).
 - **`Les Abstraits' introduction no longer carries the unfinished sentence`**.
 - The page's drip test runs its clock for 160 seconds and checks nothing is written on its canvas
   but the graduations.
+
+## 2026-09-26, last — back a house as well as on; ADAR's credit readable; Qimu plays
+
+> in SD when you open a houise, i want you to have the option to go back a house as well as
+> forward a house.
+
+**Every house's foot carries the way back a house** beside the way on — `<a class="house-prev">`
+inside a `<span class="house-steps">` with the existing `human-on` / `pine-on` / `adar-on` link —
+*← Back to 08 · Tombstone* and *Continue to 01 · Pineward →* on Qimu & Musicians, *← Back to 09 ·
+Qimu & Musicians* on Pineward, and so round: the same chain read either way, the first wrapping
+to the ninth. The way back to Scent descriptions keeps the left. On a phone the two stand under
+it, one to a side. Qimu's way on said *Back to 01 · Pineward →*, which read wrong beside a way
+back; it says *Continue to*, as the others do.
+
+> in adar in the SD, the sentecne Pictures The photograph standing with each fragrance is ADAR's
+> own, from adarperfumes.com. is not entirely visibile ont he black background, so make it
+> visible.
+
+**ADAR's credit** was drawn in the paper pages' ink and grey on black: ADAR's page sets none of
+the five colour tokens (it paints its own colours onto its rules), so `.house-credit` fell back to
+the site's. It is in ADAR's own greys now (`.adar-page .house-credit`), the word *Pictures* and the
+link in its near-white.
+
+> in Qimu and Musicians, i want there to be a button on top that allows you to mute and unmute. it
+> should be a square and relatively obvious. I also want you whn you hover the notes in qimu and
+> musicians, it plays them as piano notes. Also make sure that whatever generated is logical and
+> can be played.
+
+**The score is real music now** (`qimu.js`, rewritten under the same drawing). It was a texture:
+runs, chords and clusters set at random along bars whose lengths said nothing about their time
+signatures. Now each stave has:
+
+- **a key** — up to four sharps or flats, major or minor, its signature at the head and every
+  note in it; in a minor key the leading note is raised in the dominant's bars, carrying its sharp
+  or natural the first time it appears on its line in the bar, as an engraver writes it;
+- **a metre** from the fourteen music uses (`METERS`), changing now and then at a bar line — and
+  **every bar lasts exactly what its time signature says**, in each hand: its notes and rests are
+  chosen beat by beat (crotchets, quavers, semiquavers, dotted rhythms, triplets; in 6/8 and the
+  other compound times, dotted crotchet beats), beamed within the beat, with flags on a lone
+  quaver, second beams and stubs for semiquavers, dots, rests of the right values;
+- **harmony** — a progression a bar at a time (I–IV–V–I, ii–V–I, i–VI–III–VII and so on), the tune
+  on the chord's own notes at the beat and stepping between them, now and then harmonised by the
+  chord closed up under it; on a braced pair the left hand holds the root and fifth, breaks the
+  chord in quavers, or plays the root in octaves — **nothing a hand plays at once spans more than
+  an octave** — and a stave of more than one bar ends on the key's own chord, its last note the
+  key's own note;
+- the playhead passes along it **at its own tempo** (a crotchet at 58 to 88 a minute), each note
+  lifting as its time comes rather than as a line passes it.
+
+The time signature at a stave's head was, for a stave that changed metre, being drawn with the
+last metre rather than the first (the drawing read a variable that moved on after it was set) —
+found in a close-up, fixed, and tested.
+
+**Pointing at a note plays it**, as a piano: the nearest notehead within 9px of the pointer is
+struck at its own pitch, a chord as a chord, once for as long as the hand stays on it; a tap does
+the same on a phone. **The piano is made here**, not sampled: two strings to a note a hair apart,
+a piano's overtones, a quick strike and a long fall (longer the lower the note) through a filter
+that closes as it fades, a tick of the hammer, and a little of a room after it.
+
+**The button** (`.qimu-sound`) is a square at the top right — a speaker drawn in it, crossed out
+while the notes are silent, filled in the score's blue and sounding once they play — with *Sound
+off* / *Sound on* beside it (only the square on a phone). **It starts silent**: a browser lets no
+page make a sound until it has been pressed, so the first press is what turns the sound on, and it
+answers with the key's chord, softly, so the press is heard to have worked. It is made by the
+script, so without it there is no button and nothing to play.
+
+Tested in `tests/houses.spec.js`: **`Qimu & Musicians' score is real music: bars that add up, in
+key, within a hand`** (at three window sizes: every bar the length of its time signature in each
+hand; the time signatures written on a stave the ones its bars are in, in order; every note in the
+key, a minor key's raised leading note allowed; no chord wider than an octave; everything between
+E1 and C6; more than three metres) and **`Qimu & Musicians has a square sound button, and a note
+pointed at plays its own pitch`** (a square at the top; silent while off; turned on, a note
+pointed at is struck at exactly its own frequencies — read off what the page asks the browser's
+audio to play — and not again while the hand stays; silent once off again). The earlier score test
+still holds: notes written, times other than 4/4, nothing written but numbers, never stronger than
+a little over half, carried with the page.
+
+**Not done, and asked**: the Houses view's hover for Qimu (`motifs.js`) still draws its own
+texture of staves and loose music; it plays nothing.

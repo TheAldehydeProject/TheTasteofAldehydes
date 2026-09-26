@@ -136,3 +136,30 @@ console errors.
 - The owner said the strip should be *"slightly thicker"*; the squares are 150px, up from
   the 132px first drawn. If that is still not what they meant, `.pine-shot`'s width and
   height are the one place to change it.
+
+## 2026-09-26, last — the viewer never goes blank; the strip's pictures fetched in time
+
+> the pictures of pineward at the very bottom in the gallery (SD) can get stuck if you scroll too
+> quickly, fix that.
+
+**Reproduced, frame by frame.** Opening a picture and pressing → (or ←) a few times inside the
+420ms a change takes left the viewer **blank**, every time: of its two picture layers, one was
+marked both *on show* and *on its way out* (`is-on` and `to-back`), which the stylesheet draws at
+nothing, and the other had been emptied. The clean-up that takes the *on its way out* mark off a
+layer is run only by the change that sent it out, and a quicker press cancels it — so a layer came
+back into use still carrying it. `show()` now takes every mark of where a layer was going off it
+as it comes in. Whatever it was doing, it is only coming in now.
+
+**And the strip's pictures are fetched once the gallery is near.** They are lazy in the page, and
+a lazy picture standing outside the strip's window — clipped by it, off to the right — is never
+fetched until it has slid in, so running along the strip quickly showed empty squares where the
+pictures should be. Once the gallery comes within a screen or so of the window, every one of them
+is asked for (`warmStrip` in `pineward-gallery.js`).
+
+The page's own scroll was checked as well — flung to the foot in half a second, the strip stands
+where it should, held while the pointer is over it, as the owner asked it to be.
+
+Tested in `tests/pineward.spec.js` (the gallery's first tests): **`the gallery's viewer shows a
+picture however fast it is stepped through`** — stepped seven times on, three back, at 300ms,
+160ms and 90ms apart: one picture on show every time, and no layer both on show and going out;
+**`the gallery strip's pictures are all fetched once the gallery is near`**.

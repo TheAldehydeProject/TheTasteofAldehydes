@@ -1847,6 +1847,16 @@ html.js-coming body.favorites-page .page-content { visibility: hidden; }
   from { opacity: 0; translate: -50% -8px; }
   to { opacity: 1; translate: -50% 0; }
 }
+/* HANDED BACK SETTLED. On the way out of a chapter the chamber is given
+   back with its menu open, under a black that is still solid; the step
+   that opens it is put straight at its end (`giveBack` in chamber.js),
+   and so are the word, the plate and the menu here — or they were seen
+   shrinking and sliding into place after the black had cleared, which
+   read as the writing jumping. `handing` lasts two frames; `settled`
+   until the menu is next shut, because taking a finished animation's
+   duration back mid-way would put it back where it was at that time. */
+.chamber.handing { --chamber-step-ms: 0.01s; }
+.chamber-plate.settled .chamber-panel { animation-duration: 0.01s; animation-delay: 0s; }
 /* AND IT LEAVES ON THE SAME STEP IT ARRIVED ON. It used to be taken
    off the page in the frame the word was pressed, leaving the orbit to
    spend the next two seconds coming back in on its own — the one half
@@ -2526,6 +2536,95 @@ body.structured .page-where { color: rgba(226, 232, 242, 0.55); border-left-colo
 /* One sentence, and nothing else: "Get in touch, send a carrier pigeon."
    The address and the links came off at the owner's word. */
 .contact-page h1 { max-width: 16ch; }
+
+/* THE DETAILS BEHIND A CAPTCHA (contact.js): the characters in specks in
+   a hairline box, a box to type them into under it, and the details once
+   they are typed. Set in the site's mono and ruled as its readings are. */
+.contact-lock { margin-top: clamp(40px, 8vh, 72px); max-width: 420px; }
+.contact-lock-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+.contact-check[hidden], .contact-details[hidden] { display: none; }
+.contact-captcha { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+.contact-captcha-canvas {
+  display: block;
+  width: 300px;
+  height: 96px;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  background: var(--bg);
+}
+.contact-captcha-new,
+.contact-captcha-go {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: none;
+  border: 1px solid var(--line);
+  padding: 9px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s var(--menu-ease), background-color 0.2s var(--menu-ease);
+}
+.contact-captcha-new { border-color: transparent; padding-left: 0; padding-right: 0; color: var(--muted); }
+.contact-captcha-new:hover { color: var(--ink); }
+.contact-captcha-go:hover, .contact-captcha-go:focus-visible { border-color: var(--ink); }
+.contact-captcha-label {
+  display: block;
+  margin: 22px 0 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.contact-captcha-row { display: flex; gap: 12px; align-items: stretch; }
+.contact-captcha-field {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: 18px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 6px 0;
+  outline: none;
+}
+.contact-captcha-field:focus { border-bottom-color: var(--ink); }
+.contact-captcha-say { min-height: 1.6em; margin: 12px 0 0; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.contact-details {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px 22px;
+  margin: 0;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  animation: contact-open 0.5s var(--menu-ease) both;
+}
+.contact-details dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  align-self: baseline;
+}
+.contact-details dd { margin: 0; font-size: 18px; color: var(--ink); align-self: baseline; }
+.contact-details a { color: var(--ink); text-underline-offset: 3px; }
+@keyframes contact-open { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+/* Without the script, the line saying so; with it, not. */
+.contact-lock.is-scripted .contact-lock-nojs { display: none; }
+.contact-lock-nojs { font-size: 15px; color: var(--muted); margin: 0; }
+@media (prefers-reduced-motion: reduce) { .contact-details { animation: none; } }
 
 /* ==================================================================
    FOCUS STATES
@@ -4158,7 +4257,9 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   display: flex;
   flex-direction: column;
   min-height: 0;
-  margin-top: clamp(26px, 5vh, 54px);
+  /* A little lower than it stood — the owner, 2026-09-26: "in RE, lower
+     the left side table a little". It was 5vh (45px at 900 high). */
+  margin-top: clamp(44px, 9.5vh, 100px);
 }
 .researches-page .index-scroll {
   flex: 1 1 auto;
@@ -4625,6 +4726,13 @@ body.find-reading .find-reading-note { opacity: 1; }
      on where everything will be, and the browser nudging it as well sent
      the card pressed off the top. */
   overflow-anchor: none;
+  /* THE SCROLLBAR'S ROOM IS KEPT WHETHER THERE IS ONE OR NOT. On a
+     screen that shows scrollbars (most without a trackpad), Chapter 1 is
+     taller than the window and Chapter 2 is not, and a drawer can make a
+     short chapter tall: each time the bar came or went the whole sheet
+     moved sideways by half its width. Measured, 7px between the two
+     chapters. */
+  scrollbar-gutter: stable;
   background: #000;
   color: var(--silver);
   /* NOTHING CUTS THIS PAGE OPEN ANY MORE. For several rounds the
@@ -6711,12 +6819,16 @@ html.photo-viewing, html.photo-viewing body { overflow: hidden; }
   gap: 30px;
   margin: 0 0 26px;
 }
+/* The name over each of a pair of worked answers — "For the 5-note
+   Xerjoff". Set in the writing's own face and in bold, as a heading of
+   the answer under it, at the owner's word (2026-09-26): it was the
+   mono in spaced capitals, which read as one of the site's readings. */
 .zone-pair-name {
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #dbe1ea;
+  font-family: var(--sans);
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: #eef1f6;
   margin: 0 0 8px;
 }
 
@@ -6844,7 +6956,7 @@ html.photo-viewing, html.photo-viewing body { overflow: hidden; }
    joints. */
 .essay-sub {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 14.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #8eb4e2;
@@ -7774,11 +7886,11 @@ body.frag-open { overflow: hidden; }
    back. The pictures are out of the layout by the time this runs —
    they have been lifted into fliers of their own — so fading the whole
    article is exactly "everything except the picture". */
-.frag-reader.is-clearing .frag-in { opacity: 0; transition-duration: 640ms; }
+.frag-reader.is-clearing .frag-in { opacity: 0; transition-duration: 360ms; }
 /* THE WAY BACK IS SLOWER THAN THE WAY IN, at the owner's word — "make
    it a bit slower too". The reader's own ground goes under the
    pictures over a second rather than the 700ms it arrives in. */
-.frag-reader.is-leaving { transition-duration: 1000ms; }
+.frag-reader.is-leaving { transition-duration: 560ms; }
 
 .frag-kicker {
   display: flex;
@@ -8911,6 +9023,44 @@ a.note-cite:hover { color: var(--ink); }
 .house-credit a { color: var(--ink); text-underline-offset: 3px; }
 .house-credit a:hover { color: var(--muted); }
 
+/* ADAR'S PAGE IS BLACK, AND SETS NONE OF THE FIVE TOKENS the credit is
+   drawn in — it paints its own colours straight onto its rules — so the
+   credit came out in the paper pages' ink on black, and its words could
+   barely be read (the owner, 2026-09-26). In ADAR's own greys here. */
+.adar-page .house-credit { color: #a8a8b4; border-top-color: rgba(232, 232, 238, 0.14); }
+.adar-page .house-credit-say,
+.adar-page .house-credit strong,
+.adar-page .house-credit a { color: #e8e8ee; }
+.adar-page .house-credit a:hover { color: #a8a8b4; }
+
+/* THE WAY BACK A HOUSE, beside the way on — "the option to go back a
+   house as well as forward a house" (2026-09-26). The two stand together
+   on the right of every house's foot, the one before and the one after,
+   the ninth and the first wrapping round to each other; the way back to
+   Scent descriptions keeps the left. Set in each foot's own mono. */
+.house-steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px 30px;
+  margin-left: auto;
+}
+.house-prev {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-decoration: none;
+}
+.house-prev:hover { color: var(--ink); }
+.adar-foot .house-prev { color: #8a8a96; }
+.adar-foot .house-prev:hover { color: #e8e8ee; }
+@media (max-width: 700px) {
+  /* On a phone the two go under the way back to the category, one to a
+     side, rather than both squeezed to the right. */
+  .house-steps { width: 100%; justify-content: space-between; margin-left: 0; }
+}
+
 /* (The picture on an opened favourite was a floated rectangle here,
    `.fav-shot`, until 2026-09-26; it is a framed print now, `.fav-print`,
    with the rest of the opened favourite's rules.) */
@@ -9732,7 +9882,17 @@ body.frag-open .frag-stage { opacity: 0; pointer-events: none; }
   transition: opacity 0.4s var(--menu-ease), border-color 0.2s, background-color 0.2s;
   transition-delay: calc(40ms + var(--i, 0) * 32ms), 0s, 0s;
 }
-.frag-item[hidden] { display: none; }
+/* A FRAGRANCE THE SEARCH LEAVES OUT IS OFF THE PAGE, in all three
+   layouts. The plain `[hidden]` rule lost to each layout's own `display`
+   (`.frag-stage.is-list .frag-item` and the rest outrank it), so the
+   search marked the rows it had left out and every one of them stayed on
+   the page — the owner's "make it work" (2026-09-26). The trap is in
+   CLAUDE.md: a rule for `[hidden]` has to outrank every rule that gives
+   the thing a display, and this one does. */
+.frag-item[hidden],
+.frag-stage.is-list .frag-item[hidden],
+.frag-stage.is-boxes .frag-item[hidden],
+.frag-stage.is-cards .frag-item[hidden] { display: none; }
 .frag-stage.rows-in .frag-item { opacity: 1; }
 .frag-item > span {
   opacity: 0;
@@ -10112,6 +10272,63 @@ body.tombstone-page {
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
+/* THE SOUND, on Qimu & Musicians: "a button on top that allows you to
+   mute and unmute. it should be a square and relatively obvious"
+   (2026-09-26). A square at the top right with a speaker drawn in it —
+   crossed out while the notes are silent, sounding and filled in the
+   score's blue once they play — and what it is doing written beside it.
+   Made by qimu.js, so without the script there is no button and nothing
+   to play. It stands under the Menu's overlay (25) and over the page. */
+.qimu-sound {
+  position: fixed;
+  top: 16px;
+  right: 22px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: rgb(44, 62, 99);
+  cursor: pointer;
+  font-family: var(--mono);
+}
+.qimu-sound-say {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(44, 62, 99, 0.78);
+  transition: color 0.25s var(--menu-ease);
+}
+.qimu-sound-box {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1.5px solid rgb(44, 62, 99);
+  background: rgba(226, 235, 246, 0.82);
+  transition: background-color 0.25s var(--menu-ease), color 0.25s var(--menu-ease), transform 0.25s var(--menu-ease);
+}
+.qimu-sound svg { display: block; }
+.qimu-sound svg path { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+.qimu-sound .qimu-sound-horn { fill: currentColor; }
+.qimu-sound .qimu-sound-waves { display: none; }
+.qimu-sound.is-on .qimu-sound-waves { display: inline; }
+.qimu-sound.is-on .qimu-sound-cross { display: none; }
+.qimu-sound.is-on .qimu-sound-box { background: rgb(44, 62, 99); color: #eef3fa; }
+.qimu-sound.is-on .qimu-sound-say { color: rgb(44, 62, 99); }
+.qimu-sound:hover .qimu-sound-box,
+.qimu-sound:focus-visible .qimu-sound-box { transform: translateY(-1px); }
+.qimu-sound:focus-visible { outline: none; }
+.qimu-sound:focus-visible .qimu-sound-box { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px rgb(44, 62, 99); }
+@media (max-width: 700px) {
+  /* On a phone the word goes, and the square stands on the chrome's own
+     ground like the Menu across from it. */
+  .qimu-sound { top: 10px; right: 12px; }
+  .qimu-sound-say { display: none; }
+}
+
 body.qimu-page {
   --bg: #e2ebf6; --bg-2: #d6e1ef; --line: #bccbdd;
   --chrome-ground: rgba(226, 235, 246, 0.8);

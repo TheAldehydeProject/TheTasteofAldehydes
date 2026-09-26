@@ -602,3 +602,28 @@ two pages read a picture with the same code, and a test in `tests/chamber.spec.j
 the same. Of the individual fragrances only Tobacolor moves: its plinth, wider than its bottle, is
 left out the same way, which centres the bottle.
 
+
+## 2026-09-26, last — boxes to begin with; a search that works, on the fragrances alone
+
+> for fragrances in SD, it make boxes the default view.
+
+**Boxes are what the view opens on** (`mode = "boxes"`), until another is chosen; a choice made on
+an earlier visit is still kept.
+
+> the search in fragrances in SD should be dynamic and make it work. also, only work the inside of
+> the fragrances page, not the entire website. also do not included houses in that search
+
+**The search did nothing you could see.** It marked the fragrances it left out as hidden — and each
+layout's own `display` (`.frag-stage.is-list .frag-item` and the other two) outranked the plain
+`.frag-item[hidden]` rule, so every one of them stayed on the page. This is the trap CLAUDE.md
+warns about, in a new place: a rule for `[hidden]` has to outrank every rule giving the thing a
+display. It does now, in all three layouts, and the search narrows the fragrances **as it is
+typed**. It looks at **their numbers, names and dates only** — a house's name no longer brings up
+the fragrance that came from it — and nothing in it hands a question on to the site's search (the
+page's own search, which does, is not shown on this view).
+
+Tested in `tests/fragrance-line.spec.js`: **`the search takes the others off the page as it is
+typed, in every layout, and looks at no house`** — reading what is SHOWN rather than what is
+marked, which is why the earlier test passed while the bug stood; the tests that took the list for
+the view's first layout now say boxes, and the one about how many rows fit switches to the list
+first.

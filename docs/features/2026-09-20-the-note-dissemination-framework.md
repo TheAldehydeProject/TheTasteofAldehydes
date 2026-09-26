@@ -420,3 +420,35 @@ same went for the other two theories' plates — see [the essay pages](2026-09-1
 
 Tested in `tests/essay.spec.js`: **`no theory carries a picture`** — none of the three has an
 `.essay-plate` or an `<img>` in its writing, and the framework's diagrams are still there.
+
+## 2026-09-26, last — bolder pair names, larger subheadings, the graph on a log scale, a wheel that scrolls
+
+The owner, with a picture of *FOR THE 5-NOTE XERJOFF* over its worked answer: "change the font in
+picture 1, and make it bold emphasized rather than the way it is: in the same page, make the blue
+subsubtitles slightly larger", "to the theories note dissemination framework, i want you to
+duplicate the graph and make the second one logarhthmic like in the calculator", and "when you
+scroll in teh calculator in the places where you can input a number, it shouldnt change it".
+
+- **The pairs' names** (`.zone-pair-name` — *For the 5-note Xerjoff*, *For the 20-note Xerjoff*,
+  four in all) are set in the writing's own face, bold (700), at 16.5px, in their own case — they
+  were the mono in spaced capitals at 12px, which read as one of the site's readings rather than
+  as the heading of the answer under them.
+- **The blue subheadings** (`.essay-sub` — *Xerjoff*, *The thresholds*, *Complication 1* …) are
+  14.5px rather than 13px. Both classes are this page's alone.
+- **The graph is drawn twice.** Under Amber Zero's graph stands the same three readings on a
+  **logarithmic** y, drawn the way the calculator draws its log scale: whole decades (0.1, 1, 10)
+  with the eight fainter lines inside each, the thresholds at 0.5 and 2, and the axis named
+  *Log(Modified IBR)*. It is the same SVG the calculator would draw for 0.136, 0.513 and 4.36,
+  written into the page. No sentence was added to the owner's writing to introduce it; the
+  caption under it says what it is.
+- **The wheel over a number field scrolls rather than counts.** A browser steps a number field up
+  or down when the wheel turns over it while it has the caret; `calculator.js` refuses the step
+  and hands the turn to whatever scrolls round the field, so the caret stays and the number does
+  not change.
+
+Tested in `tests/calculator.spec.js`: **`turning the wheel over a number field leaves the number
+alone`** (the number as typed, the caret still in it, and the page scrolled instead); **`the
+piece draws its graph twice, the second on a logarithmic scale`** (two graphs, the second with
+0.1 and 10 on its scale, sixteen fainter lines, and each reading exactly where its logarithm
+falls; the first still linear); **`the pairs' names are bold in the writing's face, and the blue
+subheadings larger`**.

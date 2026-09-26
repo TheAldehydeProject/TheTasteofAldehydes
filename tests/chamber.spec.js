@@ -799,6 +799,77 @@ test("leaving a chapter never shows the chamber without its chrome",
   await expect(page.locator(".chamber-panel")).toBeVisible();
 });
 
+/* AND WHAT COMES BACK IS ALREADY IN ITS PLACE. "Sometimes the text and the
+   box jumps after the transition" (2026-09-26). Reproduced frame by frame
+   on the way out of Chapter 1: the chamber was handed back with its menu
+   reopening from shut, so the word FAVOURITES and its boxed cue were seen
+   shrinking and sliding up the window for two seconds after the black had
+   cleared — the box changing its width in one frame as it went from
+   "Expand" to "Collapse". Now the word, the cue and the menu are where
+   they will stay before the black begins to clear, and never move after. */
+test("leaving a chapter hands the chamber back with its word and cue already in place",
+  async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto(PAGE);
+  await waitForChamber(page);
+  await page.waitForTimeout(2500);
+  await openMenu(page);
+  await openChapterFully(page, 0);
+  await page.evaluate(() => {
+    window.__out = [];
+    const t0 = performance.now();
+    const box = (el) => { const b = el.getBoundingClientRect(); return [b.x, b.y, b.width, b.height].map((v) => Math.round(v)); };
+    const tick = () => {
+      const pg = document.querySelector(".chapter-page");
+      window.__out.push({
+        page: pg.hidden ? 0 : Number(getComputedStyle(pg).opacity),
+        word: box(document.querySelector(".chamber-word")),
+        cue: box(document.querySelector(".chamber-cue")),
+        panel: document.querySelector(".chamber-panel").hidden ? null : box(document.querySelector(".chamber-panel")),
+      });
+      if (performance.now() - t0 < 3600) requestAnimationFrame(tick);
+    };
+    tick();
+  });
+  await page.locator(".chapter-back").click();
+  await page.waitForTimeout(4000);
+  const seen = await page.evaluate(() => window.__out);
+  // Every frame from the first one the black is anything short of solid.
+  const clearing = seen.slice(seen.findIndex((f) => f.page < 0.995));
+  expect(clearing.length, "the black should have been watched clearing").toBeGreaterThan(10);
+  const at = (f) => JSON.stringify([f.word, f.cue, f.panel]);
+  const first = at(clearing[0]);
+  expect(clearing[0].panel, "the menu is up before the black clears").not.toBeNull();
+  clearing.forEach((f, n) => expect(at(f), "frame " + n + " of the black clearing").toBe(first));
+  await expect(page.locator(".chamber-cue")).toHaveText("Collapse");
+  expect(errors).toEqual([]);
+});
+
+/* AND THE CHAMBER IS NOT DRAWN WHILE A CHAPTER COVERS IT. It was measured,
+   moved and painted on two full-window canvases every frame the whole
+   time a chapter was open, work taken from the chapter's own drawing and
+   from the flight between the sun and the moon ("a bit laggy"). */
+test("the chamber under an open chapter is left undrawn, and takes up again on the way out",
+  async ({ page }) => {
+  await page.goto(PAGE);
+  await waitForChamber(page);
+  await page.waitForTimeout(2000);
+  await openMenu(page);
+  await openChapterFully(page, 0);
+  const inked = () => page.evaluate(() => [...document.querySelectorAll(".chamber-field, .chamber-front")].reduce((n, c) => {
+    const g = c.getContext("2d");
+    if (!g || !c.width) return n;
+    const d = g.getImageData(0, 0, c.width, c.height).data;
+    for (let i = 3; i < d.length; i += 64) if (d[i] > 8) n++;
+    return n;
+  }, 0));
+  await page.waitForTimeout(400);
+  expect(await inked(), "nothing painted under the chapter").toBe(0);
+  await page.locator(".chapter-back").click();
+  await page.waitForTimeout(2600);
+  expect(await inked(), "and the chamber drawn again once it is back").toBeGreaterThan(50);
+});
+
 /* A FAVOURITE OPENS A DRAWER UNDER ITS ROW.
    The owner first: "when you click a given fragrance... the other
    favorite fragrances will go down and the square in which Des Cendres

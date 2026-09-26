@@ -44,8 +44,9 @@
 //                           picture is there).
 //                 An item opens its fragrance in the page
 //                 (fragrance-reader.js), as the old table's rows did.
-//   THE OPTIONS   on the right: List, Boxes, Cards. The choice is kept
-//                 for the next visit, in this browser only.
+//   THE OPTIONS   on the right: List, Boxes, Cards — Boxes to begin with
+//                 (2026-09-26). The choice is kept for the next visit, in
+//                 this browser only.
 //
 // THE OLD VIEW IS KEPT, and nothing here changes it. Its table is still
 // in the page, exactly as it was — this reads the fragrances from it and
@@ -116,7 +117,7 @@
   // THE STAGE: the aside, the items, the options
   // ============================================================
   const stage = document.createElement("div");
-  stage.className = "frag-stage is-list";
+  stage.className = "frag-stage is-boxes";
   // ITS NAME: "Individual" over "Fragrances", smaller — the owner's, the
   // night of 2026-09-25, when the line under it ("The ones with no house
   // here", read off the old view's head) was taken off. The old view
@@ -258,11 +259,17 @@
     order();
   }));
   const norm = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  // THE SEARCH LOOKS AT THE FRAGRANCES AND NOTHING ELSE, as you type:
+  // their numbers, their names and their dates — "only work the inside of
+  // the fragrances page, not the entire website. also do not included
+  // houses in that search" (2026-09-26). A house's name no longer brings
+  // up the fragrance that came from it, and nothing here hands a question
+  // on to the site's search.
   function filter() {
     const words = norm(search.value).split(/\s+/).filter(Boolean);
     let n = 0;
     fragrances.forEach((f) => {
-      const text = norm([three(f.no), f.name, f.house, f.shown].join(" "));
+      const text = norm([three(f.no), f.name, f.shown].join(" "));
       const hit = words.every((w) => text.includes(w));
       f.item.hidden = !hit;
       if (hit) n++;
@@ -290,11 +297,14 @@
   // ============================================================
   // THE THREE WAYS OF SHOWING THEM
   // ============================================================
-  let mode = "list";
+  // BOXES UNTIL ANOTHER IS CHOSEN — "for fragrances in SD, make boxes
+  // the default view" (2026-09-26). A choice made on an earlier visit is
+  // still kept.
+  let mode = "boxes";
   try {
     const kept = window.localStorage.getItem(KEEP);
     if (MODES.includes(kept)) mode = kept;
-  } catch (e) { /* no storage: the list it is */ }
+  } catch (e) { /* no storage: the boxes it is */ }
   let switching = 0;
   function paint() {
     MODES.forEach((m) => stage.classList.toggle("is-" + m, m === mode));

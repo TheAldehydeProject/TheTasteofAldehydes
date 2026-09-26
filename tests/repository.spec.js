@@ -340,3 +340,63 @@ test("a house that shows photographs says where they came from", () => {
   expect(wrong, "houses using pictures without crediting them").toEqual([]);
   expect(credited, "no house was found using pictures at all").toBeGreaterThan(0);
 });
+
+/* WHAT A SEARCH ENGINE SEES, and a shared link: "can you also do search
+   engine optimisation so that when you google this or look it up with any
+   search engine, then it would look good?" (2026-09-26). Written by
+   tools/seo.py into every page, on the site's own address — the one in
+   CNAME, thetasteofaldehydes.com, since the owner moved it there. Every
+   page has exactly one description and one canonical address on that
+   domain, and an icon; a page for the world carries the title, line and
+   picture a shared link shows, and is in the sitemap; what is not the
+   site itself says noindex and is not. The sitemap names only pages that
+   exist, and robots.txt names the sitemap. */
+test("every page tells search engines what it is, on the site's own address", () => {
+  const domain = fs.readFileSync(path.join(ROOT, "CNAME"), "utf8").trim();
+  expect(domain).toBe("thetasteofaldehydes.com");
+  const base = "https://" + domain + "/";
+  const sitemap = fs.readFileSync(path.join(ROOT, "sitemap.xml"), "utf8");
+  const listed = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  listed.forEach((loc) => {
+    expect(loc.startsWith(base), loc).toBe(true);
+    const file = loc === base ? "index.html" : loc.slice(base.length);
+    expect(fs.existsSync(path.join(ROOT, file)), `${loc} is a page that exists`).toBe(true);
+  });
+  expect(fs.readFileSync(path.join(ROOT, "robots.txt"), "utf8")).toContain("Sitemap: " + base + "sitemap.xml");
+  for (const f of ["favicon.svg", "apple-touch-icon.png", "images/social-card.png"]) {
+    expect(fs.existsSync(path.join(ROOT, f)), f).toBe(true);
+  }
+  const pages = htmlFiles().filter((f) => !path.relative(ROOT, f).startsWith("archive"));
+  expect(pages.length).toBeGreaterThan(30);
+  for (const file of pages) {
+    const name = path.relative(ROOT, file).split(path.sep).join("/");
+    const head = fs.readFileSync(file, "utf8").split("</head>")[0];
+    const count = (re) => (head.match(re) || []).length;
+    expect(count(/<meta name="description" content="[^"]{20,170}">/g), `${name}: one description of a sensible length`).toBe(1);
+    expect(count(/<link rel="canonical"/g), `${name}: one canonical address`).toBe(1);
+    expect(count(/<link rel="icon"/g), `${name}: an icon`).toBe(1);
+    const hidden = /<meta name="robots" content="noindex/.test(head);
+    const canonical = head.match(/<link rel="canonical" href="([^"]+)"/)[1];
+    if (hidden) {
+      expect(listed.some((loc) => loc.endsWith("/" + name) || (name === "index.html" && loc === base)), `${name} is left out of the sitemap`).toBe(false);
+      continue;
+    }
+    expect(canonical, `${name}: its address on the site's own domain`).toBe(name === "index.html" ? base : base + name);
+    expect(listed, `${name} is in the sitemap`).toContain(canonical);
+    for (const property of ["og:title", "og:description", "og:url", "og:image", "og:site_name"]) {
+      expect(count(new RegExp(`<meta property="${property}" content="[^"]+">`, "g")), `${name}: ${property}`).toBe(1);
+    }
+    expect(head, `${name}: a large card when shared`).toContain('<meta name="twitter:card" content="summary_large_image">');
+    // Structured data is written as JSON, and must read as JSON.
+    [...head.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].forEach((m) => {
+      const data = JSON.parse(m[1]);
+      expect(data["@context"]).toBe("https://schema.org");
+    });
+  }
+  // What is not the site itself is kept out.
+  for (const hidden of ["search.html", "works/test-page.html", "works/test-node-a.html", "works/example-article-work.html", "works/pineward.html"]) {
+    expect(fs.readFileSync(path.join(ROOT, hidden), "utf8"), hidden).toContain('<meta name="robots" content="noindex, follow">');
+  }
+  // And the home page carries the site's name for a search engine to show.
+  expect(fs.readFileSync(path.join(ROOT, "index.html"), "utf8")).toMatch(/"@type": "WebSite", "name": "The Taste of Aldehydes"/);
+});

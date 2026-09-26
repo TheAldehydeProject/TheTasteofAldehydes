@@ -150,7 +150,11 @@ test("the table is nearly the page, with the aside on its left and the options o
   expect(out.ticks, "a tick for every fragrance").toBe(8);
   expect(out.mark, "the mark").toBeGreaterThan(100);
   await expect(page.locator(".frag-mode")).toHaveText(["List", "Boxes", "Cards"]);
-  await expect(page.locator(".frag-mode[data-mode='list']")).toHaveAttribute("aria-pressed", "true");
+  // BOXES TO BEGIN WITH: "for fragrances in SD, make boxes the default
+  // view" (2026-09-26). It was the list.
+  await expect(page.locator(".frag-mode[data-mode='boxes']")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".frag-stage")).toHaveClass(/is-boxes/);
+  await expect(page.locator(".frag-read-mode")).toHaveText("Boxes");
 });
 
 /* THE ASIDE'S NAME — 2026-09-25: "remove the text "The ones with no
@@ -179,6 +183,9 @@ test("the aside is headed Individual, smaller, over Fragrances, and says nothing
 test("a screen holds a good many rows, and the table scrolls in its own box", async ({ page }) => {
   await withMany(page, 60);
   await toTheTable(page);
+  // Rows are the list's; the page opens on the boxes now.
+  await page.locator(".frag-mode[data-mode='list']").click();
+  await page.waitForTimeout(700);
   const out = await page.evaluate(() => {
     const box = document.querySelector(".frag-list-scroll");
     const items = [...document.querySelectorAll(".frag-item")];
@@ -372,10 +379,47 @@ test("the headings sort the table and the field searches it, in any of the three
   await page.waitForTimeout(600);
   await page.locator(".frag-sort[data-key='house']").click();
   expect((await rowsOf(page))[0][2]).toBe("Casa Goa");
-  await page.locator(".frag-list-field").fill("serge");
+  await page.locator(".frag-list-field").fill("prof");
   expect((await rowsOf(page)).map((r) => r[1])).toEqual(["De Profundis"]);
   await expect(page.locator(".frag-list-count")).toHaveText("001");
   await expect(page.locator(".frag-scale-tick:not([hidden])")).toHaveCount(1);
+});
+
+/* THE SEARCH REALLY TAKES THE OTHERS OFF THE PAGE, as it is typed, in all
+   three layouts — and it looks at the fragrances alone. "the search in
+   fragrances in SD should be dynamic and make it work. also, only work the
+   inside of the fragrances page, not the entire website. also do not
+   included houses in that search" (2026-09-26). It marked the rows it
+   left out and every one of them stayed on the page: each layout's own
+   display outranked the rule for [hidden]. So this reads what is SHOWN,
+   not what is marked. */
+test("the search takes the others off the page as it is typed, in every layout, and looks at no house", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await toTheTable(page);
+  const shown = () => page.$$eval(".frag-item", (all) => all.filter((li) => {
+    const r = li.getBoundingClientRect();
+    return getComputedStyle(li).display !== "none" && r.width > 0 && r.height > 0;
+  }).map((li) => li.querySelector(".frag-t-name").textContent.trim()));
+  for (const mode of ["boxes", "list", "cards"]) {
+    await page.locator(".frag-mode[data-mode='" + mode + "']").click();
+    await page.waitForTimeout(700);
+    const field = page.locator(".frag-list-field");
+    await field.fill("");
+    await field.pressSequentially("hax", { delay: 40 });
+    expect(await shown(), mode + ": as it is typed").toEqual(["Haxan"]);
+    await expect(page.locator(".frag-list-count")).toHaveText("001");
+    // A house's name is not a fragrance's: Serge Lutens brings up nothing.
+    await field.fill("serge");
+    expect(await shown(), mode + ": no house").toEqual([]);
+    await field.fill("");
+    expect((await shown()).length, mode + ": all back").toBe(8);
+  }
+  // Nothing typed here leaves the page.
+  await page.locator(".frag-list-field").fill("something nowhere");
+  await page.locator(".frag-list-field").press("Enter");
+  await page.waitForTimeout(500);
+  expect(page.url()).toContain("scent-descriptions.html");
+  expect(errors).toEqual([]);
 });
 
 /* AN ITEM OPENS ITS FRAGRANCE IN THE PAGE, as a row of the old table did

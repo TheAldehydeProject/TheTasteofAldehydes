@@ -1878,3 +1878,58 @@ the two identical.
 - **`the favourites and the Fragrances view read a picture with the same code`** — `readPicture`
   in `chamber.js` and in `fragrance-line.js`, character for character.
 
+
+## 2026-09-26, last — the jump after leaving a chapter; the flight between the drawings lighter
+
+> in favorites; sometimes the text and the box jumps after the transition. can you try to figure
+> out why it is? try and recreate the problem and solve it.
+
+**Recreated.** Every transition on the page was traced frame by frame, with the fonts the owner
+sees and with scrollbars shown and hidden: the burst into a chapter, a favourite's drawer opening
+(with its picture arriving late), stepping between chapters, and leaving. The burst and the drawer
+were steady. **The jump was on the way out**: pressing *← Favourites* reopens the menu so the
+chapters are there to pick from, and that is a two-second step — the orbit widening, the word
+FAVOURITES coming down to a heading and rising with the menu, the cue changing *Expand* to
+*Collapse*. It was run from the shut state, beginning under the black and still going when the
+black cleared: the word and its boxed cue were seen **shrinking and sliding up the window** just
+after the transition, and the cue's box changed its width in one frame as its word changed.
+
+So the chamber is **handed back settled** (`giveBack`): the step is put straight at its end
+(`spread`, `stepFrom`, `stepTo` at 1, the core at its open place), the plate's own easing is
+switched off for the two frames it is written in (`.chamber.handing`), and the menu comes up
+already up (`.chamber-plate.settled`, until it is next shut — taking a finished animation's length
+back would put it back where it was at that time). The black begins to clear two frames later, so
+all of it happens under solid black. Traced again, the word and its cue are where they will stay
+before the black clears, and never move after.
+
+Two smaller causes of the same kind of movement were found on the way and fixed: on a screen that
+shows scrollbars, **the sheet moved 7px sideways** between Chapter 1 (taller than the window) and
+Chapter 2 (not), or when a drawer made a short chapter tall — the room for a scrollbar is kept now
+whether there is one or not (`scrollbar-gutter: stable` on `.chapter-page`).
+
+> the transition between chapter 1 and 2 in favorites is a bit laggy, try to make it less so.
+
+Profiled: most of each frame of the flight was the browser painting canvases, not the page's own
+work. Three things were taken off it:
+
+- **The chamber under an open chapter is not drawn.** It is out of sight the whole time a chapter
+  is open, and it was still measured, moved and painted on two full-window canvases every frame —
+  during the flight too. It is cleared once and takes up again the frame the chamber is handed
+  back (`asleep` in `frame`).
+- **The flight is drawn at one and a half pixels a point at most** — twenty thousand specks a pixel
+  or two across, moving; at twice over on a sharp screen it filled over five million pixels a
+  frame for detail nobody can see in something in the air.
+- **A picture is read once.** Every favourite's picture was re-read — which means decoding the
+  whole photograph — each time its chapter was written, so going back to Chapter 1 re-read all ten
+  half way through the flight. What each picture was read as is kept by its address (`readings`).
+
+Measured in the tests' browser, which draws without a graphics card: over the same flight, more
+frames drawn, the slowest tenth of them 50ms rather than 67, and fewer long ones. On a machine
+with a graphics card the painting is far cheaper, and the work taken off is the larger share.
+
+Tested in `tests/chamber.spec.js`: **`leaving a chapter hands the chamber back with its word and
+cue already in place`** (every frame from the first one the black is anything short of solid, the
+word, the cue and the menu stand exactly where they will stay, and the cue says *Collapse*) and
+**`the chamber under an open chapter is left undrawn, and takes up again on the way out`**. The
+earlier way-out test still holds: the black fades, never shows the chamber without its chrome, and
+the writing goes first.

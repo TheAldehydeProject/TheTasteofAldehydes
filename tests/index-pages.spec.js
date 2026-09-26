@@ -431,6 +431,9 @@ test("Explorations & Researches: the paragraph under the name, the table on the 
   // The table, moved up, the left three fifths or so.
   expect(out.board.top, "the table moved up, under the paragraph").toBeLessThan(out.height * 0.45);
   expect(out.board.top).toBeGreaterThan(out.say.bottom);
+  // And then a little lower again: "in RE, lower the left side table a
+  // little" (2026-09-26). It stood 45px under the paragraph; 85px now.
+  expect(out.board.top - out.say.bottom, "a little way below the paragraph").toBeGreaterThan(70);
   const share = out.board.width / out.width;
   expect(share, `the table takes about three fifths of the page (${share.toFixed(2)})`).toBeGreaterThan(0.5);
   expect(share).toBeLessThan(0.66);

@@ -349,3 +349,19 @@ middle of the line presses that fragrance's row in the table underneath, which i
 page, and the reader opens it as it always has. The line fades while it is open. The tests in
 `tests/fragrance-reader.spec.js` block the line's script and open the reader from the table,
 as they always did; `tests/fragrance-line.spec.js` opens it from the line.
+
+## 2026-09-26, last — the way back, about half as long
+
+> the animation after the go back to fragrances in fragrances in SD should be shorter
+
+It had been made slower twice ("make it a bit slower too", "the fading away can be made slower
+too") and come to three and a half seconds from the arrow to the reader gone. Every beat of it is
+still there — the writing going, the pictures squaring up and receding each into a square of the
+grid in a straight line, resting, and fading together — on shorter clocks: `CLEAR_MS` 360 (was
+640), `TRAVEL_MS` 820 (1500), `REST_MS` 120 (220), `GONE_MS` 520 (1200), `LEAVE_MS` 560 (1000),
+with the stylesheet's two matching numbers. About 1.8 seconds.
+
+Tested in `tests/fragrance-reader.spec.js`: **`the way back from a fragrance is over in under two
+seconds`** — and still a movement, not a cut (over 1.2s, the picture flying home). The tests that
+catch the picture mid-flight and at rest wait the new times; the one that turns the wheel through
+the way back turns it only for as long as the way back lasts.

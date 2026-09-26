@@ -1571,11 +1571,16 @@
     chapterPage.classList.add("going");
     leaving = window.setTimeout(() => {
       giveBack(was);
-      chapterPage.classList.add("clearing");
-      leaving = window.setTimeout(() => {
-        leaving = 0;
-        clearChapter();
-      }, LEAVE_CLEAR);
+      // Two frames under the black before it begins to clear: the frame
+      // the chamber measures itself open in, and the one it is drawn in.
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (!leaving) return;
+        chapterPage.classList.add("clearing");
+        leaving = window.setTimeout(() => {
+          leaving = 0;
+          clearChapter();
+        }, LEAVE_CLEAR);
+      }));
     }, LEAVE_WRITING);
   }
 
@@ -1601,7 +1606,30 @@
       speck.wait = random() * between(LIFE);
     });
     const row = chapters[was.chapter] && chapters[was.chapter].row;
-    if (row) { setOpen(true, false); row.focus({ preventScroll: true }); }
+    if (row) {
+      // HANDED BACK SETTLED, not travelling. The menu is reopened here so
+      // the chapters are there to pick from, and opening it is a two-
+      // second step: the orbit widening, the word coming down to a
+      // heading and rising with the menu, the cue changing its word. Run
+      // from the closed state it began under the black and was still
+      // going when the black cleared, so the word and its boxed cue were
+      // seen shrinking and sliding up the window just after the
+      // transition — the jump the owner reported (2026-09-26: "sometimes
+      // the text and the box jumps after the transition"), reproduced
+      // frame by frame on the way out of Chapter 1. So the step is put
+      // straight at its end, and the plate's own easing is switched off
+      // (`handing`) for the frame it is written in; the menu that comes
+      // up with it is already up (`settled`, until it is next shut).
+      shell.classList.add("handing");
+      plate.classList.add("settled");
+      setOpen(true, false);
+      spread = stepFrom = stepTo = 1;
+      stepAt = -1;
+      core[0] = coreOpen[0];
+      core[1] = coreOpen[1];
+      row.focus({ preventScroll: true });
+      requestAnimationFrame(() => requestAnimationFrame(() => shell.classList.remove("handing")));
+    }
   }
 
   /** The chapter page, off the window and back to nothing. */
@@ -1999,7 +2027,21 @@
       one colour (a bottle on white, on black): there it is what is not
       that colour. A scene has none, and is centred. The same reading as fragrance-line.js's;
       the two pages share no script. */
+  // WHAT A PICTURE WAS READ AS, kept by its address. Reading one means
+  // drawing it — which decodes the whole photograph on the page's own
+  // thread — and every card of a chapter is built again each time the
+  // chapter is written, so going back to Chapter 1 re-read all ten of
+  // them half way through the flight between the drawings. Once is
+  // enough.
+  const readings = new Map();
   function readPicture(img) {
+    const key = img.currentSrc || img.src;
+    if (key && readings.has(key)) return readings.get(key);
+    const read = readPictureNow(img);
+    if (key && read) readings.set(key, read);
+    return read;
+  }
+  function readPictureNow(img) {
     const w = img.naturalWidth, h = img.naturalHeight;
     if (!w || !h) return null;
     const S = 72;
@@ -2644,7 +2686,11 @@
     const g = chapterMorph.getContext("2d");
     if (!g) { chapterGround.style.transition = ""; chapterGround.style.opacity = ""; return; }
     const w = window.innerWidth, h = window.innerHeight;
-    const ratio = Math.min(window.devicePixelRatio || 1, w < 700 ? 1.5 : 2);
+    // THE FLIGHT IS DRAWN AT ONE AND A HALF PIXELS A POINT AT MOST. It is
+    // twenty thousand specks, each a pixel or two across, moving: on a
+    // sharp screen at twice over it filled over five million pixels a
+    // frame for a detail nobody can see in something in the air.
+    const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
     chapterMorph.width = Math.round(w * ratio);
     chapterMorph.height = Math.round(h * ratio);
     chapterMorph.hidden = false;
@@ -3020,6 +3066,7 @@
     stepAt = now();
     hotRow = null;
     if (!opened) {
+      plate.classList.remove("settled");
       // THE MENU LEAVES ON THE SAME STEP THE ORBIT NARROWS ON. It used
       // to be taken off the page in the one frame the word was
       // pressed, so the writing went instantly and the orbit then
@@ -4031,10 +4078,27 @@
       ? window.performance.now() : Date.now();
   });
 
+  let asleep = false;
   function frame(now) {
     requestAnimationFrame(frame);
     const dt = Math.min(0.05, (now - last) / 1000) || 0.016;
     last = now;
+    // WHILE A CHAPTER HAS THE WINDOW, THE CHAMBER UNDER IT IS NOT DRAWN.
+    // It is out of sight the whole time — faded, under a black page — and
+    // it was still measured, moved and painted on two full-window
+    // canvases every frame, which is work taken straight from the
+    // chapter's own drawing and from the flight between the sun and the
+    // moon ("a bit laggy", 2026-09-26). It is cleared once, and takes up
+    // again the frame the chamber is handed back.
+    if (burst && burst.phase === "open") {
+      if (!asleep) {
+        asleep = true;
+        paint.clearRect(0, 0, width, height);
+        paintFront.clearRect(0, 0, width, height);
+      }
+      return;
+    }
+    asleep = false;
     clearing();
     if (REDUCE_MOTION) {
       // Nothing is watched happening: the orbit is settled once into

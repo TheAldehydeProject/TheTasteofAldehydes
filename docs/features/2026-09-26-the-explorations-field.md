@@ -468,3 +468,13 @@ In `tests/index-pages.spec.js`:
 - The arrows ask for a 2.6-second transformation; the owner may want it as slow as the field's own
   eight, or quicker still. One number (`QUICK`).
 
+
+## 2026-09-26, last — the table a little lower
+
+> in RE, lower the left side table a little
+
+The table on the left stands a little lower under the owner's paragraph — `margin-top` on
+`.researches-page .index-board` is `clamp(44px, 9.5vh, 100px)` (it was `clamp(26px, 5vh, 54px)`):
+40px lower at 1440 × 900, 32 at 1280 × 720, 46 at 1920 × 1080. All ten rows still fit without the
+table scrolling; a phone is unchanged. Tested in `tests/index-pages.spec.js`, in the layout test:
+the table more than 70px below the paragraph (it was 45).
