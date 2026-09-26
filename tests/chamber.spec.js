@@ -1159,16 +1159,23 @@ test("Bad Lily's bottle stands in the middle of its frame, its shadow not counte
 /* AND THE FRAGRANCES VIEW READS A PICTURE THE SAME WAY. The two pages
    share no script, so the reading is written twice — in chamber.js and in
    fragrance-line.js — and a fix to one (the shadow, above) has to be a
-   fix to both. */
+   fix to both. Since 2026-09-26 chamber.js keeps what each picture was
+   read as (its `readPicture` asks `readPictureNow` once per picture, so
+   going back to a chapter does not read all ten again mid-flight), so it
+   is the reading itself, under that name, that is compared. */
 test("the favourites and the Fragrances view read a picture with the same code", () => {
   const fs = require("fs");
   const path = require("path");
-  const fn = (file) => {
+  const fn = (file, name) => {
     const src = fs.readFileSync(path.join(__dirname, "..", file), "utf8");
-    const i = src.indexOf("  function readPicture(");
+    const i = src.indexOf("  function " + name + "(");
+    if (i < 0) return "";
     return src.slice(i, src.indexOf("\n  }\n", i));
   };
-  const a = fn("chamber.js"), b = fn("fragrance-line.js");
+  const kept = fn("chamber.js", "readPicture");
+  expect(kept, "chamber.js keeps each reading, and reads through the one below").toContain("readPictureNow(img)");
+  const a = fn("chamber.js", "readPictureNow").replace("function readPictureNow(", "function readPicture(");
+  const b = fn("fragrance-line.js", "readPicture");
   expect(a.length, "chamber.js reads its pictures").toBeGreaterThan(500);
   expect(a, "the same reading in both").toBe(b);
 });

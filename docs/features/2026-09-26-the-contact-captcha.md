@@ -65,6 +65,11 @@ are in the comment in `contact.html` — or asked for.
 - **`without its script the page says the details need JavaScript`** — the sentence and the
   owner's line are still there.
 
+And in `tests/pages.spec.js`, the older **`the contact page says only to send a carrier pigeon`**
+(from when the sentence was the whole page) is now **`the contact page says to send a carrier
+pigeon, or an email behind a check`**: the sentence still the heading, the owner's line under it
+and no other words but the check's own, nothing to follow and no address on the page.
+
 ## Known issues / TODO
 
 - **The details are filler** until the owner gives real ones.

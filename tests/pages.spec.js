@@ -82,23 +82,32 @@ test("every menu link on every page points at a page that exists", async ({ page
   }
 });
 
-/* CONTACT IS ONE SENTENCE. The owner, 2026-09-24: "remove the email and
-   remove everything. Get in touch, send a carrier pigeon. put that
-   instead". No address, no links — the sentence is the page. */
-test("the contact page says only to send a carrier pigeon", async ({ page }) => {
+/* CONTACT IS ONE SENTENCE — AND, SINCE 2026-09-26, AN EMAIL BEHIND A
+   CHECK. The owner, 2026-09-24: "remove the email and remove everything.
+   Get in touch, send a carrier pigeon. put that instead". Then, 2026-09-26:
+   "add a captcha that hides the contact information (let it be filer
+   contact information)", and "keep this: Get in touch, send a carrier
+   pigeon. Below it add :or just send an email:". So the sentence is still
+   the page's heading, the owner's line stands under it, and the only
+   other words are the check's own; nothing to follow and no address on
+   the page until the check is passed (tests/contact.spec.js has that). */
+test("the contact page says to send a carrier pigeon, or an email behind a check", async ({ page }) => {
   await page.goto("/contact.html");
   await expect(page.locator(".page-content h1")).toHaveText("Get in touch, send a carrier pigeon.");
   const rest = await page.evaluate(() => {
-    const content = document.querySelector(".page-content");
+    const content = document.querySelector(".page-content").cloneNode(true);
+    const links = content.querySelectorAll("a").length;
+    // The check's own controls and its no-script line are not writing.
+    content.querySelectorAll(".contact-check, .contact-lock-nojs, .contact-details").forEach((el) => el.remove());
     return {
-      links: content.querySelectorAll("a").length,
+      links,
       mail: document.documentElement.outerHTML.includes("mailto:"),
       text: content.textContent.replace(/\s+/g, " ").trim(),
     };
   });
   expect(rest.links, "nothing to follow").toBe(0);
   expect(rest.mail, "no address anywhere on the page").toBe(false);
-  expect(rest.text).toBe("Get in touch, send a carrier pigeon.");
+  expect(rest.text).toBe("Get in touch, send a carrier pigeon. or just send an email:");
 });
 
 /* THE LINE ON SLIDE 2 NAMES THE SITE AS ITS TITLE DOES. It said "The Smell

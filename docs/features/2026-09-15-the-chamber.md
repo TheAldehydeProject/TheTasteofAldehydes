@@ -1932,4 +1932,6 @@ cue already in place`** (every frame from the first one the black is anything sh
 word, the cue and the menu stand exactly where they will stay, and the cue says *Collapse*) and
 **`the chamber under an open chapter is left undrawn, and takes up again on the way out`**. The
 earlier way-out test still holds: the black fades, never shows the chamber without its chrome, and
-the writing goes first.
+the writing goes first. **`the favourites and the Fragrances view read a picture with the same
+code`** compares the reading itself now — `readPictureNow`, which `readPicture` asks once per
+picture — against `fragrance-line.js`'s, name for name; the reading did not change.

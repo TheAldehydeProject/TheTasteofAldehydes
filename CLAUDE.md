@@ -220,7 +220,7 @@ Playwright drives a real browser against the repo served over HTTP (the config s
 `python3 -m http.server` itself, so nothing needs to be running first). `npm run report`
 opens the HTML report; failures also leave a screenshot and a trace in `test-results/`.
 
-**A clean run is 398 passed, 0 failed, and takes seven to twenty minutes.** If you get a
+**A clean run is 428 passed, 0 failed, and takes seven to twenty-five minutes.** If you get a
 number wildly different from that, check the shape of the failures before believing
 them: **a hundred-odd tests all failing in about 300ms each means the web server is
 down, not that the site is broken.** The config serves on **port 4321** and reuses a
@@ -632,8 +632,9 @@ internals. (The README says `thread.js` sets `__p23` — it doesn't, `paper.js` 
   owner's own (*A personal project of perfume exploration …*), naming the site since
   2026-09-26, and no page carries a `Your Name` any more. The contact page's address and
   links went on 2026-09-24 at the owner's word — it says *Get in touch, send a carrier
-  pigeon.* — and since 2026-09-26 carries **filler** contact details behind a captcha
-  (`hello@example.com`, `@your.handle`), at the owner's word ("let it be filer contact
+  pigeon.* — and since 2026-09-26 carries, under the owner's *or just send an email:*, a
+  **filler** email behind a captcha (`hello@example.com`; a filler `@your.handle` went when
+  the owner's line said what the details are), at the owner's word ("let it be filer contact
   information"), scrambled in the page and the owner's to replace. Don't "fix" words on the site incidentally; they're the author's to make. **The site's own name
   is not one of them any more** — it is *The Taste of Aldehydes*, on slide 1 and in every
   page's `<title>`. Naming the site was not naming the author.

@@ -61,7 +61,10 @@ test.describe("the paper background", () => {
       );
     }
     const biggest = Math.max(...steps.slice(1).map((v, i) => Math.abs(v - steps[i])));
-    expect(steps[steps.length - 1], "it should have arrived by the end").toBeGreaterThan(0.02);
+    // Its full strength is NOISE_PEAK, 0.02 since the owner asked for the
+    // map's slide "less gray" (2026-09-26; it was 0.036), so "arrived" is
+    // most of the way to that rather than past it.
+    expect(steps[steps.length - 1], "it should have arrived by the end").toBeGreaterThan(0.015);
     expect(biggest, "and never in one jump").toBeLessThan(0.01);
   });
 
