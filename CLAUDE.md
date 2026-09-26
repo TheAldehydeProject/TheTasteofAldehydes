@@ -118,7 +118,7 @@ which talk through five `window` globals; see the landing page's report).
 | `works/theory-01.html`, `-02`, `works/resins-in-perfumery.html`, `works/cold-vs-warm-incense.html`, `works/buying-a-perfume.html` | the **essay pages**: a long piece of writing on the theories drawing's ground, with a **rule** down the left — one tick per section, filled in as far as you have read. Buying A Perfume (Explorations 002) is a page waiting for its writing | `essay.js` | [essay pages](docs/features/2026-09-17-the-essay-pages.md) |
 | `works/my-personal-introduction-to-perfume.html` | **Explorations 000**, the first result on Explorations &amp; Researches: the owner's guide to perfume on an essay page of its own — **gold** in place of the steel blue, a **mist** of drops rising behind the writing and turning to vapour, and the accords table, the two **pyramids**, a dropdown and footnotes drawn in the page | `essay.js`, `primer.js` | [the primer](docs/features/2026-09-23-my-personal-introduction-to-perfume.md) |
 | `works/theory-03.html` | the same, and the longest piece on the site: **The Note Dissemination Framework**, which argues in **diagrams** and carries a **calculator** standing in the same page | `essay.js`, `calculator.js` | [the framework](docs/features/2026-09-20-the-note-dissemination-framework.md) |
-| `works/test-page.html` | the **Test page**, last in the Menu: blank but for **the tree** off the owner's photograph, **built as a machine** in three dimensions — a flanged trunk with sap conduits seen through it, jointed roots ending in anchors, needled boughs — **translucent**, in its browns and greens, on a patch of forest floor that fades into the page, turned by a drag and slowly on its own, with ten **labels** coming out of it on leader lines | `tree.js` (and Three.js from the same CDN as the home page) | [the test page](docs/features/2026-09-26-the-test-page.md) |
+| `works/test-page.html` | the **Test page**, last in the Menu, designed for a laptop: blank but for **the tree** — the owner's photograph **made into three dimensions**, a cloud of its own coloured specks (every one a pixel of the picture, stood at its depth in the scene), the ground round it and not the background. It **opens as the photograph**, from exactly where it was taken, draws back, and turns all the way round, slowly on its own or by a drag, with ten **labels** coming out of it on leader lines | `tree.js` (and Three.js from the same CDN as the home page); the cloud is made once by `tools/tree-cloud.mjs` | [the test page](docs/features/2026-09-26-the-test-page.md) |
 | `works/*.html` | the other individual pieces — two templates and two sandbox pages — **and seven forwarding pages** standing where the houses used to be | none | — |
 | `search.html` | the **search page**: one field over the whole site on a dark ground of drifting specks, the answers as ruled rows carrying the trail that says where each lives, and a row of **filters** narrowing them by kind | `search.js`, `search-page.js`, `find-ground.js` | [search](docs/features/2026-09-17-the-search.md) |
 | `contact.html` | one sentence: *Get in touch, send a carrier pigeon.* | none | — |
@@ -133,7 +133,7 @@ Four of those page scripts are elaborate: `chamber.js` (~4,060 lines), `motifs.j
 `views.js` (~400), `house.js` (~350), `pineward-gallery.js` (~350), `tombstone.js`
 (~330), `index-page.js` (~310), `nav.js` (~290), `thread.js` (~290), `grande.js` (~280),
 `search.js` (~290), `beaker.js` (~260), `extras.js` (~250), `primer.js` (~230), `landing.js` (~270),
-`search-page.js` (~200), `photography.js` (~190), `find-ground.js` (~180), `explorations.js` (~960), `tree.js` (~610)
+`search-page.js` (~200), `photography.js` (~190), `find-ground.js` (~180), `explorations.js` (~960), `tree.js` (~250), and `tools/tree-cloud.mjs` (~350, run once, not by the site)
 and `page-search.js` (~110).
 These drift with every round; `wc -l *.js` is the answer, not this paragraph.
 
@@ -197,7 +197,7 @@ open the console after any change to a drawing.
 
 `node-scene.js` is the one to be most careful with, and it is the **only** file here
 that writes a WebGL shader of its own (a small program that runs on the graphics card) —
-`tree.js` draws in WebGL too, but only through the library's standard materials. A shader that
+`tree.js` draws in WebGL too, but only through the library's own points. A shader that
 fails to compile takes the whole 3D scene with it, so the map comes up **blank rather
 than merely wrong** — and blank looks like a loading failure, not like a bug you
 introduced. Every other drawing here is plain canvas, SVG and DOM, so they fail visibly
@@ -235,7 +235,9 @@ The suite runs **fully offline**: `tests/helpers.js` intercepts the Three.js and
 Fonts requests and answers them locally, Three.js from the version pinned in
 `package.json` — which must stay matched to the version `index.html` and the test page request, or the
 tests stop testing what actually ships. Nothing in `package.json` is needed to view or
-publish the site; it exists only for the tests.
+publish the site; it exists for the tests, and for `image-js`, which the one tool in
+`tools/` needs — `tree-cloud.mjs`, which made the test page's tree once from its photograph
+(see [the test page's report](docs/features/2026-09-26-the-test-page.md)).
 
 **What each spec file covers is written up in that feature's report**, under "How to
 test it". Two spec files are the exception and belong to no one feature: the browserless
@@ -332,7 +334,7 @@ built that way, what was tried and was wrong, how to test it, and anything still
 | feature | file | report |
 |---|---|---|
 | The Fragrances view as a whole-page table with three ways of showing it, and the crossing from the Houses | `fragrance-line.js`, `views.js` | [report](docs/features/2026-09-25-the-fragrance-line.md) |
-| The test page, and the mechanical tree | `works/test-page.html`, `tree.js` | [report](docs/features/2026-09-26-the-test-page.md) |
+| The test page, and the tree made from its photograph | `works/test-page.html`, `tree.js`, `tools/tree-cloud.mjs` | [report](docs/features/2026-09-26-the-test-page.md) |
 | Explorations & Researches laid out for itself, and its field | `categories/researches.html`, `explorations.js` | [report](docs/features/2026-09-26-the-explorations-field.md) |
 | The Note Library | `categories/note-library.html`, `note-library.js` | [report](docs/features/2026-09-24-the-note-library.md) |
 | The Houses view as a helix round a central axis | `contact-sheet.js` | [report](docs/features/2026-09-24-the-axis.md) |
@@ -569,8 +571,10 @@ internals. (The README says `thread.js` sets `__p23` — it doesn't, `paper.js` 
 - **A label on the test page** is one `<li class="tree-label" data-part="…">` in
   `works/test-page.html`: its number, its name, and a `<span>` line under it. The words are
   the owner's to change; `data-part` says where on the tree it comes out of, and must be one
-  of the points `tree.js` keeps (`leader`, `crown`, `trunk`, `sap`, `flare`, `arch`, `anchor`,
-  `stone`, `fern`, `ground`) — a label naming anything else is simply not shown.
+  of the points in `images/Test-Page/tree-cloud.json` (`trunk`, `flare`, `arch`, `hollow`,
+  `leg`, `upper`, `cut`, `stone`, `fern`, `floor`) — a label naming anything else is simply
+  not shown. A new point is a pixel of the photograph added to `LABELS` in
+  `tools/tree-cloud.mjs`, and the tool run again.
 - **A frame on the Photography page** is one `<figure class="photo-frame">` inside a
   set's `.photo-grid`, with its `<img>` commented out until the picture arrives. Adding
   `photo-wide` gives it two columns — one or two a set, or it stops meaning anything.
@@ -603,7 +607,7 @@ internals. (The README says `thread.js` sets `__p23` — it doesn't, `paper.js` 
   `data-credit-href` — a new favourite with a `data-image` needs both.
 - Images live in `images/`, **one folder per house or category** — `images/ADAR/`,
   `images/Pineward/`, `images/Almost-Human/`, `images/Favorites/`,
-  `images/Individual Fragrances/`, `images/Theories/` — referenced from the `<img>` tags left commented out in the
+  `images/Individual Fragrances/`, `images/Theories/`, `images/Test-Page/` (the tree's photograph and its cloud) — referenced from the `<img>` tags left commented out in the
   templates. The folder names are the owner's own and are capitalised as they wrote
   them; paths are case-sensitive on the live site, so `ADAR` is not `adar`. Each empty
   folder holds a `README.txt` saying what it is for, which is also the only thing
@@ -889,8 +893,9 @@ obvious from the code, ask rather than guessing — then add it to this list.
 | **work** | An individual piece, one page in `works/` — the essays, the researches and the templates. A **house** is not one of these any more: since 2026-09-22 the houses live in `houses/` (nine since 2026-09-23) and the individual fragrances in `individual-fragrances/`. |
 | **category** / **body of work** | A page in `categories/` listing works; also an entry in `SITE_LINKS`. |
 | **the test page** | `works/test-page.html`, **Test page** in the Menu (last, and not on the map): a page the owner asked for "completly blank" to try things on. What it carries now is **the tree**. |
-| **the tree** (test page) | The owner's photograph of a conifer on its roots, **built as a machine** in three dimensions by `tree.js`: **the trunk**, a faceted column in eight **flanged** sections widening into **the root flare**, with **the core** and six green **sap conduits** seen through it; **the roots**, jointed pipe by pipe with collars, each ending in an **anchor** (a spike and a plate), one of them **the arch root** over a hollow on a **strut**; **the crown**, nine tiers of needled **boughs**, and **the leader**; and **the ground**, a painted patch of forest floor with its **stones** and **ferns**, fading into the page and ruled round as a specimen. All **translucent**, its edges drawn, in the photograph's browns and greens; turned by a drag, slowly on its own. |
-| **the labels** (test page) | The ten names that come out of the tree on **leader lines** — an open square on the point, a slant, then level to the name — standing either side of it, faint when their point turns away. The words are the `.tree-label` list in the page; where each comes out of is its `data-part`, a point kept in `tree.js` (`ANCHOR`). |
+| **the tree** (test page) | The owner's photograph of a conifer on its roots, **made into three dimensions** — "take the image as is and make it into a 3d one, not recreate it": **the cloud**, about 213,000 specks, every one a pixel of the photograph in its own colour, stood at the depth it has in the scene. The depth is **the model** `tools/tree-cloud.mjs` works it out from, traced off the picture: **the camera** that took it, **the ground** as a floor rising up **the slope** behind the trunk, **the trunk** as a **column** (its far side given the same pixels, darker) with **the flare** sloping to the ground, **the roots** as **tubes** along lines traced down them (the great one **arching** over **the hollow**), **the stones** as domes, the ferns standing off the ground, **the soil** the photograph never shows filled in with the colours of the soil it does, and the background — foliage, the second tree — left out, with the ground thinning out round a **patch**. It **opens as the photograph**, from exactly where it was taken, **draws back** to leave the labels room, and turns all the way round. |
+| **the machine** (test page) | **Removed** (2026-09-26, the same night it came): the first tree on the test page, **built** rather than taken from the photograph — a faceted trunk in flanged sections with green sap conduits seen through it, jointed roots with collars and anchors, one arching on a strut, nine tiers of needled boughs and a leader, all translucent with their edges drawn, on a painted, ruled patch of ground. The owner: "take the image as is and make it into a 3d one, not recreate it". None of it is in `tree.js`. |
+| **the labels** (test page) | The ten names that come out of the tree on **leader lines** — an open square on the point, a slant, then level to the name — standing either side of it, faint when their point turns away. The words are the `.tree-label` list in the page; where each comes out of is its `data-part`, a point in `images/Test-Page/tree-cloud.json`, worked out from a pixel of the photograph. |
 
 ## Where things stand
 

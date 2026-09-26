@@ -2,7 +2,7 @@
   "name": "whatdoesatreesmelllike",
   "version": "1.0.0",
   "private": true,
-  "description": "The 'what does a tree smell like' portfolio site. The site itself is plain HTML, CSS and JavaScript with no build step — nothing here is needed to view or publish it. These dependencies exist only to run the test suite.",
+  "description": "The 'what does a tree smell like' portfolio site. The site itself is plain HTML, CSS and JavaScript with no build step — nothing here is needed to view or publish it. These dependencies exist to run the test suite, and (image-js) to run tools/tree-cloud.mjs, which made the test page's tree once.",
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
+    "image-js": "^1.7.0",
     "three": "^0.128.0"
   }
 }

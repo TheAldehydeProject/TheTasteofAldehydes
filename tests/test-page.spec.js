@@ -8,8 +8,11 @@
    be made mechanical, but i want it to keep some of its coours, so you
    would have areas of green and brown. I want it to be fully made 3d so
    you can rotate it. From this tree in different areas, i want there to
-   be labels that come out of it." — and "make the tree translucent.
-   render the ground with it, but not all of the background".
+   be labels that come out of it." — and "render the ground with it, but
+   not all of the background". And then, of a first version built as a
+   machine: "take the image as is and make it into a 3d one, not recreate
+   it" — a cloud of the photograph's own coloured specks, turning all the
+   way round, keeping its labels.
    ============================================================ */
 const { test, expect } = require("@playwright/test");
 const { serveDependenciesLocally, blockThreeJs, collectPageErrors } = require("./helpers");
@@ -44,9 +47,9 @@ test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
 });
 
-/* THE TREE: green and brown, standing on its ground, in a window that is
-   otherwise the page's own blank paper. */
-test("the tree is drawn in green and brown, on its ground and nothing else", async ({ page }) => {
+/* THE TREE: the photograph's greens and browns, standing on its ground, in
+   a window that is otherwise the page's own blank paper. */
+test("the tree is drawn in the photograph's green and brown, on its ground and nothing else", async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(TEST_PAGE);
@@ -83,7 +86,7 @@ test("labels come out of the tree to its parts", async ({ page }) => {
     const lines = [...document.querySelectorAll(".tree-leaders polyline")].map((l) => l.getAttribute("points").trim().split(/\s+/).length);
     return { labels, lines, W: innerWidth, H: innerHeight };
   });
-  expect(out.labels.map((l) => l.part)).toEqual(["leader", "crown", "trunk", "sap", "flare", "arch", "anchor", "stone", "fern", "ground"]);
+  expect(out.labels.map((l) => l.part)).toEqual(["trunk", "flare", "arch", "hollow", "leg", "upper", "cut", "stone", "fern", "floor"]);
   expect(out.lines.length, "a leader line for every label").toBe(10);
   out.lines.forEach((n) => expect(n, "drawn all the way out").toBe(3));
   expect(out.labels.filter((l) => l.opacity > 0.5).length, "most of them plainly there").toBeGreaterThan(5);
@@ -130,6 +133,30 @@ test("a drag turns the tree, and its labels go with it", async ({ page }) => {
   const after = await where();
   const moved = after.filter((p, n) => Math.hypot(p[0] - before[n][0], p[1] - before[n][1]) > 20).length;
   expect(moved, "the points the labels come out of turned with it").toBeGreaterThan(5);
+  expect(errors).toEqual([]);
+});
+
+/* IT OPENS AS THE PHOTOGRAPH: from exactly where the picture was taken,
+   before it draws back and turns. */
+test("it opens from where the photograph was taken", async ({ page }) => {
+  test.setTimeout(60000);
+  const meta = await (await page.request.get("/images/Test-Page/tree-cloud.json")).json();
+  expect(meta.count, "a cloud of specks").toBeGreaterThan(100000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(TEST_PAGE);
+  await expect(page.locator(".tree-stage")).toHaveClass(/is-drawn/);
+  const yaw = parseFloat(await page.locator(".tree-stage").getAttribute("data-yaw"));
+  expect(Math.abs(yaw - Math.atan2(meta.camera.at[0], meta.camera.at[2])), "looking the way the camera did").toBeLessThan(0.002);
+  // Turning only once it has been the photograph a while.
+  await page.waitForTimeout(5500);
+  expect(Math.abs(parseFloat(await page.locator(".tree-stage").getAttribute("data-yaw")) - yaw), "and then turning").toBeGreaterThan(0.05);
+});
+
+test("without its cloud the page says so, and is otherwise blank", async ({ page }) => {
+  const errors = collectPageErrors(page, ["404", "Failed to load resource"]);
+  await page.route("**/tree-cloud.bin", (route) => route.fulfill({ status: 404, body: "" }));
+  await page.goto(TEST_PAGE);
+  await expect(page.locator(".tree-fallback")).toBeVisible();
   expect(errors).toEqual([]);
 });
 
