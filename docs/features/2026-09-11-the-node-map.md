@@ -219,3 +219,34 @@ frameworks that I came up with myself* (it was "half-formed ideas I keep coming 
 Theories' preview said *Half-formed ideas, written down before I lose them.*; asked, the
 owner said to change it to match, so the preview (and the Theories page's own lede, which
 was the same sentence) says *Some frameworks that I came up with myself.*
+
+## 2026-09-26, last — solid spheres round the centre, and a switch back
+
+> also in the home page, i want you to make the spheres around the central node to appear truly
+> 3d. make this change reversibly in case i dont like it.
+
+**The spheres round the centre are lit** — the two shells of the halo and the small spheres
+strung along every branch. They were `MeshBasicMaterial`, one flat tone each, which is why they
+read as discs; they are `MeshPhongMaterial` now, under a light from above and to the left of the
+eye and a softer one from all round (a `HemisphereLight` and a `DirectionalLight`, added to the
+**scene**, not the rig, so the light stays with the eye while the map is turned under it), with a
+highlight on each (`sphereMaterial`, `shine`). The shells are drawn **double-sided**, so through
+them you see their far wall as well as their near one, and they are tessellated a little finer to
+stay round when lit. The core itself is unchanged, and so is everything else on the map: the
+branches, the wake, the labels. Their opacities and the way they answer the hand and the collapse
+are exactly what they were — the frame loop sets the same colour and opacity on either material.
+
+**Reversible, two ways**:
+
+- `SOLID_SPHERES` at the top of that section of `node-scene.js` — `true` now; set it to `false`
+  and the spheres are exactly the flat discs they were;
+- or, without touching anything, **`?spheres=flat`** on the home page's address shows the old
+  ones (and `?spheres=solid` the new), so the two can be compared side by side. The page says which
+  it drew on `<html data-spheres>`.
+
+**No shader of this file's own** is involved — the lights and the materials are the library's —
+so this cannot blank the map the way a broken shader would.
+
+Tested in `tests/node-map.spec.js`: **`the spheres are lit unless asked to be flat, and the map
+still draws either way`** — solid by default, flat with `?spheres=flat`, solid with
+`?spheres=solid`, every time with its eight labels and no errors.

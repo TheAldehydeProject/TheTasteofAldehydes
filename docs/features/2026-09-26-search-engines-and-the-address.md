@@ -50,8 +50,8 @@ ENGINES: end -->`, straight after the `<title>`:
 - **`canonical`** — the page's one address, `https://thetasteofaldehydes.com/…`. The forwarding
   pages keep the one they already had (pointing at the house's new address), as one of their three
   ways of forwarding; they are not given a second.
-- **The icons** — `favicon.svg`, the site's own registration mark (a hollow square with a small
-  one in it), and `apple-touch-icon.png`, the same at 180px for a phone's home screen.
+- **The icons** — `favicon.svg`, a hand-drawn aldehyde (see the foot of this report), and
+  `apple-touch-icon.png`, the same at 180px for a phone's home screen.
 - **Open Graph and a Twitter card** — the title (the page's own, without the site's name after
   it), the line, and `images/social-card.png`: the title slide redrawn at 1200 × 630 on the squared
   paper, with the thread under it, *A portfolio / 2026 edition*, and the address at its foot.
@@ -104,3 +104,14 @@ step that is the owner's to take — add the site to **Google Search Console** a
 - **Google Search Console** is the owner's to set up (it asks the owner of the domain to prove it
   is theirs).
 - The picture a shared link shows is the same for every page.
+
+## Later the same night — the icon is an aldehyde
+
+> for the icon of the website (favicon), I want you to generate a handdrawn aldehyde formula (o
+> double bodned to a C bonded to an H and an R group. make it simple and with the O facing up. make
+> it black on a white background.
+
+`favicon.svg` is **R–C(=O)–H drawn by hand**: the O on top, its double bond down to the C, the R
+bonded on the left and the H on the right — every letter a pen stroke, a little uneven, in black
+on a white square with softly rounded corners. `apple-touch-icon.png` is the same drawn at 180px.
+It replaced the registration mark that stood there for part of the evening.

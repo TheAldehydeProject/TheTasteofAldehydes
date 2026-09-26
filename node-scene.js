@@ -267,11 +267,54 @@ const REAL_NODES = [
   );
   rig.add(core);
 
+  // ============================================================
+  // SOLID SPHERES — the owner, 2026-09-26: "make the spheres around the
+  // central node to appear truly 3d. make this change reversibly in case
+  // i dont like it."
+  //
+  // With SOLID_SPHERES on, the two shells round the centre and the small
+  // spheres along each branch are LIT rather than filled flat: a light
+  // from above and to the left of the eye, a softer one from all round,
+  // and a highlight — so each is rounder on the side the light comes
+  // from and falls away into shade on the other, and the shells, seen
+  // through, show their far wall as well as their near one. They were
+  // flat discs of one colour, which is why they never read as spheres.
+  //
+  // TO GO BACK: set SOLID_SPHERES to false, and they are exactly what
+  // they were. Or, without changing anything, add ?spheres=flat to the
+  // page's address to see the old ones (and ?spheres=solid the new).
+  // The lights are the library's own and so are the materials: nothing
+  // here is a shader of this file's own, so it cannot blank the map.
+  // ============================================================
+  const SOLID_SPHERES = true;
+  const asked = new URLSearchParams(window.location.search).get("spheres");
+  const SOLID = asked === "flat" ? false : asked === "solid" ? true : SOLID_SPHERES;
+  document.documentElement.dataset.spheres = SOLID ? "solid" : "flat";
+  if (SOLID) {
+    // In the scene rather than the rig, so the light stays where the eye
+    // is while the map is turned under it.
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x77746b, 0.62));
+    const key = new THREE.DirectionalLight(0xffffff, 0.78);
+    key.position.set(-2.4, 3.2, 4);
+    scene.add(key);
+  }
+  /** A sphere's material: lit when SOLID, flat when not. */
+  function sphereMaterial(color, opacity, shine) {
+    const settings = { color: color.clone(), transparent: true, opacity: opacity, depthWrite: false };
+    if (!SOLID) return new THREE.MeshBasicMaterial(settings);
+    return new THREE.MeshPhongMaterial(Object.assign(settings, {
+      specular: new THREE.Color(0xffffff).multiplyScalar(shine),
+      shininess: 36,
+    }));
+  }
+
   function shell(radius, opacity) {
     const mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(radius, 24, 24),
-      new THREE.MeshBasicMaterial({ color: COL_CENTRE_HALO.clone(), transparent: true, opacity: opacity, depthWrite: false })
+      new THREE.SphereGeometry(radius, SOLID ? 48 : 24, SOLID ? 32 : 24),
+      sphereMaterial(COL_CENTRE_HALO, opacity, 0.22)
     );
+    // Seen through, a solid shell shows its far wall too.
+    if (SOLID) mesh.material.side = THREE.DoubleSide;
     mesh.userData.baseOpacity = opacity;
     rig.add(mesh);
     return mesh;
@@ -374,7 +417,7 @@ const REAL_NODES = [
   // ============================================================
   // BRANCHES
   // ============================================================
-  const waypointGeometry = new THREE.SphereGeometry(0.032, 14, 14);
+  const waypointGeometry = new THREE.SphereGeometry(0.032, SOLID ? 24 : 14, SOLID ? 18 : 14);
 
   /** One branch's geometry: a tube of the given radius that swells out
       to ROOT_FLARE_RADIUS where it meets the centre.
@@ -496,10 +539,7 @@ const REAL_NODES = [
       { mesh: null, base: w2.clone(), t: 0.69, scale: 0.78 },
     ];
     dots.forEach((dot) => {
-      dot.mesh = new THREE.Mesh(
-        waypointGeometry,
-        new THREE.MeshBasicMaterial({ color: COL_BRANCH.clone(), transparent: true, opacity: 0.8, depthWrite: false })
-      );
+      dot.mesh = new THREE.Mesh(waypointGeometry, sphereMaterial(COL_BRANCH, 0.8, 0.5));
       dot.mesh.position.copy(dot.base);
       rig.add(dot.mesh);
     });

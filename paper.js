@@ -42,8 +42,12 @@
   // up, so each grain is this many CSS pixels across. 1 is the finest
   // it goes; larger reads coarser, like a worse signal.
   const NOISE_SCALE = 2;
-  const NOISE_PEAK = 0.036;     // how strong the grain gets under the map
-  const WASH_PEAK = 0.09;       // the black wash under the map
+  // LESS GREY since 2026-09-26 — "make the third pge of the home page
+  // less gray": the wash under the map was 0.09 of black, which laid a
+  // plain mid-grey over the whole slide, and the grain 0.036. Both
+  // are lighter now; the squared paper and the map on it are as they were.
+  const NOISE_PEAK = 0.02;      // how strong the grain gets under the map
+  const WASH_PEAK = 0.025;      // the black wash under the map
   // The grain is the one layer the shaped wipe below is not allowed to
   // cut, and it has its own ramp rather than following the rest of the
   // paper. Texture arriving along a moving edge is about the most

@@ -404,3 +404,72 @@ test("the Photography node says it is a work in progress", async ({ page }) => {
   await expect(page.locator(".node-preview-modal")).toBeVisible();
   await expect(page.locator(".node-preview-note")).toHaveCount(0);
 });
+
+/* SOLID SPHERES, AND A LIGHTER SLIDE — the owner, 2026-09-26: "make the
+   third pge of the home page less gray", and "make the spheres around the
+   central node to appear truly 3d. make this change reversibly in case i
+   dont like it."
+
+   The spheres round the centre are lit now (the shells and the small
+   spheres along the branches) — read off the canvas as the shade across
+   the outer shell: one side brighter than the other, where the flat
+   sphere was one even tone. `?spheres=flat` gives the old ones back
+   without touching the code. And the ground under the map is nearly the
+   white of the other slides: the wash is lighter. */
+test.describe("the map's spheres and its ground", () => {
+  test.beforeEach(async ({ page }) => {
+    await serveDependenciesLocally(page);
+  });
+
+  /** Brightness across the outer shell, left of the core to right of it,
+   *  read off a screenshot a little above the core's middle. */
+  async function across(page) {
+    const shot = (await page.screenshot()).toString("base64");
+    return page.evaluate(async (shot) => {
+      const img = new Image();
+      img.src = "data:image/png;base64," + shot;
+      await img.decode();
+      const c = document.createElement("canvas");
+      c.width = img.width; c.height = img.height;
+      const g = c.getContext("2d");
+      g.drawImage(img, 0, 0);
+      const box = document.getElementById("node-canvas").getBoundingClientRect();
+      const cx = Math.round(box.left + box.width / 2), cy = Math.round(box.top + box.height / 2);
+      // A patch's average, so neither a grid line nor a grain decides it.
+      const at = (x, y) => {
+        const d = g.getImageData(x - 20, y - 20, 40, 40).data;
+        let n = 0;
+        for (let i = 0; i < d.length; i += 4) n += (d[i] + d[i + 1] + d[i + 2]) / 3;
+        return n / (d.length / 4);
+      };
+      // The ground, well away from the map and clear of the trace along
+      // the foot of the slide.
+      const ground = [at(70, 170), at(innerWidth - 80, 130), at(innerWidth - 80, Math.round(innerHeight * 0.45))];
+      return { ground, cx, cy };
+    }, shot);
+  }
+
+  test("the spheres are lit unless asked to be flat, and the map still draws either way", async ({ page }) => {
+    for (const [query, want] of [["", "solid"], ["?spheres=flat", "flat"], ["?spheres=solid", "solid"]]) {
+      const errors = collectPageErrors(page);
+      await page.goto("/index.html" + query);
+      await jumpToSlide(page, "slide-3");
+      await waitForMapSettled(page);
+      expect(await page.evaluate(() => document.documentElement.dataset.spheres), query || "by default").toBe(want);
+      await expect(page.locator(".node3d-label")).toHaveCount(8);
+      expect(errors, query).toEqual([]);
+    }
+  });
+
+  test("the slide under the map is nearly white, not grey", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/index.html");
+    await jumpToSlide(page, "slide-3");
+    await waitForMapSettled(page);
+    await page.waitForTimeout(800);
+    const { ground } = await across(page);
+    // The page itself is 250; under the old wash the ground came to about
+    // 228, and it is about 240 now, the grid and the grain still on it.
+    ground.forEach((v, i) => expect(v, `the ground at point ${i}`).toBeGreaterThan(236));
+  });
+});
