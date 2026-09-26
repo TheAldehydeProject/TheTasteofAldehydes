@@ -4,53 +4,56 @@
 // The page's markup is the catalogue: one <article class="lib-record">
 // per note, standing in the <section class="lib-shelf"> of its family —
 // its ACCORD, as the page calls it (the owner's word for what was
-// "shelves"; the code still says shelf). This files every record as a
-// FILE in its accord's BOX, and puts a catalogue terminal in front of
-// the archive — the owner, 2026-09-26: "redisgn the whole page of the
-// note library, and I want it to be like files in boxes rather than a
-// library libvrary. im thinking of movies and spy stuff. I want oyu to
-// keep it on theme and geometric":
+// "shelves"; the code still says shelf). This sets every record out as an
+// ELEMENT in A PERIODIC TABLE OF NOTES, and puts a catalogue terminal in
+// front of it — the owner, 2026-09-26: "i also want you to redisgn the
+// note library. I am running out of ideas so redisgn it somehow and we
+// will change it keep the colours and the search". A site called The
+// Taste of Aldehydes, and aldehydes are chemistry:
 //
-//   THE BOXES       an accord is an archive box: its LID is its label —
-//                   the box's number, the accord's code in its colour,
-//                   its name and line, how many files it holds — and a
-//                   hand-hole is cut in its front. (The CSS draws it.)
-//   THE FILES       a note is a file folder standing in its box, its TAB
-//                   staggered as a drawer's are and carrying its FILE
-//                   NUMBER — the accord's code and its place in it,
-//                   counted alphabetically — along an edge in the
-//                   accord's colour; its name on its face; and at its
-//                   foot a small square for every fragrance on the site
-//                   that uses it, so a note used often is a thicker file.
-//                   They were books on shelves for four rounds (cloth,
-//                   specks, flat shapes, skeletons) and before that
-//                   folders again, "digital" ones, which were "3-bit".
-//   THE TERMINAL    one field over the whole catalogue, with a × at its
-//                   right to clear it. Files that answer light up and
-//                   everything else goes dim; a box with nothing in it
-//                   folds away. It reads names
-//                   and every other spelling folded into a record, by
-//                   DIRECT WORDS only: whole words, no near misses, and
-//                   nothing found by what a note is said to be.
-//   THE INDEX       a tab per accord, to stand in front of that one.
-//   THE CARD        pressing a file pulls it up out of its box and opens
-//                   its CASE FILE beside the archive — a stamp, SUBJECT,
-//                   SUMMARY, ALIASES and KNOWN APPEARANCES in typed
-//                   capitals, and the mark clipped in as an EXHIBIT: the call number,
-//                   the explanation, the other spellings, and every
-//                   fragrance on the site that uses it, linked to where
-//                   it stands in its house. Drawn as the rest of the
-//                   site is — hairlines, corner marks, and at its head
-//                   THE MARK: a ring of specks, one for every fragrance
-//                   that uses the note, joined up and turning slowly in
-//                   a cloud of its accord's dust. It was a glowing glass
-//                   panel, which the owner found "too futuristic".
-//   THE ROOM        a lamp that follows the hand over the stacks, and
-//                   dust in the air — both white, as the whole page is
-//                   black and white since 2026-09-26: its turquoise went at
-//                   the owner's "change the theme ... from that turqoise to
-//                   black/white (to match the rest of the website". The
-//                   accords keep their colours, and nothing else has one.
+//   THE TABLE       every accord is a GROUP, a block of elements standing
+//                   down in columns seven deep — the seven periods — its
+//                   head carrying its number, its code in its colour, its
+//                   name and how many it holds. The blocks stand side by
+//                   side and wrap, so the page is one table of coloured
+//                   blocks. (The CSS lays it out.)
+//   THE ELEMENTS    a note is a tile, faintly its accord's colour: its
+//                   NUMBER (its place in the whole table, counted down
+//                   the page — worked out, not written), its SYMBOL (a
+//                   capital and a small letter off its own name, one to a
+//                   note), its name, and at the top right how many
+//                   fragrances on the site use it, as an element carries
+//                   its mass. The call number (WOO 007) is still on it,
+//                   for the card.
+//   THE KEY         the one large tile at the head of the page that says
+//                   what a tile says — number, symbol, name, fragrances —
+//                   and shows whichever element the hand is on.
+//   THE TERMINAL    one field over the whole table, with a × at its right
+//                   to clear it. Elements that answer light up and every
+//                   other goes dim, and so does a group with nothing in it.
+//                   It reads names and every other spelling folded into a
+//                   record, by DIRECT WORDS only: whole words, no near
+//                   misses, and nothing found by what a note is said to be.
+//   THE INDEX       a tab per accord, which lights that group and dims the rest.
+//   THE CARD        pressing an element opens its ELEMENT CARD beside the
+//                   table: its tile large, THE ATOM — a nucleus of specks
+//                   and an electron for every fragrance that uses the note,
+//                   in its shells (two, eight, eighteen ...) turning at
+//                   their own speeds in its accord's colour — its name and
+//                   accord, what it is, its ISOTOPES (the other spellings)
+//                   and its COMPOUNDS (every fragrance on the site that
+//                   uses it, linked to where it stands in its house).
+//                   Drawn as the rest of the site is — hairlines, corner
+//                   marks, specks.
+//   THE ROOM        a lamp that follows the hand over the table, and dust
+//                   in the air — both white: the page is black and white
+//                   and the accords keep their colours, and nothing else
+//                   has one.
+//
+// It was, in turn, books on shelves (cloth, specks, flat shapes,
+// skeletons), "digital" folders the owner found "3-bit", and for one round
+// FILES IN BOXES with a case file ("movies and spy stuff"). None of those
+// is in the code.
 //
 // WHICH FRAGRANCES USE A NOTE comes from notes-data.js, read here each
 // time the page opens. A fragrance's NAME is read off its own house's
@@ -96,9 +99,9 @@
     WOO: 30, CON: 135, RES: 40, ANI: 14, EAR: 75, AIR: 200, SMK: 220, IMP: 268, RET: 0,
   };
 
-  // THE FILES: one square at a file's foot for every fragrance using it,
-  // up to this many, and a plus after that.
-  const MARKS_MOST = 18;
+  // THE TABLE: every group stands this many elements deep — the seven
+  // periods — and is as many columns wide as it needs.
+  const PERIODS = 7;
 
   // THE PAGE'S WHITE, and each accord's colour (`HUE`, at `MARK_SAT` and
   // `MARK_LIGHT`) as the card's mark spends it. The returns cart has no
@@ -208,42 +211,60 @@
   }
 
   // ============================================================
-  // FILING THE RECORDS: every record a file folder in its accord's box.
-  // Its TAB stands in one of three places across its top, in turn, as
-  // the tabs of a drawer's folders do; the tab carries its file number,
-  // and its edge the accord's colour. At its foot, a small square for
-  // every fragrance using the note.
+  // SETTING OUT THE ELEMENTS: every record a tile in its group — its
+  // number, its symbol, its name, and how many fragrances use it.
   // ============================================================
-  records.forEach((r) => {
+  /** A symbol of its own for every note: its first letter as a capital
+      and a small letter after it — the first of its second word if it
+      has one, then each letter of its name in turn — and a third letter
+      only where every pair is taken. Worked out down the page, so a
+      note added moves only the symbols after it that it collides with. */
+  const taken = new Set();
+  function symbolFor(name) {
+    const plain = name.normalize("NFD").replace(/[^A-Za-z\s]/g, "");
+    const words = plain.split(/\s+/).filter(Boolean);
+    const letters = plain.replace(/\s+/g, "").toLowerCase();
+    if (!letters) return "?";
+    const first = letters[0].toUpperCase();
+    const tries = [];
+    if (words[1]) tries.push(first + words[1][0].toLowerCase());
+    for (let i = 1; i < letters.length; i++) tries.push(first + letters[i]);
+    for (let i = 1; i < letters.length; i++) for (let j = i + 1; j < letters.length; j++) tries.push(first + letters[i] + letters[j]);
+    const got = tries.find((t) => !taken.has(t)) || first + String(taken.size);
+    taken.add(got);
+    return got;
+  }
+  records.forEach((r, n) => {
     const el = r.el;
+    r.no = n + 1;
+    r.sym = symbolFor(r.name);
     el.style.setProperty("--hue", String(HUE[r.code] != null ? HUE[r.code] : 0));
-    el.style.setProperty("--tab", String(r.alpha % 3));
     el.dataset.uses = String(r.keys.size);
     el.dataset.call = r.call;
+    el.dataset.no = String(r.no);
+    el.dataset.sym = r.sym;
     if (r.code === "RET") el.classList.add("lib-grey");
 
-    const label = document.createElement("span");
-    label.className = "lib-call";
-    label.setAttribute("aria-hidden", "true");
-    label.innerHTML = "<b></b><i></i>";
-    label.firstChild.textContent = r.code;
-    label.lastChild.textContent = r.call.slice(4);
-    el.insertBefore(label, el.firstChild);
-
-    const marks = document.createElement("span");
-    marks.className = "lib-marks";
-    marks.setAttribute("aria-hidden", "true");
-    const n = r.keys.size;
-    marks.style.setProperty("--n", String(Math.min(MARKS_MOST, n)));
-    marks.dataset.more = n > MARKS_MOST ? "+" + (n - MARKS_MOST) : "";
-    el.appendChild(marks);
+    const no = document.createElement("span");
+    no.className = "lib-el-no";
+    no.setAttribute("aria-hidden", "true");
+    no.textContent = String(r.no);
+    const mass = document.createElement("span");
+    mass.className = "lib-el-uses";
+    mass.setAttribute("aria-hidden", "true");
+    mass.textContent = String(r.keys.size);
+    const sym = document.createElement("span");
+    sym.className = "lib-el-sym";
+    sym.setAttribute("aria-hidden", "true");
+    sym.textContent = r.sym;
+    el.prepend(no, mass, sym);
 
     el.setAttribute("role", "button");
     el.setAttribute("tabindex", "-1");
-    el.setAttribute("aria-label", r.name + ", file " + r.call + ". " +
+    el.setAttribute("aria-label", r.name + ", element " + r.no + ", " + r.sym + ". " +
       (r.keys.size === 1 ? "In one fragrance." : "In " + r.keys.size + " fragrances."));
-    // The arrival: box by box, file by file, and quick about it.
-    el.style.setProperty("--in", Math.min(900, shelves.indexOf(r.shelf) * 70 + r.alpha * 9) + "ms");
+    // The arrival: the table filling in number order, and quick about it.
+    el.style.setProperty("--in", Math.min(1100, n * 3) + "ms");
   });
   const recOf = new Map(records.map((r) => [r.el, r]));
 
@@ -261,7 +282,7 @@
   const shelved = records.filter((r) => r.code !== "RET");
   const most = shelved.reduce((a, b) => (b.keys.size > a.keys.size ? b : a), shelved[0]);
   const figures = [
-    ["Files", shelved.length],
+    ["Elements", shelved.length],
     ["Accords", shelves.filter((s) => s.dataset.shelf !== "RET").length],
     ["Fragrances", fragrances.size],
     ["Most used", most ? most.name : "—", most ? "in " + most.keys.size + " fragrances" : ""],
@@ -307,9 +328,9 @@
         '<button type="button" class="lib-order-by is-on" data-order="alpha">A–Z</button>' +
         '<button type="button" class="lib-order-by" data-order="uses">Most used</button>' +
       '</div>' +
-      '<button type="button" class="lib-random">Pull a random file</button>' +
+      '<button type="button" class="lib-random">A random element</button>' +
     '</div>' +
-    '<p class="lib-nothing" hidden>No file answers that. <a class="lib-elsewhere" href="#">Search the whole site →</a></p>';
+    '<p class="lib-nothing" hidden>No element answers that. <a class="lib-elsewhere" href="#">Search the whole site →</a></p>';
 
   const index = document.createElement("nav");
   index.className = "lib-index";
@@ -343,22 +364,61 @@
   const stacks = document.createElement("div");
   stacks.className = "lib-stacks";
   index.after(stacks);
-  // THE BOX'S LID carries its number and how many files are in it.
+  // THE GROUP'S HEAD carries its number and how many elements are in it,
+  // and the group is as many columns wide as it needs, seven deep.
   shelves.forEach((s, k) => {
     const n = s.querySelectorAll(".lib-record").length;
     const plate = s.querySelector(".lib-plate");
-    const box = document.createElement("p");
-    box.className = "lib-box-no";
-    box.textContent = "Box " + String(k + 1).padStart(2, "0");
+    const group = document.createElement("p");
+    group.className = "lib-group-no";
+    group.textContent = String(k + 1).padStart(2, "0");
     const count = document.createElement("p");
     count.className = "lib-shelf-count";
-    count.textContent = n === 1 ? "1 file" : n + " files";
+    count.textContent = String(n);
+    count.title = n === 1 ? "1 element" : n + " elements";
     s.style.setProperty("--hue", String(HUE[s.dataset.shelf] != null ? HUE[s.dataset.shelf] : 0));
+    s.style.setProperty("--cols", String(Math.max(1, Math.ceil(n / PERIODS))));
     if (s.dataset.shelf === "RET") s.classList.add("lib-grey");
-    plate.prepend(box);
+    const say = s.querySelector(".lib-shelf-say");
+    if (say) plate.title = say.textContent.trim();
+    plate.prepend(group);
     plate.appendChild(count);
     stacks.appendChild(s);
   });
+
+  // THE KEY: one large tile at the head of the page, saying what a tile
+  // says, and showing the element the hand is on (the most used, until
+  // then).
+  const key = document.createElement("figure");
+  key.className = "lib-key";
+  key.setAttribute("aria-hidden", "true");
+  key.innerHTML =
+    '<div class="lib-key-tile">' +
+      '<span class="lib-key-no"></span><span class="lib-key-uses"></span>' +
+      '<span class="lib-key-sym"></span><span class="lib-key-name"></span>' +
+    '</div>' +
+    '<figcaption>' +
+      '<span class="lib-key-say" data-at="no">Number</span>' +
+      '<span class="lib-key-say" data-at="uses">Fragrances using it</span>' +
+      '<span class="lib-key-say" data-at="sym">Symbol</span>' +
+      '<span class="lib-key-say" data-at="name">Note</span>' +
+    '</figcaption>';
+  head.appendChild(key);
+  head.classList.add("has-key");
+  const keyNo = key.querySelector(".lib-key-no"), keyUses = key.querySelector(".lib-key-uses");
+  const keySym = key.querySelector(".lib-key-sym"), keyName = key.querySelector(".lib-key-name");
+  let keyed = null;
+  function keyTo(r) {
+    if (!r || r === keyed) return;
+    keyed = r;
+    key.style.setProperty("--hue", String(HUE[r.code] != null ? HUE[r.code] : 0));
+    key.classList.toggle("lib-grey", r.code === "RET");
+    keyNo.textContent = String(r.no);
+    keyUses.textContent = String(r.keys.size);
+    keySym.textContent = r.sym;
+    keyName.textContent = r.name;
+    key.dataset.no = String(r.no);
+  }
 
   // The lamp stands over the stacks in the window.
   const lamp = document.createElement("div");
@@ -370,27 +430,26 @@
   const card = document.createElement("aside");
   card.className = "lib-card";
   card.hidden = true;
-  card.setAttribute("aria-label", "Case file");
-  // A CASE FILE: typed headings, a stamp across its head, and the mark
-  // clipped in as the exhibit.
+  card.setAttribute("aria-label", "Element");
+  // AN ELEMENT CARD: its tile large beside its atom, then what it is.
   card.innerHTML =
     '<div class="lib-card-top">' +
-      '<span class="lib-card-kind">Case file</span>' +
+      '<span class="lib-card-kind">Element</span>' +
       '<span class="lib-card-call"></span>' +
-      '<button type="button" class="lib-card-close" aria-label="Put the file back">×</button>' +
+      '<button type="button" class="lib-card-close" aria-label="Close">×</button>' +
     '</div>' +
-    '<p class="lib-card-stamp" aria-hidden="true">Declassified</p>' +
-    '<figure class="lib-card-exhibit">' +
-      '<span class="lib-card-clip" aria-hidden="true"></span>' +
+    '<figure class="lib-card-atom">' +
+      '<div class="lib-card-tile" aria-hidden="true">' +
+        '<span class="lib-key-no"></span><span class="lib-key-uses"></span>' +
+        '<span class="lib-key-sym"></span><span class="lib-key-name"></span>' +
+      '</div>' +
       '<canvas class="lib-card-mark" aria-hidden="true"></canvas>' +
       '<figcaption class="lib-card-caption"></figcaption>' +
     '</figure>' +
-    '<p class="lib-card-label">Subject</p>' +
     '<h2 class="lib-card-name" tabindex="-1"></h2>' +
     '<p class="lib-card-shelf"></p>' +
-    '<p class="lib-card-label">Summary</p>' +
     '<p class="lib-card-say"></p>' +
-    '<details class="lib-card-aka lib-drop" data-drop="aka"><summary><span class="lib-drop-name">Aliases</span>' +
+    '<details class="lib-card-aka lib-drop" data-drop="aka"><summary><span class="lib-drop-name">Isotopes</span>' +
       '<span class="lib-found-count"></span></summary><ul></ul></details>' +
     '<div class="lib-card-found"><h3></h3><div class="lib-card-list"></div></div>' +
     '<div class="lib-card-steps">' +
@@ -584,6 +643,16 @@
     rove(el);
     open(recOf.get(el), false);
   });
+  // THE KEY follows the hand, and the keyboard, over the table.
+  stacks.addEventListener("pointerover", (event) => {
+    const el = event.target.closest(".lib-record");
+    if (el) keyTo(recOf.get(el));
+  });
+  stacks.addEventListener("focusin", (event) => {
+    const el = event.target.closest(".lib-record");
+    if (el) keyTo(recOf.get(el));
+  });
+  keyTo(most);
 
   // ============================================================
   // THE CARD
@@ -592,6 +661,7 @@
   let typing = 0;
   const cardCall = card.querySelector(".lib-card-call");
   const cardCaption = card.querySelector(".lib-card-caption");
+  const cardTile = ["no", "uses", "sym", "name"].reduce((o, k) => (o[k] = card.querySelector(".lib-card-tile .lib-key-" + k), o), {});
   const cardShelf = card.querySelector(".lib-card-shelf");
   const cardName = card.querySelector(".lib-card-name");
   const cardSay = card.querySelector(".lib-card-say");
@@ -599,78 +669,75 @@
   const cardFound = card.querySelector(".lib-card-found");
   const steps = [...card.querySelectorAll(".lib-card-step")];
 
-  // THE MARK at the head of the card: a ring of specks, one for every
-  // fragrance on the site that uses the note, joined one to the next by
-  // hairlines, turning slowly in a cloud of dust in its accord's colour,
-  // with a rule run in to it from either side and ticked. Particles and
-  // geometry, as the rest of the site is drawn — the owner found the
-  // glass card "too futuristic".
+  // THE ATOM beside the element's tile: a nucleus of specks, and an
+  // electron for every fragrance on the site that uses the note, in its
+  // shells — two, then eight, then eighteen, then thirty-two — each shell
+  // a hairline ring turning at its own speed, the inner ones faster, in
+  // the accord's colour. Particles and geometry, as the rest of the site
+  // is drawn. (It was a ring of specks for the same count, the card's
+  // "mark", until the page became a periodic table.)
   const mark = card.querySelector(".lib-card-mark");
-  const MARK_TALL = 92;
+  const MARK_TALL = 150;
+  const SHELLS = [2, 8, 18, 32];
   let markFrame = 0;
   let markOf = null;
   function markFor(r) {
-    const n = Math.max(1, Math.min(48, r.keys.size));
-    let seed = Math.floor(hash(r.name + "mark") * 4294967295) || 5;
+    let seed = Math.floor(hash(r.name + "atom") * 4294967295) || 5;
     const rnd = () => {
       seed ^= seed << 13; seed >>>= 0;
       seed ^= seed >>> 17;
       seed ^= seed << 5; seed >>>= 0;
       return seed / 4294967296;
     };
-    const ring = [];
-    for (let i = 0; i < n; i++) ring.push({ a: (i / n) * Math.PI * 2 + (rnd() - 0.5) * (Math.PI / n) * 0.6, r: 1 + (rnd() - 0.5) * 0.12 });
-    const dust = [];
-    for (let i = 0; i < 110; i++) {
-      const a = rnd() * Math.PI * 2, d = Math.sqrt(rnd()) * 1.35;
-      dust.push({ a, d, s: 0.7 + rnd() * 0.9, o: 0.12 + rnd() * 0.35, w: (rnd() - 0.5) * 0.4 });
+    let left = Math.max(1, r.keys.size);
+    const shells = [];
+    for (let k = 0; k < SHELLS.length && left > 0; k++) {
+      const n = Math.min(SHELLS[k], left);
+      left -= n;
+      shells.push({ n, off: rnd() * Math.PI * 2, speed: (0.5 + rnd() * 0.3) / (k + 1) });
     }
-    // In the page's white, with the accord's colour on the ring's specks
-    // alone — one for every fragrance — as a file carries it only on its
-    // tab (2026-09-26, black and white).
-    return { ring, dust, colour: markColour(r.code) };
+    if (left > 0) shells[shells.length - 1].n += left;
+    const core = [];
+    const nucleons = 6 + Math.min(18, r.keys.size);
+    for (let i = 0; i < nucleons; i++) {
+      const a = rnd() * Math.PI * 2, d = Math.sqrt(rnd()) * 6.5;
+      core.push({ x: Math.cos(a) * d, y: Math.sin(a) * d, tint: rnd() < 0.5 });
+    }
+    return { shells, core, colour: markColour(r.code) };
   }
   function drawMark(t) {
     if (!markOf) return;
     const w = mark.clientWidth;
     if (!w) return;
     const ratio = drawRatio();
-    if (mark.width !== Math.round(w * ratio)) { mark.width = Math.round(w * ratio); mark.height = Math.round(MARK_TALL * ratio); }
+    const tall = mark.clientHeight || MARK_TALL;
+    if (mark.width !== Math.round(w * ratio) || mark.height !== Math.round(tall * ratio)) {
+      mark.width = Math.round(w * ratio); mark.height = Math.round(tall * ratio);
+    }
     const g = mark.getContext("2d");
     if (!g) return;
     g.setTransform(ratio, 0, 0, ratio, 0, 0);
-    g.clearRect(0, 0, w, MARK_TALL);
-    const cx = w / 2, cy = MARK_TALL / 2, R = 30;
-    const turn = still ? 0 : t * 0.00011;
+    g.clearRect(0, 0, w, tall);
+    const cx = w / 2, cy = tall / 2;
+    const clock = still ? 0 : t * 0.001;
     const white = (a) => "rgba(" + LINE + "," + a + ")";
-    // The rule in from either side, ticked, and stopping short of the ring.
-    g.fillStyle = "rgba(" + getComputedStyle(document.body).getPropertyValue("--ink-rgb") + ",0.2)";
-    g.fillRect(0, cy, cx - R - 14, 0.8);
-    g.fillRect(cx + R + 14, cy, w - cx - R - 14, 0.8);
-    for (let x = 0; x < cx - R - 14; x += 12) g.fillRect(x, cy - (x % 48 ? 2 : 4), 0.8, x % 48 ? 4 : 8);
-    for (let x = w; x > cx + R + 14; x -= 12) g.fillRect(x, cy - ((w - x) % 48 ? 2 : 4), 0.8, (w - x) % 48 ? 4 : 8);
-    // The dust, turning a little slower than the ring.
-    markOf.dust.forEach((d) => {
-      const a = d.a + turn * (0.6 + d.w);
-      g.fillStyle = white(d.o * 0.85);
-      g.fillRect(cx + Math.cos(a) * d.d * R, cy + Math.sin(a) * d.d * R * 0.92, d.s, d.s);
-    });
-    // The ring: joined, then its specks.
-    const pts = markOf.ring.map((p) => [cx + Math.cos(p.a + turn) * R * p.r, cy + Math.sin(p.a + turn) * R * p.r]);
-    if (pts.length > 1) {
-      g.strokeStyle = white(0.28);
+    const step = Math.min((Math.min(tall, w) / 2 - 22) / markOf.shells.length, 22);
+    markOf.shells.forEach((sh, k) => {
+      const R = 16 + step * (k + 1);
+      g.strokeStyle = white(0.22);
       g.lineWidth = 0.7;
-      g.beginPath();
-      pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
-      g.closePath();
-      g.stroke();
-    }
-    g.fillStyle = markOf.colour;
-    pts.forEach(([x, y]) => g.fillRect(x - 1.2, y - 1.2, 2.4, 2.4));
-    // The centre, a registration cross.
-    g.fillStyle = white(0.55);
-    g.fillRect(cx - 4, cy - 0.4, 8, 0.8);
-    g.fillRect(cx - 0.4, cy - 4, 0.8, 8);
+      g.beginPath(); g.arc(cx, cy, R, 0, Math.PI * 2); g.stroke();
+      g.fillStyle = markOf.colour;
+      for (let i = 0; i < sh.n; i++) {
+        const a = sh.off + (i / sh.n) * Math.PI * 2 + clock * sh.speed;
+        g.fillRect(cx + Math.cos(a) * R - 1.4, cy + Math.sin(a) * R - 1.4, 2.8, 2.8);
+      }
+    });
+    // The nucleus.
+    markOf.core.forEach((p) => {
+      g.fillStyle = p.tint ? markOf.colour : white(0.8);
+      g.fillRect(cx + p.x - 1.3, cy + p.y - 1.3, 2.6, 2.6);
+    });
   }
   function markLoop(t) {
     drawMark(t);
@@ -684,8 +751,15 @@
     r.el.classList.add("is-out");
     card.style.setProperty("--hue", r.el.style.getPropertyValue("--hue"));
 
-    cardCall.textContent = r.call;
-    cardCaption.textContent = "Exhibit A · " + (r.keys.size === 1 ? "1 appearance" : r.keys.size + " appearances");
+    cardCall.textContent = r.sym + " · " + r.call;
+    cardCaption.textContent = r.keys.size === 1 ? "1 electron — one fragrance uses it"
+      : r.keys.size + " electrons — one for every fragrance using it";
+    cardTile.no.textContent = String(r.no);
+    cardTile.uses.textContent = String(r.keys.size);
+    cardTile.sym.textContent = r.sym;
+    cardTile.name.textContent = r.name;
+    card.classList.toggle("lib-grey", r.code === "RET");
+    keyTo(r);
     markOf = markFor(r);
     if (!markFrame) markFrame = requestAnimationFrame(markLoop);
     cardShelf.textContent = "Accord " + r.code + " — " + r.shelfName;
@@ -810,7 +884,8 @@
     });
     byHouse.forEach((nos) => nos.sort());
     const h3 = cardFound.querySelector("h3");
-    h3.textContent = "Known appearances · " + String(r.keys.size).padStart(2, "0");
+    // A fragrance is a compound of its notes.
+    h3.textContent = "Compounds · " + String(r.keys.size).padStart(2, "0");
     const list = cardFound.querySelector(".lib-card-list");
     list.textContent = "";
     cardFound.hidden = !r.keys.size;

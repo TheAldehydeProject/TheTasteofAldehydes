@@ -3,15 +3,15 @@
 //
 // Every note named in a fragrance on the site, filed by accord (the
 // page's word; the markup still says shelf), each with a line on what
-// it is. The page's markup is the catalogue; the script files every
-// record as a FILE in its accord's BOX — an archive, since 2026-09-26.
-// What these hold:
+// it is. The page's markup is the catalogue; the script sets every
+// record out as an ELEMENT in a PERIODIC TABLE OF NOTES, its accord a
+// group — since 2026-09-26. What these hold:
 //
 //   - every note the site uses HAS a record (the owner asked for "all
 //     the notes that I have used so far"), and none is shelved twice;
-//   - the files stand in their boxes without running into each other;
-//   - the terminal and its ×, the accord tabs, the order and the case
-//     file all work,
+//   - the elements stand in their groups without running into each other;
+//   - the terminal and its ×, the accord tabs, the order, the key and the
+//     element card all work,
 //     and the card's fragrances link to where they stand;
 //   - the site's own search finds a note, by any of its spellings;
 //   - and without the script the catalogue is still there to read.
@@ -94,7 +94,7 @@ test("every fragrance a card lists links to where it stands in its house", async
   const card = page.locator(".lib-card");
   await expect(card).toBeVisible();
   await expect(card.locator(".lib-card-name")).toHaveText("Cedarwood");
-  await expect(card.locator(".lib-card-call")).toHaveText(/^WOO \d{3}$/);
+  await expect(card.locator(".lib-card-call")).toHaveText(/^[A-Z][a-z]{1,2} · WOO \d{3}$/);
   const hrefs = await card.locator(".lib-card-list a").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
   expect(hrefs.length).toBeGreaterThan(10);
   hrefs.forEach((h) => expect(h, "a fragrance link").toMatch(/^\.\.\/(houses\/[a-z-]+|individual-fragrances\/individual-fragrances)\.html#part-\d\d$/));
@@ -254,7 +254,7 @@ test("the page says accords rather than shelves, and no longer counts names as w
         ...[...document.querySelectorAll(".lib-tab")].map((t) => t.title)].join(" | "),
     };
   });
-  expect(out.terms).toEqual(["Files", "Accords", "Fragrances", "Most used"]);
+  expect(out.terms).toEqual(["Elements", "Accords", "Fragrances", "Most used"]);
   expect(out.most, "the note used most").toBe(out.expected);
   expect(out.mostUses).toBe("in " + out.expectedUses + " fragrances");
   expect(out.said, "no shelves where a reader sees them").not.toMatch(/shel/i);
@@ -265,69 +265,51 @@ test("the page says accords rather than shelves, and no longer counts names as w
 
 
 
-/* THE NOTES ARE FILES IN BOXES. The owner (2026-09-26): "redisgn the
-   whole page of the note library, and I want it to be like files in boxes
-   rather than a library libvrary. im thinking of movies and spy stuff. I
-   want oyu to keep it on theme and geometric ... i also like the colour
-   coding". Read off the page: nothing of the books is left (no spine or
-   boards canvas, no lean, no slip, no glyph or anything digital before
-   them); every file carries a TAB with its file number, which is its
-   accord's code and its place in it; the tabs stand in three places in
-   turn, as a drawer's do; the accord's colour is along the tab's top edge
-   and down the lid's end and NOWHERE ELSE on a file — its face, its edge
-   and its name are the page's greys; and every accord's colour is its own. */
-test("the notes are files in boxes, the accord's colour only along a file's tab and down its box's lid", async ({ page }) => {
+/* THE NOTES ARE A PERIODIC TABLE. The owner (2026-09-26): "i also want you
+   to redisgn the note library. I am running out of ideas so redisgn it
+   somehow and we will change it keep the colours and the search". Read off
+   the page: nothing of the books or the files is left; every element
+   carries its number (its place down the whole table, 1 to the last), a
+   symbol of its own — a capital and a small letter or two, no two notes
+   the same — and how many fragrances use it; and every element is faintly
+   its accord's colour, each accord its own. */
+test("the notes are a periodic table: every element numbered, with a symbol of its own, in its accord's colour", async ({ page }) => {
   await arrive(page);
   const out = await page.evaluate(() => {
     const chroma = (v) => Math.max(0, ...(String(v).match(/rgba?\([^)]*\)/g) || []).map((c) => {
       const n = c.match(/[\d.]+/g).slice(0, 3).map(Number);
       return Math.max(...n) - Math.min(...n);
     }));
-    const gone = ["canvas.lib-spine", "canvas.lib-boards", ".lib-leans", ".lib-slip", ".lib-case",
-      ".lib-glyph", ".lib-bands", ".lib-code", ".lib-folder-tab", ".lib-scan", ".is-decoding"]
+    const gone = ["canvas.lib-spine", "canvas.lib-boards", ".lib-leans", ".lib-slip", ".lib-case", ".lib-call",
+      ".lib-marks", ".lib-box-no", ".lib-card-stamp", ".lib-card-exhibit", ".lib-glyph", ".lib-scan"]
       .filter((sel) => document.querySelector(sel));
-    const files = [...document.querySelectorAll(".lib-shelf:not([data-shelf='RET']) .lib-record")];
+    const all = [...document.querySelectorAll(".lib-record")];
     const faults = [];
-    const places = new Set();
+    const syms = new Set();
     const byShelf = {};
-    files.forEach((f) => {
-      const tab = f.querySelector(".lib-call");
-      const code = f.closest(".lib-shelf").dataset.shelf;
-      if (!tab) return faults.push(f.id + " has no tab");
-      // The dash between code and number is the stylesheet's (so the
-      // tab's own text is the call number without its space).
-      const says = tab.querySelector("b").textContent + getComputedStyle(tab.querySelector("i"), "::before").content.replace(/"/g, "") +
-        tab.querySelector("i").textContent;
-      if (says !== f.dataset.call.replace(" ", "-")) faults.push(f.id + " tab says " + says + ", not " + f.dataset.call);
-      if (!says.startsWith(code + "-")) faults.push(f.id + " is filed under " + says);
-      places.add(Math.round(tab.getBoundingClientRect().left - f.getBoundingClientRect().left));
-      const cs = getComputedStyle(f);
-      const edge = getComputedStyle(tab).borderTopColor;
-      if (chroma(edge) < 40) faults.push(f.id + " tab edge not coloured: " + edge);
-      [["face", cs.backgroundColor], ["edge", cs.borderLeftColor], ["name", getComputedStyle(f.querySelector(".lib-name")).color],
-        ["tab's side", getComputedStyle(tab).borderLeftColor], ["tab's lettering", getComputedStyle(tab).color]]
-        .forEach(([what, v]) => { if (chroma(v) > 6) faults.push(f.id + " " + what + " coloured: " + v); });
-      (byShelf[code] = byShelf[code] || new Set()).add(edge);
+    all.forEach((el, i) => {
+      const no = el.querySelector(".lib-el-no"), sym = el.querySelector(".lib-el-sym"), uses = el.querySelector(".lib-el-uses");
+      if (!no || !sym || !uses) return faults.push(el.id + " is not an element");
+      if (no.textContent !== String(i + 1)) faults.push(el.id + " numbered " + no.textContent + ", not " + (i + 1));
+      if (!/^[A-Z][a-z]{1,2}$/.test(sym.textContent)) faults.push(el.id + " symbol " + sym.textContent);
+      if (syms.has(sym.textContent)) faults.push(el.id + " shares its symbol " + sym.textContent);
+      syms.add(sym.textContent);
+      if (uses.textContent !== el.dataset.uses) faults.push(el.id + " says " + uses.textContent + " fragrances, not " + el.dataset.uses);
+      const code = el.closest(".lib-shelf").dataset.shelf;
+      if (code === "RET") return;
+      const bg = getComputedStyle(el).backgroundColor;
+      if (chroma(bg) < 3) faults.push(el.id + " not in its accord's colour: " + bg);
+      (byShelf[code] = byShelf[code] || new Set()).add(getComputedStyle(el).borderTopColor);
     });
-    const lids = [...document.querySelectorAll(".lib-shelf:not([data-shelf='RET']) .lib-plate")]
-      .map((l) => ({ shadow: getComputedStyle(l).boxShadow, bg: getComputedStyle(l).backgroundColor }));
     const colours = Object.values(byShelf).map((set) => [...set]);
-    return {
-      gone, faults, files: files.length, places: places.size,
-      oneEach: colours.every((c) => c.length === 1),
-      distinct: new Set(colours.map((c) => c[0])).size, accords: colours.length,
-      lidsColoured: lids.filter((l) => chroma(l.shadow) > 40).length, lids: lids.length,
-      lidsGrey: lids.filter((l) => chroma(l.bg) <= 6).length,
-    };
+    return { gone, faults, n: all.length, oneEach: colours.every((c) => c.length === 1),
+      distinct: new Set(colours.map((c) => c[0])).size, accords: colours.length };
   });
-  expect(out.gone, "nothing of the books is left").toEqual([]);
-  expect(out.files).toBeGreaterThan(300);
-  expect(out.faults, "every file tabbed with its number, coloured only there").toEqual([]);
-  expect(out.places, "the tabs staggered in three places").toBe(3);
+  expect(out.gone, "nothing of the books or the files is left").toEqual([]);
+  expect(out.n).toBeGreaterThan(300);
+  expect(out.faults).toEqual([]);
   expect(out.oneEach, "one colour to an accord").toBe(true);
   expect(out.distinct, "and each accord its own").toBe(out.accords);
-  expect(out.lidsColoured, "every lid carries its accord's colour down its end").toBe(out.lids);
-  expect(out.lidsGrey, "and is otherwise grey").toBe(out.lids);
 });
 
 /* THE PAGE IS BLACK AND WHITE. "change the theme of the bage from that
@@ -408,89 +390,110 @@ test("the card is hairlines and specks rather than glass", async ({ page }) => {
   expect(out.ink, "the mark at its head is drawn").toBeGreaterThan(80);
 });
 
-/* THE CARD IS A CASE FILE: "movies and spy stuff". Pressing a file pulls
-   it up out of its box and opens its case file: CASE FILE and the file
-   number across its head, a stamp, the mark clipped in as Exhibit A with
-   how many appearances it has, the note under SUBJECT, what it is under
-   SUMMARY, its other spellings as ALIASES, and the fragrances using it as
-   its KNOWN APPEARANCES. Its close puts the file back. */
-test("pressing a file pulls it and opens its case file", async ({ page }) => {
+/* THE ELEMENT CARD. Pressing an element outlines it and opens its card:
+   ELEMENT with its symbol and call number across its head, its tile large,
+   its ATOM — an electron for every fragrance using it — with a caption
+   saying so, its name and accord, what it is, its ISOTOPES (the other
+   spellings) and its COMPOUNDS (the fragrances using it). Its close
+   closes it. */
+test("pressing an element opens its card, with an electron for every fragrance using it", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__electrons = 0;
+    const P = CanvasRenderingContext2D.prototype, fillRect = P.fillRect;
+    P.fillRect = function (x, y, w, h) {
+      if (this.canvas.classList.contains("lib-card-mark") && Math.abs(w - 2.8) < 0.01) window.__electrons++;
+      return fillRect.apply(this, arguments);
+    };
+  });
   await arrive(page);
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.locator("#note-cedarwood").click();
   const card = page.locator(".lib-card");
   await expect(card).toBeVisible();
   await expect(page.locator("#note-cedarwood")).toHaveClass(/is-out/);
-  const uses = +(await page.locator("#note-cedarwood").getAttribute("data-uses"));
-  const call = await page.locator("#note-cedarwood").getAttribute("data-call");
-  await expect(card.locator(".lib-card-kind")).toHaveText("Case file");
-  await expect(card.locator(".lib-card-call")).toHaveText(call);
-  await expect(card.locator(".lib-card-stamp")).toBeVisible();
-  await expect(card.locator(".lib-card-exhibit canvas.lib-card-mark")).toBeVisible();
-  await expect(card.locator(".lib-card-caption")).toHaveText("Exhibit A · " + uses + " appearances");
-  await expect(card.locator(".lib-card-label")).toHaveText(["Subject", "Summary"]);
+  const el = page.locator("#note-cedarwood");
+  const uses = +(await el.getAttribute("data-uses"));
+  const sym = await el.getAttribute("data-sym");
+  await expect(card.locator(".lib-card-kind")).toHaveText("Element");
+  await expect(card.locator(".lib-card-call")).toHaveText(sym + " · " + (await el.getAttribute("data-call")));
+  await expect(card.locator(".lib-card-tile .lib-key-sym")).toHaveText(sym);
+  await expect(card.locator(".lib-card-tile .lib-key-no")).toHaveText(await el.getAttribute("data-no"));
+  await expect(card.locator(".lib-card-tile .lib-key-uses")).toHaveText(String(uses));
+  await expect(card.locator(".lib-card-caption")).toHaveText(uses + " electrons — one for every fragrance using it");
   await expect(card.locator(".lib-card-name")).toHaveText("Cedarwood");
-  await expect(card.locator(".lib-card-aka .lib-drop-name")).toHaveText("Aliases");
-  await expect(card.locator(".lib-card-found h3")).toHaveText("Known appearances · " + String(uses).padStart(2, "0"));
-  // The stamp is set across the head at a slant, as a stamp is.
-  const turned = await card.locator(".lib-card-stamp").evaluate((el) => getComputedStyle(el).transform);
-  expect(turned, "the stamp is set at a slant").not.toBe("none");
+  await expect(card.locator(".lib-card-aka .lib-drop-name")).toHaveText("Isotopes");
+  await expect(card.locator(".lib-card-found h3")).toHaveText("Compounds · " + String(uses).padStart(2, "0"));
+  // The atom: one electron drawn for every fragrance, each time it is drawn.
+  await page.waitForTimeout(300);
+  const drawn = await page.evaluate(() => window.__electrons);
+  expect(drawn % uses, "a whole number of atoms drawn").toBe(0);
+  expect(drawn, "and at least one").toBeGreaterThanOrEqual(uses);
   await card.locator(".lib-card-close").click();
   await expect(card).toBeHidden();
   await expect(page.locator("#note-cedarwood")).not.toHaveClass(/is-out/);
 });
 
-/* MORE AIR: "the library feels crowded, I want you to stylistically make
-   it more breathable". Kept in the archive: the rows of files stand well
-   apart (a tab needs the room above its file), the files a little apart
-   from each other, and the boxes well apart down the page. */
-test("the boxes breathe", async ({ page }) => {
+/* THE KEY at the head of the page says what each part of a tile is, and
+   shows the element the hand is on — the one used most until then. */
+test("the key at the head of the page shows the element under the hand", async ({ page }) => {
   await arrive(page);
-  const out = await page.evaluate(() => {
-    const cs = getComputedStyle(document.querySelector(".lib-records"));
-    const [a, b] = document.querySelectorAll(".lib-shelf");
-    return { row: parseFloat(cs.rowGap), col: parseFloat(cs.columnGap),
-      between: b.getBoundingClientRect().top - a.getBoundingClientRect().bottom };
-  });
-  expect(out.row, "between the rows of a box").toBeGreaterThanOrEqual(24);
-  expect(out.col, "between one file and the next").toBeGreaterThanOrEqual(10);
-  expect(out.between, "and between one box and the next").toBeGreaterThanOrEqual(40);
+  const key = page.locator(".lib-key");
+  await expect(key).toBeVisible();
+  await expect(key.locator(".lib-key-say")).toHaveText(["Number", "Fragrances using it", "Symbol", "Note"]);
+  await expect(key.locator(".lib-key-name")).toHaveText("Cedarwood");
+  await page.locator("#note-bergamot").hover();
+  await expect(key.locator(".lib-key-name")).toHaveText("Bergamot");
+  await expect(key.locator(".lib-key-sym")).toHaveText(await page.locator("#note-bergamot").getAttribute("data-sym"));
+  await expect(key.locator(".lib-key-uses")).toHaveText(await page.locator("#note-bergamot").getAttribute("data-uses"));
 });
 
-/* EVERY ACCORD IS A BOX. Its LID across its head, standing a little proud
-   of the box either side, says what is in it: the box's number (in the
-   order the accords stand on the page), the accord's code and name, and
-   how many files it holds — and the box is drawn round its files, a
-   hairline on three sides, with a hand-hole cut in its front at the foot.
-   It was bookcases, then boards, before (2026-09-26). */
-test("every accord is a box with a lid saying what is in it, and a hand-hole in its front", async ({ page }) => {
+/* MORE AIR: "the library feels crowded, I want you to stylistically make
+   it more breathable". Kept in the table: the groups stand apart from each
+   other, across and down, and the elements a hair apart inside them. */
+test("the groups breathe", async ({ page }) => {
+  await arrive(page);
+  const out = await page.evaluate(() => {
+    const stacks = getComputedStyle(document.querySelector(".lib-stacks"));
+    const cs = getComputedStyle(document.querySelector(".lib-records"));
+    return { across: parseFloat(stacks.columnGap), down: parseFloat(stacks.rowGap), inside: parseFloat(cs.columnGap) };
+  });
+  expect(out.across, "between one group and the next").toBeGreaterThanOrEqual(16);
+  expect(out.down, "and between one band of groups and the next").toBeGreaterThanOrEqual(24);
+  expect(out.inside, "the elements a hair apart").toBeGreaterThanOrEqual(3);
+});
+
+/* EVERY ACCORD IS A GROUP. Its head carries its number (in the order the
+   accords stand on the page), its code in its colour, its name and how
+   many elements it holds, over a rule in its colour; and its elements
+   stand down in columns SEVEN DEEP — the periods — as many columns across
+   as it needs. */
+test("every accord is a group, seven deep, under a head saying what is in it", async ({ page }) => {
   await arrive(page);
   const out = await page.evaluate(() => {
     const faults = [];
     const shelves = [...document.querySelectorAll(".lib-shelf")];
-    shelves.forEach((box, i) => {
-      const code = box.dataset.shelf;
-      const lid = box.querySelector(".lib-plate");
-      const n = box.querySelectorAll(".lib-record").length;
-      const no = lid.querySelector(".lib-box-no");
-      const want = "Box " + String(i + 1).padStart(2, "0");
-      if (!no || no.textContent !== want) faults.push(code + " lid says " + (no && no.textContent) + ", not " + want);
-      if (lid.querySelector(".lib-shelf-code").textContent !== code) faults.push(code + " lid code");
-      const count = lid.querySelector(".lib-shelf-count").textContent;
-      if (count !== (n === 1 ? "1 file" : n + " files")) faults.push(code + " lid count " + count + " for " + n);
-      const bs = getComputedStyle(box), lr = lid.getBoundingClientRect(), br = box.getBoundingClientRect();
-      if (parseFloat(bs.borderLeftWidth) < 1 || parseFloat(bs.borderRightWidth) < 1 || parseFloat(bs.borderBottomWidth) < 1)
-        faults.push(code + " box has no sides");
-      if (!(lr.left < br.left && lr.right > br.right)) faults.push(code + " lid not proud of the box");
-      const hole = getComputedStyle(box.querySelector(".lib-records"), "::after");
-      const holder = box.querySelector(".lib-records").getBoundingClientRect();
-      if (hole.content === "none" || parseFloat(hole.width) < 40 || parseFloat(hole.borderTopLeftRadius) < 4)
-        faults.push(code + " has no hand-hole");
-      const last = [...box.querySelectorAll(".lib-record")].reduce((m, f) => Math.max(m, f.getBoundingClientRect().bottom), 0);
-      if (holder.bottom - last < parseFloat(hole.height) + parseFloat(hole.bottom)) faults.push(code + " hand-hole under a file");
+    shelves.forEach((g, i) => {
+      const code = g.dataset.shelf;
+      const head = g.querySelector(".lib-plate");
+      const n = g.querySelectorAll(".lib-record").length;
+      const no = head.querySelector(".lib-group-no");
+      if (!no || no.textContent !== String(i + 1).padStart(2, "0")) faults.push(code + " numbered " + (no && no.textContent));
+      if (head.querySelector(".lib-shelf-code").textContent !== code) faults.push(code + " code");
+      if (head.querySelector(".lib-shelf-count").textContent !== String(n)) faults.push(code + " count");
+      // Seven deep, and as many across as it needs — read off where each
+      // stands in the layout, which the tiles' arrival does not move.
+      const tops = new Set([...g.querySelectorAll(".lib-record")].map((el) => el.offsetTop));
+      const lefts = new Set([...g.querySelectorAll(".lib-record")].map((el) => el.offsetLeft));
+      if (tops.size !== Math.min(7, n)) faults.push(code + " stands " + tops.size + " deep");
+      if (lefts.size !== Math.ceil(n / 7)) faults.push(code + " is " + lefts.size + " across for " + n);
+      // Read down each column first, in order.
+      const els = [...g.querySelectorAll(".lib-record")];
+      if (n > 7 && els[1].offsetLeft !== els[0].offsetLeft)
+        faults.push(code + " does not read down first");
     });
-    return { faults, boxes: shelves.length };
+    return { faults, groups: shelves.length };
   });
-  expect(out.boxes).toBeGreaterThan(10);
+  expect(out.groups).toBeGreaterThan(10);
   expect(out.faults).toEqual([]);
 });
 
@@ -523,40 +526,27 @@ test("the lamp follows the pointer a beat behind it", async ({ page }) => {
   }, { timeout: 3000 }).toBeLessThan(1);
 });
 
-/* THE FILES STAND IN THEIR BOXES: each within its box, tab and all, none
-   on top of another — a tab never on the file above it — and each carrying
-   its box's code; at a phone's width too, and never a sideways scroll. */
-test("the files stand in their boxes without running into each other", async ({ page }) => {
+/* THE ELEMENTS STAND IN THEIR GROUPS: each within its group's width, none
+   on top of another, no group on another; at a phone's width too (where a
+   group is the page's width and reads across), and never a sideways
+   scroll. */
+test("the elements stand in their groups without running into each other", async ({ page }) => {
   for (const size of [{ width: 1440, height: 900 }, { width: 900, height: 900 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(size);
     await arrive(page);
-    await page.waitForTimeout(2000);
+    // The table fills in over about a second and a half; measured after.
+    await expect(page.locator("body")).not.toHaveClass(/lib-arriving/, { timeout: 5000 });
     const out = await page.evaluate(() => {
       const faults = [];
-      document.querySelectorAll(".lib-shelf").forEach((shelf) => {
-        const code = shelf.dataset.shelf;
-        const holder = shelf.querySelector(".lib-records").getBoundingClientRect();
-        const boxes = [...shelf.querySelectorAll(".lib-record")].map((el) => {
-          const r = el.getBoundingClientRect(), t = el.querySelector(".lib-call").getBoundingClientRect();
-          return { el, r, t };
+      const groups = [...document.querySelectorAll(".lib-shelf")].map((g) => ({ g, r: g.getBoundingClientRect() }));
+      const hits = (a, b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1;
+      groups.forEach(({ g, r }, i) => {
+        for (let j = i + 1; j < groups.length; j++) if (hits(r, groups[j].r)) faults.push(g.id + " on " + groups[j].g.id);
+        const els = [...g.querySelectorAll(".lib-record")].map((el) => ({ el, r: el.getBoundingClientRect() }));
+        els.forEach(({ el, r: e }, k) => {
+          if (e.left < r.left - 1 || e.right > r.right + 1) faults.push(el.id + " out of its group");
+          for (let m = k + 1; m < els.length; m++) if (hits(e, els[m].r)) faults.push(el.id + " on " + els[m].el.id);
         });
-        boxes.forEach(({ el, r, t }, i) => {
-          if (!el.querySelector(".lib-call").textContent.startsWith(code)) faults.push(el.id + " wrong file number");
-          if (r.left < holder.left - 1 || r.right > holder.right + 1) faults.push(el.id + " out of its box");
-          if (t.left < r.left - 1 || t.right > r.right + 1 || t.top < holder.top - 1) faults.push(el.id + " tab out of its box");
-          if (Math.abs(t.bottom - r.top) > 2) faults.push(el.id + " tab not on its file");
-          for (let j = 0; j < boxes.length; j++) {
-            if (j === i) continue;
-            const o = boxes[j];
-            const hits = (a, b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1;
-            if (j > i && hits(r, o.r)) faults.push(el.id + " on " + o.el.id);
-            if (hits(t, o.r)) faults.push(el.id + "'s tab on " + o.el.id);
-          }
-        });
-        // Every file in a row stands at the same height.
-        const tops = new Set(boxes.map((b) => Math.round(b.r.top)));
-        const rows = new Set(boxes.map((b) => Math.round(b.r.top / 40)));
-        if (tops.size > rows.size) faults.push(code + " files of a row at different heights");
       });
       return { faults, wide: document.documentElement.scrollWidth - window.innerWidth };
     });
@@ -565,33 +555,11 @@ test("the files stand in their boxes without running into each other", async ({ 
   }
 });
 
-/* A FILE'S THICKNESS IS HOW MANY FRAGRANCES USE IT: a small square at its
-   foot for each, and past eighteen a figure for the rest. */
-test("a note used often is a thicker file than a note used once", async ({ page }) => {
-  await arrive(page);
-  const out = await page.evaluate(() => {
-    const by = (id) => {
-      const el = document.getElementById(id), m = el.querySelector(".lib-marks");
-      return { n: +el.dataset.uses, w: m.getBoundingClientRect().width, more: m.dataset.more };
-    };
-    const most = [...document.querySelectorAll(".lib-record")].reduce((a, b) => (+b.dataset.uses > +a.dataset.uses ? b : a));
-    return { often: by("note-bergamot"), once: by("note-holy-bread"), most: by(most.id) };
-  });
-  expect(out.often.n).toBeGreaterThanOrEqual(10);
-  expect(out.once.n).toBe(1);
-  expect(out.once.w, "one square").toBeCloseTo(5, 0);
-  expect(out.often.w, "a square for each").toBeCloseTo(out.often.n * 7 - 2, 0);
-  expect(out.often.more).toBe("");
-  expect(out.most.n, "the note used most is used more than eighteen times").toBeGreaterThan(18);
-  expect(out.most.w, "and stops at eighteen squares").toBeCloseTo(18 * 7 - 2, 0);
-  expect(out.most.more, "with the rest as a figure").toBe("+" + (out.most.n - 18));
-});
-
 /* THE × AT THE RIGHT OF THE BAR: "let the search bar stay the same (just
    make there a little X to reset the search on the right side of the
    bar)". Faint and not pressable while the bar is empty; with something
    typed, it stands at the bar's right end, and pressing it empties the
-   bar, lights nothing, dims nothing, brings every box back and leaves the
+   bar, lights nothing, dims nothing, brings every group back and leaves the
    typing in the bar. The browser's own clearing mark is not shown too. */
 test("the × at the right of the search bar clears it", async ({ page }) => {
   await arrive(page);
@@ -601,7 +569,7 @@ test("the × at the right of the search bar clears it", async ({ page }) => {
   await expect(clear).toBeDisabled();
   await query.fill("cedar");
   await expect(clear).toBeEnabled();
-  await expect(page.locator("#shelf-cit")).toBeHidden();
+  await expect(page.locator("#shelf-cit"), "a group with nothing answering goes dim").toHaveClass(/is-away/);
   const at = await page.evaluate(() => {
     const bar = document.querySelector(".lib-terminal").getBoundingClientRect();
     const x = document.querySelector(".lib-clear").getBoundingClientRect();
@@ -627,7 +595,7 @@ test("the × at the right of the search bar clears it", async ({ page }) => {
   await expect(clear).toBeDisabled();
   await expect(page.locator(".lib-record.is-hit")).toHaveCount(0);
   await expect(page.locator(".lib-record.is-dim")).toHaveCount(0);
-  await expect(page.locator("#shelf-cit")).toBeVisible();
+  await expect(page.locator("#shelf-cit")).not.toHaveClass(/is-away/);
   // Typed from the keyboard, and cleared the same way.
   await query.pressSequentially("tonka");
   await expect(page.locator(".lib-record.is-hit").first()).toBeVisible();
@@ -636,11 +604,12 @@ test("the × at the right of the search bar clears it", async ({ page }) => {
   await expect(page.locator(".lib-shelf.is-away")).toHaveCount(0);
 });
 
-/* THE TERMINAL: files that answer light up, the rest go dim, and a box
-   with nothing in it folds away. It reads other spellings — and DIRECT
+/* THE TERMINAL: elements that answer light up, the rest go dim, and so
+   does a group with nothing in it — dimmed rather than folded away, so the
+   table keeps its shape. It reads other spellings — and DIRECT
    WORDS ONLY, at the owner's word: nothing is found by what a note is
    said to be, and no near miss counts. */
-test("the terminal lights the files that answer and folds away the rest", async ({ page }) => {
+test("the terminal lights the elements that answer and dims the rest", async ({ page }) => {
   await arrive(page);
   const query = page.locator(".lib-query");
 
@@ -650,7 +619,8 @@ test("the terminal lights the files that answer and folds away the rest", async 
   await expect(page.locator("#note-cedarwood")).toHaveClass(/is-hit/);
   expect(await page.locator("#note-cedarwood .lib-say").textContent()).not.toMatch(/blood/i);
   await expect(page.locator("#note-bergamot")).not.toHaveClass(/is-hit/);
-  await expect(page.locator("#shelf-cit")).toBeHidden();
+  await expect(page.locator("#shelf-cit"), "a group with nothing answering goes dim, and stays where it is").toHaveClass(/is-away/);
+  await expect(page.locator("#shelf-cit")).toBeVisible();
   await expect(page.locator(".lib-count")).toHaveText(/^\d+ \/ \d+$/);
 
   // A word only in the explanations lights nothing that is not called
@@ -691,21 +661,22 @@ test("the terminal lights the files that answer and folds away the rest", async 
   await expect(page.locator(".lib-record.is-dim")).toHaveCount(0);
 });
 
-/* THE INDEX: one tab per accord. */
-test("an accord tab stands you in front of that box alone", async ({ page }) => {
+/* THE INDEX: one tab per accord, and a tab lights its group — every
+   other goes dim where it stands, as a periodic table's key does. */
+test("an accord tab lights that group and dims the rest", async ({ page }) => {
   await arrive(page);
   await expect(page.locator(".lib-tab")).toHaveCount(await page.locator(".lib-shelf").count() + 1);
   await page.locator(".lib-tab[data-shelf='WOO']").click();
-  await expect(page.locator("#shelf-woo")).toBeVisible();
-  await expect(page.locator("#shelf-cit")).toBeHidden();
-  await expect(page.locator(".lib-shelf:visible")).toHaveCount(1);
+  await expect(page.locator("#shelf-woo")).not.toHaveClass(/is-away/);
+  await expect(page.locator("#shelf-cit")).toHaveClass(/is-away/);
+  await expect(page.locator(".lib-shelf:not(.is-away)")).toHaveCount(1);
   await page.locator(".lib-tab[data-shelf='']").click();
-  await expect(page.locator("#shelf-cit")).toBeVisible();
+  await expect(page.locator(".lib-shelf.is-away")).toHaveCount(0);
 });
 
-/* MOST USED reorders a box by use, and the file numbers — where a file
-   belongs — stay where they were. */
-test("ordering by use moves the files and keeps their numbers", async ({ page }) => {
+/* MOST USED reorders a group by use, and the call numbers — where an
+   element belongs — stay where they were. */
+test("ordering by use moves the elements and keeps their numbers", async ({ page }) => {
   await arrive(page);
   const callBefore = await page.locator("#note-cedarwood").getAttribute("data-call");
   await page.locator(".lib-order-by[data-order='uses']").click();
@@ -717,9 +688,9 @@ test("ordering by use moves the files and keeps their numbers", async ({ page })
   expect(names).toEqual([...names].sort());
 });
 
-/* THE KEYBOARD: one file takes the tab, the arrows walk the boxes, and
-   Enter pulls the file and opens its case file. */
-test("the files can be walked and opened with the keyboard", async ({ page }) => {
+/* THE KEYBOARD: one element takes the tab, the arrows walk the table, and
+   Enter opens its card. */
+test("the elements can be walked and opened with the keyboard", async ({ page }) => {
   await arrive(page);
   await expect(page.locator(".lib-record[tabindex='0']")).toHaveCount(1);
   await page.locator(".lib-record[tabindex='0']").focus();
@@ -744,7 +715,7 @@ test("the site's search finds a note, by any of its spellings", async ({ page })
   await expect(page.locator(".find-filter[data-kind='Note']")).toBeVisible();
 });
 
-/* WITH ANIMATION TURNED OFF the boxes are simply there, and the
+/* WITH ANIMATION TURNED OFF the table is simply there, and the
    readout is already at its figures. */
 test.describe("with reduced motion", () => {
   test("the library is there at once", async ({ page }) => {

@@ -99,3 +99,17 @@ test("the contact page says only to send a carrier pigeon", async ({ page }) => 
   expect(rest.mail, "no address anywhere on the page").toBe(false);
   expect(rest.text).toBe("Get in touch, send a carrier pigeon.");
 });
+
+/* THE LINE ON SLIDE 2 NAMES THE SITE AS ITS TITLE DOES. It said "The Smell
+   of Aldehydes" after the site was named The Taste of Aldehydes; the owner,
+   2026-09-26, asked for it fixed "to suit the "taste" of aldehydes". The
+   rest of the sentence is theirs and stays exactly as written. */
+test("the line on slide 2 names the site as its title does", async ({ page }) => {
+  await serveDependenciesLocally(page);
+  await page.goto("/index.html");
+  const title = (await page.locator("#slide-1 h1").textContent()).trim();
+  expect(title).toBe("The Taste of Aldehydes");
+  const line = (await page.locator("#slide-2 .intro-lede").textContent()).replace(/\s+/g, " ").trim();
+  expect(line).toBe("A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for " +
+    "information, interpretations, theories and even ideas.");
+});

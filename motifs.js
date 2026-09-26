@@ -178,10 +178,15 @@
   // drawn as a diagram draws them, and a disk of specks tipped towards
   // you, turning round it — faster the nearer they are — and spiralling
   // in, the back half behind the hole and the front half across it.
-  // Out of it, WAVES OF DOTS ring out much further than the soundings
-  // did (`WELL_REACH` of the window), and as each passes it bends what
-  // it crosses — a ripple that pushes out ahead of it and draws in
-  // behind it.
+  // It reaches much further than the soundings did (`WELL_REACH` of the
+  // window), and specks are drawn in to it from all round the edge of
+  // that reach, faster as they near it, turning as they come (`INFALL`).
+  // For a day it rang out WAVES OF DOTS that pushed out and drew in what
+  // they crossed; the owner (2026-09-26): "the black holes ... should
+  // have less of waves of effects and rather a general constant (almost
+  // constant pull)". So there are no waves, and the pull is broad and
+  // steady — much the same across the whole reach, a little stronger at
+  // the hole, and breathing only very slightly (`WELL_BREATH`).
   //
   // AND IT PULLS. Every well puts itself on `wells`, and
   // `HouseMotifs.bend()` hands contact-sheet.js the field they make
@@ -198,11 +203,10 @@
   const WELL_REACH_MOST = 380;       // px
   const WELL_FORM = 1500;            // ms to form
   const WELL_PULL = 0.82;            // how far in (of the way to the hole) a point near it is drawn
-  const WELL_SWIRL = 1.15;           // radians a point near it is turned
-  const RING_SPEED = 0.085;          // px a ms, how fast the waves ring out
-  const RING_COUNT = 4;
-  const RING_PUSH = 13;              // px, how far a wave pushes what it crosses
-  const RING_BAND = 17;              // px, and over how wide a band
+  const WELL_FLOOR = 0.42;           // of that, how much reaches right across the field (the rest gathers at the hole)
+  const WELL_BREATH = 0.05;          // how much the pull swells and eases, very slowly
+  const WELL_SWIRL = 1.0;            // radians a point near it is turned
+  const INFALL = 80;                 // specks being drawn in to it at once
   const DISK_SPECKS = 120;
   const WELL_APART = 0.55;           // of the window's shorter side, the least distance between two wells
   const wells = [];
@@ -219,24 +223,17 @@
       if (d > w.R || d < 0.001 || w.s < 0.002) continue;
       const win = 1 - smooth(w.R * 0.55, w.R, d);
       cover = Math.max(cover, win * Math.min(1, w.s * 2));
-      const k = w.s * Math.exp(-d / (w.R * 0.34)) * win;
-      let r = d - k * WELL_PULL * Math.max(0, d - w.h * 0.45);
-      // The waves: out ahead of each, in behind it.
-      let mag = 1;
-      for (let j = 0; j < w.rings.length; j++) {
-        const g = w.rings[j], u = (d - g.r) / RING_BAND;
-        if (u > 3 || u < -3) continue;
-        const e = Math.exp(-u * u);
-        r += RING_PUSH * w.s * g.f * u * e * 2.33 * win;
-        mag += 0.4 * w.s * g.f * e * win;
-      }
+      // Broad and steady: much the same across the reach, gathering at
+      // the hole.
+      const k = w.s * w.b * (WELL_FLOOR + (1 - WELL_FLOOR) * Math.exp(-d / (w.R * 0.3))) * win;
+      const r = d - k * WELL_PULL * Math.max(0, d - w.h * 0.45);
       const spin = WELL_SWIRL * w.s * Math.exp(-d / (w.R * 0.26)) * win;
       const c = Math.cos(spin), sn = Math.sin(spin);
       const ux = dx / d, uy = dy / d;
       const rx = ux * c - uy * sn, ry = ux * sn + uy * c;
       x = w.x + rx * r;
       y = w.y + ry * r;
-      sc *= Math.pow(Math.max(0.05, r / d), 0.85) * mag;
+      sc *= Math.pow(Math.max(0.05, r / d), 0.85);
       al *= smooth(w.h * 0.8, w.h * 2, r);
       turn += spin;
     }
@@ -326,7 +323,11 @@
     const tilt = rand(-0.45, 0.45), flat = rand(0.24, 0.36);
     const disk = Array.from({ length: DISK_SPECKS }, () => ({ q: Math.random(), a: rand(0, Math.PI * 2), size: rand(0.8, 2), lit: rand(0.4, 1) }));
     // On the list from the moment it is made, so the next is kept from it.
-    const well = { x: at.x, y: at.y, R, h: 0, s: 0, rings: [], seen: performance.now() };
+    const well = { x: at.x, y: at.y, R, h: 0, s: 0, b: 1, seen: performance.now() };
+    // THE INFALL: each speck starts somewhere round the edge of the reach
+    // and is drawn in, faster the nearer it comes, turning as it comes.
+    const fall = () => ({ a: rand(0, Math.PI * 2), rho: R * rand(0.55, 1), size: rand(0.8, 1.8), lit: rand(0.4, 1) });
+    const infall = Array.from({ length: INFALL }, fall);
     wells.push(well);
     let lastAge = 0;
     return {
@@ -338,26 +339,23 @@
         const s = a * ease(age / WELL_FORM);
         const h = hole * Math.sqrt(s);
         well.s = s; well.h = h; well.seen = performance.now();
-        well.rings = Array.from({ length: RING_COUNT }, (_, k) => {
-          const r = h + ((age * RING_SPEED + (k * R) / RING_COUNT) % R);
-          return { r, f: (1 - r / R) * smooth(h, h * 5, r) };
-        });
+        well.b = 1 + WELL_BREATH * Math.sin(age / 1700);
         if (!wells.includes(well)) wells.push(well);
 
-        // THE WAVES, in dots, each bent by the field it makes.
+        // THE INFALL: drawn in steadily from all round, quickening and
+        // turning as it nears the hole, and taken by it at its edge.
         c.fillStyle = "rgb(" + INK + ")";
-        well.rings.forEach((g) => {
-          if (g.f < 0.01) return;
-          const n = Math.max(12, Math.round((Math.PI * 2 * g.r) / 8));
-          for (let i = 0; i < n; i++) {
-            const t = (i / n) * Math.PI * 2 + age / 4000;
-            const p = bendPoint(well.x + Math.cos(t) * g.r, well.y + Math.sin(t) * g.r);
-            const k = 0.7 * a * g.f * p.a;
-            if (k < 0.01) continue;
-            const z = 1.3 + 1.1 * g.f;
-            c.globalAlpha = Math.min(1, k);
-            c.fillRect(p.x - z / 2, p.y - z / 2, z, z);
-          }
+        infall.forEach((p) => {
+          const pull = Math.pow(R / Math.max(p.rho, h * 1.2), 0.8);
+          p.rho -= (dt / 1000) * 26 * pull * s;
+          p.a += (dt / 1000) * 0.9 * pull;
+          if (p.rho < h * 1.3) Object.assign(p, fall(), { rho: R * rand(0.85, 1) });
+          const edge = 1 - smooth(R * 0.7, R, p.rho);        // coming in out of nothing
+          const k = 0.55 * a * s * p.lit * edge * (0.35 + 0.65 * (1 - p.rho / R));
+          if (k < 0.01) return;
+          const z = p.size * (0.6 + 0.5 * p.rho / R);
+          c.globalAlpha = Math.min(1, k);
+          c.fillRect(well.x + Math.cos(p.a) * p.rho - z / 2, well.y + Math.sin(p.a) * p.rho - z / 2, z, z);
         });
         c.globalAlpha = 1;
 

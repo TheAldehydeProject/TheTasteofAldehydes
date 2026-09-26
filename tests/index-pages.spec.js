@@ -453,17 +453,19 @@ test("Explorations & Researches: the paragraph under the name, the table on the 
   expect(errors).toEqual([]);
 });
 
-/* THE FIELD IS ABSTRACT. It first drew a figure for each work — a
-   pyramid, a tear of resin, a bottle, two smokes — and the owner: "REmove
-   the research specific stuff; and make it more so a general abstract
-   geometric particulate thing. The closest thing to waht i like is the
-   cloud when you hover the untitled researches/Explorations (and when you
-   hover nothing). re-interpret it and do that please." So every row is a
-   cloud gathered round an abstract form, given by its number; an Untitled
-   row is the plain cloud; nothing pointed at is the ring. Nothing on a row
-   names a figure any more, and nothing is written into the drawing. */
-test("pointing at a row gathers the field into an abstract form, and leaving the table brings the ring back",
+/* THE FIELD KEEPS ITS OWN TIME. It drew a figure for each work, then an
+   abstract form for the row pointed at; the owner (2026-09-26): "I want
+   the shapes to not change based on which research you hover, but rather
+   to transform from one to another in the span of 12.5 seconds, then stay
+   in their form for 5 and then start transforming again into the next
+   one". Run on the page's own clock, sped up: the galaxy first, gathered
+   and held; then, from 6.6s, 12.5s turning into the sphere; the sphere
+   held 5s; then on to the knot — and round the whole cycle back to the
+   galaxy. Pointing at a row changes nothing, and nothing is written into
+   the drawing. */
+test("the field holds each form five seconds and turns into the next over twelve and a half, whatever is pointed at",
   async ({ page }) => {
+  test.setTimeout(120000);
   const errors = collectPageErrors(page);
   await page.addInitScript(() => {
     window.__words = [];
@@ -473,60 +475,89 @@ test("pointing at a row gathers the field into an abstract form, and leaving the
       return fillText.apply(this, arguments);
     };
   });
+  await page.clock.install();
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(RESEARCHES);
-  expect(await page.locator(".index-table tbody tr[data-figure]").count(), "no row names a figure").toBe(0);
   const field = page.locator(".re-field");
-  await expect(field).toHaveAttribute("data-figure", "ring");
-  await page.waitForTimeout(2200);
-  const ring = await fieldInk(page);
-  expect(ring.ink, "the ring is drawn").toBeGreaterThan(400);
-  await expect(page.locator(".re-caption-name")).toHaveText("Explorations & Researches");
+  const state = () => field.evaluate((f) => ({ figure: f.dataset.figure, phase: f.dataset.phase,
+    run: parseFloat(f.style.getPropertyValue("--run")) }));
+  await expect(field).toHaveAttribute("data-cycle", "galaxy,sphere,knot,torus,helix,spiral,cloud");
+  await page.clock.runFor(2500);
+  expect(await state()).toMatchObject({ figure: "galaxy", phase: "hold" });
+  await expect(page.locator(".re-caption-name")).toHaveText("Galaxy");
+  await expect(page.locator(".re-caption-no")).toHaveText("01 / 07");
+  const galaxy = await fieldInk(page);
+  expect(galaxy.ink, "the galaxy is drawn").toBeGreaterThan(400);
 
-  // Each row its own form, by its number, and its caption.
-  const forms = { 0: "sphere", 1: "knot", 2: "torus", 3: "helix", 4: "disc", 5: "lattice" };
-  const seen = [ring];
-  const seenNames = ["ring"];
-  for (const [no, name] of Object.entries(forms)) {
-    const row = page.locator(`.index-table tbody tr[data-no="${no}"]`);
-    await row.hover();
-    await expect(field).toHaveAttribute("data-figure", name);
-    await expect(page.locator(".re-caption-name")).toHaveText(await row.getAttribute("data-name"));
-    if (no > 3) continue;
-    await page.waitForTimeout(2000);
-    const now = await fieldInk(page);
-    expect(now.ink, `${name} is drawn`).toBeGreaterThan(300);
-    // Measured: a form against itself a moment later, turned, 14–25; one
-    // form against another, 37 and up (the helix and the tipped torus,
-    // both tall, at their closest).
-    seen.forEach((before, k) => expect(apart(now, before), `${name} is a different drawing from the ${seenNames[k]}`).toBeGreaterThan(30));
-    seen.push(now);
-    seenNames.push(name);
-  }
-  // An Untitled row is the plain cloud.
-  await page.locator('.index-table tbody tr[data-no="7"]').hover();
-  await expect(field, "an Untitled row is the cloud").toHaveAttribute("data-figure", "cloud");
-
-  // Off the table, the ring comes back — a moment later.
+  // Pointing at a row does nothing to it.
+  await page.locator('.index-table tbody tr[data-no="1"]').hover();
+  await page.clock.runFor(600);
+  expect((await state()).figure, "pointing at a row changes nothing").toBe("galaxy");
+  expect(await page.locator(".index-table tbody tr.is-shown").count()).toBe(0);
+  expect(await page.locator(".index-table tbody tr[data-figure]").count(), "no row names a form").toBe(0);
   await page.mouse.move(200, 100);
-  await page.waitForTimeout(250);
-  await expect(field, "not at once").toHaveAttribute("data-figure", "cloud");
-  await expect(field).toHaveAttribute("data-figure", "ring", { timeout: 3000 });
 
-  // From the keyboard too: a row's link focused is pointed at.
-  await page.locator('.index-table tbody tr[data-no="1"] a').focus();
-  await expect(field).toHaveAttribute("data-figure", "knot");
-  await expect(page.locator('.index-table tbody tr[data-no="1"]')).toHaveClass(/is-shown/);
+  // Held until 6.6s (1.6 to gather, 5 standing), then turning.
+  await page.clock.runFor(3200);        // 6.3s
+  expect((await state()).phase, "still holding at six seconds").toBe("hold");
+  await page.clock.runFor(700);         // 7.0s
+  expect(await state(), "then turning into the sphere").toMatchObject({ figure: "sphere", phase: "morph" });
+  await expect(page.locator(".re-caption-name")).toHaveText("Galaxy → Sphere");
+  // Half way, it is neither.
+  await page.clock.runFor(5900);        // 12.9s: half way through
+  const half = await state();
+  expect(half.phase).toBe("morph");
+  expect(half.run, "half way through the turning").toBeGreaterThan(0.4);
+  expect(half.run).toBeLessThan(0.6);
+  // Still turning at twelve seconds in, and the sphere once it has.
+  await page.clock.runFor(5700);        // 18.6s
+  expect((await state()).phase, "twelve and a half seconds of it").toBe("morph");
+  await page.clock.runFor(1500);        // 20.1s
+  expect(await state()).toMatchObject({ figure: "sphere", phase: "hold" });
+  await expect(page.locator(".re-caption-name")).toHaveText("Sphere");
+  const sphere = await fieldInk(page);
+  expect(sphere.ink, "the sphere is drawn").toBeGreaterThan(400);
+  expect(apart(sphere, galaxy), "and it is a different drawing").toBeGreaterThan(30);
+  await page.clock.runFor(4600);        // 24.7s: the sphere held five seconds
+  expect(await state(), "on to the knot").toMatchObject({ figure: "knot", phase: "morph" });
 
-  // A row added later takes the next form round, with nothing written on it.
-  await page.evaluate(() => {
-    const row = document.querySelector('tr[data-no="9"]');
-    row.dataset.name = "Something new"; row.dataset.kind = "Research"; row.dataset.no = "10";
-  });
-  await page.locator('.index-table tbody tr[data-no="10"]').hover();
-  await expect(field, "the forms go round again").toHaveAttribute("data-figure", "sphere");
+  // Round the whole cycle and back to the galaxy: seven forms, 17.5s each.
+  await page.clock.runFor(17500 * 6 - 4600 - 1000);
+  expect(await state(), "round again to the galaxy").toMatchObject({ figure: "galaxy", phase: "hold" });
   expect(await page.evaluate(() => window.__words), "nothing is written into the drawing").toEqual([]);
   expect(errors).toEqual([]);
+});
+
+/* THE LOCI: "some loci where you have geometric elements (such as
+   triangles from the connected dots)". Read off what the field's canvas is
+   asked to draw once a form has gathered: triangles filled, and lines. */
+test("here and there on the field, specks are joined into triangles", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__drawn = { fills: 0, strokes: 0 };
+    const P = CanvasRenderingContext2D.prototype, fill = P.fill, stroke = P.stroke;
+    P.fill = function () { if (this.canvas.classList.contains("re-canvas")) window.__drawn.fills++; return fill.apply(this, arguments); };
+    P.stroke = function () { if (this.canvas.classList.contains("re-canvas")) window.__drawn.strokes++; return stroke.apply(this, arguments); };
+  });
+  await page.clock.install();
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(RESEARCHES);
+  await page.clock.runFor(5000);
+  const before = await page.evaluate(() => ({ ...window.__drawn }));
+  await page.clock.runFor(1000);
+  const after = await page.evaluate(() => ({ ...window.__drawn }));
+  expect(after.fills - before.fills, "triangles filled").toBeGreaterThan(20);
+  expect(after.strokes - before.strokes, "and their lines drawn").toBeGreaterThan(100);
+});
+
+/* ONE FORM HELD: `?form=` stands any one form still on the page, which is
+   how the candidates were shown to the owner. The cube is gone. */
+test("a form can be held on the page, and the cube is gone", async ({ page }) => {
+  await page.goto(RESEARCHES + "?form=knot");
+  const field = page.locator(".re-field");
+  await expect(field).toHaveAttribute("data-cycle", "knot");
+  await expect(page.locator(".re-caption-name")).toHaveText("Trefoil knot");
+  await page.goto(RESEARCHES + "?form=lattice");
+  await expect(field, "no cube: the cycle as it is").toHaveAttribute("data-cycle", "galaxy,sphere,knot,torus,helix,spiral,cloud");
 });
 
 test("the field answers the pointer over it",
@@ -559,20 +590,21 @@ test("the field answers the pointer over it",
 });
 
 test.describe("the field with animation turned off", () => {
-  test("each figure is simply there, and nothing moves", async ({ page }) => {
+  test("the galaxy is simply there, and nothing moves", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     const errors = collectPageErrors(page);
+    await page.clock.install();
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(RESEARCHES);
-    await page.waitForTimeout(500);
+    await page.clock.runFor(500);
     const a = await fieldInk(page);
-    expect(a.ink, "the ring is drawn at once").toBeGreaterThan(400);
-    await page.waitForTimeout(700);
+    expect(a.ink, "the galaxy is drawn at once").toBeGreaterThan(400);
+    await expect(page.locator(".re-field")).toHaveAttribute("data-figure", "galaxy");
+    // Long past when it would have turned into the sphere, it has not.
+    await page.clock.runFor(25000);
     const b = await fieldInk(page);
     expect(apart(a, b), "and stands still").toBe(0);
-    await page.locator('.index-table tbody tr[data-no="0"]').hover();
-    const c = await fieldInk(page);
-    expect(apart(c, a), "a row pointed at is drawn at once").toBeGreaterThan(40);
+    await expect(page.locator(".re-field")).toHaveAttribute("data-figure", "galaxy");
     expect(errors).toEqual([]);
   });
 });

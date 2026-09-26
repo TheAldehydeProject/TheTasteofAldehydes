@@ -1,12 +1,15 @@
 # Explorations & Researches, laid out again, and the field
 
 (The figures below — one for each work — were **replaced the same day** by abstract forms; see
-*2026-09-26, later — abstract forms, not figures* at the foot. The layout stands as written.)
+*2026-09-26, later — abstract forms, not figures*; and the table stopped conducting the field
+that evening, when it took its own clock — see *2026-09-26, last* at the foot. The layout stands
+as written.)
 
 Date: 2026-09-26
 
-Files touched: `categories/researches.html`, `explorations.js` (new), the `EXPLORATIONS &
-RESEARCHES` block in `style.css` (all of it under `.researches-page`), `tests/index-pages.spec.js`
+Files touched: `categories/researches.html`, `explorations.js` (new; ~820 lines by the last
+section), the `EXPLORATIONS & RESEARCHES` block in `style.css` (all of it under
+`.researches-page`), `tests/index-pages.spec.js`
 
 ## What changed
 
@@ -176,3 +179,133 @@ against another 37 and up; the test asks for more than 30. (It was a count of ce
 in them, which two tall forms of the same size could not be told apart by.) The other three tests
 of the field are unchanged.
 
+
+## 2026-09-26, last — its own clock, and a catalogue of shapes to choose from
+
+> for the researches, I want the shapes to not change based on which research you hover, but
+> rather to transform from one to another in the span of 12.5 seconds, then stay in their form
+> for 5 and then start transforming again into the next one. I want you to come up with a list
+> of shapes that you can put there, and we will decide. for example, the cube can go, i want you
+> to keep the galaxy looking one (default), keep the gas cloud but make it bigger and cooler (the
+> one when you hover the researches/explorations that have not been filled in yet), Keep the
+> sphere from 000, and keep the 001, and 002 and 003 and 004. give me a big list, and with the
+> list i want screenshots of how it would look. I want these eto look mathematical and abstract,
+> as well as made from particles with some loci where you have geometric elements (such as
+> triangles from the connected dots)
+
+**The table does not conduct the field any more.** Pointing at a row, focusing its link or
+tapping it does nothing to it; no row is marked `is-shown`, and the turns on a phone are gone
+with it. The field keeps **its own time**: a form **holds** for `HOLD` (5s) and then
+**transforms** into the next over `MORPH` (12.5s), round **the cycle** (`CYCLE`) and back to the
+start. The first form gathers out of specks scattered over the field for `ARRIVE` (1.6s) before
+its first hold.
+
+**The cycle is the forms the owner kept**, in this order: the **galaxy** (the old ring with dust
+inside it — the default, and first), the **sphere** (000), the **trefoil knot** (001), the
+**torus** (002), the **helix** (003), the **spiral** (004, the disc) and the **gas cloud**, which
+turns back into the galaxy. The cube (`lattice`) is gone.
+
+**The gas cloud is bigger and churns**: four overlapping lobes of gas, two wisps curling out of
+the middle and thickening as they go, two long filaments, a few dense knots and a wide faint halo,
+filling most of the field; the inner part turns faster than the outer (`drift: "churn"`).
+
+**A transformation** takes every speck from its place in the one form to its place in the next.
+The two forms' places are **paired by rank** — from the top down in 24 bands, and round each band
+in order (`perm`, `rank`) — so the top of one form goes to the top of the next and the whole
+turns rather than tangling. The specks **set off in turn**: the top first, over the first half of
+the transformation (`SWEEP`), with a little of each speck's own; and each **swings out of its
+straight way**, most at half way (`ARC`). The field keeps turning throughout. Which place in the
+form each speck holds is kept (`SLOT`) and carried from one form to the next, however many
+transformations a hidden window has missed (`keepUp`).
+
+**The loci**: here and there on the form, a few specks **joined each to its nearest three** by
+hairlines, the triangles those lines close **faintly filled** and the specks at their corners
+drawn a little larger — five standing at once, each coming up over 1.4s, standing about 7.6s and
+going (`LOCI`, `LOCUS_*`). A locus gathers specks round one picked at random **on the shape
+itself, never in its haze**, no two nearer than `LOCUS_GAP` (17px) so its triangles are open
+rather than a knot, and it works out its lines once, when it comes — so it turns with the form as
+one piece; a line pulled longer than `LOCUS_REACH` in a transformation is let go. The web between
+ninety random specks is gone; the loci replaced it.
+
+**The caption** says which form, and where it is: `03 / 07`, the form's name (*Trefoil knot*, or
+*Sphere → Trefoil knot* while it turns), and *Holding* or *Transforming* — with a hairline over it
+filling as the hold or the transformation goes (`.re-run`, `--run`).
+
+**With reduced motion** the galaxy is drawn once, with its loci, and nothing ever turns into
+anything.
+
+### The catalogue
+
+**`?form=<name>` holds any one form still on the page**, captioned *Held*: how the candidates
+were photographed for the owner, and the way to look at one again. Every candidate is in
+`SHAPES`; the ones the owner does not choose come out of the code.
+
+The candidates, as they were shown (numbered for choosing):
+
+| no. | name | `?form=` | what it is |
+|---|---|---|---|
+| 1 | Armillary | `gyre` | three rings crossed |
+| 2 | Saddle | `saddle` | a surface curving up one way and down the other |
+| 3 | Nested shells | `shells` | three spheres, one inside the next |
+| 4 | Double cone | `hourglass` | two cones, point to point |
+| 5 | Lorenz attractor | `lorenz` | where a point goes under Lorenz's three equations: the butterfly |
+| 6 | Aizawa attractor | `aizawa` | a sphere with a tube drawn down through it |
+| 7 | Rössler attractor | `rossler` | a flat spiral that folds over at its edge |
+| 8 | Möbius strip | `mobius` | its straight rulings and its one edge |
+| 9 | Klein bottle | `klein` | the bottle, as a wireframe |
+| 10 | Hopf fibration | `hopf` | circles on a torus, every one linked through every other |
+| 11 | Lissajous knot | `lissajous` | a curve of three sines |
+| 12 | Torus knot (7, 3) | `torusknot` | a line wound seven times round and three times through |
+| 13 | Seashell | `seashell` | a conch's spiral, as a wireframe |
+| 14 | Hyperboloid | `hyperboloid` | two families of straight lines crossing into a waist |
+| 15 | Geodesic sphere | `geodesic` | an icosahedron cut in two and pushed out: triangles |
+| 16 | Phyllotaxis | `phyllotaxis` | a sunflower's seeds on a dome, each turned the golden angle |
+| 17 | Spherical harmonic | `harmonic` | a sphere swollen into twelve lobes |
+| 18 | Enneper surface | `enneper` | a minimal surface folding over itself |
+| 19 | Ripple | `ripple` | rings on still water |
+| 20 | Borromean rings | `borromean` | three rings, no two linked, all three held |
+| 21 | Supershape | `supershape` | the superformula in three dimensions, as a wireframe |
+| 22 | Vortex | `vortex` | a funnel of specks whirling, faster nearer the middle |
+| 23 | Gyroid | `gyroid` | a minimal surface of labyrinths, cut to a ball |
+| 24 | Helicoid | `helicoid` | a spiral staircase of a surface |
+
+A form marked `fit` (the attractors, the Möbius strip, the Klein bottle, the seashell, Enneper's
+surface, the supershape) is recentred on its own middle and scaled so all but its furthest few
+specks fill the same reach as every other form, whatever its own numbers are; `turn` stands one
+at an angle. The attractors are traced once and sampled **in order along the path**, so their
+loops read as lines; the surfaces that would otherwise read as a fog are drawn as their
+**wireframe** (`wire`).
+
+### What was tried and was wrong
+
+- **Sixteen specks packed round a locus's anchor**: in a dense form they stood within a few
+  pixels of each other, and the locus read as a dark blot. They are kept 17px apart.
+- **Loci in the haze**: a locus that caught loose specks drew a triangle hanging off the shape.
+- **The Lorenz attractor sampled at random** along a long path was a smudge; turned to face you
+  and sampled in order along a shorter one, it is the butterfly.
+- **The Hopf fibration by stereographic projection**: the circles came out at wildly different
+  sizes and the whole was a blot at the middle. It is one torus's linked circles now.
+
+### How to test it
+
+In `tests/index-pages.spec.js` (run on the page's own clock, sped up with Playwright's):
+
+- **`the field holds each form five seconds and turns into the next over twelve and a half,
+  whatever is pointed at`** (replaces *pointing at a row gathers the field into an abstract
+  form…*) — the cycle as listed; the galaxy held and captioned `01 / 07`; a row pointed at changes
+  nothing and no row is marked; still holding at 6.3s, turning into the sphere at 7s (captioned
+  *Galaxy → Sphere*), half way through at 12.9s, still turning at 18.6s and the sphere held at
+  20.1s, a different drawing from the galaxy; on to the knot after its five seconds; and round the
+  whole cycle back to the galaxy. Nothing written into the drawing.
+- **`here and there on the field, specks are joined into triangles`** (new) — in a second, more
+  than twenty triangles filled and a hundred lines drawn on the field's canvas.
+- **`a form can be held on the page, and the cube is gone`** (new) — `?form=knot` holds the knot,
+  captioned; `?form=lattice` is not a form, and the page runs its cycle.
+- **`the field with animation turned off › the galaxy is simply there, and nothing moves`** —
+  drawn at once, and the same drawing twenty-five seconds later.
+
+### Known issues / TODO
+
+- **The owner is to choose from the catalogue**; the chosen go into `CYCLE` (in the order they
+  give, or a sensible one), and the rest come out of `SHAPES` and `NAMES`, and out of the table
+  above.

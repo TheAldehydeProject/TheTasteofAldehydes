@@ -780,7 +780,9 @@ test("the front house is marked by four corners standing clear of it and its lab
    "de emphasize the black line in the middle in SD. (especially with the
    shadow around it)" (2026-09-25, night). Read off the particles' canvas
    down the middle of the window: the line is still there the whole way
-   down, but no longer dark — and next to nothing lies beside it. */
+   down, but no longer dark — and next to nothing lies beside it. (Down
+   the whole way the houses leave uncovered: since 2026-09-26 nothing is
+   drawn under a house at all, and the front house stands on the axis.) */
 test("the axis is a quiet line, with hardly any light either side", async ({ page }) => {
   await page.goto(SHEET);
   await waitForSheet(page);
@@ -791,8 +793,15 @@ test("the axis is a quiet line, with hardly any light either side", async ({ pag
     const g = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
     const mid = Math.round((c.clientWidth / 2) * ratio);
     const alpha = (x, y) => g[(y * c.width + x) * 4 + 3];
+    const at = c.getBoundingClientRect();
+    const covered = [...document.querySelectorAll(".sheet-frame, .sheet-caption, .sheet-number")]
+      .filter((f) => f.closest(".sheet-frame").style.visibility !== "hidden")
+      .map((f) => f.getBoundingClientRect())
+      .filter((r) => r.width && r.left - at.left - 4 < c.clientWidth / 2 && r.right - at.left + 4 > c.clientWidth / 2);
     let there = 0, dark = 0, lit = 0, rows = 0;
     for (let y = 0; y < c.height; y += 2) {
+      const cy = y / ratio + at.top;
+      if (covered.some((r) => cy >= r.top - 4 && cy <= r.bottom + 4)) continue;
       rows++;
       const a = Math.max(alpha(mid - 1, y), alpha(mid, y), alpha(mid + 1, y));
       if (a > 90) there++;
@@ -1110,6 +1119,86 @@ test("ADAR's wells bend the page towards them, and let it go again", async ({ pa
   expect(after.bend, "no field once ADAR has been left").toBe(false);
   expect(after.turned, "and every house as it was").toBe(0);
   expect(errors).toEqual([]);
+});
+
+/* ADAR'S PULL IS STEADY: "The black holes that pop up with ADAR house
+   hovering in SD should have less of waves of effects and rather a general
+   constant (almost constant pull)" (2026-09-26). The waves pushed what
+   they crossed outward ahead of them and drew it in behind; now every
+   point a well reaches is drawn IN, towards the hole, at every moment —
+   read off the field itself, again and again over two seconds. */
+test("ADAR's wells only ever draw the page in, never push it out", async ({ page }) => {
+  test.setTimeout(60000);
+  await page.goto(SHEET);
+  await waitForSheet(page);
+  await pointAt(page, 1);
+  await page.waitForTimeout(2600);
+  let looked = 0, pushed = 0;
+  for (let k = 0; k < 8; k++) {
+    const r = await page.evaluate(() => {
+      const bend = window.HouseMotifs.bend();
+      const wells = window.HouseMotifs.wellsAt();
+      if (!bend || !wells.length) return null;
+      let looked = 0, pushed = 0;
+      for (let y = 60; y < innerHeight; y += 12) for (let x = 0; x < innerWidth; x += 12) {
+        const p = bend(x, y);
+        const moved = Math.hypot(p.x - x, p.y - y);
+        if (moved < 0.5) continue;
+        const w = wells.reduce((a, b) => (Math.hypot(b.x - x, b.y - y) < Math.hypot(a.x - x, a.y - y) ? b : a));
+        looked++;
+        if (Math.hypot(p.x - w.x, p.y - w.y) > Math.hypot(x - w.x, y - w.y) + 0.01) pushed++;
+      }
+      return { looked, pushed };
+    });
+    if (r) { looked += r.looked; pushed += r.pushed; }
+    await page.waitForTimeout(250);
+  }
+  expect(looked, "a field to read").toBeGreaterThan(100);
+  expect(pushed, "and nothing in it pushed away from a hole").toBe(0);
+});
+
+/* NOTHING IS DRAWN OVER A HOUSE: "make the particles in picture one not go
+   in front of the house, i want them to attach to the house" (2026-09-26).
+   Read off the particles' canvas: inside every house plainly on the page —
+   its picture and its label — not a speck; and where the spoke of a house
+   at the side comes to that house, a tie drawn on its edge. */
+test("nothing is drawn over a house, and each spoke is tied on at its edge", async ({ page }) => {
+  await page.goto(SHEET);
+  await waitForSheet(page);
+  await bringToFront(page, 2);
+  await page.mouse.move(4, 4);
+  await page.waitForTimeout(1500);
+  const out = await page.evaluate(() => {
+    const c = document.querySelector(".sheet-field");
+    const at = c.getBoundingClientRect();
+    const ratio = c.width / c.clientWidth;
+    const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+    const ink = (x0, y0, x1, y1) => {
+      let n = 0;
+      for (let y = Math.max(0, Math.round(y0 * ratio)); y < Math.min(c.height, Math.round(y1 * ratio)); y++)
+        for (let x = Math.max(0, Math.round(x0 * ratio)); x < Math.min(c.width, Math.round(x1 * ratio)); x++)
+          if (d[(y * c.width + x) * 4 + 3] > 10) n++;
+      return n;
+    };
+    const mid = c.clientWidth / 2;
+    const houses = [...document.querySelectorAll(".sheet-frame")]
+      .filter((f) => f.style.visibility !== "hidden" && parseFloat(f.style.getPropertyValue("--shown")) > 0.34)
+      .map((f) => {
+        const r = f.getBoundingClientRect();
+        const l = r.left - at.left, t = r.top - at.top, rr = r.right - at.left, b = r.bottom - at.top;
+        if (b < 0 || t > c.clientHeight) return null;
+        const side = (l + rr) / 2 > mid + 40 ? "right" : (l + rr) / 2 < mid - 40 ? "left" : "front";
+        const cy = (t + b) / 2;
+        const tie = side === "right" ? ink(l - 8, cy - 7, l + 1, cy + 7) : side === "left" ? ink(rr - 1, cy - 7, rr + 8, cy + 7) : null;
+        return { over: ink(l + 2, t + 2, rr - 2, b - 2), side, tie };
+      }).filter(Boolean);
+    return houses;
+  });
+  expect(out.length, "houses on the window").toBeGreaterThan(2);
+  out.forEach((h, i) => expect(h.over, `specks drawn over house ${i + 1}`).toBe(0));
+  const sides = out.filter((h) => h.side !== "front");
+  expect(sides.length, "houses at the side").toBeGreaterThan(1);
+  sides.forEach((h, i) => expect(h.tie, `a tie where the spoke meets house ${i + 1}`).toBeGreaterThan(6));
 });
 
 /* QIMU & MUSICIANS KEPT QUIET: "more subtle and way less movement".

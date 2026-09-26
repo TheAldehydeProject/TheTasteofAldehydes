@@ -782,3 +782,31 @@ change), `tests/contact-sheet.spec.js`, `tests/houses.spec.js`.
 - On the house's own page, **`Les Abstraits has its armoire … and a drip down the whole page into
   a beaker…`** runs its own clock for 160 seconds rather than 80, and checks the same of the
   words written on the page's canvas.
+
+## 2026-09-26 — ADAR's wells: a steady pull, and no waves
+
+> The black holes that pop up with ADAR house hovering in SD should have less of waves of effects
+> and rather a general constant (almost constant pull).
+
+**The waves are gone.** Each well rang out four rings of dots (`RING_*`) that pushed what they
+crossed outward ahead of them and drew it in behind them, so the page rippled in and out as they
+passed; nothing of them is in `motifs.js` — no `RING_SPEED`, `RING_COUNT`, `RING_PUSH`,
+`RING_BAND`, no `rings` on a well.
+
+**The pull is general and steady**: much the same across a well's whole reach and a little
+stronger at the hole — `WELL_FLOOR` (0.42) of it reaches right across the field and the rest
+gathers at the hole — so the page's squares are seen bent in towards it everywhere inside its
+reach, and it swells and eases only very slightly, very slowly (`WELL_BREATH`, 5%, over about
+eleven seconds: the owner's "almost constant"). The swirl is a touch less (`WELL_SWIRL` 1.0).
+
+**What shows the pull now is THE INFALL**: specks drawn in to the hole from all round the edge of
+its reach, quickening as they near it and turning as they come, and taken by it at its edge
+(`INFALL`, eighty at once) — instead of rings going out.
+
+### How to test it
+
+In `tests/contact-sheet.spec.js`, **`ADAR's wells only ever draw the page in, never push it
+out`** (new): while ADAR is rested on, the field is read eight times over two seconds at points
+across the window, and every point it moves is moved **nearer** the hole nearest it — never
+further. With the waves this found fifteen points pushed out; `ADAR's wells bend the page towards
+them, and let it go again` holds as it was.

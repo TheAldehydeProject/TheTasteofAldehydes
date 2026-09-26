@@ -137,6 +137,11 @@
   const SPOKE_PARTS = 130;         // particles to a spoke
   const SPOKE_WIDTH = 5;           // px, the tube's reach either side of its line
   const SPOKE_TWIST = 0.25;        // radians a second the tube turns about itself
+  // NOTHING IS DRAWN OVER A HOUSE (2026-09-26): the particles are taken
+  // out of every house's box, a little past its edge, and a spoke is tied
+  // on where it meets the edge — see attach().
+  const ATTACH_PAD = 3;            // px round a house kept clear
+  const TIE_SIDE = 3.5;            // px, half the tie's square
   const DUST = 520;                // specks turning round the axis (fewer on a phone)
   const DUST_SPIN = 0.07;          // radians a second
   // THE CORNERS: four brackets of specks standing just outside the front
@@ -632,6 +637,65 @@
       const q = age / b.life;
       const e = 1 - Math.pow(1 - q, 3);
       speck(b.x + b.dx * e, b.y + b.dy * e, b.size, (1 - q) * 0.7);
+    }
+    ink.globalAlpha = 1;
+    attach(t);
+  }
+
+  /** NOTHING IS DRAWN OVER A HOUSE, and every spoke is TIED ON at its edge.
+      The owner (2026-09-26): "make the particles ... not go in front of the
+      house, i want them to attach to the house". A house turned away stands
+      under this canvas (it is further back than the specks round it), so a
+      strand, the dust or its own spoke used to cross its picture; now the
+      particles are taken back out of every house's box — picture and label
+      — as fully as the house is there to hide them (`--shown`), and where
+      a spoke meets the edge of its house a small tie is drawn: a square of
+      specks sitting on the edge, a registration mark on what it holds. */
+  function attach(t) {
+    const at = ink.canvas.getBoundingClientRect();
+    const boxes = [];
+    frames.forEach((frame, i) => {
+      if (frame.style.visibility === "hidden") return;
+      const there = Math.min(1, (parseFloat(frame.style.getPropertyValue("--shown")) || 0) * 3);
+      if (there < 0.02) return;
+      const r = frame.getBoundingClientRect();
+      if (!r.width || r.bottom < at.top || r.top > at.bottom) return;
+      boxes.push({ i, there, l: r.left - at.left, t: r.top - at.top, r: r.right - at.left, b: r.bottom - at.top });
+      for (const sel of [".sheet-caption", ".sheet-number"]) {
+        const el = frame.querySelector(sel);
+        const q = el && el.getBoundingClientRect();
+        if (q && q.width) boxes.push({ i: -1, there, l: q.left - at.left, t: q.top - at.top, r: q.right - at.left, b: q.bottom - at.top });
+      }
+    });
+    ink.globalCompositeOperation = "destination-out";
+    ink.fillStyle = "#000";
+    for (const b of boxes) {
+      ink.globalAlpha = b.there;
+      ink.fillRect(b.l - ATTACH_PAD, b.t - ATTACH_PAD, b.r - b.l + ATTACH_PAD * 2, b.b - b.t + ATTACH_PAD * 2);
+    }
+    ink.globalCompositeOperation = "source-over";
+    ink.fillStyle = "rgb(" + INK + ")";
+    // THE TIES: where a spoke's line comes to its house's near edge.
+    for (const b of boxes) {
+      if (b.i < 0 || !shown[b.i]) continue;
+      const d = b.i - pos;
+      if (Math.abs(d) > 2.6) continue;
+      const sa = Math.sin(d * TURN);
+      const reach = R * shown[b.i] * sa;           // how far across the spoke runs
+      const y = cy + d * span;
+      const edge = reach > 0 ? b.l - ATTACH_PAD : b.r + ATTACH_PAD;
+      if (Math.abs(reach) < Math.abs(edge - cx) || y < b.t || y > b.b) continue;
+      const fade = Math.pow(Math.max(0, 1 - Math.abs(d) / 2.6), 0.7) * shown[b.i] * helixShown * b.there;
+      const beat = REDUCE_MOTION ? 0 : Math.max(0, Math.sin(t * 2.2 + b.i));
+      const side = TIE_SIDE;
+      for (let k = 0; k <= 4; k++) {
+        const u = -side + (k / 4) * side * 2;
+        speck(edge - side, y + u, 1.2, 0.8 * fade);
+        speck(edge + side, y + u, 1.2, 0.8 * fade);
+        speck(edge + u, y - side, 1.2, 0.8 * fade);
+        speck(edge + u, y + side, 1.2, 0.8 * fade);
+      }
+      speck(edge, y, 2 + beat * 0.8, (0.85 + beat * 0.15) * fade);
     }
     ink.globalAlpha = 1;
   }

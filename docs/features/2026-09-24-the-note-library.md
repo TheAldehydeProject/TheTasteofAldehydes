@@ -3,7 +3,7 @@
 Date: 2026-09-24
 
 Files touched: `categories/note-library.html` (new), `note-library.js` (new, ~870
-lines; ~990 by the last section), the `lib-*` rules at the foot of `style.css`, `nav.js` (a line in `SITE_LINKS`),
+lines; ~1,070 by the last section), the `lib-*` rules at the foot of `style.css`, `nav.js` (a line in `SITE_LINKS`),
 `search.js` (a note is findable, by any of its spellings), `search-page.js` (a line in
 `PAGES`), `search.html` (a **Notes** filter), `tests/note-library.spec.js` (new), and the
 page lists in `tests/menu.spec.js`, `tests/pages.spec.js` and `tests/mobile.spec.js`.
@@ -653,5 +653,95 @@ In `tests/note-library.spec.js`:
 
 ### Known issues / TODO
 
-- The page is still called *Note Library* in the menu, on the map and in its heading; if the owner
-  wants it renamed to go with the archive, it is the five places in CLAUDE.md.
+- (Superseded the same day by the periodic table, below.) The page is still called *Note Library*
+  in the menu, on the map and in its heading; renaming it is the five places in CLAUDE.md.
+
+## 2026-09-26, last of all — a periodic table of notes
+
+> i also want you to redisgn the note library. I am running out of ideas so redisgn it somehow and
+> we will change it keep the colours and the search, keep it as is more or less.
+
+The archive lasted one round. The page is now **a periodic table of notes** — chosen because the
+site is *The Taste of Aldehydes*, aldehydes are chemistry, and a periodic table is the most
+geometric way there is of setting out a family of things with a colour for each kind. **The
+colours, the search bar (and its ×), the order buttons, the accord tabs and the readout are kept
+as they were**; everything below them is new, and the page is still called *Note Library*, with
+*Periodic table of notes* over its name.
+
+**Every accord is a group** (`.lib-shelf`): a block of elements standing **down in columns seven
+deep** — the seven periods (`PERIODS`) — as many columns across as it needs (`--cols`, set by the
+script), under a **head** giving its number (`01`, in the order the accords stand on the page), its
+code in its colour, its name, and how many elements it holds, over a rule in its colour (its line
+is the head's `title`). The groups stand side by side and wrap, so the page reads as one table of
+coloured blocks with gaps where a period is short. On a phone a group is the page's width and its
+elements read across in rows.
+
+**Every note is an element** (`.lib-record`): a 74px square tile, faintly its accord's colour
+(`--mark-rgb-a`, a tenth of it) with an edge a third of it; at its top left its **number** — its
+place in the whole table, counted down the page, 1 to 332; at its top right, in its accord's
+colour, **how many fragrances use it**, as an element carries its mass; in its middle its
+**symbol**; and at its foot its name. **The symbol** (`symbolFor`) is its first letter as a capital
+and a small letter after it — the first of its second word if it has one (*Green Mandarin*, Gm),
+then each letter of its name in turn — and a third letter only where every pair is taken
+(*Cedarwood*, Ced). Symbols are worked out down the page and never shared; a note added moves only
+the symbols after it that it collides with. Number and symbol are on the tile as `data-no` and
+`data-sym`; the call number (`WOO 007`) is still worked out and on it as `data-call`, and is what
+the card gives.
+
+**The key** (`.lib-key`), at the right of the page's head: one tile large, with what each part of
+a tile is ruled out to it — *Number*, *Symbol* and *Note* to its left, *Fragrances using it* to its
+right — showing whichever element the hand (or the keyboard) is on, and the one used most until
+then (`keyTo`). Not on a phone, where the tile under the finger is its own key.
+
+**The element card** (it was the case file): *ELEMENT* with the element's symbol and call number
+across its head; the tile large beside **its atom** — a nucleus of specks and **an electron for
+every fragrance that uses the note**, in its shells (two, eight, eighteen, thirty-two, `SHELLS`),
+each shell a hairline ring turning at its own speed, the inner faster, in the accord's colour
+(`markFor`, `drawMark` — it was the ring of specks, "the mark"); a caption, *28 electrons — one
+for every fragrance using it*; its name and *Accord WOO — Woods*; what it is; **Isotopes** (the
+other spellings — they were *Aliases*); and **Compounds · 28** (the fragrances using it, the same
+dropdowns — it was *Known appearances*). The stamp, the exhibit, the paperclip and the typed
+SUBJECT and SUMMARY are gone.
+
+**The terminal and the tabs dim rather than fold away**: a group with nothing answering a search
+goes dim where it stands (`is-away`, at 0.16), and an accord's tab lights its group and dims every
+other, as a periodic table's key does, so the table keeps its shape. An element answering is
+outlined in white with a white mark under it; the rest go dim. *A random element* stands where
+*Pull a random file* did, an empty search says *No element answers that*, and the readout's first
+figure is **Elements**. The elements fill in in number order as the page arrives, each growing into
+its place.
+
+Nothing of the archive is left in the code: no `.lib-call`, `.lib-marks`, `.lib-box-no`, lid, rivet,
+hand-hole, stamp, exhibit or clip, and no `MARKS_MOST`.
+
+### How to test it
+
+In `tests/note-library.spec.js`:
+
+- **`the notes are a periodic table: every element numbered, with a symbol of its own, in its
+  accord's colour`** (replaces *…files in boxes…*) — nothing of the books or the files left; every
+  element numbered 1 upwards in page order, a symbol of one capital and one or two small letters,
+  none shared, and the fragrance count it shows its own; every element tinted, one colour to an
+  accord and each accord its own.
+- **`pressing an element opens its card, with an electron for every fragrance using it`**
+  (replaces *…case file*) — outlined; ELEMENT, the symbol and call number, the tile's symbol,
+  number and count, the caption, the name, Isotopes, Compounds with the count; the atom drawn with
+  a whole number of electrons for each fragrance; the close closes it.
+- **`the key at the head of the page shows the element under the hand`** (new) — its four labels,
+  Cedarwood to begin with, Bergamot under the hand, with its symbol and count.
+- **`the groups breathe`** (replaces *the boxes breathe*) — groups 16px apart across and 24px down,
+  elements 3px apart.
+- **`every accord is a group, seven deep, under a head saying what is in it`** (replaces *…a box…*)
+  — its number in page order, its code, its count; seven deep (or fewer if it holds fewer), as many
+  columns as it needs, reading down first — read off the layout, which the arrival does not move.
+- **`the elements stand in their groups without running into each other`** — at 1440, 900 and
+  390px, once the table has filled in: no element outside its group, none on another, no group on
+  another, no sideways scroll.
+- The ×, the terminal and the tabs now expect a group left out to carry `is-away` and stay on the
+  page; the card's call reads the symbol first; the readout's first figure is *Elements*.
+
+### Known issues / TODO
+
+- The owner said they would change it; this is a first answer to "redesign it somehow".
+- At some widths a band of groups ends well short of the right edge, where the next group is too
+  wide to fit beside it — the gaps of a periodic table, left as they fall.

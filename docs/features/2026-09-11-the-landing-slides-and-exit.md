@@ -116,6 +116,18 @@ the curve, which are what was wrong.
 
 Both fail on the `landing.js` before this change.
 
+## 2026-09-26 — the line on slide 2 names the site
+
+> fix A personal project of perfume exploration. “The Smell of Aldehydes” will act as a library
+> for information, interpretations, theories and even ideas. to suit the "taste" of aldehydes.
+
+Slide 2's line still called the site *The Smell of Aldehydes* after the owner had named it *The
+Taste of Aldehydes*. It says the site's name now — *A personal project of perfume exploration.
+“The Taste of Aldehydes” will act as a library for information, interpretations, theories and even
+ideas.* — and nothing else in it changed. The comment over it in `index.html` no longer calls it
+filler. In `tests/pages.spec.js`, **`the line on slide 2 names the site as its title does`**
+reads slide 1's title and slide 2's line, whole.
+
 ## Known issues / TODO
 
 None outstanding.

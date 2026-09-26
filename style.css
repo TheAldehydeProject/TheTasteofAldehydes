@@ -4164,10 +4164,6 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   min-height: 0;
   max-height: none;
 }
-/* The row the field is showing, when it is not being pointed at — a
-   link focused from the keyboard, or its turn on a phone. */
-.researches-page .index-table tr.is-shown td { color: var(--ink); }
-.researches-page .index-table tr[data-open="no"].is-shown td { color: var(--muted); }
 
 /* THE FIELD. Its corners bracketed, as the site brackets a drawing. */
 .re-field {
@@ -4220,6 +4216,23 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 }
 .re-caption-kind { letter-spacing: 0.08em; text-transform: uppercase; font-size: 10px; }
 .re-field:not(.is-drawn) .re-caption { visibility: hidden; }
+/* How far through the form's hold, or its turning into the next, the
+   field stands: a hairline over the caption, filled as it goes. */
+.re-run {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12px;
+  height: 1px;
+  background: rgba(var(--ink-rgb), 0.12);
+}
+.re-run i {
+  display: block;
+  height: 100%;
+  background: rgba(var(--ink-rgb), 0.6);
+  transform-origin: 0 50%;
+  transform: scaleX(var(--run, 0));
+}
 
 /* BELOW 900px ONE COLUMN: the name and what the page is, the field as a
    band under them, and the table under that. */
@@ -10263,214 +10276,169 @@ html.js-coming body.library-page .library { visibility: hidden; }
 }
 
 /* ------------------------------------------------------------------
-   THE ARCHIVE — files in boxes. The owner, 2026-09-26: "redisgn the
-   whole page of the note library, and I want it to be like files in
-   boxes rather than a library libvrary. im thinking of movies and spy
-   stuff. I want oyu to keep it on theme and geometric."
+   THE PERIODIC TABLE OF NOTES. The owner, 2026-09-26: "i also want you
+   to redisgn the note library. I am running out of ideas so redisgn it
+   somehow and we will change it keep the colours and the search".
 
-   AN ACCORD IS A BOX (`.lib-shelf`): a hairline box, its LID (`.lib-plate`)
-   a band across its head standing a little proud of it on either side,
-   carrying the box's number, the accord's code in its colour with a
-   strip of that colour down the lid's left end, its name, its line and
-   how many files it holds; a hand-hole cut in its front at the foot.
+   AN ACCORD IS A GROUP (`.lib-shelf`): a block of elements standing down
+   in columns seven deep — the seven periods — as many columns wide as it
+   needs (`--cols`, set by the script), under a HEAD (`.lib-plate`) with
+   its number, its code in its colour, its name and how many it holds.
+   The groups stand side by side and wrap.
 
-   A NOTE IS A FILE (`.lib-record`): a folder standing in the box, its TAB
-   (`.lib-call`) in one of three places across its top in turn, as a
-   drawer's folders' tabs are staggered, carrying its file number with
-   its accord's colour along its top edge; its name typed on its face;
-   and at its foot a small square for every fragrance using the note
-   (`.lib-marks`), so a note used often is a thicker file.
+   A NOTE IS AN ELEMENT (`.lib-record`): a square tile faintly its
+   accord's colour, with its number at the top left, how many fragrances
+   use it at the top right, its SYMBOL large in the middle and its name
+   at its foot.
 
-   They were BOOKS for four rounds — cloth, specks, flat shapes, then
-   skeletons on hairline boards — and folders before that, "digital"
-   ones the owner found "3-bit". None of the book is left: no spine
-   canvas, no boards canvas, no lean, no slip.
+   It was files in boxes (a case file, "movies and spy stuff") for one
+   round, and books on shelves before that. None of either is left.
    ------------------------------------------------------------------ */
-.lib-stacks { margin: 30px 0 0; }
+.library-page { --tile: 74px; --tile-gap: 4px; }
+.lib-stacks { margin: 34px 0 0; }
+body.lib-built .lib-stacks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 34px 20px;
+}
 body.lib-built .lib-shelf,
-body.lib-built .lib-record { --mark: hsl(var(--hue, 0) 45% 58%); }
+body.lib-built .lib-record,
+.lib-key,
+.lib-card { --mark: hsl(var(--hue, 0) 45% 58%); --mark-rgb-a: hsla(var(--hue, 0), 45%, 58%, 0.1); }
 body.lib-built .lib-grey,
-body.lib-built .lib-grey .lib-record { --mark: hsl(0 0% 62%); }
+body.lib-built .lib-grey .lib-record,
+.lib-key.lib-grey,
+.lib-card.lib-grey { --mark: hsl(0 0% 62%); --mark-rgb-a: hsla(0, 0%, 62%, 0.1); }
 
 body.lib-built .lib-shelf {
-  position: relative;
-  margin: 0 0 58px;
+  margin: 0;
   padding: 0;
-  border: 1px solid rgba(var(--ink-rgb), 0.24);
-  border-top: none;
-  background: rgba(var(--ink-rgb), 0.012);
+  transition: opacity 0.35s;
 }
-body.lib-built .lib-shelf.is-away { display: none; }
+/* A group the terminal or a tab has left out stays where it stands, dim,
+   so the table keeps its shape. */
+body.lib-built .lib-shelf.is-away { opacity: 0.16; }
 
-/* THE LID. */
+/* THE GROUP'S HEAD. */
 body.lib-built .lib-plate {
-  position: relative;
   display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 8px 26px;
-  margin: 0 -7px;
-  padding: 15px 24px 15px 30px;
-  border: 1px solid rgba(var(--ink-rgb), 0.42);
-  background: #111112;
-  box-shadow: inset 4px 0 0 var(--mark);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 8px;
+  width: calc(var(--cols, 1) * (var(--tile) + var(--tile-gap)) - var(--tile-gap));
+  min-width: calc(var(--tile) * 2);
+  margin: 0 0 8px;
+  padding: 0 0 7px;
+  border-bottom: 2px solid var(--mark);
+  cursor: default;
 }
-/* A rivet at either end of the lid. */
-body.lib-built .lib-plate::before,
-body.lib-built .lib-plate::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 4px;
-  height: 4px;
-  margin-top: -2px;
-  border: 1px solid rgba(var(--ink-rgb), 0.5);
-}
-body.lib-built .lib-plate::before { left: 12px; }
-body.lib-built .lib-plate::after { right: 10px; }
-.lib-box-no {
+.lib-group-no {
   margin: 0;
   font-family: var(--mono);
   font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(var(--ink-rgb), 0.55);
+  letter-spacing: 0.1em;
+  color: var(--muted);
 }
 body.lib-built .lib-shelf-name {
   margin: 0;
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  font-size: 16px;
-  white-space: nowrap;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 body.lib-built .lib-shelf-code {
-  margin: 0;
-  font-size: 26px;
-  letter-spacing: 0.08em;
+  display: block;
+  margin: 0 0 1px;
+  font-size: 15px;
+  letter-spacing: 0.1em;
   color: var(--mark);
 }
-body.lib-built .lib-shelf-say { margin: 0; font-size: 13px; line-height: 1.45; }
+body.lib-built .lib-shelf-say { display: none; }
 .lib-shelf-count {
   margin: 0;
   font-family: var(--mono);
   font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(var(--ink-rgb), 0.55);
-  white-space: nowrap;
+  color: var(--muted);
 }
 
-/* INSIDE THE BOX: the files, and the hand-hole cut in its front. */
+/* THE ELEMENTS, seven deep and as many across as the group needs. */
 body.lib-built .lib-records {
-  position: relative;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 30px 14px;
-  padding: 36px 26px 66px;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, var(--tile));
+  grid-auto-columns: var(--tile);
+  gap: var(--tile-gap);
 }
-body.lib-built .lib-records::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 20px;
-  width: 96px;
-  height: 20px;
-  margin-left: -48px;
-  border: 1px solid rgba(var(--ink-rgb), 0.3);
-  border-radius: 10px;
-  pointer-events: none;
-}
-
-/* A FILE. */
 body.lib-built .lib-record {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 10px;
+  box-sizing: border-box;
   min-width: 0;
-  height: 96px;
-  padding: 14px 12px 11px;
-  border: 1px solid rgba(var(--ink-rgb), 0.34);
-  background: #0f0f10;
-  color: rgba(var(--ink-rgb), 0.88);
+  width: var(--tile);
+  height: var(--tile);
+  margin: 0;
+  padding: 0;
+  border: 1px solid hsla(var(--hue, 0), 45%, 58%, 0.34);
+  background: var(--mark-rgb-a);
+  color: var(--ink);
   cursor: pointer;
   outline: none;
-  transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), border-color 0.25s, opacity 0.4s;
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), border-color 0.25s, background-color 0.25s, opacity 0.35s;
 }
-/* ITS TAB, standing on its top, in one of three places; the accord's
-   colour along its top edge. It covers the folder's own top edge where
-   it stands, so the tab and the folder read as one piece. */
-.lib-call {
+body.lib-built .lib-grey .lib-record { border-color: rgba(var(--ink-rgb), 0.3); }
+.lib-el-no,
+.lib-el-uses {
   position: absolute;
-  top: -14px;
-  left: calc(var(--tab, 0) * 30% - 1px);
-  width: 40%;
-  min-width: 58px;
-  height: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  border: 1px solid rgba(var(--ink-rgb), 0.34);
-  border-top: 2px solid var(--mark);
-  border-bottom: none;
-  background: #0f0f10;
+  top: 5px;
   font-family: var(--mono);
-  font-size: 8px;
+  font-size: 9px;
   line-height: 1;
-  letter-spacing: 0.12em;
-  color: rgba(var(--ink-rgb), 0.72);
-  transition: border-color 0.25s;
+  color: rgba(var(--ink-rgb), 0.62);
+  font-variant-numeric: tabular-nums;
 }
-.lib-call b, .lib-call i { font-weight: 500; font-style: normal; }
-.lib-call i::before { content: "-"; }
+.lib-el-no { left: 6px; }
+.lib-el-uses { right: 6px; color: var(--mark); }
+.lib-el-sym {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 19px;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
 body.lib-built .lib-record .lib-name {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: 6px;
   margin: 0;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  font-weight: 500;
-  line-height: 1.45;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-family: var(--sans);
+  font-size: 8.5px;
+  font-weight: 400;
+  line-height: 1.15;
+  text-align: center;
+  color: rgba(var(--ink-rgb), 0.78);
   overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 body.lib-built .lib-record .lib-say { display: none; }
-/* A small square for every fragrance that uses the note. */
-.lib-marks {
-  position: relative;
-  display: block;
-  flex: none;
-  width: calc(var(--n, 1) * 7px - 2px);
-  height: 5px;
-  background: repeating-linear-gradient(to right, rgba(var(--ink-rgb), 0.62) 0 5px, transparent 5px 7px);
-}
-.lib-marks::after {
-  content: attr(data-more);
-  position: absolute;
-  left: 100%;
-  top: 50%;
-  margin-left: 5px;
-  transform: translateY(-50%);
-  font-family: var(--mono);
-  font-size: 8px;
-  color: rgba(var(--ink-rgb), 0.6);
-}
 
 body.lib-built .lib-record:hover,
 body.lib-built .lib-record:focus-visible {
-  transform: translateY(-6px);
-  border-color: rgba(var(--ink-rgb), 0.72);
+  transform: translateY(-3px);
+  border-color: var(--mark);
+  background: hsla(var(--hue, 0), 45%, 58%, 0.2);
 }
-body.lib-built .lib-record:hover .lib-call,
-body.lib-built .lib-record:focus-visible .lib-call { border-left-color: rgba(var(--ink-rgb), 0.72); border-right-color: rgba(var(--ink-rgb), 0.72); }
-body.lib-built .lib-record:focus-visible { outline: 1px solid var(--lib-hi); outline-offset: 3px; }
+body.lib-built .lib-record:focus-visible { outline: 1px solid var(--lib-hi); outline-offset: 2px; }
 
-/* A file that answers the terminal, and one that does not. */
+/* An element that answers the terminal, and one that does not. */
 body.lib-built .lib-record.is-hit {
   border-color: var(--lib-hi);
   box-shadow: inset 0 0 0 1px rgba(var(--lib-hi-rgb), 0.8);
@@ -10478,36 +10446,126 @@ body.lib-built .lib-record.is-hit {
 body.lib-built .lib-record.is-hit::before {
   content: "";
   position: absolute;
-  top: -9px;
-  right: 6px;
+  bottom: -5px;
+  left: 50%;
   width: 4px;
   height: 4px;
+  margin-left: -2px;
   background: var(--lib-hi);
 }
-body.lib-built .lib-record.is-dim { opacity: 0.13; }
+body.lib-built .lib-record.is-dim { opacity: 0.14; }
 
-/* THE FILE THAT IS OUT: pulled up out of its box while its case file is
-   open, a sheet showing over its top. */
+/* THE ELEMENT BEING READ: outlined in white while its card is open. */
 body.lib-built .lib-record.is-out {
-  transform: translateY(-16px);
   border-color: var(--lib-hi);
+  background: hsla(var(--hue, 0), 45%, 58%, 0.26);
   z-index: 2;
 }
-body.lib-built .lib-record.is-out::after {
+
+/* THE ARRIVAL: the table filling in number order. */
+@keyframes lib-shelve { from { opacity: 0; transform: scale(0.82); } }
+body.lib-arriving .lib-record { animation: lib-shelve 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) var(--in) backwards; }
+
+/* THE KEY at the head of the page: one tile large, and what each part of
+   it is, ruled out to the side. */
+.lib-head.has-key {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 24px 40px;
+}
+.lib-head.has-key > :not(.lib-key) { grid-column: 1; }
+.lib-key {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: end;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: stretch;
+  gap: 0 14px;
+  margin: 0;
+  padding-right: 150px;
+}
+.lib-key-tile,
+.lib-card-tile {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  box-sizing: border-box;
+  border: 1px solid var(--mark);
+  background: var(--mark-rgb-a);
+}
+.lib-key-no,
+.lib-key-uses {
+  position: absolute;
+  top: 10px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1;
+  color: rgba(var(--ink-rgb), 0.7);
+}
+.lib-key-no { left: 12px; }
+.lib-key-uses { right: 12px; color: var(--mark); }
+.lib-key-sym {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40px;
+  text-align: center;
+  font-size: 50px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.lib-key-name {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 14px;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(var(--ink-rgb), 0.85);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.lib-key figcaption {
+  grid-column: 1;
+  grid-row: 1;
+  position: relative;
+  width: 150px;
+}
+.lib-key-tile { grid-column: 2; grid-row: 1; }
+.lib-key-say {
+  position: absolute;
+  right: 0;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+/* Each label ruled across to the part of the tile it names. */
+.lib-key-say::after {
   content: "";
   position: absolute;
-  z-index: -1;
-  left: 46%;
-  right: 8%;
-  top: -24px;
-  height: 30px;
-  border: 1px solid rgba(var(--ink-rgb), 0.55);
-  background: #151516;
+  top: 50%;
+  left: calc(100% + 6px);
+  height: 1px;
+  background: rgba(var(--ink-rgb), 0.3);
 }
-
-/* THE ARRIVAL: box by box, file by file, dropped into place. */
-@keyframes lib-shelve { from { opacity: 0; transform: translateY(-18px); } }
-body.lib-arriving .lib-record { animation: lib-shelve 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--in) backwards; }
+.lib-key-say[data-at="no"] { top: 5px; }
+.lib-key-say[data-at="no"]::after { width: 14px; }
+/* How many fragrances use it is at the tile's right, so its label stands
+   on the right and is ruled back to it. */
+.lib-key-say[data-at="uses"] { top: 5px; right: auto; left: calc(100% + 14px + 150px + 22px); }
+.lib-key-say[data-at="uses"]::after { left: auto; right: calc(100% + 6px); width: 16px; }
+.lib-key-say[data-at="sym"] { top: 59px; }
+.lib-key-say[data-at="sym"]::after { width: 46px; }
+.lib-key-say[data-at="name"] { top: 125px; }
+.lib-key-say[data-at="name"]::after { width: 36px; }
 
 /* ------------------------------------------------------------------
    THE ROOM
@@ -10531,12 +10589,12 @@ body.lib-arriving .lib-record { animation: lib-shelve 0.6s cubic-bezier(0.2, 0.7
 .lib-lamp.is-on { opacity: 1; }
 
 /* ------------------------------------------------------------------
-   THE CARD — A CASE FILE standing beside the archive. Not a dialog: the
-   boxes stay in reach, and pressing another file turns it over to that
-   one. Since 2026-09-26 ("movies and spy stuff") it is a dossier: CASE
-   FILE and the file number typed across its head over a dashed rule, a
-   STAMP across it, the mark clipped in as EXHIBIT A, and every heading —
-   SUBJECT, SUMMARY, ALIASES, KNOWN APPEARANCES — typed in capitals.
+   THE CARD — AN ELEMENT CARD standing beside the table. Not a dialog: the
+   table stays in reach, and pressing another element turns it over to
+   that one. Its tile large beside ITS ATOM (the canvas: an electron for
+   every fragrance that uses the note), then its name and accord, what it
+   is, its ISOTOPES (other spellings) and its COMPOUNDS (the fragrances).
+   It was a case file for one round, with a stamp and an exhibit.
 
    STILL DRAWN AS THE REST OF THE SITE IS: a hairline edge with a
    registration tick at each corner, no glass, no glow, no blur — the
@@ -10591,71 +10649,26 @@ body.lib-arriving .lib-record { animation: lib-shelve 0.6s cubic-bezier(0.2, 0.7
 }
 .lib-card-close { font-size: 22px; line-height: 1; padding: 2px 6px; }
 .lib-card-close:hover { color: var(--ink); }
-/* THE STAMP, set across the file at a slant: a double hairline box. */
-.lib-card-stamp {
-  position: absolute;
-  top: 66px;
-  right: 24px;
-  margin: 0;
-  padding: 5px 11px 4px;
-  border: 2px solid rgba(var(--ink-rgb), 0.5);
-  outline: 1px solid rgba(var(--ink-rgb), 0.3);
-  outline-offset: 2px;
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(var(--ink-rgb), 0.6);
-  transform: rotate(-9deg);
-  pointer-events: none;
+.lib-card-atom {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px 16px;
+  margin: 22px 0 18px;
 }
-/* THE EXHIBIT: the mark in a frame, clipped on. */
-.lib-card-exhibit {
-  position: relative;
-  width: 70%;
-  margin: 26px 0 0;
-  padding: 10px 10px 8px;
-  border: 1px solid rgba(var(--ink-rgb), 0.3);
-  background: rgba(var(--ink-rgb), 0.02);
-}
-.lib-card-clip {
-  position: absolute;
-  top: -13px;
-  left: 20px;
-  width: 11px;
-  height: 32px;
-  border: 1.5px solid rgba(var(--ink-rgb), 0.7);
-  border-radius: 6px;
-}
-.lib-card-clip::after {
-  content: "";
-  position: absolute;
-  left: 1.5px;
-  right: 1.5px;
-  top: 5px;
-  bottom: 8px;
-  border: 1.5px solid rgba(var(--ink-rgb), 0.7);
-  border-radius: 4px;
-}
+.lib-card-tile { width: 132px; height: 132px; }
+.lib-card-tile .lib-key-sym { top: 34px; font-size: 44px; }
 .lib-card-mark {
   display: block;
   width: 100%;
-  height: 92px;
+  height: 150px;
 }
 .lib-card-caption {
-  margin: 6px 0 0;
+  grid-column: 1 / -1;
+  margin: 0;
   font-family: var(--mono);
   font-size: 9px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.lib-card-label {
-  margin: 20px 0 4px;
-  font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.26em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -10665,7 +10678,7 @@ body.lib-arriving .lib-record { animation: lib-shelve 0.6s cubic-bezier(0.2, 0.7
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: hsl(var(--hue, 0) 45% 62%);
+  color: var(--mark);
 }
 .lib-card-name {
   margin: 0;
@@ -10675,7 +10688,7 @@ body.lib-arriving .lib-record { animation: lib-shelve 0.6s cubic-bezier(0.2, 0.7
   line-height: 1.1;
   outline: none;
 }
-.lib-card-say { min-height: 3em; margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink); }
+.lib-card-say { min-height: 3em; margin: 16px 0 0; font-size: 15px; line-height: 1.6; color: var(--ink); }
 .lib-card h3 {
   margin: 22px 0 8px;
   font-family: var(--mono);
@@ -10790,18 +10803,22 @@ body.lib-arriving .lib-record { animation: lib-shelve 0.6s cubic-bezier(0.2, 0.7
   .lib-readout dd { font-size: 26px; }
   .lib-terminal { flex-wrap: wrap; padding: 12px 14px; }
   .lib-count { order: 3; width: 100%; }
-  body.lib-built .lib-plate {
-    grid-template-columns: minmax(0, 1fr) auto;
-    margin: 0 -4px;
-    padding: 13px 16px 13px 22px;
+  /* ON A PHONE every group is the width of the page, its elements in rows
+     across it rather than seven deep, and the key is left out — the tile
+     under the finger is its own key. */
+  .library-page { --tile: 62px; }
+  body.lib-built .lib-stacks { display: block; }
+  body.lib-built .lib-shelf { margin: 0 0 30px; }
+  body.lib-built .lib-plate { width: auto; }
+  body.lib-built .lib-records {
+    grid-auto-flow: row;
+    grid-template-rows: none;
+    grid-template-columns: repeat(auto-fill, minmax(var(--tile), 1fr));
+    grid-auto-rows: var(--tile);
   }
-  body.lib-built .lib-shelf-name { grid-column: 1 / -1; order: -1; }
-  /* The lid runs to three lines here: its rivets stand level with the
-     first, where the code is, rather than half way down. */
-  body.lib-built .lib-plate::before,
-  body.lib-built .lib-plate::after { top: 32px; }
-  body.lib-built .lib-shelf-say { grid-column: 1 / -1; }
-  body.lib-built .lib-records { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 10px; padding: 30px 12px 58px; }
+  body.lib-built .lib-record { width: auto; }
+  .lib-head.has-key { display: block; }
+  .lib-key { display: none; }
   .lib-card {
     top: auto;
     left: 12px;
@@ -10810,5 +10827,7 @@ body.lib-arriving .lib-record { animation: lib-shelve 0.6s cubic-bezier(0.2, 0.7
     width: auto;
     max-height: 70vh;
   }
-  .lib-card-stamp { top: 60px; right: 16px; font-size: 10px; }
+  .lib-card-tile { width: 104px; height: 104px; }
+  .lib-card-tile .lib-key-sym { top: 28px; font-size: 34px; }
+  .lib-card-mark { height: 120px; }
 }
