@@ -85,6 +85,14 @@
     geodesic: "Geodesic sphere", phyllotaxis: "Phyllotaxis", harmonic: "Spherical harmonic",
     enneper: "Enneper surface", ripple: "Ripple", borromean: "Borromean rings",
     supershape: "Supershape", vortex: "Vortex", gyroid: "Gyroid", helicoid: "Helicoid",
+    // The second list.
+    tesseract: "Tesseract", buckyball: "Buckyball", stella: "Star tetrahedron",
+    sierpinski: "Sierpiński tetrahedron", thomas: "Thomas attractor", halvorsen: "Halvorsen attractor",
+    chua: "Chua’s double scroll", dini: "Dini’s surface",
+    cyclide: "Dupin cyclide", eight: "Figure-eight knot", loxodrome: "Loxodromes",
+    dipole: "Dipole field", chladni: "Chladni figure", stellated: "Stellated dodecahedron",
+    cell24: "24-cell", coil: "Toroidal coil", spirograph: "Spirograph", eggcrate: "Egg crate",
+    fivetet: "Five tetrahedra", hilbert: "Hilbert curve",
   };
 
   // ============================================================
@@ -165,14 +173,16 @@
     while (out.length < want) out.push([0, 0, 0]);
     return (traced[name] = out);
   }
+  const PHI = (1 + Math.sqrt(5)) / 2;
+  /** The icosahedron's twelve corners, on the sphere. */
+  const icosa = () => [[-1, PHI, 0], [1, PHI, 0], [-1, -PHI, 0], [1, -PHI, 0], [0, -1, PHI], [0, 1, PHI], [0, -1, -PHI], [0, 1, -PHI],
+    [PHI, 0, -1], [PHI, 0, 1], [-PHI, 0, -1], [-PHI, 0, 1]].map((p) => { const l = Math.hypot(...p); return p.map((c) => c / l); });
   /** The icosahedron's edges, each cut in two and pushed out to the
       sphere — a geodesic of frequency two. Worked out once. */
   let dome = null;
   function geodesic() {
     if (dome) return dome;
-    const t = (1 + Math.sqrt(5)) / 2;
-    const v = [[-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0], [0, -1, t], [0, 1, t], [0, -1, -t], [0, 1, -t],
-      [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1]].map((p) => { const l = Math.hypot(...p); return p.map((c) => c / l); });
+    const v = icosa();
     const f = [[0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11], [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
       [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9], [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]];
     const mid = (a, b) => { const m = lerp3(a, b, 0.5), l = Math.hypot(...m); return m.map((c) => c / l); };
@@ -193,6 +203,50 @@
   };
   const superformula = (a, m, n1, n2, n3) =>
     Math.pow(Math.pow(Math.abs(Math.cos((m * a) / 4)), n2) + Math.pow(Math.abs(Math.sin((m * a) / 4)), n3), -1 / n1);
+  /** Worked out once and kept, under its name. */
+  const once = (name, make) => traced[name] || (traced[name] = make());
+  /** Every pair of corners standing `d` apart: a polytope's edges, in
+      three dimensions or in four. */
+  const edgesAt = (V, d) => {
+    const E = [];
+    V.forEach((a, j) => V.forEach((b, k) => {
+      if (k > j && Math.abs(Math.hypot(...a.map((c, n) => c - b[n])) - d) < 1e-3) E.push([a, b]);
+    }));
+    return E;
+  };
+  /** A place along one of a figure's edges, a few standing on its corners. */
+  const onEdge = (E, i, k) => {
+    const [a, b] = E[i % E.length];
+    return lerp3(a, b, R3[i] < 0.14 ? Math.round(R1[i]) : R1[i]).map((c) => c * k);
+  };
+  /** A regular tetrahedron's four corners on the sphere, a point upward. */
+  const tetra = () => [[0, -1, 0], ...[0, 1, 2].map((k) => {
+    const a = (k / 3) * TAU, r = (2 * Math.SQRT2) / 3;
+    return [Math.cos(a) * r, 1 / 3, Math.sin(a) * r];
+  })];
+  /** A figure symmetric about the (1, 1, 1) diagonal, stood on it. */
+  const diag = ([x, y, z]) => [(x - y) / Math.SQRT2, -(x + y + z) / Math.sqrt(3), (x + y - 2 * z) / Math.sqrt(6)];
+  /** The `h`th corner of the Hilbert curve that fills a cube of 2^bits
+      a side (Skilling's way: the index dealt out across the three axes,
+      Gray-decoded, and the excess turns undone). */
+  const hilbert = (h, bits) => {
+    const X = [0, 0, 0];
+    for (let j = 0; j < 3 * bits; j++) {
+      if ((h >> (3 * bits - 1 - j)) & 1) X[j % 3] |= 1 << (bits - 1 - Math.floor(j / 3));
+    }
+    const top = 2 << (bits - 1);
+    let t = X[2] >> 1;
+    for (let k = 2; k > 0; k--) X[k] ^= X[k - 1];
+    X[0] ^= t;
+    for (let Q = 2; Q !== top; Q <<= 1) {
+      const P = Q - 1;
+      for (let k = 2; k >= 0; k--) {
+        if (X[k] & Q) X[0] ^= P;
+        else { t = (X[0] ^ X[k]) & P; X[0] ^= t; X[k] ^= t; }
+      }
+    }
+    return X;
+  };
 
   const SHAPES = {
     // ---------- THE CYCLE ----------
@@ -412,6 +466,215 @@
     helicoid: { fuzz: 0.012, place(i) {
       const u = (R1[i] * 2 - 1) * 2.3 * Math.PI, v = (R2[i] * 2 - 1) * 0.62;
       return [v * Math.cos(u), u * 0.105, v * Math.sin(u)];
+    } },
+
+    // ---------- THE CANDIDATES, SECOND LIST (25 to 44) ----------
+    // The four-dimensional cube, turned a little through the fourth
+    // dimension and seen from along it: a cube inside a cube, corner to
+    // corner.
+    tesseract: { fuzz: 0.006, fit: true, place(i) {
+      const E = once("tesseract", () => {
+        const V = [];
+        for (let k = 0; k < 16; k++) V.push([0, 1, 2, 3].map((b) => ((k >> b) & 1 ? 1 : -1)));
+        const a = 0.34, c = Math.cos(a), s = Math.sin(a);
+        const see = ([x, y, z, w]) => {
+          [x, w] = [x * c - w * s, x * s + w * c];
+          [y, w] = [y * c - w * s, y * s + w * c];
+          const k = 2.4 / (3.4 - w);
+          return [x * k, y * k, z * k];
+        };
+        return edgesAt(V, 2).map(([p, q]) => [see(p), see(q)]);
+      });
+      return onEdge(E, i, 1);
+    } },
+    // The truncated icosahedron — a football, and the carbon-sixty molecule.
+    buckyball: { fuzz: 0.006, place(i) {
+      const E = once("buckyball", () => {
+        const V = [];
+        [[0, 1, 3 * PHI], [1, 2 + PHI, 2 * PHI], [PHI, 2, 2 * PHI + 1]].forEach((b) => {
+          for (let sg = 0; sg < 8; sg++) {
+            const q = b.map((c, k) => ((sg >> k) & 1 ? -c : c));
+            [[0, 1, 2], [1, 2, 0], [2, 0, 1]].forEach((o) => V.push(o.map((k) => q[k])));
+          }
+        });
+        const U = V.filter((v, j) => V.findIndex((w) => w.every((c, k) => Math.abs(c - v[k]) < 1e-6)) === j);
+        const R = Math.hypot(...U[0]);
+        return edgesAt(U, 2).map(([a, b]) => [a.map((c) => c / R), b.map((c) => c / R)]);
+      });
+      return onEdge(E, i, 0.8);
+    } },
+    // Two tetrahedra through each other, one point up and one point down.
+    stella: { fuzz: 0.008, place(i) {
+      const E = once("stella", () => [1, -1].flatMap((s) => {
+        const V = tetra().map((v) => v.map((c) => c * s)), out = [];
+        V.forEach((a, j) => V.forEach((b, k) => { if (k > j) out.push([a, b]); }));
+        return out;
+      }));
+      return onEdge(E, i, 0.82);
+    } },
+    // A tetrahedron made of four half-size ones, each of those of four
+    // more, and so on down: three levels, drawn as their edges.
+    sierpinski: { fuzz: 0.004, place(i) {
+      const E = once("sierpinski", () => {
+        let T = [tetra()];
+        for (let n = 0; n < 3; n++) T = T.flatMap((t) => t.map((c) => t.map((v) => lerp3(c, v, 0.5))));
+        const out = [];
+        T.forEach((t) => t.forEach((a, j) => t.forEach((b, k) => { if (k > j) out.push([a, b]); })));
+        return out;
+      });
+      return onEdge(E, i, 0.86);
+    } },
+    // Thomas's cyclically symmetric attractor: a point wandering a lattice
+    // of loops, never the same way twice.
+    thomas: { fuzz: 0.005, fit: true, place(i) {
+      const b = 0.208186;
+      const P = trace("thomas", ([x, y, z]) => [Math.sin(y) - b * x, Math.sin(z) - b * y, Math.sin(x) - b * z],
+        [0.1, 0, -0.1], 0.05, 7000, 1, 1500, diag);
+      return P[Math.floor((i / N) * P.length)].slice();
+    } },
+    // Halvorsen's: three lobes turning round one axis, a propeller.
+    halvorsen: { fuzz: 0.006, fit: true, turn: [1.3, 0, 0], place(i) {
+      const a = 1.89;
+      const P = trace("halvorsen", ([x, y, z]) => [-a * x - 4 * y - 4 * z - y * y, -a * y - 4 * z - 4 * x - z * z, -a * z - 4 * x - 4 * y - x * x],
+        [-1.48, -1.51, 2.04], 0.004, 31500, 1, 1500, diag);
+      return P[Math.floor((i / N) * P.length)].slice();
+    } },
+    // Chua's circuit: two scrolls, the point going round one and jumping
+    // to the other.
+    chua: { fuzz: 0.006, fit: true, turn: [0, -0.9, 0], place(i) {
+      const al = 15.6, be = 28, m0 = -1.143, m1 = -0.714;
+      const f = (x) => m1 * x + 0.5 * (m0 - m1) * (Math.abs(x + 1) - Math.abs(x - 1));
+      const P = trace("chua", ([x, y, z]) => [al * (y - x - f(x)), x - y + z, -be * y],
+        [0.7, 0, 0], 0.004, 26000, 1, 3000, ([x, y, z]) => [x, y * 2.2, z * 0.34]);
+      return P[Math.floor((i / N) * P.length)].slice();
+    } },
+    // Dini's surface: a funnel twisted into a spiral, narrowing for ever.
+    dini: { fuzz: 0.004, fit: true, place(i) {
+      const [wu, wv] = wire(i, 26, 9), u = wu * 3.2 * Math.PI, v = 0.08 + wv * 1.7;
+      return [Math.cos(u) * Math.sin(v), -(Math.cos(v) + Math.log(Math.tan(v / 2)) + 0.18 * u), Math.sin(u) * Math.sin(v)];
+    } },
+    // A torus pinched on one side: every line on it a circle.
+    cyclide: { fuzz: 0.005, fit: true, turn: [0.7, 0, 0], place(i) {
+      const [wu, wv] = wire(i, 18, 10), u = wu * TAU, v = wv * TAU;
+      const a = 1, b = 0.8, c = 0.6, d = 0.34, den = a - c * Math.cos(u) * Math.cos(v);
+      return [(d * (c - a * Math.cos(u) * Math.cos(v)) + b * b * Math.cos(u)) / den,
+        (b * Math.sin(v) * (c * Math.cos(u) - d)) / den,
+        (b * Math.sin(u) * (a - d * Math.cos(v))) / den];
+    } },
+    eight: { fuzz: 0.04, turn: [0.7, 0, 0], place(i) {
+      const t = R1[i] * TAU, k = 0.26;
+      return [(2 + Math.cos(2 * t)) * Math.cos(3 * t) * k, Math.sin(4 * t) * k * 1.3, (2 + Math.cos(2 * t)) * Math.sin(3 * t) * k];
+    } },
+    // Rhumb lines: six ways across a sphere at one constant bearing,
+    // spiralling into each pole.
+    loxodrome: { fuzz: 0.008, place(i) {
+      const k = i % 6, z = (R1[i] * 2 - 1) * 0.985, lon = Math.atanh(z) / 0.15 + (k / 6) * TAU, r = Math.sqrt(1 - z * z);
+      return [Math.cos(lon) * r * 0.8, -z * 0.8, Math.sin(lon) * r * 0.8];
+    } },
+    // A magnet's field: its lines leaving one pole and curving round to
+    // the other, in every direction round the axis.
+    dipole: { fuzz: 0.006, place(i) {
+      if (R2[i] < 0.05) return [0, (R1[i] - 0.5) * 0.2, 0];
+      const L = [0.5, 0.7, 0.9][i % 3], ph = ((Math.floor(i / 3) % 8) / 8) * TAU + (i % 3) * 0.2;
+      const th = 0.12 + R1[i] * (Math.PI - 0.24), r = L * Math.sin(th) ** 2;
+      return [r * Math.sin(th) * Math.cos(ph), -r * Math.cos(th) * 1.5, r * Math.sin(th) * Math.sin(ph)];
+    } },
+    // Sand on a sounded plate, gathered on the lines that stand still.
+    chladni: { fuzz: 0.003, turn: [-0.9, 0, 0], place(i) {
+      if (R2[i] < 0.1) {
+        // The plate's edge.
+        const s = R1[i] * 4, e = Math.floor(s) % 4, f = (s - Math.floor(s)) * 2 - 1;
+        const [x, z] = [[f, 1], [1, -f], [-f, -1], [-1, f]][e];
+        return [x * 0.8, 0, z * 0.8];
+      }
+      const P = pool("chladni", N, 53, (rnd) => {
+        const x = rnd() * 2 - 1, z = rnd() * 2 - 1, n = 2, m = 5;
+        const f = Math.cos(n * Math.PI * x) * Math.cos(m * Math.PI * z) - Math.cos(m * Math.PI * x) * Math.cos(n * Math.PI * z);
+        return Math.abs(f) < 0.045 ? [x * 0.8, 0, z * 0.8] : null;
+      });
+      return P[i % P.length].slice();
+    } },
+    // The small stellated dodecahedron: twelve points, each joined to the
+    // five across from it, pentagrams all round.
+    stellated: { fuzz: 0.006, place(i) {
+      const E = once("stellated", () => {
+        const V = icosa(), e = Math.min(...V.slice(1).map((v) => Math.hypot(...v.map((c, k) => c - V[0][k]))));
+        return edgesAt(V, e * PHI);
+      });
+      return onEdge(E, i, 0.82);
+    } },
+    // The 24-cell: a solid of the fourth dimension with no match in the
+    // third, twenty-four corners and ninety-six edges, seen as the
+    // tesseract is.
+    cell24: { fuzz: 0.006, fit: true, place(i) {
+      const E = once("cell24", () => {
+        const V = [];
+        for (let a = 0; a < 4; a++) for (let b = a + 1; b < 4; b++) for (const sa of [1, -1]) for (const sb of [1, -1]) {
+          const v = [0, 0, 0, 0];
+          v[a] = sa; v[b] = sb;
+          V.push(v);
+        }
+        const t = 0.3, c = Math.cos(t), s = Math.sin(t);
+        const see = ([x, y, z, w]) => {
+          [x, w] = [x * c - w * s, x * s + w * c];
+          [z, w] = [z * c - w * s, z * s + w * c];
+          const k = 2.4 / (3.2 - w);
+          return [x * k, y * k, z * k];
+        };
+        return edgesAt(V, Math.SQRT2).map(([p, q]) => [see(p), see(q)]);
+      });
+      return onEdge(E, i, 1);
+    } },
+    // Two wires wound round a ring, as a coil is.
+    coil: { fuzz: 0.01, turn: [0.62, 0, 0], place(i) {
+      const t = R1[i] * TAU, n = 22, ph = (i % 2) * Math.PI, R = 0.58, r = 0.19;
+      const q = R + r * Math.cos(n * t + ph);
+      return [q * Math.cos(t), r * Math.sin(n * t + ph), q * Math.sin(t)];
+    } },
+    // The toy's curve: a small wheel rolled inside a large one, a pen held
+    // off its rim — lifted and let down as it goes round.
+    spirograph: { fuzz: 0.01, turn: [0.75, 0, 0], place(i) {
+      const R = 7, r = 3, d = 4.2, k = (R - r) / r, t = R1[i] * TAU * 3;
+      return [((R - r) * Math.cos(t) + d * Math.cos(k * t)) * 0.095, Math.sin(t * 7) * 0.07, ((R - r) * Math.sin(t) - d * Math.sin(k * t)) * 0.095];
+    } },
+    // An egg crate: sin x sin z, drawn as its grid.
+    eggcrate: { fuzz: 0.004, place(i) {
+      const [wx, wz] = wire(i, 18, 18), x = wx * 2 - 1, z = wz * 2 - 1;
+      return [x * 0.8, -Math.sin(x * 2.5 * Math.PI) * Math.sin(z * 2.5 * Math.PI) * 0.15, z * 0.8];
+    } },
+    // Five tetrahedra in a dodecahedron's twenty corners, each corner
+    // used once: a star that turns only one way.
+    fivetet: { fuzz: 0.006, place(i) {
+      const E = once("fivetet", () => {
+        const q = 1 / PHI, V = [];
+        for (const a of [1, -1]) for (const b of [1, -1]) {
+          for (const c of [1, -1]) V.push([a, b, c]);
+          V.push([0, a * q, b * PHI], [a * q, b * PHI, 0], [a * PHI, 0, b * q]);
+        }
+        const far = (a, b) => Math.abs(Math.hypot(...a.map((c, k) => c - b[k])) - 2 * Math.SQRT2) < 1e-6;
+        const tets = [];
+        for (let a = 0; a < 20; a++) for (let b = a + 1; b < 20; b++) for (let c = b + 1; c < 20; c++) for (let d = c + 1; d < 20; d++) {
+          const T = [a, b, c, d];
+          if (T.every((x, j) => T.every((y, k) => k <= j || far(V[x], V[y])))) tets.push(T);
+        }
+        const used = new Set(), five = [];
+        tets.forEach((T) => { if (T.every((x) => !used.has(x))) { five.push(T); T.forEach((x) => used.add(x)); } });
+        const R = Math.sqrt(3), out = [];
+        five.forEach((T) => T.forEach((x, j) => T.forEach((y, k) => { if (k > j) out.push([V[x].map((c) => c / R), V[y].map((c) => c / R)]); })));
+        return out;
+      });
+      return onEdge(E, i, 0.82);
+    } },
+    // The Hilbert curve: one line that visits every cell of a cube of
+    // four by four by four, turning at right angles, never crossing itself.
+    hilbert: { fuzz: 0.006, turn: [0.2, 0.5, 0], place(i) {
+      const E = once("hilbert", () => {
+        const P = [];
+        for (let h = 0; h < 64; h++) P.push(hilbert(h, 2).map((c) => (c - 1.5) / 1.5));
+        return P.slice(1).map((p, k) => [P[k], p]);
+      });
+      const [a, b] = E[i % E.length];
+      return lerp3(a, b, R1[i]).map((c) => c * 0.62);
     } },
   };
 

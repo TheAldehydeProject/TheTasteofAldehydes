@@ -549,6 +549,42 @@ test("here and there on the field, specks are joined into triangles", async ({ p
   expect(after.strokes - before.strokes, "and their lines drawn").toBeGreaterThan(100);
 });
 
+/* THE SECOND LIST: twenty more candidates for the owner to choose from,
+   numbered 25 to 44 as they were shown. Each can be held on the page, is
+   named in the caption, and is drawn — a shape whose numbers came out
+   wrong draws only its haze. */
+const SECOND_LIST = {
+  buckyball: "Buckyball", stella: "Star tetrahedron", tesseract: "Tesseract",
+  stellated: "Stellated dodecahedron", fivetet: "Five tetrahedra", cell24: "24-cell",
+  loxodrome: "Loxodromes", spirograph: "Spirograph", coil: "Toroidal coil", dipole: "Dipole field",
+  dini: "Dini’s surface", sierpinski: "Sierpiński tetrahedron", hilbert: "Hilbert curve",
+  thomas: "Thomas attractor", chladni: "Chladni figure", chua: "Chua’s double scroll",
+  halvorsen: "Halvorsen attractor", eight: "Figure-eight knot", cyclide: "Dupin cyclide", eggcrate: "Egg crate",
+};
+test("every candidate on the second list can be held, and draws itself", async ({ page }) => {
+  test.slow();
+  const errors = collectPageErrors(page);
+  await page.clock.install();
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const ink = () => page.evaluate(() => {
+    const c = document.querySelector(".re-canvas"), d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+    let n = 0;
+    for (let i = 3; i < d.length; i += 4) if (d[i] > 40) n++;
+    return n;
+  });
+  await page.goto(RESEARCHES + "?form=sphere");
+  await page.clock.runFor(3000);
+  const sphere = await ink();
+  for (const [form, name] of Object.entries(SECOND_LIST)) {
+    await page.goto(RESEARCHES + "?form=" + form);
+    await page.clock.runFor(3000);
+    await expect(page.locator(".re-field")).toHaveAttribute("data-cycle", form);
+    await expect(page.locator(".re-caption-name")).toHaveText(name);
+    expect(await ink(), form + " is drawn, not only its haze").toBeGreaterThan(sphere * 0.5);
+  }
+  expect(errors).toEqual([]);
+});
+
 /* ONE FORM HELD: `?form=` stands any one form still on the page, which is
    how the candidates were shown to the owner. The cube is gone. */
 test("a form can be held on the page, and the cube is gone", async ({ page }) => {

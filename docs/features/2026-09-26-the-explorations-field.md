@@ -304,8 +304,70 @@ In `tests/index-pages.spec.js` (run on the page's own clock, sped up with Playwr
 - **`the field with animation turned off › the galaxy is simply there, and nothing moves`** —
   drawn at once, and the same drawing twenty-five seconds later.
 
+## 2026-09-26, later still — twenty more to choose from
+
+Shown the ten best of the first list, the owner asked for more before choosing: *"I want you to
+generate about 20 more of these and show me the exact same way you have now, and then we will
+choose."* Twenty more stand in `SHAPES` now, numbered on from the first list and **in the order
+they were ranked for the owner, the best-looking first** — so the table is also the ranking. Each
+is photographed held (`?form=`), as the first were, on two sheets of ten.
+
+| no. | name | `?form=` | what it is |
+|---|---|---|---|
+| 25 | Buckyball | `buckyball` | the truncated icosahedron — a football, and the carbon-sixty molecule |
+| 26 | Star tetrahedron | `stella` | two tetrahedra through each other, one point up and one down |
+| 27 | Tesseract | `tesseract` | the four-dimensional cube, turned a little through the fourth dimension and seen from along it |
+| 28 | Stellated dodecahedron | `stellated` | the small stellated dodecahedron: twelve points, pentagrams all round |
+| 29 | Five tetrahedra | `fivetet` | five tetrahedra in a dodecahedron's twenty corners, each corner used once |
+| 30 | 24-cell | `cell24` | a four-dimensional solid with no match in three, seen as the tesseract is |
+| 31 | Loxodromes | `loxodrome` | six rhumb lines spiralling across a sphere into its poles |
+| 32 | Spirograph | `spirograph` | the toy's curve — a wheel rolled inside a wheel — lifted and let down as it goes |
+| 33 | Toroidal coil | `coil` | two wires wound round a ring |
+| 34 | Dipole field | `dipole` | a magnet's field lines, from pole to pole all round the axis |
+| 35 | Dini's surface | `dini` | a funnel twisted into a spiral |
+| 36 | Sierpiński tetrahedron | `sierpinski` | a tetrahedron of four half-size ones, three levels down, as edges |
+| 37 | Hilbert curve | `hilbert` | one line visiting every cell of a four-by-four-by-four cube at right angles |
+| 38 | Thomas attractor | `thomas` | a point wandering a lattice of loops |
+| 39 | Chladni figure | `chladni` | sand on a sounded plate, gathered on the lines that stand still |
+| 40 | Chua's double scroll | `chua` | two scrolls, the point going round one and jumping to the other |
+| 41 | Halvorsen attractor | `halvorsen` | three lobes round one axis, a propeller |
+| 42 | Figure-eight knot | `eight` | the knot with four crossings |
+| 43 | Dupin cyclide | `cyclide` | a torus pinched on one side, every line on it a circle |
+| 44 | Egg crate | `eggcrate` | sin x sin z, as its grid |
+
+**The polytopes are drawn as their edges** (`onEdge`, the geodesic's way made shared): the
+edges worked out once from the corners — every pair standing a set distance apart (`edgesAt`,
+which works in four dimensions as in three) — and a few specks standing on the corners. The
+two four-dimensional ones are turned a little through the fourth dimension and then seen in
+perspective along it, which is what makes the tesseract a cube inside a cube. **The Hilbert
+curve** is Skilling's construction (`hilbert`); a check at the time found its 63 steps each one
+cell long and its 64 cells all different. **Halvorsen's and Thomas's attractors** are symmetric
+about the (1, 1, 1) diagonal and are stood on it (`diag`); Halvorsen's is leant towards you so
+its three lobes show.
+
+### What was tried and was wrong
+
+- **A Calabi–Yau manifold** (the quintic's cross-section, as twenty-five patches): in 2400 specks
+  it was a box of dust, whichever way it was seen. Out.
+- **Boy's surface** (Bryant and Kusner's): a ball with a crown, too many lines crossing to read.
+  Fewer lines did not save it. Out, for the Hilbert curve.
+- **A breather surface** was a needle through a ball; **Kuen's surface** an unreadable blob; **an
+  electron orbital** (hydrogen's 3d, sampled as a cloud of chances) a fuzz; **the Riemann surface
+  of the square root** a sheet seen edge on. All out, for the 24-cell, the coil, the spirograph
+  and the egg crate.
+- **The cinquefoil knot as a tube**, rings along it and then five strands twisting round it: a
+  tangle either way. Out, for the five tetrahedra.
+- **The egg crate tipped towards you**: a jumble. Lying flat, it reads as a wave.
+
+### How to test it
+
+- **`every candidate on the second list can be held, and draws itself`** (new, in
+  `tests/index-pages.spec.js`) — each of the twenty held by `?form=`, named in the caption, and
+  drawn with at least half the ink the sphere has: a shape whose numbers came out wrong draws only
+  its haze. No page errors.
+
 ### Known issues / TODO
 
-- **The owner is to choose from the catalogue**; the chosen go into `CYCLE` (in the order they
-  give, or a sensible one), and the rest come out of `SHAPES` and `NAMES`, and out of the table
-  above.
+- **The owner is to choose from both lists** (1–24 and 25–44); the chosen go into `CYCLE` (in the
+  order they give, or a sensible one), and the rest come out of `SHAPES` and `NAMES` — and their
+  helpers with them, where nothing else uses one — and out of both tables.
