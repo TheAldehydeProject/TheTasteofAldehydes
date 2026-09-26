@@ -1123,10 +1123,18 @@ test("ADAR's wells bend the page towards them, and let it go again", async ({ pa
 
 /* ADAR'S PULL IS STEADY: "The black holes that pop up with ADAR house
    hovering in SD should have less of waves of effects and rather a general
-   constant (almost constant pull)" (2026-09-26). The waves pushed what
-   they crossed outward ahead of them and drew it in behind; now every
-   point a well reaches is drawn IN, towards the hole, at every moment —
-   read off the field itself, again and again over two seconds. */
+   constant (almost constant pull)" (2026-09-26). Read off the field itself,
+   again and again over three seconds, at points round every well that has
+   come up to full strength:
+   - every point a well reaches is drawn IN, towards the hole, never out;
+   - and the pull at any one point is ALMOST CONSTANT — its strongest and
+     weakest within a fifth of each other. The waves swept through it: the
+     same points were pulled 21px at one moment and 38px the next (1.8
+     times), where the steady pull breathes by 5%.
+   A point in the reach of two wells at once is judged by neither — one
+   well's turn can carry it sideways from the other, which is not a wave.
+   Judging by the nearest hole instead failed a full run (2026-09-26) on
+   overlapping reaches alone, and let the waves themselves pass. */
 test("ADAR's wells only ever draw the page in, never push it out", async ({ page }) => {
   test.setTimeout(60000);
   await page.goto(SHEET);
@@ -1134,27 +1142,48 @@ test("ADAR's wells only ever draw the page in, never push it out", async ({ page
   await pointAt(page, 1);
   await page.waitForTimeout(2600);
   let looked = 0, pushed = 0;
-  for (let k = 0; k < 8; k++) {
+  const pulls = {};
+  for (let k = 0; k < 14; k++) {
     const r = await page.evaluate(() => {
       const bend = window.HouseMotifs.bend();
       const wells = window.HouseMotifs.wellsAt();
       if (!bend || !wells.length) return null;
+      const alone = (x, y) => { const reach = wells.filter((w) => Math.hypot(w.x - x, w.y - y) < w.R); return reach.length === 1 ? reach[0] : null; };
       let looked = 0, pushed = 0;
       for (let y = 60; y < innerHeight; y += 12) for (let x = 0; x < innerWidth; x += 12) {
         const p = bend(x, y);
         const moved = Math.hypot(p.x - x, p.y - y);
         if (moved < 0.5) continue;
-        const w = wells.reduce((a, b) => (Math.hypot(b.x - x, b.y - y) < Math.hypot(a.x - x, a.y - y) ? b : a));
+        const w = alone(x, y);
+        if (!w) continue;
         looked++;
         if (Math.hypot(p.x - w.x, p.y - w.y) > Math.hypot(x - w.x, y - w.y) + 0.01) pushed++;
       }
-      return { looked, pushed };
+      // How far in each of a ring of points round every full-strength well is drawn.
+      const pull = {};
+      wells.forEach((w) => {
+        if (w.s < 0.99) return;
+        for (const f of [0.3, 0.45, 0.6, 0.75]) for (let a = 0; a < 8; a++) {
+          const x = w.x + Math.cos((a * Math.PI) / 4) * w.R * f, y = w.y + Math.sin((a * Math.PI) / 4) * w.R * f;
+          if (x < 0 || y < 60 || x > innerWidth || y > innerHeight || alone(x, y) !== w) continue;
+          const p = bend(x, y);
+          pull[Math.round(w.x) + "," + Math.round(w.y) + ":" + f + ":" + a] = Math.hypot(x - w.x, y - w.y) - Math.hypot(p.x - w.x, p.y - w.y);
+        }
+      });
+      return { looked, pushed, pull };
     });
-    if (r) { looked += r.looked; pushed += r.pushed; }
-    await page.waitForTimeout(250);
+    if (r) {
+      looked += r.looked; pushed += r.pushed;
+      Object.entries(r.pull).forEach(([key, v]) => (pulls[key] = pulls[key] || []).push(v));
+    }
+    await page.waitForTimeout(200);
   }
   expect(looked, "a field to read").toBeGreaterThan(100);
   expect(pushed, "and nothing in it pushed away from a hole").toBe(0);
+  const held = Object.values(pulls).filter((v) => v.length >= 5);
+  expect(held.length, "points held in a well's reach long enough to compare").toBeGreaterThan(8);
+  const swing = Math.max(...held.map((v) => Math.max(...v) / Math.max(0.01, Math.min(...v))));
+  expect(swing, "the pull at a point almost constant").toBeLessThan(1.2);
 });
 
 /* NOTHING IS DRAWN OVER A HOUSE: "make the particles in picture one not go

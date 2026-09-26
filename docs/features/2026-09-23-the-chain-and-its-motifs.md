@@ -806,7 +806,21 @@ its reach, quickening as they near it and turning as they come, and taken by it 
 ### How to test it
 
 In `tests/contact-sheet.spec.js`, **`ADAR's wells only ever draw the page in, never push it
-out`** (new): while ADAR is rested on, the field is read eight times over two seconds at points
-across the window, and every point it moves is moved **nearer** the hole nearest it — never
-further. With the waves this found fifteen points pushed out; `ADAR's wells bend the page towards
-them, and let it go again` holds as it was.
+out`** (new): while ADAR is rested on, the field is read fourteen times over three seconds, and
+two things are held of it. **Every point it moves is moved nearer the hole whose reach it is in**,
+never further; and **the pull is almost constant** — a ring of points round every well at full
+strength is read each time, and at no point is the strongest pull more than 1.2 times the
+weakest. The steady pull breathes by 5% (a swing of 1.05); the waves swept the same points
+through 21px and 38px (1.8) and fail it. `ADAR's wells bend the page towards them, and let it go
+again` holds as it was.
+
+**The first version of this test was wrong, and it is worth knowing how.** It judged every point
+by the hole nearest it, and said the waves had pushed fifteen points out. A full run on
+2026-09-26 then failed it on the steady pull, with 558 points "pushed" — and every one stood
+where two wells' reaches overlap, one well's turn carrying a point sideways from the other, which
+is not a wave. Judged only where one well reaches, the old waves pushed **nothing** out either:
+their pull always outweighed their push, so "never pushed out" could not tell them from the
+steady pull, and the fifteen had been overlap too. What does tell them apart is the pull
+changing at a point over time, which is what the test now reads. **A point in the reach of two
+wells at once is judged by neither**; `wellsAt` gives each well's reach (`R`) and strength (`s`)
+for this.

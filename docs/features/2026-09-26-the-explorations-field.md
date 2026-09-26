@@ -296,7 +296,12 @@ In `tests/index-pages.spec.js` (run on the page's own clock, sped up with Playwr
   nothing and no row is marked; still holding at 6.3s, turning into the sphere at 7s (captioned
   *Galaxy → Sphere*), half way through at 12.9s, still turning at 18.6s and the sphere held at
   20.1s, a different drawing from the galaxy; on to the knot after its five seconds; and round the
-  whole cycle back to the galaxy. Nothing written into the drawing.
+  whole cycle back to the galaxy. Nothing written into the drawing. **Its clock is paused before
+  the page arrives** (`pauseAt`), since 2026-09-26: an installed clock goes on flowing at the real
+  rate between the steps, and on a busy machine that drift ate the 0.3s between *still holding*
+  and the turn, failing a full run. Paused, it showed its last step had been aimed at the very
+  edge of the galaxy's return (124.1s) and passed only on drift; it is aimed at 126.6s, the
+  middle of that hold.
 - **`here and there on the field, specks are joined into triangles`** (new) — in a second, more
   than twenty triangles filled and a hundred lines drawn on the field's canvas.
 - **`a form can be held on the page, and the cube is gone`** (new) — `?form=knot` holds the knot,

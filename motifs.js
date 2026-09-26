@@ -2127,9 +2127,10 @@
     bend() {
       return wells.length ? bendPoint : null;
     },
-    // Where ADAR's wells stand now — for the tests, like `census`.
+    // Where ADAR's wells stand now, how far each reaches and how strong it
+    // has come up (0 to 1) — for the tests, like `census`.
     wellsAt() {
-      return wells.map((w) => ({ x: w.x, y: w.y }));
+      return wells.map((w) => ({ x: w.x, y: w.y, R: w.R, s: w.s }));
     },
     stop(now) {
       house = null;

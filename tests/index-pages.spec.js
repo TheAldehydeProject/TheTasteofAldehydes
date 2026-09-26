@@ -475,7 +475,12 @@ test("the field holds each form five seconds and turns into the next over twelve
       return fillText.apply(this, arguments);
     };
   });
+  // Paused before the page arrives: an installed clock otherwise goes on
+  // flowing at the real rate between the steps, and on a busy machine that
+  // drift ate the 0.3s between "still holding" and the turn (it failed so
+  // once, in a full run). Paused, only `runFor` moves it, from the first frame.
   await page.clock.install();
+  await page.clock.pauseAt(Date.now() + 1000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(RESEARCHES);
   const field = page.locator(".re-field");
@@ -521,8 +526,9 @@ test("the field holds each form five seconds and turns into the next over twelve
   await page.clock.runFor(4600);        // 24.7s: the sphere held five seconds
   expect(await state(), "on to the knot").toMatchObject({ figure: "knot", phase: "morph" });
 
-  // Round the whole cycle and back to the galaxy: seven forms, 17.5s each.
-  await page.clock.runFor(17500 * 6 - 4600 - 1000);
+  // Round the whole cycle and back to the galaxy: seven forms, 17.5s each —
+  // into the middle of its hold (124.1s to 129.1s), not onto its edge.
+  await page.clock.runFor(17500 * 6 - 4600 - 1000 + 2500);   // 126.6s
   expect(await state(), "round again to the galaxy").toMatchObject({ figure: "galaxy", phase: "hold" });
   expect(await page.evaluate(() => window.__words), "nothing is written into the drawing").toEqual([]);
   expect(errors).toEqual([]);
