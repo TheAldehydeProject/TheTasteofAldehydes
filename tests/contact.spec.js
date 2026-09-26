@@ -7,6 +7,11 @@
    sentence stays at the head of the page; under it, characters drawn in
    specks, a box to type them into, and the (filler) details once they are
    typed. The details are not in the page's source in the clear.
+
+   And then: "keep this: Get in touch, send a carrier pigeon. Below it add
+   :or just send an email: and there add the stuff that i told you to" —
+   the owner's line under the sentence, as the head of the check, and the
+   one detail it shows the (filler) email.
    ============================================================ */
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
@@ -32,6 +37,19 @@ test("the details are not in the page's source to be harvested", () => {
   expect(source).not.toMatch(/mailto:/);
   // And the owner's sentence is still the head of the page.
   expect(source).toContain("<h1>Get in touch, send a carrier pigeon.</h1>");
+});
+
+test("under the sentence, the owner's 'or just send an email:', and the check under that", async ({ page }) => {
+  await page.goto(CONTACT);
+  const h1 = page.locator("h1");
+  const or = page.locator(".contact-or");
+  await expect(or).toHaveText("or just send an email:");
+  const canvas = page.locator(".contact-captcha-canvas");
+  const [a, b, c] = [await h1.boundingBox(), await or.boundingBox(), await canvas.boundingBox()];
+  expect(b.y, "the line under the sentence").toBeGreaterThan(a.y + a.height - 1);
+  expect(b.y - (a.y + a.height), "and close under it").toBeLessThan(80);
+  expect(c.y, "the check under the line").toBeGreaterThan(b.y + b.height - 1);
+  await expect(page.locator(".contact-lock")).toHaveAttribute("aria-labelledby", await or.getAttribute("id"));
 });
 
 test("the details stay hidden until the characters are typed, and a wrong answer draws new ones", async ({ page }) => {
@@ -70,9 +88,10 @@ test("typed right, the details are shown, in either case", async ({ page }) => {
   const details = page.locator(".contact-details");
   await expect(details).toBeVisible();
   await expect(page.locator(".contact-check")).toBeHidden();
-  await expect(details.locator("dt")).toHaveText(["Email", "Instagram"]);
+  // An email, and only the email: what the owner's line says it is.
+  await expect(details.locator("dt")).toHaveText(["Email"]);
   await expect(details.locator("a")).toHaveAttribute("href", "mailto:hello@example.com");
-  await expect(details).toContainText("@your.handle");
+  await expect(details.locator("a")).toHaveText("hello@example.com");
   expect(errors).toEqual([]);
 });
 
@@ -82,6 +101,7 @@ test("without its script the page says the details need JavaScript", async ({ br
   await serveDependenciesLocally(page);
   await page.goto(CONTACT);
   await expect(page.locator("h1")).toHaveText("Get in touch, send a carrier pigeon.");
+  await expect(page.locator(".contact-or")).toHaveText("or just send an email:");
   await expect(page.locator(".contact-lock-nojs")).toBeVisible();
   await expect(page.locator(".contact-check")).toBeHidden();
   await context.close();

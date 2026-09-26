@@ -24,9 +24,9 @@ The owner, 2026-09-26:
 - **Typing them**: either case does, and spaces are ignored. Wrong, it says *Not quite — here are
   new characters.* and draws a new set. **New characters** draws a new set on request, for one
   that cannot be read.
-- **The details**, once typed: a ruled list — *Email* `hello@example.com` (a mail link) and
-  *Instagram* `@your.handle`. Both are filler; `example.com` is the address set aside for exactly
-  that.
+- **The details**, once typed: a ruled line — *Email* `hello@example.com` (a mail link). Filler;
+  `example.com` is the address set aside for exactly that. (An *Instagram* `@your.handle` stood
+  under it for the first round; see the foot of this report for why it went.)
 
 ## Where the details are
 
@@ -58,11 +58,31 @@ are in the comment in `contact.html` — or asked for.
   still shows nothing.
 - **`typed right, the details are shown, in either case`** — every random number the page asks
   for is fixed, so the characters are known (six D's), and typed in lower case they open the
-  details.
-- **`without its script the page says the details need JavaScript`**.
+  details: the email, and only the email.
+- **`under the sentence, the owner's 'or just send an email:', and the check under that`** — the
+  line in the owner's words, close under the sentence, the check under the line, and the check
+  named by it.
+- **`without its script the page says the details need JavaScript`** — the sentence and the
+  owner's line are still there.
 
 ## Known issues / TODO
 
 - **The details are filler** until the owner gives real ones.
 - There is no spoken version of the characters for someone who cannot see them; *New characters*
   is the only way round a set that cannot be read.
+
+## Later the same night — "or just send an email:"
+
+> for the contact information, keep this: Get in touch, send a carrier pigeon.
+> Below it add :or just send an email: and there add the stuff that i told you to in our previous
+> command.
+
+- **The sentence stays** the page's heading, exactly as it was.
+- **Under it, the owner's own line**, *or just send an email:* — lower case and with its colon, as
+  they wrote it — in the reading's face, a size down from the heading and in its ink, so it reads
+  as the sentence carried on (`.contact-or`). It is the head of the check now (the check is
+  `aria-labelledby` it) and took the place of the small *Contact details* label that stood there.
+- **And under that, the check**, as it was, whose button says *Show the email*; typed right, it
+  shows **the email alone**. The filler *Instagram* line was taken out of the sealed details,
+  because the line over them says what they are: an email. The characters, the specks and the
+  sealing are unchanged.

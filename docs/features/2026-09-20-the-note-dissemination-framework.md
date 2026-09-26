@@ -435,20 +435,47 @@ scroll in teh calculator in the places where you can input a number, it shouldnt
   as the heading of the answer under them.
 - **The blue subheadings** (`.essay-sub` — *Xerjoff*, *The thresholds*, *Complication 1* …) are
   14.5px rather than 13px. Both classes are this page's alone.
-- **The graph is drawn twice.** Under Amber Zero's graph stands the same three readings on a
-  **logarithmic** y, drawn the way the calculator draws its log scale: whole decades (0.1, 1, 10)
+- **The graph was drawn twice** — see the next section, which made it one graph again. Under
+  Amber Zero's graph stood the same three readings on a **logarithmic** y, drawn the way the calculator draws its log scale: whole decades (0.1, 1, 10)
   with the eight fainter lines inside each, the thresholds at 0.5 and 2, and the axis named
   *Log(Modified IBR)*. It is the same SVG the calculator would draw for 0.136, 0.513 and 4.36,
   written into the page. No sentence was added to the owner's writing to introduce it; the
-  caption under it says what it is.
+  caption under it said what it was.
 - **The wheel over a number field scrolls rather than counts.** A browser steps a number field up
   or down when the wheel turns over it while it has the caret; `calculator.js` refuses the step
   and hands the turn to whatever scrolls round the field, so the caret stays and the number does
   not change.
 
 Tested in `tests/calculator.spec.js`: **`turning the wheel over a number field leaves the number
-alone`** (the number as typed, the caret still in it, and the page scrolled instead); **`the
-piece draws its graph twice, the second on a logarithmic scale`** (two graphs, the second with
-0.1 and 10 on its scale, sixteen fainter lines, and each reading exactly where its logarithm
-falls; the first still linear); **`the pairs' names are bold in the writing's face, and the blue
+alone`** (the number as typed, the caret still in it, and the page scrolled instead); the
+graph's own test is in the next section; **`the pairs' names are bold in the writing's face, and the blue
 subheadings larger`**.
+
+## 2026-09-26, later — one graph, with the log scale a button on its right
+
+The owner, having seen the second graph: "actually, please remove the second graph, and put the
+option on the right to view the first as logarthithmic".
+
+- **One graph.** Amber Zero's figure (`.zone-switch`) carries both drawings — the linear one
+  (`data-scale="linear"`) and the logarithmic one (`data-scale="log"`, `hidden`) — and only one
+  is ever shown. The second figure is gone.
+- **The option on the right** is the calculator's own **LOGARITHMIC SCALE** button, the same
+  `.calc-scale` in the same place relative to its graph — at the top right of the figure, over
+  the graph's right edge (`.zone-switch-head`). Pressed, it fills blue as the calculator's does,
+  the drawing turns logarithmic, and the caption says *… across the three stages on a
+  logarithmic scale, against the thresholds at 0.5 and 2.* (`.zone-log-say`); pressed again, it
+  goes back.
+- **Made by the script**: the few lines at the foot of `calculator.js` build the button and
+  change the drawings over. Without the script the figure is the linear graph and nothing else —
+  no button that does nothing.
+- **An `<svg>` needs its own `[hidden]` rule.** The browser's own `[hidden] { display: none }` is
+  written for HTML elements only, so the hidden drawing would have stood under the other one;
+  `.zone-figure svg[hidden]` is in `style.css`.
+
+Tested in `tests/calculator.spec.js`: **`the piece's graph is one graph, turned logarithmic by a
+button on its right`** — one graph shown, the button above the graph's right edge, not pressed
+and the caption saying nothing of logarithms; pressed, the logarithmic drawing in its place
+(0.1 and 10 on its scale, sixteen fainter lines, each reading exactly where its logarithm falls,
+*Log(Modified IBR)*) and the caption saying so; pressed again, back. **`without its script the
+piece's graph is the linear one, and no button`**. The calculator's own toggle test now looks
+for `.calc .calc-scale`, since there are two of those buttons on the page.

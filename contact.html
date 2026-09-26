@@ -37,7 +37,12 @@
   AND UNDER IT, THE DETAILS BEHIND A CAPTCHA — the owner, 2026-09-26:
   "in contact, add a captcha that hides the contact information (let it
   be filer contact information)". contact.js draws a few characters in
-  specks; typed back, they show the details.
+  specks; typed back, they show the details. Then, the same night: "for
+  the contact information, keep this: Get in touch, send a carrier
+  pigeon. Below it add :or just send an email: and there add the stuff
+  that i told you to" — so the owner's "or just send an email:" stands
+  under the sentence, as the head of the captcha, and the one detail it
+  shows is the (filler) email.
 
   THE DETAILS ARE FILLER, and they are NOT written in this page in the
   clear — so that a program reading pages for addresses finds none. They
@@ -51,8 +56,8 @@
   <h1>Get in touch, send a carrier pigeon.</h1>
 
   <section class="contact-lock" aria-labelledby="contact-lock-name"
-           data-sealed="OjdGIAUYDQlRTU4MAAQVCyUWGQ0JFQQcSgYcDE5IRwUYDQkHDlYMAAQVCyUWGQ0JFQQcSgYcDE45STNbLQsAFQ0DFwkURklRIRULEBpXDAQdBQABR0RbRjgu">
-    <p class="contact-lock-name" id="contact-lock-name">Contact details</p>
+           data-sealed="OjdGIAUYDQlRTU4MAAQVCyUWGQ0JFQQcSgYcDE5IRwUYDQkHDlYMAAQVCyUWGQ0JFQQcSgYcDE45OA==">
+    <p class="contact-or" id="contact-lock-name">or just send an email:</p>
     <form class="contact-check" hidden>
       <div class="contact-captcha">
         <canvas class="contact-captcha-canvas" role="img" aria-label="Characters drawn in specks, to type into the box below"></canvas>
@@ -62,12 +67,12 @@
       <div class="contact-captcha-row">
         <input class="contact-captcha-field" id="contact-captcha-field" type="text" autocomplete="off"
                autocapitalize="characters" spellcheck="false" maxlength="10">
-        <button class="contact-captcha-go" type="submit">Show the details</button>
+        <button class="contact-captcha-go" type="submit">Show the email</button>
       </div>
       <p class="contact-captcha-say" aria-live="polite"></p>
     </form>
     <dl class="contact-details" hidden></dl>
-    <p class="contact-lock-nojs">The details are shown once a short check is passed, and the check needs JavaScript.</p>
+    <p class="contact-lock-nojs">The email is shown once a short check is passed, and the check needs JavaScript.</p>
   </section>
 </div>
 

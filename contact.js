@@ -2,7 +2,11 @@
 // THE CONTACT DETAILS, BEHIND A CAPTCHA — contact.html
 //
 // The owner, 2026-09-26: "in contact, add a captcha that hides the
-// contact information (let it be filer contact information)".
+// contact information (let it be filer contact information)" — and
+// then "keep this: Get in touch, send a carrier pigeon. Below it add :or
+// just send an email: and there add the stuff". So the check stands
+// under the owner's "or just send an email:", and what it shows is the
+// (filler) email.
 //
 // WHAT IT IS: six characters drawn in specks — the site's own way of
 // drawing — each turned a little and set a little off its line, over a
@@ -19,8 +23,8 @@
 // get past it. It stops the ordinary harvesting that reads a page and
 // takes whatever looks like an address, which is what it is for.
 //
-// WITHOUT THIS SCRIPT the page is its sentence, and a line saying the
-// details need JavaScript.
+// WITHOUT THIS SCRIPT the page is its sentence, the owner's line under
+// it, and a line saying the email needs JavaScript.
 // ============================================================
 (function () {
   const lock = document.querySelector(".contact-lock");

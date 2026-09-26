@@ -50,7 +50,8 @@ ENGINES: end -->`, straight after the `<title>`:
 - **`canonical`** — the page's one address, `https://thetasteofaldehydes.com/…`. The forwarding
   pages keep the one they already had (pointing at the house's new address), as one of their three
   ways of forwarding; they are not given a second.
-- **The icons** — `favicon.svg`, a hand-drawn aldehyde (see the foot of this report), and
+- **The icons** — `favicon.svg`, an aldehyde drawn as a structural formula (see the foot of this
+  report), and
   `apple-touch-icon.png`, the same at 180px for a phone's home screen.
 - **Open Graph and a Twitter card** — the title (the page's own, without the site's name after
   it), the line, and `images/social-card.png`: the title slide redrawn at 1200 × 630 on the squared
@@ -115,3 +116,29 @@ step that is the owner's to take — add the site to **Google Search Console** a
 bonded on the left and the H on the right — every letter a pen stroke, a little uneven, in black
 on a white square with softly rounded corners. `apple-touch-icon.png` is the same drawn at 180px.
 It replaced the registration mark that stood there for part of the evening.
+
+## Last — the aldehyde drawn as a chemist draws it
+
+> favicon, i want you to make it less bold, and make the symbols not connect. also redesign it, i
+> dont want it to be handdrawn, more so chemical and very technical.
+
+`favicon.svg` is the same molecule, **drawn the way a structural formula is drawn** in a chemistry
+program rather than by hand:
+
+- **The geometry is the molecule's.** The C in the middle; the O straight above it on a double
+  bond (two parallel lines); R and H below it either side, each at **120°** — the angles a carbonyl
+  carbon actually makes. Every bond is the same length (18 units of the icon's 48).
+- **The symbols do not connect.** Every bond stops short of the letters at both ends — a clear gap
+  round each letter, worked out from the letter's box and the bond's angle — which is how a
+  formula is set.
+- **Less bold.** Bonds a little over 1 unit wide and the letters a little under (1.05 and 0.95; the
+  hand-drawn one was 2.5), with square ends.
+- **Technical letters**: O an ellipse, C the same ellipse opened on the right, H two stems and a
+  bar, R a stem, a round bowl and a straight leg — geometric shapes in the one thin line, not type
+  (an icon cannot rely on a font being there) and not a pen.
+- Black on white, on a square with barely rounded corners. `apple-touch-icon.png` is the same at
+  180px, rendered from the SVG.
+
+The numbers were computed rather than placed by eye, which is what makes it read as technical: the
+script that worked them out is not kept, because the file is the whole of it and its comment says
+what it is.

@@ -436,7 +436,7 @@ test("the graph has a logarithmic version, and a reading of 0 is left off it",
   await put(page, "ic-Mid", 40);
   await put(page, "ic-DryDown", 85);
 
-  const toggle = page.locator(".calc-scale");
+  const toggle = page.locator(".calc .calc-scale");
   const ticks = () => page.$$eval(".calc-graph .graph-tick",
     (all) => all.map((e) => e.textContent));
   // `innerText` is not a thing on an SVG text node.
@@ -499,7 +499,7 @@ test("the graph has a logarithmic version, and a reading of 0 is left off it",
   await page.waitForTimeout(250);
   await page.locator('.calc-model[data-model="v2"]').click();
   await page.waitForTimeout(500);
-  await expect(page.locator(".calc-scale")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".calc .calc-scale")).toHaveAttribute("aria-pressed", "true");
 });
 
 /* THE WHEEL SCROLLS, IT DOES NOT COUNT: "when you scroll in the calculator
@@ -534,17 +534,48 @@ test("turning the wheel over a number field leaves the number alone", async ({ p
 });
 
 /* THE PIECE ITSELF, as the owner asked for it on 2026-09-26:
-   - the graph of Amber Zero drawn twice, the second on a logarithmic scale
-     "like in the calculator" — whole decades, the fainter lines inside
-     them, the thresholds, and the three readings where they fall;
+   - the graph of Amber Zero on a logarithmic scale "like in the
+     calculator" — drawn a second time for one round, and then, at the
+     owner's word, ONE graph with "the option on the right to view the
+     first as logarthithmic": the calculator's own LOGARITHMIC SCALE
+     button at its top right, changing the drawing between the two —
+     whole decades, the fainter lines inside them, the thresholds, and the
+     three readings where they fall — and the caption with it;
    - "For the 5-note Xerjoff" and the like set bold, in the writing's own
      face rather than the mono in spaced capitals;
    - the blue subheadings a little larger than they were (13px). */
-test("the piece draws its graph twice, the second on a logarithmic scale", async ({ page }) => {
+test("the piece's graph is one graph, turned logarithmic by a button on its right", async ({ page }) => {
   await page.goto(THEORY);
-  const graphs = page.locator(".essay-section svg.graph");
-  await expect(graphs).toHaveCount(2);
-  const log = graphs.nth(1);
+  const figure = page.locator(".zone-switch");
+  await expect(figure).toHaveCount(1);
+  const visible = page.locator(".essay-section svg.graph:visible");
+  await expect(visible, "one graph on the page, not two").toHaveCount(1);
+  const linear = figure.locator('svg[data-scale="linear"]');
+  const log = figure.locator('svg[data-scale="log"]');
+  await expect(linear).toBeVisible();
+  await expect(log).toBeHidden();
+  await expect(linear.locator(".graph-tick").filter({ hasText: /^5$/ })).toHaveCount(1);
+
+  // The button stands at the graph's top right.
+  const button = figure.locator("button.calc-scale");
+  await expect(button).toHaveText(/Logarithmic Scale/i);
+  await expect(button).toHaveAttribute("aria-pressed", "false");
+  const [b, g] = [await button.boundingBox(), await linear.boundingBox()];
+  expect(b.x + b.width, "on the right, level with the graph's right edge").toBeGreaterThan(g.x + g.width - 30);
+  expect(b.x, "in the right half").toBeGreaterThan(g.x + g.width / 2);
+  expect(b.y + b.height, "above the graph").toBeLessThanOrEqual(g.y + 2);
+  const caption = figure.locator("figcaption");
+  // (Read as it is shown: the words for the other scale are in the
+  // caption, hidden, which a plain text match would count.)
+  expect(await caption.innerText()).not.toContain("logarithmic");
+
+  await button.click();
+  await expect(button).toHaveAttribute("aria-pressed", "true");
+  await expect(button).toHaveClass(/chosen/);
+  await expect(linear).toBeHidden();
+  await expect(log).toBeVisible();
+  await expect(visible).toHaveCount(1);
+  expect(await caption.innerText()).toContain("on a logarithmic scale");
   await expect(log.locator(".graph-tick").filter({ hasText: /^0\.1$/ })).toHaveCount(1);
   await expect(log.locator(".graph-tick").filter({ hasText: /^10$/ })).toHaveCount(1);
   expect(await log.locator(".graph-grid-fine").count(), "the fainter lines inside each decade").toBe(16);
@@ -552,8 +583,21 @@ test("the piece draws its graph twice, the second on a logarithmic scale", async
   const dots = await log.locator(".graph-dot").evaluateAll((ds) => ds.map((d) => +d.getAttribute("cy")));
   const at = (v) => 394 + (34 - 394) * (Math.log10(v) + 1) / 2;
   [0.136, 0.513, 4.36].forEach((v, i) => expect(Math.abs(dots[i] - at(v)), v + " where it falls").toBeLessThan(0.5));
-  // The first graph is still the linear one.
-  await expect(graphs.nth(0).locator(".graph-tick").filter({ hasText: /^5$/ })).toHaveCount(1);
+
+  // And back.
+  await button.click();
+  await expect(button).toHaveAttribute("aria-pressed", "false");
+  await expect(linear).toBeVisible();
+  await expect(log).toBeHidden();
+  expect(await caption.innerText()).not.toContain("logarithmic");
+});
+
+test("without its script the piece's graph is the linear one, and no button", async ({ page }) => {
+  await page.route("**/calculator.js", (route) => route.abort());
+  await page.goto(THEORY);
+  await expect(page.locator('.zone-switch svg[data-scale="linear"]')).toBeVisible();
+  await expect(page.locator('.zone-switch svg[data-scale="log"]')).toBeHidden();
+  await expect(page.locator(".zone-switch button")).toHaveCount(0);
 });
 
 test("the pairs' names are bold in the writing's face, and the blue subheadings larger", async ({ page }) => {

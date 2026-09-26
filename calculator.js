@@ -798,3 +798,44 @@
         "off this scale. Switch back to see it.</p>" : "");
   }
 })();
+
+// ============================================================
+// THE PIECE'S OWN GRAPH, ON EITHER SCALE — Example 3's figure
+//
+// The owner asked for the piece's graph to be seen on a logarithmic
+// scale the way the calculator's is, and then — having seen it drawn a
+// second time underneath — for the second one gone and "the option on
+// the right to view the first as logarthithmic". So the figure carries
+// both drawings (`data-scale="linear"` and `"log"`, the log one
+// `hidden`) and this puts the calculator's own LOGARITHMIC SCALE button
+// at its top right to change between them, with the caption saying
+// which it is.
+//
+// WITHOUT THIS SCRIPT the figure is the linear graph and nothing else:
+// the button is made here, so there is none left doing nothing.
+// ============================================================
+(function () {
+  document.querySelectorAll(".zone-switch").forEach((figure) => {
+    const linear = figure.querySelector('[data-scale="linear"]');
+    const log = figure.querySelector('[data-scale="log"]');
+    if (!linear || !log) return;
+    const say = figure.querySelector(".zone-log-say");
+
+    const head = document.createElement("div");
+    head.className = "zone-switch-head";
+    head.innerHTML = '<button class="calc-scale" type="button" aria-pressed="false">' +
+      "Logarithmic Scale</button>";
+    figure.insertBefore(head, linear);
+    const button = head.querySelector("button");
+
+    let logY = false;
+    button.addEventListener("click", () => {
+      logY = !logY;
+      linear.toggleAttribute("hidden", logY);
+      log.toggleAttribute("hidden", !logY);
+      if (say) say.hidden = !logY;
+      button.classList.toggle("chosen", logY);
+      button.setAttribute("aria-pressed", logY ? "true" : "false");
+    });
+  });
+})();

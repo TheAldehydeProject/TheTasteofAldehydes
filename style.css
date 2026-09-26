@@ -2540,14 +2540,15 @@ body.structured .page-where { color: rgba(226, 232, 242, 0.55); border-left-colo
 /* THE DETAILS BEHIND A CAPTCHA (contact.js): the characters in specks in
    a hairline box, a box to type them into under it, and the details once
    they are typed. Set in the site's mono and ruled as its readings are. */
-.contact-lock { margin-top: clamp(40px, 8vh, 72px); max-width: 420px; }
-.contact-lock-name {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin: 0 0 14px;
+.contact-lock { margin-top: clamp(22px, 4vh, 40px); max-width: 420px; }
+/* THE OWNER'S "or just send an email:" — the sentence over it carried on,
+   so it is set in the reading's own face, a size down from the heading
+   and in its ink, rather than as one of the mono labels. */
+.contact-or {
+  font-size: clamp(20px, 2.2vw, 26px);
+  line-height: 1.3;
+  color: var(--ink);
+  margin: 0 0 22px;
 }
 .contact-check[hidden], .contact-details[hidden] { display: none; }
 .contact-captcha { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
@@ -6705,6 +6706,18 @@ html.photo-viewing, html.photo-viewing body { overflow: hidden; }
   overflow: visible;
 }
 .zone-figure-wide .zone { max-width: 760px; }
+/* A GRAPH ON EITHER SCALE (theory-03's Example 3): both drawings are in
+   the figure and one is `hidden`. The browser's own [hidden] rule is
+   written for HTML elements only, so an <svg> needs its own. The button
+   that changes them is the calculator's, at the figure's top right. */
+.zone-figure svg[hidden] { display: none; }
+.zone-switch-head {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  justify-content: flex-end;
+}
+.zone-switch-head .calc-scale { margin: 0; }
 .zone-figure figcaption,
 .zone-row-figure figcaption {
   font-family: var(--mono);
