@@ -373,6 +373,98 @@ its three lobes show.
 
 ### Known issues / TODO
 
-- **The owner is to choose from both lists** (1–24 and 25–44); the chosen go into `CYCLE` (in the
-  order they give, or a sensible one), and the rest come out of `SHAPES` and `NAMES` — and their
-  helpers with them, where nothing else uses one — and out of both tables.
+- ~~The owner is to choose from both lists~~ — they did; see the next section.
+
+## 2026-09-26, night — the seventeen chosen, eight and eight, the arrows, and more geometry
+
+The owner chose: *"from these the best are going to be 2,3,4,5,6,7,9, 27,30,32, 35,36,37,38,39,42
+and helix ... i want you to put these on the page instead of what there is right now, and make it
+now last 8 seconds transforming to 8 seocnds holding. i also want you to be able to on command go to
+the next one or back with two arrows that are small and subtle near the bottom, and i want it to
+display the name (in tiny script) of what is actually being shown in the particle thing. Also, to
+the shapes and stuff, i want you to add triangles and a little geometry."*
+
+**Which 2 to 9** was asked, because two sheets carried those numbers — the first catalogue (1–24)
+and the ten best (1–10) sent after it. The owner meant **the ten best**. So the cycle is, in the
+order the owner gave it (`CYCLE`): the geodesic sphere, the Borromean rings, the Rössler attractor,
+the Aizawa attractor, the Lissajous knot, the armillary, the ripple, the tesseract, the 24-cell, the
+spirograph, Dini's surface, the Sierpiński tetrahedron, the Hilbert curve, the Thomas attractor, the
+Chladni figure, the figure-eight knot — and the helix, from the old cycle, last.
+
+**Everything else came out of the code**, the owner having said "instead of what there is right
+now": the galaxy, the sphere, the trefoil knot, the torus, the spiral and the gas cloud (the old
+cycle but the helix), and every candidate not chosen, from both lists — with their helpers where
+nothing else used one (`fib`, `superformula`, the complex numbers, Boy's and the rest) and **the
+drift** the galaxy, the gas cloud and the vortex had (`float`, `churn`, `whirl`), which no form
+left uses. `?form=<name>` still holds any one form of the cycle still on the page; a name no longer
+a form runs the cycle.
+
+**The clock is a small machine now** rather than a sum of the time: it is showing form `cur`,
+holding it or on its way to form `to`, since `since`, for `dur` (`tick`, `setOut`, `land`), and
+brought up to the time however long the window was away. That is what lets an arrow start a
+transformation at any moment. `HOLD` and `MORPH` are both 8000; the first form gathers for 1.6s
+(`ARRIVE`) before its eight.
+
+**The arrows** (`.re-step`, a hairline chevron in a 22px button either side of the name, at a third
+of the ink, darker under the hand) go on to the next form or back **at once**, in a quicker
+transformation (`QUICK`, 2.6s); one pressed while another is under way **lands** it first — the
+specks are sprung, so they carry on rather than jump — and then sets out from there. The clock
+carries on from wherever they leave it. Held (`?form=`), there are none. With reduced motion an arrow
+simply shows the other form, drawn once and still.
+
+**The name**, *"in tiny script"*: the caption is 10px mono, centred at the field's foot between the
+arrows — its number (`03 / 17`) and the form's name, and nothing else (*Holding* and *Transforming*
+are gone, and so is the arrow between two names). It is **the name of what the field is actually
+showing**: a transformation's new name is taken up half way through it, when there is more of the
+new form than the old, with a short fade (`is-new`). The name keeps one width (23 characters), so
+the arrows never move. The hairline over it fills as the hold or the transformation goes, between
+the arrows.
+
+**Triangles and a little geometry**:
+
+- **More loci** (`LOCI` 7, from 5), their triangles a little darker (`LOCUS_FILL`).
+- **The spans** (`SPANS`, two at a time): a large triangle across the whole form, its corners specks
+  on the shape 110 to 250px apart and none of its angles under 31° (`SPAN_ANGLE`), faintly filled,
+  a small arc in each corner, a small open square on each corner as the site marks a point, and one
+  of its angles **written in degrees** (`58°`), in 9px mono. A span stands nine seconds; it goes as
+  a transformation starts (it is drawn across one form) and none comes while one is under way.
+- **The frame** the form turns in: **the equator** it turns round, a dashed ellipse just outside
+  every form (`EQUATOR`, 1.02), ticked every thirty degrees — the ticks turning with the form, the
+  nearer ones plainer — and **the axis** through it, dashed, with a short bar at each end. All of it
+  at 13% ink (`FRAME_INK`), behind the specks.
+
+### How to test it
+
+In `tests/index-pages.spec.js`:
+
+- **`the field holds each form eight seconds and turns into the next over eight, whatever is
+  pointed at`** (replaces the five-and-twelve-and-a-half test) — on a paused clock: the geodesic
+  sphere held and captioned `01 / 17`; a row pointed at changes nothing; still holding at 9.3s,
+  turning into the rings at 10s with the sphere's name still up, its name still the sphere's at
+  13.2s and the rings' at 14.2s (`02 / 17`); still turning at 17.4s, the rings held at 18.2s and a
+  different drawing; on to the Rössler attractor at 26s, held at 37s, and on to Aizawa's at 42s.
+  Nothing written into the drawing **but angles** (`58°`). It ran a whole lap once; seventeen forms
+  at sixteen seconds is 272 seconds of frames, too long a run — the wrap round from the last to
+  the first is the arrows' test's.
+- **`the arrows at the field's foot go on to the next form, or back, at once`** (new) — both there,
+  small and near the foot; next starts the rings at once, past half way in 1.5s and there in 2.6s;
+  back twice, the second while the first is under way, lands the sphere and goes on round to the
+  helix (`17 / 17`); and eight seconds later the cycle carries on round to the sphere.
+- **`here and there on the field, specks are joined into triangles, with a little geometry`**
+  (replaces the loci test) — in a second: triangles filled and lines drawn, as before, and now arcs
+  (the spans' angles), angles written in degrees, and dashed lines (the equator).
+- **`every form in the cycle can be held, and draws itself; the ones not chosen are gone`**
+  (replaces the second list's test and `a form can be held…`) — each of the seventeen held, named,
+  with no arrows, and drawn with at least three tenths of the inkiest form's ink; the galaxy, the
+  sphere, the gas cloud, the knot, the torus, the spiral, the cube, the hyperboloid and the
+  buckyball are not forms, and the page runs its cycle.
+- **`the field answers the pointer over it`** — now reads the inkiest patch near the form's middle
+  rather than a place on the galaxy's ring.
+- **`the field with animation turned off › the first form is simply there, nothing moves, and the
+  arrows change it without moving`** (replaces *the galaxy is simply there…*).
+
+### Known issues / TODO
+
+- The arrows ask for a 2.6-second transformation; the owner may want it as slow as the field's own
+  eight, or quicker still. One number (`QUICK`).
+

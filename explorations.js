@@ -10,33 +10,44 @@
 // pointed at:
 //
 //   "for the researches, I want the shapes to not change based on which
-//   research you hover, but rather to transform from one to another in
-//   the span of 12.5 seconds, then stay in their form for 5 and then
-//   start transforming again into the next one ... I want these eto look
-//   mathematical and abstract, as well as made from particles with some
-//   loci where you have geometric elements (such as triangles from the
-//   connected dots)"
+//   research you hover, but rather to transform from one to another ...
+//   I want these eto look mathematical and abstract, as well as made from
+//   particles with some loci where you have geometric elements (such as
+//   triangles from the connected dots)"
 //
-// So the field keeps ITS OWN TIME and the table no longer conducts it.
-// It stands in one FORM for `HOLD` (5s), then TRANSFORMS into the next
-// over `MORPH` (12.5s) — every speck travelling from its place in the one
-// to its place in the other, the ones at the top setting off first, each
-// swinging a little out of its straight way — and round again (`CYCLE`).
-// Every form is a cloud of specks round a mathematical shape, standing in
-// three dimensions and turning slowly about a tilted axis, the nearer
-// specks larger and darker. And here and there on it, THE LOCI: a few
-// specks joined each to its nearest by hairlines, the triangles they make
-// faintly filled, each locus coming up, standing a while and going.
+// And last, choosing from two lists of candidates shown to them:
 //
-// THE CYCLE, which the owner chose to keep: the galaxy (the ring with
-// dust inside it, first, as it was), the sphere, the trefoil knot, the
-// torus, the helix, the spiral and the gas cloud (made bigger, and
-// churning). The cube is gone. Every other shape in SHAPES is a CANDIDATE
-// the owner was shown to choose from — `?form=<name>` holds any one of
-// them still on the page — and the ones not chosen come out.
+//   "i want you to put these on the page instead of what there is right
+//   now, and make it now last 8 seconds transforming to 8 seocnds
+//   holding. i also want you to be able to on command go to the next one
+//   or back with two arrows that are small and subtle near the bottom,
+//   and i want it to display the name (in tiny script) of what is
+//   actually being shown in the particle thing. Also, to the shapes and
+//   stuff, i want you to add triangles and a little geometry."
 //
-// With reduced motion nothing moves: the galaxy is simply there, drawn
-// once. The pointer over the field parts the specks near it.
+// So the field keeps ITS OWN TIME and the table does not conduct it. It
+// stands in one FORM for `HOLD` (8s), then TRANSFORMS into the next over
+// `MORPH` (8s) — every speck travelling from its place in the one to its
+// place in the other, the ones at the top setting off first, each
+// swinging a little out of its straight way — and round again (`CYCLE`,
+// the seventeen the owner chose, in their order). Every form is a cloud of
+// specks round a mathematical shape, standing in three dimensions and
+// turning slowly about a tilted axis, the nearer specks larger and darker.
+//
+// THE ARROWS at its foot, either side of the form's name, go on to the
+// next form or back to the one before at once, in a quicker
+// transformation (`QUICK`); the clock carries on from there.
+//
+// And the geometry: THE LOCI, here and there on a form — a few specks
+// joined each to its nearest by hairlines, the triangles they make
+// faintly filled, each coming up, standing a while and going; THE SPANS,
+// a larger triangle or two across the whole form with its angles marked;
+// and THE FRAME the form turns in — its axis, and the equator it turns
+// round, ticked every thirty degrees and turning with it.
+//
+// With reduced motion nothing moves: the first form is simply there, drawn
+// once, and the arrows change it without a transformation. The pointer
+// over the field parts the specks near it.
 // ============================================================
 (function () {
   const field = document.querySelector(".re-field");
@@ -46,11 +57,13 @@
   if (!g) return;
   const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const INK = "23, 23, 15";            // --ink
+  const MONO = getComputedStyle(document.documentElement).getPropertyValue("--mono").trim() || "monospace";
   const TAU = Math.PI * 2;
 
   const COUNT = () => (window.innerWidth < 700 ? 1300 : 2400);
-  const HOLD = 5000;                   // ms a form stands
-  const MORPH = 12500;                 // ms a form takes to become the next
+  const HOLD = 8000;                   // ms a form stands
+  const MORPH = 8000;                  // ms a form takes to become the next
+  const QUICK = 2600;                  // ms it takes when an arrow asks for it
   const ARRIVE = 1600;                 // ms the first form takes to gather, before its hold
   const SWEEP = 0.5;                   // of a transformation, over which the specks set off in turn
   const ARC = 0.24;                    // how far out of its straight way a speck swings on the way
@@ -62,8 +75,8 @@
   const FOCAL = 3.2;                   // the perspective: larger is flatter
   const HAZE = 0.1;                    // share of every form's specks left loose round it
   // THE LOCI: "some loci where you have geometric elements (such as
-  // triangles from the connected dots)".
-  const LOCI = 5;                      // standing at once
+  // triangles from the connected dots)" — and then "add triangles".
+  const LOCI = 7;                      // standing at once
   const LOCUS_LIFE = 7600;             // ms each stands, coming and going
   const LOCUS_FADE = 1400;             // ms of that coming up, and going
   const LOCUS_SIZE = 13;               // specks to a locus
@@ -71,28 +84,30 @@
   const LOCUS_FROM = 84;               // px round its anchor it gathers from
   const LOCUS_GAP = 17;                // px, the least between two of its specks
   const LOCUS_REACH = 96;              // px beyond which a line is let go
+  const LOCUS_FILL = 0.08;             // how dark a locus's triangles are filled
+  // THE SPANS: "and a little geometry" — a large triangle across the form,
+  // its corners on the shape, its angles marked.
+  const SPANS = 2;                     // standing at once
+  const SPAN_LIFE = 9000;              // ms each stands
+  const SPAN_FADE = 1600;              // ms of that coming up, and going
+  const SPAN_NEAR = 110;               // px, the shortest side a span may have
+  const SPAN_FAR = 250;                // px, and the longest
+  const SPAN_ANGLE = 0.55;             // radians, the least angle a span may have (no slivers)
+  const SPAN_ARC = 11;                 // px, the radius of the arc marking an angle
+  // THE FRAME the form turns in: its axis, and the equator round it.
+  const EQUATOR = 1.02;                // the equator's radius, in the forms' own units
+  const EQUATOR_TICKS = 12;            // every thirty degrees
+  const FRAME_INK = 0.13;              // how dark the frame is drawn
 
-  // THE CYCLE, in the order it comes round; the first is where it starts.
-  const CYCLE = ["galaxy", "sphere", "knot", "torus", "helix", "spiral", "cloud"];
+  // THE CYCLE, in the order the owner gave it; the first is where it starts.
+  const CYCLE = ["geodesic", "borromean", "rossler", "aizawa", "lissajous", "gyre", "ripple",
+    "tesseract", "cell24", "spirograph", "dini", "sierpinski", "hilbert", "thomas", "chladni", "eight", "helix"];
   const NAMES = {
-    galaxy: "Galaxy", cloud: "Gas cloud", sphere: "Sphere", knot: "Trefoil knot", torus: "Torus",
-    helix: "Helix", spiral: "Spiral",
-    // The candidates.
-    gyre: "Armillary", saddle: "Saddle", shells: "Nested shells", hourglass: "Double cone",
-    lorenz: "Lorenz attractor", aizawa: "Aizawa attractor", rossler: "Rössler attractor",
-    mobius: "Möbius strip", klein: "Klein bottle", hopf: "Hopf fibration", lissajous: "Lissajous knot",
-    torusknot: "Torus knot (7, 3)", seashell: "Seashell", hyperboloid: "Hyperboloid",
-    geodesic: "Geodesic sphere", phyllotaxis: "Phyllotaxis", harmonic: "Spherical harmonic",
-    enneper: "Enneper surface", ripple: "Ripple", borromean: "Borromean rings",
-    supershape: "Supershape", vortex: "Vortex", gyroid: "Gyroid", helicoid: "Helicoid",
-    // The second list.
-    tesseract: "Tesseract", buckyball: "Buckyball", stella: "Star tetrahedron",
-    sierpinski: "Sierpiński tetrahedron", thomas: "Thomas attractor", halvorsen: "Halvorsen attractor",
-    chua: "Chua’s double scroll", dini: "Dini’s surface",
-    cyclide: "Dupin cyclide", eight: "Figure-eight knot", loxodrome: "Loxodromes",
-    dipole: "Dipole field", chladni: "Chladni figure", stellated: "Stellated dodecahedron",
-    cell24: "24-cell", coil: "Toroidal coil", spirograph: "Spirograph", eggcrate: "Egg crate",
-    fivetet: "Five tetrahedra", hilbert: "Hilbert curve",
+    geodesic: "Geodesic sphere", borromean: "Borromean rings", rossler: "Rössler attractor",
+    aizawa: "Aizawa attractor", lissajous: "Lissajous knot", gyre: "Armillary", ripple: "Ripple",
+    tesseract: "Tesseract", cell24: "24-cell", spirograph: "Spirograph", dini: "Dini’s surface",
+    sierpinski: "Sierpiński tetrahedron", hilbert: "Hilbert curve", thomas: "Thomas attractor",
+    chladni: "Chladni figure", eight: "Figure-eight knot", helix: "Helix",
   };
 
   // ============================================================
@@ -142,10 +157,6 @@
   // the field whatever its own numbers are; `turn` stands it at an angle.
   // ============================================================
   const gauss = (u, v) => Math.sqrt(-2 * Math.log(Math.max(1e-6, u))) * Math.cos(TAU * v);
-  const fib = (k, n) => {
-    const y = 1 - (2 * (k + 0.5)) / n, r = Math.sqrt(Math.max(0, 1 - y * y)), th = Math.PI * (3 - Math.sqrt(5)) * k;
-    return [Math.cos(th) * r, y, Math.sin(th) * r];
-  };
   const lerp3 = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 
   /** A path traced once and kept — the attractors, which are sampled
@@ -162,7 +173,7 @@
     }
     return (traced[name] = out);
   }
-  /** Places found once by searching a volume — the gyroid. */
+  /** Places found once by searching a volume — the Chladni figure's sand. */
   function pool(name, want, seed, find) {
     if (traced[name] && traced[name].length >= want) return traced[name];
     const rnd = stream(seed), out = [];
@@ -173,6 +184,8 @@
     while (out.length < want) out.push([0, 0, 0]);
     return (traced[name] = out);
   }
+  /** Worked out once and kept, under its name. */
+  const once = (name, make) => traced[name] || (traced[name] = make());
   const PHI = (1 + Math.sqrt(5)) / 2;
   /** The icosahedron's twelve corners, on the sphere. */
   const icosa = () => [[-1, PHI, 0], [1, PHI, 0], [-1, -PHI, 0], [1, -PHI, 0], [0, -1, PHI], [0, 1, PHI], [0, -1, -PHI], [0, 1, -PHI],
@@ -194,17 +207,6 @@
     });
     return (dome = edges);
   }
-  /** A place on a surface's WIREFRAME: along one of `nu` lines one way
-      or `nv` the other, so a surface is drawn as a mathematician draws
-      one rather than filled. */
-  const wire = (i, nu, nv) => {
-    const along = more(i, 22);
-    return more(i, 21) < 0.5 ? [Math.round(more(i, 23) * nu) / nu, along] : [along, Math.round(more(i, 23) * nv) / nv];
-  };
-  const superformula = (a, m, n1, n2, n3) =>
-    Math.pow(Math.pow(Math.abs(Math.cos((m * a) / 4)), n2) + Math.pow(Math.abs(Math.sin((m * a) / 4)), n3), -1 / n1);
-  /** Worked out once and kept, under its name. */
-  const once = (name, make) => traced[name] || (traced[name] = make());
   /** Every pair of corners standing `d` apart: a polytope's edges, in
       three dimensions or in four. */
   const edgesAt = (V, d) => {
@@ -247,111 +249,34 @@
     }
     return X;
   };
+  /** A place on a surface's WIREFRAME: along one of `nu` lines one way
+      or `nv` the other, so a surface is drawn as a mathematician draws
+      one rather than filled. */
+  const wire = (i, nu, nv) => {
+    const along = more(i, 22);
+    return more(i, 21) < 0.5 ? [Math.round(more(i, 23) * nu) / nu, along] : [along, Math.round(more(i, 23) * nv) / nv];
+  };
 
   const SHAPES = {
-    // ---------- THE CYCLE ----------
-    // THE GALAXY: the ring with dust inside it, as it always was.
-    galaxy: { fuzz: 0.035, drift: "float", place(i) {
-      if (R2[i] < 0.16) {
-        const d = Math.sqrt(R3[i]) * 0.48, a = R1[i] * TAU;
-        return [Math.cos(a) * d, (R4[i] - 0.5) * 0.12, Math.sin(a) * d];
-      }
-      const a = R1[i] * TAU, r = 0.8 + (R3[i] - 0.5) * 0.12;
-      return [Math.cos(a) * r, (R4[i] - 0.5) * 0.05, Math.sin(a) * r];
+    // An icosahedron's edges cut in two and pushed out: triangles.
+    geodesic: { fuzz: 0.008, place(i) {
+      const E = geodesic(), [a, b] = E[i % E.length];
+      const t = R3[i] < 0.14 ? Math.round(R1[i]) : R1[i];
+      return lerp3(a, b, t).map((c) => c * 0.8);
     } },
-    // THE GAS CLOUD, "bigger and cooler": four lobes of gas overlapping,
-    // two long filaments drawn through them, a few dense knots where
-    // something is gathering, and a wide faint halo — churning slowly,
-    // the inner part turning faster than the outer.
-    cloud: { fuzz: 0, drift: "churn", place(i) {
-      const b = more(i, 1), u = more(i, 2), v = more(i, 3), w = more(i, 4), q = more(i, 5);
-      if (b < 0.34) {
-        // Two wisps curling out of the middle, thickening as they go.
-        const t = u, arm = q < 0.5 ? 0 : Math.PI, a = t * TAU * 1.35 + arm;
-        const rad = 0.12 + 0.86 * t, th = 0.035 + 0.09 * t;
-        return [Math.cos(a) * rad + gauss(v, w) * th, Math.sin(t * Math.PI * 2 + arm) * 0.22 + gauss(w, v) * th * 0.8, Math.sin(a) * rad * 0.8 + gauss(v, u) * th];
-      }
-      if (b < 0.66) {
-        const L = [[0, 0, 0, 0.46, 0.3, 0.42], [-0.52, 0.2, 0.12, 0.32, 0.22, 0.28], [0.5, -0.22, -0.16, 0.34, 0.22, 0.3], [0.12, 0.36, -0.36, 0.26, 0.2, 0.22]][Math.floor(q * 4)];
-        return [L[0] + gauss(u, v) * L[3], L[1] + gauss(v, w) * L[4], L[2] + gauss(w, u) * L[5]];
-      }
-      if (b < 0.8) {
-        const t = u, one = q < 0.5;
-        const c = one ? [-1.05 + 2.1 * t, 0.38 * Math.sin(Math.PI * t * 1.3) - 0.12, 0.34 * Math.cos(Math.PI * t)]
-          : [0.62 * Math.cos(3 * t + 1), -0.62 + 1.1 * t, 0.52 * Math.sin(2 * t)];
-        const th = 0.05 + 0.04 * Math.sin(t * 9);
-        return [c[0] + gauss(v, w) * th, c[1] + gauss(w, v) * th, c[2] + gauss(v, u) * th];
-      }
-      if (b < 0.9) {
-        const K = [[-0.3, -0.1, 0.2], [0.26, 0.12, -0.1], [0.62, -0.3, 0.1], [-0.62, 0.3, -0.1], [0.05, 0.42, -0.4], [-0.1, -0.45, 0.3]][Math.floor(q * 6)];
-        return [K[0] + gauss(u, v) * 0.045, K[1] + gauss(v, w) * 0.045, K[2] + gauss(w, u) * 0.045];
-      }
-      return [gauss(u, v) * 0.78, gauss(v, w) * 0.55, gauss(w, u) * 0.7];
+    // Three rings, no two linked, all three held.
+    borromean: { fuzz: 0.025, place(i) {
+      const k = i % 3, t = R1[i] * TAU, a = 0.8, b = 0.42;
+      const c = Math.cos(t) * a, s = Math.sin(t) * b;
+      return k === 0 ? [c, s, 0] : k === 1 ? [0, c, s] : [s, 0, c];
     } },
-    sphere: { fuzz: 0.03, place(i) {
-      const [x, y, z] = fib(i, N);
-      const r = R2[i] < 0.1 ? 0.3 * Math.cbrt(R3[i]) : 0.78;
-      return [x * r, y * r, z * r];
-    } },
-    knot: { fuzz: 0.05, place(i) {
-      const t = R1[i] * TAU, k = 0.25;
-      return [(Math.sin(t) + 2 * Math.sin(2 * t)) * k, (Math.cos(t) - 2 * Math.cos(2 * t)) * k, -Math.sin(3 * t) * k * 1.4];
-    } },
-    // Tipped over at an angle, so it is neither the galaxy lying down nor,
-    // turned edge on, a band standing up like the helix.
-    torus: { fuzz: 0.03, place(i) {
-      const u = R1[i] * TAU, v = R2[i] * TAU, R = 0.56, r = 0.24, tip = 0.95;
-      const x = (R + r * Math.cos(v)) * Math.cos(u), y = r * Math.sin(v), z = (R + r * Math.cos(v)) * Math.sin(u);
-      return [x, y * Math.cos(tip) - z * Math.sin(tip), y * Math.sin(tip) + z * Math.cos(tip)];
-    } },
-    helix: { fuzz: 0.03, place(i) {
-      const s = R1[i], strand = i % 2;
-      if (R2[i] < 0.12) {
-        // A rung across, now and then.
-        const s2 = Math.round(s * 18) / 18, a = s2 * TAU * 2.5, u = R3[i];
-        const x0 = Math.cos(a) * 0.42, z0 = Math.sin(a) * 0.42;
-        return [x0 * (1 - 2 * u), (s2 - 0.5) * 1.6, z0 * (1 - 2 * u)];
-      }
-      const a = s * TAU * 2.5 + strand * Math.PI;
-      return [Math.cos(a) * 0.42, (s - 0.5) * 1.6, Math.sin(a) * 0.42];
-    } },
-    // Three arms round a core.
-    spiral: { fuzz: 0.02, place(i) {
-      if (R2[i] < 0.14) {
-        const d = Math.cbrt(R3[i]) * 0.18, [x, y, z] = fib(i, N);
-        return [x * d, y * d * 0.6, z * d];
-      }
-      const arm = i % 3, r = 0.1 + Math.pow(R1[i], 0.7) * 0.8;
-      const a = (arm / 3) * TAU + r * 4.2 + gauss(R3[i], R4[i]) * 0.22 / (r + 0.3);
-      return [Math.cos(a) * r, gauss(R4[i], R3[i]) * 0.03 * (1 - r), Math.sin(a) * r];
-    } },
-
-    // ---------- THE CANDIDATES ----------
-    gyre: { fuzz: 0.025, place(i) {
-      const a = R1[i] * TAU, r = 0.74, k = i % 3;
-      const c = Math.cos(a) * r, s = Math.sin(a) * r;
-      return k === 0 ? [c, s, 0] : k === 1 ? [c, 0, s] : [0, c, s];
-    } },
-    saddle: { fuzz: 0.02, place(i) {
-      const a = R1[i] * TAU, d = Math.sqrt(R2[i]) * 0.78;
-      const x = Math.cos(a) * d, z = Math.sin(a) * d;
-      return [x, (x * x - z * z) * 1.1, z];
-    } },
-    shells: { fuzz: 0.025, place(i) {
-      const k = i % 3, [x, y, z] = fib(Math.floor(i / 3), Math.ceil(N / 3));
-      const r = [0.3, 0.56, 0.82][k];
-      return [x * r, y * r, z * r];
-    } },
-    hourglass: { fuzz: 0.025, place(i) {
-      const h = R1[i] * 2 - 1, r = Math.abs(h) * 0.58, a = R2[i] * TAU;
-      return [Math.cos(a) * r, h * 0.78, Math.sin(a) * r];
-    } },
-    // The butterfly: where a point goes under Lorenz's three equations.
-    lorenz: { fuzz: 0.006, fit: true, place(i) {
-      const P = trace("lorenz", ([x, y, z]) => [10 * (y - x), x * (28 - z) - y, x * y - (8 / 3) * z],
-        [0.1, 0, 0], 0.005, 26000, 1, 1500, ([x, y, z]) => [x, -(z - 25), y * 0.3]);
+    // Rössler's: a flat spiral that folds over at its edge.
+    rossler: { fuzz: 0.012, fit: true, turn: [0.5, 0, 0], place(i) {
+      const P = trace("rossler", ([x, y, z]) => [-y - z, x + 0.2 * y, 0.2 + z * (x - 5.7)],
+        [0.1, 0, 0], 0.01, 24000, 2, 3000, ([x, y, z]) => [x, -z * 0.35, y]);
       return P[Math.floor((i / N) * P.length)].slice();
     } },
+    // Aizawa's: a sphere with a tube drawn down through it.
     aizawa: { fuzz: 0.01, fit: true, place(i) {
       const [a, b, c, d, e, f] = [0.95, 0.7, 0.6, 3.5, 0.25, 0.1];
       const P = trace("aizawa", ([x, y, z]) => [(z - b) * x - d * y, d * x + (z - b) * y,
@@ -359,79 +284,16 @@
       [0.1, 0, 0], 0.008, 24000, 2, 3000, ([x, y, z]) => [x, -z, y]);
       return P[Math.floor((i / N) * P.length)].slice();
     } },
-    rossler: { fuzz: 0.012, fit: true, turn: [0.5, 0, 0], place(i) {
-      const P = trace("rossler", ([x, y, z]) => [-y - z, x + 0.2 * y, 0.2 + z * (x - 5.7)],
-        [0.1, 0, 0], 0.01, 24000, 2, 3000, ([x, y, z]) => [x, -z * 0.35, y]);
-      return P[Math.floor((i / N) * P.length)].slice();
-    } },
-    // Drawn as its rulings — straight lines across it — and its one edge.
-    mobius: { fuzz: 0.008, fit: true, place(i) {
-      const edge = more(i, 24) < 0.35;
-      const u = edge ? R1[i] * TAU * 2 : (Math.round(R1[i] * 44) / 44) * TAU;
-      const v = edge ? 0.45 : (R2[i] * 2 - 1) * 0.45;
-      const r = 1 + v * Math.cos(u / 2);
-      return [r * Math.cos(u), v * Math.sin(u / 2), r * Math.sin(u)];
-    } },
-    klein: { fuzz: 0.006, fit: true, turn: [0, 0, Math.PI / 2], place(i) {
-      const [wu, wv] = wire(i, 26, 14), u = wu * Math.PI, v = wv * TAU;
-      const cu = Math.cos(u), su = Math.sin(u), cv = Math.cos(v), sv = Math.sin(v);
-      const x = (-2 / 15) * cu * (3 * cv - 30 * su + 90 * cu ** 4 * su - 60 * cu ** 6 * su + 5 * cu * cv * su);
-      const y = (-1 / 15) * su * (3 * cv - 3 * cu ** 2 * cv - 48 * cu ** 4 * cv + 48 * cu ** 6 * cv - 60 * su + 5 * cu * cv * su
-        - 5 * cu ** 3 * cv * su - 80 * cu ** 5 * cv * su + 80 * cu ** 7 * cv * su);
-      const z = (2 / 15) * (3 + 5 * cu * su) * sv;
-      return [x, y, z];
-    } },
-    // The fibres of one torus of the Hopf fibration: circles lying on a
-    // torus (its Villarceau circles), every one linked through every other.
-    hopf: { fuzz: 0.012, place(i) {
-      const R = 0.58, r = 0.32, th = Math.asin(r / R), ph = ((i % 16) / 16) * TAU, s = R1[i] * TAU;
-      const x = R * Math.cos(s) * Math.cos(th), y = r + R * Math.sin(s), z = R * Math.cos(s) * Math.sin(th);
-      return [x * Math.cos(ph) - y * Math.sin(ph), z, x * Math.sin(ph) + y * Math.cos(ph)];
-    } },
+    // A curve of three sines.
     lissajous: { fuzz: 0.03, place(i) {
       const t = R1[i] * TAU;
       return [Math.sin(3 * t + 0.4) * 0.74, Math.sin(4 * t + 1.1) * 0.74, Math.sin(5 * t) * 0.74];
     } },
-    torusknot: { fuzz: 0.028, place(i) {
-      const t = R1[i] * TAU, r = 0.52 + 0.22 * Math.cos(3 * t), tip = 0.85;
-      const x = r * Math.cos(7 * t), y = 0.22 * Math.sin(3 * t), z = r * Math.sin(7 * t);
-      return [x, y * Math.cos(tip) - z * Math.sin(tip), y * Math.sin(tip) + z * Math.cos(tip)];
-    } },
-    seashell: { fuzz: 0.006, fit: true, turn: [0.25, 0, 0], place(i) {
-      const [wu, wv] = wire(i, 64, 10), u = Math.sqrt(wu), th = u * 4.5 * TAU, v = wv * TAU;
-      const r = 0.03 + 0.24 * u, rc = 0.05 + 0.42 * u, y = 0.75 - 1.45 * u;
-      return [(rc + r * Math.cos(v)) * Math.cos(th), y + r * Math.sin(v), (rc + r * Math.cos(v)) * Math.sin(th)];
-    } },
-    // Straight lines, two families of them, crossing into a waist.
-    hyperboloid: { fuzz: 0.01, place(i) {
-      if (R3[i] < 0.12) {
-        const a = R1[i] * TAU, top = R2[i] < 0.5;
-        return [Math.cos(a) * 0.62, top ? -0.8 : 0.8, Math.sin(a) * 0.62];
-      }
-      const fam = i % 2 ? 1 : -1, k = Math.floor(R2[i] * 28), a = (k / 28) * TAU, t = R1[i];
-      return lerp3([Math.cos(a) * 0.62, -0.8, Math.sin(a) * 0.62], [Math.cos(a + fam * 2.2) * 0.62, 0.8, Math.sin(a + fam * 2.2) * 0.62], t);
-    } },
-    geodesic: { fuzz: 0.008, place(i) {
-      const E = geodesic(), [a, b] = E[i % E.length];
-      const t = R3[i] < 0.14 ? Math.round(R1[i]) : R1[i];
-      return lerp3(a, b, t).map((c) => c * 0.8);
-    } },
-    // The seeds of a sunflower, on a dome: every one turned the golden
-    // angle from the one before.
-    phyllotaxis: { fuzz: 0.004, turn: [-1.25, 0, 0], place(i) {
-      const r = Math.sqrt((i + 0.5) / N) * 0.86, th = i * Math.PI * (3 - Math.sqrt(5));
-      const h = 0.5 * Math.sqrt(Math.max(0, 1 - (r / 0.86) ** 2)) - 0.18;
-      return [r * Math.cos(th), -h, r * Math.sin(th)];
-    } },
-    harmonic: { fuzz: 0.012, place(i) {
-      const [x, y, z] = fib(i, N);
-      const th = Math.acos(y), ph = Math.atan2(z, x);
-      const r = 0.28 + 1.55 * Math.abs(Math.sin(th) ** 3 * Math.cos(th) * Math.cos(3 * ph));
-      return [x * r, y * r, z * r];
-    } },
-    enneper: { fuzz: 0.006, fit: true, place(i) {
-      const [wr, wa] = wire(i, 9, 28), rho = wr * 1.25, a = wa * TAU, u = rho * Math.cos(a), v = rho * Math.sin(a);
-      return [u - (u * u * u) / 3 + u * v * v, u * u - v * v, v - (v * v * v) / 3 + v * u * u];
+    // The armillary: three rings crossed.
+    gyre: { fuzz: 0.025, place(i) {
+      const a = R1[i] * TAU, r = 0.74, k = i % 3;
+      const c = Math.cos(a) * r, s = Math.sin(a) * r;
+      return k === 0 ? [c, s, 0] : k === 1 ? [c, 0, s] : [0, c, s];
     } },
     // Rings on a still surface, dying away from where it was touched.
     ripple: { fuzz: 0.008, place(i) {
@@ -439,36 +301,6 @@
       const h = 0.2 * Math.cos(rho * 15) * Math.exp(-rho * 1.7);
       return [rho * Math.cos(a), -h, rho * Math.sin(a)];
     } },
-    borromean: { fuzz: 0.025, place(i) {
-      const k = i % 3, t = R1[i] * TAU, a = 0.8, b = 0.42;
-      const c = Math.cos(t) * a, s = Math.sin(t) * b;
-      return k === 0 ? [c, s, 0] : k === 1 ? [0, c, s] : [s, 0, c];
-    } },
-    supershape: { fuzz: 0.006, fit: true, place(i) {
-      const [wt, wp] = wire(i, 36, 14), th = (wt * 2 - 1) * Math.PI, ph = (wp - 0.5) * Math.PI;
-      const r1 = superformula(th, 6, 1, 1.4, 1.4), r2 = superformula(ph, 3, 1, 1.4, 1.4);
-      return [r1 * Math.cos(th) * r2 * Math.cos(ph), r2 * Math.sin(ph), r1 * Math.sin(th) * r2 * Math.cos(ph)];
-    } },
-    vortex: { fuzz: 0.015, drift: "whirl", place(i) {
-      const h = R1[i] * 2 - 1, r = 0.07 + 0.62 * Math.pow((h + 1) / 2, 1.6), a = R2[i] * TAU + h * 5;
-      return [r * Math.cos(a), -h * 0.8, r * Math.sin(a)];
-    } },
-    gyroid: { fuzz: 0.006, place(i) {
-      const P = pool("gyroid", N, 71, (rnd) => {
-        const x = (rnd() * 2 - 1) * 0.8, y = (rnd() * 2 - 1) * 0.8, z = (rnd() * 2 - 1) * 0.8;
-        if (x * x + y * y + z * z > 0.64) return null;
-        const k = 5.2;
-        const v = Math.sin(k * x) * Math.cos(k * y) + Math.sin(k * y) * Math.cos(k * z) + Math.sin(k * z) * Math.cos(k * x);
-        return Math.abs(v) < 0.06 ? [x, y, z] : null;
-      });
-      return P[i % P.length].slice();
-    } },
-    helicoid: { fuzz: 0.012, place(i) {
-      const u = (R1[i] * 2 - 1) * 2.3 * Math.PI, v = (R2[i] * 2 - 1) * 0.62;
-      return [v * Math.cos(u), u * 0.105, v * Math.sin(u)];
-    } },
-
-    // ---------- THE CANDIDATES, SECOND LIST (25 to 44) ----------
     // The four-dimensional cube, turned a little through the fourth
     // dimension and seen from along it: a cube inside a cube, corner to
     // corner.
@@ -486,122 +318,6 @@
         return edgesAt(V, 2).map(([p, q]) => [see(p), see(q)]);
       });
       return onEdge(E, i, 1);
-    } },
-    // The truncated icosahedron — a football, and the carbon-sixty molecule.
-    buckyball: { fuzz: 0.006, place(i) {
-      const E = once("buckyball", () => {
-        const V = [];
-        [[0, 1, 3 * PHI], [1, 2 + PHI, 2 * PHI], [PHI, 2, 2 * PHI + 1]].forEach((b) => {
-          for (let sg = 0; sg < 8; sg++) {
-            const q = b.map((c, k) => ((sg >> k) & 1 ? -c : c));
-            [[0, 1, 2], [1, 2, 0], [2, 0, 1]].forEach((o) => V.push(o.map((k) => q[k])));
-          }
-        });
-        const U = V.filter((v, j) => V.findIndex((w) => w.every((c, k) => Math.abs(c - v[k]) < 1e-6)) === j);
-        const R = Math.hypot(...U[0]);
-        return edgesAt(U, 2).map(([a, b]) => [a.map((c) => c / R), b.map((c) => c / R)]);
-      });
-      return onEdge(E, i, 0.8);
-    } },
-    // Two tetrahedra through each other, one point up and one point down.
-    stella: { fuzz: 0.008, place(i) {
-      const E = once("stella", () => [1, -1].flatMap((s) => {
-        const V = tetra().map((v) => v.map((c) => c * s)), out = [];
-        V.forEach((a, j) => V.forEach((b, k) => { if (k > j) out.push([a, b]); }));
-        return out;
-      }));
-      return onEdge(E, i, 0.82);
-    } },
-    // A tetrahedron made of four half-size ones, each of those of four
-    // more, and so on down: three levels, drawn as their edges.
-    sierpinski: { fuzz: 0.004, place(i) {
-      const E = once("sierpinski", () => {
-        let T = [tetra()];
-        for (let n = 0; n < 3; n++) T = T.flatMap((t) => t.map((c) => t.map((v) => lerp3(c, v, 0.5))));
-        const out = [];
-        T.forEach((t) => t.forEach((a, j) => t.forEach((b, k) => { if (k > j) out.push([a, b]); })));
-        return out;
-      });
-      return onEdge(E, i, 0.86);
-    } },
-    // Thomas's cyclically symmetric attractor: a point wandering a lattice
-    // of loops, never the same way twice.
-    thomas: { fuzz: 0.005, fit: true, place(i) {
-      const b = 0.208186;
-      const P = trace("thomas", ([x, y, z]) => [Math.sin(y) - b * x, Math.sin(z) - b * y, Math.sin(x) - b * z],
-        [0.1, 0, -0.1], 0.05, 7000, 1, 1500, diag);
-      return P[Math.floor((i / N) * P.length)].slice();
-    } },
-    // Halvorsen's: three lobes turning round one axis, a propeller.
-    halvorsen: { fuzz: 0.006, fit: true, turn: [1.3, 0, 0], place(i) {
-      const a = 1.89;
-      const P = trace("halvorsen", ([x, y, z]) => [-a * x - 4 * y - 4 * z - y * y, -a * y - 4 * z - 4 * x - z * z, -a * z - 4 * x - 4 * y - x * x],
-        [-1.48, -1.51, 2.04], 0.004, 31500, 1, 1500, diag);
-      return P[Math.floor((i / N) * P.length)].slice();
-    } },
-    // Chua's circuit: two scrolls, the point going round one and jumping
-    // to the other.
-    chua: { fuzz: 0.006, fit: true, turn: [0, -0.9, 0], place(i) {
-      const al = 15.6, be = 28, m0 = -1.143, m1 = -0.714;
-      const f = (x) => m1 * x + 0.5 * (m0 - m1) * (Math.abs(x + 1) - Math.abs(x - 1));
-      const P = trace("chua", ([x, y, z]) => [al * (y - x - f(x)), x - y + z, -be * y],
-        [0.7, 0, 0], 0.004, 26000, 1, 3000, ([x, y, z]) => [x, y * 2.2, z * 0.34]);
-      return P[Math.floor((i / N) * P.length)].slice();
-    } },
-    // Dini's surface: a funnel twisted into a spiral, narrowing for ever.
-    dini: { fuzz: 0.004, fit: true, place(i) {
-      const [wu, wv] = wire(i, 26, 9), u = wu * 3.2 * Math.PI, v = 0.08 + wv * 1.7;
-      return [Math.cos(u) * Math.sin(v), -(Math.cos(v) + Math.log(Math.tan(v / 2)) + 0.18 * u), Math.sin(u) * Math.sin(v)];
-    } },
-    // A torus pinched on one side: every line on it a circle.
-    cyclide: { fuzz: 0.005, fit: true, turn: [0.7, 0, 0], place(i) {
-      const [wu, wv] = wire(i, 18, 10), u = wu * TAU, v = wv * TAU;
-      const a = 1, b = 0.8, c = 0.6, d = 0.34, den = a - c * Math.cos(u) * Math.cos(v);
-      return [(d * (c - a * Math.cos(u) * Math.cos(v)) + b * b * Math.cos(u)) / den,
-        (b * Math.sin(v) * (c * Math.cos(u) - d)) / den,
-        (b * Math.sin(u) * (a - d * Math.cos(v))) / den];
-    } },
-    eight: { fuzz: 0.04, turn: [0.7, 0, 0], place(i) {
-      const t = R1[i] * TAU, k = 0.26;
-      return [(2 + Math.cos(2 * t)) * Math.cos(3 * t) * k, Math.sin(4 * t) * k * 1.3, (2 + Math.cos(2 * t)) * Math.sin(3 * t) * k];
-    } },
-    // Rhumb lines: six ways across a sphere at one constant bearing,
-    // spiralling into each pole.
-    loxodrome: { fuzz: 0.008, place(i) {
-      const k = i % 6, z = (R1[i] * 2 - 1) * 0.985, lon = Math.atanh(z) / 0.15 + (k / 6) * TAU, r = Math.sqrt(1 - z * z);
-      return [Math.cos(lon) * r * 0.8, -z * 0.8, Math.sin(lon) * r * 0.8];
-    } },
-    // A magnet's field: its lines leaving one pole and curving round to
-    // the other, in every direction round the axis.
-    dipole: { fuzz: 0.006, place(i) {
-      if (R2[i] < 0.05) return [0, (R1[i] - 0.5) * 0.2, 0];
-      const L = [0.5, 0.7, 0.9][i % 3], ph = ((Math.floor(i / 3) % 8) / 8) * TAU + (i % 3) * 0.2;
-      const th = 0.12 + R1[i] * (Math.PI - 0.24), r = L * Math.sin(th) ** 2;
-      return [r * Math.sin(th) * Math.cos(ph), -r * Math.cos(th) * 1.5, r * Math.sin(th) * Math.sin(ph)];
-    } },
-    // Sand on a sounded plate, gathered on the lines that stand still.
-    chladni: { fuzz: 0.003, turn: [-0.9, 0, 0], place(i) {
-      if (R2[i] < 0.1) {
-        // The plate's edge.
-        const s = R1[i] * 4, e = Math.floor(s) % 4, f = (s - Math.floor(s)) * 2 - 1;
-        const [x, z] = [[f, 1], [1, -f], [-f, -1], [-1, f]][e];
-        return [x * 0.8, 0, z * 0.8];
-      }
-      const P = pool("chladni", N, 53, (rnd) => {
-        const x = rnd() * 2 - 1, z = rnd() * 2 - 1, n = 2, m = 5;
-        const f = Math.cos(n * Math.PI * x) * Math.cos(m * Math.PI * z) - Math.cos(m * Math.PI * x) * Math.cos(n * Math.PI * z);
-        return Math.abs(f) < 0.045 ? [x * 0.8, 0, z * 0.8] : null;
-      });
-      return P[i % P.length].slice();
-    } },
-    // The small stellated dodecahedron: twelve points, each joined to the
-    // five across from it, pentagrams all round.
-    stellated: { fuzz: 0.006, place(i) {
-      const E = once("stellated", () => {
-        const V = icosa(), e = Math.min(...V.slice(1).map((v) => Math.hypot(...v.map((c, k) => c - V[0][k]))));
-        return edgesAt(V, e * PHI);
-      });
-      return onEdge(E, i, 0.82);
     } },
     // The 24-cell: a solid of the fourth dimension with no match in the
     // third, twenty-four corners and ninety-six edges, seen as the
@@ -625,45 +341,28 @@
       });
       return onEdge(E, i, 1);
     } },
-    // Two wires wound round a ring, as a coil is.
-    coil: { fuzz: 0.01, turn: [0.62, 0, 0], place(i) {
-      const t = R1[i] * TAU, n = 22, ph = (i % 2) * Math.PI, R = 0.58, r = 0.19;
-      const q = R + r * Math.cos(n * t + ph);
-      return [q * Math.cos(t), r * Math.sin(n * t + ph), q * Math.sin(t)];
-    } },
     // The toy's curve: a small wheel rolled inside a large one, a pen held
     // off its rim — lifted and let down as it goes round.
     spirograph: { fuzz: 0.01, turn: [0.75, 0, 0], place(i) {
       const R = 7, r = 3, d = 4.2, k = (R - r) / r, t = R1[i] * TAU * 3;
       return [((R - r) * Math.cos(t) + d * Math.cos(k * t)) * 0.095, Math.sin(t * 7) * 0.07, ((R - r) * Math.sin(t) - d * Math.sin(k * t)) * 0.095];
     } },
-    // An egg crate: sin x sin z, drawn as its grid.
-    eggcrate: { fuzz: 0.004, place(i) {
-      const [wx, wz] = wire(i, 18, 18), x = wx * 2 - 1, z = wz * 2 - 1;
-      return [x * 0.8, -Math.sin(x * 2.5 * Math.PI) * Math.sin(z * 2.5 * Math.PI) * 0.15, z * 0.8];
+    // Dini's surface: a funnel twisted into a spiral, narrowing for ever.
+    dini: { fuzz: 0.004, fit: true, place(i) {
+      const [wu, wv] = wire(i, 26, 9), u = wu * 3.2 * Math.PI, v = 0.08 + wv * 1.7;
+      return [Math.cos(u) * Math.sin(v), -(Math.cos(v) + Math.log(Math.tan(v / 2)) + 0.18 * u), Math.sin(u) * Math.sin(v)];
     } },
-    // Five tetrahedra in a dodecahedron's twenty corners, each corner
-    // used once: a star that turns only one way.
-    fivetet: { fuzz: 0.006, place(i) {
-      const E = once("fivetet", () => {
-        const q = 1 / PHI, V = [];
-        for (const a of [1, -1]) for (const b of [1, -1]) {
-          for (const c of [1, -1]) V.push([a, b, c]);
-          V.push([0, a * q, b * PHI], [a * q, b * PHI, 0], [a * PHI, 0, b * q]);
-        }
-        const far = (a, b) => Math.abs(Math.hypot(...a.map((c, k) => c - b[k])) - 2 * Math.SQRT2) < 1e-6;
-        const tets = [];
-        for (let a = 0; a < 20; a++) for (let b = a + 1; b < 20; b++) for (let c = b + 1; c < 20; c++) for (let d = c + 1; d < 20; d++) {
-          const T = [a, b, c, d];
-          if (T.every((x, j) => T.every((y, k) => k <= j || far(V[x], V[y])))) tets.push(T);
-        }
-        const used = new Set(), five = [];
-        tets.forEach((T) => { if (T.every((x) => !used.has(x))) { five.push(T); T.forEach((x) => used.add(x)); } });
-        const R = Math.sqrt(3), out = [];
-        five.forEach((T) => T.forEach((x, j) => T.forEach((y, k) => { if (k > j) out.push([V[x].map((c) => c / R), V[y].map((c) => c / R)]); })));
+    // A tetrahedron made of four half-size ones, each of those of four
+    // more, and so on down: three levels, drawn as their edges.
+    sierpinski: { fuzz: 0.004, place(i) {
+      const E = once("sierpinski", () => {
+        let T = [tetra()];
+        for (let n = 0; n < 3; n++) T = T.flatMap((t) => t.map((c) => t.map((v) => lerp3(c, v, 0.5))));
+        const out = [];
+        T.forEach((t) => t.forEach((a, j) => t.forEach((b, k) => { if (k > j) out.push([a, b]); })));
         return out;
       });
-      return onEdge(E, i, 0.82);
+      return onEdge(E, i, 0.86);
     } },
     // The Hilbert curve: one line that visits every cell of a cube of
     // four by four by four, turning at right angles, never crossing itself.
@@ -675,6 +374,45 @@
       });
       const [a, b] = E[i % E.length];
       return lerp3(a, b, R1[i]).map((c) => c * 0.62);
+    } },
+    // Thomas's cyclically symmetric attractor: a point wandering a lattice
+    // of loops, never the same way twice.
+    thomas: { fuzz: 0.005, fit: true, place(i) {
+      const b = 0.208186;
+      const P = trace("thomas", ([x, y, z]) => [Math.sin(y) - b * x, Math.sin(z) - b * y, Math.sin(x) - b * z],
+        [0.1, 0, -0.1], 0.05, 7000, 1, 1500, diag);
+      return P[Math.floor((i / N) * P.length)].slice();
+    } },
+    // Sand on a sounded plate, gathered on the lines that stand still.
+    chladni: { fuzz: 0.003, turn: [-0.9, 0, 0], place(i) {
+      if (R2[i] < 0.1) {
+        // The plate's edge.
+        const s = R1[i] * 4, e = Math.floor(s) % 4, f = (s - Math.floor(s)) * 2 - 1;
+        const [x, z] = [[f, 1], [1, -f], [-f, -1], [-1, f]][e];
+        return [x * 0.8, 0, z * 0.8];
+      }
+      const P = pool("chladni", N, 53, (rnd) => {
+        const x = rnd() * 2 - 1, z = rnd() * 2 - 1, n = 2, m = 5;
+        const f = Math.cos(n * Math.PI * x) * Math.cos(m * Math.PI * z) - Math.cos(m * Math.PI * x) * Math.cos(n * Math.PI * z);
+        return Math.abs(f) < 0.045 ? [x * 0.8, 0, z * 0.8] : null;
+      });
+      return P[i % P.length].slice();
+    } },
+    // The knot with four crossings.
+    eight: { fuzz: 0.04, turn: [0.7, 0, 0], place(i) {
+      const t = R1[i] * TAU, k = 0.26;
+      return [(2 + Math.cos(2 * t)) * Math.cos(3 * t) * k, Math.sin(4 * t) * k * 1.3, (2 + Math.cos(2 * t)) * Math.sin(3 * t) * k];
+    } },
+    // Two strands wound round each other, with a rung across now and then.
+    helix: { fuzz: 0.03, place(i) {
+      const s = R1[i], strand = i % 2;
+      if (R2[i] < 0.12) {
+        const s2 = Math.round(s * 18) / 18, a = s2 * TAU * 2.5, u = R3[i];
+        const x0 = Math.cos(a) * 0.42, z0 = Math.sin(a) * 0.42;
+        return [x0 * (1 - 2 * u), (s2 - 0.5) * 1.6, z0 * (1 - 2 * u)];
+      }
+      const a = s * TAU * 2.5 + strand * Math.PI;
+      return [Math.cos(a) * 0.42, (s - 0.5) * 1.6, Math.sin(a) * 0.42];
     } },
   };
 
@@ -696,8 +434,7 @@
     const loose = new Uint8Array(N);
     const raw = [];
     for (let i = 0; i < N; i++) {
-      // The galaxy and the gas cloud are haze already.
-      if (name !== "cloud" && name !== "galaxy" && R4[i] < HAZE) { loose[i] = 1; raw.push(null); continue; }
+      if (R4[i] < HAZE) { loose[i] = 1; raw.push(null); continue; }
       let p = shape.place(i);
       if (shape.turn) p = turned(p, shape.turn);
       raw.push(p);
@@ -715,7 +452,7 @@
     for (let i = 0; i < N; i++) {
       let p = raw[i];
       if (!p) {
-        // The haze round every form: the cloud, wider and fainter.
+        // The haze round every form: a cloud, wider and fainter.
         const s = 0.5;
         p = [gauss(R1[i], R3[i]) * s, gauss(R3[i], R2[i]) * s * 0.8, gauss(R2[i], R1[i]) * s];
       } else if (shape.fuzz) {
@@ -735,7 +472,7 @@
     const perm = Int32Array.from({ length: N }, (_, i) => i).sort((a, b) => key[a] - key[b]);
     const rank = new Int32Array(N);
     perm.forEach((slot, r) => { rank[slot] = r; });
-    const form = { name, P, perm, rank, loose, drift: shape.drift || "" };
+    const form = { name, P, perm, rank, loose };
     made.set(name, form);
     return form;
   }
@@ -743,75 +480,115 @@
   // ============================================================
   // WHICH FORM, AND WHEN. `?form=<name>` holds one form still on the page
   // (how the candidates were shown to the owner); otherwise THE CYCLE.
+  //
+  // THE CLOCK: showing form `cur`, either holding it (`to` is -1) or on its
+  // way from it to form `to`, since `since`, for `dur`. It is kept up with
+  // the time however long the window was away, and an arrow can start a
+  // transformation at any moment.
   // ============================================================
   const asked = new URLSearchParams(window.location.search).get("form");
   const held = asked && SHAPES[asked] ? asked : "";
   const cycle = held ? [held] : CYCLE;
   field.dataset.cycle = cycle.join(",");
-  let T0 = -1;                         // when the first form began to gather
-  let applied = 0;                     // transformations the specks have made
-  let phase = { k: 0, morph: false, q: 0 };
-  /** Where in the cycle the clock stands: holding form `k`, or on its way
-      from form `k` to the next, `q` of the way through. */
-  function when(t) {
-    if (cycle.length < 2 || still) return { k: 0, morph: false, q: 0 };
-    const s = t - T0 - ARRIVE - HOLD;
-    if (s < 0) return { k: 0, morph: false, q: (t - T0) / (ARRIVE + HOLD) };
-    const lap = MORPH + HOLD, n = Math.floor(s / lap), r = s - n * lap;
-    return r < MORPH ? { k: n, morph: true, q: r / MORPH } : { k: n + 1, morph: false, q: (r - MORPH) / HOLD };
-  }
-  const formAt = (k) => formOf(cycle[((k % cycle.length) + cycle.length) % cycle.length]);
-  /** The pairing for the transformation out of form `k`: where each speck
-      goes, and when in it it sets off — the top first, and the rest in
-      turn with a little of each speck's own. */
-  function pair(k) {
-    const from = formAt(k), to = formAt(k + 1);
+  const wrap = (k) => ((k % cycle.length) + cycle.length) % cycle.length;
+  const formAt = (k) => formOf(cycle[wrap(k)]);
+  let cur = 0, to = -1, since = -1, dur = ARRIVE + HOLD;
+  let phase = { morph: false, q: 0 };
+  /** The pairing for a transformation from form `a` to form `b`: where
+      each speck goes, and when in it it sets off — the top first, and the
+      rest in turn with a little of each speck's own. */
+  function pair(a, b) {
+    const from = formAt(a), into = formAt(b);
     for (let i = 0; i < N; i++) {
       const r = from.rank[SLOT[i]];
-      NEXT[i] = to.perm[r];
+      NEXT[i] = into.perm[r];
       SETOFF[i] = (0.62 * (r / N) + 0.38 * more(i, 11)) * SWEEP;
     }
   }
-  let paired = -1;
-  /** Bring the specks' places up to the clock: every transformation
-      already finished is taken, however many (a window left hidden). */
-  function keepUp(p) {
-    // Holding form k, or setting out from it, the specks have made k.
-    while (applied < p.k) {
-      pair(applied);
-      SLOT.set(NEXT);
-      applied++;
+  function setOut(k, length, t) {
+    to = wrap(k); since = t; dur = length;
+    pair(cur, to);
+    // A span is drawn across one form: it goes as the form starts to.
+    spans.forEach((s) => { s.life = Math.min(s.life, t - s.born + SPAN_FADE * 0.6); });
+  }
+  function land(t) {
+    SLOT.set(NEXT);
+    cur = to; to = -1; since = t; dur = HOLD;
+  }
+  /** Bring the clock up to `t`: every hold and transformation already
+      over is taken, however many (a window left hidden). */
+  function tick(t) {
+    if (since < 0) since = t;
+    if (cycle.length > 1 && !still) {
+      for (let n = 0; t - since >= dur && n < 1000; n++) {
+        const end = since + dur;
+        if (to < 0) setOut(cur + 1, MORPH, end);
+        else land(end);
+      }
     }
-    if (p.morph && paired !== p.k) { pair(p.k); paired = p.k; }
+    phase = { morph: to >= 0, q: Math.max(0, Math.min(1, (t - since) / dur)) };
+  }
+  /** An arrow: on to the next form, or back to the one before, now. One
+      already on its way lands where it was going first — the specks are
+      sprung, so they carry on there rather than jump. */
+  function go(dir) {
+    if (cycle.length < 2 || !N) return;
+    const t = performance.now();
+    tick(t);
+    if (to >= 0) land(t);
+    setOut(cur + dir, QUICK, t);
+    if (still) {
+      // Nothing moves: simply the other form, drawn once.
+      land(t);
+      tick(t);
+      settle(t);
+      stillLoci();
+      caption();
+      draw(t);
+      return;
+    }
+    tick(t);
+    caption();
+    wake();
   }
 
   // ============================================================
-  // THE CAPTION under the drawing: which form, and a hairline filling as
-  // it holds or turns into the next.
+  // THE CAPTION at the field's foot, with THE ARROWS either side of it:
+  // the name of the form the field is actually showing — a
+  // transformation's new name taken up half way through it, when there
+  // is more of the new form than the old — and its number, with a
+  // hairline over it filling as the hold or the transformation goes.
   // ============================================================
   const capNo = field.querySelector(".re-caption-no");
   const capName = field.querySelector(".re-caption-name");
-  const capKind = field.querySelector(".re-caption-kind");
   const cap = field.querySelector(".re-caption");
   const run = document.createElement("span");
   run.className = "re-run";
   run.setAttribute("aria-hidden", "true");
   run.appendChild(document.createElement("i"));
   if (cap) cap.appendChild(run);
+  field.querySelectorAll(".re-step").forEach((b) => {
+    if (cycle.length < 2) { b.hidden = true; return; }
+    b.addEventListener("click", () => go(b.classList.contains("re-prev") ? -1 : 1));
+  });
   let said = "";
-  function caption(p) {
-    const at = ((p.k % cycle.length) + cycle.length) % cycle.length;
-    const now = cycle[at], next = cycle[(at + 1) % cycle.length];
-    field.style.setProperty("--run", Math.max(0, Math.min(1, p.q)).toFixed(3));
-    const say = p.morph ? now + ">" + next : now;
+  function caption() {
+    field.style.setProperty("--run", phase.q.toFixed(3));
+    const shown = to >= 0 && phase.q >= 0.5 ? to : cur;
+    const say = cur + ">" + to + ":" + shown;
     if (say === said) return;
     said = say;
-    field.dataset.figure = p.morph ? next : now;
-    field.dataset.phase = p.morph ? "morph" : "hold";
+    field.dataset.figure = cycle[to >= 0 ? to : cur];
+    field.dataset.phase = to >= 0 ? "morph" : "hold";
+    if (field.dataset.shown === cycle[shown]) return;
+    field.dataset.shown = cycle[shown];
     if (!capName) return;
-    capNo.textContent = String((p.morph ? (at + 1) % cycle.length : at) + 1).padStart(2, "0") + " / " + String(cycle.length).padStart(2, "0");
-    capName.textContent = p.morph ? NAMES[now] + " → " + NAMES[next] : NAMES[now];
-    capKind.textContent = held ? "Held" : p.morph ? "Transforming" : "Holding";
+    capName.textContent = NAMES[cycle[shown]];
+    if (capNo) capNo.textContent = String(shown + 1).padStart(2, "0") + " / " + String(cycle.length).padStart(2, "0");
+    // Taken up with a short fade, not a cut.
+    capName.classList.remove("is-new");
+    void capName.offsetWidth;
+    capName.classList.add("is-new");
   }
 
   // ============================================================
@@ -820,31 +597,11 @@
   // near (0 far, 1 near).
   // ============================================================
   const out = new Float32Array(3);
-  const at3 = new Float32Array(3);
-  let cosA = 1, sinA = 0;
+  let spin = 0, cosA = 1, sinA = 0;
   const cosT = Math.cos(TILT), sinT = Math.sin(TILT);
   function turnTo(t) {
-    const a = still ? 0.6 : t * SPIN;
-    cosA = Math.cos(a); sinA = Math.sin(a);
-  }
-  /** Where place `j` of `form` stands at `t`, drifting as that form does. */
-  function placeOf(form, j, t, o, w) {
-    let x = form.P[j * 3], y = form.P[j * 3 + 1], z = form.P[j * 3 + 2];
-    if (form.drift && !still) {
-      if (form.drift === "float") {
-        x += Math.sin(t * 0.0003 + R4[j] * 6) * 0.03;
-        y += Math.cos(t * 0.00025 + R1[j] * 6) * 0.025;
-      } else {
-        // The gas cloud churns, and the vortex whirls: turned about the
-        // upright axis, faster nearer it.
-        const r = Math.hypot(x, z);
-        const a = t * (form.drift === "whirl" ? 0.0011 / (r + 0.12) : 0.00016 * (1.6 - Math.min(1.4, r)));
-        const c = Math.cos(a), s = Math.sin(a);
-        [x, z] = [x * c - z * s, x * s + z * c];
-        y += Math.sin(t * 0.0004 + r * 5) * (form.drift === "churn" ? 0.03 : 0);
-      }
-    }
-    o[0] += x * w; o[1] += y * w; o[2] += z * w;
+    spin = still ? 0.6 : t * SPIN;
+    cosA = Math.cos(spin); sinA = Math.sin(spin);
   }
   function project(x, y, z) {
     // About the upright axis, then leaning towards you.
@@ -856,27 +613,30 @@
     out[2] = Math.max(0, Math.min(1, 0.5 - z2 * 0.55));
   }
   const ease = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * x * (x * (x * 6 - 15) + 10));
-  /** Where speck `i` belongs at `t`. */
-  function target(i, t, p) {
-    at3[0] = 0; at3[1] = 0; at3[2] = 0;
-    if (!p.morph) {
-      placeOf(formAt(p.k), SLOT[i], t, at3, 1);
-    } else {
-      const e = ease((p.q - SETOFF[i]) / (1 - SWEEP));
-      placeOf(formAt(p.k), SLOT[i], t, at3, 1 - e);
-      placeOf(formAt(p.k + 1), NEXT[i], t, at3, e);
-      // Swung out of its straight way, most at half way.
-      const swing = Math.sin(Math.PI * e) * ARC;
-      at3[0] += (R1[i] - 0.5) * 2 * swing; at3[1] += (R2[i] - 0.5) * 1.4 * swing; at3[2] += (R3[i] - 0.5) * 2 * swing;
+  /** Where speck `i` belongs now: its place in form `F`, or on its way
+      from there to its place in form `G`. */
+  function target(i, F, G) {
+    const j = SLOT[i] * 3;
+    if (!G) {
+      project(F[j], F[j + 1], F[j + 2]);
+      return;
     }
-    project(at3[0], at3[1], at3[2]);
+    const k = NEXT[i] * 3;
+    const e = ease((phase.q - SETOFF[i]) / (1 - SWEEP));
+    // Swung out of its straight way, most at half way.
+    const swing = Math.sin(Math.PI * e) * ARC;
+    project(F[j] + (G[k] - F[j]) * e + (R1[i] - 0.5) * 2 * swing,
+      F[j + 1] + (G[k + 1] - F[j + 1]) * e + (R2[i] - 0.5) * 1.4 * swing,
+      F[j + 2] + (G[k + 2] - F[j + 2]) * e + (R3[i] - 0.5) * 2 * swing);
   }
+  const forms = () => [formAt(cur).P, to >= 0 ? formAt(to).P : null];
 
   /** Every speck straight to its place: the still drawing. */
   function settle(t) {
     turnTo(t);
+    const [F, G] = forms();
     for (let i = 0; i < N; i++) {
-      target(i, t, phase);
+      target(i, F, G);
       X[i] = out[0]; Y[i] = out[1];
       VX[i] = 0; VY[i] = 0;
       keep(i, out[2]);
@@ -897,21 +657,21 @@
   // ============================================================
   const loci = [];
   const pick = stream(4099);
+  /** On the shape itself, never in the haze round it. */
+  const onIt = (loose, i) => !loose[SLOT[i]] && A[i] >= 0.3;
   function locus(born) {
-    // On the shape itself, never in the haze round it.
-    const form = formAt(phase.k);
-    const onIt = (i) => !form.loose[SLOT[i]] && A[i] >= 0.3;
+    const loose = formAt(cur).loose;
     let anchor = -1;
     for (let tries = 0; tries < 40; tries++) {
       const c = Math.floor(pick() * N);
-      if (onIt(c) && A[c] > 0.35) { anchor = c; break; }
+      if (onIt(loose, c) && A[c] > 0.35) { anchor = c; break; }
     }
     if (anchor < 0) return null;
     // Its company: specks round it, never nearer each other than
     // `LOCUS_GAP`, so the triangles they make are open rather than a knot.
     const near = [];
     for (let i = 0; i < N; i++) {
-      if (!onIt(i)) continue;
+      if (!onIt(loose, i)) continue;
       const d = Math.hypot(X[i] - X[anchor], Y[i] - Y[anchor]);
       if (d < LOCUS_FROM) near.push([d + pick() * 20, i]);
     }
@@ -937,12 +697,44 @@
     }));
     return { who, pairs, tris, born, life: LOCUS_LIFE * (0.8 + pick() * 0.4) };
   }
+
+  // ============================================================
+  // THE SPANS: a triangle across the whole form, its three corners specks
+  // on the shape well apart and none of its angles narrow — each angle
+  // marked with a small arc, one of them written out in degrees.
+  // ============================================================
+  const spans = [];
+  const angleAt = (a, b, c) => {
+    const ux = X[b] - X[a], uy = Y[b] - Y[a], vx = X[c] - X[a], vy = Y[c] - Y[a];
+    return Math.acos(Math.max(-1, Math.min(1, (ux * vx + uy * vy) / (Math.hypot(ux, uy) * Math.hypot(vx, vy) || 1))));
+  };
+  function span(born) {
+    const loose = formAt(cur).loose, some = [];
+    for (let tries = 0; tries < 400 && some.length < 90; tries++) {
+      const c = Math.floor(pick() * N);
+      if (onIt(loose, c) && A[c] > 0.4) some.push(c);
+    }
+    const fits = (a, b) => { const d = Math.hypot(X[a] - X[b], Y[a] - Y[b]); return d >= SPAN_NEAR && d <= SPAN_FAR; };
+    for (let tries = 0; tries < 300 && some.length > 3; tries++) {
+      const a = some[Math.floor(pick() * some.length)], b = some[Math.floor(pick() * some.length)], c = some[Math.floor(pick() * some.length)];
+      if (a === b || b === c || a === c || !fits(a, b) || !fits(b, c) || !fits(a, c)) continue;
+      if (Math.min(angleAt(a, b, c), angleAt(b, c, a), angleAt(c, a, b)) < SPAN_ANGLE) continue;
+      return { who: [a, b, c], born, life: SPAN_LIFE * (0.85 + pick() * 0.3), writ: Math.floor(pick() * 3) };
+    }
+    return null;
+  }
   function tendLoci(t) {
     for (let k = loci.length - 1; k >= 0; k--) if (t - loci[k].born > loci[k].life) loci.splice(k, 1);
     // One at a time, staggered, never all together.
     if (loci.length < LOCI && (!loci.length || t - loci[loci.length - 1].born > LOCUS_LIFE / LOCI)) {
       const l = locus(t);
       if (l) loci.push(l);
+    }
+    for (let k = spans.length - 1; k >= 0; k--) if (t - spans[k].born > spans[k].life) spans.splice(k, 1);
+    // Only across a form that is standing, never one on its way.
+    if (!phase.morph && t - since > 900 && spans.length < SPANS && (!spans.length || t - spans[spans.length - 1].born > SPAN_LIFE / SPANS)) {
+      const s = span(t);
+      if (s) spans.push(s);
     }
   }
 
@@ -980,23 +772,92 @@
     draw(performance.now());
   }
 
+  /** THE FRAME the form turns in: the equator it turns round — dashed,
+      and ticked every thirty degrees, the ticks turning with the form —
+      and the axis through it, with a short bar at each end. */
+  function drawFrame() {
+    g.lineWidth = 1 / ratio;
+    g.strokeStyle = "rgba(" + INK + "," + FRAME_INK + ")";
+    g.setLineDash([2, 5]);
+    g.beginPath();
+    for (let k = 0; k <= 96; k++) {
+      const a = (k / 96) * TAU;
+      project(Math.cos(a) * EQUATOR, 0, Math.sin(a) * EQUATOR);
+      if (k) g.lineTo(out[0], out[1]); else g.moveTo(out[0], out[1]);
+    }
+    g.stroke();
+    project(0, -EQUATOR, 0);
+    const ax = out[0], ay = out[1];
+    project(0, EQUATOR, 0);
+    const bx = out[0], by = out[1];
+    g.beginPath(); g.moveTo(ax, ay); g.lineTo(bx, by); g.stroke();
+    g.setLineDash([]);
+    g.beginPath();
+    g.moveTo(ax - 4, ay); g.lineTo(ax + 4, ay);
+    g.moveTo(bx - 4, by); g.lineTo(bx + 4, by);
+    g.stroke();
+    // The ticks, set on the form's own turning: nearer ones plainer.
+    for (let k = 0; k < EQUATOR_TICKS; k++) {
+      const a = (k / EQUATOR_TICKS) * TAU - spin;
+      project(Math.cos(a) * EQUATOR, 0, Math.sin(a) * EQUATOR);
+      const x0 = out[0], y0 = out[1], near = out[2];
+      project(Math.cos(a) * (EQUATOR + 0.05), 0, Math.sin(a) * (EQUATOR + 0.05));
+      g.strokeStyle = "rgba(" + INK + "," + (FRAME_INK * (0.6 + near * 1.4)).toFixed(3) + ")";
+      g.beginPath(); g.moveTo(x0, y0); g.lineTo(out[0], out[1]); g.stroke();
+    }
+  }
+
+  /** A span: its sides, its faint fill, an arc in each corner, a small
+      open square on each corner, and one angle written out beside its arc. */
+  function drawSpan(s, e) {
+    const [a, b, c] = s.who;
+    const k = Math.min(A[a], A[b], A[c]) * e;
+    g.fillStyle = "rgba(" + INK + "," + (0.028 * k).toFixed(3) + ")";
+    g.strokeStyle = "rgba(" + INK + "," + (0.34 * k).toFixed(3) + ")";
+    g.beginPath(); g.moveTo(X[a], Y[a]); g.lineTo(X[b], Y[b]); g.lineTo(X[c], Y[c]); g.closePath();
+    g.fill();
+    g.stroke();
+    [[a, b, c], [b, c, a], [c, a, b]].forEach(([p, q, r], n) => {
+      const from = Math.atan2(Y[q] - Y[p], X[q] - X[p]);
+      let sweep = Math.atan2(Y[r] - Y[p], X[r] - X[p]) - from;
+      while (sweep > Math.PI) sweep -= TAU;
+      while (sweep < -Math.PI) sweep += TAU;
+      g.beginPath();
+      g.arc(X[p], Y[p], SPAN_ARC, from, from + sweep, sweep < 0);
+      g.stroke();
+      g.strokeRect(X[p] - 2.5, Y[p] - 2.5, 5, 5);
+      if (n !== s.writ) return;
+      const mid = from + sweep / 2;
+      g.font = "9px " + MONO;
+      g.textBaseline = "middle";
+      g.textAlign = "center";
+      g.fillStyle = "rgba(" + INK + "," + (0.55 * k).toFixed(3) + ")";
+      g.fillText(Math.round((Math.abs(sweep) * 180) / Math.PI) + "°", X[p] + Math.cos(mid) * (SPAN_ARC + 12), Y[p] + Math.sin(mid) * (SPAN_ARC + 12));
+    });
+  }
+
   function draw(t) {
     g.setTransform(ratio, 0, 0, ratio, 0, 0);
     g.clearRect(0, 0, W, H);
+    turnTo(t);
+    drawFrame();
     // THE LOCI: their triangles first, faint, then their lines.
     g.lineWidth = 1 / ratio;
     const reach2 = LOCUS_REACH * LOCUS_REACH;
     const lit = new Map();
+    const env = (born, life, fade) => {
+      const age = still ? fade : t - born;
+      const v = Math.min(1, age / fade, (life - age) / fade);
+      return v <= 0 ? 0 : v * v * (3 - 2 * v);
+    };
     loci.forEach((l) => {
-      const age = still ? LOCUS_FADE : t - l.born;
-      const env = Math.min(1, age / LOCUS_FADE, (l.life - age) / LOCUS_FADE);
-      if (env <= 0) return;
-      const e = env * env * (3 - 2 * env);
+      const e = env(l.born, l.life, LOCUS_FADE);
+      if (!e) return;
       l.who.forEach((i) => lit.set(i, Math.max(lit.get(i) || 0, e)));
       l.tris.forEach(([a, b, c]) => {
         const far = Math.max((X[a] - X[b]) ** 2 + (Y[a] - Y[b]) ** 2, (X[b] - X[c]) ** 2 + (Y[b] - Y[c]) ** 2, (X[a] - X[c]) ** 2 + (Y[a] - Y[c]) ** 2);
         if (far > reach2 * 0.5) return;
-        g.fillStyle = "rgba(" + INK + "," + (0.06 * e * Math.min(A[a], A[b], A[c])).toFixed(3) + ")";
+        g.fillStyle = "rgba(" + INK + "," + (LOCUS_FILL * e * Math.min(A[a], A[b], A[c])).toFixed(3) + ")";
         g.beginPath(); g.moveTo(X[a], Y[a]); g.lineTo(X[b], Y[b]); g.lineTo(X[c], Y[c]); g.closePath(); g.fill();
       });
       l.pairs.forEach(([a, b]) => {
@@ -1007,6 +868,11 @@
         g.strokeStyle = "rgba(" + INK + "," + k.toFixed(3) + ")";
         g.beginPath(); g.moveTo(X[a], Y[a]); g.lineTo(X[b], Y[b]); g.stroke();
       });
+    });
+    // THE SPANS, over the loci.
+    spans.forEach((s) => {
+      const e = env(s.born, s.life, SPAN_FADE);
+      if (e) drawSpan(s, e);
     });
     // THE SPECKS, as they were last told — the ones in a locus a little
     // larger and plainer, as the corners of a drawing are.
@@ -1026,14 +892,15 @@
     g.globalAlpha = 1;
   }
 
+  let T0 = -1;
   function step(t) {
     if (T0 < 0) T0 = t;
-    phase = when(t);
-    keepUp(phase);
-    caption(phase);
+    tick(t);
+    caption();
     turnTo(t);
+    const [F, G] = forms();
     for (let i = 0; i < N; i++) {
-      target(i, t, phase);
+      target(i, F, G);
       keep(i, out[2]);
       const k = SPRING * (0.7 + 0.6 * R3[i]);
       VX[i] = (VX[i] + (out[0] - X[i]) * k) * DAMP;
@@ -1049,10 +916,12 @@
     if (t - T0 > ARRIVE * 0.8) tendLoci(t);
   }
 
-  /** With reduced motion, the loci stand where they would, once. */
+  /** With reduced motion, the loci and the spans stand where they would, once. */
   function stillLoci() {
     loci.length = 0;
+    spans.length = 0;
     for (let k = 0; k < LOCI; k++) { const l = locus(0); if (l) loci.push(l); }
+    for (let k = 0; k < SPANS; k++) { const s = span(0); if (s) spans.push(s); }
   }
 
   let frame = 0, seen = true;
@@ -1078,7 +947,8 @@
   else window.addEventListener("resize", size);
 
   size();
-  caption(phase);
+  tick(performance.now());
+  caption();
   field.classList.add("is-drawn");
   if (still) { settle(0); stillLoci(); draw(0); }
   else wake();

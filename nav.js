@@ -26,6 +26,7 @@ const SITE_LINKS = [
   { label: "Photography", href: "categories/other-2.html" },
   { label: "Search", href: "search.html" },
   { label: "Contact", href: "contact.html" },
+  { label: "Test page", href: "works/test-page.html" },
 ];
 
 (function () {

@@ -47,6 +47,7 @@
     { url: "works/cold-vs-warm-incense.html", trail: ["Explorations & Researches", "Cold vs Warm Incense"] },
     { url: "categories/note-library.html", trail: ["Note Library"] },
     { url: "categories/other-2.html", trail: ["Photography"] },
+    { url: "works/test-page.html", trail: ["Test page"] },
   ];
 
   let everything = null;

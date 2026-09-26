@@ -456,14 +456,24 @@ test("Explorations & Researches: the paragraph under the name, the table on the 
 /* THE FIELD KEEPS ITS OWN TIME. It drew a figure for each work, then an
    abstract form for the row pointed at; the owner (2026-09-26): "I want
    the shapes to not change based on which research you hover, but rather
-   to transform from one to another in the span of 12.5 seconds, then stay
-   in their form for 5 and then start transforming again into the next
-   one". Run on the page's own clock, sped up: the galaxy first, gathered
-   and held; then, from 6.6s, 12.5s turning into the sphere; the sphere
-   held 5s; then on to the knot — and round the whole cycle back to the
-   galaxy. Pointing at a row changes nothing, and nothing is written into
-   the drawing. */
-test("the field holds each form five seconds and turns into the next over twelve and a half, whatever is pointed at",
+   to transform from one to another" — and last, choosing seventeen forms,
+   "make it now last 8 seconds transforming to 8 seocnds holding". Run on
+   the page's own clock, sped up: the geodesic sphere first, gathered and
+   held; then, from 9.6s, 8s turning into the Borromean rings — its name
+   taken up half way through, when there is more of the new form than the
+   old; the rings held 8s; then on to the Rössler attractor, and to
+   Aizawa's after it. Pointing at a row changes nothing,
+   and nothing is written into the drawing but the angles of its spans. */
+const CYCLE = ["geodesic", "borromean", "rossler", "aizawa", "lissajous", "gyre", "ripple",
+  "tesseract", "cell24", "spirograph", "dini", "sierpinski", "hilbert", "thomas", "chladni", "eight", "helix"];
+const FORM_NAMES = {
+  geodesic: "Geodesic sphere", borromean: "Borromean rings", rossler: "Rössler attractor",
+  aizawa: "Aizawa attractor", lissajous: "Lissajous knot", gyre: "Armillary", ripple: "Ripple",
+  tesseract: "Tesseract", cell24: "24-cell", spirograph: "Spirograph", dini: "Dini’s surface",
+  sierpinski: "Sierpiński tetrahedron", hilbert: "Hilbert curve", thomas: "Thomas attractor",
+  chladni: "Chladni figure", eight: "Figure-eight knot", helix: "Helix",
+};
+test("the field holds each form eight seconds and turns into the next over eight, whatever is pointed at",
   async ({ page }) => {
   test.setTimeout(120000);
   const errors = collectPageErrors(page);
@@ -477,97 +487,148 @@ test("the field holds each form five seconds and turns into the next over twelve
   });
   // Paused before the page arrives: an installed clock otherwise goes on
   // flowing at the real rate between the steps, and on a busy machine that
-  // drift ate the 0.3s between "still holding" and the turn (it failed so
-  // once, in a full run). Paused, only `runFor` moves it, from the first frame.
+  // drift ate the margin between "still holding" and the turn (it failed so
+  // once, in a full run). Paused, only `runFor` moves it.
   await page.clock.install();
   await page.clock.pauseAt(Date.now() + 1000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(RESEARCHES);
   const field = page.locator(".re-field");
-  const state = () => field.evaluate((f) => ({ figure: f.dataset.figure, phase: f.dataset.phase,
+  const name = page.locator(".re-caption-name");
+  const state = () => field.evaluate((f) => ({ figure: f.dataset.figure, phase: f.dataset.phase, shown: f.dataset.shown,
     run: parseFloat(f.style.getPropertyValue("--run")) }));
-  await expect(field).toHaveAttribute("data-cycle", "galaxy,sphere,knot,torus,helix,spiral,cloud");
+  await expect(field).toHaveAttribute("data-cycle", CYCLE.join(","));
   await page.clock.runFor(2500);
-  expect(await state()).toMatchObject({ figure: "galaxy", phase: "hold" });
-  await expect(page.locator(".re-caption-name")).toHaveText("Galaxy");
-  await expect(page.locator(".re-caption-no")).toHaveText("01 / 07");
-  const galaxy = await fieldInk(page);
-  expect(galaxy.ink, "the galaxy is drawn").toBeGreaterThan(400);
+  expect(await state()).toMatchObject({ figure: "geodesic", phase: "hold" });
+  await expect(name).toHaveText("Geodesic sphere");
+  await expect(page.locator(".re-caption-no")).toHaveText("01 / 17");
+  const first = await fieldInk(page);
+  expect(first.ink, "the geodesic sphere is drawn").toBeGreaterThan(400);
 
   // Pointing at a row does nothing to it.
   await page.locator('.index-table tbody tr[data-no="1"]').hover();
   await page.clock.runFor(600);
-  expect((await state()).figure, "pointing at a row changes nothing").toBe("galaxy");
+  expect((await state()).figure, "pointing at a row changes nothing").toBe("geodesic");
   expect(await page.locator(".index-table tbody tr.is-shown").count()).toBe(0);
   expect(await page.locator(".index-table tbody tr[data-figure]").count(), "no row names a form").toBe(0);
   await page.mouse.move(200, 100);
 
-  // Held until 6.6s (1.6 to gather, 5 standing), then turning.
-  await page.clock.runFor(3200);        // 6.3s
-  expect((await state()).phase, "still holding at six seconds").toBe("hold");
-  await page.clock.runFor(700);         // 7.0s
-  expect(await state(), "then turning into the sphere").toMatchObject({ figure: "sphere", phase: "morph" });
-  await expect(page.locator(".re-caption-name")).toHaveText("Galaxy → Sphere");
-  // Half way, it is neither.
-  await page.clock.runFor(5900);        // 12.9s: half way through
-  const half = await state();
-  expect(half.phase).toBe("morph");
-  expect(half.run, "half way through the turning").toBeGreaterThan(0.4);
-  expect(half.run).toBeLessThan(0.6);
-  // Still turning at twelve seconds in, and the sphere once it has.
-  await page.clock.runFor(5700);        // 18.6s
-  expect((await state()).phase, "twelve and a half seconds of it").toBe("morph");
-  await page.clock.runFor(1500);        // 20.1s
-  expect(await state()).toMatchObject({ figure: "sphere", phase: "hold" });
-  await expect(page.locator(".re-caption-name")).toHaveText("Sphere");
-  const sphere = await fieldInk(page);
-  expect(sphere.ink, "the sphere is drawn").toBeGreaterThan(400);
-  expect(apart(sphere, galaxy), "and it is a different drawing").toBeGreaterThan(30);
-  await page.clock.runFor(4600);        // 24.7s: the sphere held five seconds
-  expect(await state(), "on to the knot").toMatchObject({ figure: "knot", phase: "morph" });
-
-  // Round the whole cycle and back to the galaxy: seven forms, 17.5s each —
-  // into the middle of its hold (124.1s to 129.1s), not onto its edge.
-  await page.clock.runFor(17500 * 6 - 4600 - 1000 + 2500);   // 126.6s
-  expect(await state(), "round again to the galaxy").toMatchObject({ figure: "galaxy", phase: "hold" });
-  expect(await page.evaluate(() => window.__words), "nothing is written into the drawing").toEqual([]);
+  // Held until 9.6s (1.6 to gather, 8 standing), then turning.
+  await page.clock.runFor(6200);        // 9.3s
+  expect((await state()).phase, "still holding at nine seconds").toBe("hold");
+  await page.clock.runFor(700);         // 10.0s
+  expect(await state(), "then turning into the Borromean rings").toMatchObject({ figure: "borromean", phase: "morph" });
+  await expect(name, "and still showing the sphere, early in it").toHaveText("Geodesic sphere");
+  await page.clock.runFor(3200);        // 13.2s: a little short of half way
+  expect((await state()).shown).toBe("geodesic");
+  await page.clock.runFor(1000);        // 14.2s: a little past it
+  const past = await state();
+  expect(past.shown, "the new name taken up half way through").toBe("borromean");
+  expect(past.run).toBeGreaterThan(0.5);
+  expect(past.run).toBeLessThan(0.65);
+  await expect(name).toHaveText("Borromean rings");
+  await expect(page.locator(".re-caption-no")).toHaveText("02 / 17");
+  await page.clock.runFor(3200);        // 17.4s
+  expect((await state()).phase, "eight seconds of it").toBe("morph");
+  await page.clock.runFor(800);         // 18.2s
+  expect(await state()).toMatchObject({ figure: "borromean", phase: "hold" });
+  const rings = await fieldInk(page);
+  expect(apart(rings, first), "and it is a different drawing").toBeGreaterThan(30);
+  await page.clock.runFor(7800);        // 26.0s: the rings held eight seconds
+  expect(await state(), "on to the Rössler attractor").toMatchObject({ figure: "rossler", phase: "morph" });
+  // And so on, sixteen seconds a form: the attractor held from 33.6s, and
+  // turning into Aizawa's from 41.6s. (Round the end of the cycle back to
+  // the start is the arrows' test's; a whole lap here is a long run.)
+  await page.clock.runFor(11000);       // 37.0s
+  expect(await state()).toMatchObject({ figure: "rossler", phase: "hold" });
+  await page.clock.runFor(5000);        // 42.0s
+  expect(await state(), "on to the Aizawa attractor").toMatchObject({ figure: "aizawa", phase: "morph" });
+  const words = await page.evaluate(() => window.__words);
+  expect(words.filter((w) => !/^\d+°$/.test(w)), "nothing written into the drawing but angles").toEqual([]);
   expect(errors).toEqual([]);
 });
 
-/* THE LOCI: "some loci where you have geometric elements (such as
-   triangles from the connected dots)". Read off what the field's canvas is
-   asked to draw once a form has gathered: triangles filled, and lines. */
-test("here and there on the field, specks are joined into triangles", async ({ page }) => {
+/* THE ARROWS: "go to the next one or back with two arrows that are small
+   and subtle near the bottom". Each starts a quicker transformation at
+   once (2.6s); one pressed while another is under way lands it first; and
+   the field's own clock carries on from wherever the arrows leave it. */
+test("the arrows at the field's foot go on to the next form, or back, at once", async ({ page }) => {
+  test.setTimeout(60000);
+  const errors = collectPageErrors(page);
+  await page.clock.install();
+  await page.clock.pauseAt(Date.now() + 1000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(RESEARCHES);
+  const field = page.locator(".re-field");
+  const state = () => field.evaluate((f) => ({ figure: f.dataset.figure, phase: f.dataset.phase, shown: f.dataset.shown }));
+  await page.clock.runFor(3000);
+  const next = page.locator(".re-next"), prev = page.locator(".re-prev");
+  await expect(next).toBeVisible();
+  await expect(prev).toBeVisible();
+  // Small: well under the size of the caption's own line.
+  const box = await next.boundingBox();
+  expect(box.width).toBeLessThanOrEqual(24);
+  expect(box.y, "near the bottom of the field").toBeGreaterThan((await field.boundingBox()).y + (await field.boundingBox()).height - 60);
+
+  await next.click();
+  expect(await state(), "on to the next at once").toMatchObject({ figure: "borromean", phase: "morph" });
+  await page.clock.runFor(1500);
+  expect((await state()).shown, "past half way in a second and a half").toBe("borromean");
+  await page.clock.runFor(1300);
+  expect(await state(), "and there in 2.6 seconds").toMatchObject({ figure: "borromean", phase: "hold" });
+  await expect(page.locator(".re-caption-name")).toHaveText("Borromean rings");
+
+  // Back, twice, the second while the first is under way: the sphere
+  // lands, and from it back again round to the helix, the last.
+  await prev.click();
+  await page.clock.runFor(600);
+  await prev.click();
+  expect(await state(), "back past the start, round to the last").toMatchObject({ figure: "helix", phase: "morph" });
+  await page.clock.runFor(2800);
+  expect(await state()).toMatchObject({ figure: "helix", phase: "hold" });
+  await expect(page.locator(".re-caption-no")).toHaveText("17 / 17");
+  // Its own clock carries on: eight seconds held, then round to the sphere.
+  await page.clock.runFor(8300);
+  expect(await state(), "and the cycle goes on from there").toMatchObject({ figure: "geodesic", phase: "morph" });
+  expect(errors).toEqual([]);
+});
+
+/* THE LOCI, THE SPANS AND THE FRAME: "some loci where you have geometric
+   elements (such as triangles from the connected dots)" — and then "add
+   triangles and a little geometry". Read off what the field's canvas is
+   asked to draw once a form has gathered: triangles filled, and lines;
+   the spans' angles marked with arcs and written in degrees; and the
+   frame's dashed equator. */
+test("here and there on the field, specks are joined into triangles, with a little geometry", async ({ page }) => {
   await page.addInitScript(() => {
-    window.__drawn = { fills: 0, strokes: 0 };
-    const P = CanvasRenderingContext2D.prototype, fill = P.fill, stroke = P.stroke;
-    P.fill = function () { if (this.canvas.classList.contains("re-canvas")) window.__drawn.fills++; return fill.apply(this, arguments); };
-    P.stroke = function () { if (this.canvas.classList.contains("re-canvas")) window.__drawn.strokes++; return stroke.apply(this, arguments); };
+    window.__drawn = { fills: 0, strokes: 0, arcs: 0, dashes: 0, angles: 0 };
+    const P = CanvasRenderingContext2D.prototype, fill = P.fill, stroke = P.stroke, arc = P.arc, dash = P.setLineDash, text = P.fillText;
+    const ours = (c) => c.canvas.classList.contains("re-canvas");
+    P.fill = function () { if (ours(this)) window.__drawn.fills++; return fill.apply(this, arguments); };
+    P.stroke = function () { if (ours(this)) window.__drawn.strokes++; return stroke.apply(this, arguments); };
+    P.arc = function () { if (ours(this)) window.__drawn.arcs++; return arc.apply(this, arguments); };
+    P.setLineDash = function (d) { if (ours(this) && d && d.length) window.__drawn.dashes++; return dash.apply(this, arguments); };
+    P.fillText = function (t) { if (ours(this) && /^\d+°$/.test(String(t))) window.__drawn.angles++; return text.apply(this, arguments); };
   });
   await page.clock.install();
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(RESEARCHES);
-  await page.clock.runFor(5000);
+  await page.clock.runFor(6000);
   const before = await page.evaluate(() => ({ ...window.__drawn }));
   await page.clock.runFor(1000);
   const after = await page.evaluate(() => ({ ...window.__drawn }));
   expect(after.fills - before.fills, "triangles filled").toBeGreaterThan(20);
   expect(after.strokes - before.strokes, "and their lines drawn").toBeGreaterThan(100);
+  expect(after.arcs - before.arcs, "a span's angles marked").toBeGreaterThan(10);
+  expect(after.angles - before.angles, "and one written in degrees").toBeGreaterThan(10);
+  expect(after.dashes - before.dashes, "the equator drawn dashed").toBeGreaterThan(10);
 });
 
-/* THE SECOND LIST: twenty more candidates for the owner to choose from,
-   numbered 25 to 44 as they were shown. Each can be held on the page, is
-   named in the caption, and is drawn — a shape whose numbers came out
-   wrong draws only its haze. */
-const SECOND_LIST = {
-  buckyball: "Buckyball", stella: "Star tetrahedron", tesseract: "Tesseract",
-  stellated: "Stellated dodecahedron", fivetet: "Five tetrahedra", cell24: "24-cell",
-  loxodrome: "Loxodromes", spirograph: "Spirograph", coil: "Toroidal coil", dipole: "Dipole field",
-  dini: "Dini’s surface", sierpinski: "Sierpiński tetrahedron", hilbert: "Hilbert curve",
-  thomas: "Thomas attractor", chladni: "Chladni figure", chua: "Chua’s double scroll",
-  halvorsen: "Halvorsen attractor", eight: "Figure-eight knot", cyclide: "Dupin cyclide", eggcrate: "Egg crate",
-};
-test("every candidate on the second list can be held, and draws itself", async ({ page }) => {
+/* EVERY FORM IN THE CYCLE can be held on the page (`?form=`), is named in
+   the caption, and is drawn — a shape whose numbers came out wrong draws
+   only its haze. Held, there are no arrows. The forms not chosen — the
+   galaxy, the sphere, the gas cloud and the rest — are gone. */
+test("every form in the cycle can be held, and draws itself; the ones not chosen are gone", async ({ page }) => {
   test.slow();
   const errors = collectPageErrors(page);
   await page.clock.install();
@@ -578,28 +639,22 @@ test("every candidate on the second list can be held, and draws itself", async (
     for (let i = 3; i < d.length; i += 4) if (d[i] > 40) n++;
     return n;
   });
-  await page.goto(RESEARCHES + "?form=sphere");
-  await page.clock.runFor(3000);
-  const sphere = await ink();
-  for (const [form, name] of Object.entries(SECOND_LIST)) {
+  const inks = {};
+  for (const form of CYCLE) {
     await page.goto(RESEARCHES + "?form=" + form);
     await page.clock.runFor(3000);
     await expect(page.locator(".re-field")).toHaveAttribute("data-cycle", form);
-    await expect(page.locator(".re-caption-name")).toHaveText(name);
-    expect(await ink(), form + " is drawn, not only its haze").toBeGreaterThan(sphere * 0.5);
+    await expect(page.locator(".re-caption-name")).toHaveText(FORM_NAMES[form]);
+    await expect(page.locator(".re-next"), "held, no arrows").toBeHidden();
+    inks[form] = await ink();
+  }
+  const most = Math.max(...Object.values(inks));
+  for (const form of CYCLE) expect(inks[form], form + " is drawn, not only its haze").toBeGreaterThan(most * 0.3);
+  for (const gone of ["galaxy", "sphere", "cloud", "knot", "torus", "spiral", "lattice", "hyperboloid", "buckyball"]) {
+    await page.goto(RESEARCHES + "?form=" + gone);
+    await expect(page.locator(".re-field"), gone + " is not a form: the page runs its cycle").toHaveAttribute("data-cycle", CYCLE.join(","));
   }
   expect(errors).toEqual([]);
-});
-
-/* ONE FORM HELD: `?form=` stands any one form still on the page, which is
-   how the candidates were shown to the owner. The cube is gone. */
-test("a form can be held on the page, and the cube is gone", async ({ page }) => {
-  await page.goto(RESEARCHES + "?form=knot");
-  const field = page.locator(".re-field");
-  await expect(field).toHaveAttribute("data-cycle", "knot");
-  await expect(page.locator(".re-caption-name")).toHaveText("Trefoil knot");
-  await page.goto(RESEARCHES + "?form=lattice");
-  await expect(field, "no cube: the cycle as it is").toHaveAttribute("data-cycle", "galaxy,sphere,knot,torus,helix,spiral,cloud");
 });
 
 test("the field answers the pointer over it",
@@ -608,31 +663,39 @@ test("the field answers the pointer over it",
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(RESEARCHES);
   await page.waitForTimeout(2200);
-  // THE POINTER PARTS THE SPECKS: the ring's own band, with the pointer
-  // held on it, has less ink right under the pointer than it had.
-  const spot = await page.evaluate(() => {
-    const r = document.querySelector(".re-canvas").getBoundingClientRect();
-    return { x: r.left + r.width / 2, y: r.top + r.height * 0.47 + Math.min(r.width * 0.42, r.height * 0.36) * 0.33 };
-  });
-  const under = () => page.evaluate(({ x, y }) => {
+  // THE POINTER PARTS THE SPECKS: the inkiest patch of the form near its
+  // middle, with the pointer held on it, has less ink under the pointer
+  // than it had.
+  const inkAt = ({ x, y }) => {
     const c = document.querySelector(".re-canvas"), r = c.getBoundingClientRect(), k = c.width / r.width;
     const d = c.getContext("2d").getImageData(Math.round((x - r.left - 18) * k), Math.round((y - r.top - 18) * k), Math.round(36 * k), Math.round(36 * k)).data;
     let n = 0;
     for (let i = 3; i < d.length; i += 4) if (d[i] > 40) n++;
     return n;
-  }, spot);
+  };
+  const spot = await page.evaluate((inkAtSrc) => {
+    const inkAt = eval("(" + inkAtSrc + ")");
+    const r = document.querySelector(".re-canvas").getBoundingClientRect();
+    let best = null;
+    for (let gy = -3; gy <= 3; gy++) for (let gx = -3; gx <= 3; gx++) {
+      const p = { x: r.left + r.width / 2 + gx * 36, y: r.top + r.height * 0.47 + gy * 36 }, n = inkAt(p);
+      if (!best || n > best.n) best = { ...p, n };
+    }
+    return best;
+  }, inkAt.toString());
+  const under = () => page.evaluate(inkAt, spot);
   const before = await under();
   await page.mouse.move(spot.x, spot.y);
   await page.mouse.move(spot.x + 1, spot.y, { steps: 2 });
   await page.waitForTimeout(900);
   const parted = await under();
-  expect(before, "the ring's band has ink where the pointer goes").toBeGreaterThan(10);
+  expect(before, "the form has ink where the pointer goes").toBeGreaterThan(10);
   expect(parted, "and the pointer parts it").toBeLessThan(before * 0.6);
   expect(errors).toEqual([]);
 });
 
 test.describe("the field with animation turned off", () => {
-  test("the galaxy is simply there, and nothing moves", async ({ page }) => {
+  test("the first form is simply there, nothing moves, and the arrows change it without moving", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     const errors = collectPageErrors(page);
     await page.clock.install();
@@ -640,13 +703,22 @@ test.describe("the field with animation turned off", () => {
     await page.goto(RESEARCHES);
     await page.clock.runFor(500);
     const a = await fieldInk(page);
-    expect(a.ink, "the galaxy is drawn at once").toBeGreaterThan(400);
-    await expect(page.locator(".re-field")).toHaveAttribute("data-figure", "galaxy");
-    // Long past when it would have turned into the sphere, it has not.
+    expect(a.ink, "the geodesic sphere is drawn at once").toBeGreaterThan(400);
+    await expect(page.locator(".re-field")).toHaveAttribute("data-figure", "geodesic");
+    // Long past when it would have turned into the rings, it has not.
     await page.clock.runFor(25000);
     const b = await fieldInk(page);
     expect(apart(a, b), "and stands still").toBe(0);
-    await expect(page.locator(".re-field")).toHaveAttribute("data-figure", "galaxy");
+    await expect(page.locator(".re-field")).toHaveAttribute("data-figure", "geodesic");
+    // An arrow: the next form, drawn at once, and still.
+    await page.locator(".re-next").click();
+    await expect(page.locator(".re-field")).toHaveAttribute("data-figure", "borromean");
+    await expect(page.locator(".re-field")).toHaveAttribute("data-phase", "hold");
+    await expect(page.locator(".re-caption-name")).toHaveText("Borromean rings");
+    const c = await fieldInk(page);
+    expect(apart(c, a), "a different drawing").toBeGreaterThan(30);
+    await page.clock.runFor(3000);
+    expect(apart(await fieldInk(page), c), "standing still").toBe(0);
     expect(errors).toEqual([]);
   });
 });

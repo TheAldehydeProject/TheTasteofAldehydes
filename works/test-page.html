@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test page — The Taste of Aldehydes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="tree-page">
+
+<!--
+  THE TEST PAGE. The owner, 2026-09-26: "add a new page to the whole
+  site, and make it completly blank. this will be a test page." On it,
+  the tree off their photograph, "made mechanical" in three dimensions,
+  translucent, turning, standing on its patch of ground — drawn by
+  tree.js, which says how.
+
+  THE LABELS that come out of it are the list below: one <li> each, what
+  it says written here, and WHERE ON THE TREE it comes out of named by its
+  data-part — one of leader, crown, trunk, sap, flare, arch, anchor,
+  stone, fern, ground (the points themselves are in tree.js). Change the
+  words freely; to take a label off, delete its line. The number is the
+  order they come out in.
+-->
+<main class="tree-stage" aria-label="A mechanical tree in three dimensions, which can be turned by dragging">
+  <canvas class="tree-canvas" aria-hidden="true"></canvas>
+  <svg class="tree-leaders" aria-hidden="true"></svg>
+  <ol class="tree-labels">
+    <li class="tree-label" data-part="leader"><b>01</b>Leader<span>the growing tip</span></li>
+    <li class="tree-label" data-part="crown"><b>02</b>Crown array<span>nine tiers of needled ribs</span></li>
+    <li class="tree-label" data-part="trunk"><b>03</b>Trunk column<span>eight flanged sections</span></li>
+    <li class="tree-label" data-part="sap"><b>04</b>Sap conduits<span>six lines, root to crown</span></li>
+    <li class="tree-label" data-part="flare"><b>05</b>Root flare<span>spreads the load</span></li>
+    <li class="tree-label" data-part="arch"><b>06</b>Arch root<span>spans the hollow on a strut</span></li>
+    <li class="tree-label" data-part="anchor"><b>07</b>Anchor<span>root driven into the soil</span></li>
+    <li class="tree-label" data-part="stone"><b>08</b>Stone<span>held in the roots</span></li>
+    <li class="tree-label" data-part="fern"><b>09</b>Fern<span>undergrowth</span></li>
+    <li class="tree-label" data-part="ground"><b>10</b>Forest floor<span>soil, needle litter, moss</span></li>
+  </ol>
+  <p class="tree-hint" aria-hidden="true">Drag to turn it · scroll to come closer</p>
+  <p class="tree-fallback" hidden>The tree needs a 3D library that did not load.</p>
+</main>
+
+<script>window.SITE_ROOT = "../";</script>
+<script src="../nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="../tree.js"></script>
+</body>
+</html>

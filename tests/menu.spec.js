@@ -79,6 +79,7 @@ test("menu lists every page in SITE_LINKS, in order", async ({ page }) => {
     "Photography",
     "Search",
     "Contact",
+    "Test page",
   ]);
 });
 

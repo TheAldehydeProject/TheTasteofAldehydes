@@ -70,13 +70,15 @@
   </header>
 
   <!-- THE FIELD: drawn by explorations.js, on its own clock — a form held
-       five seconds, then twelve and a half turning into the next. -->
-  <figure class="re-field" aria-hidden="true">
-    <canvas class="re-canvas"></canvas>
+       eight seconds, then eight turning into the next. The arrows either
+       side of its name go on to the next form, or back, at once. -->
+  <figure class="re-field">
+    <canvas class="re-canvas" aria-hidden="true"></canvas>
     <figcaption class="re-caption">
+      <button class="re-step re-prev" type="button" aria-label="The form before"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M6.5 1.5 3 5l3.5 3.5"/></svg></button>
       <span class="re-caption-no"></span>
       <span class="re-caption-name"></span>
-      <span class="re-caption-kind"></span>
+      <button class="re-step re-next" type="button" aria-label="The next form"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M3.5 1.5 7 5 3.5 8.5"/></svg></button>
     </figcaption>
   </figure>
 

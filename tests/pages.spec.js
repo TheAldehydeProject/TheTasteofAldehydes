@@ -36,6 +36,7 @@ const PAGES = [
   { url: "/works/my-personal-introduction-to-perfume.html", root: "../", title: /Introduction to Perfume/ },
   { url: "/works/test-node-a.html", root: "../", title: /Test node/ },
   { url: "/works/test-node-b.html", root: "../", title: /Test node/ },
+  { url: "/works/test-page.html", root: "../", title: /Test page/ },
 ];
 
 for (const page_ of PAGES) {
