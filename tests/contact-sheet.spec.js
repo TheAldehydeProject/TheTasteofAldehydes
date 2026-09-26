@@ -1121,21 +1121,22 @@ test("ADAR's wells bend the page towards them, and let it go again", async ({ pa
   expect(errors).toEqual([]);
 });
 
-/* ADAR'S PULL IS STEADY: "The black holes that pop up with ADAR house
-   hovering in SD should have less of waves of effects and rather a general
-   constant (almost constant pull)" (2026-09-26). Read off the field itself,
-   again and again over three seconds, at points round every well that has
-   come up to full strength:
-   - every point a well reaches is drawn IN, towards the hole, never out;
-   - and the pull at any one point is ALMOST CONSTANT — its strongest and
-     weakest within a fifth of each other. The waves swept through it: the
-     same points were pulled 21px at one moment and 38px the next (1.8
-     times), where the steady pull breathes by 5%.
+/* ADAR'S PULL UNDULATES: for a round (2026-09-26) it was made steady — "less
+   of waves of effects and rather a general constant (almost constant pull)" —
+   and the owner then asked for it back: "revert the black hole to the
+   undulating version". Read off the field itself, again and again over three
+   seconds, at points round every well that has come up to full strength:
+   - every point a well reaches is still drawn IN, towards the hole, never
+     out — a wave only draws it in more or less as it passes;
+   - and the pull at a point SWELLS AND EASES as the waves ring out through
+     it — its strongest well over a third more than its weakest. The waves
+     measured 1.8 times; the steady pull, which this test held under 1.2 for
+     its one round, breathed by 5%.
    A point in the reach of two wells at once is judged by neither — one
    well's turn can carry it sideways from the other, which is not a wave.
    Judging by the nearest hole instead failed a full run (2026-09-26) on
-   overlapping reaches alone, and let the waves themselves pass. */
-test("ADAR's wells only ever draw the page in, never push it out", async ({ page }) => {
+   overlapping reaches alone. */
+test("ADAR's wells draw the page in, in waves", async ({ page }) => {
   test.setTimeout(60000);
   await page.goto(SHEET);
   await waitForSheet(page);
@@ -1183,7 +1184,7 @@ test("ADAR's wells only ever draw the page in, never push it out", async ({ page
   const held = Object.values(pulls).filter((v) => v.length >= 5);
   expect(held.length, "points held in a well's reach long enough to compare").toBeGreaterThan(8);
   const swing = Math.max(...held.map((v) => Math.max(...v) / Math.max(0.01, Math.min(...v))));
-  expect(swing, "the pull at a point almost constant").toBeLessThan(1.2);
+  expect(swing, "the pull at a point swelling and easing as the waves pass").toBeGreaterThan(1.35);
 });
 
 /* NOTHING IS DRAWN OVER A HOUSE: "make the particles in picture one not go

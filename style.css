@@ -231,6 +231,7 @@ body.ataraxia-page,
 body.essay-page,
 body.find-page,
 body.library-page,
+body.network-page,
 body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
 
 @media (max-width: 700px) {
@@ -4273,18 +4274,31 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 
 /* ==================================================================
    THE TEST PAGE — works/test-page.html
-   "completly blank": the page's own paper and the Menu, and on them only
-   THE TREE, drawn by tree.js across the whole window — and its LABELS,
-   each a leader line (in `.tree-leaders`) out to a name in the mono, set
-   by the script either side of the tree.
+   The owner's picture of a dense red network, on its own dark ground:
+   the page's five tokens turned over (as the Note Library's are), a soft
+   shadow under the network where the picture has one, THE NETWORK drawn by
+   network.js across the whole window, and its TAGS — small black labels
+   in the mono, two of them yellow — set beside their nodes by the script.
    ================================================================== */
-.tree-page { overflow: hidden; }
-.tree-stage {
+.network-page {
+  --bg: #1f1f20;
+  --bg-2: #282829;
+  --line: #3a3a3b;
+  --ink: #ece8e2;
+  --ink-rgb: 236, 232, 226;
+  --muted: #8f8b86;
+  background:
+    radial-gradient(ellipse 46% 26% at 50% 78%, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0) 70%),
+    var(--bg);
+  color: var(--ink);
+  overflow: hidden;
+}
+.net-stage {
   position: fixed;
   inset: 0;
   overflow: hidden;
 }
-.tree-canvas {
+.net-canvas {
   position: absolute;
   inset: 0;
   display: block;
@@ -4292,17 +4306,7 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   height: 100%;
   touch-action: none;
 }
-.tree-leaders {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-}
-.tree-leaders polyline { fill: none; stroke: rgba(var(--ink-rgb), 0.5); stroke-width: 1; }
-.tree-leaders rect { fill: var(--bg); stroke: rgba(var(--ink-rgb), 0.75); stroke-width: 1; }
-.tree-labels {
+.net-labels {
   position: absolute;
   inset: 0;
   margin: 0;
@@ -4310,30 +4314,33 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   list-style: none;
   pointer-events: none;
 }
-.tree-label {
+.net-label {
   position: absolute;
   left: 0;
   top: 0;
+  padding: 3px 6px 3px;
+  background: #0c0c0c;
+  color: #e9e5df;
   font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.35;
-  color: var(--ink);
+  font-size: 9px;
+  line-height: 1.25;
+  letter-spacing: 0.08em;
   white-space: nowrap;
   opacity: 0;
 }
-.tree-label.is-left { text-align: right; }
-.tree-label b {
-  margin-right: 8px;
-  font-weight: 400;
-  color: rgba(var(--ink-rgb), 0.45);
-}
-.tree-label.is-left b { margin-right: 8px; }
-.tree-label span {
+.net-label span {
   display: block;
-  font-size: 10px;
-  color: var(--muted);
+  color: #8f8b86;
+  font-size: 8px;
 }
-.tree-hint {
+.net-label.is-marked {
+  padding: 6px 9px;
+  background: #f2b418;
+  color: #141414;
+  font-size: 11px;
+  font-weight: 500;
+}
+.net-hint {
   position: absolute;
   left: 22px;
   bottom: 18px;
@@ -4346,9 +4353,9 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   pointer-events: none;
   transition: opacity 600ms ease;
 }
-.tree-stage.is-turned .tree-hint,
-.tree-stage.is-bare .tree-hint { opacity: 0; }
-.tree-fallback {
+.net-stage.is-turned .net-hint,
+.net-stage.is-bare .net-hint { opacity: 0; }
+.net-fallback {
   position: absolute;
   left: 28px;
   bottom: 28px;
@@ -4357,11 +4364,7 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   font-size: 12px;
   color: var(--muted);
 }
-.tree-fallback[hidden] { display: none; }
-@media (max-width: 700px) {
-  .tree-label { font-size: 10px; }
-  .tree-label span { display: none; }
-}
+.net-fallback[hidden] { display: none; }
 
 /* ==================================================================
    THE SEARCH PAGE — search.html

@@ -9,46 +9,49 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../style.css">
 </head>
-<body class="tree-page">
+<body class="network-page dark-surface">
 
 <!--
   THE TEST PAGE. The owner, 2026-09-26: "add a new page to the whole
-  site, and make it completly blank. this will be a test page." On it,
-  their photograph of a tree made into three dimensions — "take the image
-  as is and make it into a 3d one, not recreate it" — as a cloud of the
-  photograph's own coloured specks, turning all the way round, with the
-  ground and not the background. Drawn by tree.js; tools/tree-cloud.mjs
-  says how the picture was stood up in depth.
+  site, and make it completly blank. this will be a test page." What it
+  carries now, at their word: "a dense map of red nodes that are
+  interconnected ... solid and resemble a network", after a picture they
+  sent — drawn by network.js, on this page's own dark ground.
 
-  THE LABELS that come out of it are the list below: one <li> each, what
-  it says written here, and WHERE ON THE TREE it comes out of named by its
-  data-part — one of trunk, flare, arch, hollow, leg, upper, cut, stone,
-  fern, floor (the points themselves are in images/Test-Page/
-  tree-cloud.json). Change the words freely; to take a label off, delete
-  its line. The number is the order they come out in.
+  THE TAGS beside some of the nodes are the list below: one <li> each,
+  the words written here (they stand for nothing, as the picture's do;
+  change them freely, add or take one off). A tag with the class
+  "is-marked" is one of the two yellow ones; the rest are black.
 -->
-<main class="tree-stage" aria-label="A photograph of a tree made into three dimensions, which can be turned by dragging">
-  <canvas class="tree-canvas" aria-hidden="true"></canvas>
-  <svg class="tree-leaders" aria-hidden="true"></svg>
-  <ol class="tree-labels">
-    <li class="tree-label" data-part="trunk"><b>01</b>Trunk<span>its bark in long plates</span></li>
-    <li class="tree-label" data-part="flare"><b>02</b>Root flare<span>where the trunk spreads into its roots</span></li>
-    <li class="tree-label" data-part="arch"><b>03</b>Arching root<span>raised clear of the ground</span></li>
-    <li class="tree-label" data-part="hollow"><b>04</b>Hollow<span>the space under the arch</span></li>
-    <li class="tree-label" data-part="leg"><b>05</b>Root under the arch<span>running out towards you</span></li>
-    <li class="tree-label" data-part="upper"><b>06</b>Roots up the slope<span>laid over one another</span></li>
-    <li class="tree-label" data-part="cut"><b>07</b>Cut root<span>its end sawn off</span></li>
-    <li class="tree-label" data-part="stone"><b>08</b>Stone<span>on the forest floor</span></li>
-    <li class="tree-label" data-part="fern"><b>09</b>Fern<span>undergrowth</span></li>
-    <li class="tree-label" data-part="floor"><b>10</b>Forest floor<span>soil and needle litter</span></li>
+<main class="net-stage" aria-label="A dense network of red nodes, in three dimensions, which can be turned by dragging">
+  <canvas class="net-canvas" aria-hidden="true"></canvas>
+  <ol class="net-labels" aria-hidden="true">
+    <li class="net-label">TOUK TARK</li>
+    <li class="net-label">EDELIDAT</li>
+    <li class="net-label">FSTR 04<span>01.44.7</span></li>
+    <li class="net-label">CORTIHH</li>
+    <li class="net-label">LOND</li>
+    <li class="net-label">DUNLEFT<span>REL 12</span></li>
+    <li class="net-label">KORDELT</li>
+    <li class="net-label">TCHI 7</li>
+    <li class="net-label">RIDGE.02</li>
+    <li class="net-label">SOLNA</li>
+    <li class="net-label">VETHER 31</li>
+    <li class="net-label">MARROW<span>18.2</span></li>
+    <li class="net-label">CASSIL</li>
+    <li class="net-label">OBELON</li>
+    <li class="net-label">QUIRE 9</li>
+    <li class="net-label">HUNLIE</li>
+    <li class="net-label is-marked">FME</li>
+    <li class="net-label is-marked">FHIX.</li>
   </ol>
-  <p class="tree-hint" aria-hidden="true">Drag to turn it · scroll to come closer</p>
-  <p class="tree-fallback" hidden>The tree could not be drawn here.</p>
+  <p class="net-hint" aria-hidden="true">Drag to turn it · scroll to come closer · point at a node</p>
+  <p class="net-fallback" hidden>The network could not be drawn here.</p>
 </main>
 
 <script>window.SITE_ROOT = "../";</script>
 <script src="../nav.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-<script src="../tree.js"></script>
+<script src="../network.js"></script>
 </body>
 </html>

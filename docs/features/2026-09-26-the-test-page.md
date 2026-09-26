@@ -1,161 +1,148 @@
-# The test page, and the tree made from its photograph
+# The test page, and the network on it
 Date: 2026-09-26
-Files touched: `works/test-page.html` (new), `tree.js` (new), `tools/tree-cloud.mjs` (new),
-`images/Test-Page/` (new: `tree.jpg`, `tree-cloud.bin`, `tree-cloud.json`, `README.txt`),
-`style.css` (`.tree-*`), `nav.js` (`SITE_LINKS`), `search-page.js` (`PAGES`), `package.json`
-(`image-js`), `tests/test-page.spec.js` (new), `tests/menu.spec.js`, `tests/pages.spec.js`,
-`tests/mobile.spec.js`, `CLAUDE.md`
+Files touched: `works/test-page.html` (new), `network.js` (new), `style.css` (`.network-page`,
+`.net-*`, and the dark `--chrome-ground` list), `nav.js` (`SITE_LINKS`), `search-page.js`
+(`PAGES`), `tests/test-page.spec.js` (new), `tests/menu.spec.js`, `tests/pages.spec.js`,
+`tests/mobile.spec.js`, `CLAUDE.md`. For two rounds the same night: `tree.js`,
+`tools/tree-cloud.mjs`, `images/Test-Page/` and `image-js` in `package.json` — all taken out
+again.
 
 What changed: A new page, **Test page**, last in the Menu, designed for a laptop: blank but for
-the owner's photograph of a tree **made into three dimensions** — a cloud of the photograph's own
-coloured specks, every one a pixel of the picture stood at the depth it has in the scene, the
-ground round the tree kept and the background left out. It **opens as the photograph**, from
-exactly where it was taken; draws back; and turns all the way round, slowly on its own or by a drag
-(the wheel brings it closer). Ten **labels** come out of it on leader lines.
+**the network** — a dense map of solid red nodes of every size, a few pale and amber among them,
+joined by thousands of hair-thin lines, on a dark ground, after a picture the owner sent. It
+stands in three dimensions and turns slowly on its own; a drag turns it, the wheel brings it
+closer, and a node under the pointer lights up its own links. Small black **tags** stand beside
+some of the nodes, and two are **marked** yellow, as the picture's are.
 
-The owner, 2026-09-26:
+The owner, 2026-09-26, first:
 
-> add a new page to the whole site, and make it completly blank. this will be a test page. On this
-> test page, I want you to take this tree: picture 1; and make it into a 3D render, I want it to be
-> made mechanical, but i want it to keep some of its coours, so you would have areas of green and
-> brown. I want it to be fully made 3d so you can rotate it. From this tree in different areas, i
-> want there to be labels that come out of it.
+> add a new page to the whole site, and make it completly blank. this will be a test page.
 
-> additionally, make the tree translucent. render the ground with it, but not all of the background
+and then, after two trees (below):
 
-and then, of the first version, built as a machine:
+> okay nevermind, remove that tree entirely, and i want to try soemthing else. I want you to make
+> a dense map of red nodes that are interconnected. these nodes should be solid and resemble a
+> network. do this on the test page. Addiyionally, let it resemble the attached picture
 
-> for now leave the phone be, just design the test page for the laptop. The tree, i want you to take
-> the image as is and make it into a 3d one, not recreate it. i want the tree as is to be made into
-> a 3d tree.
+The picture: a dark grey ground; a dense cluster of glossy red spheres of many sizes, some white
+and amber ones among them, specks of grey; thousands of thin lines, most short and dense in the
+middle, some long ones running out to outlying nodes; small black tags in a mono face beside some
+nodes (*TOUK TARK*, *EDELIDAT*, …) and two yellow ones (*FME*, *FHIX.*), each joined to its
+neighbours by yellow lines. Asked whether the nodes should stand for something on the site, the
+owner chose **"abstract, like the picture"** — so nothing in it means anything, and the tags'
+words are made up in the picture's manner. Laptop only, at the owner's earlier word ("for now
+leave the phone be").
 
-Asked how: **a cloud of coloured specks** (rather than a solid photo surface), turning **all the
-way round** (rather than part way), keeping **the labels** — and neither the translucency nor the
-mechanical touch. Asked to use `image-js` (`npm install image-js`) for the work on the picture.
+## How it is built — `network.js`
 
-## The tree is the photograph
+Three.js r128, from the same address as the home page's map (so the tests' local copy answers it
+too), with the library's own lit spheres, lines and points — **no shader of its own**. The
+network is **seeded**, so it is the same network on every visit.
 
-`images/Test-Page/tree.jpg` is the owner's photograph as they sent it. `tools/tree-cloud.mjs` reads
-it with image-js and writes **one speck for every 1.6 pixels each way** — about 213,000 — into
-`tree-cloud.bin`: for each, where it stands (three whole numbers, in thousandths of a metre) and its
-colour (three bytes, the pixel's own). `tree-cloud.json` says how many, where the photograph was
-taken from, and where each label comes out of the tree. `tree.js` only reads the two and draws them
-as points. **The site never runs the tool**; it was run once, and is run again only to change the
-tree.
-
-A photograph does not say how far away anything in it is, so the tool works it out from **a model
-of the scene, traced off the picture itself**:
-
-- **The camera** that took it: the picture's middle, how wide it sees (`F`, 760px), how far it
-  looks down (`PITCH`, 30°), how high it stood (`EYE`, 1.6). Every pixel is a ray out of it.
-- **The ground**: a floor, level in front of the trunk and **rising behind it** (`SLOPE`), as the
-  photograph's slope does. A pixel of the ground is where its ray meets it; anything green on it
-  stands a little off it, as leaves do.
-- **The trunk**: an upright **column** as wide as the picture shows it at each height, round a
-  straight axis (`AXIS_U`), standing behind the front of its flare (`TRUNK_FOOT`). Its **far
-  side**, which the photograph cannot show, is given the same pixels a little darker — so it can
-  be turned all the way round and still be a trunk. At its foot the column is kept to the width of
-  a flare (`FLARE`); what the outline holds beyond that is **the flare** running out into the
-  roots, a surface sloping from the trunk down to the ground. It thins out towards the top of the
-  picture, where the photograph stops.
-- **The roots** (`ROOTS`): **tubes** along lines traced down each one, every point of the line
-  with how wide the root is there (px) and how high its middle runs off the ground — the great one
-  **arching** over its hollow. A pixel of a root is where its ray meets the tube; the far side of
-  the tube, where it stands clear of the ground, is given the same pixels a little darker.
-- **The stones** (`STONES`): low domes.
-- **The soil the photograph never shows** — under the roots and the stones, and behind the foot
-  of the trunk — is filled in with colours taken from the open soil in front (`SOIL`), so turning
-  it does not open white holes in the ground.
-- **What is not kept**: the foliage above the ground and the second tree behind (`SKY`), and the
-  ground further from the trunk than a patch round it (`KEEP`) or near the photograph's own sides
-  and foot (`EDGE`) — each thinning out rather than cut, so the ground is a patch with a soft edge
-  and the rest of the background is gone.
-
-`TREE_DEBUG=1 node tools/tree-cloud.mjs` colours every speck by what it was taken for (ground,
-root, trunk, flare, stone, filled-in soil) instead of by the photograph, which is how the model was
-checked; run it again without to put the colours back.
+- **The nodes** (`COUNT`, 540): half in a dense **core** a little above the middle, about a third
+  in a looser **body** round it, the rest **outliers** far out, more of them below and to the
+  sides. Two thirds red (`RED`, five reds), then pale, a few amber, and small grey specks. A
+  node's size comes from how many links it has (`0.018 + 0.0065·√degree`), with a few large ones
+  anyway. They are **one** `InstancedMesh` of lit spheres (`MeshStandardMaterial`, a little
+  glossy), so 540 spheres cost one draw.
+- **The links**: every node joined to its nearest two to five (`NEAREST`) — the mesh; 26
+  **hubs** (`HUBS`) each sending ten to thirty-four lines out all over, the further the likelier
+  (`HUB_LINKS`); every outlier tied back in by two to five long ones (`OUTLIER_LINKS`). About
+  2,100 in all, as one `LineSegments`, each in the colour of what it joins, one in sixteen
+  **teal** (as the picture has), and **faded towards the ground by its length**, as thin lines
+  at a distance are.
+- **The marked two**: two nodes low in the network, each joined to its four nearest by **yellow**
+  lines (`MARK`), with the yellow tags beside them.
+- **The ground**: the page's own `--bg`, `#1f1f20`, with a soft darker shadow under the network
+  (in the stylesheet), and fog to the same colour so the far side sinks back into it. Ninety
+  grey specks in the air round it.
+- **Light**: a key from above and to the left, as the picture's, a warm rim from behind, a
+  hemisphere and an ambient so no sphere goes black.
 
 ## Seeing it
 
-It **opens exactly where the photograph was taken from** — the camera's own place, looking the same
-way down (`camera` in the JSON) — so at first it is the photograph, in specks. Then it **draws
-back** (`BACK`, to 1.6 times as far, between 0.7 and 2.1s: `DRAW_BACK`) to leave the labels room,
-and after 2.6s (`REVEAL`) it begins to **turn round the trunk**, slowly (`TURN_RATE`), all the way
-round. A drag turns it and tips it (`PITCH`); it carries on turning on its own a little after it is
-let go; the wheel brings it closer. Seen from behind it shows the front again, mirrored — which is
-what the owner chose, knowing a photograph has no back.
+It opens a little turned (`yaw` 0.35) and **turns on its own**, very slowly (`TURN_RATE`). A
+**drag** turns it and tips it (`DRAG`, within `PITCH`); it starts turning on its own again
+`TURN_AFTER` (2.6s) after being let go. The **wheel** brings it closer or further (0.45 to 1.6
+times). Pointing at a node **lights its links** — a pale line over each — makes the node a
+third larger and dims the rest of the lines; the turning holds while it does. The pointer is
+matched to a node from each sphere's middle and size (`ray.distanceSqToPoint`), not triangle by
+triangle, so it stays quick. A hint at the foot of the window — *Drag to turn it · scroll to
+come closer · point at a node* — goes once it has been turned.
 
-## The labels
+How far away it is seen from is worked out from the window (`size()`), so the whole network fits
+its height and width.
 
-The words are in the page — one `<li class="tree-label">` each, its number, its name and a small
-line under it — and **where on the tree each comes out of** is named by its `data-part`: `trunk`,
-`flare`, `arch`, `hollow`, `leg`, `upper`, `cut`, `stone`, `fern`, `floor`, points worked out by the
-tool from a pixel of the photograph each (`LABELS`) and kept in the JSON. The words are mine,
-plainly naming what is there, and are the owner's to rewrite.
+## The tags
 
-Each frame, every point is found on the window; its label stands to the side of the tree it is on,
-in a column clear of it (`Math.min(W * 0.34, 470)` from the middle), kept at least 38px from the
-next and on the window; a leader line runs from a small open square on the point, slanting to an
-elbow and then level to the name. A label whose point has turned away goes faint — the trunk's
-facing out from its axis, everything lying on the ground facing up. On arrival the lines draw out
-one after another.
+The words are in the page — one `<li class="net-label">` each, a name and sometimes a small
+`<span>` after it (*FSTR 04 (01.44.7)*) — and the two yellow ones carry `is-marked`. The script
+gives the plain ones to the first six hubs and then the outliers with the most links, and the
+yellow ones to the two marked nodes. Every frame each is placed **beside its node, on the side
+away from the middle**, fainter the further back its node stands (the yellow ones never), and of
+any two that would touch the fainter steps aside — so none is ever over another. They come up
+one after another once the page has drawn.
 
 ## Why / key decisions
 
-- **Specks, not a surface**: the owner's choice, and the site's own language. It also forgives
-  what a single photograph cannot know better than a surface would.
-- **Traced, not estimated by a machine-learning model**: a depth model needs downloading and a
-  library the site does not otherwise use; the owner asked for image-js instead. Tracing is also
-  something the owner can correct: every line of the model is a few numbers in the tool.
-- **Made once, read by the page**: the page stays plain JavaScript with no build step; the
-  1.9 MB cloud is a file like a photograph. `image-js` is in `package.json` only for the tool.
-- **Three.js r128** from the same address as the home page's map, so the tests' local copy
-  answers it too. It draws points, and writes no shader of its own.
+- **Abstract**, at the owner's choice: the nodes are not the site's pages or fragrances.
+- **Solid, lit spheres** rather than flat discs: the picture's are glossy, and the owner said
+  "solid".
+- **Instanced spheres and one set of lines**: three thousand-odd objects drawn as three.
+- **Seeded**: the same network every time, so what the owner sees is what they are commenting on.
+- **Laptop only**: the page is not designed for a phone yet; it does not scroll sideways there.
 
 ## What was tried and was wrong
 
-- **The machine** (the first version, the same night): the tree **built** rather than taken from
-  the photograph — a faceted trunk in eight flanged sections with six green sap conduits seen
-  through it, jointed roots with collars ending in anchors (one arching on a strut), nine tiers of
-  needled boughs and a leader, all translucent with their edges drawn, on a painted patch of ground
-  ruled round as a specimen, with labels such as *Crown array* and *Sap conduits*. The owner:
-  "take the image as is and make it into a 3d one, not recreate it". None of it is in `tree.js`.
-- **The picture came out mirrored** at first: looking along +z, three.js's right is −x. The tool
-  turns z round.
-- **The ground flat all the way back** stretched the far roots into planks and put the slope
-  behind the trunk far away; it rises behind the trunk now.
-- **Roots as raised strips** (each pixel lifted by the root's thickness) were round seen from the
-  front and flat planks seen from the side, the ones up the slope worst; they are tubes now.
-- **The trunk as wide as its outline all the way down** made a great bowl of its foot, the roots'
-  first spread included; the column is kept to a flare's width there.
-- **Nothing where the photograph could not see**: turned, the ground had a white hole behind every
-  root and the trunk. The soil is filled in.
+Two trees stood on this page the same night, each taken out when the owner asked. Nothing of
+either is in the code: no `tree.js`, no `tools/tree-cloud.mjs`, no `images/Test-Page/`, no
+`image-js`, no `.tree-*`.
+
+- **The machine**, first: asked for "this tree: picture 1 … a 3D render … made mechanical, but
+  … areas of green and brown … labels that come out of it", and then "translucent. render the
+  ground with it, but not all of the background". It **built** a tree: a faceted trunk in eight
+  flanged sections with six green sap conduits seen through it, jointed roots with collars
+  ending in anchors (one arching on a strut), nine tiers of needled boughs and a leader, all
+  translucent with their edges drawn, on a painted patch of ground, with labels such as *Crown
+  array* and *Sap conduits*. The owner: "take the image as is and make it into a 3d one, not
+  recreate it".
+- **The photograph made three-dimensional**, second: the owner's picture turned into a cloud of
+  about 213,000 of its own coloured specks, each pixel stood at the depth it had in a model of
+  the scene traced off the picture (a camera, a floor rising behind the trunk, the trunk a
+  column, the roots tubes, the stones domes, the unseen soil filled in), made once by a tool
+  with `image-js`, opening as the photograph and turning all the way round, with ten labels on
+  leader lines. The owner: "remove that tree entirely, and i want to try soemthing else".
+
+The lessons that still hold for anything on this page: a picture seen along +z comes out
+mirrored in three.js unless z is turned round; and a heavy WebGL frame on the tests' software
+renderer is slow enough that a test on a paused clock can time out — the tests here run on real
+time, with a longer allowance.
 
 ## How to test it
 
 `tests/test-page.spec.js`:
 
-- **`the tree is drawn in the photograph's green and brown, on its ground and nothing else`** —
-  read off a screenshot: thousands of green pixels and thousands of brown, the window's corners
-  and edges the page's own paper, no heading or writing.
-- **`labels come out of the tree to its parts`** — the ten, in order, each with a leader line drawn
-  all the way out, most plainly there, every one on the window and none over another.
-- **`it opens from where the photograph was taken`** — a cloud of over 100,000 specks; at first
-  looking exactly the way the photograph's camera did; turning once it has been the photograph a
-  while.
-- **`a drag turns the tree, and its labels go with it`**.
-- **`without its cloud the page says so, and is otherwise blank`** and **`without its 3D library
-  …`**.
-- **`the test page with animation turned off › the tree stands still, its labels simply there, and
-  still turns by hand`**.
+- **`a dense network of red nodes is drawn on the dark page, and nothing else`** — over 400
+  nodes and 1,500 links; read off a screenshot, thousands of red pixels, the corners and edges
+  the page's own dark ground (`#1f1f20`), no heading or writing.
+- **`tags stand beside the nodes, two of them yellow, none over another`** — more than eight
+  showing; the yellow ones exactly *FHIX.* and *FME* on `#f2b418`, the rest on black; no two
+  overlapping.
+- **`a drag turns the network, and its tags go with it`** — turning on its own, turned further by
+  a drag, the hint gone, and the tags moved with it.
+- **`pointing at a node lights up its links`** — a node found under the pointer, its links lit,
+  and let go when the pointer leaves.
+- **`without its 3D library the page says so, and is otherwise blank`**.
+- **`the test page with animation turned off › the network stands still, its tags simply there,
+  and still turns by hand`**.
 
-It is also in `pages.spec.js`, `mobile.spec.js` (nothing wider than a phone — the page is not
-designed for one yet, at the owner's word) and `menu.spec.js` (last in the Menu).
+It is also in `pages.spec.js`, `mobile.spec.js` (nothing wider than a phone) and `menu.spec.js`
+(last in the Menu).
 
 ## Known issues / TODO
 
-- **Not designed for a phone yet**, at the owner's word ("for now leave the phone be").
-- **The photograph is not credited**: where it came from is not known. The site credits pictures
-  where they are used; a line can go at the foot once the owner says whose it is.
-- **The model is a first answer**: the owner will have notes on how it turns, how deep things
-  stand, and what the labels say. Each is a number or a traced line in the tool.
+- **Not designed for a phone yet**, at the owner's word.
+- **The tags' words are made up**, in the manner of the picture's; they are the owner's to
+  change, in the page.
+- **A first answer**: how dense, how red, how it turns and what it does under the hand are each a
+  number at the top of `network.js`.

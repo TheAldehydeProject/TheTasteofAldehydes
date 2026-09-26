@@ -824,3 +824,27 @@ steady pull, and the fifteen had been overlap too. What does tell them apart is 
 changing at a point over time, which is what the test now reads. **A point in the reach of two
 wells at once is judged by neither**; `wellsAt` gives each well's reach (`R`) and strength (`s`)
 for this.
+
+## 2026-09-26, last — ADAR's wells: the waves back
+
+> additionally please revert the black hole to the undulating version
+
+**The steady pull above is gone, and the waves are back** exactly as they stood before it:
+`motifs.js` is the version of the night of 2026-09-25 again — four **rings of dots** ringing out
+from each hole (`RING_SPEED`, `RING_COUNT`, `RING_PUSH`, `RING_BAND`), each pushing what it crosses
+outward ahead of it and drawing it in behind, so the page's squares ripple in and out as they
+pass; the swirl back at `WELL_SWIRL` 1.15, and the pull gathering at the hole
+(`exp(−d / 0.34R)`). **Nothing of the steady pull is in the code**: no `WELL_FLOOR`,
+`WELL_BREATH`, `INFALL`, no `b` on a well and no infall drawn. Everything else stays — a third as
+often, never next to each other (`WELL_APART`), up to three at once. The one thing kept from the
+steady round is `wellsAt` giving each well's reach and strength, which the test needs.
+
+### How to test it
+
+The test is turned round, deliberately: it is **`ADAR's wells draw the page in, in waves`** now.
+It reads the field the same way — fourteen times over three seconds, judging only points in one
+well's reach — and still holds that **nothing is pushed away from a hole** (the waves' push never
+outweighs the pull, as the section above found); but where it held the pull at a point **under
+1.2** times its weakest for the steady round, it now holds that the pull **swells and eases**:
+somewhere its strongest is **over 1.35** times its weakest. The waves measure about 1.8; the
+steady pull, 1.05, would fail it.

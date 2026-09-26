@@ -1,18 +1,14 @@
 // @ts-check
 /* ============================================================
-   THE TEST PAGE — works/test-page.html, drawn by tree.js.
+   THE TEST PAGE — works/test-page.html, drawn by network.js.
 
    The owner, 2026-09-26: "add a new page to the whole site, and make it
-   completly blank. this will be a test page. On this test page, I want
-   you to take this tree ... and make it into a 3D render, I want it to
-   be made mechanical, but i want it to keep some of its coours, so you
-   would have areas of green and brown. I want it to be fully made 3d so
-   you can rotate it. From this tree in different areas, i want there to
-   be labels that come out of it." — and "render the ground with it, but
-   not all of the background". And then, of a first version built as a
-   machine: "take the image as is and make it into a 3d one, not recreate
-   it" — a cloud of the photograph's own coloured specks, turning all the
-   way round, keeping its labels.
+   completly blank. this will be a test page." And what is on it now: "I
+   want you to make a dense map of red nodes that are interconnected.
+   these nodes should be solid and resemble a network. do this on the test
+   page. Addiyionally, let it resemble the attached picture" — the nodes
+   standing for nothing, "abstract, like the picture". (A tree stood here
+   first, twice over, and went: see the report.)
    ============================================================ */
 const { test, expect } = require("@playwright/test");
 const { serveDependenciesLocally, blockThreeJs, collectPageErrors } = require("./helpers");
@@ -20,7 +16,7 @@ const { serveDependenciesLocally, blockThreeJs, collectPageErrors } = require(".
 const TEST_PAGE = "/works/test-page.html";
 
 /** What the window shows, read back off a screenshot: how many pixels are
- *  the tree's greens, how many its browns, and the colour at a few points. */
+ *  the nodes' red, and the colour at a few points. */
 async function look(page, points = []) {
   const shot = (await page.screenshot()).toString("base64");
   return page.evaluate(async ({ shot, points }) => {
@@ -32,131 +28,110 @@ async function look(page, points = []) {
     const g = c.getContext("2d");
     g.drawImage(img, 0, 0);
     const d = g.getImageData(0, 0, c.width, c.height).data;
-    let green = 0, brown = 0;
-    for (let i = 0; i < d.length; i += 16) {
-      const r = d[i], gr = d[i + 1], b = d[i + 2];
-      if (gr > r + 12 && gr > b + 8) green++;
-      if (r > gr + 22 && r > b + 30 && r < 235) brown++;
-    }
+    let red = 0;
+    for (let i = 0; i < d.length; i += 16) if (d[i] > 170 && d[i + 1] < 120 && d[i + 2] < 130) red++;
     const at = points.map(([x, y]) => { const k = (y * c.width + x) * 4; return [d[k], d[k + 1], d[k + 2]]; });
-    return { green, brown, at };
+    return { red, at };
   }, { shot, points });
 }
+/** The tags that are showing, and where. */
+const shownTags = (page) => page.$$eval(".net-label", (ls) => ls.map((l) => {
+  const r = l.getBoundingClientRect(), s = getComputedStyle(l);
+  return { text: l.textContent, marked: l.classList.contains("is-marked"), opacity: +s.opacity, ground: s.backgroundColor,
+    left: r.left, right: r.right, top: r.top, bottom: r.bottom };
+}).filter((t) => t.opacity > 0.2));
 
 test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
 });
 
-/* THE TREE: the photograph's greens and browns, standing on its ground, in
-   a window that is otherwise the page's own blank paper. */
-test("the tree is drawn in the photograph's green and brown, on its ground and nothing else", async ({ page }) => {
+/* THE NETWORK: hundreds of solid red nodes and thousands of links, on the
+   page's own dark ground, and nothing else on the page. */
+test("a dense network of red nodes is drawn on the dark page, and nothing else", async ({ page }) => {
+  test.setTimeout(60000);
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(TEST_PAGE);
-  await expect(page.locator(".tree-stage")).toHaveClass(/is-drawn/);
-  await page.waitForTimeout(3500);
-  const W = 1440, H = 900;
-  const seen = await look(page, [[W - 30, 200], [W - 30, H - 30], [30, H / 2], [W / 2, 30]]);
-  expect(seen.green, "areas of green").toBeGreaterThan(1500);
-  expect(seen.brown, "and of brown").toBeGreaterThan(1500);
-  // The corners of the window are the page's paper: the ground is drawn
-  // with the tree, and the rest of the background is not.
-  const paper = await page.evaluate(() => getComputedStyle(document.body).backgroundColor.match(/\d+/g).map(Number));
-  seen.at.forEach((px, n) => {
-    px.forEach((v, k) => expect(Math.abs(v - paper[k]), "point " + n + " is the blank page").toBeLessThan(6));
-  });
-  // Nothing else on the page: no heading, no writing, only the tree and
-  // its labels.
-  expect(await page.locator("h1, h2, .page-content").count()).toBe(0);
+  const stage = page.locator(".net-stage");
+  await expect(stage).toHaveClass(/is-drawn/);
+  expect(+(await stage.getAttribute("data-nodes")), "hundreds of nodes").toBeGreaterThan(400);
+  expect(+(await stage.getAttribute("data-links")), "and thousands of links between them").toBeGreaterThan(1500);
+  await page.waitForTimeout(2500);
+  const seen = await look(page, [[1410, 40], [1410, 880], [20, 450], [720, 20]]);
+  expect(seen.red, "the nodes are red").toBeGreaterThan(2500);
+  const ground = await page.evaluate(() => getComputedStyle(document.body).getPropertyValue("--bg").trim());
+  expect(ground).toBe("#1f1f20");
+  seen.at.forEach((px, n) => px.forEach((v) => expect(v, "point " + n + " is the dark ground").toBeLessThan(60)));
+  expect(await page.locator("h1, h2, .page-content").count(), "no heading, no writing").toBe(0);
   expect(errors).toEqual([]);
 });
 
-/* THE LABELS come out of it: a leader line from a point on the tree to
-   each name, every name on the window, none on top of another. */
-test("labels come out of the tree to its parts", async ({ page }) => {
+/* THE TAGS: small black labels beside their nodes, two of them yellow,
+   never one over another. */
+test("tags stand beside the nodes, two of them yellow, none over another", async ({ page }) => {
+  test.setTimeout(60000);
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(TEST_PAGE);
-  await page.waitForTimeout(4000);
-  const out = await page.evaluate(() => {
-    const labels = [...document.querySelectorAll(".tree-label")].map((el) => {
-      const r = el.getBoundingClientRect();
-      return { part: el.dataset.part, text: el.textContent, left: r.left, right: r.right, top: r.top, bottom: r.bottom, opacity: +getComputedStyle(el).opacity };
-    });
-    const lines = [...document.querySelectorAll(".tree-leaders polyline")].map((l) => l.getAttribute("points").trim().split(/\s+/).length);
-    return { labels, lines, W: innerWidth, H: innerHeight };
-  });
-  expect(out.labels.map((l) => l.part)).toEqual(["trunk", "flare", "arch", "hollow", "leg", "upper", "cut", "stone", "fern", "floor"]);
-  expect(out.lines.length, "a leader line for every label").toBe(10);
-  out.lines.forEach((n) => expect(n, "drawn all the way out").toBe(3));
-  expect(out.labels.filter((l) => l.opacity > 0.5).length, "most of them plainly there").toBeGreaterThan(5);
-  out.labels.forEach((l) => {
-    expect(l.left, l.part + " on the window").toBeGreaterThanOrEqual(0);
-    expect(l.right).toBeLessThanOrEqual(out.W);
-    expect(l.top).toBeGreaterThanOrEqual(0);
-    expect(l.bottom).toBeLessThanOrEqual(out.H);
-  });
-  for (let a = 0; a < out.labels.length; a++) for (let b = a + 1; b < out.labels.length; b++) {
-    const p = out.labels[a], q = out.labels[b];
-    const overlap = p.left < q.right && q.left < p.right && p.top < q.bottom - 2 && q.top < p.bottom - 2;
-    expect(overlap, p.part + " and " + q.part + " apart").toBe(false);
+  await page.waitForTimeout(3500);
+  const tags = await shownTags(page);
+  expect(tags.length, "most of them showing").toBeGreaterThan(8);
+  const marked = tags.filter((t) => t.marked);
+  expect(marked.map((t) => t.text).sort()).toEqual(["FHIX.", "FME"]);
+  marked.forEach((t) => expect(t.ground, "yellow").toBe("rgb(242, 180, 24)"));
+  tags.filter((t) => !t.marked).forEach((t) => expect(t.ground, "black").toBe("rgb(12, 12, 12)"));
+  for (let a = 0; a < tags.length; a++) for (let b = a + 1; b < tags.length; b++) {
+    const p = tags[a], q = tags[b];
+    const over = p.left < q.right && q.left < p.right && p.top < q.bottom && q.top < p.bottom;
+    expect(over, p.text + " and " + q.text + " apart").toBe(false);
   }
   expect(errors).toEqual([]);
 });
 
-/* IT TURNS: dragged, it goes round, and the labels go round with it; left
-   alone, it turns slowly on its own. */
-test("a drag turns the tree, and its labels go with it", async ({ page }) => {
+/* IT TURNS, slowly on its own and by a drag, the tags going with it. */
+test("a drag turns the network, and its tags go with it", async ({ page }) => {
+  test.setTimeout(60000);
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(TEST_PAGE);
-  await page.waitForTimeout(3000);
-  const stage = page.locator(".tree-stage");
+  await page.mouse.move(1430, 890);
+  await page.waitForTimeout(2500);
+  const stage = page.locator(".net-stage");
   const yaw = async () => parseFloat(await stage.getAttribute("data-yaw"));
-  const where = () => page.$$eval(".tree-leaders rect", (rs) => rs.map((r) => [+r.getAttribute("x"), +r.getAttribute("y")]));
-  // On its own, slowly.
+  const where = () => page.$$eval(".net-label", (ls) => ls.map((l) => l.style.transform));
   const a = await yaw();
   await page.waitForTimeout(1500);
-  const b = await yaw();
-  expect(b - a, "turning slowly on its own").toBeGreaterThan(0.02);
-  expect(b - a).toBeLessThan(0.5);
-  // By hand.
+  expect((await yaw()) - a, "turning slowly on its own").toBeGreaterThan(0.01);
   const before = await where();
   await page.mouse.move(720, 450);
   await page.mouse.down();
   await page.mouse.move(1020, 470, { steps: 12 });
   await page.mouse.up();
   await page.waitForTimeout(200);
-  const c = await yaw();
-  expect(Math.abs(c - b), "turned by the drag").toBeGreaterThan(1.2);
+  expect(Math.abs((await yaw()) - a), "turned by the drag").toBeGreaterThan(1.2);
   await expect(stage, "and the hint goes").toHaveClass(/is-turned/);
   const after = await where();
-  const moved = after.filter((p, n) => Math.hypot(p[0] - before[n][0], p[1] - before[n][1]) > 20).length;
-  expect(moved, "the points the labels come out of turned with it").toBeGreaterThan(5);
+  expect(after.filter((t, n) => t !== before[n]).length, "the tags went with it").toBeGreaterThan(10);
   expect(errors).toEqual([]);
 });
 
-/* IT OPENS AS THE PHOTOGRAPH: from exactly where the picture was taken,
-   before it draws back and turns. */
-test("it opens from where the photograph was taken", async ({ page }) => {
+/* A NODE UNDER THE POINTER lights its own links. */
+test("pointing at a node lights up its links", async ({ page }) => {
   test.setTimeout(60000);
-  const meta = await (await page.request.get("/images/Test-Page/tree-cloud.json")).json();
-  expect(meta.count, "a cloud of specks").toBeGreaterThan(100000);
+  const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(TEST_PAGE);
-  await expect(page.locator(".tree-stage")).toHaveClass(/is-drawn/);
-  const yaw = parseFloat(await page.locator(".tree-stage").getAttribute("data-yaw"));
-  expect(Math.abs(yaw - Math.atan2(meta.camera.at[0], meta.camera.at[2])), "looking the way the camera did").toBeLessThan(0.002);
-  // Turning only once it has been the photograph a while.
-  await page.waitForTimeout(5500);
-  expect(Math.abs(parseFloat(await page.locator(".tree-stage").getAttribute("data-yaw")) - yaw), "and then turning").toBeGreaterThan(0.05);
-});
-
-test("without its cloud the page says so, and is otherwise blank", async ({ page }) => {
-  const errors = collectPageErrors(page, ["404", "Failed to load resource"]);
-  await page.route("**/tree-cloud.bin", (route) => route.fulfill({ status: 404, body: "" }));
-  await page.goto(TEST_PAGE);
-  await expect(page.locator(".tree-fallback")).toBeVisible();
+  await page.waitForTimeout(2000);
+  const stage = page.locator(".net-stage");
+  let found = null;
+  for (let y = 330; y < 600 && !found; y += 8) for (let x = 600; x < 860 && !found; x += 8) {
+    await page.mouse.move(x, y);
+    if (await stage.getAttribute("data-hover")) found = { x, y };
+  }
+  expect(found, "a node found under the pointer").not.toBeNull();
+  expect(+(await stage.getAttribute("data-lit")), "its links lit").toBeGreaterThan(0);
+  await page.mouse.move(1430, 60);
+  await expect(stage, "and let go when the pointer leaves it").toHaveAttribute("data-hover", "");
   expect(errors).toEqual([]);
 });
 
@@ -165,22 +140,22 @@ test("without its 3D library the page says so, and is otherwise blank", async ({
   const errors = collectPageErrors(page, ["ERR_FAILED", "Failed to load resource"]);
   await blockThreeJs(page);
   await page.goto(TEST_PAGE);
-  await expect(page.locator(".tree-fallback")).toBeVisible();
-  await expect(page.locator(".tree-hint")).toHaveCSS("opacity", "0");
+  await expect(page.locator(".net-fallback")).toBeVisible();
+  await expect(page.locator(".net-hint")).toHaveCSS("opacity", "0");
   expect(errors).toEqual([]);
 });
 
 test.describe("the test page with animation turned off", () => {
-  test("the tree stands still, its labels simply there, and still turns by hand", async ({ page }) => {
+  test("the network stands still, its tags simply there, and still turns by hand", async ({ page }) => {
+    test.setTimeout(60000);
     await page.emulateMedia({ reducedMotion: "reduce" });
     const errors = collectPageErrors(page);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(TEST_PAGE);
     await page.waitForTimeout(500);
-    const stage = page.locator(".tree-stage");
+    const stage = page.locator(".net-stage");
     const a = await stage.getAttribute("data-yaw");
-    const shown = await page.$$eval(".tree-label", (ls) => ls.filter((l) => +getComputedStyle(l).opacity > 0.2).length);
-    expect(shown, "the labels there at once").toBeGreaterThan(5);
+    expect((await shownTags(page)).length, "the tags there at once").toBeGreaterThan(8);
     await page.waitForTimeout(2000);
     expect(await stage.getAttribute("data-yaw"), "never turning on its own").toBe(a);
     await page.mouse.move(720, 450);
