@@ -21,54 +21,34 @@
 
 <!--
   THE TEST PAGE. The owner, 2026-09-26: "add a new page to the whole
-  site, and make it completly blank. this will be a test page." What it
-  carries now, at their word: "a dense map of red nodes that are
-  interconnected ... solid and resemble a network", after a picture they
-  sent — drawn by network.js, on this page's own dark ground.
+  site, and make it completly blank. this will be a test page." It
+  carried a network of red nodes, then five of them; and since
+  2026-09-27, at their word, it is THE NOTE LIBRARY IN THREE DIMENSIONS:
+  "I want each galaxy to be an accord, and then the dots on it should be
+  the individual notes that belong to that accord group."
 
-  And since 2026-09-27, at their word, it is FIVE SYSTEMS — one in the
-  middle and one at each of its corners, joined by lines you can press to
-  travel along — of glowing red nodes that each stand for something
-  (arbitrary for now: a code, a role, a load, a latency), which a press
-  selects, turning every other one translucent. The map at the foot of
-  the window, the card and the labels are added by network.js.
+  NOTHING ABOUT THE LIBRARY IS WRITTEN HERE. network.js reads the Note
+  Library's own page (categories/note-library.html) as this one opens —
+  every accord, every note, what it is — and notes-data.js for how many
+  fragrances use each, so a note added to the library is here at once.
 
-  THE TAGS beside some of the nodes of the middle system are the list
-  below: one <li> each, and each NAMES the node it stands beside (the
-  word shows in that node's card). The words stand for nothing, as the
-  picture's did; change them freely, add or take one off. A tag with the
-  class "is-marked" is one of the two yellow ones; the rest are black.
+  What network.js draws and adds: one red galaxy of every note; the
+  button at the foot that expands it into a galaxy for each accord,
+  joined to a centre; the dropdown that goes from one to another; the
+  window on the right with the search bar's switch and the accords; and
+  the card a note is read in.
 -->
-<main class="net-stage" aria-label="Five networks of glowing red nodes in three dimensions, one in the middle and one at each corner, joined by lines: drag to turn, press a node to select it, press a line to travel along it">
-  <h1 class="visually-hidden">Test page</h1>
+<main class="net-stage" aria-label="The Note Library in three dimensions: every note a glowing node, in one red galaxy that expands into a galaxy for each accord, joined to a centre. Drag to turn it, press a note to read it.">
+  <h1 class="visually-hidden">Test page — the Note Library in three dimensions</h1>
   <canvas class="net-canvas" aria-hidden="true"></canvas>
-  <ol class="net-labels" aria-hidden="true">
-    <li class="net-label">TOUK TARK</li>
-    <li class="net-label">EDELIDAT</li>
-    <li class="net-label">FSTR 04<span>01.44.7</span></li>
-    <li class="net-label">CORTIHH</li>
-    <li class="net-label">LOND</li>
-    <li class="net-label">DUNLEFT<span>REL 12</span></li>
-    <li class="net-label">KORDELT</li>
-    <li class="net-label">TCHI 7</li>
-    <li class="net-label">RIDGE.02</li>
-    <li class="net-label">SOLNA</li>
-    <li class="net-label">VETHER 31</li>
-    <li class="net-label">MARROW<span>18.2</span></li>
-    <li class="net-label">CASSIL</li>
-    <li class="net-label">OBELON</li>
-    <li class="net-label">QUIRE 9</li>
-    <li class="net-label">HUNLIE</li>
-    <li class="net-label is-marked">FME</li>
-    <li class="net-label is-marked">FHIX.</li>
-  </ol>
-  <p class="net-hint" aria-hidden="true">Drag to turn it · scroll to come closer · press a node to select it · press a line to travel along it</p>
-  <p class="net-fallback" hidden>The network could not be drawn here.</p>
+  <p class="net-hint" aria-hidden="true">Drag to turn it any way · scroll to come closer · press a note to read it</p>
+  <p class="net-fallback" hidden>The library could not be drawn here.</p>
 </main>
 
 <script>window.SITE_ROOT = "../";</script>
 <script src="../nav.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="../notes-data.js"></script>
 <script src="../network.js"></script>
 </body>
 </html>

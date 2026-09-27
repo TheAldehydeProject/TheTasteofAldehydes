@@ -1,11 +1,17 @@
 # The test page, and the network on it
 Date: 2026-09-26
-Files touched: `works/test-page.html` (new), `network.js` (new), `style.css` (`.network-page`,
+Files touched: `works/test-page.html` (new), `network.js` (new), `notes-data.js` (loaded, since
+2026-09-27), `style.css` (`.network-page`,
 `.net-*`, and the dark `--chrome-ground` list), `nav.js` (`SITE_LINKS`), `search-page.js`
 (`PAGES`), `tests/test-page.spec.js` (new), `tests/menu.spec.js`, `tests/pages.spec.js`,
 `tests/mobile.spec.js`, `CLAUDE.md`. For two rounds the same night: `tree.js`,
 `tools/tree-cloud.mjs`, `images/Test-Page/` and `image-js` in `package.json` — all taken out
 again.
+
+**Since the evening of 2026-09-27 the page carries the Note Library in three dimensions** — see
+[the last section](#2026-09-27-later--the-note-library-in-three-dimensions). The one network, and
+then the five, described first below are gone from the code; they are kept here for the
+reasoning, as the site's reports keep what was replaced.
 
 What changed: A new page, **Test page**, last in the Menu, designed for a laptop: blank but for
 **the network** — a dense map of solid red nodes of every size, a few pale and amber among them,
@@ -230,3 +236,201 @@ the card with its code, system, role and latency; Escape, and whole again); **`p
 between two systems takes you along it, and back`** (the label, the flight, the map saying
 HALCYON, the same bridge back to the middle, and a map diamond to VANTA); and the earlier tags,
 drag, pointing and reduced-motion tests, the last now also making a journey at once.
+
+## 2026-09-27, later — the Note Library in three dimensions
+
+> additionally, I want you to do something with the test page. I want you to model the note library
+> according to that. I want each galaxy to be an accord, and then the dots on it should be the
+> individual notes that belong to that accord group. I want this all to be 3d (as it is), and
+> navigtable freely with rotation. I want you to have a window on the right that contains the option
+> to make the search bar available. On this right side window should also be the selection of the
+> accords manually (as it is currently below the search bar in the note library page).
+> for my idea to work, there would be one central red library, with all the notes and accords within
+> that central galaxy. Then, if you press a button to expand it (bottom middle of the screen, then
+> each of the accords' galaxies will separate and go into a separate direction. This will allow you
+> to explore each accord individually. You can select the accord you want to go to in a drop down
+> menu on the bottom of the page (it appears after the expansion of the galaxy).
+> The nodes should remain red and glowing, until they expand, where they will then turn their
+> individual colours as they are now. They should remain aglow. WHile they transition from the red to
+> their respective colours, I want them to turn white and have changing geometrical links between
+> them too.
+> I want all transitions to be smooth and run at 60FPS.
+> when the nodes diverge from the central galaxy in the expansion to form their own individual accord
+> galaxies, I want there to be a central node which is connected to all thje galaxies. This will be
+> used as a navigation point so you can go from one accord to another interchanagably, which I want
+> you to make quite easy.
+>
+> While youre at it, I want you to make sure all the transitions can run at 60FPS on the entire
+> page.
+
+`network.js` was written again round the Note Library. Nothing of the five systems is in it: no
+`SYSTEMS`, no `ROLES`, no tags from the page, no `.net-map`, no `NetScene.busiest` or `gap`.
+"The entire page" was read as the whole of the test page — every transition on it — and not the
+whole site, which is the likelier reading of "the entire page".
+
+### The library, read off the Note Library
+
+The page writes none of it down. As it opens it **fetches `categories/note-library.html`** and reads
+the catalogue out of it — every accord (`.lib-shelf`: code, name, line), every note in it
+(`.lib-record`: id, name, other spellings, what it is) — as the fragrance reader fetches the
+individual fragrances, so there is one catalogue on the site and not two. It loads `notes-data.js`
+and counts **how many fragrances use each note exactly as the library counts them**, and gives every
+note **the library's own number and symbol** (the same `symbolFor`, run down the notes in the same
+order). The accords' colours are the library's `HUE`s, a little more saturated (`SAT`, `LIGHT`) so
+that each glows as its colour rather than as white; the chrome uses the library's own, exactly.
+Four small things are copied from `note-library.js` and `search.js` for this — `HUE`, `symbolFor`,
+the direct-words matching and `norm` — and the tests hold the two pages to the same answers. The
+returns cart is left out (it is empty, and a test keeps it so). If the library's page cannot be
+read, the page says so and links to it.
+
+### One red galaxy
+
+All 332 notes in **one spiral galaxy**: a bulge and four arms winding out (`ARMS`, `TWIST`), no two
+notes nearer than `GAP`, every node **red and glowing** as the network's were — a faceted sphere lit
+and glowing from within, a soft halo — joined to its nearest two by red links with pulses running
+along them, turning slowly (`SPIN`) inside a ticked ring, and a **haze** of fine specks strewn along
+the arms so it reads as a galaxy and not only as a network. **Every accord is a slice of it**, round
+in order, its most used notes nearest the core. A note's size is how many fragrances use it. The
+most used ten are named beside their nodes in small black tags.
+
+### Coming apart — through white, with changing links
+
+**The button at the foot, in the middle** (*Expand the library*) runs one clock (`u`, 0 to 1 over
+`EXPAND_MS`, 3.4s) that everything reads (`phase()`):
+
+- **red → white** over its first quarter, **white → the accord's colour** over its last third, the
+  glow brighter while white;
+- while white, **the changing links**: every pair of notes of one accord nearer than `LINK_REACH`
+  joined by a white line, brighter the nearer — worked out again every frame from where they stand,
+  so as the notes move the lines come and go and the triangles change (`changing` in the tests);
+- **each accord flies out** from its slice on a curve that carries on the way the galaxy was turning
+  (`swirl`), to **its own direction** — its slice's own heading, above, level or below in turn
+  (`LIFTS`; where the ring of them closes, the last is kept off both its neighbours' heights) — and
+  its notes **reform as a small spiral galaxy of its own**, its most used at the core, turning on
+  its own, in a ring of its own colour with its haze;
+- **the centre** comes up where the library was — a white node in a turning cage with two rings —
+  and **a bridge** runs out from it to every galaxy's core (a small wire diamond), white at the
+  centre and the accord's colour at the galaxy, pulses running along it;
+- the one galaxy's links, ring and haze go as it starts; each galaxy's links, ring and haze come as
+  it forms; the view draws back and comes down a little (`APART_PITCH`) so the galaxies above and
+  below stand clear of each other, fitted to where they actually stand (`fitApart`).
+
+*Collapse into one* runs the same clock backwards — colour, white and its links, red — and goes back
+to the centre from wherever you are. Pressed half way, either way turns round where it is.
+
+### Going between accords — easy, and through the centre
+
+Once apart, **the dropdown at the foot** (over the button) lists the centre and every accord, with
+**an arrow either side of it** for the one before and after; **the keyboard's arrows** do the same,
+and Home goes back to the centre. **The name beside every galaxy** is a button that goes there; so is
+**a bridge** (pointed at, it says *Go to 06 · Spice →*); so is **a note** in another galaxy (it goes
+there and selects it); so are the accords in the window on the right. Pressing **the centre** goes
+back to seeing them all.
+
+**Every journey from one galaxy to another bends in towards the centre and out again** — the way
+bends through it (`via`), and draws back a little half way so you see where you are going — which is
+what makes the centre the navigation point the owner asked for. **Arriving**, a galaxy is seen from
+the centre's side of it, a little above, as if having come out along its bridge, so that it stands
+alone against the stars, its disc facing you, its most used six notes named. (Seen from outside it,
+as the five systems were, the centre and its sixteen bridges stood behind every galaxy and cluttered
+it — that was tried first and looked worse.)
+
+### The window on the right
+
+`.net-panel`: the library's name and counts; **the switch that makes the search bar available** —
+off, there is no bar; on, **the library's own `query>`** comes down at the top in the middle, with
+its count and its ×, reading names and other spellings by **direct words** (the same answers as the
+library: a test types *cedar* into both), matches lit and the rest translucent, the first eight
+listed under it to go to; and **the accords, chosen by hand**, as the library's tabs are: every
+accord a row with its colour, number, code, name and count, and *All* — one lights and the rest go
+translucent, and once apart it also goes there. The window **folds away** by the button at its head
+to that button alone, and the drawing takes the room it gave; on a phone it starts folded, and the
+switch folds it to use the bar.
+
+### Freely, with rotation
+
+A drag turns it round without limit and tips it **nearly straight up or down** (`PITCH_MAX`, 83°),
+round whatever is being looked at, and **carries on turning a moment after it is let go**, slowing;
+the wheel and a pinch bring it closer or further. The view is kept in the middle of the room the
+window on the right and the foot leave (`setViewOffset`), and fitted to it.
+
+### Selecting
+
+Pressing a note **selects it**: it grows and goes white-hot, its links light, and **every other node
+turns translucent** (its neighbours less so) — each note's own opacity eased on its own, so a
+selection, a search and an accord chosen by hand can change together and never jump. **The card on
+the left** says what it is — its symbol and name, its accord, its element number and call number, how
+many fragrances use it, what it is, and *Open it in the Note Library →* (`#note-…`, which opens its
+card there) — with a dotted line from the card to the note. Escape, its ×, the note again or empty
+space lets it go.
+
+### Sixty frames a second
+
+- **Nothing is made or thrown away while it runs.** Every node, glow, link, pulse and bridge is one
+  of a handful of buffers written in place each frame (the links' upload limited to what is drawn);
+  the notes are two instanced meshes, the haze turns as a whole; about forty draw calls in all.
+- **Each note's own opacity** is the one addition to the library's shader (`perNode`): a note going
+  translucent is drawn in a second pass that does not hide what is behind it, so solid and
+  translucent notes are sorted right without re-sorting anything.
+- **Every program compiled before it is first shown** (`renderer.compile` with everything visible
+  once): the centre, the bridges and the rings used to be compiled the moment the library came apart,
+  which was one 74ms frame just as the movement began.
+- **The page's chrome is moved by transform and faded by opacity only** — the names, the tags, the
+  labels, the window folding, the bar coming down, the dropdown opening, the card — and **every size
+  is read at once, before anything is written**, and a style is written only when it changes. A trace
+  of the expansion shows no layout at all while it runs.
+- **Re-fitting is not re-sizing**: the view is re-fitted when the window folds or the library comes
+  apart, and the drawing surface is only made again when the window itself changes size.
+- **If the frames still come too slowly** — a sharp, large screen on a weak graphics card — it draws
+  at a lower resolution (`quality`) rather than dropping frames.
+
+Measured in the browser the tests use (no graphics card, drawing in software): **a frame's own work
+is 1–2ms on average and at most about 8ms**, through the expansion, journeys, selection, the search,
+folding the window, a drag and the collapse — against the 16.7ms a frame has at sixty a second. What
+that machine then spends is almost all waiting for its software drawing to finish (a trace: 3.4s of
+3.6s), which a graphics card does in a moment. The test for it holds the page's own work to that.
+
+With **reduced motion** nothing turns on its own, and expanding, collapsing and every journey are made
+at once; a drag still turns it.
+
+### How to test it
+
+`tests/test-page.spec.js`, rewritten:
+
+- **`the Note Library is drawn as one red galaxy, every note a node`** — as many nodes as the library
+  has records and as many accords as it has, red on the dark ground, the button at the foot in the
+  middle, the window on the right, no dropdown yet.
+- **`every note is the Note Library's own, with its number, symbol and uses`** — every note's name,
+  number, symbol, fragrance count and accord the same as the library page gives it, and every accord's
+  hue.
+- **`the page's copy of the library's colours is the library's`** — `HUE` the same in both files.
+- **`the window on the right makes the search bar available and chooses the accords`** — no bar
+  until the switch; *cedar* answered as the library answers it, the rest translucent; the switch off
+  clears it; an accord chosen by hand lights alone; folded, the drawing takes its room.
+- **`pressing a note selects it: the rest turn translucent, and its card says what it is`**.
+- **`expanding: through white, with changing links, into a galaxy for each accord in its own
+  colour`** — white half way, linked, the links changing as they move; apart, every note in its
+  accord's colour, every accord in its own galaxy and no two galaxies' reaches meeting; the centre
+  white; the dropdown there, and the galaxies named.
+- **`the centre joins every galaxy, and going from one accord to another is easy`** — the dropdown,
+  both arrows, the keyboard, Home, a bridge, the centre from the dropdown and a galaxy's name; the way
+  from one galaxy to the next passing near the centre.
+- **`collapsing brings every note back into the one red galaxy`**.
+- **`a drag turns it freely, any way`** — round, and tipped past 1.3 radians.
+- **`every frame of every transition is quick enough for sixty a second`** — through the expansion,
+  two journeys and the collapse: a frame's own work under 4ms on average, under 10ms for nearly all,
+  and no stall.
+- **`without its 3D library the page says so`**, **`without the Note Library's page it says so, and
+  points at the library`**, and **`the test page with animation turned off › it stands still, comes
+  apart and travels at once, and still turns by hand`**.
+
+It is also in `pages.spec.js`, `mobile.spec.js` (nothing wider than a phone) and `menu.spec.js`.
+
+### Known issues / TODO
+
+- **A first answer**, as every drawing here is: how far apart the galaxies stand, how fast it comes
+  apart, how they are seen on arrival — each a number at the top of `network.js`.
+- **On a phone** it works — the window folds, the foot and the card take the width — but it was
+  designed for a laptop, and the galaxies are small on a narrow screen.
+- **The frame rate was measured on a machine without a graphics card**, where only the page's own
+  share of each frame can be measured; on a real screen it should be checked by eye.

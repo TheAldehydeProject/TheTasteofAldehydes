@@ -745,3 +745,16 @@ In `tests/note-library.spec.js`:
 - The owner said they would change it; this is a first answer to "redesign it somehow".
 - At some widths a band of groups ends well short of the right edge, where the next group is too
   wide to fit beside it — the gaps of a periodic table, left as they fall.
+
+## 2026-09-27 — read by the test page, too
+
+Nothing on this page changed, but it has a second reader now: the **test page**
+(`works/test-page.html`, `network.js`) draws the whole library in three dimensions — one red galaxy
+of every note, which comes apart into a galaxy for each accord (see [the test
+page](2026-09-26-the-test-page.md#2026-09-27-later--the-note-library-in-three-dimensions)). It reads
+**this page's markup** for the catalogue, as the site's search does, so a note added here is there
+at once and nothing is written twice. Four small things it needs are copied from `note-library.js`
+(and `norm` from `search.js`): **`HUE`**, **`symbolFor`**, the **direct-words** matching and the way
+**uses** are counted from `notes-data.js`. **Change one of those here and change it there**; the
+tests in `tests/test-page.spec.js` hold the two to the same answers — every note's number, symbol,
+fragrance count and accord, every accord's hue, and what *cedar* finds.

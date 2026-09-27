@@ -50,8 +50,8 @@ ENGINES: end -->`, straight after the `<title>`:
 - **`canonical`** — the page's one address, `https://thetasteofaldehydes.com/…`. The forwarding
   pages keep the one they already had (pointing at the house's new address), as one of their three
   ways of forwarding; they are not given a second.
-- **The icons** — `favicon.svg`, an aldehyde drawn as a structural formula (see the foot of this
-  report), and
+- **The icons** — `favicon.svg`, an aldehyde drawn as a structural formula, set as a chemistry
+  book sets one since 2026-09-27 (see the foot of this report), and
   `apple-touch-icon.png`, the same at 180px for a phone's home screen.
 - **Open Graph and a Twitter card** — the title (the page's own, without the site's name after
   it), the line, and `images/social-card.png`: the title slide redrawn at 1200 × 630 on the squared
@@ -230,3 +230,34 @@ from is called The Taste of Aldehydes, and gets its own title back`**.
 
 **Still the owner's**: submitting the sitemap in **Google Search Console** (see above) — it asks
 whoever owns the domain to prove it, which no one else can do.
+
+## 2026-09-27, later — the icon from scratch, as a chemistry book sets it
+
+> okay, i want you to do the favicon from scratch and make it look like a proper chemistry thing:
+> something you would find in a nice and neat chemistry book
+
+`favicon.svg` was drawn again from nothing, as the figures in a modern chemistry textbook are set —
+the style ChemDraw calls **ACS** (the American Chemical Society's), which is what most books'
+structures are drawn in:
+
+- **Real letters.** The O, C, R and H are **Arial's** own letters (from Liberation Sans, which has
+  Arial's shapes and widths) — the typeface textbook structures use — rather than shapes made up of
+  ellipses and lines, which is what made the last one look home-made. They are turned into outlines
+  inside the file, so every computer draws them the same without needing the font.
+- **Each letter centred on its atom**, the middle of the letter's height on the atom's point.
+- **Bonds as thick as the letters' strokes**, and every bond stopping the **same small margin**
+  short of the letter at each end (9% of a bond's length), as a book's do.
+- **The double bond** two even lines either side of the C=O axis, a fifth of a bond's length apart.
+- **The shape of the molecule**: the O straight above the C, R and H at **120°** below it —
+  trigonal, as a carbonyl carbon is. The letters stand at a little under half a bond's length
+  tall, so the bonds read as bonds and not as dashes (the book's own proportion, tried first, left
+  them stubby at this size).
+- **One liberty**, said in the file: letters and bonds are drawn a little heavier than a book's
+  (0.6 of a unit added to both, so they stay equal), because a book's weight is a third of a pixel
+  in a browser's tab — the owner asked twice for the icon to be more visible, and that still holds.
+
+Black on a white square, the figure filling it to two units of its edges. Five versions were drawn
+and compared at 16, 32, 64 and 180 pixels, in a light and a dark tab, before this one. It was
+worked out by a script from the font (kept out of the repository, like the last one — the file is
+the whole of it). **`apple-touch-icon.png`** is the same figure on a plain white square with more
+room round it, because a phone rounds the corners of a home-screen icon itself.
