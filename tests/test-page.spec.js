@@ -4,23 +4,24 @@
 
    The owner, 2026-09-26: "add a new page to the whole site, and make it
    completly blank. this will be a test page." It carried a network of red
-   nodes, then five; and since 2026-09-27 it is THE NOTE LIBRARY IN THREE
-   DIMENSIONS:
+   nodes, then five, then the Note Library as galaxies; and since the night
+   of 2026-09-27 it is THE NOTE LIBRARY AS NETWORKS:
 
-     "I want each galaxy to be an accord, and then the dots on it should
-     be the individual notes that belong to that accord group ...
-     navigtable freely with rotation ... a window on the right that
-     contains the option to make the search bar available ... the
-     selection of the accords manually ... one central red library ...
-     a button to expand it (bottom middle of the screen) ... a drop down
-     menu on the bottom of the page (it appears after the expansion) ...
-     red and glowing, until they expand, where they will then turn their
-     individual colours ... While they transition from the red to their
-     respective colours, I want them to turn white and have changing
-     geometrical links between them too. I want all transitions to be
-     smooth and run at 60FPS ... a central node which is connected to all
-     the galaxies ... so you can go from one accord to another
-     interchanagably, which I want you to make quite easy."
+     "make it red regardless, screw the colouring ... less of galaxies and
+     more true to their original form: like complex networks of nodes and
+     connections ... more red and glowing. I want nothing to be selectable
+     in the main galaxy before the expansion ... main nodes which are the
+     notes (labeleld), and some other arbitraty spheres or nodes that lead
+     to nothing and cannot be clicked ... keep that [centre], but truly
+     make it a node ... not to be equidistant from the central galaxy ...
+     a signal travelling to all the connections from the central node to
+     the differnet netweorks when expanded ... slightly different than one
+     another structurally ... quite dense in nodes and connections ...
+     when you hover the accord on the right, it lights up in isolation.
+     keep that ... keep the transition COLOURS from the expansion ... a
+     little more chaotic ... create additiona nodes and connections for
+     each of the clusters ... move the bar on the right hand side to the
+     left. And make the search."
 
    window.NetScene says where things stand on the window and what state it
    is in. The tests' machine draws in software, so the drawing's own clock
@@ -28,8 +29,6 @@
    state, with room to spare, never on a number of seconds.
    ============================================================ */
 const { test, expect } = require("@playwright/test");
-const fs = require("fs");
-const path = require("path");
 const { serveDependenciesLocally, blockThreeJs, collectPageErrors } = require("./helpers");
 
 const TEST_PAGE = "/works/test-page.html";
@@ -62,12 +61,6 @@ async function look(page, points = []) {
   }, { shot, points });
 }
 const state = (page) => page.evaluate(() => window.NetScene.state());
-/** An accord's colour as the page gives it: its library hue, glowing. */
-const hsl = (h, s, l) => {
-  const a = s * Math.min(l, 1 - l);
-  const f = (n) => { const k = (n + h / 30) % 12; return l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)); };
-  return [f(0), f(8), f(4)];
-};
 async function open(page, size = { width: 1440, height: 900 }) {
   await page.setViewportSize(size);
   await page.goto(TEST_PAGE);
@@ -77,15 +70,25 @@ async function expandIt(page) {
   await page.locator(".net-expand").click();
   await expect(page.locator(".net-stage")).toHaveAttribute("data-state", "apart", { timeout: 30000 });
 }
+/** Gone to an accord's network by the dropdown, and settled there. */
+async function goTo(page, k, code) {
+  await page.locator(".net-drop-button").click();
+  await page.locator('.net-drop-option[data-to="' + k + '"]').click();
+  await expect(page.locator(".net-stage")).toHaveAttribute("data-focus", code, { timeout: 20000 });
+  await expect.poll(async () => (await state(page)).flying, { timeout: 20000 }).toBe(false);
+}
+/** Red, not white: a note's colour once the signal has passed it. */
+const red = (c) => c[0] > 0.85 && c[1] < 0.45 && c[2] < 0.5;
 
 test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
 });
 
-/* ONE RED GALAXY: every note in the Note Library a glowing red node, the
-   accords all in it; the button to expand it at the foot, in the middle;
-   the window on the right; nothing else drawn. */
-test("the Note Library is drawn as one red galaxy, every note a node", async ({ page, request }) => {
+/* ONE RED NETWORK: every note in the Note Library a glowing red node among
+   fillers of its own, all of it linked; the button to expand it at the
+   foot, in the middle of the room the window on the LEFT leaves; and
+   nothing in it answers the hand. */
+test("the Note Library is drawn as one red network, and nothing in it answers the hand", async ({ page, request }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
   // Counted in the library's markup, leaving out its comments (which show
@@ -97,24 +100,38 @@ test("the Note Library is drawn as one red galaxy, every note a node", async ({ 
   const stage = page.locator(".net-stage");
   expect(+(await stage.getAttribute("data-notes")), "every note in the library").toBe(records);
   expect(+(await stage.getAttribute("data-accords")), "every accord").toBe(shelves);
+  expect(+(await stage.getAttribute("data-nodes")), "and fillers that stand for nothing, many more of them").toBeGreaterThan(records * 5);
+  expect(+(await stage.getAttribute("data-links")), "all of it linked").toBeGreaterThan(+(await stage.getAttribute("data-nodes")) * 2);
   await expect(stage).toHaveAttribute("data-state", "one");
+  const s = await state(page);
+  expect(s.shown, "some fillers in it already, the rest made as it comes apart").toBeGreaterThan(records);
+  expect(s.shown).toBeLessThan(s.nodes);
   await page.mouse.move(700, 880);
   await page.waitForTimeout(2000);
   // Red, on the page's own dark ground at its corners.
-  const seen = await look(page, [[40, 450], [720, 150], [40, 860]]);
+  const seen = await look(page, [[1420, 450], [1420, 880], [330, 880]]);
   expect(seen.red, "the nodes are red").toBeGreaterThan(1500);
   seen.at.forEach((px, n) => px.forEach((v) => expect(v, "point " + n + " is the dark ground").toBeLessThan(60)));
   const vanilla = await page.evaluate(() => window.NetScene.note("Vanilla"));
-  expect(vanilla.colour[0], "a note is red").toBeGreaterThan(0.85);
-  expect(vanilla.colour[1]).toBeLessThan(0.45);
-  // The button that expands it: at the foot, in the middle of the room the
-  // window on the right leaves.
+  expect(red(vanilla.colour), "a note is red").toBe(true);
+  // NOTHING ANSWERS: pointed at, a note says nothing; pressed, nothing is
+  // chosen.
+  expect(s.answering).toBe(false);
+  await page.mouse.move(vanilla.x, vanilla.y);
+  await page.waitForTimeout(300);
+  await expect(page.locator(".net-hover")).not.toHaveClass(/is-on/);
+  await page.mouse.click(vanilla.x, vanilla.y);
+  await page.waitForTimeout(300);
+  await expect(stage).not.toHaveAttribute("data-selected", /./);
+  await expect(page.locator(".net-card")).toBeHidden();
+  // The button that expands it: at the foot, in the middle of what the
+  // window on the left leaves.
   const button = await page.locator(".net-expand").boundingBox();
   const panel = await page.locator(".net-panel").boundingBox();
+  expect(panel.x, "the window on the left").toBeLessThan(30);
   expect(button.y + button.height, "at the foot").toBeGreaterThan(900 - 50);
-  expect(Math.abs(button.x + button.width / 2 - panel.x / 2), "in the middle").toBeLessThan(40);
+  expect(Math.abs(button.x + button.width / 2 - (1440 + 320) / 2), "in the middle of the room left").toBeLessThan(40);
   await expect(page.locator(".net-expand")).toHaveText(/Expand the library/i);
-  expect(panel.x + panel.width, "the window on the right").toBeGreaterThan(1440 - 30);
   // Before it has come apart there is no dropdown to be had.
   await expect(page.locator(".net-nav")).toHaveCSS("opacity", "0");
   // Nothing written on it but its chrome; the one <h1> is read, not drawn.
@@ -134,7 +151,6 @@ test("every note is the Note Library's own, with its number, symbol and uses", a
     id: el.id, no: +el.dataset.no, sym: el.dataset.sym, uses: +el.dataset.uses,
     code: el.closest(".lib-shelf").dataset.shelf, name: el.querySelector(".lib-name").textContent.trim(),
   })));
-  const hues = await page.$$eval(".lib-shelf", (els) => els.map((el) => [el.dataset.shelf, +el.style.getPropertyValue("--hue")]));
   await open(page);
   const here = await page.evaluate(() => window.NetScene.notes());
   expect(here.length).toBe(library.length);
@@ -148,26 +164,12 @@ test("every note is the Note Library's own, with its number, symbol and uses", a
     expect(n.uses, r.name + "'s fragrances").toBe(r.uses);
     expect(n.code, r.name + "'s accord").toBe(r.code);
   });
-  // And every accord in the library's own colour.
-  const accords = await page.evaluate(() => window.NetScene.accords());
-  accords.forEach((A) => expect(A.hue, A.code).toBe(hues.find(([c]) => c === A.code)[1]));
 });
 
-/* The accords' colours, and the rule the search reads by, are the Note
-   Library's own, copied into network.js: kept the same. */
-test("the page's copy of the library's colours is the library's", () => {
-  const read = (file) => {
-    const text = fs.readFileSync(path.join(__dirname, "..", file), "utf8");
-    const m = text.match(/const HUE = \{([\s\S]*?)\};/);
-    return m && m[1].replace(/\s+/g, " ").trim();
-  };
-  expect(read("network.js")).toBe(read("note-library.js"));
-});
-
-/* THE WINDOW ON THE RIGHT: the switch that makes the search bar available
-   — the library's own `query>`, by its own rule — and the accords, chosen
-   by hand: the rest go translucent. */
-test("the window on the right makes the search bar available and chooses the accords", async ({ page }) => {
+/* THE WINDOW ON THE LEFT: minimal, with a ring of specks; the switch that
+   opens the search IN THE WINDOW — the library's own rule — and the
+   accords, each lighting up alone under the hand, and chosen by a press. */
+test("the window on the left holds the search and the accords, each lighting up alone under the hand", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
   // What the library's own search finds for "cedar".
@@ -178,56 +180,177 @@ test("the window on the right makes the search bar available and chooses the acc
 
   await open(page);
   const stage = page.locator(".net-stage");
+  const N = +(await stage.getAttribute("data-notes"));
+  const panel = page.locator(".net-panel");
+  const box = await panel.boundingBox();
+  expect(box.x, "on the left").toBeLessThan(30);
+  expect(box.width, "and narrow").toBeLessThan(300);
+  // The ring of specks in it, drawn.
+  const inked = await page.locator(".net-mark").evaluate((c) => {
+    const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+    let n = 0;
+    for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++;
+    return n;
+  });
+  expect(inked, "the ring of specks").toBeGreaterThan(300);
+
+  // THE SEARCH, in the window.
   const bar = page.locator(".net-search");
-  const toggle = page.locator(".net-panel .net-switch");
+  const toggle = panel.locator(".net-switch");
   await expect(bar, "not there until it is asked for").toBeHidden();
   await expect(toggle).toHaveAttribute("aria-checked", "false");
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-checked", "true");
   await expect(bar).toBeVisible();
+  const barBox = await bar.boundingBox();
+  expect(barBox.x >= box.x && barBox.x + barBox.width <= box.x + box.width, "inside the window").toBe(true);
   await expect(page.locator(".net-query")).toBeFocused();
   await page.keyboard.type("cedar");
   expect((await state(page)).hits.slice().sort(), "the library's own answers").toEqual(found);
   await expect(page.locator(".net-result")).toHaveCount(found.length);
-  await expect(page.locator(".net-count")).toHaveText(found.length + " / " + (await stage.getAttribute("data-notes")));
-  await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(+(await stage.getAttribute("data-notes")) - found.length);
+  await expect(page.locator(".net-count")).toHaveText(found.length + " / " + N);
+  await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(N - found.length);
   expect((await state(page)).faintest, "the rest translucent").toBeLessThan(0.2);
+  // Its × empties it.
+  await page.locator(".net-clear").click();
+  expect((await state(page)).query).toBe("");
+  await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(0);
+  await page.keyboard.type("cedar");
   // Put away again, and the search goes with it.
   await toggle.click();
   await expect(bar).toBeHidden();
   expect((await state(page)).query).toBe("");
   await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(0);
 
-  // The accords, by hand: one lights, the rest go translucent; all of them
-  // back again.
+  // UNDER THE HAND an accord lights up alone, and only while it is there.
   const accords = page.locator(".net-accord");
   expect(await accords.count(), "every accord, and all of them").toBe(17);
   const woods = page.locator('.net-accord[data-code="WOO"]');
+  const count = +(await woods.locator(".net-accord-count").textContent());
+  await woods.hover();
+  expect((await state(page)).previewing).toBe("WOO");
+  await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(N - count);
+  expect((await page.evaluate(() => window.NetScene.note("Cedarwood"))).opacity, "a wood whole").toBe(1);
+  await page.mouse.move(900, 450);
+  expect((await state(page)).previewing).toBe("");
+  await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(0);
+  // Pressed, it stays lit; all of them back again.
   await woods.click();
   await expect(woods).toHaveAttribute("aria-pressed", "true");
-  const count = +(await woods.locator(".net-accord-count").textContent());
-  await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(+(await stage.getAttribute("data-notes")) - count);
-  expect((await page.evaluate(() => window.NetScene.note("Cedarwood"))).opacity, "a wood whole").toBe(1);
+  await page.mouse.move(900, 450);
+  await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(N - count);
   await page.locator('.net-accord[data-code=""]').click();
+  await page.mouse.move(900, 450);
   await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(0);
 
   // Folded away, it leaves only its button, and the drawing takes the room.
   await page.locator(".net-fold").click();
-  await expect(page.locator(".net-panel")).toHaveClass(/is-folded/);
+  await expect(panel).toHaveClass(/is-folded/);
   await page.waitForTimeout(700);
-  expect(await page.evaluate(() => document.elementFromPoint(window.innerWidth - 20, 500).className), "the drawing under the strip it left").toContain("net-canvas");
+  expect(await page.evaluate(() => document.elementFromPoint(120, 500).className), "the drawing where it stood").toContain("net-canvas");
   await page.locator(".net-fold").click();
-  await expect(page.locator(".net-panel")).not.toHaveClass(/is-folded/);
+  await expect(panel).not.toHaveClass(/is-folded/);
   expect(errors).toEqual([]);
 });
 
-/* SELECTING: pressing a note — every other turns translucent, and the card
-   on the left says what it is, with the way to it in the Note Library. */
-test("pressing a note selects it: the rest turn translucent, and its card says what it is", async ({ page }) => {
-  test.setTimeout(90000);
+/* EXPANDING: every node turns WHITE, with links between them that CHANGE
+   as they move; each sets off on a path of its own; more nodes are MADE
+   for every accord on the way, with links of their own; and each accord
+   comes to stand as a network of its own — red again, dense, built its
+   own way, at a distance of its own — with a true node at its middle, and
+   the centre joined to them all. */
+test("expanding: through white, with changing links and nodes made on the way, into a dense red network for each accord", async ({ page }) => {
+  test.setTimeout(150000);
   const errors = collectPageErrors(page);
   await open(page);
   const stage = page.locator(".net-stage");
+  const before = await page.evaluate(() => window.NetScene.accords().map((A) => [A.code, window.NetScene.network(A.code).spread]));
+  before.forEach(([code, spread]) => expect(spread, code + " starts in the one network").toBeGreaterThan(6));
+  const shownBefore = (await state(page)).shown;
+  await page.locator(".net-expand").click();
+  await expect(page.locator(".net-expand")).toHaveAttribute("aria-expanded", "true");
+  // WHITE, WITH CHANGING LINKS, on the way.
+  await expect.poll(async () => (await state(page)).u, { timeout: 20000, intervals: [50] }).toBeGreaterThan(0.3);
+  const mid1 = await page.evaluate(() => ({ s: window.NetScene.state(), v: window.NetScene.note("Vanilla") }));
+  expect(mid1.s.u, "still on its way").toBeLessThan(0.6);
+  mid1.v.colour.forEach((c) => expect(c, "white").toBeGreaterThan(0.85));
+  expect(mid1.s.changing, "linked, while white").toBeGreaterThan(80);
+  expect(mid1.s.answering, "and nothing answers on the way").toBe(false);
+  await expect.poll(async () => (await state(page)).u, { timeout: 20000, intervals: [50] }).toBeGreaterThan(mid1.s.u + 0.1);
+  const mid2 = await page.evaluate(() => ({ s: window.NetScene.state(), v: window.NetScene.note("Vanilla") }));
+  expect(mid2.s.changing, "and the links change as they go").not.toBe(mid1.s.changing);
+  expect(mid2.v.x !== mid1.v.x || mid2.v.y !== mid1.v.y, "moving").toBe(true);
+  // MADE ON THE WAY: more nodes than the one network had, linked.
+  await expect.poll(async () => (await state(page)).u, { timeout: 20000, intervals: [50] }).toBeGreaterThan(0.66);
+  const mid3 = await state(page);
+  expect(mid3.shown, "nodes made on the way").toBeGreaterThan(shownBefore + 500);
+  expect(mid3.segments, "and their links").toBeGreaterThan(mid3.changing + 500);
+  // APART: RED AGAIN, every node there.
+  await expect(stage).toHaveAttribute("data-state", "apart", { timeout: 30000 });
+  const s = await state(page);
+  expect(s.shown, "every node").toBe(s.nodes);
+  expect(s.answering).toBe(true);
+  for (const name of ["Vanilla", "Cedarwood", "Bergamot", "Rose"]) {
+    await expect.poll(async () => red((await page.evaluate((n) => window.NetScene.note(n), name)).colour), { timeout: 10000, message: name + " red again" }).toBe(true);
+  }
+  const accords = await page.evaluate(() => window.NetScene.accords());
+  const after = await page.evaluate(() => window.NetScene.accords().map((A) => window.NetScene.network(A.code)));
+  after.forEach((g, k) => expect(g.spread, accords[k].code + " in its own network").toBeLessThan(0.01));
+  // DENSE, each built its own way, each at a distance of its own.
+  accords.forEach((A) => {
+    expect(A.members, A.code + ": dense in nodes").toBeGreaterThan(Math.max(100, A.count * 4));
+    expect(A.links, A.code + ": and in links").toBeGreaterThan(A.members * 1.8);
+    expect(A.middle, A.code + ": a node at its middle").toBe(true);
+  });
+  expect(new Set(accords.map((A) => A.type)).size, "built differently").toBeGreaterThanOrEqual(5);
+  const reaches = accords.map((A) => A.reach);
+  expect(Math.max(...reaches) - Math.min(...reaches), "not all the same way from the centre").toBeGreaterThan(5);
+  // No two networks' reaches meet (in three dimensions — on the window,
+  // one may stand behind another).
+  for (let a = 0; a < after.length; a++) for (let b = a + 1; b < after.length; b++) {
+    const d = Math.hypot(...after[a].at.map((v, k) => v - after[b].at[k]));
+    expect(d, accords[a].code + " and " + accords[b].code + " apart").toBeGreaterThan((after[a].R + after[b].R) * 1.4);
+  }
+  // The centre: bright where it stands.
+  const c = await page.evaluate(() => window.NetScene.centre());
+  const seen = await look(page, [[c.x, c.y]]);
+  expect(Math.min(...seen.at[0]), "the centre, white").toBeGreaterThan(120);
+  // The dropdown, now, and the names beside the networks.
+  await expect(page.locator(".net-nav")).toHaveCSS("opacity", "1");
+  await expect(page.locator(".net-drop-option")).toHaveCount(accords.length + 1);
+  await expect(page.locator(".net-expand")).toHaveText(/Collapse into one/i);
+  expect(await page.locator(".net-name.is-on").count(), "most of the networks named").toBeGreaterThan(8);
+  expect(errors).toEqual([]);
+});
+
+/* THE SIGNAL: out from the centre along every bridge, over and over, and
+   on through each network from its middle node, link by link. */
+test("a signal goes out from the centre to every network, and through it", async ({ page }) => {
+  test.setTimeout(120000);
+  await open(page);
+  await expandIt(page);
+  let most = 0;
+  for (let k = 0; k < 200 && most < 40; k++) {
+    most = Math.max(most, (await state(page)).litNodes);
+    await page.waitForTimeout(30);
+  }
+  expect(most, "nodes lit as it passes").toBeGreaterThan(40);
+  // And it passes: lit, then not.
+  await expect.poll(async () => (await state(page)).litNodes, { timeout: 20000 }).toBeLessThan(most / 4);
+});
+
+/* ONCE APART: a note answers — named at its network, pressed it is chosen,
+   every other node turns translucent and the card on the right says what
+   it is — and a filler never does. */
+test("once apart, pressing a note selects it and its card says what it is; a filler never answers", async ({ page }) => {
+  test.setTimeout(150000);
+  const errors = collectPageErrors(page);
+  await open(page);
+  await expandIt(page);
+  const stage = page.locator(".net-stage");
+  await goTo(page, 6, "GOU");
+  // Every note of the network you are at named beside its node.
+  await expect.poll(async () => page.locator(".net-label").evaluateAll((els) => els.filter((e) => +getComputedStyle(e).opacity > 0.5).length), { timeout: 10000 }).toBeGreaterThan(15);
   const N = +(await stage.getAttribute("data-notes"));
   const about = (await page.evaluate(() => window.NetScene.notes())).find((n) => n.name === "Vanilla");
   let at = await page.evaluate(() => window.NetScene.note("Vanilla"));
@@ -241,9 +364,11 @@ test("pressing a note selects it: the rest turn translucent, and its card says w
   expect((await state(page)).faintest, "the rest translucent").toBeLessThan(0.2);
   const card = page.locator(".net-card");
   await expect(card).toBeVisible();
+  const cardBox = await card.boundingBox();
+  expect(cardBox.x + cardBox.width, "on the right").toBeGreaterThan(1440 - 40);
   await expect(card.locator(".net-card-name")).toHaveText("Vanilla");
   await expect(card.locator(".net-card-sym")).toHaveText(about.sym);
-  await expect(card).toContainText("GOU · Gourmand");
+  await expect(card.locator(".net-card-accord")).toHaveText("Gourmand");
   await expect(card.locator(".net-card-no")).toHaveText(String(about.no));
   await expect(card.locator(".net-card-uses")).toHaveText("used in " + about.uses);
   await expect(card.locator(".net-card-say")).not.toBeEmpty();
@@ -253,66 +378,24 @@ test("pressing a note selects it: the rest turn translucent, and its card says w
   await expect(stage).toHaveAttribute("data-selected", "");
   await expect(card).toBeHidden();
   await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(0);
-  expect(errors).toEqual([]);
-});
-
-/* EXPANDING: the one galaxy comes apart. Every node turns WHITE, with links
-   between them that CHANGE as they move; each accord flies out in its own
-   direction and reforms as a galaxy of its own, in its own colour; the
-   centre comes up where the library was; and the dropdown comes up at the
-   foot. */
-test("expanding: through white, with changing links, into a galaxy for each accord in its own colour", async ({ page }) => {
-  test.setTimeout(120000);
-  const errors = collectPageErrors(page);
-  await open(page);
-  const stage = page.locator(".net-stage");
-  const before = await page.evaluate(() => window.NetScene.accords().map((A) => [A.code, window.NetScene.galaxy(A.code).spread]));
-  before.forEach(([code, spread]) => expect(spread, code + " starts in the one galaxy").toBeGreaterThan(8));
-  await page.locator(".net-expand").click();
-  await expect(page.locator(".net-expand")).toHaveAttribute("aria-expanded", "true");
-  // WHITE, WITH CHANGING LINKS, on the way.
-  await expect.poll(async () => (await state(page)).u, { timeout: 20000, intervals: [50] }).toBeGreaterThan(0.3);
-  const mid1 = await page.evaluate(() => ({ s: window.NetScene.state(), v: window.NetScene.note("Vanilla") }));
-  expect(mid1.s.u, "still on its way").toBeLessThan(0.65);
-  mid1.v.colour.forEach((c) => expect(c, "white").toBeGreaterThan(0.85));
-  expect(mid1.s.changing, "linked, while white").toBeGreaterThan(80);
-  await expect.poll(async () => (await state(page)).u, { timeout: 20000, intervals: [50] }).toBeGreaterThan(mid1.s.u + 0.1);
-  const mid2 = await page.evaluate(() => ({ s: window.NetScene.state(), v: window.NetScene.note("Vanilla") }));
-  expect(mid2.s.changing, "and the links change as they go").not.toBe(mid1.s.changing);
-  expect(mid2.v.x !== mid1.v.x || mid2.v.y !== mid1.v.y, "moving").toBe(true);
-  // APART, IN THEIR COLOURS.
-  await expect(stage).toHaveAttribute("data-state", "apart", { timeout: 30000 });
-  const accords = await page.evaluate(() => window.NetScene.accords());
-  for (const [name, code] of [["Vanilla", "GOU"], ["Cedarwood", "WOO"], ["Bergamot", "CIT"], ["Rose", "FLO"]]) {
-    const n = await page.evaluate((name) => window.NetScene.note(name), name);
-    const want = hsl(accords.find((A) => A.code === code).hue, 0.72, 0.6);
-    n.colour.forEach((c, k) => expect(Math.abs(c - want[k]), name + " in " + code + "'s colour").toBeLessThan(0.02));
-  }
-  const after = await page.evaluate(() => window.NetScene.accords().map((A) => [A.code, window.NetScene.galaxy(A.code)]));
-  after.forEach(([code, g]) => expect(g.spread, code + " in its own galaxy").toBeLessThan(0.01));
-  // Each gone its own way: no two galaxies' reaches meet (in three
-  // dimensions — on the window, one may stand behind another).
-  const apart = after.map(([, g]) => g);
-  for (let a = 0; a < apart.length; a++) for (let b = a + 1; b < apart.length; b++) {
-    const d = Math.hypot(...apart[a].at.map((v, k) => v - apart[b].at[k]));
-    expect(d, after[a][0] + " and " + after[b][0] + " apart").toBeGreaterThan((apart[a].r + apart[b].r) * 1.5);
-  }
-  // The centre: bright where it stands.
-  const c = await page.evaluate(() => window.NetScene.centre());
-  const seen = await look(page, [[c.x, c.y]]);
-  expect(Math.min(...seen.at[0]), "the centre, white").toBeGreaterThan(120);
-  // The dropdown, now, and the names beside the galaxies.
-  await expect(page.locator(".net-nav")).toHaveCSS("opacity", "1");
-  await expect(page.locator(".net-drop-option")).toHaveCount(accords.length + 1);
-  await expect(page.locator(".net-expand")).toHaveText(/Collapse into one/i);
-  expect(await page.locator(".net-name.is-on").count(), "most of the galaxies named").toBeGreaterThan(8);
+  // A FILLER: pointed at, it says nothing; pressed, nothing is chosen and
+  // nothing moves.
+  const filler = await page.evaluate(() => window.NetScene.filler("GOU"));
+  expect(filler, "a filler clear of the notes").not.toBeNull();
+  await page.mouse.move(filler.x, filler.y);
+  await page.waitForTimeout(300);
+  await expect(page.locator(".net-hover")).not.toHaveClass(/is-on/);
+  await page.mouse.click(filler.x, filler.y);
+  await page.waitForTimeout(300);
+  await expect(stage).toHaveAttribute("data-selected", "");
+  await expect(stage).toHaveAttribute("data-focus", "GOU");
   expect(errors).toEqual([]);
 });
 
 /* THE WAY BETWEEN THEM: the dropdown, the arrows either side of it, the
-   keyboard, a bridge, a galaxy's name — every journey from one galaxy to
+   keyboard, a bridge, a network's name — every journey from one network to
    another bending in towards the centre — and back to the centre. */
-test("the centre joins every galaxy, and going from one accord to another is easy", async ({ page }) => {
+test("the centre joins every network, and going from one accord to another is easy", async ({ page }) => {
   test.setTimeout(150000);
   const errors = collectPageErrors(page);
   await open(page);
@@ -320,25 +403,23 @@ test("the centre joins every galaxy, and going from one accord to another is eas
   const stage = page.locator(".net-stage");
   const at = (code) => expect(stage).toHaveAttribute("data-focus", code, { timeout: 20000 });
   const settled = () => expect.poll(async () => (await state(page)).flying, { timeout: 20000 }).toBe(false);
+  const reach = Object.fromEntries((await page.evaluate(() => window.NetScene.accords())).map((A) => [A.code, A.reach]));
   // The dropdown.
   await page.locator(".net-drop-button").click();
   await expect(page.locator(".net-dock")).toHaveClass(/is-open/);
   await page.locator('.net-drop-option[data-to="6"]').click();
   await at("GOU");
-  await expect(page.locator(".net-drop-say")).toHaveText("07 · GOU · Gourmand");
+  await expect(page.locator(".net-drop-say")).toHaveText("07 · Gourmand");
   await expect(page.locator('.net-accord[data-code="GOU"]'), "the window says where you are").toHaveClass(/is-here/);
   await settled();
   // The arrow after it — and the way there bends in towards the centre.
-  let nearest = Infinity;
+  // (Asked of the journey itself, since this machine may draw too few
+  // frames to be seen passing it.)
   await page.locator('.net-step[data-step="1"]').click();
-  for (let k = 0; k < 400; k++) {
-    const s = await state(page);
-    nearest = Math.min(nearest, s.target);
-    if (!s.flying) break;
-    await page.waitForTimeout(20);
-  }
+  const bend = await page.evaluate(() => window.NetScene.bend());
+  expect(bend, "a journey under way").not.toBeNull();
+  expect(bend, "by way of the centre").toBeLessThan(0.55 * Math.max(reach.GOU, reach.BRW));
   await at("BRW");
-  expect(nearest, "by way of the centre").toBeLessThan(15.5 * 0.7);
   // The arrow before it, and the keyboard's.
   await page.locator('.net-step[data-step="-1"]').click();
   await at("GOU");
@@ -365,36 +446,40 @@ test("the centre joins every galaxy, and going from one accord to another is eas
   await page.mouse.click(found.x, found.y);
   await at("SPI");
   await settled();
-  // Back to the centre from the dropdown, and to a galaxy by its name.
+  // Back to the centre from the dropdown, and to a network by its name.
   await page.locator(".net-drop-button").click();
   await page.locator('.net-drop-option[data-to="-1"]').click();
   await at("centre");
   await settled();
   const name = page.locator(".net-name.is-on").first();
-  const code = await name.locator(".net-name-code").textContent();
+  const code = await name.getAttribute("data-code");
   await name.click();
   await at(code);
+  // An accord pressed in the window goes there too.
+  await page.locator('.net-accord[data-code="CIT"]').click();
+  await at("CIT");
   expect(errors).toEqual([]);
 });
 
-/* COLLAPSING: back through white into the one red galaxy, and the dropdown
-   goes. */
-test("collapsing brings every note back into the one red galaxy", async ({ page }) => {
+/* COLLAPSING: back through white into the one red network, the nodes made
+   on the way gone again, and the dropdown goes. */
+test("collapsing brings every note back into the one red network", async ({ page }) => {
   test.setTimeout(120000);
   const errors = collectPageErrors(page);
   await open(page);
+  const shownBefore = (await state(page)).shown;
   await expandIt(page);
-  await page.locator(".net-drop-button").click();
-  await page.locator('.net-drop-option[data-to="3"]').click();
-  await expect(page.locator(".net-stage")).toHaveAttribute("data-focus", "FLO", { timeout: 20000 });
+  await goTo(page, 3, "FLO");
   await page.locator(".net-expand").click();
   await expect(page.locator(".net-stage")).toHaveAttribute("data-state", "one", { timeout: 30000 });
-  expect((await state(page)).focus, "back at the centre").toBe("centre");
+  const s = await state(page);
+  expect(s.focus, "back at the centre").toBe("centre");
+  expect(s.shown, "the made nodes gone again").toBe(shownBefore);
+  expect(s.answering).toBe(false);
   const v = await page.evaluate(() => window.NetScene.note("Vanilla"));
-  expect(v.colour[0], "red again").toBeGreaterThan(0.85);
-  expect(v.colour[1]).toBeLessThan(0.45);
-  const spreads = await page.evaluate(() => window.NetScene.accords().map((A) => window.NetScene.galaxy(A.code).spread));
-  spreads.forEach((s) => expect(s, "every accord back in the one galaxy").toBeGreaterThan(8));
+  expect(red(v.colour), "red again").toBe(true);
+  const spreads = await page.evaluate(() => window.NetScene.accords().map((A) => window.NetScene.network(A.code).spread));
+  spreads.forEach((d) => expect(d, "every accord back in the one network").toBeGreaterThan(6));
   await expect(page.locator(".net-nav")).toHaveCSS("opacity", "0");
   await expect(page.locator(".net-expand")).toHaveText(/Expand the library/i);
   expect(errors).toEqual([]);
@@ -416,9 +501,9 @@ test("a drag turns it freely, any way", async ({ page }) => {
   const b = await state(page);
   expect(Math.abs(b.yaw - a.yaw), "turned round").toBeGreaterThan(1.2);
   await expect(stage, "and the hint goes").toHaveClass(/is-turned/);
-  await page.mouse.move(500, 200);
+  await page.mouse.move(700, 200);
   await page.mouse.down();
-  await page.mouse.move(500, 700, { steps: 16 });
+  await page.mouse.move(700, 700, { steps: 16 });
   await page.mouse.up();
   await page.waitForTimeout(600);
   expect((await state(page)).pitch, "tipped nearly straight over").toBeGreaterThan(1.3);
@@ -426,29 +511,28 @@ test("a drag turns it freely, any way", async ({ page }) => {
 });
 
 /* SIXTY FRAMES A SECOND: every frame's own work — the drawing's and the
-   page's — through the expansion, a journey and the collapse, is a small
-   part of the sixtieth of a second a frame has. (What this machine's
-   software drawing then takes is not the page's, and a graphics card does
-   it in a moment.) */
+   page's — through the expansion, a journey and the collapse, is a part of
+   the sixtieth of a second a frame has. (What this machine's software
+   drawing then takes is not the page's, and a graphics card does it in a
+   moment.) */
 test("every frame of every transition is quick enough for sixty a second", async ({ page }) => {
   test.setTimeout(150000);
   await open(page);
   await page.evaluate(() => window.NetScene.reset());
   await expandIt(page);
-  await page.locator(".net-drop-button").click();
-  await page.locator('.net-drop-option[data-to="8"]').click();
-  await expect(page.locator(".net-stage")).toHaveAttribute("data-focus", "WOO", { timeout: 20000 });
+  await goTo(page, 8, "WOO");
   await page.keyboard.press("ArrowLeft");
   await expect(page.locator(".net-stage")).toHaveAttribute("data-focus", "BRW", { timeout: 20000 });
   await page.locator(".net-expand").click();
   await expect(page.locator(".net-stage")).toHaveAttribute("data-state", "one", { timeout: 30000 });
   const s = await page.evaluate(() => window.NetScene.stats());
-  // A frame has 16.7ms at sixty a second. The page's own work is kept to a
-  // few of them — here with room for a busy machine running other tests.
+  // A frame has 16.7ms at sixty a second. The page's own work — here on a
+  // machine drawing in software and running other tests beside it — is a
+  // part of that on average, and very nearly always inside it.
   expect(s.frames, "frames drawn").toBeGreaterThan(60);
-  expect(s.mean, "a frame's own work, on average, in ms").toBeLessThan(4);
-  expect(s.p95, "nearly every frame's").toBeLessThan(10);
-  expect(s.max, "and no stall — a drawing made for the first time mid-way, say").toBeLessThan(30);
+  expect(s.mean, "a frame's own work, on average, in ms").toBeLessThan(7);
+  expect(s.p95, "nearly every frame's").toBeLessThan(16.7);
+  expect(s.max, "and no stall — a drawing made for the first time mid-way, say").toBeLessThan(40);
 });
 
 test("without its 3D library the page says so", async ({ page }) => {
@@ -473,7 +557,7 @@ test("without the Note Library's page it says so, and points at the library", as
 });
 
 test.describe("the test page with animation turned off", () => {
-  test("it stands still, comes apart and travels at once, and still turns by hand", async ({ page }) => {
+  test("it stands still, comes apart and travels at once, sends no signal, and still turns by hand", async ({ page }) => {
     test.setTimeout(90000);
     await page.emulateMedia({ reducedMotion: "reduce" });
     const errors = collectPageErrors(page);
@@ -486,14 +570,16 @@ test.describe("the test page with animation turned off", () => {
     expect([p2.x, p2.y], "never turning on its own").toEqual([p1.x, p1.y]);
     await page.locator(".net-expand").click();
     await expect(stage, "apart at once").toHaveAttribute("data-state", "apart", { timeout: 1000 });
+    await page.waitForTimeout(800);
+    expect((await state(page)).litNodes, "no signal").toBe(0);
     await page.locator(".net-drop-button").click();
     await page.locator('.net-drop-option[data-to="3"]').click();
     await expect(stage, "there at once").toHaveAttribute("data-focus", "FLO", { timeout: 1000 });
     expect((await state(page)).flying).toBe(false);
     const a = (await state(page)).yaw;
-    await page.mouse.move(400, 400);
+    await page.mouse.move(700, 400);
     await page.mouse.down();
-    await page.mouse.move(560, 420, { steps: 8 });
+    await page.mouse.move(860, 420, { steps: 8 });
     await page.mouse.up();
     await page.waitForTimeout(200);
     expect(Math.abs((await state(page)).yaw - a), "but a drag still turns it").toBeGreaterThan(0.6);

@@ -8,10 +8,12 @@ Files touched: `works/test-page.html` (new), `network.js` (new), `notes-data.js`
 `tools/tree-cloud.mjs`, `images/Test-Page/` and `image-js` in `package.json` — all taken out
 again.
 
-**Since the evening of 2026-09-27 the page carries the Note Library in three dimensions** — see
-[the last section](#2026-09-27-later--the-note-library-in-three-dimensions). The one network, and
-then the five, described first below are gone from the code; they are kept here for the
-reasoning, as the site's reports keep what was replaced.
+**Since the night of 2026-09-27 the page carries the Note Library as networks** — see
+[the last section](#2026-09-27-night--the-note-library-as-networks), which replaced [the Note
+Library in three dimensions](#2026-09-27-later--the-note-library-in-three-dimensions) (galaxies)
+the same night. The one network, then the five, then the galaxies, described first below, are
+gone from the code; they are kept here for the reasoning, as the site's reports keep what was
+replaced.
 
 What changed: A new page, **Test page**, last in the Menu, designed for a laptop: blank but for
 **the network** — a dense map of solid red nodes of every size, a few pale and amber among them,
@@ -434,3 +436,173 @@ It is also in `pages.spec.js`, `mobile.spec.js` (nothing wider than a phone) and
   designed for a laptop, and the galaxies are small on a narrow screen.
 - **The frame rate was measured on a machine without a graphics card**, where only the page's own
   share of each frame can be measured; on a real screen it should be checked by eye.
+
+## 2026-09-27, night — the Note Library as networks
+
+> additionally, I want you to make it red regardless, screw the colouring (test page). I also want
+> them to be less of galaxies and more true to their original form: like complex networks of nodes
+> and connections. I want it to look more like before you made it into a galaxy. I have added a
+> picture, but i want it more red and glowing. I want nothing to be selectable in the main galaxy
+> before the expansion. once the expansion occurs, I want there to be several galaxies for the
+> accords, as there are now; and I would want each to have main nodes which are the notes
+> (labeleld), and some other arbitraty spheres or nodes that lead to nothing and cannot be clicked.
+> They are there purely aeshtetically. If you want make the two distinct in some way- give
+> importance to the clickable ones.
+> I like the way you have made each of the galaxies have a center and a central node; keep that, but
+> truly make it a node. I also want the galaxies not to be equidistant from the central galaxy after
+> expansion. ADDITIONALLY, KEEP IN MIND, I AM ONLY SAYING GALAXIES BECAUSE YOU MADE THEM INTO
+> GALAXIES. IN REALITY I WANT THEM TO BE COMPLEX NETWORKS WITH CONNECTIONS AND GEOMETRICS AND
+> WHATNOT - as mentionedprior. I have added a pictuer 1 which is to show you what it should look
+> like (each accord saparetly AND all combined). I also added picture 2, which is a view I am a fan
+> of, so keep that. I also want there to be a signal travelling to all the connections from the
+> central node to the differnet netweorks when expanded. I also want them all tobe slightly
+> different than one another structurally. But most importantly, i want them to be quite dense in
+> nodes and connections.
+> I also like that when you hover the accord on the right, it lights up in isolation. keep that. but
+> make the window on the right less techy, and make it more in accordance with the rest of the
+> website: minimalist, geometric and simple (with particles!).
+> I also want you to keep the transition COLOURS from the expansion. Otherwise, i want you to make it
+> a little more chaotic. Additionally, feel free to create additional nodes to make up for the loss
+> of density per cluster during the expansion. When theyu are transitioning, you can reate
+> additiona nodes and connections for each of the clusters so that they will appear dense when
+> inspected. Additionally, I want you to move the bar on the right hand side to the left. And make
+> the search. push it without permission.
+
+Picture 1 was the dense red network the page first carried; picture 2, the centre in its cage.
+`network.js` was written again. What stayed from the galaxies: the library read off its own page
+(and counted, numbered and named as it is there), the button at the foot, the white and the
+changing links on the way, the centre and its bridges, the dropdown with its arrows, the keyboard,
+journeys bending through the centre, the card, a drag, and everything done for sixty frames a
+second. What went: every galaxy (`ARMS`, `TWIST`, the haze, the rings of colour), **the accords'
+colours** — so `HUE`, `SAT` and `LIGHT` are no longer in `network.js`, and nothing of the library's
+colours is copied any more — and the window on the right. "Make the search" was read as the
+search going into the window, which is where the window's switch now opens it.
+
+### One red network, and nothing in it answers
+
+What it opens on is the picture again: **every note a glowing red node**, and among them **the
+fillers** — smaller dark-red nodes, a few pale ones and grey specks, standing for nothing — each
+joined to its nearest two or three, the busiest notes sending lines out all over it, a few nodes far
+out tied back in by long ones, turning in a ticked ring. Each accord is **a knot** of it round a
+home of its own, the homes spread through one body so the knots run together. About a thousand
+nodes and two thousand links. **Nothing in it answers the hand** — no name under the pointer, no
+selection, no bridge — until it has come apart (`answering()`); the accords in the window and the
+search still light what they find.
+
+### Coming apart — white, chaotic, and made denser on the way
+
+The same one clock (`u`, `EXPAND_MS` 3.8s) and the same colours: **red → white → red**, the changing
+links while white. What is new:
+
+- **each node goes its own way** — setting off at a moment of its own (`delay`), on a curve bent its
+  own way (`bend`), **shaken** as it goes (`amp`, `f`, `ph`) — which is the "little more chaotic";
+- **more nodes are made on the way.** Three quarters of every accord's fillers are not in the one
+  network at all: they are **thrown in** from somewhere near (`scatter`) to their places in the
+  accord's network while it travels, each at a moment of its own (`born`), with **their own links
+  showing as they come** (`netMade`, drawn from `form` rather than waiting for the end), white while
+  everything is white — so each cluster is dense on the way and not only at the end;
+- the changing links shorten as they fade, so fewer are looked for as the networks close up.
+
+### Each accord a network of its own
+
+Apart, **every accord is a network**, red again — its notes and **four or so fillers to every
+note, and eighty more** (`FILL_PER_NOTE`, `FILL_MORE`): 120 to 310 nodes each, about three
+thousand in all, and over two links to a node. **No two are built alike** (`TYPES`): a knot, a long
+one, twins, a shell with a core, a flat one, a ring — round again for the sixteen — each tilted and
+turning its own way. **Its notes are spread through it from the middle out, the most used nearest
+the middle**, the fillers between. **It stands at a distance of its own** from the centre (`REACH`,
+11 to 24), out the way its knot lay, pushed apart until no two reach each other.
+
+**The notes are the nodes that matter**: larger (by how many fragrances use them), brighter, with a
+glow the fillers hardly have — and at the network you are at, **every note is named** beside its
+node. They are **the only nodes that answer**: pointed at, a note says its symbol and name;
+pressed, it is chosen and the card says what it is. **A filler never answers** — it is not even
+looked for.
+
+**Its middle is a true node** — a red sphere, glowing, in a turning cage, with a dashed ring round
+the network — joined by links to the nodes nearest the middle and to its busiest notes. **The centre
+is picture 2**: the white node in its turning cage with its two rings, **joined to every network's
+middle node by a bridge**.
+
+### The signal
+
+Every few seconds (`SIGNAL_EVERY`) **a signal leaves the centre along every bridge** — a bright
+point travelling out at one speed, so it reaches the nearer networks first — and, arriving, **lights
+the network's middle node and runs through the whole network from it, link by link** (`depth`: how
+many links from the middle each node is; `HOP`, `SIGNAL_WIDTH`): the nodes it passes go towards
+white and a little larger, and their links light, and it goes out behind itself.
+
+### The window on the left
+
+On the left now, and plain: **the library's name**, its counts and what it is showing (*one network*
+/ *16 networks*); **a ring of specks** — one for every note, round in its accords with a gap
+between, larger for the more used, lit where the hand, the search or the accord you are at is,
+turning slowly (`drawMark`); **a square switch** that opens **the search in the window itself** —
+an underlined field with its count and its ×, the library's own direct words, the first eight found
+listed to go to; and **the accords**, each a row with a small diamond, its number, name and count.
+**Under the hand an accord lights up alone**, for as long as the hand is there (`previewing`), and
+pressed it stays lit and, once apart, is gone to. A hairline box with a registration tick at each
+corner, folding to its button. **The card** a note is chosen into stands on the right now, opposite.
+
+### Two faults found and fixed on the way
+
+- **Black lines and black specks.** The canvas is see-through over the page's own ground, and the
+  glows were added with the library's additive blending, which also adds to the canvas's own
+  opacity: a glow or a link gone dark (a filler not made yet, the links while a note was chosen)
+  printed **black** over the page. Everything added is now added to the colour only, never to the
+  opacity (`additive()`).
+- **A network in front of the lens.** Arriving at one network, a neighbour could stand between you
+  and it, a few enormous spheres over the window and the window on the left. **Anything within a
+  few units of the lens is let go** (`NEAR_IN`, `NEAR_OUT`, `vis`), its links with it.
+
+### Sixty frames a second, twice as many nodes
+
+About three thousand nodes instead of the galaxies' three hundred and thirty-two, so the frame was made cheaper: every node's
+place and colour worked out by plain arithmetic (its network's turn as a matrix once a frame), its
+matrix written straight into the buffer, a node not made yet written empty once and then left
+alone, the translucent set drawn only while something is translucent, the search read once a frame
+rather than once a node, the changing links sorted once as they begin, and the ring in the window
+drawn a dozen times a second rather than every frame. Measured in the tests' browser, drawing in
+software: **about 2–3ms a frame at rest and apart, and about 4.6ms on average while it comes apart**
+— against 16.7ms at sixty a second. The worst frames there (13–25ms) fall on no one part of the work
+and move from run to run: that machine's software drawing taking the processor, not the page.
+
+### How to test it
+
+`tests/test-page.spec.js`, rewritten again:
+
+- **`the Note Library is drawn as one red network, and nothing in it answers the hand`** — as many
+  notes and accords as the library, many more nodes, more links than nodes, red on the dark ground;
+  a note pointed at and pressed does nothing; the window on the left, the button in the middle of
+  what it leaves.
+- **`every note is the Note Library's own, with its number, symbol and uses`**.
+- **`the window on the left holds the search and the accords, each lighting up alone under the
+  hand`** — the ring of specks drawn; the search inside the window, answering *cedar* as the library
+  does, its × and its switch clearing it; an accord under the hand lit alone and only while it is
+  there, pressed and kept; folded, the drawing where it stood.
+- **`expanding: through white, with changing links and nodes made on the way, into a dense red network
+  for each accord`** — white and linked half way, nothing answering; hundreds of nodes made on the
+  way, with links; apart, red again, every accord's network dense in nodes and links with a node at
+  its middle, at least five ways of building them, distances from the centre differing by more than
+  five, no two meeting; the centre white.
+- **`a signal goes out from the centre to every network, and through it`** — nodes lit as it passes,
+  and then not.
+- **`once apart, pressing a note selects it and its card says what it is; a filler never answers`**
+  — the notes of the network named; the card on the right; a filler pointed at and pressed, nothing.
+- **`the centre joins every network, and going from one accord to another is easy`** — as before,
+  and an accord pressed in the window; the journey asked for its bend (`NetScene.bend()`) rather than
+  watched, since the tests' machine draws too few frames to be seen passing the centre.
+- **`collapsing brings every note back into the one red network`** — the made nodes gone again.
+- **`every frame of every transition is quick enough for sixty a second`** — under 7ms on average,
+  under 16.7ms for nearly all, no stall.
+- the drag, the two fallbacks, and **reduced motion** (no signal, too).
+
+`HUE`'s test went with `HUE`.
+
+### Known issues / TODO
+
+- **A first answer again**: how dense, how far apart, how chaotic, how often the signal goes — each
+  a number at the top of `network.js`.
+- **On a phone** it works, as before, and is small.
+- **The frame rate on a real screen** should still be checked by eye; the tests can only measure the
+  page's own share.

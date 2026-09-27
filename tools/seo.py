@@ -69,7 +69,7 @@ P = {
  "works/dupes-designers-and-niches.html": dict(type="article", desc="Dupes, designers and niches — and private lines and ultra niches: the categories of fragrances based on the market itself, their prices, their goals and their smell.", crumbs=[HOME, RE_]),
  "works/resins-in-perfumery.html": dict(type="article", desc="Resins in perfumery: what a resin is, and then examples of the most frequently used ones, as well as what makes them unique.", crumbs=[HOME, RE_]),
  "works/cold-vs-warm-incense.html": dict(type="article", desc="Cold vs warm incense: two ways the same material goes into a fragrance, and they do not smell like the same family at all.", crumbs=[HOME, RE_]),
- "works/buying-a-perfume.html": dict(type="article", desc="Buying a Perfume, a philosophical exploration — one of the Explorations & Researches on The Taste of Aldehydes, a personal project of perfume exploration.", crumbs=[HOME, RE_]),
+ "works/buying-a-perfume.html": dict(type="article", desc="Buying a Perfume, simplifying the thought process: night or day, inside or out, summer or winter, safe or divisive, and the special cases.", crumbs=[HOME, RE_]),
  "contact.html": dict(desc="Get in touch with The Taste of Aldehydes, a personal project of perfume exploration: send a carrier pigeon, or an email.", crumbs=[HOME]),
  # Not for search engines: the site's own search, the sandbox and the
  # templates, and the pages left standing where the houses used to be.

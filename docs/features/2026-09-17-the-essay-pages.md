@@ -258,3 +258,36 @@ its subtitle on its own page only`** (the row, the order of 000–004, the subti
 table, the seven headings, nothing waiting, the € and the underline); **`Explorations 002 is
 Buying a Perfume, and its page stands ready for the owner's writing`**; and **`the theories and the
 researches reach their own pieces`**, which finds the research at the fourth row now.
+
+## 2026-09-27, night — Buying a Perfume, written
+
+The owner sent the whole of the writing — *"Buying a perfume / Simplifying the thought process"*,
+an introduction, *What is the fragrance going to be used for?* with four pairs under it, *Special
+Cases*, a conclusion and one footnote — with *"ADD THAT TO THE EXPLORATION OF HOW TO BUY A
+PERFUME"*.
+
+- **`works/buying-a-perfume.html` is written**: five sections — 01 Introduction, 02 What is the
+  fragrance going to be used for?, 03 Special Cases, 04 Conclusion, 05 Footnotes — the owner's own
+  headings, and under 02 and 03 their own smaller ones (*Night/Day*, *Inside/Outside*,
+  *Summer/Winter*, *Safe/Divisive*; *All-Rounder*, *Club*, *Romantic*, *Formal*) as
+  **`h3.essay-sub`**, the same subheading the primer uses. Every word is theirs, as sent — *Youre
+  welcome.*, *Montblac*, *Ganneymede*, *Rodriquez*, *they you will remember* and all — with only
+  the colons after the headings and the invisible marks a word processor leaves taken out.
+- **Its subtitle is its own**: *Simplifying the thought process* stands under the title in the
+  head's italic, in place of *A Philosophical Exploration*, and on this page only; the row on
+  Explorations &amp; Researches still says *Buying a Perfume*, now dated 27.09.2026 (it was
+  26.09).
+- ***HOWEVER***, a line of its own in the owner's text, is set apart as one — spaced capitals in
+  the mono (`p.essay-however`).
+- **The footnote** the owner marked on *Romantic* (*"Romantic:footnote1"*) is a small raised
+  number after that heading, down to **05 Footnotes** and back (`a.essay-fn`,
+  `ol.essay-footnotes`, `a.essay-fn-back` — the primer's), so it stands on the rule too.
+- **Three links** where the writing names something on the site, without changing a word:
+  *dupes and designers* to Explorations 001, *Guitarist* to Qimu &amp; Musicians, *Tobacolor* to
+  the individual fragrances.
+- Its description for search engines says what it covers now (`tools/seo.py`, run).
+
+Tested: **`Explorations 002 is Buying a Perfume, written in the owner's words, its subtitle on its
+own page only`** in `tests/essay.spec.js` (it was *…stands ready for the owner's writing*) — the
+row, the head and its subtitle, the five headings and eight subheadings, no waiting box, the
+owner's words as written, the footnote there and back, and the two fragrances' links.

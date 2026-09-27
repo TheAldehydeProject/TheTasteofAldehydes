@@ -4405,25 +4405,26 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 
 /* ==================================================================
    THE TEST PAGE — works/test-page.html
-   Since 2026-09-27, THE NOTE LIBRARY IN THREE DIMENSIONS, drawn by
+   Since the night of 2026-09-27, THE NOTE LIBRARY AS NETWORKS, drawn by
    network.js on the page's own dark ground (its five tokens turned over,
-   as the Note Library's are): one red galaxy of every note, which the
-   button at the foot expands into a galaxy for each accord, joined to a
-   centre.
+   as the Note Library's are): one dense red network of every note, which
+   the button at the foot expands into a network for each accord, joined
+   to a centre.
 
-   Everything here is what network.js adds round the drawing: THE WINDOW
-   ON THE RIGHT (the search bar's switch and the accords), THE SEARCH BAR
-   it makes available at the top, THE FOOT (the button, and once expanded
-   the dropdown with an arrow either side), THE CARD a note is read in,
-   with its line to the note, and the names beside the galaxies and the
-   notes. In the mono, on near-black, ruled in the nodes' red.
+   What network.js adds round the drawing, and what is styled here: THE
+   WINDOW ON THE LEFT (moved from the right at the owner's word, and made
+   "less techy ... minimalist, geometric and simple (with particles!)") —
+   the library's name, a small ring of specks, the search in the window
+   itself and the accords; THE FOOT (the button, and once expanded the
+   dropdown with an arrow either side); THE CARD a note is read in, on the
+   right, with its line to the note; and the names beside the networks and
+   the notes.
 
    SIXTY FRAMES A SECOND: everything that moves here moves by transform
    and fades by opacity — never by `left`, `width` or a blur — so the
-   browser never has to lay the page out again while the drawing runs.
-   The room the window on the right takes is one variable (`--room`, the
-   same as `room()` in network.js), and the bar and the foot stand in the
-   middle of what is left by a transform.
+   browser never lays the page out again while the drawing runs. The room
+   the window takes is one variable (`--room`, the same as `room()` in
+   network.js), and the foot stands in the middle of what is left.
    ================================================================== */
 .network-page {
   --bg: #1f1f20;
@@ -4433,8 +4434,9 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   --ink-rgb: 236, 232, 226;
   --muted: #8f8b86;
   --net-red: #ff3a44;
-  --net-panel: rgba(16, 16, 17, 0.92);
-  --net-rule: rgba(255, 255, 255, 0.1);
+  --net-ground: rgba(24, 24, 25, 0.8);
+  --net-rule: rgba(255, 255, 255, 0.08);
+  --net-tick: rgba(255, 255, 255, 0.34);
   background:
     radial-gradient(ellipse 50% 34% at 50% 52%, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0) 70%),
     var(--bg);
@@ -4446,9 +4448,9 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   position: fixed;
   inset: 0;
   overflow: hidden;
-  font-family: var(--mono);
+  font-family: var(--sans);
 }
-.net-stage.has-panel { --room: min(330px, 30vw); }
+.net-stage.has-panel { --room: min(320px, 28vw); }
 .net-canvas {
   position: absolute;
   inset: 0;
@@ -4459,13 +4461,15 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 }
 .net-hint {
   position: absolute;
-  left: 22px;
-  top: 70px;
-  max-width: 300px;
+  right: 22px;
+  top: 24px;
+  max-width: 330px;
   margin: 0;
+  font-family: var(--mono);
   font-size: 10px;
   line-height: 1.6;
   letter-spacing: 0.05em;
+  text-align: right;
   color: var(--muted);
   pointer-events: none;
   transition: opacity 600ms ease;
@@ -4478,47 +4482,71 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   left: 28px;
   bottom: 28px;
   margin: 0;
+  font-family: var(--mono);
   font-size: 12px;
   color: var(--muted);
 }
 .net-fallback a { color: var(--ink); }
 .net-fallback[hidden] { display: none; }
-.net-chip {
+/* A small open diamond: the page's one marker, filled when it is on. */
+.net-dot {
   display: inline-block;
   flex: none;
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
+  border: 1px solid currentColor;
+  transform: rotate(45deg);
+  transition: background-color 200ms ease, border-color 200ms ease;
+}
+/* Registration ticks at the four corners of a window, drawn as eight
+   hairlines: the site's own geometry. */
+.net-panel::after,
+.net-card::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--net-tick), var(--net-tick)) top left / 10px 1px no-repeat,
+    linear-gradient(var(--net-tick), var(--net-tick)) top left / 1px 10px no-repeat,
+    linear-gradient(var(--net-tick), var(--net-tick)) top right / 10px 1px no-repeat,
+    linear-gradient(var(--net-tick), var(--net-tick)) top right / 1px 10px no-repeat,
+    linear-gradient(var(--net-tick), var(--net-tick)) bottom left / 10px 1px no-repeat,
+    linear-gradient(var(--net-tick), var(--net-tick)) bottom left / 1px 10px no-repeat,
+    linear-gradient(var(--net-tick), var(--net-tick)) bottom right / 10px 1px no-repeat,
+    linear-gradient(var(--net-tick), var(--net-tick)) bottom right / 1px 10px no-repeat;
+  transition: opacity 300ms ease;
 }
 
-/* THE WINDOW ON THE RIGHT. Folded, it slides away but for a strip with
-   the button that opens it again. */
+/* THE WINDOW ON THE LEFT. Folded, it slides away but for the button that
+   opens it again. */
 .net-panel {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  left: 22px;
+  top: 72px;
   display: flex;
   flex-direction: column;
-  width: 292px;
-  max-height: calc(100% - 36px);
-  font-size: 11px;
+  width: 264px;
+  max-height: calc(100% - 96px);
+  padding: 14px 16px 12px;
+  box-sizing: border-box;
   color: var(--ink);
   transition: transform 460ms cubic-bezier(0.2, 0.7, 0.2, 1);
   will-change: transform;
 }
-/* Its ground is a layer of its own, so that folded, the ground goes and
-   only the button that opens it again is left at the edge. */
 .net-panel::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: var(--net-panel);
-  border: 1px solid rgba(255, 90, 99, 0.24);
+  background: var(--net-ground);
+  border: 1px solid var(--net-rule);
   transition: opacity 300ms ease;
 }
-.net-panel.is-folded { transform: translateX(calc(100% - 40px)); pointer-events: none; }
+.net-panel.is-folded { transform: translateX(calc(-100% + 40px)); pointer-events: none; }
 .net-panel.is-folded .net-fold { pointer-events: auto; }
-.net-panel.is-folded::before { opacity: 0; }
+.net-panel.is-folded::before,
+.net-panel.is-folded::after { opacity: 0; }
 .net-panel > :not(.net-panel-head),
 .net-panel-title { transition: opacity 300ms ease; }
 .net-panel.is-folded > :not(.net-panel-head),
@@ -4526,218 +4554,213 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-panel-head {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  padding: 10px 14px 6px 8px;
+}
+.net-panel-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #f4f0ea;
 }
 .net-fold {
   position: relative;
   flex: none;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
+  margin-right: -6px;
   padding: 0;
-  background: var(--net-panel);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--net-ground);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   cursor: pointer;
   transition: border-color 200ms ease;
 }
-.net-fold:hover, .net-fold:focus-visible { border-color: rgba(255, 90, 99, 0.8); }
+.net-fold:hover, .net-fold:focus-visible { border-color: rgba(255, 255, 255, 0.6); }
 .net-fold span {
   position: absolute;
-  left: 7px;
-  top: 8px;
+  left: 8px;
+  top: 7px;
   width: 6px;
   height: 6px;
-  border-right: 1.5px solid var(--ink);
-  border-bottom: 1.5px solid var(--ink);
-  transform: rotate(-45deg);
+  border-left: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  transform: rotate(45deg);
   transition: transform 300ms ease;
 }
-.net-panel.is-folded .net-fold span { transform: translateX(3px) rotate(135deg); }
-.net-panel-title {
-  margin: 0;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #fff;
-}
+.net-panel.is-folded .net-fold span { transform: translateX(-2px) rotate(-135deg); }
 .net-panel-count {
-  margin: 0;
-  padding: 0 14px 10px 42px;
-  font-size: 10px;
+  margin: 4px 0 0;
+  font-family: var(--mono);
+  font-size: 9.5px;
   letter-spacing: 0.04em;
   color: var(--muted);
+}
+/* THE MARK: a ring of specks, one for every note (drawn by network.js). */
+.net-mark {
+  display: block;
+  width: 100%;
+  height: 92px;
+  margin: 8px 0 6px;
 }
 .net-panel-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  padding: 10px 0;
   border-top: 1px solid var(--net-rule);
 }
 .net-panel-label {
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 12px;
   color: var(--muted);
 }
 .net-panel-sub {
   margin: 0;
-  padding: 10px 14px 6px;
+  padding: 10px 0 6px;
   border-top: 1px solid var(--net-rule);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
-/* The switch that makes the search bar available. */
+/* The switch: a hairline box, and a square that crosses it. */
 .net-switch {
   position: relative;
-  width: 36px;
-  height: 18px;
+  width: 28px;
+  height: 14px;
   padding: 0;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.24);
   cursor: pointer;
-  transition: background-color 220ms ease, border-color 220ms ease;
+  transition: border-color 220ms ease;
 }
 .net-switch span {
   position: absolute;
   left: 2px;
   top: 2px;
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   background: var(--muted);
   transition: transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1), background-color 220ms ease;
 }
-.net-switch[aria-checked="true"] { background: rgba(255, 58, 68, 0.3); border-color: var(--net-red); }
-.net-switch[aria-checked="true"] span { transform: translateX(18px); background: #fff; }
+.net-switch[aria-checked="true"] { border-color: var(--net-red); }
+.net-switch[aria-checked="true"] span { transform: translateX(14px); background: var(--net-red); }
 .net-switch:focus-visible { outline: 1px solid #fff; outline-offset: 2px; }
-/* The accords, chosen by hand — as the library's tabs. */
-.net-accords {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  align-content: start;
-  gap: 2px;
-  padding: 0 8px 10px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-}
-.net-accord {
-  display: grid;
-  grid-template-columns: 8px 16px 28px 1fr auto;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 8px;
-  background: none;
-  border: 1px solid transparent;
-  font: inherit;
-  font-size: 10.5px;
-  letter-spacing: 0.04em;
-  text-align: left;
-  color: var(--muted);
-  cursor: pointer;
-  transition: color 200ms ease, border-color 200ms ease, background-color 200ms ease;
-}
-.net-accord:hover, .net-accord:focus-visible { color: var(--ink); border-color: rgba(255, 255, 255, 0.14); }
-.net-accord.is-on { color: #fff; border-color: rgba(255, 90, 99, 0.62); background: rgba(255, 58, 68, 0.08); }
-.net-accord.is-here { background: rgba(255, 255, 255, 0.06); color: var(--ink); }
-.net-accord-no, .net-accord-count { font-size: 9px; color: rgba(var(--ink-rgb), 0.42); }
-.net-accord-code { letter-spacing: 0.1em; }
-.net-accord-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.net-accord.is-here .net-accord-count::before { content: "here · "; color: #ff6a72; }
-
-/* THE SEARCH BAR, made available by the switch: the library's own
-   `query>`, at the top in the middle of the room left. */
-.net-search {
-  position: absolute;
-  top: 18px;
-  left: 50%;
-  display: grid;
-  grid-template-columns: auto 1fr auto auto;
-  align-items: center;
-  gap: 10px;
-  width: min(480px, calc(100vw - var(--room) - 140px));
-  padding: 9px 12px;
-  background: var(--net-panel);
-  border: 1px solid rgba(255, 90, 99, 0.45);
-  font-size: 12px;
-  transform: translateX(calc(-50% - var(--room) / 2));
-  transition: transform 460ms cubic-bezier(0.2, 0.7, 0.2, 1);
-  animation: net-come-down 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
-}
+/* THE SEARCH, in the window: one ruled line. */
+.net-search { margin: 0 0 10px; animation: net-come-down 280ms cubic-bezier(0.2, 0.7, 0.2, 1); }
 .net-search[hidden] { display: none; }
 @keyframes net-come-down {
-  from { opacity: 0; translate: 0 -10px; }
+  from { opacity: 0; translate: 0 -6px; }
   to { opacity: 1; translate: 0 0; }
 }
-.net-prompt { color: #ff6a72; letter-spacing: 0.04em; }
+.net-search-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+}
 .net-query {
+  flex: 1;
   min-width: 0;
   padding: 0;
   background: none;
   border: none;
   outline: none;
   font: inherit;
+  font-size: 13px;
   color: var(--ink);
 }
-.net-query::placeholder { color: rgba(var(--ink-rgb), 0.35); }
+.net-query::placeholder { color: rgba(var(--ink-rgb), 0.32); }
 .net-query::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
-.net-count { font-size: 10px; color: var(--muted); white-space: nowrap; }
+.net-count { font-family: var(--mono); font-size: 9.5px; color: var(--muted); white-space: nowrap; }
 .net-clear {
   position: relative;
-  width: 18px;
-  height: 18px;
+  flex: none;
+  width: 14px;
+  height: 14px;
   padding: 0;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: none;
   cursor: pointer;
-  transition: opacity 200ms ease, border-color 200ms ease;
+  transition: opacity 200ms ease;
 }
 .net-clear span::before,
 .net-clear span::after {
   content: "";
   position: absolute;
-  left: 4px;
-  top: 8px;
-  width: 8px;
+  left: 2px;
+  top: 7px;
+  width: 10px;
   height: 1px;
   background: var(--ink);
   transform: rotate(45deg);
 }
 .net-clear span::after { transform: rotate(-45deg); }
-.net-clear:disabled { opacity: 0.3; cursor: default; }
-.net-clear:not(:disabled):hover { border-color: var(--net-red); }
+.net-clear:disabled { opacity: 0.25; cursor: default; }
 .net-results {
-  grid-column: 1 / -1;
   display: none;
-  max-height: 264px;
-  margin: 8px -12px -9px;
-  padding: 4px 0;
+  max-height: 196px;
+  margin: 6px 0 0;
+  padding: 0;
   overflow-y: auto;
   list-style: none;
-  border-top: 1px solid var(--net-rule);
 }
 .net-search.has-results .net-results { display: block; }
 .net-result {
   display: grid;
-  grid-template-columns: 8px 30px 1fr auto;
-  align-items: center;
-  gap: 9px;
-  padding: 6px 12px;
-  font-size: 11px;
+  grid-template-columns: 28px 1fr auto;
+  align-items: baseline;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 12.5px;
   color: var(--ink);
   cursor: pointer;
-  transition: background-color 150ms ease;
+  transition: color 150ms ease;
 }
-.net-result:hover { background: rgba(255, 255, 255, 0.07); }
+.net-result:hover { color: #fff; }
 .net-result.is-none { display: block; color: var(--muted); cursor: default; }
-.net-result.is-none:hover { background: none; }
-.net-result-sym { color: #fff; font-weight: 500; }
-.net-result-code { font-size: 9px; letter-spacing: 0.1em; color: var(--muted); }
+.net-result-sym { font-family: var(--mono); font-size: 10px; color: #ff6a72; }
+.net-result-code { font-family: var(--mono); font-size: 9px; color: var(--muted); }
+/* The accords, chosen by hand — each lights up alone under the hand. */
+.net-accords {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  align-content: start;
+  gap: 0;
+  margin: 0 -4px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+.net-accord {
+  display: grid;
+  grid-template-columns: 10px 18px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 4px;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 12.5px;
+  text-align: left;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 200ms ease, box-shadow 200ms ease;
+}
+.net-accord .net-dot { color: rgba(255, 255, 255, 0.35); }
+.net-accord:hover, .net-accord:focus-visible { color: #fff; outline: none; }
+.net-accord:hover .net-dot, .net-accord:focus-visible .net-dot { background: var(--net-red); border-color: var(--net-red); }
+.net-accord.is-on { color: #fff; }
+.net-accord.is-on .net-dot { background: #fff; border-color: #fff; }
+.net-accord.is-here { box-shadow: inset 2px 0 0 var(--net-red); }
+.net-accord-no, .net-accord-count { font-family: var(--mono); font-size: 9px; color: rgba(var(--ink-rgb), 0.4); }
+.net-accord-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* THE FOOT: the button that expands the library, in the middle — and,
-   once it has come apart, the dropdown over it with an arrow either
-   side. */
+/* THE FOOT: the button that expands the library, in the middle of the room
+   left — and, once apart, the dropdown over it with an arrow either side. */
 .net-dock {
   position: absolute;
   left: 50%;
@@ -4746,7 +4769,7 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  transform: translateX(calc(-50% - var(--room) / 2));
+  transform: translateX(calc(-50% + var(--room) / 2));
   transition: transform 460ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .net-expand {
@@ -4769,13 +4792,12 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-expand:hover, .net-expand:focus-visible { background: #ff5a63; }
 .net-expand:focus-visible { outline: 1px solid #fff; outline-offset: 3px; }
 .net-stage.is-apart .net-expand {
-  background: var(--net-panel);
+  background: var(--net-ground);
   border-color: rgba(255, 255, 255, 0.3);
   color: var(--ink);
   box-shadow: none;
 }
 .net-stage.is-apart .net-expand:hover { border-color: #fff; }
-/* Four points going out from the middle — and, apart, coming back in. */
 .net-expand-mark {
   position: relative;
   width: 12px;
@@ -4807,12 +4829,12 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   position: relative;
   width: 36px;
   padding: 0;
-  background: var(--net-panel);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--net-ground);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   cursor: pointer;
-  transition: border-color 200ms ease, background-color 200ms ease;
+  transition: border-color 200ms ease;
 }
-.net-step:hover, .net-step:focus-visible { border-color: #fff; background: rgba(40, 40, 42, 0.95); }
+.net-step:hover, .net-step:focus-visible { border-color: #fff; }
 .net-step span {
   position: absolute;
   left: 50%;
@@ -4820,8 +4842,8 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   width: 7px;
   height: 7px;
   margin: -4px 0 0 -2px;
-  border-left: 1.5px solid var(--ink);
-  border-bottom: 1.5px solid var(--ink);
+  border-left: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
   transform: rotate(45deg);
 }
 .net-step[data-step="1"] span { margin-left: -5px; transform: rotate(-135deg); }
@@ -4830,28 +4852,28 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   display: flex;
   align-items: center;
   gap: 10px;
-  min-width: 280px;
+  min-width: 270px;
   height: 100%;
   padding: 10px 14px;
-  background: var(--net-panel);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--net-ground);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-left: none;
   border-right: none;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.05em;
+  font-family: var(--sans);
+  font-size: 13px;
   text-align: left;
   color: var(--ink);
   cursor: pointer;
 }
+.net-drop-button .net-dot { color: var(--net-red); background: var(--net-red); }
 .net-drop-button:focus-visible { outline: 1px solid #fff; outline-offset: -3px; }
 .net-drop-say { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .net-drop-caret {
   width: 6px;
   height: 6px;
   margin-top: 3px;
-  border-left: 1.5px solid var(--muted);
-  border-top: 1.5px solid var(--muted);
+  border-left: 1px solid var(--muted);
+  border-top: 1px solid var(--muted);
   transform: rotate(45deg);
   transition: transform 260ms ease;
 }
@@ -4863,11 +4885,11 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   bottom: calc(100% + 6px);
   max-height: min(390px, 58vh);
   margin: 0;
-  padding: 4px 0;
+  padding: 6px 0;
   overflow-y: auto;
   list-style: none;
-  background: rgba(14, 14, 15, 0.97);
-  border: 1px solid rgba(255, 90, 99, 0.4);
+  background: rgba(20, 20, 21, 0.97);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   outline: none;
   opacity: 0;
   pointer-events: none;
@@ -4881,75 +4903,62 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 14px;
-  font-size: 11px;
-  letter-spacing: 0.04em;
+  padding: 6px 14px;
+  font-size: 12.5px;
   color: var(--muted);
   cursor: pointer;
 }
-.net-drop-option.is-active { background: rgba(255, 255, 255, 0.08); color: var(--ink); }
+.net-drop-option .net-dot { color: rgba(255, 255, 255, 0.35); }
+.net-drop-option.is-active { background: rgba(255, 255, 255, 0.06); color: var(--ink); }
 .net-drop-option.is-here { color: #fff; }
-.net-drop-option.is-here::after { content: "here"; margin-left: auto; font-size: 9px; letter-spacing: 0.12em; color: #ff6a72; }
+.net-drop-option.is-here .net-dot { background: var(--net-red); border-color: var(--net-red); }
 
-/* THE CARD a selected note is read in, on the left, and its line. */
+/* THE CARD a selected note is read in, on the right, and its line. */
 .net-card {
-  --chip: var(--net-red);
   position: absolute;
-  left: 22px;
+  right: 22px;
   top: 50%;
   width: 272px;
   max-height: calc(100% - 180px);
   overflow-y: auto;
-  padding: 14px 16px 15px;
-  background: rgba(14, 14, 15, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-left: 3px solid var(--chip);
-  font-size: 10px;
-  letter-spacing: 0.04em;
+  padding: 16px 18px 16px;
+  box-sizing: border-box;
+  background: var(--net-ground);
+  border: 1px solid var(--net-rule);
   color: var(--ink);
   transform: translateY(-50%);
   animation: net-card-in 280ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .net-card[hidden] { display: none; }
 @keyframes net-card-in {
-  from { opacity: 0; translate: -10px 0; }
+  from { opacity: 0; translate: 10px 0; }
   to { opacity: 1; translate: 0 0; }
 }
 .net-card-top {
   display: grid;
-  grid-template-columns: 46px 1fr auto;
+  grid-template-columns: 44px 1fr auto;
   align-items: start;
   gap: 12px;
 }
 .net-card-sym {
   display: grid;
   place-items: center;
-  width: 46px;
-  height: 46px;
-  border: 1px solid var(--chip);
-  font-family: var(--sans);
-  font-size: 19px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--net-red);
+  font-size: 18px;
   font-weight: 600;
   color: #fff;
 }
-.net-card-name {
-  margin: 1px 0 4px;
-  font-family: var(--sans);
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0;
-  line-height: 1.2;
-  color: #fff;
-}
-.net-card-accord { display: flex; align-items: center; gap: 7px; margin: 0; color: var(--muted); }
-.net-card-accord .net-chip { background: var(--chip); }
+.net-card-name { margin: 1px 0 3px; font-size: 16px; font-weight: 600; line-height: 1.2; color: #fff; }
+.net-card-accord { margin: 0; font-size: 12px; color: var(--muted); }
 .net-card-close {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   padding: 0;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 13px;
   line-height: 1;
   color: var(--ink);
   cursor: pointer;
@@ -4959,29 +4968,24 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 3px 14px;
-  margin: 13px 0 0;
+  margin: 14px 0 0;
   padding: 10px 0 0;
   border-top: 1px solid var(--net-rule);
+  font-family: var(--mono);
+  font-size: 10px;
 }
 .net-card-facts div { display: contents; }
-.net-card-facts dt { color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-size: 9px; }
+.net-card-facts dt { color: var(--muted); letter-spacing: 0.08em; }
 .net-card-facts dd { margin: 0; text-align: right; }
-.net-card-say {
-  margin: 12px 0 0;
-  font-family: var(--sans);
-  font-size: 12.5px;
-  letter-spacing: 0;
-  line-height: 1.55;
-  color: rgba(var(--ink-rgb), 0.86);
-}
+.net-card-say { margin: 12px 0 0; font-size: 12.5px; line-height: 1.55; color: rgba(var(--ink-rgb), 0.86); }
 .net-card-open {
   display: inline-block;
   margin-top: 12px;
   padding-bottom: 2px;
-  border-bottom: 1px solid var(--chip);
+  border-bottom: 1px solid var(--net-red);
+  font-size: 12px;
   color: #fff;
   text-decoration: none;
-  letter-spacing: 0.06em;
 }
 .net-card-open:hover { border-bottom-color: #fff; }
 .net-leader {
@@ -5005,8 +5009,9 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   top: 0;
   margin: 0;
   padding: 3px 7px;
+  font-family: var(--mono);
   font-size: 9.5px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
@@ -5018,8 +5023,8 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-hover.is-on,
 .net-bridge.is-on { opacity: 1; }
 
-/* THE NAMES: one beside every galaxy once it has come apart — a way
-   there — and the black tags beside a few notes. */
+/* THE NAMES: one beside every accord's network once apart (a way there),
+   and the black tags naming every note of the network you are at. */
 .net-names,
 .net-labels {
   position: absolute;
@@ -5030,26 +5035,22 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   list-style: none;
   pointer-events: none;
 }
-/* What stands over what: the names lowest, then what the hand is on,
-   then the card and its line, and the window, the bar and the foot on
-   top of everything. */
 .net-hover, .net-bridge { z-index: 2; }
 .net-leader { z-index: 3; }
 .net-card { z-index: 4; }
-.net-panel, .net-search, .net-dock { z-index: 5; }
+.net-panel, .net-dock { z-index: 5; }
 .net-name {
   position: absolute;
   left: 0;
   top: 0;
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   gap: 6px;
   padding: 3px 8px;
-  background: rgba(12, 12, 12, 0.84);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.08em;
+  background: rgba(12, 12, 12, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: var(--sans);
+  font-size: 11px;
   white-space: nowrap;
   color: var(--ink);
   opacity: 0;
@@ -5059,41 +5060,33 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 }
 .net-name.is-on { pointer-events: auto; }
 .net-name:hover, .net-name:focus-visible { border-color: rgba(255, 255, 255, 0.55); }
-.net-name-code { color: #fff; }
-.net-name-word { color: var(--muted); }
+.net-name-no { font-family: var(--mono); font-size: 9px; color: #ff6a72; }
 .net-label {
   position: absolute;
   left: 0;
   top: 0;
-  padding: 3px 6px 3px;
+  padding: 2px 6px 3px;
   background: #0c0c0c;
   color: #e9e5df;
+  font-family: var(--mono);
   font-size: 9px;
   line-height: 1.25;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   white-space: nowrap;
   opacity: 0;
   will-change: transform, opacity;
 }
 
-/* On a phone: the window folds away to its strip (open it with its
-   button), the bar goes under the Menu, the foot and the card take the
-   width. */
+/* On a phone: the window starts folded (its button under the Menu), the
+   foot and the card take the width. */
 @media (max-width: 700px) {
   .net-stage.has-panel { --room: 0px; }
-  .net-hint { top: 64px; left: 16px; max-width: calc(100% - 80px); }
-  .net-panel { top: 64px; right: 12px; z-index: 6; width: min(292px, calc(100% - 24px)); max-height: calc(100% - 200px); }
-  .net-search {
-    top: 64px;
-    left: 12px;
-    width: calc(100% - 76px);
-    transform: none;
-  }
+  .net-hint { top: 22px; right: 16px; max-width: calc(100% - 120px); }
+  .net-panel { top: 64px; left: 12px; z-index: 6; width: min(264px, calc(100% - 24px)); max-height: calc(100% - 200px); }
   .net-dock { left: 12px; right: 12px; bottom: 12px; transform: none; }
   .net-nav { width: 100%; }
   .net-drop { flex: 1; min-width: 0; }
   .net-drop-button { min-width: 0; width: 100%; }
-  .net-drop-list { left: -36px; right: -36px; }
   .net-card {
     left: 12px;
     right: 12px;
@@ -11805,4 +11798,14 @@ body.lib-arriving .lib-record { animation: lib-shelve 0.5s cubic-bezier(0.2, 0.7
   .lib-card-tile { width: 104px; height: 104px; }
   .lib-card-tile .lib-key-sym { top: 28px; font-size: 34px; }
   .lib-card-mark { height: 120px; }
+}
+
+/* The owner's HOWEVER, in Buying a Perfume: a line of its own in their
+   capitals, set apart as the turn it is (2026-09-27). */
+.essay-section p.essay-however {
+  margin: 30px 0 22px;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: #dbe1ea;
 }

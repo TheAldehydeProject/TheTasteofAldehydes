@@ -758,3 +758,10 @@ at once and nothing is written twice. Four small things it needs are copied from
 **uses** are counted from `notes-data.js`. **Change one of those here and change it there**; the
 tests in `tests/test-page.spec.js` hold the two to the same answers — every note's number, symbol,
 fragrance count and accord, every accord's hue, and what *cedar* finds.
+
+**Since the night of 2026-09-27** the test page draws the library as **networks** instead — one red
+network, coming apart into a network for each accord, all of it red ([the test
+page](2026-09-26-the-test-page.md#2026-09-27-night--the-note-library-as-networks)) — so it no longer
+uses the accords' colours, and **`HUE` is not copied any more**. Three things still are —
+`symbolFor`, the direct-words matching and the way uses are counted — and the same tests hold them
+(every note's number, symbol, fragrance count and accord, and what *cedar* finds).

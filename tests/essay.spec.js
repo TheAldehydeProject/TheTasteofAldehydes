@@ -211,15 +211,18 @@ test("no theory carries a picture", async ({ page }) => {
   await expect(page.locator(".zone-figure").first(), "the framework's diagrams stay").toBeVisible();
 });
 
-/* EXPLORATIONS 002. The owner: "add another exploration on 'Buying A
-   Perfume - A Philosophical Exploration' Make it be 002. make the page
-   too, I will want to just add text later on." And then (2026-09-27):
-   "The second should be 002, and called 'Buying a Perfume'". So 002 is
-   that row, named so and linked, and the page is an essay page with its
-   rule, "A Philosophical Exploration" under its title, and nothing
-   written in it that the owner did not write: every section says it is
-   waiting, in a dashed box. */
-test("Explorations 002 is Buying a Perfume, and its page stands ready for the owner's writing",
+/* EXPLORATIONS 002, BUYING A PERFUME. The row came first (2026-09-26:
+   "add another exploration on 'Buying A Perfume - A Philosophical
+   Exploration' Make it be 002 ... I will want to just add text later
+   on"; 2026-09-27: "The second should be 002, and called 'Buying a
+   Perfume'"), and later on 2026-09-27 the writing: "ADD THAT TO THE
+   EXPLORATION OF HOW TO BUY A PERFUME". So the row is 002, named only
+   that; the page carries the owner's own subtitle, "Simplifying the
+   thought process", under its title and nowhere else; and every section
+   is theirs, word for word — none waiting — with their smaller headings
+   inside the sections (not ticks on the rule) and their footnote leading
+   down and back. */
+test("Explorations 002 is Buying a Perfume, written in the owner's words, its subtitle on its own page only",
   async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.goto("/categories/researches.html");
@@ -235,16 +238,29 @@ test("Explorations 002 is Buying a Perfume, and its page stands ready for the ow
 
   await page.goto("/works/buying-a-perfume.html");
   await expect(page.locator(".essay-head h1")).toContainText("Buying a Perfume");
-  await expect(page.locator(".essay-head h1 em")).toHaveText("A Philosophical Exploration");
+  await expect(page.locator(".essay-head h1 em")).toHaveText("Simplifying the thought process");
   await expect(page.locator(".essay-kicker")).toHaveText("Explorations · 002");
-  const sections = page.locator(".essay-section");
-  const count = await sections.count();
-  expect(count).toBeGreaterThan(0);
+  await expect(page.locator(".essay-section h2")).toHaveText([
+    "01Introduction", "02What is the fragrance going to be used for?", "03Special Cases", "04Conclusion", "05Footnotes",
+  ]);
   await expect(page.locator(".essay-rule")).toBeVisible();
-  // Nothing written in it yet: only the waiting boxes, one a section.
-  expect(await page.locator(".essay-section p:not(.essay-waiting)").count(),
-    "no prose the owner did not write").toBe(0);
-  await expect(page.locator(".essay-waiting")).toHaveCount(count);
+  // Written: no waiting box left, and the owner's own words as they wrote them.
+  await expect(page.locator(".essay-waiting")).toHaveCount(0);
+  await expect(page.locator(".essay-sub")).toHaveText([
+    "Night/Day", "Inside/Outside", "Summer/Winter", "Safe/Divisive", "All-Rounder", "Club", "Romantic1", "Formal",
+  ]);
+  const text = await page.locator(".essay-body").textContent();
+  for (const words of ["Youre welcome.", "HOWEVER", "Diabolical if you ask me.", "Montblac’s Patchouli Ink",
+    "Ganneymede by Marc-Antoine Barrois", "Quite simple I think.", "by no means holistic"]) {
+    expect(text, words).toContain(words);
+  }
+  // The footnote: down from Romantic and back again.
+  await expect(page.locator("#footnote-1-from")).toHaveAttribute("href", "#footnote-1");
+  await expect(page.locator("#footnote-1 .essay-fn-back")).toHaveAttribute("href", "#footnote-1-from");
+  await expect(page.locator("#footnote-1")).toContainText("Anyone can wear anything.");
+  // The two fragrances it names that live on this site lead to them.
+  await expect(page.locator('.essay-body a[href="../houses/qimu-and-musicians.html#part-01"]')).toHaveText("Guitarist");
+  await expect(page.locator('.essay-body a[href="../individual-fragrances/individual-fragrances.html#part-04"]')).toHaveText("Tobacolor");
   expect(errors).toEqual([]);
 });
 
