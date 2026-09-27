@@ -895,5 +895,6 @@ audio to play — and not again while the hand stays; silent once off again). Th
 still holds: notes written, times other than 4/4, nothing written but numbers, never stronger than
 a little over half, carried with the page.
 
-**Not done, and asked**: the Houses view's hover for Qimu (`motifs.js`) still draws its own
-texture of staves and loose music; it plays nothing.
+**Asked, and done (2026-09-27)**: the Houses view's hover for Qimu (`motifs.js`) now writes real
+music with this page's own composer, copied there word for word — and, at the owner's word
+("Real music, silent"), plays nothing. See [the motifs](2026-09-23-the-chain-and-its-motifs.md).

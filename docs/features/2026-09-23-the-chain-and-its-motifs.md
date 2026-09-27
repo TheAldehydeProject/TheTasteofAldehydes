@@ -848,3 +848,44 @@ outweighs the pull, as the section above found); but where it held the pull at a
 1.2** times its weakest for the steady round, it now holds that the pull **swells and eases**:
 somewhere its strongest is **over 1.35** times its weakest. The waves measure about 1.8; the
 steady pull, 1.05, would fail it.
+
+## 2026-09-27 — Qimu & Musicians' music made real, and silent
+
+Qimu & Musicians' own page was made real music that plays when pointed at (see [the newer
+houses](2026-09-21-the-newer-houses.md)). Asked whether the music this view writes for Qimu should
+be too, the owner chose **"Real music, silent"**.
+
+- **The staves are composed, not textured.** A stave here is written by **the house page's own
+  composer**, copied from `qimu.js` into `motifs.js` word for word — the note names, the keys, the
+  fourteen metres (`METERS`), what a beat can be, the progressions, `keyOf`, `composeBar`,
+  `spacing` and `layBar` — because no page script knows about another. So each stave has a key and
+  its signature (a minor key's leading note raised, with its sign, in the dominant's bars), a
+  metre that changes now and then at a bar line, **every bar adding up to its time signature** in
+  each hand, beamed by the beat, a progression a chord a bar with the tune on the chord's notes, a
+  braced left hand within an octave, and the last bar home. What draws it — the engraving, the
+  clefs, the placing — is this file's own (`engrave`, `composeScore`), at this file's size.
+  They are still short, still written out left to right, still faint, and still carry no
+  expression marks.
+- **The loose music is a bar of a tune**, in its own key and metre and composed the same way,
+  with no staff; the runs of five and seven, the clusters and the flurries of small notes it was
+  meant nothing, and went. It **keeps clear of the staves** still standing, and a new stave keeps
+  clear of it (`passages`) — the first try printed a passage over a braced stave.
+- **Silent.** Nothing on the Houses view sounds; only the house's own page plays.
+- `HouseMotifs.music()` says what is standing — key, times written, every bar's metre, each
+  hand's length and pitches — as `QimuScore.staves()` does on the house page.
+
+### How to test it
+
+In `tests/contact-sheet.spec.js`:
+
+- **`Qimu & Musicians' music on the Houses view is real music, and makes no sound`** — Qimu
+  rested on for thirteen seconds, staves and then loose music read as they stand: every bar a
+  whole bar of its metre, each hand filling it, the times written on a stave the ones its bars are
+  in, every note in its key and within a hand, several metres — and no sound asked of the browser
+  at all.
+- **`the Houses view composes Qimu's music with the house page's own code`** — the composing, in
+  five pieces, the same in `qimu.js` and `motifs.js`, word for word.
+- The earlier three still hold unchanged: faint, and notes staying where they are put; times
+  other than 4/4 and nothing written but numbers, staves first and then loose; short five-line
+  staves.
+

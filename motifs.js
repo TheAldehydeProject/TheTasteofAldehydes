@@ -13,9 +13,9 @@
 // Ataraxia's bands of particles running as waves and shaking the air
 // round them, Grande's particles rising and bursting, Les Abstraits'
 // old armoire drawn in lines with irises at its feet and a drip
-// filling a puddle, Tale's doodles, Tombstone's names cut into the
-// wall and its roots and flowers, and Qimu & Musicians' music, written
-// out on short staves and loose on the page.
+// filling a beaker, Tale's doodles, Tombstone's roots and flowers, and
+// Qimu & Musicians' music — real music, silent — written out on short
+// staves and loose on the page.
 //
 // THEY GATHER RATHER THAN APPEAR. Nothing is there the moment a house
 // is rested on: things are born one at a time and each comes up over
@@ -29,7 +29,7 @@
 // clear of the house being rested on, so its picture is never drawn
 // over.
 //
-// window.HouseMotifs = { start(key, frame, around), stop(now), census() } — `around`
+// window.HouseMotifs = { start(key, frame, around), stop(now), census(), music() } — `around`
 // is the boxes of the houses on the page, which writing is kept off.
 // ============================================================
 (function () {
@@ -1592,37 +1592,49 @@
     };
   }
 
-  // ---------- QIMU & MUSICIANS: music, written out on short staves and loose on the page ----------
+  // ---------- QIMU & MUSICIANS: real music, written out on short staves and loose on the page ----------
   // The owner, first: "make it so that it is 5 lines like music sheets,
   // and add ephemeral notes to that"; then "more subtle and way less
   // movement"; then "make it complex ... sometimes they are in the 5 line
   // grid, while othertimes it is just complex notes popping up
-  // spontaneously". And then, of the staves that ran the width of the
-  // window with every marking a score can carry: "make it shorter lines,
-  // so it dosnt span across the entire page ... more subtle ... not so in
-  // your face. also remove all the dynamic elements of the compositions,
-  // such as the trills and whatnot." So:
+  // spontaneously". Then, of the staves that ran the width of the window
+  // with every marking a score can carry: "make it shorter lines, so it
+  // dosnt span across the entire page ... more subtle ... not so in your
+  // face. also remove all the dynamic elements of the compositions, such
+  // as the trills and whatnot." And last (2026-09-27), once the house's
+  // own page had been made real music that plays, asked whether this
+  // should be too: "Real music, silent". So:
   //
   //   THE STAVES are short — a phrase, a few bars, never more than about
   //   a third of the window — and written out left to right as a score is
-  //   read: a clef, a key signature, and a TIME SIGNATURE picked from the
-  //   ones music actually uses (`TIMES` — 4/4 among them, but only among
-  //   them), changing at a bar now and then. In the bars, the texture that
-  //   makes it look complex: beamed runs of semiquavers and
-  //   demisemiquavers, tuplets of three, five, six and seven, chords with
-  //   their accidentals, clusters, rests, a slur over a run. Now and then
-  //   two staves braced — a piano's grand staff.
+  //   read: a clef, a key signature and a time signature, and then REAL
+  //   MUSIC, by the house page's own composer (`qimu.js`), copied here
+  //   word for word because no page script knows about another (a test
+  //   keeps the two the same): a key, major or minor, and every note in
+  //   it (a minor key's leading note raised, with its sign, in the
+  //   dominant's bars); a metre from the fourteen music uses (`METERS` —
+  //   4/4 is one of them and no more likely than any other), changing now
+  //   and then at a bar line, and EVERY BAR ADDING UP to it exactly, in
+  //   each hand, beamed by the beat — quavers, semiquavers, dotted notes,
+  //   triplets; a progression a chord a bar, the tune on the chord's own
+  //   notes; now and then two staves braced — a piano's grand staff —
+  //   whose left hand holds the root or breaks the chord, never further
+  //   than a hand can reach; and the last bar home on the key's chord.
   //   NO EXPRESSION MARKS: no dynamics or hairpins, no trills, no grace
-  //   notes, no accents or staccato, no fermatas, no rolled chords, no
-  //   tempo words. The notes, their rhythm, and the lines they stand on.
-  //   THE LOOSE MUSIC is a run, a flurry of small notes or a few chords
-  //   with no staff, popping up on the page and gone again.
+  //   notes, no accents or staccato, no fermatas, no tempo words. The
+  //   notes, their rhythm, and the lines they stand on.
+  //   THE LOOSE MUSIC is a bar of such a tune with no staff, popping up on
+  //   the page and gone again. (The runs of five and seven, the clusters
+  //   and the flurries of small notes it was, meant nothing, and went.)
+  //   SILENT. Nothing here sounds: the house's own page is where a note
+  //   pointed at plays.
   //   THE TWO TAKE TURNS (`QIMU_STAVES_MS`, `QIMU_LOOSE_MS`).
   //
   // All of it faint (`QIMU_LINE`, `QIMU_INK`) and still: a thing is
   // written where it stands and stays there until it goes. All of it
   // drawn here in paths, because a music font cannot be counted on.
-  const staves = [];
+  const staves = [];                     // standing now, kept clear of each other
+  const passages = [];                   // and the loose music, likewise
   const GAP = 7;                         // between one line of a stave and the next
   const QIMU_STAVES_MS = 9000;
   const QIMU_LOOSE_MS = 6000;
@@ -1637,21 +1649,22 @@
   const RX = GAP * 0.6, RY = GAP * 0.42;
   const yAt = (top, p) => top + 4 * GAP - p * GAP / 2;   // p: 0 the bottom line, 8 the top
   const mLine = (c, x1, y1, x2, y2, w) => { c.lineWidth = w || 1; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); };
-  function mHead(c, x, y, open, k) {
-    k = k || 1;
+  function mHead(c, x, y, open) {
     c.beginPath();
-    c.ellipse(x, y, RX * k, RY * k, -0.35, 0, Math.PI * 2);
+    c.ellipse(x, y, RX, RY, -0.35, 0, Math.PI * 2);
     if (open) { c.lineWidth = 1; c.stroke(); } else c.fill();
   }
-  function mBeam(c, x1, y1, x2, y2, n, up, k) {
-    k = k || 1;
-    for (let i = 0; i < n; i++) {
-      const d = (up ? 1 : -1) * i * GAP * 0.55 * k, h = 1.1 * k;
-      c.beginPath();
-      c.moveTo(x1, y1 + d - h); c.lineTo(x2, y2 + d - h); c.lineTo(x2, y2 + d + h); c.lineTo(x1, y1 + d + h);
-      c.closePath();
-      c.fill();
-    }
+  function mWhole(c, x, y) {
+    c.lineWidth = 1.2;
+    c.beginPath();
+    c.ellipse(x, y, RX * 1.15, RY * 1.05, 0, 0, Math.PI * 2);
+    c.stroke();
+  }
+  function mBeamLine(c, x1, y1, x2, y2) {
+    c.beginPath();
+    c.moveTo(x1, y1 - 1.1); c.lineTo(x2, y2 - 1.1); c.lineTo(x2, y2 + 1.1); c.lineTo(x1, y1 + 1.1);
+    c.closePath();
+    c.fill();
   }
   function mFlag(c, x, y, up, n) {
     c.lineWidth = 1;
@@ -1662,6 +1675,9 @@
       c.bezierCurveTo(x + GAP * 0.9, y0 + (up ? 1 : -1) * GAP * 0.8, x + GAP * 0.9, y0 + (up ? 1 : -1) * GAP * 1.6, x + GAP * 0.5, y0 + (up ? 1 : -1) * GAP * 2.2);
       c.stroke();
     }
+  }
+  function mDot(c, x, y) {
+    c.beginPath(); c.arc(x, y, 1.1, 0, Math.PI * 2); c.fill();
   }
   function mSharp(c, x, y) {
     mLine(c, x - 1.3, y - GAP * 1.2, x - 1.3, y + GAP * 1.3, 0.8);
@@ -1683,24 +1699,29 @@
     mLine(c, x - 1.4, y - GAP * 0.3 + 0.7, x + 1.4, y - GAP * 0.3 - 0.7, 1.5);
     mLine(c, x - 1.4, y + GAP * 0.35 + 0.7, x + 1.4, y + GAP * 0.35 - 0.7, 1.5);
   }
-  const ACCIDENTAL = [mSharp, mFlat, mNatural];
-  function mRest(c, x, top, kind) {
+  /** A rest of `units` semiquavers, standing where rests stand. */
+  function mRest(c, x, top, units) {
     const y = top + GAP * 2;
-    if (kind === "q") {
+    const eighth = (ex, ey, tails) => {
+      for (let i = 0; i < tails; i++) {
+        const dy = i * GAP;
+        c.beginPath(); c.arc(ex - 1.4 - i * 0.9, ey - GAP * 0.55 + dy, 1.3, 0, Math.PI * 2); c.fill();
+        c.lineWidth = 1;
+        c.beginPath(); c.moveTo(ex - 1.4 - i * 0.9, ey - GAP * 0.55 + dy); c.quadraticCurveTo(ex, ey - GAP * 0.35 + dy, ex + 1.6 - i * 0.9, ey - GAP * 0.8 + dy); c.stroke();
+      }
+      mLine(c, ex + 1.6, ey - GAP * 0.8, ex - 0.9 - (tails - 1) * 0.9, ey + GAP * (0.9 + (tails - 1) * 0.8), 1);
+    };
+    if (units >= 16) c.fillRect(x - 3.5, top + GAP, 7, GAP * 0.5);
+    else if (units >= 8) c.fillRect(x - 3.5, y - GAP * 0.5, 7, GAP * 0.5);
+    else if (units >= 4) {
       c.lineWidth = 1.4;
       c.beginPath();
       c.moveTo(x - 1.3, y - GAP * 1.5); c.lineTo(x + 1.9, y - GAP * 0.7); c.lineTo(x - 1.3, y + GAP * 0.1);
       c.lineTo(x + 1.9, y + GAP * 0.8); c.quadraticCurveTo(x - 2.6, y + GAP * 0.9, x, y + GAP * 1.6);
       c.stroke();
-    } else if (kind === "h") {
-      c.fillRect(x - 3.5, y - GAP * 0.5, 7, GAP * 0.45);
-    } else {
-      const dots = kind === "s" ? 2 : 1;
-      for (let i = 0; i < dots; i++) {
-        c.beginPath(); c.arc(x - 1.3 + i * 1.1, y - GAP * 0.5 + i * GAP * 0.8, 1.4, 0, Math.PI * 2); c.fill();
-      }
-      mLine(c, x + 2.3, y - GAP * 0.7, x - 0.9, y + GAP * 1.2 + (dots - 1) * GAP * 0.7, 1);
-    }
+    } else if (units >= 2) eighth(x, y, 1);
+    else eighth(x, y, 2);
+    if (units === 6 || units === 3) mDot(c, x + 5, y - GAP * 0.5);
   }
   function mSlur(c, x1, y1, x2, y2, below) {
     const lift = (below ? 1 : -1) * Math.min(GAP * 1.6, 4 + (x2 - x1) * 0.12);
@@ -1756,257 +1777,533 @@
     c.beginPath(); c.arc(x + 1.5 * G, top + 1.5 * G, 1, 0, Math.PI * 2); c.fill();
   }
 
-  // THE COMPOSER. Every mark is put down with the x it stands at, so a
-  // stave can be written out left to right: a mark is drawn once the pen
-  // has reached it. `staff` false is loose music, which has no lines to
-  // stand on and so no ledger lines either.
-  function writer(top, staff, k) {
-    k = k || 1;
-    const marks = [];
-    const put = (x, fn) => marks.push({ x: x, fn: fn });
-    const ledger = (x, p) => {
-      if (!staff) return;
-      for (let q = -2; q >= p; q -= 2) { const y = yAt(top, q); put(x, (c) => mLine(c, x - RX * 1.7, y, x + RX * 1.7, y, 0.8)); }
-      for (let q = 10; q <= p; q += 2) { const y = yAt(top, q); put(x, (c) => mLine(c, x - RX * 1.7, y, x + RX * 1.7, y, 0.8)); }
-    };
-    const clampP = (p) => Math.max(staff ? -3 : -3, Math.min(staff ? 11 : 11, p));
+  // ============================================================
+  // THE MUSIC — the house page's own composer (`qimu.js`), WORD FOR WORD
+  // from here to the end of `layBar`: keys, metres, what a beat can be,
+  // progressions, a bar composed, and a bar laid out. Only what draws it
+  // is this file's own. A pitch is a STEP — how many letters above middle
+  // C (C4 is 0, C5 7, B3 −1) — raised or lowered by the key signature or
+  // an accidental earlier in the bar.
+  // ============================================================
+  const random = () => Math.random();
+  const weighted = (list) => {
+    let total = 0;
+    list.forEach((one) => { total += one[0]; });
+    let r = random() * total;
+    for (const one of list) { r -= one[0]; if (r <= 0) return one[1]; }
+    return list[list.length - 1][1];
+  };
 
-    // A BEAMED RUN, stepping and leaping, in semiquavers or quicker.
-    function run(x, n, beams, p0) {
-      const dx = GAP * 1.75 * k;
-      const ps = [];
-      let p = p0;
-      for (let i = 0; i < n; i++) {
-        ps.push(p);
-        p = clampP(p + pick([-1, -1, 1, 1, 1, -2, 2, 3, -3, 1, -1, 4]));
+  const SEMIS = [0, 2, 4, 5, 7, 9, 11];            // C D E F G A B
+  const SHARPS = [3, 0, 4, 1, 5];                   // F C G D A, in the order they are written
+  const FLATS = [6, 2, 5, 1, 4];                    // B E A D G
+  const MAJOR_SHARP = [0, 4, 1, 5, 2];              // C G D A E
+  const MAJOR_FLAT = [0, 3, 6, 2, 5];               // C F B♭ E♭ A♭
+  const letterOf = (d) => ((d % 7) + 7) % 7;
+  const midiOf = (d, alter) => 60 + 12 * Math.floor(d / 7) + SEMIS[letterOf(d)] + alter;
+  // Where a step stands on its stave: the treble's bottom line is E4,
+  // the bass's is G2.
+  const posOf = (d, low) => (low ? d + 10 : d - 2);
+
+  // THE METRES, each as its beats — a crotchet beat is 4 semiquavers, a
+  // dotted crotchet 6 — in the spans a long note may fill.
+  const METERS = [
+    { t: ["4", "4"], spans: [[4, 4], [4, 4]] },
+    { t: ["3", "4"], spans: [[4, 4, 4]] },
+    { t: ["2", "4"], spans: [[4, 4]] },
+    { t: ["5", "4"], spans: [[4, 4, 4], [4, 4]] },
+    { t: ["7", "4"], spans: [[4, 4], [4, 4], [4, 4, 4]] },
+    { t: ["6", "4"], spans: [[4, 4, 4], [4, 4, 4]] },
+    { t: ["2", "2"], spans: [[4, 4], [4, 4]] },
+    { t: ["3", "2"], spans: [[4, 4], [4, 4], [4, 4]] },
+    { t: ["6", "8"], spans: [[6], [6]] },
+    { t: ["9", "8"], spans: [[6], [6], [6]] },
+    { t: ["12", "8"], spans: [[6], [6], [6], [6]] },
+    { t: ["3", "8"], spans: [[6]] },
+    { t: ["5", "8"], spans: [[6], [4]] },
+    { t: ["7", "8"], spans: [[4], [4], [6]] },
+  ];
+  const unitsOf = (meter) => meter.spans.reduce((n, s) => n + s.reduce((a, b) => a + b, 0), 0);
+  // The note values a whole span can be held for.
+  const HELD = { 16: true, 12: true, 8: true, 6: true, 4: true };
+
+  // WHAT A BEAT CAN BE: in semiquavers ("R" is a rest; "T" a triplet of
+  // quavers in the time of two).
+  const SIMPLE = [
+    [2, [4]], [4, [2, 2]], [2.6, [1, 1, 1, 1]], [2.2, [2, 1, 1]], [2.2, [1, 1, 2]],
+    [1.6, [3, 1]], [1.5, "T"], [0.4, ["R4"]], [0.6, ["R2", 2]],
+  ];
+  const COMPOUND = [
+    [3, [6]], [4, [2, 2, 2]], [2.5, [4, 2]], [1.2, [2, 4]], [1.2, [1, 1, 1, 1, 1, 1]],
+    [1.5, [2, 1, 1, 2]], [1.2, [3, 1, 2]], [0.5, ["R6"]],
+  ];
+  const PAIR = [[3, [2, 2]], [2, [4]], [1.5, [1, 1, 2]], [1, [1, 1, 1, 1]]];
+
+  // PROGRESSIONS, a chord a bar, as scale degrees from 0. In a minor key
+  // the dominant (4) carries the raised leading note.
+  const MAJOR_WAYS = [[0, 3, 4, 0], [0, 5, 3, 4], [1, 4, 0, 0], [0, 4, 5, 3], [3, 0, 4, 0], [0, 3, 1, 4], [5, 1, 4, 0]];
+  const MINOR_WAYS = [[0, 3, 4, 0], [0, 5, 2, 6], [0, 3, 6, 2], [0, 5, 3, 4], [3, 4, 0, 0], [0, 6, 5, 4]];
+
+  function keyOf() {
+    const count = Math.floor(random() * 5), sharps = random() < 0.5;
+    const minor = random() < 0.4;
+    const major = (sharps ? MAJOR_SHARP : MAJOR_FLAT)[count];
+    const sig = [0, 0, 0, 0, 0, 0, 0];
+    (sharps ? SHARPS : FLATS).slice(0, count).forEach((l) => { sig[l] = sharps ? 1 : -1; });
+    return { count, sharps, minor, sig, tonic: minor ? (major + 5) % 7 : major };
+  }
+
+  function composeBar(key, meter, chord, grand, last, from) {
+    const units = unitsOf(meter);
+    const tones = [0, 2, 4].map((k) => (key.tonic + chord + k) % 7);
+    // The leading note, raised in the dominant's bars of a minor key.
+    const lead = (key.tonic + 6) % 7;
+    const raise = key.minor && chord === 4 ? lead : -1;
+    const nearestTone = (d, lo, hi) => {
+      let best = d, far = 99;
+      for (let q = lo; q <= hi; q++) {
+        if (!tones.includes(letterOf(q))) continue;
+        const f = Math.abs(q - d) + (q === d ? 0.5 : 0) * random();
+        if (f < far) { far = f; best = q; }
       }
-      const up = ps.reduce((a, b) => a + b, 0) / n < 4;
-      const xs = [], ys = ps.map((q) => yAt(top, q));
-      let at = x;
-      ps.forEach((q, i) => {
-        if (Math.random() < 0.15) {
-          const acc = pick(ACCIDENTAL), ax = at + 2, ay = ys[i];
-          put(ax, (c) => acc(c, ax, ay));
-          at += 7;
+      return best;
+    };
+
+    // THE RIGHT HAND: the tune, and now and then a chord under it.
+    const melody = [];
+    let cur = from;
+    let t = 0;
+    const lastSpan = meter.spans.length - 1;
+    meter.spans.forEach((span, si) => {
+      const spanUnits = span.reduce((a, b) => a + b, 0);
+      // THE LAST BAR comes home: the key's own chord, held.
+      if (last && si === lastSpan && HELD[spanUnits]) {
+        let home = cur, far = 99;
+        for (let q = 0; q <= 11; q++) if (letterOf(q) === key.tonic && Math.abs(q - cur) < far) { far = Math.abs(q - cur); home = q; }
+        melody.push({ t, dur: spanUnits, ds: [home], strong: true });
+        cur = home; t += spanUnits;
+        return;
+      }
+      if (!last && HELD[spanUnits] && span.length > 1 && random() < 0.2) {
+        cur = nearestTone(cur + pick([-2, -1, 1, 2]), 0, 11);
+        melody.push({ t, dur: spanUnits, ds: [cur], strong: true });
+        t += spanUnits;
+        return;
+      }
+      span.forEach((beat, bi) => {
+        // A span of one crotchet in a quaver metre (5/8, 7/8) is two
+        // quavers' worth, beamed as quavers.
+        const quaverTime = meter.t[1] === "8";
+        let cell = weighted(beat === 6 ? COMPOUND : quaverTime ? PAIR : SIMPLE);
+        if (last) cell = beat === 6 ? [6] : [4];
+        const trip = cell === "T";
+        const values = trip ? [4 / 3, 4 / 3, 4 / 3] : cell;
+        values.forEach((v, k) => {
+          if (typeof v === "string") {
+            const r = Number(v.slice(1));
+            melody.push({ t, dur: r, rest: true });
+            t += r;
+            return;
+          }
+          const strong = k === 0;
+          let d;
+          if (strong) d = nearestTone(cur + pick([-2, -1, 0, 1, 2, 3, -3]), 0, 11);
+          else d = cur + pick([-1, 1, 1, -1, 2, -2]);
+          if (d < 0) d = 1;
+          if (d > 11) d = 10;
+          cur = d;
+          melody.push({ t, dur: v, ds: [d], strong, trip, beatGroup: si * 10 + bi });
+          t += v;
+        });
+      });
+    });
+    // Now and then the tune is harmonised: a crotchet or longer on the
+    // beat becomes the chord, closed up under its top note.
+    melody.forEach((e) => {
+      if (e.rest || e.dur < 4 || random() > 0.22) return;
+      const top = e.ds[0];
+      const under = [];
+      for (let q = top - 1; q >= top - 7 && under.length < 2; q--) if (tones.includes(letterOf(q))) under.push(q);
+      if (under.length === 2 && under[1] >= -2) e.ds = [under[1], under[0], top];
+    });
+
+    // THE LEFT HAND, on a braced pair: the root held, or the chord broken
+    // under the tune — always within an octave.
+    const low = [];
+    if (grand) {
+      // The root between E2 and D3, so the fifth over it and the octave
+      // stay on or just over the bass stave, and the hand never stretches
+      // past an octave.
+      let root = tones[0];
+      while (root > -6) root -= 7;
+      while (root < -12) root += 7;
+      const fifth = root + 4, third = root + 2, octave = root + 7;
+      const style = last ? "held" : weighted([[3, "held"], [3, "broken"], [1.5, "pulse"]]);
+      let lt = 0;
+      meter.spans.forEach((span, si) => {
+        const spanUnits = span.reduce((a, b) => a + b, 0);
+        if (style === "held" && HELD[spanUnits]) {
+          low.push({ t: lt, dur: spanUnits, ds: si === 0 || last ? [root, fifth] : [fifth] });
+          lt += spanUnits;
+          return;
         }
-        xs.push(at + RX);
-        at += dx;
+        span.forEach((beat) => {
+          if (style === "pulse") {
+            low.push({ t: lt, dur: beat, ds: [root, octave] });
+            lt += beat;
+            return;
+          }
+          // The chord broken in quavers: root and fifth to a crotchet,
+          // root, third and fifth to a dotted crotchet.
+          const run = beat === 6 ? [root, third, fifth] : [root, fifth];
+          const group = 100 + lt;
+          run.forEach((q) => { low.push({ t: lt, dur: 2, ds: [q], beatGroup: group }); lt += 2; });
+        });
       });
-      const L = GAP * 3.3 * k;
-      const sx = xs.map((hx) => hx + (up ? RX * 0.92 : -RX * 0.92) * k);
-      let b1 = up ? ys[0] - L : ys[0] + L, b2 = up ? ys[n - 1] - L : ys[n - 1] + L;
-      if (Math.abs(b2 - b1) > GAP) b2 = b1 + Math.sign(b2 - b1) * GAP;
-      const beamY = (vx) => b1 + (b2 - b1) * (vx - sx[0]) / Math.max(1, sx[n - 1] - sx[0]);
-      let shift = 0;
-      sx.forEach((vx, i) => {
-        const room = up ? beamY(vx) - (ys[i] - L * 0.8) : (ys[i] + L * 0.8) - beamY(vx);
-        if (room > shift) shift = room;
+    }
+
+    // THE ACCIDENTALS, as an engraver writes them: the raised leading note
+    // carries its sign the first time it appears on its line in the bar,
+    // and holds to the bar line.
+    const spell = (events, isLow) => {
+      const marked = new Set();
+      events.forEach((e) => {
+        if (e.rest) return;
+        e.alter = []; e.acc = [];
+        e.ds.forEach((d) => {
+          const l = letterOf(d);
+          let alter = key.sig[l];
+          let acc = null;
+          if (l === raise) {
+            alter = key.sig[l] + 1;
+            if (!marked.has(d)) { acc = key.sig[l] < 0 ? "natural" : "sharp"; marked.add(d); }
+          }
+          e.alter.push(alter);
+          e.acc.push(acc);
+        });
+        e.low = isLow;
       });
-      b1 += up ? -shift : shift; b2 += up ? -shift : shift;
-      xs.forEach((hx, i) => {
-        const hy = ys[i], vx = sx[i];
-        ledger(hx, ps[i]);
-        put(hx, (c) => { mHead(c, hx, hy, false, k); mLine(c, vx, hy, vx, beamY(vx), 0.9); });
+    };
+    spell(melody, false);
+    spell(low, true);
+    return { units, melody, low, end: cur };
+  }
+
+  const spacing = (g) => GAP * (0.82 + 0.62 * Math.sqrt(g));
+  function layBar(bar) {
+    const all = bar.melody.concat(bar.low);
+    const onsets = [...new Set(all.map((e) => Math.round(e.t * 3) / 3))].sort((a, b) => a - b);
+    const xs = new Map();
+    let x = 8;
+    onsets.forEach((t, i) => {
+      const here = all.filter((e) => Math.abs(e.t - t) < 0.01);
+      const accs = here.some((e) => e.acc && e.acc.some(Boolean));
+      if (accs) x += 6;
+      xs.set(t, x);
+      const next = i + 1 < onsets.length ? onsets[i + 1] : bar.units;
+      const dotted = here.some((e) => e.dur === 3 || e.dur === 6 || e.dur === 12);
+      x += spacing(next - t) + (dotted ? 3 : 0);
+    });
+    all.forEach((e) => { e.x = xs.get(Math.round(e.t * 3) / 3); });
+    bar.width = x + 4;
+  }
+
+  // ============================================================
+  // ENGRAVING one bar's events into marks, each with the x it stands at
+  // so a stave can be written out left to right. `staff` false is loose
+  // music, which has no lines to stand on and so no ledger lines either.
+  // ============================================================
+  function engrave(bar, ox, tops, grand, put, staff) {
+    const draw = (events, top) => {
+      // Grouped for beaming: quavers and shorter within one beat.
+      const groups = [];
+      let cur = null;
+      events.forEach((e) => {
+        const beamable = !e.rest && e.dur < 4 && e.ds.length === 1;
+        if (beamable && cur && cur.key === e.beatGroup) cur.list.push(e);
+        else {
+          cur = beamable ? { key: e.beatGroup, list: [e] } : null;
+          groups.push(cur || { key: null, list: [e] });
+        }
       });
-      const last = xs[n - 1];
-      put(last, (c) => mBeam(c, sx[0], beamY(sx[0]), sx[n - 1], beamY(sx[n - 1]), beams, up, k));
-      const odd = n % 2 === 1 || n === 6;
-      if (odd || Math.random() < 0.2) {
-        const ty = beamY((sx[0] + sx[n - 1]) / 2) + (up ? -GAP * (1.4 + beams * 0.5) : GAP * (1.4 + beams * 0.5));
-        put(last, (c) => mTuplet(c, sx[0], sx[n - 1], ty, String(n), up));
+      groups.forEach((g) => (g.list.length === 1 ? single(g.list[0], top) : beamed(g.list, top)));
+    };
+    const posList = (e) => e.ds.map((d) => posOf(d, e.low));
+    const ledgers = (x, ps, top) => {
+      if (!staff) return;
+      const lo = Math.min(...ps), hi = Math.max(...ps);
+      for (let q = -2; q >= lo; q -= 2) { const y = yAt(top, q); put(x, (c) => mLine(c, x - RX * 1.7, y, x + RX * 1.7, y, 0.8)); }
+      for (let q = 10; q <= hi; q += 2) { const y = yAt(top, q); put(x, (c) => mLine(c, x - RX * 1.7, y, x + RX * 1.7, y, 0.8)); }
+    };
+    const accidentals = (e, hx, top) => {
+      e.acc.forEach((a, i) => {
+        if (!a) return;
+        const ax = hx - RX - 4.5, ay = yAt(top, posOf(e.ds[i], e.low));
+        put(ax, (c) => (a === "sharp" ? mSharp(c, ax, ay) : mNatural(c, ax, ay)));
+      });
+    };
+    function single(e, top) {
+      const hx = ox + e.x;
+      if (e.rest) {
+        put(hx, (c) => mRest(c, hx, top, e.dur));
+        return;
       }
-      if (Math.random() < 0.4) {
+      const ps = posList(e);
+      const up = ps.reduce((a, b) => a + b, 0) / ps.length < 4;
+      const open = e.dur >= 8;
+      // A second in a chord stands its head on the other side of the
+      // stem, as it is engraved.
+      const at = ps.map((p, i) => [i && p - ps[i - 1] === 1 ? hx + (up ? RX * 1.85 : -RX * 1.85) : hx, yAt(top, p)]);
+      const ys = at.map((h) => h[1]);
+      accidentals(e, hx, top);
+      ledgers(hx, ps, top);
+      const lo = Math.max(...ys), hi = Math.min(...ys);
+      const vx = hx + (up ? RX * 0.92 : -RX * 0.92);
+      const tip = up ? hi - GAP * 3.4 : lo + GAP * 3.4;
+      const dotted = e.dur === 3 || e.dur === 6 || e.dur === 12;
+      const tails = e.dur === 1 ? 2 : e.dur < 4 ? 1 : 0;
+      put(hx, (c) => {
+        at.forEach(([nx, y]) => (e.dur >= 16 ? mWhole(c, nx, y) : mHead(c, nx, y, open)));
+        if (e.dur < 16) mLine(c, vx, up ? lo : hi, vx, tip, 0.9);
+        if (tails) mFlag(c, vx, tip, up, tails);
+        if (dotted) ps.forEach((p, i) => mDot(c, hx + RX + 3, ys[i] - (p % 2 === 0 ? GAP / 2 : 0)));
+      });
+    }
+    function beamed(list, top) {
+      const ps = list.map((e) => posOf(e.ds[0], e.low));
+      const up = ps.reduce((a, b) => a + b, 0) / ps.length < 4;
+      const xs = list.map((e) => ox + e.x);
+      const ys = ps.map((p) => yAt(top, p));
+      const L = GAP * 3.3;
+      const sx = xs.map((hx) => hx + (up ? RX * 0.92 : -RX * 0.92));
+      let b1 = up ? ys[0] - L : ys[0] + L, b2 = up ? ys[ys.length - 1] - L : ys[ys.length - 1] + L;
+      if (Math.abs(b2 - b1) > GAP) b2 = b1 + Math.sign(b2 - b1) * GAP;
+      const beamY = (vx) => b1 + (b2 - b1) * (vx - sx[0]) / Math.max(1, sx[sx.length - 1] - sx[0]);
+      let shift = 0;
+      sx.forEach((vx, i) => { const room = up ? beamY(vx) - (ys[i] - L * 0.8) : (ys[i] + L * 0.8) - beamY(vx); if (room > shift) shift = room; });
+      b1 += up ? -shift : shift; b2 += up ? -shift : shift;
+      const second = (up ? 1 : -1) * GAP * 0.6;
+      list.forEach((e, i) => {
+        const hx = xs[i], hy = ys[i], vx = sx[i];
+        accidentals(e, hx, top);
+        ledgers(hx, [ps[i]], top);
+        const dotted = e.dur === 3;
+        put(hx, (c) => {
+          mHead(c, hx, hy, false);
+          mLine(c, vx, hy, vx, beamY(vx), 0.9);
+          if (dotted) mDot(c, hx + RX + 3, hy - (ps[i] % 2 === 0 ? GAP / 2 : 0));
+        });
+      });
+      const last = xs[xs.length - 1];
+      put(last, (c) => {
+        mBeamLine(c, sx[0], beamY(sx[0]), sx[sx.length - 1], beamY(sx[sx.length - 1]));
+        // Semiquavers carry a second beam: between two of them, or as a
+        // stub towards the note beside a lone one.
+        list.forEach((e, i) => {
+          if (e.dur !== 1) return;
+          const next = list[i + 1], prev = list[i - 1];
+          if (next && next.dur === 1) {
+            mBeamLine(c, sx[i], beamY(sx[i]) + second, sx[i + 1], beamY(sx[i + 1]) + second);
+          } else if (!(prev && prev.dur === 1)) {
+            const x2 = sx[i] + (prev ? -1 : 1) * RX * 2.2;
+            const a = Math.min(sx[i], x2), b = Math.max(sx[i], x2);
+            mBeamLine(c, a, beamY(a) + second, b, beamY(b) + second);
+          }
+        });
+      });
+      if (list[0].trip) {
+        const ty = beamY((sx[0] + sx[sx.length - 1]) / 2) + (up ? -GAP * 1.6 : GAP * 1.6);
+        put(last, (c) => mTuplet(c, sx[0], sx[sx.length - 1], ty, "3", up));
+      }
+      if (list.length >= 3 && random() < 0.35) {
         const sy = Math.max(...ys) + GAP * 1.5, uy = Math.min(...ys) - GAP * 1.5;
         put(last, (c) => mSlur(c, xs[0], up ? sy : uy, last, up ? sy : uy, up));
       }
-      return at + GAP * 0.6;
     }
-    // A CHORD, three or four notes deep, with its accidentals stacked
-    // before it.
-    function chord(x, p0) {
-      const n = 3 + (Math.random() < 0.5 ? 1 : 0);
-      const ps = [];
-      let p = clampP(p0);
-      for (let i = 0; i < n; i++) { ps.push(p); p = clampP(p + pick([2, 2, 3, 1])); }
-      const open = Math.random() < 0.3;
-      let at = x;
-      ps.filter(() => Math.random() < 0.3).forEach((q) => {
-        const acc = pick(ACCIDENTAL), ax = at + 2, ay = yAt(top, q);
-        put(ax, (c) => acc(c, ax, ay));
-        at += 6;
-      });
-      const hx = at + RX;
-      const up = ps.reduce((a, b) => a + b, 0) / n < 4;
-      const lo = yAt(top, ps[0]), hi = yAt(top, ps[n - 1]);
-      const vx = hx + (up ? RX * 0.92 : -RX * 0.92);
-      const tip = up ? hi - GAP * 3.3 : lo + GAP * 3.3;
-      ps.forEach((q, i) => {
-        // A second in the chord stands its head on the other side of
-        // the stem, as it is engraved.
-        const nx = i && q - ps[i - 1] === 1 ? hx + (up ? RX * 1.85 : -RX * 1.85) : hx;
-        ledger(nx, q);
-        put(hx, (c) => mHead(c, nx, yAt(top, q), open));
-      });
-      put(hx, (c) => mLine(c, vx, up ? lo : hi, vx, tip, 0.9));
-      if (!open && Math.random() < 0.35) put(hx, (c) => mFlag(c, vx, tip, up, pick([1, 2])));
-      return hx + GAP * 3 + (open ? GAP : 0);
-    }
-    function rest(x) {
-      const kind = pick(["q", "e", "s", "h"]);
-      put(x + 3, (c) => mRest(c, x + 3, top, kind));
-      return x + GAP * 2;
-    }
-    // A CLUSTER: seconds piled up, heads either side of the stem.
-    function cluster(x, p0) {
-      const n = 4 + Math.floor(Math.random() * 3);
-      const hx = x + RX * 2;
-      for (let i = 0; i < n; i++) {
-        const q = p0 + i, nx = i % 2 ? hx + RX * 1.85 : hx;
-        put(hx, (c) => mHead(c, nx, yAt(top, q), false));
-      }
-      const vx = hx + RX * 0.92;
-      put(hx, (c) => mLine(c, vx, yAt(top, p0), vx, yAt(top, p0 + n - 1) - GAP * 3, 0.9));
-      return hx + GAP * 3.5;
-    }
-    return { marks, put, run, chord, rest, cluster };
+    draw(bar.melody, tops[0]);
+    if (grand) draw(bar.low, tops[1]);
   }
 
-  // A STAVE, or a grand staff: short, with a clef, a key, a time that
-  // changes now and then, and bars of texture.
-  // Time signatures music actually uses, simple and compound, regular
-  // and not — 4/4 is one of them and no more likely than any other.
-  const TIMES = [["4", "4"], ["3", "4"], ["2", "4"], ["5", "4"], ["6", "8"], ["7", "8"], ["9", "8"], ["12", "8"],
-    ["5", "8"], ["3", "8"], ["2", "2"], ["7", "4"], ["6", "4"], ["3", "2"]];
+  // What a stave or a passage is, for the tests: its key, the time
+  // signatures written on it in order, and every bar's metre, how long
+  // each hand's part of it lasts and its pitches — as the house page's
+  // own `QimuScore` says of its staves.
+  function scoreOf(key, written, bars, grand) {
+    const sum = (list) => Math.round(list.reduce((n, e) => n + e.dur, 0) * 1000) / 1000;
+    return {
+      key: { sig: key.sig.slice(), minor: key.minor, tonic: key.tonic },
+      written: written.slice(),
+      bars: bars.map((bar) => ({
+        meter: bar.meter.t.join("/"), units: bar.units,
+        right: sum(bar.melody), left: grand ? sum(bar.low) : null,
+        pitches: bar.melody.concat(bar.low).filter((e) => !e.rest).map((e) => e.ds.map((d, i) => midiOf(d, e.alter[i]))),
+      })),
+    };
+  }
+
+  // A STAVE'S MUSIC: its head (clef, key, time), then as many bars as fit
+  // in about `long`, justified so the last bar line stands at its end —
+  // the last of them home on the key's chord. In the stave's own
+  // coordinates: x from its left edge, y from its top line.
+  function composeScore(long, grand) {
+    const marks = [];
+    const tops = grand ? [0, GAP * 10] : [0];
+    const put = (x, fn) => marks.push({ x, fn });
+    const written = [];
+    const key = keyOf();
+    let meter = pick(METERS);
+    const ways = pick(key.minor ? MINOR_WAYS : MAJOR_WAYS);
+    tops.forEach((top, i) => {
+      const low = grand && i === 1;
+      put(10, (c) => (low ? mBass(c, 14, top) : mTreble(c, 15, top)));
+      const order = key.sharps ? [8, 5, 9, 6, 3] : [4, 7, 3, 6, 2];
+      for (let k = 0; k < key.count; k++) {
+        const kx = 30 + k * 6, ky = yAt(top, order[k] - (low ? 2 : 0));
+        put(kx, (c) => (key.sharps ? mSharp(c, kx, ky) : mFlat(c, kx, ky)));
+      }
+      // The metre it OPENS in, kept, rather than read off `meter` when
+      // the mark is drawn — `meter` moves on with every change of time.
+      const tx = 35 + key.count * 6, opening = meter.t;
+      if (i === 0) written.push(opening.join("/"));
+      put(tx, (c) => mTime(c, opening, tx, top));
+    });
+    const start = 46 + key.count * 6;
+    const room = long - 10 - start;
+    const bars = [];
+    let used = 0, from = 4;
+    for (let m = 0; m < 12; m++) {
+      const change = m && random() < 0.22 ? pick(METERS.filter((one) => one !== meter)) : null;
+      const theMeter = change || meter;
+      const bar = composeBar(key, theMeter, ways[m % ways.length], grand, false, from);
+      bar.meter = theMeter;
+      bar.change = !!change;
+      layBar(bar);
+      const w = bar.width + (change ? 16 : 0);
+      if (used + w > room / 0.9 && bars.length) break;
+      bars.push(bar);
+      used += w;
+      from = bar.end;
+      meter = theMeter;
+      if (used > room) break;
+    }
+    // The last bar comes home, where there is more than one. A stave of
+    // one bar is a bar of the music going on, not a close.
+    if (bars.length > 1) {
+      const ending = bars[bars.length - 1];
+      const home = composeBar(key, ending.meter, 0, grand, true, bars[bars.length - 2].end);
+      home.meter = ending.meter;
+      home.change = ending.change;
+      layBar(home);
+      bars[bars.length - 1] = home;
+    }
+    used = bars.reduce((n, b) => n + b.width + (b.change ? 16 : 0), 0);
+    const stretch = Math.max(0.8, Math.min(1.9, room / used));
+    const edges = [start];
+    let x = start;
+    bars.forEach((bar) => {
+      if (bar.change) {
+        written.push(bar.meter.t.join("/"));
+        const tx = x + 8;
+        tops.forEach((top) => put(tx, (c) => mTime(c, bar.meter.t, tx, top)));
+        x += 16;
+      }
+      bar.melody.concat(bar.low).forEach((e) => { e.x *= stretch; });
+      engrave(bar, x, tops, grand, put, true);
+      x += bar.width * stretch;
+      edges.push(x);
+    });
+    return { marks, tops, bars: edges.slice(1, -1), end: x, tall: grand ? GAP * 14 : GAP * 4,
+      music: scoreOf(key, written, bars, grand) };
+  }
+
+  // A STAVE, or a grand staff, standing on the page.
   function stave() {
     if (qimuMode() !== "staves") return null;
     // Forget the staves that have gone.
     for (let i = staves.length - 1; i >= 0; i--) if (!things.includes(staves[i])) staves.splice(i, 1);
     const grand = Math.random() < 0.3;
-    const tall = grand ? GAP * 14 : GAP * 4;
     const long = Math.max(170, Math.min(460, W * rand(QIMU_LONG[0], QIMU_LONG[1])));
+    const score = composeScore(long, grand);
+    const wide = score.end, tall = score.tall;
+    if (wide > W - 30) return null;
     // Kept clear of the other staves standing, so two never print over
     // each other.
     let y = null, x0 = 0;
     for (let i = 0; i < 16; i++) {
-      const tryY = rand(CHROME + 30, H - 40 - tall), tryX = rand(10, Math.max(20, W - long - 10));
-      if (staves.every((s) => s.ending || tryY > s.y + s.tall + GAP * 7 || tryY + tall + GAP * 7 < s.y ||
-        tryX > s.x1 + 30 || tryX + long + 30 < s.x0)) { y = tryY; x0 = tryX; break; }
+      const tryY = rand(CHROME + 30, H - 40 - tall), tryX = rand(16, Math.max(20, W - wide - 16));
+      if (staves.concat(passages).every((s) => s.ending || tryY > s.y + s.tall + GAP * 7 || tryY + tall + GAP * 7 < s.y ||
+        tryX > s.x1 + 30 || tryX + wide + 30 < s.x0)) { y = tryY; x0 = tryX; break; }
     }
     if (y === null) return null;
-    const x1 = x0 + long;
-    const tops = grand ? [y, y + GAP * 10] : [y];
-    const writers = tops.map((top) => writer(top, true));
-    // The head of it: clef, key, time.
-    const head = x0 + 10;
-    const key = Math.floor(Math.random() * 5), sharps = Math.random() < 0.5;
-    const time = pick(TIMES);
-    tops.forEach((top, i) => {
-      const w = writers[i];
-      const bass = grand && i === 1;
-      w.put(head, (c) => (bass ? mBass(c, head + 4, top) : mTreble(c, head + 5, top)));
-      const order = sharps ? [8, 5, 9, 6, 3] : [4, 7, 3, 6, 2];
-      for (let k = 0; k < key; k++) {
-        const kx = head + 20 + k * 6, ky = yAt(top, order[k] - (bass ? 2 : 0));
-        w.put(kx, (c) => (sharps ? mSharp(c, kx, ky) : mFlat(c, kx, ky)));
-      }
-      const tx = head + 25 + key * 6;
-      w.put(tx, (c) => mTime(c, time, tx, top));
-    });
-    const start = head + 36 + key * 6;
-    // THE BARS, the same for every stave of it.
-    const bars = [];
-    for (let bx = start + rand(90, 140); bx < x1 - 30; bx += rand(95, 150)) bars.push(bx);
-    const edges = [start].concat(bars, [x1 - 10]);
-    for (let m = 0; m < edges.length - 1; m++) {
-      const from = edges[m] + 8, to = edges[m + 1] - 8;
-      // A time that changes at the bar, now and then — the same in every
-      // stave of a grand staff, as it is written.
-      const change = m && Math.random() < 0.22 ? pick(TIMES) : null;
-      tops.forEach((top, i) => {
-        const w = writers[i];
-        const low = grand && i === 1;
-        let x = from;
-        if (change) {
-          const tx = x + 5;
-          w.put(tx, (c) => mTime(c, change, tx, top));
-          x += 16;
-        }
-        let guard = 0;
-        while (x < to - 20 && guard++ < 24) {
-          const room = to - x, r = Math.random();
-          const p0 = low ? Math.floor(rand(-2, 5)) : Math.floor(rand(1, 9));
-          if (r < 0.5 && room > GAP * 7) {
-            const n = Math.min(pick([4, 5, 6, 7, 8, 3]), Math.floor(room / (GAP * 1.9)));
-            if (n >= 3) { x = w.run(x, n, pick([2, 2, 3, 1]), p0); continue; }
-          }
-          if (r < 0.78 && room > GAP * 5) { x = w.chord(x, low ? p0 - 2 : p0 - 1); continue; }
-          if (r < 0.86 && room > GAP * 5) { x = w.cluster(x, low ? p0 - 2 : p0); continue; }
-          if (room > GAP * 2.5) { x = w.rest(x); continue; }
-          break;
-        }
-      });
-    }
-    const marks = writers.reduce((all, w) => all.concat(w.marks), []);
+    const foot = score.tops[score.tops.length - 1] + 4 * GAP;
     const one = {
-      y: y, tall: tall, x0: x0, x1: x1,
+      y: y, tall: tall, x0: x0, x1: x0 + wide, grand: grand, music: score.music,
       life: rand(8000, 11000),
       draw(c, age, a) {
-        const reach = x0 + (x1 - x0) * ease(age / QIMU_WRITE_MS);
+        const reach = wide * ease(age / QIMU_WRITE_MS);
+        c.save();
+        c.translate(x0, y);
         c.strokeStyle = "rgba(" + QIMU_BLUE + "," + (QIMU_LINE * a) + ")";
-        tops.forEach((top) => {
-          for (let k = 0; k < 5; k++) mLine(c, x0, top + k * GAP, reach, top + k * GAP, 0.8);
+        score.tops.forEach((top) => {
+          for (let k = 0; k < 5; k++) mLine(c, 0, top + k * GAP, reach, top + k * GAP, 0.8);
         });
         // The bars, through both staves of a grand staff, and the brace
         // that holds the two together; a double bar at the end.
-        const foot = tops[tops.length - 1] + 4 * GAP;
-        bars.forEach((bx) => { if (bx <= reach) mLine(c, bx, y, bx, foot, 0.8); });
-        if (grand && reach > head) {
-          mLine(c, x0, y, x0, foot, 0.8);
+        score.bars.forEach((bx) => { if (bx <= reach) mLine(c, bx, 0, bx, foot, 0.8); });
+        if (grand && reach > 8) {
+          mLine(c, 0, 0, 0, foot, 0.8);
           c.lineWidth = 1.4;
           c.beginPath();
-          const bx = x0 - 5, mid = (y + foot) / 2;
-          c.moveTo(bx + 3, y);
-          c.bezierCurveTo(bx - 3, y + 8, bx + 3, mid - 10, bx - 3, mid);
+          const bx = -5, mid = foot / 2;
+          c.moveTo(bx + 3, 0);
+          c.bezierCurveTo(bx - 3, 8, bx + 3, mid - 10, bx - 3, mid);
           c.bezierCurveTo(bx + 3, mid + 10, bx - 3, foot - 8, bx + 3, foot);
           c.stroke();
         }
-        if (reach >= x1 - 10) {
-          mLine(c, x1 - 10, y, x1 - 10, foot, 0.8);
-          mLine(c, x1 - 6, y, x1 - 6, foot, 2.4);
+        if (reach >= wide - 1) {
+          mLine(c, wide - 4, 0, wide - 4, foot, 0.8);
+          mLine(c, wide, 0, wide, foot, 2.4);
         }
         c.fillStyle = c.strokeStyle = "rgba(" + QIMU_BLUE + "," + (QIMU_INK * a) + ")";
-        marks.forEach((m) => { if (m.x <= reach) m.fn(c); });
+        score.marks.forEach((m) => { if (m.x <= reach) m.fn(c); });
+        c.restore();
       },
     };
     staves.push(one);
     return one;
   }
 
-  // LOOSE MUSIC: a passage with no staff, popping up on the page and gone.
+  // LOOSE MUSIC: a bar of a tune — in its own key and metre, composed as
+  // a stave's bar is — with no staff, popping up on the page and gone.
   function passage() {
     if (qimuMode() !== "loose") return null;
-    const at = spot(50, CHROME + 50, H - 50);
-    if (!at) return null;
-    const top = at.y - GAP * 2;
-    const w = writer(top, false);
-    const kind = pick(["run", "run", "flurry", "cluster", "chords"]);
-    let x = at.x - GAP * 5;
-    if (kind === "run") {
-      x = w.run(x, pick([5, 6, 7, 9]), pick([2, 3]), Math.floor(rand(0, 7)));
-    } else if (kind === "flurry") {
-      // Small notes, many, under one beam.
-      const small = writer(top, false, 0.62);
-      small.run(x, pick([9, 10, 12]), 3, Math.floor(rand(0, 6)));
-      w.marks.push(...small.marks);
-    } else if (kind === "cluster") {
-      w.cluster(x, Math.floor(rand(0, 4)));
-    } else {
-      for (let i = 0; i < 3; i++) x = w.chord(x, Math.floor(rand(-1, 6)));
+    for (let i = passages.length - 1; i >= 0; i--) if (!things.includes(passages[i])) passages.splice(i, 1);
+    const key = keyOf();
+    const meter = pick(METERS);
+    const ways = pick(key.minor ? MINOR_WAYS : MAJOR_WAYS);
+    const bar = composeBar(key, meter, pick(ways), false, false, Math.floor(rand(2, 9)));
+    bar.meter = meter;
+    layBar(bar);
+    // Kept off the staves still standing and the other passages, so it
+    // is never printed over another piece of music.
+    const half = bar.width / 2 + 16, reach = GAP * 7;
+    let at = null;
+    for (let i = 0; i < 10 && !at; i++) {
+      const tryAt = spot(50, CHROME + 50, H - 50);
+      if (!tryAt) continue;
+      const clear = staves.concat(passages).every((s) => s.ending ||
+        tryAt.x + half < s.x0 || tryAt.x - half > s.x1 || tryAt.y + reach < s.y || tryAt.y - reach > s.y + s.tall);
+      if (clear) at = tryAt;
     }
-    const marks = w.marks;
-    return {
+    if (!at) return null;
+    const marks = [];
+    const top = at.y - GAP * 2;
+    engrave(bar, at.x - bar.width / 2, [top], false, (x, fn) => marks.push({ x, fn }), false);
+    const one = {
+      x0: at.x - half, x1: at.x + half, y: at.y - reach, tall: reach * 2,
       life: rand(3000, 4800),
       sharp: true,
+      music: scoreOf(key, [], [bar], false),
       draw(c, age, a) {
         // It POPS UP rather than fading slowly in, and it stays where it
         // was put.
@@ -2015,6 +2312,8 @@
         marks.forEach((m) => m.fn(c));
       },
     };
+    passages.push(one);
+    return one;
   }
 
   // How often each is born (per second), and how many may stand at once.
@@ -2125,6 +2424,12 @@
       const out = {};
       things.forEach((t) => { if (!t.ending && t.kind) out[t.kind.make.name] = (out[t.kind.make.name] || 0) + 1; });
       return out;
+    },
+    // What Qimu & Musicians' music standing on the page is — its key, the
+    // times written on it and every bar's metre, length in each hand and
+    // pitches — for the tests, since the drawing itself cannot be asked.
+    music() {
+      return things.filter((t) => t.music && !t.ending).map((t) => ({ kind: t.kind.make.name, grand: !!t.grand, ...t.music }));
     },
     // THE FIELD the wells make together, for contact-sheet.js to draw the
     // Houses view through: a function from a point on the window to where

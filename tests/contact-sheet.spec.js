@@ -1408,6 +1408,97 @@ test("Qimu & Musicians' music is complex, with no dynamics or ornaments, on stav
   expect(later.passage || 0, "then music popping up with no stave").toBeGreaterThan(0);
 });
 
+/* QIMU & MUSICIANS' MUSIC HERE IS REAL, AND SILENT. The owner, asked
+   whether the music the Houses view writes for Qimu should become real
+   music as the house page's had: "Real music, silent" (2026-09-27). Read
+   off the music itself while Qimu is rested on, staves and then loose
+   passages: every bar lasts exactly what its time signature says, in each
+   hand; the time signatures written on a stave are the ones its bars are
+   in, in order; every note is in its key (a minor key's raised leading
+   note allowed); nothing a hand plays at once spans more than an octave;
+   several metres, not always 4/4 — and the page asks the browser for no
+   sound at all. */
+test("Qimu & Musicians' music on the Houses view is real music, and makes no sound", async ({ page }) => {
+  test.setTimeout(60000);
+  await page.addInitScript(() => {
+    window.__sounds = 0;
+    const count = (Real) => Real && function () { window.__sounds++; return new Real(...arguments); };
+    if (window.AudioContext) window.AudioContext = count(window.AudioContext);
+    if (window.webkitAudioContext) window.webkitAudioContext = count(window.webkitAudioContext);
+  });
+  const LENGTH = { "4/4": 16, "3/4": 12, "2/4": 8, "5/4": 20, "7/4": 28, "6/4": 24, "2/2": 16, "3/2": 24,
+    "6/8": 12, "9/8": 18, "12/8": 24, "3/8": 6, "5/8": 10, "7/8": 14 };
+  const SEMIS = [0, 2, 4, 5, 7, 9, 11];
+  await page.goto(SHEET);
+  await waitForSheet(page);
+  await pointAt(page, 8);
+  const seen = new Map();
+  for (let i = 0; i < 26; i++) {
+    await page.waitForTimeout(500);
+    (await page.evaluate(() => window.HouseMotifs.music())).forEach((m) => seen.set(JSON.stringify(m), m));
+  }
+  const all = [...seen.values()];
+  const staves = all.filter((m) => m.kind === "stave"), loose = all.filter((m) => m.kind === "passage");
+  expect(staves.length, "staves written").toBeGreaterThan(2);
+  expect(loose.length, "and loose music").toBeGreaterThan(0);
+  let bars = 0;
+  const meters = new Set();
+  all.forEach((s, i) => {
+    const inKey = new Set(SEMIS.map((v, l) => (v + s.key.sig[l] + 12) % 12));
+    if (s.key.minor) inKey.add((SEMIS[(s.key.tonic + 6) % 7] + s.key.sig[(s.key.tonic + 6) % 7] + 1 + 12) % 12);
+    const expected = [s.bars[0].meter];
+    s.bars.forEach((b, j) => {
+      bars++; meters.add(b.meter);
+      if (j && b.meter !== s.bars[j - 1].meter) expected.push(b.meter);
+      expect(b.units, `${s.kind} ${i} bar ${j} is a whole ${b.meter}`).toBe(LENGTH[b.meter]);
+      expect(b.right, `${s.kind} ${i} bar ${j}, the right hand fills its ${b.meter}`).toBeCloseTo(b.units, 5);
+      if (s.grand) expect(b.left, `${s.kind} ${i} bar ${j}, the left hand fills its ${b.meter}`).toBeCloseTo(b.units, 5);
+      b.pitches.forEach((chord) => {
+        chord.forEach((m) => {
+          expect(inKey.has(m % 12), `${s.kind} ${i} bar ${j}: ${m} in the key`).toBe(true);
+          expect(m, "no lower than a piano's E1").toBeGreaterThanOrEqual(28);
+          expect(m, "no higher than C6").toBeLessThanOrEqual(84);
+        });
+        expect(Math.max(...chord) - Math.min(...chord), `${s.kind} ${i} bar ${j}: within a hand`).toBeLessThanOrEqual(12);
+      });
+    });
+    if (s.kind === "stave") expect(s.written, `stave ${i}: the times written are the ones its bars are in`).toEqual(expected);
+  });
+  expect(bars, "bars written").toBeGreaterThan(8);
+  expect(meters.size, "in several metres, not always 4/4").toBeGreaterThan(2);
+  expect(await page.evaluate(() => window.__sounds), "silent: no sound asked for").toBe(0);
+});
+
+/* AND IT IS THE HOUSE PAGE'S OWN COMPOSER. The two pages share no script,
+   so the music is composed twice — in qimu.js for the house's own page and
+   in motifs.js here — and a fix to one has to be a fix to both. Every
+   piece of the composing is the same, word for word. */
+test("the Houses view composes Qimu's music with the house page's own code", () => {
+  const fs = require("fs");
+  const path = require("path");
+  const read = (file) => fs.readFileSync(path.join(__dirname, "..", file), "utf8");
+  const piece = (src, start, end) => {
+    const i = src.indexOf(start);
+    if (i < 0) return "";
+    return src.slice(i, src.indexOf(end, i) + end.length);
+  };
+  const a = read("qimu.js"), b = read("motifs.js");
+  const pieces = [
+    ["  const weighted = (list) => {", "\n  };\n"],
+    // The notes, the keys, the metres, what a beat can be and the
+    // progressions, down to the end of keyOf — one piece.
+    ["  const SEMIS = [", "\n    return { count, sharps, minor, sig, tonic: minor ? (major + 5) % 7 : major };\n  }\n"],
+    ["  function composeBar(", "\n  }\n"],
+    ["  const spacing = ", "\n"],
+    ["  function layBar(", "\n  }\n"],
+  ];
+  pieces.forEach(([start, end]) => {
+    const one = piece(a, start, end);
+    expect(one.length, `${start.trim()} is in qimu.js`).toBeGreaterThan(20);
+    expect(piece(b, start, end), `${start.trim()} the same in both`).toBe(one);
+  });
+});
+
 /* CROSSING THE WALL SETS NOTHING OFF. The pointer passing over house
    after house on its way somewhere else must not start any of them.
 
