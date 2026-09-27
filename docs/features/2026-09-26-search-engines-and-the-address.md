@@ -210,6 +210,15 @@ written and as drawn — and what was actually missing was put right:
   and its letters 1.45 (they were 1.05 and 0.95 — a third of a pixel in a browser's tab, which is
   why it could barely be seen), and the double bond's two lines a little further apart so they
   stay two. `apple-touch-icon.png` rendered again from it.
+- **And bolder again, later the same day** ("also please make the aldehyde in the favicon more
+  visible"): what vanished in a tab was the **letters**, about two pixels tall, so they are half as
+  large again (9.6 units tall, from 6.4), the lines about twice as heavy (bonds 2.8, letters 2.3),
+  in pure black, and the formula fills the square to within three units of its edges. The bigger
+  letters would have squeezed the C=O double bond down to two dots, so the O stands further up and
+  the bonds are cut back from every letter by one small, even gap (1.2 units). The geometry is
+  worked out rather than placed: the same arrangement — O above on its double bond, R and H at
+  120° below — only larger. Three weights were drawn at 16, 32 and 48 pixels, on a normal and a
+  sharp screen, before this one was chosen. `apple-touch-icon.png` rendered again from it.
 
 Tested in `tests/repository.spec.js`: **`every page tells search engines what it is`** now also
 asks for a theme colour on every page and the Twitter card's own title, line and picture on every

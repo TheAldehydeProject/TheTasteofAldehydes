@@ -1,27 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
   <!-- The site's icon: an aldehyde, R–C(=O)–H, black on white (the owner,
        2026-09-26), drawn as a structural formula is drawn — the O on top
-       on its double bond, R and H at 120 degrees below, every bond the
-       same length and stopping short of the letters it joins, the
-       letters geometric and in the same thin line. It was drawn by hand
-       for one round; the owner asked for it "less bold", the symbols
-       not connected, and "more so chemical and very technical". Then,
-       2026-09-27, "make the aldehyde on the favicon a little more
-       visible": the same drawing a tenth larger on its square, and its
-       lines about two thirds heavier (they were 1.05 and 0.95 units,
-       a third of a pixel in a browser's tab). -->
+       on its double bond, R and H at 120 degrees below, every bond
+       stopping short of the letters it joins, the letters geometric and
+       drawn in the same line. It was drawn by hand for one round; the
+       owner asked for it "less bold", the symbols not connected, and "more
+       so chemical and very technical". Then, 2026-09-27, "a little more
+       visible", and later the same day "more visible" again: the letters
+       half as large again (it was the letters that vanished in a tab — two
+       pixels tall), the lines about twice as heavy (bonds 2.8 units, letters
+       2.3; they were 1.6 and 1.45, and 1.05 and 0.95 before that), in pure
+       black, and the whole formula filling the square to within three
+       units of its edges. Worked out, not placed by eye: the bonds are
+       cut back from each letter by the same gap all round. -->
   <rect width="48" height="48" rx="2" fill="#ffffff"/>
-  <g transform="translate(24 24) scale(1.1) translate(-24 -24)">
-    <g fill="none" stroke="#111111" stroke-linecap="butt" stroke-linejoin="miter">
-      <!-- the bonds: C=O, C–R, C–H -->
-      <path stroke-width="1.6" d="M22.3 23.5V15.5M25.7 23.5V15.5M19.94 30.84L12.47 35.16M28.06 30.84L35.53 35.16"/>
-    </g>
-    <g fill="none" stroke="#111111" stroke-width="1.45" stroke-linecap="butt" stroke-linejoin="miter">
-      <!-- the atoms: O, C, R, H -->
-      <ellipse cx="24" cy="10.5" rx="2.7" ry="3.2"/>
-      <path d="M25.74 26.05A2.7 3.2 0 1 0 25.74 30.95"/>
-      <path d="M6.11 40.7V34.3H9.16A1.65 1.65 0 0 1 9.16 37.6H6.11M8.76 37.6L10.86 40.7"/>
-      <path d="M37.29 34.3V40.7M41.89 34.3V40.7M37.29 37.5H41.89"/>
-    </g>
+  <g fill="none" stroke="#000000" stroke-linecap="butt" stroke-linejoin="miter">
+    <!-- the bonds: C=O, C–R, C–H -->
+    <path stroke-width="2.8" d="M20.64 22.60V13.60 M27.36 22.60V13.60 M19.61 31.14L11.42 35.86 M28.39 31.14L36.58 35.86"/>
+    <!-- the atoms: O, C, R, H -->
+    <g stroke-width="2.3"><ellipse cx="24.00" cy="7.60" rx="2.50" ry="3.65"/><path d="M25.67 25.89A2.50 3.65 0 1 0 25.67 31.31"/><path d="M4.53 42.05V34.75H7.63A1.92 1.92 0 0 1 7.63 38.58H4.53M6.85 38.58L9.52 42.05"/><path d="M38.48 34.75V42.05M43.47 34.75V42.05M38.48 38.40H43.47"/></g>
   </g>
 </svg>
