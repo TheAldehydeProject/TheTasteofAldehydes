@@ -216,3 +216,44 @@ Tested: **`Explorations 002 is Buying A Perfume, and its page stands ready for t
 writing`** in `tests/essay.spec.js` — the row, its number, kind and link; the numbers still
 000 to 009; the page's head, its rule, and no paragraph that is not a waiting box.
 
+
+## 2026-09-27 — Explorations 001, Dupes, Designers and Niches; 002 called Buying a Perfume
+
+> Add two explorations in the RE tab: the first should be 001 (move everything down), and called
+> Dupes, Designers and Niches. The second should be 002, and called "Buying a Perfume"
+
+and then the whole of the writing for 001, with *"Dupes Designers and Niches\* / and Private lines
+and ultra niches (this should only exist on the page of the exploration itself)"* at its head.
+
+- **`works/dupes-designers-and-niches.html`** is a new essay page, **written**: seven sections —
+  01 Introduction (the paragraph under the title, which had no heading of its own; the primer
+  calls its own first section that too), 02 Dupes, 03 Designers, 04 Designer Private Line,
+  05 Niches, 06 Ultra Niches, 07 Conclusion — every word the owner's, as sent. Four things were
+  done to it and nothing else: the invisible left-to-right marks a word processor leaves were
+  taken out; "E" after a price is **€**, as the owner asked ("25E(euro sign)"), and a price given
+  with no currency ("80-150") is left as it was; the "too" they marked "(underline)" is
+  **underlined** (`<u>`, a hairline under it, `.essay-section u`); and four **links** were added
+  where the writing mentions a page on the site — Tobacolor, Favourites, ADAR and Scent
+  descriptions — without changing a word. Two things in it read like slips and **were left**,
+  because the words are the owner's: *"Lattafa, Armaf Afnan, and Zara. The first three…"* (a
+  comma between Armaf and Afnan, which are two houses) and *"Luis Vuitton"*.
+- **The subtitle is the page's alone**: the title is *Dupes, Designers and Niches\** and under it,
+  in the head's italic, *\*and Private lines and ultra niches*. The row on the table says only
+  *Dupes, Designers and Niches*.
+- **002 is "Buying a Perfume"**. It was already there, at 002, as *Buying A Perfume - A
+  Philosophical Exploration*, with its page waiting for its writing — so this is that row renamed,
+  not a second one: the table says *Buying a Perfume*, and its page keeps *A Philosophical
+  Exploration* under the title as its subtitle, the way 001 keeps its own. Its `<title>` says
+  *Buying a Perfume* too.
+- **Everything after moved down**: Resins in Perfumery is **003** and Cold vs Warm Incense
+  **004** — and their pages' kickers say so now (*Researches · 003*, *Explorations · 004*; they
+  said *01* and *01*, which was stale even before, since the explorations are numbered by the
+  table). The table still runs 000 to 009: the last *Untitled* went to make room.
+- **Everywhere a page has to be named**: a line in `PAGES` in `search-page.js`, in
+  `tools/seo.py` (and the tool run), in `tests/mobile.spec.js` and `tests/pages.spec.js`.
+
+Tested in `tests/essay.spec.js`: **`Explorations 001 is Dupes, Designers and Niches, written, with
+its subtitle on its own page only`** (the row, the order of 000–004, the subtitle nowhere on the
+table, the seven headings, nothing waiting, the € and the underline); **`Explorations 002 is
+Buying a Perfume, and its page stands ready for the owner's writing`**; and **`the theories and the
+researches reach their own pieces`**, which finds the research at the fourth row now.

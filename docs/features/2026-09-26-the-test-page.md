@@ -146,3 +146,12 @@ It is also in `pages.spec.js`, `mobile.spec.js` (nothing wider than a phone) and
   change, in the page.
 - **A first answer**: how dense, how red, how it turns and what it does under the hand are each a
   number at the top of `network.js`.
+
+## 2026-09-27 — a title that is read and not drawn
+
+For the site-wide pass on headings ("exactly one `<h1>` per page" — see [search
+engines](2026-09-26-search-engines-and-the-address.md)) the page carries `<h1
+class="visually-hidden">Test page</h1>` inside its `<main>`: a screen reader and a search engine
+read it, and nothing is drawn — the page is as blank as the owner asked. Tested in
+`tests/test-page.spec.js`: **`a dense network of red nodes is drawn on the dark page, and nothing
+else`** still finds no heading or writing drawn, and the one `<h1>` a single pixel, clipped away.

@@ -12,10 +12,17 @@
 #                   own domain (CNAME: thetasteofaldehydes.com);
 #   the ICONS       favicon.svg, and apple-touch-icon.png for a phone;
 #   OPEN GRAPH      and a Twitter card: the title, the line and the
-#                   picture (images/social-card.png) a shared link shows;
-#   STRUCTURED DATA the site's name for the home page, and the trail each
+#                   picture (images/social-card.png) a shared link shows —
+#                   the Twitter card says all of them itself as well
+#                   (2026-09-27), rather than leaving X to fall back on
+#                   Open Graph's;
+#   A THEME COLOUR  the page's own ground, which a phone's browser paints
+#                   its bar in (`THEME`, below);
+#   STRUCTURED DATA the site's name for the home page, the trail each
 #                   page stands in (Home › Scent descriptions › ADAR),
-#                   which a search engine may show in place of the address;
+#                   which a search engine may show in place of the address,
+#                   and, for a piece of writing, that it is an article of
+#                   the site's;
 #
 # and NOINDEX on what is not the site itself — its search page, the test
 # and sandbox pages, the templates, and the pages left forwarding from
@@ -42,7 +49,7 @@ P = {
  "categories/scent-descriptions.html": dict(desc="Scent descriptions: nine perfume houses, from Pineward and ADAR to Tombstone and Qimu & Musicians, and individual fragrances, each described.", crumbs=[HOME]),
  "categories/theories.html": dict(desc="Theories — some frameworks that I came up with myself: The Architecture of Sunscreen, The Architecture of Sweat and The Note Dissemination Framework.", crumbs=[HOME]),
  "categories/favorites.html": dict(desc="Favourites — things I like, no other criteria than that: fragrances in chapters, among them Des Cendres, Haxan and De Profundis.", crumbs=[HOME]),
- "categories/researches.html": dict(desc="Explorations & Researches. Here you will find my researches and my explorations: a guide to perfume, resins in perfumery, cold and warm incense, and more.", crumbs=[HOME]),
+ "categories/researches.html": dict(desc="Explorations & Researches. Here you will find my researches and my explorations: a guide to perfume, dupes, designers and niches, resins in perfumery, and more.", crumbs=[HOME]),
  "categories/note-library.html": dict(desc="The Note Library: every note named in a fragrance on this site, filed by accord as a periodic table of notes, each with a brief explanation of what it is.", crumbs=[HOME]),
  "categories/other-2.html": dict(desc="Photography: pictures taken alongside the writing — mostly of the things being described, sometimes of the places they brought to mind.", crumbs=[HOME]),
  "houses/pineward.html": dict(type="article", desc="Pineward, the house that smells like trees: forty-seven fragrances described with their notes and photographs — Murkwood, Snoqualmie, White Fir and more.", crumbs=[HOME, SD]),
@@ -59,10 +66,11 @@ P = {
  "works/theory-02.html": dict(type="article", desc="Sweat is a facet in fragrances that I feel does not receive much thought. A way of telling the fragrances that use it apart.", crumbs=[HOME, TH]),
  "works/theory-03.html": dict(type="article", desc="This is a theory that tries to explain the evolution of fragrance in terms of how distinguishable notes are — with a calculator for it.", crumbs=[HOME, TH]),
  "works/my-personal-introduction-to-perfume.html": dict(type="article", desc="My personal introduction to perfume: this article is intended to clarify everything a person might need to understand perfume.", crumbs=[HOME, RE_]),
+ "works/dupes-designers-and-niches.html": dict(type="article", desc="Dupes, designers and niches — and private lines and ultra niches: the categories of fragrances based on the market itself, their prices, their goals and their smell.", crumbs=[HOME, RE_]),
  "works/resins-in-perfumery.html": dict(type="article", desc="Resins in perfumery: what a resin is, and then examples of the most frequently used ones, as well as what makes them unique.", crumbs=[HOME, RE_]),
  "works/cold-vs-warm-incense.html": dict(type="article", desc="Cold vs warm incense: two ways the same material goes into a fragrance, and they do not smell like the same family at all.", crumbs=[HOME, RE_]),
- "works/buying-a-perfume.html": dict(type="article", desc="Buying a perfume — a philosophical exploration.", crumbs=[HOME, RE_]),
- "contact.html": dict(desc="Contact The Taste of Aldehydes.", crumbs=[HOME]),
+ "works/buying-a-perfume.html": dict(type="article", desc="Buying a Perfume, a philosophical exploration — one of the Explorations & Researches on The Taste of Aldehydes, a personal project of perfume exploration.", crumbs=[HOME, RE_]),
+ "contact.html": dict(desc="Get in touch with The Taste of Aldehydes, a personal project of perfume exploration: send a carrier pigeon, or an email.", crumbs=[HOME]),
  # Not for search engines: the site's own search, the sandbox and the
  # templates, and the pages left standing where the houses used to be.
  "search.html": dict(desc="Search The Taste of Aldehydes: every house, fragrance, note and piece of writing on the site.", noindex=True),
@@ -76,6 +84,28 @@ P = {
 for slug in ["adar", "almost-human", "ataraxia", "grande-parfums", "les-abstraits", "pineward"]:
     P["works/%s.html" % slug] = dict(desc=P["houses/%s.html" % slug]["desc"], noindex=True, canonical="houses/%s.html" % slug)
 P["works/individual-fragrances.html"] = dict(desc=P["individual-fragrances/individual-fragrances.html"]["desc"], noindex=True, canonical="individual-fragrances/individual-fragrances.html")
+
+# THE THEME COLOUR: each page's own ground, read off the page as it is
+# drawn. A page not named here is on the site's white paper.
+PAPER = "#fafaf9"
+THEME = {
+ "categories/scent-descriptions.html": "#ffffff",
+ "categories/note-library.html": "#0b0b0c",
+ "categories/theories.html": "#15171d",
+ "houses/adar.html": "#07070a", "works/adar.html": "#07070a",
+ "houses/ataraxia.html": "#1b1d21", "works/ataraxia.html": "#1b1d21",
+ "houses/grande-parfums.html": "#f6f2e8", "works/grande-parfums.html": "#f6f2e8",
+ "houses/les-abstraits.html": "#f3f0f5", "works/les-abstraits.html": "#f3f0f5",
+ "houses/pineward.html": "#eef1ea", "works/pineward.html": "#eef1ea",
+ "houses/qimu-and-musicians.html": "#e2ebf6",
+ "houses/tale-parfums.html": "#fbf8f0",
+ "houses/tombstone.html": "#ecebe8",
+ "search.html": "#191c21",
+ "works/test-page.html": "#1f1f20",
+}
+for essay in ["theory-01", "theory-02", "theory-03", "resins-in-perfumery", "cold-vs-warm-incense",
+              "buying-a-perfume", "dupes-designers-and-niches", "my-personal-introduction-to-perfume"]:
+    THEME["works/%s.html" % essay] = "#0a0b0e"
 
 def esc(t): return H.escape(t, quote=True)
 
@@ -99,7 +129,8 @@ for path, meta in P.items():
     if meta.get("noindex"):
         lines.append('<meta name="robots" content="noindex, follow">')
     lines += ['<link rel="icon" href="%sfavicon.svg" type="image/svg+xml">' % root,
-              '<link rel="apple-touch-icon" href="%sapple-touch-icon.png">' % root]
+              '<link rel="apple-touch-icon" href="%sapple-touch-icon.png">' % root,
+              '<meta name="theme-color" content="%s">' % THEME.get(path, PAPER)]
     if not meta.get("noindex"):
         lines += ['<meta property="og:site_name" content="%s">' % SITE,
                   '<meta property="og:type" content="%s">' % meta.get("type", "website"),
@@ -111,12 +142,20 @@ for path, meta in P.items():
                   '<meta property="og:image:height" content="630">',
                   '<meta property="og:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">',
                   '<meta property="og:locale" content="en_GB">',
-                  '<meta name="twitter:card" content="summary_large_image">']
+                  '<meta name="twitter:card" content="summary_large_image">',
+                  '<meta name="twitter:title" content="%s">' % esc(short),
+                  '<meta name="twitter:description" content="%s">' % esc(meta["desc"]),
+                  '<meta name="twitter:image" content="%simages/social-card.png">' % BASE,
+                  '<meta name="twitter:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">']
         data = []
         if path == "index.html":
             data.append({"@context": "https://schema.org", "@type": "WebSite", "name": SITE,
                          "alternateName": "Taste of Aldehydes", "url": BASE,
                          "description": meta["desc"], "inLanguage": "en"})
+        if meta.get("type") == "article":
+            data.append({"@context": "https://schema.org", "@type": "Article", "headline": short,
+                         "description": meta["desc"], "url": canon, "image": BASE + "images/social-card.png",
+                         "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": SITE, "url": BASE}})
         if meta.get("crumbs"):
             items = [{"@type": "ListItem", "position": i + 1, "name": n, "item": BASE + u}
                      for i, (n, u) in enumerate(meta["crumbs"] + [(short, path)])]

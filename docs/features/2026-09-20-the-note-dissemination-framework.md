@@ -479,3 +479,23 @@ and the caption saying nothing of logarithms; pressed, the logarithmic drawing i
 *Log(Modified IBR)*) and the caption saying so; pressed again, back. **`without its script the
 piece's graph is the linear one, and no button`**. The calculator's own toggle test now looks
 for `.calc .calc-scale`, since there are two of those buttons on the page.
+
+## 2026-09-27 — the pair names quieter, over a blue hairline; the calculator's heading an h2
+
+> I want you to change the xerjoff font again so it suits the rest of the page please.
+
+**The pairs' names** (`.zone-pair-name` — *For the 5-note Xerjoff* and the rest) are in the
+writing's own face at a **medium** weight (500, 16px) in the lead paragraph's light grey, with a
+**hairline of the page's blue** under them as wide as the name — the head of the worked answer
+under it, quieter than the page's headings. The bold white of the round before was heavier than
+anything round it but the section headings; the mono in spaced capitals before that read as one
+of the site's readings. Three treatments were drawn side by side before this one was chosen (the
+name in the subheadings' blue; in the writing's italic; this one).
+
+**The calculator's heading is an `<h2>`** (it was a second `<h1>` on the page: *The Note
+Dissemination Theory — Calculator*), and the calculator stands in the page's `<main>` rather than
+loose on the body — see [search engines](2026-09-26-search-engines-and-the-address.md). It looks the
+same (`.calc-head h2`).
+
+Tested in `tests/calculator.spec.js`: **`the pairs' names are in the writing's face over a blue
+hairline, and the blue subheadings larger`**.

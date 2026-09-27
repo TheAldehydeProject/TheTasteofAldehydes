@@ -478,3 +478,29 @@ The table on the left stands a little lower under the owner's paragraph — `mar
 40px lower at 1440 × 900, 32 at 1280 × 720, 46 at 1920 × 1080. All ten rows still fit without the
 table scrolling; a phone is unchanged. Tested in `tests/index-pages.spec.js`, in the layout test:
 the table more than 70px below the paragraph (it was 45).
+
+## 2026-09-27 — twelve and six, the bar across the foot, the arrows plainer
+
+> make the loading bar stretch out a little bit in the bottom right of the RE (image 1). i want it
+> to be longer (as it was before). I also wanna make it 6 transforming and 12 holding. make the
+> arrows a little more obvious please.
+
+- **Twelve seconds held, six turning** — `HOLD` 12000 and `MORPH` 6000 in `explorations.js` (they
+  were eight and eight). The first form still takes `ARRIVE` (1.6s) to gather before its hold, so
+  the first transformation starts at 13.6s. `SWEEP` is unchanged: over the first half of a
+  transformation the specks set off in turn, which at six seconds is three.
+- **The bar is as long as it was before the arrows**: it had been cut down to the room between
+  them (`left`/`right` 28px of the caption) when they arrived; it is a child of the field now, not
+  of the caption, and runs across the field's foot 18px in from each side, 46px up (42px on a
+  phone), over the caption — which is where it stood when it spanned the old caption's whole
+  width. "Image 1", which the owner mentions, did not reach this session; "the bottom right of the
+  RE" is the field, which is where this bar is, and nothing else on the page loads.
+- **The arrows plainer** — each in a hairline square (`border: 1px` at 0.3 of the ink), the
+  chevron at 11px and 1.5 wide (it was 9 and 1.2) and at 0.66 of the ink (it was 0.34); pointed
+  at, the square and the chevron go to the full ink. Still 24px, so still "small and subtle near
+  the bottom".
+
+Tested in `tests/index-pages.spec.js`: **`the field holds each form twelve seconds and turns into
+the next over six, whatever is pointed at`** (the clock at 13.3s, 14.0s, half way at 16.6s,
+landed at 20.0s, on to Rössler at 31.8s and Aizawa at 49.8s); **`the arrows at the field's foot go
+on to the next form, or back, at once`** (twelve seconds held after them now).

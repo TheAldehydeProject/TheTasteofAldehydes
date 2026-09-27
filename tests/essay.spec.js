@@ -144,10 +144,11 @@ test("the theories and the researches reach their own pieces", async ({ page }) 
   await expect(first).toHaveAttribute("href", "../works/theory-01.html");
 
   await page.goto("/categories/researches.html");
-  // 000 stands first since 2026-09-23; the research is the next row.
+  // 000 stands first since 2026-09-23; since 2026-09-27 Dupes, Designers
+  // and Niches and Buying a Perfume stand before the research, at 003.
   await expect(page.locator(".index-table tbody a").first())
     .toHaveAttribute("href", "../works/my-personal-introduction-to-perfume.html");
-  await expect(page.locator(".index-table tbody a").nth(1))
+  await expect(page.locator(".index-table tbody a").nth(3))
     .toHaveAttribute("href", "../works/resins-in-perfumery.html");
 
   // And the research carries the owner's own writing rather than a
@@ -212,11 +213,13 @@ test("no theory carries a picture", async ({ page }) => {
 
 /* EXPLORATIONS 002. The owner: "add another exploration on 'Buying A
    Perfume - A Philosophical Exploration' Make it be 002. make the page
-   too, I will want to just add text later on." So 002 is that row,
-   linked, and the page is an essay page with its rule, and nothing
+   too, I will want to just add text later on." And then (2026-09-27):
+   "The second should be 002, and called 'Buying a Perfume'". So 002 is
+   that row, named so and linked, and the page is an essay page with its
+   rule, "A Philosophical Exploration" under its title, and nothing
    written in it that the owner did not write: every section says it is
    waiting, in a dashed box. */
-test("Explorations 002 is Buying A Perfume, and its page stands ready for the owner's writing",
+test("Explorations 002 is Buying a Perfume, and its page stands ready for the owner's writing",
   async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.goto("/categories/researches.html");
@@ -224,14 +227,14 @@ test("Explorations 002 is Buying A Perfume, and its page stands ready for the ow
   await expect(row).toHaveCount(1);
   await expect(row.locator(".index-no")).toHaveText("002");
   await expect(row.locator(".index-kind")).toHaveText("Exploration");
-  await expect(row.locator("a")).toHaveText("Buying A Perfume - A Philosophical Exploration");
+  await expect(row.locator("a")).toHaveText("Buying a Perfume");
   await expect(row.locator("a")).toHaveAttribute("href", "../works/buying-a-perfume.html");
   // The numbers still run 000 to 009, each once.
   const nos = await page.$$eval(".index-table tbody tr", (all) => all.map((r) => r.dataset.no));
   expect(nos).toEqual(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]);
 
   await page.goto("/works/buying-a-perfume.html");
-  await expect(page.locator(".essay-head h1")).toContainText("Buying A Perfume");
+  await expect(page.locator(".essay-head h1")).toContainText("Buying a Perfume");
   await expect(page.locator(".essay-head h1 em")).toHaveText("A Philosophical Exploration");
   await expect(page.locator(".essay-kicker")).toHaveText("Explorations · 002");
   const sections = page.locator(".essay-section");
@@ -242,5 +245,43 @@ test("Explorations 002 is Buying A Perfume, and its page stands ready for the ow
   expect(await page.locator(".essay-section p:not(.essay-waiting)").count(),
     "no prose the owner did not write").toBe(0);
   await expect(page.locator(".essay-waiting")).toHaveCount(count);
+  expect(errors).toEqual([]);
+});
+
+/* EXPLORATIONS 001, 2026-09-27: "Add two explorations in the RE tab: the
+   first should be 001 (move everything down), and called Dupes,
+   Designers and Niches." The row is 001 and named only that; its page
+   carries the owner's "*and Private lines and ultra niches" under the
+   title ("this should only exist on the page of the exploration
+   itself"), and all seven of its sections are the owner's writing —
+   none of them waiting. What followed 001 moved down: Resins in
+   Perfumery is 003 and Cold vs Warm Incense 004. */
+test("Explorations 001 is Dupes, Designers and Niches, written, with its subtitle on its own page only",
+  async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto("/categories/researches.html");
+  const row = page.locator('.index-table tbody tr[data-no="1"]');
+  await expect(row.locator(".index-no")).toHaveText("001");
+  await expect(row.locator(".index-kind")).toHaveText("Exploration");
+  await expect(row.locator("a")).toHaveText("Dupes, Designers and Niches");
+  await expect(row.locator("a")).toHaveAttribute("href", "../works/dupes-designers-and-niches.html");
+  await expect(page.locator(".index-table"), "the subtitle is the page's alone").not.toContainText("Private lines");
+  const named = await page.$$eval(".index-table tbody tr", (all) => all.map((r) => r.dataset.no + " " + r.dataset.name));
+  expect(named.slice(0, 5)).toEqual(["0 My Personal Introduction to Perfume", "1 Dupes, Designers and Niches",
+    "2 Buying a Perfume", "3 Resins in Perfumery", "4 Cold vs Warm Incense"]);
+
+  await page.goto("/works/dupes-designers-and-niches.html");
+  await expect(page.locator(".essay-kicker")).toHaveText("Explorations · 001");
+  await expect(page.locator(".essay-head h1")).toContainText("Dupes, Designers and Niches*");
+  await expect(page.locator(".essay-head h1 em")).toHaveText("*and Private lines and ultra niches");
+  await expect(page.locator(".essay-section h2")).toHaveText(["01Introduction", "02Dupes", "03Designers",
+    "04Designer Private Line", "05Niches", "06Ultra Niches", "07Conclusion"]);
+  await expect(page.locator(".essay-waiting"), "all of it written").toHaveCount(0);
+  // The owner's own words, as sent: the euro sign where they asked for
+  // it, and the "too" they marked to be underlined.
+  await expect(page.locator("#section-02")).toContainText("priced between 25€ to 50€");
+  await expect(page.locator("#section-02 u")).toHaveText("too");
+  await expect(page.locator("#section-07")).toContainText("Trust me, it is pretty fun.");
+  await expect(page.locator(".essay-rule")).toBeVisible();
   expect(errors).toEqual([]);
 });

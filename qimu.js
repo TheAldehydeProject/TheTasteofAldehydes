@@ -39,20 +39,25 @@
 //                it, never further than a hand can reach. The last bar
 //                comes home to the key's own chord.
 //
-// So every note has a pitch, and HOVERING A NOTE PLAYS IT, on a piano
-// made here (`strike`) — a chord plays as a chord. A tap does the same
-// on a phone. It starts silent: a browser will not let a page make a
-// sound until it has been pressed, so the square button at the top of
-// the page (`.qimu-sound`) is how the sound is turned on, and off again.
+// So every note has a pitch, and POINTING AT A STAVE PLAYS IT — that
+// stave, from its first note, as it is written, both hands, in time, on
+// a recorded grand piano (`key`, `play`), and only while the hand is on
+// its lines (2026-09-27; until then a single note sounded as the hand
+// passed over it, on a piano made up here, which the owner found
+// "aweful"). A tap plays a stave through once on a phone. It starts
+// silent: a browser will not let a page make a sound until it has been
+// pressed, so the square button at the top of the page (`.qimu-sound`)
+// is how the sound is turned on, and off again.
 //
 // NICELY ANIMATED, and quietly:
 //   WRITTEN IN  a stave is written left to right, as a pen would, the
 //               first time it comes into the window;
 //   PLAYED      then a faint playhead passes along it at its own tempo,
 //               and each note it reaches LIFTS — a little stronger, for a
-//               moment — as a note sounds and dies away (in silence: the
-//               playhead is to be seen, the hand is what sounds). The
-//               staves play one after another rather than all at once;
+//               moment — as a note sounds and dies away (in silence,
+//               unless it is the stave under the hand with the sound on,
+//               whose playhead is where the piano is). The staves play
+//               one after another rather than all at once;
 //   THE HAND    and the notes near the pointer stand a shade stronger.
 //
 // IT LIVES DOWN THE DOCUMENT, not on the window: a score is read down
@@ -91,7 +96,6 @@
   const TEMPO = [58, 88];          // crotchets a minute, a stave's own
   const RING = 0.9;                // seconds a played note takes to die away
   const HAND = 90;
-  const REACH = 9;                 // px round a notehead the hand plays it from
 
   let seed = 77013;
   const random = () => {
@@ -535,6 +539,10 @@
         heads: hs.at.map(([nx, y]) => [ox + nx, y]),
         at: e.at,
         dur: e.dur,
+        // Which hand, and whether it falls on the beat: how hard the
+        // piano plays it (`play`).
+        low: !!e.low,
+        strong: !!e.strong,
       });
     };
     function single(e, top, isLow) {
@@ -722,8 +730,14 @@
         pitches: bar.melody.concat(bar.low).filter((e) => !e.rest).map((e) => e.ds.map((d, i) => midiOf(d, e.alter[i]))),
       })),
     };
-    return { marks, tops, bars: edges.slice(1, -1), edges, times, length: clock, end: x, info,
-      tall: grand ? GAP * 14 : GAP * 4 };
+    // WHAT IT SOUNDS LIKE: every note on it, in the order it sounds, with
+    // how long it is held — read off the very marks that are drawn, so
+    // what is heard is what is written, note for note.
+    const music = marks.filter((m) => m.note)
+      .map((m) => ({ at: m.at, secs: m.dur * perUnit, pitches: m.pitches, low: m.low, strong: m.strong, mark: m }))
+      .sort((p, q) => p.at - q.at || (p.low ? 1 : 0) - (q.low ? 1 : 0));
+    return { marks, tops, bars: edges.slice(1, -1), edges, times, length: clock, end: x, info, music,
+      beat: 60 / tempo, tall: grand ? GAP * 14 : GAP * 4 };
   }
 
   // ============================================================
@@ -780,8 +794,6 @@
   }
 
   let handX = -99999, handY = -99999;
-  let hot = null;            // the note under the hand, and when it was struck
-  let hotAt = 0;
 
   /** Where the playhead stands, on the stave, at `t` seconds into it. */
   function headAt(s, t) {
@@ -810,12 +822,20 @@
       const since = clock - s.seen;
       const reach = REDUCE_MOTION ? s.long : s.long * ease(since / WRITE);
       // THE PLAYHEAD: once written, along the stave at its own tempo, the
-      // staves taking turns so only a few are playing at once.
-      const playing = since - WRITE - (s.turn % 3) * 1.4;
+      // staves taking turns so only a few are playing at once — in
+      // silence. The stave under the hand, with the sound on, is the one
+      // that is HEARD, and its playhead is where the piano is, read off
+      // the sound's own clock (`heardAt`).
       let head = -1, now = -1;
-      if (!REDUCE_MOTION && playing > 0) {
-        const t = playing % (s.length + 3);
-        if (t < s.length) { now = t; head = headAt(s, t); }
+      const heard = player && player.s === s ? heardAt() : null;
+      if (heard !== null) {
+        if (heard >= 0 && heard < s.length) { now = heard; head = headAt(s, heard); }
+      } else {
+        const silent = since - WRITE - (s.turn % 3) * 1.4;
+        if (!REDUCE_MOTION && silent > 0) {
+          const t = silent % (s.length + 3);
+          if (t < s.length) { now = t; head = headAt(s, t); }
+        }
       }
       const q = s.quiet;
       ink.strokeStyle = "rgba(" + BLUE + "," + (LINE * q).toFixed(3) + ")";
@@ -840,7 +860,7 @@
       }
       // The playhead itself, a hairline.
       if (head >= 0) {
-        ink.strokeStyle = "rgba(" + BLUE + "," + (0.12 * q).toFixed(3) + ")";
+        ink.strokeStyle = "rgba(" + BLUE + "," + ((heard !== null ? 0.34 : 0.12) * q).toFixed(3) + ")";
         line(s.x0 + head, top - GAP * 2, s.x0 + head, foot + GAP * 2, 0.8);
       }
       ink.save();
@@ -857,7 +877,6 @@
           const d = Math.hypot(handX - (s.x0 + m.x), handY - (top + s.tall / 2));
           if (d < HAND) a += HANDED * (1 - d / HAND);
         }
-        if (m === hot) a += 0.24 * Math.max(0, 1 - (performance.now() - hotAt) / 900);
         ink.fillStyle = ink.strokeStyle = "rgba(" + BLUE + "," + Math.min(STRONGEST, a * q).toFixed(3) + ")";
         m.fn();
       });
@@ -866,97 +885,278 @@
   }
 
   // ============================================================
-  // THE PIANO. Made here rather than sampled: each string a waveform
-  // with a piano's overtones, struck — a quick rise, then a fall that is
-  // longer the lower the note — through a filter that closes as it
-  // fades, with a little of the hammer in it and a little of a room
-  // after it. A chord is its notes struck together, a hair apart.
+  // THE PIANO — A REAL ONE. The owner, 2026-09-27: "the music playing in
+  // Qimu & musicians sounds aweful. please fix that, make it sound good.
+  // make it also sound like the actual notes on screen ... I want it to
+  // sound like an actual composition. Additionally, I want it to make the
+  // sound only if you hover that particlar set of lines."
+  //
+  // THE SOUND IS A RECORDED GRAND PIANO, not one made up here: seventeen
+  // notes of the Salamander Grand Piano (Alexander Holm's recording of a
+  // Yamaha C5, CC BY 3.0 — credited at the foot of the page), a minor
+  // third apart from C2 to C6, in audio/piano/. A note between two of
+  // them is the nearest one played a semitone or so higher or lower,
+  // which is how a sampled piano is always made. They are fetched only
+  // once the sound is turned on. (The piano before this was a waveform
+  // with a piano's overtones, struck through a filter — an organ with a
+  // click, which is what "aweful" was about.) Until they have arrived —
+  // or if they cannot be — a softer made-up voice (`synth`) stands in, so
+  // there is never silence where there should be a note.
+  //
+  // WHAT IS PLAYED IS THE STAVE, AS IT IS WRITTEN. Pointing at one set of
+  // lines plays THAT stave from its first note — every note and chord of
+  // it, both hands of a braced pair, each at its own place in the bar and
+  // held for its own length, at the stave's own tempo — with its playhead
+  // going along it at the piano's own time, and the notes lifting as they
+  // sound. The tune is played a little louder than what is under it, the
+  // notes on the beat a little louder than the ones between, and the
+  // left hand softest, as a pianist would. At the end it breathes for a
+  // beat and plays it again, for as long as the hand is on it. Take the
+  // hand off the lines and the piano stops, its notes damped rather than
+  // cut. On a phone a tap on a stave plays it through once.
+  //
+  // It starts silent: a browser will not let a page make a sound until it
+  // has been pressed, so the square button at the top of the page is how
+  // the sound is turned on, and off again.
   // ============================================================
+  const PIANO = [["C2", 36], ["Ds2", 39], ["Fs2", 42], ["A2", 45], ["C3", 48], ["Ds3", 51], ["Fs3", 54],
+    ["A3", 57], ["C4", 60], ["Ds4", 63], ["Fs4", 66], ["A4", 69], ["C5", 72], ["Ds5", 75], ["Fs5", 78],
+    ["A5", 81], ["C6", 84]];
+  const LOOK = 0.2;                // seconds of music scheduled ahead of the sound's clock
+  const LEAD = 0.08;               // seconds between the hand arriving and the first note
+  const OVERLAP = 0.03;            // legato: a note let go a hair after the next is struck
+  const LOUD = { tune: 0.82, between: 0.62, under: 0.4, left: 0.34 };
+  const PAD = GAP * 2.5;           // px round a stave's lines that count as on it
+
   let sound = false;
   let audio = null;
+  let loading = null;
+  const bank = new Map();          // midi → decoded recording
+
+  /** The room: a short, soft hall of the page's own making — two
+      channels of noise, each smoothed and falling away over two
+      seconds, so the dry recording has somewhere to ring. */
+  function hall(ctx) {
+    const long = Math.round(ctx.sampleRate * 2.2);
+    const tail = ctx.createBuffer(2, long, ctx.sampleRate);
+    const gap = Math.round(ctx.sampleRate * 0.012);
+    for (let ch = 0; ch < 2; ch++) {
+      const data = tail.getChannelData(ch);
+      let smooth = 0;
+      for (let i = gap; i < long; i++) {
+        const k = (i - gap) / (long - gap);
+        // Darker as it dies away, as a room's air takes the top off it.
+        const soft = 0.35 + 0.5 * k;
+        smooth += (Math.random() * 2 - 1 - smooth) * (1 - soft);
+        data[i] = smooth * Math.pow(1 - k, 2.6) * 1.6;
+      }
+    }
+    return tail;
+  }
+
   function wake() {
     if (!audio) {
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return null;
       const ctx = new AC();
       const out = ctx.createGain();
-      out.gain.value = 0.55;
+      out.gain.value = 1.25;
       const squeeze = ctx.createDynamicsCompressor();
-      squeeze.threshold.value = -18;
-      squeeze.ratio.value = 3;
+      squeeze.threshold.value = -14;
+      squeeze.knee.value = 12;
+      squeeze.ratio.value = 2.5;
+      squeeze.attack.value = 0.01;
+      squeeze.release.value = 0.25;
       out.connect(squeeze).connect(ctx.destination);
-      // The room: a short tail of noise, falling away.
       const room = ctx.createConvolver();
-      const long = Math.round(ctx.sampleRate * 1.8);
-      const tail = ctx.createBuffer(2, long, ctx.sampleRate);
-      for (let ch = 0; ch < 2; ch++) {
-        const data = tail.getChannelData(ch);
-        for (let i = 0; i < long; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / long, 3.2);
-      }
-      room.buffer = tail;
+      room.buffer = hall(ctx);
       const wet = ctx.createGain();
-      wet.gain.value = 0.2;
+      wet.gain.value = 0.16;
       room.connect(wet).connect(out);
-      // A piano's overtones, a little stretched as a real string's are.
-      const partials = [0, 1, 0.46, 0.3, 0.2, 0.12, 0.08, 0.05, 0.035, 0.02];
-      const tone = ctx.createPeriodicWave(new Float32Array(partials.length), Float32Array.from(partials));
-      audio = { ctx, out, room, tone };
+      audio = { ctx, out, room };
     }
     if (audio.ctx.state === "suspended") audio.ctx.resume();
     return audio;
   }
-  function strike(pitches) {
-    if (!sound || !pitches || !pitches.length) return;
+
+  /** The seventeen recordings, fetched once, the first time the sound is
+      turned on. What fails to arrive is simply not in the bank. */
+  function load() {
+    if (loading) return loading;
+    const a = wake();
+    if (!a || !window.fetch) return (loading = Promise.resolve());
+    const root = window.SITE_ROOT || "../";
+    loading = Promise.all(PIANO.map(([name, midi]) =>
+      fetch(root + "audio/piano/" + name + ".mp3")
+        .then((answer) => { if (!answer.ok) throw new Error(name); return answer.arrayBuffer(); })
+        .then((bytes) => new Promise((done, fail) => a.ctx.decodeAudioData(bytes, done, fail)))
+        .then((recording) => { bank.set(midi, recording); })
+        .catch(() => {})));
+    return loading;
+  }
+
+  /** The recording nearest a note, and how far it has to be moved. */
+  function nearest(midi) {
+    let best = null, far = 99;
+    bank.forEach((recording, at) => {
+      const d = Math.abs(midi - at);
+      if (d < far || (d === far && at > best.at)) { far = d; best = { recording, at }; }
+    });
+    return far <= 3 ? best : null;
+  }
+
+  /** A made-up voice, for a note whose recording is not there: a few
+      pure partials, the higher ones dying sooner, as a string's do. */
+  function synth(midi, when, secs, loud, voices) {
+    const { ctx, out, room } = audio;
+    const f = 440 * Math.pow(2, (midi - 69) / 12);
+    const ring = Math.max(0.8, Math.min(3.5, 2 * Math.pow(2, (60 - midi) / 18)));
+    const voice = ctx.createGain();
+    voice.gain.value = 0;
+    const off = when + Math.max(0.12, secs) + OVERLAP;
+    [[1, 1], [2, 0.42], [3, 0.2], [4, 0.1], [5, 0.05]].forEach(([n, part]) => {
+      const tone = ctx.createOscillator();
+      tone.type = "sine";
+      tone.frequency.value = f * n * (1 + 0.0004 * n * n);
+      const level = ctx.createGain();
+      level.gain.setValueAtTime(0, when);
+      level.gain.linearRampToValueAtTime(loud * part * 0.5, when + 0.004);
+      level.gain.setTargetAtTime(0, when + 0.004, ring / (n * 1.6));
+      tone.connect(level).connect(voice);
+      tone.start(when);
+      tone.stop(off + 0.6);
+    });
+    voice.gain.setValueAtTime(1, when);
+    voice.gain.setValueAtTime(1, off);
+    voice.gain.setTargetAtTime(0, off, 0.08);
+    voice.connect(out);
+    voice.connect(room);
+    voices.push({ gain: voice.gain, stop: (t) => {}, off });
+  }
+
+  /** ONE NOTE of the score, from `when` for `secs`, at `loud`. */
+  function key(midi, when, secs, loud, voices) {
+    const near = nearest(midi);
+    if (!near) { synth(midi, when, secs, loud, voices); return; }
+    const { ctx, out, room } = audio;
+    const string = ctx.createBufferSource();
+    string.buffer = near.recording;
+    string.playbackRate.value = Math.pow(2, (midi - near.at) / 12);
+    const damper = ctx.createGain();
+    // Held for as long as it is written, then the damper comes down —
+    // faster up the keyboard, where the strings are short, than down it.
+    const off = when + Math.max(0.12, secs) + OVERLAP;
+    const fall = midi < 52 ? 0.16 : midi < 64 ? 0.11 : 0.08;
+    damper.gain.setValueAtTime(loud, when);
+    damper.gain.setValueAtTime(loud, off);
+    damper.gain.setTargetAtTime(0, off, fall);
+    string.connect(damper);
+    damper.connect(out);
+    damper.connect(room);
+    string.start(when);
+    string.stop(off + fall * 8);
+    voices.push({ gain: damper.gain, stop: (t) => string.stop(t), off });
+  }
+
+  // ============================================================
+  // THE PLAYER: one stave at a time, the one under the hand.
+  // ============================================================
+  let player = null;               // { s, start, lap, next, once, voices }
+  const heardLog = [];             // for the tests: what the piano was asked to play
+  const period = (s) => s.length + s.beat;
+
+  /** Where the piano is on the playing stave, in seconds from its start
+      (below nought before the first note; past its length in the breath). */
+  function heardAt() {
+    if (!player || !audio) return null;
+    const t = audio.ctx.currentTime - player.start;
+    if (t < 0) return -1;
+    return player.once ? t : t % period(player.s);
+  }
+
+  /** Everything due in the next moment, handed to the sound's own clock,
+      so the timing is the sound card's and not the page's. */
+  function pump() {
+    if (!player || !audio) return;
+    const now = audio.ctx.currentTime;
+    const p = player, list = p.s.music;
+    if (!list.length) return;
+    for (let n = 0; n < 400; n++) {
+      if (p.next >= list.length) {
+        if (p.once) {
+          if (now > p.start + p.s.length + 1) stop();
+          return;
+        }
+        p.lap++; p.next = 0;
+      }
+      const note = list[p.next];
+      const when = p.start + p.lap * period(p.s) + note.at;
+      if (when > now + LOOK) break;
+      p.next++;
+      if (when < now - 0.02) continue;
+      // A little of a hand in it: the notes of a chord a hair apart from
+      // the bottom up, and each a shade louder or softer than the last.
+      const base = note.low ? LOUD.left
+        : note.pitches.length > 1 ? LOUD.under
+        : note.strong ? LOUD.tune : LOUD.between;
+      const chord = note.pitches.slice().sort((x, y) => x - y);
+      chord.forEach((midi, i) => {
+        const top = !note.low && i === chord.length - 1;
+        const loud = (top && chord.length > 1 ? LOUD.tune : base) * (0.94 + Math.random() * 0.1);
+        key(midi, when + i * 0.009, note.secs, loud, p.voices);
+      });
+      heardLog.push({ stave: staves.indexOf(p.s), at: note.at, pitches: note.pitches.slice(), lap: p.lap });
+    }
+    // What has been let go of for good is forgotten.
+    if (p.voices.length > 200) p.voices = p.voices.filter((v) => v.off > now - 2);
+  }
+
+  function play(s, once) {
+    if (!sound || !s || !s.music.length) return;
+    if (player && player.s === s) { if (!once) player.once = false; return; }
+    stop();
     const a = wake();
     if (!a) return;
-    const { ctx, out, room, tone } = a;
-    const loud = 0.34 / Math.sqrt(pitches.length);
-    pitches.forEach((midi, i) => {
-      const t0 = ctx.currentTime + 0.005 + i * 0.012;
-      const f = 440 * Math.pow(2, (midi - 69) / 12);
-      // Lower strings ring longer.
-      const last = Math.max(0.9, Math.min(4.2, 2.2 * Math.pow(2, (60 - midi) / 18)));
-      const voice = ctx.createGain();
-      voice.gain.setValueAtTime(0.0001, t0);
-      voice.gain.exponentialRampToValueAtTime(loud, t0 + 0.006);
-      voice.gain.exponentialRampToValueAtTime(loud * 0.42, t0 + 0.18);
-      voice.gain.exponentialRampToValueAtTime(0.0001, t0 + last);
-      const shade = ctx.createBiquadFilter();
-      shade.type = "lowpass";
-      shade.Q.value = 0.4;
-      shade.frequency.setValueAtTime(Math.min(9000, f * 9), t0);
-      shade.frequency.exponentialRampToValueAtTime(Math.max(300, f * 2.2), t0 + last * 0.7);
-      // Two strings to a note, a hair out of tune with each other.
-      [1, 1.0016].forEach((k) => {
-        const string = ctx.createOscillator();
-        string.setPeriodicWave(tone);
-        string.frequency.value = f * k;
-        string.connect(shade);
-        string.start(t0);
-        string.stop(t0 + last + 0.1);
-      });
-      // The hammer: a tick of noise at the start.
-      const tick = ctx.createBufferSource();
-      const n = Math.round(ctx.sampleRate * 0.02);
-      const noise = ctx.createBuffer(1, n, ctx.sampleRate);
-      const data = noise.getChannelData(0);
-      for (let j = 0; j < n; j++) data[j] = (Math.random() * 2 - 1) * (1 - j / n);
-      tick.buffer = noise;
-      const knock = ctx.createBiquadFilter();
-      knock.type = "bandpass";
-      knock.frequency.value = Math.min(6000, f * 4);
-      const knockGain = ctx.createGain();
-      knockGain.gain.value = loud * 0.25;
-      tick.connect(knock).connect(knockGain).connect(voice);
-      tick.start(t0);
-      shade.connect(voice);
-      voice.connect(out);
-      voice.connect(room);
+    load();
+    player = { s, start: a.ctx.currentTime + LEAD, lap: 0, next: 0, once: !!once, voices: [] };
+    document.documentElement.dataset.qimuPlaying = String(staves.indexOf(s));
+    pump();
+  }
+
+  /** The hand is off the lines: every note still sounding is damped, and
+      every note not yet begun is never begun. */
+  function stop() {
+    if (!player) return;
+    const now = audio ? audio.ctx.currentTime : 0;
+    player.voices.forEach((v) => {
+      try {
+        v.gain.cancelScheduledValues(now);
+        v.gain.setValueAtTime(v.gain.value, now);
+        v.gain.setTargetAtTime(0, now, 0.07);
+        v.stop(now + 0.6);
+      } catch (e) { /* already stopped */ }
     });
+    player = null;
+    delete document.documentElement.dataset.qimuPlaying;
+  }
+  window.setInterval(pump, 50);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) stop(); });
+
+  /** The stave whose lines the hand is on, if any. */
+  function staveUnder(x, y) {
+    const scroll = window.scrollY;
+    for (const s of staves) {
+      const top = s.y - scroll;
+      if (y < top - PAD || y > top + s.tall + PAD) continue;
+      if (x < s.x0 - 8 || x > s.x0 + s.long + 8) continue;
+      if (s.seen === null) continue;
+      return s;
+    }
+    return null;
   }
 
   // THE BUTTON, at the top of the page: a square, plainly marked, saying
-  // whether the notes sound.
+  // whether the staves sound.
   const button = document.createElement("button");
   button.type = "button";
   button.className = "qimu-sound";
@@ -970,77 +1170,74 @@
         '<path class="qimu-sound-cross" d="M15.4 9.4l5.2 5.2M20.6 9.4l-5.2 5.2"/>' +
       "</svg>" +
     "</span>";
-  button.setAttribute("aria-label", "Sound off: press to hear the notes as they are pointed at");
   document.body.appendChild(button);
   const say = button.querySelector(".qimu-sound-say");
   function setSound(on) {
     sound = on;
+    if (!on) stop();
     button.classList.toggle("is-on", on);
     button.setAttribute("aria-pressed", String(on));
     say.textContent = on ? "Sound on" : "Sound off";
-    button.setAttribute("aria-label", on ? "Sound on: press to mute the notes" : "Sound off: press to hear the notes as they are pointed at");
+    button.setAttribute("aria-label", on ? "Sound on: press to mute the music" : "Sound off: press to hear a stave played when you point at it");
     document.documentElement.dataset.qimuSound = on ? "on" : "off";
   }
   button.addEventListener("click", () => {
     setSound(!sound);
-    // Turned on, it answers at once: the key's own chord, softly, so the
-    // press is heard to have worked.
-    if (sound) strike([60, 64, 67]);
+    // Turned on, it answers: once the piano has arrived, a soft chord —
+    // so the press is heard to have worked.
+    if (sound) {
+      const a = wake();
+      if (!a) return;
+      load().then(() => {
+        if (!sound || player) return;
+        const t = a.ctx.currentTime + 0.03, v = [];
+        [48, 55, 64, 67].forEach((m, i) => key(m, t + i * 0.012, 1.4, 0.26, v));
+      });
+    }
   });
   setSound(false);
 
   // ============================================================
-  // THE HAND ON A NOTE: the nearest notehead within reach sounds, once
-  // for as long as the hand stays on it.
-  // ============================================================
-  function noteUnder(x, y) {
-    const scroll = window.scrollY;
-    let best = null, far = REACH;
-    staves.forEach((s) => {
-      const top = s.y - scroll;
-      if (y < top - 40 || y > top + s.tall + 40) return;
-      if (x < s.x0 - 10 || x > s.x0 + s.long + 10) return;
-      s.marks.forEach((m) => {
-        if (!m.note) return;
-        m.heads.forEach(([hx, hy]) => {
-          const d = Math.hypot(x - (s.x0 + hx), y - (top + hy));
-          if (d < far) { far = d; best = m; }
-        });
-      });
-    });
-    return best;
-  }
-  function touch(x, y, pressed) {
-    const m = noteUnder(x, y);
-    if (m && (m !== hot || pressed)) {
-      hot = m;
-      hotAt = performance.now();
-      strike(m.pitches);
-      document.documentElement.dataset.qimuTouched = m.pitches.join(" ");
-    } else if (!m) hot = null;
-  }
-
-  // ============================================================
   // KEEPING UP
   // ============================================================
-  const hand = (event) => {
+  function follow(x, y, tap) {
+    if (!sound) return;
+    const s = staveUnder(x, y);
+    if (s) play(s, tap);
+    else if (!tap || player) stop();
+  }
+  window.addEventListener("pointermove", (event) => {
     handX = event.clientX; handY = event.clientY;
-    touch(event.clientX, event.clientY, event.type === "pointerdown");
+    if (event.pointerType !== "touch") follow(handX, handY, false);
     if (REDUCE_MOTION) draw(0);
-  };
-  window.addEventListener("pointermove", hand, { passive: true });
-  window.addEventListener("pointerdown", hand, { passive: true });
-  document.addEventListener("pointerleave", () => { handX = -99999; handY = -99999; hot = null; });
+  }, { passive: true });
+  window.addEventListener("pointerdown", (event) => {
+    handX = event.clientX; handY = event.clientY;
+    if (event.target.closest && event.target.closest(".qimu-sound")) return;
+    follow(handX, handY, event.pointerType === "touch");
+  }, { passive: true });
+  // The page scrolled under a hand that did not move: the lines under it
+  // are other lines.
+  window.addEventListener("scroll", () => {
+    if (handX > -9000 && sound && !(player && player.once)) follow(handX, handY, false);
+    if (REDUCE_MOTION) draw(0);
+  }, { passive: true });
+  document.addEventListener("pointerleave", () => { handX = -99999; handY = -99999; if (!(player && player.once)) stop(); });
   window.addEventListener("resize", () => { size(); if (REDUCE_MOTION) draw(0); });
-  if (REDUCE_MOTION) window.addEventListener("scroll", () => draw(0), { passive: true });
 
   size();
 
   // FOR THE TESTS, like the Houses view's `census`: every stave's bars —
   // its metre, and how long what is written in each of its staves lasts —
-  // and where its notes stand on the window, with their pitches.
+  // where its notes stand on the window, with their pitches; where each
+  // stave stands on the window; the music each one plays, in order; and
+  // what the piano has been asked to play.
   window.QimuScore = {
     staves: () => staves.map((s) => ({ grand: s.tops.length > 1, ...s.info })),
+    boxes: () => staves.map((s, i) => ({ i, x: s.x0, y: s.y - window.scrollY, w: s.long, h: s.tall, written: s.seen !== null })),
+    music: (i) => staves[i].music.map((n) => ({ at: n.at, secs: n.secs, pitches: n.pitches.slice(), low: n.low })),
+    heard: () => heardLog.slice(),
+    samples: () => [...bank.keys()],
     notes: () => {
       const scroll = window.scrollY;
       const out = [];
@@ -1058,6 +1255,7 @@
   } else {
     const began = performance.now();
     (function frame(now) {
+      pump();
       draw((now - began) / 1000);
       requestAnimationFrame(frame);
     })(performance.now());

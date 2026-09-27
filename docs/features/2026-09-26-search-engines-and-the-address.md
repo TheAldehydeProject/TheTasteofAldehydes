@@ -142,3 +142,82 @@ program rather than by hand:
 The numbers were computed rather than placed by eye, which is what makes it read as technical: the
 script that worked them out is not kept, because the file is the whole of it and its comment says
 what it is.
+
+## 2026-09-27 — a check against the whole list, and what was missing
+
+The owner sent a list — *a descriptive `<title>`, a `<meta name="description">`, a viewport tag;
+Open Graph and Twitter Card tags so the site looks good shared as a link; a `sitemap.xml` and a
+`robots.txt`; exactly one `<h1>` per page, heading levels in order, a descriptive alt on every
+image, semantic tags where appropriate; and that the site works on a phone* — with "I have no
+programming background so please handle this yourself".
+
+**Most of it was already here**, from the night before: every page had its title, description,
+viewport, canonical, icons, Open Graph tags and a large Twitter card; the sitemap and `robots.txt`
+were written. So the whole site was **audited** — every page loaded in a browser and read, as
+written and as drawn — and what was actually missing was put right:
+
+- **The Twitter card says everything itself** — `twitter:title`, `twitter:description`,
+  `twitter:image` and `twitter:image:alt` — rather than leaving X to fall back on Open Graph's
+  (which it mostly does, but not everywhere a link is shown).
+- **A theme colour for every page** (`<meta name="theme-color">`): the page's own ground, read off
+  each page as it is drawn — near-black on the essays, ADAR, Ataraxia, the Note Library, the
+  search and the test page, the house's paper on the others — which a phone's browser paints its
+  bar in. `THEME` in `tools/seo.py`; a page not named there is on the white paper.
+- **A piece of writing says it is an article** (`Article` in the structured data, with its
+  headline, line, address and picture, as part of the site) as well as the trail it stands in.
+- **Two descriptions that were too short** — Contact's (*Contact The Taste of Aldehydes.*) and
+  Buying a Perfume's — were written out to a sensible length. The sandbox pages' short ones were
+  left: they are kept out of search engines anyway.
+- **One `<h1>` on every page.** Explorations & Researches had none — its name was a paragraph; it
+  is its `<h1>` now, looking the same. The search page and the test page are drawn with no title
+  on them at all, and carry one that is read and not drawn (`.visually-hidden`, a new rule
+  beside the site's headings). The Note Dissemination Framework had **two**: the calculator's own
+  title is an `<h2>` now.
+- **A `<main>` on every page** — the page's own content, which is what a screen reader jumps to
+  and what a search engine weighs — and **a `<nav>`** round the Menu's links (`nav.js`). Where one
+  box already held the whole page (the category pages, Contact, the search page, the sandboxes,
+  the article template) that box **is** the `<main>` now, with its class unchanged; on the houses,
+  the individual fragrances and the essays, a `<main class="page-main">` is **put round** the head
+  and the writing, from the title to the last part, leaving the drawing, the credit and the foot
+  outside it. Two things had to follow: the houses' way in lifted the head as **the body's own
+  child** (`body.human-page > .human-head`), which it is not now, so those rules read any
+  descendant; and the calculator is put in the `<main>` with the piece it stands in for. Nothing
+  moves: the rule that dims the page behind the Menu reads the body's children, and `<main>` is
+  one of them, so everything in it dims with it as before.
+- **Every picture described.** Most already were. Ataraxia's five and Les Abstraits' four full
+  pictures were not, nor were the twenty-eight in Pineward's gallery — which also left each of the
+  gallery's links without a name. Each was **looked at** and described (*Deity, the bottle: amber
+  under a gold cap, in firelight and smoke*; *Blue spruce branches*). The small thumbnail beside
+  each fragrance's name keeps an empty description on purpose: it is hidden from a screen reader
+  already (`aria-hidden`), because it repeats the picture described inside, and a reader would
+  otherwise hear every name twice. A theory's card no longer leaves an empty picture in the page
+  when it has none; the Photography page's waiting frames, which link to nowhere (`#`) and have
+  nothing to name them by, are kept out of the way of the keyboard until their pictures arrive.
+- **Headings in order**: none skips a level (an `<h3>` straight after an `<h1>` was the
+  calculator's, and went with its `<h1>`).
+- **On a phone** it already worked — every page is checked at 390px wide for sideways scrolling,
+  and the new page is added to that check.
+
+### The tab and the icon
+
+> also make it so that when you click off of the tab, then the tab should be called "The Taste of
+> Aldehydes" also make the aldehyde on the favicon a little more visible.
+
+- **A tab looked away from says *The Taste of Aldehydes*** — gone to another tab, every page's
+  title becomes the site's name, and coming back brings the page's own back (`nav.js`, on the
+  browser's `visibilitychange`, so it is on every page that has the Menu).
+- **The icon is heavier**: the same drawing a tenth larger on its square, its bonds 1.6 units wide
+  and its letters 1.45 (they were 1.05 and 0.95 — a third of a pixel in a browser's tab, which is
+  why it could barely be seen), and the double bond's two lines a little further apart so they
+  stay two. `apple-touch-icon.png` rendered again from it.
+
+Tested in `tests/repository.spec.js`: **`every page tells search engines what it is`** now also
+asks for a theme colour on every page and the Twitter card's own title, line and picture on every
+page for the world; **`every page has one h1, a main, headings in order, and every picture
+described`** (new) reads every page as written — one `<h1>`, one `<main>`, a title, a viewport, a
+language, no heading more than one level deeper than the one before, and every picture with an
+alt, empty only where it is hidden as a duplicate. In `tests/pages.spec.js`, **`a tab looked away
+from is called The Taste of Aldehydes, and gets its own title back`**.
+
+**Still the owner's**: submitting the sitemap in **Google Search Console** (see above) — it asks
+whoever owns the domain to prove it, which no one else can do.

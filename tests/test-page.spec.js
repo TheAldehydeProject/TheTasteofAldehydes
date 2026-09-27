@@ -62,7 +62,12 @@ test("a dense network of red nodes is drawn on the dark page, and nothing else",
   const ground = await page.evaluate(() => getComputedStyle(document.body).getPropertyValue("--bg").trim());
   expect(ground).toBe("#1f1f20");
   seen.at.forEach((px, n) => px.forEach((v) => expect(v, "point " + n + " is the dark ground").toBeLessThan(60)));
-  expect(await page.locator("h1, h2, .page-content").count(), "no heading, no writing").toBe(0);
+  // No heading and no writing drawn. The page's one <h1> (2026-09-27, "exactly
+  // one <h1> per page") is read and not drawn: a single pixel, clipped away.
+  expect(await page.locator("h1:not(.visually-hidden), h2, .page-content").count(), "no heading, no writing").toBe(0);
+  const title = await page.locator("h1.visually-hidden").evaluate((h) => { const r = h.getBoundingClientRect(); return { w: r.width, h: r.height, text: h.textContent }; });
+  expect(title.text).toBe("Test page");
+  expect(title.w * title.h, "and it is not drawn").toBeLessThanOrEqual(1);
   expect(errors).toEqual([]);
 });
 

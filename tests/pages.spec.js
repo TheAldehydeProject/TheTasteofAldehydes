@@ -34,6 +34,7 @@ const PAGES = [
   { url: "/works/theory-03.html", root: "../", title: /Note Dissemination Framework/ },
   { url: "/works/resins-in-perfumery.html", root: "../", title: /Resins/ },
   { url: "/works/my-personal-introduction-to-perfume.html", root: "../", title: /Introduction to Perfume/ },
+  { url: "/works/dupes-designers-and-niches.html", root: "../", title: /Dupes, Designers and Niches/ },
   { url: "/works/test-node-a.html", root: "../", title: /Test node/ },
   { url: "/works/test-node-b.html", root: "../", title: /Test node/ },
   { url: "/works/test-page.html", root: "../", title: /Test page/ },
@@ -122,4 +123,31 @@ test("the line on slide 2 names the site as its title does", async ({ page }) =>
   const line = (await page.locator("#slide-2 .intro-lede").textContent()).replace(/\s+/g, " ").trim();
   expect(line).toBe("A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for " +
     "information, interpretations, theories and even ideas.");
+});
+
+/* THE TAB, LOOKED AWAY FROM: "when you click off of the tab, then the tab
+   should be called 'The Taste of Aldehydes'" (2026-09-27). The page is
+   told it has been hidden (as the browser tells it when another tab is
+   chosen), and its title becomes the site's name; told it is seen again,
+   the page's own title comes back — on a house, and on the home page,
+   whose own title already is the name. */
+test("a tab looked away from is called The Taste of Aldehydes, and gets its own title back", async ({ page }) => {
+  await serveDependenciesLocally(page);
+  const seen = (hidden) => page.evaluate((h) => {
+    Object.defineProperty(document, "hidden", { configurable: true, get: () => h });
+    Object.defineProperty(document, "visibilityState", { configurable: true, get: () => (h ? "hidden" : "visible") });
+    document.dispatchEvent(new Event("visibilitychange"));
+    return document.title;
+  }, hidden);
+  await page.goto("/houses/adar.html");
+  const own = await page.title();
+  expect(own).not.toBe("The Taste of Aldehydes");
+  expect(await seen(true)).toBe("The Taste of Aldehydes");
+  expect(await seen(false)).toBe(own);
+  await page.goto("/works/dupes-designers-and-niches.html");
+  expect(await seen(true)).toBe("The Taste of Aldehydes");
+  expect(await seen(false)).toBe("Dupes, Designers and Niches — The Taste of Aldehydes");
+  await page.goto("/index.html");
+  expect(await seen(true)).toBe("The Taste of Aldehydes");
+  expect(await seen(false)).toBe("The Taste of Aldehydes");
 });

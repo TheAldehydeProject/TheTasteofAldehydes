@@ -490,6 +490,8 @@
       // this site behaves.
       picture.addEventListener("error", () => { plate.hidden = true; });
     } else {
+      // No picture: no empty image left in the page either.
+      plate.querySelector("img").remove();
       plate.hidden = true;
     }
     const calc = mark.querySelector(".structure-card-calc");

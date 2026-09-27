@@ -898,3 +898,63 @@ a little over half, carried with the page.
 **Asked, and done (2026-09-27)**: the Houses view's hover for Qimu (`motifs.js`) now writes real
 music with this page's own composer, copied there word for word — and, at the owner's word
 ("Real music, silent"), plays nothing. See [the motifs](2026-09-23-the-chain-and-its-motifs.md).
+
+## 2026-09-27 — Qimu plays the stave, on a real piano; the partition between the two ways
+
+> the music playing in Qimu & musicians sounds aweful. please fix that, make it sound good. make it
+> also sound like the actual notes on screen, i dont think it was adherenet. I want it to sound like
+> an actual composition. Additionally, I want it to make the sound only if you hover that
+> particlar set of lines.
+
+**The piano is a recording now.** What sounded "aweful" was the piano made in `qimu.js` — a fixed
+waveform with a piano's overtones through a closing filter, with a click of noise for the hammer:
+an organ with a click. It is the **Salamander Grand Piano** (Alexander Holm's recording of a
+Yamaha C5, CC BY 3.0): seventeen of its notes, a minor third apart from C2 to C6, in
+`audio/piano/` (1.3MB, with a README saying where they came from and under what licence), each
+checked to be the pitch its name says. A note between two recordings is the nearer one played a
+semitone or so higher or lower (`nearest`, `playbackRate`), as a sampled piano always is. They are
+fetched only when the sound is turned on. Until they have arrived — or if they cannot be — a
+softer voice made of five pure partials, the higher dying sooner (`synth`), stands in, so a note is
+never silent where it should sound. A short hall of the page's own making (`hall`) gives the dry
+recording somewhere to ring. **The credit** is at the foot of the page, a second line under
+*Pictures*: *Piano — The Salamander Grand Piano, recorded by Alexander Holm, under CC BY 3.0*.
+
+**What is played is the stave, as it is written** — which is "an actual composition", "the actual
+notes on screen" and "only if you hover that particular set of lines" at once. The pointer on a
+stave's lines (or within 2.5 line-gaps of them, `PAD`) plays **that stave from its first note**:
+every note and chord of it, both hands of a braced pair, each at its place in its bar and **held
+for its written length**, at the stave's own tempo — read off the very marks that are drawn
+(`music`, built in `compose`), so what is heard is note for note what is written. The tune is a
+little louder than what is under it, the notes on the beat louder than those between, the left
+hand softest; a chord's notes a hair apart from the bottom up; each note let go a hair after the
+next begins (`OVERLAP`), and **damped** when its length is up rather than cut. It is scheduled on
+the sound's own clock a moment ahead (`pump`, `LOOK`), so its timing is the sound card's and not
+the page's. **Its playhead is the piano's**: the hairline along the stave that is heard stands at
+the piano's own time, a little stronger than the silent ones, and its notes lift as they sound. At
+its end it breathes for a beat and plays again, for as long as the hand is on it. **Off the lines,
+it stops** — the notes sounding are damped over a fraction of a second and those not yet begun are
+never begun; another stave starts from its own first note; scrolling a stave out from under a still
+pointer counts as leaving it; a hidden tab stops it. On a phone a tap on a stave plays it through
+once. The single note struck as the hand passed over it — the old behaviour, which played whatever
+notes the pointer happened to cross, in the order it crossed them — is gone (`noteUnder`, `strike`,
+`REACH`, the struck note's lift).
+
+Nothing about what the score *is* changed: the composer (`keyOf`, `composeBar`, `layBar`) is
+untouched, and still the same word for word as the Houses view's copy in `motifs.js`.
+
+> put a "ll" partition between the go back and go forward between the houses buttons.
+
+**The partition** — two upright hairlines, 13px tall, in the foot's quiet colour
+(`.house-steps-bar`, `aria-hidden`) — stands between *← Back to …* and *Continue to … →* at the foot
+of all nine houses, with 18px either side of it (the two links were 30px apart). ADAR's in its own
+grey. **On a phone** the two links stand side by side now, each taking half and wrapping its own
+words, with the partition between them — they stood one under the other, where a partition would
+have had nothing to part.
+
+Tested in `tests/houses.spec.js`: **`Qimu & Musicians has a square sound button, and a stave
+pointed at plays exactly its own music`** — silent while off; turned on, all seventeen recordings
+arrive; a stave pointed at plays exactly its written notes, in order, at their written times, on
+the recording, every pitch one drawn on it; off its lines it stops and nothing more is played;
+another stave starts from its own first note; off again, silence even on the lines. The partition
+is in the markup of every house, which **`every page has one h1, a main, headings in order, and
+every picture described`** and the house tests read.

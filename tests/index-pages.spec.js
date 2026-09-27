@@ -66,7 +66,11 @@ test("the researches are a numbered, dated table, and the first one opens",
   // the first result." It was Resins in Perfumery until 2026-09-23.
   expect(rows[0].name, "000 is the first result").toBe("My Personal Introduction to Perfume");
   expect(rows[0].no, "and it is numbered nought").toBe(0);
-  expect(rows[1].name, "the first research is the owner's own").toBe("Resins in Perfumery");
+  // 001 is Dupes, Designers and Niches since 2026-09-27 ("the first
+  // should be 001 (move everything down)"); Resins in Perfumery was 001
+  // until then and is 003.
+  expect(rows[1].name, "001 is the owner's Dupes, Designers and Niches").toBe("Dupes, Designers and Niches");
+  expect(rows[3].name, "and the first research is the owner's own").toBe("Resins in Perfumery");
 
   // Four columns, in the order asked for: the number, the work, which
   // KIND of work it is, and the date it was made. The third was added
@@ -460,11 +464,12 @@ test("Explorations & Researches: the paragraph under the name, the table on the 
    abstract form for the row pointed at; the owner (2026-09-26): "I want
    the shapes to not change based on which research you hover, but rather
    to transform from one to another" — and last, choosing seventeen forms,
-   "make it now last 8 seconds transforming to 8 seocnds holding". Run on
+   "make it now last 8 seconds transforming to 8 seocnds holding", and
+   then (2026-09-27) "make it 6 transforming and 12 holding". Run on
    the page's own clock, sped up: the geodesic sphere first, gathered and
-   held; then, from 9.6s, 8s turning into the Borromean rings — its name
+   held; then, from 13.6s, 6s turning into the Borromean rings — its name
    taken up half way through, when there is more of the new form than the
-   old; the rings held 8s; then on to the Rössler attractor, and to
+   old; the rings held 12s; then on to the Rössler attractor, and to
    Aizawa's after it. Pointing at a row changes nothing,
    and nothing is written into the drawing but the angles of its spans. */
 const CYCLE = ["geodesic", "borromean", "rossler", "aizawa", "lissajous", "gyre", "ripple",
@@ -476,7 +481,7 @@ const FORM_NAMES = {
   sierpinski: "Sierpiński tetrahedron", hilbert: "Hilbert curve", thomas: "Thomas attractor",
   chladni: "Chladni figure", eight: "Figure-eight knot", helix: "Helix",
 };
-test("the field holds each form eight seconds and turns into the next over eight, whatever is pointed at",
+test("the field holds each form twelve seconds and turns into the next over six, whatever is pointed at",
   async ({ page }) => {
   test.setTimeout(120000);
   const errors = collectPageErrors(page);
@@ -516,35 +521,36 @@ test("the field holds each form eight seconds and turns into the next over eight
   expect(await page.locator(".index-table tbody tr[data-figure]").count(), "no row names a form").toBe(0);
   await page.mouse.move(200, 100);
 
-  // Held until 9.6s (1.6 to gather, 8 standing), then turning.
-  await page.clock.runFor(6200);        // 9.3s
-  expect((await state()).phase, "still holding at nine seconds").toBe("hold");
-  await page.clock.runFor(700);         // 10.0s
+  // Held until 13.6s (1.6 to gather, 12 standing), then turning over six
+  // — "make it 6 transforming and 12 holding" (2026-09-27; it was 8 and 8).
+  await page.clock.runFor(10200);       // 13.3s
+  expect((await state()).phase, "still holding at thirteen seconds").toBe("hold");
+  await page.clock.runFor(700);         // 14.0s
   expect(await state(), "then turning into the Borromean rings").toMatchObject({ figure: "borromean", phase: "morph" });
   await expect(name, "and still showing the sphere, early in it").toHaveText("Geodesic sphere");
-  await page.clock.runFor(3200);        // 13.2s: a little short of half way
+  await page.clock.runFor(2400);        // 16.4s: a little short of half way
   expect((await state()).shown).toBe("geodesic");
-  await page.clock.runFor(1000);        // 14.2s: a little past it
+  await page.clock.runFor(600);         // 17.0s: a little past it
   const past = await state();
   expect(past.shown, "the new name taken up half way through").toBe("borromean");
   expect(past.run).toBeGreaterThan(0.5);
   expect(past.run).toBeLessThan(0.65);
   await expect(name).toHaveText("Borromean rings");
   await expect(page.locator(".re-caption-no")).toHaveText("02 / 17");
-  await page.clock.runFor(3200);        // 17.4s
-  expect((await state()).phase, "eight seconds of it").toBe("morph");
-  await page.clock.runFor(800);         // 18.2s
+  await page.clock.runFor(2400);        // 19.4s
+  expect((await state()).phase, "six seconds of it").toBe("morph");
+  await page.clock.runFor(600);         // 20.0s
   expect(await state()).toMatchObject({ figure: "borromean", phase: "hold" });
   const rings = await fieldInk(page);
   expect(apart(rings, first), "and it is a different drawing").toBeGreaterThan(30);
-  await page.clock.runFor(7800);        // 26.0s: the rings held eight seconds
+  await page.clock.runFor(11800);       // 31.8s: the rings held twelve seconds
   expect(await state(), "on to the Rössler attractor").toMatchObject({ figure: "rossler", phase: "morph" });
-  // And so on, sixteen seconds a form: the attractor held from 33.6s, and
-  // turning into Aizawa's from 41.6s. (Round the end of the cycle back to
+  // And so on, eighteen seconds a form: the attractor held from 37.6s, and
+  // turning into Aizawa's from 49.6s. (Round the end of the cycle back to
   // the start is the arrows' test's; a whole lap here is a long run.)
-  await page.clock.runFor(11000);       // 37.0s
+  await page.clock.runFor(6000);        // 37.8s
   expect(await state()).toMatchObject({ figure: "rossler", phase: "hold" });
-  await page.clock.runFor(5000);        // 42.0s
+  await page.clock.runFor(12000);       // 49.8s
   expect(await state(), "on to the Aizawa attractor").toMatchObject({ figure: "aizawa", phase: "morph" });
   const words = await page.evaluate(() => window.__words);
   expect(words.filter((w) => !/^\d+°$/.test(w)), "nothing written into the drawing but angles").toEqual([]);
@@ -590,8 +596,8 @@ test("the arrows at the field's foot go on to the next form, or back, at once", 
   await page.clock.runFor(2800);
   expect(await state()).toMatchObject({ figure: "helix", phase: "hold" });
   await expect(page.locator(".re-caption-no")).toHaveText("17 / 17");
-  // Its own clock carries on: eight seconds held, then round to the sphere.
-  await page.clock.runFor(8300);
+  // Its own clock carries on: twelve seconds held, then round to the sphere.
+  await page.clock.runFor(12300);
   expect(await state(), "and the cycle goes on from there").toMatchObject({ figure: "geodesic", phase: "morph" });
   expect(errors).toEqual([]);
 });

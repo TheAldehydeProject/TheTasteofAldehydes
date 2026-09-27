@@ -122,25 +122,24 @@ test("escape shuts the notes before the fragrance, and windows do not pile up",
   await expect(page.locator(".note-panel")).toHaveCount(1);
 });
 
-/* THE WAY BACK, which the owner described in full: "making everything
-   except the picture fade (make the picture a square) and then making
-   it go recede into one of the squares (at random) of the background
-   ... After being in the grid, make them fade away at once."
+/* THE WAY BACK IS A FADE: "remove the transitions from the fragrances in
+   fragrances SD to the fragrances SD page. Just make it fade away
+   smoothly" (2026-09-27). It used to lift the pictures out onto the
+   window and send them into squares of the grid; now nothing flies.
+   Watched every frame: the reader only ever gets fainter, from whole to
+   nothing, and smoothly — no step of more than a small part at once;
+   the list is back behind it from the first frame of the fade; no
+   picture is ever put on the window; and it all clears up.
 
-   THREE THINGS: the picture is taken out of the article and put on the
-   window as a FLIER, it SQUARES UP on its way to a cell of the grid,
-   and the list is already back behind it before it fades — which is
-   the owner's "does not replay the animation". */
-test("going back sends the picture into the grid, and the list is behind it",
+   THE GRID IS STILL THE PAGE'S OWN: the reader is ruled into the same
+   squares by the same declaration, so the ground does not change as the
+   one fades into the other. */
+test("going back, the fragrance simply fades away over the list, and nothing flies",
   async ({ page }) => {
   await toTheList(page);
-  await page.locator('.index-what a[href*="part-01"]').click();
+  await page.locator('.index-what a[href*="part-03"]').click();
   await page.waitForTimeout(1500);
 
-  // THE GRID IS THE PAGE'S OWN, and the reader is ruled into the same
-  // squares by the same declaration — which is not a nicety, because a
-  // picture recedes into ONE OF THEM and would otherwise land on
-  // nothing. The two being the same number is the whole of it.
   const ruled = await page.evaluate(() => ({
     cell: getComputedStyle(document.documentElement)
       .getPropertyValue("--grid-cell").trim(),
@@ -152,65 +151,44 @@ test("going back sends the picture into the grid, and the list is behind it",
     .toBe(ruled.sheet);
   expect(ruled.sheet).toBe(ruled.cell + " " + ruled.cell);
 
-  // Whichever of the two is showing: the picture, or the hatched square
-  // left where a picture has not arrived (hidden while there is one).
-  const was = await page.evaluate(() => Math.max(...[...document.querySelectorAll(".frag-plate img, .frag-plate > div")]
-    .map((el) => el.getBoundingClientRect().width)));
-
+  const watching = page.evaluate(() => new Promise((done) => {
+    const reader = document.querySelector(".frag-reader");
+    const seen = [];
+    const began = performance.now();
+    (function tick() {
+      seen.push({
+        t: performance.now() - began,
+        reader: reader.hidden ? 0 : +getComputedStyle(reader).opacity,
+        writing: reader.hidden ? 0 : +getComputedStyle(reader.querySelector(".frag-in")).opacity,
+        listBack: !document.querySelector(".index-page").hidden,
+        fliers: document.querySelectorAll(".frag-flier").length,
+      });
+      if (performance.now() - began < 1500) requestAnimationFrame(tick);
+      else done(seen);
+    })();
+  }));
   await page.locator(".frag-back").click();
-  // Past the writing's 360ms and some way into the 820ms travel — the way
-  // back was made about half as long on 2026-09-26 ("should be shorter").
-  await page.waitForTimeout(700);
-
-  // MID-FLIGHT. The picture is out of the article and on the window.
-  const flying = await page.evaluate(() => {
-    const f = document.querySelector(".frag-flier");
-    if (!f) return null;
-    const box = f.getBoundingClientRect();
-    return {
-      width: box.width,
-      height: box.height,
-      fixed: getComputedStyle(f).position === "fixed",
-      listBack: !document.querySelector(".index-page").hidden,
-      writingGone: +getComputedStyle(document.querySelector(".frag-in")).opacity < 0.5,
-    };
+  const seen = await watching;
+  const fading = seen.filter((f) => f.reader > 0.01 && f.reader < 0.99);
+  expect(fading.length, "a fade, seen over several frames").toBeGreaterThan(8);
+  let rise = 0, step = 0;
+  seen.forEach((f, i) => {
+    if (!i) return;
+    rise = Math.max(rise, f.reader - seen[i - 1].reader);
+    step = Math.max(step, seen[i - 1].reader - f.reader);
   });
-  expect(flying, "the picture should be flying").toBeTruthy();
-  expect(flying.fixed, "it should be on the window, not in the article").toBe(true);
-  // IT IS SMALLER THAN IT WAS, because it is receding.
-  expect(flying.width, `${was} → ${flying.width}`).toBeLessThan(was);
-  // AND IT IS A SQUARE, or on its way to being one.
-  expect(Math.abs(flying.width - flying.height),
-    `${flying.width} × ${flying.height}`).toBeLessThan(flying.width * 0.4);
-  // AND THE LIST IS ALREADY BACK behind it — nothing to replay.
-  expect(flying.listBack, "the list should be back before the picture has gone").toBe(true);
-  expect(flying.writingGone, "everything but the picture should have faded").toBe(true);
+  expect(rise, "it never comes back").toBeLessThan(0.02);
+  expect(step, "and it goes smoothly, a little at a time").toBeLessThan(0.25);
+  expect(Math.max(...seen.map((f) => f.fliers)), "no picture flies").toBe(0);
+  // The writing and the picture go together, with the reader: the writing
+  // never goes first on its own.
+  fading.forEach((f) => expect(f.writing, "the writing stays whole while the reader fades").toBeGreaterThan(0.99));
+  expect(fading.every((f) => f.listBack), "the list is back behind it the whole way").toBe(true);
+  expect(seen[seen.length - 1].reader, "and it is gone").toBe(0);
 
-  // AND IT COMES TO REST ON A SQUARE OF THAT GRID, which is the whole
-  // of "recede into one of the squares of the background": both its
-  // corners land on a multiple of the cell, and it is one cell big.
-  // Long enough for the recede to have finished — it is 820ms after a
-  // 360ms clearing — and before the 520ms fade has finished taking it
-  // away.
-  await page.waitForTimeout(600);
-  const cell = parseFloat(ruled.cell);
-  const home = await page.evaluate(() => {
-    const f = document.querySelector(".frag-flier");
-    if (!f) return null;
-    const box = f.getBoundingClientRect();
-    return { left: box.left, top: box.top, width: box.width, height: box.height };
-  });
-  expect(home, "it should still be there to look at").toBeTruthy();
-  expect(Math.abs(home.width - cell),
-    `${home.width} against a ${cell} cell`).toBeLessThan(2);
-  expect(home.left % cell, `left ${home.left} is not on the grid`).toBeLessThan(1.5);
-  expect(home.top % cell, `top ${home.top} is not on the grid`).toBeLessThan(1.5);
-
-  // AND IT ALL CLEARS UP.
-  await page.waitForTimeout(1000);
-  await expect(page.locator(".frag-flier")).toHaveCount(0);
   await expect(page.locator(".frag-reader")).toBeHidden();
   await expect(page.locator(".index-table")).toBeVisible();
+  await expect(page.locator(".frag-flier")).toHaveCount(0);
 });
 
 /* IT DOES NOT FLASH THE TABLE BACK ON THE WAY IN, which is a bug the
@@ -270,113 +248,16 @@ test("the table fades out and stays out, without flashing back",
   expect(seen[seen.length - 1], "and it is still gone at the end").toBe(0);
 });
 
-/* AND THE PICTURES GO HOME TO ONE PART OF THE GRID, which the owner
-   asked for after seeing them go anywhere: "i want the grid that the
-   fragrances can go to to be somewhere in the center, ish and on the
-   right side".
-
-   Every square on the window was fair game before, so the same
-   movement read differently every time. This checks SEVERAL
-   fragrances, because one landing in the right place proves nothing
-   about a shuffle. */
-test("a picture goes home to the right of centre, every time",
-  async ({ page }) => {
-  await toTheList(page);
-
-  const landings = [];
-  for (const no of ["01", "02", "03", "04"]) {
-    await page.locator('.index-what a[href*="part-' + no + '"]').click();
-    await page.waitForTimeout(1500);
-    await page.locator(".frag-back").click();
-    // Landed: 360ms of clearing and 820ms of travel.
-    await page.waitForTimeout(1300);
-    const at = await page.evaluate(() => {
-      const f = document.querySelector(".frag-flier");
-      if (!f) return null;
-      const box = f.getBoundingClientRect();
-      return { x: box.left, y: box.top, w: window.innerWidth, h: window.innerHeight };
-    });
-    expect(at, `part ${no} should still be landing`).toBeTruthy();
-    landings.push(at);
-    await page.waitForTimeout(1700);
-  }
-
-  landings.forEach((at, i) => {
-    // RIGHT OF CENTRE, with a little room for the block's own left edge.
-    expect(at.x, `landing ${i} at x=${Math.round(at.x)} of ${at.w}`)
-      .toBeGreaterThan(at.w * 0.5);
-    // AND CENTRE-ISH DOWN, rather than at the very top or bottom.
-    expect(at.y, `landing ${i} at y=${Math.round(at.y)} of ${at.h}`)
-      .toBeGreaterThan(at.h * 0.18);
-    expect(at.y).toBeLessThan(at.h * 0.82);
-  });
-});
-
-/* IN A STRAIGHT LINE. The owner: "I want it not to do any turning but
-   rather a straight path from the place the picture of the fragrance
-   is on the screen to the square in which it will fade away."
-
-   IT TURNED because its size ran on a shorter clock than its place: it
-   shrank towards its own corner faster than it travelled, so its middle
-   first went UP AND AWAY from the square it was headed for and then
-   swung round towards it — measured, 37px off the line on a still page
-   and 59px with the wheel going.
-
-   SO THIS WATCHES EVERY PICTURE'S MIDDLE, every frame, and asks two
-   things: that it never strays from the line between where it started
-   and where it landed, and that it never takes a step backwards along
-   it. Haxan, because it has three pictures and every one of them has
-   to go straight. */
-test("every picture goes home in a straight line", async ({ page }) => {
-  await toTheList(page);
-  await page.locator('.index-what a[href*="part-03"]').click();
-  await page.waitForTimeout(1800);
-
-  const watching = page.evaluate(() => new Promise((done) => {
-    const seen = [];
-    const began = performance.now();
-    (function tick() {
-      document.querySelectorAll(".frag-flier").forEach((f, k) => {
-        const b = f.getBoundingClientRect();
-        (seen[k] = seen[k] || []).push({ x: b.left + b.width / 2, y: b.top + b.height / 2 });
-      });
-      if (performance.now() - began < 2600) requestAnimationFrame(tick);
-      else done(seen);
-    })();
-  }));
-  await page.locator(".frag-back").click();
-  const paths = await watching;
-
-  expect(paths.length, "Haxan's three pictures should all fly").toBe(3);
-  paths.forEach((path, k) => {
-    const a = path[0];
-    const z = path[path.length - 1];
-    const dx = z.x - a.x;
-    const dy = z.y - a.y;
-    const long = Math.hypot(dx, dy);
-    expect(long, `picture ${k} should travel`).toBeGreaterThan(60);
-    let worst = 0;
-    let backwards = 0;
-    path.forEach((p, i) => {
-      worst = Math.max(worst, Math.abs((p.x - a.x) * dy - (p.y - a.y) * dx) / long);
-      if (i && ((p.x - path[i - 1].x) * dx + (p.y - path[i - 1].y) * dy) / long < -0.5) backwards += 1;
-    });
-    expect(worst, `picture ${k} strayed ${worst.toFixed(1)}px off its line`).toBeLessThan(2);
-    expect(backwards, `picture ${k} stepped backwards ${backwards} times`).toBe(0);
-  });
-});
-
 /* AND WHATEVER THE WHEEL DOES. "Make it so that this happens
    independently of scrolling please, because when you scroll the whole
    page glitches out."
 
    What the wheel did was scroll the reader, which was still standing
-   over the page and invisible, so the fading article slid about under
-   the pictures — and once the list was back, the table under them.
-   So this turns the wheel the whole way through the way back and asks
-   that NOTHING moved: not the reader, not the table, not the window,
-   and not the picture off its line. And then that the wheel works again
-   afterwards, because holding it for good would be a worse fault. */
+   over the page and going, so the fading article slid about — and once
+   the list was back, the table under it. So this turns the wheel the
+   whole way through the way back and asks that NOTHING moved: not the
+   reader, not the table, not the window. And then that the wheel works
+   again afterwards, because holding it for good would be a worse fault. */
 test("scrolling during the way back moves nothing, and is let go after",
   async ({ page }) => {
   await toTheList(page);
@@ -397,8 +278,8 @@ test("scrolling during the way back moves nothing, and is let go after",
     const seen = [];
     const began = performance.now();
     (function tick() {
-      // For as long as the way back lasts — it is under two seconds
-      // since 2026-09-26, and a wheel turned after it is an ordinary one.
+      // For as long as the way back lasts — a fade of well under a
+      // second since 2026-09-27; a wheel turned after it is an ordinary one.
       if (document.querySelector(".frag-reader").hidden) { done(seen); return; }
       seen.push({
         reader: document.querySelector(".frag-reader").scrollTop,
@@ -416,7 +297,7 @@ test("scrolling during the way back moves nothing, and is let go after",
     await page.waitForTimeout(60);
   }
   const seen = await watching;
-  expect(seen.length, "the way back should have been watched").toBeGreaterThan(20);
+  expect(seen.length, "the way back should have been watched").toBeGreaterThan(12);
 
   const readers = [...new Set(seen.map((s) => s.reader))];
   const lists = [...new Set(seen.map((s) => s.list))];
@@ -508,11 +389,12 @@ test("the reader carries the picture's credit under it", async ({ page }) => {
   await expect(page.locator(".frag-plate .frag-plate-credit a")).toHaveCount(0);
 });
 
-/* THE WAY BACK IS SHORT: "the animation after the go back to fragrances in
-   fragrances in SD should be shorter" (2026-09-26). It had come to three
-   and a half seconds; from the arrow to the reader being gone is under
-   two now, with every beat of it still there. */
-test("the way back from a fragrance is over in under two seconds", async ({ page }) => {
+/* THE WAY BACK IS SHORT AND SMOOTH: "the animation after the go back to
+   fragrances in fragrances in SD should be shorter" (2026-09-26), and
+   then "Just make it fade away smoothly" (2026-09-27). From the arrow to
+   the reader being gone is a fade of well under a second — and still a
+   fade, not a cut. */
+test("the way back from a fragrance is a fade of well under a second", async ({ page }) => {
   await toTheList(page);
   await page.locator('.index-what a[href*="part-01"]').click();
   await page.waitForTimeout(1600);
@@ -522,13 +404,12 @@ test("the way back from a fragrance is over in under two seconds", async ({ page
     document.querySelector(".frag-back").click();
     (function tick() {
       if (document.querySelector(".frag-flier")) flew = true;
-      const gone = document.querySelector(".frag-reader").hidden && !document.querySelector(".frag-flier");
-      if (gone) done({ ms: performance.now() - t0, flew });
+      if (document.querySelector(".frag-reader").hidden) done({ ms: performance.now() - t0, flew });
       else if (performance.now() - t0 > 6000) done({ ms: Infinity, flew });
       else requestAnimationFrame(tick);
     })();
   }));
-  expect(took.flew, "the picture still flies home").toBe(true);
-  expect(took.ms).toBeLessThan(2000);
-  expect(took.ms, "and it is still a movement, not a cut").toBeGreaterThan(1200);
+  expect(took.flew, "nothing flies home any more").toBe(false);
+  expect(took.ms).toBeLessThan(1100);
+  expect(took.ms, "and it is still a fade, not a cut").toBeGreaterThan(400);
 });

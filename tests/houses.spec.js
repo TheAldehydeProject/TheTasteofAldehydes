@@ -750,19 +750,26 @@ test("Qimu & Musicians' score is real music: bars that add up, in key, within a 
 });
 
 /* THE SOUND: "a button on top that allows you to mute and unmute. it
-   should be a square and relatively obvious. I also want you whn you
-   hover the notes in qimu and musicians, it plays them as piano notes"
-   (2026-09-26). The button is a square at the top of the window, starting
-   silent (a browser lets no page sound until it is pressed); with the
-   sound off a note pointed at plays nothing; turned on, a note pointed at
-   is struck at exactly its own pitches — read off what the page asks the
-   browser's audio to play — and turned off again, silence. */
-test("Qimu & Musicians has a square sound button, and a note pointed at plays its own pitch", async ({ page }) => {
+   should be a square and relatively obvious" (2026-09-26) — and then
+   (2026-09-27): "the music playing in Qimu & musicians sounds aweful ...
+   make it also sound like the actual notes on screen ... I want it to
+   sound like an actual composition. Additionally, I want it to make the
+   sound only if you hover that particlar set of lines."
+
+   The button is a square at the top of the window, starting silent (a
+   browser lets no page sound until it is pressed). With the sound off, a
+   stave pointed at plays nothing. Turned on, the recorded piano arrives
+   (all seventeen of its notes), and a stave pointed at plays THAT STAVE,
+   from its first note, every note exactly as it is written — its pitches,
+   in its order, at its times — on the recorded piano. Off its lines it
+   stops; another stave plays from its own start; and off again, silence. */
+test("Qimu & Musicians has a square sound button, and a stave pointed at plays exactly its own music", async ({ page }) => {
+  test.setTimeout(60000);
   const errors = collectPageErrors(page);
   await page.addInitScript(() => {
-    window.__struck = [];
-    const start = OscillatorNode.prototype.start;
-    OscillatorNode.prototype.start = function () { window.__struck.push(this.frequency.value); return start.apply(this, arguments); };
+    window.__recorded = 0;
+    const start = AudioBufferSourceNode.prototype.start;
+    AudioBufferSourceNode.prototype.start = function () { if (this.buffer && this.buffer.duration > 5) window.__recorded++; return start.apply(this, arguments); };
   });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(QIMU);
@@ -776,44 +783,69 @@ test("Qimu & Musicians has a square sound button, and a note pointed at plays it
   expect(box.width, "and big enough to see").toBeGreaterThanOrEqual(36);
   expect(box.y, "at the top").toBeLessThan(40);
 
-  const notes = async () => (await page.evaluate(() => window.QimuScore.notes()))
-    .filter((n) => n.y > 80 && n.y < 860 && n.x > 30 && n.x < 1410);
-  const pointAt = async (n) => { await page.mouse.move(n.x - 30, n.y - 30); await page.mouse.move(n.x, n.y, { steps: 3 }); await page.waitForTimeout(150); };
-  const struckHz = () => page.evaluate(() => window.__struck.slice());
-  const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+  const staves = async () => (await page.evaluate(() => window.QimuScore.boxes()))
+    .filter((b) => b.written && b.y > 70 && b.y + b.h < 860);
+  const heard = () => page.evaluate(() => window.QimuScore.heard());
+  const onto = async (b) => { await page.mouse.move(b.x + b.w * 0.5, b.y + b.h * 0.5, { steps: 4 }); };
 
   // Silent while it is off.
-  let seen = await notes();
-  expect(seen.length, "notes on the window to point at").toBeGreaterThan(3);
-  await pointAt(seen[0]);
-  expect(await struckHz(), "nothing sounds while it is off").toEqual([]);
+  let seen = await staves();
+  expect(seen.length, "staves on the window to point at").toBeGreaterThan(1);
+  await onto(seen[0]);
+  await page.waitForTimeout(600);
+  expect(await heard(), "nothing plays while it is off").toEqual([]);
+  await page.mouse.move(700, 20);
 
-  // On.
+  // On: the recorded piano arrives, all of it.
   await button.click();
   await expect(button).toHaveAttribute("aria-pressed", "true");
   await expect(button).toContainText("Sound on");
-  await page.waitForTimeout(200);
-  await page.evaluate(() => { window.__struck = []; });
-  seen = await notes();
-  const target = seen[Math.floor(seen.length / 2)];
-  await pointAt(target);
-  const played = await struckHz();
-  // Two strings to a note, the second a hair sharp: each pitch's first.
-  target.pitches.forEach((m) => {
-    expect(played.some((f) => Math.abs(f - hz(m)) < 0.01), `${m} (${hz(m).toFixed(2)}Hz) struck: ${played.join(", ")}`).toBe(true);
-  });
-  // The same note held under the hand is not struck again.
-  const count = (await struckHz()).length;
-  await page.mouse.move(target.x + 1, target.y);
-  await page.waitForTimeout(150);
-  expect((await struckHz()).length, "held, it is not struck again").toBe(count);
+  await expect.poll(() => page.evaluate(() => window.QimuScore.samples().length), { timeout: 10000 }).toBe(17);
 
-  // Off again: silence.
+  // A stave pointed at plays itself, note for note, from the start.
+  seen = await staves();
+  const one = seen[0];
+  await onto(one);
+  await expect(page.locator("html")).toHaveAttribute("data-qimu-playing", String(one.i));
+  await page.waitForTimeout(2500);
+  const music = await page.evaluate((i) => window.QimuScore.music(i), one.i);
+  let played = (await heard()).filter((h) => h.stave === one.i && h.lap === 0);
+  expect(played.length, "notes played").toBeGreaterThan(0);
+  expect(played.map((h) => h.pitches), "exactly the notes written, in order")
+    .toEqual(music.slice(0, played.length).map((n) => n.pitches));
+  played.forEach((h, k) => expect(h.at, `note ${k} at its written time`).toBeCloseTo(music[k].at, 5));
+  expect(await page.evaluate(() => window.__recorded), "on the recorded piano").toBeGreaterThan(0);
+  // Every pitch it plays is one drawn on that stave.
+  const drawn = await page.evaluate((i) => window.QimuScore.music(i).flatMap((n) => n.pitches), one.i);
+  played.forEach((h) => h.pitches.forEach((m) => expect(drawn).toContain(m)));
+
+  // Off its lines, it stops.
+  await page.mouse.move(700, 20, { steps: 3 });
+  await expect(page.locator("html")).not.toHaveAttribute("data-qimu-playing", /./);
+  await page.waitForTimeout(300);
+  const stopped = (await heard()).length;
+  await page.waitForTimeout(1500);
+  expect((await heard()).length, "nothing more once the hand is off its lines").toBe(stopped);
+
+  // Another stave plays from its own start.
+  const two = seen[1];
+  await onto(two);
+  await expect(page.locator("html")).toHaveAttribute("data-qimu-playing", String(two.i));
+  await page.waitForTimeout(800);
+  const other = (await heard()).filter((h) => h.stave === two.i);
+  const second = await page.evaluate((i) => window.QimuScore.music(i), two.i);
+  expect(other.length).toBeGreaterThan(0);
+  expect(other[0].at, "from its first note").toBe(second[0].at);
+  expect(other[0].pitches).toEqual(second[0].pitches);
+
+  // Off again: silence, even on the lines.
   await button.click();
   await expect(button).toHaveAttribute("aria-pressed", "false");
-  await page.evaluate(() => { window.__struck = []; });
-  await pointAt(seen[seen.length - 1]);
-  expect(await struckHz(), "silent once it is off again").toEqual([]);
+  await expect(page.locator("html")).not.toHaveAttribute("data-qimu-playing", /./);
+  const before = (await heard()).length;
+  await onto(seen[0]);
+  await page.waitForTimeout(800);
+  expect((await heard()).length, "silent once it is off again").toBe(before);
   expect(errors).toEqual([]);
 });
 

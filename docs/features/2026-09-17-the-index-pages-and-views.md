@@ -368,3 +368,13 @@ and the plates are gone from that page. See [its own report](2026-09-26-the-expl
 Everything here still holds for the old Fragrances index kept on Scent descriptions, which keeps
 its plates and its drawn mark; the new rules are all under `.researches-page`.
 
+
+## 2026-09-27 — 001 and 002, and the page's name its h1
+
+Dupes, Designers and Niches is **001** and Buying a Perfume (renamed from *Buying A Perfume - A
+Philosophical Exploration*) **002**; Resins in Perfumery and Cold vs Warm Incense moved down to
+003 and 004, and the last *Untitled* went, so the table still runs 000 to 009 — see [the essay
+pages](2026-09-17-the-essay-pages.md). The page's name, *Explorations & Researches*, is its `<h1>`
+now (it was a paragraph, and the page had none), and the box holding the page is its `<main>` —
+see [search engines](2026-09-26-search-engines-and-the-address.md). The field's own changes are in
+[its report](2026-09-26-the-explorations-field.md).

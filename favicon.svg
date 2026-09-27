@@ -5,17 +5,23 @@
        same length and stopping short of the letters it joins, the
        letters geometric and in the same thin line. It was drawn by hand
        for one round; the owner asked for it "less bold", the symbols
-       not connected, and "more so chemical and very technical". -->
+       not connected, and "more so chemical and very technical". Then,
+       2026-09-27, "make the aldehyde on the favicon a little more
+       visible": the same drawing a tenth larger on its square, and its
+       lines about two thirds heavier (they were 1.05 and 0.95 units,
+       a third of a pixel in a browser's tab). -->
   <rect width="48" height="48" rx="2" fill="#ffffff"/>
-  <g fill="none" stroke="#111111" stroke-linecap="butt" stroke-linejoin="miter">
-    <!-- the bonds: C=O, C–R, C–H -->
-    <path stroke-width="1.05" d="M22.5 23.5V15.5M25.5 23.5V15.5M19.94 30.84L12.47 35.16M28.06 30.84L35.53 35.16"/>
-  </g>
-  <g fill="none" stroke="#111111" stroke-width="0.95" stroke-linecap="butt" stroke-linejoin="miter">
-    <!-- the atoms: O, C, R, H -->
-    <ellipse cx="24" cy="10.5" rx="2.7" ry="3.2"/>
-    <path d="M25.74 26.05A2.7 3.2 0 1 0 25.74 30.95"/>
-    <path d="M6.11 40.7V34.3H9.16A1.65 1.65 0 0 1 9.16 37.6H6.11M8.76 37.6L10.86 40.7"/>
-    <path d="M37.29 34.3V40.7M41.89 34.3V40.7M37.29 37.5H41.89"/>
+  <g transform="translate(24 24) scale(1.1) translate(-24 -24)">
+    <g fill="none" stroke="#111111" stroke-linecap="butt" stroke-linejoin="miter">
+      <!-- the bonds: C=O, C–R, C–H -->
+      <path stroke-width="1.6" d="M22.3 23.5V15.5M25.7 23.5V15.5M19.94 30.84L12.47 35.16M28.06 30.84L35.53 35.16"/>
+    </g>
+    <g fill="none" stroke="#111111" stroke-width="1.45" stroke-linecap="butt" stroke-linejoin="miter">
+      <!-- the atoms: O, C, R, H -->
+      <ellipse cx="24" cy="10.5" rx="2.7" ry="3.2"/>
+      <path d="M25.74 26.05A2.7 3.2 0 1 0 25.74 30.95"/>
+      <path d="M6.11 40.7V34.3H9.16A1.65 1.65 0 0 1 9.16 37.6H6.11M8.76 37.6L10.86 40.7"/>
+      <path d="M37.29 34.3V40.7M41.89 34.3V40.7M37.29 37.5H41.89"/>
+    </g>
   </g>
 </svg>

@@ -186,3 +186,16 @@ Tested in `tests/background-and-cursor.spec.js`: `stands above everything, inclu
 pictures on the Houses view` (fails with the cursor at 900 under a picture at 1000), and
 `goes light over the dark parts of a photograph, and dark over the light` (fails against
 the old background-only reading).
+
+## 2026-09-27 — the menu's links in a nav; the tab's name while it is away
+
+- **The Menu's links stand in a `<nav aria-label="Site">`** (`.menu-nav`, inside the overlay), so a
+  screen reader knows them for the site's navigation; nothing about how it looks or opens changed.
+- **A tab looked away from is called *The Taste of Aldehydes*** — a few lines at the head of
+  `nav.js` put the site's name in the title when the page is hidden and the page's own back when it
+  is seen again. It is here because `nav.js` is the one script every page loads.
+- **`.visually-hidden`** (beside the headings' rule at the head of `style.css`) is a title or label
+  that is read and not drawn — the search page's and the test page's `<h1>`.
+- **Every page has a `<main>`** now. The rule that dims the page behind the open Menu reads the
+  body's own children, and a `<main>` is one of them, so it dims everything in it as before; see
+  [search engines](2026-09-26-search-engines-and-the-address.md) for the rest.

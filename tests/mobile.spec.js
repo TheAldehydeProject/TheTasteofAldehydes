@@ -43,6 +43,7 @@ const PAGES = [
   "/works/theory-03.html",
   "/works/cold-vs-warm-incense.html",
   "/works/buying-a-perfume.html",
+  "/works/dupes-designers-and-niches.html",
   "/works/my-personal-introduction-to-perfume.html",
   "/search.html",
   "/contact.html",

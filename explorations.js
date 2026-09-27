@@ -26,8 +26,9 @@
 //   stuff, i want you to add triangles and a little geometry."
 //
 // So the field keeps ITS OWN TIME and the table does not conduct it. It
-// stands in one FORM for `HOLD` (8s), then TRANSFORMS into the next over
-// `MORPH` (8s) — every speck travelling from its place in the one to its
+// stands in one FORM for `HOLD` (12s), then TRANSFORMS into the next over
+// `MORPH` (6s) — "make it 6 transforming and 12 holding" (2026-09-27; it
+// was eight and eight) — every speck travelling from its place in the one to its
 // place in the other, the ones at the top setting off first, each
 // swinging a little out of its straight way — and round again (`CYCLE`,
 // the seventeen the owner chose, in their order). Every form is a cloud of
@@ -61,8 +62,8 @@
   const TAU = Math.PI * 2;
 
   const COUNT = () => (window.innerWidth < 700 ? 1300 : 2400);
-  const HOLD = 8000;                   // ms a form stands
-  const MORPH = 8000;                  // ms a form takes to become the next
+  const HOLD = 12000;                  // ms a form stands
+  const MORPH = 6000;                  // ms a form takes to become the next
   const QUICK = 2600;                  // ms it takes when an arrow asks for it
   const ARRIVE = 1600;                 // ms the first form takes to gather, before its hold
   const SWEEP = 0.5;                   // of a transformation, over which the specks set off in turn
@@ -562,11 +563,14 @@
   const capNo = field.querySelector(".re-caption-no");
   const capName = field.querySelector(".re-caption-name");
   const cap = field.querySelector(".re-caption");
+  // THE BAR runs across the field's foot, nearly the whole of its width,
+  // over the caption — "i want it to be longer (as it was before)"
+  // (2026-09-27): it had been cut down to the room between the arrows.
   const run = document.createElement("span");
   run.className = "re-run";
   run.setAttribute("aria-hidden", "true");
   run.appendChild(document.createElement("i"));
-  if (cap) cap.appendChild(run);
+  if (cap) field.appendChild(run);
   field.querySelectorAll(".re-step").forEach((b) => {
     if (cycle.length < 2) { b.hidden = true; return; }
     b.addEventListener("click", () => go(b.classList.contains("re-prev") ? -1 : 1));

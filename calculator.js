@@ -199,7 +199,7 @@
   calc.innerHTML =
     '<header class="calc-head">' +
       '<p class="essay-kicker">Theories &middot; 03 &middot; Calculator</p>' +
-      '<h1 id="calc-title">The Note Dissemination Theory &mdash; Calculator</h1>' +
+      '<h2 id="calc-title">The Note Dissemination Theory &mdash; Calculator</h2>' +
       '<p class="calc-lede">Here, I have automated the math of the previous page, and provided explanations to go with it. Below, you need to select the model which you want to work with; afterwards, just fill in the numbers and the website should help you out.</p>' +
       '<p class="calc-lede">Do note that I have added a variation for each of the two variations for complication 3. ' +
         '<button class="calc-review" type="button">Press here to review them</button></p>' +
@@ -216,7 +216,8 @@
     '<footer class="calc-foot">' +
       '<button class="calc-back" type="button">&larr; Back to the theory</button>' +
     "</footer>";
-  document.body.appendChild(calc);
+  // In the page's <main>, with the piece it stands in for.
+  (document.querySelector("main") || document.body).appendChild(calc);
 
   const shell = calc.querySelector(".calc-body");
   const caveat = calc.querySelector(".calc-caveat");
@@ -269,8 +270,8 @@
       if (window.history && window.history.replaceState) {
         window.history.replaceState(null, "", "#calculator");
       }
-      calc.querySelector("h1").setAttribute("tabindex", "-1");
-      calc.querySelector("h1").focus({ preventScroll: true });
+      calc.querySelector("h2").setAttribute("tabindex", "-1");
+      calc.querySelector("h2").focus({ preventScroll: true });
     };
     if (REDUCE_MOTION) swap(); else window.setTimeout(swap, 420);
   }

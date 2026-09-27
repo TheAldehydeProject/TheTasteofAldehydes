@@ -242,11 +242,16 @@
   function show(n, way) {
     showing = (n + shots.length) % shots.length;
     const full = fullOf(shots[showing]);
+    // What the picture shows, as its thumbnail says it, for whoever
+    // cannot see it.
+    const thumb = shots[showing].querySelector("img");
+    const said = thumb ? thumb.getAttribute("alt") || "" : "";
     const going = REDUCE_MOTION ? 0 : (way || 0);
     number.textContent = numbered(showing + 1);
 
     if (!going) {
       layers[front].src = full;
+      layers[front].alt = said;
       layers[front].classList.add("is-on");
       layers[1 - front].classList.remove("is-on");
       layers[1 - front].removeAttribute("src");
@@ -258,10 +263,13 @@
     swapping = mine;
     const out = layers[front], into = layers[1 - front];
     into.src = full;
+    into.alt = said;
     ready(full).then(() => {
       // A press that landed while this one was being decoded wins.
       if (swapping !== mine || !viewing) return;
       front = 1 - front;
+      into.removeAttribute("aria-hidden");
+      out.setAttribute("aria-hidden", "true");
       // THE LAYER COMING IN MAY STILL BE MARKED AS GOING OUT. Its own
       // clean-up is only run by the change that sent it out, and a press
       // inside that change's 420ms cancels it — so stepping through the

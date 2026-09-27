@@ -29,6 +29,16 @@
       on these; the placeholders are along for the layout. */
   const real = frames.filter((frame) => frame.querySelector("img"));
 
+  // A FRAME WAITING FOR ITS PICTURE has a link that goes nowhere ("#")
+  // and nothing to name it by: it is taken out of the way of the
+  // keyboard and a screen reader until the picture arrives, when it is a
+  // link like any other (its picture's alt is its name).
+  document.querySelectorAll(".photo-frame .photo-plate").forEach((link) => {
+    if (link.querySelector("img")) return;
+    link.setAttribute("tabindex", "-1");
+    link.setAttribute("aria-hidden", "true");
+  });
+
   // ============================================================
   // ARRIVING
   //

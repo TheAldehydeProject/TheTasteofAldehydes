@@ -365,3 +365,33 @@ Tested in `tests/fragrance-reader.spec.js`: **`the way back from a fragrance is 
 seconds`** — and still a movement, not a cut (over 1.2s, the picture flying home). The tests that
 catch the picture mid-flight and at rest wait the new times; the one that turns the wheel through
 the way back turns it only for as long as the way back lasts.
+
+## 2026-09-27 — the way back is a fade
+
+> remove the transitions from the fragrances in fragrances SD to the fragrances SD page. Just make
+> it fade away smoothly.
+
+**Going back, the fragrance simply fades away** — the whole reader at once, writing, pictures and
+its squared ground, over 620ms eased at both ends (`FADE_MS`, `.frag-reader.is-leaving`) — and the
+list is **already back behind it**, exactly where it was left, coming up as the fragrance goes (the
+table's own fade in, which starts the moment `frag-open` comes off the page). The two cross rather
+than one waiting on the other.
+
+**Everything that was the drawing is out of the code**: the writing going first, each picture
+lifted out onto the window as a **flier**, squared up and sent in a straight line into one square
+of the grid somewhere right of centre (`HOME`), resting there and fading with the rest — `send`,
+`rule`, `cells`, `HOME`, `STEPS`, `EASE`, `CLEAR_MS`, `TRAVEL_MS`, `REST_MS`, `GONE_MS`,
+`LEAVE_MS`, `.frag-flier*` and `.is-clearing`. The reasoning for each round of it (the straight
+line, the shorter clocks, the home block) is in the sections above, kept because the owner may
+still call it "the flier" or "into the grid". **What stays** because it is about the fade as much:
+the wheel, a drag and the scrolling keys are **held** for the length of it, and the reader is
+ruled into the page's own squares, shifted by however far the page was scrolled into one, so the
+ground does not jump as the one fades into the other. The way in is unchanged.
+
+Tested in `tests/fragrance-reader.spec.js`: **`going back, the fragrance simply fades away over
+the list, and nothing flies`** (watched every frame: the reader only ever gets fainter, never by
+more than a quarter at once, the writing never going first on its own, no picture ever put on the
+window, the list behind it the whole way, and gone at the end; the reader's grid still the page's);
+**`the way back from a fragrance is a fade of well under a second`** (under 1.1s, over 0.4s — a
+fade, not a cut); **`scrolling during the way back moves nothing, and is let go after`**, as before.
+The two tests about where a picture lands and that it flies straight went with the flying.

@@ -163,3 +163,12 @@ Tested in `tests/pineward.spec.js` (the gallery's first tests): **`the gallery's
 picture however fast it is stepped through`** — stepped seven times on, three back, at 300ms,
 160ms and 90ms apart: one picture on show every time, and no layer both on show and going out;
 **`the gallery strip's pictures are all fetched once the gallery is near`**.
+
+## 2026-09-27 — every picture described
+
+The gallery's twenty-eight pictures had empty descriptions, which left every link in the strip
+without a name for a screen reader. Each now says what it shows — *Blue spruce branches*, *A
+Pineward burlap pouch on a mossy log*, *A Pineward bottle labelled Murkwood, lying on moss* —
+written by looking at each one, and the **viewer** carries the description of the picture it is
+showing (and hides the one sliding out). The comment above the strip says to write one for a new
+picture. Part of the site-wide pass in [search engines](2026-09-26-search-engines-and-the-address.md).

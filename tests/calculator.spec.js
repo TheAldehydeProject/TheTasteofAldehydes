@@ -600,15 +600,21 @@ test("without its script the piece's graph is the linear one, and no button", as
   await expect(page.locator(".zone-switch button")).toHaveCount(0);
 });
 
-test("the pairs' names are bold in the writing's face, and the blue subheadings larger", async ({ page }) => {
+/* THE PAIRS' NAMES: bold for a round (2026-09-26), and then "change the
+   xerjoff font again so it suits the rest of the page" (2026-09-27): the
+   writing's own face, at a medium weight rather than bold, over a
+   hairline of the page's blue. */
+test("the pairs' names are in the writing's face over a blue hairline, and the blue subheadings larger", async ({ page }) => {
   await page.goto(THEORY);
   const name = await page.locator(".zone-pair-name").first().evaluate((el) => {
     const s = getComputedStyle(el);
-    return { family: s.fontFamily, weight: +s.fontWeight, upper: s.textTransform, size: parseFloat(s.fontSize), text: el.textContent };
+    return { family: s.fontFamily, weight: +s.fontWeight, upper: s.textTransform, size: parseFloat(s.fontSize), text: el.textContent,
+      rule: s.borderBottomStyle + " " + s.borderBottomColor };
   });
   expect(name.text).toBe("For the 5-note Xerjoff");
   expect(name.family).toMatch(/Archivo/);
-  expect(name.weight).toBeGreaterThanOrEqual(700);
+  expect(name.weight, "medium, not bold").toBe(500);
+  expect(name.rule).toMatch(/^solid rgba\(142, 180, 226/);
   expect(name.upper).toBe("none");
   expect(name.size).toBeGreaterThan(15);
   const sub = await page.locator(".essay-sub").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));

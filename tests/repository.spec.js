@@ -375,6 +375,7 @@ test("every page tells search engines what it is, on the site's own address", ()
     expect(count(/<meta name="description" content="[^"]{20,170}">/g), `${name}: one description of a sensible length`).toBe(1);
     expect(count(/<link rel="canonical"/g), `${name}: one canonical address`).toBe(1);
     expect(count(/<link rel="icon"/g), `${name}: an icon`).toBe(1);
+    expect(count(/<meta name="theme-color" content="#[0-9a-f]{6}">/g), `${name}: its own colour for a phone's browser bar`).toBe(1);
     const hidden = /<meta name="robots" content="noindex/.test(head);
     const canonical = head.match(/<link rel="canonical" href="([^"]+)"/)[1];
     if (hidden) {
@@ -387,6 +388,11 @@ test("every page tells search engines what it is, on the site's own address", ()
       expect(count(new RegExp(`<meta property="${property}" content="[^"]+">`, "g")), `${name}: ${property}`).toBe(1);
     }
     expect(head, `${name}: a large card when shared`).toContain('<meta name="twitter:card" content="summary_large_image">');
+    // The card says its title, line and picture itself (2026-09-27),
+    // rather than leaving X to fall back on Open Graph's.
+    for (const name_ of ["twitter:title", "twitter:description", "twitter:image"]) {
+      expect(count(new RegExp(`<meta name="${name_}" content="[^"]+">`, "g")), `${name}: ${name_}`).toBe(1);
+    }
     // Structured data is written as JSON, and must read as JSON.
     [...head.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].forEach((m) => {
       const data = JSON.parse(m[1]);
@@ -399,4 +405,48 @@ test("every page tells search engines what it is, on the site's own address", ()
   }
   // And the home page carries the site's name for a search engine to show.
   expect(fs.readFileSync(path.join(ROOT, "index.html"), "utf8")).toMatch(/"@type": "WebSite", "name": "The Taste of Aldehydes"/);
+});
+
+/* EVERY PAGE IS BUILT TO BE READ BY MORE THAN EYES (2026-09-27: "make
+   sure there's exactly one <h1> per page, heading levels are logical, all
+   images have descriptive alt text, and semantic tags are used where
+   appropriate"). Read off each page as it is written — the forwarding
+   pages too, which carry a line and a link of their own; the archived
+   copy of an old view is left as it was: exactly one <h1>;
+   one <main>, the page's own content; a <title> and a viewport; no
+   heading more than one level deeper than the one before it; and every
+   picture with an alt — empty only on a thumbnail that repeats a picture
+   described beside it, and so hidden from a screen reader. */
+test("every page has one h1, a main, headings in order, and every picture described", () => {
+  const wrong = [];
+  for (const file of htmlFiles()) {
+    const name = path.relative(ROOT, file).split(path.sep).join("/");
+    if (name.startsWith("archive/")) continue;
+    const src = fs.readFileSync(file, "utf8");
+    const html = withoutComments(src);
+    const h1 = (html.match(/<h1\b/g) || []).length;
+    if (h1 !== 1) wrong.push(`${name}: ${h1} <h1>`);
+    const main = (html.match(/<main\b/g) || []).length;
+    if (main !== 1) wrong.push(`${name}: ${main} <main>`);
+    if (!/<title>[^<]{10,}<\/title>/.test(html)) wrong.push(`${name}: no title`);
+    if (!/<meta name="viewport" content="width=device-width/.test(html)) wrong.push(`${name}: no viewport`);
+    if (!/<html lang="en">/.test(html)) wrong.push(`${name}: no language`);
+    let last = 0;
+    for (const m of html.matchAll(/<h([1-6])\b/g)) {
+      const level = +m[1];
+      if (last && level > last + 1) wrong.push(`${name}: an <h${level}> straight after an <h${last}>`);
+      last = level;
+    }
+    for (const m of html.matchAll(/<img\b[^>]*>/g)) {
+      const tag = m[0];
+      const alt = /\salt="([^"]*)"/.exec(tag);
+      if (!alt) { wrong.push(`${name}: a picture with no alt — ${tag.slice(0, 80)}`); continue; }
+      if (alt[1].trim()) continue;
+      // Empty is right only where the picture is hidden, as a duplicate.
+      const before = html.slice(Math.max(0, m.index - 200), m.index);
+      const hidden = /aria-hidden="true"[^<]*>\s*$/.test(before) || /aria-hidden="true"/.test(tag);
+      if (!hidden) wrong.push(`${name}: a picture with an empty alt that is not hidden — ${tag.slice(0, 80)}`);
+    }
+  }
+  expect(wrong).toEqual([]);
 });

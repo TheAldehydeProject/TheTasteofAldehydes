@@ -29,6 +29,25 @@ const SITE_LINKS = [
   { label: "Test page", href: "works/test-page.html" },
 ];
 
+// ============================================================
+// THE TAB, WHILE IT IS NOT BEING LOOKED AT — "when you click off of the
+// tab, then the tab should be called 'The Taste of Aldehydes'"
+// (2026-09-27). Gone to another tab, every page's tab says the site's
+// name; come back, and it says the page's own title again.
+// ============================================================
+(function () {
+  const SITE_NAME = "The Taste of Aldehydes";
+  let own = document.title;
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      if (document.title !== SITE_NAME) own = document.title;
+      document.title = SITE_NAME;
+    } else if (document.title === SITE_NAME) {
+      document.title = own;
+    }
+  });
+})();
+
 (function () {
   const root = typeof window.SITE_ROOT === "string" ? window.SITE_ROOT : "";
   // A URL ending in "/" — which is how the site root is normally visited —
@@ -62,7 +81,13 @@ const SITE_LINKS = [
     list.appendChild(li);
   });
 
-  overlay.appendChild(list);
+  // THE SITE'S NAVIGATION, said as such to a screen reader: the links
+  // stand in a <nav> (2026-09-27; they stood in a plain box).
+  const nav = document.createElement("nav");
+  nav.className = "menu-nav";
+  nav.setAttribute("aria-label", "Site");
+  nav.appendChild(list);
+  overlay.appendChild(nav);
   document.body.appendChild(trigger);
   document.body.appendChild(overlay);
 
