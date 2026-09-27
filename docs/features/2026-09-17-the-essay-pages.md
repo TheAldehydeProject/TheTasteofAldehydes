@@ -230,8 +230,9 @@ and ultra niches (this should only exist on the page of the exploration itself)"
   calls its own first section that too), 02 Dupes, 03 Designers, 04 Designer Private Line,
   05 Niches, 06 Ultra Niches, 07 Conclusion — every word the owner's, as sent. Four things were
   done to it and nothing else: the invisible left-to-right marks a word processor leaves were
-  taken out; "E" after a price is **€**, as the owner asked ("25E(euro sign)"), and a price given
-  with no currency ("80-150") is left as it was; the "too" they marked "(underline)" is
+  taken out; "E" after a price is **€**, as the owner asked ("25E(euro sign)") — and "80-150",
+  which they sent with no currency, is "80-150€" too, at their word when asked ("add the euro sign
+  yes"); the "too" they marked "(underline)" is
   **underlined** (`<u>`, a hairline under it, `.essay-section u`); and four **links** were added
   where the writing mentions a page on the site — Tobacolor, Favourites, ADAR and Scent
   descriptions — without changing a word. Two things in it read like slips and **were left**,

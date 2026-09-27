@@ -4486,6 +4486,12 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 }
 .net-stage.is-turned .net-hint,
 .net-stage.is-bare .net-hint { opacity: 0; }
+/* The hint is longer since the five systems (2026-09-27): kept clear of
+   the map on the right, and on a phone stood under the Menu instead. */
+.net-hint { max-width: calc(100% - 270px); white-space: normal; line-height: 1.6; }
+@media (max-width: 700px) {
+  .net-hint { top: 72px; bottom: auto; left: 16px; max-width: calc(100% - 32px); }
+}
 .net-fallback {
   position: absolute;
   left: 28px;
@@ -4496,6 +4502,101 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   color: var(--muted);
 }
 .net-fallback[hidden] { display: none; }
+/* 2026-09-27 — FIVE SYSTEMS, ONE SELECTED NODE, AND THE WAY BETWEEN THEM.
+   What network.js adds to the page: THE CARD a selected node says itself
+   in, beside it; the small label a node or a bridge under the pointer says
+   its name in; and THE MAP at the foot, the five systems as a quincunx,
+   saying which one you are at, its dots a way there too. In the mono, on
+   black, ruled in the nodes' red. */
+.net-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-width: 190px;
+  padding: 12px 14px 10px;
+  background: rgba(12, 12, 12, 0.92);
+  border: 1px solid rgba(255, 90, 99, 0.55);
+  border-left: 3px solid #ff3a44;
+  color: #ece8e2;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+}
+.net-card[hidden] { display: none; }
+.net-card-code { margin: 0; font-size: 12px; font-weight: 500; color: #fff; }
+.net-card-role { margin: 3px 0 9px; color: #ff6a72; letter-spacing: 0.14em; }
+.net-card dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 3px 14px; }
+.net-card dl div { display: contents; }
+.net-card dt { color: #8f8b86; text-transform: uppercase; }
+.net-card dd { margin: 0; text-align: right; }
+.net-hover,
+.net-bridge {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 0;
+  padding: 3px 7px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+.net-hover { background: #0c0c0c; color: #e9e5df; border: 1px solid rgba(255, 90, 99, 0.4); }
+.net-bridge { background: #ff3a44; color: #140608; font-weight: 500; }
+.net-hover.is-on,
+.net-bridge.is-on { opacity: 1; }
+.net-map {
+  position: absolute;
+  right: 22px;
+  bottom: 20px;
+  width: 188px;
+  padding: 10px 10px 12px;
+  background: rgba(20, 20, 21, 0.86);
+  border: 1px solid rgba(255, 90, 99, 0.2);
+  font-family: var(--mono);
+  color: var(--muted);
+}
+.net-map-say {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  margin: 0 0 8px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.net-map-no { color: #ff6a72; }
+.net-map-name { color: var(--ink); }
+.net-map-count { flex-basis: 100%; font-size: 9px; }
+.net-map-plan {
+  position: relative;
+  height: 96px;
+  border: 1px solid rgba(255, 90, 99, 0.28);
+}
+.net-map-plan svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.net-map-plan line { stroke: rgba(255, 90, 99, 0.45); stroke-width: 0.8; vector-effect: non-scaling-stroke; }
+.net-map-dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  padding: 0;
+  border: 1px solid #ff5a63;
+  background: #1f1f20;
+  transform: rotate(45deg);
+  cursor: pointer;
+  transition: background-color 200ms ease, box-shadow 200ms ease;
+}
+.net-map-dot:hover,
+.net-map-dot:focus-visible { background: rgba(255, 90, 99, 0.45); }
+.net-map-dot.is-here { background: #ff3a44; box-shadow: 0 0 10px 2px rgba(255, 58, 68, 0.6); }
+@media (max-width: 700px) {
+  .net-map { right: 12px; bottom: 12px; width: 160px; }
+  .net-map-plan { height: 78px; }
+}
 
 /* ==================================================================
    THE SEARCH PAGE — search.html

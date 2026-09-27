@@ -61,7 +61,11 @@
   const MONO = getComputedStyle(document.documentElement).getPropertyValue("--mono").trim() || "monospace";
   const TAU = Math.PI * 2;
 
-  const COUNT = () => (window.innerWidth < 700 ? 1300 : 2400);
+  // "add a few more particles to the 3d shapes on the RE page, so the
+  // shapes look more complete" (2026-09-27): half as many again as the
+  // 2400 (1300 on a phone) they had, and all of them on the shapes — the
+  // haze keeps the number it had.
+  const COUNT = () => (window.innerWidth < 700 ? 2000 : 3600);
   const HOLD = 12000;                  // ms a form stands
   const MORPH = 6000;                  // ms a form takes to become the next
   const QUICK = 2600;                  // ms it takes when an arrow asks for it
@@ -74,7 +78,7 @@
   const SPIN = 0.00012;                // radians a millisecond the whole field turns
   const TILT = 0.38;                   // radians its axis leans towards you
   const FOCAL = 3.2;                   // the perspective: larger is flatter
-  const HAZE = 0.1;                    // share of every form's specks left loose round it
+  const HAZE = 0.067;                  // share of every form's specks left loose round it (240 of 3600, as it was of 2400)
   // THE LOCI: "some loci where you have geometric elements (such as
   // triangles from the connected dots)" — and then "add triangles".
   const LOCI = 7;                      // standing at once

@@ -155,3 +155,78 @@ class="visually-hidden">Test page</h1>` inside its `<main>`: a screen reader and
 read it, and nothing is drawn — the page is as blank as the owner asked. Tested in
 `tests/test-page.spec.js`: **`a dense network of red nodes is drawn on the dark page, and nothing
 else`** still finds no heading or writing drawn, and the one `<h1>` a single pixel, clipped away.
+
+## 2026-09-27 — five systems, glowing, that stand for something and can be travelled between
+
+> for the test page, I want you to make more spaced out, the balls should be red and glowy, i want
+> them to be more techy and geometric, i also want there to be more effects. i like it spinning, i
+> like it being a netweork. I want the balls to correspond to something, for now make it
+> arbitrary.
+>
+> I want when you select a sphere, the rest turn translucent (opacity change), make it a part of a
+> several part system going in 5 directions where you would have a system in the middle and then 4
+> more such systems, one on each "corner" of this system. you should have a line attaching them
+> and clicking on it will take you from one to another.
+
+`network.js` was rewritten round **five systems** (`SYSTEMS`): **NEXUS** in the middle (150 nodes)
+and **ARGO**, **HALCYON**, **KESTREL** and **VANTA** at its top left, top right, bottom right and
+bottom left (110 each), standing further back, so that from the middle they sit in the window's
+four corners — a quincunx. "Corner" was read as the corners of the window's square round the middle
+system, which is the likelier reading of "one on each corner"; the corner systems are the same
+kind of network as the middle one ("4 more such systems").
+
+- **Spaced out**: no two nodes in a system nearer each other than `GAP` (0.33 — they were a dense
+  cluster), fewer in the core, and each joined to its nearest two to four, with seven **hubs** a
+  system sending lines further.
+- **Red and glowing, techy and geometric**: every node a **faceted** red sphere (an icosahedron,
+  flat-shaded, lit, glowing from within) with a soft **halo** added to what is behind it (`SPOT`,
+  one soft spot drawn once, as `Points`); the six busiest in each system in a turning **wire
+  octahedron** with a dashed ring; each system turning inside a **frame** — a ticked, dashed ring
+  round its middle, another across it turning the other way, and its axis. The pale, amber and
+  grey nodes of the picture are gone; every node is red.
+- **More effects**: **pulses** of light running along the links (46 a system), and along the
+  bridges both ways; a **ping** — a ring going out from the middle of the system you are at every
+  four seconds; the halos; the cages turning; specks in the air.
+- **Spinning**: every system turns slowly about its own upright (`SPIN`), each at its own rate;
+  slower while a node is pointed at or selected. A drag still turns the view (round the system you
+  are at), the wheel still brings it closer.
+- **Every node stands for something — arbitrarily, for now**: a code (`NXS-042`), a **role**
+  (`ROLES`: relay, archive, sensor, beacon, vault …), a load, a latency, its system and how many
+  links it has. The tagged nodes of the middle system are **named** by their tags (the page's
+  `.net-label` words). Pointed at, a node says its code and role in a small label (`.net-hover`).
+- **Selecting**: pressing a node **selects** it — it grows and goes white-hot, its own links light
+  up, a **card** beside it (`.net-card`) says what it stands for — and **every other sphere, in
+  every system, turns translucent** (13% opacity, over half a second), the other lines and pulses
+  faint, the other cages dim. Pressing it again, pressing empty space, or Escape lets it go and
+  they come back. It is done with two sets of spheres per system — solid, and a translucent
+  **ghost** of each — only one of which is ever at its size; the ghosts' opacity is what fades.
+- **The bridges**: a line from the middle system to each corner one — a lit core between two faint
+  rails, three wire diamonds along it, pulses running both ways. Pointed at, it lights up and says
+  where it goes (*Travel to 03 · HALCYON →*); **pressed, the view flies along it** (1.9s, eased,
+  pulling back a little half way) to that system. From a corner, the same bridge leads back to
+  the middle; a bridge that does not touch where you are takes you to its far end. Arriving at a
+  corner, the view **turns part of the way round** (`poseAt`) so that you look back across that
+  system towards the middle, which stands in the distance with its other bridges; the middle
+  system is seen square on.
+- **The map** (`.net-map`, bottom right): the five systems as a quincunx of diamonds joined as the
+  bridges join them, the one you are at lit, with its number, name and counts over it; its
+  diamonds are buttons that travel there too (and what a keyboard can use).
+- **The tags** stay beside the middle system's nodes and fade while you are at another; the two
+  yellow ones never give way, and if they meet the second stands under the first.
+
+With **reduced motion**: nothing spins, runs or pings on its own; a selection changes at once; a
+journey is made at once. Without the library the page still says so.
+
+For the tests, `window.NetScene` says where a system's nodes and bridges stand on the window, the
+state (where you are, what is selected, how translucent the rest are), and the smallest gap in a
+system.
+
+Tested in `tests/test-page.spec.js`: **`five networks of glowing red nodes are drawn on the dark
+page, and nothing else`** (five systems, four bridges, the ground between them dark, read as the
+mean of a small block so a passing speck does not count); **`the nodes of every system are spaced
+out`**; **`pressing a node selects it: the rest turn translucent, and it says what it stands
+for`** (its code when pointed at; pressed, the rest under a fifth of their opacity, its links lit,
+the card with its code, system, role and latency; Escape, and whole again); **`pressing a line
+between two systems takes you along it, and back`** (the label, the flight, the map saying
+HALCYON, the same bridge back to the middle, and a map diamond to VANTA); and the earlier tags,
+drag, pointing and reduced-motion tests, the last now also making a journey at once.

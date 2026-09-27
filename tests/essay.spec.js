@@ -280,6 +280,7 @@ test("Explorations 001 is Dupes, Designers and Niches, written, with its subtitl
   // The owner's own words, as sent: the euro sign where they asked for
   // it, and the "too" they marked to be underlined.
   await expect(page.locator("#section-02")).toContainText("priced between 25€ to 50€");
+  await expect(page.locator("#section-03"), "the designers' price too, at the owner's word").toContainText("priced around 80-150€,");
   await expect(page.locator("#section-02 u")).toHaveText("too");
   await expect(page.locator("#section-07")).toContainText("Trust me, it is pretty fun.");
   await expect(page.locator(".essay-rule")).toBeVisible();

@@ -504,3 +504,11 @@ Tested in `tests/index-pages.spec.js`: **`the field holds each form twelve secon
 the next over six, whatever is pointed at`** (the clock at 13.3s, 14.0s, half way at 16.6s,
 landed at 20.0s, on to Rössler at 31.8s and Aizawa at 49.8s); **`the arrows at the field's foot go
 on to the next form, or back, at once`** (twelve seconds held after them now).
+
+## 2026-09-27, later — more particles on the shapes
+
+> add a few more particles to the 3d shapes on the RE page, so the shapes look more complete.
+
+`COUNT` is **3600** (2000 on a phone) — it was 2400 (1300) — and every one of the new specks is on
+the shape: `HAZE` goes from a tenth to about a fifteenth, so the loose cloud round a form keeps the
+240 specks it had. Measured in a browser, the field still draws at 60 frames a second.
