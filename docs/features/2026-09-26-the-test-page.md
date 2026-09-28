@@ -1,7 +1,7 @@
 # The test page, and the network on it
 Date: 2026-09-26
-Files touched: `works/test-page.html` (new), `network.js` (new), `notes-data.js` (loaded, since
-2026-09-27), `style.css` (`.network-page`,
+Files touched: `works/test-page.html` (new), `network.js` (new), `note-figures.js` (new,
+2026-09-28), `notes-data.js` (loaded, since 2026-09-27), `style.css` (`.network-page`,
 `.net-*`, and the dark `--chrome-ground` list), `nav.js` (`SITE_LINKS`), `search-page.js`
 (`PAGES`), `tests/test-page.spec.js` (new), `tests/menu.spec.js`, `tests/pages.spec.js`,
 `tests/mobile.spec.js`, `CLAUDE.md`. For two rounds the same night: `tree.js`,
@@ -12,8 +12,10 @@ again.
 [that section](#2026-09-27-night--the-note-library-as-networks), which replaced [the Note
 Library in three dimensions](#2026-09-27-later--the-note-library-in-three-dimensions) (galaxies)
 the same night — and **since 2026-09-28 it is its own version of the library**, with a window for
-every note, two arrows on the left, and an opening: see [the last
-section](#2026-09-28--its-own-note-library-two-arrows-an-opening-and-shine). The one network, then the five, then the galaxies, described first below, are
+every note, two arrows on the left, and an opening: see [that
+section](#2026-09-28--its-own-note-library-two-arrows-an-opening-and-shine) — **and since the evening
+of 2026-09-28 its note window has nothing of chemistry in it and a figure of every note in
+particles, and it has COMBINATIONS**: see [the last section](#2026-09-28-evening--a-glow-of-its-own-the-flash-on-a-journey-a-window-without-chemistry-and-combinations). The one network, then the five, then the galaxies, described first below, are
 gone from the code; they are kept here for the reasoning, as the site's reports keep what was
 replaced.
 
@@ -795,3 +797,229 @@ those numbers (the rim 1.45 → 1.6, the glow's `size` 1.35 → 1.5, the notes' 
 
 `red()` in the tests asks for a red channel above two fifths now, not a half: the darkest note sits
 at 0.45.
+
+## 2026-09-28, evening — a glow of its own, the flash on a journey, a window without chemistry, and combinations
+
+> too much glow, especially in the center of the clusters. Make it less so. I want the glow to be
+> very local to every node. The colour is better. the dark red is good. also, there is something
+> in the background that occurs when the page opens i attached a screenshot. recreate it and make
+> sure that it is just the cluster that forms.
+>
+> Additionally, allign the text with the center of the arrow. picture 2
+>
+> I want the expanded version, that if you click back from the citrus accord, you would go back to
+> the center - every accord, not to 16.
+>
+> I also want the flashing effect (picture 3) that occurs to happen only when you go to a different
+> node.
+>
+> also bring the clusters a little farther from one another. additionally, make sure that when
+> they are being selected, nothing is obstructing the view of that cluster. [...] i want it to be
+> clearer.
+>
+> Finally, please make the transition less bubbly. I want it to be dimensional, where it is lclear
+> what is going on. Keep the smoothness of it though. that i like.
+>
+> remove the word into one from collapse into one. let it just be collapse.
+>
+> the popup, move image 5 to the very vrey very bottom of it, and make it seem less important. also
+> in it, change the word "element" to "note"
+>
+> remove any chemistry related themes too. tf you mean isotopes, just put variations there. Also,
+> "compounds" should be "fragrances". I would also like you to make a pyramid distribution [...]
+> add a number next to the pyramid stating "non-pyramidal". emphasize the main description of the
+> fragrance, remove the chemical symbol up top. However, I also want you to add a particle diagram
+> in red particles that are show what it is that the note is of. if there is grapefruit, make a
+> grapefruit from particles. Do this for all notes. make it minimalist and geometric.
+>
+> THE ORDER OF STUFF IN THIS POPUP SHOULD BE: NAME OF THE NOTE, AND THEN THE DESCRIPTION, THEN THE
+> 3D DIAGRAM, THEN FRAGRANCES, THEN VARIATIONS, THEN PYRAMIDAL DISTRIBUTION (which i want to be
+> numerical, not as a percentage [...]), AND AFTER THE PYRAMID THE MOST FREQUENT COMBINATIONS, AND
+> THEN THE STATISTICS BUT THOSE ARE REALLY AT THE VERY END.
+>
+> i also want you to make the expand button a little to the left, and on its right there should be
+> a new button called combinations. [...] black on white or whatever. It should feel skeletal [...]
+> it will cause the otherwise red cluster to pulse and then turn a slightly yellow; it should also
+> expand in the sense that it will not be as dense. It will still be only one big cluster though.
+> The button of expanding will disappear (instead there will be a button to go back somewhere on
+> the page) afterwards a search bar pops up and you will be able to select any note. [...] it will
+> be added to this search as a "tag". you will then be able to see all the connections on the big
+> middle cluster. [...] there will be an openable list of fragrances [...] that have the thing that
+> you have selected (or things).
+>
+> additionally, clicking on the expand button removes the other button, and will center the
+> expand/collapse button. a "back" or return feature will appear somewhere.
+>
+> i also want the viewing selection of an accord on the left to be overwritten in priority if you
+> are in the expanded view viewing a specific accord; i want that one to be in focus.
+
+One question was asked first, because it could honestly go two ways: *when* the flash should
+happen — on travelling to an accord, or on pressing a note. The owner chose **travelling**.
+
+### The glow, its own and near
+
+- **Each glow is its node's own size** — `glowSize`, a second small addition to the library's
+  shaders (the points' own `gl_PointSize = size` made `size * glowSize`), set every frame from the
+  node's size and how large it is drawn — and its light (`NEAR_SPOT`) is gone within about one and
+  a half times the node's radius: `GLOW_NOTE` 26 and `GLOW_FILL` 22 across. **A point is sized
+  against half the window's height and a sphere against the lens**, which is why the numbers are
+  so much larger than the node's: the first attempt, 7.2, made glows barely wider than their nodes.
+- **What was piling up in the middle** was two things: glows as wide as a node's neighbours, added
+  together, and the lines, added together where the network is densest. The glows are local now,
+  a little quieter (`kindGlow` 0.74 + size × 2 for the notes), and the lines are drawn quieter
+  (the one network's 0.32 of full, each accord's 0.34).
+- **THE THING IN THE BACKGROUND AS IT OPENED** was the fog. The library's fog mixes what is far
+  towards the page's grey, and the glows and lines are *added* to the page — so a glow that should
+  have added nothing, round a node not yet come up, added grey: a halo round the page wherever a
+  node was waiting. **Nothing added is fogged any more** (`fog: false` in `additive()`), and what
+  is far is faded by hand to nothing instead (`fogOf`, in `segment()` for every line and per glow
+  and pulse). A node not come up has no glow at all, and the ring the network turns in comes in
+  only once it has formed — **so as it opens, only the cluster forms**. There is a test that no
+  glow is drawn without its node while it opens.
+- **A bug on the way, worth knowing:** `aim()` had a local called `cp` (the cosine of the pitch),
+  which hid the combinations clock of the same name, so the fog's far edge came out as *not a
+  number* — and every line and glow past its near edge was drawn with no colour at all. It showed
+  as the tag lines missing and the far networks bare. It is `cosPitch` now.
+
+### "Open menu here", level with the arrow
+
+The words are their own element (`.net-coach-word`), trimmed to their capitals and their baseline
+(`text-box: trim-both cap alphabetic`), so it is the middle of the letters, and not of the line
+they sit on, that stands level with the arrow's middle — whatever the face's own spacing. The test
+holds the line to a pixel and a half of the arrow's middle and the words to two and a half.
+
+### Going between accords
+
+- **The centre is in the arrows' round**: ‹ and › (and the keyboard's arrows) go centre, 01, 02
+  … 16, centre — so back from Citrus is the centre, and on from Impressions is the centre too.
+- **THE FLASH ONLY ON A JOURNEY** (`A.signalAt`, one clock for each accord, and no
+  `SIGNAL_EVERY`): going to an accord it leaves the centre along that accord's bridge, timed to
+  reach it as you do, and runs through that network alone; going to the centre (coming apart
+  included) it goes out to every one. Left alone, nothing flashes.
+- **Farther apart**: the networks stand 15 to 32 from the centre (it was 11 to 24), and no two
+  nearer than 1.9 times their reaches and 3 more (1.45 and 1.4).
+- **At an accord nothing stands in its way**: the centre, every other network and every other
+  bridge step back to a twentieth (`AWAY`, eased — `A.seen`, `hubSeen`), the accord's own bridge
+  to an eighth, and no other accord's name is printed within it.
+- **The accord you are at keeps the page** — the menu's hand lights a row in the menu but no longer
+  takes the page from it (`onlyNow` is empty at an accord); the menu marks where you are, and
+  pressing an accord there goes to it. At the centre the hand lights one alone, as it did.
+
+### Coming apart, dimensional
+
+`place()` is written again. **Each accord leaves as one body**: its middle goes *straight* out from
+its knot along its bridge to where its network stands (`C`, from the knot, loosened in
+combinations, to `A.G`), the bridge drawn out behind it from the centre as it goes; its nodes go
+from where they stood in the knot to their places in the network *around that middle*, the rim a
+little after the rest (`grain`, `delay` × 0.12). The nodes made for it come up **from its middle
+outwards** as it unfolds. The lens swings round the library by `SWEEP` (0.62 radians) as it comes
+apart, and part of the way back as it closes, so the depth it comes apart in is seen. **Gone**: the
+shake (`ph.shake`), each node's own bent path (`bend`, `swirl`), the made nodes thrown in from
+somewhere near (`scatter`), and the white lines that changed as they moved (`LINK_REACH`, the
+sorted orders, `changing`) — the network's own links are drawn from the start instead, moving with
+it. Kept: red through white and back, and the clock's softness (`ACCEL_MS`, `BRAKE`). The test
+checks every accord's middle on the straight line from where it set off to where it ends, its
+nodes kept round it, and the lens swung.
+
+### The foot, and the way back
+
+- **Expand** a little to the left, and **COMBINATIONS** on its right — two columns of one width, so
+  that the gap between them is the middle (the pair centred put the wider Expand across it).
+  Combinations is skeletal: a hairline frame with its corners run out past it like a drawing's
+  registration marks, two rings over one another for its mark — and black on white under the hand
+  and while it is on.
+- **Expanded**, Combinations goes and **Collapse** (no "into one") stands alone in the middle; **in
+  combinations**, Expand goes. The one that stays slides to its new place (`layoutFoot`, a
+  measured slide by transform).
+- **BACK** stands beside whichever is left: from an accord to the centre; from the centre into one
+  again; out of combinations. On a phone it stands in the row.
+
+### The note window, without chemistry
+
+In the owner's order: **its name**; **what it is**, set larger and brighter with a red rule down
+its left; **its figure**; **Fragrances · NN** (every fragrance naming it, the individual ones and
+then the houses, all dropdowns, each a way to it); **Variations · NN** (the other ways the site
+writes it — they were *Isotopes*); **Pyramidal distribution** — one triangle cut in three, each
+tier as dark as it is used, the count beside each (*Top*, *Middle*, *Base*: how many of its
+fragrances have it there) and beside the pyramid the count of **non-pyramidal** (in a list the
+source did not divide); **Most frequent combinations**; and **Statistics** at the very end, small
+and quiet (*Note* No. … · its call number, *Fragrances* … of the site's …, *Most used*). Across its
+head: *NOTE*, its accord, the note before and after it in its accord (‹ ›, and the keyboard's
+arrows), and the ×. **Gone**: the tile and its symbol, the atom and its electrons, *Element*,
+*Isotopes*, *Compounds*, and `symbolFor` from `network.js` altogether (the search's results and the
+hover say the name alone).
+
+### The figures (`note-figures.js`)
+
+**Every one of the 332 notes has a figure of its own**, written out by name in `FIGURES` — what the
+note is of, in red specks over faint hairlines, turning slowly on a dashed ring, the nearer specks
+larger and brighter. Built from a few geometric parts: `lathe` (an outline turned round an upright
+— a pear, a bottle, a cup, a candle, a mushroom, a bell), `ball` (a sphere of specks, pressed,
+dimpled, grooved, roughened, drawn to points, or cut open), `path`, `leaf` and `petal`, `box`,
+`disc`, `sheet`, `wave`, and things made of those: a **citrus** and a slice of it, an **apple**, a
+**rose**, **bells**, a **trumpet**, a **daisy**, a **sprig** (its pairs of leaves each a
+quarter-turn from the last, as mint and basil grow), an **ear** of grain, a **pod**, a **quill** of
+bark, **roots**, **strands**, a **tree**, a **log**, **drops**, **tears**, **smoke**, a **flame**, a
+**candle**, **hexes**, an **ingot**… Grapefruit is a grapefruit and a half of it open; Old Books a
+stack of books; Spinal Fluid a column of vertebrae; Instant Film a print in its frame. Each is built
+once, from a seed of its own name, stood in the middle and sized to a radius of one, and never has
+fewer than 150 specks nor more than 1,500 (`FEWEST`, `MOST`). A note added to the library later
+gets its accord's figure (`BY_ACCORD`) until it is given its own — and a test fails until it is.
+
+### Combinations
+
+`combine()`, only from the one network: the network **pulses** (a front of light from its middle
+out, `cmbPulse`), **turns gold** — "a slightly yellow": `GOLDS`, `GOLD_DARKS`, `GOLD_PALES`, its
+lines `GOLD_LINE` — over its own clock (`cmb`, `COMBINE_MS` 2.2s) and **loosens** by `SPREAD`
+(0.62) while the lens stands back only part of that, so it opens out on the window as well as
+thinning; the fillers go half faint. Still one network. Then **the bar** comes up over the foot
+(`combine>`), and a note typed (by the start of any word of its name or another spelling) and
+chosen — or pressed on the network — is taken as **a tag**. A tag is joined by a bright line to
+**every note found with it in a fragrance**; with more than one, to every note found with **all**
+of them, in the fragrances that have every tag (`recompute`: `matched`, `partners`); everything
+else goes faint and the tags and what is found with them most are named. Once there is a tag the
+bar offers only notes found with it. **The list** — *N fragrances have it / both / all 3* — opens
+over the bar, each fragrance a way to it (its name read off its house's page, as the note window
+reads it). A tag's × or Backspace in the empty bar takes one away; Back leaves combinations, red
+and together again.
+
+### How to test it
+
+`tests/test-page.spec.js`, as well as what it had:
+
+- **`the Note Library is drawn as one red network ...`** — the pair at the foot: Expand to the left
+  of the middle, Combinations on its right, the gap between them the middle; no Back.
+- **`as it opens it wires itself in ...`** — no glow drawn without its node while it opens; the
+  line and the words of "Open menu here" level with the arrow's middle.
+- **`every note is the Note Library's own, with its number and uses`** — and no symbol.
+- **`expanding: through white, each accord leaving as one body along its bridge ...`** — every
+  accord's middle on the straight line from where it set off to where it ends, its nodes kept round
+  it, the lens swung; farther apart; *Collapse* alone in the middle, Back beside it, no
+  Combinations.
+- **`the flash goes only on a journey ...`** — one as it comes apart, out to every network; none
+  for five seconds; going to an accord, one through that accord alone; back to the centre, out to
+  every one. **Counted as the page sends them** (`flashes`, `flashTo`), not caught as they pass:
+  this machine draws about a frame a second at its busiest, and a flash through a network is over
+  in under one — it missed them. The flash as it comes apart fires **as it lands**, not on a timer
+  from the press, for the same reason: a slow machine landed after the flash had been spent.
+- **`once apart, a note pressed opens its own window ...`** — the parts in the owner's order, the
+  statistics last and quiet; nothing of chemistry in the window's own words; the figure drawn in
+  red; *Fragrances · NN* and *Variations · NN*, the library's; the pyramid's counts
+  (`NetScene.about`) and non-pyramidal.
+- **`the centre joins every network ...`** — and ‹ from Citrus is the centre, ‹ again Impressions,
+  › the centre.
+- **`at an accord nothing stands in its way ...`** — the centre and the other networks stepped
+  back, no other name over it, the menu's hand not taking it away, Back to the centre and into one.
+- **`combinations: ...`** — the pulse, gold, loosened, still one; the bar; a tag and its lines,
+  one to every note found with it (`NetScene.combined`, `NetScene.tagLines`); the list; a second
+  tag offered only from what is found with the first; Backspace, ×, a press on the network; Back.
+- **`every note in the library has a figure of its own, in particles`**.
+- With animation turned off, combinations at once too.
+
+### Known issues / TODO
+
+- The figures are a first set of 332; some are necessarily abstract (*Animal Notes* a paw, *Musk*
+  a cloud round a core, *Oriental Notes* a lantern) and the owner may want particular ones redrawn —
+  each is one line in `FIGURES`.
+- The combinations picker matches the start of a word, where the library's own terminal matches
+  whole words only; a picker has to answer as it is typed.
