@@ -702,7 +702,8 @@ movement of the hand puts both away.
 
 ### Shine
 
-"I want the balls to shine more than be solid red objects": the spheres are **smooth and glossy**
+**Replaced the same day** — see [faceted again, in rouge](#2026-09-28-later--faceted-again-in-rouge-glowing).
+"I want the balls to shine more than be solid red objects": the spheres were **smooth and glossy**
 now — a little metallic, catching **a studio of soft lights** as highlights (`STUDIO`: a softbox
 above, a strip to the right, a red glow from below and a small bright light in front, made once
 into the lights' reflections), **a rim of their own colour glowing** round every edge (the one
@@ -748,3 +749,27 @@ notes first (nodes 0 to 331). The clusters are exactly as they were.
   because the owner asked for it "when you first load the page".
 - **The blur behind the window** is the browser's own, over a drawing that keeps moving; on a weak
   graphics card it is the most expensive thing on the page, and it is only there while a window is.
+
+## 2026-09-28, later — faceted again, in rouge, glowing
+
+> I would like you to revert to the non perfectly spherical nodes, but add a glow to them. I want it
+> to be more red ike rouge, rather than just a solid sphere of red. A darker red.
+
+- **Faceted again**: every node is the icosahedron divided once and drawn in **flat facets**, as
+  it was before the morning's smooth spheres — notes and fillers alike (still two sets, the notes
+  first). **The studio is gone** (`STUDIO`, its reflections and the metal with it); nothing of it is
+  in `network.js`.
+- **Rouge, darker**: the notes are a deep crimson (`REDS`, `#a8102a` and round it) where they were
+  a bright coral red (`#ff3a44`), the fillers a burgundy (`DARKS`), the few pale ones a dusty rose
+  (`PALES`).
+- **Glowing**: each node is **lit from within in its own red** (the emissive, taken in its own
+  colour by `perNode`) with **a rim of it burning round every facet's edge**, the lights on them
+  turned down so they read as glowing rather than lit, and **the glow round them** larger and
+  stronger (`size` 1.0, the notes' `kindGlow` about half as much again), still shimmering on the
+  notes. Rouge added to rouge: where they crowd, the red deepens rather than whitening.
+
+The links, the white of the transition, the chrome and the button are as they were.
+
+Tested: the tests' red is the deep red now — **`red()`** in `tests/test-page.spec.js` asks for a
+red channel between a half and four fifths and far above the green and blue (the old coral would
+fail it), and **`look()`** counts pixels whose red stands well above their green and blue.

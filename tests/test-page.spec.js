@@ -63,7 +63,9 @@ async function look(page, points = []) {
     g.drawImage(img, 0, 0);
     const d = g.getImageData(0, 0, c.width, c.height).data;
     let red = 0;
-    for (let i = 0; i < d.length; i += 16) if (d[i] > 170 && d[i + 1] < 120 && d[i + 2] < 130) red++;
+    // Red: bright enough, and red far above green and blue — the deep rouge
+    // the nodes are drawn in, glowing, as much as the button's.
+    for (let i = 0; i < d.length; i += 16) if (d[i] > 120 && d[i] > 2.2 * d[i + 1] && d[i] > 1.6 * d[i + 2]) red++;
     const at = points.map(([x, y]) => {
       const m = [0, 0, 0];
       for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) {
@@ -100,8 +102,10 @@ async function goTo(page, k, code) {
   await expect(page.locator(".net-stage")).toHaveAttribute("data-focus", code, { timeout: 20000 });
   await expect.poll(async () => (await state(page)).flying, { timeout: 20000 }).toBe(false);
 }
-/** Red, not white: a note's colour once the signal has passed it. */
-const red = (c) => c[0] > 0.85 && c[1] < 0.45 && c[2] < 0.5;
+/** Rouge, not white: a note's colour once the signal has passed it — a
+ *  deep red, the red far above the green and the blue (2026-09-28: "more
+ *  red ike rouge ... A darker red"). */
+const red = (c) => c[0] > 0.5 && c[0] < 0.8 && c[1] < 0.2 && c[2] < 0.25 && c[0] > 3 * c[1];
 
 test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);

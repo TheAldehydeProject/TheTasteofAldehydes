@@ -99,9 +99,12 @@
 //   THE OPENING: a spark at the centre and the one network wiring itself
 //   outwards; then THE WORD, "Open menu here", over the page out of focus.
 //
-//   SHINE: glossy spheres catching a studio of soft lights, a rim of their
-//   own colour; and the clock softer — gathering speed, coming to rest,
-//   turning round without a jolt, the accords leaving one after another.
+//   GLOW: the nodes faceted, in a deep rouge, lit from within with a rim
+//   of it burning round every edge and a glow round them ("revert to the
+//   non perfectly spherical nodes, but add a glow to them ... more red ike
+//   rouge ... A darker red"; for a morning they were glossy spheres); and
+//   the clock softer — gathering speed, coming to rest, turning round
+//   without a jolt, the accords leaving one after another.
 //
 // SIXTY FRAMES A SECOND, as before: every node, link and speck written in
 // place in a handful of buffers, every program compiled before it is
@@ -142,9 +145,12 @@
   // ============================================================
   // TUNING
   // ============================================================
-  const REDS = [0xff3a44, 0xf2404b, 0xff525b, 0xe8323d, 0xff6168];   // the notes
-  const DARKS = [0xc22a34, 0xd0313b, 0xb3222c, 0xc93a43, 0xa9242d];   // the fillers
-  const PALES = [0xf4dcdc, 0xe9c9c9, 0xffe8e6];                       // a few pale ones, as the picture has
+  // ROUGE: a deep, dark red that glows, rather than a bright solid one
+  // (2026-09-28: "more red ike rouge, rather than just a solid sphere of
+  // red. A darker red").
+  const REDS = [0xa8102a, 0x9a0c22, 0xb3142e, 0x900a20, 0xb8182f];   // the notes
+  const DARKS = [0x7a0c1a, 0x8c1020, 0x6a0915, 0x941628, 0x5e0812];   // the fillers
+  const PALES = [0xeec0c4, 0xe0a8ae, 0xf4cfcf];                       // a few pale ones, as the picture has
   const SPECK = 0x8e8784;                                              // and grey specks
   const LINE = [1, 0.34, 0.38];                                        // a link, red
   const FRAME_RED = 0x9a3b41;
@@ -657,9 +663,9 @@
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, 1, 0.05, 400);
     scene.fog = new THREE.Fog(0x1f1f20, 20, 60);
-    scene.add(new THREE.AmbientLight(0xffffff, 0.34));
-    scene.add(new THREE.HemisphereLight(0xfff4f0, 0x2a1c1c, 0.5));
-    const key = new THREE.DirectionalLight(0xffffff, 0.85);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.24));
+    scene.add(new THREE.HemisphereLight(0xfff4f0, 0x2a1c1c, 0.36));
+    const key = new THREE.DirectionalLight(0xffffff, 0.72);
     key.position.set(-3, 5, 4);
     scene.add(key);
     const rim = new THREE.DirectionalLight(0xffd0d0, 0.45);
@@ -702,39 +708,21 @@
     };
     const dynamic = (n, size) => new THREE.BufferAttribute(new Float32Array(n * size), size).setUsage(THREE.DynamicDrawUsage);
 
-    // THE NODES: glossy spheres that SHINE — the owner's "I want the balls to
-    // shine more than be solid red objects": smooth, a little metallic,
-    // catching a studio of soft lights (`STUDIO`, below) as highlights, a
-    // rim of their own colour glowing round every edge, and a glow round
-    // them. The notes are drawn finer than the fillers, as two sets of
-    // spheres (the notes are nodes 0 to NOTE_COUNT - 1), and each set twice
-    // over — whole (writing depth) and going or gone translucent (not) —
-    // sharing one opacity per node.
+    // THE NODES: faceted, not perfectly round — an icosahedron twice
+    // divided, drawn in flat facets — in ROUGE, glowing: lit from within in
+    // their own deep red, a rim of it burning round every edge, and a glow
+    // round them. (For a morning, 2026-09-28, they were smooth, glossy
+    // spheres catching a studio of lights; the owner asked for the facets
+    // back, with a glow, and a darker red.) The notes and the fillers are
+    // two sets of them (the notes are nodes 0 to NOTE_COUNT - 1), and each
+    // set is drawn twice over — whole (writing depth) and going or gone
+    // translucent (not) — sharing one opacity per node.
     // perNode: the one addition to the library's shader — each node's own
     // opacity, its glow from within taken in its own colour, and the rim.
-    const STUDIO = (() => {
-      const pm = new THREE.PMREMGenerator(renderer);
-      const room = new THREE.Scene();
-      room.add(new THREE.Mesh(new THREE.SphereGeometry(20, 24, 12), new THREE.MeshBasicMaterial({ color: 0x121214, side: THREE.BackSide })));
-      const light = (w, h, rgb, x, y, z) => {
-        const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }));
-        m.material.color.setRGB(rgb[0], rgb[1], rgb[2]);
-        m.position.set(x, y, z);
-        m.lookAt(0, 0, 0);
-        room.add(m);
-      };
-      light(10, 4, [3.2, 3.1, 3.0], -3, 12, 5);       // a softbox above
-      light(3, 11, [2.2, 2.0, 2.0], 13, 1, -3);       // a strip on the right
-      light(8, 3, [2.4, 0.35, 0.42], -4, -11, -6);    // a red glow from below
-      light(2, 2, [5, 5, 5], 5, 6, 12);               // a small bright light in front
-      const tex = pm.fromScene(room, 0.035).texture;
-      pm.dispose();
-      return tex;
-    })();
     const opacity = new Float32Array(T).fill(1);
     const N = NOTE_COUNT;
     const sets = [
-      { geo: new THREE.IcosahedronGeometry(1, 2), from: 0, count: N },
+      { geo: new THREE.IcosahedronGeometry(1, 1), from: 0, count: N },
       { geo: new THREE.IcosahedronGeometry(1, 1), from: N, count: T - N },
     ];
     function perNode(material) {
@@ -747,19 +735,19 @@
           .replace("#include <color_fragment>", "#include <color_fragment>\ndiffuseColor.a *= vInstOpacity;")
           .replace("#include <emissivemap_fragment>", "#include <emissivemap_fragment>\ntotalEmissiveRadiance *= vColor.rgb;\n" +
             "float rimOf = 1.0 - clamp(dot(normalize(vViewPosition), normal), 0.0, 1.0);\n" +
-            "totalEmissiveRadiance += vColor.rgb * pow(rimOf, 2.4) * 1.25;");
+            "totalEmissiveRadiance += vColor.rgb * pow(rimOf, 2.2) * 1.15;");
       };
       return material;
     }
-    const shiny = (extra) => perNode(new THREE.MeshStandardMaterial(Object.assign({
-      color: 0xffffff, emissive: 0x2c2c2c, roughness: 0.2, metalness: 0.3, envMap: STUDIO, envMapIntensity: 1.25,
+    const glowing = (extra) => perNode(new THREE.MeshStandardMaterial(Object.assign({
+      color: 0xffffff, emissive: 0x4c4c4c, roughness: 0.62, metalness: 0.06, flatShading: true,
     }, extra)));
     sets.forEach((set) => {
       set.opacity = new THREE.InstancedBufferAttribute(opacity.subarray(set.from, set.from + set.count), 1);
       set.opacity.setUsage(THREE.DynamicDrawUsage);
       set.geo.setAttribute("instOpacity", set.opacity);
-      set.solid = new THREE.InstancedMesh(set.geo, shiny({}), set.count);
-      set.faint = new THREE.InstancedMesh(set.geo, shiny({ transparent: true, depthWrite: false }), set.count);
+      set.solid = new THREE.InstancedMesh(set.geo, glowing({}), set.count);
+      set.faint = new THREE.InstancedMesh(set.geo, glowing({ transparent: true, depthWrite: false }), set.count);
       const tint = new THREE.Color();
       for (let j = 0; j < set.count; j++) { set.solid.setColorAt(j, tint.set(nodes[set.from + j].base)); set.faint.setColorAt(j, tint); }
       set.faint.instanceColor = set.solid.instanceColor;
@@ -778,7 +766,7 @@
     const glowGeo = new THREE.BufferGeometry();
     glowGeo.setAttribute("position", dynamic(T, 3));
     glowGeo.setAttribute("color", dynamic(T, 3));
-    const glow = new THREE.Points(glowGeo, new THREE.PointsMaterial(additive({ map: SPOT, size: 0.78, sizeAttenuation: true, vertexColors: true })));
+    const glow = new THREE.Points(glowGeo, new THREE.PointsMaterial(additive({ map: SPOT, size: 1.0, sizeAttenuation: true, vertexColors: true })));
     glow.frustumCulled = false;
     scene.add(glow);
 
@@ -2203,10 +2191,11 @@
           if (grow < 0.01) { nothing(solidM, j); if (faintNow) nothing(faintM, j); }
           else if (opacity[i] > 0.995) { put(solidM, j, n.size * grow, x, y, z); if (faintNow) nothing(faintM, j); }
           else { nothing(solidM, j); put(faintM, j, n.size * grow, x, y, z); }
-          // Its glow: the notes the most, and shimmering a little; the pale
-          // ones softly, the specks not at all — brighter while white, and as
+          // Its glow, rouge round rouge: the notes the most, and shimmering a
+          // little; the fillers less, the pale ones softly, the specks not at
+          // all — brighter while white, and as
           // the signal passes.
-          let kindGlow = n.kind === 0 ? 0.7 + n.size * 2.6 : n.kind === 1 ? 0.32 : n.kind === 2 ? 0.34 : 0;
+          let kindGlow = n.kind === 0 ? 1.3 + n.size * 3.6 : n.kind === 1 ? 0.7 : n.kind === 2 ? 0.34 : 0;
           if (n.kind === 0 && !still) kindGlow *= 1 + 0.2 * Math.sin(twinkle * n.f[0] * 1.7 + n.ph[0]);
           const k = kindGlow * (1 + 0.6 * ph.changing + lit[i] * 1.6) * (0.2 + 0.8 * opacity[i]) * (i === selected ? 2 : 1) * grow;
           glowPos[i * 3] = x; glowPos[i * 3 + 1] = y; glowPos[i * 3 + 2] = z;
