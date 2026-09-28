@@ -830,18 +830,26 @@ test("at an accord nothing stands in its way, the menu's hand does not take it a
    drawn soft — at the centre, the networks level with it sharp and the rest
    softer the farther off; at an accord, the whole of it sharp and the rest
    soft; nothing soft in the one network; and `?blur=off` on the address
-   takes it away (DEPTH_BLUR in network.js, for good). */
+   takes it away (DEPTH_BLUR in network.js, for good). A machine drawing in
+   software — this one — is not given it unless `?blur=on` asks: there it
+   halved the frames. */
 test("expanded, what is nearer or farther than what is looked at goes soft, and ?blur=off takes it away", async ({ page }) => {
-  test.setTimeout(150000);
+  test.setTimeout(240000);
   const errors = collectPageErrors(page);
+  // On as it stands, but for a machine drawing in software.
   await open(page);
-  await settle(page);
-  const stage = page.locator(".net-stage");
-  const N = +(await stage.getAttribute("data-notes"));
   let s = await state(page);
+  expect(s.depthBlur, "on, unless drawn in software").toBe(!s.software);
+  await page.goto(TEST_PAGE + "?blur=on");
+  const stage = page.locator(".net-stage");
+  await expect(stage).toHaveClass(/is-drawn/, { timeout: 15000 });
+  await settle(page);
+  const N = +(await stage.getAttribute("data-notes"));
+  s = await state(page);
   expect(s.depthBlur, "on").toBe(true);
   expect(s.soft, "nothing soft in the one network").toBe(false);
-  await expandIt(page);
+  await page.locator(".net-expand").click();
+  await expect(stage).toHaveAttribute("data-state", "apart", { timeout: 90000 });
   await expect.poll(async () => (await state(page)).flying, { timeout: 20000 }).toBe(false);
   await expect.poll(async () => (await state(page)).soft, { timeout: 5000 }).toBe(true);
   s = await state(page);
@@ -857,7 +865,7 @@ test("expanded, what is nearer or farther than what is looked at goes soft, and 
   expect(soft.filter(([c, b]) => c !== "WOO" && b > 0.5).length, "the rest soft").toBeGreaterThan(50);
   // COLLAPSED: nothing soft.
   await page.locator(".net-expand").click();
-  await expect(stage).toHaveAttribute("data-state", "one", { timeout: 30000 });
+  await expect(stage).toHaveAttribute("data-state", "one", { timeout: 90000 });
   await expect.poll(async () => (await state(page)).soft, { timeout: 5000 }).toBe(false);
   // ?blur=off: none of it.
   await page.goto(TEST_PAGE + "?blur=off");

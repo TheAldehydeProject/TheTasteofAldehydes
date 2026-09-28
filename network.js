@@ -830,36 +830,64 @@
     const glowing = (extra) => perNode(new THREE.MeshStandardMaterial(Object.assign({
       color: 0xffffff, emissive: 0x505050, roughness: 0.62, metalness: 0.06, flatShading: true,
     }, extra)));
+    // The translucent and the soft sets are written PACKED — only the
+    // nodes each draws, one after another, and only that many drawn — each
+    // with its own colours and opacities: the soft layer keeps some node
+    // part-soft nearly always, and a set drawn whole for the sake of a few
+    // cost this machine's software drawing half its frames.
+    const packed = (set, extra) => {
+      const geo = new THREE.BufferGeometry();
+      Object.keys(set.geo.attributes).forEach((k) => { if (k !== "instOpacity") geo.setAttribute(k, set.geo.attributes[k]); });
+      if (set.geo.index) geo.setIndex(set.geo.index);
+      const op = new THREE.InstancedBufferAttribute(new Float32Array(set.count), 1).setUsage(THREE.DynamicDrawUsage);
+      geo.setAttribute("instOpacity", op);
+      const mesh = new THREE.InstancedMesh(geo, glowing({ transparent: true, depthWrite: false }), set.count);
+      mesh.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(set.count * 3), 3).setUsage(THREE.DynamicDrawUsage);
+      mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      mesh.frustumCulled = false;
+      mesh.renderOrder = 2;
+      mesh.count = 0;
+      mesh.visible = false;
+      Object.assign(mesh, extra);
+      return { mesh, op: op.array, opAttr: op, m: mesh.instanceMatrix.array, c: mesh.instanceColor.array, n: 0 };
+    };
     sets.forEach((set) => {
       set.opacity = new THREE.InstancedBufferAttribute(drawnOp.subarray(set.from, set.from + set.count), 1);
       set.opacity.setUsage(THREE.DynamicDrawUsage);
       set.geo.setAttribute("instOpacity", set.opacity);
       set.solid = new THREE.InstancedMesh(set.geo, glowing({}), set.count);
-      set.faint = new THREE.InstancedMesh(set.geo, glowing({ transparent: true, depthWrite: false }), set.count);
       const tint = new THREE.Color();
-      for (let j = 0; j < set.count; j++) { set.solid.setColorAt(j, tint.set(nodes[set.from + j].base)); set.faint.setColorAt(j, tint); }
-      set.faint.instanceColor = set.solid.instanceColor;
+      for (let j = 0; j < set.count; j++) set.solid.setColorAt(j, tint.set(nodes[set.from + j].base));
       set.solid.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-      set.faint.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
       set.solid.instanceColor.setUsage(THREE.DynamicDrawUsage);
-      set.solid.frustumCulled = set.faint.frustumCulled = false;
-      set.faint.renderOrder = 2;
-      scene.add(set.solid, set.faint);
-      // Its soft copy: the same shape, its own opacity, its own places.
-      set.softGeo = new THREE.BufferGeometry();
-      Object.keys(set.geo.attributes).forEach((k) => { if (k !== "instOpacity") set.softGeo.setAttribute(k, set.geo.attributes[k]); });
-      if (set.geo.index) set.softGeo.setIndex(set.geo.index);
-      set.softOpacity = new THREE.InstancedBufferAttribute(softOp.subarray(set.from, set.from + set.count), 1);
-      set.softOpacity.setUsage(THREE.DynamicDrawUsage);
-      set.softGeo.setAttribute("instOpacity", set.softOpacity);
-      set.soft = new THREE.InstancedMesh(set.softGeo, glowing({ transparent: true, depthWrite: false }), set.count);
-      set.soft.instanceColor = set.solid.instanceColor;
-      set.soft.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-      set.soft.frustumCulled = false;
+      set.solid.frustumCulled = false;
+      scene.add(set.solid);
+      // Going or gone translucent; and its soft copy, on the soft layer.
+      set.fp = packed(set);
+      set.faint = set.fp.mesh;
+      scene.add(set.faint);
+      set.sp = packed(set);
+      set.soft = set.sp.mesh;
       set.soft.layers.set(SOFT);
-      set.soft.visible = false;
       scene.add(set.soft);
     });
+    /** A node written into a packed set: where, how large, its colour, how
+        opaque. */
+    const pack = (p, s, x, y, z, r, g, b, o) => {
+      const k = p.n++;
+      put(p.m, k, s, x, y, z);
+      p.c[k * 3] = r; p.c[k * 3 + 1] = g; p.c[k * 3 + 2] = b;
+      p.op[k] = o;
+    };
+    const packDone = (p) => {
+      p.mesh.count = p.n;
+      p.mesh.visible = p.n > 0;
+      if (!p.n) return;
+      p.mesh.instanceMatrix.updateRange.count = p.n * 16;
+      p.mesh.instanceColor.updateRange.count = p.n * 3;
+      p.opAttr.updateRange.count = p.n;
+      p.mesh.instanceMatrix.needsUpdate = p.mesh.instanceColor.needsUpdate = p.opAttr.needsUpdate = true;
+    };
     // Each node's own red — and its gold, for combinations — as three
     // numbers each, for the arithmetic each frame.
     const baseRGB = new Float32Array(T * 3), goldRGB = new Float32Array(T * 3);
@@ -1032,7 +1060,15 @@
     // How soft each of them is this frame (none, unless it says).
     const softness = new Map(shareable.map((o) => [o, 0]));
     const share = (o, b) => { softness.set(o, b > 0.004 ? b : 0); };
-    const depthBlurOn = /[?&]blur=off\b/.test(location.search) ? false : /[?&]blur=on\b/.test(location.search) ? true : DEPTH_BLUR;
+    // (A machine drawing in software — no graphics card to hand the drawing
+    // to — is not given it unless asked: every soft node is drawn a second
+    // time, see-through, and there it halved the frames. `?blur=on` asks.)
+    const software = (() => {
+      if (!renderer.extensions.has("WEBGL_debug_renderer_info")) return false;
+      const gl = renderer.getContext(), info = gl.getExtension("WEBGL_debug_renderer_info");
+      return /swiftshader|llvmpipe|softpipe|software/i.test(String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)));
+    })();
+    const depthBlurOn = /[?&]blur=off\b/.test(location.search) ? false : /[?&]blur=on\b/.test(location.search) ? true : DEPTH_BLUR && !software;
     const halfFloat = renderer.capabilities.isWebGL2 && renderer.extensions.has("EXT_color_buffer_float");
     const softTarget = () => new THREE.WebGLRenderTarget(2, 2, {
       minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat,
@@ -1374,7 +1410,6 @@
     // depth blur is (none till it has nearly come apart); and a note added
     // in combinations: when, which, and when each line from it sets out.
     const blurOf = new Float32Array(T);
-    const softEmpty = new Uint8Array(T).fill(1);   // written empty on the soft layer already
     let focusD = 0, band = BLUR_BAND, dofK = 0, bump = 0, lineCount = 0, softSegs = 0;
     let tagAt = -1e9, tagNew = -1, softest = 0;
     const lineAt = new Float32Array(T).fill(-1);
@@ -2690,7 +2725,6 @@
       arr[o + 12] = x; arr[o + 13] = y; arr[o + 14] = z; arr[o + 15] = 1;
     }
     const nothing = (arr, i) => arr.fill(0, i * 16, i * 16 + 16);
-    let faintWas = true;
     /** One line, faded by hand the way the fog would fade it — but to
         nothing, where the fog would have faded it to grey — and shared
         between the sharp and the soft by how soft it is (`sb`). */
@@ -2833,7 +2867,7 @@
 
       // TRANSLUCENCY, eased node by node.
       const fade = still ? 1 : 1 - Math.exp(-dt * FADE_RATE);
-      let dim = 0, settling = false, anyFaint = false, changed = false;
+      let dim = 0, settling = false, changed = false;
       focusNow = uTo === 1 && focus >= 0 ? focus : -1;
       tagging = cmbTo === 1 && chosen.length > 0;
       // At an accord the one you are at is what is lit — the menu's hand
@@ -2865,7 +2899,6 @@
           blurOf[i] = b;
         }
       } else if (blurOf[0] !== 0 || blurOf[T - 1] !== 0 || softLast) blurOf.fill(0);
-      let softChanged = false;
       for (let i = 0; i < T; i++) {
         const w = want(i), was = opacity[i];
         if (was !== w) {
@@ -2878,18 +2911,14 @@
         const o = opacity[i], b = blurOf[i];
         const sharp = b > 0 ? o * (1 - b) : o, sft = o * b * SOFT_DIM;
         if (drawnOp[i] !== sharp) { drawnOp[i] = sharp; changed = true; }
-        if (softOp[i] !== sft) { softOp[i] = sft; softChanged = true; }
-        if (sharp <= 0.995) anyFaint = true;
+        softOp[i] = sft;
         if (opacity[i] < 0.5 && nodes[i].kind === 0) dim++;
       }
       if (changed) sets.forEach((set) => { set.opacity.needsUpdate = true; });
-      if (softChanged) sets.forEach((set) => { set.softOpacity.needsUpdate = true; });
-      sets.forEach((set) => { set.soft.visible = softNow; });
+
       softness.forEach((b, o) => { softness.set(o, 0); });
       // The translucent set is drawn only while something is translucent.
-      const faintNow = anyFaint || faintWas;
-      faintWas = anyFaint;
-      sets.forEach((set) => { set.faint.visible = anyFaint; });
+
       hubSeen += ((focusNow >= 0 ? 0.07 : 1) - hubSeen) * fade;
       accords.forEach((A) => {
         const to = focusNow >= 0 && A.k !== focusNow ? AWAY : 1;
@@ -2913,7 +2942,8 @@
       glowsDrawn = 0; nodesDrawn = 0;
       for (let q = 0; q < 2; q++) {
         const set = sets[q];
-        const solidM = set.solid.instanceMatrix.array, faintM = set.faint.instanceMatrix.array, softM = set.soft.instanceMatrix.array;
+        const solidM = set.solid.instanceMatrix.array;
+        set.fp.n = 0; set.sp.n = 0;
         const instColour = set.solid.instanceColor.array;
         const to = set.from + set.count;
         for (let i = set.from; i < to; i++) {
@@ -2923,10 +2953,9 @@
           // then left alone until it is made.
           if (scaleOf[i] <= 0) {
             vis[i] = 0;
-            if (softNow && !softEmpty[i]) { nothing(softM, j); softEmpty[i] = 1; }
             if (!empty[i]) {
               empty[i] = 1;
-              nothing(solidM, j); nothing(faintM, j);
+              nothing(solidM, j);
               glowSz[i] = 0;
               glowCol[i * 3] = glowCol[i * 3 + 1] = glowCol[i * 3 + 2] = 0;
               softGlowCol[i * 3] = softGlowCol[i * 3 + 1] = softGlowCol[i * 3 + 2] = 0;
@@ -2972,13 +3001,10 @@
             (1 + lit[i] * 0.25 + pw * 0.35 + partnerOf[i] * 0.3);
           const x = P[i * 3], y = P[i * 3 + 1], z = P[i * 3 + 2];
           const sharpO = drawnOp[i];
-          if (grow < 0.01 || sharpO < 0.004) { nothing(solidM, j); if (faintNow) nothing(faintM, j); }
-          else if (sharpO > 0.995) { put(solidM, j, n.size * grow, x, y, z); if (faintNow) nothing(faintM, j); }
-          else { nothing(solidM, j); put(faintM, j, n.size * grow, x, y, z); }
-          if (softNow) {
-            if (grow >= 0.01 && softOp[i] > 0.004) { put(softM, j, n.size * grow, x, y, z); softEmpty[i] = 0; }
-            else if (!softEmpty[i]) { nothing(softM, j); softEmpty[i] = 1; }
-          }
+          if (grow < 0.01 || sharpO < 0.004) nothing(solidM, j);
+          else if (sharpO > 0.995) put(solidM, j, n.size * grow, x, y, z);
+          else { nothing(solidM, j); pack(set.fp, n.size * grow, x, y, z, r, g, b, sharpO); }
+          if (softNow && grow >= 0.01 && softOp[i] > 0.004) pack(set.sp, n.size * grow, x, y, z, r, g, b, softOp[i]);
           // ITS GLOW, its own and near it: as wide as the node and a little
           // more, the notes a little brighter, shimmering; the fillers less,
           // the pale ones softly, the specks not at all — brighter while
@@ -3004,14 +3030,14 @@
           }
         }
         set.solid.instanceMatrix.needsUpdate = true;
-        if (faintNow) set.faint.instanceMatrix.needsUpdate = true;
-        if (softNow) set.soft.instanceMatrix.needsUpdate = true;
         set.solid.instanceColor.needsUpdate = true;
+        packDone(set.fp);
+        packDone(set.sp);
       }
       glowGeo.attributes.position.needsUpdate = true;
       glowGeo.attributes.color.needsUpdate = true;
       glowGeo.attributes.glowSize.needsUpdate = true;
-      softGlow.visible = softNow;
+      softGlow.visible = softNow && SOFT_GLOW > 0;
       if (softNow) softGlowGeo.attributes.color.needsUpdate = true;
 
       // THE LINKS: the one network's letting go as the accords leave, each
@@ -3485,7 +3511,7 @@
         combine: cmbTo === 1, cmb, tags: chosen.map((n) => n.name), matched: matched.slice(), partners: partners.size,
         hub: hubSeen, away: accords.map((A) => A.seen), tagLines: tagSegs, glows: glowsDrawn, drawn: nodesDrawn, pulsed: pulsedAt > 0, flashes, flashTo: flashTo.slice(),
         litAccords: accords.filter((A) => A.members.some((n) => lit[n.i] > 0.3)).map((A) => A.code),
-        depthBlur: depthBlurOn, soft: softLast, bump, softest, dof: dofK, softLines: softSegs,
+        depthBlur: depthBlurOn, software, soft: softLast, bump, softest, dof: dofK, softLines: softSegs,
         blurred: notes.filter((n) => blurOf[n.i] > 0.5 && scaleOf[n.i] > 0.5).length,
       }),
       /** How soft a note is drawn this frame, 0 to 1. */

@@ -1122,6 +1122,13 @@ drawn.
 **Reversible**: `DEPTH_BLUR` at the top of `network.js` — false, and it is gone. **`?blur=off`**
 on the address shows the page without it, and `?blur=on` with it, without changing anything.
 
+**Not on a machine drawing in software** unless `?blur=on` asks: a browser with no graphics card
+to hand the drawing to (it says so — *SwiftShader*, *llvmpipe* — in `WEBGL_debug_renderer_info`)
+draws every see-through sphere on the processor, and there the soft layer halved the frames
+(3.8 a second to 2), so slowly that coming apart took longer than the tests wait. A graphics card
+does the same work in a moment. The machine the tests run on is one of these, so the depth blur's
+own test asks for it with `?blur=on`, and the rest run without it as such a machine would.
+
 This is the second WebGL program of the site's own (after the home page's map): two small
 `ShaderMaterial`s drawn on a square over the window (`blurMaterial`, `layMaterial`). A fault in
 either would leave the soft layer black or blank rather than the page — the sharp layer is drawn
@@ -1139,9 +1146,14 @@ reduced motion: the lines are simply there.
 ### Costs
 
 The soft layer is a second drawing of the scene at a quarter of the pixels and four passes of the
-blur; on this machine's software drawing, a frame's own work went from 3.4ms to 4.0ms on average
-through the expansion, a journey and the collapse (the test's bound is 7ms). A soft copy already
-empty is not written again (`softEmpty`).
+blur; a frame's own work (the page's, not the drawing's) went from 3.4ms to 4.0ms on average
+through the expansion, a journey and the collapse (the test's bound is 7ms). The translucent set
+and the soft set are **packed** (`packed`, `pack`, `packDone`): each draws only the nodes it has
+this frame, one after another, with its own colours and opacities, where they used to draw every
+node of their set and hide the rest — with the depth blur some node is nearly always part-soft,
+and so part-translucent, and the translucent set was otherwise drawn whole every frame. What was
+tried and did not help on software drawing: the blur's targets in 8 bits, at a quarter of the
+window, and a plainer sphere for the soft copies; it is the see-through spheres themselves.
 
 ### How to test it
 
@@ -1156,7 +1168,8 @@ empty is not written again (`softEmpty`).
   Back while expanded`** — was *... and Back goes the way you came*; the dropdown goes to the
   centre and Collapse into one, Back hidden throughout.
 - **`expanded, what is nearer or farther than what is looked at goes soft, and ?blur=off takes it
-  away`** (new) — nothing soft in the one network; apart, some notes soft and not all, their links
+  away`** (new) — on as it stands unless drawn in software; then with `?blur=on`: nothing soft in
+  the one network; apart, some notes soft and not all, their links
   with them; at Woods every one of its notes sharp and the rest soft; collapsed, nothing soft; and
   with `?blur=off`, no soft layer at all.
 - **`combinations: ...`** — Back and Combinations together in the middle; Reset not pressable,
