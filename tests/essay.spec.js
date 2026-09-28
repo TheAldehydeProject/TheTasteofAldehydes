@@ -254,6 +254,16 @@ test("Explorations 002 is Buying a Perfume, written in the owner's words, its su
     "Ganneymede by Marc-Antoine Barrois", "Quite simple I think.", "by no means holistic"]) {
     expect(text, words).toContain(words);
   }
+  // The two paragraphs the owner set apart, by one thin line down their
+  // left (2026-09-28: "a vertical line on the left of the paragraphs ...
+  // just a thin line").
+  const set = page.locator(".essay-set");
+  await expect(set).toHaveCount(1);
+  await expect(set.locator("p")).toHaveCount(2);
+  await expect(set.locator("p").first()).toContainText("In my opinion, a fragrance is an extension of the person using it.");
+  await expect(set.locator("p").last()).toContainText("The way you choose to present yourself");
+  const line = await set.evaluate((e) => { const c = getComputedStyle(e); return [c.borderLeftWidth, c.borderLeftStyle, c.borderTopWidth, c.borderRightWidth]; });
+  expect(line, "a thin line on the left, and nothing else").toEqual(["1px", "solid", "0px", "0px"]);
   // The footnote: down from Romantic and back again.
   await expect(page.locator("#footnote-1-from")).toHaveAttribute("href", "#footnote-1");
   await expect(page.locator("#footnote-1 .essay-fn-back")).toHaveAttribute("href", "#footnote-1-from");

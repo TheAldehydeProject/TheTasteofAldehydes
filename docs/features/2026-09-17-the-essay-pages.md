@@ -291,3 +291,16 @@ Tested: **`Explorations 002 is Buying a Perfume, written in the owner's words, i
 own page only`** in `tests/essay.spec.js` (it was *…stands ready for the owner's writing*) — the
 row, the head and its subtitle, the five headings and eight subheadings, no waiting box, the
 owner's words as written, the footnote there and back, and the two fragrances' links.
+
+## 2026-09-28 — a thin line beside two paragraphs
+
+> i want you to add a vertical line on the left of the paragraphs "In my opinion, a fragrance is
+> an extension of the person using it. ..." [and] "The way you choose to present yourself ..." to
+> emphasize them a little. just a thin line
+
+On Buying a Perfume, the two paragraphs after *HOWEVER* stand in a `<div class="essay-set">`:
+**one hairline down their left** in the essays' steel blue at a little over half strength, the
+writing moved in from it (22px; 14px on a phone), and nothing else changed — no ground, no other
+rule, the words exactly as they were. `.essay-set` can set apart any run of paragraphs on an essay
+page the same way. Tested in the 002 test in `tests/essay.spec.js`: the two paragraphs in it, and a
+1px line on the left only.

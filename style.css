@@ -4409,22 +4409,25 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
    network.js on the page's own dark ground (its five tokens turned over,
    as the Note Library's are): one dense red network of every note, which
    the button at the foot expands into a network for each accord, joined
-   to a centre.
+   to a centre — and, since 2026-09-28, its own version of the library.
 
-   What network.js adds round the drawing, and what is styled here: THE
-   WINDOW ON THE LEFT (moved from the right at the owner's word, and made
-   "less techy ... minimalist, geometric and simple (with particles!)") —
-   the library's name, a small ring of specks, the search in the window
-   itself and the accords; THE FOOT (the button, and once expanded the
-   dropdown with an arrow either side); THE CARD a note is read in, on the
-   right, with its line to the note; and the names beside the networks and
-   the notes.
+   What network.js adds round the drawing, and what is styled here: THE TWO
+   ARROWS on the left (the search's on top, the menu's under it) and what
+   they pull out — THE SEARCH BAR, the library's own `query>`, and THE MENU,
+   minimal, geometric, with particles; THE FOOT (the button, and once
+   expanded the dropdown with an arrow either side); THE NOTE WINDOW a
+   pressed note opens, translucent, over THE VEIL that puts the rest of the
+   page out of focus; THE WORD AS IT OPENS ("Open menu here", the page out
+   of focus but for the arrows); the arrows GLOWING when the page has been
+   left alone; and the names beside the networks and the notes.
 
    SIXTY FRAMES A SECOND: everything that moves here moves by transform
-   and fades by opacity — never by `left`, `width` or a blur — so the
-   browser never lays the page out again while the drawing runs. The room
-   the window takes is one variable (`--room`, the same as `room()` in
-   network.js), and the foot stands in the middle of what is left.
+   and fades by opacity — never by `left`, `width` or an animated blur — so
+   the browser never lays the page out again while the drawing runs; the
+   veil and the note window are blurred behind at a blur that never
+   changes, and come and go by their opacity. The room the menu takes is
+   one variable (`--room`, the same as `room()` in network.js), and the
+   foot stands in the middle of what is left.
    ================================================================== */
 .network-page {
   --bg: #1f1f20;
@@ -4435,8 +4438,10 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   --muted: #8f8b86;
   --net-red: #ff3a44;
   --net-ground: rgba(24, 24, 25, 0.8);
+  --net-glass: rgba(26, 24, 26, 0.58);
   --net-rule: rgba(255, 255, 255, 0.08);
   --net-tick: rgba(255, 255, 255, 0.34);
+  --net-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   background:
     radial-gradient(ellipse 50% 34% at 50% 52%, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0) 70%),
     var(--bg);
@@ -4450,7 +4455,7 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   overflow: hidden;
   font-family: var(--sans);
 }
-.net-stage.has-panel { --room: min(320px, 28vw); }
+.net-stage.has-panel { --room: min(336px, 30vw); }
 .net-canvas {
   position: absolute;
   inset: 0;
@@ -4463,7 +4468,7 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   position: absolute;
   right: 22px;
   top: 24px;
-  max-width: 330px;
+  max-width: 340px;
   margin: 0;
   font-family: var(--mono);
   font-size: 10px;
@@ -4477,6 +4482,8 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-stage.is-turned .net-hint,
 .net-stage.is-bare .net-hint,
 .net-stage.is-selecting .net-hint { opacity: 0; }
+/* Left alone a while, it says again what can be done. */
+.net-stage.is-idle .net-hint { opacity: 1; }
 .net-fallback {
   position: absolute;
   left: 28px;
@@ -4501,7 +4508,7 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 /* Registration ticks at the four corners of a window, drawn as eight
    hairlines: the site's own geometry. */
 .net-panel::after,
-.net-card::after {
+.net-note::after {
   content: "";
   position: absolute;
   inset: -5px;
@@ -4515,151 +4522,134 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
     linear-gradient(var(--net-tick), var(--net-tick)) bottom left / 1px 10px no-repeat,
     linear-gradient(var(--net-tick), var(--net-tick)) bottom right / 10px 1px no-repeat,
     linear-gradient(var(--net-tick), var(--net-tick)) bottom right / 1px 10px no-repeat;
-  transition: opacity 300ms ease;
 }
 
-/* THE WINDOW ON THE LEFT. Folded, it slides away but for the button that
-   opens it again. */
-.net-panel {
+/* AS IT OPENS, the chrome comes in once the network has wired itself. */
+.net-rail, .net-dock, .net-hint {
+  transition: opacity 700ms ease, transform 460ms var(--net-ease);
+}
+.net-stage:not(.is-loaded) .net-rail,
+.net-stage:not(.is-loaded) .net-dock,
+.net-stage:not(.is-loaded) .net-hint { opacity: 0; }
+.net-stage:not(.is-loaded) .net-rail { transform: translateX(-8px); }
+
+/* THE TWO ARROWS on the left: the search's on top, the menu's under it,
+   each a hairline square with a chevron pointing the way what it pulls out
+   will go, and its word beside it under the hand. */
+.net-rail {
   position: absolute;
   left: 22px;
-  top: 72px;
+  top: 76px;
   display: flex;
   flex-direction: column;
-  width: 264px;
-  max-height: calc(100% - 96px);
-  padding: 14px 16px 12px;
-  box-sizing: border-box;
-  color: var(--ink);
-  transition: transform 460ms cubic-bezier(0.2, 0.7, 0.2, 1);
-  will-change: transform;
+  gap: 8px;
 }
-.net-panel::before {
+.net-arrow {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: var(--net-ground);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 200ms ease, background-color 200ms ease;
+}
+.net-arrow:hover, .net-arrow:focus-visible { border-color: rgba(255, 255, 255, 0.7); outline: none; }
+.net-arrow.is-out { border-color: rgba(255, 90, 99, 0.7); }
+.net-chev {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -4px 0 0 -6px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 300ms var(--net-ease), margin 300ms var(--net-ease);
+}
+.net-arrow.is-out .net-chev { margin-left: -3px; transform: rotate(135deg); }
+/* The search's arrow carries a small ring under its chevron: a lens. */
+.net-arrow[data-pull="search"]::before {
   content: "";
   position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--net-ground);
-  border: 1px solid var(--net-rule);
-  transition: opacity 300ms ease;
+  right: 5px;
+  bottom: 5px;
+  width: 5px;
+  height: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
 }
-.net-panel.is-folded { transform: translateX(calc(-100% + 40px)); pointer-events: none; }
-.net-panel.is-folded .net-fold { pointer-events: auto; }
-.net-panel.is-folded::before,
-.net-panel.is-folded::after { opacity: 0; }
-.net-panel > :not(.net-panel-head),
-.net-panel-title { transition: opacity 300ms ease; }
-.net-panel.is-folded > :not(.net-panel-head),
-.net-panel.is-folded .net-panel-title { opacity: 0; pointer-events: none; }
-.net-panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.net-panel-title {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: #f4f0ea;
-}
-.net-fold {
-  position: relative;
-  flex: none;
-  width: 22px;
-  height: 22px;
-  margin-right: -6px;
-  padding: 0;
-  background: var(--net-ground);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  cursor: pointer;
-  transition: border-color 200ms ease;
-}
-.net-fold:hover, .net-fold:focus-visible { border-color: rgba(255, 255, 255, 0.6); }
-.net-fold span {
+.net-arrow-say {
   position: absolute;
-  left: 8px;
-  top: 7px;
-  width: 6px;
-  height: 6px;
-  border-left: 1px solid var(--ink);
-  border-bottom: 1px solid var(--ink);
-  transform: rotate(45deg);
-  transition: transform 300ms ease;
-}
-.net-panel.is-folded .net-fold span { transform: translateX(-2px) rotate(-135deg); }
-.net-panel-count {
-  margin: 4px 0 0;
+  left: calc(100% + 10px);
+  top: 50%;
+  padding: 3px 7px;
+  background: #0c0c0c;
   font-family: var(--mono);
   font-size: 9.5px;
-  letter-spacing: 0.04em;
-  color: var(--muted);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: #e9e5df;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-4px, -50%);
+  transition: opacity 180ms ease, transform 180ms ease;
 }
-/* THE MARK: a ring of specks, one for every note (drawn by network.js). */
-.net-mark {
-  display: block;
-  width: 100%;
-  height: 92px;
-  margin: 8px 0 6px;
-}
-.net-panel-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-top: 1px solid var(--net-rule);
-}
-.net-panel-label {
-  font-size: 12px;
-  color: var(--muted);
-}
-.net-panel-sub {
-  margin: 0;
-  padding: 10px 0 6px;
-  border-top: 1px solid var(--net-rule);
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-/* The switch: a hairline box, and a square that crosses it. */
-.net-switch {
-  position: relative;
-  width: 28px;
-  height: 14px;
-  padding: 0;
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  cursor: pointer;
-  transition: border-color 220ms ease;
-}
-.net-switch span {
+.net-arrow:hover .net-arrow-say,
+.net-arrow:focus-visible .net-arrow-say { opacity: 1; transform: translate(0, -50%); }
+.net-arrow.is-out .net-arrow-say { display: none; }
+/* LEFT ALONE, the arrows glow: a red light round each, breathing — as
+   quiet as the line at the top right saying what can be done. */
+.net-arrow::after {
+  content: "";
   position: absolute;
-  left: 2px;
-  top: 2px;
-  width: 8px;
-  height: 8px;
-  background: var(--muted);
-  transition: transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1), background-color 220ms ease;
+  inset: -1px;
+  border: 1px solid rgba(255, 90, 99, 0.9);
+  box-shadow: 0 0 18px 3px rgba(255, 58, 68, 0.6), inset 0 0 10px rgba(255, 58, 68, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 600ms ease;
 }
-.net-switch[aria-checked="true"] { border-color: var(--net-red); }
-.net-switch[aria-checked="true"] span { transform: translateX(14px); background: var(--net-red); }
-.net-switch:focus-visible { outline: 1px solid #fff; outline-offset: 2px; }
-/* THE SEARCH, in the window: one ruled line. */
-.net-search { margin: 0 0 10px; animation: net-come-down 280ms cubic-bezier(0.2, 0.7, 0.2, 1); }
-.net-search[hidden] { display: none; }
-@keyframes net-come-down {
-  from { opacity: 0; translate: 0 -6px; }
-  to { opacity: 1; translate: 0 0; }
+.net-stage.is-idle .net-arrow::after { animation: net-glow 2.6s ease-in-out infinite; }
+.net-stage.is-idle .net-arrow[data-pull="menu"]::after { animation-delay: 0.4s; }
+.net-stage.is-coaching .net-arrow[data-pull="menu"]::after { animation: net-glow 1.6s ease-in-out infinite; }
+@keyframes net-glow {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
 }
-.net-search-field {
+
+/* THE SEARCH BAR the upper arrow pulls out, beside it: the library's own
+   `query>`, its count and its ×, and what it finds under it. */
+.net-find {
+  position: absolute;
+  left: 64px;
+  top: 76px;
+  width: 300px;
+  margin: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-10px);
+  transition: opacity 260ms ease, transform 320ms var(--net-ease), visibility 0s linear 320ms;
+}
+.net-find.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 260ms ease, transform 320ms var(--net-ease), visibility 0s;
+}
+.net-find-field {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 0 5px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+  height: 32px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  background: var(--net-ground);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
+.net-find-prompt { font-family: var(--mono); font-size: 11px; color: #ff6a72; }
 .net-query {
   flex: 1;
   min-width: 0;
@@ -4667,8 +4657,8 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   background: none;
   border: none;
   outline: none;
-  font: inherit;
-  font-size: 13px;
+  font-family: var(--mono);
+  font-size: 12px;
   color: var(--ink);
 }
 .net-query::placeholder { color: rgba(var(--ink-rgb), 0.32); }
@@ -4677,11 +4667,11 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-clear {
   position: relative;
   flex: none;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   padding: 0;
   background: none;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
   transition: opacity 200ms ease;
 }
@@ -4689,9 +4679,9 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-clear span::after {
   content: "";
   position: absolute;
-  left: 2px;
+  left: 3px;
   top: 7px;
-  width: 10px;
+  width: 8px;
   height: 1px;
   background: var(--ink);
   transform: rotate(45deg);
@@ -4700,13 +4690,16 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-clear:disabled { opacity: 0.25; cursor: default; }
 .net-results {
   display: none;
-  max-height: 196px;
-  margin: 6px 0 0;
-  padding: 0;
+  max-height: 236px;
+  margin: 0;
+  padding: 4px 10px;
   overflow-y: auto;
   list-style: none;
+  background: rgba(20, 20, 21, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-top: none;
 }
-.net-search.has-results .net-results { display: block; }
+.net-find.has-results .net-results { display: block; }
 .net-result {
   display: grid;
   grid-template-columns: 28px 1fr auto;
@@ -4722,6 +4715,73 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-result.is-none { display: block; color: var(--muted); cursor: default; }
 .net-result-sym { font-family: var(--mono); font-size: 10px; color: #ff6a72; }
 .net-result-code { font-family: var(--mono); font-size: 9px; color: var(--muted); }
+
+/* THE MENU the lower arrow pulls out, beside it: the library's name, a
+   ring of specks, and the accords. */
+.net-panel {
+  position: absolute;
+  left: 64px;
+  top: 116px;
+  display: flex;
+  flex-direction: column;
+  width: 256px;
+  max-height: calc(100% - 140px);
+  padding: 14px 16px 12px;
+  box-sizing: border-box;
+  color: var(--ink);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-12px);
+  transition: opacity 280ms ease, transform 420ms var(--net-ease), visibility 0s linear 420ms;
+}
+.net-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 280ms ease, transform 420ms var(--net-ease), visibility 0s;
+}
+.net-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--net-ground);
+  border: 1px solid var(--net-rule);
+}
+.net-panel-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #f4f0ea;
+}
+.net-panel-count {
+  margin: 4px 0 0;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+/* THE MARK: a ring of specks, one for every note (drawn by network.js). */
+.net-mark {
+  display: block;
+  width: 100%;
+  height: 92px;
+  margin: 8px 0 6px;
+}
+.net-panel-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+.net-panel-sub {
+  margin: 0;
+  padding: 10px 0 6px;
+  border-top: 1px solid var(--net-rule);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
 /* The accords, chosen by hand — each lights up alone under the hand. */
 .net-accords {
   flex: 1;
@@ -4913,93 +4973,312 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-drop-option.is-here { color: #fff; }
 .net-drop-option.is-here .net-dot { background: var(--net-red); border-color: var(--net-red); }
 
-/* THE CARD a selected note is read in, on the right, and its line. */
-.net-card {
+/* THE VEIL: everything behind a note's window out of focus — blurred once,
+   by a blur that never changes, and faded in and out by its opacity. */
+.net-veil {
   position: absolute;
-  right: 22px;
+  inset: 0;
+  background: rgba(12, 12, 13, 0.34);
+  -webkit-backdrop-filter: blur(7px) saturate(1.1);
+  backdrop-filter: blur(7px) saturate(1.1);
+  opacity: 0;
+  transition: opacity 340ms ease;
+}
+.net-veil.is-on { opacity: 1; }
+.net-veil[hidden] { display: none; }
+
+/* THE NOTE WINDOW: the library's element card, and a little more —
+   translucent, in the middle of the room, over the veil. */
+.net-note {
+  position: absolute;
+  left: 50%;
   top: 50%;
-  width: 272px;
-  max-height: calc(100% - 180px);
-  overflow-y: auto;
-  padding: 16px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  width: min(560px, calc(100% - 48px));
+  max-height: min(86vh, 760px);
+  padding: 18px 22px 0;
   box-sizing: border-box;
-  background: var(--net-ground);
-  border: 1px solid var(--net-rule);
+  background: var(--net-glass);
+  -webkit-backdrop-filter: blur(22px) saturate(1.15);
+  backdrop-filter: blur(22px) saturate(1.15);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
   color: var(--ink);
-  transform: translateY(-50%);
-  animation: net-card-in 280ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  opacity: 0;
+  transform: translate(-50%, calc(-50% + 14px)) scale(0.985);
+  transition: opacity 320ms ease, transform 420ms var(--net-ease);
 }
-.net-card[hidden] { display: none; }
-@keyframes net-card-in {
-  from { opacity: 0; translate: 10px 0; }
-  to { opacity: 1; translate: 0 0; }
+/* What it says scrolls under its head, which stays. */
+.net-note-body {
+  flex: 1;
+  min-height: 0;
+  margin: 0 -22px;
+  padding: 0 22px 18px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
-.net-card-top {
-  display: grid;
-  grid-template-columns: 44px 1fr auto;
-  align-items: start;
-  gap: 12px;
+.net-note.is-on { opacity: 1; transform: translate(-50%, -50%); }
+.net-note[hidden] { display: none; }
+.net-note h2, .net-note h3, .net-note p { margin: 0; }
+.net-note-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--net-rule);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
-.net-card-sym {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--net-red);
-  font-size: 18px;
-  font-weight: 600;
-  color: #fff;
-}
-.net-card-name { margin: 1px 0 3px; font-size: 16px; font-weight: 600; line-height: 1.2; color: #fff; }
-.net-card-accord { margin: 0; font-size: 12px; color: var(--muted); }
-.net-card-close {
-  width: 20px;
-  height: 20px;
+.net-note-kind { color: #ff6a72; }
+.net-note-call { flex: 1; color: var(--muted); letter-spacing: 0.08em; }
+.net-note-close {
+  width: 24px;
+  height: 24px;
   padding: 0;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  font-size: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 14px;
   line-height: 1;
   color: var(--ink);
   cursor: pointer;
 }
-.net-card-close:hover { border-color: #fff; }
-.net-card-facts {
+.net-note-close:hover, .net-note-close:focus-visible { border-color: #fff; outline: none; }
+.net-note-figure {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 3px 14px;
-  margin: 14px 0 0;
-  padding: 10px 0 0;
-  border-top: 1px solid var(--net-rule);
+  grid-template-columns: 112px 1fr;
+  gap: 16px;
+  align-items: center;
+  margin-top: 16px;
+}
+/* Its tile, as it stands in the library's table. */
+.net-note-tile {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  box-sizing: border-box;
+  border: 1px solid var(--net-red);
+  background: rgba(255, 58, 68, 0.08);
+  box-shadow: 0 0 22px rgba(255, 58, 68, 0.18), inset 0 0 16px rgba(255, 58, 68, 0.12);
+}
+.net-note-no, .net-note-uses {
+  position: absolute;
+  top: 7px;
   font-family: var(--mono);
   font-size: 10px;
 }
-.net-card-facts div { display: contents; }
-.net-card-facts dt { color: var(--muted); letter-spacing: 0.08em; }
-.net-card-facts dd { margin: 0; text-align: right; }
-.net-card-say { margin: 12px 0 0; font-size: 12.5px; line-height: 1.55; color: rgba(var(--ink-rgb), 0.86); }
-.net-card-open {
-  display: inline-block;
-  margin-top: 12px;
-  padding-bottom: 2px;
-  border-bottom: 1px solid var(--net-red);
-  font-size: 12px;
+.net-note-no { left: 8px; color: var(--muted); }
+.net-note-uses { right: 8px; color: #ff6a72; }
+.net-note-sym {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 30px;
+  font-size: 38px;
+  font-weight: 600;
+  text-align: center;
   color: #fff;
+}
+.net-note-tname {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 8px;
+  font-size: 10px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(var(--ink-rgb), 0.8);
+}
+.net-note-atom { display: block; width: 100%; height: 170px; }
+.net-note-caption {
+  margin-top: 6px !important;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+.net-note-name {
+  margin-top: 14px !important;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.15;
+  color: #fff;
+  outline: none;
+}
+.net-note-accord { margin-top: 4px !important; font-size: 12px; line-height: 1.5; color: var(--muted); }
+.net-note-say { margin-top: 12px !important; font-size: 14px; line-height: 1.6; color: rgba(var(--ink-rgb), 0.92); }
+.net-note-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 5px 16px;
+  margin: 16px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--net-rule);
+  font-family: var(--mono);
+  font-size: 10.5px;
+}
+.net-note-facts div { display: contents; }
+.net-note-facts dt { color: var(--muted); letter-spacing: 0.08em; }
+.net-note-facts dd { margin: 0; text-align: right; color: var(--ink); }
+.net-note h3 {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.net-note-tiers, .net-note-with, .net-note-lists { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--net-rule); }
+.net-note-tiers.is-empty .net-note-bar { display: none; }
+.net-note-bar { display: flex; gap: 2px; height: 6px; margin-top: 10px; }
+.net-note-seg { flex: 1 1 0; background: var(--net-red); }
+.net-note-seg-top { background: #ffd2d0; }
+.net-note-seg-mid { background: #ff7c84; }
+.net-note-seg-base { background: #d8232f; }
+.net-note-seg-flat { background: rgba(255, 255, 255, 0.28); }
+.net-note-tier-say { margin-top: 7px !important; font-family: var(--mono); font-size: 10px; color: rgba(var(--ink-rgb), 0.8); }
+.net-note-with.is-empty { display: none; }
+.net-note-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.net-note-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font: inherit;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 180ms ease;
+}
+.net-note-chip:hover, .net-note-chip:focus-visible { border-color: rgba(255, 90, 99, 0.8); outline: none; }
+.net-note-chip-sym { font-family: var(--mono); font-size: 9.5px; color: #ff6a72; }
+.net-note-chip-count { font-family: var(--mono); font-size: 9px; color: var(--muted); }
+.net-note-lists { display: grid; gap: 10px; }
+.net-note-found { display: grid; gap: 6px; }
+.net-note-none { font-size: 12px; color: var(--muted); }
+.net-note-drop summary {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 5px 0;
+  list-style: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink);
+}
+.net-note-drop summary::-webkit-details-marker { display: none; }
+.net-note-drop summary::before {
+  content: "";
+  flex: none;
+  width: 5px;
+  height: 5px;
+  margin-right: 2px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: translateY(-2px) rotate(-45deg);
+  transition: transform 200ms ease;
+}
+.net-note-drop[open] > summary::before { transform: translateY(-3px) rotate(45deg); }
+.net-note-drop-name { flex: 1; }
+.net-note-count { font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
+.net-note-house { margin-left: 14px; }
+.net-note-house summary { font-size: 12.5px; color: rgba(var(--ink-rgb), 0.86); }
+.net-note-drop ul { margin: 2px 0 6px 14px; padding: 0; list-style: none; }
+.net-note-aka li { padding: 2px 0; font-size: 12.5px; color: rgba(var(--ink-rgb), 0.86); }
+.net-note-drop a {
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  gap: 8px;
+  padding: 3px 0;
+  font-size: 12.5px;
+  color: var(--ink);
   text-decoration: none;
 }
-.net-card-open:hover { border-bottom-color: #fff; }
-.net-leader {
+.net-note-drop a:hover .net-note-fname { text-decoration: underline; text-decoration-color: var(--net-red); }
+.net-note-fno { font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
+.net-note-ftier { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: #ff7c84; }
+.net-note-steps {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--net-rule);
+}
+.net-note-step {
+  padding: 5px 9px;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font: inherit;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 180ms ease;
+}
+.net-note-step:hover, .net-note-step:focus-visible { border-color: #fff; outline: none; }
+
+/* THE WORD AS IT OPENS: the page out of focus but for the two arrows, and
+   a line pointing at the menu's. It asks nothing of the hand: anything the
+   hand does puts it away, and so does a few seconds. */
+.net-coach {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
   pointer-events: none;
+  background: rgba(12, 12, 13, 0.3);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   opacity: 0;
-  transition: opacity 240ms ease;
+  visibility: hidden;
+  transition: opacity 520ms ease, visibility 0s linear 520ms;
 }
-.net-leader.is-on { opacity: 1; }
-.net-leader line { stroke: rgba(255, 255, 255, 0.4); stroke-width: 1; stroke-dasharray: 3 3; }
-.net-leader circle { fill: none; stroke: #fff; stroke-width: 1; }
+.net-stage.is-coaching .net-coach {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 520ms ease, visibility 0s;
+}
+.net-coach-say {
+  position: absolute;
+  left: 70px;
+  top: 116px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 32px;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #fff;
+  transform: translateX(10px);
+  transition: transform 520ms var(--net-ease);
+}
+.net-stage.is-coaching .net-coach-say { transform: none; }
+/* The line from the word to the arrow, with its head at the arrow. */
+.net-coach-line {
+  position: relative;
+  width: 46px;
+  height: 1px;
+  background: #fff;
+}
+.net-coach-line::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-left: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  transform: rotate(45deg);
+}
 
 /* Under the hand: a note's symbol and name; a bridge's way. */
 .net-hover,
@@ -5036,9 +5315,12 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   pointer-events: none;
 }
 .net-hover, .net-bridge { z-index: 2; }
-.net-leader { z-index: 3; }
-.net-card { z-index: 4; }
 .net-panel, .net-dock { z-index: 5; }
+.net-find { z-index: 6; }
+.net-coach { z-index: 7; }
+.net-rail { z-index: 8; }
+.net-veil { z-index: 9; }
+.net-note { z-index: 10; }
 .net-name {
   position: absolute;
   left: 0;
@@ -5077,25 +5359,31 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   will-change: transform, opacity;
 }
 
-/* On a phone: the window starts folded (its button under the Menu), the
-   foot and the card take the width. */
+/* On a phone: the arrows under the Menu, what they pull out the width of
+   the window beside them, the foot across it, the note window nearly all
+   of it. */
 @media (max-width: 700px) {
   .net-stage.has-panel { --room: 0px; }
   .net-hint { top: 22px; right: 16px; max-width: calc(100% - 120px); }
-  .net-panel { top: 64px; left: 12px; z-index: 6; width: min(264px, calc(100% - 24px)); max-height: calc(100% - 200px); }
+  .net-rail { left: 12px; top: 64px; }
+  .net-find { left: 52px; top: 64px; width: calc(100% - 64px); }
+  .net-panel { left: 52px; top: 104px; width: calc(100% - 64px); max-height: calc(100% - 250px); }
+  .net-coach-say { left: 58px; top: 104px; font-size: 19px; }
   .net-dock { left: 12px; right: 12px; bottom: 12px; transform: none; }
   .net-nav { width: 100%; }
   .net-drop { flex: 1; min-width: 0; }
   .net-drop-button { min-width: 0; width: 100%; }
-  .net-card {
-    left: 12px;
-    right: 12px;
-    top: auto;
-    bottom: 128px;
-    width: auto;
-    max-height: 42%;
-    transform: none;
-  }
+  .net-note { width: calc(100% - 24px); max-height: calc(100% - 96px); padding: 14px 16px 0; }
+  .net-note-body { margin: 0 -16px; padding: 0 16px 14px; }
+  .net-note-figure { grid-template-columns: 96px 1fr; gap: 12px; }
+  .net-note-tile { width: 96px; height: 96px; }
+  .net-note-sym { top: 24px; font-size: 32px; }
+  .net-note-atom { height: 120px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .net-stage.is-idle .net-arrow::after,
+  .net-stage.is-coaching .net-arrow[data-pull="menu"]::after { animation: none; opacity: 0.8; }
+  .net-veil, .net-note, .net-coach, .net-coach-say, .net-panel, .net-find { transition: none; }
 }
 
 /* ==================================================================
@@ -11808,4 +12096,15 @@ body.lib-arriving .lib-record { animation: lib-shelve 0.5s cubic-bezier(0.2, 0.7
   font-size: 13px;
   letter-spacing: 0.3em;
   color: #dbe1ea;
+}
+/* Two paragraphs set apart a little by the owner's thin line down their
+   left (Buying a Perfume's "In my opinion…" and "The way you choose…"). */
+.essay-section .essay-set {
+  margin: 0 0 26px;
+  padding-left: 22px;
+  border-left: 1px solid rgba(142, 180, 226, 0.55);
+}
+.essay-section .essay-set p:last-child { margin-bottom: 0; }
+@media (max-width: 700px) {
+  .essay-section .essay-set { padding-left: 14px; }
 }

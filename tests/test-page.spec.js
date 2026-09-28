@@ -23,12 +23,27 @@
      each of the clusters ... move the bar on the right hand side to the
      left. And make the search."
 
+   And then (2026-09-28): "not have it refer to the note library but make
+   it into another version of the note library. I want each of the nodes to
+   have a window pop up that tells you about the note ... a little more ...
+   blur the rest of the page ... add another arrow up above the one that
+   pulls out the menu ... have it pull up te search bar ... i want the
+   balls to shine more ... a less rigid transition between collapsing and
+   expanding ... a short and brief but thematic animation to when you
+   first load the page ... isntead of starting with the left window out, I
+   want it to be hidden, and I want a temporary text to pop up (while the
+   entire page is blurred) that point to that arrow, saying open menu
+   here. whenever you stop controlling it for a while, i want the arrows on
+   the left to start glowing".
+
    window.NetScene says where things stand on the window and what state it
    is in. The tests' machine draws in software, so the drawing's own clock
    runs slower than it would on a real screen: every wait here is on a
    state, with room to spare, never on a number of seconds.
    ============================================================ */
 const { test, expect } = require("@playwright/test");
+const fs = require("fs");
+const path = require("path");
 const { serveDependenciesLocally, blockThreeJs, collectPageErrors } = require("./helpers");
 
 const TEST_PAGE = "/works/test-page.html";
@@ -66,6 +81,14 @@ async function open(page, size = { width: 1440, height: 900 }) {
   await page.goto(TEST_PAGE);
   await expect(page.locator(".net-stage")).toHaveClass(/is-drawn/, { timeout: 15000 });
 }
+/** Opened: the network wired in, and the word pointing at the menu put
+ *  away by a press on empty ground (the one network answers nothing). */
+async function settle(page) {
+  await expect.poll(async () => (await state(page)).loaded, { timeout: 30000 }).toBe(true);
+  await page.mouse.click(1420, 300);
+  await expect.poll(async () => (await state(page)).coaching, { timeout: 5000 }).toBe(false);
+  await page.waitForTimeout(600);
+}
 async function expandIt(page) {
   await page.locator(".net-expand").click();
   await expect(page.locator(".net-stage")).toHaveAttribute("data-state", "apart", { timeout: 30000 });
@@ -86,10 +109,10 @@ test.beforeEach(async ({ page }) => {
 
 /* ONE RED NETWORK: every note in the Note Library a glowing red node among
    fillers of its own, all of it linked; the button to expand it at the
-   foot, in the middle of the room the window on the LEFT leaves; and
-   nothing in it answers the hand. */
-test("the Note Library is drawn as one red network, and nothing in it answers the hand", async ({ page, request }) => {
-  test.setTimeout(90000);
+   foot, in the middle; the menu PUT AWAY, its arrow on the left under the
+   search's; and nothing in it answers the hand. */
+test("the Note Library is drawn as one red network, the menu put away, and nothing in it answers the hand", async ({ page, request }) => {
+  test.setTimeout(150000);
   const errors = collectPageErrors(page);
   // Counted in the library's markup, leaving out its comments (which show
   // what a record looks like).
@@ -103,11 +126,10 @@ test("the Note Library is drawn as one red network, and nothing in it answers th
   expect(+(await stage.getAttribute("data-nodes")), "and fillers that stand for nothing, many more of them").toBeGreaterThan(records * 5);
   expect(+(await stage.getAttribute("data-links")), "all of it linked").toBeGreaterThan(+(await stage.getAttribute("data-nodes")) * 2);
   await expect(stage).toHaveAttribute("data-state", "one");
+  await settle(page);
   const s = await state(page);
   expect(s.shown, "some fillers in it already, the rest made as it comes apart").toBeGreaterThan(records);
   expect(s.shown).toBeLessThan(s.nodes);
-  await page.mouse.move(700, 880);
-  await page.waitForTimeout(2000);
   // Red, on the page's own dark ground at its corners.
   const seen = await look(page, [[1420, 450], [1420, 880], [330, 880]]);
   expect(seen.red, "the nodes are red").toBeGreaterThan(1500);
@@ -115,7 +137,7 @@ test("the Note Library is drawn as one red network, and nothing in it answers th
   const vanilla = await page.evaluate(() => window.NetScene.note("Vanilla"));
   expect(red(vanilla.colour), "a note is red").toBe(true);
   // NOTHING ANSWERS: pointed at, a note says nothing; pressed, nothing is
-  // chosen.
+  // chosen and no window opens.
   expect(s.answering).toBe(false);
   await page.mouse.move(vanilla.x, vanilla.y);
   await page.waitForTimeout(300);
@@ -123,14 +145,20 @@ test("the Note Library is drawn as one red network, and nothing in it answers th
   await page.mouse.click(vanilla.x, vanilla.y);
   await page.waitForTimeout(300);
   await expect(stage).not.toHaveAttribute("data-selected", /./);
-  await expect(page.locator(".net-card")).toBeHidden();
-  // The button that expands it: at the foot, in the middle of what the
-  // window on the left leaves.
+  await expect(page.locator(".net-note")).toBeHidden();
+  // THE MENU PUT AWAY, and its arrow on the left — the search's arrow above
+  // it, where the menu's used to be.
+  expect(s.panel, "the menu starts put away").toBe(false);
+  await expect(page.locator(".net-panel")).toBeHidden();
+  const searchArrow = await page.locator('.net-arrow[data-pull="search"]').boundingBox();
+  const menuArrow = await page.locator('.net-arrow[data-pull="menu"]').boundingBox();
+  expect(searchArrow.x, "on the left").toBeLessThan(40);
+  expect(Math.abs(menuArrow.x - searchArrow.x), "one above the other").toBeLessThan(2);
+  expect(menuArrow.y, "the search's on top").toBeGreaterThan(searchArrow.y + searchArrow.height);
+  // The button that expands it: at the foot, in the middle.
   const button = await page.locator(".net-expand").boundingBox();
-  const panel = await page.locator(".net-panel").boundingBox();
-  expect(panel.x, "the window on the left").toBeLessThan(30);
   expect(button.y + button.height, "at the foot").toBeGreaterThan(900 - 50);
-  expect(Math.abs(button.x + button.width / 2 - (1440 + 320) / 2), "in the middle of the room left").toBeLessThan(40);
+  expect(Math.abs(button.x + button.width / 2 - 720), "in the middle").toBeLessThan(40);
   await expect(page.locator(".net-expand")).toHaveText(/Expand the library/i);
   // Before it has come apart there is no dropdown to be had.
   await expect(page.locator(".net-nav")).toHaveCSS("opacity", "0");
@@ -139,6 +167,65 @@ test("the Note Library is drawn as one red network, and nothing in it answers th
   expect(title.text).toContain("Test page");
   expect(title.w * title.h, "and it is not drawn").toBeLessThanOrEqual(1);
   expect(errors).toEqual([]);
+});
+
+/* AS IT OPENS: the network WIRES ITSELF from a spark at the centre
+   outwards, and only then does the chrome come in — and then the page goes
+   out of focus but for the two arrows, and a line points at the menu's:
+   "Open menu here", until the hand does anything (or a few seconds). */
+test("as it opens it wires itself in, and then points at the menu's arrow over the page out of focus", async ({ page }) => {
+  test.setTimeout(90000);
+  const errors = collectPageErrors(page);
+  await open(page);
+  const stage = page.locator(".net-stage");
+  expect((await state(page)).loaded, "wiring itself in, first").toBe(false);
+  await expect(page.locator(".net-rail"), "the chrome not in yet").toHaveCSS("opacity", "0");
+  await expect.poll(async () => (await state(page)).loaded, { timeout: 30000 }).toBe(true);
+  await expect(stage).toHaveClass(/is-loaded/);
+  await expect(page.locator(".net-rail")).toHaveCSS("opacity", "1");
+  // THE WORD: the page out of focus, the arrows not, the line at the menu's.
+  expect((await state(page)).coaching).toBe(true);
+  const coach = page.locator(".net-coach");
+  await expect(coach).toBeVisible();
+  await expect(coach).toContainText("Open menu here");
+  expect(await coach.evaluate((c) => getComputedStyle(c).backdropFilter || getComputedStyle(c).webkitBackdropFilter), "out of focus").toContain("blur");
+  const z = await page.evaluate(() => [".net-coach", ".net-rail", ".net-dock"].map((c) => +getComputedStyle(document.querySelector(c)).zIndex));
+  expect(z[1], "the arrows over it").toBeGreaterThan(z[0]);
+  expect(z[2], "and the rest under it").toBeLessThan(z[0]);
+  const say = await page.locator(".net-coach-say").boundingBox();
+  const arrow = await page.locator('.net-arrow[data-pull="menu"]').boundingBox();
+  expect(Math.abs(say.y + say.height / 2 - (arrow.y + arrow.height / 2)), "level with the menu's arrow").toBeLessThan(6);
+  expect(say.x, "beside it").toBeGreaterThan(arrow.x + arrow.width - 2);
+  // It asks nothing of the hand: the press goes through, and puts it away.
+  await page.locator('.net-arrow[data-pull="menu"]').click();
+  await expect.poll(async () => (await state(page)).coaching).toBe(false);
+  await expect(coach).toBeHidden();
+  expect((await state(page)).panel, "and the press opened the menu").toBe(true);
+  expect(errors).toEqual([]);
+});
+
+/* LEFT ALONE, the arrows glow — and the line at the top right saying what
+   can be done comes back — until the hand moves again. */
+test("left alone a while, the arrows on the left glow, and the line saying what can be done comes back", async ({ page }) => {
+  test.setTimeout(90000);
+  await open(page);
+  await settle(page);
+  const stage = page.locator(".net-stage");
+  await page.mouse.move(600, 300);
+  await page.mouse.down();
+  await page.mouse.move(640, 300, { steps: 4 });
+  await page.mouse.up();
+  await expect(page.locator(".net-hint"), "gone once it has been turned").toHaveCSS("opacity", "0");
+  expect((await state(page)).idle).toBe(false);
+  await page.evaluate(() => window.NetScene.leave(20000));
+  await expect.poll(async () => (await state(page)).idle, { timeout: 5000 }).toBe(true);
+  await expect(stage).toHaveClass(/is-idle/);
+  const glow = await page.locator(".net-arrow").evaluateAll((els) => els.map((e) => getComputedStyle(e, "::after").animationName));
+  expect(glow, "both arrows glowing").toEqual(["net-glow", "net-glow"]);
+  await expect(page.locator(".net-hint"), "and the line back").toHaveCSS("opacity", "1");
+  await page.mouse.move(700, 350);
+  await expect.poll(async () => (await state(page)).idle).toBe(false);
+  await expect(stage).not.toHaveClass(/is-idle/);
 });
 
 /* EVERY NOTE IS THE LIBRARY'S OWN: read off the Note Library's page, with
@@ -166,11 +253,24 @@ test("every note is the Note Library's own, with its number, symbol and uses", a
   });
 });
 
-/* THE WINDOW ON THE LEFT: minimal, with a ring of specks; the switch that
-   opens the search IN THE WINDOW — the library's own rule — and the
-   accords, each lighting up alone under the hand, and chosen by a press. */
-test("the window on the left holds the search and the accords, each lighting up alone under the hand", async ({ page }) => {
-  test.setTimeout(90000);
+/* Where each house's fragrances live, which the note window links to, is
+   the Note Library's own table, copied into network.js: kept the same. */
+test("the page's copy of where each house's fragrances live is the library's", () => {
+  const read = (file) => {
+    const text = fs.readFileSync(path.join(__dirname, "..", file), "utf8");
+    const m = text.match(/const HOUSES = \{([\s\S]*?)\};/);
+    return m && m[1].replace(/\s+/g, " ").trim();
+  };
+  expect(read("network.js")).toBeTruthy();
+  expect(read("network.js")).toBe(read("note-library.js"));
+});
+
+/* THE TWO ARROWS: the upper pulls out THE SEARCH BAR — the library's own
+   `query>`, by its own rule — and the lower THE MENU: a ring of specks and
+   the accords, each lighting up alone under the hand, and chosen by a
+   press. */
+test("the arrows on the left pull out the search bar and the menu, whose accords light up alone under the hand", async ({ page }) => {
+  test.setTimeout(180000);
   const errors = collectPageErrors(page);
   // What the library's own search finds for "cedar".
   await page.goto(LIBRARY);
@@ -179,31 +279,23 @@ test("the window on the left holds the search and the accords, each lighting up 
   expect(found.length).toBeGreaterThan(1);
 
   await open(page);
+  await settle(page);
   const stage = page.locator(".net-stage");
   const N = +(await stage.getAttribute("data-notes"));
-  const panel = page.locator(".net-panel");
-  const box = await panel.boundingBox();
-  expect(box.x, "on the left").toBeLessThan(30);
-  expect(box.width, "and narrow").toBeLessThan(300);
-  // The ring of specks in it, drawn.
-  const inked = await page.locator(".net-mark").evaluate((c) => {
-    const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
-    let n = 0;
-    for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++;
-    return n;
-  });
-  expect(inked, "the ring of specks").toBeGreaterThan(300);
+  const searchArrow = page.locator('.net-arrow[data-pull="search"]');
+  const menuArrow = page.locator('.net-arrow[data-pull="menu"]');
 
-  // THE SEARCH, in the window.
-  const bar = page.locator(".net-search");
-  const toggle = panel.locator(".net-switch");
-  await expect(bar, "not there until it is asked for").toBeHidden();
-  await expect(toggle).toHaveAttribute("aria-checked", "false");
-  await toggle.click();
-  await expect(toggle).toHaveAttribute("aria-checked", "true");
+  // THE SEARCH BAR, beside its arrow.
+  const bar = page.locator(".net-find");
+  await expect(bar, "not there until it is pulled out").toBeHidden();
+  await expect(searchArrow).toHaveAttribute("aria-expanded", "false");
+  await searchArrow.click();
+  await expect(searchArrow).toHaveAttribute("aria-expanded", "true");
   await expect(bar).toBeVisible();
-  const barBox = await bar.boundingBox();
-  expect(barBox.x >= box.x && barBox.x + barBox.width <= box.x + box.width, "inside the window").toBe(true);
+  await expect(bar.locator(".net-find-prompt")).toHaveText("query>");
+  const a = await searchArrow.boundingBox(), b = await bar.boundingBox();
+  expect(b.x, "beside its arrow").toBeGreaterThan(a.x + a.width);
+  expect(Math.abs(b.y - a.y), "level with it").toBeLessThan(3);
   await expect(page.locator(".net-query")).toBeFocused();
   await page.keyboard.type("cedar");
   expect((await state(page)).hits.slice().sort(), "the library's own answers").toEqual(found);
@@ -211,17 +303,33 @@ test("the window on the left holds the search and the accords, each lighting up 
   await expect(page.locator(".net-count")).toHaveText(found.length + " / " + N);
   await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(N - found.length);
   expect((await state(page)).faintest, "the rest translucent").toBeLessThan(0.2);
-  // Its × empties it.
+  // Its × empties it; Escape empties it, and then puts it away.
   await page.locator(".net-clear").click();
   expect((await state(page)).query).toBe("");
   await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(0);
   await page.keyboard.type("cedar");
-  // Put away again, and the search goes with it.
-  await toggle.click();
-  await expect(bar).toBeHidden();
+  await page.keyboard.press("Escape");
   expect((await state(page)).query).toBe("");
-  await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(0);
+  await page.keyboard.press("Escape");
+  await expect(bar).toBeHidden();
+  expect((await state(page)).search).toBe(false);
 
+  // THE MENU, beside its arrow, with its ring of specks.
+  const panel = page.locator(".net-panel");
+  await expect(panel).toBeHidden();
+  await menuArrow.click();
+  await expect(panel).toBeVisible();
+  await expect(menuArrow).toHaveAttribute("aria-expanded", "true");
+  const m = await menuArrow.boundingBox(), box = await panel.boundingBox();
+  expect(box.x, "beside its arrow").toBeGreaterThan(m.x + m.width);
+  expect(Math.abs(box.y - m.y), "from its arrow down").toBeLessThan(3);
+  const inked = await page.locator(".net-mark").evaluate((c) => {
+    const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+    let n = 0;
+    for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++;
+    return n;
+  });
+  expect(inked, "the ring of specks").toBeGreaterThan(300);
   // UNDER THE HAND an accord lights up alone, and only while it is there.
   const accords = page.locator(".net-accord");
   expect(await accords.count(), "every accord, and all of them").toBe(17);
@@ -242,14 +350,11 @@ test("the window on the left holds the search and the accords, each lighting up 
   await page.locator('.net-accord[data-code=""]').click();
   await page.mouse.move(900, 450);
   await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(0);
-
-  // Folded away, it leaves only its button, and the drawing takes the room.
-  await page.locator(".net-fold").click();
-  await expect(panel).toHaveClass(/is-folded/);
-  await page.waitForTimeout(700);
-  expect(await page.evaluate(() => document.elementFromPoint(120, 500).className), "the drawing where it stood").toContain("net-canvas");
-  await page.locator(".net-fold").click();
-  await expect(panel).not.toHaveClass(/is-folded/);
+  // Put away by its arrow again, and the drawing has the room back.
+  await menuArrow.click();
+  await expect(panel).toBeHidden();
+  await page.waitForTimeout(500);
+  expect(await page.evaluate(() => document.elementFromPoint(200, 500).className), "the drawing where it stood").toContain("net-canvas");
   expect(errors).toEqual([]);
 });
 
@@ -339,12 +444,23 @@ test("a signal goes out from the centre to every network, and through it", async
   await expect.poll(async () => (await state(page)).litNodes, { timeout: 20000 }).toBeLessThan(most / 4);
 });
 
-/* ONCE APART: a note answers — named at its network, pressed it is chosen,
-   every other node turns translucent and the card on the right says what
-   it is — and a filler never does. */
-test("once apart, pressing a note selects it and its card says what it is; a filler never answers", async ({ page }) => {
+/* ONCE APART: a note answers — named at its network, pointed at it says its
+   name, and pressed it opens ITS WINDOW: the page behind out of focus, and
+   in the window what the Note Library says of it and a little more, with
+   nothing sending you to the library — and a filler never does. */
+test("once apart, a note pressed opens its own window over the page out of focus; a filler never answers", async ({ page }) => {
   test.setTimeout(150000);
   const errors = collectPageErrors(page);
+  // What the Note Library's own card says of Vanilla: its other spellings,
+  // and every fragrance naming it.
+  await page.goto(LIBRARY);
+  await expect(page.locator("body")).toHaveClass(/lib-built/);
+  const aka = ((await page.locator("#note-vanilla").getAttribute("data-aka")) || "").split("|").map((x) => x.trim()).filter(Boolean);
+  await page.locator("#note-vanilla").click();
+  await expect(page.locator(".lib-card")).toBeVisible();
+  const keys = (await page.locator(".lib-card-list a[data-key]").evaluateAll((as) => as.map((a) => a.dataset.key))).sort();
+  expect(keys.length).toBeGreaterThan(5);
+
   await open(page);
   await expandIt(page);
   const stage = page.locator(".net-stage");
@@ -353,6 +469,7 @@ test("once apart, pressing a note selects it and its card says what it is; a fil
   await expect.poll(async () => page.locator(".net-label").evaluateAll((els) => els.filter((e) => +getComputedStyle(e).opacity > 0.5).length), { timeout: 10000 }).toBeGreaterThan(15);
   const N = +(await stage.getAttribute("data-notes"));
   const about = (await page.evaluate(() => window.NetScene.notes())).find((n) => n.name === "Vanilla");
+  const more = await page.evaluate(() => window.NetScene.about("Vanilla"));
   let at = await page.evaluate(() => window.NetScene.note("Vanilla"));
   await page.mouse.move(at.x, at.y);
   await expect(page.locator(".net-hover"), "pointed at, it says its name").toHaveClass(/is-on/);
@@ -360,24 +477,73 @@ test("once apart, pressing a note selects it and its card says what it is; a fil
   at = await page.evaluate(() => window.NetScene.note("Vanilla"));
   await page.mouse.click(at.x, at.y);
   await expect(stage).toHaveAttribute("data-selected", "Vanilla");
+  expect((await state(page)).note).toBe("Vanilla");
   await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(N - 1);
-  expect((await state(page)).faintest, "the rest translucent").toBeLessThan(0.2);
-  const card = page.locator(".net-card");
-  await expect(card).toBeVisible();
-  const cardBox = await card.boundingBox();
-  expect(cardBox.x + cardBox.width, "on the right").toBeGreaterThan(1440 - 40);
-  await expect(card.locator(".net-card-name")).toHaveText("Vanilla");
-  await expect(card.locator(".net-card-sym")).toHaveText(about.sym);
-  await expect(card.locator(".net-card-accord")).toHaveText("Gourmand");
-  await expect(card.locator(".net-card-no")).toHaveText(String(about.no));
-  await expect(card.locator(".net-card-uses")).toHaveText("used in " + about.uses);
-  await expect(card.locator(".net-card-say")).not.toBeEmpty();
-  await expect(card.locator(".net-card-open")).toHaveAttribute("href", /categories\/note-library\.html#note-vanilla$/);
-  await expect(page.locator(".net-leader"), "a line from the card to the note").toHaveClass(/is-on/);
+  // THE REST OF THE PAGE OUT OF FOCUS, the window over it, translucent.
+  const veil = page.locator(".net-veil");
+  const win = page.locator(".net-note");
+  await expect(veil).toBeVisible();
+  await expect(win).toBeVisible();
+  await expect(win).toHaveAttribute("role", "dialog");
+  expect(await veil.evaluate((v) => getComputedStyle(v).backdropFilter || getComputedStyle(v).webkitBackdropFilter), "the page out of focus").toContain("blur");
+  const ground = await win.evaluate((w) => getComputedStyle(w).backgroundColor);
+  expect(+ground.match(/[\d.]+(?=\)$)/)[0], "the window translucent").toBeLessThan(0.9);
+  const z = await page.evaluate(() => [".net-veil", ".net-rail", ".net-dock", ".net-panel"].map((c) => +getComputedStyle(document.querySelector(c)).zIndex));
+  z.slice(1).forEach((v) => expect(v, "everything else under the veil").toBeLessThan(z[0]));
+  // WHAT THE LIBRARY SAYS OF IT.
+  await expect(win.locator(".net-note-name")).toHaveText("Vanilla");
+  await expect(win.locator(".net-note-name")).toBeFocused();
+  await expect(win.locator(".net-note-sym")).toHaveText(about.sym);
+  await expect(win.locator(".net-note-no")).toHaveText(String(about.no));
+  await expect(win.locator(".net-note-uses")).toHaveText(String(about.uses));
+  await expect(win.locator(".net-note-call")).toHaveText(/^GOU \d{3}$/);
+  await expect(win.locator(".net-note-accord")).toContainText("Gourmand");
+  await expect(win.locator(".net-note-say")).not.toBeEmpty();
+  expect((await win.locator(".net-note-aka li").allTextContents()).map((x) => x.trim()), "its other spellings, the library's").toEqual(aka);
+  const here = (await win.locator(".net-note-found a[data-key]").evaluateAll((as) => as.map((a) => a.dataset.key))).sort();
+  expect(here, "every fragrance naming it, the library's").toEqual(keys);
+  expect(more.keys, "and the page's own count agrees").toEqual(keys);
+  await expect(win.locator(".net-note-found h3")).toHaveText("Compounds · " + String(keys.length).padStart(2, "0"));
+  // A LITTLE MORE: its rank, how many of the site's fragrances, where in
+  // them it stands, and what it is most often found with.
+  await expect(win.locator(".net-note-facts")).toContainText(about.uses + " of the site's " + more.fragrances);
+  await expect(win.locator(".net-note-facts")).toContainText(/\d+(st|nd|rd|th) of \d+ · \d+(st|nd|rd|th) of \d+ in Gourmand/);
+  const tiers = { top: "Top", mid: "Heart", base: "Base", flat: "Undivided" };
+  for (const [t, word] of Object.entries(tiers)) {
+    if (more.tally[t]) await expect(win.locator(".net-note-tier-say")).toContainText(word + " " + more.tally[t]);
+  }
+  const chips = win.locator(".net-note-chip");
+  expect(await chips.count(), "the notes it is most often with").toBeGreaterThan(3);
+  // NOTHING SENDS YOU TO THE LIBRARY.
+  expect(await win.locator('a[href*="note-library"]').count(), "no way out to the library").toBe(0);
+  // Its fragrances are ways to them.
+  const hrefs = await win.locator(".net-note-found a[data-key]").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
+  hrefs.forEach((h) => expect(h).toMatch(/^\.\.\/(houses\/[a-z-]+|individual-fragrances\/individual-fragrances)\.html#part-\d\d$/));
+  // The arrows go through its accord; a chip goes to that note.
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(async () => (await state(page)).note).not.toBe("Vanilla");
+  const next = (await state(page)).note;
+  expect((await page.evaluate(() => window.NetScene.notes())).find((n) => n.name === next).code, "the next in its accord").toBe("GOU");
+  await page.keyboard.press("ArrowLeft");
+  await expect.poll(async () => (await state(page)).note).toBe("Vanilla");
+  const chipName = (await chips.first().locator(".net-note-chip-name").textContent()).trim();
+  await chips.first().click();
+  await expect.poll(async () => (await state(page)).note, { timeout: 20000 }).toBe(chipName);
+  // Escape puts it away, and the page comes back into focus.
   await page.keyboard.press("Escape");
   await expect(stage).toHaveAttribute("data-selected", "");
-  await expect(card).toBeHidden();
+  await expect(win).toBeHidden();
+  await expect(veil).toBeHidden();
   await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(0);
+  // So does a press on the page round it.
+  await expect.poll(async () => (await state(page)).flying, { timeout: 20000 }).toBe(false);
+  const again = (await page.evaluate(() => window.NetScene.notes())).find((n) => n.code === "GOU" && n.uses > 2);
+  await goTo(page, 6, "GOU");
+  at = await page.evaluate((name) => window.NetScene.note(name), again.name);
+  await page.mouse.click(at.x, at.y);
+  await expect(win).toBeVisible();
+  await page.mouse.click(40, 500);
+  await expect(win).toBeHidden();
   // A FILLER: pointed at, it says nothing; pressed, nothing is chosen and
   // nothing moves.
   const filler = await page.evaluate(() => window.NetScene.filler("GOU"));
@@ -389,6 +555,7 @@ test("once apart, pressing a note selects it and its card says what it is; a fil
   await page.waitForTimeout(300);
   await expect(stage).toHaveAttribute("data-selected", "");
   await expect(stage).toHaveAttribute("data-focus", "GOU");
+  await expect(win).toBeHidden();
   expect(errors).toEqual([]);
 });
 
@@ -455,7 +622,8 @@ test("the centre joins every network, and going from one accord to another is ea
   const code = await name.getAttribute("data-code");
   await name.click();
   await at(code);
-  // An accord pressed in the window goes there too.
+  // An accord pressed in the menu goes there too.
+  await page.locator('.net-arrow[data-pull="menu"]').click();
   await page.locator('.net-accord[data-code="CIT"]').click();
   await at("CIT");
   expect(errors).toEqual([]);

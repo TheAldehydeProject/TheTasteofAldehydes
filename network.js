@@ -77,6 +77,32 @@
 //   the switch that opens the search in the window itself, and the
 //   accords, each lighting up alone under the hand.
 //
+// AND THEN (2026-09-28), its own version of the library: "not have it
+// refer to the note library but make it into another version of the note
+// library. I want each of the nodes to have a window pop up that tells you
+// about the note ... a little more ... blur the rest of the page ... add
+// another arrow up above the one that pulls out the menu ... have it pull
+// up te search bar ... i want the balls to shine more ... a less rigid
+// transition ... a short and brief but thematic animation to when you
+// first load the page ... [the menu] hidden, and ... a temporary text to
+// pop up (while the entire page is blurred) that point to that arrow,
+// saying open menu here ... the arrows on the left to start glowing".
+//
+//   THE NOTE WINDOW a note opens: what the library's card says and a
+//   little more, translucent, over THE VEIL that puts the rest of the page
+//   out of focus. Nothing on the page sends you to the library.
+//
+//   THE TWO ARROWS on the left: the search's on top pulling out THE SEARCH
+//   BAR (`query>`), the menu's under it pulling out THE MENU, which starts
+//   put away. Left alone, they glow.
+//
+//   THE OPENING: a spark at the centre and the one network wiring itself
+//   outwards; then THE WORD, "Open menu here", over the page out of focus.
+//
+//   SHINE: glossy spheres catching a studio of soft lights, a rim of their
+//   own colour; and the clock softer — gathering speed, coming to rest,
+//   turning round without a jolt, the accords leaving one after another.
+//
 // SIXTY FRAMES A SECOND, as before: every node, link and speck written in
 // place in a handful of buffers, every program compiled before it is
 // first shown, the chrome moved by transform and opacity only, and a lower
@@ -139,6 +165,14 @@
   const NEAR_IN = 9, NEAR_OUT = 72;
 
   const EXPAND_MS = 3800;               // coming apart, and back together
+  // ... not on a rigid clock: it gathers speed over ACCEL_MS and comes to
+  // rest over the last BRAKE of the way, and turned round half way it
+  // slows, stops and goes back rather than jumping.
+  const ACCEL_MS = 420, BRAKE = 0.1;
+  const FLOAT = 0.035;                  // every node's own slow drift, at rest
+  const LOAD_MS = 1900;                 // the page wiring itself as it opens
+  const COACH_MS = 4200;                // "Open menu here", after it has opened
+  const IDLE_MS = 7000;                 // left alone this long, the arrows glow
   const FLY_MS = 2100;
   const FLY_NEAR_MS = 1500;
   const FADE_RATE = 0.0072;             // translucency, eased: gone in ~0.5s
@@ -206,21 +240,28 @@
       })
       .filter((A) => A.notes.length);
   }
-  /** Which fragrances name each spelling, as the library counts it. */
+  /** Which fragrances name each spelling, as the library counts it — and,
+      for the note window, where in each it stands (top, heart, base, or a
+      list the source did not divide). */
+  const TIERS = ["top", "mid", "base", "flat"];
   function counted() {
-    const uses = new Map();
+    const uses = new Map(), tiers = new Map(), fragrances = new Set();
     const NOTES = window.FRAGRANCE_NOTES || {};
     Object.keys(NOTES).forEach((key) => {
       const e = NOTES[key];
       const lists = [e.top, e.mid, e.base, e.flat];
       if (e.also) lists.push(e.also.top, e.also.mid, e.also.base, e.also.flat);
-      lists.filter(Boolean).forEach((list) => list.forEach((note) => {
+      lists.forEach((list, j) => (list || []).forEach((note) => {
         const k = note.toLowerCase();
-        if (!uses.has(k)) uses.set(k, new Set());
+        if (!uses.has(k)) { uses.set(k, new Set()); tiers.set(k, new Map()); }
         uses.get(k).add(key);
+        const at = tiers.get(k);
+        if (!at.has(key)) at.set(key, new Set());
+        at.get(key).add(TIERS[j % 4]);
+        fragrances.add(key);
       }));
     });
-    return uses;
+    return { uses, tiers, fragrances };
   }
   const taken = new Set();
   function symbolFor(name) {
@@ -266,24 +307,43 @@
   // ============================================================
   function start(accords) {
     stage.classList.remove("is-reading");
-    const uses = counted();
+    const { uses, tiers, fragrances } = counted();
     const notes = [];
     const byUse = (a, b) => b.uses - a.uses || a.no - b.no;
     accords.forEach((A, k) => {
       A.k = k;
       A.notes.forEach((n) => {
-        const keys = new Set();
-        [n.name].concat(n.aka).forEach((s) => (uses.get(s.toLowerCase()) || []).forEach((key) => keys.add(key)));
+        const keys = new Set(), where = new Map();
+        [n.name].concat(n.aka).forEach((s) => {
+          (uses.get(s.toLowerCase()) || []).forEach((key) => keys.add(key));
+          (tiers.get(s.toLowerCase()) || new Map()).forEach((set, key) => {
+            if (!where.has(key)) where.set(key, new Set());
+            set.forEach((t) => where.get(key).add(t));
+          });
+        });
         n.A = A;
         n.no = notes.length + 1;
         n.sym = symbolFor(n.name);
         n.uses = keys.size;
+        n.keys = keys;
+        n.where = where;
         notes.push(n);
       });
       A.byUse = A.notes.slice().sort(byUse);
     });
     const NOTE_COUNT = notes.length;
     const A16 = accords.length;
+    // For the note window: every note's place by use, in the library and in
+    // its accord, and which notes each fragrance names (so that a note can
+    // say what it is most often found with).
+    notes.slice().sort(byUse).forEach((n, j) => { n.rank = j + 1; });
+    accords.forEach((A) => A.byUse.forEach((n, j) => { n.rankIn = j + 1; }));
+    const keyNotes = new Map();
+    notes.forEach((n) => n.keys.forEach((key) => {
+      if (!keyNotes.has(key)) keyNotes.set(key, []);
+      keyNotes.get(key).push(n);
+    }));
+    const FRAGRANCE_COUNT = fragrances.size;
     const UP = new THREE.Vector3(0, 1, 0);
 
     // ============================================================
@@ -292,6 +352,8 @@
     // are in the one network already; the rest are MADE AS IT COMES
     // APART, so that each accord's network is dense when you are at it.
     // ============================================================
+    // Every note first (0 to NOTE_COUNT - 1) and then every filler, so that
+    // the notes can be drawn finer than the fillers (two sets of spheres).
     const nodes = [];
     accords.forEach((A) => {
       A.members = [];
@@ -301,6 +363,8 @@
         nodes.push(node);
         A.members.push(node);
       });
+    });
+    accords.forEach((A) => {
       const F = Math.round(A.notes.length * FILL_PER_NOTE + FILL_MORE);
       for (let f = 0; f < F; f++) {
         const r = rnd();
@@ -387,6 +451,12 @@
       inIt.forEach((m) => A.centroid.add(m.c));
       A.centroid.divideScalar(Math.max(1, inIt.length));
     });
+
+    // How far out from the centre each node of the one network stands, as a
+    // share of the farthest: the order the page WIRES ITSELF in as it opens.
+    const reachOne = new Float32Array(T);
+    const farOne = Math.max(...nodes.map((n) => (n.c ? n.c.length() : 0)));
+    nodes.forEach((n, i) => { reachOne[i] = n.c ? n.c.length() / farOne : 0; });
 
     // ============================================================
     // EACH ACCORD'S OWN NETWORK — built its own way (`TYPES`), dense, with
@@ -497,7 +567,10 @@
       A.swirl = new THREE.Vector3().crossVectors(UP, A.home);
       if (A.swirl.lengthSq() < 1e-6) A.swirl.set(1, 0, 0);
       A.swirl.normalize().multiplyScalar(-1);
+      // Each accord sets off at a moment of its own, one after another.
+      A.lag = 0;
     });
+    accords.slice().sort((a, b) => a.home.length() - b.home.length()).forEach((A, j) => { A.lag = (j / Math.max(1, A16 - 1)) * 0.12; });
 
     // ============================================================
     // THE LINKS: each node to its nearest few, the busiest sending lines
@@ -629,16 +702,41 @@
     };
     const dynamic = (n, size) => new THREE.BufferAttribute(new Float32Array(n * size), size).setUsage(THREE.DynamicDrawUsage);
 
-    // THE NODES: faceted spheres, lit, glowing from within in their own
-    // colour, drawn twice over — whole (writing depth) and going or gone
-    // translucent (not) — sharing one opacity per node.
+    // THE NODES: glossy spheres that SHINE — the owner's "I want the balls to
+    // shine more than be solid red objects": smooth, a little metallic,
+    // catching a studio of soft lights (`STUDIO`, below) as highlights, a
+    // rim of their own colour glowing round every edge, and a glow round
+    // them. The notes are drawn finer than the fillers, as two sets of
+    // spheres (the notes are nodes 0 to NOTE_COUNT - 1), and each set twice
+    // over — whole (writing depth) and going or gone translucent (not) —
+    // sharing one opacity per node.
     // perNode: the one addition to the library's shader — each node's own
-    // opacity, and its glow from within taken in its own colour.
-    const BALL = new THREE.IcosahedronGeometry(1, 1);
+    // opacity, its glow from within taken in its own colour, and the rim.
+    const STUDIO = (() => {
+      const pm = new THREE.PMREMGenerator(renderer);
+      const room = new THREE.Scene();
+      room.add(new THREE.Mesh(new THREE.SphereGeometry(20, 24, 12), new THREE.MeshBasicMaterial({ color: 0x121214, side: THREE.BackSide })));
+      const light = (w, h, rgb, x, y, z) => {
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }));
+        m.material.color.setRGB(rgb[0], rgb[1], rgb[2]);
+        m.position.set(x, y, z);
+        m.lookAt(0, 0, 0);
+        room.add(m);
+      };
+      light(10, 4, [3.2, 3.1, 3.0], -3, 12, 5);       // a softbox above
+      light(3, 11, [2.2, 2.0, 2.0], 13, 1, -3);       // a strip on the right
+      light(8, 3, [2.4, 0.35, 0.42], -4, -11, -6);    // a red glow from below
+      light(2, 2, [5, 5, 5], 5, 6, 12);               // a small bright light in front
+      const tex = pm.fromScene(room, 0.035).texture;
+      pm.dispose();
+      return tex;
+    })();
     const opacity = new Float32Array(T).fill(1);
-    const opacityAttr = new THREE.InstancedBufferAttribute(opacity, 1);
-    opacityAttr.setUsage(THREE.DynamicDrawUsage);
-    BALL.setAttribute("instOpacity", opacityAttr);
+    const N = NOTE_COUNT;
+    const sets = [
+      { geo: new THREE.IcosahedronGeometry(1, 2), from: 0, count: N },
+      { geo: new THREE.IcosahedronGeometry(1, 1), from: N, count: T - N },
+    ];
     function perNode(material) {
       material.onBeforeCompile = (sh) => {
         sh.vertexShader = sh.vertexShader
@@ -647,26 +745,31 @@
         sh.fragmentShader = sh.fragmentShader
           .replace("#include <common>", "#include <common>\nvarying float vInstOpacity;")
           .replace("#include <color_fragment>", "#include <color_fragment>\ndiffuseColor.a *= vInstOpacity;")
-          .replace("#include <emissivemap_fragment>", "#include <emissivemap_fragment>\ntotalEmissiveRadiance *= vColor.rgb;");
+          .replace("#include <emissivemap_fragment>", "#include <emissivemap_fragment>\ntotalEmissiveRadiance *= vColor.rgb;\n" +
+            "float rimOf = 1.0 - clamp(dot(normalize(vViewPosition), normal), 0.0, 1.0);\n" +
+            "totalEmissiveRadiance += vColor.rgb * pow(rimOf, 2.4) * 1.25;");
       };
       return material;
     }
-    const solid = new THREE.InstancedMesh(BALL, perNode(new THREE.MeshStandardMaterial({
-      color: 0xffffff, emissive: 0x505050, roughness: 0.32, metalness: 0.28, flatShading: true,
-    })), T);
-    const faint = new THREE.InstancedMesh(BALL, perNode(new THREE.MeshStandardMaterial({
-      color: 0xffffff, emissive: 0x505050, roughness: 0.4, metalness: 0.2, flatShading: true,
-      transparent: true, depthWrite: false,
-    })), T);
-    const tint = new THREE.Color();
-    for (let i = 0; i < T; i++) { solid.setColorAt(i, tint.set(nodes[i].base)); faint.setColorAt(i, tint); }
-    faint.instanceColor = solid.instanceColor;
-    solid.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    faint.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    solid.instanceColor.setUsage(THREE.DynamicDrawUsage);
-    solid.frustumCulled = faint.frustumCulled = false;
-    faint.renderOrder = 2;
-    scene.add(solid, faint);
+    const shiny = (extra) => perNode(new THREE.MeshStandardMaterial(Object.assign({
+      color: 0xffffff, emissive: 0x2c2c2c, roughness: 0.2, metalness: 0.3, envMap: STUDIO, envMapIntensity: 1.25,
+    }, extra)));
+    sets.forEach((set) => {
+      set.opacity = new THREE.InstancedBufferAttribute(opacity.subarray(set.from, set.from + set.count), 1);
+      set.opacity.setUsage(THREE.DynamicDrawUsage);
+      set.geo.setAttribute("instOpacity", set.opacity);
+      set.solid = new THREE.InstancedMesh(set.geo, shiny({}), set.count);
+      set.faint = new THREE.InstancedMesh(set.geo, shiny({ transparent: true, depthWrite: false }), set.count);
+      const tint = new THREE.Color();
+      for (let j = 0; j < set.count; j++) { set.solid.setColorAt(j, tint.set(nodes[set.from + j].base)); set.faint.setColorAt(j, tint); }
+      set.faint.instanceColor = set.solid.instanceColor;
+      set.solid.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      set.faint.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      set.solid.instanceColor.setUsage(THREE.DynamicDrawUsage);
+      set.solid.frustumCulled = set.faint.frustumCulled = false;
+      set.faint.renderOrder = 2;
+      scene.add(set.solid, set.faint);
+    });
     // Each node's own red, as three numbers, for the arithmetic each frame.
     const baseRGB = new Float32Array(T * 3);
     nodes.forEach((n, i) => { const c = new THREE.Color(n.base); baseRGB[i * 3] = c.r; baseRGB[i * 3 + 1] = c.g; baseRGB[i * 3 + 2] = c.b; });
@@ -708,6 +811,11 @@
     }
     const oneRing = lines(circle(ringR, 160, true).concat(ticks), FRAME_RED, 0.6);
     scene.add(oneRing);
+    // THE SPARK the page opens from, at the centre.
+    const spark = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute([0, 0, 0], 3)),
+      new THREE.PointsMaterial(additive({ map: SPOT, size: 1.2, color: 0xffd6d6, opacity: 0 })));
+    spark.visible = false;
+    scene.add(spark);
 
     // THE CENTRE (the owner's picture 2): a white node in a turning cage,
     // with two dashed rings.
@@ -780,8 +888,9 @@
     scene.add(new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0x8a8480, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0.55, fog: false })));
 
     // ============================================================
-    // THE CHROME: the window on the left (with the search in it), the
-    // foot, the card on the right, the names, the labels under the hand.
+    // THE CHROME: the two arrows on the left and what they pull out — the
+    // search bar and the menu — the foot, the note window, the names, and
+    // the labels under the hand.
     // ============================================================
     const el = (tag, cls, html) => {
       const e = document.createElement(tag);
@@ -790,28 +899,44 @@
       return e;
     };
 
-    // THE WINDOW ON THE LEFT: minimal, geometric, with particles.
-    const panel = el("aside", "net-panel");
-    panel.setAttribute("aria-label", "The Note Library: search and accords");
-    panel.innerHTML =
-      '<div class="net-panel-head">' +
-        '<p class="net-panel-title">Note Library</p>' +
-        '<button type="button" class="net-fold" aria-expanded="true" aria-label="Fold the window away"><span aria-hidden="true"></span></button>' +
+    // THE ARROWS ON THE LEFT: the search's on top, where the menu's used to
+    // be, and the menu's under it — the owner's "another arrow up above the
+    // one that pulls out the menu ... have it pull up the search bar". Each
+    // points the way what it pulls out will go.
+    const rail = el("div", "net-rail");
+    rail.innerHTML =
+      '<button type="button" class="net-arrow" data-pull="search" aria-expanded="false" aria-controls="net-find" aria-label="Open the search">' +
+        '<span class="net-chev" aria-hidden="true"></span><span class="net-arrow-say" aria-hidden="true">Search</span></button>' +
+      '<button type="button" class="net-arrow" data-pull="menu" aria-expanded="false" aria-controls="net-menu" aria-label="Open the menu">' +
+        '<span class="net-chev" aria-hidden="true"></span><span class="net-arrow-say" aria-hidden="true">Menu</span></button>';
+    stage.appendChild(rail);
+    const searchArrow = rail.querySelector('[data-pull="search"]');
+    const menuArrow = rail.querySelector('[data-pull="menu"]');
+
+    // THE SEARCH BAR the upper arrow pulls out: the library's own `query>`.
+    const search = el("form", "net-find");
+    search.id = "net-find";
+    search.setAttribute("role", "search");
+    search.setAttribute("aria-label", "Search the notes");
+    search.innerHTML =
+      '<div class="net-find-field">' +
+        '<span class="net-find-prompt" aria-hidden="true">query&gt;</span>' +
+        '<input class="net-query" id="net-query" type="search" autocomplete="off" spellcheck="false" placeholder="a note, like cedar or tonka" aria-label="Search the notes">' +
+        '<output class="net-count" aria-live="polite"></output>' +
+        '<button type="button" class="net-clear" aria-label="Clear the search" disabled><span aria-hidden="true"></span></button>' +
       "</div>" +
+      '<ul class="net-results" role="listbox" aria-label="Notes found"></ul>';
+    stage.appendChild(search);
+
+    // THE MENU the lower arrow pulls out: minimal, geometric, with particles
+    // — the library's name, a ring of specks, and the accords.
+    const panel = el("aside", "net-panel");
+    panel.id = "net-menu";
+    panel.setAttribute("aria-label", "The Note Library: its accords");
+    panel.innerHTML =
+      '<p class="net-panel-title">Note Library</p>' +
       '<p class="net-panel-count"><span class="net-panel-notes"></span> notes · <span class="net-panel-accords"></span> accords · <span class="net-panel-state"></span></p>' +
       '<canvas class="net-mark" aria-hidden="true"></canvas>' +
-      '<div class="net-panel-row">' +
-        '<span class="net-panel-label" id="net-search-label">Search</span>' +
-        '<button type="button" class="net-switch" role="switch" aria-checked="false" aria-labelledby="net-search-label"><span aria-hidden="true"></span></button>' +
-      "</div>" +
-      '<form class="net-search" role="search" hidden>' +
-        '<div class="net-search-field">' +
-          '<input class="net-query" id="net-query" type="search" autocomplete="off" spellcheck="false" placeholder="a note, like cedar or tonka" aria-label="Search the notes">' +
-          '<output class="net-count" aria-live="polite"></output>' +
-          '<button type="button" class="net-clear" aria-label="Clear the search" disabled><span aria-hidden="true"></span></button>' +
-        "</div>" +
-        '<ul class="net-results" role="listbox" aria-label="Notes found"></ul>' +
-      "</form>" +
       '<p class="net-panel-label net-panel-sub">Accords</p>' +
       '<div class="net-accords" role="group" aria-label="Choose an accord"></div>';
     stage.appendChild(panel);
@@ -834,14 +959,20 @@
     };
     const accordButtons = [accordButton("", "", "Every accord", NOTE_COUNT)];
     accords.forEach((A) => accordButtons.push(accordButton(A.code, pad(A.k + 1), A.name, A.notes.length)));
-    const search = panel.querySelector(".net-search");
     const query = search.querySelector(".net-query");
     const countOut = search.querySelector(".net-count");
     const clearButton = search.querySelector(".net-clear");
     const results = search.querySelector(".net-results");
-    const switcher = panel.querySelector(".net-switch");
     const markCanvas = panel.querySelector(".net-mark");
     const markCtx = markCanvas.getContext("2d");
+
+    // THE WORD AS IT OPENS: the page out of focus, and a line pointing at
+    // the menu's arrow — "Open menu here" — for a few seconds, or until the
+    // hand does anything.
+    const coach = el("div", "net-coach");
+    coach.setAttribute("aria-hidden", "true");
+    coach.innerHTML = '<p class="net-coach-say"><span class="net-coach-line"></span>Open menu here</p>';
+    stage.appendChild(coach);
 
     // THE FOOT: the button that expands it, and — once expanded — the
     // dropdown with an arrow either side.
@@ -878,20 +1009,17 @@
     option(-1, "The centre — every accord");
     accords.forEach((A) => option(A.k, pad(A.k + 1) + " · " + A.name));
 
-    // THE CARD a selected note says itself in, on the right, and its line.
-    const card = el("aside", "net-card");
-    card.hidden = true;
-    card.setAttribute("aria-live", "polite");
-    card.setAttribute("aria-label", "The note selected");
-    stage.appendChild(card);
-    const leader = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    leader.setAttribute("class", "net-leader");
-    leader.setAttribute("aria-hidden", "true");
-    const leaderLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    const leaderDot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    leaderDot.setAttribute("r", "3");
-    leader.append(leaderLine, leaderDot);
-    stage.appendChild(leader);
+    // THE NOTE WINDOW a pressed note opens: the page out of focus behind
+    // it (the veil), and the window itself translucent over that.
+    const veil = el("div", "net-veil");
+    veil.hidden = true;
+    stage.appendChild(veil);
+    const note = el("section", "net-note");
+    note.hidden = true;
+    note.setAttribute("role", "dialog");
+    note.setAttribute("aria-modal", "true");
+    note.setAttribute("aria-labelledby", "net-note-name");
+    stage.appendChild(note);
 
     const hoverTag = el("p", "net-hover");
     hoverTag.setAttribute("aria-hidden", "true");
@@ -937,13 +1065,15 @@
     let filter = "", previewing = "";     // an accord chosen by hand; one under the hand
     let hits = [], hitSet = new Set();
     let selected = -1, hovered = -1, overBridge = -1, overHub = false;
-    let panelOpen = window.innerWidth >= 700;
+    let panelOpen = false, searchOpen = false, noteOpen = false;   // the menu and the search start put away
     let viewOff = 0, viewLift = 0, fitted = false;
     const cam = { T: new THREE.Vector3(), d: 20, yaw: 0.35, pitch: ONE_PITCH, zoom: 1 };
     let W = 1, H = 1, fitMin = 1;
     let dOne = 16, dAll = 60;
     let raf = 0, quality = 1;
     let signalAt = -1e9;                  // when the last signal left the centre
+    let uVel = 0;                         // how fast it is coming apart (or together), per ms
+    let loaded = still, introZoom = 1;    // the opening: done yet, and the lens easing in
     let markDirty = true;
     let tagsMoving = false;
 
@@ -977,12 +1107,12 @@
     function place() {
       cosP = Math.cos(psi); sinP = Math.sin(psi);
       const s = clock * 0.001;
-      const shaking = ph.shake > 0.001 && !still;
+      const wobble = !still;
       accords.forEach((A) => {
         A.q.setFromAxisAngle(UP, A.spin).premultiply(A.tilt);
         // The accord's own way out: from its knot to where its network
         // stands, bending the way the one network was turning.
-        const m = ph.move, im = 1 - m;
+        const m = ease(clamp((u - 0.1 - A.lag) / 0.72, 0, 1)), im = 1 - m;
         v1.copy(A.centroid).add(A.G).multiplyScalar(0.5).addScaledVector(A.swirl, 3.5);
         Cw[A.k].copy(A.centroid).multiplyScalar(im * im).addScaledVector(v1, 2 * im * m).addScaledVector(A.G, m * m);
         // Its turn as a matrix, once — then every node by plain arithmetic.
@@ -1006,7 +1136,8 @@
             // Its own way, a little chaotic: setting off at a moment of its
             // own, on a path bent its own way, to where it ends.
             const ex = rx + Gx, ey = ry + Gy, ez = rz + Gz;
-            const mi = ease(clamp((u - 0.08 - n.delay) / 0.66, 0, 1));
+            const s0 = 0.04 + A.lag * 0.6 + n.delay * 0.6;
+            const mi = ease(clamp((u - s0) / (0.94 - s0), 0, 1));
             if (mi >= 1) { x = ex; y = ey; z = ez; }
             else {
               const im2 = 1 - mi, c = n.c, bd = n.bend;
@@ -1017,9 +1148,9 @@
             }
             scaleOf[i] = 1;
           }
-          // Shaken as it goes.
-          if (shaking) {
-            const a = n.amp * ph.shake;
+          // Shaken as it goes, and drifting a little always.
+          if (wobble) {
+            const a = n.amp * (ph.shake + FLOAT);
             x += Math.sin(s * n.f[0] + n.ph[0]) * a;
             y += Math.sin(s * n.f[1] + n.ph[1]) * a * 0.8;
             z += Math.sin(s * n.f[2] + n.ph[2]) * a;
@@ -1036,7 +1167,9 @@
     // ============================================================
     // SEEING IT
     // ============================================================
-    const room = () => (panelOpen && W >= 700 ? Math.min(320, W * 0.28) : 0);
+    // The room the menu takes on the left, open: the arrows, a gap, and the
+    // menu itself (the same as `--room` in style.css).
+    const room = () => (panelOpen && W >= 700 ? Math.min(336, W * 0.3) : 0);
     const foot = () => (uTo === 1 ? (W < 700 ? 150 : 132) : (W < 700 ? 90 : 78));
     const TOP = 24;
     const halfFov = () => {
@@ -1116,7 +1249,7 @@
         restTarget(cam.T);
         cam.d = restDistance();
       }
-      const d = cam.d * cam.zoom;
+      const d = cam.d * cam.zoom * introZoom;
       const cp = Math.cos(cam.pitch);
       camera.position.set(cam.T.x + Math.sin(cam.yaw) * cp * d, cam.T.y + Math.sin(cam.pitch) * d, cam.T.z + Math.cos(cam.yaw) * cp * d);
       camera.lookAt(cam.T);
@@ -1260,30 +1393,39 @@
     nav.querySelectorAll(".net-step").forEach((b) => b.addEventListener("click", () => step(+b.dataset.step)));
 
     // ============================================================
-    // THE WINDOW ON THE LEFT: folding it, the search, the accords — each
-    // lighting up alone under the hand, and staying lit when pressed.
+    // THE ARROWS AND WHAT THEY PULL OUT: the search bar and the menu. The
+    // menu's accords each light up alone under the hand, and stay lit when
+    // pressed.
     // ============================================================
-    const fold = panel.querySelector(".net-fold");
     function setPanel(open) {
       panelOpen = open;
-      panel.classList.toggle("is-folded", !open);
+      panel.classList.toggle("is-open", open);
       stage.classList.toggle("has-panel", open);
-      fold.setAttribute("aria-expanded", open ? "true" : "false");
-      fold.setAttribute("aria-label", open ? "Fold the window away" : "Open the window");
-      panel.querySelectorAll(".net-accord, .net-switch, .net-query, .net-clear").forEach((b) => { b.tabIndex = open ? 0 : -1; });
+      menuArrow.classList.toggle("is-out", open);
+      menuArrow.setAttribute("aria-expanded", open ? "true" : "false");
+      menuArrow.setAttribute("aria-label", open ? "Put the menu away" : "Open the menu");
+      panel.querySelectorAll(".net-accord").forEach((b) => { b.tabIndex = open ? 0 : -1; });
       markDirty = true;
       if (W > 1) refit();
+      wake();
     }
-    fold.addEventListener("click", () => setPanel(!panelOpen));
+    menuArrow.addEventListener("click", () => setPanel(!panelOpen));
 
     function setSearch(on) {
-      switcher.setAttribute("aria-checked", on ? "true" : "false");
-      search.hidden = !on;
+      searchOpen = on;
+      search.classList.toggle("is-open", on);
       stage.classList.toggle("has-search", on);
+      searchArrow.classList.toggle("is-out", on);
+      searchArrow.setAttribute("aria-expanded", on ? "true" : "false");
+      searchArrow.setAttribute("aria-label", on ? "Put the search away" : "Open the search");
+      query.tabIndex = clearButton.tabIndex = on ? 0 : -1;
       if (on) query.focus({ preventScroll: true });
-      else if (query.value) { query.value = ""; find(); }
+      else {
+        if (query.value) { query.value = ""; find(); }
+        if (document.activeElement === query) searchArrow.focus({ preventScroll: true });
+      }
     }
-    switcher.addEventListener("click", () => setSearch(switcher.getAttribute("aria-checked") !== "true"));
+    searchArrow.addEventListener("click", () => setSearch(!searchOpen));
 
     accordButtons.forEach((b) => {
       b.addEventListener("click", () => {
@@ -1310,7 +1452,7 @@
       b.addEventListener("blur", () => hand(false));
     });
 
-    // THE SEARCH, in the window: direct words, as the library's own.
+    // THE SEARCH: direct words, as the library's own.
     function find() {
       const q = query.value.trim();
       hits = [];
@@ -1342,11 +1484,15 @@
     query.addEventListener("input", find);
     clearButton.addEventListener("click", () => { query.value = ""; find(); query.focus(); });
     search.addEventListener("submit", (e) => { e.preventDefault(); if (hits[0]) { go(hits[0]); search.classList.remove("has-results"); } });
-    query.addEventListener("keydown", (e) => { if (e.key === "Escape" && query.value) { e.stopPropagation(); query.value = ""; find(); } });
+    query.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      e.stopPropagation();
+      if (query.value) { query.value = ""; find(); } else setSearch(false);
+    });
     query.addEventListener("focus", () => { if (query.value.trim()) search.classList.add("has-results"); });
 
-    /** A note chosen from the search: the library comes apart if it has
-        not, its network is gone to, and the note selected. */
+    /** A note chosen from the search or the window: the library comes
+        apart if it has not, its network is gone to, and its window opened. */
     function go(n) {
       if (uTo < 1) expand(true);
       if (focus !== n.A.k) travel(n.A.k);
@@ -1354,53 +1500,307 @@
     }
 
     // ============================================================
-    // SELECTING a note (only once it has come apart): whole and lit, and
-    // every other node translucent.
+    // SELECTING a note (only once it has come apart): whole and lit, every
+    // other node translucent — and its window opened, the page out of focus
+    // behind it.
     // ============================================================
     function select(i, keep) {
-      if (selected === i && !keep) { deselect(); return; }
+      if (selected === i && !keep && noteOpen) { deselect(); return; }
       selected = i;
-      const n = nodes[i].note;
-      card.innerHTML =
-        '<div class="net-card-top">' +
-          '<span class="net-card-sym"></span>' +
-          '<div><p class="net-card-name"></p><p class="net-card-accord"></p></div>' +
-          '<button type="button" class="net-card-close" aria-label="Let it go">×</button>' +
-        "</div>" +
-        '<dl class="net-card-facts">' +
-          '<div><dt>Element</dt><dd class="net-card-no"></dd></div>' +
-          '<div><dt>Call number</dt><dd class="net-card-call"></dd></div>' +
-          '<div><dt>Fragrances</dt><dd class="net-card-uses"></dd></div>' +
-        "</dl>" +
-        '<p class="net-card-say"></p>' +
-        '<a class="net-card-open"></a>';
-      card.querySelector(".net-card-sym").textContent = n.sym;
-      card.querySelector(".net-card-name").textContent = n.name;
-      card.querySelector(".net-card-accord").textContent = n.A.name;
-      card.querySelector(".net-card-no").textContent = String(n.no);
-      card.querySelector(".net-card-call").textContent = n.call;
-      card.querySelector(".net-card-uses").textContent = n.uses === 1 ? "used in 1" : "used in " + n.uses;
-      card.querySelector(".net-card-say").textContent = n.say;
-      const open = card.querySelector(".net-card-open");
-      open.href = root + LIBRARY + "#" + n.id;
-      open.textContent = "Open it in the Note Library →";
-      card.querySelector(".net-card-close").addEventListener("click", deselect);
-      card.hidden = false;
-      card.w = 0;
       stage.classList.add("is-selecting");
-      stage.dataset.selected = n.name;
+      stage.dataset.selected = nodes[i].note.name;
+      openNote(nodes[i].note);
       markDirty = true;
       wake();
     }
     function deselect() {
       if (selected < 0) return;
       selected = -1;
-      card.hidden = true;
+      closeNote();
       stage.classList.remove("is-selecting");
       stage.dataset.selected = "";
       markDirty = true;
       wake();
     }
+
+    // ============================================================
+    // THE NOTE WINDOW — the library's element card here, and a little
+    // more: its tile and its atom (an electron for every fragrance using
+    // it), what it is, how many fragrances use it and where it ranks, where
+    // in them it stands (top, heart, base), the notes it is most often
+    // found with, its other spellings (isotopes), and every fragrance that
+    // names it (compounds), each a way to it; and the note before and after
+    // it in its accord. Nothing sends you to the Note Library: this is
+    // another version of it.
+    // ============================================================
+    const HOUSES = {
+      pineward: { name: "Pineward", href: "houses/pineward.html" },
+      adar: { name: "ADAR", href: "houses/adar.html" },
+      "almost-human": { name: "Almost Human", href: "houses/almost-human.html" },
+      ataraxia: { name: "Ataraxia", href: "houses/ataraxia.html" },
+      grande: { name: "Grande Parfums", href: "houses/grande-parfums.html" },
+      abstraits: { name: "Les Abstraits", href: "houses/les-abstraits.html" },
+      tale: { name: "Tale Parfums", href: "houses/tale-parfums.html" },
+      tombstone: { name: "Tombstone", href: "houses/tombstone.html" },
+      qimu: { name: "Qimu & Musicians", href: "houses/qimu-and-musicians.html" },
+      individual: { name: "Individual fragrances", href: "individual-fragrances/individual-fragrances.html" },
+    };
+    const TIER_SAY = { top: "Top", mid: "Heart", base: "Base", flat: "Undivided" };
+    const ordinal = (k) => k + (k % 100 >= 11 && k % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][k % 10] || "th");
+    const dropsOpen = new Set();          // which of its dropdowns were left open
+    note.addEventListener("toggle", (e) => {
+      const d = e.target;
+      if (!d.dataset || !d.dataset.drop) return;
+      if (d.open) dropsOpen.add(d.dataset.drop); else dropsOpen.delete(d.dataset.drop);
+    }, true);
+    const drop = (title, count, cls, key) => {
+      const box = el("details", "net-note-drop " + cls);
+      box.dataset.drop = key;
+      box.innerHTML = '<summary><span class="net-note-drop-name"></span><span class="net-note-count"></span></summary>';
+      box.querySelector(".net-note-drop-name").textContent = title;
+      box.querySelector(".net-note-count").textContent = String(count);
+      box.open = dropsOpen.has(key);
+      return box;
+    };
+    let noteShown = null, noteBack = null, noteTimer = 0;
+    let atom = null;                      // the atom drawn in the window
+    function fillNote(n) {
+      noteShown = n;
+      const A = n.A;
+      note.innerHTML =
+        '<div class="net-note-top">' +
+          '<span class="net-note-kind">Element</span><span class="net-note-call"></span>' +
+          '<button type="button" class="net-note-close" aria-label="Close">×</button>' +
+        "</div>" +
+        '<div class="net-note-body">' +
+        '<div class="net-note-figure">' +
+          '<div class="net-note-tile" aria-hidden="true"><span class="net-note-no"></span><span class="net-note-uses"></span>' +
+            '<span class="net-note-sym"></span><span class="net-note-tname"></span></div>' +
+          '<canvas class="net-note-atom" aria-hidden="true"></canvas>' +
+        "</div>" +
+        '<p class="net-note-caption"></p>' +
+        '<h2 class="net-note-name" id="net-note-name" tabindex="-1"></h2>' +
+        '<p class="net-note-accord"></p>' +
+        '<p class="net-note-say"></p>' +
+        '<dl class="net-note-facts"></dl>' +
+        '<div class="net-note-tiers"><h3>Where it stands</h3><div class="net-note-bar" aria-hidden="true"></div><p class="net-note-tier-say"></p></div>' +
+        '<div class="net-note-with"><h3>Most often with</h3><div class="net-note-chips"></div></div>' +
+        '<div class="net-note-lists"></div>' +
+        '<div class="net-note-steps"></div>' +
+        "</div>";
+      const q = (c) => note.querySelector(c);
+      q(".net-note-call").textContent = n.call;
+      q(".net-note-no").textContent = String(n.no);
+      q(".net-note-uses").textContent = String(n.uses);
+      q(".net-note-sym").textContent = n.sym;
+      q(".net-note-tname").textContent = n.name;
+      q(".net-note-caption").textContent = n.uses === 1 ? "1 electron — the one fragrance using it"
+        : n.uses + " electrons — one for every fragrance using it";
+      q(".net-note-name").textContent = n.name;
+      q(".net-note-accord").textContent = pad(A.k + 1) + " · " + A.name + (A.say ? " — " + A.say : "");
+      q(".net-note-say").textContent = n.say;
+      // The facts, and the little more.
+      const facts = [
+        ["Element", "No. " + n.no + " of " + NOTE_COUNT],
+        ["Fragrances", n.uses ? n.uses + " of the site's " + FRAGRANCE_COUNT + " · " + Math.round((n.uses / FRAGRANCE_COUNT) * 100) + "%" : "none yet"],
+        ["Most used", ordinal(n.rank) + " of " + NOTE_COUNT + " · " + ordinal(n.rankIn) + " of " + A.notes.length + " in " + A.name],
+      ];
+      const dl = q(".net-note-facts");
+      facts.forEach(([k, v]) => {
+        const d = el("div");
+        d.appendChild(el("dt")).textContent = k;
+        d.appendChild(el("dd")).textContent = v;
+        dl.appendChild(d);
+      });
+      // Where in its fragrances it stands: top, heart, base — or a list the
+      // source did not divide.
+      const tally = { top: 0, mid: 0, base: 0, flat: 0 };
+      n.where.forEach((set) => set.forEach((t) => { tally[t]++; }));
+      const total = TIERS.reduce((a, t) => a + tally[t], 0);
+      const bar = q(".net-note-bar");
+      TIERS.forEach((t) => {
+        if (!tally[t]) return;
+        const seg = el("span", "net-note-seg net-note-seg-" + t);
+        seg.style.flexGrow = String(tally[t]);
+        bar.appendChild(seg);
+      });
+      q(".net-note-tier-say").textContent = total
+        ? TIERS.filter((t) => tally[t]).map((t) => TIER_SAY[t] + " " + tally[t]).join(" · ")
+        : "No fragrance on the site names it yet.";
+      if (!total) q(".net-note-tiers").classList.add("is-empty");
+      // The notes it is most often found with, in the same fragrances.
+      const withs = new Map();
+      n.keys.forEach((key) => (keyNotes.get(key) || []).forEach((m) => { if (m !== n) withs.set(m, (withs.get(m) || 0) + 1); }));
+      const best = [...withs].sort((a, b) => b[1] - a[1] || b[0].uses - a[0].uses).slice(0, 8);
+      const chips = q(".net-note-chips");
+      best.forEach(([m, c]) => {
+        const b = el("button", "net-note-chip");
+        b.type = "button";
+        b.dataset.no = String(m.no);
+        b.innerHTML = '<span class="net-note-chip-sym"></span><span class="net-note-chip-name"></span><span class="net-note-chip-count"></span>';
+        b.children[0].textContent = m.sym;
+        b.children[1].textContent = m.name;
+        b.children[2].textContent = "×" + c;
+        b.title = "In " + c + (c === 1 ? " fragrance" : " fragrances") + " with " + n.name + (m.A !== n.A ? " · " + m.A.name : "");
+        chips.appendChild(b);
+      });
+      if (!best.length) q(".net-note-with").classList.add("is-empty");
+      // Its other spellings, and every fragrance naming it.
+      const lists = q(".net-note-lists");
+      if (n.aka.length) {
+        const aka = lists.appendChild(drop("Isotopes", n.aka.length, "net-note-aka", "aka"));
+        const ul = aka.appendChild(el("ul"));
+        n.aka.forEach((a) => { ul.appendChild(el("li")).textContent = a; });
+      }
+      const found = lists.appendChild(el("div", "net-note-found"));
+      found.appendChild(el("h3")).textContent = "Compounds · " + pad(n.uses);
+      const byHouse = new Map();
+      [...n.keys].sort().forEach((key) => {
+        const [house, no] = key.split(":");
+        if (!byHouse.has(house)) byHouse.set(house, []);
+        byHouse.get(house).push(no);
+      });
+      const order = Object.keys(HOUSES).filter((h) => byHouse.has(h)).concat([...byHouse.keys()].filter((h) => !HOUSES[h]));
+      const houses = order.filter((h) => h !== "individual");
+      if (byHouse.has("individual")) {
+        const nos = byHouse.get("individual");
+        found.appendChild(drop("Individual fragrances", nos.length, "net-note-group", "individual")).appendChild(fragrancesOf(n, "individual", nos));
+      }
+      if (houses.length) {
+        const block = found.appendChild(drop("Houses", houses.length === 1 ? "1 house" : houses.length + " houses", "net-note-group", "houses"));
+        houses.forEach((house) => {
+          const nos = byHouse.get(house);
+          const group = block.appendChild(drop((HOUSES[house] || { name: house }).name, nos.length, "net-note-house", "house:" + house));
+          group.appendChild(fragrancesOf(n, house, nos));
+        });
+      }
+      if (!n.uses) found.appendChild(el("p", "net-note-none")).textContent = "No fragrance on the site names it yet.";
+      // The note before and after it in its accord, by use.
+      const at = n.rankIn - 1, L = A.byUse.length;
+      const steps = q(".net-note-steps");
+      [[-1, "‹ "], [1, ""]].forEach(([by, before]) => {
+        const m = A.byUse[(at + by + L) % L];
+        const b = el("button", "net-note-step");
+        b.type = "button";
+        b.dataset.step = String(by);
+        b.dataset.no = String(m.no);
+        b.textContent = by < 0 ? before + m.name : m.name + " ›";
+        b.setAttribute("aria-label", (by < 0 ? "The note before: " : "The note after: ") + m.name);
+        steps.appendChild(b);
+      });
+      atom = { n, canvas: q(".net-note-atom"), w: 0, h: 0, seed: n.no };
+    }
+    function fragrancesOf(n, house, nos) {
+      const where = HOUSES[house] || { name: house, href: "" };
+      const ul = el("ul");
+      nos.forEach((no) => {
+        const key = house + ":" + no;
+        const a = ul.appendChild(el("li")).appendChild(el("a"));
+        a.href = where.href ? root + where.href + "#part-" + no : "#";
+        a.dataset.key = key;
+        a.innerHTML = '<span class="net-note-fno"></span><span class="net-note-fname"></span><span class="net-note-ftier"></span>';
+        a.children[0].textContent = no;
+        a.children[1].textContent = titles.get(key) || "";
+        a.children[2].textContent = [...(n.where.get(key) || [])].map((t) => TIER_SAY[t]).join(", ");
+      });
+      if (where.href) learn(house, where.href);
+      return ul;
+    }
+    // THE NAMES OF THE FRAGRANCES, read off each house's own page the first
+    // time a window needs them, and kept (as the library does).
+    const titles = new Map(), asked = new Set();
+    function learn(house, href) {
+      if (asked.has(house)) return;
+      asked.add(house);
+      fetch(root + href).then((res) => (res.ok ? res.text() : "")).then((text) => {
+        if (!text) return;
+        const doc = new DOMParser().parseFromString(text, "text/html");
+        doc.querySelectorAll("details[id^='part-']").forEach((part) => {
+          const t = part.querySelector(".human-title, .pine-title, .adar-title");
+          if (t) titles.set(house + ":" + part.id.slice(5), t.textContent.replace(/\s+/g, " ").trim());
+        });
+        note.querySelectorAll("a[data-key]").forEach((a) => {
+          const name = titles.get(a.dataset.key);
+          if (name) a.querySelector(".net-note-fname").textContent = name;
+        });
+      }).catch(() => {});
+    }
+    note.addEventListener("click", (e) => {
+      const t = e.target.closest("button");
+      if (!t) return;
+      if (t.classList.contains("net-note-close")) { deselect(); return; }
+      if (t.dataset.no) {
+        const m = notes[+t.dataset.no - 1];
+        if (m) go(m);
+      }
+    });
+    veil.addEventListener("click", deselect);
+    function openNote(n) {
+      if (!noteOpen) noteBack = document.activeElement;
+      fillNote(n);
+      stage.dataset.note = n.name;
+      if (!noteOpen) {
+        noteOpen = true;
+        window.clearTimeout(noteTimer);
+        veil.hidden = note.hidden = false;
+        void note.offsetWidth;            // laid out once, so that it can come in
+        veil.classList.add("is-on");
+        note.classList.add("is-on");
+        stage.classList.add("has-note");
+      }
+      note.querySelector(".net-note-body").scrollTop = 0;
+      note.querySelector(".net-note-name").focus({ preventScroll: true });
+      wake();
+    }
+    function closeNote() {
+      if (!noteOpen) return;
+      noteOpen = false;
+      stage.dataset.note = "";
+      veil.classList.remove("is-on");
+      note.classList.remove("is-on");
+      stage.classList.remove("has-note");
+      noteTimer = window.setTimeout(() => { if (!noteOpen) veil.hidden = note.hidden = true; }, still ? 0 : 360);
+      if (noteBack && noteBack.isConnected && noteBack.focus) noteBack.focus({ preventScroll: true });
+      noteBack = null;
+    }
+
+    // ============================================================
+    // THE WORD AS IT OPENS, AND THE ARROWS WHEN LEFT ALONE. Once the page
+    // has wired itself, everything but the arrows goes out of focus and a
+    // line points at the menu's: "Open menu here", for a few seconds or
+    // until the hand does anything. And whenever the page has been left
+    // alone for a while, the two arrows glow, and the line at the top right
+    // saying what can be done comes back.
+    // ============================================================
+    let coachOn = false, coachTimer = 0, idle = false, lastInput = performance.now();
+    function opened() {
+      stage.classList.add("is-loaded");
+      coachOn = true;
+      stage.classList.add("is-coaching");
+      coachTimer = window.setTimeout(unCoach, COACH_MS);
+    }
+    function unCoach() {
+      if (!coachOn) return;
+      coachOn = false;
+      window.clearTimeout(coachTimer);
+      stage.classList.remove("is-coaching");
+      lastInput = performance.now();
+    }
+    function setIdle(on) {
+      idle = on;
+      stage.classList.toggle("is-idle", on);
+    }
+    const touched = () => {
+      lastInput = performance.now();
+      if (coachOn) unCoach();
+      if (idle) setIdle(false);
+    };
+    ["pointerdown", "wheel", "keydown", "touchstart"].forEach((type) => document.addEventListener(type, touched, { capture: true, passive: true }));
+    document.addEventListener("pointermove", () => { lastInput = performance.now(); if (idle) setIdle(false); }, { passive: true });
+    window.setInterval(() => {
+      const want = loaded && !coachOn && !noteOpen && !document.hidden && u === uTo && !flight && performance.now() - lastInput > IDLE_MS;
+      if (want !== idle) setIdle(want);
+    }, 500);
 
     /** The names beside the notes: every note of the network you are at. */
     function tagsFor() {
@@ -1561,6 +1961,17 @@
     }, { passive: false });
     document.addEventListener("keydown", (e) => {
       const typing = e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA");
+      // A note's window open: Escape closes it, the arrows go through the
+      // notes of its accord.
+      if (noteOpen && !typing) {
+        if (e.key === "Escape") { e.preventDefault(); deselect(); }
+        else if ((e.key === "ArrowRight" || e.key === "ArrowLeft") && noteShown && e.target.tagName !== "SUMMARY") {
+          e.preventDefault();
+          const b = note.querySelector('.net-note-step[data-step="' + (e.key === "ArrowRight" ? 1 : -1) + '"]');
+          if (b) go(notes[+b.dataset.no - 1]);
+        }
+        return;
+      }
       if (e.key === "Escape" && !typing) { closeDrop(); deselect(); return; }
       if (typing || dock.classList.contains("is-open") || e.target === dropList) return;
       if (uTo < 1) return;
@@ -1573,6 +1984,18 @@
     // EVERY FRAME
     // ============================================================
     let lastT = 0, born = 0, segs = 0, changing = 0, sorted = false;
+    /** THE OPENING: a spark at the centre, and the one network wired in
+        from it outwards — each node coming up as the front reaches it, each
+        link drawn out from its nearer end to its farther — while the lens
+        eases in. Where the front stands, 0 to 1.18; 9 once it is done. */
+    let loadT = 0;                        // the opening's own clock: frames' time, never more than 50ms a frame
+    function loadFront() {
+      if (loaded) { introZoom = 1; return 9; }
+      const p = clamp((loadT - 60) / LOAD_MS, 0, 1);
+      introZoom = 1 + 0.2 * (1 - ease(p));
+      if (p >= 1) { loaded = true; introZoom = 1; opened(); return 9; }
+      return (1 - Math.pow(1 - p, 3)) * 1.18;
+    }
     const colours = new Float32Array(T * 3);
     const lit = new Float32Array(T);      // how lit each node is by the signal passing it
     const glowPos = glowGeo.attributes.position.array, glowCol = glowGeo.attributes.color.array;
@@ -1614,13 +2037,28 @@
       linkCol[o + 2] = linkCol[o + 5] = b;
       segs++;
     }
-    function drawLinks(set, weight, strength, signalled) {
+    function drawLinks(set, weight, strength, signalled, front) {
       if (weight <= 0.01) return;
       const wh = ph.white;
+      const wiring = front !== undefined && front < 2;
       for (let k = 0; k < set.length; k++) {
-        const a = set[k][0], b = set[k][1];
+        let a = set[k][0], b = set[k][1];
         const sa = vis[a], sb = vis[b];
         if (sa < 0.05 || sb < 0.05) continue;
+        if (wiring) {
+          // AS THE PAGE OPENS: drawn out from its nearer end to its farther
+          // as the front from the centre passes, bright where it is growing.
+          if (reachOne[a] > reachOne[b]) { const c = a; a = b; b = c; }
+          const ra = reachOne[a], rb = reachOne[b];
+          const f = clamp((front - ra) / Math.max(0.03, rb - ra), 0, 1);
+          if (f <= 0) continue;
+          const glowing = f < 1 ? 1.8 : 1;
+          const ax = P[a * 3], ay = P[a * 3 + 1], az = P[a * 3 + 2];
+          const v = weight * strength * glowing;
+          segment(ax, ay, az, ax + (P[b * 3] - ax) * f, ay + (P[b * 3 + 1] - ay) * f, az + (P[b * 3 + 2] - az) * f,
+            LINE[0] * v + (glowing - 1) * 0.3, LINE[1] * v + (glowing - 1) * 0.2, LINE[2] * v + (glowing - 1) * 0.2);
+          continue;
+        }
         const litUp = a === selected || b === selected || a === hovered || b === hovered;
         let f = weight * Math.min(opacity[a], opacity[b]) * Math.min(sa, sb) * (litUp ? 2.4 : 1) * strength;
         const s = signalled ? Math.max(lit[a], lit[b]) : 0;
@@ -1639,9 +2077,21 @@
       lastT = t;
       if (!born) born = t;
       if (!still) clock += dt;
+      if (!loaded) loadT += dt;
       if (u !== uTo) {
-        const by = still ? 1 : dt / EXPAND_MS;
-        u = uTo > u ? Math.min(uTo, u + by) : Math.max(uTo, u - by);
+        if (still) { u = uTo; uVel = 0; }
+        else {
+          // Its speed eases towards what the way left asks for — full speed,
+          // and less and less over the last BRAKE of it — so it sets off
+          // softly, comes to rest softly, and turns round without a jolt.
+          const left = uTo - u, dir = Math.sign(left);
+          const cruise = 1 / EXPAND_MS;
+          const want = dir * cruise * Math.min(1, Math.sqrt(Math.abs(left) / BRAKE));
+          uVel += (want - uVel) * (1 - Math.exp(-dt / ACCEL_MS * 3));
+          u += uVel * dt;
+          if ((dir > 0 && u >= uTo - 0.0004) || (dir < 0 && u <= uTo + 0.0004)) { u = uTo; uVel = 0; }
+          u = clamp(u, 0, 1);
+        }
         if (u === uTo) { say(); tagsFor(); }
       }
       ph = phase();
@@ -1680,7 +2130,6 @@
       // TRANSLUCENCY, eased node by node.
       const fade = still ? 1 : 1 - Math.exp(-dt * FADE_RATE);
       let dim = 0, settling = false, anyFaint = false, changed = false;
-      const intro = still ? 1 : smooth(0, 1200, t - born);
       onlyNow = previewing || filter;
       searchingNow = hits.length > 0 || query.value.trim() !== "";
       for (let i = 0; i < T; i++) {
@@ -1694,62 +2143,79 @@
         if (opacity[i] <= 0.995) anyFaint = true;
         if (opacity[i] < 0.5 && nodes[i].kind === 0) dim++;
       }
-      if (changed) opacityAttr.needsUpdate = true;
+      if (changed) sets.forEach((set) => { set.opacity.needsUpdate = true; });
       // The translucent set is drawn only while something is translucent.
       const faintNow = anyFaint || faintWas;
       faintWas = anyFaint;
-      faint.visible = anyFaint;
-      const solidM = solid.instanceMatrix.array, faintM = faint.instanceMatrix.array;
-      const instColour = solid.instanceColor.array;
+      sets.forEach((set) => { set.faint.visible = anyFaint; });
 
-      // THE NODES: where, how large, what colour — red, white on the way.
+      // THE NODES: where, how large, what colour — red, white on the way —
+      // and, as the page opens, wired in from the centre outwards.
       const wh = ph.white;
       const eyeX = camera.position.x, eyeY = camera.position.y, eyeZ = camera.position.z;
-      for (let i = 0; i < T; i++) {
-        const n = nodes[i];
-        // A node not made yet (or gone again) is written empty once, and
-        // then left alone until it is made.
-        if (scaleOf[i] <= 0) {
-          vis[i] = 0;
-          if (!empty[i]) {
-            empty[i] = 1;
-            nothing(solidM, i); nothing(faintM, i);
-            glowCol[i * 3] = glowCol[i * 3 + 1] = glowCol[i * 3 + 2] = 0;
+      const front = loadFront();
+      const twinkle = clock * 0.001;
+      for (let q = 0; q < 2; q++) {
+        const set = sets[q];
+        const solidM = set.solid.instanceMatrix.array, faintM = set.faint.instanceMatrix.array;
+        const instColour = set.solid.instanceColor.array;
+        const to = set.from + set.count;
+        for (let i = set.from; i < to; i++) {
+          const j = i - set.from;
+          const n = nodes[i];
+          // A node not made yet (or gone again) is written empty once, and
+          // then left alone until it is made.
+          if (scaleOf[i] <= 0) {
+            vis[i] = 0;
+            if (!empty[i]) {
+              empty[i] = 1;
+              nothing(solidM, j); nothing(faintM, j);
+              glowCol[i * 3] = glowCol[i * 3 + 1] = glowCol[i * 3 + 2] = 0;
+            }
+            continue;
           }
-          continue;
+          empty[i] = 0;
+          // Its red, towards white on the way, when chosen, and as the
+          // signal passes.
+          const wk = n.kind === 3 ? wh * 0.7 : wh;
+          let r = baseRGB[i * 3], g = baseRGB[i * 3 + 1], b = baseRGB[i * 3 + 2];
+          r += (1 - r) * wk; g += (1 - g) * wk; b += (1 - b) * wk;
+          const hot = i === selected ? 0.6 : i === hovered ? 0.3 : searchingNow && hitSet.has(i) ? 0.2 : 0;
+          if (hot) { r += (1 - r) * hot; g += (1 - g) * hot; b += (1 - b) * hot; }
+          const li = lit[i] * 0.55;
+          if (li > 0.01) { r += (1 - r) * li; g += (1 - g) * li; b += (1 - b) * li; }
+          colours[i * 3] = r; colours[i * 3 + 1] = g; colours[i * 3 + 2] = b;
+          instColour[j * 3] = r; instColour[j * 3 + 1] = g; instColour[j * 3 + 2] = b;
+          // Anything right in front of the lens is let go, so that a network
+          // standing between the eye and the one looked at never fills it.
+          const ex = P[i * 3] - eyeX, ey = P[i * 3 + 1] - eyeY, ez = P[i * 3 + 2] - eyeZ;
+          const dd = ex * ex + ey * ey + ez * ez;
+          vis[i] = scaleOf[i] * (dd >= NEAR_OUT ? 1 : smooth(NEAR_IN, NEAR_OUT, dd));
+          // Wired in: each comes up as the front from the centre reaches it,
+          // swelling a little past its size and settling.
+          let pop = 1;
+          if (front < 2) {
+            const a = smooth(reachOne[i], reachOne[i] + 0.1, front);
+            pop = a * (1 + 0.45 * Math.sin(Math.PI * a));
+          }
+          const grow = (i === selected ? 1.55 : i === hovered ? 1.35 : 1) * vis[i] * pop * (1 + lit[i] * 0.25);
+          const x = P[i * 3], y = P[i * 3 + 1], z = P[i * 3 + 2];
+          if (grow < 0.01) { nothing(solidM, j); if (faintNow) nothing(faintM, j); }
+          else if (opacity[i] > 0.995) { put(solidM, j, n.size * grow, x, y, z); if (faintNow) nothing(faintM, j); }
+          else { nothing(solidM, j); put(faintM, j, n.size * grow, x, y, z); }
+          // Its glow: the notes the most, and shimmering a little; the pale
+          // ones softly, the specks not at all — brighter while white, and as
+          // the signal passes.
+          let kindGlow = n.kind === 0 ? 0.7 + n.size * 2.6 : n.kind === 1 ? 0.32 : n.kind === 2 ? 0.34 : 0;
+          if (n.kind === 0 && !still) kindGlow *= 1 + 0.2 * Math.sin(twinkle * n.f[0] * 1.7 + n.ph[0]);
+          const k = kindGlow * (1 + 0.6 * ph.changing + lit[i] * 1.6) * (0.2 + 0.8 * opacity[i]) * (i === selected ? 2 : 1) * grow;
+          glowPos[i * 3] = x; glowPos[i * 3 + 1] = y; glowPos[i * 3 + 2] = z;
+          glowCol[i * 3] = r * k; glowCol[i * 3 + 1] = g * k * 0.9; glowCol[i * 3 + 2] = b * k * 0.9;
         }
-        empty[i] = 0;
-        // Its red, towards white on the way, when chosen, and as the signal
-        // passes.
-        const wk = n.kind === 3 ? wh * 0.7 : wh;
-        let r = baseRGB[i * 3], g = baseRGB[i * 3 + 1], b = baseRGB[i * 3 + 2];
-        r += (1 - r) * wk; g += (1 - g) * wk; b += (1 - b) * wk;
-        const hot = i === selected ? 0.6 : i === hovered ? 0.3 : searchingNow && hitSet.has(i) ? 0.2 : 0;
-        if (hot) { r += (1 - r) * hot; g += (1 - g) * hot; b += (1 - b) * hot; }
-        const li = lit[i] * 0.55;
-        if (li > 0.01) { r += (1 - r) * li; g += (1 - g) * li; b += (1 - b) * li; }
-        colours[i * 3] = r; colours[i * 3 + 1] = g; colours[i * 3 + 2] = b;
-        instColour[i * 3] = r; instColour[i * 3 + 1] = g; instColour[i * 3 + 2] = b;
-        // Anything right in front of the lens is let go, so that a network
-        // standing between the eye and the one looked at never fills it.
-        const ex = P[i * 3] - eyeX, ey = P[i * 3 + 1] - eyeY, ez = P[i * 3 + 2] - eyeZ;
-        const dd = ex * ex + ey * ey + ez * ez;
-        vis[i] = scaleOf[i] * (dd >= NEAR_OUT ? 1 : smooth(NEAR_IN, NEAR_OUT, dd));
-        const grow = (i === selected ? 1.55 : i === hovered ? 1.35 : 1) * vis[i] * (0.15 + 0.85 * intro) * (1 + lit[i] * 0.25);
-        const x = P[i * 3], y = P[i * 3 + 1], z = P[i * 3 + 2];
-        if (grow < 0.01) { nothing(solidM, i); if (faintNow) nothing(faintM, i); }
-        else if (opacity[i] > 0.995) { put(solidM, i, n.size * grow, x, y, z); if (faintNow) nothing(faintM, i); }
-        else { nothing(solidM, i); put(faintM, i, n.size * grow, x, y, z); }
-        // Its glow: the notes the most, the pale ones softly, the specks not
-        // at all — brighter while white, and as the signal passes.
-        const kindGlow = n.kind === 0 ? 0.62 + n.size * 2.4 : n.kind === 1 ? 0.28 : n.kind === 2 ? 0.3 : 0;
-        const k = kindGlow * (1 + 0.6 * ph.changing + lit[i] * 1.6) * (0.2 + 0.8 * opacity[i]) * (i === selected ? 2 : 1) * grow;
-        glowPos[i * 3] = x; glowPos[i * 3 + 1] = y; glowPos[i * 3 + 2] = z;
-        glowCol[i * 3] = r * k; glowCol[i * 3 + 1] = g * k * 0.9; glowCol[i * 3 + 2] = b * k * 0.9;
+        set.solid.instanceMatrix.needsUpdate = true;
+        if (faintNow) set.faint.instanceMatrix.needsUpdate = true;
+        set.solid.instanceColor.needsUpdate = true;
       }
-      solid.instanceMatrix.needsUpdate = true;
-      if (faintNow) faint.instanceMatrix.needsUpdate = true;
-      solid.instanceColor.needsUpdate = true;
       glowGeo.attributes.position.needsUpdate = true;
       glowGeo.attributes.color.needsUpdate = true;
 
@@ -1757,7 +2223,7 @@
       // ones while white, the accords' as each network forms, and each
       // middle node's.
       segs = 0;
-      drawLinks(oneLinks, ph.one * intro, 0.46, false);
+      drawLinks(oneLinks, ph.one, 0.46, false, front);
       drawLinks(netMade, Math.max(ph.apart, ph.form) * (1 + 0.5 * ph.changing), 0.4, true);
       drawLinks(netRest, ph.apart, 0.4, true);
       changing = 0;
@@ -1834,7 +2300,7 @@
 
       // THE PULSES along the links.
       const onNet = ph.move > 0.5;
-      const pulseStrength = (onNet ? ph.apart : ph.one) * intro;
+      const pulseStrength = (onNet ? ph.apart : ph.one) * (front < 2 ? smooth(0.95, 1.18, front) : 1);
       for (let k = 0; k < PULSES; k++) {
         const p = pulse[k];
         if (!still) p.t += dt * p.rate;
@@ -1852,7 +2318,16 @@
 
       // THE RING the one network turns in.
       oneRing.rotation.y = -psi * 1.6;
-      oneRing.material.opacity = 0.55 * ph.one * intro * (only || hitSet.size ? 0.5 : 1);
+      const ringIn = front < 2 ? ease(clamp(front / 1.18, 0, 1)) : 1;
+      oneRing.scale.setScalar(0.55 + 0.45 * ringIn);
+      oneRing.material.opacity = 0.55 * ph.one * ringIn * (only || hitSet.size ? 0.5 : 1);
+      // The spark at the centre the page opens from.
+      spark.visible = front < 2;
+      if (spark.visible) {
+        const p = clamp(front / 1.18, 0, 1);
+        spark.material.opacity = Math.exp(-Math.pow(p / 0.32, 2)) * 1.2;
+        spark.material.size = 1.2 + p * 6;
+      }
       oneRing.visible = ph.one > 0.01;
 
       // THE CENTRE, the bridges, the pulses on them, and the signal.
@@ -1912,7 +2387,7 @@
       setData(stage, "yaw", cam.yaw.toFixed(2));
       setData(stage, "pitch", cam.pitch.toFixed(2));
       record(performance.now() - began, t);
-      return settling || u !== uTo || !!flight || !!drag || !!spinYaw || !!spinPitch || t - born < 1400 || tagsMoving || markDirty;
+      return settling || u !== uTo || !!flight || !!drag || !!spinYaw || !!spinPitch || !loaded || tagsMoving || markDirty || noteOpen;
     }
 
     // ============================================================
@@ -1933,6 +2408,7 @@
     function covered(x, y, w, h) {
       const r = room();
       if (r && x < r + 24) return true;
+      if (x < 70 && y < 180) return true;              // the two arrows
       const mid = W / 2 + r / 2, half = W < 700 ? W : 200;
       return y + h > H - foot() && x + w > mid - half && x < mid + half;
     }
@@ -1948,10 +2424,6 @@
       });
       accords.forEach((A) => { const L = A.label; if (!L.w) { L.w = L.el.offsetWidth; L.h = L.el.offsetHeight; } });
       tags.forEach((g) => { if (!g.w && g.node >= 0) { g.w = g.el.offsetWidth; g.h = g.el.offsetHeight; } });
-      if (selected >= 0 && !card.hidden && !card.w) {
-        const b = card.getBoundingClientRect(), o = stage.getBoundingClientRect();
-        card.w = b.width; card.h = b.height; card.x = b.left - o.left; card.y = b.top - o.top;
-      }
       const only = previewing || filter;
       // The networks' names, once apart.
       const boxes = [];
@@ -2014,23 +2486,6 @@
         if (g.show !== g.want || g.next !== undefined) tagsMoving = true;
         fadeTo(g.el, g.show);
       });
-      // The card's line to its note, from the card's left edge.
-      if (selected >= 0 && !card.hidden) {
-        const i = selected;
-        const p = project(P[i * 3], P[i * 3 + 1], P[i * 3 + 2]);
-        const x = toX(p), y = toY(p);
-        const phone = W < 700;
-        leaderLine.setAttribute("x1", phone ? x.toFixed(1) : card.x.toFixed(1));
-        leaderLine.setAttribute("y1", phone ? card.y.toFixed(1) : clamp(y, card.y + 14, card.y + card.h - 14).toFixed(1));
-        leaderLine.setAttribute("x2", x.toFixed(1));
-        leaderLine.setAttribute("y2", y.toFixed(1));
-        leaderDot.setAttribute("cx", x.toFixed(1));
-        leaderDot.setAttribute("cy", y.toFixed(1));
-        leader.classList.toggle("is-on", p.z < 1);
-      } else {
-        leader.classList.remove("is-on");
-        card.w = 0;
-      }
       if (hovered >= 0 && !flight && hovered !== selected) {
         const n = nodes[hovered].note;
         hoverTag.textContent = n.sym + " · " + n.name;
@@ -2047,16 +2502,76 @@
         bridgeTag.classList.add("is-on");
       } else bridgeTag.classList.remove("is-on");
       drawMark(dt);
+      drawAtom(t);
     }
-    window.addEventListener("resize", () => { card.w = 0; });
-    card.addEventListener("animationend", () => { card.w = 0; });
+    window.addEventListener("resize", () => { if (atom) atom.w = 0; });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => {
       accords.forEach((A) => { A.label.w = 0; });
       tags.forEach((g) => { g.w = 0; });
-      card.w = 0;
       markDirty = true;
       wake();
     });
+
+    // ============================================================
+    // THE ATOM in the note window: a nucleus of specks and an electron for
+    // every fragrance using the note, in shells of 2, 8, 18 and 32, each
+    // shell tilted its own way and turning at its own speed — the library's
+    // atom, drawn in this page's red.
+    // ============================================================
+    const SHELLS = [2, 8, 18, 32, 50];
+    function drawAtom(t) {
+      if (!noteOpen || !atom) return;
+      const c = atom.canvas;
+      if (!atom.w) {
+        const r = c.getBoundingClientRect();
+        if (!r.width) return;
+        const ratio = Math.min(window.devicePixelRatio || 1, W < 700 ? 1.5 : 2);
+        atom.w = r.width; atom.h = r.height;
+        c.width = Math.round(r.width * ratio);
+        c.height = Math.round(r.height * ratio);
+        atom.g = c.getContext("2d");
+        atom.g.setTransform(ratio, 0, 0, ratio, 0, 0);
+      }
+      const g = atom.g, w = atom.w, h = atom.h, cx = w / 2, cy = h / 2, n = atom.n;
+      const time = (still ? 0 : t) * 0.001;
+      g.clearRect(0, 0, w, h);
+      // The nucleus.
+      let sd = n.no * 7919 + 17;
+      const r1 = () => ((sd = (sd * 16807) % 2147483647) / 2147483647);
+      const nucleons = 6 + Math.min(18, n.uses);
+      const core = 4 + Math.sqrt(nucleons) * 1.6;
+      for (let k = 0; k < nucleons; k++) {
+        const a = r1() * 6.283, d = Math.sqrt(r1()) * core;
+        const x = cx + Math.cos(a) * d + Math.sin(time * 2.1 + k) * 0.5;
+        const y = cy + Math.sin(a) * d + Math.cos(time * 1.7 + k * 1.3) * 0.5;
+        g.fillStyle = k % 3 ? "rgba(255, 74, 84, 0.95)" : "rgba(255, 236, 234, 0.9)";
+        g.fillRect(x - 1.1, y - 1.1, 2.2, 2.2);
+      }
+      // The shells, and their electrons.
+      const small = Math.min(w, h);
+      let left = n.uses;
+      for (let k = 0; k < SHELLS.length && left > 0; k++) {
+        const count = Math.min(left, SHELLS[k]);
+        left -= count;
+        const R = small * (0.22 + k * 0.11), flat = 0.32 + k * 0.1, turn = 0.5 + k * 1.15;
+        const cosT = Math.cos(turn), sinT = Math.sin(turn);
+        g.strokeStyle = "rgba(255, 255, 255, 0.13)";
+        g.lineWidth = 1;
+        g.beginPath();
+        g.ellipse(cx, cy, R, R * flat, turn, 0, Math.PI * 2);
+        g.stroke();
+        const speed = (0.9 - k * 0.14) * (k % 2 ? -1 : 1);
+        for (let e = 0; e < count; e++) {
+          const a = (e / count) * Math.PI * 2 + time * speed;
+          const lx = Math.cos(a) * R, ly = Math.sin(a) * R * flat;
+          const x = cx + lx * cosT - ly * sinT, y = cy + lx * sinT + ly * cosT;
+          g.fillStyle = "rgba(255, 60, 72, 0.28)";
+          g.beginPath(); g.arc(x, y, 4.2, 0, Math.PI * 2); g.fill();
+          g.fillStyle = "#ffe9e7";
+          g.beginPath(); g.arc(x, y, 1.6, 0, Math.PI * 2); g.fill();
+        }
+      }
+    }
 
     // ============================================================
     // THE MARK in the window: a ring of specks, one for every note, the
@@ -2167,9 +2682,21 @@
         u, state: stage.dataset.state, focus: focus < 0 ? "centre" : accords[focus].code, flying: !!flight,
         selected: selected >= 0 ? nodes[selected].note.name : null, filter, previewing, query: query.value, hits: hits.map((n) => n.name),
         dim: notes.filter((n) => opacity[n.i] < 0.5).length, faintest: Math.min(...opacity),
-        changing, segments: segs, quality, panel: panelOpen, target: cam.T.length(), pitch: cam.pitch, yaw: cam.yaw,
+        changing, segments: segs, quality, panel: panelOpen, search: searchOpen, target: cam.T.length(), pitch: cam.pitch, yaw: cam.yaw,
         nodes: T, shown: shown(), answering: answering(), litNodes: lit.filter((l) => l > 0.3).length,
+        note: noteOpen && noteShown ? noteShown.name : null, loaded, coaching: coachOn, idle,
       }),
+      /** What a note's window would say of it: how many fragrances, which,
+          where in them it stands, and what it is most often with. */
+      about: (name) => {
+        const n = notes.find((x) => x.name === name);
+        if (!n) return null;
+        const tally = { top: 0, mid: 0, base: 0, flat: 0 };
+        n.where.forEach((set) => set.forEach((t) => { tally[t]++; }));
+        return { keys: [...n.keys].sort(), tally, rank: n.rank, rankIn: n.rankIn, fragrances: FRAGRANCE_COUNT };
+      },
+      /** Leave the page to itself this many ms ago, as if the hand had gone. */
+      leave: (ms) => { lastInput = performance.now() - ms; },
       notes: () => notes.map((n) => ({ id: n.id, name: n.name, sym: n.sym, no: n.no, uses: n.uses, code: n.A.code })),
       accords: () => accords.map((A) => ({ code: A.code, name: A.name, count: A.notes.length, members: A.members.length, links: A.links, type: A.type, reach: A.reach, R: A.R, middle: A.coreGroup.visible })),
       /** A filler of an accord's network standing clear of every note on
@@ -2222,7 +2749,8 @@
     renderer.compile(scene, camera);
     unseen.forEach((o) => { o.visible = false; });
 
-    setPanel(panelOpen);
+    setPanel(false);
+    setSearch(false);
     find();
     if ("ResizeObserver" in window) new ResizeObserver(size).observe(stage);
     else window.addEventListener("resize", size);
@@ -2230,6 +2758,7 @@
     size();
     tagsFor();
     stage.classList.add("is-drawn");
+    if (loaded) opened();                 // no opening to wait for, with reduced motion
     wake();
   }
 })();

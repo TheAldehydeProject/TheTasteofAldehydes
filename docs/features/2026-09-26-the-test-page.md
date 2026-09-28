@@ -9,9 +9,11 @@ Files touched: `works/test-page.html` (new), `network.js` (new), `notes-data.js`
 again.
 
 **Since the night of 2026-09-27 the page carries the Note Library as networks** — see
-[the last section](#2026-09-27-night--the-note-library-as-networks), which replaced [the Note
+[that section](#2026-09-27-night--the-note-library-as-networks), which replaced [the Note
 Library in three dimensions](#2026-09-27-later--the-note-library-in-three-dimensions) (galaxies)
-the same night. The one network, then the five, then the galaxies, described first below, are
+the same night — and **since 2026-09-28 it is its own version of the library**, with a window for
+every note, two arrows on the left, and an opening: see [the last
+section](#2026-09-28--its-own-note-library-two-arrows-an-opening-and-shine). The one network, then the five, then the galaxies, described first below, are
 gone from the code; they are kept here for the reasoning, as the site's reports keep what was
 replaced.
 
@@ -606,3 +608,143 @@ and move from run to run: that machine's software drawing taking the processor, 
 - **On a phone** it works, as before, and is small.
 - **The frame rate on a real screen** should still be checked by eye; the tests can only measure the
   page's own share.
+
+## 2026-09-28 — its own Note Library: two arrows, an opening, and shine
+
+> another thing i want you to do is in the test page, not have it refer to the note library but
+> make it into another version of the note library. I want each of the nodes to have a window pop
+> up that tells you about the note. the information should be the same as in the note library but
+> it should be a little more. I also want it to somehow get into focus, so if its a popup window or
+> something, then let it blur the rest of the page or make it out of focus.Maybe make it
+> translucent. if that looks better do that.
+>
+> I want you to add another arrow up above the one that pulls out the menu (image 1), and have it
+> pull up te search bar (with the "query") in it. I want you to move the existing arrow down, and
+> have the seaerch arrow be in place of this one.
+>
+> Stylistically, i want the balls to shine more than be solid red objects. The clusters look great,
+> so keep them please. Im just think that i want a less rigid transition between collapsing and
+> expanding. I also want you to add a short and brief but thematic animation to when you first
+> load the page.
+>
+> isntead of starting with the left window out, I want it to be hidden, and I want a temporary
+> text to pop up (while the entire page is blurred) that point to that arrow, saying open menu
+> here. whenever you stop controlling it for a while, i want the arrows on the left to start
+> glowing or have this glowy effect to them for emphasis (I want this to be on par with the text
+> in thetop right that tells you what you can do.)
+>
+> make the animation smoother.
+
+Image 1 was the folded window's button, a chevron in a square. The networks, the clusters, the
+centre, the signal and the journeys are as they were.
+
+### The note window
+
+A note pressed (once apart) opens **its own window** — `.net-note`, a dialog — and the card on the
+right that said *Open it in the Note Library →* is gone, with its dotted line: nothing on the page
+sends you to the library now ("not have it refer to the note library"). The page still **reads**
+the library's own page for what the notes are; that is where they are written, and a note added
+there is here at once.
+
+- **The rest of the page goes out of focus** behind it: **the veil** (`.net-veil`) covers the whole
+  stage — the networks, the arrows, the menu, the foot — blurred and a little darkened, and the
+  window stands over it, **translucent**, blurring what is behind it again. The owner offered
+  both; both are used. A press on the veil, its ×, or Escape puts it away, and the node it was about
+  and every other come back.
+- **What the library's card says**: *Element* and its call number across its head; its **tile** as
+  it stands in the library's table (number, uses, symbol, name) beside **its atom** — an electron
+  for every fragrance using it in shells of 2, 8, 18 and 32, turning, in this page's red; what it
+  is; its accord; its other spellings (**isotopes**); and every fragrance naming it
+  (**compounds**) — the individual fragrances first, then the houses, each a dropdown, each
+  fragrance a link to where it stands, its name read off its house's page the first time.
+- **And a little more**: how many of the site's fragrances use it, and what share; **where it
+  ranks** by use, in the library and in its accord; **where it stands** in those fragrances — top,
+  heart, base, or in a list the source did not divide — as a bar and as numbers, and beside each
+  fragrance in its list; the notes it is **most often found with** (sharing the most fragrances
+  with it), each a way to that note; and the note before and after it in its accord. The arrow
+  keys go through its accord.
+
+So the test page now copies **`HOUSES`** from `note-library.js` too (where each house's fragrances
+live) — four things copied, and a test holds each.
+
+### The two arrows, the search bar and the menu
+
+**Two arrows** stand on the left (`.net-rail`), under the site's Menu: **the search's on top**, in
+the place the window's button stood, and **the menu's under it** — "move the existing arrow down".
+Each is a hairline square with a chevron pointing the way what it pulls out will go (the search's
+carries a small ring, a lens), and says its word beside it under the hand.
+
+- The upper pulls out **the search bar** beside it (`.net-find`): the library's own `query>`, its
+  count and its ×, what it finds listed under it. It is out of the menu now; the menu's switch is
+  gone. Escape empties it, and then puts it away.
+- The lower pulls out **the menu** (the window, `.net-panel`): the library's name, the ring of
+  specks and the accords, **each still lighting up alone under the hand**. It starts **put away**
+  — "instead of starting with the left window out, I want it to be hidden".
+
+### As it opens
+
+**The opening** (`loadFront`, `LOAD_MS` 1.9s): a spark at the centre, and the one network **wired
+in from it outwards** — each node coming up as a front from the centre reaches it, swelling a
+little past its size and settling, each link drawn out from its nearer end to its farther and
+bright while it grows, the ticked ring widening with it — while the lens eases in. It runs on the
+frames' own time, never more than 50ms a frame, so a slow first second cannot skip it. The arrows,
+the foot and the line at the top right come in once it is done.
+
+Then **the word** (`.net-coach`): the page out of focus but for the two arrows, and a line
+pointing at the menu's — **Open menu here** — its arrow glowing, for a few seconds (`COACH_MS`) or
+until the hand does anything. It asks nothing of the hand: the press goes through (pressing the
+arrow opens the menu and puts the word away together).
+
+**Left alone** (`IDLE_MS`, 7s, and never while it is moving), **the two arrows glow**, breathing a
+red light — and the line at the top right saying what can be done **comes back**, which is how
+"on par with the text in the top right" was read: as quiet as it, and back when it is. Any
+movement of the hand puts both away.
+
+### Shine
+
+"I want the balls to shine more than be solid red objects": the spheres are **smooth and glossy**
+now — a little metallic, catching **a studio of soft lights** as highlights (`STUDIO`: a softbox
+above, a strip to the right, a red glow from below and a small bright light in front, made once
+into the lights' reflections), **a rim of their own colour glowing** round every edge (the one
+addition to the library's shader, `perNode`, carries it), and their glow round them, **shimmering
+a little** on the notes. The notes are drawn finer than the fillers — two sets of spheres, the
+notes first (nodes 0 to 331). The clusters are exactly as they were.
+
+### Less rigid, smoother
+
+- **The clock is no longer rigid**: coming apart (or together) gathers speed over `ACCEL_MS`, comes
+  to rest over the last `BRAKE` of the way, and **turned round half way it slows, stops and goes
+  back** rather than jumping.
+- **The accords leave one after another** (`lag`), the nearest the centre first, and each node's
+  way starts sooner and is spread over more of it.
+- **Every node drifts a little, always** (`FLOAT`), so a network at rest is never quite still.
+
+### How to test it
+
+`tests/test-page.spec.js`:
+
+- **`the Note Library is drawn as one red network, the menu put away, and nothing in it answers the
+  hand`** — and the two arrows on the left, the search's over the menu's.
+- **`as it opens it wires itself in, and then points at the menu's arrow over the page out of
+  focus`** — not yet opened at first, the chrome not in; then the word, level with the menu's arrow,
+  the page blurred under it and the arrows over it; a press on the arrow puts it away and opens the
+  menu.
+- **`left alone a while, the arrows on the left glow, and the line saying what can be done comes
+  back`** (`NetScene.leave`).
+- **`the arrows on the left pull out the search bar and the menu, whose accords light up alone under
+  the hand`** — the search bar beside its arrow, *cedar* answered as the library answers it, the ×,
+  Escape twice; the menu beside its arrow, the ring, an accord lit alone under the hand, pressed.
+- **`once apart, a note pressed opens its own window over the page out of focus; a filler never
+  answers`** — the veil and the translucent window over everything; Vanilla's symbol, number, uses,
+  call number and accord; **its other spellings and every fragrance naming it, the same as the
+  library's own card**; its share, rank and tiers (`NetScene.about`); the notes it is most often
+  with; no link to the library; the arrow keys and a chip going to other notes; Escape and a press
+  on the veil putting it away.
+- the rest as before, the journeys test opening the menu before pressing an accord in it.
+
+### Known issues / TODO
+
+- **The word shows every time the page opens.** It could be once a visit; it was left every time,
+  because the owner asked for it "when you first load the page".
+- **The blur behind the window** is the browser's own, over a drawing that keeps moving; on a weak
+  graphics card it is the most expensive thing on the page, and it is only there while a window is.

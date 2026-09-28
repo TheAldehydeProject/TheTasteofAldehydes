@@ -765,3 +765,9 @@ page](2026-09-26-the-test-page.md#2026-09-27-night--the-note-library-as-networks
 uses the accords' colours, and **`HUE` is not copied any more**. Three things still are —
 `symbolFor`, the direct-words matching and the way uses are counted — and the same tests hold them
 (every note's number, symbol, fragrance count and accord, and what *cedar* finds).
+
+**Since 2026-09-28** the test page is its own version of the library — a window for every note
+with this page's card in it and a little more, and no way out to this page — so it copies
+**`HOUSES`** from `note-library.js` as well (where each house's fragrances live, for the links in
+its window): four things copied, `HOUSES` held the same by a test, and the fragrances its window
+lists for a note held to this page's card's own.
