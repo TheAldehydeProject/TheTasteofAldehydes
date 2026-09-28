@@ -141,8 +141,9 @@
 //
 //   COMBINATIONS, beside the button that expands it: the one network
 //   pulses, turns a little yellow and loosens, and a bar takes notes as
-//   tags — every note found with them is joined to them, and the fragrances
-//   that have them all are listed.
+//   tags — one tag is joined to every note found with it; two or more
+//   are lit alone, joined only to each other — and the fragrances that
+//   have them all are listed.
 //
 // SIXTY FRAMES A SECOND, as before: every node, link and speck written in
 // place in a handful of buffers, every program compiled before it is
@@ -1223,6 +1224,8 @@
     let matched = [];                     // the fragrances that have them all
     let partnerMost = 1;
     let nets = [];                        // each chosen note's own network: every note found with it, how often
+    let pairs = [];                       // two or more chosen: each two found together, and in how many
+    let pairMost = 1;
     let lastMatched = 0;                  // how many it came to last, to catch the eye when it changes
     const partnerOf = new Float32Array(T);  // each note's share of the most found with the tags
     let fogNear = 10, fogFar = 40;        // the depth everything additive fades over
@@ -1777,9 +1780,10 @@
       lineAt.fill(-1);
       const a = n.i;
       const far = (m) => Math.hypot(P[m.i * 3] - P[a * 3], P[m.i * 3 + 1] - P[a * 3 + 1], P[m.i * 3 + 2] - P[a * 3 + 2]);
-      const order = [...partners.keys()].sort((p, q) => far(p) - far(q));
+      // (One tag: to everything found with it. More: to the other tags,
+      // which are all that is joined then.)
+      const order = (chosen.length === 1 ? [...partners.keys()] : chosen.filter((c) => c !== n)).sort((p, q) => far(p) - far(q));
       order.forEach((m, k) => { lineAt[m.i] = 0.14 + 0.4 * (order.length > 1 ? k / (order.length - 1) : 0); });
-      chosen.forEach((c) => { if (c !== n) lineAt[c.i] = 0.14; });
       tagAt = performance.now();
       tagNew = a;
       wake();
@@ -1797,13 +1801,17 @@
       n.keys.forEach((key) => (keyNotes.get(key) || []).forEach((m) => { if (m !== n) net.set(m, (net.get(m) || 0) + 1); }));
       return net;
     };
-    /** What the tags come to. EACH CHOSEN NOTE IS A NETWORK — every note
-        found with it in a fragrance — and with more than one, only what
-        every one of their networks holds is shown: "only the lines that
-        satisfy both networks ... like the middle area in a venn diagram"
-        (2026-09-28, night). (Until then only the notes of the fragrances
-        that had them all.) And, for the list, the fragrances that have
-        every one of them. */
+    /** What the tags come to. ONE TAG IS A NETWORK — every note found
+        with it in a fragrance, lit and joined to it. TWO OR MORE ARE LIT
+        ALONE, joined only to each other where they are found together:
+        "There are so many nodes lit up that do not belong in the venn
+        diagram. I want ONLY the ones that are relevant to be lit up ...
+        only have connections lit up between cedarwood myrrh vanilla and
+        fir ... apply the same logic in general" (2026-09-28). What every
+        one of their networks holds — the middle of the Venn diagram, which
+        was lit and joined to them all for a night — is still worked out,
+        for the bar's suggestions and the hand, and goes as faint as the
+        rest. And, for the list, the fragrances that have every one. */
     function recompute() {
       chosenSet.clear();
       chosen.forEach((n) => chosenSet.add(n.i));
@@ -1823,7 +1831,15 @@
       }
       partnerMost = Math.max(1, ...partners.values());
       partnerOf.fill(0);
-      partners.forEach((c, m) => { partnerOf[m.i] = c / partnerMost; });
+      if (chosen.length === 1) partners.forEach((c, m) => { partnerOf[m.i] = c / partnerMost; });
+      pairs = [];
+      if (chosen.length > 1) {
+        chosen.forEach((a, j) => chosen.forEach((b, k) => {
+          const c = k > j ? nets[j].get(b) || 0 : 0;
+          if (c) pairs.push([a, b, c]);
+        }));
+      }
+      pairMost = Math.max(1, ...pairs.map((x) => x[2]));
       // The tags, each with its ×.
       combineTags.innerHTML = "";
       chosen.forEach((n) => {
@@ -2330,9 +2346,11 @@
     }, 500);
 
     /** The names beside the notes: every note of the network you are at —
-        or, in combinations, the tags and what they are found with most. */
+        or, in combinations, the tags (and, with one, what it is found
+        with most). */
     function tagsFor() {
       const want = focus >= 0 && !flight && uTo === 1 ? accords[focus].byUse
+        : cmbTo === 1 && chosen.length > 1 ? chosen.slice(0, MOST)
         : cmbTo === 1 && chosen.length ? chosen.concat([...partners].sort((a, b) => b[1] - a[1] || b[0].uses - a[0].uses).map((x) => x[0])).slice(0, MOST)
         : [];
       tags.forEach((g, k) => {
@@ -2559,8 +2577,8 @@
       if (searchingNow && !hitSet.has(i)) o = GHOST;
       // At an accord, the rest of the library steps back out of its way.
       if (focusNow >= 0 && n.A.k !== focusNow) o = Math.min(o, AWAY);
-      // Combinations: the fillers thinner; and with tags, only the tags and
-      // what they are found with.
+      // Combinations: the fillers thinner; and with tags, only the tags —
+      // and, with one, what it is found with.
       if (cp.on) {
         if (tagging) o = Math.min(o, n.kind === 0 && (chosenSet.has(i) || partnerOf[i] > 0) ? 1 : n.kind === 0 ? 0.1 : 0.12);
         else if (n.kind !== 0) o = Math.min(o, 1 - 0.45 * cp.spread);
@@ -2859,30 +2877,33 @@
       if (tagging) {
         // Drawn out from the note just added, each as far as it has come,
         // brighter at its end while it is still coming.
-        const out = (from, to) => (lineAt[to] < 0 ? 1 : ease(clamp((tx - lineAt[to]) / LINE_GROW, 0, 1)));
-        for (const c of chosen) {
-          const a = c.i;
+        const out = (to) => (lineAt[to] < 0 ? 1 : ease(clamp((tx - lineAt[to]) / LINE_GROW, 0, 1)));
+        if (chosen.length === 1) {
+          // ONE TAG: joined to every note found with it, each line as
+          // bright as they are found together.
+          const a = chosen[0].i;
           const ax = P[a * 3], ay = P[a * 3 + 1], az = P[a * 3 + 2];
           const growing = a === tagNew && tx < 1;
-          const net = nets[chosen.indexOf(c)], most = Math.max(1, ...[...partners.keys()].map((m) => net.get(m) || 0));
           partners.forEach((count, m) => {
             const bI = m.i;
-            const g = growing ? out(a, bI) : 1;
+            const g = growing ? out(bI) : 1;
             if (g <= 0) return;
-            // As bright as this note is found with it, in its own network.
-            const f = (0.28 + 0.9 * ((net.get(m) || 0) / most)) * Math.min(vis[a], vis[bI]) * cp.spread * (g < 1 ? 1.7 : 1);
+            const f = (0.28 + 0.9 * (count / partnerMost)) * Math.min(vis[a], vis[bI]) * cp.spread * (g < 1 ? 1.7 : 1);
             segment(ax, ay, az, ax + (P[bI * 3] - ax) * g, ay + (P[bI * 3 + 1] - ay) * g, az + (P[bI * 3 + 2] - az) * g,
               f, f * 0.84, f * 0.52);
           });
-          for (const d of chosen) {
-            if (d.i <= a || !net.has(d)) continue;
-            // Between two chosen: from the one just added, if either is.
-            const fromD = d.i === tagNew && tx < 1, fromC = growing;
-            const s0 = fromD ? d.i : a, s1 = fromD ? a : d.i;
-            const g = fromD || fromC ? out(s0, s1) : 1;
+        } else {
+          // TWO OR MORE: only between them, where they are found together —
+          // out from the one just added.
+          for (const [c, d, count] of pairs) {
+            const fromD = d.i === tagNew && tx < 1, fromC = c.i === tagNew && tx < 1;
+            const s0 = fromD ? d.i : c.i, s1 = fromD ? c.i : d.i;
+            const g = fromD || fromC ? out(s1) : 1;
             if (g <= 0) continue;
+            const f = (0.6 + 0.5 * (count / pairMost)) * Math.min(vis[c.i], vis[d.i]) * cp.spread * (g < 1 ? 1.4 : 1);
             const sx = P[s0 * 3], sy = P[s0 * 3 + 1], sz = P[s0 * 3 + 2];
-            segment(sx, sy, sz, sx + (P[s1 * 3] - sx) * g, sy + (P[s1 * 3 + 1] - sy) * g, sz + (P[s1 * 3 + 2] - sz) * g, 1.3, 1.2, 1);
+            segment(sx, sy, sz, sx + (P[s1 * 3] - sx) * g, sy + (P[s1 * 3 + 1] - sy) * g, sz + (P[s1 * 3 + 2] - sz) * g,
+              f * 1.3, f * 1.18, f * 0.95);
           }
         }
       }
@@ -3297,6 +3318,7 @@
         nodes: T, shown: shown(), answering: answering(), litNodes: lit.filter((l) => l > 0.3).length,
         note: noteOpen && noteShown ? noteShown.name : null, loaded, coaching: coachOn, idle,
         combine: cmbTo === 1, cmb, tags: chosen.map((n) => n.name), matched: matched.slice(), partners: partners.size,
+        pairs: pairs.map(([a, b, c]) => [a.name, b.name, c]),
         hub: hubSeen, away: accords.map((A) => A.seen), tagLines: tagSegs, glows: glowsDrawn, drawn: nodesDrawn, pulsed: pulsedAt > 0, flashes, flashTo: flashTo.slice(),
         litAccords: accords.filter((A) => A.members.some((n) => lit[n.i] > 0.3)).map((A) => A.code),
         tagging: tagAt > 0 && performance.now() - tagAt < TAG_MS,
@@ -3317,10 +3339,11 @@
       /** Press a note: it is chosen, and its window opens. */
       open: (name) => { const n = notes.find((x) => x.name === name); if (n) select(n.i, true); return !!n; },
       notes: () => notes.map((n) => ({ id: n.id, name: n.name, no: n.no, uses: n.uses, code: n.A.code })),
-      /** Which fragrances have every one of these notes, and the middle of
-          their networks' Venn diagram: every note found with EACH of them
+      /** Which fragrances have every one of these notes, the middle of
+          their networks' Venn diagram — every note found with EACH of them
           (in some fragrance or other), at the least it is found with any
-          one — as combinations works it out. */
+          one — and each two of them found together — as combinations works
+          it out. */
       combined: (names) => {
         const ns = names.map((x) => notes.find((n) => n.name === x));
         if (ns.some((n) => !n)) return null;
@@ -3334,7 +3357,10 @@
         });
         const withs = {};
         each[0].forEach((c, m) => { if (!ns.includes(m) && each.every((net) => net.has(m))) withs[m.name] = Math.min(...each.map((net) => net.get(m))); });
-        return { keys: [...keys].sort(), withs };
+        // Each two of them found together, and in how many fragrances.
+        const together = [];
+        ns.forEach((a, j) => ns.forEach((b, k) => { const c = k > j ? each[j].get(b) || 0 : 0; if (c) together.push([a.name, b.name, c]); }));
+        return { keys: [...keys].sort(), withs, together };
       },
       /** Where a glow reaches on the window, round a note: how many pixels
           from its middle its light is gone. */

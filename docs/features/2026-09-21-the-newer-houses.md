@@ -1057,3 +1057,56 @@ Tested in `tests/houses.spec.js`:
 In `tests/contact-sheet.spec.js`, **`the Houses view engraves Qimu's music with the house page's
 own code`** (was *… composes …*) compares the whole engraver in the two files, and finds no
 composer left in either.
+
+## 2026-09-28, the very last — Qimu's music on a phone
+
+> Finally, make sure the mysic works in qimu and musicians for the phone too.
+
+It was written to work on a phone — a tap on a stave played it — and on an iPhone it would most
+likely have been silent all the same, for three reasons that a desktop never meets. All three are
+in `qimu.js`, and the desktop is unchanged by them:
+
+- **The silent switch.** An iPhone puts a page's sound in with the ringer and mutes it with the
+  switch at its side, unless the page says it is **music**. Safari has the words for that
+  (`navigator.audioSession.type = "playback"`, which has to be said before the sound is first
+  made), and the button says them on its first press (`asMusic`). An iPhone too old to have them
+  is told the only way it understands: a quarter of a second of silence, made on the page as a WAV,
+  played on a loop while the sound is on (`keepOpen`), and let go when it goes off or the page goes
+  behind another (`letGo`).
+- **A sound started inside the press.** A phone lets a page's sound out only once one has actually
+  been started inside a press, so the button starts a single silent sample at once (`unlock`).
+- **Put to sleep.** A phone puts a page's sound to sleep when the page goes behind another — on an
+  iPhone the sound is then *interrupted*, which is not the *suspended* the page used to look for.
+  Anything not running is woken now (`wake`), and every tap wakes it, since a tap is a press the
+  phone will allow it in.
+
+And **the tap itself** is a tap now: a finger that went down and came up within 12px and 0.7s
+of where it went down (`TAP_MOVE`, `TAP_MS`) — **never the start of a scroll**, which the phone
+takes over — played on the finger coming up rather than going down, and **never on something that
+does something else** (a link, a button, a part's name). A tap on a stave **plays it through once**
+with its name under it; **a tap on it again stops it**, and so does a tap anywhere else. A finger
+is wider than a pointer, so a tap within `TOUCH_PAD` (30px) of a stave's lines counts, the nearest
+stave if two are in reach. **A scroll plays nothing**: before, a stave scrolling under the place a
+finger had last touched started playing on a loop, as if it were a pointer resting there.
+
+**With the sound on, the staves come up a little** on a window without margins — from `QUIET`
+(0.24) to `HEARD_QUIET` (0.5), eased — because behind the writing they were too faint to find and
+tap. Off, they go back. A desktop's staves stand in the margins at full strength and do not change.
+
+### How to test it
+
+`tests/houses.spec.js`, **`Qimu & Musicians on a phone › a stave tapped plays through, tapped again
+stops, and a scroll plays nothing`** (new), on a 390 × 844 touch screen: the button on the window;
+a tap with the sound off plays nothing; turned on, the page has said it is music **before** the
+sound was made (`navigator.audioSession`, put in for the test, since Chromium has none); the staves
+come up (`strength`, a new reading in `QimuScore.boxes`) and go back down when it is turned off; a
+tap on a stave plays exactly its notes from its start, with its name under it; a tap just off its
+lines stops it, and one just above them plays it again; a tap with no stave near stops it; and six
+scrolls with a finger last down plays nothing.
+
+### Known issues / TODO
+
+- **Not heard on a real iPhone from here.** Chromium, which the tests drive, has none of the three
+  things above; the test checks that the page asks for them, and a real phone is the only proof.
+  If it is still silent, the volume buttons are the next thing to look at: once the page is music,
+  it follows the media volume, not the ringer's.

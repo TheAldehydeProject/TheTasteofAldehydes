@@ -1006,15 +1006,32 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
   expect(s.matched, "the fragrances with both").toEqual(two.keys);
   expect(two.keys.length).toBeGreaterThan(0);
   expect(s.partners, "and what is found with both").toBe(Object.keys(two.withs).length);
-  // THE MIDDLE OF THE VENN DIAGRAM: only what is found with BOTH keeps its
-  // lines — a note of Yuzu's network and not the other's loses them, and
-  // goes faint — and each of the two is joined to every one of the middle.
+  // TWO OR MORE ARE LIT ALONE, joined only to each other ("I want ONLY
+  // the ones that are relevant to be lit up ... only have connections lit
+  // up between cedarwood myrrh vanilla and fir"): one line, Yuzu to the
+  // other, and nothing else — what is found with both (the middle of their
+  // Venn diagram, still what the bar suggests) goes as faint as the rest,
+  // and so does what is found with Yuzu alone. Only the two are named.
   Object.keys(two.withs).forEach((m) => expect(m in one.withs, m + " is in Yuzu's network").toBe(true));
   expect(Object.keys(two.withs).length, "fewer than Yuzu's own").toBeLessThan(Object.keys(one.withs).length);
+  expect(two.together, "the two found together").toEqual([["Yuzu", partner, two.keys.length]]);
   await expect.poll(async () => (await state(page)).tagging, { timeout: 8000 }).toBe(false);
-  await expect.poll(async () => (await state(page)).tagLines, { timeout: 5000 }).toBe(2 * Object.keys(two.withs).length + 1);
+  expect((await state(page)).pairs).toEqual(two.together);
+  await expect.poll(async () => (await state(page)).tagLines, { timeout: 5000 }).toBe(1);
+  const other = await page.evaluate((n) => window.NetScene.note(n), partner);
+  const between = (await page.evaluate(() => window.NetScene.tagLines()))[0];
+  const yuzuNow = await page.evaluate(() => window.NetScene.note("Yuzu"));
+  const ends = [between.a, between.b].sort((p, q) => p.x - q.x);
+  const tagsAt = [yuzuNow, other].sort((p, q) => p.x - q.x);
+  ends.forEach((e, k) => expect(Math.hypot(e.x - tagsAt[k].x, e.y - tagsAt[k].y), "from one tag to the other").toBeLessThan(3));
+  expect(between.colour[0] + between.colour[1], "and lit").toBeGreaterThan(0.6);
+  const middle = Object.keys(two.withs)[0];
+  await expect.poll(async () => (await page.evaluate((n) => window.NetScene.note(n), middle)).opacity, { timeout: 8000 }).toBeLessThan(0.2);
   const outside = Object.keys(one.withs).find((m) => m !== partner && !(m in two.withs));
   await expect.poll(async () => (await page.evaluate((n) => window.NetScene.note(n), outside)).opacity, { timeout: 8000 }).toBeLessThan(0.2);
+  for (const tag of ["Yuzu", partner]) expect((await page.evaluate((n) => window.NetScene.note(n), tag)).opacity, tag + " lit").toBe(1);
+  await expect.poll(async () => (await page.locator(".net-label").evaluateAll((els) => els.filter((e) => +getComputedStyle(e).opacity > 0.3)
+    .map((e) => e.textContent.trim()))).every((n) => n === "Yuzu" || n === partner), { timeout: 5000 }).toBe(true);
   // What nothing answers says so, in the owner's words.
   await input.fill("zzzq");
   await expect(page.locator(".net-suggest.is-none")).toHaveText("Unfortunately nothing like that exists on this page yet.");

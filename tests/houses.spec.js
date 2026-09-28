@@ -897,6 +897,104 @@ test("Qimu & Musicians has a square sound button, and a stave pointed at plays e
   expect(errors).toEqual([]);
 });
 
+/* ON A PHONE (2026-09-28): "make sure the music works in qimu and musicians
+   for the phone too". There is no hovering on a phone, so a TAP on a stave
+   plays it through, and a tap on it again stops it; a scroll plays nothing.
+   An iPhone mutes a page's sound with its silent switch unless the page
+   says it is music (`navigator.audioSession`, which this browser does not
+   have and which is put in for the test), and that has to be said before
+   the sound is first made. With the sound on, the staves across the
+   window come up a little, so there is something to tap. */
+test.describe("Qimu & Musicians on a phone", () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+
+  test("a stave tapped plays through, tapped again stops, and a scroll plays nothing", async ({ page }) => {
+    test.setTimeout(60000);
+    const errors = collectPageErrors(page);
+    await page.addInitScript(() => {
+      const session = { type: "auto" };
+      Object.defineProperty(navigator, "audioSession", { value: session, configurable: true });
+      window.__asked = [];
+      const Real = window.AudioContext;
+      window.AudioContext = function () { window.__asked.push(session.type); return new Real(...arguments); };
+      window.AudioContext.prototype = Real.prototype;
+    });
+    await page.goto(QIMU);
+    await page.waitForTimeout(3200);
+    const button = page.locator(".qimu-sound");
+    await expect(button).toBeVisible();
+    const box = await page.locator(".qimu-sound-box").boundingBox();
+    expect(box.x + box.width, "on the window").toBeLessThanOrEqual(390);
+
+    const onWindow = async () => (await page.evaluate(() => window.QimuScore.boxes()))
+      .filter((b) => b.written && b.y > 80 && b.y + b.h < 780);
+    const heard = () => page.evaluate(() => window.QimuScore.heard());
+    const playing = page.locator("html");
+
+    // Quiet behind the writing while the sound is off.
+    let seen = await onWindow();
+    expect(seen.length, "a stave on the window to tap").toBeGreaterThan(0);
+    expect(seen[0].strength, "quiet").toBeLessThan(0.3);
+
+    // A tap with the sound off plays nothing.
+    const mid = (b) => [Math.round(b.x + b.w / 2), Math.round(b.y + b.h / 2)];
+    await page.touchscreen.tap(...mid(seen[0]));
+    await page.waitForTimeout(500);
+    expect(await heard(), "nothing while it is off").toEqual([]);
+
+    // On — said to be music before the sound is first made.
+    await button.tap();
+    await expect(button).toHaveAttribute("aria-pressed", "true");
+    expect(await page.evaluate(() => window.__asked), "music, before the sound began").toEqual(["playback"]);
+    await expect.poll(() => page.evaluate(() => window.QimuScore.samples().length), { timeout: 10000 }).toBe(17);
+    await expect.poll(async () => (await onWindow())[0].strength, { timeout: 5000 }).toBeGreaterThan(0.45);
+
+    // A TAP ON A STAVE plays it through, note for note, from its start,
+    // with its name under it.
+    seen = await onWindow();
+    const one = seen[0];
+    await page.touchscreen.tap(...mid(one));
+    await expect(playing).toHaveAttribute("data-qimu-playing", String(one.i));
+    await page.waitForTimeout(1500);
+    const music = await page.evaluate((i) => window.QimuScore.music(i), one.i);
+    const played = (await heard()).filter((h) => h.stave === one.i && h.lap === 0);
+    expect(played.length, "notes played").toBeGreaterThan(0);
+    expect(played.map((h) => h.pitches), "exactly the notes written, in order").toEqual(music.slice(0, played.length).map((n) => n.pitches));
+    expect((await page.evaluate(() => window.QimuScore.boxes()))[one.i].named, "its name under it").toBeGreaterThan(0.5);
+
+    // A finger's width: a tap just off its lines still plays it.
+    await page.touchscreen.tap(mid(one)[0], Math.round(one.y + one.h + 22));
+    await expect(playing, "tapped again: it stops").not.toHaveAttribute("data-qimu-playing", /./);
+    await page.touchscreen.tap(mid(one)[0], Math.round(one.y - 22));
+    await expect(playing, "just above its lines").toHaveAttribute("data-qimu-playing", String(one.i));
+    // A tap anywhere else stops it.
+    const clear = await page.evaluate(() => {
+      const bs = window.QimuScore.boxes();
+      for (let y = 100; y < 780; y += 10) if (!bs.some((b) => y > b.y - 60 && y < b.y + b.h + 60) && !document.elementFromPoint(12, y).closest("a, button, summary")) return y;
+      return null;
+    });
+    expect(clear, "somewhere with no stave").not.toBeNull();
+    await page.touchscreen.tap(12, clear);
+    await expect(playing).not.toHaveAttribute("data-qimu-playing", /./);
+
+    // A SCROLL plays nothing, even when a stave comes under the finger.
+    const before = (await heard()).length;
+    for (let k = 0; k < 6; k++) {
+      await page.evaluate(() => window.scrollBy(0, 70));
+      await page.waitForTimeout(150);
+    }
+    await page.waitForTimeout(400);
+    await expect(playing).not.toHaveAttribute("data-qimu-playing", /./);
+    expect((await heard()).length, "nothing played on the way").toBe(before);
+
+    // Off: quiet again.
+    await button.tap();
+    await expect(button).toHaveAttribute("aria-pressed", "false");
+    await expect.poll(async () => (await onWindow())[0].strength, { timeout: 5000 }).toBeLessThan(0.3);
+    expect(errors).toEqual([]);
+  });
+});
+
 /* WITH MOTION TURNED OFF each of the four still draws its ground, and
    draws it still. */
 test("with motion turned off the four new grounds are drawn and stand still", async ({ browser }) => {

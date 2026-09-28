@@ -40,11 +40,21 @@
 //
 // POINTING AT A STAVE PLAYS IT — that stave, from its first note, as it
 // is written, both hands, in time, on a recorded grand piano (`key`,
-// `play`), and only while the hand is on its lines. A tap plays a stave
-// through once on a phone. It starts silent: a browser will not let a
-// page make a sound until it has been pressed, so the square button at
-// the top of the page (`.qimu-sound`) is how the sound is turned on, and
-// off again.
+// `play`), and only while the hand is on its lines. It starts silent: a
+// browser will not let a page make a sound until it has been pressed, so
+// the square button at the top of the page (`.qimu-sound`) is how the
+// sound is turned on, and off again.
+//
+// ON A PHONE, where there is no hovering, A TAP ON A STAVE PLAYS IT
+// THROUGH once, and a second tap stops it; a scroll plays nothing. The
+// owner, 2026-09-28: "make sure the music works in qimu and musicians for
+// the phone too". Three things a phone needs that a desktop does not
+// (`asMusic`, `unlock`, and waking the sound inside every tap): an
+// iPhone's silent switch mutes a page's sound unless the page says it is
+// music, a phone wants a sound actually started inside the press that
+// allows it, and a phone puts a page's sound to sleep when the page goes
+// behind another. With the sound on, the staves across a narrow window
+// come up a little (`HEARD_QUIET`), so there is something to tap.
 //
 // NICELY ANIMATED, and quietly:
 //   WRITTEN IN  a stave is written left to right, as a pen would, the
@@ -88,6 +98,7 @@
   const STRONGEST = 0.58;          // and never more than this: it is a ground
   const COLUMN = 940;
   const QUIET = 0.24;              // what is left over the writing, where there are no margins
+  const HEARD_QUIET = 0.5;         // and what it comes up to while the sound is on, to be found and tapped
 
   const GAP = 6;                   // between one line of a stave and the next
   const EVERY = 210;               // px down the page from one stave to the next
@@ -752,6 +763,7 @@
   }
 
   let handX = -99999, handY = -99999;
+  let heardUp = 0;                 // how far the sound being on has brought the quiet staves up
 
   /** Where the playhead stands, on the stave, at `t` seconds into it. */
   function headAt(s, t) {
@@ -791,10 +803,14 @@
     // The page grows as parts are opened; the score keeps up.
     if (document.documentElement.scrollHeight + EVERY > madeTo) more(document.documentElement.scrollHeight + EVERY);
     const pointed = handX > -9000 ? staveUnder(handX, handY) : null;
+    // With the sound on, the staves behind the writing come up a little.
+    heardUp = REDUCE_MOTION ? (sound ? 1 : 0) : heardUp + ((sound ? 1 : 0) - heardUp) * 0.08;
+    if (Math.abs(heardUp - (sound ? 1 : 0)) < 0.004) heardUp = sound ? 1 : 0;
     staves.forEach((s) => {
       const top = s.y - scroll;
-      // Its name comes up while the hand is on it, and goes when it leaves.
-      const want = s === pointed ? 1 : 0;
+      // Its name comes up while the hand is on it (or while a tap plays
+      // it through), and goes when it leaves.
+      const want = s === pointed || (player && player.s === s && player.once) ? 1 : 0;
       s.named = REDUCE_MOTION ? want : s.named + (want - s.named) * NAME_IN;
       if (s.named < 0.004) s.named = 0;
       if (top > height + 40 || top + s.deep + 60 < -60) return;
@@ -817,7 +833,8 @@
           if (t < s.length) { now = t; head = headAt(s, t); }
         }
       }
-      const q = s.quiet;
+      const q = s.quiet < 1 ? s.quiet + (HEARD_QUIET - s.quiet) * heardUp : s.quiet;
+      s.q = q;
       ink.strokeStyle = "rgba(" + BLUE + "," + (LINE * q).toFixed(3) + ")";
       s.tops.forEach((t) => {
         for (let k = 0; k < 5; k++) mLine(ink, s.x0, top + t + k * GAP, s.x0 + reach, top + t + k * GAP, 0.7);
@@ -924,6 +941,9 @@
   const OVERLAP = 0.03;            // legato: a note let go a hair after the next is struck
   const LOUD = { tune: 0.82, between: 0.62, under: 0.4, left: 0.34 };
   const PAD = GAP * 2.5;           // px round a stave's lines that count as on it
+  const TOUCH_PAD = GAP * 5;       // and for a finger, which is wider than a pointer
+  const TAP_MOVE = 12;             // px a finger may move and still have tapped
+  const TAP_MS = 700;              // and how long it may stay down
 
   let sound = false;
   let audio = null;
@@ -972,8 +992,57 @@
       room.connect(wet).connect(out);
       audio = { ctx, out, room };
     }
-    if (audio.ctx.state === "suspended") audio.ctx.resume();
+    // Asleep — "suspended", or on an iPhone "interrupted" after the page
+    // went behind another — it is woken; inside a press, that works.
+    if (audio.ctx.state !== "running" && audio.ctx.state !== "closed") {
+      const woken = audio.ctx.resume();
+      if (woken && woken.catch) woken.catch(() => {});
+    }
     return audio;
+  }
+
+  /** ON AN IPHONE, MUSIC, NOT A NOISE: a page's sound is muted by the
+      silent switch unless the page says it is music — which it can say
+      outright where Safari has the words for it (`audioSession`, asked
+      before the sound is first made), and on an older iPhone only by
+      playing something, so a silent moment of sound is played on a loop
+      for as long as the sound is on. */
+  let keepOpen = null;
+  const IPHONE = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  function asMusic() {
+    try {
+      if (navigator.audioSession) { navigator.audioSession.type = "playback"; return; }
+    } catch (e) { /* not to be set here */ }
+    if (!IPHONE || !window.Audio || !window.Blob || !window.URL) return;
+    if (!keepOpen) {
+      // A quarter of a second of silence, as a WAV made here.
+      const n = 2000, bytes = new Uint8Array(44 + n);
+      const view = new DataView(bytes.buffer);
+      const text = (at, t) => { for (let i = 0; i < t.length; i++) bytes[at + i] = t.charCodeAt(i); };
+      text(0, "RIFF"); view.setUint32(4, 36 + n, true); text(8, "WAVE");
+      text(12, "fmt "); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+      view.setUint32(24, 8000, true); view.setUint32(28, 8000, true); view.setUint16(32, 1, true); view.setUint16(34, 8, true);
+      text(36, "data"); view.setUint32(40, n, true);
+      bytes.fill(128, 44);
+      keepOpen = new Audio(URL.createObjectURL(new Blob([bytes], { type: "audio/wav" })));
+      keepOpen.loop = true;
+      keepOpen.setAttribute("x-webkit-airplay", "deny");
+    }
+    const going = keepOpen.play();
+    if (going && going.catch) going.catch(() => {});
+  }
+  const letGo = () => { if (keepOpen) keepOpen.pause(); };
+
+  /** A phone lets a page's sound out only once a sound has actually been
+      started inside a press: a single silent sample, at once. */
+  function unlock(a) {
+    try {
+      const nothing = a.ctx.createBuffer(1, 1, a.ctx.sampleRate);
+      const src = a.ctx.createBufferSource();
+      src.buffer = nothing;
+      src.connect(a.ctx.destination);
+      src.start(0);
+    } catch (e) { /* nothing to unlock */ }
   }
 
   /** The seventeen recordings, fetched once, the first time the sound is
@@ -1137,19 +1206,22 @@
     delete document.documentElement.dataset.qimuPlaying;
   }
   window.setInterval(pump, 50);
-  document.addEventListener("visibilitychange", () => { if (document.hidden) stop(); });
+  document.addEventListener("visibilitychange", () => { if (document.hidden) { stop(); letGo(); } });
 
-  /** The stave whose lines the hand is on, if any. */
-  function staveUnder(x, y) {
+  /** The stave whose lines the hand is on, if any — within `pad` of
+      them, the nearest if a finger's reach takes in two. */
+  function staveUnder(x, y, pad = PAD) {
     const scroll = window.scrollY;
+    let best = null, far = Infinity;
     for (const s of staves) {
       const top = s.y - scroll;
-      if (y < top - PAD || y > top + s.tall + PAD) continue;
-      if (x < s.x0 - 8 || x > s.x0 + s.long + 8) continue;
+      if (y < top - pad || y > top + s.tall + pad) continue;
+      if (x < s.x0 - Math.max(8, pad) || x > s.x0 + s.long + Math.max(8, pad)) continue;
       if (s.seen === null) continue;
-      return s;
+      const d = y < top ? top - y : y > top + s.tall ? y - top - s.tall : 0;
+      if (d < far) { far = d; best = s; }
     }
-    return null;
+    return best;
   }
 
   // THE BUTTON, at the top of the page: a square, plainly marked, saying
@@ -1171,7 +1243,7 @@
   const say = button.querySelector(".qimu-sound-say");
   function setSound(on) {
     sound = on;
-    if (!on) stop();
+    if (!on) { stop(); letGo(); }
     button.classList.toggle("is-on", on);
     button.setAttribute("aria-pressed", String(on));
     say.textContent = on ? "Sound on" : "Sound off";
@@ -1181,10 +1253,13 @@
   button.addEventListener("click", () => {
     setSound(!sound);
     // Turned on, it answers: once the piano has arrived, a soft chord —
-    // so the press is heard to have worked.
+    // so the press is heard to have worked. (Music, said before the sound
+    // is first made; and a sound started inside the press, for a phone.)
     if (sound) {
+      asMusic();
       const a = wake();
       if (!a) return;
+      unlock(a);
       load().then(() => {
         if (!sound || player) return;
         const t = a.ctx.currentTime + 0.03, v = [];
@@ -1197,26 +1272,60 @@
   // ============================================================
   // KEEPING UP
   // ============================================================
-  function follow(x, y, tap) {
+  function follow(x, y) {
     if (!sound) return;
     const s = staveUnder(x, y);
-    if (s) play(s, tap);
-    else if (!tap || player) stop();
+    if (s) play(s, false);
+    else stop();
+  }
+  // A FINGER: a tap on a stave plays it through, a tap on it again (or
+  // anywhere else) stops it. Only a tap — a finger that went down and
+  // came up nearly where it went down, and was not the start of a scroll,
+  // which the browser takes over (`pointercancel`) — and never a tap on
+  // something that does something else (a link, a button, a part's name).
+  let finger = null, fingered = false;
+  const busy = "a, button, summary, input, select, textarea, label, [role='button'], .qimu-sound";
+  function tap(x, y) {
+    const s = staveUnder(x, y, TOUCH_PAD);
+    if (s && !(player && player.s === s)) play(s, true);
+    else stop();
   }
   window.addEventListener("pointermove", (event) => {
     handX = event.clientX; handY = event.clientY;
-    if (event.pointerType !== "touch") follow(handX, handY, false);
+    if (event.pointerType !== "touch") { fingered = false; follow(handX, handY); }
     if (REDUCE_MOTION) draw(0);
   }, { passive: true });
   window.addEventListener("pointerdown", (event) => {
     handX = event.clientX; handY = event.clientY;
+    if (event.pointerType === "touch") {
+      fingered = true;
+      finger = { x: handX, y: handY, t: performance.now() };
+      return;
+    }
+    fingered = false;
     if (event.target.closest && event.target.closest(".qimu-sound")) return;
-    follow(handX, handY, event.pointerType === "touch");
+    follow(handX, handY);
   }, { passive: true });
+  window.addEventListener("pointerup", (event) => {
+    if (event.pointerType !== "touch" || !finger) return;
+    const was = finger;
+    finger = null;
+    if (Math.hypot(event.clientX - was.x, event.clientY - was.y) > TAP_MOVE || performance.now() - was.t > TAP_MS) return;
+    if (!sound || (event.target.closest && event.target.closest(busy))) return;
+    // Inside the tap, the phone's own permission: a sound it has put to
+    // sleep is woken, and on an older iPhone the music kept up.
+    asMusic();
+    const a = wake();
+    if (a) unlock(a);
+    handX = event.clientX; handY = event.clientY;
+    tap(handX, handY);
+  }, { passive: true });
+  window.addEventListener("pointercancel", () => { finger = null; }, { passive: true });
   // The page scrolled under a hand that did not move: the lines under it
-  // are other lines.
+  // are other lines. (Not under a finger: a phone plays only what is
+  // tapped.)
   window.addEventListener("scroll", () => {
-    if (handX > -9000 && sound && !(player && player.once)) follow(handX, handY, false);
+    if (handX > -9000 && sound && !fingered && !(player && player.once)) follow(handX, handY);
     if (REDUCE_MOTION) draw(0);
   }, { passive: true });
   document.addEventListener("pointerleave", () => { handX = -99999; handY = -99999; if (!(player && player.once)) stop(); });
@@ -1232,12 +1341,13 @@
   // and bars — which of the piece's they are, their metre, how long each
   // voice of each hand lasts in them, and their pitches — where its notes
   // stand on the window, with their pitches; where each stave stands on
-  // the window and how far its name has come up; the music each one
+  // the window, how far its name has come up and how strongly it was last
+  // drawn (`strength`, its quiet); the music each one
   // plays, in order; and what the piano has been asked to play.
   window.QimuScore = {
     staves: () => staves.map((s) => ({ grand: s.tops.length > 1, ...s.info })),
     boxes: () => staves.map((s, i) => ({ i, x: s.x0, y: s.y - window.scrollY, w: s.long, h: s.tall, deep: s.deep,
-      written: s.seen !== null, named: s.named })),
+      written: s.seen !== null, named: s.named, strength: s.q })),
     music: (i) => staves[i].music.map((n) => ({ at: n.at, secs: n.secs, pitches: n.pitches.slice(), low: n.low })),
     heard: () => heardLog.slice(),
     samples: () => [...bank.keys()],

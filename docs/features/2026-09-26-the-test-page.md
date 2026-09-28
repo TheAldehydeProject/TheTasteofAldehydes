@@ -15,7 +15,7 @@ the same night — and **since 2026-09-28 it is its own version of the library**
 every note, two arrows on the left, and an opening: see [that
 section](#2026-09-28--its-own-note-library-two-arrows-an-opening-and-shine) — **and since the evening
 of 2026-09-28 its note window has nothing of chemistry in it and a figure of every note in
-particles, and it has COMBINATIONS**: see [that section](#2026-09-28-evening--a-glow-of-its-own-the-flash-on-a-journey-a-window-without-chemistry-and-combinations) — and **since the last round of 2026-09-28 there is no blur anywhere on it, a note's window lists the fragrances in each tier of its pyramid, and two notes in combinations keep only the middle of their Venn diagram**: see [the last section](#2026-09-28-last--no-blur-the-fragrances-in-each-tier-and-the-middle-of-the-venn-diagram). The one network, then the five, then the galaxies, described first below, are
+particles, and it has COMBINATIONS**: see [that section](#2026-09-28-evening--a-glow-of-its-own-the-flash-on-a-journey-a-window-without-chemistry-and-combinations) — and **since the last round of 2026-09-28 there is no blur anywhere on it, a note's window lists the fragrances in each tier of its pyramid, and two notes in combinations keep only the middle of their Venn diagram**: see [the last section](#2026-09-28-last--no-blur-the-fragrances-in-each-tier-and-the-middle-of-the-venn-diagram) — and **since the very last round of 2026-09-28, two notes or more in combinations are lit alone and joined only to each other**: see [that section](#2026-09-28-the-very-last--two-notes-or-more-lit-alone). The one network, then the five, then the galaxies, described first below, are
 gone from the code; they are kept here for the reasoning, as the site's reports keep what was
 replaced.
 
@@ -1301,3 +1301,47 @@ frame's time (`lastT`), which is what lets the turn catch up, and a frame the pa
 while clicked off (`KeepTime.standIn`, from `nav.js`) is not counted when the page judges how
 quickly the machine draws. See [the page shell](2026-09-11-the-page-shell-and-menu.md#2026-09-28--the-page-keeps-its-own-time);
 tested in `tests/keep-time.spec.js`.
+
+## 2026-09-28, the very last — two notes or more, lit alone
+
+> There are so many nodes lit up that do not belong in the venn diagram. I want ONLY the ones
+> that are relevant to be lit up. You can have the notes that are relevant be lit up but be
+> blurred like the ones that are not being used; however please make sure that you only have
+> connections lit up between cedarwood myrrh vanilla and fir (in the image) and i want you to
+> apply the same logic in general.
+
+The picture was four tags — Cedarwood, Myrrh, Fir, Vanilla — with the middle of their four
+networks lit and joined to all four: fifty-four notes, every one found with each of the four in
+some fragrance or other, and to the owner most of them "do not belong".
+
+**One tag** is as it was: its own network, every note found with it lit and joined to it, the
+most found brightest, and the names of the tag and what it is found with most.
+
+**Two or more are lit alone.** The tags are the only notes at full strength, and **the only lines
+are between them** — each two joined where some fragrance names them both, as bright as how many
+do (`pairs`, `pairMost`, worked out in `recompute`), the line from a tag just added drawn out to
+the others one after another, the nearest first. Everything else is **as faint as what is not
+being used** — the owner allowed the relevant notes to stay "lit up but ... like the ones that are
+not being used", and that is what the middle of the Venn diagram is now: worked out still
+(`partners`), for **the bar's suggestions** (what can be added and still be found with them all)
+and for **the hand** (*· with them ×3* on a faint note pointed at), but drawn exactly as faint as
+the rest and joined to nothing. Only the tags are named. Two tags never found together have no
+line between them. The Cedarwood, Myrrh, Fir, Vanilla of the picture comes to six lines — every
+two of the four are found together, Cedarwood and Vanilla most (nine fragrances) — over one
+fragrance with all four, Grande Parfums' 06.
+
+"Blurred" is read as faint: the owner had every blur taken off the page the round before.
+
+### How to test it
+
+`tests/test-page.spec.js`, **`combinations: ...`** — two tags: `NetScene.combined` gives each two
+found together (`together`), and the page draws exactly those (`pairs`): **one line**, from Yuzu
+to the other, lit; a note of the middle of their Venn diagram and a note of Yuzu's network alone
+both gone faint; both tags at full strength; and every name standing is one of the two. (It
+expected a line from each tag to every note of the middle, the round before.)
+
+### Known issues / TODO
+
+- "The same logic in general" is read as every combination of two or more. One tag keeps its
+  network, because with the same logic it would have no lines at all.
+
