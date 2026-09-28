@@ -862,7 +862,7 @@ test("expanded, what is nearer or farther than what is looked at goes soft, and 
   await page.waitForTimeout(900);
   const soft = await page.evaluate(() => window.NetScene.notes().map((n) => [n.code, window.NetScene.softness(n.name)]));
   soft.filter(([c]) => c === "WOO").forEach(([, b]) => expect(b, "a note of Woods sharp").toBe(0));
-  expect(soft.filter(([c, b]) => c !== "WOO" && b > 0.5).length, "the rest soft").toBeGreaterThan(50);
+  expect(soft.filter(([c, b]) => c !== "WOO" && b > 0.5).length, "the rest nearer or farther soft").toBeGreaterThan(10);
   // COLLAPSED: nothing soft.
   await page.locator(".net-expand").click();
   await expect(stage).toHaveAttribute("data-state", "one", { timeout: 90000 });

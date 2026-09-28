@@ -1170,7 +1170,7 @@ window, and a plainer sphere for the soft copies; it is the see-through spheres 
 - **`expanded, what is nearer or farther than what is looked at goes soft, and ?blur=off takes it
   away`** (new) — on as it stands unless drawn in software; then with `?blur=on`: nothing soft in
   the one network; apart, some notes soft and not all, their links
-  with them; at Woods every one of its notes sharp and the rest soft; collapsed, nothing soft; and
+  with them; at Woods every one of its notes sharp and the notes nearer or farther soft (not all the rest: a network level with Woods stays sharp, as through a lens); collapsed, nothing soft; and
   with `?blur=off`, no soft layer at all.
 - **`combinations: ...`** — Back and Combinations together in the middle; Reset not pressable,
   then taking two tags away at once; the network soft a moment after a tag is added
