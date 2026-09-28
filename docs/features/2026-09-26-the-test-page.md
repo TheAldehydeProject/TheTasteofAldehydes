@@ -1023,3 +1023,156 @@ and together again.
   each is one line in `FIGURES`.
 - The combinations picker matches the start of a word, where the library's own terminal matches
   whole words only; a picker has to answer as it is typed.
+
+## 2026-09-28, night — far less glow, the counts out of how many, a depth blur, and combinations clearer
+
+> WAY too glowy. make it less. same for the yellow version, but red is way worse in screenshot 5
+> you can barely see anything other than the red glow.
+>
+> add an "/4" in the clary sage window. do th same for all other windows in the oyrammidal section,
+> but out of the total number of fragrances containin that ingredient there are.
+>
+> remove the back button from the screenshot (when expanded)
+>
+> and make this (image 2) more obvious. [*3 fragrances have all 5*]
+>
+> rewrite this as "Unfortunately nothing like that exists on this page yet."
+>
+> add a reset button in the combinations
+>
+> stop with this obvious gradient whenever you do a collapse (image 4). you can see several black
+> to gray lines on the page that make it quite unappealing. this exists also when you are in the
+> collapsed/
+>
+> otherwise, create a short animation of blurring the cluster and connecting the notes towith other
+> ones whenever you input a new note in hte connections part of the page.
+>
+> center both, the combination adn the back button in the combinations view.
+>
+> finally, I want us to try to add a depth blur in when using the exanded view. can you do that?
+> make it reversivle in case wwe dont like it.
+
+Nothing was asked: each note says one thing.
+
+### Far less glow
+
+Every node's glow is a third of what it was in red and a little over half in gold
+(`GLOW_RED` 0.34, `GLOW_GOLD` 0.55, multiplying what each kind of node gives off), a little
+smaller (`GLOW_NOTE` 22, `GLOW_FILL` 18; they were 26 and 22), and whitening on the way apart
+adds less to it (`0.3 * wh`, was `0.5`). The nodes read as nodes again, with the red of their own
+facets and rims; the middle of the one network is no longer a haze.
+
+### The ground, one grey
+
+The rings were **the page's own background**: `.network-page` laid a radial gradient from
+`rgba(0,0,0,0.3)` to nothing over `#1f1f20`, and a gradient that shallow has only nine or ten
+steps of 8-bit grey to be drawn in — ellipses of black to grey round the network, worst while it
+moved. It is gone: `background: var(--bg)`, one grey. (The soft layer below dithers what it lays
+down, for the same reason.)
+
+### Out of how many
+
+In the note window each count in **Pyramidal distribution** — top, middle, base and non-pyramidal
+— is followed by **/N**, smaller and quieter: N is the number of fragrances on the site naming the
+note (the same N as *Fragrances · NN* above it). Clary Sage: 0/4, 2/4, 0/4, and 2/4
+non-pyramidal. (A fragrance can list a note in two tiers, so the four need not add up to N.)
+
+### The foot and the bar
+
+- **No Back once expanded**: the dropdown and its arrows go to the centre and between accords,
+  and Collapse into one. Back is **only in combinations**, where it stands **before
+  Combinations, the two together in the middle** (`.net-foot.is-back`: each as wide as it is,
+  rather than two equal columns whose gap is the middle).
+- **The list's button made plain** (*3 fragrances have all 5*): a gold frame round the count,
+  and **SHOW** (**HIDE** once open) in a filled gold tab at its end with its caret, and a ring
+  going out from it whenever the count changes (`is-new`). While there is nothing to list it is
+  only its words.
+- **"Unfortunately nothing like that exists on this page yet."** — what the bar says to anything
+  that answers nothing, with or without tags (it said *Nothing found with all of them answers
+  that.* and *No note answers that.*). While it is saying so, or suggesting notes, the list
+  steps aside for it (the two stood on top of each other).
+- **RESET** at the bar's right end: every tag taken away and the field emptied at once. Faint and
+  not pressable while there is nothing to take away.
+
+### The depth blur
+
+Once expanded, whatever stands nearer or farther than what is looked at is drawn **soft**, as a
+lens would: at the centre, the centre and the networks level with it sharp, the others softer the
+farther in front or behind (`BLUR_BAND` 4 either side sharp, wholly soft `BLUR_RAMP` 22 beyond);
+at an accord, **the whole of it** sharp (its reach and a little) and the rest of the library soft.
+It comes in over the last part of coming apart and goes with collapsing (`smooth(0.55, 1, u)`).
+
+**How** — the one part of this that is not obvious from the result: a lens blur usually reads each
+pixel's depth back off the depth buffer, but almost everything here is **added light** — lines,
+glows — which writes no depth, so a pixel of line over empty ground would read as the far
+distance and be blurred as if it were. Instead every node, link, glow and bridge knows its own
+depth, so each is **shared between two layers by how soft it is**: the sharp as it always was, and
+**the soft layer** — its own copies of the node sets, the glows, the links and the bridges
+(`set.soft`, `softGlow`, `softLinks`, `softBridges`, on layer `SOFT`), with the centre, the middle
+nodes, their frames and the ring drawn into both by their own softness. The soft layer is drawn
+apart at half the window's size, blurred twice with a Gaussian of thirteen taps each way
+(`BLUR_STEPS`), and laid down first, with a grain of noise where there is anything so its soft
+edges are never drawn in steps; everything sharp is drawn over it. Nothing is drawn stronger than
+it was — except that a node gone soft keeps none of its own glow (`SOFT_GLOW` 0) and the soft
+layer is a little quieter (`SOFT_DIM` 0.72): a network out of focus, blurred at full strength with
+its glows, was a red haze, which is the one thing this round asked to be rid of. The specks in
+the far air stay sharp; blurred, they mottled the whole ground. With nothing soft, nothing of it is
+drawn.
+
+**Reversible**: `DEPTH_BLUR` at the top of `network.js` — false, and it is gone. **`?blur=off`**
+on the address shows the page without it, and `?blur=on` with it, without changing anything.
+
+This is the second WebGL program of the site's own (after the home page's map): two small
+`ShaderMaterial`s drawn on a square over the window (`blurMaterial`, `layMaterial`). A fault in
+either would leave the soft layer black or blank rather than the page — the sharp layer is drawn
+by the library's own materials, as before.
+
+### A note added: the network soft, its lines drawn out
+
+When a note is added in combinations (typed, chosen or pressed), for 1.6 seconds (`TAG_MS`) **the
+rest of the network goes soft** — the same soft layer — while **the note's lines are drawn out**
+from it, the nearest first, one after another, brighter at their ends while they are still coming
+(`lineAt`, `LINE_GROW`); each note it is found with **comes back into focus as its line reaches
+it**, and then the whole network. Taking a tag away or Reset ends it at once. None of it with
+reduced motion: the lines are simply there.
+
+### Costs
+
+The soft layer is a second drawing of the scene at a quarter of the pixels and four passes of the
+blur; on this machine's software drawing, a frame's own work went from 3.4ms to 4.0ms on average
+through the expansion, a journey and the collapse (the test's bound is 7ms). A soft copy already
+empty is not written again (`softEmpty`).
+
+### How to test it
+
+`tests/test-page.spec.js`:
+
+- **`the Note Library is drawn as one red network ...`** — and the ground one grey
+  (`background-image: none`).
+- **`expanding: ...`** — *Collapse* alone in the middle, **no Back**.
+- **`once apart, a note pressed opens its own window ...`** — the pyramid's counts read **n/N**,
+  N the fragrances naming the note.
+- **`at an accord nothing stands in its way, the menu's hand does not take it away, and there is no
+  Back while expanded`** — was *... and Back goes the way you came*; the dropdown goes to the
+  centre and Collapse into one, Back hidden throughout.
+- **`expanded, what is nearer or farther than what is looked at goes soft, and ?blur=off takes it
+  away`** (new) — nothing soft in the one network; apart, some notes soft and not all, their links
+  with them; at Woods every one of its notes sharp and the rest soft; collapsed, nothing soft; and
+  with `?blur=off`, no soft layer at all.
+- **`combinations: ...`** — Back and Combinations together in the middle; Reset not pressable,
+  then taking two tags away at once; the network soft a moment after a tag is added
+  (`NetScene.state().softest`) and sharp again after; *Show* / *Hide*; the owner's sentence for
+  what answers nothing.
+- With animation turned off, a note added in combinations: no soft moment, every line at once.
+
+To look at it: `?blur=off` against the page as it is.
+
+### Known issues / TODO
+
+- The depth blur is an experiment the owner asked to be able to take back: **`DEPTH_BLUR = false`**
+  does it for good, and the soft layer is still used for the moment after a note is added.
+- A soft network in front of what is looked at is laid **under** what is sharp rather than over
+  it; where the two cross, the soft one is behind. Lines and glows are added light and do not
+  care; the spheres would, and at an accord everything in front is let go anyway.
+- On a slow machine the moment after a tag is added may be seen in only a few frames.
+

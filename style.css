@@ -4442,9 +4442,11 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   --net-rule: rgba(255, 255, 255, 0.08);
   --net-tick: rgba(255, 255, 255, 0.34);
   --net-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
-  background:
-    radial-gradient(ellipse 50% 34% at 50% 52%, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0) 70%),
-    var(--bg);
+  /* One grey, flat. A darker pool stood in the middle of it until
+     2026-09-28, and a gradient that shallow is drawn in a handful of
+     steps — rings of black to grey round the network ("stop with this
+     obvious gradient"). */
+  background: var(--bg);
   color: var(--ink);
   overflow: hidden;
 }
@@ -4822,9 +4824,10 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 /* THE FOOT: the button that expands the library and, on its right, the one
    that opens COMBINATIONS, the pair in the middle of the room left. Expanded,
    Combinations goes and Collapse stands alone in the middle, the dropdown
-   over it; in combinations, Expand goes and the bar that takes notes stands
-   over Combinations; in either, BACK beside the one left. (network.js hides
-   and shows them, and slides the one that stays to its new place.) */
+   over it; in combinations, Expand goes, BACK comes before Combinations and
+   the two stand together in the middle, the bar that takes notes over them.
+   (network.js hides and shows them, and slides the one that stays to its
+   new place.) */
 .net-dock {
   position: absolute;
   left: 50%;
@@ -4849,6 +4852,9 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-foot > .net-expand { justify-self: end; }
 .net-foot > .net-combine-button { justify-self: start; }
 .net-foot.is-single > button { justify-self: center; }
+/* Back and Combinations: each as wide as it is, so that the two together
+   stand in the middle ("center both"). */
+.net-foot.is-back { grid-auto-columns: auto; column-gap: 16px; }
 .net-foot > button[hidden] { display: none; }
 .net-foot > button:not([hidden]) { animation: net-in 420ms var(--net-ease) both; }
 @keyframes net-in {
@@ -4957,12 +4963,8 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-combine-button:focus-visible,
 .net-combine-button[aria-pressed="true"] { background: #f4f0ea; border-color: #f4f0ea; color: #111; outline: none; }
 .net-combine-button:focus-visible { outline: 1px solid #fff; outline-offset: 6px; }
-/* BACK, beside the button left in the middle. */
+/* BACK, before Combinations. */
 .net-back {
-  position: absolute;
-  right: calc(100% + 12px);
-  top: 0;
-  bottom: 0;
   display: inline-flex;
   align-items: center;
   gap: 9px;
@@ -5029,21 +5031,48 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   transition-delay: 900ms;
 }
 .net-combine-found { position: relative; display: flex; justify-content: center; margin-bottom: 6px; }
+/* What the tags come to, and the way to the list — plainly a button once
+   there is a list to open ("make this more obvious"): a gold frame, the
+   count in it, and SHOW (HIDE) in a gold tab at its end; a ring going out
+   from it whenever the count changes. Only the words while there is none. */
 .net-combine-toggle {
+  display: inline-flex;
+  align-items: stretch;
+  padding: 0;
+  background: rgba(34, 28, 17, 0.94);
+  border: 1px solid rgba(240, 215, 154, 0.75);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  color: #f6e2ae;
+  cursor: pointer;
+  transition: border-color 200ms ease, background-color 200ms ease;
+}
+.net-combine-count { padding: 7px 12px 7px 13px; }
+.net-combine-open {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 10px;
-  background: var(--net-ground);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.06em;
-  color: #f0d79a;
-  cursor: pointer;
+  padding: 0 11px 0 12px;
+  background: #e6b44a;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #1a1206;
+  transition: background-color 200ms ease;
 }
-.net-combine-toggle:disabled { color: var(--muted); cursor: default; }
-.net-combine-toggle:not(:disabled):hover, .net-combine-toggle:focus-visible { border-color: rgba(240, 215, 154, 0.7); outline: none; }
+.net-combine-toggle:disabled { background: var(--net-ground); border-color: rgba(255, 255, 255, 0.14); color: var(--muted); cursor: default; }
+.net-combine-toggle:disabled .net-combine-open { display: none; }
+.net-combine-toggle:not(:disabled):hover,
+.net-combine-toggle:focus-visible { border-color: #f6e2ae; background: rgba(52, 42, 22, 0.96); outline: none; }
+.net-combine-toggle:not(:disabled):hover .net-combine-open,
+.net-combine-toggle:focus-visible .net-combine-open { background: #f6d68a; }
+.net-combine-toggle.is-new { animation: net-found 1100ms ease-out; }
+@keyframes net-found {
+  from { box-shadow: 0 0 0 0 rgba(230, 180, 74, 0.75); }
+  to { box-shadow: 0 0 0 12px rgba(230, 180, 74, 0); }
+}
 .net-combine-caret {
   width: 5px;
   height: 5px;
@@ -5053,7 +5082,6 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   transform: rotate(45deg);
   transition: transform 220ms ease;
 }
-.net-combine-toggle:disabled .net-combine-caret { display: none; }
 .net-combine.is-listing .net-combine-caret { margin-top: -3px; transform: rotate(225deg); }
 .net-combine-list {
   position: absolute;
@@ -5073,6 +5101,8 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 .net-combine.is-listing .net-combine-list { opacity: 1; visibility: visible; transform: none; transition: opacity 220ms ease, transform 220ms var(--net-ease), visibility 0s; }
+/* While notes are being suggested, the list steps aside for them. */
+.net-combine.is-listing.has-suggestions .net-combine-list { opacity: 0; visibility: hidden; }
 .net-combine-list ul { margin: 0; padding: 0; list-style: none; }
 .net-combine-list a {
   display: flex;
@@ -5143,6 +5173,48 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   color: var(--ink);
 }
 .net-combine-input::placeholder { color: rgba(var(--ink-rgb), 0.32); }
+/* RESET, at the bar's right end: every tag taken away at once. Faint, and
+   not pressable, while there is nothing to take away. */
+.net-combine-reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+  padding: 5px 9px;
+  background: none;
+  border: 1px solid rgba(240, 215, 154, 0.5);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f0d79a;
+  cursor: pointer;
+  transition: opacity 200ms ease, background-color 200ms ease, color 200ms ease;
+}
+.net-combine-reset:disabled { opacity: 0.3; cursor: default; }
+.net-combine-reset:not(:disabled):hover,
+.net-combine-reset:focus-visible { background: #f0d79a; color: #141008; outline: none; }
+/* Its mark: a ring nearly closed, and the head of an arrow where it opens. */
+.net-combine-reset-mark {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  box-sizing: border-box;
+  border: 1px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  transform: rotate(-30deg);
+}
+.net-combine-reset-mark::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: -1px;
+  border-left: 4px solid currentColor;
+  border-top: 2.5px solid transparent;
+  border-bottom: 2.5px solid transparent;
+  transform: rotate(30deg);
+}
 .net-combine-suggest {
   position: absolute;
   left: 0;
@@ -5435,6 +5507,8 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-note-pyr-edge { fill: none; stroke: rgba(255, 255, 255, 0.55); stroke-width: 1; }
 .net-note-pyr-lead { stroke: rgba(255, 255, 255, 0.22); stroke-width: 1; stroke-dasharray: 1 3; }
 .net-note-pyr-n { font-family: var(--sans); font-size: 15px; font-weight: 600; fill: #fff; }
+/* ... out of how many fragrances name it: smaller, quieter, after it. */
+.net-note-pyr-n .net-note-pyr-of { font-size: 10.5px; font-weight: 500; fill: rgba(236, 232, 226, 0.5); }
 .net-note-pyr-word { font-family: var(--mono); font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; fill: rgba(236, 232, 226, 0.55); }
 .net-note-pyr-flat {
   display: flex;
@@ -5445,6 +5519,7 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   border-left: 1px dashed rgba(255, 255, 255, 0.22);
 }
 .net-note-pyr-flat-n { font-size: 30px; font-weight: 600; line-height: 1; color: #fff; }
+.net-note-pyr-flat-n .net-note-pyr-of { margin-left: 1px; font-size: 16px; font-weight: 500; color: rgba(236, 232, 226, 0.5); }
 .net-note-pyr-flat-word { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
 /* THE MOST FREQUENT COMBINATIONS. */
 .net-note-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
@@ -5644,7 +5719,7 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   .net-note-pyr-figure { width: 210px; }
   .net-combine { width: calc(100vw - 24px); }
   .net-foot { column-gap: 8px; }
-  .net-back { position: static; padding: 0 12px; }
+  .net-back { padding: 0 12px; }
   .net-expand, .net-combine-button { gap: 8px; padding: 10px 12px; font-size: 10px; letter-spacing: 0.1em; }
 }
 @media (prefers-reduced-motion: reduce) {
