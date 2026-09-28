@@ -736,7 +736,7 @@
           .replace("#include <color_fragment>", "#include <color_fragment>\ndiffuseColor.a *= vInstOpacity;")
           .replace("#include <emissivemap_fragment>", "#include <emissivemap_fragment>\ntotalEmissiveRadiance *= vColor.rgb;\n" +
             "float rimOf = 1.0 - clamp(dot(normalize(vViewPosition), normal), 0.0, 1.0);\n" +
-            "totalEmissiveRadiance += vColor.rgb * pow(rimOf, 2.2) * 1.45;");
+            "totalEmissiveRadiance += vColor.rgb * pow(rimOf, 2.2) * 1.6;");
       };
       return material;
     }
@@ -767,7 +767,7 @@
     const glowGeo = new THREE.BufferGeometry();
     glowGeo.setAttribute("position", dynamic(T, 3));
     glowGeo.setAttribute("color", dynamic(T, 3));
-    const glow = new THREE.Points(glowGeo, new THREE.PointsMaterial(additive({ map: SPOT, size: 1.35, sizeAttenuation: true, vertexColors: true })));
+    const glow = new THREE.Points(glowGeo, new THREE.PointsMaterial(additive({ map: SPOT, size: 1.5, sizeAttenuation: true, vertexColors: true })));
     glow.frustumCulled = false;
     scene.add(glow);
 
@@ -2196,7 +2196,7 @@
           // little; the fillers less, the pale ones softly, the specks not at
           // all — brighter while white, and as
           // the signal passes.
-          let kindGlow = n.kind === 0 ? 2 + n.size * 5.2 : n.kind === 1 ? 1.05 : n.kind === 2 ? 0.4 : 0;
+          let kindGlow = n.kind === 0 ? 2.3 + n.size * 6 : n.kind === 1 ? 1.2 : n.kind === 2 ? 0.44 : 0;
           if (n.kind === 0 && !still) kindGlow *= 1 + 0.2 * Math.sin(twinkle * n.f[0] * 1.7 + n.ph[0]);
           const k = kindGlow * (1 + 0.6 * ph.changing + lit[i] * 1.6) * (0.2 + 0.8 * opacity[i]) * (i === selected ? 2 : 1) * grow;
           glowPos[i * 3] = x; glowPos[i * 3 + 1] = y; glowPos[i * 3 + 2] = z;

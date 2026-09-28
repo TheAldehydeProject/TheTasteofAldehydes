@@ -784,10 +784,14 @@ The same afternoon, one step further each way, and nothing else touched:
   darkest `#72061a`), the fillers' burgundy nearer a wine (`DARKS`, `#5e0813` and round it, the
   darkest `#48050d`), and the light falling on them less (the ambient 0.2, the sky 0.3, the key
   0.6), so a facet turned to the light is not what makes a node bright.
-- **Glowier**: the rim burning round every facet's edge stronger (1.45 where it was 1.15), the
-  glow round every node larger (`size` 1.35 where it was 1.0) and stronger — the notes' `kindGlow`
-  `2 + size × 5.2` (it was `1.3 + size × 3.6`), the fillers' 1.05 (0.7), the pale ones' 0.4 — so
+- **Glowier**: the rim burning round every facet's edge stronger (1.6 where it was 1.15), the
+  glow round every node larger (`size` 1.5 where it was 1.0) and stronger — the notes' `kindGlow`
+  `2.3 + size × 6` (it was `1.3 + size × 3.6`), the fillers' 1.2 (0.7), the pale ones' 0.44 — so
   where the network crowds, its heart is a haze of red rather than a pile of red balls.
+
+The owner, seeing it: "This is good actually! Just a TAD bit glowier" — which is the second half of
+those numbers (the rim 1.45 → 1.6, the glow's `size` 1.35 → 1.5, the notes' `kindGlow` from
+`2 + size × 5.2`, the fillers' from 1.05, the pale ones' from 0.4). The darkness was left as it was.
 
 `red()` in the tests asks for a red channel above two fifths now, not a half: the darkest note sits
 at 0.45.
