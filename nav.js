@@ -16,6 +16,80 @@
 // below — that's the only place it needs to change.
 // ============================================================
 
+// ============================================================
+// THE PAGE KEEPS ITS OWN TIME — "please make the animations in RE and in
+// the test site clusters animate even when you click off of the page. as
+// a matter of fact do that with all animations on the page please"
+// (2026-09-28).
+//
+// Every drawing on the site moves a frame at a time, asking the browser
+// for the next one (`requestAnimationFrame`) — and a browser holds those
+// back from a page it thinks is not being looked at: in a tab behind
+// another one, in a window gone to the background, and in some browsers
+// in a window that is simply not the one in front. So a page clicked off
+// stood still where it was, and picked up from there when it was looked
+// at again.
+//
+// So this stands in for the browser when it will not give a frame. While
+// the window is not the one in front, or the page is hidden, every frame
+// asked for is also promised by a timer (`STAND_IN_MS`); whichever comes
+// first draws it and the other is let go. In front and looked at, nothing
+// changes: the browser's own frames, and no timer at all. A hidden page's
+// timers are run at most about once a second by the browser, so what is
+// drawn meanwhile moves slowly there — and the drawings that move by the
+// clock rather than by the frame (the Explorations field, the test page's
+// turning, the house pages' bands and crests) are exactly where they would
+// have been when the page is looked at again.
+//
+// It is here because every page loads nav.js before anything that draws.
+// `window.KeepTime.standIn` is true while a timer's frame is being drawn,
+// for a drawing that measures its own frames (the test page's).
+// ============================================================
+(function () {
+  const native = window.requestAnimationFrame && window.requestAnimationFrame.bind(window);
+  const cancelNative = window.cancelAnimationFrame && window.cancelAnimationFrame.bind(window);
+  if (!native || !cancelNative) return;
+  const STAND_IN_MS = 40;              // a frame promised this soon, while not in front
+  const KeepTime = (window.KeepTime = { standIn: false, frames: 0 });
+  const waiting = new Map();           // id → { raf, timer }
+  let next = 1;
+  const inFront = () => !document.hidden && (typeof document.hasFocus !== "function" || document.hasFocus());
+
+  window.requestAnimationFrame = function (callback) {
+    const id = next++;
+    const one = { raf: 0, timer: 0 };
+    const run = (t, standIn) => {
+      if (!waiting.has(id)) return;
+      waiting.delete(id);
+      if (one.raf) cancelNative(one.raf);
+      if (one.timer) window.clearTimeout(one.timer);
+      if (standIn) { KeepTime.standIn = true; KeepTime.frames++; }
+      try { callback(t); } finally { KeepTime.standIn = false; }
+    };
+    one.promise = () => { if (!one.timer) one.timer = window.setTimeout(() => run(performance.now(), true), STAND_IN_MS); };
+    waiting.set(id, one);
+    // Handed on under the drawing's own name, so anything that tells the
+    // drawings' frames apart by it (the landing page's tests do) still can.
+    const given = (t) => run(t, false);
+    try { Object.defineProperty(given, "name", { value: callback.name || "" }); } catch (e) { /* a name is only a courtesy */ }
+    one.raf = native(given);
+    if (!inFront()) one.promise();
+    return id;
+  };
+  // A frame asked for while the page was in front, and not yet given when
+  // it is clicked off, is promised then.
+  const promiseAll = () => { if (!inFront()) waiting.forEach((one) => one.promise()); };
+  window.addEventListener("blur", promiseAll);
+  document.addEventListener("visibilitychange", promiseAll);
+  window.cancelAnimationFrame = function (id) {
+    const one = waiting.get(id);
+    if (!one) return;
+    waiting.delete(id);
+    if (one.raf) cancelNative(one.raf);
+    if (one.timer) window.clearTimeout(one.timer);
+  };
+})();
+
 const SITE_LINKS = [
   { label: "Home", href: "index.html" },
   { label: "Scent descriptions", href: "categories/scent-descriptions.html" },

@@ -3,8 +3,8 @@
 Date: 2026-09-11 (the repository's first commit); `nav.js` last changed in `0e3b8b4`,
 which added Search to the menu. Migrated from CLAUDE.md on 2026-09-17.
 
-Files: `nav.js` (~200 lines), every `*.html`, `style.css`, `tests/menu.spec.js`,
-`tests/pages.spec.js`, `tests/background-and-cursor.spec.js`
+Files: `nav.js` (~360 lines), every `*.html`, `style.css`, `tests/menu.spec.js`,
+`tests/pages.spec.js`, `tests/background-and-cursor.spec.js`, `tests/keep-time.spec.js` (2026-09-28)
 
 ## What it is
 
@@ -199,3 +199,43 @@ the old background-only reading).
 - **Every page has a `<main>`** now. The rule that dims the page behind the open Menu reads the
   body's own children, and a `<main>` is one of them, so it dims everything in it as before; see
   [search engines](2026-09-26-search-engines-and-the-address.md) for the rest.
+
+## 2026-09-28 — the page keeps its own time
+
+> also, please make the animations in RE and in the test site clusters animate even when you click
+> off of the page. as a matter of fact do that with all animations on the page please.
+
+Every drawing on the site moves a frame at a time, asking the browser for the next one
+(`requestAnimationFrame`), and **a browser holds those frames back from a page it thinks nobody is
+looking at**: a tab behind another, a window gone to the background, and in some browsers a window
+that is simply not the one in front. Clicked off, a page stood still where it was and picked up from
+there. Nothing on the site paused itself on a click away (no script listens for the window losing
+focus); it was the browser.
+
+- **`nav.js` stands in for the browser** — the first thing in it, because every page loads `nav.js`
+  before anything that draws. While the window is not the one in front (`document.hasFocus()`), or
+  the page is hidden, **every frame asked for is also promised by a timer** (`STAND_IN_MS`, 40ms);
+  whichever comes first draws it and the other is let go, and a frame already waiting when the page
+  is clicked off is promised then. **In front and looked at, nothing is different**: the browser's
+  own frames, no timer. A frame is handed to the browser under the drawing's own function name
+  (`tick`, `animate`, `frame` …), so anything that tells the drawings' frames apart by it still can —
+  the landing page's tests do, and failed until it was. A hidden page's timers are run by the browser about once a second at most,
+  so there the drawings move slowly; what moves by the clock rather than by the frame is exactly
+  where it would have been when the page is seen again. `window.KeepTime` says how many frames a
+  timer has drawn (`frames`) and whether one is being drawn now (`standIn`).
+- **Explorations & Researches' field** moves by the clock already (its forms held and turned on
+  their own time, its turn `t × SPIN`); come back to it and **its specks are put straight where
+  they belong** (`settle`) rather than springing there from where they were left.
+- **The test page's turning** — the one network, and each accord's — **is measured by the clock,
+  not by the frame** (`wall` in `network.js`), so however few frames it was given, it has turned as
+  far as it would have. Everything else there still takes at most 50ms a frame. It no longer
+  forgets its last frame when the tab comes back (`lastT`), which is what let the turning catch up.
+- **The two drawings that stopped themselves while hidden no longer do**: the primer's mist
+  (`primer.js`) and Pineward's gallery strip, which kept its cycle only while the page was seen
+  (`pineward-gallery.js`; coming back still gives the picture in front a full stand).
+- Left alone as they are: the chamber's catching up when a tab comes back (it already paid the time
+  owed), Qimu's sound stopping in a hidden tab (a sound, not a drawing), and the tab's name.
+
+Tested in `tests/keep-time.spec.js` (new): with the window not in front and the browser giving no
+frames at all, **the Explorations field**, **the test page's network** and **Ataraxia's bands** are
+drawn again and again by the page's own frames and move; and **in front, no timer draws a frame**.

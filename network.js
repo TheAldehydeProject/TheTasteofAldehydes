@@ -2631,7 +2631,13 @@
 
     function frame(t) {
       const began = performance.now();
-      const dt = Math.min(50, t - (lastT || t));
+      // Everything moves at most 50ms a frame — but THE TURNING is measured
+      // by the clock (`wall`), so a page given few frames or none, clicked
+      // off, has still turned as far as it would have (2026-09-28: "animate
+      // even when you click off of the page"). A pure turn is safe to take
+      // in one step however long.
+      const wall = Math.min(3600000, Math.max(0, t - (lastT || t)));
+      const dt = Math.min(50, wall);
       lastT = t;
       if (!born) born = t;
       if (!still) clock += dt;
@@ -2670,8 +2676,8 @@
       cp = combo();
       const slow = selected >= 0 ? 0.25 : hovered >= 0 ? 0.35 : 1;
       if (!still) {
-        psi += dt * SPIN * (1 - ph.move) * slow * (tagging ? 0.35 : 1);
-        accords.forEach((A) => { A.spin += dt * A.rate * ph.move * slow; });
+        psi += wall * SPIN * (1 - ph.move) * slow * (tagging ? 0.35 : 1);
+        accords.forEach((A) => { A.spin += wall * A.rate * ph.move * slow; });
       }
       place();
 
@@ -3257,6 +3263,9 @@
     const took = new Float32Array(240), gaps = new Float32Array(90);
     let tookN = 0, gapN = 0, lastFrame = 0;
     function record(ms, t) {
+      // A frame the page drew for itself while clicked off (nav.js) says
+      // nothing about how quickly this machine draws.
+      if (window.KeepTime && window.KeepTime.standIn) { lastFrame = 0; return; }
       took[tookN++ % took.length] = ms;
       if (lastFrame && t - lastFrame < 200) gaps[gapN++ % gaps.length] = t - lastFrame;
       lastFrame = t;
@@ -3272,7 +3281,9 @@
       else if (!raf) lastFrame = 0;
     }
     function wake() { if (!raf) raf = requestAnimationFrame(loop); }
-    document.addEventListener("visibilitychange", () => { lastT = 0; lastFrame = 0; if (!document.hidden) wake(); });
+    // Back to the page: the frame timings start again (`lastFrame`), but the
+    // clock does not forget where it was (`lastT`), so the turning catches up.
+    document.addEventListener("visibilitychange", () => { lastFrame = 0; if (!document.hidden) wake(); });
 
     // FOR THE TESTS: where things are on the window, and what state it is in.
     const onScreen = (v) => { scene.updateMatrixWorld(); const p = project(v.x, v.y, v.z); return { x: toX(p), y: toY(p), z: p.z }; };

@@ -27,11 +27,11 @@ number out of a filename. Reorder the markup and the numbering follows.
 
 ## It stops while it is being looked at
 
-*"automatically cycling on the page (unless hovered)"* is the rule, and three more things
-count as being looked at for the same reason: the keyboard being in the strip, the viewer
-being open over it, and the tab not being the one in front. A carousel that advances
-while you are reading one of its pictures — or while you are not in the room — is the
-thing this is avoiding. Pressing an arrow also puts the clock back to the top, so you get
+*"automatically cycling on the page (unless hovered)"* is the rule, and two more things
+count as being looked at for the same reason: the keyboard being in the strip and the viewer
+being open over it. (The tab not being the one in front counted too, until 2026-09-28 —
+see the last section.) A carousel that advances while you are reading one of its pictures is
+the thing this is avoiding. Pressing an arrow also puts the clock back to the top, so you get
 the full stand on the picture you asked for rather than whatever was left of the one
 before it.
 
@@ -172,3 +172,10 @@ Pineward burlap pouch on a mossy log*, *A Pineward bottle labelled Murkwood, lyi
 written by looking at each one, and the **viewer** carries the description of the picture it is
 showing (and hides the one sliding out). The comment above the strip says to write one for a new
 picture. Part of the site-wide pass in [search engines](2026-09-26-search-engines-and-the-address.md).
+
+## 2026-09-28 — the strip cycles while the tab is away
+
+The strip no longer counts a tab behind another as being looked at: it goes on cycling (`running()`
+in `pineward-gallery.js` without `document.hidden`), at the owner's "do that with all animations".
+Hovering it, the keyboard in it and the viewer open over it still hold it, and coming back still
+gives the picture in front a full stand. See [the page shell](2026-09-11-the-page-shell-and-menu.md#2026-09-28--the-page-keeps-its-own-time).

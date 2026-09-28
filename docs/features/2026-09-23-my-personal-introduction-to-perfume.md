@@ -184,3 +184,9 @@ so there the rule names **Footnotes**. The fallback it guarded is unchanged in `
 `the piece opens with its fourteen sections and the rule` now also reads the last three
 names on the rule and what each of the two new sections holds; it fails with the Citations
 not a section.
+
+## 2026-09-28 — the mist goes on
+
+The mist no longer stops while the page is hidden (`primer.js` stepped it only while
+`!document.hidden`): the owner asked for every animation to go on "even when you click off of the
+page". See [the page shell](2026-09-11-the-page-shell-and-menu.md#2026-09-28--the-page-keeps-its-own-time).

@@ -4,7 +4,7 @@ Date: 2026-09-17 (`d7092b2`, the round that added four page kinds at once; migra
 from CLAUDE.md on 2026-09-17)
 
 Files: `essay.js` (~380 lines), `works/theory-01.html`, `works/theory-02.html`,
-`works/theory-03.html`, `works/resins-in-perfumery.html`, `works/cold-vs-warm-incense.html`,
+`works/theory-03.html`, `works/resins-in-perfumery.html`, `works/skin.html` (2026-09-28), `works/cold-vs-warm-incense.html` (deleted 2026-09-28),
 `works/buying-a-perfume.html`, the `essay-*` block in
 `style.css`, `tests/essay.spec.js`
 
@@ -85,7 +85,7 @@ report](2026-09-23-my-personal-introduction-to-perfume.md). `essay.js` runs with
 canvas and simply draws no swarm.
 
 
-`works/cold-vs-warm-incense.html` (2026-09-21) is the first **exploration** on this
+`works/cold-vs-warm-incense.html` (2026-09-21; **deleted 2026-09-28**, never written — see [the last section](#2026-09-28-last--researches-003-skin-cold-vs-warm-incense-taken-down)) was the first **exploration** on this
 ground, and it is an essay page like any other — the swarm behind it, the sights at the
 corners, the rule down the left. An exploration goes out after a smell and writes down
 what is there; a research takes a material at a time. The row on
@@ -304,3 +304,84 @@ writing moved in from it (22px; 14px on a phone), and nothing else changed — n
 rule, the words exactly as they were. `.essay-set` can set apart any run of paragraphs on an essay
 page the same way. Tested in the 002 test in `tests/essay.spec.js`: the two paragraphs in it, and a
 1px line on the left only.
+
+## 2026-09-28, last — Researches 003, Skin; Cold vs Warm Incense taken down
+
+> also please add this into RE, where this should be 003. I also want you to remove the page for
+> cold vs warm incenses, and make the text lighter gray (since the page wont exist)
+> additionally, for the following RESEARCH, there are two tables which I want you to make. i have
+> added them as images 1 and 2.
+>
+> also, if you can, add diagrams here and there, to make it more palpable.
+
+Files: `works/skin.html` (new), `categories/researches.html`, `works/resins-in-perfumery.html`
+(its kicker), `works/cold-vs-warm-incense.html` (deleted), `essay.js` (`nameOf`), `style.css`
+(`.essay-figure`, `ed-*`, `.essay-table`, `.essay-sources`, `.essay-eq`), `search-page.js`,
+`tools/seo.py` and `sitemap.xml`, `tests/essay.spec.js`, `tests/mobile.spec.js`,
+`tests/pages.spec.js`.
+
+**Skin — And how it affects the perfume you wear** is **Researches 003**, a research on the
+essay ground like the others: ten sections — Introduction, pH, Bacteria, Oily, Dry and Moisturized
+Skin, Diet, Hormones and Medications, The Geography of Skin, Conclusion, and then **Sources** and
+**Footnotes**, in the owner's order, so both stand on the rule. **The writing is the owner's, word
+for word** — "no one whom I ever asked was really explain it", "The opposite is applies as well",
+their capitals and hyphens — with only their notes to me acted on and taken out: the pH equation
+drawn as an equation, *pH = −log₁₀[H⁺]*, in the page's face for maths (`.essay-eq`, `--math`);
+**test it on your skin!** in bold; the sources in MLA 8.
+
+- **The two tables** the owner sent as pictures are tables (`.essay-table`): *Skin pH* against the
+  effect on top notes, on base notes and on longevity, in pH; and *Body site* against average
+  temperature, sebum and fragrance character, in The Geography of Skin — cell for cell, headed in
+  the mono in the essays' steel blue, the row's name in the first column, the numbers in the mono.
+  On a phone they scroll sideways rather than squeeze.
+- **Eight diagrams, "here and there"** (`.essay-figure`, drawn in the page in SVG and a little
+  HTML, hairlines, the steel blue only on what each is about), each saying only what the writing
+  beside it says: **the strip and the skin** (lightest first, in order, on paper; on skin later,
+  and one changed, over *pH · bacteria · sebum · warmth · hormones · diet*); **the pH scale**, 0 to
+  14, neutral at 7, the skin's 4.5–6.5 marked, ×10 a step; **bergamot on two skins** — a tall,
+  short curve at pH 4.5 and a lower, longer one at 6.5; **two ways bacteria change a perfume** — an
+  enzyme turning linalool into an oxidised molecule, and *S. hominis*'s thioalcohols joining the
+  perfume as one note more; **three skins** — dry (nothing held, 2–4 hours), moisturised (water
+  holding what is drawn to water, longer than dry) and oily (sebum holding musks, resins and woods,
+  8–12 hours); **what is eaten, given off and smelled** — fenugreek, sotolon, maple syrup; garlic
+  and onion, allyl methyl sulfide, pungent; cumin, cuminaldehyde, warm, spicy curry (out of the
+  owner's sixteenth footnote); **the cycle**, a ring with the time around ovulation lit; and **the
+  body**, a figure in hairlines with the four places from the second table, the warmest drawn the
+  brightest. Every one carries an `aria-label` saying what it shows.
+- **Eighteen footnotes**, each a raised number leading down and a way back (the primer's and
+  Buying a Perfume's). Two stand side by side twice (3 and 4, 11 and 12), a comma between them. Two
+  sit in headings, and **the rule now leaves a footnote's number out of a section's name**
+  (`nameOf` in `essay.js`), or it read *Diet13*.
+- **The sources, in MLA 8** (`.essay-sources`): alphabetical by what each begins with, a hanging
+  indent, the journal or site in italics, a DOI where there is one and the address where there is
+  not, and for a web page with no date the day it was read (*Accessed 28 Sept. 2026.*). The owner
+  listed Behan et al. twice; it is one work and stands once. The details were found for each (the
+  articles on PubMed and in *Nutrients*, *Frontiers in Human Neuroscience* and *Chemical Senses*);
+  the three blogs give no author and no date, so none is given.
+
+**The row** is 003, a Research, dated 28.09.2026, and **everything after it moved down one**, as
+when 001 and 002 were added: Resins in Perfumery is **004** — and its own page says *Researches ·
+004* — Cold vs Warm Incense 005, the forest 006, the rain 007, and the last of the Untitled rows
+went, so the table still runs 000 to 009.
+
+**Cold vs Warm Incense has no page now.** It was never written — four sections each waiting in a
+dashed box — and it is deleted, with its line in the search's manifest, in `tools/seo.py` and in the
+sitemap. **Its row stays**, at 005, marked `data-open="no"` as the unwritten rows are: drawn lighter
+and not a link — "make the text lighter gray (since the page wont exist)".
+
+Tested in `tests/essay.spec.js`: **`Researches 003 is Skin: the owner's research with its two
+tables, its diagrams, its footnotes and its sources`** — the row and the one after it, the resins
+page's 004, the head, the ten headings (and the rule's names without footnote numbers), the owner's
+words, none of the notes left to me, the bold, the equation with its 10 and its +, both tables cell
+for cell and in their sections, at least seven diagrams in at least six sections each labelled and
+drawn, eighteen marks in order each to its note and back, the thirteenth's link to its source, and
+seven sources in alphabetical order with a hanging indent, the container in italics and a date read
+where there is no volume; and **`Cold vs Warm Incense has no page: its row stays, lighter and not a
+link`**. `the theories and the researches reach their own pieces` reads the resins research at the
+fifth link now.
+
+**Five slips in the footnotes, put right at the owner's word** ("yeah go for it", asked at the end of
+the round): footnote 1's "powder of Hydrogen" is *power*, and its pH change "of 6 to 7" a tenfold
+*decrease* in hydrogen (it said increase); footnote 3's "6.5 to 2.5" for a factor of 100 is *6.5 to
+4.5*; footnote 4's "turpenes" is *terpenes*; and footnote 12 points at *footnote 10* for
+*lipophilic*, where it said 8. Nothing else in the writing was touched.

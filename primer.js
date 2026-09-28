@@ -225,7 +225,8 @@
   function frame(now) {
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
-    if (!document.hidden) step(dt, (now - began) / 1000);
+    // It goes on while the page is not looked at, too (2026-09-28).
+    step(dt, (now - began) / 1000);
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);

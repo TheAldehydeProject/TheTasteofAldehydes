@@ -145,10 +145,13 @@ test("the theories and the researches reach their own pieces", async ({ page }) 
 
   await page.goto("/categories/researches.html");
   // 000 stands first since 2026-09-23; since 2026-09-27 Dupes, Designers
-  // and Niches and Buying a Perfume stand before the research, at 003.
+  // and Niches and Buying a Perfume stand before the research, and since
+  // 2026-09-28 Skin at 003, so the resins research is 004.
   await expect(page.locator(".index-table tbody a").first())
     .toHaveAttribute("href", "../works/my-personal-introduction-to-perfume.html");
   await expect(page.locator(".index-table tbody a").nth(3))
+    .toHaveAttribute("href", "../works/skin.html");
+  await expect(page.locator(".index-table tbody a").nth(4))
     .toHaveAttribute("href", "../works/resins-in-perfumery.html");
 
   // And the research carries the owner's own writing rather than a
@@ -281,7 +284,8 @@ test("Explorations 002 is Buying a Perfume, written in the owner's words, its su
    title ("this should only exist on the page of the exploration
    itself"), and all seven of its sections are the owner's writing —
    none of them waiting. What followed 001 moved down: Resins in
-   Perfumery is 003 and Cold vs Warm Incense 004. */
+   Perfumery was 003 and Cold vs Warm Incense 004 — and since Skin came in
+   at 003 (2026-09-28), 004 and 005. */
 test("Explorations 001 is Dupes, Designers and Niches, written, with its subtitle on its own page only",
   async ({ page }) => {
   const errors = collectPageErrors(page);
@@ -294,7 +298,7 @@ test("Explorations 001 is Dupes, Designers and Niches, written, with its subtitl
   await expect(page.locator(".index-table"), "the subtitle is the page's alone").not.toContainText("Private lines");
   const named = await page.$$eval(".index-table tbody tr", (all) => all.map((r) => r.dataset.no + " " + r.dataset.name));
   expect(named.slice(0, 5)).toEqual(["0 My Personal Introduction to Perfume", "1 Dupes, Designers and Niches",
-    "2 Buying a Perfume", "3 Resins in Perfumery", "4 Cold vs Warm Incense"]);
+    "2 Buying a Perfume", "3 Skin", "4 Resins in Perfumery"]);
 
   await page.goto("/works/dupes-designers-and-niches.html");
   await expect(page.locator(".essay-kicker")).toHaveText("Explorations · 001");
@@ -311,4 +315,158 @@ test("Explorations 001 is Dupes, Designers and Niches, written, with its subtitl
   await expect(page.locator("#section-07")).toContainText("Trust me, it is pretty fun.");
   await expect(page.locator(".essay-rule")).toBeVisible();
   expect(errors).toEqual([]);
+});
+
+/* RESEARCHES 003, SKIN (2026-09-28): "also please add this into RE, where
+   this should be 003" — with the two tables the owner sent as pictures,
+   "diagrams here and there, to make it more palpable", the pH equation
+   drawn as one, "test it on your skin!" in bold, and the sources "all
+   MLA8". The row is 003, a Research, and the one after it moved down: the
+   resins research is 004, and its own page says so. Every section is the
+   owner's, the two tables carry exactly their cells, every footnote mark
+   leads to its note and every note back, the sources are MLA 8 — in
+   alphabetical order, hanging, the container in italics — and the notes
+   the owner left to me are not on the page. */
+test("Researches 003 is Skin: the owner's research with its two tables, its diagrams, its footnotes and its sources",
+  async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto("/categories/researches.html");
+  const row = page.locator('.index-table tbody tr[data-no="3"]');
+  await expect(row.locator(".index-no")).toHaveText("003");
+  await expect(row.locator(".index-kind")).toHaveText("Research");
+  await expect(row.locator("a")).toHaveText("Skin");
+  await expect(row.locator("a")).toHaveAttribute("href", "../works/skin.html");
+  const next = page.locator('.index-table tbody tr[data-no="4"]');
+  await expect(next.locator("a")).toHaveAttribute("href", "../works/resins-in-perfumery.html");
+  const nos = await page.$$eval(".index-table tbody tr", (all) => all.map((r) => r.dataset.no));
+  expect(nos).toEqual(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]);
+  await page.goto("/works/resins-in-perfumery.html");
+  await expect(page.locator(".essay-kicker")).toHaveText("Researches · 004");
+
+  await page.goto("/works/skin.html");
+  await expect(page.locator(".essay-head h1")).toContainText("Skin");
+  await expect(page.locator(".essay-head h1 em")).toHaveText("And how it affects the perfume you wear");
+  await expect(page.locator(".essay-kicker")).toHaveText("Researches · 003");
+  const heads = await page.locator(".essay-section h2").evaluateAll((hs) => hs.map((h) => {
+    const c = h.cloneNode(true);
+    c.querySelectorAll(".essay-no, .essay-fn").forEach((e) => e.remove());
+    return c.textContent.trim();
+  }));
+  expect(heads).toEqual(["Introduction", "pH", "Bacteria", "Oily, Dry and Moisturized Skin", "Diet",
+    "Hormones and Medications", "The Geography of Skin", "Conclusion", "Sources", "Footnotes"]);
+  await expect(page.locator(".essay-facts")).toContainText("10");
+  // The rule names a section without its footnote mark.
+  await expect(page.locator(".essay-rule")).toBeVisible();
+  await expect(page.locator(".essay-mark-name"), "the rule's names carry no footnote number").toHaveText(heads);
+
+  // THE OWNER'S WORDS, as they wrote them.
+  const text = await page.locator(".essay-body").textContent();
+  for (const words of ["no one whom I ever asked was really explain it. So I will.", "In my humble opinion, it is a really cool topic.",
+    "The opposite is applies as well", "“The skin you sprayed at 8 a.m. is not the same skin at 6 p.m.”",
+    "It is like adding an ingredient that was not there previously.", "8-12 hours", "2-4 hours",
+    "among a LOT of other things", "allow several weeks before deciding that a fragrance has changed",
+    "a whole new dimension of smelling things, and seeing how they turn out – on your skin."]) {
+    expect(text, words).toContain(words);
+  }
+  // The five slips in the footnotes the owner asked to have put right.
+  const notesText = await page.locator("ol.essay-footnotes").textContent();
+  for (const fixed of ["the power of Hydrogen", "a 10-fold decrease in the amount of hydrogen", "from pH 6.5 to 4.5",
+    "esters, aldehydes and terpenes", "mentioned in footnote 10."]) {
+    expect(notesText, fixed).toContain(fixed);
+  }
+  // Nothing of the notes left to me.
+  for (const not of ["CLAUDE", "put it in bold", "\\text", "\\log", "Footnote1", "footnote1", "Footnores", "footntoe", "MLA", "make them all"]) {
+    expect(text, "not: " + not).not.toContain(not);
+  }
+  await expect(page.locator(".essay-section strong", { hasText: "test it on your skin!" })).toHaveCount(1);
+  // pH's equation, drawn as one.
+  const eq = page.locator("#footnote-1 .essay-eq");
+  await expect(eq).toHaveCount(1);
+  await expect(eq.locator("sub")).toHaveText("10");
+  await expect(eq.locator("sup")).toHaveText("+");
+  expect(await eq.evaluate((e) => getComputedStyle(e).fontFamily), "in the page's face for maths").not.toMatch(/Plex Mono/);
+
+  // THE TWO TABLES, cell for cell.
+  const tables = await page.locator(".essay-table").evaluateAll((ts) => ts.map((t) =>
+    [...t.querySelectorAll("tr")].map((r) => [...r.children].map((c) => c.textContent.replace(/\s+/g, " ").trim()))));
+  expect(tables).toEqual([
+    [["Skin pH", "Effect on top notes", "Effect on base notes", "Longevity impact"],
+      ["4.5–5.0 (acidic)", "Brighter, sharper, faster burnoff", "Minimal change", "Tops fade 10–20% faster"],
+      ["5.0–5.5 (average)", "Balanced expression", "Normal development", "Standard performance"],
+      ["5.5–6.5 (less acidic)", "Softer, more muted opening", "Slightly extended warmth", "Marginal base improvement"]],
+    [["Body site", "Avg. temperature", "Sebum", "Fragrance character"],
+      ["Inner wrist", "~32°C", "Low-moderate", "Clean, linear, moderate projection"],
+      ["Neck (sides)", "~35°C", "Moderate", "Strong projection, more body interaction"],
+      ["Behind ear", "~34°C", "Low", "True-to-formula, intimate sillage"],
+      ["Inner elbow", "~33°C", "Low", "Quiet, close-range, long-lasting"]],
+  ]);
+  // The first table in pH, the second in the geography of the skin.
+  await expect(page.locator("#section-02 .essay-table")).toHaveCount(1);
+  await expect(page.locator("#section-07 .essay-table")).toHaveCount(1);
+
+  // THE DIAGRAMS: here and there, each saying what it shows, and drawn.
+  const figures = page.locator(".essay-figure");
+  expect(await figures.count(), "diagrams here and there").toBeGreaterThanOrEqual(7);
+  const inSections = await figures.evaluateAll((fs) => new Set(fs.map((f) => f.closest(".essay-section").id)).size);
+  expect(inSections, "spread through the piece").toBeGreaterThanOrEqual(6);
+  for (const f of await figures.all()) {
+    expect((await f.getAttribute("aria-label")) || "", "a figure says what it shows").not.toBe("");
+    const box = await f.boundingBox();
+    expect(box.height, "and is drawn").toBeGreaterThan(60);
+  }
+
+  // THE FOOTNOTES: eighteen, each mark to its note and each note back.
+  const notes = page.locator("ol.essay-footnotes > li");
+  await expect(notes).toHaveCount(18);
+  for (let n = 1; n <= 18; n++) {
+    await expect(page.locator(`a.essay-fn[href="#footnote-${n}"]`), `mark ${n}`).toHaveCount(1);
+    await expect(page.locator(`#footnote-${n} a.essay-fn-back`)).toHaveAttribute("href", `#footnote-${n}-from`);
+    await expect(page.locator(`#footnote-${n}-from`)).toHaveCount(1);
+  }
+  const marks = await page.locator("a.essay-fn").evaluateAll((as) => as.map((a) => a.textContent));
+  expect(marks, "the marks in order").toEqual(Array.from({ length: 18 }, (_, i) => String(i + 1)));
+  await page.locator('a.essay-fn[href="#footnote-13"]').click();
+  await expect(page).toHaveURL(/#footnote-13$/);
+  await expect(page.locator("#footnote-13")).toBeInViewport();
+
+  // THE SOURCES, in MLA 8: seven works (one the owner listed twice),
+  // alphabetical, hanging, the container in italics, a web page dated by
+  // when it was read.
+  const sources = page.locator("ul.essay-sources > li");
+  await expect(sources).toHaveCount(7);
+  const firsts = await sources.evaluateAll((ls) => ls.map((l) => l.textContent.replace(/^[“"]/, "").trim()));
+  expect([...firsts].sort((a, b) => a.localeCompare(b, "en"))).toEqual(firsts);
+  for (const li of await sources.all()) {
+    await expect(li.locator("cite"), "the container in italics").toHaveCount(1);
+    expect(await li.locator("cite").evaluate((c) => getComputedStyle(c).fontStyle)).toBe("italic");
+    const t = await li.textContent();
+    expect(t.trim().endsWith("."), "an entry ends with a full stop").toBe(true);
+    if (!/vol\. \d+/.test(t)) expect(t, "a web page dated by when it was read").toMatch(/Accessed \d{1,2} [A-Z][a-z]{2,4}\. \d{4}\./);
+  }
+  const hang = await sources.first().evaluate((l) => [parseFloat(getComputedStyle(l).paddingLeft), parseFloat(getComputedStyle(l).textIndent)]);
+  expect(hang[0], "a hanging indent").toBeGreaterThan(10);
+  expect(hang[1]).toBeCloseTo(-hang[0], 0);
+  expect(await sources.nth(0).textContent()).toContain("Behan, J. M., et al. “Insight into How Skin Changes Perfume.”");
+  expect(await page.locator("#source-havlicek").textContent()).toContain("Havlíček, Jan, and Pavlína Lenochová.");
+  await expect(page.locator("#footnote-13 a[href='#source-havlicek']")).toHaveCount(1);
+  expect(errors).toEqual([]);
+});
+
+/* COLD VS WARM INCENSE, TAKEN DOWN (2026-09-28): "remove the page for
+   cold vs warm incenses, and make the text lighter gray (since the page
+   wont exist)". The row stays, at 005, drawn quieter and no link; the
+   page is gone and nothing on the site points at it. */
+test("Cold vs Warm Incense has no page: its row stays, lighter and not a link", async ({ page, request }) => {
+  await page.goto("/categories/researches.html");
+  const row = page.locator('.index-table tbody tr[data-name="Cold vs Warm Incense"]');
+  await expect(row).toHaveAttribute("data-open", "no");
+  await expect(row.locator(".index-no")).toHaveText("005");
+  await expect(row.locator("a")).toHaveCount(0);
+  const shade = (loc) => loc.evaluate((e) => {
+    const [r, g, b] = getComputedStyle(e).color.match(/\d+(\.\d+)?/g).map(Number);
+    return (r + g + b) * +(getComputedStyle(e.closest("tr")).opacity);
+  });
+  const written = page.locator('.index-table tbody tr[data-no="3"] .index-what');
+  expect(await shade(row.locator(".index-what")), "lighter than a written row").not.toBe(await shade(written));
+  expect((await request.get("/works/cold-vs-warm-incense.html")).status(), "the page is gone").toBe(404);
 });

@@ -68,7 +68,7 @@ P = {
  "works/my-personal-introduction-to-perfume.html": dict(type="article", desc="My personal introduction to perfume: this article is intended to clarify everything a person might need to understand perfume.", crumbs=[HOME, RE_]),
  "works/dupes-designers-and-niches.html": dict(type="article", desc="Dupes, designers and niches — and private lines and ultra niches: the categories of fragrances based on the market itself, their prices, their goals and their smell.", crumbs=[HOME, RE_]),
  "works/resins-in-perfumery.html": dict(type="article", desc="Resins in perfumery: what a resin is, and then examples of the most frequently used ones, as well as what makes them unique.", crumbs=[HOME, RE_]),
- "works/cold-vs-warm-incense.html": dict(type="article", desc="Cold vs warm incense: two ways the same material goes into a fragrance, and they do not smell like the same family at all.", crumbs=[HOME, RE_]),
+ "works/skin.html": dict(type="article", desc="Skin, and how it affects the perfume you wear: pH, bacteria, oily, dry and moisturized skin, diet, hormones and medications, and the geography of the skin.", crumbs=[HOME, RE_]),
  "works/buying-a-perfume.html": dict(type="article", desc="Buying a Perfume, simplifying the thought process: night or day, inside or out, summer or winter, safe or divisive, and the special cases.", crumbs=[HOME, RE_]),
  "contact.html": dict(desc="Get in touch with The Taste of Aldehydes, a personal project of perfume exploration: send a carrier pigeon, or an email.", crumbs=[HOME]),
  # Not for search engines: the site's own search, the sandbox and the
@@ -103,7 +103,7 @@ THEME = {
  "search.html": "#191c21",
  "works/test-page.html": "#1f1f20",
 }
-for essay in ["theory-01", "theory-02", "theory-03", "resins-in-perfumery", "cold-vs-warm-incense",
+for essay in ["theory-01", "theory-02", "theory-03", "resins-in-perfumery", "skin",
               "buying-a-perfume", "dupes-designers-and-niches", "my-personal-introduction-to-perfume"]:
     THEME["works/%s.html" % essay] = "#0a0b0e"
 

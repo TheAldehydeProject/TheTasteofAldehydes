@@ -306,18 +306,23 @@
       const h = 0.2 * Math.cos(rho * 15) * Math.exp(-rho * 1.7);
       return [rho * Math.cos(a), -h, rho * Math.sin(a)];
     } },
-    // The four-dimensional cube, turned a little through the fourth
-    // dimension and seen from along it: a cube inside a cube, corner to
-    // corner.
-    tesseract: { fuzz: 0.006, fit: true, place(i) {
+    // The four-dimensional cube, seen straight along the fourth dimension:
+    // THE CLASSIC ONE — a cube inside a cube, square to it and centred in
+    // it, each inner corner joined to the outer corner beside it (a
+    // Schlegel diagram). The owner, 2026-09-28: "fix the tesseract, i want
+    // it to look a little more classic", with the picture everyone knows.
+    // It was turned a little through the fourth dimension first (0.34 rad
+    // in two planes), which skewed the inner cube off to one corner. The
+    // inner cube is 0.55 of the outer, as in the picture; the field's own
+    // turn and lean give it its three-dimensional look, in gentler
+    // perspective than the other forms (`focal`), as the picture has it —
+    // with the field's, its outer cube read as a roof from some sides.
+    tesseract: { fuzz: 0.005, fit: true, focal: 7, place(i) {
       const E = once("tesseract", () => {
         const V = [];
         for (let k = 0; k < 16; k++) V.push([0, 1, 2, 3].map((b) => ((k >> b) & 1 ? 1 : -1)));
-        const a = 0.34, c = Math.cos(a), s = Math.sin(a);
         const see = ([x, y, z, w]) => {
-          [x, w] = [x * c - w * s, x * s + w * c];
-          [y, w] = [y * c - w * s, y * s + w * c];
-          const k = 2.4 / (3.4 - w);
+          const k = w > 0 ? 1 : 0.55;
           return [x * k, y * k, z * k];
         };
         return edgesAt(V, 2).map(([p, q]) => [see(p), see(q)]);
@@ -497,6 +502,7 @@
   field.dataset.cycle = cycle.join(",");
   const wrap = (k) => ((k % cycle.length) + cycle.length) % cycle.length;
   const formAt = (k) => formOf(cycle[wrap(k)]);
+  const focalAt = (k) => (SHAPES[cycle[wrap(k)]] && SHAPES[cycle[wrap(k)]].focal) || FOCAL;
   let cur = 0, to = -1, since = -1, dur = ARRIVE + HOLD;
   let phase = { morph: false, q: 0 };
   /** The pairing for a transformation from form `a` to form `b`: where
@@ -611,11 +617,12 @@
     spin = still ? 0.6 : t * SPIN;
     cosA = Math.cos(spin); sinA = Math.sin(spin);
   }
-  function project(x, y, z) {
+  function project(x, y, z, focal) {
     // About the upright axis, then leaning towards you.
+    const f = focal || FOCAL;
     const x1 = x * cosA + z * sinA, z1 = -x * sinA + z * cosA;
     const y2 = y * cosT - z1 * sinT, z2 = y * sinT + z1 * cosT;
-    const k = FOCAL / (FOCAL + z2);
+    const k = f / (f + z2);
     out[0] = CX + x1 * S * k;
     out[1] = CY + y2 * S * k;
     out[2] = Math.max(0, Math.min(1, 0.5 - z2 * 0.55));
@@ -625,8 +632,11 @@
       from there to its place in form `G`. */
   function target(i, F, G) {
     const j = SLOT[i] * 3;
+    // A form may ask for gentler perspective than the rest (`focal`): the
+    // tesseract, seen as it is always drawn.
+    const fF = focalAt(cur);
     if (!G) {
-      project(F[j], F[j + 1], F[j + 2]);
+      project(F[j], F[j + 1], F[j + 2], fF);
       return;
     }
     const k = NEXT[i] * 3;
@@ -635,7 +645,8 @@
     const swing = Math.sin(Math.PI * e) * ARC;
     project(F[j] + (G[k] - F[j]) * e + (R1[i] - 0.5) * 2 * swing,
       F[j + 1] + (G[k + 1] - F[j + 1]) * e + (R2[i] - 0.5) * 1.4 * swing,
-      F[j + 2] + (G[k + 2] - F[j + 2]) * e + (R3[i] - 0.5) * 2 * swing);
+      F[j + 2] + (G[k + 2] - F[j + 2]) * e + (R3[i] - 0.5) * 2 * swing,
+      fF + (focalAt(to) - fF) * e);
   }
   const forms = () => [formAt(cur).P, to >= 0 ? formAt(to).P : null];
 
@@ -951,6 +962,23 @@
       if (seen) wake();
     }).observe(field);
   }
+  // BACK FROM AWAY — a tab behind another, a window clicked off, given few
+  // frames or none (2026-09-28: "animate even when you click off of the
+  // page"). The forms and the turn keep the clock's time already; the
+  // specks are put straight where they belong rather than springing there
+  // from where they were left.
+  let awaySince = 0;
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) { awaySince = performance.now(); return; }
+    const t = performance.now();
+    if (still || !awaySince || t - awaySince < 800) { awaySince = 0; return; }
+    awaySince = 0;
+    tick(t);
+    settle(t);
+    caption();
+    draw(t);
+    wake();
+  });
   if ("ResizeObserver" in window) new ResizeObserver(size).observe(field);
   else window.addEventListener("resize", size);
 

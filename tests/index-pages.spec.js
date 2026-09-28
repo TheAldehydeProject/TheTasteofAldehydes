@@ -68,9 +68,11 @@ test("the researches are a numbered, dated table, and the first one opens",
   expect(rows[0].no, "and it is numbered nought").toBe(0);
   // 001 is Dupes, Designers and Niches since 2026-09-27 ("the first
   // should be 001 (move everything down)"); Resins in Perfumery was 001
-  // until then and is 003.
+  // until then, 003 after it, and 004 since Skin came in at 003
+  // (2026-09-28: "add this into RE, where this should be 003").
   expect(rows[1].name, "001 is the owner's Dupes, Designers and Niches").toBe("Dupes, Designers and Niches");
-  expect(rows[3].name, "and the first research is the owner's own").toBe("Resins in Perfumery");
+  expect(rows[3].name, "003 is the owner's research on skin").toBe("Skin");
+  expect(rows[4].name, "and the resins research after it").toBe("Resins in Perfumery");
 
   // Four columns, in the order asked for: the number, the work, which
   // KIND of work it is, and the date it was made. The third was added
@@ -481,6 +483,31 @@ const FORM_NAMES = {
   sierpinski: "Sierpiński tetrahedron", hilbert: "Hilbert curve", thomas: "Thomas attractor",
   chladni: "Chladni figure", eight: "Figure-eight knot", helix: "Helix",
 };
+/* THE TESSERACT, CLASSIC (2026-09-28: "fix the tesseract, i want it to look
+   a little more classic", with the picture everyone knows): a cube square
+   inside a cube and centred in it, each inner corner joined to the outer
+   corner beside it — seen straight along the fourth dimension, not turned
+   through it first (which skewed the inner cube off to a corner) — and in
+   gentler perspective than the other forms. Read off the form's own code:
+   its sixteen corners come out as eight at the outer cube's and eight at
+   0.55 of them, and its perspective is its own. */
+test("the tesseract is the classic one: a cube square inside a cube, corners joined", () => {
+  const fs = require("fs");
+  const path = require("path");
+  const src = fs.readFileSync(path.join(__dirname, "..", "explorations.js"), "utf8");
+  const block = src.slice(src.indexOf("    tesseract: {"), src.indexOf("    cell24: {"));
+  expect(block.length).toBeGreaterThan(100);
+  expect(block, "not turned through the fourth dimension").not.toMatch(/Math\.(sin|cos)/);
+  expect(block, "a perspective of its own").toMatch(/focal: \d/);
+  const see = new Function("return " + block.match(/const see = (\(\[x, y, z, w\]\) => \{[\s\S]*?\n        \});/)[1])();
+  const corners = [];
+  for (let k = 0; k < 16; k++) corners.push(see([0, 1, 2, 3].map((b) => ((k >> b) & 1 ? 1 : -1))));
+  const reach = corners.map((p) => Math.max(...p.map(Math.abs)));
+  expect(reach.filter((r) => r === 1).length, "eight corners on the outer cube").toBe(8);
+  expect(reach.filter((r) => Math.abs(r - 0.55) < 1e-9).length, "and eight on the inner one").toBe(8);
+  corners.forEach((p) => expect(Math.abs(Math.abs(p[0]) - Math.abs(p[1])) + Math.abs(Math.abs(p[1]) - Math.abs(p[2])), "square to each other, centred").toBeLessThan(1e-9));
+});
+
 test("the field holds each form twelve seconds and turns into the next over six, whatever is pointed at",
   async ({ page }) => {
   test.setTimeout(120000);

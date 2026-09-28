@@ -88,7 +88,17 @@ async function look(page, points = []) {
       }
       return m;
     });
-    return { red, at };
+    // And the brightest pixel near each point (the least of its three
+    // channels): what is drawn there, whatever stands beside it.
+    const peak = points.map(([x, y]) => {
+      let best = 0;
+      for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) {
+        const k = ((Math.round(y) + dy) * c.width + (Math.round(x) + dx)) * 4;
+        best = Math.max(best, Math.min(d[k], d[k + 1], d[k + 2]));
+      }
+      return best;
+    });
+    return { red, at, peak };
   }, { shot, points });
 }
 const state = (page) => page.evaluate(() => window.NetScene.state());
@@ -476,10 +486,14 @@ test("expanding: through white, each accord leaving as one body along its bridge
     const d = Math.hypot(...after[a].at.map((v, k) => v - after[b].at[k]));
     expect(d, accords[a].code + " and " + accords[b].code + " apart").toBeGreaterThan((after[a].R + after[b].R) * 1.85 + 2.5);
   }
-  // The centre: bright where it stands.
+  // The centre: bright where it stands. Read as the brightest pixel there
+  // rather than the average round it: a network's name may stand beside
+  // the centre, depending on how far the library has turned — and since
+  // the turning is measured by the clock (2026-09-28), a slow machine
+  // turns it as far as a quick one, so where the names fall differs.
   const c = await page.evaluate(() => window.NetScene.centre());
   const seen = await look(page, [[c.x, c.y]]);
-  expect(Math.min(...seen.at[0]), "the centre, white").toBeGreaterThan(120);
+  expect(seen.peak[0], "the centre, white").toBeGreaterThan(160);
   // The dropdown now; "Collapse" — no "into one" — alone in the middle,
   // Combinations gone, and no Back (2026-09-28, night: "remove the back
   // button ... (when expanded)").

@@ -33,6 +33,7 @@ const PAGES = [
   { url: "/works/theory-02.html", root: "../", title: /Architecture of Sweat/ },
   { url: "/works/theory-03.html", root: "../", title: /Note Dissemination Framework/ },
   { url: "/works/resins-in-perfumery.html", root: "../", title: /Resins/ },
+  { url: "/works/skin.html", root: "../", title: /Skin/ },
   { url: "/works/my-personal-introduction-to-perfume.html", root: "../", title: /Introduction to Perfume/ },
   { url: "/works/dupes-designers-and-niches.html", root: "../", title: /Dupes, Designers and Niches/ },
   { url: "/works/test-node-a.html", root: "../", title: /Test node/ },

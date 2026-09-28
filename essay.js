@@ -238,11 +238,11 @@
 
   // What a section is CALLED. Its heading carries the section's number
   // in a span of its own, and the number is not part of the name — read
-  // whole, every tick on the rule came out as "01PREMISE".
+  // whole, every tick on the rule came out as "01PREMISE". Nor is a
+  // footnote's mark in the heading: Skin's read "Diet13".
   function nameOf(section) {
     const head = section.querySelector("h2").cloneNode(true);
-    const no = head.querySelector(".essay-no");
-    if (no) no.remove();
+    head.querySelectorAll(".essay-no, .essay-fn").forEach((mark) => mark.remove());
     return head.textContent.trim();
   }
 

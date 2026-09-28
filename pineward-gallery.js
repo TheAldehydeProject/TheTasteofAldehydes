@@ -101,17 +101,20 @@
   // ============================================================
   // CYCLING ON ITS OWN, AND STOPPING WHEN IT IS BEING LOOKED AT
   //
-  // "unless hovered" is the whole of the rule, and three more things
+  // "unless hovered" is the whole of the rule, and two more things
   // count as being looked at for the same reason: the keyboard being
-  // in the strip, the viewer being open over it, and the tab not being
-  // the one in front. A carousel that advances while you are reading
-  // one of its pictures — or while you are not in the room — is the
-  // thing this is avoiding.
+  // in the strip, and the viewer being open over it. (The tab not being
+  // the one in front counted too, until the owner asked for every
+  // animation to go on "even when you click off of the page", 2026-09-28.)
+  // A carousel that advances while you are reading one of its pictures
+  // is the thing this is avoiding.
   // ============================================================
   let clock = 0;
 
   function running() {
-    return !REDUCE_MOTION && !held && !viewing && !document.hidden;
+    // Not paused while the tab is behind another any more: "animate even
+    // when you click off of the page" (2026-09-28).
+    return !REDUCE_MOTION && !held && !viewing;
   }
 
   let held = false;

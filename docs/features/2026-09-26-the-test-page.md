@@ -1290,3 +1290,14 @@ the same answer the page draws.
   which fragrances have them all — and the owner has only asked about the lines. If they meant the
   lines to come from the fragrances with every tag alone, that is `recompute` reading `matched`
   instead of `nets`.
+
+## 2026-09-28, last of all — turning by the clock
+
+"make the animations in RE and in the test site clusters animate even when you click off of the
+page": the one network's turn and each accord's are measured **by the clock** (`wall` in `frame`),
+not by the frame, so a page given few frames or none has still turned as far as it would have;
+everything else still takes at most 50ms a frame. Coming back to the tab no longer forgets the last
+frame's time (`lastT`), which is what lets the turn catch up, and a frame the page drew for itself
+while clicked off (`KeepTime.standIn`, from `nav.js`) is not counted when the page judges how
+quickly the machine draws. See [the page shell](2026-09-11-the-page-shell-and-menu.md#2026-09-28--the-page-keeps-its-own-time);
+tested in `tests/keep-time.spec.js`.

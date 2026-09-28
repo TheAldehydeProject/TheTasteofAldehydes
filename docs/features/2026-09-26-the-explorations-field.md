@@ -512,3 +512,33 @@ on to the next form, or back, at once`** (twelve seconds held after them now).
 `COUNT` is **3600** (2000 on a phone) — it was 2400 (1300) — and every one of the new specks is on
 the shape: `HAZE` goes from a tenth to about a fifteenth, so the loose cloud round a form keeps the
 240 specks it had. Measured in a browser, the field still draws at 60 frames a second.
+
+## 2026-09-28 — back from away
+
+At the owner's "make the animations in RE ... animate even when you click off of the page": the
+field's forms and its turn already keep the clock's time, and the page's frames are kept coming
+when a browser holds them back ([the page shell](2026-09-11-the-page-shell-and-menu.md#2026-09-28--the-page-keeps-its-own-time));
+coming back to the page after more than 0.8s away, **its specks are put straight where they belong**
+(`settle`, on `visibilitychange` in `explorations.js`) rather than springing there from where they
+were left. Tested in `tests/keep-time.spec.js`.
+
+## 2026-09-28 — the tesseract, classic
+
+> also sorry, but fix the tesseract, i want it to look a little more classic, like in the picture
+> attached
+
+The picture is the one everyone knows: **a cube inside a cube**, square to it and centred in it,
+each inner corner joined to the outer corner beside it. The field's tesseract was turned a little
+through the fourth dimension first (0.34 radians in two planes) before being seen along it, which
+threw the inner cube off towards a corner and bent the whole into something less recognisable. It is
+seen **straight along the fourth dimension** now — the eight corners on one side of it at the outer
+cube, the eight on the other at **0.55** of it, as in the picture — and **in gentler perspective**
+than the other forms (`focal: 7` on the form, against the field's `FOCAL` of 3.2; `focalAt`, and a
+transformation eases from one form's perspective to the next's), because with the field's own the
+outer cube read as a roof from some sides of its turn. The fuzz a hair less (0.005), so its edges
+stand cleaner.
+
+Tested: **`the tesseract is the classic one: a cube square inside a cube, corners joined`** in
+`tests/index-pages.spec.js` — read off the form's own code: no turn through the fourth dimension, a
+perspective of its own, and its sixteen corners eight on the outer cube and eight at 0.55, all square
+and centred.
