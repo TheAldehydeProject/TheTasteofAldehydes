@@ -102,7 +102,8 @@
 //   GLOW: the nodes faceted, in a deep rouge, lit from within with a rim
 //   of it burning round every edge and a glow round them ("revert to the
 //   non perfectly spherical nodes, but add a glow to them ... more red ike
-//   rouge ... A darker red"; for a morning they were glossy spheres); and
+//   rouge ... A darker red", then "A little glowier and darker please!";
+//   for a morning they were glossy spheres); and
 //   the clock softer — gathering speed, coming to rest, turning round
 //   without a jolt, the accords leaving one after another.
 //
@@ -148,8 +149,8 @@
   // ROUGE: a deep, dark red that glows, rather than a bright solid one
   // (2026-09-28: "more red ike rouge, rather than just a solid sphere of
   // red. A darker red").
-  const REDS = [0xa8102a, 0x9a0c22, 0xb3142e, 0x900a20, 0xb8182f];   // the notes
-  const DARKS = [0x7a0c1a, 0x8c1020, 0x6a0915, 0x941628, 0x5e0812];   // the fillers
+  const REDS = [0x8c0a20, 0x7e081b, 0x961026, 0x72061a, 0x9c1229];   // the notes
+  const DARKS = [0x5e0813, 0x6c0a19, 0x50060f, 0x72101f, 0x48050d];   // the fillers
   const PALES = [0xeec0c4, 0xe0a8ae, 0xf4cfcf];                       // a few pale ones, as the picture has
   const SPECK = 0x8e8784;                                              // and grey specks
   const LINE = [1, 0.34, 0.38];                                        // a link, red
@@ -663,9 +664,9 @@
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, 1, 0.05, 400);
     scene.fog = new THREE.Fog(0x1f1f20, 20, 60);
-    scene.add(new THREE.AmbientLight(0xffffff, 0.24));
-    scene.add(new THREE.HemisphereLight(0xfff4f0, 0x2a1c1c, 0.36));
-    const key = new THREE.DirectionalLight(0xffffff, 0.72);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+    scene.add(new THREE.HemisphereLight(0xfff4f0, 0x2a1c1c, 0.3));
+    const key = new THREE.DirectionalLight(0xffffff, 0.6);
     key.position.set(-3, 5, 4);
     scene.add(key);
     const rim = new THREE.DirectionalLight(0xffd0d0, 0.45);
@@ -735,12 +736,12 @@
           .replace("#include <color_fragment>", "#include <color_fragment>\ndiffuseColor.a *= vInstOpacity;")
           .replace("#include <emissivemap_fragment>", "#include <emissivemap_fragment>\ntotalEmissiveRadiance *= vColor.rgb;\n" +
             "float rimOf = 1.0 - clamp(dot(normalize(vViewPosition), normal), 0.0, 1.0);\n" +
-            "totalEmissiveRadiance += vColor.rgb * pow(rimOf, 2.2) * 1.15;");
+            "totalEmissiveRadiance += vColor.rgb * pow(rimOf, 2.2) * 1.45;");
       };
       return material;
     }
     const glowing = (extra) => perNode(new THREE.MeshStandardMaterial(Object.assign({
-      color: 0xffffff, emissive: 0x4c4c4c, roughness: 0.62, metalness: 0.06, flatShading: true,
+      color: 0xffffff, emissive: 0x505050, roughness: 0.62, metalness: 0.06, flatShading: true,
     }, extra)));
     sets.forEach((set) => {
       set.opacity = new THREE.InstancedBufferAttribute(opacity.subarray(set.from, set.from + set.count), 1);
@@ -766,7 +767,7 @@
     const glowGeo = new THREE.BufferGeometry();
     glowGeo.setAttribute("position", dynamic(T, 3));
     glowGeo.setAttribute("color", dynamic(T, 3));
-    const glow = new THREE.Points(glowGeo, new THREE.PointsMaterial(additive({ map: SPOT, size: 1.0, sizeAttenuation: true, vertexColors: true })));
+    const glow = new THREE.Points(glowGeo, new THREE.PointsMaterial(additive({ map: SPOT, size: 1.35, sizeAttenuation: true, vertexColors: true })));
     glow.frustumCulled = false;
     scene.add(glow);
 
@@ -2195,7 +2196,7 @@
           // little; the fillers less, the pale ones softly, the specks not at
           // all — brighter while white, and as
           // the signal passes.
-          let kindGlow = n.kind === 0 ? 1.3 + n.size * 3.6 : n.kind === 1 ? 0.7 : n.kind === 2 ? 0.34 : 0;
+          let kindGlow = n.kind === 0 ? 2 + n.size * 5.2 : n.kind === 1 ? 1.05 : n.kind === 2 ? 0.4 : 0;
           if (n.kind === 0 && !still) kindGlow *= 1 + 0.2 * Math.sin(twinkle * n.f[0] * 1.7 + n.ph[0]);
           const k = kindGlow * (1 + 0.6 * ph.changing + lit[i] * 1.6) * (0.2 + 0.8 * opacity[i]) * (i === selected ? 2 : 1) * grow;
           glowPos[i * 3] = x; glowPos[i * 3 + 1] = y; glowPos[i * 3 + 2] = z;

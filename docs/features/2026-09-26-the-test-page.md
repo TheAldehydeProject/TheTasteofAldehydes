@@ -773,3 +773,21 @@ The links, the white of the transition, the chrome and the button are as they we
 Tested: the tests' red is the deep red now — **`red()`** in `tests/test-page.spec.js` asks for a
 red channel between a half and four fifths and far above the green and blue (the old coral would
 fail it), and **`look()`** counts pixels whose red stands well above their green and blue.
+
+### A little glowier and darker
+
+> A little glowier and darker please!
+
+The same afternoon, one step further each way, and nothing else touched:
+
+- **Darker**: the notes' crimson taken down about a fifth (`REDS`, `#8c0a20` and round it, the
+  darkest `#72061a`), the fillers' burgundy nearer a wine (`DARKS`, `#5e0813` and round it, the
+  darkest `#48050d`), and the light falling on them less (the ambient 0.2, the sky 0.3, the key
+  0.6), so a facet turned to the light is not what makes a node bright.
+- **Glowier**: the rim burning round every facet's edge stronger (1.45 where it was 1.15), the
+  glow round every node larger (`size` 1.35 where it was 1.0) and stronger — the notes' `kindGlow`
+  `2 + size × 5.2` (it was `1.3 + size × 3.6`), the fillers' 1.05 (0.7), the pale ones' 0.4 — so
+  where the network crowds, its heart is a haze of red rather than a pile of red balls.
+
+`red()` in the tests asks for a red channel above two fifths now, not a half: the darkest note sits
+at 0.45.

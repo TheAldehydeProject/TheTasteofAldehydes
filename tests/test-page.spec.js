@@ -104,8 +104,9 @@ async function goTo(page, k, code) {
 }
 /** Rouge, not white: a note's colour once the signal has passed it — a
  *  deep red, the red far above the green and the blue (2026-09-28: "more
- *  red ike rouge ... A darker red"). */
-const red = (c) => c[0] > 0.5 && c[0] < 0.8 && c[1] < 0.2 && c[2] < 0.25 && c[0] > 3 * c[1];
+ *  red ike rouge ... A darker red", and then "A little glowier and darker
+ *  please!"). */
+const red = (c) => c[0] > 0.4 && c[0] < 0.8 && c[1] < 0.2 && c[2] < 0.25 && c[0] > 3 * c[1];
 
 test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
