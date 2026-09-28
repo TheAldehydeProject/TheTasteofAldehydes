@@ -958,3 +958,102 @@ the recording, every pitch one drawn on it; off its lines it stops and nothing m
 another stave starts from its own first note; off again, silence even on the lines. The partition
 is in the markup of every house, which **`every page has one h1, a main, headings in order, and
 every picture described`** and the house tests read.
+
+## 2026-09-28 — Qimu's staves are real pieces, named under them
+
+> For the qimu and musicians, i want you to actually find sheet music from some obscure piano
+> pieces and display that. I also want you to give their name when hovering that piece in a light
+> font underneath the sheet music.
+
+Files: `qimu.js` (its music and engraving rewritten; the page's staves, playhead and piano as
+they were), `qimu-pieces.js` and `tools/qimu-pieces.py` (both new), `motifs.js` (the Houses
+view, same engraver), `houses/qimu-and-musicians.html` (the pieces loaded, Archivo's 300, the
+credit), `categories/scent-descriptions.html` (the pieces loaded), `tests/houses.spec.js`,
+`tests/contact-sheet.spec.js`.
+
+**Every stave is now the opening of a real piano piece**, note for note as its score has it — and
+the composer that made the music up (`keyOf`, `composeBar`, `METERS`, the progressions) is gone
+from `qimu.js` and from `motifs.js`.
+
+**Where the music comes from.** *Polish Music Heritage in Open Access* (polishscores.org): the
+Fryderyk Chopin Institute's digital editions of Polish music, as **kern files (a plain-text way of
+writing a score, one column a staff, one line a moment), under CC BY 4.0 — which may be used with
+credit, and the page credits it. From its hundred and thirty-odd solo piano pieces, eighteen by
+composers of the first half of the nineteenth century whom hardly anyone plays now:
+
+- **Maria Szymanowska** — seven of the *Vingt exercices et préludes* (1819), Nos. 6, 8, 9, 13, 14,
+  15 and 18, and the *Caprice sur la romance de Joconde*;
+- **Władysław Żeleński** — the *Praeludium* and *Promenade* of the *Sechs Charakterstücke* Op. 17
+  (1872), and the *Adagio* and *Allegro con moto* of the Sonata Op. 20;
+- **Józef Krogulski** — a *Mazur*; **Józef Elsner** — the *Mazur* from the opera *Łokietek*;
+- **Franciszek Mirecki** — Krakowiaks Nos. 6 and 19 of the *Krakowiaki ofiarowane Polkom*;
+- **Wojciech Sowiński** — *Les Charmes de la campagne* Op. 11 No. 2;
+- **Kasper Napoleon Wysocki** — the *Walc rewolucyjny* (1831).
+
+Szymanowska's preludes are named by their number in the collection rather than by key: the
+archive's titles for several of them disagree with their own key signatures.
+
+**How it gets onto the page.** `tools/qimu-pieces.py`, run by hand and never by the site (it needs
+nothing installed; the header says how to fetch the scores), reads the first four bars of each
+(and an upbeat before them) and writes **`qimu-pieces.js`** — `window.QIMU_PIECES`, 57KB: each
+piece's composer, title, metre, key signature, a tempo, and its bars, each hand one or two voices,
+each a list of events filling the bar exactly — a note or chord as **steps** (letters above middle
+C, as the score before it used) and **alters**, the accidental an engraver writes before each
+(worked out bar by bar and staff by staff, as a score is read), which way its stem goes, which beam
+it is under, its ties and its slurs, triplets, rests, and the unseen rests of a voice that stops. A
+piece is taken only where its opening is plain enough for a margin: a treble and a bass staff, no
+change of clef, key or metre, no grace notes, at most two voices a hand, nothing shorter than a
+demisemiquaver. The tempo is chosen by hand for each (the scores give only words: *Allegro*,
+*Tempo di Mazurka*).
+
+**How it is drawn: THE ENGRAVER** — one block of `qimu.js`, from *THE ENGRAVER* to *THE ENGRAVER
+ENDS*, which is word for word the same in `motifs.js` (the Houses view draws the same pieces, and a
+test holds the two together; they used to share the composer the same way). What it does that the
+made-up music never needed: **chords under beams** (the stem from the far head, the beam from the
+near one, pushed out until every stem is long enough for its beams and reaching the middle line off
+notes far from the stave); **two voices on one stave**, the upper's stems up and the lower's down,
+their rests lifted and lowered; **seconds** in a chord, the upper head on the far side of an up
+stem and the lower on the far side of a down one; **accidentals** — sharps, flats and naturals —
+stacked in columns where a chord's would touch; **ties** between heads and **slurs** bowed clear of
+every note under them, running across bar lines; **demisemiquavers**, dotted semiquavers, triplet
+quavers and semiquavers (a *3* on the beam, a *6* over six); **a whole bar's rest** in the middle
+of its bar; stems reaching the middle line; an **upbeat** bar. A stave holds as many of its piece's
+opening bars as fit at their own width (one too wide for it alone drawn closer), ends on a **plain
+bar line** — the piece goes on — and carries **both hands** on a braced pair about half the time
+(`GRAND`), always when the right hand is silent at first or written low (more than a ledger line
+under the treble stave). The pieces come in a shuffled order, every one before any comes round
+again.
+
+**What is played is still exactly what is drawn**: the `music` a stave plays is read off its marks;
+a note tied on is **held through** the note it is tied to (`hold`) and that note is not struck
+again (`struck`); the playhead moves at the piece's own tempo.
+
+**Its name, under it, while the hand is on it**: the piece on one line and its composer under it,
+a little fainter (`NAME`, 0.56 and 0.72 of it), broken where it would run past the stave's end, set
+under everything written on it (`deep`, the lowest ink the engraver has put down) at the stave's
+left edge, in **Archivo at 300** — the page's own face, light, which its fonts link now asks for
+(`0,300`); the canvas asks for it before first use, as a canvas fetches no font on its own. It
+comes up over a few frames as the hand arrives and goes as it leaves (`NAME_IN`); at once with
+reduced motion. A tap names it on a phone. Behind the writing (no margins) it is as quiet as the
+stave.
+
+**The credit** is a third line in the foot: *Scores — The openings of eighteen piano pieces by …,
+from Polish Music Heritage in Open Access, © The Fryderyk Chopin Institute, under CC BY 4.0.*
+
+Tested in `tests/houses.spec.js`:
+
+- **`Qimu & Musicians' staves are the openings of real piano pieces, note for note`** (replacing
+  *… real music: bars that add up, in key, within a hand*) — at three window sizes, every stave one
+  of the eighteen; its bars the piece's own from the first, in order, with exactly the score's
+  pitches; every bar the length of the piece's time signature (an upbeat shorter) in every voice of
+  every hand; the right hand alone on a single stave; the piece's own time signature written; no
+  piece twice before every piece has come; more than eight pieces and three metres seen.
+- **`pointing at a stave names its piece under it, in a light face`** (new) — nothing named
+  unpointed; pointed at, the piece and its composer drawn under the stave at its left edge, in a
+  300 face; gone once the hand leaves.
+- **`… keeps a quiet score in its margins`** and **`… a stave pointed at plays exactly its own
+  music`** unchanged and still passing.
+
+In `tests/contact-sheet.spec.js`, **`the Houses view engraves Qimu's music with the house page's
+own code`** (was *… composes …*) compares the whole engraver in the two files, and finds no
+composer left in either.

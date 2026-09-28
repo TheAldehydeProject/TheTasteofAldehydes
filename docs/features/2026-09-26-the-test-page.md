@@ -15,7 +15,7 @@ the same night — and **since 2026-09-28 it is its own version of the library**
 every note, two arrows on the left, and an opening: see [that
 section](#2026-09-28--its-own-note-library-two-arrows-an-opening-and-shine) — **and since the evening
 of 2026-09-28 its note window has nothing of chemistry in it and a figure of every note in
-particles, and it has COMBINATIONS**: see [the last section](#2026-09-28-evening--a-glow-of-its-own-the-flash-on-a-journey-a-window-without-chemistry-and-combinations). The one network, then the five, then the galaxies, described first below, are
+particles, and it has COMBINATIONS**: see [that section](#2026-09-28-evening--a-glow-of-its-own-the-flash-on-a-journey-a-window-without-chemistry-and-combinations) — and **since the last round of 2026-09-28 there is no blur anywhere on it, a note's window lists the fragrances in each tier of its pyramid, and two notes in combinations keep only the middle of their Venn diagram**: see [the last section](#2026-09-28-last--no-blur-the-fragrances-in-each-tier-and-the-middle-of-the-venn-diagram). The one network, then the five, then the galaxies, described first below, are
 gone from the code; they are kept here for the reasoning, as the site's reports keep what was
 replaced.
 
@@ -1096,6 +1096,11 @@ non-pyramidal. (A fragrance can list a note in two tiers, so the four need not a
 
 ### The depth blur
 
+**Removed** the next round, with the soft moment after a tag is added — "remove the blur;
+entirely scratch that idea" — and nothing of it is in the code: see [the last
+section](#2026-09-28-last--no-blur-the-fragrances-in-each-tier-and-the-middle-of-the-venn-diagram).
+Kept here for the reasoning.
+
 Once expanded, whatever stands nearer or farther than what is looked at is drawn **soft**, as a
 lens would: at the centre, the centre and the networks level with it sharp, the others softer the
 farther in front or behind (`BLUR_BAND` 4 either side sharp, wholly soft `BLUR_RAMP` 22 beyond);
@@ -1135,6 +1140,8 @@ either would leave the soft layer black or blank rather than the page — the sh
 by the library's own materials, as before.
 
 ### A note added: the network soft, its lines drawn out
+
+(The network going soft went the next round with the depth blur; the lines are still drawn out.)
 
 When a note is added in combinations (typed, chosen or pressed), for 1.6 seconds (`TAG_MS`) **the
 rest of the network goes soft** — the same soft layer — while **the note's lines are drawn out**
@@ -1189,3 +1196,97 @@ To look at it: `?blur=off` against the page as it is.
   care; the spheres would, and at an accord everything in front is let go anyway.
 - On a slow machine the moment after a tag is added may be seen in only a few frames.
 
+## 2026-09-28, last — no blur, the fragrances in each tier, and the middle of the Venn diagram
+
+> remove the blur; entirely scratch that idea.
+>
+> picture 1: I want you to change the text in variations to "No records of variations exist as of
+> now"
+> i also want you to add a list of fragrances in which ingredient n is listed as a top note. do the
+> same for middle and base and non-pyramidal.
+>
+> image 2: make this text disappear if you move the thing, (i want you to make it an idle thing)
+>
+> I want you to change the way that the connections represent a perfume with all selected notes in
+> combinations, such that instead of all the notes you select showing their links to all the other
+> notes they are connected to, i want the selection of the second (and third and soone) note to
+> eliminate the connections that do not connect BOTH (or all) selected notes.
+
+Two things were asked. Whether "the blur" was the depth blur alone or the soft moment after a tag
+is added too — **both, all blur gone**; the tag's lines still draw out one by one. And what "only
+the connections that connect both" should be — the owner: *"i want each note to be a network, but
+upon selecting more than one note, only the lines that satisfy both networks are going to be
+included (like the middle area in a venn diagram)"*.
+
+### No blur
+
+Out of the code, not switched off: `DEPTH_BLUR` and `?blur=`, the soft layer and everything drawn
+into it (`SOFT`, `set.sp` / `set.soft`, `softGlow`, `softLinks`, `softBridges`, `SOFT_GLOW`,
+`SOFT_DIM`), the two render targets and the page's own two shaders (`blurMaterial`,
+`layMaterial`), the depth of field (`dofOf`, `blurOf`), the soft moment after a tag is added
+(`softest`, `bump`) and the check for a machine drawing in software. The frame ends with
+`renderer.render(scene, camera)` as it did before the blur. What the blur round left that is worth
+keeping stays: the translucent set **packed** (`packed`, `pack`, `packDone` — only the nodes it
+has this frame), the tag's lines drawn out (`TAG_MS`, `lineAt`, `LINE_GROW`), the flat grey ground
+and everything else in the section above. The test page is back to the library's own shaders and
+the two small additions to them (`perNode`, `glowSize`); it writes none of its own.
+
+### Variations, when there are none
+
+*No records of variations exist as of now* — the owner's words, where a note is written only one
+way (it said *Written only this way on the site.*).
+
+### The fragrances in each tier
+
+Under the pyramid, **four dropdowns** — *Top*, *Middle*, *Base*, *Non-pyramidal*, each with how
+many — and in each the fragrances naming the note there, by number, name and house (*Individual*
+for the individual fragrances), every one a way to it where it stands, in the site's house order.
+A fragrance can stand in two (a note named in the heart and the base). A tier with none says *None
+as of now.* and is greyed. They open and shut as the window's other dropdowns do and stay as they
+were left for the next note (`drop`, `dropsOpen`, `tier:top` …). `.net-note-tier-lists`,
+`.net-note-fhouse` in `style.css`.
+
+### "Choose a note …" only when left alone
+
+The line where the list's button stands, while no note is chosen, is **only there when the page
+is left alone** — it fades in with the arrows' glow once the hand has been still for `IDLE_MS`
+(`is-idle` on the stage), and out at the first movement (`.net-combine-toggle.is-hint`). With a
+note chosen it is the button to the list, as before, and always there.
+
+### The middle of the Venn diagram
+
+**One tag**: it is its own network — joined to every note found with it in any fragrance, as
+before. **Two or more**: each is still its own network, and only **the notes in every one of
+them** keep lines — the middle of their Venn diagram (`nets`, `networkOf`, in `recompute`). Every
+tag is joined to every one of those, **each line as bright as that tag is found with it** in its
+own network, and the tags to each other where they are found together. Everything else goes faint
+— a note of Yuzu's network and not the other's loses its lines — and **none of the network's own
+lines are drawn while a note is chosen** (they read as more connections). **The list** is still
+the fragrances that have every tag (*N fragrances have both*), which is a different, narrower
+thing: a note in the middle may be found with Yuzu in one fragrance and with the other in another.
+The bar's suggestions, once there is a tag, are the middle's. `NetScene.combined(names)` gives
+the same answer the page draws.
+
+### How to test it
+
+`tests/test-page.spec.js`:
+
+- **`once apart, a note pressed opens its own window ...`** — under the pyramid, each tier's
+  dropdown holds exactly the fragrances naming the note there, as many as the pyramid counts,
+  each a link into a house; a note written only one way (opened with `NetScene.open`) says *No
+  records of variations exist as of now*.
+- **`combinations: ...`** — "Choose a note …" gone while the hand moves, there once the page is
+  left to itself (`NetScene.leave`), gone again at a move; a tag's lines drawn out and done
+  (`tagging` false); two tags: only the middle of the two networks (every note of it in Yuzu's,
+  fewer than Yuzu's), `2 × middle + 1` lines, and a note of Yuzu's alone gone faint.
+- **`the depth blur is gone from the test page, not switched off`** (new, replacing the depth
+  blur's own) — none of `DEPTH_BLUR`, `WebGLRenderTarget`, `blurMaterial`, `SOFT_GLOW`, `softOp`
+  or `blur=off` in `network.js`.
+- With animation turned off, a tag's lines all at once.
+
+### Known issues / TODO
+
+- The lines and the list answer two different questions — what is found with each tag, and
+  which fragrances have them all — and the owner has only asked about the lines. If they meant the
+  lines to come from the fragrances with every tag alone, that is `recompute` reading `matched`
+  instead of `nets`.

@@ -889,3 +889,44 @@ In `tests/contact-sheet.spec.js`:
   other than 4/4 and nothing written but numbers, staves first and then loose; short five-line
   staves.
 
+
+## 2026-09-28 — Qimu & Musicians' music is the same real pieces
+
+When the house's own page stopped making its music up and took the openings of eighteen real piano
+pieces instead (the owner: "actually find sheet music from some obscure piano pieces and display
+that" — see [the newer houses](2026-09-21-the-newer-houses.md)), this view followed, still silent.
+
+- **The staves are those pieces.** `categories/scent-descriptions.html` loads `qimu-pieces.js`
+  before `motifs.js`, and a stave is a piece picked at random, **from a bar of its opening picked
+  at random**, as many of its bars as fit, both hands on a braced pair about a third of the time
+  (`QIMU_GRAND`) — always when the right hand has nothing to play in them, or is written low. It
+  ends on a plain bar line, as the house page's do: the piece goes on.
+- **The loose music is one bar of a piece's right hand**, a bar in which it plays, with no staff.
+- **One engraver for both pages.** The composer that was copied here word for word is gone, and in
+  its place **the whole engraver** is — the strokes, the reading of a piece's bar into events, the
+  layout, the engraving (chords under beams, two voices, seconds, accidental columns, ties and
+  slurs, triplets, a whole bar's rest), the stave's head, and `scoreOf` — from *THE ENGRAVER* to
+  *THE ENGRAVER ENDS*, the same in `qimu.js` word for word. The strokes it carries are the ones
+  this file had (a shade heavier than the house page's were); only `GAP` differs, 7 here and 6
+  there. What stays this file's own: where a stave stands and keeping it clear of the others, how
+  it is written out and faded, the loose music, and silence.
+- **No names here.** The house's page names a stave pointed at; nothing on this view is pointed at
+  (the hand is on a house), so nothing is named, and the test that nothing is written but numbers
+  still holds.
+- `HouseMotifs.music()` now says which piece (composer, title), the time written, and every bar —
+  which of the piece's it is, its length, each voice of each hand's length, its pitches.
+
+### How to test it
+
+In `tests/contact-sheet.spec.js`:
+
+- **`Qimu & Musicians' music on the Houses view is the same real pieces, and makes no sound`**
+  (was *… is real music …*) — every stave and passage one of the eighteen, its bars the piece's
+  own one after another, exactly the score's pitches, every bar a whole bar of the piece's time (an
+  upbeat less) in every voice of every hand; no sound asked of the browser.
+- **`the Houses view engraves Qimu's music with the house page's own code`** (was *… composes
+  …*) — the whole engraver the same in `qimu.js` and `motifs.js`, and no composer left in either.
+- **`Qimu & Musicians' music is complex, with no dynamics or ornaments, on staves and then
+  loose`** — the times now read off the music itself, over a few rests on the house: a piece keeps
+  its own time, so the metres vary from stave to stave rather than within one.
+- Faint and still, and short five-line staves: unchanged.

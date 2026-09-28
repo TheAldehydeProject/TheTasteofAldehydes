@@ -659,9 +659,10 @@ test("Les Abstraits has its armoire with iris on one side and a drip down the wh
    dont make them always 4/4 ... make it random (as long as its an
    actual used notation) ... Overall ... subtle". Read off what the
    page's canvas is asked to draw: noteheads, times other than 4/4,
-   nothing written but numbers (no dynamics, no ornaments), nothing
-   stronger than a little over half — and the staves CARRIED WITH THE
-   PAGE: scroll it and every stave is drawn that much higher. */
+   nothing written but numbers (no dynamics, no ornaments — and, while
+   nothing is pointed at, no names), nothing stronger than a little over
+   half — and the staves CARRIED WITH THE PAGE: scroll it and every stave
+   is drawn that much higher. */
 test("Qimu & Musicians keeps a quiet score in its margins, carried with the page", async ({ page }) => {
   await page.addInitScript(() => {
     window.__q = { heads: 0, texts: new Set(), strongest: 0, tops: [] };
@@ -704,49 +705,96 @@ test("Qimu & Musicians keeps a quiet score in its margins, carried with the page
   expect(before.filter((y) => after.includes(y - 200)).length, `before ${before}, after ${after}`).toBeGreaterThan(0);
 });
 
-/* AND IT IS MUSIC THAT CAN BE PLAYED: "make sure that whatever generated is
-   logical and can be played" (2026-09-26). Read off the score itself, at
-   three sizes of window: every bar lasts exactly what its time signature
-   says, in each hand; the time signatures written on a stave are the ones
-   its bars are in, in order; every note is in the stave's key (a minor
-   key's raised leading note allowed); nothing a hand plays at once spans
-   more than an octave; and it stays where a piano's middle lies. */
-test("Qimu & Musicians' score is real music: bars that add up, in key, within a hand", async ({ page }) => {
-  const LENGTH = { "4/4": 16, "3/4": 12, "2/4": 8, "5/4": 20, "7/4": 28, "6/4": 24, "2/2": 16, "3/2": 24,
-    "6/8": 12, "9/8": 18, "12/8": 24, "3/8": 6, "5/8": 10, "7/8": 14 };
+/* AND IT IS REAL MUSIC: "actually find sheet music from some obscure
+   piano pieces and display that" (2026-09-28). Every stave, at three
+   sizes of window, is the opening of one of the eighteen pieces in
+   qimu-pieces.js — the piece's own bars, from its first, in order, their
+   pitches exactly the score's, both hands on a braced pair and the right
+   hand alone otherwise; every bar lasts what the piece's time signature
+   says (an upbeat less), in every voice of every hand; the time signature
+   written is the piece's own. And every piece comes round before any
+   comes round again. (Until then this checked a key, an octave's reach and
+   a range, because the music was made up here.) */
+test("Qimu & Musicians' staves are the openings of real piano pieces, note for note", async ({ page }) => {
+  const LENGTH = { "4/4": 16, "3/4": 12, "2/4": 8, "6/8": 12, "12/8": 24, "3/8": 6 };
   const SEMIS = [0, 2, 4, 5, 7, 9, 11];
-  let bars = 0, meters = new Set();
+  const midi = (d, a) => 60 + 12 * Math.floor(d / 7) + SEMIS[((d % 7) + 7) % 7] + a;
+  let bars = 0;
+  const meters = new Set(), titles = new Set();
   for (const [w, h] of [[1440, 900], [1920, 1080], [390, 844]]) {
     await page.setViewportSize({ width: w, height: h });
     await page.goto(QIMU);
-    await page.waitForTimeout(600);
-    const staves = await page.evaluate(() => window.QimuScore.staves());
+    await page.evaluate(() => document.querySelectorAll("details").forEach((d) => { d.open = true; }));
+    await page.waitForTimeout(700);
+    const { staves, pieces } = await page.evaluate(() => ({ staves: window.QimuScore.staves(), pieces: window.QIMU_PIECES }));
+    expect(pieces.length, "eighteen pieces").toBe(18);
     expect(staves.length, "staves down the page").toBeGreaterThan(2);
+    // Every piece before any comes round again.
+    const firsts = staves.slice(0, Math.min(staves.length, pieces.length)).map((s) => s.title);
+    expect(new Set(firsts).size, `no piece twice before all have come: ${firsts.join(" | ")}`).toBe(firsts.length);
     staves.forEach((s, i) => {
-      // The key's own notes, and a minor key's raised leading note.
-      const inKey = new Set(SEMIS.map((v, l) => (v + s.key.sig[l] + 12) % 12));
-      if (s.key.minor) inKey.add((SEMIS[(s.key.tonic + 6) % 7] + s.key.sig[(s.key.tonic + 6) % 7] + 1 + 12) % 12);
-      const expected = [s.bars[0].meter];
+      const piece = pieces.find((p) => p.title === s.title && p.composer === s.composer);
+      expect(piece, `stave ${i} is one of the pieces: ${s.title}`).toBeTruthy();
+      titles.add(s.title);
+      expect(s.written, `stave ${i}: the piece's own time signature`).toEqual([piece.meter.join("/")]);
+      expect(s.bars.map((b) => b.n), `stave ${i}: the piece's opening bars, in order`).toEqual(s.bars.map((b, j) => j));
       s.bars.forEach((b, j) => {
         bars++; meters.add(b.meter);
-        if (j && b.meter !== s.bars[j - 1].meter) expected.push(b.meter);
-        expect(b.units, `stave ${i} bar ${j} is a whole ${b.meter}`).toBe(LENGTH[b.meter]);
-        expect(b.right, `stave ${i} bar ${j}, the right hand fills its ${b.meter}`).toBeCloseTo(b.units, 5);
-        if (s.grand) expect(b.left, `stave ${i} bar ${j}, the left hand fills its ${b.meter}`).toBeCloseTo(b.units, 5);
-        b.pitches.forEach((chord) => {
-          chord.forEach((m) => {
-            expect(inKey.has(m % 12), `stave ${i} bar ${j}: ${m} in the key`).toBe(true);
-            expect(m, "no lower than a piano's E1").toBeGreaterThanOrEqual(28);
-            expect(m, "no higher than C6").toBeLessThanOrEqual(84);
-          });
-          expect(Math.max(...chord) - Math.min(...chord), `stave ${i} bar ${j}: within a hand`).toBeLessThanOrEqual(12);
-        });
+        const src = piece.bars[b.n];
+        if (src.pickup) expect(b.units, `stave ${i} bar ${j}, an upbeat`).toBeLessThan(LENGTH[b.meter]);
+        else expect(b.units, `stave ${i} bar ${j} is a whole ${b.meter}`).toBe(LENGTH[b.meter]);
+        b.right.forEach((v, k) => expect(v, `stave ${i} bar ${j}, right hand voice ${k} fills its bar`).toBeCloseTo(b.units, 4));
+        if (s.grand) b.left.forEach((v, k) => expect(v, `stave ${i} bar ${j}, left hand voice ${k} fills its bar`).toBeCloseTo(b.units, 4));
+        else expect(b.left, `stave ${i}: a single stave carries the right hand alone`).toBeNull();
+        // The pitches, exactly the score's.
+        const hands = s.grand ? [...src.right, ...src.left] : src.right;
+        const want = hands.flat().filter((e) => !e.rest).map((e) => e.ds.map((d, q) => midi(d, e.al[q])));
+        expect(b.pitches, `stave ${i} bar ${j}: the score's own notes`).toEqual(want);
       });
-      expect(s.written, `stave ${i}: the time signatures written are the ones its bars are in`).toEqual(expected);
     });
   }
   expect(bars, "bars written").toBeGreaterThan(20);
+  expect(titles.size, "many pieces").toBeGreaterThan(8);
   expect(meters.size, "in several metres, not always 4/4").toBeGreaterThan(3);
+});
+
+/* ITS NAME: "give their name when hovering that piece in a light font
+   underneath the sheet music". Nothing is named until a stave is pointed
+   at; then its piece and its composer are set under everything written
+   on it, in a light face (weight 300 — the page asks for Archivo's), and
+   taken away again once the hand has gone. */
+test("pointing at a stave names its piece under it, in a light face", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__named = [];
+    const P = CanvasRenderingContext2D.prototype;
+    const fillText = P.fillText;
+    P.fillText = function (t, x, y) {
+      if (this.canvas.classList.contains("human-field") && !/^\d+$/.test(String(t))) window.__named.push({ t: String(t), font: this.font, x, y });
+      return fillText.apply(this, arguments);
+    };
+  });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(QIMU);
+  await page.waitForTimeout(3000);
+  expect(await page.evaluate(() => window.__named.length), "nothing named unpointed").toBe(0);
+  const boxes = (await page.evaluate(() => window.QimuScore.boxes())).filter((b) => b.written && b.y > 70 && b.y + b.deep + 60 < 880);
+  expect(boxes.length, "a stave on the window").toBeGreaterThan(0);
+  const one = boxes[0];
+  const info = (await page.evaluate(() => window.QimuScore.staves()))[one.i];
+  await page.mouse.move(one.x + one.w / 2, one.y + one.h / 2, { steps: 3 });
+  await expect.poll(() => page.evaluate((i) => window.QimuScore.boxes()[i].named, one.i)).toBeGreaterThan(0.9);
+  const named = await page.evaluate(() => window.__named.slice(-40));
+  const said = [...new Set(named.map((n) => n.t))].join(" ");
+  expect(said, "the piece").toContain(info.title.split(" ").slice(0, 2).join(" "));
+  expect(said, "and its composer").toContain(info.composer.split(" ").pop());
+  named.forEach((n) => {
+    expect(n.font, "a light face").toMatch(/^300 /);
+    expect(n.y, "under the stave").toBeGreaterThan(one.y + one.h);
+    expect(n.x, "at its left edge").toBeCloseTo(one.x, 0);
+  });
+  // Off it, the name goes.
+  await page.mouse.move(720, 20, { steps: 3 });
+  await expect.poll(() => page.evaluate((i) => window.QimuScore.boxes()[i].named, one.i)).toBe(0);
 });
 
 /* THE SOUND: "a button on top that allows you to mute and unmute. it

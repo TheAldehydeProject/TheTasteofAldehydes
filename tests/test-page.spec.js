@@ -627,6 +627,22 @@ test("once apart, a note pressed opens its own window over the page out of focus
     .toEqual([more.tally.top + of, more.tally.mid + of, more.tally.base + of]);
   await expect(win.locator(".net-note-pyr-flat-n")).toHaveText(more.tally.flat + of);
   await expect(win.locator(".net-note-pyr-flat-word")).toHaveText("non-pyramidal");
+  // AND UNDER IT, THE FRAGRANCES IN EACH: "add a list of fragrances in
+  // which ingredient n is listed as a top note. do the same for middle and
+  // base and non-pyramidal" — each a dropdown saying how many, every one a
+  // way to it.
+  const TIERS = { top: "Top", mid: "Middle", base: "Base", flat: "Non-pyramidal" };
+  for (const [t, say] of Object.entries(TIERS)) {
+    const box = win.locator('.net-note-tier[data-tier="' + t + '"]');
+    await expect(box.locator("summary")).toContainText(say);
+    await expect(box.locator("summary")).toContainText(String(more.tiers[t].length));
+    const inIt = (await box.locator("a[data-key]").evaluateAll((as) => as.map((a) => a.dataset.key))).sort();
+    expect(inIt, say + ": the fragrances naming it there").toEqual(more.tiers[t]);
+    expect(more.tiers[t].length, say + ": as many as the pyramid counts").toBe(more.tally[t]);
+    if (!more.tiers[t].length) await expect(box).toContainText("None as of now.");
+  }
+  const tierLinks = await win.locator(".net-note-tier a[data-key]").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
+  tierLinks.forEach((h) => expect(h).toMatch(/^\.\.\/(houses\/[a-z-]+|individual-fragrances\/individual-fragrances)\.html#part-\d\d$/));
   // THE MOST FREQUENT COMBINATIONS.
   const chips = win.locator(".net-note-chip");
   expect(await chips.count(), "the notes it is most often combined with").toBeGreaterThan(3);
@@ -669,6 +685,14 @@ test("once apart, a note pressed opens its own window over the page out of focus
   await page.mouse.click(at.x, at.y);
   await expect(win).toBeVisible();
   await page.mouse.click(40, 500);
+  await expect(win).toBeHidden();
+  // A NOTE WRITTEN ONLY ONE WAY says so, in the owner's words.
+  const plain = await page.evaluate(() => window.NetScene.notes().map((n) => n.name).find((x) => !window.NetScene.about(x).aka.length));
+  expect(await page.evaluate((x) => window.NetScene.open(x), plain)).toBe(true);
+  await expect(win.locator(".net-note-name")).toHaveText(plain);
+  await expect(win.locator(".net-note-aka h3")).toHaveText("Variations · 00");
+  await expect(win.locator(".net-note-aka .net-note-none")).toHaveText("No records of variations exist as of now");
+  await page.keyboard.press("Escape");
   await expect(win).toBeHidden();
   // A FILLER: pointed at, it says nothing; pressed, nothing is chosen and
   // nothing moves.
@@ -824,60 +848,12 @@ test("at an accord nothing stands in its way, the menu's hand does not take it a
   expect(errors).toEqual([]);
 });
 
-/* THE DEPTH BLUR (2026-09-28, night: "try to add a depth blur in when
-   using the expanded view ... make it reversible in case we dont like it"):
-   once expanded, what stands nearer or farther than what is looked at is
-   drawn soft — at the centre, the networks level with it sharp and the rest
-   softer the farther off; at an accord, the whole of it sharp and the rest
-   soft; nothing soft in the one network; and `?blur=off` on the address
-   takes it away (DEPTH_BLUR in network.js, for good). A machine drawing in
-   software — this one — is not given it unless `?blur=on` asks: there it
-   halved the frames. */
-test("expanded, what is nearer or farther than what is looked at goes soft, and ?blur=off takes it away", async ({ page }) => {
-  test.setTimeout(240000);
-  const errors = collectPageErrors(page);
-  // On as it stands, but for a machine drawing in software.
-  await open(page);
-  let s = await state(page);
-  expect(s.depthBlur, "on, unless drawn in software").toBe(!s.software);
-  await page.goto(TEST_PAGE + "?blur=on");
-  const stage = page.locator(".net-stage");
-  await expect(stage).toHaveClass(/is-drawn/, { timeout: 15000 });
-  await settle(page);
-  const N = +(await stage.getAttribute("data-notes"));
-  s = await state(page);
-  expect(s.depthBlur, "on").toBe(true);
-  expect(s.soft, "nothing soft in the one network").toBe(false);
-  await page.locator(".net-expand").click();
-  await expect(stage).toHaveAttribute("data-state", "apart", { timeout: 90000 });
-  await expect.poll(async () => (await state(page)).flying, { timeout: 20000 }).toBe(false);
-  await expect.poll(async () => (await state(page)).soft, { timeout: 5000 }).toBe(true);
-  s = await state(page);
-  expect(s.dof, "wholly, once apart").toBe(1);
-  expect(s.blurred, "at the centre, the notes far in front of it or behind it soft").toBeGreaterThan(10);
-  expect(s.blurred, "and those level with it not").toBeLessThan(N * 0.8);
-  expect(s.softLines, "their links soft with them").toBeGreaterThan(100);
-  // AT AN ACCORD: every one of its notes sharp, and the rest of the library soft.
-  await goTo(page, 8, "WOO");
-  await page.waitForTimeout(900);
-  const soft = await page.evaluate(() => window.NetScene.notes().map((n) => [n.code, window.NetScene.softness(n.name)]));
-  soft.filter(([c]) => c === "WOO").forEach(([, b]) => expect(b, "a note of Woods sharp").toBe(0));
-  expect(soft.filter(([c, b]) => c !== "WOO" && b > 0.5).length, "the rest nearer or farther soft").toBeGreaterThan(10);
-  // COLLAPSED: nothing soft.
-  await page.locator(".net-expand").click();
-  await expect(stage).toHaveAttribute("data-state", "one", { timeout: 90000 });
-  await expect.poll(async () => (await state(page)).soft, { timeout: 5000 }).toBe(false);
-  // ?blur=off: none of it.
-  await page.goto(TEST_PAGE + "?blur=off");
-  await expect(stage).toHaveClass(/is-drawn/, { timeout: 15000 });
-  await settle(page);
-  expect((await state(page)).depthBlur).toBe(false);
-  await expandIt(page);
-  await expect.poll(async () => (await state(page)).flying, { timeout: 20000 }).toBe(false);
-  s = await state(page);
-  expect(s.soft, "no soft layer").toBe(false);
-  expect(s.blurred, "nothing soft").toBe(0);
-  expect(errors).toEqual([]);
+/* NO BLUR: "remove the blur; entirely scratch that idea" (2026-09-28).
+   The depth blur and the soft layer it drew with are gone from the code,
+   not switched off — no second pass drawn apart, no blur of its own. */
+test("the depth blur is gone from the test page, not switched off", () => {
+  const src = require("fs").readFileSync(require("path").join(__dirname, "..", "network.js"), "utf8");
+  expect(src).not.toMatch(/DEPTH_BLUR|WebGLRenderTarget|blurMaterial|SOFT_GLOW|softOp|blur=off/);
 });
 
 /* COLLAPSING: back through white into the one red network, the nodes made
@@ -911,10 +887,15 @@ test("collapsing brings every note back into the one red network", async ({ page
    and loosens — still one network — Expand goes and a way back comes, the
    two together in the middle ("center both"), and a bar takes notes as
    tags: a tag is joined, on the network, to every note found with it in a
-   fragrance — the network going soft a moment while its lines are drawn
-   out ("a short animation of blurring the cluster and connecting the
-   notes") — and a list, plainly a button now, opens of the fragrances that
-   have every tag; RESET takes them all away at once. */
+   fragrance, its lines drawn out one by one ("connecting the notes"; the
+   network going soft while they were, a blur, went with the depth blur —
+   "remove the blur; entirely scratch that idea") — and a SECOND tag leaves
+   only the MIDDLE OF THE VENN DIAGRAM: "i want each note to be a network,
+   but upon selecting more than one note, only the lines that satisfy both
+   networks are going to be included". A list, plainly a button, opens of
+   the fragrances that have every tag; RESET takes them all away at once;
+   and "Choose a note to see what it is combined with" is said only while
+   the page is left alone ("make it an idle thing"). */
 test("combinations: the network turns gold and loosens, and notes taken as tags show what they are combined with", async ({ page }) => {
   test.setTimeout(180000);
   const errors = collectPageErrors(page);
@@ -944,6 +925,19 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
   expect(backBox.x + backBox.width, "Back before it").toBeLessThan(onBox.x);
   expect(Math.abs((backBox.x + onBox.x + onBox.width) / 2 - 720), "the two together in the middle").toBeLessThan(3);
   await expect(page.locator(".net-combine-reset"), "nothing to reset yet").toBeDisabled();
+  // "CHOOSE A NOTE ..." ONLY WHEN LEFT ALONE: gone while the hand moves,
+  // there once the page has been left to itself, gone again at a move.
+  const hint = page.locator(".net-combine-toggle");
+  await expect(hint).toHaveClass(/is-hint/);
+  await expect(hint).toContainText("Choose a note to see what it is combined with");
+  await page.mouse.move(1300, 180, { steps: 3 });
+  await expect.poll(() => hint.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 3000 }).toBeLessThan(0.05);
+  await page.evaluate(() => window.NetScene.leave(9000));
+  await expect(stage).toHaveClass(/is-idle/, { timeout: 5000 });
+  await expect.poll(() => hint.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 3000 }).toBeGreaterThan(0.95);
+  await page.mouse.move(1280, 200, { steps: 3 });
+  await expect(stage).not.toHaveClass(/is-idle/);
+  await expect.poll(() => hint.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 3000 }).toBeLessThan(0.05);
   expect(await page.locator(".net-combine-button").evaluate((b) => getComputedStyle(b).backgroundColor), "black on white").toMatch(/rgb\(24[0-9], 2[34][0-9], 2[23][0-9]\)/);
   // THE BAR, and the first tag.
   const input = page.locator(".net-combine-input");
@@ -954,10 +948,8 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
   await page.keyboard.press("Enter");
   await expect(page.locator(".net-tag")).toHaveCount(1);
   await expect(page.locator(".net-tag")).toContainText("Yuzu");
-  // THE NETWORK SOFT A MOMENT, and back in focus once its lines are out.
-  await expect.poll(async () => (await state(page)).softest, { timeout: 8000, intervals: [30] }).toBeGreaterThan(0.3);
-  await expect.poll(async () => (await state(page)).bump, { timeout: 8000 }).toBe(0);
-  await expect.poll(async () => (await state(page)).soft, { timeout: 5000 }).toBe(false);
+  // ITS LINES DRAWN OUT, and nothing going soft while they are.
+  await expect.poll(async () => (await state(page)).tagging, { timeout: 8000 }).toBe(false);
   const one = await page.evaluate(() => window.NetScene.combined(["Yuzu"]));
   let s = await state(page);
   expect(s.tags).toEqual(["Yuzu"]);
@@ -1000,6 +992,15 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
   expect(s.matched, "the fragrances with both").toEqual(two.keys);
   expect(two.keys.length).toBeGreaterThan(0);
   expect(s.partners, "and what is found with both").toBe(Object.keys(two.withs).length);
+  // THE MIDDLE OF THE VENN DIAGRAM: only what is found with BOTH keeps its
+  // lines — a note of Yuzu's network and not the other's loses them, and
+  // goes faint — and each of the two is joined to every one of the middle.
+  Object.keys(two.withs).forEach((m) => expect(m in one.withs, m + " is in Yuzu's network").toBe(true));
+  expect(Object.keys(two.withs).length, "fewer than Yuzu's own").toBeLessThan(Object.keys(one.withs).length);
+  await expect.poll(async () => (await state(page)).tagging, { timeout: 8000 }).toBe(false);
+  await expect.poll(async () => (await state(page)).tagLines, { timeout: 5000 }).toBe(2 * Object.keys(two.withs).length + 1);
+  const outside = Object.keys(one.withs).find((m) => m !== partner && !(m in two.withs));
+  await expect.poll(async () => (await page.evaluate((n) => window.NetScene.note(n), outside)).opacity, { timeout: 8000 }).toBeLessThan(0.2);
   // What nothing answers says so, in the owner's words.
   await input.fill("zzzq");
   await expect(page.locator(".net-suggest.is-none")).toHaveText("Unfortunately nothing like that exists on this page yet.");
@@ -1139,12 +1140,11 @@ test.describe("the test page with animation turned off", () => {
     // Combinations, at once, and out of them.
     await page.locator(".net-combine-button").click();
     await expect(stage, "combinations at once").toHaveAttribute("data-combine", "on", { timeout: 1000 });
-    // A note added: its lines at once, and nothing going soft.
+    // A note added: its lines at once.
     await page.locator(".net-combine-input").fill("yuz");
     await page.keyboard.press("Enter");
     await expect(page.locator(".net-tag")).toHaveCount(1);
     await page.waitForTimeout(600);
-    expect((await state(page)).softest, "no soft moment").toBe(0);
     expect((await state(page)).tagLines, "every line out at once").toBe((await state(page)).partners);
     await page.locator(".net-back").click();
     await expect(stage, "and out at once").toHaveAttribute("data-combine", "", { timeout: 1000 });

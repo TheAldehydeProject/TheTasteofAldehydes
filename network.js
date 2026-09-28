@@ -208,26 +208,14 @@
   // 2026-09-28, night), the red the more so.
   const GLOW_NOTE = 22, GLOW_FILL = 18;
   const GLOW_RED = 0.34, GLOW_GOLD = 0.55;
-  // THE DEPTH BLUR (2026-09-28, night: "try to add a depth blur in when
-  // using the expanded view ... make it reversible in case we dont like
-  // it"): once expanded, whatever stands nearer or farther than what is
-  // looked at goes soft, as it would through a lens — the centre and the
-  // networks level with it sharp, the rest softer the farther off; at an
-  // accord, the whole of it sharp and everything else soft. DEPTH_BLUR is
-  // the switch: false, and it is gone. `?blur=off` (or `?blur=on`) on the
-  // address tries the other way without changing anything.
-  const DEPTH_BLUR = true;
-  const BLUR_BAND = 4;                  // this far nearer or farther than what is looked at stays sharp
-  const BLUR_RAMP = 22;                 // ... and over this much more it goes wholly soft
-  const BLUR_STEPS = [0.6, 1];          // how soft is wholly soft: the blur, run twice, this far a tap
-  // A NOTE ADDED IN COMBINATIONS: the network goes soft for a moment, and
-  // the note's lines are drawn out to what it is found with, each coming
-  // into focus as its line reaches it ("a short animation of blurring the
-  // cluster and connecting the notes").
+  // A NOTE ADDED IN COMBINATIONS: its lines are drawn out to what it is
+  // found with, the nearest first, one after another ("... connecting the
+  // notes"). (For a night, 2026-09-28, the rest of the network went soft
+  // while they were — and, once expanded, what stood nearer or farther
+  // than what was looked at was drawn soft, a DEPTH BLUR. The owner:
+  // "remove the blur; entirely scratch that idea". Nothing of either is
+  // here.)
   const TAG_MS = 1600;
-  const SOFT_GLOW = 0;                  // how much of its glow a node gone soft keeps
-  const SOFT_DIM = 0.72;                // and how much of the rest: a little less, so that a
-                                        // network out of focus is quieter, not a haze
 
   // THE ONE NETWORK
   const ONE_R = 5.2;                    // how far its body reaches
@@ -799,15 +787,10 @@
     // back, with a glow, and a darker red.) The notes and the fillers are
     // two sets of them (the notes are nodes 0 to NOTE_COUNT - 1), and each
     // set is drawn twice over — whole (writing depth) and going or gone
-    // translucent (not) — sharing one opacity per node; and a third time,
-    // on THE SOFT LAYER (below), for as much of each as is out of focus.
+    // translucent (not) — sharing one opacity per node.
     // perNode: the one addition to the library's shader — each node's own
     // opacity, its glow from within taken in its own colour, and the rim.
     const opacity = new Float32Array(T).fill(1);
-    // What is drawn: each node's opacity, as much of it as is sharp, and as
-    // much as is soft.
-    const drawnOp = new Float32Array(T).fill(1), softOp = new Float32Array(T);
-    const SOFT = 1;                       // the layer the soft copies are drawn on
     const N = NOTE_COUNT;
     const sets = [
       { geo: new THREE.IcosahedronGeometry(1, 1), from: 0, count: N },
@@ -830,11 +813,9 @@
     const glowing = (extra) => perNode(new THREE.MeshStandardMaterial(Object.assign({
       color: 0xffffff, emissive: 0x505050, roughness: 0.62, metalness: 0.06, flatShading: true,
     }, extra)));
-    // The translucent and the soft sets are written PACKED — only the
-    // nodes each draws, one after another, and only that many drawn — each
-    // with its own colours and opacities: the soft layer keeps some node
-    // part-soft nearly always, and a set drawn whole for the sake of a few
-    // cost this machine's software drawing half its frames.
+    // The translucent set is written PACKED — only the nodes it draws, one
+    // after another, and only that many drawn — with its own colours and
+    // opacities, rather than every node of its set drawn and most hidden.
     const packed = (set, extra) => {
       const geo = new THREE.BufferGeometry();
       Object.keys(set.geo.attributes).forEach((k) => { if (k !== "instOpacity") geo.setAttribute(k, set.geo.attributes[k]); });
@@ -852,7 +833,7 @@
       return { mesh, op: op.array, opAttr: op, m: mesh.instanceMatrix.array, c: mesh.instanceColor.array, n: 0 };
     };
     sets.forEach((set) => {
-      set.opacity = new THREE.InstancedBufferAttribute(drawnOp.subarray(set.from, set.from + set.count), 1);
+      set.opacity = new THREE.InstancedBufferAttribute(opacity.subarray(set.from, set.from + set.count), 1);
       set.opacity.setUsage(THREE.DynamicDrawUsage);
       set.geo.setAttribute("instOpacity", set.opacity);
       set.solid = new THREE.InstancedMesh(set.geo, glowing({}), set.count);
@@ -862,14 +843,10 @@
       set.solid.instanceColor.setUsage(THREE.DynamicDrawUsage);
       set.solid.frustumCulled = false;
       scene.add(set.solid);
-      // Going or gone translucent; and its soft copy, on the soft layer.
+      // Going or gone translucent.
       set.fp = packed(set);
       set.faint = set.fp.mesh;
       scene.add(set.faint);
-      set.sp = packed(set);
-      set.soft = set.sp.mesh;
-      set.soft.layers.set(SOFT);
-      scene.add(set.soft);
     });
     /** A node written into a packed set: where, how large, its colour, how
         opaque. */
@@ -913,14 +890,6 @@
     const glow = new THREE.Points(glowGeo, glowMaterial);
     glow.frustumCulled = false;
     scene.add(glow);
-    const softGlowGeo = new THREE.BufferGeometry();
-    softGlowGeo.setAttribute("position", glowGeo.attributes.position);
-    softGlowGeo.setAttribute("glowSize", glowGeo.attributes.glowSize);
-    softGlowGeo.setAttribute("color", dynamic(T, 3));
-    const softGlow = new THREE.Points(softGlowGeo, glowMaterial);
-    softGlow.frustumCulled = false;
-    softGlow.layers.set(SOFT);
-    scene.add(softGlow);
 
     // THE LINKS — the one network's, the accords', the middle nodes' and,
     // in combinations, the tags' — one set of lines, written each frame.
@@ -931,14 +900,6 @@
     const links = new THREE.LineSegments(linkGeo, new THREE.LineBasicMaterial(additive({ vertexColors: true })));
     links.frustumCulled = false;
     scene.add(links);
-    const softLinkGeo = new THREE.BufferGeometry();
-    softLinkGeo.setAttribute("position", dynamic(MAX_SEGMENTS * 2, 3));
-    softLinkGeo.setAttribute("color", dynamic(MAX_SEGMENTS * 2, 3));
-    const softPos = softLinkGeo.attributes.position.array, softCol = softLinkGeo.attributes.color.array;
-    const softLinks = new THREE.LineSegments(softLinkGeo, links.material);
-    softLinks.frustumCulled = false;
-    softLinks.layers.set(SOFT);
-    scene.add(softLinks);
 
     // THE PULSES running along the links.
     const pulse = [];
@@ -1017,13 +978,6 @@
     const bridges = new THREE.LineSegments(bridgeGeo, new THREE.LineBasicMaterial(additive({ vertexColors: true })));
     bridges.frustumCulled = false;
     scene.add(bridges);
-    const softBridgeGeo = new THREE.BufferGeometry();
-    softBridgeGeo.setAttribute("position", bridgeGeo.attributes.position);
-    softBridgeGeo.setAttribute("color", dynamic(A16 * 2, 3));
-    const softBridges = new THREE.LineSegments(softBridgeGeo, bridges.material);
-    softBridges.frustumCulled = false;
-    softBridges.layers.set(SOFT);
-    scene.add(softBridges);
     const BP = 3;
     const bpGeo = new THREE.BufferGeometry();
     bpGeo.setAttribute("position", dynamic(A16 * (BP + 1), 3));
@@ -1040,141 +994,7 @@
     }
     const dustGeo = new THREE.BufferGeometry();
     dustGeo.setAttribute("position", new THREE.Float32BufferAttribute(dust, 3));
-    const dustSpecks = new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0x8a8480, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0.55, fog: false }));
-    scene.add(dustSpecks);
-
-    // ============================================================
-    // THE SOFT LAYER: what is out of focus — by depth once expanded, and for
-    // a moment when a note is added in combinations — is drawn a second
-    // time, apart, at half the window's size, blurred, and laid down under
-    // everything that is sharp. Each node, link and glow is shared between
-    // the two by how soft it is, so nothing is drawn stronger than it was;
-    // the centre, the middle nodes, their frames, the ring and the specks
-    // in the air go into both the same way. Nothing of it is drawn while
-    // nothing is soft.
-    // ============================================================
-    scene.children.forEach((o) => { if (o.isLight) o.layers.enable(SOFT); });
-    const shareable = [hubBall, hubCage, hubRing, hubRing2, hubGlow, oneRing, dustSpecks];
-    accords.forEach((A) => shareable.push(A.coreBall, A.coreCage, A.coreGlow, A.frame));
-    shareable.forEach((o) => o.layers.enable(SOFT));
-    // How soft each of them is this frame (none, unless it says).
-    const softness = new Map(shareable.map((o) => [o, 0]));
-    const share = (o, b) => { softness.set(o, b > 0.004 ? b : 0); };
-    // (A machine drawing in software — no graphics card to hand the drawing
-    // to — is not given it unless asked: every soft node is drawn a second
-    // time, see-through, and there it halved the frames. `?blur=on` asks.)
-    const software = (() => {
-      if (!renderer.extensions.has("WEBGL_debug_renderer_info")) return false;
-      const gl = renderer.getContext(), info = gl.getExtension("WEBGL_debug_renderer_info");
-      return /swiftshader|llvmpipe|softpipe|software/i.test(String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)));
-    })();
-    const depthBlurOn = /[?&]blur=off\b/.test(location.search) ? false : /[?&]blur=on\b/.test(location.search) ? true : DEPTH_BLUR && !software;
-    const halfFloat = renderer.capabilities.isWebGL2 && renderer.extensions.has("EXT_color_buffer_float");
-    const softTarget = () => new THREE.WebGLRenderTarget(2, 2, {
-      minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat,
-      type: halfFloat ? THREE.HalfFloatType : THREE.UnsignedByteType, stencilBuffer: false,
-    });
-    const softA = softTarget(), softB = softTarget();
-    softB.depthBuffer = false;
-    const flat = new THREE.Scene();
-    const flatCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const QUAD_VS = "varying vec2 vUv;\nvoid main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }";
-    // A Gaussian of thirteen taps read in seven, along one way at a time.
-    const blurMaterial = new THREE.ShaderMaterial({
-      uniforms: { tMap: { value: null }, uStep: { value: new THREE.Vector2() } },
-      vertexShader: QUAD_VS,
-      fragmentShader: [
-        "uniform sampler2D tMap;", "uniform vec2 uStep;", "varying vec2 vUv;",
-        "void main() {",
-        "  vec4 c = texture2D(tMap, vUv) * 0.19648255;",
-        "  c += (texture2D(tMap, vUv + uStep * 1.41176471) + texture2D(tMap, vUv - uStep * 1.41176471)) * 0.29690696;",
-        "  c += (texture2D(tMap, vUv + uStep * 3.29411765) + texture2D(tMap, vUv - uStep * 3.29411765)) * 0.09447040;",
-        "  c += (texture2D(tMap, vUv + uStep * 5.17647059) + texture2D(tMap, vUv - uStep * 5.17647059)) * 0.01038136;",
-        "  gl_FragColor = c;",
-        "}",
-      ].join("\n"),
-      depthTest: false, depthWrite: false, blending: THREE.NoBlending,
-    });
-    // Laid down as it is, with a grain of noise where there is anything, so
-    // that a soft edge is never drawn in steps.
-    const layMaterial = new THREE.ShaderMaterial({
-      uniforms: { tMap: { value: null } },
-      vertexShader: QUAD_VS,
-      fragmentShader: [
-        "uniform sampler2D tMap;", "varying vec2 vUv;",
-        "float grain(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }",
-        "void main() {",
-        "  vec4 c = texture2D(tMap, vUv);",
-        "  float there = clamp((c.r + c.g + c.b + c.a) * 64.0, 0.0, 1.0);",
-        "  c.rgb = max(c.rgb + (grain(gl_FragCoord.xy) - 0.5) / 255.0 * there, 0.0);",
-        "  gl_FragColor = c;",
-        "}",
-      ].join("\n"),
-      depthTest: false, depthWrite: false, blending: THREE.NoBlending,
-    });
-    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), blurMaterial);
-    quad.frustumCulled = false;
-    flat.add(quad);
-    renderer.autoClear = false;
-    function sizeSoft() {
-      const w = Math.max(2, Math.ceil(renderer.domElement.width / 2)), h = Math.max(2, Math.ceil(renderer.domElement.height / 2));
-      softA.setSize(w, h);
-      softB.setSize(w, h);
-    }
-    /** The frame drawn: with nothing soft, as it is; otherwise the soft
-        layer first — drawn apart, blurred twice over, laid down — and what
-        is sharp over it. */
-    let softLast = false;
-    function render(soft) {
-      softLast = soft;
-      renderer.setClearColor(0x000000, 0);
-      if (!soft) {
-        camera.layers.set(0);
-        renderer.setRenderTarget(null);
-        renderer.clear();
-        renderer.render(scene, camera);
-        return;
-      }
-      const keep = [];
-      shareable.forEach((o) => {
-        const b = softness.get(o);
-        keep.push(o.material.opacity, o.visible);
-        o.material.opacity = keep[keep.length - 2] * b * SOFT_DIM;
-        o.visible = o.visible && b > 0;
-      });
-      camera.layers.set(SOFT);
-      renderer.setRenderTarget(softA);
-      renderer.clear();
-      renderer.render(scene, camera);
-      quad.material = blurMaterial;
-      BLUR_STEPS.forEach((r) => {
-        blurMaterial.uniforms.tMap.value = softA.texture;
-        blurMaterial.uniforms.uStep.value.set(r / softA.width, 0);
-        renderer.setRenderTarget(softB);
-        renderer.render(flat, flatCam);
-        blurMaterial.uniforms.tMap.value = softB.texture;
-        blurMaterial.uniforms.uStep.value.set(0, r / softA.height);
-        renderer.setRenderTarget(softA);
-        renderer.render(flat, flatCam);
-      });
-      renderer.setRenderTarget(null);
-      renderer.clear();
-      quad.material = layMaterial;
-      layMaterial.uniforms.tMap.value = softA.texture;
-      renderer.render(flat, flatCam);
-      renderer.clearDepth();
-      camera.layers.set(0);
-      shareable.forEach((o, k) => {
-        const b = softness.get(o);
-        o.material.opacity = keep[k * 2] * (1 - b);
-        o.visible = keep[k * 2 + 1] && b < 0.996;
-      });
-      renderer.render(scene, camera);
-      shareable.forEach((o, k) => {
-        o.material.opacity = keep[k * 2];
-        o.visible = keep[k * 2 + 1];
-      });
-    }
+    scene.add(new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0x8a8480, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0.55, fog: false })));
 
     // ============================================================
     // THE CHROME: the two arrows on the left and what they pull out — the
@@ -1402,24 +1222,15 @@
     let partners = new Map();             // every note found with all of them: how often
     let matched = [];                     // the fragrances that have them all
     let partnerMost = 1;
+    let nets = [];                        // each chosen note's own network: every note found with it, how often
     let lastMatched = 0;                  // how many it came to last, to catch the eye when it changes
     const partnerOf = new Float32Array(T);  // each note's share of the most found with the tags
     let fogNear = 10, fogFar = 40;        // the depth everything additive fades over
-    // THE SOFT: how soft each node is this frame, and what decides it — how
-    // far off what is looked at is, how much of it is sharp, how strong the
-    // depth blur is (none till it has nearly come apart); and a note added
-    // in combinations: when, which, and when each line from it sets out.
-    const blurOf = new Float32Array(T);
-    let focusD = 0, band = BLUR_BAND, dofK = 0, bump = 0, lineCount = 0, softSegs = 0;
-    let tagAt = -1e9, tagNew = -1, softest = 0;
+    // A note added in combinations: when, which, and when each line from it
+    // sets out.
+    let tagAt = -1e9, tagNew = -1;
     const lineAt = new Float32Array(T).fill(-1);
     const LINE_GROW = 0.3;                // each line's drawing out, as a share of TAG_MS
-    /** How soft something is at this distance from the eye. */
-    const dofOf = (d) => {
-      if (dofK <= 0.004) return 0;
-      const x = (Math.abs(d - focusD) - band) / BLUR_RAMP;
-      return x <= 0 ? 0 : dofK * (x >= 1 ? 1 : x * x * (3 - 2 * x));
-    };
     let loaded = still, introZoom = 1;    // the opening: done yet, and the lens easing in
     let markDirty = true;
     let tagsMoving = false;
@@ -1540,7 +1351,6 @@
       W = stage.clientWidth; H = stage.clientHeight;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, W < 700 ? 1.5 : 2) * quality);
       renderer.setSize(W, H, false);
-      sizeSoft();
       camera.aspect = W / Math.max(1, H);
       camera.updateProjectionMatrix();
       tags.forEach((g) => { g.w = 0; });
@@ -1963,8 +1773,7 @@
       chosen.push(n);
       combineInput.value = "";
       recompute();
-      // ITS LINES DRAWN OUT, the nearest first, one after another, while the
-      // rest of the network goes soft for a moment.
+      // ITS LINES DRAWN OUT, the nearest first, one after another.
       lineAt.fill(-1);
       const a = n.i;
       const far = (m) => Math.hypot(P[m.i * 3] - P[a * 3], P[m.i * 3 + 1] - P[a * 3 + 1], P[m.i * 3 + 2] - P[a * 3 + 2]);
@@ -1973,7 +1782,6 @@
       chosen.forEach((c) => { if (c !== n) lineAt[c.i] = 0.14; });
       tagAt = performance.now();
       tagNew = a;
-      softest = 0;
       wake();
     }
     function dropTag(n) {
@@ -1983,20 +1791,35 @@
       tagAt = -1e9;
       recompute();
     }
-    /** What the tags come to: the fragrances that have them all, and every
-        other note in those, with how many of them it is in. */
+    /** Every note found with this one in a fragrance, and in how many. */
+    const networkOf = (n) => {
+      const net = new Map();
+      n.keys.forEach((key) => (keyNotes.get(key) || []).forEach((m) => { if (m !== n) net.set(m, (net.get(m) || 0) + 1); }));
+      return net;
+    };
+    /** What the tags come to. EACH CHOSEN NOTE IS A NETWORK — every note
+        found with it in a fragrance — and with more than one, only what
+        every one of their networks holds is shown: "only the lines that
+        satisfy both networks ... like the middle area in a venn diagram"
+        (2026-09-28, night). (Until then only the notes of the fragrances
+        that had them all.) And, for the list, the fragrances that have
+        every one of them. */
     function recompute() {
       chosenSet.clear();
       chosen.forEach((n) => chosenSet.add(n.i));
       partners = new Map();
       matched = [];
+      nets = chosen.map(networkOf);
       if (chosen.length) {
         let keys = null;
         chosen.forEach((n) => { keys = keys ? new Set([...keys].filter((k) => n.keys.has(k))) : new Set(n.keys); });
         matched = [...keys].sort();
-        matched.forEach((key) => (keyNotes.get(key) || []).forEach((m) => {
-          if (!chosenSet.has(m.i)) partners.set(m, (partners.get(m) || 0) + 1);
-        }));
+        // The middle of the Venn diagram, each note at the least it is
+        // found with any one of them.
+        nets[0].forEach((c, m) => {
+          if (chosenSet.has(m.i) || !nets.every((net) => net.has(m))) return;
+          partners.set(m, Math.min(...nets.map((net) => net.get(m))));
+        });
       }
       partnerMost = Math.max(1, ...partners.values());
       partnerOf.fill(0);
@@ -2019,6 +1842,9 @@
         : F === 0 ? "No fragrance has all of them"
         : F + (F === 1 ? " fragrance has " : " fragrances have ") + (chosen.length === 1 ? "it" : chosen.length === 2 ? "both" : "all " + chosen.length);
       combineToggle.disabled = !F;
+      // "Choose a note ..." only while the page is left alone ("make this
+      // text disappear if you move the thing ... make it an idle thing").
+      combineToggle.classList.toggle("is-hint", !chosen.length);
       combineReset.disabled = !chosen.length && !combineInput.value;
       if (!F) showList(false);
       // A new answer catches the eye, so that the way to the list is seen.
@@ -2327,12 +2153,40 @@
       if (n.aka.length) {
         const ul = aka.appendChild(el("ul"));
         n.aka.forEach((a) => { ul.appendChild(el("li")).textContent = a; });
-      } else aka.appendChild(el("p", "net-note-none")).textContent = "Written only this way on the site.";
+      } else aka.appendChild(el("p", "net-note-none")).textContent = "No records of variations exist as of now";
       // PYRAMIDAL DISTRIBUTION, counted.
       const tally = tallyOf(n);
       const tiers = q(".net-note-tiers");
-      if (TIERS.some((t) => tally[t])) tiers.appendChild(pyramid(tally, n.keys.size));
-      else tiers.appendChild(el("p", "net-note-none")).textContent = "No fragrance on the site names it yet.";
+      if (TIERS.some((t) => tally[t])) {
+        tiers.appendChild(pyramid(tally, n.keys.size));
+        // ... and under it, the fragrances in each: "add a list of
+        // fragrances in which ingredient n is listed as a top note. do the
+        // same for middle and base and non-pyramidal".
+        const lists = tiers.appendChild(el("div", "net-note-tier-lists"));
+        const rank = (h) => { const k = Object.keys(HOUSES).indexOf(h); return k < 0 ? 99 : k; };
+        TIERS.forEach((t) => {
+          const keys = [...n.keys].filter((key) => (n.where.get(key) || new Set()).has(t)).sort((a, b) => {
+            const [ha, na] = a.split(":"), [hb, nb] = b.split(":");
+            return rank(ha) - rank(hb) || ha.localeCompare(hb) || na.localeCompare(nb);
+          });
+          const box = lists.appendChild(drop(TIER_SAY[t], keys.length, "net-note-tier" + (keys.length ? "" : " is-empty"), "tier:" + t));
+          box.dataset.tier = t;
+          if (!keys.length) { box.appendChild(el("p", "net-note-none")).textContent = "None as of now."; return; }
+          const ul = box.appendChild(el("ul"));
+          keys.forEach((key) => {
+            const [house, no] = key.split(":");
+            const where = HOUSES[house] || { name: house, href: "" };
+            const a = ul.appendChild(el("li")).appendChild(el("a"));
+            a.href = where.href ? root + where.href + "#part-" + no : "#";
+            a.dataset.key = key;
+            a.innerHTML = '<span class="net-note-fno"></span><span class="net-note-fname"></span><span class="net-note-fhouse"></span>';
+            a.children[0].textContent = no;
+            a.children[1].textContent = titles.get(key) || "";
+            a.children[2].textContent = house === "individual" ? "Individual" : where.name;
+            if (where.href) learn(house, where.href);
+          });
+        });
+      } else tiers.appendChild(el("p", "net-note-none")).textContent = "No fragrance on the site names it yet.";
       // THE MOST FREQUENT COMBINATIONS: the notes found with it most.
       const withs = new Map();
       n.keys.forEach((key) => (keyNotes.get(key) || []).forEach((m) => { if (m !== n) withs.set(m, (withs.get(m) || 0) + 1); }));
@@ -2686,7 +2540,6 @@
     const lit = new Float32Array(T);      // how lit each node is by the signal passing it
     const glowPos = glowGeo.attributes.position.array, glowCol = glowGeo.attributes.color.array;
     const glowSz = glowGeo.attributes.glowSize.array;
-    const softGlowCol = softGlowGeo.attributes.color.array, softBridgeCol = softBridgeGeo.attributes.color.array;
     const pulsePos = pulseGeo.attributes.position.array, pulseCol = pulseGeo.attributes.color.array;
     const bridgePos = bridgeGeo.attributes.position.array, bridgeCol = bridgeGeo.attributes.color.array;
     const bpPos = bpGeo.attributes.position.array, bpCol = bpGeo.attributes.color.array;
@@ -2726,33 +2579,19 @@
     }
     const nothing = (arr, i) => arr.fill(0, i * 16, i * 16 + 16);
     /** One line, faded by hand the way the fog would fade it — but to
-        nothing, where the fog would have faded it to grey — and shared
-        between the sharp and the soft by how soft it is (`sb`). */
-    function segment(ax, ay, az, bx, by, bz, r, g, b, sb) {
+        nothing, where the fog would have faded it to grey. */
+    function segment(ax, ay, az, bx, by, bz, r, g, b) {
       if (segs >= MAX_SEGMENTS) return;
       const mx = (ax + bx) * 0.5 - eyeX, my = (ay + by) * 0.5 - eyeY, mz = (az + bz) * 0.5 - eyeZ;
       const f = fogOf(Math.sqrt(mx * mx + my * my + mz * mz));
       if (f < 0.01) return;
-      lineCount++;
-      const keep = sb > 0.004 ? f * (1 - sb) : f;
-      if (keep > 0.004) {
-        const o = segs * 6;
-        linkPos[o] = ax; linkPos[o + 1] = ay; linkPos[o + 2] = az;
-        linkPos[o + 3] = bx; linkPos[o + 4] = by; linkPos[o + 5] = bz;
-        linkCol[o] = linkCol[o + 3] = r * keep;
-        linkCol[o + 1] = linkCol[o + 4] = g * keep;
-        linkCol[o + 2] = linkCol[o + 5] = b * keep;
-        segs++;
-      }
-      if (sb > 0.004 && softSegs < MAX_SEGMENTS) {
-        const o = softSegs * 6, k = f * sb * SOFT_DIM;
-        softPos[o] = ax; softPos[o + 1] = ay; softPos[o + 2] = az;
-        softPos[o + 3] = bx; softPos[o + 4] = by; softPos[o + 5] = bz;
-        softCol[o] = softCol[o + 3] = r * k;
-        softCol[o + 1] = softCol[o + 4] = g * k;
-        softCol[o + 2] = softCol[o + 5] = b * k;
-        softSegs++;
-      }
+      const o = segs * 6;
+      linkPos[o] = ax; linkPos[o + 1] = ay; linkPos[o + 2] = az;
+      linkPos[o + 3] = bx; linkPos[o + 4] = by; linkPos[o + 5] = bz;
+      linkCol[o] = linkCol[o + 3] = r * f;
+      linkCol[o + 1] = linkCol[o + 4] = g * f;
+      linkCol[o + 2] = linkCol[o + 5] = b * f;
+      segs++;
     }
     const line = [0, 0, 0];
     function drawLinks(set, weight, strength, signalled, front) {
@@ -2774,7 +2613,7 @@
           const ax = P[a * 3], ay = P[a * 3 + 1], az = P[a * 3 + 2];
           const v = weight * strength * glowing;
           segment(ax, ay, az, ax + (P[b * 3] - ax) * f, ay + (P[b * 3 + 1] - ay) * f, az + (P[b * 3 + 2] - az) * f,
-            line[0] * v + (glowing - 1) * 0.3, line[1] * v + (glowing - 1) * 0.2, line[2] * v + (glowing - 1) * 0.2, 0);
+            line[0] * v + (glowing - 1) * 0.3, line[1] * v + (glowing - 1) * 0.2, line[2] * v + (glowing - 1) * 0.2);
           continue;
         }
         const litUp = a === selected || b === selected || a === hovered || b === hovered;
@@ -2785,7 +2624,7 @@
         const r = lerp(line[0], 1, w), g = lerp(line[1], 1, w), bl = lerp(line[2], 1, w);
         f += s * 1.3 * weight;
         segment(P[a * 3], P[a * 3 + 1], P[a * 3 + 2], P[b * 3], P[b * 3 + 1], P[b * 3 + 2],
-          (r + (1 - r) * s * 0.6) * f, (g + (1 - g) * s * 0.5) * f, (bl + (1 - bl) * s * 0.5) * f, (blurOf[a] + blurOf[b]) * 0.5);
+          (r + (1 - r) * s * 0.6) * f, (g + (1 - g) * s * 0.5) * f, (bl + (1 - bl) * s * 0.5) * f);
       }
     }
     const frameColour = new THREE.Color();
@@ -2875,30 +2714,8 @@
       onlyNow = focusNow >= 0 ? "" : previewing || filter;
       searchingNow = hits.length > 0 || query.value.trim() !== "";
 
-      // HOW SOFT EACH NODE IS: by its depth once expanded — sharp within
-      // `band` of what is looked at (the whole of an accord, at one), softer
-      // farther off — and, for a moment after a note is added in
-      // combinations, everything but the notes chosen, each of what it is
-      // found with coming back into focus as its line reaches it.
-      dofK = depthBlurOn ? smooth(0.55, 1, u) : 0;
-      focusD = Math.hypot(eyeX - cam.T.x, eyeY - cam.T.y, eyeZ - cam.T.z);
-      const bandTo = focus >= 0 ? accords[focus].R * 1.15 + 1.5 : BLUR_BAND;
-      band = still ? bandTo : band + (bandTo - band) * (1 - Math.exp(-dt / 400));
+      // A note just added in combinations: how far its lines have come.
       const tx = still ? 1 : (t - tagAt) / TAG_MS;
-      bump = tx >= 0 && tx < 1 ? smooth(0, 0.14, tx) * (1 - smooth(0.62, 1, tx)) : 0;
-      if (bump > softest) softest = bump;
-      const softNow = dofK > 0.004 || bump > 0.004;
-      if (softNow) {
-        for (let i = 0; i < T; i++) {
-          let b = dofK > 0.004 ? dofOf(Math.hypot(P[i * 3] - eyeX, P[i * 3 + 1] - eyeY, P[i * 3 + 2] - eyeZ)) : 0;
-          if (bump > 0.004 && !chosenSet.has(i)) {
-            let tb = bump * 0.95;
-            if (lineAt[i] >= 0) tb *= 1 - smooth(lineAt[i] + LINE_GROW - 0.06, lineAt[i] + LINE_GROW + 0.06, tx);
-            if (tb > b) b = tb;
-          }
-          blurOf[i] = b;
-        }
-      } else if (blurOf[0] !== 0 || blurOf[T - 1] !== 0 || softLast) blurOf.fill(0);
       for (let i = 0; i < T; i++) {
         const w = want(i), was = opacity[i];
         if (was !== w) {
@@ -2907,17 +2724,10 @@
           changed = true;
           if (opacity[i] !== w) settling = true;
         }
-        // As much of it as is sharp, and as much as is soft.
-        const o = opacity[i], b = blurOf[i];
-        const sharp = b > 0 ? o * (1 - b) : o, sft = o * b * SOFT_DIM;
-        if (drawnOp[i] !== sharp) { drawnOp[i] = sharp; changed = true; }
-        softOp[i] = sft;
         if (opacity[i] < 0.5 && nodes[i].kind === 0) dim++;
       }
       if (changed) sets.forEach((set) => { set.opacity.needsUpdate = true; });
 
-      softness.forEach((b, o) => { softness.set(o, 0); });
-      // The translucent set is drawn only while something is translucent.
 
       hubSeen += ((focusNow >= 0 ? 0.07 : 1) - hubSeen) * fade;
       accords.forEach((A) => {
@@ -2943,7 +2753,7 @@
       for (let q = 0; q < 2; q++) {
         const set = sets[q];
         const solidM = set.solid.instanceMatrix.array;
-        set.fp.n = 0; set.sp.n = 0;
+        set.fp.n = 0;
         const instColour = set.solid.instanceColor.array;
         const to = set.from + set.count;
         for (let i = set.from; i < to; i++) {
@@ -2958,7 +2768,6 @@
               nothing(solidM, j);
               glowSz[i] = 0;
               glowCol[i * 3] = glowCol[i * 3 + 1] = glowCol[i * 3 + 2] = 0;
-              softGlowCol[i * 3] = softGlowCol[i * 3 + 1] = softGlowCol[i * 3 + 2] = 0;
             }
             continue;
           }
@@ -3000,11 +2809,10 @@
           const grow = (i === selected ? 1.55 : tag ? 1.5 : i === hovered ? 1.35 : 1) * vis[i] * pop *
             (1 + lit[i] * 0.25 + pw * 0.35 + partnerOf[i] * 0.3);
           const x = P[i * 3], y = P[i * 3 + 1], z = P[i * 3 + 2];
-          const sharpO = drawnOp[i];
+          const sharpO = opacity[i];
           if (grow < 0.01 || sharpO < 0.004) nothing(solidM, j);
           else if (sharpO > 0.995) put(solidM, j, n.size * grow, x, y, z);
           else { nothing(solidM, j); pack(set.fp, n.size * grow, x, y, z, r, g, b, sharpO); }
-          if (softNow && grow >= 0.01 && softOp[i] > 0.004) pack(set.sp, n.size * grow, x, y, z, r, g, b, softOp[i]);
           // ITS GLOW, its own and near it: as wide as the node and a little
           // more, the notes a little brighter, shimmering; the fillers less,
           // the pale ones softly, the specks not at all — brighter while
@@ -3019,35 +2827,26 @@
           glowSz[i] = k > 0.004 ? n.size * (n.kind === 0 ? GLOW_NOTE : GLOW_FILL) * grow : 0;
           if (glowSz[i] > 0) glowsDrawn++;
           if (grow >= 0.01) nodesDrawn++;
-          const bi = blurOf[i], ks = k * (1 - bi);
-          glowCol[i * 3] = r * ks; glowCol[i * 3 + 1] = g * ks * 0.9; glowCol[i * 3 + 2] = b * ks * 0.9;
-          // (A node gone soft keeps no glow of its own: blurred, it is
-          // already all glow, and with it a network out of focus was a red
-          // haze.)
-          if (softNow) {
-            const kb = k * bi * SOFT_GLOW;
-            softGlowCol[i * 3] = r * kb; softGlowCol[i * 3 + 1] = g * kb * 0.9; softGlowCol[i * 3 + 2] = b * kb * 0.9;
-          }
+          glowCol[i * 3] = r * k; glowCol[i * 3 + 1] = g * k * 0.9; glowCol[i * 3 + 2] = b * k * 0.9;
         }
         set.solid.instanceMatrix.needsUpdate = true;
         set.solid.instanceColor.needsUpdate = true;
         packDone(set.fp);
-        packDone(set.sp);
       }
       glowGeo.attributes.position.needsUpdate = true;
       glowGeo.attributes.color.needsUpdate = true;
       glowGeo.attributes.glowSize.needsUpdate = true;
-      softGlow.visible = softNow && SOFT_GLOW > 0;
-      if (softNow) softGlowGeo.attributes.color.needsUpdate = true;
 
       // THE LINKS: the one network's letting go as the accords leave, each
       // accord's own coming with it, and each middle node's — and, in
       // combinations, every tag joined to what it is found with.
       line[0] = LINE[0] * ig + GOLD_LINE[0] * gold; line[1] = LINE[1] * ig + GOLD_LINE[1] * gold; line[2] = LINE[2] * ig + GOLD_LINE[2] * gold;
-      segs = 0; softSegs = 0; lineCount = 0;
+      segs = 0;
       // (Quieter than they were: added together where the network is
       // densest, they were most of the glow in its middle.)
-      drawLinks(oneLinks, ph.one * (tagging ? 0.3 : cp.on ? 0.7 : 1), 0.32, false, front);
+      // (None of the network's own while notes are chosen: every line then
+      // is one of theirs.)
+      drawLinks(oneLinks, ph.one * (tagging ? 0 : cp.on ? 0.7 : 1), 0.32, false, front);
       drawLinks(netMade, ph.form, 0.34, true);
       drawLinks(netRest, ph.form, 0.34, true);
       const before = segs;
@@ -3059,23 +2858,25 @@
           const a = c.i;
           const ax = P[a * 3], ay = P[a * 3 + 1], az = P[a * 3 + 2];
           const growing = a === tagNew && tx < 1;
+          const net = nets[chosen.indexOf(c)], most = Math.max(1, ...[...partners.keys()].map((m) => net.get(m) || 0));
           partners.forEach((count, m) => {
             const bI = m.i;
             const g = growing ? out(a, bI) : 1;
             if (g <= 0) return;
-            const f = (0.28 + 0.9 * (count / partnerMost)) * Math.min(vis[a], vis[bI]) * cp.spread * (g < 1 ? 1.7 : 1);
+            // As bright as this note is found with it, in its own network.
+            const f = (0.28 + 0.9 * ((net.get(m) || 0) / most)) * Math.min(vis[a], vis[bI]) * cp.spread * (g < 1 ? 1.7 : 1);
             segment(ax, ay, az, ax + (P[bI * 3] - ax) * g, ay + (P[bI * 3 + 1] - ay) * g, az + (P[bI * 3 + 2] - az) * g,
-              f, f * 0.84, f * 0.52, 0);
+              f, f * 0.84, f * 0.52);
           });
           for (const d of chosen) {
-            if (d.i <= a) continue;
+            if (d.i <= a || !net.has(d)) continue;
             // Between two chosen: from the one just added, if either is.
             const fromD = d.i === tagNew && tx < 1, fromC = growing;
             const s0 = fromD ? d.i : a, s1 = fromD ? a : d.i;
             const g = fromD || fromC ? out(s0, s1) : 1;
             if (g <= 0) continue;
             const sx = P[s0 * 3], sy = P[s0 * 3 + 1], sz = P[s0 * 3 + 2];
-            segment(sx, sy, sz, sx + (P[s1 * 3] - sx) * g, sy + (P[s1 * 3 + 1] - sy) * g, sz + (P[s1 * 3 + 2] - sz) * g, 1.3, 1.2, 1, 0);
+            segment(sx, sy, sz, sx + (P[s1 * 3] - sx) * g, sy + (P[s1 * 3 + 1] - sy) * g, sz + (P[s1 * 3 + 2] - sz) * g, 1.3, 1.2, 1);
           }
         }
       }
@@ -3092,7 +2893,6 @@
         const flash = !still && A.arrived > -40 && A.arrived < 500 ? Math.exp(-Math.pow(A.arrived / 180, 2)) : 0;
         const dimmed = (onlyNow && onlyNow !== A.code ? 0.3 : 1) * A.seen;
         const far = fogOf(camera.position.distanceTo(c));
-        const coreSoft = dofOf(camera.position.distanceTo(c));
         A.coreBall.material.opacity = dimmed;
         A.coreCage.material.opacity = (0.75 + flash * 0.25) * show * dimmed * far;
         A.coreGlow.material.opacity = (0.7 + flash) * show * dimmed * far;
@@ -3103,27 +2903,18 @@
         A.frame.material.opacity = 0.3 * show * dimmed * far;
         for (const i of A.core) {
           const f = 0.5 * show * Math.min(opacity[i], dimmed) + flash * 0.8 * show;
-          segment(c.x, c.y, c.z, P[i * 3], P[i * 3 + 1], P[i * 3 + 2], f, f * 0.4, f * 0.45, (coreSoft + blurOf[i]) * 0.5);
+          segment(c.x, c.y, c.z, P[i * 3], P[i * 3 + 1], P[i * 3 + 2], f, f * 0.4, f * 0.45);
         }
-        share(A.coreBall, coreSoft); share(A.coreCage, coreSoft); share(A.coreGlow, coreSoft); share(A.frame, coreSoft);
       });
       linkGeo.setDrawRange(0, segs * 2);
       linkGeo.attributes.position.updateRange.count = segs * 6;
       linkGeo.attributes.color.updateRange.count = segs * 6;
       linkGeo.attributes.position.needsUpdate = true;
       linkGeo.attributes.color.needsUpdate = true;
-      softLinks.visible = softNow && softSegs > 0;
-      if (softLinks.visible) {
-        softLinkGeo.setDrawRange(0, softSegs * 2);
-        softLinkGeo.attributes.position.updateRange.count = softSegs * 6;
-        softLinkGeo.attributes.color.updateRange.count = softSegs * 6;
-        softLinkGeo.attributes.position.needsUpdate = true;
-        softLinkGeo.attributes.color.needsUpdate = true;
-      }
 
       // THE PULSES along the links.
       const onNet = ph.move > 0.5;
-      const pulseStrength = (onNet ? ph.apart : ph.one * (tagging ? 0.3 : 1)) * (front < 2 ? smooth(0.95, 1.18, front) : 1);
+      const pulseStrength = (onNet ? ph.apart : ph.one * (tagging ? 0 : 1)) * (front < 2 ? smooth(0.95, 1.18, front) : 1);
       const pg = 0.62 + 0.18 * gold, pb = 0.64 - 0.3 * gold;
       for (let k = 0; k < PULSES; k++) {
         const p = pulse[k];
@@ -3134,7 +2925,7 @@
         const x = lerp(P[a * 3], P[b * 3], p.t), y = lerp(P[a * 3 + 1], P[b * 3 + 1], p.t), z = lerp(P[a * 3 + 2], P[b * 3 + 2], p.t);
         pulsePos[k * 3] = x; pulsePos[k * 3 + 1] = y; pulsePos[k * 3 + 2] = z;
         const f = pulseStrength * Math.min(opacity[a], opacity[b], vis[a], vis[b]) * Math.sin(Math.PI * p.t) *
-          fogOf(Math.hypot(x - eyeX, y - eyeY, z - eyeZ)) * (1 - Math.max(blurOf[a], blurOf[b]));
+          fogOf(Math.hypot(x - eyeX, y - eyeY, z - eyeZ));
         pulseCol[k * 3] = f; pulseCol[k * 3 + 1] = f * pg; pulseCol[k * 3 + 2] = f * pb;
       }
       pulseGeo.attributes.position.needsUpdate = true;
@@ -3156,8 +2947,6 @@
         spark.material.size = 1.2 + p * 6;
       }
       oneRing.visible = ph.one > 0.01 && ringIn > 0.01;
-      if (oneRing.visible) share(oneRing, bump * 0.9);
-      share(dustSpecks, bump * 0.9);
 
       // THE CENTRE, the bridges, the pulses on them, and the signal — the
       // centre and every other bridge stepping back while you are at an
@@ -3174,8 +2963,6 @@
         hubRing.material.opacity = 0.6 * on;
         hubRing2.material.opacity = 0.35 * on;
         hubGlow.material.opacity = (0.9 + pulseOut * 0.8) * on;
-        const hubSoft = dofOf(camera.position.length());
-        [hubBall, hubCage, hubRing, hubRing2, hubGlow].forEach((o) => share(o, hubSoft));
       }
       const reach = ph.bridges;
       for (let k = 0; k < A16; k++) {
@@ -3189,23 +2976,15 @@
         bridgePos[o + 3] = v2.x; bridgePos[o + 4] = v2.y; bridgePos[o + 5] = v2.z;
         const dimmed = (only && only !== A.code ? 0.35 : 1) * (focusNow === k ? 0.12 + 0.88 * hubSeen : A.seen);
         const litB = (overBridge === k || focusNow === k ? 1.8 : 1) * reach * (selected >= 0 ? 0.5 : 1) * dimmed;
-        const da = v1.distanceTo(camera.position), db = v2.distanceTo(camera.position);
-        const fa = fogOf(da), fb = fogOf(db);
-        const sa = dofOf(da), sbb = dofOf(db);
-        const ka = litB * fa * (1 - sa), kb = litB * fb * (1 - sbb);
-        bridgeCol[o] = 0.85 * ka; bridgeCol[o + 1] = 0.8 * ka; bridgeCol[o + 2] = 0.8 * ka;
-        bridgeCol[o + 3] = 0.95 * kb; bridgeCol[o + 4] = 0.35 * kb; bridgeCol[o + 5] = 0.38 * kb;
-        if (softNow) {
-          const qa = litB * fa * sa * SOFT_DIM, qb = litB * fb * sbb * SOFT_DIM;
-          softBridgeCol[o] = 0.85 * qa; softBridgeCol[o + 1] = 0.8 * qa; softBridgeCol[o + 2] = 0.8 * qa;
-          softBridgeCol[o + 3] = 0.95 * qb; softBridgeCol[o + 4] = 0.35 * qb; softBridgeCol[o + 5] = 0.38 * qb;
-        }
+        const fa = fogOf(v1.distanceTo(camera.position)), fb = fogOf(v2.distanceTo(camera.position));
+        bridgeCol[o] = 0.85 * litB * fa; bridgeCol[o + 1] = 0.8 * litB * fa; bridgeCol[o + 2] = 0.8 * litB * fa;
+        bridgeCol[o + 3] = 0.95 * litB * fb; bridgeCol[o + 4] = 0.35 * litB * fb; bridgeCol[o + 5] = 0.38 * litB * fb;
         for (let j = 0; j < BP; j++) {
           const w = ((still ? 0 : t) * 0.00014 * (overBridge === k ? 2.5 : 1) + j / BP + k * 0.13) % 1;
           const x = j % 2 ? 1 - w : w;
           const q = (k * (BP + 1) + j) * 3;
           bpPos[q] = lerp(v1.x, v2.x, x); bpPos[q + 1] = lerp(v1.y, v2.y, x); bpPos[q + 2] = lerp(v1.z, v2.z, x);
-          const f = reach * Math.sin(Math.PI * x) * (overBridge === k ? 1.2 : 0.55) * dimmed * lerp(fa, fb, x) * (1 - lerp(sa, sbb, x));
+          const f = reach * Math.sin(Math.PI * x) * (overBridge === k ? 1.2 : 0.55) * dimmed * lerp(fa, fb, x);
           bpCol[q] = f; bpCol[q + 1] = f * 0.7; bpCol[q + 2] = f * 0.72;
         }
         // THE SIGNAL, out along this bridge, when a journey sent one.
@@ -3213,19 +2992,17 @@
         const travelled = (A.since * SIGNAL_SPEED) / Math.max(1, A.reach);
         if (!still && A.since >= 0 && travelled <= 1 && reach > 0.9) {
           bpPos[q] = lerp(v1.x, v2.x, travelled); bpPos[q + 1] = lerp(v1.y, v2.y, travelled); bpPos[q + 2] = lerp(v1.z, v2.z, travelled);
-          const f = Math.max(0.35, dimmed) * lerp(fa, fb, travelled) * (1 - lerp(sa, sbb, travelled) * 0.7);
+          const f = Math.max(0.35, dimmed) * lerp(fa, fb, travelled);
           bpCol[q] = 1.6 * f; bpCol[q + 1] = 1.4 * f; bpCol[q + 2] = 1.4 * f;
         } else { bpCol[q] = bpCol[q + 1] = bpCol[q + 2] = 0; }
       }
       bridges.visible = bridgePulses.visible = reach > 0.01;
-      softBridges.visible = bridges.visible && softNow;
       bridgeGeo.attributes.position.needsUpdate = true;
       bridgeGeo.attributes.color.needsUpdate = true;
-      if (softBridges.visible) softBridgeGeo.attributes.color.needsUpdate = true;
       bpGeo.attributes.position.needsUpdate = true;
       bpGeo.attributes.color.needsUpdate = true;
 
-      render(softNow);
+      renderer.render(scene, camera);
       chrome(t, dt);
 
       setData(stage, "u", u.toFixed(3));
@@ -3233,7 +3010,7 @@
       setData(stage, "yaw", cam.yaw.toFixed(2));
       setData(stage, "pitch", cam.pitch.toFixed(2));
       record(performance.now() - began, t);
-      return settling || u !== uTo || cmb !== cmbTo || pulsing || !!flight || !!drag || !!spinYaw || !!spinPitch || !loaded || tagsMoving || markDirty || noteOpen || bump > 0 ||
+      return settling || u !== uTo || cmb !== cmbTo || pulsing || !!flight || !!drag || !!spinYaw || !!spinPitch || !loaded || tagsMoving || markDirty || noteOpen || tx < 1 ||
         accords.some((A) => A.since >= 0 && A.arrived < 1600);
     }
 
@@ -3505,20 +3282,14 @@
         u, state: stage.dataset.state, focus: focus < 0 ? "centre" : accords[focus].code, flying: !!flight,
         selected: selected >= 0 ? nodes[selected].note.name : null, filter, previewing, query: query.value, hits: hits.map((n) => n.name),
         dim: notes.filter((n) => opacity[n.i] < 0.5).length, faintest: Math.min(...opacity),
-        segments: lineCount, quality, panel: panelOpen, search: searchOpen, target: cam.T.length(), pitch: cam.pitch, yaw: cam.yaw,
+        segments: segs, quality, panel: panelOpen, search: searchOpen, target: cam.T.length(), pitch: cam.pitch, yaw: cam.yaw,
         nodes: T, shown: shown(), answering: answering(), litNodes: lit.filter((l) => l > 0.3).length,
         note: noteOpen && noteShown ? noteShown.name : null, loaded, coaching: coachOn, idle,
         combine: cmbTo === 1, cmb, tags: chosen.map((n) => n.name), matched: matched.slice(), partners: partners.size,
         hub: hubSeen, away: accords.map((A) => A.seen), tagLines: tagSegs, glows: glowsDrawn, drawn: nodesDrawn, pulsed: pulsedAt > 0, flashes, flashTo: flashTo.slice(),
         litAccords: accords.filter((A) => A.members.some((n) => lit[n.i] > 0.3)).map((A) => A.code),
-        depthBlur: depthBlurOn, software, soft: softLast, bump, softest, dof: dofK, softLines: softSegs,
-        blurred: notes.filter((n) => blurOf[n.i] > 0.5 && scaleOf[n.i] > 0.5).length,
+        tagging: tagAt > 0 && performance.now() - tagAt < TAG_MS,
       }),
-      /** How soft a note is drawn this frame, 0 to 1. */
-      softness: (name) => {
-        const n = notes.find((x) => x.name === name);
-        return n ? blurOf[n.i] : null;
-      },
       /** What a note's window would say of it: how many fragrances, which,
           where in them it stands, and what it is most often with. */
       about: (name) => {
@@ -3526,20 +3297,32 @@
         if (!n) return null;
         const tally = { top: 0, mid: 0, base: 0, flat: 0 };
         n.where.forEach((set) => set.forEach((t) => { tally[t]++; }));
-        return { keys: [...n.keys].sort(), tally, rank: n.rank, rankIn: n.rankIn, fragrances: FRAGRANCE_COUNT, aka: n.aka.slice() };
+        const tiers = {};
+        TIERS.forEach((t) => { tiers[t] = [...n.keys].filter((key) => (n.where.get(key) || new Set()).has(t)).sort(); });
+        return { keys: [...n.keys].sort(), tally, tiers, rank: n.rank, rankIn: n.rankIn, fragrances: FRAGRANCE_COUNT, aka: n.aka.slice() };
       },
       /** Leave the page to itself this many ms ago, as if the hand had gone. */
       leave: (ms) => { lastInput = performance.now() - ms; },
+      /** Press a note: it is chosen, and its window opens. */
+      open: (name) => { const n = notes.find((x) => x.name === name); if (n) select(n.i, true); return !!n; },
       notes: () => notes.map((n) => ({ id: n.id, name: n.name, no: n.no, uses: n.uses, code: n.A.code })),
-      /** Which fragrances have every one of these notes, and every other note
-          in those with how many it is in — as combinations works it out. */
+      /** Which fragrances have every one of these notes, and the middle of
+          their networks' Venn diagram: every note found with EACH of them
+          (in some fragrance or other), at the least it is found with any
+          one — as combinations works it out. */
       combined: (names) => {
         const ns = names.map((x) => notes.find((n) => n.name === x));
         if (ns.some((n) => !n)) return null;
         let keys = null;
         ns.forEach((n) => { keys = keys ? new Set([...keys].filter((k) => n.keys.has(k))) : new Set(n.keys); });
+        // Each one's own network, and the middle of their Venn diagram.
+        const each = ns.map((n) => {
+          const net = new Map();
+          [...n.keys].forEach((key) => (keyNotes.get(key) || []).forEach((m) => { if (m !== n) net.set(m, (net.get(m) || 0) + 1); }));
+          return net;
+        });
         const withs = {};
-        [...keys].forEach((key) => (keyNotes.get(key) || []).forEach((m) => { if (!ns.includes(m)) withs[m.name] = (withs[m.name] || 0) + 1; }));
+        each[0].forEach((c, m) => { if (!ns.includes(m) && each.every((net) => net.has(m))) withs[m.name] = Math.min(...each.map((net) => net.get(m))); });
         return { keys: [...keys].sort(), withs };
       },
       /** Where a glow reaches on the window, round a note: how many pixels
@@ -3638,13 +3421,6 @@
     scene.traverse((o) => { if (!o.visible) { unseen.push(o); o.visible = true; } });
     renderer.compile(scene, camera);
     unseen.forEach((o) => { o.visible = false; });
-    // ... the soft layer's too, and its targets made, by drawing it once.
-    sizeSoft();
-    quad.material = blurMaterial;
-    renderer.compile(flat, flatCam);
-    quad.material = layMaterial;
-    renderer.compile(flat, flatCam);
-    render(true);
 
     setPanel(false);
     setSearch(false);
