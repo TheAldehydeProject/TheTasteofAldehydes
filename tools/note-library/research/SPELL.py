@@ -7,16 +7,7 @@
 # written in both is an error).
 from acc import out, SAME
 V = {
- "note-mineral-accord": {"Mineral Accords": "No change: mineral accord in the plural."},
- "note-ozone": {"Ozonic Notes": "No change: ozone, named as a kind of note."},
- "note-old-books": {"Old Book": "No change: old books in the singular."},
- "note-westfarthing-leaf": {"Westfarthing Leaf (Tobacco)": "No change: the same leaf, with what it is written beside it."},
- "note-aged-parchment": {"Aged Parchment Accord": "No change: aged parchment, with the word accord saying it is built rather than taken from real parchment."},
- "note-instant-film": {"Instant Film Accord": "No change: instant film, with the word accord saying it is built."},
- "note-petrichor": {"Petrichor Accord": "No change: petrichor, with the word accord saying it is built."},
- "note-dusty-antiques": {"Antique Shop": "No change: the same picture, named by the place."},
- "note-marine-accord": {"Sea Notes": "No change: the sea, named as a kind of note."},
- "note-soil": {"Earthy Notes": "No change: earth, named as a kind of note."},
- "note-spikenard": {"Himalayan Nard (Jatamansi)": "No change: jatamansi is spikenard's Indian name, and it grows in the Himalayas."},
+ # empty since 2026-09-29: every note is researched, so each of these
+ # moved into its own accord's file.
 }
 out("SPELL", {}, {nid: dict(vars={k: dict(same=t) for k, t in v.items()}) for nid, v in V.items()})

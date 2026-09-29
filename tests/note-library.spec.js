@@ -1236,10 +1236,10 @@ test("without its 3D library the page says so, and lists every note", async ({ p
    there. A note not researched yet keeps the old library's line and names
    no source; its variations are left unwritten unless they are only
    another spelling. (tools/note-library/catalogue.py writes all of it.) */
-// A variation of a researched note that is still to be looked into — the
-// session's searches ran out before it (2026-09-29). Its window says "Not
-// written yet."; write it and take it off this list.
-const WAITING = new Set(["African CO2"]);
+// A variation of a researched note that is still to be looked into. Empty
+// since every note and variation was written (2026-09-29); one added here
+// says "Not written yet." in its window until it is.
+const WAITING = new Set();
 test("the catalogue: the owner first, the rest in order, two sources to every description written", () => {
   const html = fs.readFileSync(path.join(__dirname, "..", "categories", "note-library.html"), "utf8");
   const text = (h) => h.replace(/<[^>]+>/g, "").replace(/&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
