@@ -68,6 +68,9 @@
   format (2026-09-29): its caption is "Diagram 1; showing …", the number
   in a <span class="essay-figure-no">. The numbers are written here, not
   counted — a diagram added or moved means renumbering the ones after it.
+  THE TABLES are named the same way, and counted apart: "Table 1; showing
+  …", the table in a <figure class="essay-table-figure"> with its
+  <figcaption> under it.
   A FOOTNOTE is a mark leading down to its note, and the note a way back.
   TO ADD A SECTION: copy a whole <section class="essay-section"> block
   and number it; the "Sections" count in the head is the one thing to
@@ -177,7 +180,10 @@
     <p>The extent of the effect of pH and acidity on the skin will differ based on the conditions of that skin. If your skin is clean and dry, then the effect will be lessened. The things that can change your skin pH include Soap, water, sweat, skincare actives (glycolic acid, salicylic acid), and stress.</p>
     <p>To quote premierepeau who put it very nicely; “The skin you sprayed at 8 a.m. is not the same skin at 6 p.m.”</p>
     <p>Additionally, here is a table to show you how different parts of a fragrance are likely to be affected by skin pH. This is a generalization and the reality is more nuanced, but I will not get into that.</p>
-    <!-- THE OWNER'S FIRST TABLE, sent as a picture. -->
+    <!-- THE OWNER'S FIRST TABLE, sent as a picture — named under it as the
+         diagrams are, "Table 1; showing …" (2026-09-29: "add a picture/table
+         name"), in the owner's own words about it. -->
+    <figure class="essay-table-figure">
     <div class="essay-table-wrap">
       <table class="essay-table">
         <thead>
@@ -190,6 +196,8 @@
         </tbody>
       </table>
     </div>
+      <figcaption><span class="essay-figure-no">Table 1</span>; showing how different parts of a fragrance are likely to be affected by skin <span class="essay-keep-case">pH</span>.</figcaption>
+    </figure>
   </section>
 
   <section class="essay-section" id="section-03">
@@ -200,8 +208,9 @@
          and after the second paragraph of Bacteria, respectively"). A
          compound (linalool, in small script under the word), the bacteria's
          enzymes drawn as a Pac-Man with a pentagon for a mouth, and the
-         compound changed (oxidized, in small script under it). -->
-    <figure class="essay-figure ed-bacteria ed-enzymes" aria-label="A compound in the perfume, such as linalool, and the enzymes of the bacteria on your skin: together they give the compound changed, oxidized">
+         compound changed ("(oxidized)", in small script under it, in
+         brackets as the linalool is, at the owner's word, 2026-09-29). -->
+    <figure class="essay-figure ed-bacteria ed-enzymes" aria-label="A compound in the perfume, such as linalool, and the enzymes of the bacteria on your skin: together they give the compound changed (oxidized)">
       <svg viewBox="0 0 640 150" role="img" aria-hidden="true">
         <text class="ed-label" x="0" y="20">The perfume, changed</text>
         <g class="ed-molecule">
@@ -219,7 +228,7 @@
         <circle class="ed-atom" cx="424" cy="58" r="7"/>
         <text class="ed-atom-o" x="424" y="62" text-anchor="middle">O</text>
         <text class="ed-accent" x="392" y="124" text-anchor="middle">compound changed</text>
-        <text class="ed-tiny ed-tiny-lit" x="392" y="141" text-anchor="middle">oxidized</text>
+        <text class="ed-tiny ed-tiny-lit" x="392" y="141" text-anchor="middle">(oxidized)</text>
       </svg>
       <figcaption><span class="essay-figure-no">Diagram 4</span>; showing an enzyme of the bacteria on your skin changing a compound in the perfume.</figcaption>
     </figure>
@@ -318,7 +327,10 @@
     <!-- THE CYCLE, as a ring, with the time around ovulation lit. Its
          lettering spaced out (2026-09-29: "make the text ... not so
          compact"): the lines further apart, the ring's names further off
-         the ring, and the writing on the right further from them. -->
+         the ring, and the writing on the right further from them. The line
+         from ovulation to the writing straight and level (the same day,
+         later: "straighten that line"): out from the end of the lit arc,
+         level with it, to the first line of what it says. -->
     <figure class="essay-figure ed-cycle" aria-label="The menstrual cycle as a ring — menstruation, the follicular phase, ovulation and the luteal phase — with the time right around ovulation marked: then musks and hormonal smells are received much more strongly">
       <svg viewBox="0 0 640 270" role="img" aria-hidden="true">
         <circle class="ed-ring" cx="168" cy="130" r="92"/>
@@ -331,13 +343,13 @@
         <text class="ed-accent" x="168" y="260" text-anchor="middle">ovulation</text>
         <text class="ed-small" x="56" y="134" text-anchor="end">luteal</text>
         <text class="ed-small" x="168" y="134" text-anchor="middle">one cycle</text>
-        <path class="ed-lead" d="M200 216q80-10 156-12"/>
+        <path class="ed-lead" d="M203 218H356"/>
         <text class="ed-say" x="364" y="54">Through the cycle the same perfume</text>
         <text class="ed-say" x="364" y="80">can seem more or less powerful,</text>
         <text class="ed-say" x="364" y="106">and more or less attractive.</text>
-        <text class="ed-label" x="364" y="180">right around ovulation</text>
-        <text class="ed-accent" x="364" y="208">musks and hormonal smells,</text>
-        <text class="ed-accent" x="364" y="232">received much more strongly</text>
+        <text class="ed-label" x="364" y="194">right around ovulation</text>
+        <text class="ed-accent" x="364" y="222">musks and hormonal smells,</text>
+        <text class="ed-accent" x="364" y="246">received much more strongly</text>
       </svg>
       <figcaption><span class="essay-figure-no">Diagram 8</span>; showing the menstrual cycle, and the time around ovulation when musks and hormonal smells are received much more strongly.</figcaption>
     </figure>
@@ -355,7 +367,11 @@
     <h2><span class="essay-no">07</span>The Geography of Skin</h2>
     <p>There is a vast difference between various parts of your body when it comes to stuff like temperature, sweat gland density and sebum production. Here is a table to show different body sites, their average temperature, their sebum production, and the likely resultant fragrance character:</p>
     <!-- THE OWNER'S SECOND TABLE, sent as a picture, and the same four
-         places drawn on a figure, warmest the brightest. -->
+         places drawn on a figure, warmest the brightest — the raised arm
+         one outline with the body, out of the shoulder and the armpit
+         (2026-09-29: "make the human arm attached rather than not"; it was
+         a capsule of its own, closed at the shoulder). -->
+    <figure class="essay-table-figure">
     <div class="essay-table-wrap">
       <table class="essay-table">
         <thead>
@@ -369,6 +385,8 @@
         </tbody>
       </table>
     </div>
+      <figcaption><span class="essay-figure-no">Table 2</span>; showing different body sites, their average temperature, their sebum production, and the likely resultant fragrance character.</figcaption>
+    </figure>
     <figure class="essay-figure ed-body" aria-label="The four places on the body from the table: the sides of the neck, the warmest at about 35°C; behind the ear, about 34°C; the inner elbow, about 33°C; and the inner wrist, the coolest at about 32°C">
       <svg viewBox="0 0 620 330" role="img" aria-hidden="true">
         <g class="ed-figure">
@@ -378,8 +396,7 @@
           <path d="M140 118q-34 4-50 18v166M160 118q34 4 50 18"/>
           <path d="M110 150v152M190 150v152"/>
         </g>
-        <path class="ed-limb" d="M204 136l54 76 40 70"/>
-        <path class="ed-limb-in" d="M204 136l54 76 40 70"/>
+        <path class="ed-arm" d="M210 136L266.6 206L305.8 277.5A9 9 0 0 1 290.2 286.5L249.4 218L190 150"/>
         <circle class="ed-site" cx="163" cy="108" r="8" style="--heat: 1"/>
         <circle class="ed-site" cx="184" cy="80" r="7" style="--heat: 0.8"/>
         <circle class="ed-site" cx="256" cy="210" r="6" style="--heat: 0.6"/>

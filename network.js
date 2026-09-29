@@ -251,13 +251,14 @@
   const IDLE_MS = 7000;                 // left alone this long, the arrows glow
   const COMBINE_MS = 2200;              // into combinations, and back
   const SPREAD = 0.62;                  // ... loosened by this much
-  // With two notes or more chosen, what could still be added — every note
-  // found with each of them, the middle of their Venn diagram — stands at
-  // this strength, the more often found the stronger: seen, and above the
-  // half a note must be at to be pressed, but not lit as the chosen are
-  // ("I want only these two to be lit up ... BUT I WANT THE POSSIBILITIES
-  // TO ALSO BE SHOWN", 2026-09-29).
-  const POSSIBLE = [0.56, 0.82];
+  // With notes chosen, what is still AVAILABLE — every note named in a
+  // fragrance that has all of them — stands as it is, not lit, joined to
+  // each chosen note by a feeble line (FEEBLE); everything else is OFF, at
+  // this strength, and cannot be pressed (2026-09-29, last: "any other notes
+  // which do not combine IN MY LIBRARY with note X should be turned off ...
+  // connected by a feeble line, and not highighted in any way ... ONLY NOTES
+  // THAT ARE PRESENT IN PERFUMES THAT CONTAIN NOTES X AND Y (NOT X OR Y)").
+  const OFF = 0.06, FEEBLE = 0.16;
   // ... and the chosen are joined by an emphasized line (the bond): a fine
   // bright rod of this radius, a glow laid along it a point every BOND_STEP,
   // and a bead of light running its length and back every BEAD_MS.
@@ -1060,14 +1061,17 @@
     // would also like the background to be a little dynamic, not just dots
     // in 3d space on a gray background"): each drifts on a slow orbit of
     // its own and twinkles, and the whole of it turns, slower than anything
-    // else; now and then two near specks are joined by a hairline that comes
-    // and goes, a constellation found and lost; and once in a while a faint
-    // streak crosses far behind. With motion turned off the specks stand
-    // still and nothing crosses. (The background's own grey is untouched:
-    // a gradient there drew rings, 2026-09-28.)
-    const DUST = 900, THREADS = 14;
+    // else. Far out in it, GALAXIES: small spirals, a few elliptical, and
+    // tight clusters of stars, each turning slowly about itself ("something
+    // more akin to galaxies or some constallations far far away", the same
+    // evening — the hairlines that came and went between near specks, and
+    // the streak that crossed now and then, were "random lines", and are
+    // gone). With motion turned off nothing drifts, twinkles or turns. (The
+    // background's own grey is untouched: a gradient there drew rings,
+    // 2026-09-28.)
+    const DUST = 900;
     const dustHome = new Float32Array(DUST * 3), dustWay = new Float32Array(DUST * 3);
-    const dustPhase = new Float32Array(DUST), dustRate = new Float32Array(DUST), dustNear = new Int32Array(DUST);
+    const dustPhase = new Float32Array(DUST), dustRate = new Float32Array(DUST);
     for (let i = 0; i < DUST; i++) {
       const v = new THREE.Vector3(gauss(), gauss(), gauss()).normalize().multiplyScalar(45 + rnd() * 60);
       dustHome[i * 3] = v.x; dustHome[i * 3 + 1] = v.y; dustHome[i * 3 + 2] = v.z;
@@ -1076,30 +1080,80 @@
       dustPhase[i] = rnd() * Math.PI * 2;
       dustRate[i] = 0.5 + rnd();
     }
-    for (let i = 0; i < DUST; i++) {               // each speck's nearest, for the threads
-      let best = -1, bd = Infinity;
-      for (let j = 0; j < DUST; j++) {
-        if (j === i) continue;
-        const dx = dustHome[i * 3] - dustHome[j * 3], dy = dustHome[i * 3 + 1] - dustHome[j * 3 + 1], dz = dustHome[i * 3 + 2] - dustHome[j * 3 + 2];
-        const d = dx * dx + dy * dy + dz * dz;
-        if (d < bd) { bd = d; best = j; }
-      }
-      dustNear[i] = best;
-    }
     const dustGeo = new THREE.BufferGeometry();
     dustGeo.setAttribute("position", dynamic(DUST, 3));
     dustGeo.setAttribute("color", dynamic(DUST, 3));
     const dustPts = new THREE.Points(dustGeo, new THREE.PointsMaterial({ size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0.6, fog: false, vertexColors: true }));
     dustPts.frustumCulled = false;
-    scene.add(dustPts);
-    const threadGeo = new THREE.BufferGeometry();
-    threadGeo.setAttribute("position", dynamic((THREADS + 1) * 2, 3));
-    threadGeo.setAttribute("color", dynamic((THREADS + 1) * 2, 3));
-    const threadLines = new THREE.LineSegments(threadGeo, new THREE.LineBasicMaterial(additive({ vertexColors: true })));
-    threadLines.frustumCulled = false;
-    scene.add(threadLines);
-    const threads = Array.from({ length: THREADS }, () => ({ a: 0, b: 0, t0: -1e9, life: 1 }));
-    const streak = { t0: -1e9, next: 5000, from: new THREE.Vector3(), way: new THREE.Vector3() };
+    const sky = new THREE.Group();
+    sky.add(dustPts);
+    scene.add(sky);
+    // THE GALAXIES, made once, from a sequence of their own (so that the
+    // rest of the drawing is laid out as it always was). Each stands far out
+    // — farther than the specks — tilted its own way, and only its inner
+    // part turns: a spiral winds two or three arms out of a warm core, bluer
+    // and fainter as they go; an elliptical is a warm haze thickest in its
+    // middle; a cluster a tight ball of pale stars.
+    const GALAXIES = 36;
+    const GALAXY_KINDS = Array.from({ length: GALAXIES }, (_, k) => (k % 6 === 2 ? "elliptical" : k % 6 === 5 ? "cluster" : "spiral"));
+    let gSeed = 90210;
+    const gRnd = () => ((gSeed = (gSeed * 16807) % 2147483647) - 1) / 2147483646;
+    const gGauss = () => Math.sqrt(-2 * Math.log(Math.max(1e-9, gRnd()))) * Math.cos(2 * Math.PI * gRnd());
+    const galaxies = GALAXY_KINDS.map((kind, k) => {
+      const pos = [], col = [];
+      const R = kind === "cluster" ? 1.2 + gRnd() * 0.7 : kind === "elliptical" ? 2 + gRnd() * 1.4 : 3 + gRnd() * 2.2;
+      const star = (x, y, z, r, g, b) => { pos.push(x, y, z); col.push(r, g, b); };
+      if (kind === "spiral") {
+        const nArm = gRnd() < 0.35 ? 3 : 2, wind = 2.2 + gRnd() * 1.6, N = 260 + Math.floor(gRnd() * 140);
+        for (let j = 0; j < N; j++) {
+          if (j < N * 0.26) {
+            // The core: warm, dense, bright.
+            const r = Math.abs(gGauss()) * R * 0.13, a = gRnd() * Math.PI * 2;
+            const lum = 0.42 + 0.3 * gRnd();
+            star(Math.cos(a) * r, Math.sin(a) * r, gGauss() * R * 0.05, lum, lum * 0.9, lum * 0.74);
+            continue;
+          }
+          const t = Math.pow(gRnd(), 0.8), arm = j % nArm;
+          const r = R * (0.1 + 0.9 * t);
+          const a = (arm / nArm) * Math.PI * 2 + wind * Math.log(1 + t * 5) + gGauss() * (0.16 + 0.12 * t);
+          const lum = (0.4 - 0.24 * t) * (0.7 + 0.6 * gRnd());
+          const pink = gRnd() < 0.05;
+          star(Math.cos(a) * r, Math.sin(a) * r, gGauss() * R * 0.025,
+            pink ? lum * 1.15 : lum * 0.78, pink ? lum * 0.62 : lum * 0.84, pink ? lum * 0.7 : lum);
+        }
+      } else if (kind === "elliptical") {
+        const N = 200, sy = 0.5 + gRnd() * 0.25;
+        for (let j = 0; j < N; j++) {
+          const r = Math.abs(gGauss()) * 0.34, a = gRnd() * Math.PI * 2, e = gGauss() * 0.3;
+          const lum = (0.5 - 0.7 * Math.min(0.5, r)) * (0.75 + 0.5 * gRnd());
+          star(Math.cos(a) * r * R, Math.sin(a) * r * R * sy, e * r * R * 0.5, lum, lum * 0.88, lum * 0.72);
+        }
+      } else {
+        const N = 90;
+        for (let j = 0; j < N; j++) {
+          const v = new THREE.Vector3(gGauss(), gGauss(), gGauss()).multiplyScalar(R * 0.22 * (0.4 + gRnd()));
+          const lum = 0.3 + 0.35 * gRnd();
+          star(v.x, v.y, v.z, lum * 0.86, lum * 0.92, lum);
+        }
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+      geo.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+      const pts = new THREE.Points(geo, new THREE.PointsMaterial(additive({ size: 1.2, sizeAttenuation: false, vertexColors: true, opacity: 0.75 })));
+      pts.frustumCulled = false;
+      // Where it stands: spread round the sky (a spiral of directions, so
+      // that no two come together), far out, turned towards the middle and
+      // then tilted its own way — never so far that it is only seen edge on.
+      const y = 1 - ((k + 0.5) / GALAXY_KINDS.length) * 2, ring = Math.sqrt(1 - y * y), phi = k * 2.39996;
+      const holder = new THREE.Object3D();
+      holder.position.set(Math.cos(phi) * ring, y * 0.7, Math.sin(phi) * ring).normalize().multiplyScalar(118 + gRnd() * 40);
+      holder.lookAt(0, 0, 0);
+      holder.rotateX(0.15 + gRnd() * 0.9);
+      holder.rotateZ(gRnd() * Math.PI * 2);
+      holder.add(pts);
+      sky.add(holder);
+      return { pts, turn: (gRnd() < 0.5 ? -1 : 1) * (0.000018 + gRnd() * 0.00002), at: gRnd() * Math.PI * 2 };
+    });
     const DUST_RGB = [0x8a / 255, 0x84 / 255, 0x80 / 255];
     let airDrawn = false;
     function air(t) {
@@ -1117,34 +1171,8 @@
         col[o] = DUST_RGB[0] * tw; col[o + 1] = DUST_RGB[1] * tw; col[o + 2] = DUST_RGB[2] * tw;
       }
       dustGeo.attributes.position.needsUpdate = dustGeo.attributes.color.needsUpdate = true;
-      dustPts.rotation.y = threadLines.rotation.y = tt * 0.0000125;
-      const lp = threadGeo.attributes.position.array, lc = threadGeo.attributes.color.array;
-      threads.forEach((th, k) => {
-        let age = (t - th.t0) / th.life;
-        if (!still && (age >= 1 || age < 0) && Math.random() < 0.012) {
-          th.a = Math.floor(Math.random() * DUST); th.b = dustNear[th.a]; th.t0 = t; th.life = 4200 + Math.random() * 3800; age = 0;
-        }
-        const on = still || age < 0 || age > 1 ? 0 : Math.sin(Math.PI * age) * 0.3;
-        for (let e = 0; e < 2; e++) {
-          const i = (e ? th.b : th.a) * 3, o = k * 6 + e * 3;
-          lp[o] = pos[i]; lp[o + 1] = pos[i + 1]; lp[o + 2] = pos[i + 2];
-          lc[o] = 0.66 * on; lc[o + 1] = 0.6 * on; lc[o + 2] = 0.58 * on;
-        }
-      });
-      // The streak, far behind: a short line crossing, brightest at its head.
-      if (!still && t - streak.t0 > streak.next) {
-        streak.from.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize().multiplyScalar(80 + Math.random() * 20);
-        streak.way.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).cross(streak.from).normalize();
-        streak.t0 = t; streak.next = 7000 + Math.random() * 8000;
-      }
-      const sa = (t - streak.t0) / 1500, o = THREADS * 6;
-      const glow = !still && sa >= 0 && sa <= 1 ? Math.sin(Math.PI * sa) * 0.55 : 0;
-      const hx = streak.from.x + streak.way.x * sa * 30, hy = streak.from.y + streak.way.y * sa * 30, hz = streak.from.z + streak.way.z * sa * 30;
-      lp[o] = hx; lp[o + 1] = hy; lp[o + 2] = hz;
-      lp[o + 3] = hx - streak.way.x * 6; lp[o + 4] = hy - streak.way.y * 6; lp[o + 5] = hz - streak.way.z * 6;
-      lc[o] = glow; lc[o + 1] = glow * 0.92; lc[o + 2] = glow * 0.9;
-      lc[o + 3] = lc[o + 4] = lc[o + 5] = 0;
-      threadGeo.attributes.position.needsUpdate = threadGeo.attributes.color.needsUpdate = true;
+      sky.rotation.y = tt * 0.0000125;
+      galaxies.forEach((G) => { G.pts.rotation.z = G.at + tt * G.turn; });
     }
 
     // ============================================================
@@ -1463,17 +1491,13 @@
     let cmb = 0, cmbTo = 0;               // 0: the red network; 1: combinations
     let cmbPulse = -1e9;                  // when combinations began: the pulse through it
     const chosen = [];                    // the notes taken as tags, in order
-    let partners = new Map();             // every note found with all of them: how often
+    let partners = new Map();             // what is available: every note in a fragrance with all of them, and in how many
     let matched = [];                     // the fragrances that have them all
-    let partnerMost = 1;
     let nets = [];                        // each chosen note's own network: every note found with it, how often
     let pairs = [];                       // two or more chosen: each two found together, and in how many
     let pairMost = 1;
     let lastMatched = 0;                  // how many it came to last, to catch the eye when it changes
-    const partnerOf = new Float32Array(T);  // each note's share of the most found with the tags
-    // ... and, with two or more chosen, the same share for what could still
-    // be added (0 for anything that could not): seen, not lit.
-    const possibleOf = new Float32Array(T);
+    const availOf = new Uint8Array(T);    // 1: available with the notes chosen; 0: off (or nothing chosen)
     let bonds = 0, bondPts = 0;           // the emphasized lines a frame drew, and their glow's points
     let fogNear = 10, fogFar = 40;        // the depth everything additive fades over
     // A note added in combinations: when, which, and when each line from it
@@ -2041,7 +2065,7 @@
     // Only from the one network. A note taken as a tag is joined, on the
     // network, to every note found with it in a fragrance; with more than
     // one, to every note found with ALL of them — in the fragrances that
-    // have every tag, which are the list.
+    // have every tag, which are the list — and everything else is off.
     // ============================================================
     const chosenSet = new Set();
     function combine(on) {
@@ -2081,6 +2105,9 @@
     combineButton.addEventListener("click", () => combine(cmbTo !== 1));
     function addTag(n) {
       if (cmbTo !== 1 || chosenSet.has(n.i)) return;
+      // What is off cannot be taken: nothing in the library has it with
+      // every note already chosen.
+      if (chosen.length && !partners.has(n)) return;
       chosen.push(n);
       combineInput.value = "";
       recompute();
@@ -2088,10 +2115,12 @@
       lineAt.fill(-1);
       const a = n.i;
       const far = (m) => Math.hypot(P[m.i * 3] - P[a * 3], P[m.i * 3 + 1] - P[a * 3 + 1], P[m.i * 3 + 2] - P[a * 3 + 2]);
-      // (One tag: to everything found with it. More: to the other tags,
-      // which are all that is joined then.)
-      const order = (chosen.length === 1 ? [...partners.keys()] : chosen.filter((c) => c !== n)).sort((p, q) => far(p) - far(q));
-      order.forEach((m, k) => { lineAt[m.i] = 0.14 + 0.4 * (order.length > 1 ? k / (order.length - 1) : 0); });
+      // (To the other tags first, the emphasized lines; then to everything
+      // still available.)
+      const others = chosen.filter((c) => c !== n).sort((p, q) => far(p) - far(q));
+      const rest = [...partners.keys()].sort((p, q) => far(p) - far(q));
+      others.forEach((m, k) => { lineAt[m.i] = 0.1 + 0.12 * (others.length > 1 ? k / (others.length - 1) : 0); });
+      rest.forEach((m, k) => { lineAt[m.i] = (others.length ? 0.26 : 0.14) + 0.36 * (rest.length > 1 ? k / (rest.length - 1) : 0); });
       tagAt = performance.now();
       tagNew = a;
       wake();
@@ -2109,21 +2138,19 @@
       n.keys.forEach((key) => (keyNotes.get(key) || []).forEach((m) => { if (m !== n) net.set(m, (net.get(m) || 0) + 1); }));
       return net;
     };
-    /** What the tags come to. ONE TAG IS A NETWORK — every note found
-        with it in a fragrance, lit and joined to it. TWO OR MORE ARE LIT
-        ALONE, joined only to each other where they are found together:
-        "There are so many nodes lit up that do not belong in the venn
-        diagram. I want ONLY the ones that are relevant to be lit up ...
-        only have connections lit up between cedarwood myrrh vanilla and
-        fir ... apply the same logic in general" (2026-09-28) — the line
-        between them emphasized (the bond). What every one of their networks
-        holds — the middle of the Venn diagram, which was lit and joined to
-        them all for a night, and then as faint as the rest — is what could
-        still be added: the bar suggests it, and it is SHOWN, seen and
-        pressable but not lit, with no lines ("anything that could be added
-        to the venn diagram should be at least available for selection
-        visually", 2026-09-29). And, for the list, the fragrances that have
-        every one. */
+    /** What the tags come to, since 2026-09-29 (last): THE FRAGRANCES THAT
+        HAVE EVERY ONE OF THEM — the list — and what is AVAILABLE, every
+        other note those fragrances name, and in how many. Only those stay
+        on, each as it is (not lit), joined to every chosen note by a feeble
+        line; everything else is off and cannot be taken. The chosen are
+        emphasized, and two or more joined to each other by an emphasized
+        line (the bond). "If you then select note Y ... BUT ONLY NOTES THAT
+        ARE PRESENT IN PERFUMES THAT CONTAIN NOTES X AND Y (NOT X OR Y)! then
+        if you add note Z, then leave only notes that are characterizing
+        perfumes that have notes of X, Y and Z". (Until then, two or more
+        showed the middle of their networks' Venn diagram — every note found
+        with each of them, in some fragrance or other — which left notes
+        on with no fragrance having them all.) */
     function recompute() {
       chosenSet.clear();
       chosen.forEach((n) => chosenSet.add(n.i));
@@ -2134,18 +2161,13 @@
         let keys = null;
         chosen.forEach((n) => { keys = keys ? new Set([...keys].filter((k) => n.keys.has(k))) : new Set(n.keys); });
         matched = [...keys].sort();
-        // The middle of the Venn diagram, each note at the least it is
-        // found with any one of them.
-        nets[0].forEach((c, m) => {
-          if (chosenSet.has(m.i) || !nets.every((net) => net.has(m))) return;
-          partners.set(m, Math.min(...nets.map((net) => net.get(m))));
-        });
+        // What is available: every other note those fragrances name.
+        matched.forEach((key) => (keyNotes.get(key) || []).forEach((m) => {
+          if (!chosenSet.has(m.i)) partners.set(m, (partners.get(m) || 0) + 1);
+        }));
       }
-      partnerMost = Math.max(1, ...partners.values());
-      partnerOf.fill(0);
-      possibleOf.fill(0);
-      if (chosen.length === 1) partners.forEach((c, m) => { partnerOf[m.i] = c / partnerMost; });
-      else partners.forEach((c, m) => { possibleOf[m.i] = c / partnerMost; });
+      availOf.fill(0);
+      partners.forEach((c, m) => { availOf[m.i] = 1; });
       pairs = [];
       if (chosen.length > 1) {
         chosen.forEach((a, j) => chosen.forEach((b, k) => {
@@ -2252,7 +2274,14 @@
         li.addEventListener("pointerdown", (e) => { e.preventDefault(); addTag(n); });
         combineSuggest.appendChild(li);
       });
-      if (q && !suggestions.length) combineSuggest.appendChild(el("li", "net-suggest is-none", "Unfortunately nothing like that exists on this page yet."));
+      if (q && !suggestions.length) {
+        // A note there is, but off: nothing in the library has it with
+        // every note chosen. Nothing at all: the owner's own words.
+        const off = chosen.length && notes.some((n) => !chosenSet.has(n.i) && starts(n, q));
+        combineSuggest.appendChild(el("li", "net-suggest is-none", off
+          ? "Nothing in the library has that with " + (chosen.length === 1 ? chosen[0].name : "all of these") + "."
+          : "Unfortunately nothing like that exists on this page yet."));
+      }
       combineReset.disabled = !chosen.length && !q;
       combineBar.classList.toggle("has-suggestions", combineSuggest.children.length > 0);
     }
@@ -2720,12 +2749,11 @@
     }, 500);
 
     /** The names beside the notes: every note of the network you are at —
-        or, in combinations, the tags (and, with one, what it is found
-        with most). */
+        or, in combinations, the tags alone (what is available with them is
+        not highlighted in any way, 2026-09-29). */
     function tagsFor() {
       const want = focus >= 0 && !flight && uTo === 1 ? accords[focus].byUse
-        : cmbTo === 1 && chosen.length > 1 ? chosen.slice(0, MOST)
-        : cmbTo === 1 && chosen.length ? chosen.concat([...partners].sort((a, b) => b[1] - a[1] || b[0].uses - a[0].uses).map((x) => x[0])).slice(0, MOST)
+        : cmbTo === 1 && chosen.length ? chosen.slice(0, MOST)
         : [];
       tags.forEach((g, k) => {
         const n = want[k];
@@ -2968,13 +2996,11 @@
       // At an accord, the rest of the library steps back out of its way —
       // as its network does, and on a journey as the lens goes (`seen`).
       if (uTo === 1 && n.A.seen < 1) o = Math.min(o, n.A.seen);
-      // Combinations: the fillers thinner; and with tags, only the tags —
-      // and, with one, what it is found with; with more, what could still
-      // be added shown, not lit.
+      // Combinations: the fillers thinner; and with tags, the tags and what
+      // is still available on, as they are — and everything else off.
       if (cp.on) {
         if (tagging) {
-          o = Math.min(o, n.kind !== 0 ? 0.12 : chosenSet.has(i) || partnerOf[i] > 0 ? 1
-            : possibleOf[i] > 0 ? POSSIBLE[0] + (POSSIBLE[1] - POSSIBLE[0]) * possibleOf[i] : 0.1);
+          o = Math.min(o, n.kind === 0 && (chosenSet.has(i) || availOf[i]) ? 1 : OFF);
         } else if (n.kind !== 0) o = Math.min(o, 1 - 0.45 * cp.spread);
       }
       if (selected >= 0 && i !== selected) o = Math.min(o, near[selected].has(i) ? 0.35 : GHOST);
@@ -3242,7 +3268,7 @@
           let b = baseRGB[i * 3 + 2] * ig + goldRGB[i * 3 + 2] * gold;
           r += (1 - r) * wk; g += (1 - g) * wk; b += (1 - b) * wk;
           const tag = chosenSet.has(i);
-          const hot = i === selected ? 0.6 : tag ? 0.55 : i === hovered ? 0.3 : partnerOf[i] * 0.12;
+          const hot = i === selected ? 0.6 : tag ? 0.55 : i === hovered ? 0.3 : 0;
           if (hot) { r += (1 - r) * hot; g += (1 - g) * hot; b += (1 - b) * hot; }
           const li = lit[i] * 0.55;
           if (li > 0.01) { r += (1 - r) * li; g += (1 - g) * li; b += (1 - b) * li; }
@@ -3269,7 +3295,7 @@
             pop = a * (1 + 0.2 * Math.sin(Math.PI * a));
           }
           const grow = (i === selected ? 1.55 : tag ? 1.5 : i === hovered ? 1.35 : 1) * vis[i] * pop *
-            (1 + lit[i] * 0.25 + pw * 0.35 + partnerOf[i] * 0.3);
+            (1 + lit[i] * 0.25 + pw * 0.35);
           const x = P[i * 3], y = P[i * 3 + 1], z = P[i * 3 + 2];
           const sharpO = opacity[i];
           if (grow < 0.01 || sharpO < 0.004) nothing(solidM, j);
@@ -3317,35 +3343,36 @@
         // Drawn out from the note just added, each as far as it has come,
         // brighter at its end while it is still coming.
         const out = (to) => (lineAt[to] < 0 ? 1 : ease(clamp((tx - lineAt[to]) / LINE_GROW, 0, 1)));
-        if (chosen.length === 1) {
-          // ONE TAG: joined to every note found with it, each line as
-          // bright as they are found together.
-          const a = chosen[0].i;
+        // EVERY CHOSEN NOTE joined to everything still available by a
+        // feeble line, the same for all — nothing highlighted — drawn out
+        // from the one just added.
+        chosen.forEach((c) => {
+          const a = c.i;
           const ax = P[a * 3], ay = P[a * 3 + 1], az = P[a * 3 + 2];
           const growing = a === tagNew && tx < 1;
           partners.forEach((count, m) => {
             const bI = m.i;
             const g = growing ? out(bI) : 1;
             if (g <= 0) return;
-            const f = (0.28 + 0.9 * (count / partnerMost)) * Math.min(vis[a], vis[bI]) * cp.spread * (g < 1 ? 1.7 : 1);
+            const f = FEEBLE * Math.min(vis[a], vis[bI], opacity[bI]) * cp.spread * (g < 1 ? 1.6 : 1);
+            if (f < 0.004) return;
             segment(ax, ay, az, ax + (P[bI * 3] - ax) * g, ay + (P[bI * 3 + 1] - ay) * g, az + (P[bI * 3 + 2] - az) * g,
               f, f * 0.84, f * 0.52);
           });
-        } else {
-          // TWO OR MORE: only between them, where they are found together —
-          // out from the one just added — each line emphasized (the bond).
-          pairs.forEach(([c, d, count], p) => {
-            const fromD = d.i === tagNew && tx < 1, fromC = c.i === tagNew && tx < 1;
-            const s0 = fromD ? d.i : c.i, s1 = fromD ? c.i : d.i;
-            const g = fromD || fromC ? out(s1) : 1;
-            if (g <= 0) return;
-            const f = (0.6 + 0.5 * (count / pairMost)) * Math.min(vis[c.i], vis[d.i]) * cp.spread * (g < 1 ? 1.4 : 1);
-            const sx = P[s0 * 3], sy = P[s0 * 3 + 1], sz = P[s0 * 3 + 2];
-            const ex = sx + (P[s1 * 3] - sx) * g, ey = sy + (P[s1 * 3 + 1] - sy) * g, ez = sz + (P[s1 * 3 + 2] - sz) * g;
-            segment(sx, sy, sz, ex, ey, ez, f * 1.3, f * 1.18, f * 0.95);
-            bond(sx, sy, sz, ex, ey, ez, Math.min(1, f), g, p * 0.37);
-          });
-        }
+        });
+        // TWO OR MORE: joined to each other — out from the one just added —
+        // each line emphasized (the bond).
+        pairs.forEach(([c, d, count], p) => {
+          const fromD = d.i === tagNew && tx < 1, fromC = c.i === tagNew && tx < 1;
+          const s0 = fromD ? d.i : c.i, s1 = fromD ? c.i : d.i;
+          const g = fromD || fromC ? out(s1) : 1;
+          if (g <= 0) return;
+          const f = (0.6 + 0.5 * (count / pairMost)) * Math.min(vis[c.i], vis[d.i]) * cp.spread * (g < 1 ? 1.4 : 1);
+          const sx = P[s0 * 3], sy = P[s0 * 3 + 1], sz = P[s0 * 3 + 2];
+          const ex = sx + (P[s1 * 3] - sx) * g, ey = sy + (P[s1 * 3 + 1] - sy) * g, ez = sz + (P[s1 * 3 + 2] - sz) * g;
+          segment(sx, sy, sz, ex, ey, ez, f * 1.3, f * 1.18, f * 0.95);
+          bond(sx, sy, sz, ex, ey, ez, Math.min(1, f), g, p * 0.37);
+        });
       }
       tagSegs = segs - before;
       bondRod.count = bonds;
@@ -3621,7 +3648,7 @@
       });
       if (hovered >= 0 && !flight && hovered !== selected) {
         const n = nodes[hovered].note;
-        hoverTag.textContent = cmbTo === 1 ? n.name + (chosenSet.has(hovered) ? " · take it away" : partners.has(n) ? " · with them ×" + partners.get(n) : " · combine") : n.name;
+        hoverTag.textContent = cmbTo === 1 ? n.name + (chosenSet.has(hovered) ? " · take it away" : partners.has(n) ? (chosen.length === 1 ? " · with it ×" : " · with them ×") + partners.get(n) : " · combine") : n.name;
         const i = hovered;
         const p = project(P[i * 3], P[i * 3 + 1], P[i * 3 + 2]);
         move(hoverTag, toX(p) + 14, toY(p) + 10);
@@ -3788,7 +3815,7 @@
         note: noteOpen && noteShown ? noteShown.name : null, loaded, coaching: coachOn, idle,
         combine: cmbTo === 1, cmb, tags: chosen.map((n) => n.name), matched: matched.slice(), partners: partners.size,
         pairs: pairs.map(([a, b, c]) => [a.name, b.name, c]),
-        possible: notes.filter((n) => possibleOf[n.i] > 0).map((n) => n.name), bonds, bondPoints: bondPts,
+        available: notes.filter((n) => availOf[n.i]).map((n) => n.name), bonds, bondPoints: bondPts,
         hub: hubSeen, away: accords.map((A) => A.seen), tagLines: tagSegs, glows: glowsDrawn, drawn: nodesDrawn, pulsed: pulsedAt > 0, flashes, flashTo: flashTo.slice(),
         litAccords: accords.filter((A) => A.members.some((n) => lit[n.i] > 0.3)).map((A) => A.code),
         tagging: tagAt > 0 && performance.now() - tagAt < TAG_MS,
@@ -3810,24 +3837,23 @@
       /** Press a note: it is chosen, and its window opens. */
       open: (name) => { const n = notes.find((x) => x.name === name); if (n) select(n.i, true); return !!n; },
       notes: () => notes.map((n) => ({ id: n.id, name: n.name, no: n.no, uses: n.uses, code: n.A.code })),
-      /** Which fragrances have every one of these notes, the middle of
-          their networks' Venn diagram — every note found with EACH of them
-          (in some fragrance or other), at the least it is found with any
-          one — and each two of them found together — as combinations works
+      /** Which fragrances have every one of these notes, what is available
+          with them — every other note those fragrances name, and in how
+          many — and each two of them found together, as combinations works
           it out. */
       combined: (names) => {
         const ns = names.map((x) => notes.find((n) => n.name === x));
         if (ns.some((n) => !n)) return null;
         let keys = null;
         ns.forEach((n) => { keys = keys ? new Set([...keys].filter((k) => n.keys.has(k))) : new Set(n.keys); });
-        // Each one's own network, and the middle of their Venn diagram.
         const each = ns.map((n) => {
           const net = new Map();
           [...n.keys].forEach((key) => (keyNotes.get(key) || []).forEach((m) => { if (m !== n) net.set(m, (net.get(m) || 0) + 1); }));
           return net;
         });
+        // Every other note in the fragrances that have them all.
         const withs = {};
-        each[0].forEach((c, m) => { if (!ns.includes(m) && each.every((net) => net.has(m))) withs[m.name] = Math.min(...each.map((net) => net.get(m))); });
+        [...keys].forEach((key) => (keyNotes.get(key) || []).forEach((m) => { if (!ns.includes(m)) withs[m.name] = (withs[m.name] || 0) + 1; }));
         // Each two of them found together, and in how many fragrances.
         const together = [];
         ns.forEach((a, j) => ns.forEach((b, k) => { const c = k > j ? each[j].get(b) || 0 : 0; if (c) together.push([a.name, b.name, c]); }));

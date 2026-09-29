@@ -455,3 +455,38 @@ five tiny squares and no circles on moisturized skin and no squares on the other
 at least 1.7 of their size apart; and **no lettering in any diagram running into any other, at
 1280px and at 390px**. It was run against the page before this round and failed, and against a
 label pushed back into the one under it and failed, before it was trusted.
+
+## 2026-09-29, later — Skin: a level line, the tables named, "(oxidized)", the arm attached
+
+> straighten that line in diagram 8 in RE skin … on the same page, add a picture/table name for
+> image 5. … "compound changed oxidized", put oxidized in brackets. also, on the same page, make the
+> human arm attached rather than not in diagram 9
+
+- **Diagram 8's line** from ovulation to what it says was a slight curve rising to the writing. It is
+  **straight and level** now: out from the end of the lit arc, level with it, to just short of the
+  first line of the writing — *musks and hormonal smells,* — which moved down to meet it (its label
+  and its two lines keep the spacing they had, 28 and 24 apart).
+- **The tables are named** as the diagrams are, under them and counted apart: *Table 1; showing how
+  different parts of a fragrance are likely to be affected by skin pH.* (the one in the owner's
+  picture) and *Table 2; showing different body sites, their average temperature, their sebum
+  production, and the likely resultant fragrance character.* — both in the owner's own words about
+  them, from the sentence before each. The owner asked for the first; the second was named with it
+  so the two are alike. A table stands in a `<figure class="essay-table-figure">` with its
+  `<figcaption>`; the caption is styled exactly as a diagram's.
+- **"(oxidized)"** in brackets under *compound changed*, as *(linalool)* is under *compound*.
+- **Diagram 9's raised arm** was a capsule of its own — a thick stroke with a dark one inside it,
+  rounded at both ends — so it stood beside the shoulder, closed, rather than coming out of it. It is
+  one open outline now (`.ed-arm`, which replaced `.ed-limb` and `.ed-limb-in`): its upper edge goes
+  on from where the right shoulder's curve ends (210, 136), bends at the elbow, rounds off at the
+  wrist, and its lower edge comes back into the armpit where the body's side begins (190, 150),
+  a little narrower at the wrist than at the shoulder. The inner elbow and the inner wrist are still
+  on it.
+
+### How to test it
+
+`tests/essay.spec.js`, **`Skin's diagrams are numbered, and drawn as the owner asked`**, now also
+checks: *(oxidized)* in small script under *compound changed*; diagram 8's line a straight path (no
+curve in it), level, starting at the lit arc and stopping just short of the writing, level with its
+first line; diagram 9's arm one open path starting at the shoulder's end and ending at the armpit,
+with no capsule left; and two named tables, *Table 1* and *Table 2*, each caption under its table
+in the "…; showing …" format, the first in the owner's words.

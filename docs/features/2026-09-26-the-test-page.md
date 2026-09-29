@@ -8,7 +8,7 @@ Files touched: `works/test-page.html` (new), `network.js` (new), `note-figures.j
 `tools/tree-cloud.mjs`, `images/Test-Page/` and `image-js` in `package.json` — all taken out
 again.
 
-**Since 2026-09-29 this is the Note Library** — at `categories/note-library.html`, the periodic table gone, the old address forwarding, **the Sources** at its centre and every note written again from two sources: see [that section](#2026-09-29-later--the-note-library-itself-the-sources-at-its-centre-and-every-note-written-again). Then, [last](#2026-09-29-last--the-middle-nodes-the-way-in-journeys-that-fade-the-air-and-a-search-that-touches-nothing): seeing every accord, only their **middle nodes** answer; journeys **fade**; **the air** behind it moves; and the search **answers as it is typed and touches nothing**.
+**Since 2026-09-29 this is the Note Library** — at `categories/note-library.html`, the periodic table gone, the old address forwarding, **the Sources** at its centre and every note written again from two sources: see [that section](#2026-09-29-later--the-note-library-itself-the-sources-at-its-centre-and-every-note-written-again). Then, [last](#2026-09-29-last--the-middle-nodes-the-way-in-journeys-that-fade-the-air-and-a-search-that-touches-nothing): seeing every accord, only their **middle nodes** answer; journeys **fade**; **the air** behind it moves; and the search **answers as it is typed and touches nothing**. And [very last](#2026-09-29-very-last--combinations-by-fragrance-and-galaxies-far-away): combinations keep on **only what is in a fragrance with every chosen note**, and **galaxies** stand far away in place of the random lines.
 
 **Since the night of 2026-09-27 the page carries the Note Library as networks** — see
 [that section](#2026-09-27-night--the-note-library-as-networks), which replaced [the Note
@@ -1723,3 +1723,77 @@ specks stand still and nothing crosses.
   measured outside the test runner, before and after, the slowest frames are the same 23–33ms, at
   the moment the library finishes coming apart. So the air and the fading did not make it; the
   test's own machine, recording as it runs, does. Left as it is rather than loosened.
+
+## 2026-09-29, very last — combinations by fragrance, and galaxies far away
+
+> Okay, for the combinations page; i want you to make it so that if you select note X, then all the
+> notes that note X connects to will be available. any other notes which do not combine IN MY
+> LIBRARY with note X should be turned off. they should also be connected by a feeble line, and not
+> highighted in any way. If you then select note Y, then both of these shoyuld be emphasized, and an
+> emphasized line should connect them both. The other notes should stay turned on and be connected to
+> both notes X and Y, BUT ONLY NOTES THAT ARE PRESENT IN PERFUMES THAT CONTAIN NOTES X AND Y (NOT X
+> OR Y)! then if you add note Z, then leave only notes that are characterizing perfumes that have
+> notes of X, Y and Z plus the other notes (that should stay lit up), and keep them connected too.
+>
+> also remove these random lines please; i want something more akin to galaxies or some
+> constallations far far away.
+
+With the owner's two pictures: two notes chosen and a crowd of gold notes still shown as possible,
+and six chosen with *no fragrance has all of them* under the bar and notes still shown as available.
+Both came from the rule before this one — the middle of the chosen notes' networks' Venn diagram:
+every note found with each chosen note **in some fragrance or other**, not in one fragrance with all
+of them.
+
+### Combinations: what is available is what is in a fragrance with them all
+
+- **One rule for any number of notes** (`recompute`): the fragrances that have every chosen note are
+  the list, and **what is available is every other note those fragrances name** (`partners`, with in
+  how many). With one note that is everything it is ever found with; with two, only what is in a
+  fragrance with both; with three, with all three; and so on.
+- **Available notes stay on as they are** — their gold, their size, **not lit and not named** — each
+  joined to **every chosen note by a feeble line**, the same for every one (`FEEBLE`). **Everything
+  else is off** (`OFF`, 0.06, fillers too), cannot be pressed, and is not offered by the bar.
+- **The chosen are emphasized** — whiter, larger, glowing, named — and two or more are joined to each
+  other by **the emphasized line** (the bond), as before.
+- **Only what is available can be taken**: the bar offers only those notes, a press on the network
+  finds only those, and `addTag` refuses anything else. So there is always at least one fragrance
+  with them all, and the six-with-nothing of the owner's picture cannot happen. Typing a note that is
+  off says so: *Nothing in the library has that with* Yuzu (or *with all of these*). Typing a note
+  that does not exist still says the owner's *Unfortunately nothing like that exists on this page
+  yet.*
+- The list, the count (*N fragrances have all 3*), Reset, Back and the idle hint are as they were.
+  `possibleOf`, `partnerOf`, `POSSIBLE` and `partnerMost` are gone; `availOf` is in their place, and
+  `state().possible` is `state().available`.
+
+### The air: no lines — galaxies far away
+
+- **The hairlines** that came and went between near specks (`THREADS`) and **the streak** that
+  crossed now and then — the owner's "random lines" — **are gone** from the code.
+- In their place, **galaxies**, far out beyond the specks (118 to 158 from the middle, where the
+  specks are 45 to 105): **36** of them spread round the sky — **spirals**, two or three arms wound out
+  of a warm core, bluer and fainter as they go, a pinkish knot here and there; **ellipticals**, a warm
+  haze thickest in its middle; and **clusters**, tight balls of pale stars. Each is turned towards the
+  middle and tilted its own way (never so far that it is only seen edge on), and **turns slowly about
+  itself**; the whole sky turns with the specks. A handful are in view at any time, a few tens of
+  pixels across — far away, as asked. With reduced motion nothing turns.
+- They are made once from **a sequence of their own** (`gRnd`), so the rest of the drawing is laid
+  out exactly as it was. Each is one `THREE.Points` in a tilted holder; only its turn changes a frame.
+- First tries, seen and changed before this was published: ten galaxies, too few (one in view) and
+  too large and bright to read as far; then thirty-six too small (specks and dashes, some edge on).
+
+### How to test it
+
+`tests/note-library.spec.js`, **`combinations: …`**, rewritten for the rule:
+- with Yuzu, `available` is exactly what it is found with; every line from Yuzu **feeble**; an
+  available note **its own gold** (the colour it had before anything was chosen), a note not found
+  with it **off**; only Yuzu named;
+- with a second note, what is available is **worked out in the test from each note's own
+  fragrances** — only notes in a fragrance with both — and matches `available`; a note found with
+  each but never with both in one fragrance (the old Venn middle) is **off**; the lines are one
+  emphasized between the two and a feeble one from **each** of them to everything available
+  (2 × available + 1); the two whiter than their gold;
+- a note that is off, typed, is **not offered**, the bar says *Nothing in the library has that with
+  all of these.*, and Enter takes nothing.
+
+The galaxies have no test of their own (the page's frame-speed test covers what they cost); look at
+the page.

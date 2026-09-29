@@ -1044,13 +1044,21 @@ test("collapsing brings every note back into the one red network", async ({ page
    tags: a tag is joined, on the network, to every note found with it in a
    fragrance, its lines drawn out one by one ("connecting the notes"; the
    network going soft while they were, a blur, went with the depth blur —
-   "remove the blur; entirely scratch that idea") — and a SECOND tag leaves
-   only the MIDDLE OF THE VENN DIAGRAM: "i want each note to be a network,
-   but upon selecting more than one note, only the lines that satisfy both
-   networks are going to be included". A list, plainly a button, opens of
-   the fragrances that have every tag; RESET takes them all away at once;
-   and "Choose a note to see what it is combined with" is said only while
-   the page is left alone ("make it an idle thing"). */
+   "remove the blur; entirely scratch that idea"). Since 2026-09-29 (last)
+   what stays on is exactly what is AVAILABLE — every note in a fragrance
+   that has every tag — plain, not lit, joined to each tag by a feeble
+   line; everything else is off and cannot be taken; the tags are
+   emphasized, joined to each other by an emphasized line: "if you select
+   note X, then all the notes that note X connects to will be available.
+   any other notes which do not combine IN MY LIBRARY with note X should be
+   turned off ... If you then select note Y, then both of these shoyuld be
+   emphasized ... ONLY NOTES THAT ARE PRESENT IN PERFUMES THAT CONTAIN NOTES
+   X AND Y (NOT X OR Y)!" (It was the middle of their networks' Venn
+   diagram, which left notes on with no fragrance having them all.) A
+   list, plainly a button, opens of the fragrances that have every tag;
+   RESET takes them all away at once; and "Choose a note to see what it is
+   combined with" is said only while the page is left alone ("make it an
+   idle thing"). */
 test("combinations: the network turns gold and loosens, and notes taken as tags show what they are combined with", async ({ page }) => {
   test.setTimeout(180000);
   const errors = collectPageErrors(page);
@@ -1065,6 +1073,9 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
   await expect.poll(async () => (await state(page)).cmb, { timeout: 30000 }).toBe(1);
   await expect.poll(async () => (await state(page)).flying, { timeout: 20000 }).toBe(false);
   const gold = (await page.evaluate(() => window.NetScene.note("Vanilla"))).colour;
+  // Every note's own gold, before anything is chosen: what "not
+  // highlighted" is measured against.
+  const goldOf = Object.fromEntries(await page.evaluate(() => window.NetScene.notes().map((n) => [n.name, window.NetScene.note(n.name).colour])));
   expect(gold[1], "gold: its green well up with its red").toBeGreaterThan(gold[0] * 0.45);
   expect(gold[0], "and its blue well under both").toBeGreaterThan(gold[2] * 2.5);
   expect(await page.evaluate(() => window.NetScene.spread()), "loosened").toBeGreaterThan(spread0 * 1.4);
@@ -1110,17 +1121,28 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
   expect(s.tags).toEqual(["Yuzu"]);
   expect(s.matched, "the fragrances that have it").toEqual(one.keys);
   expect(s.partners, "every note found with it").toBe(Object.keys(one.withs).length);
-  // Joined on the network to every one of them, brightly.
+  // Joined on the network to every one of them — by a FEEBLE line, the same
+  // for each, nothing highlighted (2026-09-29, last: "all the notes that
+  // note X connects to will be available ... connected by a feeble line,
+  // and not highighted in any way").
   await expect.poll(async () => (await state(page)).tagLines, { timeout: 5000 }).toBe(Object.keys(one.withs).length);
   const lines = await page.evaluate(() => window.NetScene.tagLines());
-  lines.forEach((l) => expect(l.colour[0] + l.colour[1], "a line lit").toBeGreaterThan(0.3));
+  lines.forEach((l) => expect(l.colour[0], "a feeble line").toBeLessThan(0.2));
+  lines.forEach((l) => expect(l.colour[0], "but there").toBeGreaterThan(0.01));
   const yuzu = await page.evaluate(() => window.NetScene.note("Yuzu"));
   lines.forEach((l) => expect(Math.hypot(l.a.x - yuzu.x, l.a.y - yuzu.y), "from Yuzu").toBeLessThan(2));
-  // What they are found with stays lit; the rest go faint.
+  // What they are found with is AVAILABLE — on, as it was, not lit; the
+  // rest are OFF.
+  expect((await state(page)).available.slice().sort(), "available: what is found with it").toEqual(Object.keys(one.withs).sort());
   const partner = Object.keys(one.withs)[0];
   await expect.poll(async () => (await page.evaluate((n) => window.NetScene.note(n), partner)).opacity, { timeout: 8000 }).toBe(1);
+  const plain = (c, d) => Math.max(...c.map((v, k) => Math.abs(v - d[k])));
+  expect(plain((await page.evaluate((n) => window.NetScene.note(n), partner)).colour, goldOf[partner]), "not highlighted: its own gold").toBeLessThan(0.03);
   const stranger = (await page.evaluate(() => window.NetScene.notes())).find((n) => n.name !== "Yuzu" && !(n.name in one.withs));
-  await expect.poll(async () => (await page.evaluate((n) => window.NetScene.note(n), stranger.name)).opacity, { timeout: 8000 }).toBeLessThan(0.2);
+  await expect.poll(async () => (await page.evaluate((n) => window.NetScene.note(n), stranger.name)).opacity, { timeout: 8000 }).toBeLessThan(0.1);
+  // Only Yuzu is named.
+  await expect.poll(async () => (await page.locator(".net-label").evaluateAll((els) => els.filter((e) => +getComputedStyle(e).opacity > 0.3)
+    .map((e) => e.textContent.trim()))).every((n) => n === "Yuzu"), { timeout: 5000 }).toBe(true);
   // THE LIST: the fragrances that have it, each a way to it — behind a
   // button that says so ("make this more obvious").
   await expect(page.locator(".net-combine-count")).toContainText(one.keys.length + (one.keys.length === 1 ? " fragrance" : " fragrances"));
@@ -1134,7 +1156,7 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
   expect(listed).toEqual(one.keys);
   const hrefs = await page.locator(".net-combine-list a[data-key]").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
   hrefs.forEach((h) => expect(h).toMatch(/^\.\.\/(houses\/[a-z-]+|individual-fragrances\/individual-fragrances)\.html#part-\d\d$/));
-  // A SECOND TAG, from what it is found with: only fragrances with both.
+  // A SECOND TAG, from what is available: only fragrances with both.
   await input.click();
   await input.fill(partner.split(" ")[0].slice(0, 4));
   const offered = await page.locator(".net-suggest-name").allTextContents();
@@ -1146,31 +1168,41 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
   expect(s.tags).toEqual(["Yuzu", partner]);
   expect(s.matched, "the fragrances with both").toEqual(two.keys);
   expect(two.keys.length).toBeGreaterThan(0);
-  expect(s.partners, "and what is found with both").toBe(Object.keys(two.withs).length);
-  // TWO OR MORE ARE LIT ALONE, joined only to each other ("I want ONLY
-  // the ones that are relevant to be lit up ... only have connections lit
-  // up between cedarwood myrrh vanilla and fir"): one line, Yuzu to the
-  // other, and nothing else — EMPHASIZED, a bright rod wider than a line
-  // ("connected with a bright and emphasized line", 2026-09-29). What is
-  // found with both — the middle of their Venn diagram, what the bar
-  // suggests — is SHOWN: seen and pressable, not lit, no lines ("BUT I
-  // WANT THE POSSIBILITIES TO ALSO BE SHOWN ... anything that could be
-  // added to the venn diagram should be at least available for selection
-  // visually"); what is found with Yuzu alone goes faint. Only the two
-  // are named.
-  Object.keys(two.withs).forEach((m) => expect(m in one.withs, m + " is in Yuzu's network").toBe(true));
-  expect(Object.keys(two.withs).length, "fewer than Yuzu's own").toBeLessThan(Object.keys(one.withs).length);
+  // WHAT STAYS ON: ONLY what is in a fragrance that has BOTH ("ONLY NOTES
+  // THAT ARE PRESENT IN PERFUMES THAT CONTAIN NOTES X AND Y (NOT X OR Y)!").
+  // Worked out here from each note's own fragrances.
+  const both = new Set(two.keys);
+  const inBoth = (await page.evaluate(() => window.NetScene.notes().map((n) => ({ name: n.name, keys: window.NetScene.about(n.name).keys }))))
+    .filter((n) => n.name !== "Yuzu" && n.name !== partner && n.keys.some((k) => both.has(k))).map((n) => n.name).sort();
+  expect(Object.keys(two.withs).sort(), "what is found with both, by fragrance").toEqual(inBoth);
+  expect(s.partners, "and that is what is available").toBe(inBoth.length);
+  expect(s.available.slice().sort()).toEqual(inBoth);
+  // A note found with Yuzu in one fragrance and with the other in another,
+  // but never with both in one — the middle of their Venn diagram, which
+  // stayed on until now (picture one) — is OFF.
+  const theirs = await page.evaluate((p) => window.NetScene.combined([p]), partner);
+  const venn = Object.keys(one.withs).filter((m) => m !== partner && m in theirs.withs && !inBoth.includes(m));
+  if (venn.length) {
+    await expect.poll(async () => (await page.evaluate((n) => window.NetScene.note(n), venn[0])).opacity, { timeout: 8000 }).toBeLessThan(0.1);
+  }
+  // THE TWO EMPHASIZED, joined by an emphasized line; everything available
+  // joined to BOTH by a feeble one.
   expect(two.together, "the two found together").toEqual([["Yuzu", partner, two.keys.length]]);
   await expect.poll(async () => (await state(page)).tagging, { timeout: 8000 }).toBe(false);
   expect((await state(page)).pairs).toEqual(two.together);
-  await expect.poll(async () => (await state(page)).tagLines, { timeout: 5000 }).toBe(1);
+  await expect.poll(async () => (await state(page)).tagLines, { timeout: 5000 }).toBe(inBoth.length * 2 + 1);
   const other = await page.evaluate((n) => window.NetScene.note(n), partner);
-  const between = (await page.evaluate(() => window.NetScene.tagLines()))[0];
   const yuzuNow = await page.evaluate(() => window.NetScene.note("Yuzu"));
-  const ends = [between.a, between.b].sort((p, q) => p.x - q.x);
   const tagsAt = [yuzuNow, other].sort((p, q) => p.x - q.x);
-  ends.forEach((e, k) => expect(Math.hypot(e.x - tagsAt[k].x, e.y - tagsAt[k].y), "from one tag to the other").toBeLessThan(3));
+  const near = (e, t) => Math.hypot(e.x - t.x, e.y - t.y) < 3;
+  const all = await page.evaluate(() => window.NetScene.tagLines());
+  const between = all.find((l) => (near(l.a, yuzuNow) && near(l.b, other)) || (near(l.a, other) && near(l.b, yuzuNow)));
+  expect(between, "a line from one tag to the other").toBeTruthy();
   expect(between.colour[0] + between.colour[1], "and lit").toBeGreaterThan(0.6);
+  const feeble = all.filter((l) => l !== between);
+  feeble.forEach((l) => expect(l.colour[0], "the rest feeble").toBeLessThan(0.2));
+  expect(feeble.filter((l) => near(l.a, yuzuNow)).length, "every one available joined to Yuzu").toBe(inBoth.length);
+  expect(feeble.filter((l) => near(l.a, other)).length, "and to the other").toBe(inBoth.length);
   // The bond: one rod along that line, brighter than it and wider than a
   // line, with a glow laid along it.
   const rods = await page.evaluate(() => window.NetScene.bonds());
@@ -1180,30 +1212,40 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
   expect(rods[0].width, "wider than a line").toBeGreaterThan(1.5);
   expect(rods[0].colour[0] + rods[0].colour[1], "brighter than the line").toBeGreaterThan(between.colour[0] + between.colour[1]);
   expect((await state(page)).bondPoints, "a glow along it").toBeGreaterThan(10);
-  // The possibilities: every note found with both, shown — above the half a
-  // note must be at to be pressed, below the tags.
-  const possible = (await state(page)).possible;
-  expect([...possible].sort(), "what could still be added: found with both").toEqual(Object.keys(two.withs).sort());
-  const middle = Object.keys(two.withs)[0];
-  await expect.poll(async () => (await page.evaluate((n) => window.NetScene.note(n), middle)).opacity, { timeout: 8000 }).toBeGreaterThan(0.5);
-  for (const m of Object.keys(two.withs)) {
-    const o = (await page.evaluate((n) => window.NetScene.note(n), m)).opacity;
-    expect(o, m + " shown").toBeGreaterThan(0.5);
-    expect(o, m + " but not lit as the tags are").toBeLessThan(0.9);
+  // What is available is on, as it was, not lit; the tags lit.
+  if (inBoth.length) {
+    await expect.poll(async () => (await page.evaluate((n) => window.NetScene.note(n), inBoth[0])).opacity, { timeout: 8000 }).toBe(1);
+    expect(plain((await page.evaluate((n) => window.NetScene.note(n), inBoth[0])).colour, goldOf[inBoth[0]]), "not highlighted").toBeLessThan(0.03);
   }
-  const outside = Object.keys(one.withs).find((m) => m !== partner && !(m in two.withs));
-  await expect.poll(async () => (await page.evaluate((n) => window.NetScene.note(n), outside)).opacity, { timeout: 8000 }).toBeLessThan(0.2);
-  for (const tag of ["Yuzu", partner]) expect((await page.evaluate((n) => window.NetScene.note(n), tag)).opacity, tag + " lit").toBe(1);
-  // A possibility pointed at answers, and says it goes with them.
+  for (const tag of ["Yuzu", partner]) {
+    const c = await page.evaluate((n) => window.NetScene.note(n), tag);
+    expect(c.opacity, tag + " lit").toBe(1);
+    expect(Math.min(...c.colour), tag + " emphasized, towards white").toBeGreaterThan(Math.min(...goldOf[tag]) + 0.2);
+  }
+  // Something available pointed at answers, and says it goes with them.
   const onScreen = await page.evaluate((names) => names.map((n) => ({ n, ...window.NetScene.note(n) }))
-    .find((p) => p.x > 80 && p.x < 1360 && p.y > 120 && p.y < 620), Object.keys(two.withs));
+    .find((p) => p.x > 80 && p.x < 1360 && p.y > 120 && p.y < 620), inBoth);
   if (onScreen) {
     await page.mouse.move(onScreen.x, onScreen.y, { steps: 2 });
-    await expect(stage, "a possibility answers the hand").toHaveAttribute("data-hover", /.+/, { timeout: 3000 });
+    await expect(stage, "what is available answers the hand").toHaveAttribute("data-hover", /.+/, { timeout: 3000 });
     await page.mouse.move(1300, 200, { steps: 2 });
   }
   await expect.poll(async () => (await page.locator(".net-label").evaluateAll((els) => els.filter((e) => +getComputedStyle(e).opacity > 0.3)
     .map((e) => e.textContent.trim()))).every((n) => n === "Yuzu" || n === partner), { timeout: 5000 }).toBe(true);
+  // WHAT IS OFF CANNOT BE TAKEN: the bar does not offer it, and says why.
+  const offs = (await page.evaluate(() => window.NetScene.notes())).filter((n) => n.name !== "Yuzu" && n.name !== partner && !inBoth.includes(n.name) &&
+    /^[A-Za-z]{4}/.test(n.name));
+  let off = null;
+  for (const n of offs.slice(0, 40)) {
+    await input.fill(n.name.slice(0, 4));
+    if (!(await page.locator(".net-suggest:not(.is-none)").count())) { off = n; break; }
+  }
+  expect(off, "a note that is off, typed").not.toBeNull();
+  await expect(page.locator(".net-suggest.is-none")).toHaveText("Nothing in the library has that with all of these.");
+  await expect(page.locator(".net-suggest:not(.is-none)")).toHaveCount(0);
+  await page.keyboard.press("Enter");
+  expect((await state(page)).tags, "nothing taken").toEqual(["Yuzu", partner]);
+  expect((await state(page)).matched.length, "and always a fragrance with them all").toBeGreaterThan(0);
   // What nothing answers says so, in the owner's words.
   await input.fill("zzzq");
   await expect(page.locator(".net-suggest.is-none")).toHaveText("Unfortunately nothing like that exists on this page yet.");

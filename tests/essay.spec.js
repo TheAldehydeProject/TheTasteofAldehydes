@@ -504,7 +504,8 @@ test("Skin's diagrams are numbered, and drawn as the owner asked", async ({ page
   }, [name, small]);
   const enzymes = page.locator(".ed-enzymes");
   expect(await under(enzymes, "compound", "(linalool)")).toBe("under");
-  expect(await under(enzymes, "compound changed", "oxidized")).toBe("under");
+  // "(oxidized)" in brackets, as "(linalool)" is (2026-09-29, later).
+  expect(await under(enzymes, "compound changed", "(oxidized)")).toBe("under");
   const enzText = await enzymes.locator("svg").textContent();
   expect(enzText).not.toContain("oxidised");
   expect(enzText).toContain("its enzymes");
@@ -569,6 +570,63 @@ test("Skin's diagrams are numbered, and drawn as the owner asked", async ({ page
   });
   expect(gaps.say, "the three lines of writing").toBeGreaterThanOrEqual(1.7);
   expect(gaps.accent, "the two lines under RIGHT AROUND OVULATION").toBeGreaterThanOrEqual(1.7);
+  // ITS LINE STRAIGHT AND LEVEL ("straighten that line in diagram 8"):
+  // no curve in it, flat, out from the end of the lit arc to just short of
+  // the writing, level with the first line of what it says.
+  const lead = await page.locator(".ed-cycle").evaluate((f) => {
+    const p = f.querySelector("path.ed-lead"), b = p.getBBox();
+    const first = [...f.querySelectorAll("text.ed-accent")].find((t) => t.textContent.startsWith("musks")).getBBox();
+    const arc = f.querySelector(".ed-ring-lit").getBBox();
+    return { d: p.getAttribute("d"), height: b.height, from: b.x, to: b.x + b.width, arcEnd: arc.x + arc.width,
+      textAt: first.x, level: b.y > first.y && b.y < first.y + first.height };
+  });
+  expect(lead.d, "a straight line, not a curve").not.toMatch(/[qQcCsStTaA]/);
+  expect(lead.height, "level").toBeLessThan(0.5);
+  expect(lead.from - lead.arcEnd, "out from the lit arc").toBeGreaterThanOrEqual(0);
+  expect(lead.from - lead.arcEnd).toBeLessThan(12);
+  expect(lead.textAt - lead.to, "to just short of the writing").toBeGreaterThan(0);
+  expect(lead.textAt - lead.to).toBeLessThan(12);
+  expect(lead.level, "level with its first line").toBe(true);
+
+  // THE ARM ATTACHED ("make the human arm attached rather than not in
+  // diagram 9"): one open outline starting where the shoulder ends and
+  // ending where the body's side begins — no capsule closed at the
+  // shoulder.
+  const arm = await page.locator(".ed-body").evaluate((f) => {
+    const a = f.querySelector("path.ed-arm");
+    const ends = (d) => { const n = d.match(/-?\d+(\.\d+)?/g).map(Number); return [[n[0], n[1]], [n[n.length - 2], n[n.length - 1]]]; };
+    const paths = [...f.querySelectorAll(".ed-figure path")].map((p) => p.getAttribute("d"));
+    // The right shoulder, M160 118 and a curve 50 across and 18 down: it
+    // ends at 210 136. The body's right side goes down from 190 150.
+    const shoulderEnd = paths.some((x) => x.includes("M160 118q34 4 50 18")) ? [210, 136] : null;
+    const side = paths.find((x) => x.includes("M190 150v"));
+    return { there: !!a, ends: a ? ends(a.getAttribute("d")) : null, shoulderEnd, side: !!side, capsule: f.querySelectorAll(".ed-limb, .ed-limb-in").length,
+      closed: a ? /z\s*$/i.test(a.getAttribute("d")) : null };
+  });
+  expect(arm.there, "the arm").toBe(true);
+  expect(arm.capsule, "no capsule of its own").toBe(0);
+  expect(arm.closed, "open at the body").toBe(false);
+  expect(arm.ends[0], "out of the shoulder").toEqual(arm.shoulderEnd);
+  expect(arm.side, "the body's side").toBe(true);
+  expect(arm.ends[1], "and into the armpit, where the side begins").toEqual([190, 150]);
+
+  // THE TABLES NAMED as the diagrams are, counted apart: "Table 1; showing
+  // …" under the first ("add a picture/table name for image 5"), "Table 2"
+  // under the second.
+  const named = await page.locator(".essay-table-figure").evaluateAll((fs) => fs.map((f) => ({
+    table: !!f.querySelector("table.essay-table"), caption: f.querySelector("figcaption").textContent.trim(),
+    under: f.querySelector("figcaption").getBoundingClientRect().top >= f.querySelector("table").getBoundingClientRect().bottom,
+    no: f.querySelector("figcaption .essay-figure-no").textContent })));
+  expect(named).toHaveLength(2);
+  named.forEach((t, i) => {
+    expect(t.table).toBe(true);
+    expect(t.no).toBe(`Table ${i + 1}`);
+    expect(t.caption).toMatch(new RegExp(`^Table ${i + 1}; showing \\S`));
+    expect(t.under, "under the table").toBe(true);
+  });
+  expect(named[0].caption).toBe("Table 1; showing how different parts of a fragrance are likely to be affected by skin pH.");
+  await expect(page.locator("#section-02 .essay-table-figure")).toHaveCount(1);
+  await expect(page.locator("#section-07 .essay-table-figure")).toHaveCount(1);
 
   // NO LETTERING RUNS INTO ANY OTHER, at a desktop's width and a phone's.
   for (const width of [1280, 390]) {
