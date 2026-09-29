@@ -385,3 +385,73 @@ the round): footnote 1's "powder of Hydrogen" is *power*, and its pH change "of 
 *decrease* in hydrogen (it said increase); footnote 3's "6.5 to 2.5" for a factor of 100 is *6.5 to
 4.5*; footnote 4's "turpenes" is *terpenes*; and footnote 12 points at *footnote 10* for
 *lipophilic*, where it said 8. Nothing else in the writing was touched.
+
+## 2026-09-29 — Skin's diagrams numbered, and four of them redrawn
+
+> in the light blue area on the pH scale, just say "your skin", and ommit the ph 4.5to 6.5. Next,
+> remove the x10 x10 x10. next, hange Healthy skin is on the acidic side of neutral — and 4.5 to 6.5
+> is a hundredfold difference in hydrogen. TO Diagram 1; showing the pH scale and where your skin
+> lies on this on it. (also label all the other diagrams the same way; diagram 1 2 3 etc. with the
+> same description format. for the second, make it diagram 2, showing the brightness per unit time
+> of bergamot on high and low acidity levels. do this for all diagrams.
+
+and, for the bacteria diagram, the moisturized skin and the cycle, the notes quoted below. Four
+things were asked before starting, because they could be read two ways: **the numbering** — the
+Introduction's strip diagram stands before the pH scale, and the owner chose **page order**, so the
+strip is Diagram 1 and the pH scale Diagram 2 (they had called it 1 and bergamot 2); **the ×10s** —
+the owner chose **all of it**: the three ×10s, the arcs over them and the line *each step down: ten
+times the hydrogen* under them; where **compound changed** and **oxidized** stand — **both under**
+the changed molecule, mirroring *compound (linalool)*; and **which compounds** on moisturized skin
+become squares — **all five**.
+
+Files: `works/skin.html`, `style.css` (`.essay-figure-no`, `ed-tiny`, `ed-tiny-lit`, `ed-pacman`;
+`ed-hop`, `ed-bug`, `ed-enzyme` and `ed-coccus` gone), `tests/essay.spec.js`.
+
+- **Every diagram is numbered**, in the order they stand, in the owner's format: its caption is
+  *Diagram N; showing …* — the number in `span.essay-figure-no`, drawn in the brighter ink — and
+  every old caption went for one. There are **nine** now (the bacteria diagram became two). The
+  pH scale's and bergamot's say what the owner wrote — *where your skin lies on it* for their
+  *"lies on this on it"*, a slip plainly meant as one of the two; the other seven are written in
+  the same form, saying what each one shows. **The numbers are written in the page, not counted**,
+  as a section's are: a diagram added or moved means renumbering the ones after it, and the test
+  says so.
+- **Diagram 2, the pH scale**: the band says *your skin* and nothing more; the ×10s, their arcs and
+  the line under them are gone, and the drawing ends at the numbers. *NEUTRAL* and *your skin* were
+  moved a little apart, since on a phone the two nearly touched.
+- **The bacteria diagram is two** — *"after the first and after the second paragraph of Bacteria,
+  respectively"*:
+  - **Diagram 4**, *The perfume, changed*, after the first paragraph: **compound** with
+    *(linalool)* in small script under it; **the enzymes as a Pac-Man** — *"slightly with a
+    pentagon hole"*: a round body whose mouth, facing the compound, is cut by a regular pentagon
+    with its point at the middle, so the mouth opens like Pac-Man's and has the pentagon's corners
+    inside it (`ed-pacman`; the capsule with three blue dots is gone); *its enzymes* under it, as
+    before; and under the changed molecule **compound changed** with *oxidized* in small script
+    under it — the owner's spelling, where it said *oxidised*. Six mouths were drawn side by side and
+    the one that read most as Pac-Man while still showing its corners was taken.
+  - **Diagram 5**, *An ingredient added*, after the second: **no bacterium drawn** (*"ommit s
+    hominis from the diagram"*); the compound drawn **exactly as it was** — a circle, a bond and SH —
+    with **compounds made by S. Hominis** under it, on two lines, and *(thioalcohols)* in small
+    script under that; **+ the perfume**, as it was; **= a copy of the perfume with that compound in
+    the middle of it**, its three circles spread to make room, and *one note more* under it.
+- **Small script** is `ed-tiny` — the mono at 9.5px (12px on a phone), quieter than the name over
+  it, and in the steel blue (`ed-tiny-lit`) under a name that is itself lit.
+- **Diagram 6, three skins**: every compound on moisturized skin is **a tiny square** (7 units), the
+  two rising and the three held in the water alike — and **only there**; dry and oily keep their
+  circles. Each column carries a class of its own (`ed-dry`, `ed-moist`, `ed-oily`).
+- **Diagram 8, the cycle**, *"not so compact"*: the three lines of writing 26 apart where they were
+  20, the two under *RIGHT AROUND OVULATION* 24 where they were 18, that heading further below the
+  writing, the whole block further right, and the ring's names further off the ring — the drawing
+  a little wider (640) and taller (270). It had no caption and has one now.
+
+Tested: **`Skin's diagrams are numbered, and drawn as the owner asked`** in `tests/essay.spec.js` —
+nine captions, *Diagram 1* to *Diagram 9* in page order in the owner's format, the Introduction's
+first, the pH scale's and bergamot's word for word; the band saying only *your skin* and nothing of
+the ×10s; the two bacteria diagrams straight after the first and the second paragraph; *(linalool)*
+under *compound* and *oxidized* under *compound changed*, each in small script and centred under it;
+the Pac-Man round, its mouth open towards the compound, solid behind, with at least three corners in
+the mouth; the capsule, its dots and the bacterium gone; *(thioalcohols)* under *by S. Hominis*; the
+compound drawn as before and again, the same, inside a copy of the perfume after the equals sign;
+five tiny squares and no circles on moisturized skin and no squares on the others; the cycle's lines
+at least 1.7 of their size apart; and **no lettering in any diagram running into any other, at
+1280px and at 390px**. It was run against the page before this round and failed, and against a
+label pushed back into the one under it and failed, before it was trusted.

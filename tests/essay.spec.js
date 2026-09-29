@@ -452,6 +452,143 @@ test("Researches 003 is Skin: the owner's research with its two tables, its diag
   expect(errors).toEqual([]);
 });
 
+/* SKIN'S DIAGRAMS, NUMBERED AND REDRAWN (2026-09-29). The owner: every
+   diagram labelled "Diagram 1; showing …", in page order (the strip in
+   the Introduction is 1, the pH scale 2); the pH scale's band saying only
+   "your skin", with the ×10s, their arcs and the line under them gone;
+   bergamot's caption in their words; the bacteria diagram split in two,
+   after the first and the second paragraph of Bacteria — a compound
+   (linalool in small script under it) + the enzymes as a Pac-Man with a
+   pentagon for a mouth → compound changed (oxidized in small script under
+   it); and no S. hominis drawn, its compounds (thioalcohols in small
+   script) drawn as before + the perfume = the perfume with them in the
+   middle; every compound on moisturized skin a tiny square, and only
+   there; and the cycle's lettering not so compact. No lettering in any
+   diagram runs into any other, at a desktop's width or a phone's. */
+test("Skin's diagrams are numbered, and drawn as the owner asked", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto("/works/skin.html");
+
+  // NUMBERED, in page order, in the owner's format.
+  const captions = await page.locator(".essay-figure figcaption").evaluateAll((cs) => cs.map((c) => c.textContent.trim()));
+  expect(captions).toHaveLength(9);
+  captions.forEach((c, i) => expect(c, `diagram ${i + 1}`).toMatch(new RegExp(`^Diagram ${i + 1}; showing \\S`)));
+  await expect(page.locator(".essay-figure figcaption .essay-figure-no")).toHaveText(
+    Array.from({ length: 9 }, (_, i) => `Diagram ${i + 1}`));
+  expect(await page.locator("#section-01 .essay-figure figcaption").textContent(), "the Introduction's is 1").toMatch(/^Diagram 1;/);
+  await expect(page.locator(".ed-ph figcaption")).toHaveText("Diagram 2; showing the pH scale and where your skin lies on it.");
+  await expect(page.locator(".ed-curves figcaption")).toHaveText(
+    "Diagram 3; showing the brightness per unit time of bergamot on high and low acidity levels.");
+
+  // THE pH SCALE: "your skin", and nothing of the ×10s.
+  const ph = page.locator(".ed-ph");
+  await expect(ph.locator("text.ed-accent")).toHaveText("your skin");
+  const phText = await ph.locator("svg").textContent();
+  for (const gone of ["×10", "4.5", "6.5", "each step down", "hydrogen"]) expect(phText, "not: " + gone).not.toContain(gone);
+  await expect(ph.locator(".ed-hop")).toHaveCount(0);
+
+  // BACTERIA: two diagrams, after its first and its second paragraph.
+  const after = await page.locator("#section-03 > p").evaluateAll((ps) => ps.map((p) => {
+    const n = p.nextElementSibling;
+    return n && n.matches("figure.essay-figure") ? n.className : "";
+  }));
+  expect(after[0], "the enzyme's after the first paragraph").toContain("ed-enzymes");
+  expect(after[1], "the added compounds' after the second").toContain("ed-added");
+  // What stands under what: a name, and its small script under it.
+  const under = (fig, name, small) => fig.evaluate((f, [name, small]) => {
+    const t = [...f.querySelectorAll("text")];
+    const a = t.find((e) => e.textContent === name), b = t.find((e) => e.textContent === small);
+    if (!a || !b) return "missing";
+    const A = a.getBBox(), B = b.getBBox();
+    return B.y > A.y && Math.abs((A.x + A.width / 2) - (B.x + B.width / 2)) < 3 && b.classList.contains("ed-tiny") ? "under" : "not under";
+  }, [name, small]);
+  const enzymes = page.locator(".ed-enzymes");
+  expect(await under(enzymes, "compound", "(linalool)")).toBe("under");
+  expect(await under(enzymes, "compound changed", "oxidized")).toBe("under");
+  const enzText = await enzymes.locator("svg").textContent();
+  expect(enzText).not.toContain("oxidised");
+  expect(enzText).toContain("its enzymes");
+  // The enzymes: a Pac-Man facing the compound, its mouth a pentagon's
+  // corners rather than a plain wedge.
+  const pac = await enzymes.locator("path.ed-pacman").evaluate((p) => {
+    const b = p.getBBox(), cx = b.x + b.width - b.height / 2, cy = b.y + b.height / 2, r = b.height / 2;
+    const at = (x, y) => p.isPointInFill(new DOMPoint(x, y));
+    return { round: Math.abs(b.height - b.width) < b.height * 0.2, mouthOpen: !at(cx - r * 0.75, cy), body: at(cx + r * 0.6, cy),
+      corners: p.getAttribute("d").match(/L([^A-Za-z]*)/)[1].trim().split(/[\s,]+/).length / 2 };
+  });
+  expect(pac.round, "round").toBe(true);
+  expect(pac.mouthOpen, "a mouth open towards the compound").toBe(true);
+  expect(pac.body, "and solid behind it").toBe(true);
+  expect(pac.corners, "a pentagon's corners in the mouth").toBeGreaterThanOrEqual(3);
+  await expect(page.locator(".ed-bug, .ed-enzyme, .ed-coccus"), "the capsule, its dots and the bacterium are gone").toHaveCount(0);
+
+  const added = page.locator(".ed-added");
+  const addText = await added.locator("svg").textContent();
+  expect(addText, "no bacterium named on its own").not.toMatch(/S\. hominis/);
+  expect(addText).toContain("compounds made");
+  expect(addText).toContain("by S. Hominis");
+  expect(await under(added, "by S. Hominis", "(thioalcohols)")).toBe("under");
+  expect(addText).not.toMatch(/(^|[^(])thioalcohols/);
+  expect(addText).toContain("the perfume");
+  // The compound drawn exactly as it was, and the same again in the
+  // middle of a copy of the perfume after the equals sign.
+  const drawn = await added.evaluate((f) => {
+    const shape = (g) => [...g.querySelectorAll("circle")].map((c) => +c.getAttribute("r"));
+    const thiols = [...f.querySelectorAll(".ed-thiol")], notes = [...f.querySelectorAll(".ed-notes")];
+    const x = (g) => { const b = g.getBBox(); return [b.x, b.x + b.width]; };
+    const eq = [...f.querySelectorAll("text")].find((t) => t.textContent === "=").getBBox().x;
+    return { thiol: shape(thiols[0]), inner: shape(thiols[1]), perfume: shape(notes[0]), copy: shape(notes[1]),
+      innerX: x(thiols[1]), copyX: x(notes[1]), afterEq: x(thiols[1])[0] > eq && x(notes[1])[0] > eq };
+  });
+  expect(drawn.thiol, "the compound as it was drawn").toEqual([6, 9]);
+  expect(drawn.inner, "the same compound in the result").toEqual(drawn.thiol);
+  expect(drawn.copy, "a copy of the perfume").toEqual(drawn.perfume);
+  expect(drawn.afterEq).toBe(true);
+  expect(drawn.innerX[0], "the compound in the middle of it").toBeGreaterThan(drawn.copyX[0]);
+  expect(drawn.innerX[1]).toBeLessThan(drawn.copyX[1]);
+
+  // MOISTURIZED: every compound a tiny square — and only there.
+  const cols = await page.locator(".ed-skins").evaluate((f) => ["ed-dry", "ed-moist", "ed-oily"].map((k) => {
+    const g = f.querySelector("." + k);
+    const rects = [...g.querySelectorAll("rect")];
+    return { circles: g.querySelectorAll("circle").length, squares: rects.length,
+      tinySquares: rects.every((r) => r.width.baseVal.value === r.height.baseVal.value && r.width.baseVal.value <= 8) };
+  }));
+  expect(cols[1], "moisturized").toEqual({ circles: 0, squares: 5, tinySquares: true });
+  expect(cols[0].squares, "dry").toBe(0);
+  expect(cols[2].squares, "oily").toBe(0);
+  expect(cols[0].circles).toBeGreaterThan(0);
+  expect(cols[2].circles).toBeGreaterThan(0);
+
+  // THE CYCLE, not so compact: its lines well apart.
+  const gaps = await page.locator(".ed-cycle").evaluate((f) => {
+    const lines = (cls) => [...f.querySelectorAll("text." + cls)].map((t) => +t.getAttribute("y"));
+    const size = (cls) => parseFloat(getComputedStyle(f.querySelector("text." + cls)).fontSize);
+    const step = (ys) => Math.min(...ys.slice(1).map((y, i) => y - ys[i]));
+    return { say: step(lines("ed-say")) / size("ed-say"), accent: step(lines("ed-accent").filter((y) => y < 250)) / size("ed-accent") };
+  });
+  expect(gaps.say, "the three lines of writing").toBeGreaterThanOrEqual(1.7);
+  expect(gaps.accent, "the two lines under RIGHT AROUND OVULATION").toBeGreaterThanOrEqual(1.7);
+
+  // NO LETTERING RUNS INTO ANY OTHER, at a desktop's width and a phone's.
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    const hits = await page.$$eval(".essay-figure svg", (svgs) => svgs.flatMap((svg, i) => {
+      const boxes = [...svg.querySelectorAll("text")].map((t) => ({ t: t.textContent, b: t.getBBox() }));
+      const out = [];
+      for (let a = 0; a < boxes.length; a++) for (let c = a + 1; c < boxes.length; c++) {
+        const A = boxes[a].b, C = boxes[c].b;
+        if (A.x < C.x + C.width && C.x < A.x + A.width && A.y < C.y + C.height && C.y < A.y + A.height) {
+          out.push(`${svg.closest("figure").querySelector(".essay-figure-no").textContent}: ${boxes[a].t} / ${boxes[c].t}`);
+        }
+      }
+      return out;
+    }));
+    expect(hits, `at ${width}px`).toEqual([]);
+  }
+  expect(errors).toEqual([]);
+});
+
 /* COLD VS WARM INCENSE, TAKEN DOWN (2026-09-28): "remove the page for
    cold vs warm incenses, and make the text lighter gray (since the page
    wont exist)". The row stays, at 005, drawn quieter and no link; the

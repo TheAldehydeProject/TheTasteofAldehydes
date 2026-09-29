@@ -60,9 +60,14 @@
   THE DIAGRAMS are this page's own, drawn in the page (SVG and HTML, no
   pictures), each saying only what the writing beside it says: the strip
   and the skin; the pH scale; bergamot on acidic and on less acidic skin;
-  what bacteria do to a perfume; dry, moisturised and oily skin; three
-  foods and what they give off; the cycle; and the four places on the
-  body from the second table. `ed-*` in style.css.
+  an enzyme changing a compound; the compounds S. Hominis makes, added to
+  the perfume; dry, moisturized and oily skin; three foods and what they
+  give off; the cycle; and the four places on the body from the second
+  table. `ed-*` in style.css.
+  EVERY DIAGRAM IS NUMBERED, in the order they stand, in the owner's
+  format (2026-09-29): its caption is "Diagram 1; showing …", the number
+  in a <span class="essay-figure-no">. The numbers are written here, not
+  counted — a diagram added or moved means renumbering the ones after it.
   A FOOTNOTE is a mark leading down to its note, and the note a way back.
   TO ADD A SECTION: copy a whole <section class="essay-section"> block
   and number it; the "Sections" count in the head is the one thing to
@@ -121,19 +126,21 @@
         <text class="ed-small" x="446" y="176">changed</text>
         <text class="ed-small ed-var" x="370" y="274" text-anchor="middle">pH · bacteria · sebum · warmth · hormones · diet</text>
       </svg>
-      <figcaption>On paper the order is the molecules’ own weight. On skin, everything under them has a say.</figcaption>
+      <figcaption><span class="essay-figure-no">Diagram 1</span>; showing the order a perfume evaporates in on a testing strip, and how the skin changes it.</figcaption>
     </figure>
   </section>
 
   <section class="essay-section" id="section-02">
     <h2><span class="essay-no">02</span>pH</h2>
     <p>pH is a chemistry term that describes the measure of how acidic something is.<a class="essay-fn" href="#footnote-1" id="footnote-1-from">1</a> You can find it on the packaging of store-bought water as well as some shampoos and hygienic products. This descriptor can also be used for your skin, where the pH of your skin determines how acidic it is.<a class="essay-fn" href="#footnote-2" id="footnote-2-from">2</a> Normal physiological human skin can have a pH from 4.5 to 6.5, which is quite a large difference.<a class="essay-fn" href="#footnote-3" id="footnote-3-from">3</a><a class="essay-fn" href="#footnote-4" id="footnote-4-from">4</a></p>
-    <!-- THE SCALE: 0 to 14, neutral at 7, the skin's band marked, and a
-         step of the scale a factor of ten. -->
-    <figure class="essay-figure ed-ph" aria-label="The pH scale from 0 to 14: acidic below 7, neutral at 7, basic above it. Human skin sits between 4.5 and 6.5, on the acidic side, and every whole step down the scale is ten times as much hydrogen">
-      <svg viewBox="0 0 640 170" role="img" aria-hidden="true">
+    <!-- THE SCALE: 0 to 14, neutral at 7, and the skin's band marked
+         "your skin" and nothing more. The ×10 under each step, their
+         arcs and the line under them went at the owner's word
+         (2026-09-29). -->
+    <figure class="essay-figure ed-ph" aria-label="The pH scale from 0 to 14: acidic below 7, neutral at 7, basic above it. Your skin sits on the acidic side, between 4.5 and 6.5">
+      <svg viewBox="0 0 640 106" role="img" aria-hidden="true">
         <rect class="ed-band" x="230" y="56" width="80" height="22"/>
-        <text class="ed-accent" x="270" y="44" text-anchor="middle">your skin · 4.5–6.5</text>
+        <text class="ed-accent" x="270" y="48" text-anchor="middle">your skin</text>
         <rect class="ed-track" x="50" y="60" width="560" height="14"/>
         <g class="ed-ticks">
           <path d="M50 74v8M90 74v8M130 74v8M170 74v8M210 74v8M250 74v8M290 74v8M330 74v8M370 74v8M410 74v8M450 74v8M490 74v8M530 74v8M570 74v8M610 74v8"/>
@@ -145,18 +152,11 @@
           <text x="530" y="98">12</text><text x="570" y="98">13</text><text x="610" y="98">14</text>
         </g>
         <path class="ed-mark" d="M330 50v34"/>
-        <text class="ed-label" x="330" y="28" text-anchor="middle">neutral</text>
-        <text class="ed-label" x="50" y="28">← acidic</text>
-        <text class="ed-label" x="610" y="28" text-anchor="end">basic →</text>
-        <g class="ed-hop">
-          <path d="M214 112q18 18 32 0"/><path d="M254 112q18 18 32 0"/><path d="M294 112q18 18 32 0"/>
-        </g>
-        <g class="ed-small" text-anchor="middle">
-          <text x="230" y="142">×10</text><text x="270" y="142">×10</text><text x="310" y="142">×10</text>
-        </g>
-        <text class="ed-small" x="330" y="164" text-anchor="middle">each step down: ten times the hydrogen</text>
+        <text class="ed-label" x="330" y="24" text-anchor="middle">neutral</text>
+        <text class="ed-label" x="50" y="24">← acidic</text>
+        <text class="ed-label" x="610" y="24" text-anchor="end">basic →</text>
       </svg>
-      <figcaption>Healthy skin is on the acidic side of neutral — and 4.5 to 6.5 is a hundredfold difference in hydrogen.</figcaption>
+      <figcaption><span class="essay-figure-no">Diagram 2</span>; showing the pH scale and where your skin lies on it.</figcaption>
     </figure>
     <p>Certain molecules like the ones found in bergamot<a class="essay-fn" href="#footnote-5" id="footnote-5-from">5</a>, a commonly used citrus top note, will evaporate quite aggressively in more acidic environments, resulting in a relatively brighter and sharper opening, which also lasts a shorter a duration. The opposite is applies as well: if your skin is at pH of 6.5, then the bergamot will last longer, and smell softer.</p>
     <!-- BERGAMOT: the same top note, a tall short peak on acidic skin and
@@ -172,7 +172,7 @@
         <text class="ed-accent" x="156" y="32">pH 4.5 · brighter, sharper, sooner gone</text>
         <text class="ed-say" x="316" y="104">pH 6.5 · softer, lasting longer</text>
       </svg>
-      <figcaption>Bergamot, the same top note, on two skins.</figcaption>
+      <figcaption><span class="essay-figure-no">Diagram 3</span>; showing the brightness per unit time of bergamot on high and low acidity levels.</figcaption>
     </figure>
     <p>The extent of the effect of pH and acidity on the skin will differ based on the conditions of that skin. If your skin is clean and dry, then the effect will be lessened. The things that can change your skin pH include Soap, water, sweat, skincare actives (glycolic acid, salicylic acid), and stress.</p>
     <p>To quote premierepeau who put it very nicely; “The skin you sprayed at 8 a.m. is not the same skin at 6 p.m.”</p>
@@ -195,44 +195,58 @@
   <section class="essay-section" id="section-03">
     <h2><span class="essay-no">03</span>Bacteria</h2>
     <p>A particularly (if not the most) important element that determines how perfumes react to your skin is its microbiota. The bacteria that colonize your skin often has a certain set of enzymes which it uses for its own purposes; but sometimes, these enzymes can also change parts of perfume when you spray it on your skin. Bacteria in this category include Staphylococcus species, Corynebacterium species, and Cutibacterium species.<a class="essay-fn" href="#footnote-6" id="footnote-6-from">6</a></p>
-    <p>Another way in which bacteria contribute to perfume variations is by giving the perfume a smell to combine with. There is a bacterium called Staphylococcus Hominis which makes compounds that are a part of a person’s natural odor<a class="essay-fn" href="#footnote-7" id="footnote-7-from">7</a>; and when these compounds combine with a perfume, then they effectively change its smell by changing its composition. It is like adding an ingredient that was not there previously.</p>
-    <!-- TWO WAYS: an enzyme changes a molecule of the perfume; or the
-         bacteria make a smell of their own, which joins it. -->
-    <figure class="essay-figure ed-bacteria" aria-label="Two ways bacteria change a perfume. First, a bacterium's enzymes change one of the perfume's molecules, such as linalool, into an oxidised one. Second, Staphylococcus hominis makes thioalcohols, part of a person's own odour, which join the perfume like an ingredient that was not there before">
-      <svg viewBox="0 0 640 250" role="img" aria-hidden="true">
+    <!-- THE PERFUME, CHANGED — after the first paragraph, which it draws
+         (2026-09-29: the one diagram of two halves split, "after the first
+         and after the second paragraph of Bacteria, respectively"). A
+         compound (linalool, in small script under the word), the bacteria's
+         enzymes drawn as a Pac-Man with a pentagon for a mouth, and the
+         compound changed (oxidized, in small script under it). -->
+    <figure class="essay-figure ed-bacteria ed-enzymes" aria-label="A compound in the perfume, such as linalool, and the enzymes of the bacteria on your skin: together they give the compound changed, oxidized">
+      <svg viewBox="0 0 640 150" role="img" aria-hidden="true">
         <text class="ed-label" x="0" y="20">The perfume, changed</text>
         <g class="ed-molecule">
           <path d="M40 70l18-10 18 10v20l-18 10-18-10z"/><path d="M76 70l16-8"/>
         </g>
-        <text class="ed-small" x="58" y="124" text-anchor="middle">linalool</text>
-        <text class="ed-plus" x="132" y="86" text-anchor="middle">+</text>
-        <rect class="ed-bug" x="162" y="66" width="72" height="28" rx="14"/>
-        <g class="ed-enzyme"><circle cx="186" cy="80" r="3"/><circle cx="200" cy="76" r="3"/><circle cx="214" cy="83" r="3"/></g>
-        <text class="ed-small" x="198" y="124" text-anchor="middle">its enzymes</text>
-        <path class="ed-arrow" d="M258 80h56M306 72l8 8-8 8"/>
+        <text class="ed-small" x="60" y="124" text-anchor="middle">compound</text>
+        <text class="ed-tiny" x="60" y="141" text-anchor="middle">(linalool)</text>
+        <text class="ed-plus" x="138" y="86" text-anchor="middle">+</text>
+        <path class="ed-pacman" d="M184.6 67.3A24 24 0 1 1 184.6 92.7L195.3 96.2 207 80 195.3 63.8Z"/>
+        <text class="ed-small" x="205" y="124" text-anchor="middle">its enzymes</text>
+        <path class="ed-arrow" d="M268 80h60M320 72l8 8-8 8"/>
         <g class="ed-molecule ed-molecule-lit">
-          <path d="M346 70l18-10 18 10v20l-18 10-18-10z"/><path d="M382 70l16-8"/>
+          <path d="M366 70l18-10 18 10v20l-18 10-18-10z"/><path d="M402 70l16-8"/>
         </g>
-        <circle class="ed-atom" cx="404" cy="58" r="7"/>
-        <text class="ed-atom-o" x="404" y="62" text-anchor="middle">O</text>
-        <text class="ed-accent" x="372" y="124" text-anchor="middle">oxidised</text>
-
-        <text class="ed-label" x="0" y="160">An ingredient added</text>
-        <g class="ed-coccus"><circle cx="46" cy="206" r="9"/><circle cx="64" cy="200" r="9"/><circle cx="56" cy="218" r="9"/><circle cx="74" cy="216" r="9"/></g>
-        <text class="ed-small" x="60" y="244" text-anchor="middle">S. hominis</text>
-        <path class="ed-arrow" d="M100 208h40M132 200l8 8-8 8"/>
-        <g class="ed-thiol"><circle cx="168" cy="208" r="6"/><path d="M174 208h14"/><circle class="ed-atom" cx="196" cy="208" r="9"/></g>
-        <text class="ed-atom-o" x="196" y="212" text-anchor="middle">SH</text>
-        <text class="ed-small" x="182" y="244" text-anchor="middle">thioalcohols</text>
-        <text class="ed-plus" x="244" y="214" text-anchor="middle">+</text>
-        <g class="ed-notes"><circle cx="286" cy="200" r="6"/><circle cx="304" cy="214" r="8"/><circle cx="322" cy="198" r="5"/></g>
-        <text class="ed-small" x="304" y="244" text-anchor="middle">the perfume</text>
-        <text class="ed-plus" x="360" y="214" text-anchor="middle">=</text>
-        <g class="ed-notes"><circle cx="400" cy="200" r="6"/><circle cx="418" cy="214" r="8"/><circle cx="436" cy="198" r="5"/></g>
-        <circle class="ed-atom" cx="454" cy="212" r="7"/>
-        <text class="ed-accent" x="428" y="244" text-anchor="middle">one note more</text>
+        <circle class="ed-atom" cx="424" cy="58" r="7"/>
+        <text class="ed-atom-o" x="424" y="62" text-anchor="middle">O</text>
+        <text class="ed-accent" x="392" y="124" text-anchor="middle">compound changed</text>
+        <text class="ed-tiny ed-tiny-lit" x="392" y="141" text-anchor="middle">oxidized</text>
       </svg>
-      <figcaption>An enzyme changes what was sprayed; a bacterium’s own smell adds to it.</figcaption>
+      <figcaption><span class="essay-figure-no">Diagram 4</span>; showing an enzyme of the bacteria on your skin changing a compound in the perfume.</figcaption>
+    </figure>
+    <p>Another way in which bacteria contribute to perfume variations is by giving the perfume a smell to combine with. There is a bacterium called Staphylococcus Hominis which makes compounds that are a part of a person’s natural odor<a class="essay-fn" href="#footnote-7" id="footnote-7-from">7</a>; and when these compounds combine with a perfume, then they effectively change its smell by changing its composition. It is like adding an ingredient that was not there previously.</p>
+    <!-- AN INGREDIENT ADDED — after the second paragraph. No bacterium
+         drawn (2026-09-29: "ommit s hominis from the diagram"): the
+         compounds S. Hominis makes (thioalcohols, in small script), drawn
+         as they always were, + the perfume = the perfume with that
+         compound in the middle of it. -->
+    <figure class="essay-figure ed-bacteria ed-added" aria-label="The compounds made by Staphylococcus Hominis, thioalcohols, added to the perfume: the result is the perfume with those compounds in the middle of it, one note more">
+      <svg viewBox="0 0 640 162" role="img" aria-hidden="true">
+        <text class="ed-label" x="0" y="20">An ingredient added</text>
+        <g class="ed-thiol"><circle cx="84" cy="72" r="6"/><path d="M90 72h14"/><circle class="ed-atom" cx="112" cy="72" r="9"/></g>
+        <text class="ed-atom-o" x="112" y="76" text-anchor="middle">SH</text>
+        <text class="ed-small" x="98" y="118" text-anchor="middle">compounds made</text>
+        <text class="ed-small" x="98" y="137" text-anchor="middle">by S. Hominis</text>
+        <text class="ed-tiny" x="98" y="155" text-anchor="middle">(thioalcohols)</text>
+        <text class="ed-plus" x="206" y="78" text-anchor="middle">+</text>
+        <g class="ed-notes"><circle cx="262" cy="64" r="6"/><circle cx="280" cy="78" r="8"/><circle cx="298" cy="62" r="5"/></g>
+        <text class="ed-small" x="280" y="118" text-anchor="middle">the perfume</text>
+        <text class="ed-plus" x="352" y="78" text-anchor="middle">=</text>
+        <g class="ed-notes ed-notes-with"><circle cx="410" cy="60" r="6"/><circle cx="456" cy="92" r="8"/><circle cx="502" cy="58" r="5"/></g>
+        <g class="ed-thiol ed-thiol-in"><circle cx="438" cy="64" r="6"/><path d="M444 64h14"/><circle class="ed-atom" cx="466" cy="64" r="9"/></g>
+        <text class="ed-atom-o" x="466" y="68" text-anchor="middle">SH</text>
+        <text class="ed-accent" x="456" y="118" text-anchor="middle">one note more</text>
+      </svg>
+      <figcaption><span class="essay-figure-no">Diagram 5</span>; showing the compounds made by S. Hominis added to the perfume, like an ingredient that was not there previously.</figcaption>
     </figure>
     <p>It is important to note that the microbiota difference does not just exist person to person (interpersonally), but area to area on the same person (intrapersonally). This means that spraying on different sites on your body will give you different results. Both intra and interpersonal variations come from the ratios of different colonizing bacteria species.</p>
   </section>
@@ -242,10 +256,13 @@
     <p>Your skin physiologically produces an oil called sebum, which helps moderate the volatility of molecules. When you spray your fragrance on oily skin, the oil traps a lot of the olfactory components that carry scent, and then slows down their evaporation.<a class="essay-fn" href="#footnote-9" id="footnote-9-from">9</a> Oily skin in general can have a fragrance last up to 8-12 hours, where the same fragrance might last 2-4 hours on dry skin.<a class="essay-fn" href="#footnote-10" id="footnote-10-from">10</a></p>
     <p>When you compare dry to moisturized, moisturized is still way better at preserving scent. Well-hydrated skin is going to be great at holding a particular type of chemicals that sebum may not hold to. It is different, it is less, but it is still better than nothing.<a class="essay-fn" href="#footnote-11" id="footnote-11-from">11</a><a class="essay-fn" href="#footnote-12" id="footnote-12-from">12</a></p>
     <!-- THREE SKINS: nothing to hold the perfume; water holding the
-         molecules drawn to water; sebum holding the ones drawn to oil. -->
-    <figure class="essay-figure ed-skins" aria-label="Three skins. On dry skin nothing holds the perfume and it lasts 2 to 4 hours. On moisturised skin water holds the molecules drawn to water, and it lasts longer than on dry skin. On oily skin sebum holds the molecules drawn to oil — musks, resins and woods — and it lasts 8 to 12 hours">
+         molecules drawn to water; sebum holding the ones drawn to oil.
+         Every compound on moisturized skin is a tiny square, and only
+         there (2026-09-29: "tiny squares ONLY IN THE MOISTURIZED
+         category"). -->
+    <figure class="essay-figure ed-skins" aria-label="Three skins. On dry skin nothing holds the perfume and it lasts 2 to 4 hours. On moisturized skin water holds the molecules drawn to water, drawn as tiny squares, and it lasts longer than on dry skin. On oily skin sebum holds the molecules drawn to oil — musks, resins and woods — and it lasts 8 to 12 hours">
       <svg viewBox="0 0 660 250" role="img" aria-hidden="true">
-        <g class="ed-skin-col">
+        <g class="ed-skin-col ed-dry">
           <path class="ed-skin" d="M20 170h180v14H20z"/>
           <g class="ed-rise"><path d="M60 162V70"/><path d="M110 162V56"/><path d="M160 162V80"/></g>
           <circle class="ed-mol" cx="60" cy="64" r="5"/><circle class="ed-mol" cx="110" cy="50" r="6"/><circle class="ed-mol" cx="160" cy="74" r="5"/>
@@ -253,16 +270,16 @@
           <text class="ed-label" x="110" y="214" text-anchor="middle">Dry</text>
           <text class="ed-accent" x="110" y="236" text-anchor="middle">2–4 hours</text>
         </g>
-        <g class="ed-skin-col">
+        <g class="ed-skin-col ed-moist">
           <path class="ed-water" d="M240 146c20-6 40 6 60 0s40-6 60 0 40 6 60 0v24H240z"/>
           <path class="ed-skin" d="M240 170h180v14H240z"/>
-          <g class="ed-rise"><path d="M280 140V78"/><path d="M390 140V90"/></g>
-          <circle class="ed-mol" cx="280" cy="72" r="5"/><circle class="ed-mol" cx="390" cy="84" r="5"/>
-          <circle class="ed-hydro" cx="300" cy="158" r="5"/><circle class="ed-hydro" cx="334" cy="154" r="5"/><circle class="ed-hydro" cx="366" cy="160" r="5"/>
+          <g class="ed-rise"><path d="M280 140V77"/><path d="M390 140V89"/></g>
+          <rect class="ed-mol ed-square" x="276.5" y="68.5" width="7" height="7"/><rect class="ed-mol ed-square" x="386.5" y="80.5" width="7" height="7"/>
+          <rect class="ed-hydro ed-square" x="296.5" y="154.5" width="7" height="7"/><rect class="ed-hydro ed-square" x="330.5" y="150.5" width="7" height="7"/><rect class="ed-hydro ed-square" x="362.5" y="156.5" width="7" height="7"/>
           <text class="ed-label" x="330" y="214" text-anchor="middle">Moisturized</text>
           <text class="ed-accent" x="330" y="236" text-anchor="middle">longer than dry</text>
         </g>
-        <g class="ed-skin-col">
+        <g class="ed-skin-col ed-oily">
           <path class="ed-sebum" d="M460 128h180v42H460z"/>
           <path class="ed-skin" d="M460 170h180v14H460z"/>
           <g class="ed-rise"><path d="M620 124V92"/></g>
@@ -274,7 +291,7 @@
           <text class="ed-accent" x="550" y="236" text-anchor="middle">8–12 hours</text>
         </g>
       </svg>
-      <figcaption>What is held stays; what is not, leaves. Sebum holds what is drawn to oil — musks, resins, woods — and water holds what is drawn to water.</figcaption>
+      <figcaption><span class="essay-figure-no">Diagram 6</span>; showing what dry, moisturized and oily skin each hold on to, and how long a perfume lasts on each.</figcaption>
     </figure>
     <p>It is worth noting that because dry skin is quite unreactive to perfume, it also means that it translates the scent from paper to skin well; especially compared to oily.</p>
   </section>
@@ -290,7 +307,7 @@
       <div class="ed-diet-row"><span class="ed-diet-food">Fenugreek</span><span class="ed-diet-to" aria-hidden="true"></span><span class="ed-diet-what">sotolon</span><span class="ed-diet-to" aria-hidden="true"></span><span class="ed-diet-smell">maple syrup</span></div>
       <div class="ed-diet-row"><span class="ed-diet-food">Garlic and onion</span><span class="ed-diet-to" aria-hidden="true"></span><span class="ed-diet-what">allyl methyl sulfide</span><span class="ed-diet-to" aria-hidden="true"></span><span class="ed-diet-smell">pungent</span></div>
       <div class="ed-diet-row"><span class="ed-diet-food">Cumin</span><span class="ed-diet-to" aria-hidden="true"></span><span class="ed-diet-what">cuminaldehyde</span><span class="ed-diet-to" aria-hidden="true"></span><span class="ed-diet-smell">warm, spicy curry</span></div>
-      <figcaption>Through sweat, and for garlic and onion through the breath.</figcaption>
+      <figcaption><span class="essay-figure-no">Diagram 7</span>; showing three foods, what each gives off, and what that smells of.</figcaption>
     </figure>
   </section>
 
@@ -298,29 +315,31 @@
     <h2><span class="essay-no">06</span>Hormones and Medications</h2>
     <p>Hormones are molecules that your body uses in order to communicate some form of change; they are what drive hunger, satiety, sleep and the menstrual cycle (among a LOT of other things); and in the past 5 years it was revealed that they also contribute to the perception of smell – not the smell of someone, but rather their perception of it. Essentially, during different stages of the menstrual cycle, one might find the same perfume varyingly powerful and varyingly attractive.</p>
     <p>To add onto the latter direct effect of hormones on perfume, it was also shown that specifically in the periovulatory period (right around ovulation), women tend to have a much higher receptibility to musks and hormonal smells.<a class="essay-fn" href="#footnote-17" id="footnote-17-from">17</a></p>
-    <!-- THE CYCLE, as a ring, with the time around ovulation lit. -->
+    <!-- THE CYCLE, as a ring, with the time around ovulation lit. Its
+         lettering spaced out (2026-09-29: "make the text ... not so
+         compact"): the lines further apart, the ring's names further off
+         the ring, and the writing on the right further from them. -->
     <figure class="essay-figure ed-cycle" aria-label="The menstrual cycle as a ring — menstruation, the follicular phase, ovulation and the luteal phase — with the time right around ovulation marked: then musks and hormonal smells are received much more strongly">
-      <svg viewBox="0 0 600 256" role="img" aria-hidden="true">
-        <g transform="translate(14 0)">
-          <circle class="ed-ring" cx="150" cy="125" r="92"/>
-          <path class="ed-ring-part" d="M150 33A92 92 0 0 1 228 76"/>
-          <path class="ed-ring-lit" d="M123 213A92 92 0 0 0 177 213"/>
-          <g class="ed-ring-ticks"><path d="M150 25v16"/><path d="M150 209v16"/><path d="M242 125h-16"/><path d="M58 125h16"/></g>
-          <circle class="ed-dot-lit" cx="150" cy="217" r="6"/>
-          <text class="ed-small" x="222" y="44">menstruation</text>
-          <text class="ed-small" x="254" y="129">follicular</text>
-          <text class="ed-accent" x="150" y="250" text-anchor="middle">ovulation</text>
-          <text class="ed-small" x="48" y="129" text-anchor="end">luteal</text>
-          <text class="ed-small" x="150" y="129" text-anchor="middle">one cycle</text>
-        </g>
-        <path class="ed-lead" d="M196 212q57-8 114-8"/>
-        <text class="ed-label" x="318" y="190">right around ovulation</text>
-        <text class="ed-accent" x="318" y="212">musks and hormonal smells,</text>
-        <text class="ed-accent" x="318" y="230">received much more strongly</text>
-        <text class="ed-say" x="318" y="74">Through the cycle the same perfume</text>
-        <text class="ed-say" x="318" y="94">can seem more or less powerful,</text>
-        <text class="ed-say" x="318" y="114">and more or less attractive.</text>
+      <svg viewBox="0 0 640 270" role="img" aria-hidden="true">
+        <circle class="ed-ring" cx="168" cy="130" r="92"/>
+        <path class="ed-ring-part" d="M168 38A92 92 0 0 1 246 81"/>
+        <path class="ed-ring-lit" d="M141 218A92 92 0 0 0 195 218"/>
+        <g class="ed-ring-ticks"><path d="M168 30v16"/><path d="M168 214v16"/><path d="M252 130h16"/><path d="M68 130h16"/></g>
+        <circle class="ed-dot-lit" cx="168" cy="222" r="6"/>
+        <text class="ed-small" x="246" y="40">menstruation</text>
+        <text class="ed-small" x="280" y="134">follicular</text>
+        <text class="ed-accent" x="168" y="260" text-anchor="middle">ovulation</text>
+        <text class="ed-small" x="56" y="134" text-anchor="end">luteal</text>
+        <text class="ed-small" x="168" y="134" text-anchor="middle">one cycle</text>
+        <path class="ed-lead" d="M200 216q80-10 156-12"/>
+        <text class="ed-say" x="364" y="54">Through the cycle the same perfume</text>
+        <text class="ed-say" x="364" y="80">can seem more or less powerful,</text>
+        <text class="ed-say" x="364" y="106">and more or less attractive.</text>
+        <text class="ed-label" x="364" y="180">right around ovulation</text>
+        <text class="ed-accent" x="364" y="208">musks and hormonal smells,</text>
+        <text class="ed-accent" x="364" y="232">received much more strongly</text>
       </svg>
+      <figcaption><span class="essay-figure-no">Diagram 8</span>; showing the menstrual cycle, and the time around ovulation when musks and hormonal smells are received much more strongly.</figcaption>
     </figure>
     <p>Hormones also have an indirect effect on the smell of individual (whereas the effect of diet I would consider to be direct), in a sense that they increase production of specific compounds and their secretion from our sweat glands<a class="essay-fn" href="#footnote-18" id="footnote-18-from">18</a>; and these compounds are then metabolized to make volatile olfactory metabolites. What this means in short is that hormones make our sweat odor stronger (and different); and similarly as with the diet, it gives your perfume more notes to work with.</p>
     <p>Medications also play a role in influencing what a person’s perfume might smell like, by changing sweat production, metabolism, or skin bacteria. Here is a list of what that can look like:</p>
@@ -373,7 +392,7 @@
         <text class="ed-label" x="370" y="214">Inner elbow</text><text class="ed-accent" x="560" y="214" text-anchor="end">~33°C</text>
         <text class="ed-label" x="370" y="280">Inner wrist</text><text class="ed-accent" x="560" y="280" text-anchor="end">~32°C</text>
       </svg>
-      <figcaption>The four places from the table, the warmest drawn the brightest.</figcaption>
+      <figcaption><span class="essay-figure-no">Diagram 9</span>; showing the four body sites from the table, the warmest drawn the brightest.</figcaption>
     </figure>
   </section>
 
