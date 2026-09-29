@@ -619,7 +619,9 @@ test("the flash goes only on a journey: to the centre, out to every network; to 
    what it is most often combined with, and its numbers last; and a filler
    never answers. */
 test("once apart, a note pressed opens its own window over the page out of focus; a filler never answers", async ({ page }) => {
-  test.setTimeout(150000);
+  // Longer since 2026-09-29: every journey is slower, and faded, and this
+  // test makes several.
+  test.setTimeout(240000);
   const errors = collectPageErrors(page);
   await open(page);
   // What the catalogue says of Vanilla: its other spellings, and what each
@@ -817,7 +819,7 @@ test("once apart, a note pressed opens its own window over the page out of focus
    (2026-09-29); an accord arrived at comes up whole, the rest faded back,
    and fits the window. */
 test("the centre joins every network, and going from one accord to another is easy", async ({ page }) => {
-  test.setTimeout(150000);
+  test.setTimeout(240000);             // a dozen journeys, slower since 2026-09-29
   const errors = collectPageErrors(page);
   await open(page);
   await expandIt(page);
