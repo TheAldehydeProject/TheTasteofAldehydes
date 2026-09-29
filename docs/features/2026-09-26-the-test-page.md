@@ -1497,13 +1497,13 @@ whether there is a difference at all. If yes, research it."
 
 The figures revised for what a note **is**, not what it is made of — "like holy bread should be a
 cross": Holy Bread a cross; a note best known by an outline — a paw print for Animal Notes, a
-glove for Suede, a bone for Rotten Flesh, a bolt for Ozone, a fingerprint for Skin, a hide for
-Leather — drawn as **a flat shape** facing you with a little thickness and specks inside it;
+bolt for Ozone, a fingerprint for Skin, a hide for Leather (and, after the owner's answer below, a
+boot for Suede, a fly for Rotten Flesh, a musk deer for Musk) — drawn as **a flat shape** facing you with a little thickness and specks inside it;
 flowers turned to face you rather than the sky; and **fifty-odd others redrawn** (a hop cone of
 spiral scales, eucalyptus leaves hanging from an arched stem, a mortar and pestle for Herbal
 Notes, a cacao pod and its beans, tonka's wrinkled beans, a pine cone, a tapped trunk for
 Balsam, a thorny branch with tears for Myrrh, a box of tears for Benzoin, a blackberry of
-drupelets, cranberries on water, a cotton boll for Musk, a sheep for Lanolin …). **Every figure
+drupelets, cranberries on water …; eleven of them were redrawn again at the owner's answer, below). **Every figure
 sways** about its upright, a little left of straight on, once every fourteen seconds or so, rather
 than turning all the way round: an outline turned edge on says nothing.
 
@@ -1565,6 +1565,30 @@ researched yet.
   each accord in `tools/note-library/research/` (the rest are the pattern), taking each note's
   spelling-only variations out of `SPELL.py` into it, `WAITING` emptied in the test, and the tool
   run.
-- The symbols the owner was asked about (Musk as a cotton boll, Botanical Musk, Civet, Suede,
-  Rotten Flesh, Mousse de Saxe, Opoponax, Malt, Sandalwood, Lanolin, Amber Oud, CO2 Extracts) may
-  change at their word.
+- None of the symbols is waiting: the twelve the owner was asked about were redrawn but Civet
+  (below).
+
+### Twelve symbols asked about, eleven redrawn
+
+Asked which of the twelve symbols I was unsure of should be redrawn, the owner answered "All except
+civet". So Civet stays the animal, and the other eleven say what they are differently:
+
+- **Musk** — a **musk deer**, where musk was first taken from: no antlers, the back higher at the
+  rump, big ears and the long tusk (it was a cotton boll, for white musk's softness).
+- **Botanical Musk** — the **musk mallow's seed pod**, pointed and ribbed, its seeds falling from
+  its tip and gathered below (it was a leaf and a cloud).
+- **Lanolin** — **a pot of balm**, its lid leant against it, a swirl on top and a tuft of wool
+  beside it (it was a sheep).
+- **Suede** — **a suede boot**, a chukka laced through three eyelets, its nap brushed one way (it
+  was a glove).
+- **Rotten Flesh** — **a fly** from above: eyes, a striped body, veined wings, six jointed legs (it
+  was a bone).
+- **Mousse de Saxe** — **Saxony's arms**, for "moss of Saxony": a shield barred across with the
+  crown-wreath on the bend, and moss at its foot (it was an old atomiser).
+- **CO2 Extracts** — **a pressure gauge**, since carbon dioxide takes the smell out only under
+  pressure, a drop falling from its pipe (it was a bottle and a drop).
+- **Malt** — **malted milk balls**, one whole and one bitten through to its crumb (it was grains).
+- **Sandalwood** — **a sandalwood fan**, pleated, pierced, with its tassel (it was logs and shavings).
+- **Opoponax** — **a censer** on three chains, smoking (it was a tree with a drop).
+- **Amber Oud** — **a mabkhara**, the burner oud and amber are smoked on, chips of the wood on it (it
+  was a ball and a gem).
