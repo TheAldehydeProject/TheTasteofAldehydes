@@ -1497,8 +1497,8 @@ whether there is a difference at all. If yes, research it."
 
 The figures revised for what a note **is**, not what it is made of — "like holy bread should be a
 cross": Holy Bread a cross; a note best known by an outline — a paw print for Animal Notes, a
-bolt for Ozone, a fingerprint for Skin, a hide for Leather (and, after the owner's answer below, a
-boot for Suede, a fly for Rotten Flesh, a musk deer for Musk) — drawn as **a flat shape** facing you with a little thickness and specks inside it;
+bolt for Ozone, a fingerprint for Skin, a hide for Leather (and, after the owner's answers below, a
+swatch for Suede, meat on the bone for Rotten Flesh, a musk deer and its pod for Musk) — drawn as **a flat shape** facing you with a little thickness and specks inside it;
 flowers turned to face you rather than the sky; and **fifty-odd others redrawn** (a hop cone of
 spiral scales, eucalyptus leaves hanging from an arched stem, a mortar and pestle for Herbal
 Notes, a cacao pod and its beans, tonka's wrinkled beans, a pine cone, a tapped trunk for
@@ -1565,8 +1565,8 @@ researched yet.
   each accord in `tools/note-library/research/` (the rest are the pattern), taking each note's
   spelling-only variations out of `SPELL.py` into it, `WAITING` emptied in the test, and the tool
   run.
-- None of the symbols is waiting: the twelve the owner was asked about were redrawn but Civet
-  (below).
+- None of the symbols is waiting: the twelve the owner was asked about were redrawn but Civet,
+  and five of those again at the owner's word (below).
 
 ### Twelve symbols asked about, eleven redrawn
 
@@ -1592,3 +1592,21 @@ civet". So Civet stays the animal, and the other eleven say what they are differ
 - **Opoponax** — **a censer** on three chains, smoking (it was a tree with a drop).
 - **Amber Oud** — **a mabkhara**, the burner oud and amber are smoked on, chips of the wood on it (it
   was a ball and a gem).
+
+### Five redrawn again
+
+> i want you to change sandalwood icon please; change suede, rotten flesh should also be changed,
+> make musk deer musk specifically; also change mousse de saxe
+
+- **Sandalwood** — **a mala**: prayer beads of the wood, sacred in India, on their loop, with the
+  larger guru bead and the tassel (the fan went).
+- **Suede** — **a swatch** of it, stitched round its edge, its nap lying one way and **a finger's
+  trail** across it where the nap lies the other way — suede's own look (the boot went).
+- **Rotten Flesh** — **meat on the bone**: a joint of flesh, its knobbed bone sticking out,
+  marbled, going bad in spots, the stench rising off it in three wavy lines (the fly went).
+- **Musk** — "musk deer musk specifically", read both ways it can be: **the musk deer**, no antlers,
+  its back arched high at the rump, big ears, the long tusk, the pod marked under its belly — and
+  **the musk itself** beside it, the furred pod its opening spilling a heap of the dark grains.
+- **Mousse de Saxe** — **a base tied in a bundle**, as it is made: sticks of licorice root, a
+  vanilla pod and a round geranium leaf bound with a leather thong — its geranium, licorice,
+  vanilla and leather (Saxony's arms went).
