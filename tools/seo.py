@@ -50,7 +50,7 @@ P = {
  "categories/theories.html": dict(desc="Theories — some frameworks that I came up with myself: The Architecture of Sunscreen, The Architecture of Sweat and The Note Dissemination Framework.", crumbs=[HOME]),
  "categories/favorites.html": dict(desc="Favourites — things I like, no other criteria than that: fragrances in chapters, among them Des Cendres, Haxan and De Profundis.", crumbs=[HOME]),
  "categories/researches.html": dict(desc="Explorations & Researches. Here you will find my researches and my explorations: a guide to perfume, dupes, designers and niches, resins in perfumery, and more.", crumbs=[HOME]),
- "categories/note-library.html": dict(desc="The Note Library: every note named in a fragrance on this site as a network in three dimensions, filed by accord — what each is, its variations, where it stands in the fragrances, and its sources.", crumbs=[HOME]),
+ "categories/note-library.html": dict(desc="The Note Library: every note named in a fragrance on this site, as a network in three dimensions — what each is, its variations, and its sources.", crumbs=[HOME]),
  "categories/other-2.html": dict(desc="Photography: pictures taken alongside the writing — mostly of the things being described, sometimes of the places they brought to mind.", crumbs=[HOME]),
  "houses/pineward.html": dict(type="article", desc="Pineward, the house that smells like trees: forty-seven fragrances described with their notes and photographs — Murkwood, Snoqualmie, White Fir and more.", crumbs=[HOME, SD]),
  "houses/adar.html": dict(type="article", desc="ADAR, the house that you have never heard of: eleven fragrances described with their notes — Amber Zero, Aetherialism, Incantu, Lignum Dei, Tyrian and more.", crumbs=[HOME, SD]),
