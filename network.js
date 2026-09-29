@@ -249,6 +249,18 @@
   const IDLE_MS = 7000;                 // left alone this long, the arrows glow
   const COMBINE_MS = 2200;              // into combinations, and back
   const SPREAD = 0.62;                  // ... loosened by this much
+  // With two notes or more chosen, what could still be added — every note
+  // found with each of them, the middle of their Venn diagram — stands at
+  // this strength, the more often found the stronger: seen, and above the
+  // half a note must be at to be pressed, but not lit as the chosen are
+  // ("I want only these two to be lit up ... BUT I WANT THE POSSIBILITIES
+  // TO ALSO BE SHOWN", 2026-09-29).
+  const POSSIBLE = [0.56, 0.82];
+  // ... and the chosen are joined by an emphasized line (the bond): a fine
+  // bright rod of this radius, a glow laid along it a point every BOND_STEP,
+  // and a bead of light running its length and back every BEAD_MS.
+  const BOND_R = 0.026, BOND_STEP = 0.045, BOND_GLOW = 0.5, BEAD_MS = 2600;
+  const BOND_MAX = 64, BOND_POINTS = 4000;
   const FLY_MS = 2300;
   const FLY_NEAR_MS = 1600;
   const FADE_RATE = 0.0072;             // translucency, eased: gone in ~0.5s
@@ -912,6 +924,28 @@
     scene.add(pulses);
     for (let k = 0; k < PULSES; k++) pulse.push({ one: Math.floor(rnd() * oneLinks.length), net: Math.floor(rnd() * netLinks.length), t: rnd(), rate: 0.0003 + rnd() * 0.0006, back: rnd() < 0.5 });
 
+    // THE BOND: in combinations, with two notes or more chosen, the line
+    // between two of them that are found together, emphasized — "connected
+    // with a bright and emphasized line" (2026-09-29): a fine bright rod
+    // (the library's own cylinder, no shader of ours), a soft glow laid
+    // along it, and a bead of light running its length and back. Written
+    // each frame, like the lines.
+    const bondRod = new THREE.InstancedMesh(new THREE.CylinderGeometry(1, 1, 1, 10, 1, true),
+      new THREE.MeshBasicMaterial(additive({})), BOND_MAX);
+    const noColour = new THREE.Color(0, 0, 0);
+    for (let k = 0; k < BOND_MAX; k++) bondRod.setColorAt(k, noColour);
+    bondRod.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    bondRod.count = 0;
+    bondRod.frustumCulled = false;
+    scene.add(bondRod);
+    const bondGeo = new THREE.BufferGeometry();
+    bondGeo.setAttribute("position", dynamic(BOND_POINTS, 3));
+    bondGeo.setAttribute("color", dynamic(BOND_POINTS, 3));
+    bondGeo.setDrawRange(0, 0);
+    const bondGlow = new THREE.Points(bondGeo, new THREE.PointsMaterial(additive({ map: SPOT, size: BOND_GLOW, sizeAttenuation: true, vertexColors: true })));
+    bondGlow.frustumCulled = false;
+    scene.add(bondGlow);
+
     // THE FRAME the one network turns in, ticked.
     const ringR = ONE_R * 1.2;
     const ticks = [];
@@ -1228,6 +1262,10 @@
     let pairMost = 1;
     let lastMatched = 0;                  // how many it came to last, to catch the eye when it changes
     const partnerOf = new Float32Array(T);  // each note's share of the most found with the tags
+    // ... and, with two or more chosen, the same share for what could still
+    // be added (0 for anything that could not): seen, not lit.
+    const possibleOf = new Float32Array(T);
+    let bonds = 0, bondPts = 0;           // the emphasized lines a frame drew, and their glow's points
     let fogNear = 10, fogFar = 40;        // the depth everything additive fades over
     // A note added in combinations: when, which, and when each line from it
     // sets out.
@@ -1807,11 +1845,15 @@
         "There are so many nodes lit up that do not belong in the venn
         diagram. I want ONLY the ones that are relevant to be lit up ...
         only have connections lit up between cedarwood myrrh vanilla and
-        fir ... apply the same logic in general" (2026-09-28). What every
-        one of their networks holds — the middle of the Venn diagram, which
-        was lit and joined to them all for a night — is still worked out,
-        for the bar's suggestions and the hand, and goes as faint as the
-        rest. And, for the list, the fragrances that have every one. */
+        fir ... apply the same logic in general" (2026-09-28) — the line
+        between them emphasized (the bond). What every one of their networks
+        holds — the middle of the Venn diagram, which was lit and joined to
+        them all for a night, and then as faint as the rest — is what could
+        still be added: the bar suggests it, and it is SHOWN, seen and
+        pressable but not lit, with no lines ("anything that could be added
+        to the venn diagram should be at least available for selection
+        visually", 2026-09-29). And, for the list, the fragrances that have
+        every one. */
     function recompute() {
       chosenSet.clear();
       chosen.forEach((n) => chosenSet.add(n.i));
@@ -1831,7 +1873,9 @@
       }
       partnerMost = Math.max(1, ...partners.values());
       partnerOf.fill(0);
+      possibleOf.fill(0);
       if (chosen.length === 1) partners.forEach((c, m) => { partnerOf[m.i] = c / partnerMost; });
+      else partners.forEach((c, m) => { possibleOf[m.i] = c / partnerMost; });
       pairs = [];
       if (chosen.length > 1) {
         chosen.forEach((a, j) => chosen.forEach((b, k) => {
@@ -2578,10 +2622,13 @@
       // At an accord, the rest of the library steps back out of its way.
       if (focusNow >= 0 && n.A.k !== focusNow) o = Math.min(o, AWAY);
       // Combinations: the fillers thinner; and with tags, only the tags —
-      // and, with one, what it is found with.
+      // and, with one, what it is found with; with more, what could still
+      // be added shown, not lit.
       if (cp.on) {
-        if (tagging) o = Math.min(o, n.kind === 0 && (chosenSet.has(i) || partnerOf[i] > 0) ? 1 : n.kind === 0 ? 0.1 : 0.12);
-        else if (n.kind !== 0) o = Math.min(o, 1 - 0.45 * cp.spread);
+        if (tagging) {
+          o = Math.min(o, n.kind !== 0 ? 0.12 : chosenSet.has(i) || partnerOf[i] > 0 ? 1
+            : possibleOf[i] > 0 ? POSSIBLE[0] + (POSSIBLE[1] - POSSIBLE[0]) * possibleOf[i] : 0.1);
+        } else if (n.kind !== 0) o = Math.min(o, 1 - 0.45 * cp.spread);
       }
       if (selected >= 0 && i !== selected) o = Math.min(o, near[selected].has(i) ? 0.35 : GHOST);
       return o;
@@ -2610,6 +2657,39 @@
       linkCol[o + 1] = linkCol[o + 4] = g * f;
       linkCol[o + 2] = linkCol[o + 5] = b * f;
       segs++;
+    }
+    /** One emphasized line between two chosen notes (the bond), as far as
+        it has come (`g`), at strength `f`: the rod, the glow along it, and
+        — once it has come all the way, and never with motion turned off —
+        the bead running its length and back. */
+    const bondM = new THREE.Matrix4(), bondQ = new THREE.Quaternion(), bondV = new THREE.Vector3();
+    const bondS = new THREE.Vector3(), bondAt = new THREE.Vector3(), bondC = new THREE.Color();
+    const Y_AXIS = new THREE.Vector3(0, 1, 0);
+    function bond(ax, ay, az, bx, by, bz, f, g, phase) {
+      const dx = bx - ax, dy = by - ay, dz = bz - az, L = Math.hypot(dx, dy, dz);
+      if (L < 1e-4 || bonds >= BOND_MAX) return;
+      const mx = (ax + bx) * 0.5, my = (ay + by) * 0.5, mz = (az + bz) * 0.5;
+      const k = f * fogOf(Math.hypot(mx - eyeX, my - eyeY, mz - eyeZ));
+      if (k < 0.01) return;
+      bondQ.setFromUnitVectors(Y_AXIS, bondV.set(dx / L, dy / L, dz / L));
+      bondM.compose(bondAt.set(mx, my, mz), bondQ, bondS.set(BOND_R, L, BOND_R));
+      bondRod.setMatrixAt(bonds, bondM);
+      bondRod.setColorAt(bonds, bondC.setRGB(Math.min(1, k * 1.05), Math.min(1, k * 0.94), Math.min(1, k * 0.74)));
+      bonds++;
+      const pos = bondGeo.attributes.position.array, col = bondGeo.attributes.color.array;
+      const glowPoint = (t, s) => {
+        if (bondPts >= BOND_POINTS) return;
+        const o = bondPts * 3;
+        pos[o] = ax + dx * t; pos[o + 1] = ay + dy * t; pos[o + 2] = az + dz * t;
+        col[o] = s; col[o + 1] = s * 0.8; col[o + 2] = s * 0.46;
+        bondPts++;
+      };
+      const n = Math.max(2, Math.ceil(L / BOND_STEP));
+      for (let s = 0; s <= n; s++) glowPoint(s / n, k * 0.075);
+      if (g >= 1 && !still) {
+        const t = 0.5 - 0.5 * Math.cos(((clock / BEAD_MS) + phase) * Math.PI * 2);
+        for (let s = 0; s < 3; s++) glowPoint(t, k * 0.45);
+      }
     }
     const line = [0, 0, 0];
     function drawLinks(set, weight, strength, signalled, front) {
@@ -2874,6 +2954,7 @@
       drawLinks(netMade, ph.form, 0.34, true);
       drawLinks(netRest, ph.form, 0.34, true);
       const before = segs;
+      bonds = 0; bondPts = 0;
       if (tagging) {
         // Drawn out from the note just added, each as far as it has come,
         // brighter at its end while it is still coming.
@@ -2894,20 +2975,31 @@
           });
         } else {
           // TWO OR MORE: only between them, where they are found together —
-          // out from the one just added.
-          for (const [c, d, count] of pairs) {
+          // out from the one just added — each line emphasized (the bond).
+          pairs.forEach(([c, d, count], p) => {
             const fromD = d.i === tagNew && tx < 1, fromC = c.i === tagNew && tx < 1;
             const s0 = fromD ? d.i : c.i, s1 = fromD ? c.i : d.i;
             const g = fromD || fromC ? out(s1) : 1;
-            if (g <= 0) continue;
+            if (g <= 0) return;
             const f = (0.6 + 0.5 * (count / pairMost)) * Math.min(vis[c.i], vis[d.i]) * cp.spread * (g < 1 ? 1.4 : 1);
             const sx = P[s0 * 3], sy = P[s0 * 3 + 1], sz = P[s0 * 3 + 2];
-            segment(sx, sy, sz, sx + (P[s1 * 3] - sx) * g, sy + (P[s1 * 3 + 1] - sy) * g, sz + (P[s1 * 3 + 2] - sz) * g,
-              f * 1.3, f * 1.18, f * 0.95);
-          }
+            const ex = sx + (P[s1 * 3] - sx) * g, ey = sy + (P[s1 * 3 + 1] - sy) * g, ez = sz + (P[s1 * 3 + 2] - sz) * g;
+            segment(sx, sy, sz, ex, ey, ez, f * 1.3, f * 1.18, f * 0.95);
+            bond(sx, sy, sz, ex, ey, ez, Math.min(1, f), g, p * 0.37);
+          });
         }
       }
       tagSegs = segs - before;
+      bondRod.count = bonds;
+      if (bonds) {
+        bondRod.instanceMatrix.needsUpdate = true;
+        bondRod.instanceColor.needsUpdate = true;
+      }
+      bondGeo.setDrawRange(0, bondPts);
+      if (bondPts) {
+        bondGeo.attributes.position.needsUpdate = true;
+        bondGeo.attributes.color.needsUpdate = true;
+      }
       // Each accord's middle node, and its links into its network.
       accords.forEach((A) => {
         const show = ph.apart;
@@ -3319,6 +3411,7 @@
         note: noteOpen && noteShown ? noteShown.name : null, loaded, coaching: coachOn, idle,
         combine: cmbTo === 1, cmb, tags: chosen.map((n) => n.name), matched: matched.slice(), partners: partners.size,
         pairs: pairs.map(([a, b, c]) => [a.name, b.name, c]),
+        possible: notes.filter((n) => possibleOf[n.i] > 0).map((n) => n.name), bonds, bondPoints: bondPts,
         hub: hubSeen, away: accords.map((A) => A.seen), tagLines: tagSegs, glows: glowsDrawn, drawn: nodesDrawn, pulsed: pulsedAt > 0, flashes, flashTo: flashTo.slice(),
         litAccords: accords.filter((A) => A.members.some((n) => lit[n.i] > 0.3)).map((A) => A.code),
         tagging: tagAt > 0 && performance.now() - tagAt < TAG_MS,
@@ -3434,6 +3527,24 @@
           const o = (k - (segs - tagSegs)) + (segs - tagSegs);
           out.push({ a: onScreen(new THREE.Vector3(linkPos[o * 6], linkPos[o * 6 + 1], linkPos[o * 6 + 2])),
             b: onScreen(new THREE.Vector3(linkPos[o * 6 + 3], linkPos[o * 6 + 4], linkPos[o * 6 + 5])), colour: [linkCol[o * 6], linkCol[o * 6 + 1], linkCol[o * 6 + 2]] });
+        }
+        return out;
+      },
+      /** The emphasized lines a frame drew between the chosen: where each
+          rod starts and ends on the window, how wide it is there, and how
+          bright. */
+      bonds: () => {
+        const out = [], m = new THREE.Matrix4(), c = new THREE.Color();
+        const at = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3();
+        for (let k = 0; k < bonds; k++) {
+          bondRod.getMatrixAt(k, m);
+          m.decompose(at, q, s);
+          const half = new THREE.Vector3(0, s.y / 2, 0).applyQuaternion(q);
+          const a = onScreen(at.clone().sub(half)), b = onScreen(at.clone().add(half));
+          // Its width on the window, at its middle: the rod's radius, seen.
+          const d = at.distanceTo(camera.position);
+          bondRod.getColorAt(k, c);
+          out.push({ a, b, width: (2 * s.x * scale()) / d, colour: [c.r, c.g, c.b] });
         }
         return out;
       },

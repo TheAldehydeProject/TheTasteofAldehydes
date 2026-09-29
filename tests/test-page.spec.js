@@ -1009,9 +1009,14 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
   // TWO OR MORE ARE LIT ALONE, joined only to each other ("I want ONLY
   // the ones that are relevant to be lit up ... only have connections lit
   // up between cedarwood myrrh vanilla and fir"): one line, Yuzu to the
-  // other, and nothing else — what is found with both (the middle of their
-  // Venn diagram, still what the bar suggests) goes as faint as the rest,
-  // and so does what is found with Yuzu alone. Only the two are named.
+  // other, and nothing else — EMPHASIZED, a bright rod wider than a line
+  // ("connected with a bright and emphasized line", 2026-09-29). What is
+  // found with both — the middle of their Venn diagram, what the bar
+  // suggests — is SHOWN: seen and pressable, not lit, no lines ("BUT I
+  // WANT THE POSSIBILITIES TO ALSO BE SHOWN ... anything that could be
+  // added to the venn diagram should be at least available for selection
+  // visually"); what is found with Yuzu alone goes faint. Only the two
+  // are named.
   Object.keys(two.withs).forEach((m) => expect(m in one.withs, m + " is in Yuzu's network").toBe(true));
   expect(Object.keys(two.withs).length, "fewer than Yuzu's own").toBeLessThan(Object.keys(one.withs).length);
   expect(two.together, "the two found together").toEqual([["Yuzu", partner, two.keys.length]]);
@@ -1025,11 +1030,37 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
   const tagsAt = [yuzuNow, other].sort((p, q) => p.x - q.x);
   ends.forEach((e, k) => expect(Math.hypot(e.x - tagsAt[k].x, e.y - tagsAt[k].y), "from one tag to the other").toBeLessThan(3));
   expect(between.colour[0] + between.colour[1], "and lit").toBeGreaterThan(0.6);
+  // The bond: one rod along that line, brighter than it and wider than a
+  // line, with a glow laid along it.
+  const rods = await page.evaluate(() => window.NetScene.bonds());
+  expect(rods, "one emphasized line").toHaveLength(1);
+  const rodEnds = [rods[0].a, rods[0].b].sort((p, q) => p.x - q.x);
+  rodEnds.forEach((e, k) => expect(Math.hypot(e.x - tagsAt[k].x, e.y - tagsAt[k].y), "along it, tag to tag").toBeLessThan(3));
+  expect(rods[0].width, "wider than a line").toBeGreaterThan(1.5);
+  expect(rods[0].colour[0] + rods[0].colour[1], "brighter than the line").toBeGreaterThan(between.colour[0] + between.colour[1]);
+  expect((await state(page)).bondPoints, "a glow along it").toBeGreaterThan(10);
+  // The possibilities: every note found with both, shown — above the half a
+  // note must be at to be pressed, below the tags.
+  const possible = (await state(page)).possible;
+  expect([...possible].sort(), "what could still be added: found with both").toEqual(Object.keys(two.withs).sort());
   const middle = Object.keys(two.withs)[0];
-  await expect.poll(async () => (await page.evaluate((n) => window.NetScene.note(n), middle)).opacity, { timeout: 8000 }).toBeLessThan(0.2);
+  await expect.poll(async () => (await page.evaluate((n) => window.NetScene.note(n), middle)).opacity, { timeout: 8000 }).toBeGreaterThan(0.5);
+  for (const m of Object.keys(two.withs)) {
+    const o = (await page.evaluate((n) => window.NetScene.note(n), m)).opacity;
+    expect(o, m + " shown").toBeGreaterThan(0.5);
+    expect(o, m + " but not lit as the tags are").toBeLessThan(0.9);
+  }
   const outside = Object.keys(one.withs).find((m) => m !== partner && !(m in two.withs));
   await expect.poll(async () => (await page.evaluate((n) => window.NetScene.note(n), outside)).opacity, { timeout: 8000 }).toBeLessThan(0.2);
   for (const tag of ["Yuzu", partner]) expect((await page.evaluate((n) => window.NetScene.note(n), tag)).opacity, tag + " lit").toBe(1);
+  // A possibility pointed at answers, and says it goes with them.
+  const onScreen = await page.evaluate((names) => names.map((n) => ({ n, ...window.NetScene.note(n) }))
+    .find((p) => p.x > 80 && p.x < 1360 && p.y > 120 && p.y < 620), Object.keys(two.withs));
+  if (onScreen) {
+    await page.mouse.move(onScreen.x, onScreen.y, { steps: 2 });
+    await expect(stage, "a possibility answers the hand").toHaveAttribute("data-hover", /.+/, { timeout: 3000 });
+    await page.mouse.move(1300, 200, { steps: 2 });
+  }
   await expect.poll(async () => (await page.locator(".net-label").evaluateAll((els) => els.filter((e) => +getComputedStyle(e).opacity > 0.3)
     .map((e) => e.textContent.trim()))).every((n) => n === "Yuzu" || n === partner), { timeout: 5000 }).toBe(true);
   // What nothing answers says so, in the owner's words.

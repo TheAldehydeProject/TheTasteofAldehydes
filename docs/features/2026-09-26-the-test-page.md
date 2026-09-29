@@ -1345,3 +1345,59 @@ expected a line from each tag to every note of the middle, the round before.)
 - "The same logic in general" is read as every combination of two or more. One tag keeps its
   network, because with the same logic it would have no lines at all.
 
+## 2026-09-29 — the possibilities shown, and the line between the chosen emphasized
+
+> On this page; it should Show dont blur out yhe nodes which can be connected to these two. I want
+> only these two to be lit up, and connected with a bright and emphasized line; BUT I WANT THE
+> POSSIBILITIES TO ALSO BE SHOWN. In the venn diagram, so far its correct; those are the ones that
+> should be lit up; but anything that could be added to the venn diagram should be at least
+> available for selection visually.
+
+The picture was a phone in combinations with **Cedarwood** and **Musk** chosen: the two lit and
+named, a hair-thin line between them, and everything else as faint as what is not used — the round
+before's "two or more, lit alone".
+
+**What "the possibilities" are** is read in the page's own terms: the notes that could be added to
+the Venn diagram are **the middle of it** — every note found with each chosen note in some fragrance
+(`partners`, worked out in `recompute`), which is exactly what **the bar suggests** once there are
+tags. Nothing else is one.
+
+- **The possibilities are shown.** With two tags or more, each carries its share of the most found
+  (`possibleOf`, 0 to 1, the least it is found with any one tag over the most any possibility is),
+  and stands at **`POSSIBLE`, 0.56 to 0.82** of its strength, the more often found the stronger:
+  plainly there, gold, its own size and its own glow — and **not lit**: not whitened, not
+  enlarged, not named, and **joined to nothing**. The tags stay the only notes at full strength,
+  whitened, half as large again and named. What is found with fewer than all the tags goes as
+  faint as before (0.1).
+- **Available for selection.** A note chosen from the network has to be at half its strength or
+  more to answer the hand while tags are chosen (`nodeAt`) — which is why, the round before, the
+  middle of the Venn diagram could not be pressed at all, only typed. At 0.56 and up it answers:
+  pointed at, it says *· with them ×N*; pressed, it is added as a tag. A note that is not a
+  possibility still does not answer.
+- **The line between the chosen is emphasized — the bond.** Every line between two tags (each two
+  found together, `pairs`) is drawn as before and, over it, **a fine bright rod** — the library's
+  own cylinder, instanced (`bondRod`, `BOND_R` 0.026, about three pixels wide at the network's
+  distance), additive, warm white, as bright as the pair is found together — with **a soft glow
+  laid along it** (`bondGlow`: a point of the site's `SPOT` every `BOND_STEP`) and **a bead of
+  light running its length and back** every `BEAD_MS` (2.6s), each bond on a phase of its own. It
+  grows out with the line when a tag is added, and the bead only runs once it has arrived. No shader
+  of the page's own: a cylinder and points, as everything else.
+
+With motion turned off the bond is drawn still, without its bead.
+
+### How to test it
+
+`tests/test-page.spec.js`, **`combinations: ...`** — two tags: one line and **one rod** along it,
+tag to tag, wider than a line (more than 1.5px) and brighter than the line, with a glow along it
+(`NetScene.bonds()`, `state().bondPoints`); **the possibilities are exactly the middle of the Venn
+diagram** (`state().possible` against `NetScene.combined`'s `withs`), **every one above half
+strength and below the tags'**; a note of Yuzu's network alone still faint; both tags at full
+strength; a possibility pointed at answering the hand; and only the two named. (It expected the
+middle of the Venn diagram as faint as the rest, the round before.)
+
+### Known issues / TODO
+
+- Many tags make many bonds: each two found together has one, up to `BOND_MAX` (64) — eleven tags'
+  worth — and the glow's points are capped at `BOND_POINTS` (4000); past either, the plain line is
+  still drawn.
+
