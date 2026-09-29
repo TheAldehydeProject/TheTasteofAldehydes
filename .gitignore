@@ -26,3 +26,6 @@ npm-debug.log*
 # accident on 2026-09-21 by a `git add -A`; it is not part of the site.
 look-tmp.js
 *-tmp.js
+
+# Python's own caches, left by running a tool in tools/.
+__pycache__/

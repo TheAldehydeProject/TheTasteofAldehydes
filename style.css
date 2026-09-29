@@ -245,7 +245,6 @@ body.adar-page,
 body.ataraxia-page,
 body.essay-page,
 body.find-page,
-body.library-page,
 body.network-page,
 body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
 
@@ -4404,12 +4403,13 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 }
 
 /* ==================================================================
-   THE TEST PAGE — works/test-page.html
-   Since the night of 2026-09-27, THE NOTE LIBRARY AS NETWORKS, drawn by
-   network.js on the page's own dark ground (its five tokens turned over,
-   as the Note Library's are): one dense red network of every note, which
-   the button at the foot expands into a network for each accord, joined
-   to a centre — and, since 2026-09-28, its own version of the library.
+   THE NOTE LIBRARY — categories/note-library.html (the test page, at
+   works/test-page.html, until 2026-09-29, when it became the library)
+   THE NOTE LIBRARY AS NETWORKS, drawn by network.js on the page's own
+   dark ground (its five tokens turned over): one dense red network of
+   every note, which the button at the foot expands into a network for
+   each accord, joined to a centre — the Sources — and a window for every
+   note.
 
    What network.js adds round the drawing, and what is styled here: THE TWO
    ARROWS on the left (the search's on top, the menu's under it) and what
@@ -4497,6 +4497,34 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 }
 .net-fallback a { color: var(--ink); }
 .net-fallback[hidden] { display: none; }
+/* THE CATALOGUE: the library's data, which network.js reads — and the page
+   itself, a plain list, whenever the drawing cannot be made. Never shown
+   while it is being drawn. */
+html.lib-drawing .lib-catalogue { display: none; }
+html:not(.lib-drawing) body.network-page { overflow: auto; }
+html:not(.lib-drawing) .net-stage { position: static; overflow: visible; }
+html:not(.lib-drawing) .net-canvas,
+html:not(.lib-drawing) .net-hint { display: none; }
+html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margin: 96px auto 0; padding: 0 24px; }
+.lib-catalogue { max-width: 760px; margin: 0 auto; padding: 72px 24px 96px; color: var(--ink); }
+.lib-catalogue-title { margin: 0 0 8px; font-size: 30px; font-weight: 600; }
+.lib-catalogue .lib-shelf { margin-top: 48px; }
+.lib-catalogue .lib-shelf-name { margin: 0 0 4px; font-size: 20px; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.lib-catalogue .lib-shelf-code { margin-right: 8px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--net-red); }
+.lib-catalogue .lib-shelf-say { margin: 8px 0 0; font-size: 14px; color: var(--muted); }
+.lib-catalogue .lib-record { padding: 16px 0; border-bottom: 1px solid var(--net-rule); }
+.lib-catalogue .lib-name { margin: 0; font-size: 16px; font-weight: 600; }
+.lib-catalogue .lib-say { margin: 6px 0 0; font-size: 14.5px; line-height: 1.6; }
+.lib-catalogue .lib-say[data-sources]::after,
+.lib-catalogue .lib-variations dd[data-sources]::after { content: " [" attr(data-sources) "]"; font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+.lib-catalogue .lib-variations { margin: 10px 0 0; font-size: 13.5px; line-height: 1.55; }
+.lib-catalogue .lib-variations dt { margin-top: 8px; font-weight: 600; color: rgba(var(--ink-rgb), 0.9); }
+.lib-catalogue .lib-variations dd { margin: 2px 0 0; color: rgba(var(--ink-rgb), 0.78); }
+.lib-catalogue .lib-sources { margin-top: 64px; }
+.lib-catalogue .lib-sources h2 { font-size: 20px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.lib-catalogue .lib-sources ol { margin: 16px 0 0; padding-left: 2.6em; font-size: 13.5px; line-height: 1.6; color: rgba(var(--ink-rgb), 0.82); }
+.lib-catalogue .lib-sources li { margin-bottom: 8px; overflow-wrap: anywhere; }
+.lib-catalogue .lib-sources a { color: inherit; }
 /* A small open diamond: the page's one marker, filled when it is on. */
 .net-dot {
   display: inline-block;
@@ -5449,11 +5477,13 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-note-drawing { display: block; width: 100%; height: 210px; }
 .net-note h3 {
   font-family: var(--mono);
-  font-size: 9.5px;
-  font-weight: 400;
+  font-size: 10px;
+  font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--muted);
+  /* A little more visible since 2026-09-29 ("make the subtitles in the
+     popup note windows slightly more visible"): it was the muted grey. */
+  color: rgba(var(--ink-rgb), 0.74);
 }
 .net-note-part { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--net-rule); }
 .net-note-found { display: grid; gap: 6px; }
@@ -5487,26 +5517,70 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-note-house summary { font-size: 12.5px; color: rgba(var(--ink-rgb), 0.86); }
 .net-note-drop ul { margin: 2px 0 6px 14px; padding: 0; list-style: none; }
 .net-note-drop a {
-  display: grid;
-  grid-template-columns: 26px 1fr auto;
-  gap: 8px;
+  display: block;
   padding: 3px 0;
   font-size: 12.5px;
   color: var(--ink);
   text-decoration: none;
 }
 .net-note-drop a:hover .net-note-fname { text-decoration: underline; text-decoration-color: var(--net-red); }
-.net-note-fno { font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
 .net-note-ftier { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: #ff7c84; }
 /* Under the pyramid, the fragrances in each tier — top, middle, base and
-   non-pyramidal — each a dropdown, each fragrance with its house. */
+   non-pyramidal — each a dropdown, split as the window's Fragrances list
+   was (2026-09-29): the individual fragrances, then Houses, then each
+   house. */
 .net-note-tier-lists { display: grid; gap: 2px; margin-top: 14px; }
+.net-note-tier > .net-note-group { margin-left: 14px; }
+.net-note-tier > .net-note-group > summary { font-size: 12.5px; color: rgba(var(--ink-rgb), 0.9); }
 .net-note-tier.is-empty > summary { color: var(--muted); }
 .net-note-tier > .net-note-none { margin: 2px 0 6px 14px !important; }
 .net-note-fhouse { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
 /* VARIATIONS: the other ways the site writes it. */
 .net-note-aka ul { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
-.net-note-aka li { padding: 3px 8px; border: 1px solid rgba(255, 255, 255, 0.14); font-size: 12.5px; color: rgba(var(--ink-rgb), 0.9); }
+.net-note-aka li { display: contents; }
+/* Each one a button since 2026-09-29: pressed, what it means against the
+   note opens under the row. */
+.net-note-var {
+  padding: 3px 8px;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: rgba(var(--ink-rgb), 0.9);
+  cursor: pointer;
+  transition: border-color 180ms ease, background-color 180ms ease;
+}
+.net-note-var:hover, .net-note-var:focus-visible { border-color: rgba(255, 90, 99, 0.8); outline: none; }
+.net-note-var.is-on { border-color: var(--net-red); background: rgba(255, 58, 68, 0.14); color: #fff; }
+.net-note-means {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-left: 2px solid var(--net-red);
+  background: rgba(255, 255, 255, 0.035);
+}
+.net-note-means[hidden] { display: none; }
+.net-note-means.is-same { border-left-color: rgba(255, 255, 255, 0.3); }
+.net-note-means-head { display: flex; align-items: baseline; gap: 10px; }
+.net-note-means-name { font-size: 13.5px; font-weight: 600; color: #fff; }
+.net-note-means-against { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: #ff7c84; }
+.net-note-means.is-same .net-note-means-against { color: var(--muted); }
+.net-note-means-say { margin-top: 6px !important; font-size: 13.5px; line-height: 1.6; color: rgba(var(--ink-rgb), 0.92); }
+/* A description's sources: small numbers under it, each opening the
+   Sources at that one. */
+.net-note-cites { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px; margin-top: 8px !important; }
+.net-note-say + .net-note-cites { padding-left: 16px; }
+.net-note-cites-say { margin-right: 4px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.net-note-cite {
+  min-width: 22px;
+  padding: 1px 5px;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: rgba(var(--ink-rgb), 0.85);
+  cursor: pointer;
+}
+.net-note-cite:hover, .net-note-cite:focus-visible { border-color: var(--net-red); color: #fff; outline: none; }
 /* PYRAMIDAL DISTRIBUTION: one triangle cut in three, each tier as dark as
    it is used, the count beside each — and beside the pyramid, how many
    times it stood in no pyramid at all. */
@@ -5648,6 +5722,113 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-bridge { background: #fff; color: #140608; font-weight: 500; }
 .net-hover.is-on,
 .net-bridge.is-on { opacity: 1; }
+/* THE CENTRE'S NAME: "Sources", under the centre while it is pointed at,
+   and only then — its opacity set by network.js as the centre swells. */
+.net-centre-name {
+  position: absolute;
+  left: -60px;
+  top: 0;
+  width: 120px;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  text-align: center;
+  text-transform: uppercase;
+  color: #ff5a64;
+  padding: 4px 0;
+  background: rgba(20, 20, 21, 0.86);
+  border: 1px solid rgba(255, 58, 68, 0.45);
+  text-shadow: 0 0 10px rgba(255, 42, 56, 0.5);
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* THE SOURCES (2026-09-29): "a popup window, different from all the
+   others" — so PAPER where every other window is glass: a sheet of
+   references, warm white and dark ink, the page's red only in its
+   numbers, square, ruled, unfolding out of the point it was opened from
+   (--from-x, --from-y: the centre, or a source's number). */
+.net-sources {
+  --paper: #efe9df;
+  --paper-ink: #1d1a17;
+  --paper-rule: rgba(29, 26, 23, 0.16);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  width: min(620px, calc(100% - 40px));
+  max-height: min(84vh, 780px);
+  padding: 22px 28px 0;
+  box-sizing: border-box;
+  background: var(--paper);
+  color: var(--paper-ink);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: translate(calc(-50% + var(--from-x, 0px)), calc(-50% + var(--from-y, 0px))) scale(0.08);
+  transition: opacity 260ms ease, transform 520ms var(--net-ease);
+}
+.net-sources.is-on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.net-sources[hidden] { display: none; }
+.net-sources-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 3px double var(--paper-ink);
+}
+.net-sources-kicker { font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: #b3141f; }
+.net-sources-close {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--paper-ink);
+  font-size: 15px;
+  line-height: 1;
+  color: var(--paper-ink);
+  cursor: pointer;
+}
+.net-sources-close:hover, .net-sources-close:focus-visible { background: var(--paper-ink); color: var(--paper); outline: none; }
+.net-sources-title { margin: 18px 0 0; font-size: 34px; font-weight: 600; letter-spacing: -0.01em; line-height: 1; outline: none; }
+.net-sources-say { margin: 10px 0 0; font-size: 13px; line-height: 1.55; color: rgba(29, 26, 23, 0.68); }
+.net-sources-body {
+  flex: 1;
+  min-height: 0;
+  margin: 16px -28px 0;
+  padding: 0 28px 24px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-top: 1px solid var(--paper-rule);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(29, 26, 23, 0.3) transparent;
+}
+.net-sources-list { margin: 0; padding: 0; list-style: none; counter-reset: none; }
+.net-source {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--paper-rule);
+  font-size: 13.5px;
+  line-height: 1.55;
+  transition: background-color 600ms ease;
+}
+.net-source-no { font-family: var(--mono); font-size: 11px; line-height: 1.9; color: #b3141f; }
+.net-source-text { padding-left: 2em; text-indent: -2em; overflow-wrap: anywhere; }
+.net-source-text cite { font-style: italic; }
+.net-source-text a { color: inherit; text-decoration-color: rgba(179, 20, 31, 0.5); text-underline-offset: 2px; }
+.net-source-text a:hover { text-decoration-color: #b3141f; }
+/* The first source is the owner. */
+.net-source.is-me { padding: 16px 0; }
+.net-source.is-me .net-source-text { font-size: 20px; font-weight: 600; text-indent: 0; padding-left: 0; }
+.net-source-me { display: block; margin-top: 2px; font-family: var(--mono); font-size: 10px; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(29, 26, 23, 0.55); }
+/* The one asked for, from a note's window. */
+.net-source.is-asked { background: rgba(179, 20, 31, 0.1); }
 
 /* THE NAMES: one beside every accord's network once apart (a way there),
    and the black tags naming every note of the network you are at. */
@@ -5668,6 +5849,8 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 .net-rail { z-index: 8; }
 .net-veil { z-index: 9; }
 .net-note { z-index: 10; }
+.net-sources { z-index: 11; }
+.net-centre-name { z-index: 2; }
 .net-name {
   position: absolute;
   left: 0;
@@ -5723,6 +5906,10 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   .net-drop { flex: 1; min-width: 0; }
   .net-drop-button { min-width: 0; width: 100%; }
   .net-note { width: calc(100% - 24px); max-height: calc(100% - 96px); padding: 14px 16px 0; }
+  .net-sources { width: calc(100% - 24px); max-height: calc(100% - 96px); padding: 16px 18px 0; }
+  .net-sources-body { margin: 14px -18px 0; padding: 0 18px 18px; }
+  .net-sources-title { font-size: 28px; }
+  .net-source { grid-template-columns: 30px 1fr; }
   .net-note-body { margin: 0 -16px; padding: 0 16px 14px; }
   .net-note-drawing { height: 170px; }
   .net-note-pyr { flex-wrap: wrap; gap: 12px; }
@@ -5735,7 +5922,7 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .net-stage.is-idle .net-arrow::after,
   .net-stage.is-coaching .net-arrow[data-pull="menu"]::after { animation: none; opacity: 0.8; }
-  .net-veil, .net-note, .net-coach, .net-coach-say, .net-panel, .net-find { transition: none; }
+  .net-veil, .net-note, .net-sources, .net-coach, .net-coach-say, .net-panel, .net-find { transition: none; }
 }
 
 /* ==================================================================
@@ -11617,827 +11804,6 @@ body.qimu-page {
     radial-gradient(56% 44% at 96% 96%, rgba(74, 110, 160, 0.10) 0%, transparent 72%);
   background-attachment: fixed;
   background-repeat: no-repeat;
-}
-
-/* ==================================================================
-   THE NOTE LIBRARY — categories/note-library.html, note-library.js
-
-   A library at night, read through a catalogue terminal. The page's
-   markup is the catalogue, and without the script it is laid out as a
-   plain list (the first block below). With it, every record is a BOOK
-   standing on its shelf (everything under body.lib-built).
-
-   THE PAGE'S COLOUR IS THE FIVE TOKENS, as on every dark page, and
-   it is BLACK AND WHITE: the owner, 2026-09-26, "change the theme of
-   the bage from that turqoise to black/white (to match the rest of the
-   website". Its one accent was a terminal's phosphor, a turquoise spent
-   on the terminal, the tabs, a book answering a search and the card;
-   that is white now (`--lib-hi`), and the ground a neutral black with
-   no blue in it. THE ACCORDS KEEP THEIR COLOURS ("that part can stay"),
-   and nothing else on the page has one: each accord's colour (`--hue`,
-   set by the script) is on its tab, its code, the band across the head
-   of each of its books, and the specks of its card's mark.
-   ================================================================== */
-.library-page {
-  --bg: #0b0b0c;
-  --bg-2: #141415;
-  --line: #2a2a2c;
-  --ink: #ececec;
-  --ink-rgb: 236, 236, 236;
-  --muted: #8e8e91;
-  --lib-hi: #f2f2f2;
-  --lib-hi-rgb: 242, 242, 242;
-  background: var(--bg);
-  color: var(--ink);
-  min-height: 100vh;
-}
-html.js-coming body.library-page .library { visibility: hidden; }
-
-.library {
-  position: relative;
-  z-index: 1;
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 108px 44px 140px;
-}
-.lib-kicker {
-  margin: 0 0 14px;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(var(--ink-rgb), 0.72);
-}
-.lib-title {
-  margin: 0;
-  font-family: var(--sans);
-  font-size: clamp(44px, 7vw, 84px);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 0.95;
-}
-.lib-lede {
-  max-width: 560px;
-  margin: 18px 0 0;
-  font-size: 16px;
-  line-height: 1.55;
-  color: var(--muted);
-}
-
-/* THE PLAIN CATALOGUE — what the page is without its script. */
-.lib-shelf { margin: 56px 0 0; }
-.lib-shelf-name { margin: 0 0 4px; font-size: 22px; font-weight: 600; }
-.lib-shelf-code {
-  margin-right: 8px;
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  color: hsl(var(--hue, 0) 45% 58%);
-}
-.lib-shelf-say { margin: 0 0 18px; color: var(--muted); font-size: 14px; }
-.lib-record { padding: 12px 0; border-top: 1px solid var(--line); }
-.lib-name { margin: 0 0 4px; font-size: 16px; font-weight: 600; }
-.lib-say { margin: 0; max-width: 680px; color: var(--muted); font-size: 14px; line-height: 1.55; }
-
-/* ------------------------------------------------------------------
-   THE READOUT, THE TERMINAL AND THE INDEX
-   ------------------------------------------------------------------ */
-.lib-readout {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0;
-  margin: 44px 0 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-.lib-readout > div { padding: 14px 18px 16px; border-left: 1px solid var(--line); }
-.lib-readout > div:first-child { border-left: none; padding-left: 0; }
-.lib-readout dt {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.lib-readout dd {
-  margin: 6px 0 0;
-  font-family: var(--mono);
-  font-size: 34px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
-/* A figure that is a word — the note used most — set smaller so it fits
-   the column, with what it counts under it. */
-.lib-readout dd.lib-readout-word {
-  font-size: 24px;
-  line-height: 1.1;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-top: 5px;
-}
-.lib-readout-word small {
-  display: block;
-  margin-top: 5px;
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  color: var(--muted);
-}
-
-.lib-desk { margin: 34px 0 0; }
-.lib-terminal {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 15px 18px;
-  /* A hairline box, as every field on the site is: no phosphor, no
-     scanlines, no glow (they went with the turquoise). */
-  border: 1px solid rgba(var(--ink-rgb), 0.3);
-  background: rgba(var(--ink-rgb), 0.025);
-  font-family: var(--mono);
-}
-.lib-prompt {
-  flex: none;
-  font-size: 14px;
-  color: var(--lib-hi);
-}
-.lib-query {
-  flex: 1;
-  min-width: 0;
-  padding: 0;
-  border: none;
-  outline: none;
-  background: none;
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 15px;
-  caret-color: var(--lib-hi);
-}
-.lib-query::placeholder { color: rgba(var(--ink-rgb), 0.3); }
-/* The browser's own clear is hidden: the × after the count is the one. */
-.lib-query::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
-/* THE ×, at the right of the bar: the owner's "a little X to reset the
-   search on the right side of the bar". A hairline square with a cross
-   in it, faint and inert while there is nothing to clear. */
-.lib-clear {
-  flex: none;
-  position: relative;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  border: 1px solid rgba(var(--ink-rgb), 0.4);
-  background: none;
-  color: rgba(var(--ink-rgb), 0.85);
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, opacity 0.2s;
-}
-.lib-clear span::before,
-.lib-clear span::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 11px;
-  height: 1px;
-  background: currentColor;
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-.lib-clear span::after { transform: translate(-50%, -50%) rotate(-45deg); }
-.lib-clear:hover:not(:disabled),
-.lib-clear:focus-visible { border-color: var(--lib-hi); color: var(--lib-hi); outline: none; }
-.lib-clear:disabled { opacity: 0.22; cursor: default; }
-.lib-count {
-  flex: none;
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-}
-.lib-tools {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin: 14px 0 0;
-}
-.lib-order { display: flex; gap: 0; border: 1px solid var(--line); }
-.lib-order-by,
-.lib-random,
-.lib-tab,
-.lib-card-step,
-.lib-card-close {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color 0.25s, border-color 0.25s, background 0.25s;
-}
-.lib-order-by { padding: 7px 12px; text-transform: uppercase; }
-.lib-order-by + .lib-order-by { border-left: 1px solid var(--line); }
-.lib-order-by.is-on { color: var(--bg); background: var(--lib-hi); }
-.lib-random {
-  padding: 7px 12px;
-  border: 1px solid var(--line);
-  text-transform: uppercase;
-}
-.lib-random:hover, .lib-order-by:not(.is-on):hover { color: var(--ink); border-color: rgba(var(--lib-hi-rgb), 0.5); }
-.lib-nothing { margin: 16px 0 0; font-family: var(--mono); font-size: 12px; color: var(--muted); }
-.lib-nothing[hidden] { display: none; }
-.lib-nothing a { color: var(--lib-hi); }
-
-.lib-index {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 30px 0 0;
-}
-.lib-tab {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  padding: 6px 9px 6px 8px;
-  border: 1px solid var(--line);
-}
-.lib-tab::before {
-  content: "";
-  align-self: center;
-  width: 6px;
-  height: 6px;
-  background: hsl(var(--hue, 150) 45% 58%);
-  opacity: 0.8;
-}
-.lib-tab[data-shelf=""]::before { background: var(--lib-hi); }
-.lib-tab small { font-size: 9px; color: rgba(var(--ink-rgb), 0.38); }
-.lib-tab:hover { color: var(--ink); border-color: rgba(var(--ink-rgb), 0.3); }
-.lib-tab.is-on {
-  color: var(--ink);
-  border-color: rgba(var(--lib-hi-rgb), 0.7);
-}
-
-/* ------------------------------------------------------------------
-   THE PERIODIC TABLE OF NOTES. The owner, 2026-09-26: "i also want you
-   to redisgn the note library. I am running out of ideas so redisgn it
-   somehow and we will change it keep the colours and the search".
-
-   AN ACCORD IS A GROUP (`.lib-shelf`): a block of elements standing down
-   in columns seven deep — the seven periods — as many columns wide as it
-   needs (`--cols`, set by the script), under a HEAD (`.lib-plate`) with
-   its number, its code in its colour, its name and how many it holds.
-   The groups stand side by side and wrap.
-
-   A NOTE IS AN ELEMENT (`.lib-record`): a square tile faintly its
-   accord's colour, with its number at the top left, how many fragrances
-   use it at the top right, its SYMBOL large in the middle and its name
-   at its foot.
-
-   It was files in boxes (a case file, "movies and spy stuff") for one
-   round, and books on shelves before that. None of either is left.
-   ------------------------------------------------------------------ */
-.library-page { --tile: 74px; --tile-gap: 4px; }
-.lib-stacks { margin: 34px 0 0; }
-body.lib-built .lib-stacks {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 34px 20px;
-}
-body.lib-built .lib-shelf,
-body.lib-built .lib-record,
-.lib-key,
-.lib-card { --mark: hsl(var(--hue, 0) 45% 58%); --mark-rgb-a: hsla(var(--hue, 0), 45%, 58%, 0.1); }
-body.lib-built .lib-grey,
-body.lib-built .lib-grey .lib-record,
-.lib-key.lib-grey,
-.lib-card.lib-grey { --mark: hsl(0 0% 62%); --mark-rgb-a: hsla(0, 0%, 62%, 0.1); }
-
-body.lib-built .lib-shelf {
-  margin: 0;
-  padding: 0;
-  transition: opacity 0.35s;
-}
-/* A group the terminal or a tab has left out stays where it stands, dim,
-   so the table keeps its shape. */
-body.lib-built .lib-shelf.is-away { opacity: 0.16; }
-
-/* THE GROUP'S HEAD. */
-body.lib-built .lib-plate {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: 2px 8px;
-  width: calc(var(--cols, 1) * (var(--tile) + var(--tile-gap)) - var(--tile-gap));
-  min-width: calc(var(--tile) * 2);
-  margin: 0 0 8px;
-  padding: 0 0 7px;
-  border-bottom: 2px solid var(--mark);
-  cursor: default;
-}
-.lib-group-no {
-  margin: 0;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-}
-body.lib-built .lib-shelf-name {
-  margin: 0;
-  min-width: 0;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.25;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-body.lib-built .lib-shelf-code {
-  display: block;
-  margin: 0 0 1px;
-  font-size: 15px;
-  letter-spacing: 0.1em;
-  color: var(--mark);
-}
-body.lib-built .lib-shelf-say { display: none; }
-.lib-shelf-count {
-  margin: 0;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--muted);
-}
-
-/* THE ELEMENTS, seven deep and as many across as the group needs. */
-body.lib-built .lib-records {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-rows: repeat(7, var(--tile));
-  grid-auto-columns: var(--tile);
-  gap: var(--tile-gap);
-}
-body.lib-built .lib-record {
-  position: relative;
-  box-sizing: border-box;
-  min-width: 0;
-  width: var(--tile);
-  height: var(--tile);
-  margin: 0;
-  padding: 0;
-  border: 1px solid hsla(var(--hue, 0), 45%, 58%, 0.34);
-  background: var(--mark-rgb-a);
-  color: var(--ink);
-  cursor: pointer;
-  outline: none;
-  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), border-color 0.25s, background-color 0.25s, opacity 0.35s;
-}
-body.lib-built .lib-grey .lib-record { border-color: rgba(var(--ink-rgb), 0.3); }
-.lib-el-no,
-.lib-el-uses {
-  position: absolute;
-  top: 5px;
-  font-family: var(--mono);
-  font-size: 9px;
-  line-height: 1;
-  color: rgba(var(--ink-rgb), 0.62);
-  font-variant-numeric: tabular-nums;
-}
-.lib-el-no { left: 6px; }
-.lib-el-uses { right: 6px; color: var(--mark); }
-.lib-el-sym {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 19px;
-  text-align: center;
-  font-family: var(--sans);
-  font-size: 23px;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.01em;
-}
-body.lib-built .lib-record .lib-name {
-  position: absolute;
-  left: 4px;
-  right: 4px;
-  bottom: 6px;
-  margin: 0;
-  font-family: var(--sans);
-  font-size: 8.5px;
-  font-weight: 400;
-  line-height: 1.15;
-  text-align: center;
-  color: rgba(var(--ink-rgb), 0.78);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-body.lib-built .lib-record .lib-say { display: none; }
-
-body.lib-built .lib-record:hover,
-body.lib-built .lib-record:focus-visible {
-  transform: translateY(-3px);
-  border-color: var(--mark);
-  background: hsla(var(--hue, 0), 45%, 58%, 0.2);
-}
-body.lib-built .lib-record:focus-visible { outline: 1px solid var(--lib-hi); outline-offset: 2px; }
-
-/* An element that answers the terminal, and one that does not. */
-body.lib-built .lib-record.is-hit {
-  border-color: var(--lib-hi);
-  box-shadow: inset 0 0 0 1px rgba(var(--lib-hi-rgb), 0.8);
-}
-body.lib-built .lib-record.is-hit::before {
-  content: "";
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  width: 4px;
-  height: 4px;
-  margin-left: -2px;
-  background: var(--lib-hi);
-}
-body.lib-built .lib-record.is-dim { opacity: 0.14; }
-
-/* THE ELEMENT BEING READ: outlined in white while its card is open. */
-body.lib-built .lib-record.is-out {
-  border-color: var(--lib-hi);
-  background: hsla(var(--hue, 0), 45%, 58%, 0.26);
-  z-index: 2;
-}
-
-/* THE ARRIVAL: the table filling in number order. */
-@keyframes lib-shelve { from { opacity: 0; transform: scale(0.82); } }
-body.lib-arriving .lib-record { animation: lib-shelve 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) var(--in) backwards; }
-
-/* THE KEY at the head of the page: one tile large, and what each part of
-   it is, ruled out to the side. */
-.lib-head.has-key {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: 24px 40px;
-}
-.lib-head.has-key > :not(.lib-key) { grid-column: 1; }
-.lib-key {
-  grid-column: 2;
-  grid-row: 1 / span 3;
-  align-self: end;
-  position: relative;
-  display: grid;
-  grid-template-columns: auto auto;
-  align-items: stretch;
-  gap: 0 14px;
-  margin: 0;
-  padding-right: 150px;
-}
-.lib-key-tile,
-.lib-card-tile {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  box-sizing: border-box;
-  border: 1px solid var(--mark);
-  background: var(--mark-rgb-a);
-}
-.lib-key-no,
-.lib-key-uses {
-  position: absolute;
-  top: 10px;
-  font-family: var(--mono);
-  font-size: 13px;
-  line-height: 1;
-  color: rgba(var(--ink-rgb), 0.7);
-}
-.lib-key-no { left: 12px; }
-.lib-key-uses { right: 12px; color: var(--mark); }
-.lib-key-sym {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 40px;
-  text-align: center;
-  font-size: 50px;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-.lib-key-name {
-  position: absolute;
-  left: 8px;
-  right: 8px;
-  bottom: 14px;
-  text-align: center;
-  font-size: 13px;
-  color: rgba(var(--ink-rgb), 0.85);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.lib-key figcaption {
-  grid-column: 1;
-  grid-row: 1;
-  position: relative;
-  width: 150px;
-}
-.lib-key-tile { grid-column: 2; grid-row: 1; }
-.lib-key-say {
-  position: absolute;
-  right: 0;
-  font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-  white-space: nowrap;
-}
-/* Each label ruled across to the part of the tile it names. */
-.lib-key-say::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: calc(100% + 6px);
-  height: 1px;
-  background: rgba(var(--ink-rgb), 0.3);
-}
-.lib-key-say[data-at="no"] { top: 5px; }
-.lib-key-say[data-at="no"]::after { width: 14px; }
-/* How many fragrances use it is at the tile's right, so its label stands
-   on the right and is ruled back to it. */
-.lib-key-say[data-at="uses"] { top: 5px; right: auto; left: calc(100% + 14px + 150px + 22px); }
-.lib-key-say[data-at="uses"]::after { left: auto; right: calc(100% + 6px); width: 16px; }
-.lib-key-say[data-at="sym"] { top: 59px; }
-.lib-key-say[data-at="sym"]::after { width: 46px; }
-.lib-key-say[data-at="name"] { top: 125px; }
-.lib-key-say[data-at="name"]::after { width: 36px; }
-
-/* ------------------------------------------------------------------
-   THE ROOM
-   ------------------------------------------------------------------ */
-.lib-ground {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-.lib-lamp {
-  position: fixed;
-  inset: 0;
-  z-index: 12;
-  pointer-events: none;
-  background: radial-gradient(300px circle at var(--lx, -999px) var(--ly, -999px), rgba(255, 255, 255, 0.07), transparent 70%);
-  mix-blend-mode: screen;
-  opacity: 0;
-  transition: opacity 0.6s;
-}
-.lib-lamp.is-on { opacity: 1; }
-
-/* ------------------------------------------------------------------
-   THE CARD — AN ELEMENT CARD standing beside the table. Not a dialog: the
-   table stays in reach, and pressing another element turns it over to
-   that one. Its tile large beside ITS ATOM (the canvas: an electron for
-   every fragrance that uses the note), then its name and accord, what it
-   is, its ISOTOPES (other spellings) and its COMPOUNDS (the fragrances).
-   It was a case file for one round, with a stamp and an exhibit.
-
-   STILL DRAWN AS THE REST OF THE SITE IS: a hairline edge with a
-   registration tick at each corner, no glass, no glow, no blur — the
-   owner found the glass version "too futuristic".
-   ------------------------------------------------------------------ */
-.lib-card {
-  --tick: rgba(var(--ink-rgb), 0.7);
-  position: fixed;
-  top: 74px;
-  right: 24px;
-  bottom: 24px;
-  z-index: 20;
-  width: min(420px, calc(100vw - 36px));
-  overflow-y: auto;
-  padding: 18px 26px 28px;
-  border: 1px solid rgba(var(--ink-rgb), 0.2);
-  background:
-    linear-gradient(var(--tick), var(--tick)) 0 0 / 12px 1px no-repeat,
-    linear-gradient(var(--tick), var(--tick)) 0 0 / 1px 12px no-repeat,
-    linear-gradient(var(--tick), var(--tick)) 100% 0 / 12px 1px no-repeat,
-    linear-gradient(var(--tick), var(--tick)) 100% 0 / 1px 12px no-repeat,
-    linear-gradient(var(--tick), var(--tick)) 0 100% / 12px 1px no-repeat,
-    linear-gradient(var(--tick), var(--tick)) 0 100% / 1px 12px no-repeat,
-    linear-gradient(var(--tick), var(--tick)) 100% 100% / 12px 1px no-repeat,
-    linear-gradient(var(--tick), var(--tick)) 100% 100% / 1px 12px no-repeat,
-    rgba(13, 13, 14, 0.98);
-  box-shadow: 0 30px 70px -34px rgba(0, 0, 0, 0.9);
-}
-.lib-card[hidden] { display: none; }
-.lib-card.is-in { animation: lib-card-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
-@keyframes lib-card-in { from { opacity: 0; transform: translateX(26px); } }
-.lib-card-top {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  padding: 0 0 12px;
-  border-bottom: 1px dashed rgba(var(--ink-rgb), 0.32);
-}
-.lib-card-kind {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.lib-card-call {
-  margin-right: auto;
-  font-family: var(--mono);
-  font-size: 14px;
-  letter-spacing: 0.16em;
-  color: var(--ink);
-}
-.lib-card-close { font-size: 22px; line-height: 1; padding: 2px 6px; }
-.lib-card-close:hover { color: var(--ink); }
-.lib-card-atom {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: 8px 16px;
-  margin: 22px 0 18px;
-}
-.lib-card-tile { width: 132px; height: 132px; }
-.lib-card-tile .lib-key-sym { top: 34px; font-size: 44px; }
-.lib-card-mark {
-  display: block;
-  width: 100%;
-  height: 150px;
-}
-.lib-card-caption {
-  grid-column: 1 / -1;
-  margin: 0;
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.lib-card-shelf {
-  margin: 6px 0 0;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--mark);
-}
-.lib-card-name {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  outline: none;
-}
-.lib-card-say { min-height: 3em; margin: 16px 0 0; font-size: 15px; line-height: 1.6; color: var(--ink); }
-.lib-card h3 {
-  margin: 22px 0 8px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.lib-card-aka[hidden], .lib-card-found[hidden], .lib-card-step[hidden] { display: none; }
-.lib-card-aka ul { margin: 6px 0 4px; padding: 0 0 0 17px; list-style: none; font-size: 13px; line-height: 1.7; color: rgba(var(--ink-rgb), 0.8); }
-.lib-card-aka li { display: inline; }
-.lib-card-aka li + li::before { content: " · "; color: var(--muted); }
-.lib-card-list { margin-top: 6px; }
-
-/* THE DROPDOWNS. "Also catalogued as", and every group under "Found
-   in" — the individual fragrances, the houses, and each house — is a
-   <details> that opens on its own summary line: a small triangle that
-   turns as it opens, the name, and how many are inside at the far end.
-   The card opens with them all shut, which is the owner's "a lot less
-   chaotic". */
-.lib-drop > summary {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 8px 0;
-  list-style: none;
-  cursor: pointer;
-  border-bottom: 1px solid rgba(var(--ink-rgb), 0.08);
-  outline: none;
-}
-.lib-drop > summary::-webkit-details-marker { display: none; }
-.lib-drop > summary::before {
-  content: "";
-  flex: none;
-  width: 0;
-  height: 0;
-  border-left: 5px solid var(--muted);
-  border-top: 4px solid transparent;
-  border-bottom: 4px solid transparent;
-  transition: transform 0.2s var(--menu-ease), border-color 0.2s;
-}
-.lib-drop[open] > summary::before { transform: rotate(90deg); }
-.lib-drop > summary:hover::before,
-.lib-drop > summary:focus-visible::before { border-left-color: var(--lib-hi); }
-.lib-drop > summary:focus-visible { box-shadow: inset 0 -1px 0 var(--lib-hi); }
-.lib-found-count {
-  margin-left: auto;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-}
-.lib-card-aka { margin: 22px 0 0; }
-.lib-card-aka > summary .lib-drop-name {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.lib-found-section { margin: 6px 0 0; }
-.lib-found-head {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-.lib-found-individual ul,
-.lib-found-house ul { margin: 2px 0 6px; padding: 0 0 0 17px; list-style: none; }
-.lib-found-individual a,
-.lib-found-house a {
-  display: flex;
-  gap: 10px;
-  padding: 4px 0;
-  border-bottom: 1px solid rgba(var(--ink-rgb), 0.06);
-  color: var(--ink);
-  text-decoration: none;
-  font-size: 14px;
-}
-.lib-found-individual a:hover .lib-found-name { color: var(--lib-hi); text-decoration: underline; text-underline-offset: 3px; }
-.lib-found-houses .lib-found-house { margin: 0 0 0 17px; }
-.lib-found-houses .lib-found-house > summary { padding: 6px 0; border-bottom-color: rgba(var(--ink-rgb), 0.05); }
-.lib-found-housename {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(var(--ink-rgb), 0.78);
-}
-.lib-found-house a:hover .lib-found-name { color: var(--lib-hi); text-decoration: underline; text-underline-offset: 3px; }
-.lib-found-no { flex: none; width: 22px; font-family: var(--mono); font-size: 11px; color: var(--muted); padding-top: 2px; }
-.lib-found-name { transition: color 0.2s; }
-.lib-card-steps { display: flex; justify-content: space-between; gap: 10px; margin: 26px 0 0; }
-.lib-card-step { padding: 6px 0; text-align: left; }
-.lib-card-step[data-step="1"] { margin-left: auto; text-align: right; }
-.lib-card-step:hover { color: var(--ink); }
-
-@media (prefers-reduced-motion: reduce) {
-  body.lib-arriving .lib-record,
-  .lib-card.is-in { animation: none; }
-}
-
-@media (max-width: 700px) {
-  .library { padding: 84px 16px 110px; }
-  .lib-readout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .lib-readout > div:nth-child(3) { border-left: none; padding-left: 0; }
-  .lib-readout > div:nth-child(n + 3) { border-top: 1px solid var(--line); }
-  .lib-readout dd { font-size: 26px; }
-  .lib-terminal { flex-wrap: wrap; padding: 12px 14px; }
-  .lib-count { order: 3; width: 100%; }
-  /* ON A PHONE every group is the width of the page, its elements in rows
-     across it rather than seven deep, and the key is left out — the tile
-     under the finger is its own key. */
-  .library-page { --tile: 62px; }
-  body.lib-built .lib-stacks { display: block; }
-  body.lib-built .lib-shelf { margin: 0 0 30px; }
-  body.lib-built .lib-plate { width: auto; }
-  body.lib-built .lib-records {
-    grid-auto-flow: row;
-    grid-template-rows: none;
-    grid-template-columns: repeat(auto-fill, minmax(var(--tile), 1fr));
-    grid-auto-rows: var(--tile);
-  }
-  body.lib-built .lib-record { width: auto; }
-  .lib-head.has-key { display: block; }
-  .lib-key { display: none; }
-  .lib-card {
-    top: auto;
-    left: 12px;
-    right: 12px;
-    bottom: 12px;
-    width: auto;
-    max-height: 70vh;
-  }
-  .lib-card-tile { width: 104px; height: 104px; }
-  .lib-card-tile .lib-key-sym { top: 28px; font-size: 34px; }
-  .lib-card-mark { height: 120px; }
 }
 
 /* The owner's HOWEVER, in Buying a Perfume: a line of its own in their

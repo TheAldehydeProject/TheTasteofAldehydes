@@ -771,3 +771,25 @@ with this page's card in it and a little more, and no way out to this page — s
 **`HOUSES`** from `note-library.js` as well (where each house's fragrances live, for the links in
 its window): four things copied, `HOUSES` held the same by a test, and the fragrances its window
 lists for a note held to this page's card's own.
+
+## 2026-09-29 — replaced by the test page
+
+> replace the note library page with the test page. Remove all content from the previous note
+> library. Remove the test page from the menu … effecitvely make the test page the new note
+> library page.
+
+**The periodic table is gone**, and with it everything this report describes above: `note-library.js`
+is deleted, its `lib-*` rules are out of `style.css`, and its tests (the tiles, the key, the
+terminal, the element card, the atom, the returns cart) are replaced by the test page's. The page
+at `categories/note-library.html` — the same address, the same place in the Menu and on the map —
+is **the Note Library as networks** now, drawn by `network.js`; see [the test page's
+report](2026-09-26-the-test-page.md#2026-09-29-later--the-note-library-itself-the-sources-at-its-centre-and-every-note-written-again).
+
+What stayed of this page is **its catalogue**: every accord as a `section.lib-shelf` and every
+note as an `article.lib-record` with its other spellings in `data-aka` — the markup the test page
+and the site's search had always read — kept as the library's data and as the page when the
+drawing cannot be made. It carries more now: what each note is, researched again from two
+sources at least, what each variation means, and the sources themselves, the owner first; and it
+is written by `tools/note-library/catalogue.py`. **Nothing is copied between two scripts any
+more**: the direct-words matching, the way uses are counted and `HOUSES` live in `network.js`
+alone.

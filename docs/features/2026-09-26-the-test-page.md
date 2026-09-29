@@ -1,12 +1,14 @@
-# The test page, and the network on it
+# The test page, and the network on it — the Note Library since 2026-09-29
 Date: 2026-09-26
 Files touched: `works/test-page.html` (new), `network.js` (new), `note-figures.js` (new,
 2026-09-28), `notes-data.js` (loaded, since 2026-09-27), `style.css` (`.network-page`,
 `.net-*`, and the dark `--chrome-ground` list), `nav.js` (`SITE_LINKS`), `search-page.js`
 (`PAGES`), `tests/test-page.spec.js` (new), `tests/menu.spec.js`, `tests/pages.spec.js`,
-`tests/mobile.spec.js`, `CLAUDE.md`. For two rounds the same night: `tree.js`,
+`tests/mobile.spec.js`, `CLAUDE.md`. Since 2026-09-29, when it became the Note Library: `categories/note-library.html` (the drawing and the catalogue), `works/test-page.html` (a forwarding page), `tools/note-library/` (new: `catalogue.py`, `base.json`, `research/`), `tests/note-library.spec.js` (its tests, moved from `tests/test-page.spec.js`), `tools/seo.py`, `sitemap.xml`, `.gitignore`; `note-library.js` deleted. For two rounds the same night: `tree.js`,
 `tools/tree-cloud.mjs`, `images/Test-Page/` and `image-js` in `package.json` — all taken out
 again.
+
+**Since 2026-09-29 this is the Note Library** — at `categories/note-library.html`, the periodic table gone, the old address forwarding, **the Sources** at its centre and every note written again from two sources: see [the last section](#2026-09-29-later--the-note-library-itself-the-sources-at-its-centre-and-every-note-written-again).
 
 **Since the night of 2026-09-27 the page carries the Note Library as networks** — see
 [that section](#2026-09-27-night--the-note-library-as-networks), which replaced [the Note
@@ -1401,3 +1403,168 @@ middle of the Venn diagram as faint as the rest, the round before.)
   worth — and the glow's points are capped at `BOND_POINTS` (4000); past either, the plain line is
   still drawn.
 
+
+## 2026-09-29, later — the Note Library itself: the Sources at its centre, and every note written again
+
+> For the expanded notes on the test page, i want you to remove the fragrances part, and add it
+> after the pyramidal distribution chart. I want you to give that part the same structure as
+> "fragrances" has now … divisible by the houses and individual fragrnces and then in houses also
+> you can drop down based on house.
+>
+> replace the note library page with the test page. Remove all content from the previous note
+> library. Remove the test page from the menu … effecitvely make the test page the new note library
+> page.
+>
+> revise the symbols that you used in the test page … I want it to be representative … like holy
+> bread should be a cross.
+>
+> make the subtitles in the popup note windows slightly more visible. Remove numbering from
+> fragrances in this window too.
+>
+> be able to click on the dofferent vatiations of a certain note, and it gives you a line or two
+> describing how taht is different … madagascar vanilla …
+>
+> you are not limited with wrods when it comes to describing a scent. I want you to be holistic and
+> simple, but not hold back. … search up the notes … have at least two sources for each
+> description of a note.
+>
+> the middle node of the expanded view of the nnl to be called sources … The very first source
+> should be: the first source is me. The latter whould be a popup window, differnt from all the
+> others. … a hover thing … expand slightly, turn redder and habe the text appear.
+
+Asked, the owner chose: each tier split the same way; **the notes and their variations** both
+researched and written again, all 332; the centre becomes the Sources; and for the variations:
+"If it is aspelling difrence only, then say that there was no change, but if it is a difference
+such as bourbon and madagascar vanilla, then no, give an explanation. I want you to look first at
+whether there is a difference at all. If yes, research it."
+
+### It is the Note Library now
+
+- **`categories/note-library.html` carries the drawing.** The periodic table of notes is gone —
+  `note-library.js` deleted, its `lib-*` rules out of `style.css` (about a thousand lines), and its
+  tests replaced by this page's, moved from `tests/test-page.spec.js` into
+  `tests/note-library.spec.js`. The page loads `nav.js`, Three.js, `notes-data.js`,
+  `note-figures.js` and `network.js`, on `body.network-page dark-surface`.
+- **`works/test-page.html` forwards** — the script at once, carrying the anchor; a meta refresh
+  without JavaScript; a link for anyone with neither — as the houses' old addresses do, and is
+  `noindex`. The test page is out of the Menu (`SITE_LINKS`), out of the search's `PAGES`, and out
+  of the sitemap (`tools/seo.py`).
+- **The catalogue is the page's own markup, and the one copy of the library.** Every accord
+  (`section.lib-shelf`), every note (`article.lib-record`: its name, what it is in `.lib-say` with
+  `data-sources`, its other spellings in `data-aka`, and what each means in `dl.lib-variations`),
+  and the sources (`section.lib-sources`, an `<ol>` whose first item is *Me.*). `network.js` reads
+  it off the page as it opens — it fetched the library's page while it was the test page — and the
+  site's search reads the notes off it as before, a note's link (`#note-orris`) opening that note's
+  window. While the drawing is made the catalogue is hidden by **`lib-drawing`** on `<html>` (set
+  in the page's head, cleared at `load` if `network.js` never ran), and without the drawing it is
+  the page: a plain list, every note by accord, and the sources.
+- **It is written by `tools/note-library/catalogue.py`**, never by hand, because the sources are
+  numbered alphabetically and one added renumbers every one after it: from `base.json` (every
+  accord and note, its spellings and the old library's one line) and `research/*.py` (what each
+  note is, what each variation means, and the sources each was written from — one file an accord).
+  Its README says how. It reports what is missing (`--check`).
+
+### The note window
+
+- **The Fragrances list is gone from the top**, and each tier after the pyramid — *Top*, *Middle*,
+  *Base*, *Non-pyramidal* — is split as it was: **Individual fragrances**, then **Houses**, and in
+  Houses **a dropdown for each house** (`splitByHouse`). Every one a dropdown, shut when the window
+  opens; what was left open stays open for the next note.
+- **No numbers** on the fragrances: each is its name, a way to it.
+- **The subtitles brighter** — the small capitals over each part, from the muted grey (137) to
+  about 190.
+- **What it is carries its sources**: small numbers under the description (`.net-note-cites`), each
+  opening **the sources** at that one.
+- **Every variation is a button** (`.net-note-var`): pressed, a panel under the row says what it
+  is against the note (`AGAINST VANILLA`) and its sources — or, where it is only another spelling,
+  **no change** and why (`is-same`); pressed again it closes, another pressed changes it. A
+  variation not written yet says so (*Not written yet.*).
+
+### The centre is the Sources
+
+- **Found by the hand.** Nothing says so until it is pointed at; then the centre **swells a little**
+  (`HUB_SWELL`, a quarter), its ball, cage, rings and glow **turn red**, and **Sources** comes up
+  under it, eased over about a fifth of a second (`HUB_HOVER_RATE`, `.net-centre-name`).
+- **Pressed, it opens the sources** — no longer going back to seeing every accord (the dropdown,
+  the arrows and Home still do). **A sheet of paper**, unlike every other window on the page, which
+  are dark glass: warm white, dark ink, the page's red only in its numbers, a double rule under
+  *References*, unfolding out of wherever it was opened from (`--from-x`, `--from-y`). **1 is *Me.***,
+  with *The author of this site* under it; then every source in MLA 8, alphabetical, each a link
+  that opens in a new window. Opened from a number, it scrolls to that source and marks it
+  (`is-asked`). Escape, its ×, or the page round it close it; a note's window under it stays.
+
+### The symbols
+
+The figures revised for what a note **is**, not what it is made of — "like holy bread should be a
+cross": Holy Bread a cross; a note best known by an outline — a paw print for Animal Notes, a
+glove for Suede, a bone for Rotten Flesh, a bolt for Ozone, a fingerprint for Skin, a hide for
+Leather — drawn as **a flat shape** facing you with a little thickness and specks inside it;
+flowers turned to face you rather than the sky; and **fifty-odd others redrawn** (a hop cone of
+spiral scales, eucalyptus leaves hanging from an arched stem, a mortar and pestle for Herbal
+Notes, a cacao pod and its beans, tonka's wrinkled beans, a pine cone, a tapped trunk for
+Balsam, a thorny branch with tears for Myrrh, a box of tears for Benzoin, a blackberry of
+drupelets, cranberries on water, a cotton boll for Musk, a sheep for Lanolin …). **Every figure
+sways** about its upright, a little left of straight on, once every fourteen seconds or so, rather
+than turning all the way round: an outline turned edge on says nothing.
+
+### Every note written again
+
+Every note was looked up, and what it is written again in plain words — what it is, how it smells,
+how it behaves in a perfume — from **at least two sources**, which are named under it: Fragrantica's
+notes and articles, The Perfume Society, Wikipedia, Scentspiracy, The Good Scents Company, ScenTree,
+Osmoz, Fraterworks, Perfumer & Flavorist and others, and the houses' own pages where the note is
+theirs. Nothing is said that a source does not say; where a house has named a note of its own
+(*Electric Bergamot*, *Icy Ginger*, *Mineral Ambers*, *Sawn Resin*), the window says so and
+reads it through the house's own page and a general source, and says when no material of that
+name could be found. Every **variation** was first looked at for whether it differs at all: a
+spelling, a plural, a word saying how it is made (*Olibanum*, *Resin*, *Goat Hair Tincture*) says
+*No change* and why; a real difference (*Siam Benzoin*, *Spanish Labdanum*, *Olibanum Absolute*)
+is explained, from two sources.
+
+**267 of the 332 are researched, with 818 sources** (the owner among them). **65 are not yet**:
+this session's web searches — two hundred — ran out part way through Musk, Skin & Animalic. They
+are **Leather, Musk, Skin and Suede**; every note of **Earth, Moss & Mineral**, **Water & Air** and
+**Smoke & Char**; and every note of **Impressions** but CO2 Extracts. They still say the old
+library's one line and name no source, and their variations are unwritten (*Not written yet.*)
+unless they are only another spelling — eleven say *No change* already (`research/SPELL.py`). One
+variation of a researched note, **African CO2**, waits too. `catalogue.py` lists them all.
+
+### How to test it
+
+`tests/note-library.spec.js` — all of the test page's tests, on the library's own address, and:
+
+- **`once apart, a note pressed opens its own window …`** — no Fragrances list; the subtitles
+  brighter than the muted grey; every variation a button saying what the catalogue says it means;
+  each tier split into the individual fragrances and the houses, a dropdown for each house, and
+  every fragrance naming the note somewhere in the tiers, **by name only**.
+- **`the catalogue: the owner first, the rest in order, two sources to every description
+  written`** — browserless: source 1 is *Me.*; the rest numbered in order and alphabetical, each
+  an MLA entry ending with the day it was read; every number a description names is in the list;
+  every researched note names **two sources at least**, and every one of its variations is written —
+  *No change …* for a spelling, two sources for a real difference — but for **`WAITING`** (African
+  CO2), which must stay unwritten until it is taken off the list; and a note not researched names no
+  source and leaves its real variations unwritten.
+- **`the centre is the Sources …`** — its name not there until the hand is on it; pointed at, it
+  swells red (`state().centreHover`) and says *Sources*; pressed, the sources open where the page
+  is (it goes nowhere), every source in the catalogue there, *Me.* first, light where the note
+  window is dark; Escape closes them; a description's number opens them at that source, marked and
+  in view, the note's window still under them.
+- **`the test page is the Note Library now …`** — out of the Menu and the search's pages,
+  `note-library.js` gone, and `works/test-page.html#note-vanilla` landing on Vanilla's window.
+- **`the site's search finds a note, by any of its spellings …`** — *iris butter* finds Orris,
+  and its link opens Orris's window.
+- **`without JavaScript`** and **`without its 3D library`** — the catalogue is the page, every
+  note listed, and the sources.
+
+And `python3 tools/note-library/catalogue.py --check` — nothing missing but what is listed as not
+researched yet.
+
+### Known issues / TODO
+
+- **65 notes and one variation are waiting to be researched** (above). To finish them: a file for
+  each accord in `tools/note-library/research/` (the rest are the pattern), taking each note's
+  spelling-only variations out of `SPELL.py` into it, `WAITING` emptied in the test, and the tool
+  run.
+- The symbols the owner was asked about (Musk as a cotton boll, Botanical Musk, Civet, Suede,
+  Rotten Flesh, Mousse de Saxe, Opoponax, Malt, Sandalwood, Lanolin, Amber Oud, CO2 Extracts) may
+  change at their word.

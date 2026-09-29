@@ -24,9 +24,9 @@
 #                   and, for a piece of writing, that it is an article of
 #                   the site's;
 #
-# and NOINDEX on what is not the site itself — its search page, the test
-# and sandbox pages, the templates, and the pages left forwarding from
-# where the houses used to be. It writes sitemap.xml (every page that is
+# and NOINDEX on what is not the site itself — its search page, the
+# sandbox pages, the templates, and the pages left forwarding from
+# where the houses and the test page used to be. It writes sitemap.xml (every page that is
 # indexed) and robots.txt (which names the sitemap, and keeps out the
 # archived copy of an old view in archive/, which is left untouched).
 #
@@ -50,7 +50,7 @@ P = {
  "categories/theories.html": dict(desc="Theories — some frameworks that I came up with myself: The Architecture of Sunscreen, The Architecture of Sweat and The Note Dissemination Framework.", crumbs=[HOME]),
  "categories/favorites.html": dict(desc="Favourites — things I like, no other criteria than that: fragrances in chapters, among them Des Cendres, Haxan and De Profundis.", crumbs=[HOME]),
  "categories/researches.html": dict(desc="Explorations & Researches. Here you will find my researches and my explorations: a guide to perfume, dupes, designers and niches, resins in perfumery, and more.", crumbs=[HOME]),
- "categories/note-library.html": dict(desc="The Note Library: every note named in a fragrance on this site, filed by accord as a periodic table of notes, each with a brief explanation of what it is.", crumbs=[HOME]),
+ "categories/note-library.html": dict(desc="The Note Library: every note named in a fragrance on this site as a network in three dimensions, filed by accord — what each is, its variations, where it stands in the fragrances, and its sources.", crumbs=[HOME]),
  "categories/other-2.html": dict(desc="Photography: pictures taken alongside the writing — mostly of the things being described, sometimes of the places they brought to mind.", crumbs=[HOME]),
  "houses/pineward.html": dict(type="article", desc="Pineward, the house that smells like trees: forty-seven fragrances described with their notes and photographs — Murkwood, Snoqualmie, White Fir and more.", crumbs=[HOME, SD]),
  "houses/adar.html": dict(type="article", desc="ADAR, the house that you have never heard of: eleven fragrances described with their notes — Amber Zero, Aetherialism, Incantu, Lignum Dei, Tyrian and more.", crumbs=[HOME, SD]),
@@ -74,8 +74,7 @@ P = {
  # Not for search engines: the site's own search, the sandbox and the
  # templates, and the pages left standing where the houses used to be.
  "search.html": dict(desc="Search The Taste of Aldehydes: every house, fragrance, note and piece of writing on the site.", noindex=True),
- "works/test-page.html": dict(desc="A test page, for trying things out on the site.", noindex=True),
- "works/test-node-a.html": dict(desc="A sandbox page, not a part of the site.", noindex=True),
+  "works/test-node-a.html": dict(desc="A sandbox page, not a part of the site.", noindex=True),
  "works/test-node-b.html": dict(desc="A sandbox page, not a part of the site.", noindex=True),
  "works/example-article-work.html": dict(desc="A template for a piece of writing, not a part of the site.", noindex=True),
  "works/example-gallery-work.html": dict(desc="A template for a gallery of pictures, not a part of the site.", noindex=True),
@@ -84,13 +83,15 @@ P = {
 for slug in ["adar", "almost-human", "ataraxia", "grande-parfums", "les-abstraits", "pineward"]:
     P["works/%s.html" % slug] = dict(desc=P["houses/%s.html" % slug]["desc"], noindex=True, canonical="houses/%s.html" % slug)
 P["works/individual-fragrances.html"] = dict(desc=P["individual-fragrances/individual-fragrances.html"]["desc"], noindex=True, canonical="individual-fragrances/individual-fragrances.html")
+# The test page became the Note Library (2026-09-29), and forwards there.
+P["works/test-page.html"] = dict(desc=P["categories/note-library.html"]["desc"], noindex=True, canonical="categories/note-library.html")
 
 # THE THEME COLOUR: each page's own ground, read off the page as it is
 # drawn. A page not named here is on the site's white paper.
 PAPER = "#fafaf9"
 THEME = {
  "categories/scent-descriptions.html": "#ffffff",
- "categories/note-library.html": "#0b0b0c",
+ "categories/note-library.html": "#1f1f20", "works/test-page.html": "#1f1f20",
  "categories/theories.html": "#15171d",
  "houses/adar.html": "#07070a", "works/adar.html": "#07070a",
  "houses/ataraxia.html": "#1b1d21", "works/ataraxia.html": "#1b1d21",
@@ -101,7 +102,6 @@ THEME = {
  "houses/tale-parfums.html": "#fbf8f0",
  "houses/tombstone.html": "#ecebe8",
  "search.html": "#191c21",
- "works/test-page.html": "#1f1f20",
 }
 for essay in ["theory-01", "theory-02", "theory-03", "resins-in-perfumery", "skin",
               "buying-a-perfume", "dupes-designers-and-niches", "my-personal-introduction-to-perfume"]:

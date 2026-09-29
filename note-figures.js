@@ -523,6 +523,80 @@
   const chunk = (s, o) => at(join(lathe([[0, -0.4], [0.22, -0.37], [0.35, -0.3], [0.4, -0.12], [0.42, 0.05], [0.36, 0.2], [0.28, 0.35], [0.14, 0.42], [0, 0.45]], { seg: 9, mer: 9 })), Object.assign({ s: s || 1 }, o));
   const frond = (L, n) => join(path([[0, 0, 0], [0, L, 0]], 0.05, 0.7), many(n || 8, () => leaf({ len: 0.18, w: 0.05, shape: "lance", veins: 0 }), (k) => ({ y: (k / (n || 8)) * L * 0.9, rz: k % 2 ? 1.1 : -1.1 })));
 
+  // ============================================================
+  // SYMBOLS (2026-09-29): "I want it to be representative, and better
+  // demonstrating something, like holy bread should be a cross". What is
+  // best known by its outline — a cross, a paw print, a bolt of lightning,
+  // a fingerprint, a hide — is drawn as a FLAT SHAPE facing you, given a
+  // little thickness and specks inside it; and a flower is turned to face
+  // you rather than the sky.
+  // ============================================================
+  /** Whether a point lies inside an outline. */
+  function inside(pts, x, y) {
+    let c = false;
+    for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+      const [xi, yi] = pts[i], [xj, yj] = pts[j];
+      if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c;
+    }
+    return c;
+  }
+  /** A FLAT SHAPE: an outline [[x, y] ...] in the upright plane, `depth`
+      thick (its front firm, its back fainter), its corners joined if asked,
+      and `fill` specks inside it. */
+  function flat(pts, o) {
+    o = o || {};
+    const dz = (o.depth == null ? 0.12 : o.depth) / 2, ring = pts.concat([pts[0]]), st = o.step || 0.045;
+    const parts = [path(ring.map(([x, y]) => [x, y, dz]), st), path(ring.map(([x, y]) => [x, y, -dz]), st * 1.5, 0.5)];
+    if (o.corners) pts.forEach(([x, y]) => parts.push(path([[x, y, dz], [x, y, -dz]], 0.04, 0.5)));
+    if (o.fill) {
+      const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+      const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), d = [];
+      for (let tries = 0; d.length < o.fill && tries < o.fill * 40; tries++) {
+        const x = x0 + rnd() * (x1 - x0), y = y0 + rnd() * (y1 - y0);
+        if (inside(pts, x, y)) d.push([x, y, (rnd() - 0.5) * 2 * dz, 0.55]);
+      }
+      parts.push(part(d));
+    }
+    return join.apply(null, parts);
+  }
+  /** An outline from a function of the angle round it, measured from
+      straight up: r(θ), sized by sx and sy. */
+  const polar = (fn, n, sx, sy) => Array.from({ length: n || 96 }, (_, k) => {
+    const a = (k / (n || 96)) * TAU, r = fn(a);
+    return [Math.sin(a) * r * (sx || 1), Math.cos(a) * r * (sy || 1)];
+  });
+  const oval = (rx, ry, n) => polar(() => 1, n || 40, rx, ry);
+  const moved = (pts, x, y, turn) => pts.map(([px, py]) => {
+    const c = Math.cos(turn || 0), s = Math.sin(turn || 0);
+    return [px * c - py * s + (x || 0), px * s + py * c + (y || 0)];
+  });
+  /** How far apart two angles are, the short way round. */
+  const apart = (a, b) => { const d = Math.abs(((a - b) % TAU + TAU) % TAU); return Math.min(d, TAU - d); };
+  /** Lines drawn across the inside of an outline at a slant (a hatch). */
+  function hatch(pts, gap, slant) {
+    const d = [], xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const c = Math.cos(slant), s = Math.sin(slant), R = Math.hypot(x1 - x0, y1 - y0);
+    for (let u = -R; u <= R; u += gap) for (let v = -R; v <= R; v += 0.05) {
+      const x = (x0 + x1) / 2 + u * c - v * s, y = (y0 + y1) / 2 + u * s + v * c;
+      if (inside(pts, x, y)) d.push([x, y, 0.07, 0.6]);
+    }
+    return part(d);
+  }
+  /** A flower turned to face you (flowers are built looking up). */
+  const facing = (flowerPart, tilt) => at(flowerPart, { rx: tilt == null ? 1.15 : tilt });
+  /** A seam down the front of a fruit of radius r (a peach's, a plum's). */
+  const seam = (r, sy) => path(curve((t) => { const a = -Math.PI / 2 + t * Math.PI; return [r * Math.cos(a) * Math.sin(0.4), r * Math.sin(a) * (sy || 1), r * Math.cos(a) * Math.cos(0.4)]; }, 26), 0.03, 1.1);
+  /** A torus of specks (a doughnut, a ring). */
+  function torus(R, r, n) {
+    const d = [];
+    for (let k = 0; k < (n || 420); k++) {
+      const u = (k * 2.39996323) % TAU, v = ((k * 0.61803) % 1) * TAU;
+      d.push([(R + r * Math.cos(v)) * Math.cos(u), r * Math.sin(v), (R + r * Math.cos(v)) * Math.sin(u), 1]);
+    }
+    return part(d, [circle(R + r, 48), circle(R - r, 40)]);
+  }
+
   // Every note in the library, by name, as the library writes it.
   const FIGURES = {
     // ---------------- CITRUS ----------------
@@ -546,10 +620,10 @@
     "Chamomile": () => join(onStem(daisy({ n: 14 }), 1.2, -0.3), at(onStem(daisy({ n: 13, len: 0.36 }), 0.9, 0.2), { x: 0.5, z: 0.2 }), at(onStem(daisy({ n: 12, len: 0.32 }), 0.7, 0.1), { x: -0.3, z: -0.3 })),
     "Clary Sage": () => join(stem(2, 0.05), many(7, () => flower({ n: 4, len: 0.2, w: 0.12, cup: 1.2 }), (k) => ({ y: 0.6 + k * 0.2, x: 0.02 * k, s: 1 - k * 0.08 })), at(leaf({ len: 0.7, w: 0.35, shape: "heart" }), { y: 0.1, rz: -1.1 }), at(leaf({ len: 0.7, w: 0.35, shape: "heart" }), { y: 0.1, rz: 1.1, ry: Math.PI })),
     "Davana": () => join(sprig({ h: 1.4, pairs: 3, shape: "lance", size: 0.5, wide: 0.25, lobes: 5 }), at(ball({ r: 0.12, n: 40, lines: false }), { y: 1.45, x: 0.2 })),
-    "Eucalyptus": () => join(at(twig(1.9), { rz: Math.PI / 2 }), many(8, () => leaf({ len: 0.4, w: 0.34, shape: "round", veins: 1 }), (k) => ({ y: -0.85 + k * 0.23, rz: k % 2 ? 2.1 : -2.1, ry: (k % 4) * (Math.PI / 4) }))),
-    "Herbal Notes": () => join(at(sprig({ h: 1.6, pairs: 3, size: 0.5 }), { rz: 0.25 }), at(sprig({ h: 1.5, pairs: 4, shape: "lance", size: 0.35, wide: 0.2 }), { rz: -0.25, ry: 1 }), at(sprig({ h: 1.4, pairs: 5, shape: "needle", size: 0.3 }), { ry: 2.1 }), at(path(circle(0.08, 12), 0.03), { y: 0.3 })),
-    "Hops": () => join(many(24, () => petal({ len: 0.26, w: 0.2, shape: "round", curl: -0.4 }), (k) => ({ y: -0.5 + (k / 24) * 1.1, ry: k * 2.4, rx: -0.9, x: Math.cos(k * 2.4) * 0.22 * Math.sin(Math.PI * (k / 24 * 0.9 + 0.1)), z: Math.sin(k * 2.4) * 0.22 * Math.sin(Math.PI * (k / 24 * 0.9 + 0.1)) })), path([[0, 0.6, 0], [0.1, 1.1, 0]], 0.04), at(leaf({ len: 0.6, w: 0.45, shape: "heart", lobes: 1.5, teeth: 9 }), { x: 0.1, y: 0.9, rz: -1.2 })),
-    "Juniper Berry": () => join(at(twig(1.6), { rz: 0.5 }), heap(7, () => berry(0.13, { crown: true }), 0.35), many(12, () => leaf({ len: 0.3, w: 0.03, shape: "needle", veins: 0 }), (k) => ({ x: -0.6 + k * 0.1, y: -0.3 + k * 0.05, rz: k % 2 ? 0.8 : -0.8 }))),
+    "Eucalyptus": () => { const st = bez([-0.95, 0.72, 0], [-0.4, 0.95, 0], [0.35, 0.95, 0], [0.95, 0.7, 0], 24); const at_ = (t) => st[Math.round(t * 24)]; return join(path(st, 0.045, 1), many(6, () => leaf({ len: 0.95, w: 0.12, shape: "lance", veins: 0, curl: 0.06 }), (k) => { const p = at_(0.08 + k * 0.16); return { x: p[0], y: p[1], rz: Math.PI + (k % 2 ? 0.28 : -0.28), ry: k % 2 ? 0.5 : -0.5 }; }), many(3, () => join(path([[0, 0, 0], [0, -0.12, 0]], 0.03, 0.7), at(turned([[0.02, 0], [0.08, -0.03], [0.1, -0.12], [0.07, -0.2], [0.03, -0.21]], { seg: 12, mer: 4 }), { y: -0.12 })), (k) => { const p = at_(0.9); return { x: p[0] - 0.12 + k * 0.12, y: p[1] - 0.02, z: (k - 1) * 0.06 }; })); },
+    "Herbal Notes": () => join(turned([[0, -0.85], [0.3, -0.85], [0.36, -0.78], [0.5, -0.55], [0.62, -0.2], [0.66, 0.05], [0.58, 0.07], [0.54, -0.18]], { seg: 24, mer: 8, rings: true }), at(turned([[0.07, 0], [0.09, 0.8], [0.14, 1.0], [0.1, 1.12], [0, 1.15]], { seg: 12, mer: 4 }), { x: 0.05, y: -0.55, rz: -0.55 }), many(4, (k) => leaf({ len: 0.5 - k * 0.05, w: [0.1, 0.2, 0.14, 0.24][k], shape: ["lance", "oval", "lance", "round"][k], veins: k % 2 ? 2 : 0 }), (k) => ({ x: -0.35 + k * 0.14, y: -0.05, z: (k % 2 ? 0.1 : -0.1), rz: 0.7 - k * 0.3 }))),
+    "Hops": () => { const scales = []; for (let k = 0; k < 34; k++) { const t = k / 33, y = 0.5 - t * 1.25, r = 0.36 * Math.pow(Math.sin(Math.PI * (0.12 + t * 0.8)), 0.8) * (1 - t * 0.25), a = k * 2.39996; scales.push(at(at(petal({ len: 0.28 - t * 0.06, w: 0.22 - t * 0.04, shape: "round", curl: -0.3 }), { rx: 0.45 }), { rz: Math.PI, ry: a, x: Math.sin(a) * r, y: y + 0.12, z: Math.cos(a) * r })); } return join(path(bez([0.55, 1.05, 0], [0.3, 1.0, 0], [0.05, 0.85, 0], [0, 0.6, 0], 12), 0.04, 0.9), ...scales, at(leaf({ len: 0.6, w: 0.5, shape: "heart", lobes: 1.5, teeth: 10, veins: 3 }), { x: 0.5, y: 1.0, rz: -1.9, rx: 0.3 })); },
+    "Juniper Berry": () => join(at(twig(1.7), { rz: 0.35 }), many(4, () => berry(0.2, { crown: true }), (k) => ({ x: -0.5 + k * 0.33, y: -0.18 + k * 0.12 + (k % 2 ? 0.2 : -0.2), z: 0.1 })), many(10, () => leaf({ len: 0.34, w: 0.03, shape: "needle", veins: 0 }), (k) => ({ x: -0.7 + k * 0.15, y: -0.25 + k * 0.055, rx: k % 2 ? 0.7 : -0.7, ry: k * 0.9 }))),
     "Lavender": () => many(3, () => join(stem(1.6, 0.05), many(9, () => ball({ r: 0.05, n: 14, lines: false }), (k) => ({ y: 1.1 + k * 0.07, x: Math.cos(k * 2) * 0.05, z: Math.sin(k * 2) * 0.05 }))), (k) => ({ x: (k - 1) * 0.35, rz: (1 - k) * 0.25, ry: k })),
     "Lemon Verbena": () => sprig({ h: 1.8, pairs: 4, shape: "lance", size: 0.6, wide: 0.22, whorl: 3 }),
     "Marjoram": () => sprig({ h: 1.4, pairs: 4, shape: "oval", size: 0.35, wide: 0.5, top: heap(6, () => ball({ r: 0.06, n: 12, lines: false }), 0.12) }),
@@ -559,18 +633,18 @@
     "Rosemary": () => join(stem(1.8, 0.1), many(28, () => leaf({ len: 0.26, w: 0.03, shape: "needle", veins: 0 }), (k) => ({ y: 0.2 + k * 0.055, x: 0.1 * Math.pow(k / 28, 2) * 1.4, rz: k % 2 ? 1 : -1, ry: k * 0.8 }))),
     "Sage": () => sprig({ h: 1.4, pairs: 3, shape: "oval", size: 0.8, wide: 0.42, veins: 5 }),
     "Thyme": () => many(3, () => join(stem(1.2, 0.15), many(10, () => leaf({ len: 0.1, w: 0.05, shape: "oval", veins: 0 }), (k) => ({ y: 0.2 + k * 0.1, x: 0.02 * k, rz: k % 2 ? 1 : -1 }))), (k) => ({ x: (k - 1) * 0.3, rz: (1 - k) * 0.35, ry: k * 1.3 })),
-    "Wormwood": () => join(stem(1.6, 0.05), many(4, () => leaf({ len: 0.7, w: 0.3, shape: "lance", lobes: 3.5, veins: 3 }), (k) => ({ y: 0.3 + k * 0.3, rz: k % 2 ? 1 : -1, ry: k * 0.9, s: 1 - k * 0.15 }))),
+    "Wormwood": () => sprig({ h: 1.8, pairs: 4, shape: "lance", size: 0.7, wide: 0.42, lobes: 3.5, veins: 2, alt: true }),
     "Yarrow": () => join(stem(1.5, 0.05), at(umbel(9, 0.55, 0.3, () => florets(5, 0.08, 0.6)), { y: 1.5 }), at(frond(0.8, 12), { y: 0.3, rz: -0.8 })),
     // ---------------- GREEN ----------------
     "Crushed Leaves": () => many(6, (k) => leaf({ len: 0.5 + rnd() * 0.3, w: 0.25, shape: "oval", lobes: 1.2 + rnd() * 2, curl: 0.4 }), (k) => ({ x: jit(0.7), y: jit(0.5), z: jit(0.4), rz: rnd() * TAU, rx: jit(1) })),
-    "Fig Leaf": () => join(leaf({ len: 1.5, w: 0.8, shape: "broad", lobes: 2.5, veins: 4 }), path([[0, 0, 0], [0, -0.35, 0]], 0.04)),
+    "Fig Leaf": () => { const lobes = [[0, 0.78], [0.98, 0.7], [-0.98, 0.7], [1.95, 0.52], [-1.95, 0.52]]; const pts = polar((a) => { let r = 0.26; lobes.forEach(([c, L]) => { r += L * Math.exp(-Math.pow(apart(a, c) / 0.3, 2)); }); return r - 0.18 * Math.exp(-Math.pow(apart(a, Math.PI) / 0.2, 2)); }, 140); return join(flat(pts, { depth: 0.04, fill: 120 }), many(5, (k) => path([[0, 0, 0.03], [Math.sin(lobes[k][0]) * (0.26 + lobes[k][1]) * 0.85, Math.cos(lobes[k][0]) * (0.26 + lobes[k][1]) * 0.85, 0.03]], 0.05, 0.8), () => ({})), path([[0, -0.08, 0], [0.04, -0.75, 0]], 0.04)); },
     "Galbanum": () => join(at(umbel(10, 0.6, 0.5, () => florets(4, 0.07, 0.5)), { y: 0.4 }), path([[0, -1, 0], [0, 0.4, 0]], 0.06), at(tear(1.2), { x: 0.2, y: -0.4 })),
     "Grass": () => blades(14, 1.6, { spread: 0.4 }),
     "Green Notes": () => leaf({ len: 1.6, w: 0.5, shape: "lance", veins: 6, curl: 0.2 }),
     "Green Wheat": () => join(ear({ rows: 9 }), at(path(bez([0, -1.1, 0], [0.1, -0.6, 0], [0.4, -0.3, 0], [0.55, 0.1, 0], 10), 0.05, 0.7), {})),
     "Hay": () => join(box(1.5, 0.8, 0.9, { step: 0.07 }), many(22, () => path([[-0.75, 0, 0], [0.75, jit(0.05), jit(0.05)]], 0.09, 0.6), (k) => ({ y: -0.35 + (k % 11) * 0.07, z: k < 11 ? 0.45 : -0.45 })), path([[-0.3, 0.41, -0.46], [-0.3, 0.41, 0.46]], 0.05), path([[0.3, 0.41, -0.46], [0.3, 0.41, 0.46]], 0.05)),
     "Ivy": () => join(path(bez([-0.9, -0.9, 0], [-0.2, -0.4, 0], [0.2, 0.3, 0], [0.8, 0.9, 0], 16), 0.06, 0.8), many(4, () => leaf({ len: 0.5, w: 0.35, shape: "heart", lobes: 1.5, veins: 2 }), (k) => ({ x: -0.6 + k * 0.45, y: -0.6 + k * 0.45, rz: k % 2 ? 0.8 : -0.8 }))),
-    "Poplar Bud": () => join(at(twig(1.8), { rz: 0.4 }), many(4, () => ball({ r: 0.15, sy: 2.4, tip: 0.8, n: 70 }), (k) => ({ x: -0.6 + k * 0.4, y: -0.1 + k * 0.17 + 0.18, rz: k % 2 ? -0.5 : 0.5 }))),
+    "Poplar Bud": () => join(path([[0, -1.05, 0], [0.03, 0.2, 0], [0, 0.55, 0]], 0.05, 0.8), at(ball({ r: 0.16, sy: 2.6, tip: 1, n: 90 }), { y: 0.95 }), many(4, () => ball({ r: 0.12, sy: 2.5, tip: 1, n: 60 }), (k) => ({ x: (k % 2 ? 0.2 : -0.2), y: -0.65 + k * 0.33, rz: k % 2 ? -0.55 : 0.55 }))),
     "Raspberry Leaf": () => join(path([[0, -0.8, 0], [0, 0, 0]], 0.05), at(leaf({ len: 0.8, w: 0.35, shape: "oval", teeth: 10 }), {}), at(leaf({ len: 0.6, w: 0.28, shape: "oval", teeth: 9 }), { rz: 1.1 }), at(leaf({ len: 0.6, w: 0.28, shape: "oval", teeth: 9 }), { rz: -1.1 })),
     "Rhubarb": () => join(many(3, () => at(lathe([[0.1, -1], [0.1, 0.4]], { seg: 10, mer: 4 }), {}), (k) => ({ x: (k - 1) * 0.28, rz: (1 - k) * 0.12 })), at(leaf({ len: 1.1, w: 0.8, shape: "broad", lobes: 2, veins: 4, curl: 0.3 }), { y: 0.4, rx: -0.5 })),
     "Sugar Cane": () => many(3, () => join(lathe([[0.1, -1], [0.1, 1]], { seg: 12, mer: 4 }), many(6, () => path(circle(0.115, 16), 0.03), (k) => ({ y: -0.8 + k * 0.33 }))), (k) => ({ x: (k - 1) * 0.32, rz: (k - 1) * 0.1 })),
@@ -583,51 +657,51 @@
     "Alpine Sandwort": () => join(at(ball({ r: 0.7, sy: 0.35, n: 120, cut: 5, lines: false, w: 0.6 }), {}), many(9, () => flower({ n: 5, len: 0.14, w: 0.09, cup: 0.3 }), (k) => ({ x: Math.cos(k * 2.4) * 0.45 * Math.sqrt(k / 9), z: Math.sin(k * 2.4) * 0.45 * Math.sqrt(k / 9), y: 0.25 }))),
     "Azure Bluet": () => many(4, () => onStem(flower({ n: 4, len: 0.2, w: 0.15, cup: 0.3 }), 1, 0), (k) => ({ x: (k - 1.5) * 0.35, rz: (1.5 - k) * 0.15, ry: k })),
     "Bluebell": () => bells(6, { s: 0.55 }),
-    "Carnation": () => join(flower({ n: 14, rows: 3, len: 0.4, w: 0.2, cup: 0.35, shape: "round", teeth: 10 }), at(stem(1.2, 0), { y: -1.2 }), at(ball({ r: 0.1, sy: 2, n: 30, lines: false }), { y: -0.15 })),
+    "Carnation": () => join(facing(join(flower({ n: 14, rows: 3, len: 0.4, w: 0.2, cup: 0.35, shape: "round", teeth: 10 }), at(ball({ r: 0.1, sy: 2, n: 30, lines: false }), { y: -0.15 }))), at(stem(1.2, 0), { y: -1.25 })),
     "Champaca": () => join(flower({ n: 12, rows: 2, len: 0.6, w: 0.1, cup: 0.9, shape: "lance" }), at(stem(0.8, 0), { y: -0.8 })),
-    "Chrysanthemum": () => join(flower({ n: 22, rows: 4, len: 0.45, w: 0.06, cup: 0.1, shape: "lance", curl: 0.2 }), at(stem(1, 0), { y: -1 })),
+    "Chrysanthemum": () => join(facing(flower({ n: 22, rows: 4, len: 0.45, w: 0.06, cup: 0.1, shape: "lance", curl: 0.2 })), at(stem(1, 0), { y: -1.05 })),
     "Clear Orchid": () => join(at(petal({ len: 0.55, w: 0.2 }), { rz: 0 }), at(petal({ len: 0.5, w: 0.18 }), { rz: 2.2 }), at(petal({ len: 0.5, w: 0.18 }), { rz: -2.2 }), at(petal({ len: 0.45, w: 0.3, shape: "round" }), { rz: 1.2 }), at(petal({ len: 0.45, w: 0.3, shape: "round" }), { rz: -1.2 }), at(turned([[0, 0], [0.16, -0.05], [0.24, -0.2], [0.26, -0.4], [0.2, -0.5]], { seg: 14, mer: 4 }), { z: 0.08 }), at(path(bez([0, -0.4, -0.1], [0.3, -0.9, -0.1], [0.6, -1, -0.1], [0.9, -1.1, -0.1], 10), 0.05), {})),
     "Freesia": () => join(path(bez([0, -1, 0], [0, 0.3, 0], [0.4, 0.5, 0], [1, 0.45, 0], 16), 0.05, 0.8), many(5, () => trumpet({ n: 6 }), (k) => ({ x: 0.15 + k * 0.2, y: 0.4 + k * 0.02, rz: -1.2, s: 0.55 - k * 0.07 }))),
-    "Gardenia": () => join(flower({ n: 6, rows: 3, len: 0.55, w: 0.28, cup: 0.25, shape: "oval", turn: 0.3 }), at(leaf({ len: 0.8, w: 0.3, shape: "oval" }), { y: -0.1, rz: 2, rx: 1.2 })),
+    "Gardenia": () => join(facing(flower({ n: 6, rows: 3, len: 0.55, w: 0.28, cup: 0.25, shape: "oval", turn: 0.3 })), at(leaf({ len: 0.8, w: 0.3, shape: "oval" }), { y: -0.2, rz: 2.2 }), at(leaf({ len: 0.7, w: 0.28, shape: "oval" }), { y: -0.2, rz: -2.3 })),
     "Geranium": () => join(at(umbel(9, 0.7, 0.35, () => flower({ n: 5, len: 0.14, w: 0.1, cup: 0.4 })), { y: 0.55 }), path([[0, -1, 0], [0, 0.55, 0]], 0.06), at(leaf({ len: 0.7, w: 0.45, shape: "round", lobes: 3.5, veins: 3 }), { y: -0.5, rz: -1.2 })),
     "Goldenrod": () => join(stem(1.8, 0.2), many(6, (k) => join(path([[0, 0, 0], [0.4 - k * 0.04, 0.2, 0]], 0.05, 0.6), many(6, () => ball({ r: 0.035, n: 8, lines: false }), (j) => ({ x: j * 0.07, y: 0.03 * j, z: jit(0.03) }))), (k) => ({ y: 1 + k * 0.14, x: 0.05 * k, ry: k % 2 ? 0 : Math.PI }))),
-    "Green Tea Flowers": () => join(flower({ n: 5, len: 0.5, w: 0.4, cup: 0.5, shape: "round", stamens: 26, stamenLen: 0.2 }), at(leaf({ len: 0.7, w: 0.26, shape: "oval", teeth: 10 }), { y: -0.1, rz: 1.9, rx: 1 })),
+    "Green Tea Flowers": () => join(facing(flower({ n: 5, len: 0.5, w: 0.4, cup: 0.5, shape: "round", stamens: 26, stamenLen: 0.2 })), at(leaf({ len: 0.7, w: 0.26, shape: "oval", teeth: 10 }), { y: -0.15, rz: 2.2 })),
     "Heliotrope": () => join(at(ball({ r: 0.6, sy: 0.5, n: 60, cut: 5, lines: false, w: 0.5 }), { y: 0.5 }), many(22, () => flower({ n: 5, len: 0.08, w: 0.06, cup: 0.5 }), (k) => { const a = k * 2.4, d = 0.55 * Math.sqrt(k / 22); return { x: Math.cos(a) * d, z: Math.sin(a) * d, y: 0.5 + 0.3 * (1 - d * d * 2.5) }; }), path([[0, -1, 0], [0, 0.4, 0]], 0.06)),
     "Honeysuckle": () => join(many(4, () => join(path(bez([0, 0, 0], [0.2, 0.3, 0], [0.5, 0.55, 0], [0.8, 0.6, 0], 12), 0.04), at(flower({ n: 2, len: 0.2, w: 0.08 }), { x: 0.8, y: 0.6, rz: -1.2 }), path([[0.8, 0.6, 0], [1.05, 0.75, 0]], 0.04, 0.6)), (k) => ({ ry: (k / 4) * TAU, y: -0.2 })), at(ball({ r: 0.1, n: 20, lines: false }), { y: -0.2 })),
     "Jasmine": () => join(at(twig(1.8), { rz: 0.3 }), many(3, () => onStem(flower({ n: 5, len: 0.28, w: 0.13, cup: 0.25, shape: "lance" }), 0.35, 0), (k) => ({ x: -0.5 + k * 0.5, y: -0.1 + k * 0.14 })), many(2, () => leaf({ len: 0.4, w: 0.15, shape: "lance" }), (k) => ({ x: -0.2 + k * 0.6, y: -0.05 + k * 0.15, rz: 2.3 }))),
     "Lily": () => join(flower({ n: 6, len: 0.8, w: 0.2, cup: 0.7, shape: "lance", curl: 0.3, stamens: 6, stamenLen: 0.6 }), at(stem(1, 0), { y: -1 })),
     "Lily of the Valley": () => join(bells(7, { s: 0.35 }), at(leaf({ len: 1.5, w: 0.4, shape: "oval", veins: 0 }), { x: -0.25, y: -1, rz: 0.2, ry: 0.8 })),
     "Magnolia": () => join(flower({ n: 6, rows: 2, len: 0.75, w: 0.36, cup: 1.1, shape: "oval" }), at(ball({ r: 0.12, sy: 2, n: 30, lines: false }), { y: 0.15 }), at(twig(1.4), { y: -0.2, rz: 0.4 })),
-    "Marigold": () => join(flower({ n: 18, rows: 4, len: 0.36, w: 0.14, cup: 0.3, shape: "round", teeth: 6 }), at(stem(1, 0), { y: -1 })),
+    "Marigold": () => join(facing(flower({ n: 18, rows: 4, len: 0.36, w: 0.14, cup: 0.3, shape: "round", teeth: 6 })), at(stem(1, 0), { y: -1.05 })),
     "Mimosa": () => join(frond(1.8, 14), many(7, () => ball({ r: 0.12, n: 45, rough: 0.3, bumps: 12, lines: false }), (k) => ({ x: (k % 2 ? 0.25 : -0.25) + jit(0.05), y: 0.5 + k * 0.17, z: jit(0.1) }))),
     "Mountain Wildflowers": () => join(at(onStem(daisy({ n: 11, len: 0.3 }), 1.2, -0.2), { x: -0.5 }), at(onStem(flower({ n: 5, len: 0.25, w: 0.14 }), 1, 0.1), { x: 0.1, z: 0.2 }), at(bells(3, { s: 0.35 }), { x: 0.5, y: 0.1, s: 0.8 }), at(blades(6, 0.7), { y: -0.4 })),
     "Nectar": () => join(flower({ n: 5, len: 0.6, w: 0.3, cup: 0.8 }), at(drop(0.13), { y: 0.25 })),
     "Neroli": () => join(flower({ n: 5, len: 0.45, w: 0.2, cup: 0.4, shape: "oval", stamens: 14, stamenLen: 0.22 }), at(drop(0.14), { x: 0.75, y: -0.3 }), at(drop(0.1), { x: 0.75, y: -0.75 })),
     "Orange Blossom": () => join(at(twig(1.8), { rz: 0.2, y: -0.4 }), at(flower({ n: 5, len: 0.4, w: 0.18, cup: 0.5, stamens: 14, stamenLen: 0.2 }), { x: -0.3 }), many(2, () => ball({ r: 0.12, sy: 1.7, n: 30, lines: false }), (k) => ({ x: 0.35 + k * 0.3, y: -0.2 + k * 0.08 })), at(leaf({ len: 0.6, w: 0.24, shape: "oval" }), { x: 0.6, y: -0.35, rz: -2 })),
-    "Orris": () => join(roots({ n: 4, len: 0.9, r: 0.18, bumps: 3 }), at(leaf({ len: 1.2, w: 0.1, shape: "lance", veins: 0 }), { y: 0.1, rz: 0.15 }), at(leaf({ len: 1, w: 0.1, shape: "lance", veins: 0 }), { y: 0.1, rz: -0.25 })),
+    "Orris": () => { const falls = many(3, () => petal({ len: 0.62, w: 0.3, shape: "oval", curl: 0.3 }), (k) => ({ rx: 2.1, ry: (k / 3) * TAU })); const standards = many(3, () => petal({ len: 0.55, w: 0.24, shape: "oval", curl: -0.35 }), (k) => ({ rx: 0.3, ry: (k / 3) * TAU + TAU / 6 })); return join(at(join(falls, standards), { y: 0.55 }), path([[0, -0.55, 0], [0, 0.55, 0]], 0.05), at(leaf({ len: 1.1, w: 0.1, shape: "lance", veins: 0 }), { y: -0.55, rz: 0.25 }), at(leaf({ len: 0.95, w: 0.1, shape: "lance", veins: 0 }), { y: -0.55, rz: -0.3 }), at(roots({ n: 3, len: 0.6, r: 0.14, bumps: 3 }), { y: -0.7, s: 0.8 })); },
     "Osmanthus": () => join(at(twig(1.8), { rz: 0.35 }), many(5, () => florets(5, 0.1, 0.9), (k) => ({ x: -0.6 + k * 0.3, y: -0.25 + k * 0.12 })), at(leaf({ len: 0.7, w: 0.22, shape: "lance", teeth: 12 }), { x: 0.4, y: 0.2, rz: -1.7 })),
     "Passionflower": () => join(flower({ n: 10, len: 0.6, w: 0.14, cup: 0.15, shape: "lance" }), many(40, () => path([[0, 0, 0], [0.42, 0.06, 0]], 0.05, 0.55), (k) => ({ ry: (k / 40) * TAU, y: 0.04 })), at(path([[0, 0, 0], [0, 0.35, 0]], 0.04), {}), many(3, () => path([[0, 0.35, 0], [0.18, 0.5, 0]], 0.04), (k) => ({ ry: (k / 3) * TAU }))),
     "Plum Blossom": () => join(at(path(bez([-1, -0.6, 0], [-0.3, -0.3, 0], [0.2, 0.2, 0], [1, 0.4, 0], 16), 0.06), {}), many(3, () => flower({ n: 5, len: 0.25, w: 0.2, shape: "round", cup: 0.3, stamens: 10, stamenLen: 0.14 }), (k) => ({ x: -0.5 + k * 0.55, y: -0.3 + k * 0.28, rz: -0.3 }))),
     "Pollen": () => many(16, () => join(ball({ r: 0.08, n: 26, lines: false }), star(6, 0.12, 0.08)), (k) => ({ x: jit(0.8), y: jit(0.8), z: jit(0.6), rx: rnd() * 3 })),
-    "Rose": () => join(rose({ n: 16 }), at(stem(1, 0), { y: -1 }), at(leaf({ len: 0.5, w: 0.25, shape: "oval", teeth: 10 }), { y: -0.6, rz: -1.2 })),
+    "Rose": () => join(facing(rose({ n: 16 }), 1.0), at(stem(1.2, 0.05), { y: -1.25 }), at(leaf({ len: 0.5, w: 0.25, shape: "oval", teeth: 10 }), { y: -0.75, rz: -1.2 }), at(leaf({ len: 0.42, w: 0.22, shape: "oval", teeth: 10 }), { y: -0.45, rz: 1.25 }), many(3, () => path([[0, 0, 0], [0.09, 0.05, 0]], 0.03), (k) => ({ y: -1.05 + k * 0.28, x: 0.01 * k, ry: k % 2 ? Math.PI : 0 }))),
     "Snowdrops": () => many(3, () => join(path(bez([0, -1, 0], [0, 0.2, 0], [0.1, 0.5, 0], [0.3, 0.45, 0], 12), 0.05), at(join(petal({ len: 0.3, w: 0.13 }), at(petal({ len: 0.3, w: 0.13 }), { ry: TAU / 3 }), at(petal({ len: 0.3, w: 0.13 }), { ry: (2 * TAU) / 3 })), { x: 0.3, y: 0.45, rx: Math.PI })), (k) => ({ x: (k - 1) * 0.35, ry: k * 1.3 })),
-    "Tiare Flower": () => join(flower({ n: 7, len: 0.55, w: 0.2, cup: 0.15, shape: "oval", turn: 0.2 }), at(path([[0, 0, 0], [0, -0.6, 0]], 0.04), {})),
+    "Tiare Flower": () => join(facing(flower({ n: 7, len: 0.55, w: 0.2, cup: 0.15, shape: "oval", turn: 0.2 })), at(path([[0, 0, 0], [0, -0.6, 0]], 0.04), {})),
     "Tobacco Flower": () => join(many(3, () => trumpet({ n: 5 }), (k) => ({ ry: (k / 3) * TAU, rz: 0.5, s: 0.9 })), path([[0, -1, 0], [0, 0, 0]], 0.06)),
     "Tuberose": () => join(stem(1.8, 0.05), many(6, () => trumpet({ n: 6 }), (k) => ({ y: 1 + k * 0.15, ry: k * 2.1, rz: 0.9, s: 0.5 - k * 0.03 }))),
     "Violet": () => join(at(petal({ len: 0.35, w: 0.2, shape: "round" }), { rz: 0.4 }), at(petal({ len: 0.35, w: 0.2, shape: "round" }), { rz: -0.4 }), at(petal({ len: 0.32, w: 0.2, shape: "round" }), { rz: 1.8 }), at(petal({ len: 0.32, w: 0.2, shape: "round" }), { rz: -1.8 }), at(petal({ len: 0.36, w: 0.22, shape: "round" }), { rz: Math.PI }), path(bez([0, 0, 0], [0.1, -0.3, 0], [0.3, -0.7, 0], [0.2, -1.1, 0], 10), 0.05), at(leaf({ len: 0.7, w: 0.4, shape: "heart" }), { x: 0.2, y: -1.1, rz: -0.9 })),
-    "Waterlily": () => join(at(disc(1.05, 1, 0), { y: -0.05 }), flower({ n: 12, rows: 2, len: 0.45, w: 0.14, cup: 0.4, shape: "lance" })),
+    "Waterlily": () => join(at(disc(1.05, 1, 0), { y: -0.05 }), at(flower({ n: 12, rows: 2, len: 0.45, w: 0.14, cup: 0.4, shape: "lance" }), { rx: 0.5 })),
     "White Lotus": () => join(flower({ n: 10, rows: 2, len: 0.7, w: 0.3, cup: 0.9, shape: "oval" }), at(lathe([[0.18, 0.1], [0.24, 0.2], [0.24, 0.24], [0, 0.26]], { seg: 14, mer: 4 }), {}), at(path([[0, 0, 0], [0, -0.9, 0]], 0.05), {})),
-    "Yellow Flowers": () => many(3, (k) => onStem(daisy({ n: 10 + k, len: 0.3 }), 1 - k * 0.15, (k - 1) * 0.2), (k) => ({ x: (k - 1) * 0.55, ry: k * 1.3 })),
+    "Yellow Flowers": () => many(3, (k) => join(stem(1 - k * 0.15, (k - 1) * 0.15), at(facing(daisy({ n: 10 + k, len: 0.3 }), 1.0), { y: 1 - k * 0.15, x: (k - 1) * 0.21 })), (k) => ({ x: (k - 1) * 0.55 })),
     "Ylang Ylang": () => join(many(6, (k) => path(curve((t) => [Math.sin(t * 2.4) * 0.5, -Math.pow(t, 1.6) * 0.9, Math.sin(t * 5 + k) * 0.08], 16), 0.04), (k) => ({ ry: (k / 6) * TAU })), many(6, (k) => petal({ len: 0.8, w: 0.1, shape: "lance", curl: 0.4 }), (k) => ({ ry: (k / 6) * TAU, rx: Math.PI * 0.72 })), path([[0, 0, 0], [0, 0.5, 0]], 0.05)),
     // ---------------- FRUITY ----------------
     "Apple": () => apple(),
-    "Apricot": () => join(ball({ r: 0.6, n: 240, ribs: 1, ribDepth: 0.08, dent: 0.2 }), at(leaf({ len: 0.5, w: 0.22, shape: "oval" }), { y: 0.55, rz: -0.9 })),
+    "Apricot": () => join(ball({ r: 0.55, n: 240, dent: 0.15 }), seam(0.55), path([[0, 0.5, 0], [0.04, 0.68, 0]], 0.03), at(leaf({ len: 0.45, w: 0.2, shape: "oval" }), { x: 0.03, y: 0.66, rz: -1 })),
     "Banana": () => many(3, () => pod({ len: 1.8, r: 0.16, bend: 0.4, blunt: true }), (k) => ({ z: (k - 1) * 0.3, rx: (k - 1) * 0.3, y: -k * 0.05 })),
-    "Blackberry": () => join(heap(26, () => ball({ r: 0.1, n: 16, lines: false }), 0.3, { rise: 1.8 }), at(star(5, 0.25, 0.1), { y: -0.2 })),
+    "Blackberry": () => join(many(26, () => ball({ r: 0.13, n: 22 }), (k) => { const t = (k + 0.5) / 26, y = 1 - 2 * t, rr = Math.sqrt(1 - y * y), a = k * 2.39996; return { x: Math.cos(a) * rr * 0.36, y: y * 0.5 - 0.1, z: Math.sin(a) * rr * 0.36 }; }), at(star(5, 0.3, 0.1), { y: 0.43 }), path([[0, 0.43, 0], [0.08, 0.95, 0]], 0.04), at(leaf({ len: 0.55, w: 0.24, shape: "oval", teeth: 10, veins: 3 }), { x: 0.1, y: 0.78, rz: -1.2 })),
     "Blueberry": () => heap(5, () => berry(0.26, { crown: true }), 0.55, { flat: true }),
     "Cassis": () => join(path(bez([-0.2, 1, 0], [0.1, 0.6, 0], [0.2, 0, 0], [0.15, -0.8, 0], 14), 0.05), many(8, () => berry(0.13), (k) => ({ x: 0.2 + (k % 2 ? 0.16 : -0.14), y: 0.6 - k * 0.18, z: jit(0.1) }))),
     "Cherry": () => join(at(ball({ r: 0.4, n: 160, dent: 0.25 }), { x: -0.45, y: -0.5 }), at(ball({ r: 0.4, n: 160, dent: 0.25 }), { x: 0.4, y: -0.6, z: 0.2 }), path(bez([-0.45, -0.1, 0], [-0.4, 0.4, 0], [-0.1, 0.8, 0], [0, 0.9, 0], 12), 0.04), path(bez([0.4, -0.2, 0.2], [0.3, 0.3, 0.1], [0.1, 0.8, 0], [0, 0.9, 0], 12), 0.04), at(leaf({ len: 0.45, w: 0.18, shape: "oval" }), { y: 0.9, rz: -1 })),
-    "Cranberry": () => heap(9, () => ball({ r: 0.2, sy: 1.15, n: 60, lines: false }), 0.6, { flat: true }),
+    "Cranberry": () => join(at(wave(2.3, 1.4, { amp: 0.035, nx: 28, nz: 10 }), { y: -0.35 }), many(5, () => join(ball({ r: 0.22, sy: 0.92, n: 90 }), at(star(5, 0.06, 0.025), { y: 0.2 })), (k) => ({ x: -0.72 + k * 0.36, y: -0.22 + (k % 2) * 0.03, z: (k % 2 ? 0.28 : -0.12) }))),
     "Dates": () => many(3, () => ball({ r: 0.22, sy: 2.2, n: 90, rough: 0.05, bumps: 16 }), (k) => ({ x: (k - 1) * 0.5, rz: 1.3 + (k - 1) * 0.15, y: (k % 2) * 0.1 })),
     "Dried Fruits": () => join(at(join(path(circle(0.5, 36), 0.05), path(circle(0.38, 30), 0.06, 0.7), many(8, (k) => path([[0.05, 0, 0], [0.36, 0, 0]], 0.06, 0.6), (k) => ({ ry: (k / 8) * TAU }))), { rx: Math.PI / 2, x: -0.35 }), heap(5, () => ball({ r: 0.14, n: 40, rough: 0.25, bumps: 8, lines: false }), 0.35, { flat: true }), at(ball({ r: 0.28, sy: 1.8, n: 80, rough: 0.15, bumps: 10, lines: false }), { x: 0.6, rz: 1.2 })),
     "Fig": () => join(at(turned([[0, -0.7], [0.45, -0.55], [0.55, -0.1], [0.35, 0.35], [0.1, 0.6], [0.06, 0.8]], { seg: 20, mer: 8 }), { x: -0.45 }), at(join(turned([[0, -0.7], [0.45, -0.55], [0.55, -0.1], [0.35, 0.35], [0.1, 0.6]], { seg: 18, mer: 0 }), cloud(40, 0.3, { sy: 1.3 })), { x: 0.55, sz: 0.3, ry: -0.4 })),
@@ -636,12 +710,12 @@
     "Guava": () => join(at(ball({ r: 0.62, sy: 1.1, pear: 0.15, n: 240 }), { x: -0.45 }), at(join(path(circle(0.55, 44), 0.05), path(circle(0.35, 36), 0.06, 0.7), cloud(30, 0.3, { w: 0.9 })), { rx: Math.PI / 2, x: 0.65, ry: -0.5 })),
     "Japanese Plum": () => join(at(twig(1.8), { rz: 0.3, y: 0.4 }), many(3, () => ball({ r: 0.28, n: 120, ribs: 1, ribDepth: 0.06 }), (k) => ({ x: -0.5 + k * 0.5, y: 0.02 + k * 0.1 - 0.28 }))),
     "Litchi": () => join(at(ball({ r: 0.5, sy: 1.1, n: 240, rough: 0.14, bumps: 16 }), { x: -0.4 }), at(ball({ r: 0.42, sy: 1.1, n: 160 }), { x: 0.55, y: -0.1 })),
-    "Mango": () => join(ball({ r: 0.7, sx: 0.85, sy: 1.15, sz: 0.7, n: 300, pear: -0.1 }), path([[0.1, 0.78, 0], [0.18, 0.95, 0]], 0.04)),
+    "Mango": () => join(at(ball({ r: 0.7, sx: 0.78, sy: 1.1, sz: 0.66, n: 300, pear: -0.12 }), { rz: 0.45 }), path([[-0.3, 0.65, 0], [-0.36, 0.95, 0]], 0.04), at(leaf({ len: 0.7, w: 0.2, shape: "lance" }), { x: -0.34, y: 0.92, rz: -1.2 })),
     "Maninka": () => join(ball({ r: 0.6, sy: 1.3, n: 280, ribs: 5, ribDepth: 0.14, tip: 0.3 }), path([[0, 0.78, 0], [0.06, 0.98, 0]], 0.04)),
     "Passionfruit": () => join(at(ball({ r: 0.6, n: 260, rough: 0.03 }), { x: -0.45 }), at(join(ball({ r: 0.55, n: 150, cut: 0 }), path(circle(0.55, 44), 0.05), cloud(36, 0.4, { w: 1.1 })), { x: 0.65, rx: Math.PI / 2, ry: -0.3 })),
-    "Peach": () => join(ball({ r: 0.72, n: 320, ribs: 1, ribDepth: 0.1, dent: 0.15 }), at(leaf({ len: 0.55, w: 0.2, shape: "lance" }), { y: 0.7, rz: -1 })),
+    "Peach": () => join(ball({ r: 0.72, n: 320, dent: 0.12 }), seam(0.72), at(leaf({ len: 0.6, w: 0.2, shape: "lance" }), { y: 0.7, rz: -1 }), at(leaf({ len: 0.5, w: 0.18, shape: "lance" }), { y: 0.7, ry: 0.5, rz: 1.1 })),
     "Pear": () => join(pearShape(1.05), path([[0, 0.9, 0], [0.08, 1.2, 0]], 0.04)),
-    "Plum": () => join(ball({ r: 0.62, sy: 1.12, n: 260, ribs: 1, ribDepth: 0.07 }), path([[0, 0.66, 0], [0.05, 0.9, 0]], 0.04)),
+    "Plum": () => join(ball({ r: 0.62, sy: 1.12, n: 260 }), seam(0.62, 1.12), path([[0, 0.66, 0], [0.05, 0.92, 0]], 0.04)),
     "Quince": () => join(at(pearShape(1.1), {}), at(ball({ r: 0.72, n: 120, rough: 0.15, bumps: 5, lines: false, w: 0.5 }), { y: -0.2, s: 0.95 }), at(leaf({ len: 0.4, w: 0.2, shape: "oval" }), { y: 0.95, rz: -1 })),
     "Raspberry": () => join(many(40, () => ball({ r: 0.09, n: 12, lines: false }), (k) => { const t = k / 40, a = k * 2.4, h = t * 0.8; const r = 0.42 * Math.sin(Math.PI * (0.25 + t * 0.6)); return { x: Math.cos(a) * r, y: h - 0.4, z: Math.sin(a) * r }; }), at(star(5, 0.35, 0.12), { y: -0.45 })),
     "Red Berries": () => join(at(heap(14, () => ball({ r: 0.08, n: 10, lines: false }), 0.2, { rise: 1.5 }), { x: -0.5 }), many(4, () => berry(0.14), (k) => ({ x: 0.1 + k * 0.2, y: 0.2 - k * 0.15 })), path(bez([0.1, 0.5, 0], [0.3, 0.3, 0], [0.6, 0, 0], [0.8, -0.4, 0], 10), 0.04), at(turned([[0, -0.4], [0.2, -0.2], [0.28, 0.1], [0.2, 0.25], [0, 0.28]], { seg: 14, mer: 6 }), { x: 0.4, y: -0.5 })),
@@ -675,11 +749,11 @@
     "Barley": () => ear({ rows: 8, awns: 0.8 }),
     "Beeswax": () => join(box(1.5, 0.5, 0.9, { step: 0.07 }), at(hexes(3, 6, 0.14), { z: 0.451 })),
     "Black Walnut": () => join(many(2, () => ball({ r: 0.45, sx: 0.8, n: 220, rough: 0.18, bumps: 10, cut: 0.02 }), (k) => ({ ry: k * Math.PI, x: 0 })), path(circle(0.45, 36).map((p) => [p[0] * 0.8, p[2], 0]), 0.05)),
-    "Bread": () => join(ball({ r: 0.55, sx: 1.8, sy: 0.75, n: 320, cut: 5 }), many(3, () => path(bez([-0.15, 0, 0], [-0.05, 0.03, 0], [0.05, 0.03, 0], [0.15, 0, 0], 6), 0.03), (k) => ({ x: (k - 1) * 0.45, y: 0.42, ry: 0.6 }))),
+    "Bread": () => join(ball({ r: 0.6, sx: 1.7, sy: 0.72, n: 360 }), path([[-1.02, -0.02, 0], [1.02, -0.02, 0]], 0.05, 0.6), many(3, () => path(bez([-0.2, 0, 0], [-0.07, 0.04, 0], [0.07, 0.04, 0], [0.2, 0, 0], 8), 0.025, 1.3), (k) => ({ x: (k - 1) * 0.55, y: 0.4, z: 0.1, ry: 0.5, rz: 0.15 }))),
     "Brown Sugar": () => heap(40, () => box(0.08, 0.08, 0.08, { step: 0.04 }), 0.8, { rise: 1.4 }),
     "Butter": () => join(box(1.2, 0.5, 0.7, { step: 0.06 }), at(path(curve((t) => [Math.cos(t * 3.4) * 0.12 * (1 + t), t * 0.1, Math.sin(t * 3.4) * 0.3], 30), 0.03), { y: 0.3 })),
     "Butterscotch": () => join(ball({ r: 0.4, sx: 1.1, sy: 0.5, n: 140 }), at(turned([[0.02, 0], [0.12, 0.2], [0.26, 0.42]], { seg: 10, mer: 6 }), { x: 0.55, rz: -Math.PI / 2 }), at(turned([[0.02, 0], [0.12, 0.2], [0.26, 0.42]], { seg: 10, mer: 6 }), { x: -0.55, rz: Math.PI / 2 })),
-    "Cacao": () => heap(5, () => ball({ r: 0.22, sy: 1.6, sz: 0.8, n: 80, tip: 0.4 }), 0.5, { flat: true }),
+    "Cacao": () => join(at(ball({ r: 0.4, sy: 1.95, n: 300, ribs: 10, ribDepth: 0.12, tip: 0.55 }), { x: -0.35, y: 0.05, rz: -0.45 }), path([[-0.05, 0.75, 0], [0.12, 0.98, 0]], 0.04, 1), many(2, () => join(ball({ r: 0.17, sy: 1.5, sz: 0.62, n: 70, lines: false }), path(curve((t) => [0, (t - 0.5) * 0.44, 0.1], 8), 0.03, 1.1)), (k) => ({ x: 0.55 + k * 0.28, y: -0.55 + k * 0.12, rz: 0.9 - k * 0.5 }))),
     "Caramel": () => join(many(3, () => box(0.4, 0.4, 0.4, { step: 0.05 }), (k) => ({ x: (k - 1) * 0.52, y: k === 1 ? 0.45 : 0, ry: k * 0.4 })), at(path(bez([0, 0, 0], [0.05, -0.2, 0], [-0.05, -0.4, 0], [0, -0.55, 0], 8), 0.03), { x: 0.3, y: -0.2 }), at(drop(0.08), { x: 0.3, y: -0.7 })),
     "Carob Pods": () => many(2, () => pod({ len: 1.9, r: 0.16, flat: 0.35, bend: 0.3, bumps: 8 }), (k) => ({ y: k * 0.4 - 0.2, rx: k * 0.5, rz: (k - 0.5) * 0.2 })),
     "Chantilly Cream": () => many(5, (k) => path(curve((t) => { const a = t * 4 * TAU + k * (TAU / 5), r = 0.55 * (1 - t); return [Math.cos(a) * r, t * 1.1 - 0.5, Math.sin(a) * r]; }, 90), 0.045), () => ({})),
@@ -692,11 +766,11 @@
     "Edamame": () => join(pod({ len: 1.6, r: 0.2, flat: 0.6, bend: 0.25, bumps: 3 }), many(3, () => ball({ r: 0.14, n: 30, lines: false }), (k) => ({ x: (k - 1) * 0.5, y: 0.2, z: 0.18 }))),
     "Halva": () => join(box(1.3, 0.8, 0.8, { step: 0.07 }), many(7, (k) => path(curve((t) => [-0.65 + t * 1.3, -0.3 + k * 0.1 + Math.sin(t * 8 + k) * 0.015, 0.41], 14), 0.05, 0.6), () => ({}))),
     "Hazelnut": () => many(2, () => join(ball({ r: 0.35, n: 130, pear: 0.1 }), at(many(10, () => petal({ len: 0.28, w: 0.1, shape: "lance", curl: 0.4 }), (j) => ({ ry: (j / 10) * TAU, rx: -1 })), { y: -0.2 })), (k) => ({ x: (k - 0.5) * 0.9, rz: (k - 0.5) * 0.4, y: k * 0.1 })),
-    "Holy Bread": () => join(ball({ r: 0.75, sy: 0.55, n: 300, cut: 5 }), at(join(box(0.5, 0.02, 0.5, { step: 0.05 }), path([[-0.2, 0, 0], [0.2, 0, 0]], 0.04), path([[0, 0, -0.2], [0, 0, 0.2]], 0.04)), { y: 0.42 })),
+    "Holy Bread": () => flat([[-0.13, -1], [0.13, -1], [0.13, 0.26], [0.54, 0.26], [0.54, 0.54], [0.13, 0.54], [0.13, 0.95], [-0.13, 0.95], [-0.13, 0.54], [-0.54, 0.54], [-0.54, 0.26], [-0.13, 0.26]], { depth: 0.22, fill: 280, corners: true }),
     "Honey": () => join(turned([[0.1, 0], [0.25, 0.05], [0.28, 0.2], [0.25, 0.35], [0.28, 0.5], [0.25, 0.62], [0.1, 0.68]], { seg: 16, mer: 6, rings: true }), path([[0, 0.68, 0], [0, 1.5, 0]], 0.05), at(path(bez([0, 0, 0], [0, -0.3, 0], [0.02, -0.5, 0], [0, -0.7, 0], 8), 0.04), {}), at(drop(0.1), { y: -0.85 })),
     "Honeycomb": () => join(hexes(5, 5, 0.2), many(4, () => drop(0.07), (k) => ({ x: -0.35 + k * 0.25, y: -0.95 - (k % 2) * 0.1 }))),
-    "Icing": () => join(ball({ r: 0.7, sy: 0.45, n: 200, cut: 5 }), at(path(curve((t) => [(t - 0.5) * 1.2, 0, Math.sin(t * 18) * 0.35 * Math.sin(Math.PI * t)], 60), 0.035, 1.1), { y: 0.33 })),
-    "Malt": () => many(5, () => join(ball({ r: 0.12, sy: 2.3, n: 36, tip: 0.6, lines: false }), path(bez([0, -0.25, 0], [0.05, -0.4, 0], [0.12, -0.5, 0], [0.1, -0.7, 0], 8), 0.04, 0.6), path([[0, 0.25, 0], [0.08, 0.5, 0]], 0.04, 0.6)), (k) => ({ x: (k - 2) * 0.35, rz: (k - 2) * 0.25, ry: k })),
+    "Icing": () => at(join(torus(0.52, 0.26, 460), path(curve((t) => { const a = t * TAU, R = 0.72 + 0.07 * Math.sin(a * 9); return [Math.cos(a) * R, 0.12 + 0.05 * Math.sin(a * 9), Math.sin(a) * R]; }, 120), 0.03, 1.2), many(14, () => path([[-0.04, 0, 0], [0.04, 0, 0]], 0.02, 1.4), (k) => { const u = k * 2.4, R = 0.5 + 0.12 * Math.sin(k * 1.7); return { x: Math.cos(u) * R, y: 0.25, z: Math.sin(u) * R, ry: k }; })), { rx: 1.0 }),
+    "Malt": () => many(3, () => join(ball({ r: 0.2, sy: 2.1, n: 70, tip: 0.6 }), path(bez([0, 0.35, 0.12], [0.1, 0.6, 0.15], [0.25, 0.75, 0.1], [0.35, 0.95, 0.05], 10), 0.035, 1.1), many(3, (j) => path(bez([0, -0.38, 0], [(j - 1) * 0.08, -0.5, 0], [(j - 1) * 0.18, -0.62, 0], [(j - 1) * 0.25, -0.8, 0], 8), 0.035, 0.8), () => ({}))), (k) => ({ x: (k - 1) * 0.6, y: k === 1 ? 0.1 : 0, rz: (k - 1) * 0.3 })),
     "Maple": () => join(many(5, (k) => leaf({ len: 0.75 - Math.abs(k - 2) * 0.12, w: 0.2, shape: "lance", lobes: 2, veins: 1 }), (k) => ({ rz: (k - 2) * 0.72 })), path([[0, 0, 0], [0, -0.5, 0]], 0.04), at(drop(0.1), { x: 0.5, y: -0.55 })),
     "Milk": () => join(turned([[0, -0.9], [0.38, -0.9], [0.44, 0.7]], { seg: 22, mer: 6, rings: true }), turned([[0, 0.25], [0.42, 0.25]], { seg: 20, mer: 0 }), at(drop(0.1), { x: 0.2, y: 1 })),
     "Molasses": () => join(turned([[0, 0], [0.25, 0.04], [0.32, 0.12], [0.3, 0.2]], { seg: 14, mer: 4 }), path([[0.25, 0.1, 0], [1.1, 0.5, 0]], 0.05), path(bez([0, 0, 0], [0.03, -0.4, 0], [-0.03, -0.8, 0], [0, -1.1, 0], 12), 0.035, 1.2), at(drop(0.12), { y: -1.2 })),
@@ -709,8 +783,8 @@
     "Seed Cake": () => join(box(1.4, 0.7, 0.7, { step: 0.07 }), many(24, () => part([[0, 0, 0, 1.2]]), (k) => ({ x: jit(0.65), y: jit(0.33), z: 0.36 }))),
     "Sugar": () => join(at(cube(0.5), { x: -0.3 }), at(cube(0.5), { x: 0.3, ry: 0.3 }), at(cube(0.5), { y: 0.52, ry: 0.8 })),
     "Tobacco": () => leaf({ len: 1.9, w: 0.55, shape: "broad", veins: 7, curl: 0.35 }),
-    "Toffee": () => many(4, () => chunk(0.5, { sy: 0.4 }), (k) => ({ x: (k % 2) * 0.5 - 0.25, z: Math.floor(k / 2) * 0.5 - 0.25, ry: k, y: (k % 3) * 0.1 })),
-    "Tonka": () => many(3, () => ball({ r: 0.2, sy: 2.4, n: 90, rough: 0.12, bumps: 18 }), (k) => ({ x: (k - 1) * 0.42, rz: 1.4 + (k - 1) * 0.2, y: (k % 2) * 0.12 })),
+    "Toffee": () => join(at(flat([[-0.5, -0.3], [0.4, -0.45], [0.55, 0.1], [0.1, 0.42], [-0.45, 0.25]], { depth: 0.14, fill: 110, corners: true }), { x: -0.3, rx: -0.5 }), at(flat([[-0.35, -0.25], [0.35, -0.3], [0.3, 0.3], [-0.2, 0.35]], { depth: 0.14, fill: 80, corners: true }), { x: 0.55, y: 0.25, rx: -0.4, rz: 0.4 }), at(flat([[-0.2, -0.2], [0.25, -0.15], [0.1, 0.25]], { depth: 0.14, fill: 40, corners: true }), { x: 0.35, y: -0.45, rx: -0.6, rz: -0.3 })),
+    "Tonka": () => { const bean = (k) => { const d = []; for (let j = 0; j < 5; j++) { const c = -0.7 + j * 0.35, y0 = -0.4 + (j % 3) * 0.1, y1 = 0.25 + ((j + k) % 2) * 0.15; d.push(path(curve((t) => { const y = y0 + (y1 - y0) * t, f = Math.sqrt(Math.max(0, 1 - Math.pow(y / 0.5, 2))), cc = Math.max(-0.95, Math.min(0.95, c + Math.sin(y * 16 + j * 2 + k) * 0.18)); return [cc * 0.21 * f, y, Math.sqrt(1 - cc * cc) * 0.2 * f + 0.005]; }, 16), 0.03, 0.75)); } return join(ball({ r: 0.21, sy: 2.4, n: 150, rough: 0.16, bumps: 30, tip: 0.25, lines: false }), ...d); }; return many(3, bean, (k) => [{ x: 0.12, y: 0.5, rz: 1.45 }, { x: -0.12, y: 0.02, rz: 1.68 }, { x: 0.1, y: -0.46, rz: 1.52 }][k]); },
     "Vanilla": () => many(3, () => pod({ len: 1.9, r: 0.06, bend: 0.18 }), (k) => ({ y: (k - 1) * 0.16, rx: (k - 1) * 0.4, rz: (k - 1) * 0.08 })),
     "Wheat": () => join(ear({ rows: 10, awns: 0.35 }), at(ear({ rows: 8, awns: 0.3 }), { x: 0.35, rz: -0.25, s: 0.85 })),
     // ---------------- BREWS ----------------
@@ -734,7 +808,7 @@
     "Sparkling Water": () => join(turned([[0, -1], [0.34, -1], [0.4, 0.9]], { seg: 20, mer: 6, rings: true }), many(14, (k) => path(circle(0.025 + (k % 3) * 0.015, 10), 0.02), (k) => ({ x: jit(0.22), y: -0.9 + (k / 14) * 1.6, z: jit(0.2), rx: Math.PI / 2 }))),
     "Tea": () => cup({ saucer: true, steam: true }),
     // ---------------- WOODS ----------------
-    "Amber Oud": () => join(chunk(1.1, { sx: 1.6, sy: 0.6 }), at(drop(0.14), { x: 0.4, y: 0.4 }), at(drop(0.1), { x: -0.3, y: 0.35 })),
+    "Amber Oud": () => join(at(chunk(0.8), { x: -0.35, y: -0.3 }), at(drop(0.32), { x: 0.4, y: 0.1 })),
     "Amberwood": () => join(at(disc(0.9, 6, 0), { rx: Math.PI / 2 }), at(path(circle(0.9, 50), 0.05), { rx: Math.PI / 2, z: -0.25 }), many(8, (k) => path([[Math.cos(k * 0.785) * 0.9, Math.sin(k * 0.785) * 0.9, 0], [Math.cos(k * 0.785) * 0.9, Math.sin(k * 0.785) * 0.9, -0.25]], 0.05), () => ({}))),
     "Amyris": () => join(at(twig(1.8), { rz: 0.3 }), many(3, () => join(path([[0, 0, 0], [0.3, 0.3, 0]], 0.04), many(3, () => leaf({ len: 0.3, w: 0.12, shape: "oval" }), (j) => ({ x: 0.3, y: 0.3, rz: (j - 1) * 0.9 }))), (k) => ({ x: -0.6 + k * 0.55, y: -0.15 + k * 0.15, ry: k * 2 }))),
     "Bark": () => join(sheet(1.2, 1.8, { bend: 0.6 }), many(7, (k) => path(curve((t) => [-0.55 + k * 0.18 + Math.sin(t * 9 + k) * 0.03, -0.9 + t * 1.8, 0.6 * 1.2 * Math.pow(-0.55 + k * 0.18, 2)], 16), 0.06, 0.6), () => ({}))),
@@ -747,11 +821,11 @@
     "Mahogany": () => join(box(1.8, 0.2, 0.6, { step: 0.06 }), many(6, (k) => path(curve((t) => [-0.9 + t * 1.8, 0.101, -0.25 + k * 0.1 + Math.sin(t * 6 + k) * 0.03], 20), 0.07, 0.6), () => ({}))),
     "Moldy Cedarwood": () => join(log({ r: 0.35, len: 1.6, rings: 4 }), many(14, () => join(path([[0, 0, 0], [0, 0.18, 0]], 0.04, 0.5), at(ball({ r: 0.03, n: 6, lines: false }), { y: 0.2 })), (k) => ({ x: -0.7 + k * 0.1, y: 0.33, z: jit(0.15) }))),
     "Oak": () => join(at(join(ball({ r: 0.3, sy: 1.3, n: 90, tip: 0.3 }), at(ball({ r: 0.33, sy: 0.55, n: 60, rough: 0.2, bumps: 12, cut: 5 }), { y: 0.25 }), path([[0, 0.4, 0], [0.02, 0.55, 0]], 0.03)), { x: -0.55, y: -0.3 }), at(leaf({ len: 1.2, w: 0.38, shape: "oval", lobes: 3.5, veins: 4 }), { x: 0.35, y: -0.6, rz: -0.2 })),
-    "Oud": () => join(chunk(1.2, { sx: 1.8, sy: 0.5, sz: 0.8 }), many(5, (k) => path(curve((t) => [-0.6 + t * 1.2, jit(0.05), -0.2 + k * 0.1], 8), 0.05, 1.1), () => ({}))),
+    "Oud": () => join(at(chunk(0.85), { x: -0.3, y: -0.35, ry: 0.4 }), at(chunk(0.6), { x: 0.4, y: -0.45, ry: 1.5 }), at(chunk(0.45), { x: 0.05, y: -0.05, ry: 2.1 }), at(smoke(2, 1.1), { y: 0.05, s: 0.8 })),
     "Patchouli": () => sprig({ h: 1.5, pairs: 3, shape: "oval", size: 0.7, wide: 0.6, teeth: 9, veins: 3 }),
     "Petrified Driftwood": () => join(pod({ len: 2, r: 0.2, bend: 0.4, bumps: 3, blunt: true }), at(pod({ len: 0.8, r: 0.1, bend: 0.1, blunt: true }), { x: 0.3, y: 0.55, rz: 0.8 })),
     "Pineboard": () => many(3, () => box(1.8, 0.14, 0.45, { step: 0.07 }), (k) => ({ y: k * 0.16, x: (k % 2) * 0.1, ry: (k - 1) * 0.12 })),
-    "Sandalwood": () => join(many(5, () => lathe([[0.1, -0.9], [0.1, 0.9]], { seg: 10, mer: 4 }), (k) => ({ x: (k - 2) * 0.21, y: -0.3 + (k % 2) * 0.02, rz: Math.PI / 2 + jit(0.08), z: (k % 2) * 0.15 })), at(heap(10, () => box(0.12, 0.05, 0.08, { step: 0.03 }), 0.35), { y: 0.35 })),
+    "Sandalwood": () => join(turned([[0, -0.6], [0.55, -0.6], [0.3, -0.2], [0.08, 0.2], [0, 0.25]], { seg: 20, mer: 8 }), at(log({ r: 0.12, len: 1.4, rings: 3 }), { y: -0.55, z: 0.45, ry: 0.3 }), at(log({ r: 0.1, len: 1.2, rings: 2 }), { y: -0.35, z: 0.55, ry: -0.25, rz: 0.1 })),
     "Sawdust": () => join(heap(60, () => part([[0, 0, 0, 0.9]]), 0.9, { rise: 1 }), many(3, (k) => path(curve((t) => [Math.cos(t * 3 * TAU) * 0.15, t * 0.2, Math.sin(t * 3 * TAU) * 0.15], 30), 0.03), (k) => ({ x: (k - 1) * 0.55, y: 0.4, rz: jit(0.6) }))),
     "Teak Wood": () => join(box(1.6, 0.9, 0.12, { step: 0.07 }), many(8, (k) => path(curve((t) => [-0.8 + t * 1.6, -0.38 + k * 0.11 + Math.sin(t * 5 + k * 0.7) * 0.04, 0.061], 20), 0.06, 0.6), () => ({}))),
     "Vetiver": () => join(blades(8, 0.9, { spread: 0.15 }), strands(22, 1.1, { fan: 0.9, amp: 0.08 })),
@@ -762,25 +836,25 @@
     "Cedar Leaf": () => join(path([[0, -1, 0], [0, 1, 0]], 0.05), many(10, (k) => frond(0.5 - Math.abs(k - 5) * 0.04, 6), (k) => ({ y: -0.8 + Math.floor(k / 2) * 0.35, rz: k % 2 ? 1 : -1 }))),
     "Cypress": () => tree({ h: 2.2, tiers: 7, r: 0.35, narrow: 0.5, step: 0.35 }),
     "Fir": () => tree({ h: 2, tiers: 6, r: 0.8 }),
-    "Juniper": () => join(at(twig(1.8), { rz: 0.3 }), many(16, () => leaf({ len: 0.28, w: 0.03, shape: "needle", veins: 0 }), (k) => ({ x: -0.8 + k * 0.1, y: -0.25 + k * 0.03, rz: k % 2 ? 0.8 : -0.8, ry: k })), heap(5, () => berry(0.12, { crown: true }), 0.25)),
+    "Juniper": () => join(path(bez([0, -1, 0], [0.05, -0.3, 0], [-0.05, 0.3, 0], [0.02, 1, 0], 14), 0.05, 0.8), many(24, () => leaf({ len: 0.3, w: 0.03, shape: "needle", veins: 0 }), (k) => ({ y: -0.85 + Math.floor(k / 3) * 0.24, rx: 0.9, ry: (k % 3) * (TAU / 3) + Math.floor(k / 3) * 0.5 })), many(2, () => berry(0.15, { crown: true }), (k) => ({ x: k ? 0.2 : -0.22, y: k ? 0.15 : -0.3, z: 0.1 }))),
     "Larch Cones": () => join(at(twig(1.9), { rz: 0.15 }), many(3, () => conePine(0.55), (k) => ({ x: -0.6 + k * 0.6, y: 0.2 + (k % 2) * 0.05 }))),
-    "Nootka": () => join(path([[0, -1, 0], [0, 1.2, 0]], 0.07), many(6, (k) => path(bez([0, 0, 0], [0.4, 0.1, 0], [0.6, -0.1, 0], [0.7, -0.6, 0], 12), 0.05, 0.7), (k) => ({ y: -0.4 + k * 0.28, ry: k * 1.2, s: 1 - k * 0.1 }))),
-    "Pine": () => join(path([[0, -1, 0], [0, 0.6, 0]], 0.06), at(ball({ r: 0.7, sy: 0.5, n: 120, lines: false, rough: 0.2, bumps: 5 }), { y: 0.7 }), many(4, (k) => path([[0, 0, 0], [0.5, 0.3, 0]], 0.05, 0.7), (k) => ({ y: 0.3 + k * 0.1, ry: k * 1.6 }))),
+    "Nootka": () => tree({ h: 2, tiers: 6, r: 0.75, droop: 0.5, narrow: 0.75 }),
+    "Pine": () => { const scales = []; for (let k = 0; k < 46; k++) { const t = k / 45, y = -0.75 + t * 1.3, r = 0.42 * Math.pow(Math.sin(Math.PI * (0.06 + t * 0.9)), 0.7) * (1 - t * 0.3), a = k * 2.39996; scales.push(at(at(petal({ len: 0.2, w: 0.15, shape: "round", curl: -0.15 }), { rx: 1.05 }), { ry: a, x: Math.sin(a) * r * 0.85, y, z: Math.cos(a) * r * 0.85 })); } return join(...scales, path([[0, 0.55, 0], [0.1, 0.8, 0]], 0.04, 1), at(needles(6, 0.75), { x: 0.1, y: 0.8, rz: -0.35 }), at(needles(6, 0.75), { x: 0.1, y: 0.8, rz: 0.45, ry: 1.2 })); },
     "Pine Needles": () => many(4, () => join(needles(6, 0.8), path([[0, -0.05, 0], [0, 0, 0]], 0.03)), (k) => ({ x: (k - 1.5) * 0.5, rz: (1.5 - k) * 0.3, ry: k })),
     "Snoqualmie Forest Evergreens": () => join(at(tree({ h: 2, tiers: 6, r: 0.55 }), { x: -0.5 }), at(tree({ h: 1.5, tiers: 5, r: 0.45 }), { x: 0.45, z: 0.3 }), at(tree({ h: 1.1, tiers: 4, r: 0.35 }), { x: 0.2, z: -0.5 })),
     "Spruce": () => join(tree({ h: 2, tiers: 8, r: 0.65, step: 0.22 }), at(conePine(0.45), { x: 0.75, y: 0.2, rz: 0.3 })),
     "Tamarack": () => join(path([[0, -1, 0], [0, 1, 0]], 0.06), many(9, (k) => join(path([[0, 0, 0], [0.5 - k * 0.04, 0.05, 0]], 0.05, 0.6), at(needles(7, 0.14), { x: 0.5 - k * 0.04 })), (k) => ({ y: -0.6 + k * 0.18, ry: k * 2.3 }))),
     // ---------------- RESINS ----------------
-    "Amber": () => chunk(1.5, { sy: 1 }),
-    "Balsam": () => join(at(sheet(0.8, 1.8, { bend: 0.5 }), { x: -0.35 }), at(drop(0.18), { x: 0.2, y: -0.3 })),
-    "Benzoin": () => heap(5, () => tear(1), 0.5),
+    "Amber": () => join(drop(0.62, { seg: 22, mer: 6 }), at(join(ball({ r: 0.05, sy: 2.2, n: 20, lines: false }), path(bez([0, 0, 0], [0.12, 0.08, 0], [0.22, 0.05, 0], [0.26, -0.02, 0], 6), 0.02, 1.2), path(bez([0, 0, 0], [-0.12, 0.08, 0], [-0.22, 0.05, 0], [-0.26, -0.02, 0], 6), 0.02, 1.2)), { y: 0.05, z: 0.1 })),
+    "Balsam": () => { const R = 0.4, onBark = (x, y) => [x, y, Math.sqrt(Math.max(0, R * R - x * x)) + 0.01]; return join(turned([[R, -1], [R * 1.02, 0], [R, 1]], { seg: 22, mer: 12 }), path([onBark(-0.24, 0.62), onBark(0, 0.3), onBark(0.24, 0.62)], 0.03, 1.3), path([onBark(-0.2, 0.4), onBark(0, 0.12), onBark(0.2, 0.4)], 0.03, 1.1), path(curve((t) => onBark(Math.sin(t * 5) * 0.02, 0.1 - t * 0.55), 12), 0.025, 1.4), at(drop(0.08), { y: -0.52, z: R + 0.06 }), at(turned([[0, -0.2], [0.2, -0.18], [0.3, -0.05], [0.32, 0.08]], { seg: 18, mer: 6, rings: true }), { y: -0.8, z: R + 0.28 })); },
+    "Benzoin": () => { const almonds = []; [[-0.35, 0.18, 0.5], [0.15, 0.25, -0.4], [0.42, -0.12, 0.8], [-0.18, -0.22, -0.2], [0.05, 0.02, 1.1]].forEach(([x, y, a]) => almonds.push(path(moved(oval(0.12, 0.07, 22), x, y, a).map(([px, py]) => [px, py, 0.23]).concat([[x + Math.cos(a) * 0.12, y + Math.sin(a) * 0.12, 0.23]]), 0.03, 1.2))); return join(box(1.3, 0.8, 0.44, { step: 0.05, fill: 160 }), ...almonds); },
     "Dragon's Blood": () => join(at(pod({ len: 1.6, r: 0.13, bend: 0.05, blunt: true }), { y: 0.3 }), drops(3, 1)),
     "Elemi": () => join(heap(4, () => tear(0.9), 0.4), at(leaf({ len: 0.6, w: 0.2, shape: "oval" }), { x: 0.6, y: 0.3, rz: -1.4 })),
     "Frankincense": () => join(heap(5, () => tear(0.9), 0.45), at(smoke(3, 1.2), { y: 0.1 })),
     "Incense": () => join(turned([[0, -0.9], [0.45, -0.9], [0.45, -0.8], [0, -0.8]], { seg: 20, mer: 0, rings: true }), path([[0, -0.8, 0], [0.25, 0.3, 0]], 0.03, 1.1), at(smoke(3, 1), { x: 0.25, y: 0.3 })),
-    "Labdanum": () => join(flower({ n: 5, len: 0.5, w: 0.35, shape: "round", cup: 0.3, stamens: 18, stamenLen: 0.15, teeth: 5 }), at(ball({ r: 0.28, n: 90, rough: 0.12, bumps: 6 }), { x: 0.8, y: -0.6 })),
-    "Myrrh": () => heap(3, () => ball({ r: 0.3, sy: 1.2, n: 80, rough: 0.28, bumps: 5, lines: false }), 0.45),
-    "Opoponax": () => lumps(4, 1.1),
+    "Labdanum": () => join(facing(flower({ n: 5, len: 0.5, w: 0.42, cup: 0.35, shape: "round", stamens: 20, stamenLen: 0.15 }), 1.1), at(lumps(3, 0.9), { y: -0.75 })),
+    "Myrrh": () => { const br = [[-0.95, -0.6, 0], [-0.45, -0.2, 0], [-0.1, -0.35, 0], [0.3, 0.1, 0], [0.55, 0.0, 0], [0.9, 0.45, 0]]; const thorns = []; for (let k = 1; k < br.length - 1; k++) { const p = br[k]; thorns.push(path([p, [p[0] + 0.02, p[1] + (k % 2 ? 0.22 : -0.22), 0]], 0.03, 0.8)); } return join(path(br, 0.04, 0.9), path([br[3], [0.2, 0.55, 0], [0.05, 0.75, 0]], 0.04, 0.8), ...thorns, at(tear(1.1), { x: -0.45, y: -0.42 }), at(tear(0.95), { x: 0.32, y: -0.14 }), at(tear(0.8), { x: 0.18, y: 0.42 })); },
+    "Opoponax": () => join(lumps(5, 1), at(join(path(bez([0, 0, 0], [0.02, -0.25, 0], [-0.02, -0.4, 0], [0, -0.55, 0], 8), 0.025, 1.2), at(drop(0.09), { y: -0.62 })), { x: 0.2, y: -0.1 })),
     "Peru Balsam": () => join(turned([[0, -0.4], [0.5, -0.35], [0.7, 0], [0.72, 0.05]], { seg: 22, mer: 6, rings: true }), at(drop(0.2), { y: 0.55 })),
     "Ponderosa Resin": () => join(at(sheet(1, 2, { bend: 0.4 }), {}), path(bez([0.1, 0.4, 0.25], [0.12, 0.1, 0.25], [0.08, -0.2, 0.25], [0.12, -0.5, 0.25], 10), 0.04, 1.2), at(tear(0.9), { x: 0.12, y: -0.6, z: 0.25 })),
     "Propolis": () => join(lumps(3, 0.9), at(hexes(1, 2, 0.18), { y: 0.5 })),
@@ -792,31 +866,31 @@
     "Tolu Balsam": () => join(turned([[0, -0.4], [0.5, -0.4], [0.7, 0.1]], { seg: 22, mer: 6, rings: true }), at(ball({ r: 0.5, sy: 0.25, n: 60, lines: false }), { y: 0.05 }), at(drop(0.12), { y: 0.6 })),
     "Turpentine": () => join(at(conePine(1), { x: -0.4 }), at(drop(0.2), { x: 0.6, y: -0.2 })),
     // ---------------- ANIMALIC ----------------
-    "Ambergris": () => ball({ r: 0.85, sx: 1.2, sy: 0.8, n: 360, rough: 0.2, bumps: 4 }),
+    "Ambergris": () => join(ball({ r: 0.62, sx: 1.3, sy: 0.78, n: 300, rough: 0.14, bumps: 5 }), at(wave(2.4, 1.2, { amp: 0.05, nx: 26, nz: 8 }), { y: -0.55 })),
     "Ambrette": () => join(flower({ n: 5, len: 0.5, w: 0.35, shape: "round", cup: 0.5, stamens: 10, stamenLen: 0.35 }), at(heap(5, () => ball({ r: 0.1, sx: 1.4, n: 20, lines: false }), 0.25), { x: 0.75, y: -0.65 })),
-    "Animal Notes": () => join(at(ball({ r: 0.45, sy: 0.35, n: 120, cut: 5 }), { y: -0.2 }), many(4, () => ball({ r: 0.17, sy: 0.35, n: 40, cut: 5 }), (k) => ({ x: (k - 1.5) * 0.36, z: -0.55 - (k % 3 === 0 ? 0 : 0.15), y: -0.2 }))),
-    "Botanical Musk": () => join(cloud(160, 0.65, { w: 0.6 }), at(leaf({ len: 0.6, w: 0.25, shape: "oval" }), { y: 0.55, rz: -0.6 })),
-    "Castoreum": () => join(many(2, () => ball({ r: 0.35, sy: 1.5, n: 120, pear: 0.3 }), (k) => ({ x: (k - 0.5) * 0.65, rz: (k - 0.5) * -0.4 })), path(bez([-0.3, 0.5, 0], [-0.1, 0.8, 0], [0.1, 0.8, 0], [0.3, 0.5, 0], 10), 0.04)),
-    "Civet": () => join(pod({ len: 2, r: 0.14, bend: 0.5, blunt: true }), many(7, () => path(circle(0.15, 16), 0.03), (k) => ({ x: -0.8 + k * 0.27, y: Math.sin(((k * 0.27 + 0.2) / 2) * Math.PI) * 0.5, rz: Math.PI / 2 + (k - 3) * 0.2 }))),
+    "Animal Notes": () => { const pad = polar((a) => 0.4 * (1 + 0.14 * Math.cos(3 * a + Math.PI)), 60, 1.15, 0.95); return join(flat(moved(pad, 0, -0.35), { depth: 0.1, fill: 140 }), ...[[-0.62, 0.3, 0.5], [-0.22, 0.62, 0.15], [0.22, 0.62, -0.15], [0.62, 0.3, -0.5]].map(([x, y, t]) => flat(moved(oval(0.17, 0.23), x, y, t), { depth: 0.1, fill: 40 }))); },
+    "Botanical Musk": () => join(at(leaf({ len: 1.1, w: 0.42, shape: "oval", veins: 4 }), { x: -0.35, y: -0.6, rz: 0.4 }), at(join(ball({ r: 0.32, n: 120, rough: 0.05, lines: false }), at(ball({ r: 0.24, n: 80, rough: 0.05, lines: false }), { x: -0.3, y: -0.06 }), at(ball({ r: 0.26, n: 80, rough: 0.05, lines: false }), { x: 0.3, y: -0.05 })), { x: 0.35, y: 0.45 })),
+    "Castoreum": () => { const tail = polar((a) => 0.55 + 0.08 * Math.cos(2 * a), 80, 0.8, 1.35); return join(flat(tail, { depth: 0.1 }), hatch(tail, 0.14, 0.8), hatch(tail, 0.14, -0.8), path([[0, -0.74, 0], [0, -1.05, 0]], 0.04)); },
+    "Civet": () => { const body = [[1.0, -0.02], [0.86, 0.08], [0.78, 0.17], [0.76, 0.32], [0.69, 0.2], [0.58, 0.2], [0.3, 0.25], [0.0, 0.29], [-0.35, 0.26], [-0.55, 0.17], [-0.66, 0.1], [-0.82, 0.02], [-0.96, -0.1], [-1.06, -0.3], [-1.02, -0.36], [-0.9, -0.2], [-0.74, -0.07], [-0.6, -0.04], [-0.57, -0.42], [-0.47, -0.42], [-0.43, -0.12], [-0.1, -0.13], [0.26, -0.12], [0.3, -0.42], [0.4, -0.42], [0.43, -0.1], [0.62, -0.08], [0.8, -0.1], [0.95, -0.08]]; const T = [[-0.66, 0.1], [-0.82, 0.02], [-0.96, -0.1], [-1.04, -0.28]], B = [[-0.6, -0.04], [-0.74, -0.07], [-0.9, -0.2], [-1.0, -0.33]]; const bands = []; for (let k = 0; k < 3; k++) bands.push(hatch([T[k], [(T[k][0] + T[k + 1][0]) / 2, (T[k][1] + T[k + 1][1]) / 2], [(B[k][0] + B[k + 1][0]) / 2, (B[k][1] + B[k + 1][1]) / 2], B[k]], 0.025, 0.4)); const spots = []; for (let k = 0; k < 16; k++) { const x = -0.45 + (k % 8) * 0.13 + (k > 7 ? 0.06 : 0), y = k > 7 ? 0.02 : 0.15; spots.push(flat(moved(oval(0.035, 0.025, 10), x, y - (k % 2) * 0.04), { depth: 0.02, fill: 6 })); } return join(flat(body, { depth: 0.16 }), ...bands, ...spots, flat(moved(oval(0.1, 0.05, 14), 0.82, 0.05, -0.3), { depth: 0.02, fill: 20 })); },
     "Costus": () => roots({ n: 3, len: 1.1, r: 0.2, bumps: 2, hairs: 10 }),
     "Goat Hair": () => strands(26, 1.6, { amp: 0.14, wave: 7, fan: 0.6, spread: 0.2 }),
     "Hyrax": () => many(4, () => ball({ r: 0.55, sx: 1.4, sy: 0.3, n: 90, rough: 0.2, bumps: 5 }), (k) => ({ y: -0.6 + k * 0.32, ry: k * 0.7, s: 1 - k * 0.15 })),
-    "Lanolin": () => join(cloud(120, 0.5, { sx: 1.4, w: 0.6 }), many(8, (k) => path(curve((t) => [Math.cos(t * TAU) * 0.08, t * 0.1, Math.sin(t * TAU) * 0.08], 10), 0.03), (k) => ({ x: jit(0.5), y: jit(0.3), z: jit(0.3) })), at(drop(0.14), { x: 0.2, y: -0.8 })),
-    "Leather": () => join(path([[-1, -0.7, 0], [-0.3, -0.85, 0], [0.4, -0.7, 0], [1, -0.8, 0], [0.9, 0.1, 0], [1, 0.75, 0], [0.2, 0.7, 0], [-0.5, 0.85, 0], [-1, 0.7, 0], [-0.9, 0, 0], [-1, -0.7, 0]].map((p) => [p[0], p[1], p[0] * p[0] * 0.2]), 0.05), path([[-0.8, -0.6, 0.16], [0.8, -0.6, 0.16]], 0.09, 1.1)),
-    "Musk": () => join(cloud(260, 0.8, { w: 0.55 }), ball({ r: 0.45, n: 90, lines: false, w: 1 })),
+    "Lanolin": () => { const body = polar((a) => 1 + 0.07 * Math.cos(a * 9), 120, 0.58, 0.36); const head = moved(oval(0.17, 0.22, 30), 0.68, 0.12, -0.5); const legs = [-0.32, -0.12, 0.14, 0.34].map((x, k) => path([[x, -0.3, k % 2 ? -0.05 : 0.05], [x + 0.01, -0.72, k % 2 ? -0.05 : 0.05]], 0.03, 1.1)); const curls = []; for (let k = 0; k < 14; k++) { const a = k * 2.4, d = 0.42 * Math.sqrt((k + 0.5) / 14); curls.push(at(path(circle(0.06, 12), 0.02, 0.7), { x: Math.cos(a) * d * 1.1, y: Math.sin(a) * d * 0.62, z: 0.09, rx: Math.PI / 2 })); } return join(flat(body, { depth: 0.18 }), flat(head, { depth: 0.14, fill: 60 }), ...legs, ...curls, path([[0.78, 0.26, 0.07], [0.95, 0.34, 0.07]], 0.03, 0.9)); },
+    "Leather": () => { const hide = polar((a) => { let r = 0.58; [[0.75, 0.35], [-0.75, 0.35], [2.45, 0.4], [-2.45, 0.4], [0, 0.18], [Math.PI, 0.25]].forEach(([c, L]) => { r += L * Math.exp(-Math.pow(apart(a, c) / 0.22, 2)); }); return r; }, 140, 1.05, 1.1); return join(flat(hide, { depth: 0.05, fill: 200 }), at(path(hide.map(([x, y]) => [x * 0.86, y * 0.86, 0]).concat([[hide[0][0] * 0.86, hide[0][1] * 0.86, 0]]), 0.08, 0.7), { z: 0.03 })); },
+    "Musk": () => { const lobes = [[0, 0.22, 0.34], [-0.36, 0.02, 0.28], [0.36, 0.02, 0.28], [-0.18, -0.2, 0.26], [0.18, -0.2, 0.26]].map(([x, y, r]) => at(ball({ r, n: Math.round(r * 520), rough: 0.08, bumps: 9, lines: false }), { x, y })); const sepals = many(5, () => leaf({ len: 0.5, w: 0.1, shape: "lance", veins: 0, curl: -0.2 }), (k) => ({ y: -0.35, rz: Math.PI + (k - 2) * 0.55, ry: k * 0.3 })); return join(...lobes, sepals, path([[0, -0.4, 0], [0.04, -0.98, 0]], 0.04, 0.9)); },
     "Sheep Wool": () => many(22, (k) => path(curve((t) => [Math.cos(t * 2.5 * TAU) * 0.1 * (1 - t * 0.4), t * 0.18, Math.sin(t * 2.5 * TAU) * 0.1 * (1 - t * 0.4)], 20), 0.03), (k) => ({ x: Math.cos(k * 2.4) * 0.7 * Math.sqrt(k / 22), z: Math.sin(k * 2.4) * 0.7 * Math.sqrt(k / 22), y: 0.3 * (1 - k / 22) })),
-    "Skin": () => wave(2, 1.4, { amp: 0.06, k: 0.8, swell: 0.25 }),
-    "Suede": () => join(wave(1.8, 1.2, { amp: 0.04, k: 0.6, nx: 16, nz: 10 }), many(40, () => path([[0, 0, 0], [0.02, 0.07, 0]], 0.03, 0.6), (k) => ({ x: jit(0.85), z: jit(0.55), y: 0.03 }))),
+    "Skin": () => { const parts = []; for (let k = 1; k <= 8; k++) { const rx = 0.1 + k * 0.1, ry = 0.14 + k * 0.12, gap = 0.55 - k * 0.035; parts.push(path(curve((t) => { const a = -Math.PI / 2 + gap + t * (TAU - 2 * gap); return [Math.cos(a) * rx, Math.sin(a) * ry, 0]; }, 44), 0.035, 0.95)); } return join.apply(null, parts); },
+    "Suede": () => join(flat([[-0.35, -1], [0.35, -1], [0.38, -0.2], [0.45, 0.05], [0.44, 0.62], [0.36, 0.66], [0.3, 0.12], [0.26, 0.8], [0.16, 0.84], [0.1, 0.16], [0.06, 0.88], [-0.05, 0.9], [-0.1, 0.16], [-0.16, 0.8], [-0.27, 0.78], [-0.3, 0.1], [-0.36, 0], [-0.6, 0.3], [-0.7, 0.24], [-0.45, -0.25]], { depth: 0.12, fill: 240 }), path([[-0.36, -0.82, 0.07], [0.36, -0.82, 0.07]], 0.03, 0.8)),
     // ---------------- EARTHY ----------------
     "Cedarmoss": () => join(at(ball({ r: 0.8, sy: 0.4, n: 160, rough: 0.25, bumps: 9, cut: 5, lines: false }), { y: -0.3 }), at(frond(0.8, 10), { x: 0.3, y: -0.1, rz: -0.3 })),
     "Concrete": () => box(1.4, 0.9, 0.9, { step: 0.07, fill: 90 }),
     "Damp Vegetation": () => join(many(5, () => leaf({ len: 0.7, w: 0.25, shape: "oval", curl: 0.3 }), (k) => ({ ry: (k / 5) * TAU, rx: -1.2, y: -0.5 })), falling(6, () => drop(0.07), 1.2, 0.5)),
     "Dust": () => join(lathe([[0.9, -1], [0.05, 1]], { seg: 20, mer: 2 }), cloud(120, 0.7, { w: 0.5 })),
     "Lichen": () => many(6, () => join(path(circle(0.18, 20), 0.03), path(circle(0.1, 14), 0.03), path(circle(0.05, 10), 0.03)), (k) => ({ x: Math.cos(k * 2.4) * 0.5 * Math.sqrt(k / 6 + 0.1), z: Math.sin(k * 2.4) * 0.5 * Math.sqrt(k / 6 + 0.1), rx: jit(0.3), s: 1.3 - k * 0.1 })),
-    "Mineral Accord": () => many(5, (k) => crystal(0.9 - k * 0.12, 0.16), (k) => ({ rz: (k - 2) * 0.35, rx: jit(0.3), x: (k - 2) * 0.12, y: -0.2 })),
+    "Mineral Accord": () => join(at(crystal(1.4, 0.2), { rz: 0.15 }), at(crystal(1, 0.16), { x: -0.35, y: -0.2, rz: 0.55 }), at(crystal(0.9, 0.15), { x: 0.35, y: -0.25, rz: -0.5 }), at(crystal(0.6, 0.12), { x: 0.1, y: -0.35, z: 0.25, rx: 0.5 }), at(ball({ r: 0.55, sy: 0.25, n: 90, rough: 0.2, bumps: 5, lines: false }), { y: -0.6 })),
     "Moss": () => join(ball({ r: 0.9, sy: 0.35, n: 200, rough: 0.22, bumps: 11, cut: 5, lines: false }), many(16, () => path([[0, 0, 0], [0, 0.14, 0]], 0.03), (k) => ({ x: Math.cos(k * 2.4) * 0.7 * Math.sqrt(k / 16), z: Math.sin(k * 2.4) * 0.7 * Math.sqrt(k / 16), y: 0.2 + jit(0.05) }))),
     "Mushroom": () => join(turned([[0.12, -0.9], [0.14, -0.3], [0.12, 0.1], [0.6, 0.12], [0.55, 0.3], [0.35, 0.48], [0, 0.55]], { seg: 22, mer: 8, rings: true }), many(16, () => path([[0.14, 0.1, 0], [0.58, 0.12, 0]], 0.05, 0.6), (k) => ({ ry: (k / 16) * TAU }))),
-    "Oakmoss": () => many(5, (k) => path(bez([0, 0, 0], [0.1, 0.3, 0], [(k - 2) * 0.2, 0.6, 0], [(k - 2) * 0.35, 0.9, 0], 12), 0.05), (k) => ({ ry: k * 1.2, y: -0.5 })),
+    "Oakmoss": () => { const parts = []; const grow = (x, y, a, L, depth) => { const x2 = x + Math.sin(a) * L, y2 = y + Math.cos(a) * L; parts.push(path([[x, y, 0], [x2, y2, 0]], 0.04, 0.8 + depth * 0.1)); if (depth < 4) { grow(x2, y2, a - 0.45, L * 0.72, depth + 1); grow(x2, y2, a + 0.45, L * 0.72, depth + 1); } }; [-0.5, 0, 0.5].forEach((a, k) => grow((k - 1) * 0.15, -0.9, a, 0.45, 0)); return join.apply(null, parts); },
     "Peat": () => join(box(1.4, 0.8, 0.8, { step: 0.07 }), many(5, (k) => path(curve((t) => [-0.7 + t * 1.4, -0.3 + k * 0.15 + Math.sin(t * 6 + k) * 0.02, 0.41], 14), 0.05, 0.6), () => ({}))),
     "Petrichor": () => join(at(wave(2, 1.4, { amp: 0.0, nx: 14, nz: 9 }), { y: -0.7 }), falling(7, () => drop(0.07), 1.2, 0.6), many(4, (k) => path(circle(0.12 + k * 0.08, 24), 0.04, 0.6), (k) => ({ y: -0.69, x: 0.2, z: 0.1 }))),
     "Sand": () => wave(2, 1.6, { amp: 0.1, k: 1.6, skew: 1.6, nx: 26, nz: 14 }),
@@ -828,11 +902,11 @@
     // ---------------- AIR AND WATER ----------------
     "Airy Note": () => many(7, (k) => path(curve((t) => [(t - 0.5) * 2, Math.sin(t * 5 + k * 0.7) * 0.18 + (k - 3) * 0.16, Math.cos(t * 3 + k) * 0.2], 30), 0.07, 0.7), () => ({})),
     "Aquatic Notes": () => join(wave(2, 1, { amp: 0.14, k: 1.5, nx: 20, nz: 8 }), at(path(curve((t) => { const a = t * 1.6 * Math.PI; return [0.2 + Math.cos(a) * 0.3 * (1 - t * 0.5), 0.2 + Math.sin(a) * 0.4, 0]; }, 20), 0.04), {})),
-    "Clear Skies": () => join(at(ball({ r: 0.35, n: 120 }), { y: 0.35 }), path([[-1.2, -0.5, 0], [1.2, -0.5, 0]], 0.08), many(3, (k) => path(curve((t) => [Math.cos(t * Math.PI) * (0.6 + k * 0.25), 0.35 + Math.sin(t * Math.PI) * (0.6 + k * 0.25) * 0.5, 0], 20), 0.08, 0.5), () => ({}))),
+    "Clear Skies": () => join(at(path(circle(0.35, 40), 0.04, 1.1), { rx: Math.PI / 2, y: 0.2 }), many(12, () => path([[0, 0.48, 0], [0, 0.7, 0]], 0.04, 0.8), (k) => ({ y: 0.2, rz: (k / 12) * TAU })), path([[-1.1, -0.6, 0], [1.1, -0.6, 0]], 0.05, 0.8)),
     "Cold Night Air": () => join(at(join(path(curve((t) => [Math.cos(-Math.PI / 2 + t * Math.PI) * 0.5, Math.sin(-Math.PI / 2 + t * Math.PI) * 0.5, 0], 20), 0.04), path(curve((t) => [0.2 + Math.cos(-Math.PI / 2 + t * Math.PI) * 0.35, Math.sin(-Math.PI / 2 + t * Math.PI) * 0.46, 0], 20), 0.04)), { x: -0.4, y: 0.3 }), at(flake(1.4), { x: 0.6, y: -0.3, rx: Math.PI / 2 }), many(6, () => star(4, 0.07, 0.02), (k) => ({ x: jit(1), y: jit(0.8), rx: Math.PI / 2 }))),
     "Dead Water": () => wave(2.2, 1.6, { amp: 0, nx: 22, nz: 14 }),
     "Marine Accord": () => wave(2.2, 1.4, { amp: 0.16, k: 2, skew: 0.5, nx: 24, nz: 12 }),
-    "Ozone": () => many(5, (k) => path(curve((t) => { const a = t * TAU; return [Math.cos(a) * (0.5 + 0.3 * Math.cos(a * 2 + k)), Math.sin(a * 2 + k) * 0.25, Math.sin(a) * (0.5 + 0.3 * Math.cos(a * 2 + k))]; }, 50), 0.06, 0.7), (k) => ({ rx: k * 0.5, s: 1 + k * 0.08 })),
+    "Ozone": () => flat([[0.16, 1], [-0.42, -0.06], [-0.02, -0.06], [-0.22, -1], [0.46, 0.2], [0.06, 0.2], [0.36, 1]], { depth: 0.14, fill: 170, corners: true }),
     "Rain Notes": () => many(14, (k) => join(path([[0, 0, 0], [0.04, -0.3, 0]], 0.04, 0.7), at(drop(0.04), { y: -0.35, rz: Math.PI })), (k) => ({ x: jit(0.9), y: -0.6 + (k / 14) * 1.6, z: jit(0.6) })),
     "Sea Salt": () => heap(6, () => cube(0.3), 0.6, { flat: true }),
     "Sea Water": () => join(wave(2, 1.2, { amp: 0.12, k: 1.8, nx: 20, nz: 10 }), at(drop(0.14), { y: 0.6 })),
@@ -853,7 +927,7 @@
     "Blush": () => join(turned([[0, -0.08], [0.6, -0.08], [0.62, 0.05], [0, 0.05]], { seg: 24, mer: 0, rings: true }), at(pan(0.45), { y: 0.06 }), at(join(path([[0, 0, 0], [0, 0.8, 0]], 0.04), at(ball({ r: 0.18, sy: 1.6, n: 60, lines: false, pear: -0.3 }), { y: 0.95 })), { x: 0.75, y: 0.05, rz: -0.5 })),
     "Candle Wax": () => candle({ drips: true }),
     "CO2 Extracts": () => join(turned([[0, -0.9], [0.3, -0.9], [0.3, 0.35], [0.12, 0.45], [0.12, 0.6], [0, 0.62]], { seg: 18, mer: 6, rings: true }), at(turned([[0, -0.55], [0.26, -0.55]], { seg: 16, mer: 0 }), {}), at(drop(0.08), { y: 0.85 })),
-    "Decayed Rose": () => join(at(rose({ n: 12, open: 0.6 }), { rz: 1.1, x: 0.3, y: 0.2 }), path(bez([0, -1, 0], [0, -0.2, 0], [0.1, 0.1, 0], [0.3, 0.2, 0], 12), 0.05), falling(4, () => petal({ len: 0.2, w: 0.15, shape: "round" }), 0.8, 0.6)),
+    "Decayed Rose": () => join(path(bez([0, -1, 0], [0.05, 0.1, 0], [0.4, 0.55, 0], [0.62, 0.2, 0], 16), 0.05, 0.8), at(rose({ n: 12, open: 1.25 }), { x: 0.62, y: 0.15, rx: Math.PI * 0.85, s: 0.8 }), many(4, () => petal({ len: 0.24, w: 0.2, shape: "round", curl: -0.4 }), (k) => ({ x: -0.3 + k * 0.28, y: -1, rx: -Math.PI / 2 + 0.2, ry: k * 1.7 })), at(leaf({ len: 0.4, w: 0.18, shape: "oval", curl: 0.5 }), { y: -0.4, rz: 1.9 })),
     "Dried Blood": () => join(many(4, (k) => join(at(ball({ r: 0.3 - k * 0.05, sy: 0.15, n: 80, cut: 5 }), {}), path(curve((t) => [Math.cos(t * TAU) * (0.3 - k * 0.05) * (1 + 0.15 * Math.sin(t * 9)), 0, Math.sin(t * TAU) * (0.3 - k * 0.05) * (1 + 0.15 * Math.sin(t * 9))], 30), 0.04)), (k) => ({ x: [-0.5, 0.35, 0.1, -0.2][k], z: [0, 0.3, -0.5, 0.5][k] })), at(drop(0.12), { y: 0.6 })),
     "Dusty Antiques": () => join(urn(), cloud(50, 1, { w: 0.4 })),
     "Dusty Sofa": () => join(box(1.8, 0.35, 0.8, { step: 0.08 }), at(box(1.8, 0.6, 0.2, { step: 0.08 }), { y: 0.45, z: -0.3 }), at(box(0.2, 0.5, 0.8, { step: 0.08 }), { x: -0.95, y: 0.2 }), at(box(0.2, 0.5, 0.8, { step: 0.08 }), { x: 0.95, y: 0.2 }), cloud(40, 1.1, { w: 0.4 })),
@@ -863,16 +937,16 @@
     "Lip Gloss": () => join(turned([[0, -1], [0.18, -1], [0.18, 0.2], [0.14, 0.25], [0, 0.26]], { seg: 16, mer: 6, rings: true }), at(join(path([[0, 0, 0], [0, 0.9, 0]], 0.03), at(ball({ r: 0.06, sy: 2.2, n: 20, lines: false }), { y: 0 })), { x: 0.45, y: -0.4, rz: -0.3 })),
     "Lipstick": () => join(turned([[0, -1], [0.26, -1], [0.26, 0.1], [0.2, 0.12], [0.2, 0.5], [0.16, 0.55]], { seg: 18, mer: 6, rings: true }), path(curve((t) => [Math.cos(t * TAU) * 0.16, 0.55 + 0.35 * (1 - Math.cos(t * TAU)) * 0.5, Math.sin(t * TAU) * 0.16], 20), 0.04)),
     "Makeup Palette": () => join(box(1.8, 0.1, 1.1, { step: 0.07 }), many(6, () => pan(0.2), (k) => ({ x: -0.55 + (k % 3) * 0.55, z: -0.25 + Math.floor(k / 3) * 0.5, y: 0.06 }))),
-    "Mousse de Saxe": () => join(at(ball({ r: 0.8, sy: 0.35, n: 150, rough: 0.2, bumps: 10, cut: 5, lines: false }), { y: -0.4 }), at(onStem(flower({ n: 5, len: 0.25, w: 0.18, shape: "round" }), 0.7, 0.1), { y: -0.4 })),
+    "Mousse de Saxe": () => join(turned([[0, -0.8], [0.45, -0.8], [0.55, -0.5], [0.5, -0.1], [0.22, 0.12], [0.14, 0.28], [0.18, 0.34], [0, 0.34]], { seg: 22, mer: 8, rings: true }), path(bez([0.16, 0.3, 0], [0.4, 0.4, 0], [0.6, 0.3, 0], [0.75, 0.05, 0], 12), 0.035), at(ball({ r: 0.2, sy: 1.25, n: 60 }), { x: 0.8, y: -0.18 }), at(strands(6, 0.35, { spread: 0.03 }), { x: 0.82, y: -0.42 })),
     "Old Books": () => many(4, () => book(1.3, 0.9, 0.2), (k) => ({ y: -0.4 + k * 0.23, ry: jit(0.3), rx: Math.PI / 2, x: jit(0.1) })),
     "Oriental Notes": () => lantern(),
     "Paper": () => join(sheet(1.3, 1.7, { rules: 7 }), path([[0.35, 0.85, 0], [0.65, 0.55, 0]], 0.04)),
     "Porcelain": () => join(cup({ saucer: true }), many(2, () => path(circle(0.58, 30), 0.05, 0.6), (k) => ({ y: 0.05 + k * 0.12 }))),
-    "Rotten Flesh": () => join(ball({ r: 0.8, sx: 1.25, sy: 0.7, n: 320, rough: 0.3, bumps: 3 }), many(5, (k) => path(circle(0.1 + (k % 2) * 0.05, 14), 0.03), (k) => ({ x: jit(0.6), y: 0.45, z: jit(0.35) }))),
+    "Rotten Flesh": () => join(flat([[-0.72, -0.1], [0.72, -0.1], [0.72, 0.1], [-0.72, 0.1]], { depth: 0.14, fill: 90 }), ...[[-0.75, 0.16], [-0.75, -0.16], [0.75, 0.16], [0.75, -0.16]].map(([x, y]) => flat(moved(oval(0.2, 0.2, 30), x, y), { depth: 0.14, fill: 30 }))),
     "Salty Tears": () => join(many(3, () => drop(0.14), (k) => ({ x: (k - 1) * 0.35, y: 0.6 - k * 0.45, z: jit(0.1) })), at(heap(4, () => cube(0.1), 0.2), { y: -0.8 })),
     "Spinal Fluid": () => join(many(7, () => join(turned([[0, -0.07], [0.22, -0.07], [0.24, 0.07], [0, 0.07]], { seg: 16, mer: 0, rings: true }), path([[0, 0, -0.2], [0, 0, -0.45]], 0.04), path([[-0.2, 0, -0.1], [-0.42, -0.05, -0.15]], 0.04), path([[0.2, 0, -0.1], [0.42, -0.05, -0.15]], 0.04)), (k) => ({ y: -0.9 + k * 0.3, x: Math.sin(k * 0.6) * 0.08 })), at(drop(0.1), { x: 0.6, y: -0.3 })),
     "Velvet": () => join(at(wave(1.6, 1.9, { amp: 0.16, k: 3.2, skew: 0.3, nx: 26, nz: 14 }), { rx: Math.PI / 2 }), path([[-0.85, 0.95, 0], [0.85, 0.95, 0]], 0.05)),
-    "Westfarthing Leaf": () => join(at(leaf({ len: 1.4, w: 0.45, shape: "broad", veins: 5, curl: 0.3 }), { x: -0.3, y: -0.7, rz: 0.3 }), at(pipe(), { x: 0.1, y: 0.1, s: 0.9 }), at(smoke(2, 0.6), { x: 0.2, y: 0.5 })),
+    "Westfarthing Leaf": () => join(at(turned([[0.05, 0], [0.2, 0.02], [0.22, 0.32], [0.17, 0.35]], { seg: 16, mer: 6, rings: true }), { x: 0.75, y: -0.1 }), path(bez([0.72, -0.05, 0], [0.2, -0.2, 0], [-0.4, -0.25, 0], [-1.05, -0.1, 0], 20), 0.04), at(smoke(2, 0.9), { x: 0.75, y: 0.3, s: 0.8 })),
   };
   // For a note the list does not name — one added to the library later —
   // a figure of its accord's.
@@ -923,14 +997,19 @@
   }
 
   // ============================================================
-  // DRAWING ONE: turning slowly about its upright, a little from above, on
+  // DRAWING ONE: swaying slowly about its upright, a little from above, on
   // a dashed ring; hairlines first, then the specks, the nearer larger and
-  // brighter.
+  // brighter. It SWAYS rather than turning all the way round (2026-09-29):
+  // a symbol known by its outline — a cross, a paw print, a bolt — would
+  // stand edge on half the time, and say nothing then.
   // ============================================================
   const RED = [255, 58, 68], NEAR = [255, 150, 154];
+  // Swaying either side of a little to the left of straight on, by this
+  // much (radians), once every fourteen seconds or so.
+  const SWAY_AT = -0.28, SWAY = 0.62, SWAY_RATE = 0.00045;
   function draw(g, fig, w, h, t) {
     g.clearRect(0, 0, w, h);
-    const yaw = fig.turn + (t || 0) * 0.00032, tilt = 0.32;
+    const yaw = SWAY_AT + Math.sin((t || 0) * SWAY_RATE + fig.turn) * SWAY, tilt = 0.28;
     const cy = Math.cos(yaw), sy = Math.sin(yaw), ct = Math.cos(tilt), st = Math.sin(tilt);
     const S = Math.min(w * 0.44, h * 0.42), X = w / 2, Y = h / 2, D = 4;
     const P = (x, y, z) => {

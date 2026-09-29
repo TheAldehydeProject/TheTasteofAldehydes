@@ -48,7 +48,6 @@
     { url: "works/resins-in-perfumery.html", trail: ["Explorations & Researches", "Resins in Perfumery"] },
     { url: "categories/note-library.html", trail: ["Note Library"] },
     { url: "categories/other-2.html", trail: ["Photography"] },
-    { url: "works/test-page.html", trail: ["Test page"] },
   ];
 
   let everything = null;

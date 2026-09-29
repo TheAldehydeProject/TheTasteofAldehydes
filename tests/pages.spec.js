@@ -38,7 +38,6 @@ const PAGES = [
   { url: "/works/dupes-designers-and-niches.html", root: "../", title: /Dupes, Designers and Niches/ },
   { url: "/works/test-node-a.html", root: "../", title: /Test node/ },
   { url: "/works/test-node-b.html", root: "../", title: /Test node/ },
-  { url: "/works/test-page.html", root: "../", title: /Test page/ },
 ];
 
 for (const page_ of PAGES) {

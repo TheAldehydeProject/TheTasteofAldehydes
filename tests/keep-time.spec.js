@@ -47,12 +47,12 @@ test("clicked off, Explorations & Researches' field keeps moving", async ({ page
   expect(errors).toEqual([]);
 });
 
-test("clicked off, the test page's network keeps turning", async ({ page }) => {
+test("clicked off, the Note Library's network keeps turning", async ({ page }) => {
   test.setTimeout(120000);
   const errors = collectPageErrors(page);
   await clickedOff(page);
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto("/works/test-page.html");
+  await page.goto("/categories/note-library.html");
   await expect(page.locator(".net-stage")).toHaveClass(/is-drawn/, { timeout: 30000 });
   await expect.poll(() => page.evaluate(() => window.KeepTime.frames), { timeout: 10000 }).toBeGreaterThan(5);
   const p1 = await page.evaluate(() => window.NetScene.note("Vanilla"));

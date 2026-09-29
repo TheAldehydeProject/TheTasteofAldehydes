@@ -47,7 +47,6 @@ const PAGES = [
   "/works/my-personal-introduction-to-perfume.html",
   "/search.html",
   "/contact.html",
-  "/works/test-page.html",
 ];
 
 test.describe("on a phone", () => {

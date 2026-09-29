@@ -1,5 +1,12 @@
 // ============================================================
-// THE NOTE LIBRARY AS NETWORKS — works/test-page.html (the test page)
+// THE NOTE LIBRARY AS NETWORKS — categories/note-library.html
+//
+// Since 2026-09-29 THIS IS THE NOTE LIBRARY: "replace the note library page
+// with the test page. Remove all content from the previous note library
+// ... effectively make the test page the new note library page." It was
+// works/test-page.html, which forwards here now, and the periodic table of
+// notes (note-library.js) is gone. The library's data is the catalogue in
+// this page's own markup, read as it opens (`read`).
 //
 // The test page began (2026-09-26) as the owner's picture of a dense red
 // network standing for nothing, became five glowing systems, and then
@@ -37,9 +44,10 @@
 //
 // So:
 //
-//   THE LIBRARY is still read off the Note Library's own page
-//   (categories/note-library.html) and notes-data.js: every accord, every
-//   note, what it is, how many fragrances use it, its number and symbol.
+//   THE LIBRARY is read off this page's own catalogue (`.lib-catalogue`)
+//   and notes-data.js: every accord, every note, what it is and its
+//   sources, its variations and what each means, how many fragrances use
+//   it.
 //
 //   ONE RED NETWORK to begin with, after the owner's picture: every note a
 //   glowing red node, among them the network's own FILLERS — smaller dark
@@ -163,23 +171,17 @@
   const canvas = stage && stage.querySelector(".net-canvas");
   if (!canvas) return;
   const root = typeof window.SITE_ROOT === "string" ? window.SITE_ROOT : "";
-  const LIBRARY = "categories/note-library.html";
-
-  function bare(unread) {
+  // Whatever cannot be drawn, the catalogue is shown instead: every note,
+  // by accord, as a plain list (the page's own head hides it while the
+  // drawing is made, and shows it again if this never runs).
+  function bare() {
     const say = stage.querySelector(".net-fallback");
-    if (say) {
-      if (unread) {
-        say.textContent = "The Note Library could not be read here. ";
-        const a = document.createElement("a");
-        a.href = root + LIBRARY;
-        a.textContent = "Open the Note Library →";
-        say.appendChild(a);
-      }
-      say.hidden = false;
-    }
+    if (say) say.hidden = false;
     stage.classList.add("is-bare");
+    document.documentElement.classList.remove("lib-drawing");
   }
-  if (typeof THREE === "undefined") { bare(false); return; }
+  if (typeof THREE === "undefined") { bare(); return; }
+  window.NetRunning = true;
   const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // ============================================================
@@ -261,6 +263,11 @@
   // and a bead of light running its length and back every BEAD_MS.
   const BOND_R = 0.026, BOND_STEP = 0.045, BOND_GLOW = 0.5, BEAD_MS = 2600;
   const BOND_MAX = 64, BOND_POINTS = 4000;
+  // THE CENTRE IS THE SOURCES (2026-09-29): "a hover thing; so one wouldnt
+  // know unless they hover it, in which case it would expand slightly,
+  // turn redder and have the text appear." It swells by this much, over
+  // about a fifth of a second.
+  const HUB_SWELL = 0.24, HUB_HOVER_RATE = 0.012;
   const FLY_MS = 2300;
   const FLY_NEAR_MS = 1600;
   const FADE_RATE = 0.0072;             // translucency, eased: gone in ~0.5s
@@ -289,11 +296,10 @@
   const lerp = (a, b, t) => a + (b - a) * t;
 
   // ============================================================
-  // READING THE LIBRARY — the Note Library's own page, and the same
-  // counting it does. (Copied from note-library.js: `norm` from search.js,
-  // the direct-words matching and the way uses are counted. The tests hold
-  // the two pages to the same answers. The library's symbols are not
-  // copied: this page says nothing of chemistry, 2026-09-28.)
+  // READING THE LIBRARY — this page's own catalogue — and counting its
+  // uses. (`norm` is search.js's; the direct-words matching and the way
+  // uses are counted were copied from note-library.js, which went with the
+  // periodic table on 2026-09-29 and left this the only copy.)
   // ============================================================
   function norm(text) {
     return String(text || "")
@@ -304,10 +310,17 @@
       .replace(/[^a-z0-9Ͱ-Ͽ]+/g, " ")
       .trim();
   }
-  function read(html) {
-    const doc = new DOMParser().parseFromString(html, "text/html");
-    return [...doc.querySelectorAll(".lib-shelf")]
-      .filter((shelf) => shelf.dataset.shelf && shelf.dataset.shelf !== "RET")
+  /** The numbers of the sources a description names, off its data-sources. */
+  const citesOf = (el) => (el && el.dataset.sources ? el.dataset.sources.split(/\s+/).map(Number).filter(Boolean) : []);
+  /** The catalogue: every accord, every note in it — what it is and its
+      sources, its other spellings and what each of them means — and the
+      list of sources, the first of them the owner. */
+  function read(doc) {
+    const sources = [...doc.querySelectorAll(".lib-sources li[id^='source-']")].map((li) => ({
+      no: +li.id.slice(7), html: li.innerHTML.trim(), me: li.classList.contains("lib-source-me"),
+    }));
+    const accords = [...doc.querySelectorAll(".lib-shelf")]
+      .filter((shelf) => shelf.dataset.shelf)
       .map((shelf) => {
         const code = shelf.dataset.shelf;
         const plate = shelf.querySelector(".lib-shelf-name");
@@ -318,17 +331,28 @@
           say: say ? say.textContent.trim() : "",
           notes: [...shelf.querySelectorAll(".lib-record")].map((el, i) => {
             const text = el.querySelector(".lib-say");
+            const aka = (el.dataset.aka || "").split("|").map((t) => t.trim()).filter(Boolean);
+            // What each other spelling means: its <dt> and the <dd> after it.
+            const means = new Map();
+            el.querySelectorAll(".lib-variations dt").forEach((dt) => {
+              const dd = dt.nextElementSibling;
+              if (!dd || dd.tagName !== "DD") return;
+              means.set(dt.textContent.trim(), { say: dd.textContent.trim(), same: dd.classList.contains("lib-same"), cites: citesOf(dd) });
+            });
             return {
               id: el.id,
               name: el.querySelector(".lib-name").textContent.trim(),
-              aka: (el.dataset.aka || "").split("|").map((s) => s.trim()).filter(Boolean),
+              aka,
+              means,
               say: text ? text.textContent.trim() : "",
+              cites: citesOf(text),
               call: code + " " + pad(i + 1, 3),
             };
           }),
         };
       })
       .filter((A) => A.notes.length);
+    return { accords, sources };
   }
   /** Which fragrances name each spelling, as the library counts it — and,
       for the note window, where in each it stands (top, heart, base, or a
@@ -370,18 +394,19 @@
     return best;
   }
 
-  stage.classList.add("is-reading");
-  fetch(root + LIBRARY)
-    .then((r) => (r.ok ? r.text() : Promise.reject(new Error("HTTP " + r.status))))
-    .then(read)
-    .then((accords) => (accords.length ? accords : Promise.reject(new Error("empty"))))
-    .then(start, () => { stage.classList.remove("is-reading"); bare(true); });
+  // The catalogue is this page's own: read at once, and the drawing begun
+  // once the rest of this script has been set up (it waited on a fetch of
+  // the library's page until 2026-09-29, and still starts a beat later).
+  const library = read(document);
+  Promise.resolve().then(() => {
+    if (library.accords.length) start(library.accords, library.sources);
+    else bare();
+  });
 
   // ============================================================
   // EVERYTHING ELSE, once the library has been read
   // ============================================================
-  function start(accords) {
-    stage.classList.remove("is-reading");
+  function start(accords, sources) {
     const { uses, tiers, fragrances } = counted();
     const notes = [];
     const byUse = (a, b) => b.uses - a.uses || a.no - b.no;
@@ -1198,6 +1223,99 @@
     note.setAttribute("aria-modal", "true");
     note.setAttribute("aria-labelledby", "net-note-name");
     stage.appendChild(note);
+
+    // THE SOURCES, which the centre opens — 2026-09-29: "the middle node of
+    // the expanded view ... to be called sources, which should house all the
+    // sources for the fragrance smells ... The very first source should be:
+    // the first source is me. The latter should be a popup window,
+    // different from all the others." So not glass but PAPER: a sheet of
+    // references, warm white with dark ink and the page's red only in its
+    // numbers, unfolding out of wherever it was opened from — the centre,
+    // or a source's number under a description. Every source is the
+    // catalogue's own, in MLA 8, numbered as the descriptions name them.
+    const sourceByNo = new Map();
+    const textOf = (h) => { const d = document.createElement("div"); d.innerHTML = h; return d.textContent.replace(/\s+/g, " ").trim(); };
+    sources.forEach((src) => sourceByNo.set(src.no, Object.assign({ text: textOf(src.html) }, src)));
+    const sheet = el("section", "net-sources");
+    sheet.hidden = true;
+    sheet.setAttribute("role", "dialog");
+    sheet.setAttribute("aria-modal", "true");
+    sheet.setAttribute("aria-labelledby", "net-sources-title");
+    sheet.innerHTML =
+      '<div class="net-sources-top">' +
+        '<span class="net-sources-kicker">References</span>' +
+        '<button type="button" class="net-sources-close" aria-label="Close">×</button>' +
+      "</div>" +
+      '<h2 class="net-sources-title" id="net-sources-title" tabindex="-1">Sources</h2>' +
+      '<p class="net-sources-say"></p>' +
+      '<div class="net-sources-body"><ol class="net-sources-list"></ol></div>';
+    sheet.querySelector(".net-sources-say").textContent =
+      sources.length + (sources.length === 1 ? " source" : " sources") + " for what this library says of its notes — the numbers under a note's description.";
+    const sourceList = sheet.querySelector(".net-sources-list");
+    sources.forEach((src) => {
+      const li = sourceList.appendChild(el("li", "net-source" + (src.me ? " is-me" : "")));
+      li.id = "net-source-" + src.no;
+      li.dataset.no = String(src.no);
+      li.appendChild(el("span", "net-source-no")).textContent = String(src.no);
+      const body = li.appendChild(el("span", "net-source-text"));
+      body.innerHTML = src.html;          // the page's own catalogue
+      if (src.me) body.appendChild(el("span", "net-source-me")).textContent = "The author of this site";
+      body.querySelectorAll("a").forEach((a) => { a.target = "_blank"; a.rel = "noopener"; });
+    });
+    stage.appendChild(sheet);
+    let sourcesOpen = false, sourcesBack = null, sourcesTimer = 0;
+    /** The sources opened, at one of them if asked (`no`), unfolding from
+        the point on the window it was opened from (`from`). */
+    function openSources(no, from) {
+      if (!sourcesOpen) sourcesBack = document.activeElement;
+      const r = stage.getBoundingClientRect();
+      const at = from || (sourcesBack && sourcesBack.getBoundingClientRect ? (() => { const b = sourcesBack.getBoundingClientRect(); return { x: b.left + b.width / 2 - r.left, y: b.top + b.height / 2 - r.top }; })() : { x: r.width / 2, y: r.height / 2 });
+      sheet.style.setProperty("--from-x", (at.x - r.width / 2).toFixed(0) + "px");
+      sheet.style.setProperty("--from-y", (at.y - r.height / 2).toFixed(0) + "px");
+      sourceList.querySelectorAll(".is-asked").forEach((li) => li.classList.remove("is-asked"));
+      if (!sourcesOpen) {
+        sourcesOpen = true;
+        window.clearTimeout(sourcesTimer);
+        sheet.hidden = false;
+        if (!noteOpen) veil.hidden = false;
+        void sheet.offsetWidth;
+        veil.classList.add("is-on");
+        sheet.classList.add("is-on");
+        stage.classList.add("has-sources");
+      }
+      const li = no ? sourceList.querySelector("#net-source-" + no) : null;
+      const body = sheet.querySelector(".net-sources-body");
+      if (li) {
+        li.classList.add("is-asked");
+        body.scrollTop = li.offsetTop - body.clientHeight * 0.3;
+      } else body.scrollTop = 0;
+      sheet.querySelector(".net-sources-title").focus({ preventScroll: true });
+      stage.dataset.sources = no ? String(no) : "open";
+      wake();
+    }
+    function closeSources() {
+      if (!sourcesOpen) return;
+      sourcesOpen = false;
+      stage.dataset.sources = "";
+      sheet.classList.remove("is-on");
+      stage.classList.remove("has-sources");
+      if (!noteOpen) veil.classList.remove("is-on");
+      sourcesTimer = window.setTimeout(() => {
+        if (sourcesOpen) return;
+        sheet.hidden = true;
+        if (!noteOpen) veil.hidden = true;
+      }, still ? 0 : 420);
+      if (sourcesBack && sourcesBack.isConnected && sourcesBack.focus) sourcesBack.focus({ preventScroll: true });
+      sourcesBack = null;
+    }
+    sheet.querySelector(".net-sources-close").addEventListener("click", closeSources);
+
+    // THE CENTRE'S NAME, which only the hand finds: pointed at, the centre
+    // swells a little, turns redder, and says it is the sources.
+    const centreName = el("p", "net-centre-name");
+    centreName.setAttribute("aria-hidden", "true");
+    centreName.textContent = "Sources";
+    stage.appendChild(centreName);
 
     const hoverTag = el("p", "net-hover");
     hoverTag.setAttribute("aria-hidden", "true");
@@ -2151,7 +2269,6 @@
         '<p class="net-note-accord"></p>' +
         '<p class="net-note-say"></p>' +
         '<figure class="net-note-figure"><canvas class="net-note-drawing"></canvas></figure>' +
-        '<section class="net-note-part net-note-found"></section>' +
         '<section class="net-note-part net-note-aka"><h3></h3></section>' +
         '<section class="net-note-part net-note-tiers"><h3>Pyramidal distribution</h3></section>' +
         '<section class="net-note-part net-note-with"><h3>Most frequent combinations</h3><div class="net-note-chips"></div></section>' +
@@ -2162,6 +2279,7 @@
       q(".net-note-name").textContent = n.name;
       q(".net-note-accord").textContent = A.name + (A.say ? " — " + A.say : "");
       q(".net-note-say").textContent = n.say;
+      if (n.cites.length) q(".net-note-say").after(citeLine(n.cites));
       // The note before and after it in its accord, by use, at the top.
       const at = n.rankIn - 1, L = A.byUse.length;
       [[-1, "‹"], [1, "›"]].forEach(([by, mark]) => {
@@ -2183,36 +2301,24 @@
         canvas.setAttribute("aria-label", n.name + ", drawn in red particles");
         drawing = { canvas, figure, w: 0, h: 0 };
       } else { q(".net-note-figure").remove(); drawing = null; }
-      // FRAGRANCES: every one naming it, each a way to it.
-      const found = q(".net-note-found");
-      found.appendChild(el("h3")).textContent = "Fragrances · " + pad(n.uses);
-      const byHouse = new Map();
-      [...n.keys].sort().forEach((key) => {
-        const [house, no] = key.split(":");
-        if (!byHouse.has(house)) byHouse.set(house, []);
-        byHouse.get(house).push(no);
-      });
-      const order = Object.keys(HOUSES).filter((h) => byHouse.has(h)).concat([...byHouse.keys()].filter((h) => !HOUSES[h]));
-      const houses = order.filter((h) => h !== "individual");
-      if (byHouse.has("individual")) {
-        const nos = byHouse.get("individual");
-        found.appendChild(drop("Individual fragrances", nos.length, "net-note-group", "individual")).appendChild(fragrancesOf(n, "individual", nos));
-      }
-      if (houses.length) {
-        const block = found.appendChild(drop("Houses", houses.length === 1 ? "1 house" : houses.length + " houses", "net-note-group", "houses"));
-        houses.forEach((house) => {
-          const nos = byHouse.get(house);
-          const group = block.appendChild(drop((HOUSES[house] || { name: house }).name, nos.length, "net-note-house", "house:" + house));
-          group.appendChild(fragrancesOf(n, house, nos));
-        });
-      }
-      if (!n.uses) found.appendChild(el("p", "net-note-none")).textContent = "No fragrance on the site names it yet.";
       // VARIATIONS: the other ways the site writes it.
       const aka = q(".net-note-aka");
       aka.querySelector("h3").textContent = "Variations · " + pad(n.aka.length);
+      // Each one pressed says what it means against the note — or, where it
+      // is only another spelling, that nothing changes ("be able to click
+      // on the different variations of a certain note, and it gives you a
+      // line or two describing how that is different", 2026-09-29).
       if (n.aka.length) {
         const ul = aka.appendChild(el("ul"));
-        n.aka.forEach((a) => { ul.appendChild(el("li")).textContent = a; });
+        const told = aka.appendChild(el("div", "net-note-means"));
+        told.hidden = true;
+        n.aka.forEach((name) => {
+          const b = ul.appendChild(el("li")).appendChild(el("button", "net-note-var"));
+          b.type = "button";
+          b.dataset.variation = name;
+          b.setAttribute("aria-expanded", "false");
+          b.textContent = name;
+        });
       } else aka.appendChild(el("p", "net-note-none")).textContent = "No records of variations exist as of now";
       // PYRAMIDAL DISTRIBUTION, counted.
       const tally = tallyOf(n);
@@ -2221,30 +2327,19 @@
         tiers.appendChild(pyramid(tally, n.keys.size));
         // ... and under it, the fragrances in each: "add a list of
         // fragrances in which ingredient n is listed as a top note. do the
-        // same for middle and base and non-pyramidal".
+        // same for middle and base and non-pyramidal" — and, since
+        // 2026-09-29, each of them split as the Fragrances list at the top
+        // of the window was (it is gone from there): "give that part the
+        // same structure as 'fragrances' has now ... divisible by the houses
+        // and individual fragrances and then in houses also you can drop
+        // down based on house."
         const lists = tiers.appendChild(el("div", "net-note-tier-lists"));
-        const rank = (h) => { const k = Object.keys(HOUSES).indexOf(h); return k < 0 ? 99 : k; };
         TIERS.forEach((t) => {
-          const keys = [...n.keys].filter((key) => (n.where.get(key) || new Set()).has(t)).sort((a, b) => {
-            const [ha, na] = a.split(":"), [hb, nb] = b.split(":");
-            return rank(ha) - rank(hb) || ha.localeCompare(hb) || na.localeCompare(nb);
-          });
+          const keys = [...n.keys].filter((key) => (n.where.get(key) || new Set()).has(t));
           const box = lists.appendChild(drop(TIER_SAY[t], keys.length, "net-note-tier" + (keys.length ? "" : " is-empty"), "tier:" + t));
           box.dataset.tier = t;
           if (!keys.length) { box.appendChild(el("p", "net-note-none")).textContent = "None as of now."; return; }
-          const ul = box.appendChild(el("ul"));
-          keys.forEach((key) => {
-            const [house, no] = key.split(":");
-            const where = HOUSES[house] || { name: house, href: "" };
-            const a = ul.appendChild(el("li")).appendChild(el("a"));
-            a.href = where.href ? root + where.href + "#part-" + no : "#";
-            a.dataset.key = key;
-            a.innerHTML = '<span class="net-note-fno"></span><span class="net-note-fname"></span><span class="net-note-fhouse"></span>';
-            a.children[0].textContent = no;
-            a.children[1].textContent = titles.get(key) || "";
-            a.children[2].textContent = house === "individual" ? "Individual" : where.name;
-            if (where.href) learn(house, where.href);
-          });
+          splitByHouse(box, keys, "tier:" + t);
         });
       } else tiers.appendChild(el("p", "net-note-none")).textContent = "No fragrance on the site names it yet.";
       // THE MOST FREQUENT COMBINATIONS: the notes found with it most.
@@ -2277,7 +2372,73 @@
         dl.appendChild(d);
       });
     }
-    function fragrancesOf(n, house, nos) {
+    /** A description's sources, as small numbers after it, each opening the
+        Sources at that one. */
+    function citeLine(cites) {
+      const p = el("p", "net-note-cites");
+      p.appendChild(el("span", "net-note-cites-say")).textContent = cites.length === 1 ? "Source" : "Sources";
+      cites.forEach((no) => {
+        const b = p.appendChild(el("button", "net-note-cite"));
+        b.type = "button";
+        b.dataset.source = String(no);
+        b.textContent = String(no);
+        const src = sourceByNo.get(no);
+        b.title = src ? src.text : "";
+        b.setAttribute("aria-label", "Source " + no + (src ? ": " + src.text : ""));
+      });
+      return p;
+    }
+    /** A variation pressed: what it means against the note, under the
+        row — pressed again, or another pressed, it closes or changes. */
+    function tellVariation(b) {
+      const n = noteShown;
+      const told = note.querySelector(".net-note-means");
+      if (!n || !told) return;
+      const was = b.getAttribute("aria-expanded") === "true";
+      note.querySelectorAll(".net-note-var").forEach((v) => { v.setAttribute("aria-expanded", "false"); v.classList.remove("is-on"); });
+      if (was) { told.hidden = true; told.innerHTML = ""; return; }
+      const name = b.dataset.variation;
+      const m = n.means.get(name) || { say: "", same: false, cites: [] };
+      b.setAttribute("aria-expanded", "true");
+      b.classList.add("is-on");
+      told.innerHTML = "";
+      told.classList.toggle("is-same", m.same);
+      const head = told.appendChild(el("p", "net-note-means-head"));
+      head.appendChild(el("span", "net-note-means-name")).textContent = name;
+      head.appendChild(el("span", "net-note-means-against")).textContent = m.same ? "no change" : "against " + n.name;
+      told.appendChild(el("p", "net-note-means-say")).textContent = m.say || "Not written yet.";
+      if (m.cites.length) told.appendChild(citeLine(m.cites));
+      told.hidden = false;
+    }
+    /** Fragrances (their keys) split as the window's lists are: the
+        individual fragrances first, then Houses, and in it each house —
+        every one a dropdown, and what was left open stays open. */
+    function splitByHouse(box, keys, at) {
+      const byHouse = new Map();
+      keys.slice().sort().forEach((key) => {
+        const [house, no] = key.split(":");
+        if (!byHouse.has(house)) byHouse.set(house, []);
+        byHouse.get(house).push(no);
+      });
+      const order = Object.keys(HOUSES).filter((h) => byHouse.has(h)).concat([...byHouse.keys()].filter((h) => !HOUSES[h]));
+      const houses = order.filter((h) => h !== "individual");
+      if (byHouse.has("individual")) {
+        const nos = byHouse.get("individual");
+        box.appendChild(drop("Individual fragrances", nos.length, "net-note-group", at + ":individual")).appendChild(fragrancesOf("individual", nos));
+      }
+      if (houses.length) {
+        const block = box.appendChild(drop("Houses", houses.length === 1 ? "1 house" : houses.length + " houses", "net-note-group", at + ":houses"));
+        houses.forEach((house) => {
+          const nos = byHouse.get(house);
+          block.appendChild(drop((HOUSES[house] || { name: house }).name, nos.length, "net-note-house", at + ":house:" + house))
+            .appendChild(fragrancesOf(house, nos));
+        });
+      }
+    }
+    /** The fragrances of one house, each a way to it — by name, with no
+        number ("Remove numbering from fragrances in this window too",
+        2026-09-29). */
+    function fragrancesOf(house, nos) {
       const where = HOUSES[house] || { name: house, href: "" };
       const ul = el("ul");
       nos.forEach((no) => {
@@ -2285,10 +2446,8 @@
         const a = ul.appendChild(el("li")).appendChild(el("a"));
         a.href = where.href ? root + where.href + "#part-" + no : "#";
         a.dataset.key = key;
-        a.innerHTML = '<span class="net-note-fno"></span><span class="net-note-fname"></span><span class="net-note-ftier"></span>';
-        a.children[0].textContent = no;
-        a.children[1].textContent = titles.get(key) || "";
-        a.children[2].textContent = [...(n.where.get(key) || [])].map((t) => TIER_SAY[t]).join(", ");
+        a.innerHTML = '<span class="net-note-fname"></span>';
+        a.children[0].textContent = titles.get(key) || "";
       });
       if (where.href) learn(house, where.href);
       return ul;
@@ -2316,12 +2475,14 @@
       const t = e.target.closest("button");
       if (!t) return;
       if (t.classList.contains("net-note-close")) { deselect(); return; }
+      if (t.dataset.variation) { tellVariation(t); return; }
+      if (t.dataset.source) { openSources(+t.dataset.source); return; }
       if (t.dataset.no) {
         const m = notes[+t.dataset.no - 1];
         if (m) go(m);
       }
     });
-    veil.addEventListener("click", deselect);
+    veil.addEventListener("click", () => { if (sourcesOpen) closeSources(); else deselect(); });
     function openNote(n) {
       if (!noteOpen) noteBack = document.activeElement;
       fillNote(n);
@@ -2362,6 +2523,10 @@
     let coachOn = false, coachTimer = 0, idle = false, lastInput = performance.now();
     function opened() {
       stage.classList.add("is-loaded");
+      // Arrived at a note's own address (#note-bergamot, as the site's
+      // search links to one): no word, but that note's window at once.
+      const asked = location.hash.length > 1 && notes.find((n) => "#" + n.id === decodeURIComponent(location.hash));
+      if (asked) { go(asked); return; }
       coachOn = true;
       stage.classList.add("is-coaching");
       coachTimer = window.setTimeout(unCoach, COACH_MS);
@@ -2544,7 +2709,10 @@
         else select(i);
         return;
       }
-      if (hubAt(x, y)) { travel(-1); return; }
+      // THE CENTRE IS THE SOURCES: pressed, it opens them (it went back to
+      // seeing every accord until 2026-09-29; the dropdown, the arrows and
+      // Home still do).
+      if (hubAt(x, y)) { const p = project(0, 0, 0); openSources(0, { x: toX(p), y: toY(p) }); return; }
       const k = bridgeAt(x, y);
       if (k >= 0) { travel(focus === k ? -1 : k); return; }
       deselect();
@@ -2561,6 +2729,8 @@
     }, { passive: false });
     document.addEventListener("keydown", (e) => {
       const typing = e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA");
+      // The sources open over everything: Escape closes them first.
+      if (sourcesOpen) { if (e.key === "Escape") { e.preventDefault(); closeSources(); } return; }
       // A note's window open: Escape closes it, the arrows go through the
       // notes of its accord.
       if (noteOpen && !typing) {
@@ -2610,6 +2780,10 @@
         it nearer than the fog, none past it — the fog, for what is added. */
     const fogOf = (d) => (d <= fogNear ? 1 : d >= fogFar ? 0 : 1 - smooth(fogNear, fogFar, d));
     let hubSeen = 1;                      // the centre, stepping back while you are at an accord
+    let hubHover = 0;                     // the centre pointed at: 0 to 1, eased
+    const HUB_WHITE = new THREE.Color(0xffffff), HUB_GLOW_WHITE = new THREE.Color(0xffe8e8);
+    const HUB_LINE = new THREE.Color(0xffe0e0), HUB_RING = new THREE.Color(0xffc8c8), HUB_HALO = new THREE.Color(0xffd6d6);
+    const HUB_RED = new THREE.Color(0xff2a38), HUB_RED_GLOW = new THREE.Color(0xff1a2a);
     accords.forEach((A) => { A.seen = 1; A.signalAt = -1e9; });
 
     // What each node is asked to be, read once a frame rather than a node.
@@ -2674,7 +2848,9 @@
       bondQ.setFromUnitVectors(Y_AXIS, bondV.set(dx / L, dy / L, dz / L));
       bondM.compose(bondAt.set(mx, my, mz), bondQ, bondS.set(BOND_R, L, BOND_R));
       bondRod.setMatrixAt(bonds, bondM);
-      bondRod.setColorAt(bonds, bondC.setRGB(Math.min(1, k * 1.05), Math.min(1, k * 0.94), Math.min(1, k * 0.74)));
+      // Brighter than the hairline under it, and warm white — added, as
+      // the lines are, so it may run past one where it crosses them.
+      bondRod.setColorAt(bonds, bondC.setRGB(k * 1.5, k * 1.34, k * 1.02));
       bonds++;
       const pos = bondGeo.attributes.position.array, col = bondGeo.attributes.color.array;
       const glowPoint = (t, s) => {
@@ -3071,13 +3247,25 @@
       // centre and every other bridge stepping back while you are at an
       // accord, so that nothing stands in front of it.
       hub.visible = ph.centre > 0.01 && hubSeen > 0.02;
+      // Pointed at, THE CENTRE says it is the sources: it swells a little,
+      // turns redder, and its name comes up under it — and only then.
+      const hoverTo = overHub && hub.visible && !flight ? 1 : 0;
+      hubHover += (hoverTo - hubHover) * (still ? 1 : 1 - Math.exp(-dt * HUB_HOVER_RATE));
+      if (Math.abs(hubHover - hoverTo) < 0.002) hubHover = hoverTo;
+      else settling = true;
       if (hub.visible) {
-        hub.scale.setScalar(0.2 + 0.8 * ph.centre);
+        hub.scale.setScalar((0.2 + 0.8 * ph.centre) * (1 + HUB_SWELL * hubHover));
         hubCage.rotation.set(t * 0.0004, t * 0.0006, 0);
         hubRing.rotation.set(0.5, t * 0.0003, 0);
         hubRing2.rotation.set(Math.PI / 2, 0, t * -0.00025);
-        const on = ph.centre * hubSeen * (overHub ? 1.5 : 1);
+        const on = ph.centre * hubSeen * (1 + 0.5 * hubHover);
         hubBall.material.opacity = Math.min(1, hubSeen * 1.2);
+        hubBall.material.color.copy(HUB_WHITE).lerp(HUB_RED, hubHover * 0.9);
+        hubBall.material.emissive.copy(HUB_GLOW_WHITE).lerp(HUB_RED_GLOW, hubHover);
+        hubCage.material.color.copy(HUB_LINE).lerp(HUB_RED, hubHover);
+        hubRing.material.color.copy(HUB_RING).lerp(HUB_RED, hubHover);
+        hubRing2.material.color.copy(HUB_RING).lerp(HUB_RED, hubHover);
+        hubGlow.material.color.copy(HUB_HALO).lerp(HUB_RED_GLOW, hubHover);
         hubCage.material.opacity = 0.8 * on;
         hubRing.material.opacity = 0.6 * on;
         hubRing2.material.opacity = 0.35 * on;
@@ -3253,13 +3441,20 @@
         move(hoverTag, toX(p) + 14, toY(p) + 10);
         hoverTag.classList.add("is-on");
       } else hoverTag.classList.remove("is-on");
-      if ((overBridge >= 0 || overHub) && !flight && hand) {
+      if (overBridge >= 0 && !overHub && !flight && hand) {
         const k = overBridge;
-        bridgeTag.textContent = overHub ? "The centre — see every accord" :
+        bridgeTag.textContent = overHub ? "" :
           focus === k ? "Back to the centre ←" : "Go to " + pad(k + 1) + " · " + accords[k].name + " →";
         move(bridgeTag, hand.x + 16, hand.y - 30);
         bridgeTag.classList.add("is-on");
       } else bridgeTag.classList.remove("is-on");
+      // The centre's name, under its outer ring, while it is pointed at.
+      if (hubHover > 0.004) {
+        const hp = project(0, 0, 0);
+        const below = (1.45 * hub.scale.x * scale()) / Math.max(0.5, camera.position.length());
+        move(centreName, toX(hp), toY(hp) + below + 6);
+      }
+      fadeTo(centreName, hubHover);
       drawMark(dt);
       drawFigure(t);
     }
@@ -3415,6 +3610,7 @@
         hub: hubSeen, away: accords.map((A) => A.seen), tagLines: tagSegs, glows: glowsDrawn, drawn: nodesDrawn, pulsed: pulsedAt > 0, flashes, flashTo: flashTo.slice(),
         litAccords: accords.filter((A) => A.members.some((n) => lit[n.i] > 0.3)).map((A) => A.code),
         tagging: tagAt > 0 && performance.now() - tagAt < TAG_MS,
+        centreHover: hubHover, sources: sourcesOpen,
       }),
       /** What a note's window would say of it: how many fragrances, which,
           where in them it stands, and what it is most often with. */
