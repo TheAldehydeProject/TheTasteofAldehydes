@@ -250,3 +250,52 @@ so this cannot blank the map the way a broken shader would.
 Tested in `tests/node-map.spec.js`: **`the spheres are lit unless asked to be flat, and the map
 still draws either way`** — solid by default, flat with `?spheres=flat`, solid with
 `?spheres=solid`, every time with its eight labels and no errors.
+
+## 2026-09-29 — a picture of where each node goes, and every node on a phone
+
+> form the main menu, I want you to add a picture representing each page that you will go to when
+> you click on the main note. So, put a picture corresponding to theories when you click on the
+> theories node.
+
+> make sure all the nodes work properly on the main page, and ... make sure eveything works on a
+> mobile screen.
+
+- **Every node's window shows a picture of its page** in the hatched frame that stood empty for it:
+  `image` in each node's `preview` in `REAL_NODES`, a 960 × 720 JPEG in **`images/Previews/`** (eight,
+  about 360 KB together). The picture comes up once it has arrived, settling a touch larger to its own
+  size, and is described (*A picture of the Theories page*). It stands **clear of the window's Close**,
+  which stood over the frame's corner (`margin-top: 26px` on `.node-preview-media`).
+- **Each picture is asked for when the hand comes onto its node** (or a finger onto it), so it is
+  there when the window opens — rather than all eight being fetched by everyone who opens the home
+  page.
+- **Contact has a window now** (*Get in touch: by carrier pigeon, or by an email kept behind a small
+  captcha.*). It went straight to its page until every node was given a picture, and a picture needs
+  the window.
+- **`tools/previews.js` takes the pictures** — each page at 1200 × 900, as a visitor first sees it
+  (the Note Library with "Open menu here" put away, the search with *pine* typed in), saved at 0.8 —
+  and starts its own server. Run it again when a page has changed enough to look different:
+  `node tools/previews.js`, or `node tools/previews.js theories contact` for only those. It borrows
+  the tests' browser, so it needs `npm install` once; the site itself still needs nothing.
+- **Photography's note** says *Work in progress — this part of the website will be completed later.*
+  (it said the frames were in place until the owner emptied the page).
+
+### Three faults on a phone, found checking every node
+
+- **The window ran off the screen.** It stood 64px in from one side at `min(480px, 88vw)` wide — on a
+  390px phone, 343px from 64px, so 17px off the other side, and the node's lifted name cut off with
+  it. Below 700px it stands **in the middle** now; nothing above 700 moves.
+- **Search's tap opened Photography.** The line under a name (`.node3d-sub`) is never shown on a phone
+  — nothing hovers — but it still stood there unseen, 210px wide, and Photography's lay over Search's
+  name. Below 700px it takes no taps.
+- **A name ran off the right edge** — *SCENT DESCRIPTIO*. A name flips to the other side of its mark
+  past 68% of the width; on a phone that is not enough, so below 700px it goes to **whichever side of
+  its mark has the room** (its width read once).
+
+### How to test it
+
+`tests/node-map.spec.js`:
+- **`every node's window shows a picture of the page it goes to`** — each of the eight opens a window
+  with its own name, a picture from `images/Previews/` that arrives (wider than 400px) and is
+  described, standing under the Close;
+- **`on a phone every node opens its own window, on the screen`** — at 390px, held still: every name
+  inside the screen, and a tap on each opens **its own** window, inside the screen.

@@ -45,7 +45,7 @@ TH = ("Theories", "categories/theories.html")
 RE_ = ("Explorations & Researches", "categories/researches.html")
 
 P = {
- "index.html": dict(type="website", desc="A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for information, interpretations, theories and even ideas.", crumbs=None),
+ "index.html": dict(type="website", desc="A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for information, interpretations, theories and ideas.", crumbs=None),
  "categories/scent-descriptions.html": dict(desc="Scent descriptions: nine perfume houses, from Pineward and ADAR to Tombstone and Qimu & Musicians, and individual fragrances, each described.", crumbs=[HOME]),
  "categories/theories.html": dict(desc="Theories — some frameworks that I came up with myself: The Architecture of Sunscreen, The Architecture of Sweat and The Note Dissemination Framework.", crumbs=[HOME]),
  "categories/favorites.html": dict(desc="Favourites — things I like, no other criteria than that: fragrances in chapters, among them Des Cendres, Haxan and De Profundis.", crumbs=[HOME]),

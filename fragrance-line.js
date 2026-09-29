@@ -60,8 +60,9 @@
 // this view stands between its aside and its table, the height of the
 // window; where the divider stands is published as `data-divider` on the
 // stage. `data-arrive="now"` says the crossing is the arrival: the view is
-// there at once, whole. Opened any other way, it comes in by itself. The
-// aside also carries a way back to the Houses (`data-view-go`). (Until the
+// there at once, whole. Opened any other way, it comes in by itself. (The
+// aside carried a way back to the Houses, "← The houses", until the owner
+// had it taken off, 2026-09-29; the words across the top are the way.) (Until the
 // night of 2026-09-25 views.js stretched the axis into this view's rules,
 // which this published as `data-rules`; the owner had the stretch taken
 // out.)
@@ -139,7 +140,6 @@
         '<span class="frag-scale-end frag-scale-last"></span>' +
       '</div>' +
       '<canvas class="frag-mark" aria-hidden="true"></canvas>' +
-      '<button class="frag-to-houses" type="button" data-view-go="houses"><span aria-hidden="true">←</span> The houses</button>' +
     '</aside>' +
     '<span class="frag-divider" aria-hidden="true"></span>' +
     '<div class="frag-main">' +

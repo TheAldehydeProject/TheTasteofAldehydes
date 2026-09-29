@@ -6,7 +6,7 @@
 // page you're on, and that its links are actually wired up.
 // ============================================================
 const { test, expect } = require("@playwright/test");
-const { serveDependenciesLocally, jumpToSlide, waitForMapSettled } = require("./helpers");
+const { serveDependenciesLocally, jumpToSlide, waitForMapSettled, collectPageErrors } = require("./helpers");
 
 test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
@@ -117,7 +117,9 @@ test("the menu opens the same way on every slide of the landing page", async ({ 
         classes: overlay.className,
         transform: getComputedStyle(overlay).transform,
         background: getComputedStyle(overlay).backgroundColor,
-        extraLayers: overlay.querySelectorAll("svg").length,
+        // (The smell of aldehydes stands beside the list since 2026-09-29,
+        // and is its own drawing, not a layer over the menu.)
+        extraLayers: [...overlay.querySelectorAll("svg")].filter((svg) => !svg.closest(".menu-aldehydes")).length,
         loose: document.querySelectorAll("body > svg.menu-fan").length,
         bodyClasses: document.body.className,
       };
@@ -134,4 +136,48 @@ test("the menu opens the same way on every slide of the landing page", async ({ 
     await page.keyboard.press("Escape");
     await page.waitForTimeout(600);
   }
+});
+
+/* THE SMELL OF ALDEHYDES, on the right of the menu — the owner,
+   2026-09-29: "add some typography in the menu for the smell of aldehydes
+   on the right side ... code several variations, send me screenshots and
+   then ill decide." Three versions, one shown, any other on the address
+   (`?menu-type=`). It stands right of the list without touching it, only
+   while the menu is open; it asks for its faces only once the menu has
+   been opened; it is ornament, kept from a screen reader; and it is not
+   there where there is no room for it. */
+test("the menu carries the smell of aldehydes on its right, in three versions", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/categories/theories.html");
+  const aside = page.locator(".menu-aldehydes");
+  await expect(aside).toHaveCount(1);
+  await expect(aside).toHaveAttribute("aria-hidden", "true");
+  const shown = await aside.getAttribute("data-kind");
+  expect(["particles", "specimen", "molecule"]).toContain(shown);
+  const asked = () => page.evaluate(() => [...document.querySelectorAll("link[rel=stylesheet]")].some((l) => /Instrument\+Serif/.test(l.href)));
+  expect(await asked(), "no faces asked for before the menu opens").toBe(false);
+  await page.locator(".menu-trigger").click();
+  await expect.poll(() => aside.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
+  expect(await asked(), "asked for once it opens").toBe(true);
+  const list = await page.locator(".menu-list").boundingBox();
+  const box = await aside.boundingBox();
+  expect(box.x, "right of the list, clear of it").toBeGreaterThan(list.x + list.width + 40);
+  expect(box.x + box.width).toBeLessThanOrEqual(1440 - 40);
+  await page.keyboard.press("Escape");
+  await expect.poll(() => aside.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeLessThan(0.05);
+  // Each version, by the address.
+  for (const kind of ["particles", "specimen", "molecule"]) {
+    await page.goto("/categories/theories.html?menu-type=" + kind);
+    await expect(aside).toHaveAttribute("data-kind", kind);
+    await page.locator(".menu-trigger").click();
+    await expect.poll(() => aside.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
+    if (kind === "particles") await expect(aside.locator("canvas.ma-fizz")).toBeVisible();
+    if (kind === "specimen") await expect(aside.locator(".ma-big")).toHaveText("Aldehydes");
+    if (kind === "molecule") await expect(aside.locator("svg.ma-mol textPath")).toContainText("metallic");
+  }
+  // No room beside the list on a narrow desktop window: not there.
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await expect(aside).toBeHidden();
+  expect(errors).toEqual([]);
 });

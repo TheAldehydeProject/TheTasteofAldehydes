@@ -131,3 +131,15 @@ reads slide 1's title and slide 2's line, whole.
 ## Known issues / TODO
 
 None outstanding.
+
+## 2026-09-29 — the title gathers, About me, and no "even"
+
+- **The title gathers as the page loads**, and **a square beside it opens About me** — both in
+  [their own report](2026-09-29-the-title-and-about-me.md). `landing.js` holds the slides still while
+  About me is open (`overlayOpen()` reads `about-shown` on the body), as it does for the Menu and the
+  map's preview. The block in the corner comes up last, after the title (at 1.9s; it was 0.15s), so
+  `landing.js` hands it to the scroll's fade at 3s rather than 1.4s — before its own arrival had
+  played, the fade would have taken it over half way in.
+- **Slide 2 says *theories and ideas*** — the owner took *even* out: *A personal project of perfume
+  exploration. “The Taste of Aldehydes” will act as a library for information, interpretations,
+  theories and ideas.* `tests/pages.spec.js` reads it whole.

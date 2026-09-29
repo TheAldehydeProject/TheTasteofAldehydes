@@ -902,6 +902,9 @@ test("the centre joins every network, and going from one accord to another is ea
   await page.mouse.move(M.x + 2, M.y + 2);
   await expect(stage).toHaveAttribute("data-over-middle", "SPI", { timeout: 3000 });
   await expect(page.locator(".net-bridge")).toContainText("Spice");
+  // With no arrow after it (2026-09-29: "remove the small arrows from the
+  // text ... and all texts of the sort").
+  await expect(page.locator(".net-bridge")).toHaveText(/^Go to \d\d · Spice$/);
   await page.mouse.click(M.x + 2, M.y + 2);
   await at("SPI");
   // The journey there FADES: the centre and the other networks stepping
@@ -1448,11 +1451,21 @@ test("the centre is the Sources: found by the hand, and pressed it opens them, t
   await expect(sheet.locator(".net-source")).toHaveCount(listed);
   await expect(sheet.locator(".net-source").first()).toContainText("Me.");
   await expect(sheet.locator(".net-source").first()).toHaveClass(/is-me/);
-  // Unlike the others: paper, not the dark glass the note window is.
-  const [bg, win] = await page.evaluate(() => [getComputedStyle(document.querySelector(".net-sources")).backgroundColor, getComputedStyle(document.querySelector(".net-note")).backgroundColor]);
-  const lum = (c) => { const [r, g, b] = c.match(/[\d.]+/g).map(Number); return (r + g + b) / 3; };
-  expect(lum(bg), "light, where the note window is dark").toBeGreaterThan(200);
-  expect(lum(win)).toBeLessThan(80);
+  // Unlike the others: solid paper, not the translucent glass the note
+  // window is — and since the same night its colours FLIPPED ("flip the
+  // colours of the references popup"): a dark sheet with light ink, where
+  // it was light with dark ink.
+  const [bg, ink, win] = await page.evaluate(() => [
+    getComputedStyle(document.querySelector(".net-sources")).backgroundColor,
+    getComputedStyle(document.querySelector(".net-sources")).color,
+    getComputedStyle(document.querySelector(".net-note")).backgroundColor]);
+  const parts = (c) => c.match(/[\d.]+/g).map(Number);
+  const lum = (c) => { const [r, g, b] = parts(c); return (r + g + b) / 3; };
+  const alpha = (c) => (parts(c).length > 3 ? parts(c)[3] : 1);
+  expect(lum(bg), "a dark sheet").toBeLessThan(40);
+  expect(lum(ink), "and light ink on it").toBeGreaterThan(200);
+  expect(alpha(bg), "solid paper").toBe(1);
+  expect(alpha(win), "where the note window is glass").toBeLessThan(1);
   await page.keyboard.press("Escape");
   await expect(sheet).toBeHidden();
   // A description's numbers: each opens the sources at that one.
@@ -1555,5 +1568,80 @@ test.describe("the library with animation turned off", () => {
     await page.waitForTimeout(200);
     expect(Math.abs((await state(page)).yaw - a), "but a drag still turns it").toBeGreaterThan(0.6);
     expect(errors).toEqual([]);
+  });
+});
+
+/* THE WAY OUT, ASKED FIRST — the owner, 2026-09-29: "when you find a
+   perfume that matches the search ... bring up a confirmation window that
+   you want to go to that page before you go, so it isnt a sudden click and
+   then go." A fragrance pressed in the combinations' list — or in a note's
+   window — asks: its name, its house, Stay and Go. Stay (or Escape) leaves
+   everything as it was; Go goes. */
+test("a fragrance pressed asks before the library is left", async ({ page }) => {
+  test.setTimeout(150000);
+  const errors = collectPageErrors(page);
+  await open(page);
+  await settle(page);
+  await page.locator(".net-combine-button").click();
+  await page.locator(".net-combine-input").fill("yuz");
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".net-tag")).toHaveCount(1);
+  await page.locator(".net-combine-toggle").click();
+  const first = page.locator(".net-combine-list a[data-key]").first();
+  await expect(first).toBeVisible();
+  const key = await first.getAttribute("data-key");
+  const href = await first.getAttribute("href");
+  const name = (await first.locator(".net-note-fname").textContent()).trim();
+  await first.click();
+  const ask = page.locator(".net-leave");
+  await expect(ask, "it asks").toBeVisible();
+  expect(page.url(), "and has not gone").toContain("note-library.html");
+  await expect(page.locator(".net-leave-box")).toHaveAttribute("role", "alertdialog");
+  if (name) await expect(page.locator(".net-leave-name")).toHaveText(name);
+  await expect(page.locator(".net-leave-go")).toHaveAttribute("href", href);
+  expect((await state(page)).leaving).toBe(key);
+  await expect(page.locator(".net-leave-go"), "the way on has the keys").toBeFocused();
+  // Escape: stays, and everything is as it was.
+  await page.keyboard.press("Escape");
+  await expect(ask).toBeHidden();
+  expect((await state(page)).tags, "the tags still there").toEqual(["Yuzu"]);
+  await expect(page.locator(".net-combine-list")).toBeVisible();
+  // Stay, the same.
+  await first.click();
+  await expect(ask).toBeVisible();
+  await page.locator(".net-leave-stay").click();
+  await expect(ask).toBeHidden();
+  expect(page.url()).toContain("note-library.html");
+  // And from a note's window: the fragrances in its tiers ask the same.
+  await page.locator(".net-back").click();
+  await page.evaluate(() => window.NetScene.open("Benzoin"));
+  await expect(page.locator(".net-note")).toBeVisible({ timeout: 20000 });
+  for (const s of await page.locator(".net-note summary").all()) await s.click();
+  const inTier = page.locator(".net-note a[data-key]").first();
+  await inTier.scrollIntoViewIfNeeded();
+  const tierHref = await inTier.getAttribute("href");
+  await inTier.click();
+  await expect(ask).toBeVisible();
+  // Go goes.
+  await page.locator(".net-leave-go").click();
+  await page.waitForURL("**/" + tierHref.replace(/^\.\.\//, ""));
+  expect(errors).toEqual([]);
+});
+
+/* THE GALAXIES, ONE OF EACH KIND — "I want only one galaxy of its kind to
+   be visible in the whole 3D thing. Also make it slightly more abstract and
+   particulate; i dont want it to be as emphasized ... i like their colour
+   though!" (2026-09-29). Thirty-six, most of them two- and three-armed
+   spirals much alike, became twelve, no two the same kind, in fewer specks
+   and at a little over half the strength. */
+test("the galaxies far out are twelve, no two of a kind, and quiet", async ({ page }) => {
+  await open(page);
+  const galaxies = await page.evaluate(() => window.NetScene.galaxies());
+  expect(galaxies.length).toBe(12);
+  expect(new Set(galaxies.map((G) => G.kind)).size, "no two of the same kind").toBe(galaxies.length);
+  galaxies.forEach((G) => {
+    expect(G.specks, G.kind + ": particulate — fewer specks than a spiral had").toBeLessThan(200);
+    expect(G.specks).toBeGreaterThan(10);
+    expect(G.opacity, G.kind + ": less emphasized than the 0.75 they were").toBeLessThan(0.7);
   });
 });

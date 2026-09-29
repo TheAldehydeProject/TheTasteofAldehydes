@@ -63,6 +63,32 @@
   TO ADD A SET: copy one whole <section class="photo-set">, number it on
   from the last, and write its line.
 
+  SINCE 2026-09-29 THE PAGE HAS NO SETS: the owner asked for most of it
+  removed and "This part of the webpage will be completed later" where
+  Set 01 began. To put the first set back, replace that line with this
+  (and give the page its readings and its foot again):
+
+    <section class="photo-set">
+      <div class="photo-set-head">
+        <p class="photo-set-no">Set 01</p>
+        <h2>Untitled set</h2>
+        <p class="photo-set-say">What this set is.</p>
+      </div>
+      <div class="photo-grid">
+        <figure class="photo-frame photo-wide">
+          <a class="photo-plate" href="../images/Photography/your-picture.jpg">
+            <img src="../images/Photography/your-picture.jpg" alt="Describe the picture">
+            <span class="photo-mark" aria-hidden="true"></span>
+          </a>
+          <figcaption>
+            <span class="photo-no" aria-hidden="true">01</span>
+            <span class="photo-say">Title</span>
+            <span class="photo-meta">place · date</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
   photography.js brings the frames up as you reach them and opens one
   into the viewer. Without it they are all simply there, and each is a
   link to its own picture, which still works.
@@ -79,203 +105,15 @@
       described, sometimes of the places they brought to mind. They are
       here as their own work rather than as illustration.
     </p>
-    <dl class="photo-readings">
-      <div><dt>Sets</dt><dd>03</dd></div>
-      <div><dt>Frames</dt><dd>12</dd></div>
-      <div><dt>Latest</dt><dd>2026</dd></div>
-      <div><dt>Rights</dt><dd>All reserved</dd></div>
-    </dl>
   </header>
 
-  <!-- ============================================================ -->
-  <section class="photo-set">
-    <div class="photo-set-head">
-      <p class="photo-set-no">Set 01</p>
-      <h2>Untitled set</h2>
-      <p class="photo-set-say">
-        Replace this with what this set is — where it was taken, what you
-        were after, why these are together rather than anywhere else.
-      </p>
-    </div>
-
-    <div class="photo-grid">
-      <!-- COPY FROM HERE ------------------------------------------ -->
-      <figure class="photo-frame photo-wide">
-        <a class="photo-plate" href="#">
-          <!-- <img src="../images/Photography/your-picture.jpg" alt="Describe the picture"> -->
-          <span class="photo-mark" aria-hidden="true"></span>
-        </a>
-        <figcaption>
-          <span class="photo-no" aria-hidden="true">01</span>
-          <span class="photo-say">Untitled</span>
-          <span class="photo-meta">place · date</span>
-        </figcaption>
-      </figure>
-      <!-- TO HERE ------------------------------------------------- -->
-
-      <figure class="photo-frame">
-        <a class="photo-plate" href="#">
-          <!-- <img src="../images/Photography/your-picture.jpg" alt="Describe the picture"> -->
-          <span class="photo-mark" aria-hidden="true"></span>
-        </a>
-        <figcaption>
-          <span class="photo-no" aria-hidden="true">02</span>
-          <span class="photo-say">Untitled</span>
-          <span class="photo-meta">place · date</span>
-        </figcaption>
-      </figure>
-
-      <figure class="photo-frame">
-        <a class="photo-plate" href="#">
-          <!-- <img src="../images/Photography/your-picture.jpg" alt="Describe the picture"> -->
-          <span class="photo-mark" aria-hidden="true"></span>
-        </a>
-        <figcaption>
-          <span class="photo-no" aria-hidden="true">03</span>
-          <span class="photo-say">Untitled</span>
-          <span class="photo-meta">place · date</span>
-        </figcaption>
-      </figure>
-
-      <figure class="photo-frame">
-        <a class="photo-plate" href="#">
-          <!-- <img src="../images/Photography/your-picture.jpg" alt="Describe the picture"> -->
-          <span class="photo-mark" aria-hidden="true"></span>
-        </a>
-        <figcaption>
-          <span class="photo-no" aria-hidden="true">04</span>
-          <span class="photo-say">Untitled</span>
-          <span class="photo-meta">place · date</span>
-        </figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <!-- ============================================================ -->
-  <section class="photo-set">
-    <div class="photo-set-head">
-      <p class="photo-set-no">Set 02</p>
-      <h2>Untitled set</h2>
-      <p class="photo-set-say">
-        Replace this with what this set is.
-      </p>
-    </div>
-
-    <div class="photo-grid">
-      <figure class="photo-frame">
-        <a class="photo-plate" href="#">
-          <!-- <img src="../images/Photography/your-picture.jpg" alt="Describe the picture"> -->
-          <span class="photo-mark" aria-hidden="true"></span>
-        </a>
-        <figcaption>
-          <span class="photo-no" aria-hidden="true">05</span>
-          <span class="photo-say">Untitled</span>
-          <span class="photo-meta">place · date</span>
-        </figcaption>
-      </figure>
-
-      <figure class="photo-frame">
-        <a class="photo-plate" href="#">
-          <!-- <img src="../images/Photography/your-picture.jpg" alt="Describe the picture"> -->
-          <span class="photo-mark" aria-hidden="true"></span>
-        </a>
-        <figcaption>
-          <span class="photo-no" aria-hidden="true">06</span>
-          <span class="photo-say">Untitled</span>
-          <span class="photo-meta">place · date</span>
-        </figcaption>
-      </figure>
-
-      <figure class="photo-frame photo-wide">
-        <a class="photo-plate" href="#">
-          <!-- <img src="../images/Photography/your-picture.jpg" alt="Describe the picture"> -->
-          <span class="photo-mark" aria-hidden="true"></span>
-        </a>
-        <figcaption>
-          <span class="photo-no" aria-hidden="true">07</span>
-          <span class="photo-say">Untitled</span>
-          <span class="photo-meta">place · date</span>
-        </figcaption>
-      </figure>
-
-      <figure class="photo-frame">
-        <a class="photo-plate" href="#">
-          <!-- <img src="../images/Photography/your-picture.jpg" alt="Describe the picture"> -->
-          <span class="photo-mark" aria-hidden="true"></span>
-        </a>
-        <figcaption>
-          <span class="photo-no" aria-hidden="true">08</span>
-          <span class="photo-say">Untitled</span>
-          <span class="photo-meta">place · date</span>
-        </figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <!-- ============================================================ -->
-  <section class="photo-set">
-    <div class="photo-set-head">
-      <p class="photo-set-no">Set 03</p>
-      <h2>Untitled set</h2>
-      <p class="photo-set-say">
-        Replace this with what this set is.
-      </p>
-    </div>
-
-    <div class="photo-grid">
-      <figure class="photo-frame">
-        <a class="photo-plate" href="#">
-          <!-- <img src="../images/Photography/your-picture.jpg" alt="Describe the picture"> -->
-          <span class="photo-mark" aria-hidden="true"></span>
-        </a>
-        <figcaption>
-          <span class="photo-no" aria-hidden="true">09</span>
-          <span class="photo-say">Untitled</span>
-          <span class="photo-meta">place · date</span>
-        </figcaption>
-      </figure>
-
-      <figure class="photo-frame">
-        <a class="photo-plate" href="#">
-          <!-- <img src="../images/Photography/your-picture.jpg" alt="Describe the picture"> -->
-          <span class="photo-mark" aria-hidden="true"></span>
-        </a>
-        <figcaption>
-          <span class="photo-no" aria-hidden="true">10</span>
-          <span class="photo-say">Untitled</span>
-          <span class="photo-meta">place · date</span>
-        </figcaption>
-      </figure>
-
-      <figure class="photo-frame">
-        <a class="photo-plate" href="#">
-          <!-- <img src="../images/Photography/your-picture.jpg" alt="Describe the picture"> -->
-          <span class="photo-mark" aria-hidden="true"></span>
-        </a>
-        <figcaption>
-          <span class="photo-no" aria-hidden="true">11</span>
-          <span class="photo-say">Untitled</span>
-          <span class="photo-meta">place · date</span>
-        </figcaption>
-      </figure>
-
-      <figure class="photo-frame">
-        <a class="photo-plate" href="#">
-          <!-- <img src="../images/Photography/your-picture.jpg" alt="Describe the picture"> -->
-          <span class="photo-mark" aria-hidden="true"></span>
-        </a>
-        <figcaption>
-          <span class="photo-no" aria-hidden="true">12</span>
-          <span class="photo-say">Untitled</span>
-          <span class="photo-meta">place · date</span>
-        </figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <footer class="photo-foot">
-    <p>Every picture on this page is mine. All rights reserved.</p>
-  </footer>
+  <!-- WHERE SET 01 BEGAN. The owner, 2026-09-29: "remove most of the
+       contents of the photography page, and write where "set 1" begins;
+       This part of the webpage will be completed later". The sets, their
+       frames, the readings (Sets, Frames, Latest, Rights) and the line at
+       the foot went; a set's markup is kept in the comment at the top of
+       this page, to be put back when there are pictures. -->
+  <p class="photo-later">This part of the webpage will be completed later</p>
 
 </main>
 

@@ -37,7 +37,8 @@
   // point — scrolling the page around behind it just looks broken.
   function overlayOpen() {
     return document.body.classList.contains("menu-open") ||
-           document.body.classList.contains("preview-open");
+           document.body.classList.contains("preview-open") ||
+           document.body.classList.contains("about-shown");   // About me (title.js)
   }
 
   // ============================================================
@@ -254,7 +255,9 @@
       update();
     };
     element.addEventListener("animationend", takeOver, { once: true });
-    setTimeout(takeOver, 1400);
+    // (After the title has gathered, since 2026-09-29: the block comes up
+    // last, at 1.9s, so it is handed over after that.)
+    setTimeout(takeOver, 3000);
 
     container.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);

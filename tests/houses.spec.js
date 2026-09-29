@@ -1663,3 +1663,38 @@ test("ADAR's picture credit stands out plainly from its black page", async ({ pa
   expect(read.say, "the word Pictures").toBeGreaterThan(7);
   expect(read.link, "and the link").toBeGreaterThan(7);
 });
+
+/* A RETURN BUTTON AT THE TOP OF EVERY HOUSE — the owner, 2026-09-29: "For
+   every house in houses ... ON THE TOP OF THE PAGE a return button in case
+   they pressed the button by accident." Above the house's name, back to
+   the Houses view with that house at the front; and the name has not
+   moved for it. */
+test("every house has a return button at the top, back to the houses at that house", async ({ page }) => {
+  test.setTimeout(120000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const HOUSE_PAGES = [
+    ["pineward", "01"], ["adar", "02"], ["almost-human", "03"], ["ataraxia", "04"], ["grande-parfums", "05"],
+    ["les-abstraits", "06"], ["tale-parfums", "07"], ["tombstone", "08"], ["qimu-and-musicians", "09"],
+  ];
+  for (const [house, no] of HOUSE_PAGES) {
+    await page.goto("/houses/" + house + ".html");
+    const back = page.locator(".house-return");
+    await expect(back, house).toHaveCount(1);
+    await expect(back).toHaveAttribute("href", "../categories/scent-descriptions.html#house-" + no);
+    await expect(back).toHaveText(/Back to the houses/i);
+    const b = await back.boundingBox(), h = await page.locator("h1").boundingBox();
+    expect(b.y + b.height, house + ": above the name").toBeLessThan(h.y);
+    expect(b.y, house + ": at the top of the page").toBeLessThan(400);
+    // The kicker over the name stands where it stood (26vh down at 900
+    // tall), the button taken back out of the head.
+    // (Read once the house's way in has brought the head up into place.)
+    await expect.poll(async () => Math.abs((await page.locator("header p").first().boundingBox()).y - 234),
+      { timeout: 5000, message: house + ": the name has not moved" }).toBeLessThan(3);
+  }
+  // Pressed, it lands on that house.
+  await page.goto("/houses/tombstone.html");
+  await page.locator(".house-return").click();
+  await page.waitForURL("**/categories/scent-descriptions.html#house-08");
+  await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
+  await expect(page.locator("#sheet")).toHaveAttribute("data-front", "8");
+});

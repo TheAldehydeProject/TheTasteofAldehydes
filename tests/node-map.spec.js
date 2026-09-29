@@ -473,3 +473,71 @@ test.describe("the map's spheres and its ground", () => {
     ground.forEach((v, i) => expect(v, `the ground at point ${i}`).toBeGreaterThan(236));
   });
 });
+
+/* A PICTURE OF WHERE IT GOES — the owner, 2026-09-29: "add a picture
+   representing each page that you will go to when you click on the main
+   note. So, put a picture corresponding to theories when you click on the
+   theories node." Every node's window shows its page, from
+   images/Previews/ — Contact's too, which went straight to its page until
+   it had a picture to show. */
+test("every node's window shows a picture of the page it goes to", async ({ page }) => {
+  test.setTimeout(90000);
+  const errors = collectPageErrors(page);
+  await serveDependenciesLocally(page);
+  await page.goto("/index.html");
+  await jumpToSlide(page, "slide-3");
+  await waitForMapSettled(page);
+  for (let i = 0; i < EXPECTED_LABELS.length; i++) {
+    await page.locator(".node3d-label").nth(i).click({ force: true });
+    const modal = page.locator(".node-preview-modal");
+    await expect(modal, EXPECTED_LABELS[i] + " opens a window").toBeVisible();
+    await expect(page.locator(".node-preview-title")).toHaveText(EXPECTED_LABELS[i]);
+    const img = page.locator(".node-preview-media img");
+    await expect(img).toHaveAttribute("src", /^images\/Previews\/[a-z-]+\.jpg$/);
+    await expect.poll(() => img.evaluate((e) => e.naturalWidth), { timeout: 5000, message: EXPECTED_LABELS[i] + "'s picture arrives" }).toBeGreaterThan(400);
+    await expect(img).toHaveAttribute("alt", "A picture of the " + EXPECTED_LABELS[i] + " page");
+    // Clear of the window's Close, which stood over its corner.
+    const shut = await page.locator(".node-preview-close").boundingBox();
+    const pic = await page.locator(".node-preview-media").boundingBox();
+    expect(pic.y, "the picture under the Close").toBeGreaterThanOrEqual(shut.y + shut.height - 1);
+    await page.locator(".node-preview-close").click();
+    await expect(modal).toHaveCount(0, { timeout: 5000 });
+  }
+  expect(errors).toEqual([]);
+});
+
+/* ON A PHONE every node opens ITS OWN window, and the window is on the
+   screen. Both were wrong (2026-09-29): the window stood 64px in from one
+   side at nearly the screen's width, so it ran off the other; and the line
+   under Photography's name, never shown on a phone, still caught the tap
+   meant for Search, which opened Photography. And no name runs off the
+   screen's edge ("SCENT DESCRIPTIO"). */
+test("on a phone every node opens its own window, on the screen", async ({ browser }) => {
+  test.setTimeout(120000);
+  // Held still, so the names stand where they came to rest.
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, reducedMotion: "reduce" });
+  const page = await context.newPage();
+  await serveDependenciesLocally(page);
+  await page.goto("/index.html");
+  await jumpToSlide(page, "slide-3");
+  await waitForMapSettled(page);
+  const names = await page.$$eval(".node3d-label .node3d-text", (els) => els.map((e) => {
+    const r = e.getBoundingClientRect();
+    return { left: r.left, right: r.right };
+  }));
+  names.forEach((r, i) => {
+    expect(r.left, EXPECTED_LABELS[i] + " inside the screen").toBeGreaterThanOrEqual(-1);
+    expect(r.right, EXPECTED_LABELS[i] + " inside the screen").toBeLessThanOrEqual(391);
+  });
+  for (let i = 0; i < EXPECTED_LABELS.length; i++) {
+    await page.locator(".node3d-label").nth(i).tap({ force: true });
+    await expect(page.locator(".node-preview-title"), "the tap on " + EXPECTED_LABELS[i] + " opens its own").toHaveText(EXPECTED_LABELS[i]);
+    await page.waitForTimeout(800);
+    const m = await page.locator(".node-preview-modal").boundingBox();
+    expect(m.x, EXPECTED_LABELS[i] + "'s window on the screen").toBeGreaterThanOrEqual(0);
+    expect(m.x + m.width).toBeLessThanOrEqual(390);
+    await page.locator(".node-preview-close").click();
+    await expect(page.locator(".node-preview-modal")).toHaveCount(0, { timeout: 5000 });
+  }
+  await context.close();
+});

@@ -239,3 +239,13 @@ focus); it was the browser.
 Tested in `tests/keep-time.spec.js` (new): with the window not in front and the browser giving no
 frames at all, **the Explorations field**, **the test page's network** and **Ataraxia's bands** are
 drawn again and again by the page's own frames and move; and **in front, no timer draws a frame**.
+
+## 2026-09-29 — the smell of aldehydes beside the menu; About me out of the dimming
+
+- **The menu carries typography on its right** — the smell of aldehydes, in one of three versions
+  the owner is to choose between. `nav.js` builds it into the overlay; it has [a report of its
+  own](2026-09-29-the-smell-of-aldehydes-in-the-menu.md). The test that nothing is drawn over the
+  menu counts SVG outside it.
+- **`.about`, the home page's About me, is excluded from the menu's dimming rule** — it is built on
+  the body, and so was in the trap the notes window fell into (see *the glitch on the way out*). See
+  [the title and About me](2026-09-29-the-title-and-about-me.md).

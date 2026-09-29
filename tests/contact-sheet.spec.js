@@ -164,6 +164,16 @@ test("the wheel, the keys, the numbers, the buttons and a drag all travel along 
   await settle();
   expect(await at(), "the button at the side").toBe("2");
 
+  // The double arrows go all the way: "a double arrow going up above the
+  // up arrow and a double arrow going down underneath the bottom arrow"
+  // (2026-09-29).
+  await page.locator('.sheet-nav-end[data-to="last"]').click();
+  await expect.poll(at, { timeout: 5000 }).toBe("9");
+  await page.locator('.sheet-nav-end[data-to="first"]').click();
+  await expect.poll(at, { timeout: 5000 }).toBe("1");
+  const order = await page.$$eval(".sheet-nav > *", (els) => els.map((e) => e.dataset.to || e.dataset.step || "at"));
+  expect(order, "above the up arrow, and under the down").toEqual(["first", "-1", "at", "1", "last"]);
+
   await page.locator(".sheet-axis-no").nth(5).click();
   await settle();
   expect(await at(), "a number on the axis").toBe("6");
@@ -1866,3 +1876,44 @@ test("without its script the page is still the plain grid of pictures",
   await expect(page.locator(".sheet-head h1")).toHaveText("Scent descriptions");
 });
 
+/* AN ADDRESS NAMES THE HOUSE TO BE AT: `#house-08` opens the Houses view
+   with Tombstone at the front. It is where every house's return button
+   leads (2026-09-29: "a return button in case they pressed the button by
+   accident"), so the way back lands where the reader was. */
+test("an address naming a house opens the view at that house", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto(SHEET + "#house-08");
+  await waitForSheet(page);
+  await expect(page.locator("#sheet")).toHaveAttribute("data-front", "8");
+  await expect(page.locator(".sheet-nav-at b")).toHaveText("08 / 09");
+  await expect(page.locator(".sheet-nav-at span")).toHaveText("Tombstone");
+  // And without one, the first, as always.
+  await page.goto(SHEET);
+  await waitForSheet(page);
+  await expect(page.locator("#sheet")).toHaveAttribute("data-front", "1");
+  expect(errors).toEqual([]);
+});
+
+/* THE TWO WORDS ACROSS THE TOP ARE BUTTONS — "more emphasized, and more
+   button-y" (2026-09-29): each a box with a square in it, the one you are
+   on filled in ink; still either side of the axis. */
+test("Houses and Fragrances across the top are boxed buttons, the one you are on filled", async ({ page }) => {
+  await page.goto(SHEET);
+  await waitForSheet(page);
+  const look = () => page.$$eval(".sheet-filter", (bs) => bs.map((b) => {
+    const cs = getComputedStyle(b);
+    return { on: b.classList.contains("is-on"), border: parseFloat(cs.borderTopWidth), bg: cs.backgroundColor, color: cs.color, h: b.getBoundingClientRect().height };
+  }));
+  const lum = (c) => { const [r, g, b] = c.match(/[\d.]+/g).map(Number); return (r + g + b) / 3; };
+  let seen = await look();
+  seen.forEach((b) => {
+    expect(b.border, "a box round it").toBeGreaterThan(0);
+    expect(b.h, "a button's height").toBeGreaterThan(28);
+  });
+  const on = seen.find((b) => b.on), off = seen.find((b) => !b.on);
+  expect(lum(on.bg), "the one you are on filled in ink").toBeLessThan(60);
+  expect(lum(on.color), "its word the paper").toBeGreaterThan(200);
+  expect(lum(off.bg), "the other on the paper").toBeGreaterThan(200);
+  await page.locator('.sheet-filter[data-view="fragrances"]').click();
+  await expect.poll(async () => (await look()).find((b) => b.on) && lum((await look())[1].bg), { timeout: 3000 }).toBeLessThan(60);
+});

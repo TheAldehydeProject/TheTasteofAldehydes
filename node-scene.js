@@ -62,50 +62,63 @@ const REAL_NODES = [
   // So to add a page here: put it in SITE_LINKS, add a line below, and
   // recompute the whole list rather than squeezing one more in — a
   // hand-placed eighth would undo the spacing.
+  //
+  // A PICTURE OF WHERE IT GOES. Every node's window shows the page it
+  // leads to (the owner, 2026-09-29: "put a picture corresponding to
+  // theories when you click on the theories node"): `image` in its
+  // preview, a picture in images/Previews/ taken by tools/previews.js —
+  // run that again when a page has changed enough to look different.
   {
     label: "Scent descriptions", sub: "notes on things I've smelled and tried to describe",
     href: "categories/scent-descriptions.html", pos: [0.27, 2.8, 1.53],
-    preview: { description: "Here I describe things, from scents to houses to notes to anything else." },
+    preview: { image: "images/Previews/scent-descriptions.jpg", description: "Here I describe things, from scents to houses to notes to anything else." },
   },
   {
     label: "Theories", sub: "some frameworks that I came up with myself",
     href: "categories/theories.html", pos: [-1.98, 2.0, -1.52],
-    preview: { description: "Some frameworks that I came up with myself." },
+    preview: { image: "images/Previews/theories.jpg", description: "Some frameworks that I came up with myself." },
   },
   {
     label: "Explorations & Researches", sub: "things I looked into properly and wrote up",
     href: "categories/researches.html", pos: [2.96, 1.2, -0.26],
-    preview: { description: "Researches and explorations: where I go and find out, rather than describe." },
+    preview: { image: "images/Previews/researches.jpg", description: "Researches and explorations: where I go and find out, rather than describe." },
   },
   {
     label: "Favourites", sub: "things I like",
     href: "categories/favorites.html", pos: [-2.15, 0.4, 2.34],
-    preview: { description: "The ones I keep coming back to, kept by chapter." },
+    preview: { image: "images/Previews/favourites.jpg", description: "The ones I keep coming back to, kept by chapter." },
   },
   {
     label: "Note Library", sub: "every note I have named, shelved and explained",
     href: "categories/note-library.html", pos: [0.0, -0.4, -3.17],
-    preview: { description: "Every note named in a fragrance on this site, shelved by family, each with a brief explanation of what it is." },
+    preview: { image: "images/Previews/note-library.jpg", description: "Every note named in a fragrance on this site, shelved by family, each with a brief explanation of what it is." },
   },
   {
     label: "Photography", sub: "frames in sets, and what is written on the back",
     href: "categories/other-2.html", pos: [2.0, -1.2, 2.19],
     preview: {
+      image: "images/Previews/photography.jpg",
       description: "The frames stand in sets, numbered down the margin, each with what a photographer writes on the back of a print.",
       // THE OWNER ASKED FOR THIS ONE TO SAY SO. It is a `note` rather
       // than part of the description because it is a state of the page
       // rather than a line about it, and the window sets it apart.
-      note: "Work in progress — the frames are in place and most of the pictures are not.",
+      // (It said the frames were in place until the owner emptied the
+      // page, 2026-09-29: "This part of the webpage will be completed
+      // later".)
+      note: "Work in progress — this part of the website will be completed later.",
     },
   },
   {
     label: "Search", sub: "one field over the whole site",
     href: "search.html", pos: [-2.49, -2.0, -0.22],
-    preview: { description: "One field over everything written here, and where each answer lives." },
+    preview: { image: "images/Previews/search.jpg", description: "One field over everything written here, and where each answer lives." },
   },
   {
     label: "Contact", sub: "the ways to reach me",
     href: "contact.html", pos: [1.23, -2.8, -0.94],
+    // It went straight to its page until every node was given a picture
+    // of where it goes (2026-09-29), and a picture needs the window.
+    preview: { image: "images/Previews/contact.jpg", description: "Get in touch: by carrier pigeon, or by an email kept behind a small captcha." },
   },
 ];
 
@@ -712,6 +725,18 @@ const REAL_NODES = [
     function off() { if (activeBranch === n._index) activeBranch = -1; }
     n._el.addEventListener("pointerenter", on);
     n._el.addEventListener("focus", on);
+    // Its picture asked for as soon as the hand is on it, so that it is
+    // there by the time the window opens, rather than every picture
+    // being fetched for everyone who comes to the home page.
+    let asked = false;
+    const ask = () => {
+      if (asked || !n.preview || !n.preview.image) return;
+      asked = true;
+      new Image().src = n.preview.image;
+    };
+    n._el.addEventListener("pointerenter", ask);
+    n._el.addEventListener("focus", ask);
+    n._el.addEventListener("touchstart", ask, { passive: true });
     n._el.addEventListener("pointerleave", off);
     n._el.addEventListener("blur", off);
     n._el.addEventListener("click", (e) => {
@@ -846,6 +871,22 @@ const REAL_NODES = [
       "</button>" +
       '<div class="node-preview-media"></div>';
 
+    // The picture of the page, in the hatched frame that stood empty
+    // for it. Set as a property rather than pasted into the markup, like
+    // the words below; and it comes up once it has arrived rather than
+    // being drawn in a line at a time.
+    if (node.preview.image) {
+      const media = modal.querySelector(".node-preview-media");
+      const img = document.createElement("img");
+      img.alt = "A picture of the " + node.label + " page";
+      img.decoding = "async";
+      const shown = () => media.classList.add("has-picture");
+      img.addEventListener("load", shown);
+      img.src = node.preview.image;
+      if (img.complete && img.naturalWidth) shown();
+      media.appendChild(img);
+    }
+
     const desc = document.createElement("p");
     desc.className = "node-preview-desc";
     desc.textContent = node.preview.description;
@@ -886,7 +927,12 @@ const REAL_NODES = [
     document.body.appendChild(modal);
 
     const modalWidth = Math.min(480, window.innerWidth * 0.88); // matches the CSS width rule exactly
-    const finalLeft = onLeft ? PREVIEW_MARGIN : window.innerWidth - PREVIEW_MARGIN - modalWidth;
+    // On a phone the window is as wide as the screen leaves room for, so
+    // standing it 64px in from one side threw it off the other; it
+    // stands in the middle there instead (2026-09-29). Keyed to the
+    // width, as every phone rule here is, so nothing above 700 moves.
+    const finalLeft = window.innerWidth < 700 ? (window.innerWidth - modalWidth) / 2
+      : onLeft ? PREVIEW_MARGIN : window.innerWidth - PREVIEW_MARGIN - modalWidth;
     // The arm now reaches the window's edge instead of stopping short.
     const dockX = onLeft ? finalLeft + modalWidth : finalLeft;
     const dockY = window.innerHeight / 2;
@@ -1500,7 +1546,15 @@ const REAL_NODES = [
       const y = (-projected.y * 0.5 + 0.5) * h;
       n._lastScreenX = rect.left + x;
       n._lastScreenY = rect.top + y;
-      const flip = x > w * 0.68;
+      // On a phone a name standing out to the right of its mark can run
+      // off the screen ("SCENT DESCRIPTIO"); there it goes to whichever
+      // side of its mark has the room (2026-09-29). Its width is read
+      // once — the name does not change.
+      let flip = x > w * 0.68;
+      if (w < 700) {
+        const need = n._wide || (n._wide = n._el.querySelector(".node3d-text").offsetWidth + 26);
+        flip = x + need > w - 4 && x > w - x;
+      }
       n._el.classList.toggle("flip", flip);
       n._el.style.transform =
         "translate(" + x + "px," + y + "px)" +

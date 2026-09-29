@@ -88,7 +88,8 @@ test("every menu link on every page points at a page that exists", async ({ page
    Get in touch, send a carrier pigeon. put that instead". Then, 2026-09-26:
    "add a captcha that hides the contact information (let it be filer
    contact information)", and "keep this: Get in touch, send a carrier
-   pigeon. Below it add :or just send an email:". So the sentence is still
+   pigeon. Below it add :or just send an email:" — and on 2026-09-29 'rewrite
+   "or just send an email:" to "... or an email:"'. So the sentence is still
    the page's heading, the owner's line stands under it, and the only
    other words are the check's own; nothing to follow and no address on
    the page until the check is passed (tests/contact.spec.js has that). */
@@ -108,13 +109,14 @@ test("the contact page says to send a carrier pigeon, or an email behind a check
   });
   expect(rest.links, "nothing to follow").toBe(0);
   expect(rest.mail, "no address anywhere on the page").toBe(false);
-  expect(rest.text).toBe("Get in touch, send a carrier pigeon. or just send an email:");
+  expect(rest.text).toBe("Get in touch, send a carrier pigeon. ... or an email:");
 });
 
 /* THE LINE ON SLIDE 2 NAMES THE SITE AS ITS TITLE DOES. It said "The Smell
    of Aldehydes" after the site was named The Taste of Aldehydes; the owner,
    2026-09-26, asked for it fixed "to suit the "taste" of aldehydes". The
-   rest of the sentence is theirs and stays exactly as written. */
+   rest of the sentence is theirs and stays exactly as written — but for
+   "even", which they took out of "even ideas" (2026-09-29). */
 test("the line on slide 2 names the site as its title does", async ({ page }) => {
   await serveDependenciesLocally(page);
   await page.goto("/index.html");
@@ -122,7 +124,7 @@ test("the line on slide 2 names the site as its title does", async ({ page }) =>
   expect(title).toBe("The Taste of Aldehydes");
   const line = (await page.locator("#slide-2 .intro-lede").textContent()).replace(/\s+/g, " ").trim();
   expect(line).toBe("A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for " +
-    "information, interpretations, theories and even ideas.");
+    "information, interpretations, theories and ideas.");
 });
 
 /* THE TAB, LOOKED AWAY FROM: "when you click off of the tab, then the tab

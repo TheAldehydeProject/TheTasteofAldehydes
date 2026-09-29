@@ -314,6 +314,178 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
 .menu-list a:hover, .menu-list a:focus-visible { color: var(--brass); }
 .menu-list .menu-current { color: var(--brass); }
 
+/* THE SMELL OF ALDEHYDES, on the right of the menu (2026-09-29): built by
+   nav.js in one of three versions (`MENU_TYPE`, or `?menu-type=`). It
+   stands in the room right of the list — the list is about 660px wide at
+   its full size, so from 1160px up — and under the list on a tall phone;
+   between the two there is no room, and it is not there. It comes up a
+   beat after the links. */
+.menu-aldehydes {
+  position: absolute;
+  top: 50%;
+  right: 64px;
+  width: min(520px, calc(100vw - 850px));
+  color: #f0efe8;
+  opacity: 0;
+  transform: translateY(-50%) translateY(14px);
+  transition: opacity 0.9s var(--menu-ease), transform 1.1s var(--menu-ease);
+  pointer-events: none;
+}
+.menu-overlay.open .menu-aldehydes {
+  opacity: 1;
+  transform: translateY(-50%);
+  transition-delay: 0.45s;
+  pointer-events: auto;
+}
+@media (max-width: 1159px) and (min-width: 701px) { .menu-aldehydes { display: none; } }
+@media (max-width: 700px) {
+  .menu-aldehydes {
+    top: auto;
+    bottom: 26px;
+    left: 24px;
+    right: 24px;
+    width: auto;
+    transform: translateY(14px);
+  }
+  .menu-overlay.open .menu-aldehydes { transform: none; }
+}
+@media (max-width: 700px) and (max-height: 739px) { .menu-aldehydes { display: none; } }
+
+/* 1 · THE PARTICLES */
+.menu-aldehydes[data-kind="particles"] { height: min(360px, 52vh); }
+.ma-fizz { display: block; }
+.ma-say {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 10px 0 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.ma-say-of { color: #6f6c66; }
+.ma-say-word { min-width: 12ch; opacity: 0; transform: translateY(4px); }
+.ma-say-word.is-on { opacity: 1; transform: none; transition: opacity 0.6s ease, transform 0.8s var(--menu-ease); }
+
+/* 2 · THE SPECIMEN: five faces on a ruled ground. */
+.menu-aldehydes[data-kind="specimen"] {
+  padding: 22px 0 18px;
+  border-top: 1px solid rgba(240, 239, 232, 0.5);
+  border-bottom: 1px solid rgba(240, 239, 232, 0.2);
+}
+.ma-kicker {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #8f8c81;
+}
+.ma-big {
+  margin: 6px 0 14px;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-size: clamp(64px, 7.4vw, 112px);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+}
+.ma-sheet {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 22px;
+  padding: 14px 0;
+  border-top: 1px solid rgba(240, 239, 232, 0.2);
+  border-bottom: 1px solid rgba(240, 239, 232, 0.2);
+  /* a faint squared ground under the words */
+  background-image: linear-gradient(rgba(240, 239, 232, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(240, 239, 232, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.ma-w { line-height: 1.15; opacity: 0; transform: translateY(8px); transition: opacity 0.7s ease, transform 0.9s var(--menu-ease); }
+.menu-overlay.open .ma-w { opacity: 1; transform: none; }
+.menu-overlay.open .ma-w:nth-child(1) { transition-delay: 0.55s; }
+.menu-overlay.open .ma-w:nth-child(2) { transition-delay: 0.62s; }
+.menu-overlay.open .ma-w:nth-child(3) { transition-delay: 0.69s; }
+.menu-overlay.open .ma-w:nth-child(4) { transition-delay: 0.76s; }
+.menu-overlay.open .ma-w:nth-child(5) { transition-delay: 0.83s; }
+.menu-overlay.open .ma-w:nth-child(6) { transition-delay: 0.9s; }
+.menu-overlay.open .ma-w:nth-child(7) { transition-delay: 0.97s; }
+.menu-overlay.open .ma-w:nth-child(8) { transition-delay: 1.04s; }
+.ma-f-wide { font-family: "Unbounded", var(--sans); font-weight: 300; font-size: 30px; letter-spacing: 0.06em; text-transform: uppercase; }
+.ma-f-geo { font-family: "Major Mono Display", var(--mono); font-size: 40px; }
+.ma-f-serif { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 34px; }
+.ma-f-sans { font-family: var(--sans); font-weight: 700; font-size: 38px; letter-spacing: -0.02em; }
+.ma-f-ital { font-family: "Instrument Serif", Georgia, serif; font-size: 44px; }
+.ma-f-mono { font-family: var(--mono); font-size: 15px; letter-spacing: 0.2em; text-transform: uppercase; color: #bdb9ae; }
+.ma-f-wide.ma-small { font-size: 15px; font-weight: 500; letter-spacing: 0.16em; color: #bdb9ae; }
+.ma-f-serif.ma-small { font-size: 22px; color: #bdb9ae; }
+.ma-formulas {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 14px 0 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8f8c81;
+}
+.ma-formulas b { font-weight: 500; color: #f0efe8; margin-right: 6px; text-transform: none; }
+.ma-formulas sub { font-size: 0.75em; }
+
+/* 3 · THE MOLECULE: hairlines, a ring of words turning round it. */
+.menu-aldehydes[data-kind="molecule"] { width: min(460px, calc(100vw - 850px)); }
+.ma-mol { display: block; width: 100%; height: auto; overflow: visible; }
+.ma-orbit { fill: none; stroke: rgba(240, 239, 232, 0.16); stroke-width: 1; }
+.ma-orbit-2 { stroke-dasharray: 2 6; stroke: rgba(240, 239, 232, 0.22); }
+.ma-ring { transform-origin: 200px 200px; animation: ma-turn 90s linear infinite; }
+.ma-ring-text { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.2em; text-transform: uppercase; fill: #bdb9ae; }
+.ma-bonds line { stroke: #f0efe8; stroke-width: 2.2; stroke-linecap: butt; }
+.ma-atoms text { font-family: var(--sans); font-size: 34px; font-weight: 500; fill: #f0efe8; text-anchor: middle; dominant-baseline: middle; }
+.ma-vapour circle { fill: #f0efe8; opacity: 0; animation: ma-rise 4.8s ease-out infinite; }
+@keyframes ma-turn { to { transform: rotate(360deg); } }
+@keyframes ma-rise {
+  0% { opacity: 0; transform: translate(0, 0); }
+  18% { opacity: 0.8; }
+  100% { opacity: 0; transform: translate(var(--drift), var(--rise)); }
+}
+.ma-caption {
+  display: flex;
+  justify-content: space-between;
+  margin: 18px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(240, 239, 232, 0.25);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8f8c81;
+}
+@media (max-width: 700px) {
+  .menu-aldehydes[data-kind="particles"] { height: 150px; bottom: 12px; }
+  .menu-aldehydes[data-kind="specimen"] { padding: 10px 0; }
+  .menu-aldehydes[data-kind="specimen"] .ma-big { font-size: 44px; margin: 2px 0 6px; }
+  .menu-aldehydes[data-kind="specimen"] .ma-sheet { padding: 6px 0; gap: 2px 12px; }
+  .menu-aldehydes[data-kind="specimen"] .ma-w { font-size: 17px; }
+  .menu-aldehydes[data-kind="specimen"] .ma-w:nth-child(n + 6) { display: none; }
+  .menu-aldehydes[data-kind="specimen"] .ma-formulas { display: none; }
+  .menu-aldehydes[data-kind="molecule"] { width: auto; left: auto; right: 16px; bottom: 16px; }
+  .menu-aldehydes[data-kind="molecule"] .ma-mol { width: 190px; }
+  .menu-aldehydes[data-kind="molecule"] .ma-caption { display: none; }
+}
+/* With motion turned off: nothing turns, rises or comes in. */
+@media (prefers-reduced-motion: reduce) {
+  .ma-ring, .ma-vapour circle { animation: none; }
+  .ma-vapour circle { opacity: 0.5; }
+  .menu-aldehydes, .ma-w, .ma-say-word.is-on { transition: none; transform: none; }
+  .menu-overlay.open .menu-aldehydes { transform: translateY(-50%); }
+}
+
 /* The rest of the page gently dims while the menu is open, so the
    overlay reads as coming forward rather than just appearing.
    The transition sits on the base selector, not on .menu-open — when
@@ -345,10 +517,10 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
    selectors carry the same exclusions, and have to: the transition
    living on one and not the other is the fault the paragraph above
    this one is about. */
-body > *:not(.menu-trigger):not(.menu-overlay):not(.cursor-ring):not(.cursor-dot):not(.note-panel):not(.note-scrim):not(.primer-tip) {
+body > *:not(.menu-trigger):not(.menu-overlay):not(.cursor-ring):not(.cursor-dot):not(.note-panel):not(.note-scrim):not(.primer-tip):not(.about) {
   transition: opacity 0.85s var(--menu-ease);
 }
-body.menu-open > *:not(.menu-trigger):not(.menu-overlay):not(.cursor-ring):not(.cursor-dot):not(.note-panel):not(.note-scrim):not(.primer-tip) {
+body.menu-open > *:not(.menu-trigger):not(.menu-overlay):not(.cursor-ring):not(.cursor-dot):not(.note-panel):not(.note-scrim):not(.primer-tip):not(.about) {
   opacity: 0.1;
 }
 
@@ -411,10 +583,226 @@ body.menu-open > *:not(.menu-trigger):not(.menu-overlay):not(.cursor-ring):not(.
 .scroll-cue:hover { color: var(--ink); }
 
 @media (prefers-reduced-motion: no-preference) {
-  .title-content, .title-block { animation: rise 0.9s ease both; }
-  .title-block { animation-delay: 0.15s; }
+  /* (The title's own rise only on a page without title.js, which brings
+     it up itself — a title still rising while the specks read where it
+     is set them all ten pixels low.) */
+  html:not(.title-coming):not(.title-here) .title-content,
+  .title-block { animation: rise 0.9s ease both; }
+  /* The block in the corner comes up last, once the title has gathered
+     (2026-09-29; it came 0.15s after the title before). */
+  .title-block { animation-delay: 1.9s; }
 }
 @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* THE TITLE GATHERING (title.js, 2026-09-29: "add an animation to the
+   title page for when you load it in"). While specks drift in and settle
+   into its letters, the title, the line under it and the square are held
+   back (`title-coming`, set in the page's head); then the letters come up
+   over the specks, the line a beat later, the square last. Without the
+   script they come up by themselves after three seconds. */
+.title-specks { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .title-coming .title-content h1,
+  .title-coming .title-sub,
+  .title-coming .about-open { opacity: 0; animation: title-late 0.6s 3s forwards; }
+  .title-coming .title-sub { transform: translateY(8px); }
+  .title-here .title-content h1 { transition: opacity 0.7s ease; }
+  .title-here .title-sub { transition: opacity 0.7s ease 0.35s, transform 0.8s var(--menu-ease) 0.35s; }
+  .title-here .about-open { transition: opacity 0.6s ease 0.75s; }
+}
+@keyframes title-late { to { opacity: 1; transform: none; } }
+
+/* THE SQUARE AT THE TITLE — About me (2026-09-29). A registration mark
+   standing off the title's top right, its dot breathing so that it is
+   seen to be something; pointed at, it fills and says what it is. On a
+   phone it stands under the title, saying so. */
+.title-line { position: relative; display: inline-block; }
+.about-open {
+  position: absolute;
+  top: 16%;
+  left: calc(100% + 16px);
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+}
+.about-open-box {
+  position: relative;
+  display: block;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border: 1px solid currentColor;
+  transition: background-color 0.25s ease;
+}
+.about-open-mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: currentColor;
+}
+.about-open-word {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translate(-4px, -50%);
+  white-space: nowrap;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-style: normal;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+.about-open:hover .about-open-box, .about-open:focus-visible .about-open-box { background: var(--ink); }
+.about-open:hover .about-open-mark, .about-open:focus-visible .about-open-mark { background: var(--bg, #fff); }
+.about-open:hover .about-open-word, .about-open:focus-visible .about-open-word { opacity: 1; transform: translate(0, -50%); }
+@media (prefers-reduced-motion: no-preference) {
+  .about-open-mark { animation: about-breathe 2.8s ease-in-out infinite; }
+}
+@keyframes about-breathe { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.7); } }
+@media (max-width: 700px) {
+  .about-open { position: static; display: inline-flex; align-items: center; gap: 10px; margin: 18px 0 0; }
+  .about-open-word { position: static; opacity: 1; transform: none; }
+}
+
+/* ABOUT ME — the page out of focus behind a sheet of the owner's two
+   paragraphs, each coming up in turn under its hairline (title.js). */
+.about {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  overflow-y: auto;
+  background: rgba(250, 249, 246, 0);
+  -webkit-backdrop-filter: blur(0px);
+  backdrop-filter: blur(0px);
+  transition: background 0.5s ease, backdrop-filter 0.5s ease, -webkit-backdrop-filter 0.5s ease;
+}
+.about[hidden] { display: none; }
+.about.is-open {
+  background: rgba(250, 249, 246, 0.55);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.about-sheet {
+  position: relative;
+  width: min(640px, 100%);
+  background: #fbfaf7;
+  border: 1px solid var(--line);
+  padding: 48px 52px 44px;
+  box-shadow: 0 30px 80px rgba(20, 20, 24, 0.12);
+  outline: none;
+  opacity: 0;
+  transform: translateY(14px) scale(0.985);
+  transition: opacity 0.5s ease, transform 0.7s var(--menu-ease);
+}
+.about.is-open .about-sheet { opacity: 1; transform: none; }
+/* A registration tick at two corners, drawing out as it opens. */
+.about-sheet::before,
+.about-sheet::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 0 solid var(--ink);
+  transform: scale(0);
+  transition: transform 0.5s var(--menu-ease) 0.3s;
+}
+.about-sheet::before { left: -1px; top: -1px; border-left-width: 1px; border-top-width: 1px; transform-origin: 0 0; }
+.about-sheet::after { right: -1px; bottom: -1px; border-right-width: 1px; border-bottom-width: 1px; transform-origin: 100% 100%; }
+.about.is-open .about-sheet::before,
+.about.is-open .about-sheet::after { transform: scale(1); }
+.about-kicker {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 30px;
+}
+.about-part { opacity: 0; transform: translateY(10px); transition: opacity 0.6s ease, transform 0.7s var(--menu-ease); }
+.about-part + .about-part { margin-top: 34px; }
+.about.is-open .about-part { opacity: 1; transform: none; }
+.about.is-open .about-part:nth-of-type(1) { transition-delay: 0.18s; }
+.about.is-open .about-part:nth-of-type(2) { transition-delay: 0.36s; }
+.about-part h2 {
+  position: relative;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+}
+/* Its hairline drawing out from the left as it comes up. */
+.about-part h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--line);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.9s var(--menu-ease);
+}
+.about.is-open .about-part:nth-of-type(1) h2::after { transform: scaleX(1); transition-delay: 0.3s; }
+.about.is-open .about-part:nth-of-type(2) h2::after { transform: scaleX(1); transition-delay: 0.48s; }
+.about-no { color: var(--muted); margin-right: 14px; }
+.about-part p { font-family: var(--sans); font-size: 16px; line-height: 1.72; color: #2a2a2e; margin: 0; }
+.about-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.about-close:hover, .about-close:focus-visible { color: var(--ink); }
+.about-close-mark { position: relative; width: 10px; height: 10px; }
+.about-close-mark::before,
+.about-close-mark::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+.about-close-mark::after { transform: rotate(-45deg); }
+@media (max-width: 700px) {
+  .about { padding: 14px; }
+  .about-sheet { padding: 44px 22px 30px; }
+  .about-part p { font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about, .about-sheet, .about-part, .about-part h2::after, .about-sheet::before, .about-sheet::after { transition: none; }
+}
 
 /* ==================================================================
    MIDDLE SLIDE — a single centered, italic line
@@ -594,11 +982,32 @@ body.preview-open .menu-trigger { opacity: 0.15; pointer-events: none; transitio
   transition: left 0.6s var(--menu-ease), top 0.6s var(--menu-ease), transform 0.6s var(--menu-ease), opacity 0.4s ease;
 }
 .node-preview-media {
+  position: relative;
+  overflow: hidden;
   aspect-ratio: 4 / 3;
   border: 1px solid #333;
   background-color: #141414;
   background-image: repeating-linear-gradient(-45deg, #2a2a2a 0px, #2a2a2a 1px, transparent 1px, transparent 14px);
-  margin-bottom: 22px;
+  /* clear of the Close above it, which stood over the picture's corner */
+  margin: 26px 0 22px;
+}
+/* THE PICTURE OF WHERE IT GOES (2026-09-29): the page the node leads to,
+   filling the hatched frame, coming up once it has arrived and settling
+   a little larger to its own size as the window lands. */
+.node-preview-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  transform: scale(1.04);
+  transition: opacity 0.7s ease 0.15s, transform 1.1s var(--menu-ease) 0.15s;
+}
+.node-preview-media.has-picture img { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .node-preview-media img { transition: none; transform: none; }
 }
 .node-preview-desc { font-family: var(--sans); font-size: 14px; line-height: 1.6; color: #c9c6bb; margin: 0 0 26px; }
 /* WHAT STATE A PAGE IS IN, when it has something to say about it —
@@ -884,20 +1293,31 @@ html:has(.sheet-page) { scrollbar-gutter: stable; }
 }
 .sheet-filter {
   position: absolute;
-  top: 4px;
-  border: 0;
-  background: none;
-  padding: 0;
+  /* BUTTONS, boxed (2026-09-29 — the owner: "more emphasized, and more
+     button-y"): a hairline box on the paper with a small square in it,
+     the one you are on filled in ink with its square lit. The box is
+     taken back out of the position, so the word stands where it stood. */
+  top: -5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(var(--ink-rgb), 0.5);
+  background: var(--bg);
+  padding: 9px 13px 9px 12px;
   margin: 0;
   cursor: pointer;
   pointer-events: auto;
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 500;
-  line-height: 17px;
-  letter-spacing: 0.18em;
+  line-height: 15px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--ink);
+  box-shadow: 0 1px 0 rgba(var(--ink-rgb), 0.08), 0 8px 18px -12px rgba(var(--ink-rgb), 0.55);
+  transition: background-color 0.3s var(--menu-ease), color 0.3s var(--menu-ease),
+              border-color 0.3s var(--menu-ease), box-shadow 0.3s var(--menu-ease),
+              transform 0.2s var(--menu-ease);
 }
 .sheet-filter:first-child { right: calc(50% + var(--split)); }
 .sheet-filter:last-child { left: calc(50% + var(--split)); }
@@ -908,33 +1328,33 @@ html:has(.sheet-page) { scrollbar-gutter: stable; }
   top: 50%;
   width: 14px;
   height: 1px;
-  background: currentColor;
+  background: var(--ink);
   opacity: 0.55;
   transition: opacity 0.4s var(--menu-ease);
 }
-.sheet-filter:first-child::before { left: calc(100% + 4px); }
-.sheet-filter:last-child::before { right: calc(100% + 8px); }
+.sheet-filter:first-child::before { left: calc(100% + 5px); }
+.sheet-filter:last-child::before { right: calc(100% + 5px); }
 /* On the Fragrances view there is no axis for them to point at, so they
    go; the words stay exactly where they are. */
 body.view-fragrances .sheet-filter::before { opacity: 0; }
-/* Which one you are looking at is said with a rule under it rather
-   than with colour — the same answer the chamber's menu gives, for the
-   same reason: this page spends nothing on accent. */
+/* The square in the button, before the word: open, and filled in on the
+   one you are on — the same registration mark the site uses everywhere
+   else. It used to be a rule drawn under the word. */
 .sheet-filter::after {
   content: "";
-  position: absolute;
-  left: 0;
-  right: 0.18em;
-  bottom: -4px;
-  height: 1px;
-  background: var(--ink);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s var(--menu-ease);
+  order: -1;
+  flex: none;
+  width: 7px;
+  height: 7px;
+  box-sizing: border-box;
+  border: 1px solid currentColor;
+  transition: background-color 0.3s var(--menu-ease);
 }
-.sheet-filter:hover { color: var(--ink); }
-.sheet-filter.is-on { color: var(--ink); }
-.sheet-filter.is-on::after { transform: scaleX(1); }
+.sheet-filter:hover { border-color: var(--ink); transform: translateY(-1px);
+  box-shadow: 0 1px 0 rgba(var(--ink-rgb), 0.12), 0 12px 22px -12px rgba(var(--ink-rgb), 0.7); }
+.sheet-filter:active { transform: translateY(0); }
+.sheet-filter.is-on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.sheet-filter.is-on::after { background: currentColor; }
 /* They are not there while the sheet is drawing itself, and must not
    be seen leaving either. */
 body.sheet-scripted .sheet-filters { opacity: 0; transition: none; }
@@ -1070,9 +1490,10 @@ body.view-fragrances .sheet-search { display: none; }
      the axis still runs up between them; smaller, to leave the Menu and
      the search their room, and the search is its mark alone. */
   .sheet-filters { --split: 9px; }
-  .sheet-filter { top: 2px; font-size: 11px; line-height: 15px; letter-spacing: 0.12em; }
+  .sheet-filter { top: -2px; gap: 7px; padding: 6px 9px 6px 8px; font-size: 11px; line-height: 15px; letter-spacing: 0.12em; }
+  .sheet-filter.is-on { background: var(--ink); }
   .sheet-filter::before { display: none; }
-  .sheet-filter::after { left: 9px; right: 9px; bottom: 2px; }
+  .sheet-filter::after { width: 6px; height: 6px; }
   .sheet-search-word { display: none; }
   .sheet-search { right: 13px; }
   /* AND THE CHROME HAS TO BE ON TOP OF THE SHEET, which it was not: a
@@ -1171,6 +1592,9 @@ body.view-fragrances .sheet-search { display: none; }
   transition: background 0.25s, color 0.25s;
 }
 .sheet-nav-step:hover { background: var(--ink); color: var(--bg); }
+/* The double arrows, to the first house and the last, drawn. */
+.sheet-nav-end { display: grid; place-items: center; padding: 0; }
+.sheet-nav-twice { width: 14px; height: 14px; display: block; }
 /* HELD STILL as the house changes: the reading is a box of one size, and
    a name is one line cut short rather than a second line — "Qimu &
    Musicians" used to wrap, which pushed the button under it down, and a
@@ -2664,6 +3088,12 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--brass); outline
   .infobox { float: none; width: 100%; margin: 0 0 32px; }
   .node3d-text { font-size: 14px; }
   .node3d-sub { width: 160px; }
+}
+/* On a phone the line under a name is never shown (nothing hovers), but
+   it still stood there unseen and caught the taps meant for the name
+   under it: Search's opened Photography (2026-09-29). */
+@media (max-width: 700px) {
+  .node3d-sub { pointer-events: none; }
 }
 
 
@@ -5760,13 +6190,18 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
 
 /* THE SOURCES (2026-09-29): "a popup window, different from all the
    others" — so PAPER where every other window is glass: a sheet of
-   references, warm white and dark ink, the page's red only in its
-   numbers, square, ruled, unfolding out of the point it was opened from
-   (--from-x, --from-y: the centre, or a source's number). */
+   references, square, ruled, the page's red only in its numbers,
+   unfolding out of the point it was opened from (--from-x, --from-y: the
+   centre, or a source's number). It was warm white with dark ink; the
+   colours are FLIPPED since the same night ("flip the colours of the
+   references popup"): a warm near-black sheet, warm white ink, a finer
+   edge to hold it off the dark page, and a lighter red. The variables
+   keep their names — the paper is simply dark now. */
 .net-sources {
-  --paper: #efe9df;
-  --paper-ink: #1d1a17;
-  --paper-rule: rgba(29, 26, 23, 0.16);
+  --paper: #171513;
+  --paper-ink: #efe9df;
+  --paper-rule: rgba(239, 233, 223, 0.16);
+  --paper-red: #f0555f;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -5778,7 +6213,7 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   box-sizing: border-box;
   background: var(--paper);
   color: var(--paper-ink);
-  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(239, 233, 223, 0.22);
   opacity: 0;
   transform: translate(calc(-50% + var(--from-x, 0px)), calc(-50% + var(--from-y, 0px))) scale(0.08);
   transition: opacity 260ms ease, transform 520ms var(--net-ease);
@@ -5792,7 +6227,7 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   padding-bottom: 8px;
   border-bottom: 3px double var(--paper-ink);
 }
-.net-sources-kicker { font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: #b3141f; }
+.net-sources-kicker { font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--paper-red); }
 .net-sources-close {
   width: 26px;
   height: 26px;
@@ -5806,7 +6241,7 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
 }
 .net-sources-close:hover, .net-sources-close:focus-visible { background: var(--paper-ink); color: var(--paper); outline: none; }
 .net-sources-title { margin: 18px 0 0; font-size: 34px; font-weight: 600; letter-spacing: -0.01em; line-height: 1; outline: none; }
-.net-sources-say { margin: 10px 0 0; font-size: 13px; line-height: 1.55; color: rgba(29, 26, 23, 0.68); }
+.net-sources-say { margin: 10px 0 0; font-size: 13px; line-height: 1.55; color: rgba(239, 233, 223, 0.68); }
 .net-sources-body {
   flex: 1;
   min-height: 0;
@@ -5816,7 +6251,7 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   overscroll-behavior: contain;
   border-top: 1px solid var(--paper-rule);
   scrollbar-width: thin;
-  scrollbar-color: rgba(29, 26, 23, 0.3) transparent;
+  scrollbar-color: rgba(239, 233, 223, 0.3) transparent;
 }
 .net-sources-list { margin: 0; padding: 0; list-style: none; counter-reset: none; }
 .net-source {
@@ -5829,17 +6264,97 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   line-height: 1.55;
   transition: background-color 600ms ease;
 }
-.net-source-no { font-family: var(--mono); font-size: 11px; line-height: 1.9; color: #b3141f; }
+.net-source-no { font-family: var(--mono); font-size: 11px; line-height: 1.9; color: var(--paper-red); }
 .net-source-text { padding-left: 2em; text-indent: -2em; overflow-wrap: anywhere; }
 .net-source-text cite { font-style: italic; }
-.net-source-text a { color: inherit; text-decoration-color: rgba(179, 20, 31, 0.5); text-underline-offset: 2px; }
-.net-source-text a:hover { text-decoration-color: #b3141f; }
+.net-source-text a { color: inherit; text-decoration-color: rgba(240, 85, 95, 0.55); text-underline-offset: 2px; }
+.net-source-text a:hover { text-decoration-color: var(--paper-red); }
 /* The first source is the owner. */
 .net-source.is-me { padding: 16px 0; }
 .net-source.is-me .net-source-text { font-size: 20px; font-weight: 600; text-indent: 0; padding-left: 0; }
-.net-source-me { display: block; margin-top: 2px; font-family: var(--mono); font-size: 10px; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(29, 26, 23, 0.55); }
+.net-source-me { display: block; margin-top: 2px; font-family: var(--mono); font-size: 10px; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(239, 233, 223, 0.55); }
 /* The one asked for, from a note's window. */
-.net-source.is-asked { background: rgba(179, 20, 31, 0.1); }
+.net-source.is-asked { background: rgba(240, 85, 95, 0.14); }
+
+/* THE WAY OUT, ASKED FIRST (2026-09-29): a press on a fragrance — in the
+   combinations' list or a note's window — brings this up rather than
+   leaving at once: the fragrance, its house, Stay and Go. The page behind
+   it is shaded, not blurred (the note's window may be under it, and
+   should still be read as there). */
+.net-leave {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(6, 6, 7, 0.46);
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+.net-leave[hidden] { display: none; }
+.net-leave.is-on { opacity: 1; }
+.net-leave-box {
+  position: relative;
+  width: min(400px, calc(100% - 40px));
+  box-sizing: border-box;
+  padding: 20px 22px 22px;
+  background: var(--net-glass);
+  -webkit-backdrop-filter: blur(22px) saturate(1.15);
+  backdrop-filter: blur(22px) saturate(1.15);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  color: var(--ink);
+  transform: translateY(10px) scale(0.98);
+  transition: transform 360ms var(--net-ease);
+}
+.net-leave.is-on .net-leave-box { transform: none; }
+/* A registration tick at two corners, as the site's windows carry. */
+.net-leave-box::before,
+.net-leave-box::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 0 solid rgba(255, 90, 100, 0.8);
+}
+.net-leave-box::before { left: -1px; top: -1px; border-left-width: 1px; border-top-width: 1px; }
+.net-leave-box::after { right: -1px; bottom: -1px; border-right-width: 1px; border-bottom-width: 1px; }
+.net-leave-kicker {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #ff5a64;
+}
+.net-leave-name { margin: 14px 0 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.1; }
+.net-leave-house {
+  margin: 6px 0 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.net-leave-house:empty { display: none; }
+.net-leave-say { margin: 16px 0 0; font-size: 13.5px; line-height: 1.55; color: rgba(255, 255, 255, 0.72); }
+.net-leave-choose { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+.net-leave-stay,
+.net-leave-go {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.25s, color 0.25s, border-color 0.25s;
+}
+.net-leave-stay { background: none; border: 1px solid rgba(255, 255, 255, 0.3); color: var(--ink); }
+.net-leave-stay:hover, .net-leave-stay:focus-visible { border-color: var(--ink); outline: none; }
+.net-leave-go { background: #e5202e; border: 1px solid #e5202e; color: #fff; }
+.net-leave-go:hover, .net-leave-go:focus-visible { background: #ff3a46; border-color: #ff3a46; outline: none; }
 
 /* THE NAMES: one beside every accord's network once apart (a way there),
    and the black tags naming every note of the network you are at. */
@@ -5861,6 +6376,7 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
 .net-veil { z-index: 9; }
 .net-note { z-index: 10; }
 .net-sources { z-index: 11; }
+.net-leave { z-index: 12; }
 .net-centre-name { z-index: 2; }
 .net-name {
   position: absolute;
@@ -5933,7 +6449,8 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
 @media (prefers-reduced-motion: reduce) {
   .net-stage.is-idle .net-arrow::after,
   .net-stage.is-coaching .net-arrow[data-pull="menu"]::after { animation: none; opacity: 0.8; }
-  .net-veil, .net-note, .net-sources, .net-coach, .net-coach-say, .net-panel, .net-find { transition: none; }
+  .net-veil, .net-note, .net-sources, .net-coach, .net-coach-say, .net-panel, .net-find,
+  .net-leave, .net-leave-box { transition: none; }
   .net-note.is-rising { transition: none; }
   .net-result.is-new { animation: none; }
 }
@@ -7492,6 +8009,18 @@ body.theories-page.lit .page-find { opacity: 1; }
   line-height: 0.98;
   letter-spacing: -0.02em;
   margin: 0 0 26px;
+}
+/* Where Set 01 began, since the sets went (2026-09-29): the owner's line,
+   in the readings' mono, over a hairline. */
+.photo-later {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin: 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  max-width: 720px;
 }
 .photo-lede {
   font-size: clamp(15px, 1.5vw, 18px);
@@ -10490,6 +11019,46 @@ a.note-cite:hover { color: var(--ink); }
 .adar-page .house-credit a { color: #e8e8ee; }
 .adar-page .house-credit a:hover { color: #a8a8b4; }
 
+/* THE RETURN BUTTON, at the top of every house (2026-09-29 — the owner:
+   "ON THE TOP OF THE PAGE a return button in case they pressed the button
+   by accident"): a boxed button above the house's name, back to the
+   Houses view with this house at the front (`#house-NN`). Drawn in the
+   page's own colour, so it is right on the dark pages and the light; and
+   set as far above the name as it is tall, so the name has not moved. */
+.house-return {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: max-content;
+  align-items: center;
+  gap: 11px;
+  margin: -62px 0 28px;
+  padding: 9px 14px 9px 12px;
+  border: 1px solid currentColor;
+  border-color: color-mix(in srgb, currentColor 42%, transparent);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.3s var(--menu-ease), gap 0.3s var(--menu-ease);
+}
+.house-return-mark {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin-left: 3px;
+  border-left: 1.3px solid currentColor;
+  border-bottom: 1.3px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.3s var(--menu-ease);
+}
+.house-return:hover, .house-return:focus-visible { border-color: currentColor; gap: 14px; }
+.house-return:hover .house-return-mark { transform: translateX(-2px) rotate(45deg); }
+
 /* THE WAY BACK A HOUSE, beside the way on — "the option to go back a
    house as well as forward a house" (2026-09-26). The two stand together
    on the right of every house's foot, the one before and the one after,
@@ -11209,28 +11778,6 @@ body.frag-open .frag-stage { opacity: 0; pointer-events: none; }
 /* THE MARK: a small ring of specks, one larger for every fragrance. */
 .frag-mark { display: block; flex: none; width: 176px; height: 176px; margin: 12px 0 -14px -10px; }
 @media (max-height: 720px) { .frag-mark { display: none; } }
-/* THE WAY BACK to the houses, at the foot of the aside — the Houses view
-   carries its twin, "The fragrances →", under the way round. */
-.frag-to-houses,
-.sheet-to-fragrances {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0 7px;
-  border: 0;
-  border-bottom: 1px solid rgba(var(--ink-rgb), 0.35);
-  background: none;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink);
-  cursor: pointer;
-  transition: border-color 0.25s, gap 0.3s var(--menu-ease);
-}
-.frag-to-houses { align-self: flex-start; margin-top: auto; }
-.frag-to-houses:hover,
-.sheet-to-fragrances:hover { border-bottom-color: var(--ink); gap: 16px; }
 /* THE DIVIDER between the aside and the table: the line the houses' axis
    becomes when the views cross (views.js's thread lands on it). Placed by
    the script, the height of the window. */
@@ -11247,11 +11794,6 @@ body.frag-open .frag-stage { opacity: 0; pointer-events: none; }
 }
 .frag-divider[hidden] { display: none; }
 .frag-stage.here .frag-divider { opacity: 1; }
-.sheet-to-fragrances { margin-top: 18px; }
-@media (max-width: 700px) {
-  /* The two words across the top are the way over on a phone. */
-  .frag-to-houses, .sheet-to-fragrances { display: none; }
-}
 
 /* THE ITEMS */
 .frag-main {

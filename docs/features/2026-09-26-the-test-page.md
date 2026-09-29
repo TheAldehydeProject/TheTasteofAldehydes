@@ -1797,3 +1797,68 @@ of them.
 
 The galaxies have no test of their own (the page's frame-speed test covers what they cost); look at
 the page.
+
+## 2026-09-29, the last round — one galaxy of each kind, the way out asked first, the Sources dark
+
+> please put some variation into this. I want only one galaxy of its kind to be visible in the whole
+> 3D thing. Also make it slightly more abstract and particulate; i dont want it to be as emphasized
+> ... i like their colour though!
+
+> when you find a perfume that matches the search, bring up a confirmation window that you want to
+> go to that page before you go, so it isnt a sudden click and then go.
+
+> flip the colours of the references popup
+
+> remove the small arrows from the text in image 3 (and all texts of the sort)
+
+### One galaxy of each kind
+
+The thirty-six were mostly two- and three-armed spirals, much alike. There are **twelve** now,
+**no two the same kind** (`GALAXY_KINDS`): a **grand design** spiral (two long arms wound tight), a
+**barred** spiral (a straight bar through the core, an arm from each end), a **ring** (a core and,
+clear of it, one ring), one seen **edge-on** (a long thin line with a bulge), an **elliptical** (a warm
+haze drawn out one way), a **lenticular** (a bright bulge in a smooth faint disc, no arms), a
+**flocculent** spiral (many short broken arm segments), an **irregular** one (a few clumps strung
+loosely), a **globular** cluster (a tight ball of pale stars), an **open cluster** (a loose scatter of
+a few), a **pair** (two small spirals meeting, a faint bridge of specks between) and **tails** (two
+cores throwing long tails off in opposite ways). **More particulate and more abstract**: fewer, finer
+specks, set out *along* their shapes rather than heaped up — an arm a dotted run, a ring a string of
+beads — at **0.55** of their strength where they were 0.75, and a hair smaller. **The colours are the
+ones the owner liked**: a warm core, arms going bluer and fainter, a pale blue-white for clusters, the
+odd pink knot. Still far out, spread round the sky, each turning slowly about itself, from their own
+sequence (`gRnd`), so nothing else in the drawing moved. `NetScene.galaxies()` says what each is.
+
+### The way out, asked first
+
+Every fragrance the library names is a link to its part — in **the combinations' list** and in **a
+note's window** (the fragrances in each tier). A press on one no longer leaves at once: **a small
+window** comes up over the page, shaded (not blurred — the note's window may be under it and should
+still read as there): *Leave the library*, the fragrance's name, its house, *This goes to its page,
+where it is written up.*, and **Stay** and **Go to its page** (the red one, which has the keys). Stay,
+Escape or a press round it leaves everything as it was — the tags, the list, the note's window; Go
+goes. Opened with a key held (a new tab or window) a link goes without asking, since nothing is left.
+`.net-leave` in `network.js` (`askLeave`, `stay`); `state().leaving` is the fragrance being asked
+about.
+
+### The Sources, dark
+
+The sheet of references (**the sources**) is still paper where every other window is glass, but its
+**colours are flipped**: a warm near-black sheet (`--paper`, `#171513`), warm white ink, the page's red
+lightened so it reads on the dark (`--paper-red`), and a fine light edge to hold it off the dark page.
+The variables keep their names.
+
+### No arrow in the tags
+
+*Go to 06 · Spice →*, the tag a middle node shows under the hand, is **Go to 06 · Spice** now. It was
+the only text of its sort left in the library (the old card's *Open it in the Note Library →* went
+with the card).
+
+### How to test it
+
+`tests/note-library.spec.js`:
+- **`a fragrance pressed asks before the library is left`** — from the combinations' list: it asks,
+  names the fragrance, points Go at its part, gives Go the keys; Escape and Stay leave everything as it
+  was (the tag, the list); from a note's window's tiers it asks the same, and Go goes;
+- **`the galaxies far out are twelve, no two of a kind, and quiet`**;
+- the Sources test reads the sheet **dark with light ink**, solid, where the note window is glass;
+- the middle-node test reads the tag as *Go to NN · Spice*, with nothing after it.

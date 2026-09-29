@@ -5,7 +5,7 @@
 // contact information (let it be filer contact information)" — and
 // then "keep this: Get in touch, send a carrier pigeon. Below it add :or
 // just send an email: and there add the stuff". So the check stands
-// under the owner's "or just send an email:", and what it shows is the
+// under the owner's "... or an email:", and what it shows is the
 // (filler) email.
 //
 // WHAT IT IS: six characters drawn in specks — the site's own way of

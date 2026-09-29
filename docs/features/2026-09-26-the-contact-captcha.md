@@ -91,3 +91,12 @@ and no other words but the check's own, nothing to follow and no address on the 
   shows **the email alone**. The filler *Instagram* line was taken out of the sealed details,
   because the line over them says what they are: an email. The characters, the specks and the
   sealing are unchanged.
+
+## 2026-09-29 — "... or an email:"
+
+> rewrite "or just send an email:" to "... or an email:"
+
+The line under the sentence is the owner's **… or an email:** now (`.contact-or`, three full stops as
+they typed them), and nothing else on the page changed. The test is **`under the sentence, the
+owner's '... or an email:', and the check under that`**, and `tests/pages.spec.js` reads the page's
+text with it.

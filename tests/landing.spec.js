@@ -84,8 +84,9 @@ for (const [what, selector] of [
       page.locator(selector).evaluate((el) => parseFloat(getComputedStyle(el).opacity));
     // The block arrives with an animation of its own, which holds on to
     // opacity until it has finished playing; the scroll takes over after.
-    await page.waitForTimeout(1600);
-    expect(await shown(), "should be there to begin with").toBeGreaterThan(0.9);
+    // (Since 2026-09-29 the block comes up last, once the title has
+    // gathered, so this waits for it rather than for a fixed time.)
+    await expect.poll(shown, { timeout: 6000, message: "should be there to begin with" }).toBeGreaterThan(0.9);
 
     // Park the page partway down by hand, rather than waiting out the
     // site's own long scroll, and check it responds to where the page is.
@@ -263,4 +264,91 @@ test("the long move to the map sets off at once and eases evenly", async ({ page
   expect(way(eighth)).toBeGreaterThan(0.012);
   const half = near(1200);
   expect(Math.abs(way(half) - expected(half)), "half way there, half way through").toBeLessThan(0.03);
+});
+
+/* THE TITLE GATHERS as the page loads — the owner, 2026-09-29: "add an
+   animation to the title page for when you load it in". Specks drift in
+   from all over the slide and settle into the letters; the letters come up
+   over them; the specks let go and are gone. Held back until then, the
+   title is never flashed first — and never kept waiting: it is there well
+   within three seconds. With motion turned off it is simply there. */
+test("the title gathers out of specks as the page loads, and is there within three seconds", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto("/index.html");
+  await expect(page.locator("#slide-1 canvas.title-specks"), "the specks drawn over the slide").toHaveCount(1, { timeout: 1500 });
+  const h1 = page.locator(".title-content h1");
+  await expect.poll(() => h1.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 3500 }).toBeGreaterThan(0.95);
+  await expect(page.locator("html")).toHaveClass(/title-here/);
+  await expect(page.locator("html")).not.toHaveClass(/title-coming/);
+  await expect(page.locator("canvas.title-specks"), "and let go of").toHaveCount(0, { timeout: 4000 });
+  await expect.poll(() => page.locator(".about-open").evaluate((e) => +getComputedStyle(e).opacity), { timeout: 3000 }).toBeGreaterThan(0.95);
+  expect(errors).toEqual([]);
+});
+
+test("with motion turned off the title is simply there", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/index.html");
+  await page.waitForTimeout(300);
+  await expect(page.locator("canvas.title-specks")).toHaveCount(0);
+  expect(await page.locator(".title-content h1").evaluate((e) => +getComputedStyle(e).opacity)).toBe(1);
+});
+
+/* ABOUT ME — "a square at the title which will blur out the page and bring
+   up a 'about me' page (on the same page more or less)", with the owner's
+   two paragraphs, "slightly animated". The square opens it over the page
+   gone out of focus; Escape, its close or the page round it put it away;
+   the wheel inside it never changes slides. */
+test("the square at the title opens About me over the page, out of focus", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto("/index.html");
+  const square = page.locator(".about-open");
+  await expect.poll(() => square.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
+  const about = page.locator("#about");
+  await expect(about).toBeHidden();
+  await square.click();
+  await expect(about).toBeVisible();
+  await expect(about).toHaveAttribute("role", "dialog");
+  await expect(square).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator("body")).toHaveClass(/about-shown/);
+  // The owner's words, as they wrote them.
+  await expect(page.locator("#about-title")).toContainText("About me");
+  await expect(about).toContainText("I like smelling stuff and learning, and this website is essentially my record of combining the two.");
+  await expect(about).toContainText("How the name came to be");
+  await expect(about).toContainText("why not \u201cThe Taste of Aldehydes\u201d?");
+  // The page behind it out of focus.
+  expect(await about.evaluate((e) => getComputedStyle(e).backdropFilter || getComputedStyle(e).webkitBackdropFilter)).toMatch(/blur/);
+  // A wheel inside it moves no slide.
+  const box = await page.locator(".about-sheet").boundingBox();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.wheel(0, 600);
+  await page.waitForTimeout(900);
+  expect(await scrollTop(page), "the slides stayed where they were").toBe(0);
+  await page.keyboard.press("Escape");
+  await expect(about).toBeHidden();
+  await expect(page.locator("body")).not.toHaveClass(/about-shown/);
+  // Its close, and the page round it, put it away too.
+  await square.click();
+  await page.locator(".about-close").click();
+  await expect(about).toBeHidden();
+  await square.click();
+  await expect(about).toBeVisible();
+  await page.mouse.click(8, 450);
+  await expect(about).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+test("on a phone the square stands under the title, named, and About me fits the screen", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/index.html");
+  const square = page.locator(".about-open");
+  await expect.poll(() => square.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
+  const t = await page.locator(".title-content h1").boundingBox();
+  const b = await square.boundingBox();
+  expect(b.y, "under the title").toBeGreaterThan(t.y + t.height - 1);
+  expect(Math.abs(b.x + b.width / 2 - 195), "in the middle").toBeLessThan(8);
+  await expect(page.locator(".about-open-word")).toBeVisible();
+  await square.tap().catch(() => square.click());
+  const sheet = await page.locator(".about-sheet").boundingBox();
+  expect(sheet.x).toBeGreaterThanOrEqual(0);
+  expect(sheet.x + sheet.width).toBeLessThanOrEqual(390);
 });

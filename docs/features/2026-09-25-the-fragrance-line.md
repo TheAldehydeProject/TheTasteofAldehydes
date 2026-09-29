@@ -627,3 +627,13 @@ typed, in every layout, and looks at no house`** — reading what is SHOWN rathe
 marked, which is why the earlier test passed while the bug stood; the tests that took the list for
 the view's first layout now say boxes, and the one about how many rows fit switches to the list
 first.
+
+## 2026-09-29 — no way over inside the views
+
+> remove the bottom-right "The fragrances →" and "← The houses"
+
+*← The houses* at the foot of the aside, and *The fragrances →* under the Houses view's way round,
+are **gone**, with the `data-view-go` handler in `views.js` that served them and their styles. The
+two words across the top — buttons now (see [the axis](2026-09-24-the-axis.md)) — are the way over,
+and the crossing is exactly as it was. `tests/fragrance-line.spec.js`, **`the views can be gone
+between freely, by the two words across the top alone`**, finds nothing carrying `data-view-go`.

@@ -261,3 +261,8 @@ and compared at 16, 32, 64 and 180 pixels, in a light and a dark tab, before thi
 worked out by a script from the font (kept out of the repository, like the last one — the file is
 the whole of it). **`apple-touch-icon.png`** is the same figure on a plain white square with more
 room round it, because a phone rounds the corners of a home-screen icon itself.
+
+## 2026-09-29 — the home page's description
+
+The home page's description in `tools/seo.py` follows slide 2, which lost its *even* at the owner's
+word: *… theories and ideas.* The tool was run again; nothing else changed.

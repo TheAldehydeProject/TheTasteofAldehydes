@@ -571,10 +571,11 @@ test("coming back, the line travels all the way to the axis in the middle of the
 /* FREE: a press while the crossing is running is taken AT ONCE — it
    turns round from where it has got to rather than finishing first — so
    the two can be gone between as fast as the buttons are pressed, and
-   nothing is left half done. And each view carries the way to the other
-   in itself: "The fragrances →" under the way round, "← The houses" at
-   the foot of the aside. */
-test("the views can be gone between freely, and each carries the way to the other", async ({ page }) => {
+   nothing is left half done. The way over is the two words across the top
+   alone: each view carried a way to the other in itself ("The fragrances
+   →" under the way round, "← The houses" at the foot of the aside) until
+   the owner had them taken off, 2026-09-29. */
+test("the views can be gone between freely, by the two words across the top alone", async ({ page }) => {
   test.setTimeout(60000);
   const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
@@ -604,14 +605,10 @@ test("the views can be gone between freely, and each carries the way to the othe
   await expect(page.locator(".views")).not.toHaveClass(/swiping/);
   await expect(page.locator('.view[data-view="houses"]')).toHaveAttribute("style", /^$|^\s*$/);
 
-  // THE WAY OVER, from inside each view.
-  await page.locator(".sheet-to-fragrances").click();
-  await expect(page.locator('.view[data-view="fragrances"]')).toBeVisible();
-  await expect(page.locator('.view[data-view="houses"]')).toBeHidden({ timeout: 2000 });
-  await expect(page.locator('.sheet-filter[data-view="fragrances"]')).toHaveAttribute("aria-pressed", "true");
-  await page.locator(".frag-to-houses").click();
-  await expect(page.locator('.view[data-view="houses"]')).toBeVisible();
-  await expect(page.locator('.view[data-view="fragrances"]')).toBeHidden({ timeout: 2000 });
+  // THE WAY OVER is the two words across the top and nothing else: "The
+  // fragrances →" and "← The houses", which stood inside the views, were
+  // taken off at the owner's word (2026-09-29).
+  await expect(page.locator(".sheet-to-fragrances, .frag-to-houses, [data-view-go]")).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 

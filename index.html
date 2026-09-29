@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Taste of Aldehydes</title>
 <!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
-<meta name="description" content="A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for information, interpretations, theories and even ideas.">
+<meta name="description" content="A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for information, interpretations, theories and ideas.">
 <link rel="canonical" href="https://thetasteofaldehydes.com/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="The Taste of Aldehydes">
 <meta property="og:type" content="website">
 <meta property="og:title" content="The Taste of Aldehydes">
-<meta property="og:description" content="A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for information, interpretations, theories and even ideas.">
+<meta property="og:description" content="A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for information, interpretations, theories and ideas.">
 <meta property="og:url" content="https://thetasteofaldehydes.com/">
 <meta property="og:image" content="https://thetasteofaldehydes.com/images/social-card.png">
 <meta property="og:image:width" content="1200">
@@ -22,10 +22,10 @@
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Taste of Aldehydes">
-<meta name="twitter:description" content="A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for information, interpretations, theories and even ideas.">
+<meta name="twitter:description" content="A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for information, interpretations, theories and ideas.">
 <meta name="twitter:image" content="https://thetasteofaldehydes.com/images/social-card.png">
 <meta name="twitter:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "The Taste of Aldehydes", "alternateName": "Taste of Aldehydes", "url": "https://thetasteofaldehydes.com/", "description": "A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for information, interpretations, theories and even ideas.", "inLanguage": "en"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "The Taste of Aldehydes", "alternateName": "Taste of Aldehydes", "url": "https://thetasteofaldehydes.com/", "description": "A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for information, interpretations, theories and ideas.", "inLanguage": "en"}</script>
 <!-- SEARCH ENGINES: end -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,6 +33,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="style.css">
+<!-- The title gathers out of specks as the page loads (title.js): held
+     back until it does, so it is not seen first and then gathered. The
+     stylesheet brings it up by itself after three seconds whatever. -->
+<script>if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("title-coming");</script>
 </head>
 <body class="snap-page">
 
@@ -46,10 +50,18 @@
 
 <main id="scroll-container">
 
-  <!-- SLIDE 1 — TITLE. Edit: the big line, the line under it. -->
+  <!-- SLIDE 1 — TITLE. Edit: the big line, the line under it. The
+       square at the title opens ABOUT ME (below, after the slides) —
+       the owner's own words, 2026-09-29. -->
   <section class="slide title-slide" id="slide-1">
     <div class="title-content">
-      <h1>The Taste of Aldehydes</h1>
+      <div class="title-line">
+        <h1>The Taste of Aldehydes</h1>
+        <button class="about-open" type="button" aria-haspopup="dialog" aria-controls="about" aria-expanded="false">
+          <span class="about-open-box" aria-hidden="true"><span class="about-open-mark"></span></span>
+          <span class="about-open-word">About me</span>
+        </button>
+      </div>
       <p class="title-sub">Perfumes and my notes about them</p>
     </div>
     <div class="title-block">
@@ -72,7 +84,7 @@
       <p class="intro-lede">
         A personal project of perfume exploration. &ldquo;The Taste of
         Aldehydes&rdquo; will act as a library for information,
-        interpretations, theories and even ideas.
+        interpretations, theories and ideas.
       </p>
     </div>
   </section>
@@ -91,6 +103,32 @@
 
 </main>
 
+<!-- ABOUT ME — the owner's, word for word (2026-09-29): "a square at the
+     title which will blur out the page and bring up an 'about me' page
+     (on the same page more or less)". Opened by the square at the title
+     (title.js); without the script it is simply not shown. Its words are
+     the owner's; do not tidy them. -->
+<div class="about" id="about" role="dialog" aria-modal="true" aria-labelledby="about-title" hidden>
+  <article class="about-sheet" tabindex="-1">
+    <button class="about-close" type="button" aria-label="Close About me">
+      <span class="about-close-mark" aria-hidden="true"></span>
+      <span class="about-close-word">Close</span>
+    </button>
+    <p class="about-kicker">The Taste of Aldehydes</p>
+    <section class="about-part">
+      <h2 id="about-title"><span class="about-no">01</span>About me</h2>
+      <p>I like smelling stuff and learning, and this website is essentially my record of combining the two. As of now, I have accrued many experiences, research hours and conversations with people who have more than dipped their toes in this industry, and since this is becoming quite a large part of my life, I wanted to make a portfolio in which I would keep a record of everything that was worth noting down. My opinions, theories and thoughts, all in one place.</p>
+    </section>
+    <section class="about-part">
+      <h2><span class="about-no">02</span>How the name came to be</h2>
+      <p>While working on the website, I had a bottle of very mineralic spring water I bought as a souvenir when visiting someplace; and I was thirsty so I opened it. I put it in a big glass, put some ice in it and sipped while I coded. And it tasted like metal. If you were to bite down on metal parts fresh out of a CNC machine, then that is exactly what it tasted like; and since in perfumery, this cold metallic character can be achieved with aldehydes, I thought: why not &ldquo;The Taste of Aldehydes&rdquo;?</p>
+    </section>
+  </article>
+</div>
+
+<!-- Before the 3D library, which comes from far away: the title should
+     not wait on it. -->
+<script src="title.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script>window.SITE_ROOT = "";</script>
 <script src="nav.js"></script>

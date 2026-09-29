@@ -1110,3 +1110,23 @@ scrolls with a finger last down plays nothing.
   things above; the test checks that the page asks for them, and a real phone is the only proof.
   If it is still silent, the volume buttons are the next thing to look at: once the page is music,
   it follows the media volume, not the ringer's.
+
+## 2026-09-29 — a return button at the top of every house
+
+> For every house in houses, ... ON THE TOP OF THE PAGE a return button in case they pressed the
+> button by accident.
+
+**All nine houses** (these six and Pineward, ADAR and Almost Human, which keep their own shapes) have
+**a boxed button at the top of the page**, above the kicker over the house's name: a small drawn
+chevron and **Back to the houses**, in the page's own colour (`currentColor`, its box at 42% of it), so
+it is right on the dark pages and the light. It goes to the Houses view **with this house at the
+front** — `../categories/scent-descriptions.html#house-08` — which the view reads (see [the
+axis](2026-09-24-the-axis.md)). It is set **as far above the name as it is tall** (`margin: -62px 0
+28px`), so the name and everything under it stand exactly where they stood; it rises with the head in
+the house's way in. One `<a class="house-return">` as the first thing in each head (`.human-head`,
+`.pine-head`, `.adar-head`); a new house copies it with its own number.
+
+`tests/houses.spec.js`, **`every house has a return button at the top, back to the houses at that
+house`** — on all nine: one button, to its own `#house-NN`, above the name, at the top of the page,
+the kicker exactly where it stood (234px at 900 tall); and Tombstone's, pressed, lands on the Houses
+view with Tombstone at the front.

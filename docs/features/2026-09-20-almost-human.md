@@ -464,3 +464,9 @@ on, which never arrived, so nothing showed. With pictures on the page, it carrie
 line like every other house, naming **almosthuman.store** as where they came from — the
 owner's word: *"Credit is the Almost Human Website."* See [the images
 report](2026-09-17-images-folder-per-house.md).
+
+## 2026-09-29 — a return button at the top
+
+Almost Human, like every house, has **Back to the houses** at the top of its page, above its name, back to
+the Houses view with Almost Human at the front. It is written up with the rest in [the newer
+houses](2026-09-21-the-newer-houses.md#2026-09-29--a-return-button-at-the-top-of-every-house).

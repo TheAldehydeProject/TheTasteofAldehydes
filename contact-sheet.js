@@ -217,24 +217,34 @@
     return b;
   });
 
-  // THE WAY ROUND, at the side: before, where you are, after.
+  // THE WAY ROUND, at the side: the first, before, where you are, after,
+  // the last. The double arrows at either end go all the way (the owner,
+  // 2026-09-29: "a double arrow going up above the up arrow and a double
+  // arrow going down underneath the bottom arrow ... take you to the very
+  // bottom and very top"). They are drawn rather than typed: a doubled
+  // arrow is not in every face a phone has. (The fragrances' way over,
+  // "The fragrances →", stood under it until the same day.)
+  const twice = (d) => '<svg class="sheet-nav-twice" viewBox="0 0 14 14" aria-hidden="true">' +
+    '<path d="' + d + '" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>';
   const nav = document.createElement("div");
   nav.className = "sheet-nav";
   nav.innerHTML =
+    '<button type="button" class="sheet-nav-step sheet-nav-end" data-to="first" aria-label="The first house">' +
+      twice("M3 7.5 7 3.5 11 7.5M3 11.5 7 7.5 11 11.5") + '</button>' +
     '<button type="button" class="sheet-nav-step" data-step="-1" aria-label="The house before">' +
       '<span aria-hidden="true">&#8593;</span></button>' +
     '<p class="sheet-nav-at" aria-live="polite"><b></b><span></span></p>' +
     '<button type="button" class="sheet-nav-step" data-step="1" aria-label="The next house">' +
       '<span aria-hidden="true">&#8595;</span></button>' +
-    // AND THE WAY OVER to the fragrances — views.js takes anything carrying
-    // `data-view-go`; the Fragrances view carries its twin back.
-    '<button type="button" class="sheet-to-fragrances" data-view-go="fragrances">' +
-      'The fragrances <span aria-hidden="true">&#8594;</span></button>';
+    '<button type="button" class="sheet-nav-step sheet-nav-end" data-to="last" aria-label="The last house">' +
+      twice("M3 2.5 7 6.5 11 2.5M3 6.5 7 10.5 11 6.5") + '</button>';
   sheet.appendChild(nav);
   const navAt = nav.querySelector(".sheet-nav-at b");
   const navName = nav.querySelector(".sheet-nav-at span");
   nav.querySelectorAll(".sheet-nav-step").forEach((b) =>
-    b.addEventListener("click", () => go(Math.round(target) + Number(b.dataset.step))));
+    b.addEventListener("click", () => go(
+      b.dataset.to === "first" ? 0 : b.dataset.to === "last" ? N - 1
+        : Math.round(target) + Number(b.dataset.step))));
 
   // ============================================================
   // WHERE EVERYTHING STANDS
@@ -303,7 +313,15 @@
 
   // Where along the helix you are (`pos`) and where you are going
   // (`target`), in houses: 0 is the first house at the front.
-  let pos = 0, target = 0;
+  //
+  // AN ADDRESS CAN NAME THE HOUSE TO BE AT: `#house-08` opens the view with
+  // Tombstone at the front, and its neighbours come out of the axis round
+  // it. It is where every house's return button leads (2026-09-29: "a
+  // return button in case they pressed the button by accident"), so the
+  // way back lands where the reader was.
+  const asked = /^#house-(\d{1,2})$/.exec(window.location.hash);
+  const startAt = asked ? Math.max(0, Math.min(N - 1, Number(asked[1]) - 1)) : 0;
+  let pos = startAt, target = startAt;
   // THE FIELD ADAR'S WELLS MAKE (motifs.js), read once a frame in draw():
   // null while there are none, and otherwise where each point is drawn.
   let bend = null;
@@ -824,8 +842,9 @@
     }
     const t0 = performance.now();
     // First the axis, then the helix, and only then the houses — in
-    // order, 01 first, which is also the one at the front.
-    const startOf = (i) => AXIS_MS + HELIX_MS + i * EMERGE_STEP;
+    // order, 01 first, which is also the one at the front (or, opened at
+    // a house, that one first and then outwards from it).
+    const startOf = (i) => AXIS_MS + HELIX_MS + Math.abs(i - startAt) * EMERGE_STEP;
     const burst = (i) => {
       const p = spot(i - pos);
       for (let k = 0; k < 26; k++) {

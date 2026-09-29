@@ -1090,69 +1090,171 @@
     scene.add(sky);
     // THE GALAXIES, made once, from a sequence of their own (so that the
     // rest of the drawing is laid out as it always was). Each stands far out
-    // — farther than the specks — tilted its own way, and only its inner
-    // part turns: a spiral winds two or three arms out of a warm core, bluer
-    // and fainter as they go; an elliptical is a warm haze thickest in its
-    // middle; a cluster a tight ball of pale stars.
-    const GALAXIES = 36;
-    const GALAXY_KINDS = Array.from({ length: GALAXIES }, (_, k) => (k % 6 === 2 ? "elliptical" : k % 6 === 5 ? "cluster" : "spiral"));
+    // — farther than the specks — tilted its own way, and turns slowly about
+    // itself. ONE OF EACH KIND since the night of 2026-09-29 — the owner:
+    // "put some variation into this. I want only one galaxy of its kind to
+    // be visible in the whole 3D thing. Also make it slightly more abstract
+    // and particulate; i dont want it to be as emphasized ... i like their
+    // colour though!" There were thirty-six, mostly two- and three-armed
+    // spirals much alike; there are twelve now, no two the same kind, drawn
+    // in fewer, finer specks set out along their shapes rather than heaped
+    // up — an arm is a dotted run, a ring a string of beads — at a little
+    // over half the strength, in the same warm cores, bluer arms and the
+    // odd pink knot.
+    const GALAXY_KINDS = ["grand design", "barred", "ring", "edge-on", "elliptical", "lenticular",
+      "flocculent", "irregular", "globular", "open cluster", "pair", "tails"];
     let gSeed = 90210;
     const gRnd = () => ((gSeed = (gSeed * 16807) % 2147483647) - 1) / 2147483646;
     const gGauss = () => Math.sqrt(-2 * Math.log(Math.max(1e-9, gRnd()))) * Math.cos(2 * Math.PI * gRnd());
+    // The colours they always had: a warm core, arms going bluer and fainter
+    // as they go out, a pale blue-white for clusters, now and then pink.
+    const warm = (lum) => [lum, lum * 0.9, lum * 0.74];
+    const cool = (lum) => [lum * 0.78, lum * 0.84, lum];
+    const pale = (lum) => [lum * 0.86, lum * 0.92, lum];
+    const pink = (lum) => [lum * 1.15, lum * 0.62, lum * 0.7];
     const galaxies = GALAXY_KINDS.map((kind, k) => {
       const pos = [], col = [];
-      const R = kind === "cluster" ? 1.2 + gRnd() * 0.7 : kind === "elliptical" ? 2 + gRnd() * 1.4 : 3 + gRnd() * 2.2;
-      const star = (x, y, z, r, g, b) => { pos.push(x, y, z); col.push(r, g, b); };
-      if (kind === "spiral") {
-        const nArm = gRnd() < 0.35 ? 3 : 2, wind = 2.2 + gRnd() * 1.6, N = 260 + Math.floor(gRnd() * 140);
-        for (let j = 0; j < N; j++) {
-          if (j < N * 0.26) {
-            // The core: warm, dense, bright.
-            const r = Math.abs(gGauss()) * R * 0.13, a = gRnd() * Math.PI * 2;
-            const lum = 0.42 + 0.3 * gRnd();
-            star(Math.cos(a) * r, Math.sin(a) * r, gGauss() * R * 0.05, lum, lum * 0.9, lum * 0.74);
-            continue;
-          }
-          const t = Math.pow(gRnd(), 0.8), arm = j % nArm;
-          const r = R * (0.1 + 0.9 * t);
-          const a = (arm / nArm) * Math.PI * 2 + wind * Math.log(1 + t * 5) + gGauss() * (0.16 + 0.12 * t);
-          const lum = (0.4 - 0.24 * t) * (0.7 + 0.6 * gRnd());
-          const pink = gRnd() < 0.05;
-          star(Math.cos(a) * r, Math.sin(a) * r, gGauss() * R * 0.025,
-            pink ? lum * 1.15 : lum * 0.78, pink ? lum * 0.62 : lum * 0.84, pink ? lum * 0.7 : lum);
+      const star = (x, y, z, c) => { pos.push(x, y, z); col.push(c[0], c[1], c[2]); };
+      /** A core: `n` warm specks, thinning out from the middle. */
+      const core = (n, r, flat = 0.4) => {
+        for (let j = 0; j < n; j++) {
+          const d = Math.abs(gGauss()) * r, a = gRnd() * Math.PI * 2;
+          star(Math.cos(a) * d, Math.sin(a) * d, gGauss() * r * flat, warm(0.34 + 0.24 * gRnd()));
+        }
+      };
+      /** An arm: specks set out ALONG a logarithmic spiral at a nearly even
+          step — a dotted run, not a smear — from `r0` out to `r1`. */
+      const arm = (turn0, r0, r1, wind, n, jitter) => {
+        for (let j = 0; j < n; j++) {
+          const t = (j + 0.5 * gRnd()) / n;
+          const r = r0 + (r1 - r0) * t;
+          const a = turn0 + wind * Math.log(1 + t * 5) + gGauss() * jitter;
+          const lum = (0.32 - 0.18 * t) * (0.75 + 0.5 * gRnd());
+          star(Math.cos(a) * r, Math.sin(a) * r, gGauss() * 0.04, gRnd() < 0.05 ? pink(lum) : cool(lum));
+        }
+      };
+      /** A ring of beads at radius `r`. */
+      const ring = (r, n, lum, squash = 1) => {
+        for (let j = 0; j < n; j++) {
+          const a = (j / n) * Math.PI * 2 + gGauss() * 0.02, d = r * (1 + gGauss() * 0.025);
+          star(Math.cos(a) * d, Math.sin(a) * d * squash, gGauss() * 0.03, gRnd() < 0.08 ? pink(lum) : cool(lum * (0.8 + 0.4 * gRnd())));
+        }
+      };
+      if (kind === "grand design") {
+        // Two long arms, wound tight, out of a small core.
+        const R = 4.6;
+        core(34, R * 0.1);
+        arm(0, R * 0.12, R, 2.9, 70, 0.05);
+        arm(Math.PI, R * 0.12, R, 2.9, 70, 0.05);
+      } else if (kind === "barred") {
+        // A straight bar through the core, an arm from each end of it.
+        const R = 4;
+        core(26, R * 0.09);
+        for (let j = 0; j < 40; j++) {
+          const x = (j / 39 - 0.5) * R * 0.7;
+          star(x, gGauss() * 0.08, gGauss() * 0.04, warm(0.3 + 0.15 * gRnd()));
+        }
+        arm(0, R * 0.35, R, 1.7, 46, 0.06);
+        arm(Math.PI, R * 0.35, R, 1.7, 46, 0.06);
+      } else if (kind === "ring") {
+        // A core and, clear of it, one ring — nothing between.
+        core(30, 0.32);
+        ring(2.6, 84, 0.3);
+      } else if (kind === "edge-on") {
+        // A disc seen from its edge: a long thin line, a bulge in its middle.
+        const R = 4.4;
+        core(28, 0.34, 0.9);
+        for (let j = 0; j < 110; j++) {
+          const x = (gRnd() * 2 - 1) * R;
+          const f = 1 - Math.abs(x) / R;
+          star(x, gGauss() * 0.05 * (0.5 + f), gGauss() * 0.1, cool(0.12 + 0.2 * f * (0.7 + 0.6 * gRnd())));
         }
       } else if (kind === "elliptical") {
-        const N = 200, sy = 0.5 + gRnd() * 0.25;
-        for (let j = 0; j < N; j++) {
-          const r = Math.abs(gGauss()) * 0.34, a = gRnd() * Math.PI * 2, e = gGauss() * 0.3;
-          const lum = (0.5 - 0.7 * Math.min(0.5, r)) * (0.75 + 0.5 * gRnd());
-          star(Math.cos(a) * r * R, Math.sin(a) * r * R * sy, e * r * R * 0.5, lum, lum * 0.88, lum * 0.72);
+        // A warm haze, thickest in its middle, drawn out one way.
+        const R = 2.6, sy = 0.56;
+        for (let j = 0; j < 130; j++) {
+          const r = Math.abs(gGauss()) * 0.34, a = gRnd() * Math.PI * 2;
+          const lum = (0.4 - 0.55 * Math.min(0.5, r)) * (0.75 + 0.5 * gRnd());
+          star(Math.cos(a) * r * R, Math.sin(a) * r * R * sy, gGauss() * r * R * 0.4, warm(lum));
+        }
+      } else if (kind === "lenticular") {
+        // A lens: a bright bulge in a smooth, faint disc, and no arms.
+        core(40, 0.3, 0.6);
+        for (let j = 0; j < 80; j++) {
+          const r = 0.5 + Math.pow(gRnd(), 0.7) * 2.4, a = gRnd() * Math.PI * 2;
+          star(Math.cos(a) * r, Math.sin(a) * r, gGauss() * 0.04, warm(0.16 * (1 - r / 3.2) + 0.05));
+        }
+      } else if (kind === "flocculent") {
+        // Many short, broken arm segments, patchy rather than drawn.
+        core(22, 0.26);
+        for (let seg = 0; seg < 9; seg++) {
+          const a0 = gRnd() * Math.PI * 2, r0 = 0.6 + gRnd() * 1.4;
+          arm(a0, r0, r0 + 0.8 + gRnd() * 1.2, 0.7, 12, 0.04);
+        }
+      } else if (kind === "irregular") {
+        // No shape of its own: a few clumps, strung loosely together.
+        for (let c = 0; c < 5; c++) {
+          const cx = gGauss() * 1.3, cy = gGauss() * 0.9, n = 12 + Math.floor(gRnd() * 16), r = 0.2 + gRnd() * 0.4;
+          for (let j = 0; j < n; j++) {
+            star(cx + gGauss() * r, cy + gGauss() * r, gGauss() * 0.2, gRnd() < 0.12 ? pink(0.3) : cool(0.18 + 0.2 * gRnd()));
+          }
+        }
+      } else if (kind === "globular") {
+        // A tight ball of pale stars.
+        for (let j = 0; j < 70; j++) {
+          const v = new THREE.Vector3(gGauss(), gGauss(), gGauss()).multiplyScalar(0.34 * (0.4 + gRnd()));
+          star(v.x, v.y, v.z, pale(0.22 + 0.28 * gRnd()));
+        }
+      } else if (kind === "open cluster") {
+        // A loose scatter of a few, most of them brighter than the rest.
+        for (let j = 0; j < 22; j++) {
+          const v = new THREE.Vector3(gGauss(), gGauss(), gGauss()).multiplyScalar(0.9);
+          star(v.x, v.y, v.z, pale(0.22 + 0.34 * gRnd()));
+        }
+      } else if (kind === "pair") {
+        // Two small spirals meeting, a faint bridge of specks between them.
+        const at = [[-1.5, -0.3, 0], [1.5, 0.3, 0.8]];
+        at.forEach(([x0, y0, a0]) => {
+          const at0 = pos.length;
+          core(14, 0.16);
+          arm(a0, 0.2, 1.3, 2.4, 22, 0.06);
+          arm(a0 + Math.PI, 0.2, 1.3, 2.4, 22, 0.06);
+          for (let q = at0; q < pos.length; q += 3) { pos[q] += x0; pos[q + 1] += y0; }
+        });
+        for (let j = 0; j < 22; j++) {
+          const t = j / 21;
+          star(-1.5 + 3 * t, -0.3 + 0.6 * t + Math.sin(t * Math.PI) * 0.5 + gGauss() * 0.06, gGauss() * 0.05, cool(0.12 + 0.06 * gRnd()));
         }
       } else {
-        const N = 90;
-        for (let j = 0; j < N; j++) {
-          const v = new THREE.Vector3(gGauss(), gGauss(), gGauss()).multiplyScalar(R * 0.22 * (0.4 + gRnd()));
-          const lum = 0.3 + 0.35 * gRnd();
-          star(v.x, v.y, v.z, lum * 0.86, lum * 0.92, lum);
-        }
+        // Two cores with long tails thrown off in opposite ways, as two
+        // galaxies passing through each other leave them.
+        core(18, 0.18);
+        [[1, 0.6], [-1, -0.6]].forEach(([sgn, off]) => {
+          for (let j = 0; j < 44; j++) {
+            const t = j / 43, a = off + sgn * t * 2.1;
+            const r = 0.3 + t * 3.4;
+            star(Math.cos(a) * r * sgn, Math.sin(a) * r * 0.55 + gGauss() * 0.05, gGauss() * 0.06, cool((0.26 - 0.16 * t) * (0.7 + 0.6 * gRnd())));
+          }
+        });
       }
       const geo = new THREE.BufferGeometry();
       geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
       geo.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
-      const pts = new THREE.Points(geo, new THREE.PointsMaterial(additive({ size: 1.2, sizeAttenuation: false, vertexColors: true, opacity: 0.75 })));
+      const pts = new THREE.Points(geo, new THREE.PointsMaterial(additive({ size: 1.1, sizeAttenuation: false, vertexColors: true, opacity: 0.55 })));
       pts.frustumCulled = false;
       // Where it stands: spread round the sky (a spiral of directions, so
       // that no two come together), far out, turned towards the middle and
-      // then tilted its own way — never so far that it is only seen edge on.
-      const y = 1 - ((k + 0.5) / GALAXY_KINDS.length) * 2, ring = Math.sqrt(1 - y * y), phi = k * 2.39996;
+      // then tilted its own way — never so far that it is only seen edge on
+      // (bar the one that is edge-on by kind).
+      const y = 1 - ((k + 0.5) / GALAXY_KINDS.length) * 2, band = Math.sqrt(1 - y * y), phi = k * 2.39996;
       const holder = new THREE.Object3D();
-      holder.position.set(Math.cos(phi) * ring, y * 0.7, Math.sin(phi) * ring).normalize().multiplyScalar(118 + gRnd() * 40);
+      holder.position.set(Math.cos(phi) * band, y * 0.7, Math.sin(phi) * band).normalize().multiplyScalar(118 + gRnd() * 40);
       holder.lookAt(0, 0, 0);
       holder.rotateX(0.15 + gRnd() * 0.9);
       holder.rotateZ(gRnd() * Math.PI * 2);
       holder.add(pts);
       sky.add(holder);
-      return { pts, turn: (gRnd() < 0.5 ? -1 : 1) * (0.000018 + gRnd() * 0.00002), at: gRnd() * Math.PI * 2 };
+      return { kind, pts, specks: pos.length / 3, turn: (gRnd() < 0.5 ? -1 : 1) * (0.000018 + gRnd() * 0.00002), at: gRnd() * Math.PI * 2 };
     });
     const DUST_RGB = [0x8a / 255, 0x84 / 255, 0x80 / 255];
     let airDrawn = false;
@@ -1428,6 +1530,75 @@
       sourcesBack = null;
     }
     sheet.querySelector(".net-sources-close").addEventListener("click", closeSources);
+
+    // THE WAY OUT, ASKED FIRST (2026-09-29 — the owner: "when you find a
+    // perfume that matches the search ... bring up a confirmation window
+    // that you want to go to that page before you go, so it isnt a sudden
+    // click and then go"). Every fragrance the library names is a link to
+    // it — in the combinations' list and in a note's window — and a press
+    // on one asks before it leaves: the fragrance, its house, and Go or
+    // Stay. Opened with a key held (a new tab, a new window), a link goes
+    // where it goes without asking, because nothing is being left.
+    const leave = el("div", "net-leave");
+    leave.hidden = true;
+    leave.innerHTML =
+      '<section class="net-leave-box" role="alertdialog" aria-modal="true" aria-labelledby="net-leave-name" aria-describedby="net-leave-say">' +
+        '<p class="net-leave-kicker">Leave the library</p>' +
+        '<h2 class="net-leave-name" id="net-leave-name"></h2>' +
+        '<p class="net-leave-house"></p>' +
+        '<p class="net-leave-say" id="net-leave-say">This goes to its page, where it is written up.</p>' +
+        '<div class="net-leave-choose">' +
+          '<button type="button" class="net-leave-stay">Stay</button>' +
+          '<a class="net-leave-go">Go to its page</a>' +
+        "</div>" +
+      "</section>";
+    stage.appendChild(leave);
+    const leaveGo = leave.querySelector(".net-leave-go");
+    let leaveOpen = false, leaveBack = null, leaveTimer = 0;
+    function askLeave(a) {
+      const name = (a.querySelector(".net-note-fname") || a).textContent.trim() || "this fragrance";
+      const house = a.dataset.key ? a.dataset.key.split(":")[0] : "";
+      leave.querySelector(".net-leave-name").textContent = name;
+      leave.querySelector(".net-leave-house").textContent =
+        house === "individual" ? "Individual fragrances" : (HOUSES[house] || { name: "" }).name;
+      leaveGo.href = a.href;
+      leaveBack = a;
+      leaveOpen = true;
+      window.clearTimeout(leaveTimer);
+      leave.hidden = false;
+      void leave.offsetWidth;
+      leave.classList.add("is-on");
+      stage.dataset.leave = a.dataset.key || "open";
+      window.setTimeout(() => leaveGo.focus({ preventScroll: true }), still ? 0 : 60);
+    }
+    function stay() {
+      if (!leaveOpen) return;
+      leaveOpen = false;
+      stage.dataset.leave = "";
+      leave.classList.remove("is-on");
+      leaveTimer = window.setTimeout(() => { if (!leaveOpen) leave.hidden = true; }, still ? 0 : 320);
+      if (leaveBack && leaveBack.isConnected && leaveBack.focus) leaveBack.focus({ preventScroll: true });
+      leaveBack = null;
+    }
+    leave.querySelector(".net-leave-stay").addEventListener("click", stay);
+    leave.addEventListener("click", (e) => { if (e.target === leave) stay(); });
+    leave.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); stay(); }
+      else if (e.key === "Tab") {
+        // The keys stay in it while it asks.
+        const f = [leave.querySelector(".net-leave-stay"), leaveGo];
+        const at = f.indexOf(document.activeElement);
+        e.preventDefault();
+        f[(at + (e.shiftKey ? f.length - 1 : 1)) % f.length].focus();
+      }
+    });
+    stage.addEventListener("click", (e) => {
+      const a = e.target.closest && e.target.closest("a[data-key]");
+      if (!a || !stage.contains(a) || a.getAttribute("href") === "#") return;
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      askLeave(a);
+    });
 
     // THE CENTRE'S NAME, which only the hand finds: pointed at, the centre
     // swells a little, turns redder, and says it is the sources.
@@ -2930,6 +3101,8 @@
     }, { passive: false });
     document.addEventListener("keydown", (e) => {
       const typing = e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA");
+      // Asking whether to leave, over everything: its own keys.
+      if (leaveOpen) return;
       // The sources open over everything: Escape closes them first.
       if (sourcesOpen) { if (e.key === "Escape") { e.preventDefault(); closeSources(); } return; }
       // A note's window open: Escape closes it, the arrows go through the
@@ -3656,7 +3829,9 @@
       } else hoverTag.classList.remove("is-on");
       if (overMiddle >= 0 && !overHub && !flight && hand) {
         const k = overMiddle;
-        bridgeTag.textContent = "Go to " + pad(k + 1) + " · " + accords[k].name + " →";
+        // No arrow after it since 2026-09-29 ("remove the small arrows
+        // from the text ... and all texts of the sort").
+        bridgeTag.textContent = "Go to " + pad(k + 1) + " · " + accords[k].name;
         move(bridgeTag, hand.x + 16, hand.y - 30);
         bridgeTag.classList.add("is-on");
       } else bridgeTag.classList.remove("is-on");
@@ -3819,8 +3994,10 @@
         hub: hubSeen, away: accords.map((A) => A.seen), tagLines: tagSegs, glows: glowsDrawn, drawn: nodesDrawn, pulsed: pulsedAt > 0, flashes, flashTo: flashTo.slice(),
         litAccords: accords.filter((A) => A.members.some((n) => lit[n.i] > 0.3)).map((A) => A.code),
         tagging: tagAt > 0 && performance.now() - tagAt < TAG_MS,
-        centreHover: hubHover, sources: sourcesOpen,
+        centreHover: hubHover, sources: sourcesOpen, leaving: leaveOpen ? stage.dataset.leave : null,
       }),
+      /** The galaxies far out: what kind each is, and how many specks. */
+      galaxies: () => galaxies.map((G) => ({ kind: G.kind, specks: G.specks, opacity: G.pts.material.opacity })),
       /** What a note's window would say of it: how many fragrances, which,
           where in them it stands, and what it is most often with. */
       about: (name) => {

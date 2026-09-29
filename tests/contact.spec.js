@@ -11,7 +11,9 @@
    And then: "keep this: Get in touch, send a carrier pigeon. Below it add
    :or just send an email: and there add the stuff that i told you to" —
    the owner's line under the sentence, as the head of the check, and the
-   one detail it shows the (filler) email.
+   one detail it shows the (filler) email. Since 2026-09-29 that line is
+   "... or an email:" ('rewrite "or just send an email:" to "... or an
+   email:"').
    ============================================================ */
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
@@ -39,11 +41,11 @@ test("the details are not in the page's source to be harvested", () => {
   expect(source).toContain("<h1>Get in touch, send a carrier pigeon.</h1>");
 });
 
-test("under the sentence, the owner's 'or just send an email:', and the check under that", async ({ page }) => {
+test("under the sentence, the owner's '... or an email:', and the check under that", async ({ page }) => {
   await page.goto(CONTACT);
   const h1 = page.locator("h1");
   const or = page.locator(".contact-or");
-  await expect(or).toHaveText("or just send an email:");
+  await expect(or).toHaveText("... or an email:");
   const canvas = page.locator(".contact-captcha-canvas");
   const [a, b, c] = [await h1.boundingBox(), await or.boundingBox(), await canvas.boundingBox()];
   expect(b.y, "the line under the sentence").toBeGreaterThan(a.y + a.height - 1);
@@ -101,7 +103,7 @@ test("without its script the page says the details need JavaScript", async ({ br
   await serveDependenciesLocally(page);
   await page.goto(CONTACT);
   await expect(page.locator("h1")).toHaveText("Get in touch, send a carrier pigeon.");
-  await expect(page.locator(".contact-or")).toHaveText("or just send an email:");
+  await expect(page.locator(".contact-or")).toHaveText("... or an email:");
   await expect(page.locator(".contact-lock-nojs")).toBeVisible();
   await expect(page.locator(".contact-check")).toBeHidden();
   await context.close();

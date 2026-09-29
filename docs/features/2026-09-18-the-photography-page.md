@@ -77,3 +77,20 @@ beside it, the wide frame taking two columns, the frames arriving as they are sc
   `<img>` does not open, and that the viewer's reading comes off the frame's own caption.
 - The readings in the head (`Sets 03`, `Frames 12`) are written in the markup and do not
   count themselves. If the page grows, they are a second place to change.
+
+## 2026-09-29 — emptied, until it is ready
+
+> remove most of the contents of the photography page, and write where "set 1" begins; This part of
+> the webpage will be completed later
+
+The page keeps its head — *Photographs*, **Photography** and its line — and nothing else: the
+readings (*Sets 03*, *Frames 12* …), the three sets and their twelve placeholder frames are gone, and
+where *Set 01* began it says, in the owner's words, **This part of the webpage will be completed
+later** (`.photo-later`: small mono, under a hairline). **The set to copy back** is kept in the page's
+own head comment, with how to put it in. `photography.js` still loads and finds no frames, which it
+takes quietly. On the home page's map, Photography's window says *Work in progress — this part of the
+website will be completed later.*, and shows the page as it is.
+
+The page-level checks in `tests/pages.spec.js` and `tests/mobile.spec.js` still cover it (it loads
+with no errors, its title, its links, no sideways scroll at 390px). The known issues above about the
+twelve placeholder frames no longer apply: there are none.

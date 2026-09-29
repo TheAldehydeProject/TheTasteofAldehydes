@@ -58,9 +58,10 @@
 //               views cross, to where the Fragrances view's divider stands
 //               between its aside and its table (and back). The axis
 //               becomes the divider; the two pages are one line apart.
-//               And each view carries a way to the other in itself — any
-//               element with `data-view-go="houses"` or `"fragrances"` is
-//               a button to that view.
+//               (Each view carried a way to the other in itself, "The
+//               fragrances →" and "← The houses", until the owner had
+//               both taken off, 2026-09-29: the two words across the top
+//               are the way over, and nothing else is.)
 //
 // THE STRETCH that came before it (the axis smeared into pixel streaks,
 // the page travelling a window, the streaks gathering into the table's
@@ -391,13 +392,5 @@
   buttons.forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.view === showing));
     button.addEventListener("click", () => show(button.dataset.view));
-  });
-  // A WAY TO THE OTHER VIEW from inside either one: anything carrying
-  // `data-view-go` goes to the view it names.
-  document.addEventListener("click", (event) => {
-    const go = event.target.closest && event.target.closest("[data-view-go]");
-    if (!go || !viewOf(go.dataset.viewGo)) return;
-    event.preventDefault();
-    show(go.dataset.viewGo);
   });
 })();
