@@ -79,8 +79,9 @@ test("menu lists every page in SITE_LINKS, in order", async ({ page }) => {
     "Photography",
     "Search",
     "Contact",
-    "Test page",
   ]);
+  // The Test page was last until 2026-09-29, when it became the Note
+  // Library: "Remove the test page from the menu".
 });
 
 test("menu links from a nested page resolve correctly, not relative to the folder", async ({ page }) => {
