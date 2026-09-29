@@ -567,8 +567,8 @@ internals. (The README says `thread.js` sets `__p23` — it doesn't, `paper.js` 
   a file in its `research/` (see its README). The owner's rules (2026-09-29): **at least two
   sources to every description**, researched, "holistic and simple, but not hold back"; a
   spelling difference says there is no change, a real difference (Bourbon against Madagascar
-  vanilla) is explained. **65 notes are not researched yet** — the session's searches ran out —
-  and still carry the old library's one line, naming no source; `catalogue.py` lists them.
+  vanilla) is explained. **All 332 are researched** (since 2026-09-29, later) — `catalogue.py
+  --check` lists any note that is not, and `SPELL.py` is where a spelling of such a note waits.
   **Which fragrances use a note is worked out from `notes-data.js`**, so adding notes to a
   fragrance needs nothing here — unless the note is new, and then it needs a record, and
   **a figure of its own**: one line in `FIGURES` in `note-figures.js`, what the note is of — until

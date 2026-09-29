@@ -1521,13 +1521,20 @@ spelling, a plural, a word saying how it is made (*Olibanum*, *Resin*, *Goat Hai
 *No change* and why; a real difference (*Siam Benzoin*, *Spanish Labdanum*, *Olibanum Absolute*)
 is explained, from two sources.
 
-**267 of the 332 are researched, with 818 sources** (the owner among them). **65 are not yet**:
-this session's web searches — two hundred — ran out part way through Musk, Skin & Animalic. They
-are **Leather, Musk, Skin and Suede**; every note of **Earth, Moss & Mineral**, **Water & Air** and
-**Smoke & Char**; and every note of **Impressions** but CO2 Extracts. They still say the old
-library's one line and name no source, and their variations are unwritten (*Not written yet.*)
-unless they are only another spelling — eleven say *No change* already (`research/SPELL.py`). One
-variation of a researched note, **African CO2**, waits too. `catalogue.py` lists them all.
+**All 332 are researched, with 953 sources** (the owner among them). The first session's web
+searches — two hundred — ran out part way through Musk, Skin & Animalic with 267 done; a second
+session wrote **the last 65**: **Leather, Musk, Skin and Suede** (`research/ANI2.py`), every note
+of **Earth, Moss & Mineral** (`EAR.py`), **Water & Air** (`AIR.py`) and **Smoke & Char**
+(`SMK.py`), and every note of **Impressions** but CO2 Extracts (`IMP2.py`). Many of those are
+impressions rather than materials — *Clear Skies*, *Dusty Sofa*, *Spinal Fluid*, *Eye Pencil* — and
+each says so: what the house or the fragrance's list names, and how perfumers build that kind of
+smell, from a general source beside it; where a house page is the only thing naming a note, the
+wording says it is the house's picture. The house pages themselves could not be opened from the
+session (its network does not reach them), so they are named as the source of the name, never
+quoted. **African CO2**, the last variation, says honestly that White Label's list names only the
+place, not the plant. The eleven spelling-only variations waiting in `research/SPELL.py` moved into
+their notes' own files, and `SPELL.py` is empty — kept, for a spelling added to a note not yet
+researched.
 
 ### How to test it
 
@@ -1541,9 +1548,9 @@ variation of a researched note, **African CO2**, waits too. `catalogue.py` lists
   written`** — browserless: source 1 is *Me.*; the rest numbered in order and alphabetical, each
   an MLA entry ending with the day it was read; every number a description names is in the list;
   every researched note names **two sources at least**, and every one of its variations is written —
-  *No change …* for a spelling, two sources for a real difference — but for **`WAITING`** (African
-  CO2), which must stay unwritten until it is taken off the list; and a note not researched names no
-  source and leaves its real variations unwritten.
+  *No change …* for a spelling, two sources for a real difference — but for anything in **`WAITING`**
+  (empty since every variation was written), which must stay unwritten until it is taken off the
+  list; and a note not researched names no source and leaves its real variations unwritten.
 - **`the centre is the Sources …`** — its name not there until the hand is on it; pointed at, it
   swells red (`state().centreHover`) and says *Sources*; pressed, the sources open where the page
   is (it goes nowhere), every source in the catalogue there, *Me.* first, light where the note
@@ -1556,15 +1563,16 @@ variation of a researched note, **African CO2**, waits too. `catalogue.py` lists
 - **`without JavaScript`** and **`without its 3D library`** — the catalogue is the page, every
   note listed, and the sources.
 
-And `python3 tools/note-library/catalogue.py --check` — nothing missing but what is listed as not
-researched yet.
+And `python3 tools/note-library/catalogue.py --check` — *notes 332, researched 332*, and nothing
+listed as missing.
 
 ### Known issues / TODO
 
-- **65 notes and one variation are waiting to be researched** (above). To finish them: a file for
-  each accord in `tools/note-library/research/` (the rest are the pattern), taking each note's
-  spelling-only variations out of `SPELL.py` into it, `WAITING` emptied in the test, and the tool
-  run.
+- **Nothing is waiting to be researched** (2026-09-29, later): all 332 notes and every variation
+  are written. A new note needs its research in its accord's file before `--check` is clean.
+- The house pages (ADAR, Ataraxia, Tombstone, Pineward and the rest) could not be opened from the
+  session that wrote the last 65, so where a note rests on one, the description leans on what the
+  site's own `notes-data.js` already records it naming, and on a general source.
 - None of the symbols is waiting: the twelve the owner was asked about were redrawn but Civet
   (below).
 
