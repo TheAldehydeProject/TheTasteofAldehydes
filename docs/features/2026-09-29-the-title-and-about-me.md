@@ -69,6 +69,9 @@ first under *About me*, the second under *How the name came to be*.
   window and the primer's footnote are (see the glossary's *the glitch on the way out*).
 - **`[hidden]` needs a rule that outranks the sheet's own `display`**: `.about[hidden] { display:
   none }` is there for it.
+- **Centred by the sheet's own `margin: auto`**, not by `place-items: center`: centred that way, a
+  sheet taller than a short phone (667px) ran off the top as well as the foot, and its top could not
+  be scrolled to. That was the first version.
 
 ### The line on slide 2
 

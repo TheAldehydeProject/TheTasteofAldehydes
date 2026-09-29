@@ -680,8 +680,10 @@ body.menu-open > *:not(.menu-trigger):not(.menu-overlay):not(.cursor-ring):not(.
   position: fixed;
   inset: 0;
   z-index: 70;
+  /* Centred by the sheet's own auto margin rather than by `place-items`:
+     centred that way, a sheet taller than a short phone ran off the top as
+     well as the foot, and its top could not be scrolled to. */
   display: grid;
-  place-items: center;
   padding: 28px;
   overflow-y: auto;
   background: rgba(250, 249, 246, 0);
@@ -697,6 +699,7 @@ body.menu-open > *:not(.menu-trigger):not(.menu-overlay):not(.cursor-ring):not(.
 }
 .about-sheet {
   position: relative;
+  margin: auto;
   width: min(640px, 100%);
   background: #fbfaf7;
   border: 1px solid var(--line);
