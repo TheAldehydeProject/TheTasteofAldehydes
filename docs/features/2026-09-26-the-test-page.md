@@ -1707,9 +1707,19 @@ specks stand still and nothing crosses.
   chosen; Spice's middle node pointed at says *Spice* and pressed goes there; there Spice is whole,
   every other network stepped back, and **every note of Spice on the window**.
 - **`the flash goes only on a journey …`** — unchanged, and still passing with the slower journeys.
+- **`once apart, a note pressed opens its own window …`** and **`the centre joins every network …`**
+  have four minutes rather than two and a half: each makes a dozen journeys, and every journey is
+  slower now.
 
 ### Known issues / TODO
 
 - A middle node can stand behind another accord's nodes from some angles; they do not answer from
   the centre, so the press still reaches the middle node, but it can be hard to see which it is
   until the tag comes up.
+- **`every frame of every transition is quick enough for sixty a second`** fails about one run in
+  three on the test machine, on its last line: one frame of 45–55ms against the 40 it allows, while
+  the average (about 2.5ms) and nearly every frame stay well inside. **It does the same on the
+  version before this round** — run three times against it, it failed once, at 54.5ms — and
+  measured outside the test runner, before and after, the slowest frames are the same 23–33ms, at
+  the moment the library finishes coming apart. So the air and the fading did not make it; the
+  test's own machine, recording as it runs, does. Left as it is rather than loosened.
