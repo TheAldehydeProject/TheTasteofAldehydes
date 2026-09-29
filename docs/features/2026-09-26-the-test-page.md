@@ -1498,7 +1498,7 @@ whether there is a difference at all. If yes, research it."
 The figures revised for what a note **is**, not what it is made of — "like holy bread should be a
 cross": Holy Bread a cross; a note best known by an outline — a paw print for Animal Notes, a
 bolt for Ozone, a fingerprint for Skin, a hide for Leather (and, after the owner's answers below, a
-swatch for Suede, meat on the bone for Rotten Flesh, a musk deer and its pod for Musk) — drawn as **a flat shape** facing you with a little thickness and specks inside it;
+swatch for Suede, a stinking steak for Rotten Flesh, a musk deer and its pod for Musk) — drawn as **a flat shape** facing you with a little thickness and specks inside it;
 flowers turned to face you rather than the sky; and **fifty-odd others redrawn** (a hop cone of
 spiral scales, eucalyptus leaves hanging from an arched stem, a mortar and pestle for Herbal
 Notes, a cacao pod and its beans, tonka's wrinkled beans, a pine cone, a tapped trunk for
@@ -1602,8 +1602,10 @@ civet". So Civet stays the animal, and the other eleven say what they are differ
   larger guru bead and the tassel (the fan went).
 - **Suede** — **a swatch** of it, stitched round its edge, its nap lying one way and **a finger's
   trail** across it where the nap lies the other way — suede's own look (the boot went).
-- **Rotten Flesh** — **meat on the bone**: a joint of flesh, its knobbed bone sticking out,
-  marbled, going bad in spots, the stench rising off it in three wavy lines (the fly went).
+- **Rotten Flesh** — **a steak that stinks**, at the owner's next word ("the rotton flesh, make it
+  look like steak thats stinks"): a T-bone, wider than it is tall, the T of bone between its large
+  and its small side of meat, the rim of fat round it, marbled, gone off in spots, and the stench
+  rising off it in three wavy lines (the fly went, and for a moment meat on the bone).
 - **Musk** — "musk deer musk specifically", read both ways it can be: **the musk deer**, no antlers,
   its back arched high at the rump, big ears, the long tusk, the pod marked under its belly — and
   **the musk itself** beside it, the furred pod its opening spilling a heap of the dark grains.
