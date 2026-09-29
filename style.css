@@ -4743,6 +4743,12 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
 }
 .net-result:hover { color: #fff; }
 .net-result.is-none { display: block; color: var(--muted); cursor: default; }
+/* The search answers as it is typed (2026-09-29, "make the search
+   dynamic"): an answer that was not there comes up, each a beat after the
+   one above it, and the part of its name typed so far is marked. */
+.net-result.is-new { animation: net-answer 360ms var(--net-ease) both; animation-delay: calc(var(--k, 0) * 28ms); }
+@keyframes net-answer { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.net-result-mark { background: none; color: #fff; box-shadow: inset 0 -1px 0 rgba(255, 106, 114, 0.75); }
 .net-result .net-dot { color: rgba(255, 106, 114, 0.7); }
 .net-result-code { font-family: var(--mono); font-size: 9px; color: var(--muted); }
 
@@ -5411,6 +5417,11 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 .net-note.is-on { opacity: 1; transform: translate(-50%, -50%); }
+/* Opened from the search, the window RISES into place — from well below —
+   and nothing behind it moves ("i simply want the note description to go
+   up and show itself", 2026-09-29). */
+.net-note.is-rising:not(.is-on) { transform: translate(-50%, calc(-50% + 90px)); }
+.net-note.is-rising { transition: opacity 360ms ease, transform 620ms var(--net-ease); }
 .net-note[hidden] { display: none; }
 .net-note h2, .net-note h3, .net-note p { margin: 0; }
 .net-note-top {
@@ -5923,6 +5934,8 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   .net-stage.is-idle .net-arrow::after,
   .net-stage.is-coaching .net-arrow[data-pull="menu"]::after { animation: none; opacity: 0.8; }
   .net-veil, .net-note, .net-sources, .net-coach, .net-coach-say, .net-panel, .net-find { transition: none; }
+  .net-note.is-rising { transition: none; }
+  .net-result.is-new { animation: none; }
 }
 
 /* ==================================================================

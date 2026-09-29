@@ -8,7 +8,7 @@ Files touched: `works/test-page.html` (new), `network.js` (new), `note-figures.j
 `tools/tree-cloud.mjs`, `images/Test-Page/` and `image-js` in `package.json` — all taken out
 again.
 
-**Since 2026-09-29 this is the Note Library** — at `categories/note-library.html`, the periodic table gone, the old address forwarding, **the Sources** at its centre and every note written again from two sources: see [the last section](#2026-09-29-later--the-note-library-itself-the-sources-at-its-centre-and-every-note-written-again).
+**Since 2026-09-29 this is the Note Library** — at `categories/note-library.html`, the periodic table gone, the old address forwarding, **the Sources** at its centre and every note written again from two sources: see [that section](#2026-09-29-later--the-note-library-itself-the-sources-at-its-centre-and-every-note-written-again). Then, [last](#2026-09-29-last--the-middle-nodes-the-way-in-journeys-that-fade-the-air-and-a-search-that-touches-nothing): seeing every accord, only their **middle nodes** answer; journeys **fade**; **the air** behind it moves; and the search **answers as it is typed and touches nothing**.
 
 **Since the night of 2026-09-27 the page carries the Note Library as networks** — see
 [that section](#2026-09-27-night--the-note-library-as-networks), which replaced [the Note
@@ -1620,3 +1620,96 @@ civet". So Civet stays the animal, and the other eleven say what they are differ
 - **Mousse de Saxe** — **a base tied in a bundle**, as it is made: sticks of licorice root, a
   vanilla pod and a round geranium leaf bound with a leather thong — its geranium, licorice,
   vanilla and leather (Saxony's arms went).
+
+## 2026-09-29, last — the middle nodes the way in, journeys that fade, the air, and a search that touches nothing
+
+> I want you not to be able to click the lines to take you to those clusters. I want you to be
+> unable to click on individual notes in the expanded view in the "every accord" view. I want you
+> to be able to click on the cluster centers however, and go to that cluster by clicking on it that
+> way. also please smoothen out the animation of going cluster to cluster. (with fading, and with
+> the flashing and make it so that the clusters fit on the screen properly) I would also like the
+> background to be a litttttle dynamic, not just dots in 3d space on a gray background. add
+> something there. also make the search dynamic. also when you search something, i dont want
+> anything to happen in the background, is simpy want the note description to go up and show
+> itself without anything going on withthe clusters or notes and all else.
+
+### Seeing every accord, only the middle nodes answer
+
+- **A bridge is only a line.** Pointed at, it says nothing; pressed, nothing. `bridgeAt` is gone.
+- **A note, seen from the centre, answers nothing** — not named under the hand, not chosen when
+  pressed (`nodeAt` returns nothing while `focus` is the centre, unless combining). Notes answer
+  once you are at their accord, as before; combinations still take any note as a tag.
+- **An accord's middle node is the way in** (`middleAt`): pointed at, it swells, glows more, its
+  bridge lights, and the tag beside it says *Go to 06 · Spice →*; pressed, the view goes there.
+  It is found within a radius that grows with how near it stands (never under 15px), and not while
+  that accord is stepped back.
+- The dropdown, its arrows, the keys, the accords' names and the menu still go anywhere.
+
+### Journeys that fade
+
+Going from one place to another used to cut: the network left stepped back at once and the one
+arrived at came up at once. Now each journey's fades follow the journey itself (`journeyAt`):
+
+- **From one accord to another**: the one being left fades back over the first half; the centre
+  and the other networks come up a little as the way passes the middle (a quarter of their
+  strength at most) and go back again; the one gone to comes up over the last two thirds.
+- **From the centre to an accord**: the others fade back over most of the way, the centre a little
+  later, and the one gone to stays whole.
+- **Back to the centre**: everything comes up together.
+- Every fade starts from where things stood when the journey set off, so a journey turned round
+  half way does not jump.
+- The way is **slower and eased on a sine**, slowest at each end (`FLY_MS` 2.9s between accords,
+  `FLY_NEAR_MS` 2s to or from the centre). **The flash** still goes only on a journey, timed to
+  reach the network as it comes up.
+- **Every accord fits the window**: the view stands back from it by the farthest of its own nodes,
+  made or not (`A.ext`), with a third again to spare (`fit(max(R, ext) × 1.32)`), where it stood
+  back by the accord's radius with a fifth to spare and the farthest nodes of the larger ones could
+  run off the edges.
+
+### The air
+
+The specks behind everything were still. Now they are **the air** (`DUST` 900):
+
+- each drifts on a slow orbit of its own and twinkles;
+- the whole of it turns, slower than anything else;
+- now and then two near specks are joined by a **hairline** that comes and goes (`THREADS`, up to
+  fourteen at once, four to eight seconds each), a constellation found and lost;
+- once in every seven to fifteen seconds a faint **streak** crosses far behind.
+
+The grey behind it is untouched (a gradient there drew rings, 2026-09-28). With reduced motion the
+specks stand still and nothing crosses.
+
+### A search that answers as it is typed, and touches nothing
+
+- **It answers as it is typed.** The library's rule still holds for every finished word (that
+  word, or its plural), but **the word still being typed may be the beginning of one**: *ceda* finds
+  the cedars and Cedarwood already. A space after it, and it is a whole word again. A whole word
+  ranks before a beginning.
+- **The answers come up in turn**, each rising a little, and only the new ones (`is-new`); the part
+  of each name typed so far is **marked** with a red underline.
+- **Nothing happens behind it.** No note is lit or dimmed, the menu's ring does not change, nothing
+  is chosen and nothing moves. The dimming, the lit answers and `hitSet` are out of the code.
+- **An answer pressed (or Enter) only brings its note's window up**, rising from below
+  (`is-rising`), over the page out of focus. Nothing is chosen on the drawing and nothing is gone to
+  (`showNote`, `quiet`). The window's own arrows and the notes it is combined with carry on the same
+  way, window to window. Escape or a press round it puts it away.
+
+### How to test it
+
+`tests/note-library.spec.js`:
+
+- **`the arrows on the left pull out the search bar and the menu …`** — *ceda* already finds every
+  cedar; *cedar* followed by a space is the library's own answers again; the typed part marked;
+  **nothing dimmed, nothing translucent, nothing chosen, nothing moved**; an answer pressed opens
+  its window, rising, with nothing chosen or gone to.
+- **`the centre joins every network, and going from one accord to another is easy`** — a
+  bridge pointed at and pressed does nothing; a note in view at the centre is not named and not
+  chosen; Spice's middle node pointed at says *Spice* and pressed goes there; there Spice is whole,
+  every other network stepped back, and **every note of Spice on the window**.
+- **`the flash goes only on a journey …`** — unchanged, and still passing with the slower journeys.
+
+### Known issues / TODO
+
+- A middle node can stand behind another accord's nodes from some angles; they do not answer from
+  the centre, so the press still reaches the middle node, but it can be hard to see which it is
+  until the tag comes up.

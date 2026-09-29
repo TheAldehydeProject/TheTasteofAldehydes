@@ -379,16 +379,57 @@ test("the arrows on the left pull out the search bar and the menu, whose accords
   expect(b.x, "beside its arrow").toBeGreaterThan(a.x + a.width);
   expect(Math.abs(b.y - a.y), "level with it").toBeLessThan(3);
   await expect(page.locator(".net-query")).toBeFocused();
-  await page.keyboard.type("cedar");
+  // IT ANSWERS AS IT IS TYPED ("make the search dynamic", 2026-09-29): the
+  // word still being typed may be the beginning of one — "ceda" finds the
+  // cedars already, and Cedarwood — the part typed so far marked in each.
+  const before = await state(page);
+  await page.keyboard.type("ceda");
+  const early = (await state(page)).hits;
+  expect(early.length, "answers before the word is finished").toBeGreaterThanOrEqual(found.length);
+  found.forEach((f) => expect(early, f + " already").toContain(f));
+  await expect(page.locator(".net-result-mark").first()).toHaveText(/^ceda$/i);
+  // A word finished (a space after it) is the library's rule again: that
+  // word, or its plural, and nothing that only begins with it.
+  await page.keyboard.type("r ");
   expect((await state(page)).hits.slice().sort(), "the library's own answers").toEqual(found);
   await expect(page.locator(".net-result")).toHaveCount(found.length);
   await expect(page.locator(".net-count")).toHaveText(found.length + " / " + N);
-  await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(N - found.length);
-  expect((await state(page)).faintest, "the rest translucent").toBeLessThan(0.2);
+  // AND NOTHING HAPPENS BEHIND IT: no note dimmed or lit, nothing chosen,
+  // nothing moved ("i dont want anything to happen in the background").
+  await page.waitForTimeout(800);
+  let s = await state(page);
+  expect(s.dim, "nothing dimmed").toBe(0);
+  expect(s.faintest, "nothing translucent").toBeGreaterThan(0.99);
+  expect(s.selected).toBeNull();
+  expect(s.u).toBe(before.u);
+  expect(s.focus).toBe(before.focus);
+  // AN ANSWER PRESSED only brings its note's window up, rising: nothing
+  // chosen on the drawing, nothing gone to, nothing dimmed.
+  const first = (await page.locator(".net-result .net-result-name").first().textContent()).trim();
+  expect(found, "a note answered").toContain(first);
+  await page.locator(".net-result").first().click();
+  const win = page.locator(".net-note");
+  await expect(win).toBeVisible();
+  await expect(win).toHaveClass(/is-rising/);
+  await expect(win.locator(".net-note-name")).toHaveText(first);
+  expect((await state(page)).note).toBe(first);
+  await page.waitForTimeout(800);
+  s = await state(page);
+  expect(s.selected, "nothing chosen on the drawing").toBeNull();
+  expect(s.flying, "nothing gone to").toBe(false);
+  expect(s.u).toBe(before.u);
+  expect(s.focus).toBe(before.focus);
+  expect(s.dim, "nothing dimmed behind it").toBe(0);
+  await page.keyboard.press("Escape");
+  await expect(win).toBeHidden();
+  expect((await state(page)).note).toBeNull();
   // Its × empties it; Escape empties it, and then puts it away.
+  if (!(await bar.isVisible())) await searchArrow.click();
+  await expect(bar).toBeVisible();
+  await page.locator(".net-query").fill("cedar");
   await page.locator(".net-clear").click();
   expect((await state(page)).query).toBe("");
-  await expect.poll(async () => (await state(page)).dim, { timeout: 8000 }).toBe(0);
+  await expect(page.locator(".net-result")).toHaveCount(0);
   await page.keyboard.type("cedar");
   await page.keyboard.press("Escape");
   expect((await state(page)).query).toBe("");
@@ -770,8 +811,11 @@ test("once apart, a note pressed opens its own window over the page out of focus
 });
 
 /* THE WAY BETWEEN THEM: the dropdown, the arrows either side of it, the
-   keyboard, a bridge, a network's name — every journey from one network to
-   another bending in towards the centre — and back to the centre. */
+   keyboard, a network's middle node, its name — every journey from one
+   network to another bending in towards the centre — and back to the
+   centre. Seeing every accord, the bridges and the notes answer nothing
+   (2026-09-29); an accord arrived at comes up whole, the rest faded back,
+   and fits the window. */
 test("the centre joins every network, and going from one accord to another is easy", async ({ page }) => {
   test.setTimeout(150000);
   const errors = collectPageErrors(page);
@@ -808,21 +852,70 @@ test("the centre joins every network, and going from one accord to another is ea
   await page.keyboard.press("Home");
   await at("centre");
   await settled();
-  // A bridge from the centre: pointed at it says where it goes; pressed, it
-  // goes there.
+  // SEEING EVERY ACCORD, only their middle nodes answer (2026-09-29: "I
+  // want you not to be able to click the lines to take you to those
+  // clusters. I want you to be unable to click on individual notes in the
+  // expanded view in the 'every accord' view. I want you to be able to
+  // click on the cluster centers however, and go to that cluster").
+  // A BRIDGE is only a line: pointed at, it says nothing; pressed, nothing.
   const B = await page.evaluate(() => window.NetScene.bridge("SPI"));
-  let found = null;
+  const middles = await page.evaluate(() => window.NetScene.accords().map((A) => window.NetScene.network(A.code)));
+  const clear = (x, y) => middles.every((m) => Math.hypot(m.x - x, m.y - y) > 40);
+  let onLine = null;
   for (const u of [0.5, 0.4, 0.6, 0.3, 0.7]) {
     const x = B.a.x + (B.b.x - B.a.x) * u, y = B.a.y + (B.b.y - B.a.y) * u;
-    await page.mouse.move(x, y);
-    await page.waitForTimeout(80);
-    if ((await stage.getAttribute("data-over-bridge")) === "SPI") { found = { x, y }; break; }
+    if (clear(x, y) && Math.hypot(x - B.a.x, y - B.a.y) > 40) { onLine = { x, y }; break; }
   }
-  expect(found, "the bridge found on the window").not.toBeNull();
+  expect(onLine, "a stretch of the bridge clear of every middle node").not.toBeNull();
+  await page.mouse.move(onLine.x, onLine.y);
+  await page.waitForTimeout(200);
+  await expect(stage).toHaveAttribute("data-over-middle", "");
+  await page.mouse.click(onLine.x, onLine.y);
+  await page.waitForTimeout(400);
+  expect((await state(page)).flying, "the line goes nowhere").toBe(false);
+  expect((await state(page)).focus).toBe("centre");
+  // A NOTE, seen from the centre, answers nothing: not named under the
+  // hand, not chosen when pressed.
+  const loose = await page.evaluate((middles) => {
+    for (const n of window.NetScene.notes()) {
+      const p = window.NetScene.note(n.name);
+      if (p.z < 1 && p.x > 250 && p.x < innerWidth - 250 && p.y > 120 && p.y < innerHeight - 160 &&
+          middles.every((m) => Math.hypot(m.x - p.x, m.y - p.y) > 45)) return { name: n.name, x: p.x, y: p.y };
+    }
+    return null;
+  }, middles);
+  expect(loose, "a note in view, clear of the middle nodes").not.toBeNull();
+  await page.mouse.move(loose.x, loose.y);
+  await page.waitForTimeout(300);
+  await expect(page.locator(".net-hover"), "pointed at, it says nothing").not.toHaveClass(/is-on/);
+  await page.mouse.click(loose.x, loose.y);
+  await page.waitForTimeout(400);
+  let s = await state(page);
+  expect(s.selected, "pressed, nothing chosen").toBeNull();
+  expect(s.note, "and no window").toBeNull();
+  expect(s.flying, "and nothing gone to").toBe(false);
+  // A MIDDLE NODE: pointed at, it swells and says where it goes; pressed,
+  // it goes there.
+  const M = await page.evaluate(() => window.NetScene.network("SPI"));
+  await page.mouse.move(M.x + 2, M.y + 2);
+  await expect(stage).toHaveAttribute("data-over-middle", "SPI", { timeout: 3000 });
   await expect(page.locator(".net-bridge")).toContainText("Spice");
-  await page.mouse.click(found.x, found.y);
+  await page.mouse.click(M.x + 2, M.y + 2);
   await at("SPI");
+  // The journey there FADES: the centre and the other networks stepping
+  // back as Spice comes up whole — none of it cut.
   await settled();
+  s = await state(page);
+  const codes = (await page.evaluate(() => window.NetScene.accords())).map((A) => A.code);
+  s.away.forEach((v, k) => { if (codes[k] === "SPI") expect(v).toBeGreaterThan(0.99); else expect(v, codes[k] + " stepped back").toBeLessThan(0.12); });
+  // AND IT FITS THE WINDOW: every note of Spice on the screen.
+  const spice = await page.evaluate(() => window.NetScene.notes().filter((n) => n.code === "SPI").map((n) => window.NetScene.note(n.name)));
+  spice.forEach((p) => {
+    expect(p.x, "inside the window").toBeGreaterThan(0);
+    expect(p.x).toBeLessThan(1440);
+    expect(p.y).toBeGreaterThan(0);
+    expect(p.y).toBeLessThan(900);
+  });
   // Back to the centre from the dropdown, and to a network by its name.
   await page.locator(".net-drop-button").click();
   await page.locator('.net-drop-option[data-to="-1"]').click();

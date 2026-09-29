@@ -268,8 +268,11 @@
   // turn redder and have the text appear." It swells by this much, over
   // about a fifth of a second.
   const HUB_SWELL = 0.24, HUB_HOVER_RATE = 0.012;
-  const FLY_MS = 2300;
-  const FLY_NEAR_MS = 1600;
+  // A journey from one network to another, by way of the centre, and one
+  // from the centre out or back — gentler and a little longer since
+  // 2026-09-29 ("smoothen out the animation of going cluster to cluster").
+  const FLY_MS = 2900;
+  const FLY_NEAR_MS = 2000;
   const FADE_RATE = 0.0072;             // translucency, eased: gone in ~0.5s
   const GHOST = 0.1;
   const SPIN = 0.00008;                 // the one network's turn, radians a ms
@@ -377,19 +380,26 @@
     });
     return { uses, tiers, fragrances };
   }
-  // DIRECT WORDS ONLY, the library's rule: every word typed must BE a word
-  // in the note's name or one of its other spellings (a plural counts).
+  // DIRECT WORDS, the library's rule: every word typed must BE a word in
+  // the note's name or one of its other spellings (a plural counts) — but
+  // the word still being typed, with no space after it yet, may be the
+  // beginning of one, so that the answers come as it is typed ("make the
+  // search dynamic", 2026-09-29). A whole word answers before a beginning.
   const words = (text) => norm(text).split(" ").filter(Boolean);
   const same = (a, b) => a === b || a === b + "s" || b === a + "s" || a === b + "es" || b === a + "es";
   function answer(n, q) {
     const asked = words(q);
     if (!asked.length) return 0;
+    const typing = !/\s$/.test(q);
     let best = 0;
     [n.name].concat(n.aka).forEach((name, i) => {
       const mine = words(name);
-      if (!asked.every((w) => mine.some((m) => same(m, w)))) return;
-      const whole = mine.length === asked.length ? 3 : same(mine[0], asked[0]) ? 2 : 1;
-      best = Math.max(best, whole - (i ? 0.1 : 0));
+      let partly = false;
+      const ok = asked.every((w, j) => mine.some((m) => same(m, w)) ||
+        (typing && j === asked.length - 1 && mine.some((m) => m.startsWith(w)) && (partly = true)));
+      if (!ok) return;
+      const whole = mine.length === asked.length ? 3 : same(mine[0], asked[0]) || mine[0].startsWith(asked[0]) ? 2 : 1;
+      best = Math.max(best, whole - (partly ? 1.5 : 0) - (i ? 0.1 : 0));
     });
     return best;
   }
@@ -1046,15 +1056,96 @@
     bridgePulses.frustumCulled = false;
     scene.add(bridgePulses);
 
-    // Specks in the far air.
-    const dust = [];
-    for (let i = 0; i < 900; i++) {
+    // THE AIR: specks in the far air — and since 2026-09-29 not still ("I
+    // would also like the background to be a little dynamic, not just dots
+    // in 3d space on a gray background"): each drifts on a slow orbit of
+    // its own and twinkles, and the whole of it turns, slower than anything
+    // else; now and then two near specks are joined by a hairline that comes
+    // and goes, a constellation found and lost; and once in a while a faint
+    // streak crosses far behind. With motion turned off the specks stand
+    // still and nothing crosses. (The background's own grey is untouched:
+    // a gradient there drew rings, 2026-09-28.)
+    const DUST = 900, THREADS = 14;
+    const dustHome = new Float32Array(DUST * 3), dustWay = new Float32Array(DUST * 3);
+    const dustPhase = new Float32Array(DUST), dustRate = new Float32Array(DUST), dustNear = new Int32Array(DUST);
+    for (let i = 0; i < DUST; i++) {
       const v = new THREE.Vector3(gauss(), gauss(), gauss()).normalize().multiplyScalar(45 + rnd() * 60);
-      dust.push(v.x, v.y, v.z);
+      dustHome[i * 3] = v.x; dustHome[i * 3 + 1] = v.y; dustHome[i * 3 + 2] = v.z;
+      const w = new THREE.Vector3(gauss(), gauss(), gauss()).normalize().multiplyScalar(0.8 + rnd() * 1.6);
+      dustWay[i * 3] = w.x; dustWay[i * 3 + 1] = w.y; dustWay[i * 3 + 2] = w.z;
+      dustPhase[i] = rnd() * Math.PI * 2;
+      dustRate[i] = 0.5 + rnd();
+    }
+    for (let i = 0; i < DUST; i++) {               // each speck's nearest, for the threads
+      let best = -1, bd = Infinity;
+      for (let j = 0; j < DUST; j++) {
+        if (j === i) continue;
+        const dx = dustHome[i * 3] - dustHome[j * 3], dy = dustHome[i * 3 + 1] - dustHome[j * 3 + 1], dz = dustHome[i * 3 + 2] - dustHome[j * 3 + 2];
+        const d = dx * dx + dy * dy + dz * dz;
+        if (d < bd) { bd = d; best = j; }
+      }
+      dustNear[i] = best;
     }
     const dustGeo = new THREE.BufferGeometry();
-    dustGeo.setAttribute("position", new THREE.Float32BufferAttribute(dust, 3));
-    scene.add(new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0x8a8480, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0.55, fog: false })));
+    dustGeo.setAttribute("position", dynamic(DUST, 3));
+    dustGeo.setAttribute("color", dynamic(DUST, 3));
+    const dustPts = new THREE.Points(dustGeo, new THREE.PointsMaterial({ size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0.6, fog: false, vertexColors: true }));
+    dustPts.frustumCulled = false;
+    scene.add(dustPts);
+    const threadGeo = new THREE.BufferGeometry();
+    threadGeo.setAttribute("position", dynamic((THREADS + 1) * 2, 3));
+    threadGeo.setAttribute("color", dynamic((THREADS + 1) * 2, 3));
+    const threadLines = new THREE.LineSegments(threadGeo, new THREE.LineBasicMaterial(additive({ vertexColors: true })));
+    threadLines.frustumCulled = false;
+    scene.add(threadLines);
+    const threads = Array.from({ length: THREADS }, () => ({ a: 0, b: 0, t0: -1e9, life: 1 }));
+    const streak = { t0: -1e9, next: 5000, from: new THREE.Vector3(), way: new THREE.Vector3() };
+    const DUST_RGB = [0x8a / 255, 0x84 / 255, 0x80 / 255];
+    let airDrawn = false;
+    function air(t) {
+      if (still && airDrawn) return;
+      airDrawn = true;
+      const pos = dustGeo.attributes.position.array, col = dustGeo.attributes.color.array;
+      const tt = still ? 0 : t;
+      for (let i = 0; i < DUST; i++) {
+        const o = i * 3, r = dustRate[i], ph = dustPhase[i];
+        const a = Math.sin(tt * 0.00021 * r + ph), b = Math.cos(tt * 0.00017 * r + ph * 1.3);
+        pos[o] = dustHome[o] + dustWay[o] * a;
+        pos[o + 1] = dustHome[o + 1] + dustWay[o + 1] * b;
+        pos[o + 2] = dustHome[o + 2] + dustWay[o + 2] * a * b;
+        const tw = still ? 0.85 : 0.62 + 0.38 * Math.sin(tt * 0.0011 * r + ph * 2.1);
+        col[o] = DUST_RGB[0] * tw; col[o + 1] = DUST_RGB[1] * tw; col[o + 2] = DUST_RGB[2] * tw;
+      }
+      dustGeo.attributes.position.needsUpdate = dustGeo.attributes.color.needsUpdate = true;
+      dustPts.rotation.y = threadLines.rotation.y = tt * 0.0000125;
+      const lp = threadGeo.attributes.position.array, lc = threadGeo.attributes.color.array;
+      threads.forEach((th, k) => {
+        let age = (t - th.t0) / th.life;
+        if (!still && (age >= 1 || age < 0) && Math.random() < 0.012) {
+          th.a = Math.floor(Math.random() * DUST); th.b = dustNear[th.a]; th.t0 = t; th.life = 4200 + Math.random() * 3800; age = 0;
+        }
+        const on = still || age < 0 || age > 1 ? 0 : Math.sin(Math.PI * age) * 0.3;
+        for (let e = 0; e < 2; e++) {
+          const i = (e ? th.b : th.a) * 3, o = k * 6 + e * 3;
+          lp[o] = pos[i]; lp[o + 1] = pos[i + 1]; lp[o + 2] = pos[i + 2];
+          lc[o] = 0.66 * on; lc[o + 1] = 0.6 * on; lc[o + 2] = 0.58 * on;
+        }
+      });
+      // The streak, far behind: a short line crossing, brightest at its head.
+      if (!still && t - streak.t0 > streak.next) {
+        streak.from.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize().multiplyScalar(80 + Math.random() * 20);
+        streak.way.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).cross(streak.from).normalize();
+        streak.t0 = t; streak.next = 7000 + Math.random() * 8000;
+      }
+      const sa = (t - streak.t0) / 1500, o = THREADS * 6;
+      const glow = !still && sa >= 0 && sa <= 1 ? Math.sin(Math.PI * sa) * 0.55 : 0;
+      const hx = streak.from.x + streak.way.x * sa * 30, hy = streak.from.y + streak.way.y * sa * 30, hz = streak.from.z + streak.way.z * sa * 30;
+      lp[o] = hx; lp[o + 1] = hy; lp[o + 2] = hz;
+      lp[o + 3] = hx - streak.way.x * 6; lp[o + 4] = hy - streak.way.y * 6; lp[o + 5] = hz - streak.way.z * 6;
+      lc[o] = glow; lc[o + 1] = glow * 0.92; lc[o + 2] = glow * 0.9;
+      lc[o + 3] = lc[o + 4] = lc[o + 5] = 0;
+      threadGeo.attributes.position.needsUpdate = threadGeo.attributes.color.needsUpdate = true;
+    }
 
     // ============================================================
     // THE CHROME: the two arrows on the left and what they pull out — the
@@ -1359,8 +1450,8 @@
     let flight = null;
     let psi = 0;
     let filter = "", previewing = "";     // an accord chosen by hand; one under the hand
-    let hits = [], hitSet = new Set();
-    let selected = -1, hovered = -1, overBridge = -1, overHub = false;
+    let hits = [];
+    let selected = -1, hovered = -1, overMiddle = -1, overHub = false;
     let panelOpen = false, searchOpen = false, noteOpen = false;   // the menu and the search start put away
     let viewOff = 0, viewLift = 0, fitted = false;
     const cam = { T: new THREE.Vector3(), d: 20, yaw: 0.35, pitch: ONE_PITCH, zoom: 1 };
@@ -1522,7 +1613,11 @@
       fitMin = halfFov();
       dOne = fit(ONE_R * 1.08);
       dAll = fitApart(cam.yaw, APART_PITCH);
-      accords.forEach((A) => { A.d = fit(A.R * 1.22); });
+      // Arrived at, a network is framed by how far it really reaches, with
+      // room for its notes' names — it stood cut off at the window's edge
+      // when framed by its nominal size (2026-09-29: "make it so that the
+      // clusters fit on the screen properly").
+      accords.forEach((A) => { A.d = fit(Math.max(A.R, A.ext) * 1.32); });
       wake();
     }
     /** How far back to stand to see every network at once, from where
@@ -1566,7 +1661,8 @@
     }
     function aim(t) {
       if (flight) {
-        const e = ease(clamp((t - flight.t0) / flight.ms, 0, 1));
+        const x = clamp((t - flight.t0) / flight.ms, 0, 1);
+        const e = flight.soft ? 0.5 - 0.5 * Math.cos(Math.PI * x) : ease(x);
         along(e, cam.T);
         cam.d = lerp(flight.d, restDistance(), e) + flight.lift * Math.sin(Math.PI * e);
         if (flight.pose) {
@@ -1609,6 +1705,11 @@
         T: cam.T.clone(), d: cam.d, yaw: cam.yaw, pitch: cam.pitch, zoom: cam.zoom, pose,
         via: from >= 0 && k >= 0, lift: from >= 0 && k >= 0 ? dAll * 0.24 : 0,
         ms: still ? 1 : from >= 0 && k >= 0 ? FLY_MS : FLY_NEAR_MS, t0: performance.now(),
+        // A journey: its fades follow it (`journeyAt`), from how things
+        // stood when it set off, and it eases on a sine — slowest at each
+        // end, never hurried in the middle.
+        journey: true, from, to: k, soft: true,
+        seen0: accords.map((A) => A.seen), hub0: hubSeen,
       };
       focus = k;
       // THE FLASH, only on a journey (2026-09-28: "only when you go to a
@@ -1628,6 +1729,28 @@
       tagsFor();
       wake();
       if (still) aim(performance.now() + 10);
+    }
+    /** How far each network and the centre are seen, x of the way along a
+        journey — from how they stood when it set off. */
+    function journeyAt(t) {
+      const x = clamp((t - flight.t0) / flight.ms, 0, 1);
+      const from = flight.from, to = flight.to, pass = Math.sin(Math.PI * x), take = smooth(0, 0.16, x);
+      const blend = (was, now) => was + (now - was) * take;
+      let hub;
+      if (to >= 0 && from >= 0) hub = 0.07 + 0.7 * pass;
+      else if (to >= 0) hub = lerp(1, 0.07, smooth(0.25, 0.92, x));
+      else hub = lerp(0.07, 1, smooth(0.08, 0.75, x));
+      return {
+        hub: blend(flight.hub0, hub),
+        seen: (k) => {
+          let v;
+          if (to < 0) v = k === from ? 1 : lerp(AWAY, 1, smooth(0.12, 0.8, x));
+          else if (k === to) v = from < 0 ? 1 : lerp(AWAY, 1, smooth(0.35, 0.92, x));
+          else if (k === from) v = lerp(1, AWAY, smooth(0.04, 0.55, x));
+          else v = from >= 0 ? AWAY + (0.26 - AWAY) * pass : lerp(1, AWAY, smooth(0.1, 0.72, x));
+          return blend(flight.seen0[k], v);
+        },
+      };
     }
     function arrive() {
       flight = null;
@@ -1839,37 +1962,66 @@
       b.addEventListener("blur", () => hand(false));
     });
 
-    // THE SEARCH: direct words, as the library's own.
+    // THE SEARCH: direct words, as the library's own, answering as it is
+    // typed — each answer coming up in turn, the part of its name typed so
+    // far marked — and it touches nothing behind it: no note lit or dimmed,
+    // no network moved (2026-09-29: "when you search something, i dont want
+    // anything to happen in the background"). An answer pressed only opens
+    // its note's window, rising.
+    let shownHits = "";
+    function marked(name, q) {
+      const asked = words(q);
+      const frag = document.createDocumentFragment();
+      const lower = name.toLowerCase();
+      let at = 0;
+      const spans = [];
+      asked.forEach((w) => {
+        const re = new RegExp("(^|[^a-z0-9])(" + w.replace(/[^a-z0-9]/g, "") + ")", "i");
+        const m = w && re.exec(lower);
+        if (m) spans.push([m.index + m[1].length, m.index + m[1].length + m[2].length]);
+      });
+      spans.sort((a, b) => a[0] - b[0]).forEach(([a, b]) => {
+        if (a < at) return;
+        if (a > at) frag.appendChild(document.createTextNode(name.slice(at, a)));
+        frag.appendChild(el("mark", "net-result-mark")).textContent = name.slice(a, b);
+        at = b;
+      });
+      if (at < name.length) frag.appendChild(document.createTextNode(name.slice(at)));
+      return frag;
+    }
     function find() {
-      const q = query.value.trim();
+      const raw = query.value, q = raw.trim();
       hits = [];
       if (q) {
-        hits = notes.map((n) => ({ n, s: answer(n, q) })).filter((x) => x.s > 0)
+        hits = notes.map((n) => ({ n, s: answer(n, raw) })).filter((x) => x.s > 0)
           .sort((a, b) => b.s - a.s || a.n.name.localeCompare(b.n.name)).map((x) => x.n);
       }
-      hitSet = new Set(hits.map((n) => n.i));
       countOut.textContent = q ? hits.length + " / " + NOTE_COUNT : "";
       clearButton.disabled = !query.value;
+      // Only what has changed comes up again: an answer that stays, stays.
+      const now = hits.slice(0, 8).map((n) => n.name).join("|");
+      const was = new Set(shownHits.split("|"));
+      shownHits = now;
       results.innerHTML = "";
-      hits.slice(0, 8).forEach((n) => {
-        const li = el("li", "net-result");
+      hits.slice(0, 8).forEach((n, k) => {
+        const li = el("li", "net-result" + (was.has(n.name) ? "" : " is-new"));
         li.setAttribute("role", "option");
+        li.style.setProperty("--k", String(k));
         li.innerHTML = '<span class="net-dot" aria-hidden="true"></span><span class="net-result-name"></span><span class="net-result-code"></span>';
-        li.children[1].textContent = n.name;
+        li.children[1].appendChild(marked(n.name, raw));
         li.children[2].textContent = n.A.name;
-        li.addEventListener("click", () => { go(n); search.classList.remove("has-results"); });
+        li.addEventListener("click", () => { showNote(n); search.classList.remove("has-results"); });
         results.appendChild(li);
       });
       if (q && !hits.length) results.appendChild(el("li", "net-result is-none", "No note answers that."));
       search.classList.toggle("has-results", !!q);
       stage.dataset.query = q;
       stage.dataset.hits = String(hits.length);
-      markDirty = true;
       wake();
     }
     query.addEventListener("input", find);
     clearButton.addEventListener("click", () => { query.value = ""; find(); query.focus(); });
-    search.addEventListener("submit", (e) => { e.preventDefault(); if (hits[0]) { go(hits[0]); search.classList.remove("has-results"); } });
+    search.addEventListener("submit", (e) => { e.preventDefault(); if (hits[0]) { showNote(hits[0]); search.classList.remove("has-results"); } });
     query.addEventListener("keydown", (e) => {
       if (e.key !== "Escape") return;
       e.stopPropagation();
@@ -2134,6 +2286,17 @@
       if (focus !== n.A.k) travel(n.A.k);
       select(n.i, true);
     }
+    /** A note found by the search: only its window, rising — the network
+        stays exactly as it is, nothing selected on it, nothing moved. Its
+        window goes on the same way (its arrows, the notes it is with). */
+    let quiet = false;
+    function showNote(n) {
+      if (cmbTo === 1) { addTag(n); return; }
+      if (selected >= 0) { selected = -1; stage.classList.remove("is-selecting"); stage.dataset.selected = ""; markDirty = true; }
+      quiet = true;
+      openNote(n, true);
+      wake();
+    }
 
     // ============================================================
     // SELECTING a note (only once it has come apart): whole and lit, every
@@ -2142,6 +2305,7 @@
     // ============================================================
     function select(i, keep) {
       if (selected === i && !keep && noteOpen) { deselect(); return; }
+      quiet = false;
       selected = i;
       stage.classList.add("is-selecting");
       stage.dataset.selected = nodes[i].note.name;
@@ -2150,7 +2314,8 @@
       wake();
     }
     function deselect() {
-      if (selected < 0) return;
+      if (selected < 0) { if (noteOpen) { quiet = false; closeNote(); } return; }
+      quiet = false;
       selected = -1;
       closeNote();
       stage.classList.remove("is-selecting");
@@ -2479,12 +2644,12 @@
       if (t.dataset.source) { openSources(+t.dataset.source); return; }
       if (t.dataset.no) {
         const m = notes[+t.dataset.no - 1];
-        if (m) go(m);
+        if (m) { if (quiet) showNote(m); else go(m); }
       }
     });
     veil.addEventListener("click", () => { if (sourcesOpen) closeSources(); else deselect(); });
-    function openNote(n) {
-      if (!noteOpen) noteBack = document.activeElement;
+    function openNote(n, rising) {
+      if (!noteOpen) { noteBack = document.activeElement; note.classList.toggle("is-rising", !!rising); }
       fillNote(n);
       stage.dataset.note = n.name;
       if (!noteOpen) {
@@ -2584,6 +2749,11 @@
     const apartNow = () => uTo === 1 && u > 0.98;
     function nodeAt(x, y) {
       if (!answering()) return -1;
+      // Every accord at once, no note answers: only the middle nodes do,
+      // each the way to its network (2026-09-29: "I want you to be unable
+      // to click on individual notes in the expanded view in the 'every
+      // accord' view").
+      if (cmbTo !== 1 && focus < 0) return -1;
       let best = -1, bestScore = Infinity;
       const s = scale();
       for (let k = 0; k < NOTE_COUNT; k++) {
@@ -2602,18 +2772,21 @@
       }
       return best;
     }
-    function bridgeAt(x, y) {
-      if (!apartNow()) return -1;
-      let best = -1, bestD = 9;
-      const a = project(0, 0, 0), ax = toX(a), ay = toY(a), az = a.z;
-      if (az > 1) return -1;
+    /** An accord's MIDDLE NODE under the hand — seeing every accord at
+        once — which goes to its network when pressed. (The bridges did,
+        until 2026-09-29: "I want you not to be able to click the lines to
+        take you to those clusters ... I want you to be able to click on
+        the cluster centers however".) */
+    function middleAt(x, y) {
+      if (!apartNow() || focus >= 0 || cmbTo === 1) return -1;
+      const s = scale();
+      let best = -1, bestOff = Infinity;
       accords.forEach((A) => {
-        const b = project(Gw[A.k].x, Gw[A.k].y, Gw[A.k].z), bx = toX(b), by = toY(b);
-        if (b.z > 1) return;
-        const dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy;
-        const t = clamp(((x - ax) * dx + (y - ay) * dy) / Math.max(1, L), 0.12, 0.82);
-        const d = Math.hypot(ax + dx * t - x, ay + dy * t - y);
-        if (d < bestD) { bestD = d; best = A.k; }
+        const c = Cw[A.k], p = project(c.x, c.y, c.z);
+        if (p.z > 1 || A.seen < 0.5) return;
+        const r = Math.max(15, (0.62 * s) / Math.max(0.5, camera.position.distanceTo(c)));
+        const off = Math.hypot(toX(p) - x, toY(p) - y);
+        if (off < r && off < bestOff) { bestOff = off; best = A.k; }
       });
       return best;
     }
@@ -2627,11 +2800,11 @@
       if (!hand || flight) return;
       const i = nodeAt(hand.x, hand.y);
       const h = i < 0 && hubAt(hand.x, hand.y);
-      const k = i < 0 && !h ? bridgeAt(hand.x, hand.y) : -1;
+      const k = i < 0 && !h ? middleAt(hand.x, hand.y) : -1;
       if (i !== hovered) { hovered = i; stage.dataset.hover = i >= 0 ? nodes[i].note.name : ""; }
       overHub = h;
-      overBridge = k;
-      stage.dataset.overBridge = k >= 0 ? accords[k].code : "";
+      overMiddle = k;
+      stage.dataset.overMiddle = k >= 0 ? accords[k].code : "";
       stage.dataset.overCentre = h ? "1" : "";
     }
 
@@ -2713,13 +2886,13 @@
       // seeing every accord until 2026-09-29; the dropdown, the arrows and
       // Home still do).
       if (hubAt(x, y)) { const p = project(0, 0, 0); openSources(0, { x: toX(p), y: toY(p) }); return; }
-      const k = bridgeAt(x, y);
-      if (k >= 0) { travel(focus === k ? -1 : k); return; }
+      const k = middleAt(x, y);
+      if (k >= 0) { travel(k); return; }
       deselect();
     };
     canvas.addEventListener("pointerup", letGo);
     canvas.addEventListener("pointercancel", letGo);
-    canvas.addEventListener("pointerleave", () => { if (!drag) { hand = null; hovered = -1; overBridge = -1; overHub = false; stage.dataset.hover = ""; wake(); } });
+    canvas.addEventListener("pointerleave", () => { if (!drag) { hand = null; hovered = -1; overMiddle = -1; overHub = false; stage.dataset.hover = ""; wake(); } });
     canvas.addEventListener("wheel", (e) => {
       e.preventDefault();
       if (flight) return;
@@ -2787,14 +2960,14 @@
     accords.forEach((A) => { A.seen = 1; A.signalAt = -1e9; });
 
     // What each node is asked to be, read once a frame rather than a node.
-    let onlyNow = "", searchingNow = false, focusNow = -1, tagging = false;
+    let onlyNow = "", focusNow = -1, tagging = false;
     function want(i) {
       const n = nodes[i];
       let o = 1;
       if (onlyNow && n.A.code !== onlyNow) o = GHOST;
-      if (searchingNow && !hitSet.has(i)) o = GHOST;
-      // At an accord, the rest of the library steps back out of its way.
-      if (focusNow >= 0 && n.A.k !== focusNow) o = Math.min(o, AWAY);
+      // At an accord, the rest of the library steps back out of its way —
+      // as its network does, and on a journey as the lens goes (`seen`).
+      if (uTo === 1 && n.A.seen < 1) o = Math.min(o, n.A.seen);
       // Combinations: the fillers thinner; and with tags, only the tags —
       // and, with one, what it is found with; with more, what could still
       // be added shown, not lit.
@@ -2913,6 +3086,7 @@
       const wall = Math.min(3600000, Math.max(0, t - (lastT || t)));
       const dt = Math.min(50, wall);
       lastT = t;
+      air(t);
       if (!born) born = t;
       if (!still) clock += dt;
       if (!loaded) loadT += dt;
@@ -2992,7 +3166,6 @@
       // At an accord the one you are at is what is lit — the menu's hand
       // does not take it away ("i want that one to be in focus").
       onlyNow = focusNow >= 0 ? "" : previewing || filter;
-      searchingNow = hits.length > 0 || query.value.trim() !== "";
 
       // A note just added in combinations: how far its lines have come.
       const tx = still ? 1 : (t - tagAt) / TAG_MS;
@@ -3009,10 +3182,19 @@
       if (changed) sets.forEach((set) => { set.opacity.needsUpdate = true; });
 
 
-      hubSeen += ((focusNow >= 0 ? 0.07 : 1) - hubSeen) * fade;
+      // ON A JOURNEY the networks fade with the lens rather than ahead of
+      // it (2026-09-29: "smoothen out the animation of going cluster to
+      // cluster (with fading ...)"): the one left goes as the lens leaves
+      // it, the one gone to comes up as the lens nears it, and by way of
+      // the centre the rest come up a little as it passes; back to the
+      // centre, all of them come up together.
+      const J = flight && flight.journey && uTo === 1 ? journeyAt(t) : null;
+      if (J) hubSeen = J.hub;
+      else hubSeen += ((focusNow >= 0 ? 0.07 : 1) - hubSeen) * fade;
       accords.forEach((A) => {
         const to = focusNow >= 0 && A.k !== focusNow ? AWAY : 1;
-        A.seen += (to - A.seen) * fade;
+        if (J) A.seen = J.seen(A.k);
+        else A.seen += (to - A.seen) * fade;
         if (Math.abs(A.seen - to) > 0.002) settling = true;
       });
       if (Math.abs(hubSeen - (focusNow >= 0 ? 0.07 : 1)) > 0.002) settling = true;
@@ -3060,7 +3242,7 @@
           let b = baseRGB[i * 3 + 2] * ig + goldRGB[i * 3 + 2] * gold;
           r += (1 - r) * wk; g += (1 - g) * wk; b += (1 - b) * wk;
           const tag = chosenSet.has(i);
-          const hot = i === selected ? 0.6 : tag ? 0.55 : i === hovered ? 0.3 : searchingNow && hitSet.has(i) ? 0.2 : partnerOf[i] * 0.12;
+          const hot = i === selected ? 0.6 : tag ? 0.55 : i === hovered ? 0.3 : partnerOf[i] * 0.12;
           if (hot) { r += (1 - r) * hot; g += (1 - g) * hot; b += (1 - b) * hot; }
           const li = lit[i] * 0.55;
           if (li > 0.01) { r += (1 - r) * li; g += (1 - g) * li; b += (1 - b) * li; }
@@ -3182,16 +3364,20 @@
         A.coreGroup.visible = A.frame.visible = show > 0.01;
         if (show <= 0.01) return;
         const c = Cw[A.k];
+        // Pointed at, seeing every accord, it swells and brightens — the way
+        // to its network (the bridge to it lights too).
+        A.hover = (A.hover || 0) + ((overMiddle === A.k && !flight ? 1 : 0) - (A.hover || 0)) * (still ? 1 : 1 - Math.exp(-dt * HUB_HOVER_RATE));
         A.coreGroup.position.copy(c);
-        A.coreGroup.scale.setScalar(0.3 + 0.7 * show);
+        A.coreGroup.scale.setScalar((0.3 + 0.7 * show) * (1 + HUB_SWELL * 1.6 * A.hover));
+        A.coreBall.material.emissiveIntensity = 0.6 + 0.9 * A.hover;
         A.coreCage.rotation.set(t * 0.0008, t * 0.0011 + A.k, 0);
         const flash = !still && A.arrived > -40 && A.arrived < 500 ? Math.exp(-Math.pow(A.arrived / 180, 2)) : 0;
         const dimmed = (onlyNow && onlyNow !== A.code ? 0.3 : 1) * A.seen;
         const far = fogOf(camera.position.distanceTo(c));
         A.coreBall.material.opacity = dimmed;
         A.coreCage.material.opacity = (0.75 + flash * 0.25) * show * dimmed * far;
-        A.coreGlow.material.opacity = (0.7 + flash) * show * dimmed * far;
-        A.coreGlow.material.size = 1.6 + flash * 1.4;
+        A.coreGlow.material.opacity = Math.min(1, (0.7 + flash + 0.3 * A.hover) * show * dimmed * far);
+        A.coreGlow.material.size = 1.6 + flash * 1.4 + A.hover * 1.2;
         A.frame.position.copy(c);
         A.frame.quaternion.copy(A.q).premultiply(qs.setFromAxisAngle(UP, psi));
         A.frame.scale.setScalar(A.R * 1.12);
@@ -3232,7 +3418,7 @@
       oneRing.rotation.y = -psi * 1.6;
       const ringIn = front < 2 ? smooth(0.95, 1.18, front) : 1;
       oneRing.scale.setScalar((0.9 + 0.1 * ringIn) * (1 + SPREAD * 0.8 * cp.spread));
-      oneRing.material.opacity = 0.55 * ph.one * ringIn * (only || hitSet.size || tagging ? 0.5 : 1);
+      oneRing.material.opacity = 0.55 * ph.one * ringIn * (only || tagging ? 0.5 : 1);
       oneRing.material.color.copy(frameColour.setHex(FRAME_RED)).lerp(new THREE.Color(0x9a7a38), gold);
       // The spark at the centre the page opens from.
       spark.visible = front < 2;
@@ -3282,16 +3468,16 @@
         bridgePos[o] = v1.x; bridgePos[o + 1] = v1.y; bridgePos[o + 2] = v1.z;
         bridgePos[o + 3] = v2.x; bridgePos[o + 4] = v2.y; bridgePos[o + 5] = v2.z;
         const dimmed = (only && only !== A.code ? 0.35 : 1) * (focusNow === k ? 0.12 + 0.88 * hubSeen : A.seen);
-        const litB = (overBridge === k || focusNow === k ? 1.8 : 1) * reach * (selected >= 0 ? 0.5 : 1) * dimmed;
+        const litB = (overMiddle === k || focusNow === k ? 1.8 : 1) * reach * (selected >= 0 ? 0.5 : 1) * dimmed;
         const fa = fogOf(v1.distanceTo(camera.position)), fb = fogOf(v2.distanceTo(camera.position));
         bridgeCol[o] = 0.85 * litB * fa; bridgeCol[o + 1] = 0.8 * litB * fa; bridgeCol[o + 2] = 0.8 * litB * fa;
         bridgeCol[o + 3] = 0.95 * litB * fb; bridgeCol[o + 4] = 0.35 * litB * fb; bridgeCol[o + 5] = 0.38 * litB * fb;
         for (let j = 0; j < BP; j++) {
-          const w = ((still ? 0 : t) * 0.00014 * (overBridge === k ? 2.5 : 1) + j / BP + k * 0.13) % 1;
+          const w = ((still ? 0 : t) * 0.00014 * (overMiddle === k ? 2.5 : 1) + j / BP + k * 0.13) % 1;
           const x = j % 2 ? 1 - w : w;
           const q = (k * (BP + 1) + j) * 3;
           bpPos[q] = lerp(v1.x, v2.x, x); bpPos[q + 1] = lerp(v1.y, v2.y, x); bpPos[q + 2] = lerp(v1.z, v2.z, x);
-          const f = reach * Math.sin(Math.PI * x) * (overBridge === k ? 1.2 : 0.55) * dimmed * lerp(fa, fb, x);
+          const f = reach * Math.sin(Math.PI * x) * (overMiddle === k ? 1.2 : 0.55) * dimmed * lerp(fa, fb, x);
           bpCol[q] = f; bpCol[q + 1] = f * 0.7; bpCol[q + 2] = f * 0.72;
         }
         // THE SIGNAL, out along this bridge, when a journey sent one.
@@ -3441,10 +3627,9 @@
         move(hoverTag, toX(p) + 14, toY(p) + 10);
         hoverTag.classList.add("is-on");
       } else hoverTag.classList.remove("is-on");
-      if (overBridge >= 0 && !overHub && !flight && hand) {
-        const k = overBridge;
-        bridgeTag.textContent = overHub ? "" :
-          focus === k ? "Back to the centre ←" : "Go to " + pad(k + 1) + " · " + accords[k].name + " →";
+      if (overMiddle >= 0 && !overHub && !flight && hand) {
+        const k = overMiddle;
+        bridgeTag.textContent = "Go to " + pad(k + 1) + " · " + accords[k].name + " →";
         move(bridgeTag, hand.x + 16, hand.y - 30);
         bridgeTag.classList.add("is-on");
       } else bridgeTag.classList.remove("is-on");
@@ -3528,7 +3713,6 @@
       // At an accord, the one you are at is what the ring lights.
       const only = uTo === 1 && focus >= 0 ? accords[focus].code : previewing || filter;
       const here = focus >= 0 ? accords[focus].code : "";
-      const searching = hits.length || query.value.trim();
       // A hairline round it, and a tick where one accord gives way to the next.
       g.strokeStyle = "rgba(236,232,226,0.12)";
       g.lineWidth = 1;
@@ -3544,15 +3728,13 @@
         const i = n.i;
         const a = markAngles[i] + markTurn;
         const on = only ? n.A.code === only : true;
-        const hit = hitSet.has(i);
         const sel = i === selected;
-        const lift = (on && only) || hit ? 5 : 0;
+        const lift = on && only ? 5 : 0;
         const r = R + Math.min(9, Math.sqrt(n.uses) * 1.5) + lift;
         const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r * FLAT;
         const sz = sel ? 3 : 1 + Math.min(1.3, n.uses / 18);
         let alpha = on ? 0.85 : 0.13;
-        if (searching) alpha = hit ? 1 : 0.1;
-        g.fillStyle = hit || sel ? "rgba(255,255,255," + alpha + ")" :
+        g.fillStyle = sel ? "rgba(255,255,255," + alpha + ")" :
           n.A.code === here ? "rgba(255,120,126," + Math.max(alpha, 0.9) + ")" : "rgba(255,74,84," + alpha + ")";
         g.fillRect(x - sz / 2, y - sz / 2, sz, sz);
       });
