@@ -141,43 +141,51 @@ test("the menu opens the same way on every slide of the landing page", async ({ 
 /* THE SMELL OF ALDEHYDES, on the right of the menu — the owner,
    2026-09-29: "add some typography in the menu for the smell of aldehydes
    on the right side ... code several variations, send me screenshots and
-   then ill decide." Three versions, one shown, any other on the address
-   (`?menu-type=`). It stands right of the list without touching it, only
-   while the menu is open; it asks for its faces only once the menu has
-   been opened; it is ornament, kept from a screen reader; and it is not
-   there where there is no room for it. */
-test("the menu carries the smell of aldehydes on its right, in three versions", async ({ page }) => {
+   then ill decide." Three were made, and they chose THE MOLECULE; the
+   particles and the specimen came out of the code. It stands right of the
+   list without touching it, only while the menu is open; it is ornament,
+   kept from a screen reader; it asks for no faces of its own; and it is
+   not there where there is no room for it. */
+test("the menu carries the smell of aldehydes on its right: the molecule, and only it", async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/categories/theories.html");
   const aside = page.locator(".menu-aldehydes");
   await expect(aside).toHaveCount(1);
   await expect(aside).toHaveAttribute("aria-hidden", "true");
-  const shown = await aside.getAttribute("data-kind");
-  expect(["particles", "specimen", "molecule"]).toContain(shown);
-  const asked = () => page.evaluate(() => [...document.querySelectorAll("link[rel=stylesheet]")].some((l) => /Instrument\+Serif/.test(l.href)));
-  expect(await asked(), "no faces asked for before the menu opens").toBe(false);
   await page.locator(".menu-trigger").click();
   await expect.poll(() => aside.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
-  expect(await asked(), "asked for once it opens").toBe(true);
+  // The molecule: R–C(=O)–H in hairlines, a ring of what it smells of.
+  await expect(aside.locator("svg.ma-mol")).toBeVisible();
+  await expect(aside.locator(".ma-atoms text")).toHaveText(["C", "O", "R", "H"]);
+  await expect(aside.locator(".ma-bonds line")).toHaveCount(4);
+  await expect(aside.locator("svg.ma-mol textPath")).toContainText("metallic");
+  // The other two are gone, and so are the faces they needed.
+  await expect(page.locator(".ma-fizz, .ma-big, .ma-sheet")).toHaveCount(0);
+  expect(await page.evaluate(() => [...document.querySelectorAll("link[rel=stylesheet]")]
+    .some((l) => /Instrument\+Serif|Unbounded|Major\+Mono/.test(l.href))), "no faces of its own").toBe(false);
   const list = await page.locator(".menu-list").boundingBox();
   const box = await aside.boundingBox();
   expect(box.x, "right of the list, clear of it").toBeGreaterThan(list.x + list.width + 40);
   expect(box.x + box.width).toBeLessThanOrEqual(1440 - 40);
   await page.keyboard.press("Escape");
   await expect.poll(() => aside.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeLessThan(0.05);
-  // Each version, by the address.
-  for (const kind of ["particles", "specimen", "molecule"]) {
-    await page.goto("/categories/theories.html?menu-type=" + kind);
-    await expect(aside).toHaveAttribute("data-kind", kind);
-    await page.locator(".menu-trigger").click();
-    await expect.poll(() => aside.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
-    if (kind === "particles") await expect(aside.locator("canvas.ma-fizz")).toBeVisible();
-    if (kind === "specimen") await expect(aside.locator(".ma-big")).toHaveText("Aldehydes");
-    if (kind === "molecule") await expect(aside.locator("svg.ma-mol textPath")).toContainText("metallic");
-  }
+  // The address that showed the others shows the molecule.
+  await page.goto("/categories/theories.html?menu-type=particles");
+  await expect(page.locator(".menu-aldehydes svg.ma-mol")).toHaveCount(1);
   // No room beside the list on a narrow desktop window: not there.
   await page.setViewportSize({ width: 1024, height: 768 });
   await expect(aside).toBeHidden();
+  // On a tall phone, small in the corner under the list, on the screen.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/categories/theories.html");
+  await page.locator(".menu-trigger").click();
+  await expect.poll(() => aside.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
+  const small = await aside.boundingBox();
+  expect(small.x).toBeGreaterThanOrEqual(0);
+  expect(small.x + small.width).toBeLessThanOrEqual(390);
+  expect(small.y + small.height).toBeLessThanOrEqual(844);
+  const last = await page.locator(".menu-list li").last().boundingBox();
+  expect(small.y, "under the list").toBeGreaterThan(last.y);
   expect(errors).toEqual([]);
 });

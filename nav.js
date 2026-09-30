@@ -192,234 +192,65 @@ const SITE_LINKS = [
 // ============================================================
 // THE SMELL OF ALDEHYDES, on the right of the menu (2026-09-29 — the
 // owner: "add some typography in the menu for the smell of aldehydes on
-// the right side. use different fonts; or make it dynamic with particles
-// ... on theme (minimalist, particulate and/or geometric). if you want,
-// code several variations, send me screenshots and then ill decide").
+// the right side ... on theme (minimalist, particulate and/or geometric).
+// if you want, code several variations, send me screenshots and then ill
+// decide"). Three were made — the word in fizzing specks, a type specimen
+// in five faces, and this — and the owner chose THE MOLECULE; the other
+// two were taken out.
 //
-// Three versions, one shown — `MENU_TYPE` below, and `?menu-type=` on any
-// page's address to look at another without changing it:
-//
-//   "particles"  the word ALDEHYDES held in specks that fizz off it and
-//                rise like the bubbles in a glass, bursting as they go;
-//                what it smells of said under it, one word at a time.
-//   "specimen"   a type specimen: the word in a large italic, and what it
-//                smells of set in five faces and five sizes on a ruled
-//                ground, with the three aldehydes perfumery leans on
-//                most, by their formulas.
-//   "molecule"   the aldehyde itself, R–C(=O)–H, drawn in hairlines as a
-//                chemistry book draws it, a ring of what it smells of
-//                turning slowly round it, and a vapour of specks rising
-//                off the oxygen.
+// The aldehyde itself, R–C(=O)–H, drawn in hairlines as a chemistry book
+// draws it (the site's own icon's molecule), a ring of what it smells of
+// turning slowly round it, and a vapour of specks rising off the oxygen.
+// SVG and the stylesheet alone, in the site's own two faces.
 //
 // It is ornament, and is kept from a screen reader. It stands only where
-// there is room for it — beside the list on a wide window, under it on a
-// tall phone — and draws only while the menu is open. Its faces (three
-// more than the site's own two) are asked for the first time the menu is
-// opened, never before. With motion turned off it stands still.
+// there is room for it — beside the list on a wide window, in the corner
+// under it on a tall phone. With motion turned off it stands still.
 // ============================================================
 (function () {
   const overlay = document.getElementById("site-menu-overlay");
   if (!overlay) return;
-  const KINDS = ["particles", "specimen", "molecule"];
-  const MENU_TYPE = "molecule";
-  let asked = "";
-  try { asked = new URLSearchParams(window.location.search).get("menu-type") || ""; } catch (e) { /* an address with nothing to say */ }
-  const kind = KINDS.indexOf(asked) >= 0 ? asked : MENU_TYPE;
-  const still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // What an aldehyde smells of, as a perfumer says it.
   const WORDS = ["metallic", "cold", "fizzing", "soapy", "waxy", "clean linen", "snuffed candle", "orange peel"];
 
   const aside = document.createElement("div");
   aside.className = "menu-aldehydes";
-  aside.dataset.kind = kind;
   aside.setAttribute("aria-hidden", "true");
+  aside.innerHTML =
+    '<svg class="ma-mol" viewBox="0 0 400 400">' +
+      '<defs><path id="ma-ring-path" d="M200,200 m-168,0 a168,168 0 1,1 336,0 a168,168 0 1,1 -336,0"/></defs>' +
+      '<circle class="ma-orbit" cx="200" cy="200" r="150"/>' +
+      '<circle class="ma-orbit ma-orbit-2" cx="200" cy="200" r="186"/>' +
+      '<g class="ma-ring"><text class="ma-ring-text"><textPath href="#ma-ring-path" textLength="1040" lengthAdjust="spacing"></textPath></text></g>' +
+      // The bonds: C to O twice (a double bond), C to R and C to H at 120
+      // degrees below, stopping short of every letter.
+      '<g class="ma-bonds">' +
+        '<line x1="194" y1="176" x2="194" y2="120"/><line x1="206" y1="176" x2="206" y2="120"/>' +
+        '<line x1="188" y1="214" x2="140" y2="242"/><line x1="212" y1="214" x2="260" y2="242"/>' +
+      "</g>" +
+      '<g class="ma-atoms">' +
+        '<text x="200" y="203">C</text><text x="200" y="111">O</text>' +
+        '<text x="126" y="259">R</text><text x="274" y="259">H</text>' +
+      "</g>" +
+      '<g class="ma-vapour"></g>' +
+    "</svg>" +
+    '<p class="ma-caption"><span>R–CHO</span><span>The smell of aldehydes</span></p>';
+  aside.querySelector("textPath").textContent = WORDS.join("  ·  ") + "  ·  ";
+  // The vapour: specks rising off the oxygen, each on a clock of its own.
+  const vapour = aside.querySelector(".ma-vapour");
+  for (let i = 0; i < 18; i++) {
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("cx", String(200 + (Math.random() - 0.5) * 16));
+    c.setAttribute("cy", "92");
+    c.setAttribute("r", String(0.8 + Math.random() * 1.4));
+    c.style.setProperty("--drift", ((Math.random() - 0.5) * 60).toFixed(1) + "px");
+    c.style.setProperty("--rise", (-50 - Math.random() * 60).toFixed(1) + "px");
+    c.style.animationDelay = (-Math.random() * 4.8).toFixed(2) + "s";
+    c.style.animationDuration = (3.6 + Math.random() * 2.4).toFixed(2) + "s";
+    vapour.appendChild(c);
+  }
   overlay.appendChild(aside);
-
-  // Its faces: one stylesheet, asked for once; `faces` settles when it has
-  // arrived (or failed — the words then stand in the site's own).
-  let faces = null;
-  function askFonts() {
-    if (faces) return faces;
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Major+Mono+Display&family=Unbounded:wght@300;500&display=swap";
-    faces = new Promise((done) => { link.onload = link.onerror = () => done(); });
-    document.head.appendChild(link);
-    return faces;
-  }
-
-  let start = () => {}, stop = () => {};
-
-  if (kind === "specimen") {
-    // A TYPE SPECIMEN: the name large, what it smells of in five faces.
-    aside.innerHTML =
-      '<p class="ma-kicker"><span>The smell of</span><span>Specimen · 01</span></p>' +
-      '<p class="ma-big">Aldehydes</p>' +
-      '<div class="ma-sheet">' +
-        '<span class="ma-w ma-f-wide">Metallic</span>' +
-        '<span class="ma-w ma-f-geo">cold</span>' +
-        '<span class="ma-w ma-f-serif">soapy</span>' +
-        '<span class="ma-w ma-f-sans">waxy</span>' +
-        '<span class="ma-w ma-f-ital">fizzing</span>' +
-        '<span class="ma-w ma-f-mono">clean linen</span>' +
-        '<span class="ma-w ma-f-wide ma-small">snuffed candle</span>' +
-        '<span class="ma-w ma-f-serif ma-small">orange peel</span>' +
-      "</div>" +
-      '<p class="ma-formulas">' +
-        "<span><b>C<sub>10</sub>H<sub>20</sub>O</b> decanal</span>" +
-        "<span><b>C<sub>11</sub>H<sub>20</sub>O</b> undecylenic</span>" +
-        "<span><b>C<sub>12</sub>H<sub>24</sub>O</b> lauric</span>" +
-      "</p>";
-  } else if (kind === "molecule") {
-    // THE MOLECULE: R–C(=O)–H, a ring of words turning round it.
-    const ring = WORDS.join("  ·  ") + "  ·  ";
-    aside.innerHTML =
-      '<svg class="ma-mol" viewBox="0 0 400 400">' +
-        '<defs><path id="ma-ring-path" d="M200,200 m-168,0 a168,168 0 1,1 336,0 a168,168 0 1,1 -336,0"/></defs>' +
-        '<circle class="ma-orbit" cx="200" cy="200" r="150"/>' +
-        '<circle class="ma-orbit ma-orbit-2" cx="200" cy="200" r="186"/>' +
-        '<g class="ma-ring"><text class="ma-ring-text"><textPath href="#ma-ring-path" textLength="1040" lengthAdjust="spacing"></textPath></text></g>' +
-        // The bonds: C to O twice (a double bond), C to R and C to H at
-        // 120 degrees below, stopping short of every letter.
-        '<g class="ma-bonds">' +
-          '<line x1="194" y1="176" x2="194" y2="120"/><line x1="206" y1="176" x2="206" y2="120"/>' +
-          '<line x1="188" y1="214" x2="140" y2="242"/><line x1="212" y1="214" x2="260" y2="242"/>' +
-        "</g>" +
-        '<g class="ma-atoms">' +
-          '<text x="200" y="203">C</text><text x="200" y="111">O</text>' +
-          '<text x="126" y="259">R</text><text x="274" y="259">H</text>' +
-        "</g>" +
-        '<g class="ma-vapour"></g>' +
-      "</svg>" +
-      '<p class="ma-caption"><span>R–CHO</span><span>The smell of aldehydes</span></p>';
-    aside.querySelector("textPath").textContent = ring;
-    // The vapour: specks rising off the oxygen, each on a clock of its own.
-    const vapour = aside.querySelector(".ma-vapour");
-    for (let i = 0; i < 18; i++) {
-      const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      c.setAttribute("cx", String(200 + (Math.random() - 0.5) * 16));
-      c.setAttribute("cy", "92");
-      c.setAttribute("r", String(0.8 + Math.random() * 1.4));
-      c.style.setProperty("--drift", ((Math.random() - 0.5) * 60).toFixed(1) + "px");
-      c.style.setProperty("--rise", (-50 - Math.random() * 60).toFixed(1) + "px");
-      c.style.animationDelay = (-Math.random() * 4.8).toFixed(2) + "s";
-      c.style.animationDuration = (3.6 + Math.random() * 2.4).toFixed(2) + "s";
-      vapour.appendChild(c);
-    }
-  } else {
-    // THE PARTICLES: the word in specks, fizzing.
-    aside.innerHTML = '<canvas class="ma-fizz"></canvas><p class="ma-say"><span class="ma-say-of">smells</span><span class="ma-say-word"></span></p>';
-    const canvas = aside.querySelector("canvas");
-    const g = canvas.getContext("2d");
-    const sayWord = aside.querySelector(".ma-say-word");
-    let W = 0, H = 0, ratio = 1, home = [], bubbles = [], raf = 0, t0 = 0, word = -1, pointer = null;
-    const lay = () => {
-      const r = aside.getBoundingClientRect();
-      if (!r.width || !r.height) return false;
-      ratio = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 2);
-      W = r.width; H = Math.max(100, r.height - 44);
-      canvas.width = Math.round(W * ratio); canvas.height = Math.round(H * ratio);
-      canvas.style.width = W + "px"; canvas.style.height = H + "px";
-      // The word's inked pixels, as places for specks to stand.
-      const ink = document.createElement("canvas");
-      ink.width = Math.ceil(W); ink.height = Math.ceil(H);
-      const ig = ink.getContext("2d");
-      let size = Math.min(H * 0.62, W / 3.7);
-      ig.font = "italic 400 " + size + 'px "Instrument Serif", Georgia, serif';
-      const wide = ig.measureText("Aldehydes").width;
-      if (wide > W * 0.94) { size *= (W * 0.94) / wide; ig.font = "italic 400 " + size + 'px "Instrument Serif", Georgia, serif'; }
-      ig.textAlign = "center"; ig.textBaseline = "middle"; ig.fillStyle = "#000";
-      ig.fillText("Aldehydes", W / 2, H * 0.56);
-      const data = ig.getImageData(0, 0, ink.width, ink.height).data;
-      const step = Math.max(1.6, size / 48);
-      home = [];
-      for (let y = 0; y < ink.height; y += step) for (let x = 0; x < ink.width; x += step) {
-        if (data[(Math.floor(y) * ink.width + Math.floor(x)) * 4 + 3] > 128) home.push({ x: x + (Math.random() - 0.5) * step * 0.6, y: y + (Math.random() - 0.5) * step * 0.6, ox: 0, oy: 0, s: Math.random() < 0.12 ? 2 : 1.3, ph: Math.random() * 6.28 });
-      }
-      return true;
-    };
-    const draw = (now) => {
-      const t = still ? 0 : now - t0;
-      g.setTransform(ratio, 0, 0, ratio, 0, 0);
-      g.clearRect(0, 0, W, H);
-      // The word, trembling a hair, parting from the hand.
-      g.fillStyle = "#f0efe8";
-      for (const p of home) {
-        let dx = 0, dy = 0;
-        if (pointer) {
-          const ex = p.x - pointer.x, ey = p.y - pointer.y, d = Math.hypot(ex, ey);
-          if (d < 60) { const f = (1 - d / 60) * 14; dx = (ex / (d || 1)) * f; dy = (ey / (d || 1)) * f; }
-        }
-        p.ox += (dx - p.ox) * 0.12; p.oy += (dy - p.oy) * 0.12;
-        const tw = still ? 0 : Math.sin(t * 0.004 + p.ph) * 0.35;
-        g.globalAlpha = 0.86 + 0.14 * Math.sin(t * 0.002 + p.ph);
-        g.fillRect(p.x + p.ox + tw, p.y + p.oy, p.s, p.s);
-      }
-      // The fizz: now and then a speck leaves the word and rises, swaying,
-      // growing a little, and bursts into three.
-      if (!still && home.length && Math.random() < 0.5) {
-        const p = home[Math.floor(Math.random() * home.length)];
-        bubbles.push({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 0.2, vy: -0.35 - Math.random() * 0.5, r: 0.8, life: 0, end: 90 + Math.random() * 120, sway: Math.random() * 6.28, burst: 0 });
-      }
-      g.strokeStyle = "#f0efe8";
-      g.lineWidth = 0.7;
-      bubbles = bubbles.filter((b) => {
-        b.life++;
-        if (b.burst) {
-          g.globalAlpha = Math.max(0, 1 - b.burst / 14) * 0.7;
-          for (let k = 0; k < 3; k++) {
-            const a = b.sway + k * 2.09;
-            g.fillRect(b.x + Math.cos(a) * b.burst * 0.9, b.y + Math.sin(a) * b.burst * 0.9, 1, 1);
-          }
-          return ++b.burst < 14;
-        }
-        b.x += b.vx + Math.sin(b.life * 0.08 + b.sway) * 0.25; b.y += b.vy; b.r = Math.min(2.6, b.r + 0.012);
-        g.globalAlpha = 0.55 * Math.min(1, b.life / 12);
-        g.beginPath(); g.arc(b.x, b.y, b.r, 0, 6.283); g.stroke();
-        if (b.life > b.end || b.y < 4) b.burst = 1;
-        return true;
-      });
-      g.globalAlpha = 1;
-      // What it smells of, one word at a time.
-      const w = still ? 0 : Math.floor(t / 2400) % WORDS.length;
-      if (w !== word) {
-        word = w;
-        sayWord.classList.remove("is-on");
-        void sayWord.offsetWidth;
-        sayWord.textContent = WORDS[w];
-        sayWord.classList.add("is-on");
-      }
-      if (!still) raf = window.requestAnimationFrame(draw);
-    };
-    canvas.addEventListener("pointermove", (e) => { const r = canvas.getBoundingClientRect(); pointer = { x: e.clientX - r.left, y: e.clientY - r.top }; });
-    canvas.addEventListener("pointerleave", () => { pointer = null; });
-    start = () => {
-      if (!lay()) return;
-      window.cancelAnimationFrame(raf);
-      t0 = performance.now(); bubbles = []; word = -1;
-      raf = window.requestAnimationFrame(draw);
-      // Laid again once the italic has arrived, so the word is its own.
-      if (document.fonts && document.fonts.load) {
-        askFonts().then(() => document.fonts.load('italic 40px "Instrument Serif"'))
-          .then(() => { if (overlay.classList.contains("open")) lay(); }, () => {});
-      }
-    };
-    stop = () => { window.cancelAnimationFrame(raf); raf = 0; };
-    window.addEventListener("resize", () => { if (overlay.classList.contains("open")) lay(); });
-  }
-
-  // Opened and shut with the menu; its faces asked for on the first
-  // opening (or the moment the hand is on the button, a beat sooner).
-  const trigger = document.querySelector(".menu-trigger");
-  if (trigger) {
-    trigger.addEventListener("pointerenter", askFonts);
-    trigger.addEventListener("focus", askFonts);
-  }
-  new MutationObserver(() => {
-    if (overlay.classList.contains("open")) { askFonts(); start(); }
-    else window.setTimeout(() => { if (!overlay.classList.contains("open")) stop(); }, 900);
-  }).observe(overlay, { attributes: true, attributeFilter: ["class"] });
 })();
 
 // ============================================================

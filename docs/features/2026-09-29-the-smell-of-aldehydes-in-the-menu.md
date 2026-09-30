@@ -3,9 +3,9 @@ Date: 2026-09-29
 Files touched: `nav.js`, `style.css`, `tests/menu.spec.js`
 
 What changed: The menu — the same dark overlay on every page — carries **typography about the
-smell of aldehydes on its right**, beside the list of pages. There are **three versions**, one of
-which is shown (`MENU_TYPE` in `nav.js`, **the molecule** for now); the owner is to choose, and the
-other two will then come out of the code.
+smell of aldehydes on its right**, beside the list of pages: **the molecule**, R–C(=O)–H in
+hairlines with a ring of what it smells of turning round it. Three versions were made and shown;
+the owner chose the molecule, and **the particles and the specimen were taken out of the code**.
 
 ## What the owner asked
 
@@ -34,8 +34,11 @@ other two will then come out of the code.
   turning slowly** (a full turn in ninety seconds); a **vapour of specks rising off the oxygen**; and
   under it *R–CHO* and *The smell of aldehydes*. SVG and CSS alone.
 
-**`?menu-type=particles`** (or `specimen`, `molecule`) on any page's address shows that one without
-changing anything.
+**The owner chose the molecule** (2026-09-29, at the end of the round). The particles and the
+specimen, `MENU_TYPE`, `?menu-type=` and the three faces only they used (Instrument Serif, Major
+Mono Display, Unbounded, fetched when the menu first opened) are **gone from `nav.js` and
+`style.css`**; the molecule is drawn in the site's own two faces and fetches nothing. The two
+above are kept here for the reasoning, as the site keeps what it removed.
 
 ## Why / key decisions
 
@@ -44,33 +47,30 @@ changing anything.
   850px)`), and **under the list on a phone** that is tall enough (740px and more; the particles and
   the specimen across the foot, the molecule small in the corner). Between the two there is no room,
   and it is not there — the links are what the menu is for.
-- **Its faces are asked for the first time the menu is opened** (or the hand comes onto the button,
-  a beat sooner), never before: three families from Google Fonts — Instrument Serif, Major Mono
-  Display and Unbounded — on top of the site's own two, on every page, would be paid for by every
-  visit whether the menu is opened or not. The particles wait for the italic to arrive and draw the
-  word again in it.
+- **It asks for nothing** — no faces of its own, no canvas, no frame loop: an SVG and the
+  stylesheet's own animations. (While there were three, their faces were fetched the first time the
+  menu opened, so as not to be paid for by every visit.)
 - **Ornament, kept from a screen reader** (`aria-hidden`); nothing in it is a link.
-- **It draws only while the menu is open**, and stops a moment after it shuts.
+- **Its movement is the stylesheet's**: the ring turns once in ninety seconds and the vapour rises,
+  and neither costs anything while the menu is shut.
 - **It comes up a beat after the links** (0.45s), so the list is still what arrives first.
-- **With motion turned off** it stands still: no fizz, no turning ring, no rising vapour, nothing
-  coming in.
+- **With motion turned off** it stands still: no turning ring, no rising vapour, nothing coming in.
+  On a phone it stays in its corner then too (the first version nudged it out of place there).
 - It is inside the overlay, not on the body, so the Menu's dimming trap (`body > *:not(...)`) does
   not touch it. The test that no layer is drawn over the menu (`the menu opens the same way on every
   slide`) counts SVG outside it.
 
 ## How to test it
 
-`tests/menu.spec.js`, **`the menu carries the smell of aldehydes on its right, in three versions`**:
-one version shown, kept from a screen reader; no faces asked for before the menu opens, asked for
-once it does; standing right of the list and clear of it at 1440px; gone when the menu shuts; each
-of the three by `?menu-type=`; not there at 1024px.
+`tests/menu.spec.js`, **`the menu carries the smell of aldehydes on its right: the molecule, and
+only it`**: kept from a screen reader; its four atoms and four bonds, and its ring of words; nothing
+of the other two and none of their faces; right of the list and clear of it at 1440px; gone when the
+menu shuts; `?menu-type=particles` still shows the molecule; not there at 1024px; on a 390 × 844
+phone, small in the corner under the last link, on the screen.
 
-By eye: open the Menu; add `?menu-type=particles` or `?menu-type=specimen` to the address to see
-the others.
+By eye: open the Menu.
 
 ## Known issues / TODO
 
-- **The owner chooses one.** The other two then come out of `nav.js` and `style.css`, and
-  `MENU_TYPE` and `?menu-type=` with them.
 - The words are the common ones for the fatty aldehydes' smell, not the owner's own; they are theirs
   to change.

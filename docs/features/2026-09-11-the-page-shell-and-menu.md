@@ -242,8 +242,8 @@ drawn again and again by the page's own frames and move; and **in front, no time
 
 ## 2026-09-29 — the smell of aldehydes beside the menu; About me out of the dimming
 
-- **The menu carries typography on its right** — the smell of aldehydes, in one of three versions
-  the owner is to choose between. `nav.js` builds it into the overlay; it has [a report of its
+- **The menu carries typography on its right** — the smell of aldehydes: the molecule, which the
+  owner chose of three. `nav.js` builds it into the overlay; it has [a report of its
   own](2026-09-29-the-smell-of-aldehydes-in-the-menu.md). The test that nothing is drawn over the
   menu counts SVG outside it.
 - **`.about`, the home page's About me, is excluded from the menu's dimming rule** — it is built on

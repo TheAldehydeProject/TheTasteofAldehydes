@@ -314,17 +314,17 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
 .menu-list a:hover, .menu-list a:focus-visible { color: var(--brass); }
 .menu-list .menu-current { color: var(--brass); }
 
-/* THE SMELL OF ALDEHYDES, on the right of the menu (2026-09-29): built by
-   nav.js in one of three versions (`MENU_TYPE`, or `?menu-type=`). It
+/* THE SMELL OF ALDEHYDES, on the right of the menu (2026-09-29): the
+   molecule, built by nav.js — the version the owner chose of three. It
    stands in the room right of the list — the list is about 660px wide at
-   its full size, so from 1160px up — and under the list on a tall phone;
-   between the two there is no room, and it is not there. It comes up a
-   beat after the links. */
+   its full size, so from 1160px up — and small in the corner under the
+   list on a tall phone; between the two there is no room, and it is not
+   there. It comes up a beat after the links. */
 .menu-aldehydes {
   position: absolute;
   top: 50%;
   right: 64px;
-  width: min(520px, calc(100vw - 850px));
+  width: min(460px, calc(100vw - 850px));
   color: #f0efe8;
   opacity: 0;
   transform: translateY(-50%) translateY(14px);
@@ -341,105 +341,18 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
 @media (max-width: 700px) {
   .menu-aldehydes {
     top: auto;
-    bottom: 26px;
-    left: 24px;
-    right: 24px;
+    bottom: 16px;
+    right: 16px;
     width: auto;
     transform: translateY(14px);
   }
   .menu-overlay.open .menu-aldehydes { transform: none; }
+  .menu-aldehydes .ma-mol { width: 190px; }
+  .menu-aldehydes .ma-caption { display: none; }
 }
 @media (max-width: 700px) and (max-height: 739px) { .menu-aldehydes { display: none; } }
 
-/* 1 · THE PARTICLES */
-.menu-aldehydes[data-kind="particles"] { height: min(360px, 52vh); }
-.ma-fizz { display: block; }
-.ma-say {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin: 10px 0 0;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-}
-.ma-say-of { color: #6f6c66; }
-.ma-say-word { min-width: 12ch; opacity: 0; transform: translateY(4px); }
-.ma-say-word.is-on { opacity: 1; transform: none; transition: opacity 0.6s ease, transform 0.8s var(--menu-ease); }
-
-/* 2 · THE SPECIMEN: five faces on a ruled ground. */
-.menu-aldehydes[data-kind="specimen"] {
-  padding: 22px 0 18px;
-  border-top: 1px solid rgba(240, 239, 232, 0.5);
-  border-bottom: 1px solid rgba(240, 239, 232, 0.2);
-}
-.ma-kicker {
-  display: flex;
-  justify-content: space-between;
-  margin: 0;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: #8f8c81;
-}
-.ma-big {
-  margin: 6px 0 14px;
-  font-family: "Instrument Serif", Georgia, serif;
-  font-style: italic;
-  font-size: clamp(64px, 7.4vw, 112px);
-  line-height: 0.95;
-  letter-spacing: -0.01em;
-}
-.ma-sheet {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px 22px;
-  padding: 14px 0;
-  border-top: 1px solid rgba(240, 239, 232, 0.2);
-  border-bottom: 1px solid rgba(240, 239, 232, 0.2);
-  /* a faint squared ground under the words */
-  background-image: linear-gradient(rgba(240, 239, 232, 0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(240, 239, 232, 0.05) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-.ma-w { line-height: 1.15; opacity: 0; transform: translateY(8px); transition: opacity 0.7s ease, transform 0.9s var(--menu-ease); }
-.menu-overlay.open .ma-w { opacity: 1; transform: none; }
-.menu-overlay.open .ma-w:nth-child(1) { transition-delay: 0.55s; }
-.menu-overlay.open .ma-w:nth-child(2) { transition-delay: 0.62s; }
-.menu-overlay.open .ma-w:nth-child(3) { transition-delay: 0.69s; }
-.menu-overlay.open .ma-w:nth-child(4) { transition-delay: 0.76s; }
-.menu-overlay.open .ma-w:nth-child(5) { transition-delay: 0.83s; }
-.menu-overlay.open .ma-w:nth-child(6) { transition-delay: 0.9s; }
-.menu-overlay.open .ma-w:nth-child(7) { transition-delay: 0.97s; }
-.menu-overlay.open .ma-w:nth-child(8) { transition-delay: 1.04s; }
-.ma-f-wide { font-family: "Unbounded", var(--sans); font-weight: 300; font-size: 30px; letter-spacing: 0.06em; text-transform: uppercase; }
-.ma-f-geo { font-family: "Major Mono Display", var(--mono); font-size: 40px; }
-.ma-f-serif { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 34px; }
-.ma-f-sans { font-family: var(--sans); font-weight: 700; font-size: 38px; letter-spacing: -0.02em; }
-.ma-f-ital { font-family: "Instrument Serif", Georgia, serif; font-size: 44px; }
-.ma-f-mono { font-family: var(--mono); font-size: 15px; letter-spacing: 0.2em; text-transform: uppercase; color: #bdb9ae; }
-.ma-f-wide.ma-small { font-size: 15px; font-weight: 500; letter-spacing: 0.16em; color: #bdb9ae; }
-.ma-f-serif.ma-small { font-size: 22px; color: #bdb9ae; }
-.ma-formulas {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 6px 14px;
-  margin: 14px 0 0;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #8f8c81;
-}
-.ma-formulas b { font-weight: 500; color: #f0efe8; margin-right: 6px; text-transform: none; }
-.ma-formulas sub { font-size: 0.75em; }
-
-/* 3 · THE MOLECULE: hairlines, a ring of words turning round it. */
-.menu-aldehydes[data-kind="molecule"] { width: min(460px, calc(100vw - 850px)); }
+/* Hairlines, a ring of words turning round it, vapour off the oxygen. */
 .ma-mol { display: block; width: 100%; height: auto; overflow: visible; }
 .ma-orbit { fill: none; stroke: rgba(240, 239, 232, 0.16); stroke-width: 1; }
 .ma-orbit-2 { stroke-dasharray: 2 6; stroke: rgba(240, 239, 232, 0.22); }
@@ -466,24 +379,15 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
   text-transform: uppercase;
   color: #8f8c81;
 }
-@media (max-width: 700px) {
-  .menu-aldehydes[data-kind="particles"] { height: 150px; bottom: 12px; }
-  .menu-aldehydes[data-kind="specimen"] { padding: 10px 0; }
-  .menu-aldehydes[data-kind="specimen"] .ma-big { font-size: 44px; margin: 2px 0 6px; }
-  .menu-aldehydes[data-kind="specimen"] .ma-sheet { padding: 6px 0; gap: 2px 12px; }
-  .menu-aldehydes[data-kind="specimen"] .ma-w { font-size: 17px; }
-  .menu-aldehydes[data-kind="specimen"] .ma-w:nth-child(n + 6) { display: none; }
-  .menu-aldehydes[data-kind="specimen"] .ma-formulas { display: none; }
-  .menu-aldehydes[data-kind="molecule"] { width: auto; left: auto; right: 16px; bottom: 16px; }
-  .menu-aldehydes[data-kind="molecule"] .ma-mol { width: 190px; }
-  .menu-aldehydes[data-kind="molecule"] .ma-caption { display: none; }
-}
 /* With motion turned off: nothing turns, rises or comes in. */
 @media (prefers-reduced-motion: reduce) {
   .ma-ring, .ma-vapour circle { animation: none; }
   .ma-vapour circle { opacity: 0.5; }
-  .menu-aldehydes, .ma-w, .ma-say-word.is-on { transition: none; transform: none; }
+  .menu-aldehydes { transition: none; transform: translateY(-50%); }
   .menu-overlay.open .menu-aldehydes { transform: translateY(-50%); }
+}
+@media (prefers-reduced-motion: reduce) and (max-width: 700px) {
+  .menu-aldehydes, .menu-overlay.open .menu-aldehydes { transform: none; }
 }
 
 /* The rest of the page gently dims while the menu is open, so the
