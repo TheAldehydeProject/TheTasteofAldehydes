@@ -91,8 +91,10 @@ information, interpretations, theories and ideas.* The description written for s
   sheet blurs what is behind it, a wheel over it moves no slide, and Escape, its close and a press
   on the page round it each put it away;
 - **`on a phone the square stands under the title, named, and About me fits the screen`**;
-- and the corner block's fade test now **waits for the block to arrive** rather than for a fixed
-  1.6s, since it arrives last.
+- and the corner block's fade test now **waits for the block to arrive, and for `landing.js` to
+  hand it to the scroll** (its animation cleared), rather than for a fixed 1.6s, since it arrives
+  last — waiting only for it to be seen, the test parked the page while the animation still held the
+  block's opacity, and read it unmoved.
 
 `tests/pages.spec.js`, **`the line on slide 2 names the site as its title does`**, reads the line
 without *even*.

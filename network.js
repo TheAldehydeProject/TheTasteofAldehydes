@@ -1561,7 +1561,7 @@
       leave.querySelector(".net-leave-name").textContent = name;
       leave.querySelector(".net-leave-house").textContent =
         house === "individual" ? "Individual fragrances" : (HOUSES[house] || { name: "" }).name;
-      leaveGo.href = a.href;
+      leaveGo.setAttribute("href", a.getAttribute("href"));
       leaveBack = a;
       leaveOpen = true;
       window.clearTimeout(leaveTimer);

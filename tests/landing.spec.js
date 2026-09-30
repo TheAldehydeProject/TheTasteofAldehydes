@@ -87,6 +87,10 @@ for (const [what, selector] of [
     // (Since 2026-09-29 the block comes up last, once the title has
     // gathered, so this waits for it rather than for a fixed time.)
     await expect.poll(shown, { timeout: 6000, message: "should be there to begin with" }).toBeGreaterThan(0.9);
+    // And handed from its own arrival to the scroll (landing.js clears the
+    // animation once it has played, or at 3s): until then the animation
+    // holds its opacity and the scroll cannot move it.
+    await expect.poll(() => page.locator(selector).evaluate((el) => el.style.animationName), { timeout: 6000 }).toBe("none");
 
     // Park the page partway down by hand, rather than waiting out the
     // site's own long scroll, and check it responds to where the page is.
