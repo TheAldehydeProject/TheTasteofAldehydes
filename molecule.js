@@ -150,12 +150,27 @@
   const CLEAR = 0.78;          // the clear space round each, of that
   // THE LINES: how many specks to a pixel of a line's length; how far off it
   // they stand (most on it, some a little off, a few in a haze); how fast
-  // they fall, pixels a second; and how much they swirl about their way, as
-  // the aldehyde's do.
+  // they fall, pixels a second (a little slower since the night of
+  // 2026-09-30: "make the lines slightly slower the way go down"; they fell
+  // at 16 to 44); and how much they swirl about their way, as the
+  // aldehyde's do.
   const LINE_DENSITY = 3;
   const LINE_SPREAD = [[0.62, 1.2], [0.28, 3.6], [0.1, 10]];   // [share, pixels either side]
-  const FALL = [16, 44];
+  const FALL = [11, 30];
   const LINE_SWIRL = 3.2;
+  // A NAME'S BACKDROP (2026-09-30: "make them slightly particular when
+  // hovered. give them a slight backdrop of particles, same colours as the
+  // aldehyde"): a soft oval of specks behind a name the hand or the keys
+  // are on — the aldehyde's gold, violet and grey — gathering in to it as
+  // it comes up and swirling as the aldehyde's do. How many to a name, how
+  // far out they stand, of the name's own half-size and pixels more, how
+  // quickly they come and go, and how bright they are at most.
+  const HAZE_PER_NAME = 420;
+  const HAZE_REACH = [0.62, 14];    // [of the name's half-width, pixels]
+  const HAZE_RISE = [0.72, 9];      // the same, up and down
+  const HAZE_EASE = 420;            // ms, the time constant it comes up and goes on
+  const HAZE_ALPHA = 0.95;
+  const HAZE_TONES = [[0.34, "rest"], [0.36, "pi"], [0.3, "lone"]];   // [share, the aldehyde's colour]
   // THE ELECTRONEGATIVE HAND: how far its pull reaches, how much of the way
   // to it a speck at its heart is drawn, and how much brighter it is there.
   const HAND_REACH = 0.16;     // of the window's height, for the aldehyde's specks
@@ -415,6 +430,56 @@
       gl_FragColor = vec4(vColour, uAlpha * vAlpha * a);
     }`;
 
+  // A NAME'S BACKDROP, drawn straight onto the window in its pixels like the
+  // lines: every speck belongs to one name (`aHaze.x`) and stands at its own
+  // place in an oval round it (`aHaze.yz`, in the name's own half-sizes),
+  // drawn in from half as far again as the name comes up (`uHeat`), swirling
+  // a little, and drawn a part of the way to the hand.
+  const HAZE_VERTEX = `
+    uniform vec2 uRes, uHandPx;
+    uniform float uTime, uSize, uSwirl, uPull;
+    uniform float uHeat[8], uWordX[8], uWordY[8], uHalfW[8], uHalfH[8];
+    attribute vec4 aHaze;
+    attribute vec3 aTone;
+    varying vec3 vColour;
+    varying float vAlpha;
+    ${NOISE}
+    void main() {
+      int k = int(aHaze.x + 0.5);
+      float heat = 0.0, cx = 0.0, cy = 0.0, hw = 0.0, hh = 0.0;
+      for (int i = 0; i < 8; i++) {
+        if (i == k) { heat = uHeat[i]; cx = uWordX[i]; cy = uWordY[i]; hw = uHalfW[i]; hh = uHalfH[i]; }
+      }
+      if (heat <= 0.002) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
+      float seed = aHaze.w;
+      vec2 off = aHaze.yz * vec2(hw * ${HAZE_REACH[0].toFixed(3)} + ${HAZE_REACH[1].toFixed(1)}, hh * ${HAZE_RISE[0].toFixed(3)} + ${HAZE_RISE[1].toFixed(1)});
+      // gathered in as it comes up
+      float come = smoothstep(0.0, 1.0, heat);
+      off *= mix(1.55, 1.0, come);
+      vec2 p = vec2(cx, cy) + off;
+      // a slow turn of its own, and the aldehyde's swirl
+      float a = uTime * (0.25 + 0.35 * seed) + seed * 40.0;
+      p += vec2(cos(a), sin(a)) * (1.5 + 2.5 * seed);
+      p += uSwirl * 1.4 * vec2(
+        snoise(vec3(p.x * 0.02, p.y * 0.02, uTime * 0.16 + seed * 5.0)),
+        snoise(vec3(p.x * 0.02 + 9.1, p.y * 0.02, uTime * 0.16 - seed * 5.0)));
+      // the hand
+      float near = 0.0;
+      if (uPull > 0.0) {
+        vec2 d = uHandPx - p;
+        near = exp(-dot(d, d) / (${(LINE_REACH * 0.7).toFixed(1)} * ${(LINE_REACH * 0.7).toFixed(1)})) * uPull;
+        p += d * ${(LINE_PULL * 0.35).toFixed(3)} * near;
+      }
+      // brightest at its middle, fading out to its edge
+      float r = length(aHaze.yz);
+      float shape = exp(-r * r * 0.55);
+      float twinkle = 0.75 + 0.25 * sin(uTime * 1.9 + seed * 70.0);
+      vColour = aTone * (1.0 + ${HAND_LIGHT.toFixed(3)} * near);
+      vAlpha = come * shape * twinkle;
+      gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
+      gl_PointSize = uSize * (0.7 + 0.6 * seed);
+    }`;
+
   // ---- the specks ----------------------------------------------------------
   function decode(b64) {
     const s = atob(b64);
@@ -568,6 +633,28 @@
   lines.visible = false;
   scene.add(lines);
 
+  // ---- a name's backdrop -----------------------------------------------------
+  const hazeGeo = new THREE.BufferGeometry();
+  const hazeMat = new THREE.ShaderMaterial({
+    vertexShader: HAZE_VERTEX,
+    fragmentShader: LINE_FRAGMENT,
+    uniforms: {
+      uRes: { value: new THREE.Vector2(1, 1) },
+      uHandPx: { value: new THREE.Vector2() },
+      uTime: { value: 0 }, uSize: { value: 2 }, uSwirl: { value: LINE_SWIRL },
+      uPull: { value: 0 }, uAlpha: { value: HAZE_ALPHA },
+      uHeat: { value: new Float32Array(8) }, uWordX: { value: new Float32Array(8) },
+      uWordY: { value: new Float32Array(8) }, uHalfW: { value: new Float32Array(8) },
+      uHalfH: { value: new Float32Array(8) },
+    },
+    transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+  });
+  const haze = new THREE.Points(hazeGeo, hazeMat);
+  haze.frustumCulled = false;
+  haze.renderOrder = 6;
+  haze.visible = false;
+  scene.add(haze);
+
   // A shader that did not compile takes the drawing with it: check, and step aside.
   try {
     bonds.visible = true;
@@ -576,11 +663,16 @@
     lineGeo.setAttribute("aLine", new THREE.BufferAttribute(new Float32Array(4), 4));
     lineGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
     lines.visible = true;
+    hazeGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
+    hazeGeo.setAttribute("aHaze", new THREE.BufferAttribute(new Float32Array(4), 4));
+    hazeGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
+    haze.visible = true;
     renderer.compile(scene, camera);
     const programs = renderer.info.programs || [];
     if (programs.some((p) => p.diagnostics && p.diagnostics.runnable === false)) throw new Error("shader");
     bonds.visible = false;
     lines.visible = false;
+    haze.visible = false;
   } catch (e) {
     renderer.dispose();
     names.forEach((n) => n.el.remove());
@@ -633,6 +725,9 @@
     lineMat.uniforms.uSize.value = (small ? 1.8 : 2.1) * scale;
     lineMat.uniforms.uRes.value.set(W, H);
     lineMat.uniforms.uSwirl.value = small ? LINE_SWIRL * 0.8 : LINE_SWIRL;
+    hazeMat.uniforms.uSize.value = (small ? 2.2 : 2.6) * scale;
+    hazeMat.uniforms.uRes.value.set(W, H);
+    hazeMat.uniforms.uSwirl.value = lineMat.uniforms.uSwirl.value;
     names.forEach((n) => { n.el.style.fontSize = (ATOM_SIZE * pxForm).toFixed(1) + "px"; });
     drewAt = -1;
     if (REDUCE || !running) draw(performance.now());
@@ -670,6 +765,18 @@
     u.uLineX.value.set(left, right);
     const rects = links.map((a) => a.getBoundingClientRect());
     rects.forEach((r, k) => { u.uWordY.value[k] = r.top - box.top + r.height / 2; });
+    // each name's backdrop stands round the name's own lettering (the link
+    // less its padding)
+    const hu = hazeMat.uniforms;
+    links.forEach((a, k) => {
+      const r = rects[k], ls = getComputedStyle(a);
+      const padX = parseFloat(ls.paddingLeft) || 0, padY = parseFloat(ls.paddingTop) || 0;
+      hu.uWordX.value[k] = r.left - box.left + r.width / 2;
+      hu.uWordY.value[k] = r.top - box.top + r.height / 2;
+      hu.uHalfW.value[k] = Math.max(8, r.width / 2 - padX);
+      hu.uHalfH.value[k] = Math.max(6, r.height / 2 - padY);
+    });
+    layHaze();
     u.uWordH.value = Math.max(16, rects[0].height * 0.9);
     let halfW, halfH;
     if (band) {
@@ -713,10 +820,37 @@
     return { halfW, halfH };
   }
 
+  // The specks of every name's backdrop, made once (a name's shape is in
+  // the shader, from where the name stands).
+  let hazeLaid = false;
+  function layHaze() {
+    if (hazeLaid) return;
+    hazeLaid = true;
+    seed = 23;
+    const per = Math.round(HAZE_PER_NAME * (phone() ? 0.6 : 1) * (soft ? 0.3 : 1));
+    const n = per * 8;
+    const hz = new Float32Array(n * 4), tone = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+      hz[i * 4] = Math.floor(i / per);
+      hz[i * 4 + 1] = gauss() * 0.9;
+      hz[i * 4 + 2] = gauss() * 0.9;
+      hz[i * 4 + 3] = rand();
+      let x = rand(), c = COLOUR.rest;
+      for (const [share, name] of HAZE_TONES) { if (x < share) { c = COLOUR[name]; break; } x -= share; }
+      const lit = 0.95 + 0.4 * rand();
+      tone[i * 3] = c[0] * lit; tone[i * 3 + 1] = c[1] * lit; tone[i * 3 + 2] = c[2] * lit;
+    }
+    hazeGeo.dispose();
+    hazeGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+    hazeGeo.setAttribute("aHaze", new THREE.BufferAttribute(hz, 4));
+    hazeGeo.setAttribute("aTone", new THREE.BufferAttribute(tone, 3));
+    hazeGeo.setDrawRange(0, n);
+  }
+
   // ---- the hand ------------------------------------------------------------
   // A name is lit while the hand or the keys are on it, and while it asks
   // to be left for (landing.js marks it `is-lit`).
-  const hot = new Float32Array(8), hotTo = new Float32Array(8);
+  const hot = new Float32Array(8), hotTo = new Float32Array(8), heat = new Float32Array(8);
   const litNow = (a) => a.matches(":hover") || a.matches(":focus-visible") || a.classList.contains("is-lit");
   // (read on every frame; these only ask for one when the drawing is still)
   const again = () => { drewAt = -1; };
@@ -817,6 +951,9 @@
     for (let k = 0; k < links.length && k < 8; k++) {
       hotTo[k] = litNow(links[k]) ? 1 : 0;
       hot[k] += (hotTo[k] - hot[k]) * (REDUCE ? 1 : Math.min(1, dt / 90));
+      // (the backdrop comes and goes more slowly, as the name itself does)
+      heat[k] += (hotTo[k] - heat[k]) * (REDUCE ? 1 : Math.min(1, dt / HAZE_EASE));
+      if (Math.abs(heat[k] - hotTo[k]) < 0.002) heat[k] = hotTo[k];
     }
     lines.visible = laidFor !== "" && down > 0;
     if (lines.visible) {
@@ -827,6 +964,14 @@
       m.uHandPx.value.set(eased.x - box.left, eased.y - box.top);
       for (let k = 0; k < 8; k++) m.uHot.value[k] = hot[k];
     }
+    haze.visible = hazeLaid && down > 0 && heat.some((h) => h > 0.002);
+    if (haze.visible) {
+      const m = hazeMat.uniforms;
+      m.uTime.value = t;
+      m.uPull.value = pull;
+      m.uHandPx.value.set(eased.x - box.left, eased.y - box.top);
+      for (let k = 0; k < 8; k++) m.uHeat.value[k] = heat[k] * down;
+    }
 
     renderer.render(scene, camera);
 
@@ -836,11 +981,13 @@
     const state = S <= 1.02 ? "cloud" : S < 1.98 ? "turning" : S <= 2.02 ? "turned" : S < 2.98 ? "forming"
       : S <= 3.02 ? "formula" : down < 0.999 ? "lining" : "lined";
     if (state !== wrap.dataset.state) wrap.dataset.state = state;
-    return hot.some((h, k) => Math.abs(h - hotTo[k]) > 0.001);
+    return hot.some((h, k) => Math.abs(h - hotTo[k]) > 0.001 || heat[k] !== hotTo[k]);
   }
 
-  // Drawn only while the stage is on the screen, and not under the menu,
-  // About me or the way out — and, with motion turned off, only when
+  // Drawn only while the stage is on the screen, and not under the menu or
+  // About me — but under the way out it goes on (2026-09-30: "When the
+  // popup window happens, I also want the page in the back to keep
+  // moving"), the hand letting go of it — and, with motion turned off, only when
   // something has changed (the stage moved on, a name pointed at, the
   // window resized).
   let seen = true, running = false, drawn = 0, drewAt = -1;
@@ -848,7 +995,7 @@
     running = false;
     if (!seen) return;
     const body = document.body.classList;
-    const covered = body.contains("menu-open") || body.contains("about-shown") || body.contains("ask-shown");
+    const covered = body.contains("menu-open") || body.contains("about-shown");
     const changed = !REDUCE || drewAt !== (+window.__formula || 0);
     if (!covered && changed && (!soft || now - drawn > 80)) {
       const more = draw(now);

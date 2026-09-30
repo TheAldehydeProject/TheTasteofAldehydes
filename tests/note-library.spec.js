@@ -1601,6 +1601,11 @@ test("a fragrance pressed asks before the library is left", async ({ page }) => 
   await expect(page.locator(".net-leave-go")).toHaveAttribute("href", href);
   expect((await state(page)).leaving).toBe(key);
   await expect(page.locator(".net-leave-go"), "the way on has the keys").toBeFocused();
+  // orange, and calm: its way on a hairline box, not a block of red
+  // (2026-09-30: "make this orange and less urgent")
+  const go = await page.locator(".net-leave-go").evaluate((e) => ({ border: getComputedStyle(e).borderTopColor, fill: getComputedStyle(e).backgroundColor }));
+  expect(go.border).toBe("rgba(227, 147, 90, 0.7)");
+  expect(go.fill).toBe("rgba(227, 147, 90, 0.12)");
   // Escape: stays, and everything is as it was.
   await page.keyboard.press("Escape");
   await expect(ask).toBeHidden();

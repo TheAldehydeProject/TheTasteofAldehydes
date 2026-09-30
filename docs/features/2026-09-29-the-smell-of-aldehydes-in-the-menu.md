@@ -47,14 +47,14 @@ above are kept here for the reasoning, as the site keeps what it removed.
   850px)`), and **under the list on a phone** that is tall enough (740px and more; the particles and
   the specimen across the foot, the molecule small in the corner). Between the two there is no room,
   and it is not there — the links are what the menu is for.
-- **It asks for nothing** — no faces of its own, no canvas, no frame loop: an SVG and the
-  stylesheet's own animations. (While there were three, their faces were fetched the first time the
+- **It asks for nothing** — no faces of its own: an SVG, the stylesheet's own animations, and
+  (since 2026-09-30) one small canvas for its cloud, drawn only while the menu is open. (While there were three, their faces were fetched the first time the
   menu opened, so as not to be paid for by every visit.)
 - **Ornament, kept from a screen reader** (`aria-hidden`); nothing in it is a link.
-- **Its movement is the stylesheet's**: the ring turns once in ninety seconds and the vapour rises,
-  and neither costs anything while the menu is shut.
+- **Its movement**: the vapour rises (the stylesheet's) and the cloud's specks turn slowly about
+  their places (`nav.js`); neither costs anything while the menu is shut.
 - **It comes up a beat after the links** (0.45s), so the list is still what arrives first.
-- **With motion turned off** it stands still: no turning ring, no rising vapour, nothing coming in.
+- **With motion turned off** it stands still: the cloud drawn once, no rising vapour, nothing coming in.
   On a phone it stays in its corner then too (the first version nudged it out of place there).
 - It is inside the overlay, not on the body, so the Menu's dimming trap (`body > *:not(...)`) does
   not touch it. The test that no layer is drawn over the menu (`the menu opens the same way on every
@@ -63,7 +63,8 @@ above are kept here for the reasoning, as the site keeps what it removed.
 ## How to test it
 
 `tests/menu.spec.js`, **`the menu carries the smell of aldehydes on its right: the molecule, and
-only it`**: kept from a screen reader; its four atoms and four bonds, and its ring of words; nothing
+only it`**: kept from a screen reader; its four atoms and four bonds; no ring of words, and
+*metallic*, *cold* and *soapy* under it; its cloud drawn, gold and violet in it; nothing
 of the other two and none of their faces; right of the list and clear of it at 1440px; gone when the
 menu shuts; `?menu-type=particles` still shows the molecule; not there at 1024px; on a 390 × 844
 phone, small in the corner under the last link, on the screen.
@@ -72,5 +73,26 @@ By eye: open the Menu.
 
 ## Known issues / TODO
 
-- The words are the common ones for the fatty aldehydes' smell, not the owner's own; they are theirs
-  to change.
+- The three words are the owner's choice of the eight that were there (the common ones for the
+  fatty aldehydes' smell); they are theirs to change (`WORDS` in `nav.js`).
+
+## 2026-09-30 — a cloud in the home page's colours, and three words that stand still
+
+> additionally, for the aldehyde in the main menu, i want it to be changed a little, i dont want the
+> circuling text around it; i want it to have particles similar in colour to that in the home page.
+> not identical, but in general. if you want to keep text then keep metallic cold and soapy
+
+- **The ring of words is gone** — *metallic · cold · fizzing · soapy · waxy · clean linen · snuffed
+  candle · orange peel*, turning round it once in ninety seconds (`.ma-ring`, its `textPath`,
+  `ma-turn`). None of it is in the code.
+- **A cloud of specks round the molecule, in the home page's colours** (`.ma-cloud`, a canvas under
+  the drawing in its own 400 × 400, drawn by `nav.js`): **gold** in two lobes either side of the
+  C=O, where the home page's double bond is; **violet** in two lobes off the oxygen, its lone pair;
+  and a loose haze of the **warm grey** round the whole, a little thicker at R and H — about 900
+  specks, each turning slowly about its place and twinkling, added light on the menu's dark. It is
+  *not* the home page's cloud (that one is solved from Schrödinger's equation): it only says the
+  same thing in the same colours, "not identical, but in general". Drawn only while the menu is
+  open and there is room for it; once, still, with motion turned off.
+- **The vapour** off the oxygen is in the same violet and gold now (it was white).
+- **Three words stand still under it**, spaced across in the mono: *METALLIC  COLD  SOAPY*
+  (`.ma-words`), over the caption as before.

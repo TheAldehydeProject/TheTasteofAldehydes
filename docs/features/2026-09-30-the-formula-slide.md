@@ -116,8 +116,9 @@ And last, the same night:
   time, and a browser's own smooth scrolling still reads as a notch at a time — "when you scroll it
   feels very very incremental". So **the wheel is taken** on the whole page and every notch moves
   **a target**; the page **glides** to it on a spring that is critically damped (it arrives without
-  overshooting), at `GLIDE_W` (6.5 a second), a notch sending it `WHEEL_SCALE` (0.85) of its own
-  size. Notches that come quickly add to the target while the page is still on its way, so a turn
+  overshooting), at `GLIDE_W` (4.2 a second), a notch sending it `WHEEL_SCALE` (0.5) of its own
+  size — slower and less sensitive since the last round of the night ("make the scrolling smoother
+  - as if making the scrolling less sensitive/slower"; they were 6.5 and 0.85). Notches that come quickly add to the target while the page is still on its way, so a turn
   of the wheel is one long glide, not steps; a trackpad's many small deltas are glided the same way.
   **A finger, the scrollbar and reduced motion are left to the browser**: the page scrolls natively,
   and anything that scrolls the page other than the glide makes it let go (`glideWrote`).
@@ -171,7 +172,8 @@ And last, the same night:
   columns), **the length of the window**, and the names **on the outside of them**, `--line-inset`
   (30px) off — four down the left ending by its line, four down the right beginning by its, mirrored.
   The lines **come down the window from the top** as the stage comes (`LINES_OVER`, 0.85 of the
-  leg, a soft head), and then **fall**, every speck its own speed (`FALL`, 16 to 44px a second),
+  leg, a soft head), and then **fall**, every speck its own speed (`FALL`, 11 to 30px a second —
+  "make the lines slightly slower the way go down"; it was 16 to 44),
   round and round, **swirling a little about its way as the aldehyde's specks do** (`LINE_SWIRL`,
   the same simplex noise) — "some movement - exactly like in the aldehyde molecule". Most specks on
   the line, some a little off it, a few in a haze (`LINE_SPREAD`), `LINE_DENSITY` to a pixel of its
@@ -201,6 +203,15 @@ And last, the same night:
   leaves. Nothing of it is hidden. (For one round it was **half concealed**: the lower half of every
   line of a name sunk in **a veil**, a mask drawn down off it under the hand — the owner's words
   taken literally. None of it, `--veil-top` or the mask, is in the code.)
+- **A backdrop of specks under the hand** ("for the main titles, i want you to make them slightly
+  particular when hovered. give them a slight backdrop of particles, same colours as the aldehyde"):
+  a name pointed at or tabbed to comes up over **a soft oval of specks** behind its lettering — the
+  aldehyde's warm grey, gold and violet, about a third each — gathering in to it from half as far
+  again as it comes up, turning a little about their places, swirling as the aldehyde's do, drawn
+  a part of the way to the hand, and going as gradually when the hand leaves (`HAZE_*` in
+  `molecule.js`: the specks to a name, how far out they stand of the name's own half-size, how
+  quickly they come and go, how bright). Drawn in the window's own pixels like the lines, round the
+  name's lettering (the link less its padding), on the last stage only.
 
 ### The electronegative hand (`molecule.js`)
 
@@ -226,10 +237,27 @@ And last, the same night:
 
 - "when you click it, I want a confirmation message to pop up to go to that thing. it should be on
   theme": a name pressed brings up **`#formula-ask`** over the page veiled and a little out of focus:
-  a dark sheet in the stage's own colours, the aldehyde's gold in its kicker (*Leave the aldehyde*,
-  after the site's registration mark with an electron in it), its two corners and its way on; the
-  page's name set as the names are; *This goes to its page.*; **Stay** and **Go to the page** (a real
-  link). Escape, Stay or the veil put it away and the name has the keys again; the keys stay in it
+  a dark sheet in the stage's own colours, the aldehyde's gold in its two corners and its way on; the
+  page's name set as the names are; **what the page is**; **Stay** and **Go to the page** (a real
+  link).
+- **What the page is, in the map's words** ("use the text from what would have been the popup
+  windows on page 4 for the same text in the home page now"): each name carries its node's
+  `preview.description` from the node map as its **`data-say`**, and Photography its
+  `preview.note` as **`data-note`**, which the sheet sets apart under the description as the map's
+  window did (a gold hairline down its left, in the mono). The map is switched off, so its words are
+  kept on the names **word for word**, and a test says the two copies agree — change one and change
+  the other. It said *This goes to its page.* for everyone before.
+- **No kicker** ("I also want you to remove the text 'leave the aldehyde'"): the line *Leave the
+  aldehyde*, and the registration mark before it, are gone; the sheet opens on the name.
+- **The page behind goes on moving** ("When the popup window happens, I also want the page in the
+  back to keep moving"): the drawing is no longer paused under it — the aldehyde swirls, the lines
+  fall — only the hand lets go of it; the veil is a little lighter (0.38, blurred 4px; it was 0.46
+  and 5px) so the movement reads through it.
+- **Specks in it** ("I want the popup window to have some particles too"): a small canvas behind the
+  sheet's words (`.formula-ask-specks`, drawn by `landing.js`, *THE SHEET'S SPECKS*): 180 specks in
+  the aldehyde's grey, gold and violet, gathering in from all round as it opens, then turning slowly
+  about their places and swirling a little; thickest towards its right and its foot and faint where
+  the words stand. Only while it asks; still with motion turned off. Escape, Stay or the veil put it away and the name has the keys again; the keys stay in it
   while it asks; the name stays lit (`is-lit`). **Pressed with a key held** (a new tab, a new
   window) a name goes where it goes without asking. It is the Note Library's way out
   (`.net-leave`), in this page's colours. The drawing waits under it (`ask-shown`); the Menu's
@@ -261,7 +289,7 @@ And last, the same night:
   the page's layout while it draws but the drawing's own box; the lines and the names are laid out
   once, on load, when the page's face has come, and on a resize.
 - **It draws only while the stage is on the screen** (with the map on, a test counts none once the
-  map is showing), and not under the Menu, About me or the way out.
+  map is showing), and not under the Menu or About me — but under the way out it goes on.
 - **With reduced motion** the wheel is the browser's own, the stages follow the page at once, and the drawing is simply there,
   still — no flow, no fall, no swirl, no pull — drawn again only when something has changed.
   **Without the drawing** the last stage is the eight names, plainly, quiet and lit as ever, and a
@@ -302,7 +330,11 @@ And last, the same night:
 - **`the electronegative hand draws the aldehyde's own specks to it`** — and at the title, far less
   (no δ−, the specks less stirred).
 - **`a name pressed asks first, on the stage's own dark: Stay, Escape and the veil keep the page, Go
-  goes, and a key held goes at once`**.
+  goes, and a key held goes at once`** — with the map's words for the page, no kicker, specks drawn
+  in it, the page behind still moving, and Photography's note set apart.
+- **`what each name says when it asks is its page's window on the map, word for word`** — read
+  against `REAL_NODES` in `node-scene.js`.
+- **`a name pointed at stands on a slight backdrop of specks, which goes when the hand does`**.
 - **`the names wait for the last stage, and a name tabbed to takes the page there`**.
 - **`with motion turned off the stages are simply there, still`**.
 - **`without the 3D library the last stage is the eight names, plainly, and a name still asks
@@ -326,8 +358,9 @@ the aldehyde, press a name; on a phone, swipe and tap.
 - The numbers: `--stage-leg` (how much scrolling a stage takes) in `style.css`; `GLIDE_W`,
   `WHEEL_SCALE`, `FOLLOW_S`, `TITLE_GONE`, `CORNERS_GONE`, `NAMES_FROM`, `NAMES_OVER` in
   `landing.js`; `TURN_FROM`, `FORM_FROM`, `LINES_OVER`, `REACT_TITLE`, `TIGHT`, `FORM_PEAK`,
-  `BOND_*`, `ATOM_SIZE`, `CLEAR`, `LINE_*`, `FALL`, `HAND_*` at the top of `molecule.js`; how quiet
-  a name is at rest, and how long it takes to come up, in `.formula-link`.
+  `BOND_*`, `ATOM_SIZE`, `CLEAR`, `LINE_*`, `FALL`, `HAZE_*`, `HAND_*` at the top of `molecule.js`;
+  how quiet a name is at rest, and how long it takes to come up, in `.formula-link`; the sheet's
+  specks (`COUNT`, `GATHER_MS`) in `askSpecks` in `landing.js`.
 - The glide is for a mouse wheel and a trackpad. A trackpad already scrolls smoothly on its own, and
   is glided anyway so the two feel the same; if it ever feels heavy there, `WHEEL_SCALE` is the
   number.

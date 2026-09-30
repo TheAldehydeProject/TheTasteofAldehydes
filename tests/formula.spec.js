@@ -242,16 +242,17 @@ test("the wheel scrolls it smoothly, as far as it is turned and back, and nothin
   // three notches, and where the stage is, frame by frame
   await page.evaluate(() => {
     window.__seen = [];
-    const at = () => { window.__seen.push(+window.__formula); if (window.__seen.length < 90) requestAnimationFrame(at); };
+    const at = () => { window.__seen.push(+window.__formula); if (window.__seen.length < 160) requestAnimationFrame(at); };
     requestAnimationFrame(at);
   });
   for (let i = 0; i < 3; i++) { await page.mouse.wheel(0, 100); await page.waitForTimeout(60); }
-  await page.waitForTimeout(1600);
+  await page.waitForTimeout(3200);
   const seen = await page.evaluate(() => window.__seen);
   const leg = await page.evaluate(() => document.querySelector(".stage-run").offsetHeight / 4);
   const end = seen[seen.length - 1];
-  // (the glide sends the page 0.85 of a notch — WHEEL_SCALE in landing.js)
-  expect(end, "as far as it was turned: three notches of a leg").toBeCloseTo((300 * 0.85) / leg, 1);
+  // (the glide sends the page half a notch — WHEEL_SCALE in landing.js;
+  // it was 0.85 until the owner asked for it "less sensitive/slower")
+  expect(end, "as far as it was turned: three notches of a leg").toBeCloseTo((300 * 0.5) / leg, 1);
   const steps = seen.slice(1).map((v, i) => v - seen[i]);
   expect(Math.max(...steps), "never a jump").toBeLessThan(0.15);
   expect(Math.min(...steps), "never back").toBeGreaterThanOrEqual(-1e-6);
@@ -381,19 +382,41 @@ test("a name pressed asks first, on the stage's own dark: Stay, Escape and the v
   await expect(ask).toBeVisible();
   await expect(page.locator(".formula-ask-sheet")).toHaveAttribute("role", "alertdialog");
   await expect(page.locator(".formula-ask-name")).toHaveText("Theories");
-  await expect(page.locator(".formula-ask-kicker")).toHaveText("Leave the aldehyde");
+  // what the page is, in the words its window said on the map; no kicker
+  // over the name any more ("remove the text 'leave the aldehyde'")
+  await expect(page.locator(".formula-ask-say")).toHaveText("Some frameworks that I came up with myself.");
+  await expect(page.locator(".formula-ask-note")).toBeHidden();
+  await expect(page.locator(".formula-ask-kicker")).toHaveCount(0);
+  await expect(page.locator("#formula-ask")).not.toContainText("Leave the aldehyde");
   await expect(page.locator(".formula-ask-go")).toHaveAttribute("href", "categories/theories.html");
   await expect(page.locator(".formula-ask-go")).toBeFocused();
   expect(new URL(page.url()).pathname, "not gone yet").toBe("/index.html");
   // on theme: the stage's dark, its gold, the page behind out of focus
   const look = await page.evaluate(() => ({
     sheet: getComputedStyle(document.querySelector(".formula-ask-sheet")).backgroundColor,
-    kicker: getComputedStyle(document.querySelector(".formula-ask-kicker")).color,
+    corner: getComputedStyle(document.querySelector(".formula-ask-sheet"), "::before").borderTopColor,
     veil: getComputedStyle(document.getElementById("formula-ask")).backdropFilter,
   }));
-  expect(look.kicker).toBe("rgb(224, 178, 82)");
+  expect(look.corner).toBe("rgba(224, 178, 82, 0.9)");
   expect(look.sheet).toMatch(/^rgba\(26, 26, 27/);
   expect(look.veil).toMatch(/blur/);
+  // specks in it ("I want the popup window to have some particles too"),
+  // in the aldehyde's colours
+  await expect.poll(() => page.evaluate(() => {
+    const c = document.querySelector(".formula-ask-specks");
+    const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+    let n = 0;
+    for (let k = 3; k < d.length; k += 4) if (d[k] > 20) n++;
+    return n;
+  }), { timeout: 4000 }).toBeGreaterThan(60);
+  // and the page behind it still moving ("I also want the page in the back
+  // to keep moving"): the specks of a line, beside the sheet, one moment and the next
+  const [lx] = await lineXs(page);
+  const strip = { x: lx - 30, y: 120, width: 60, height: 520 };
+  const one = await page.screenshot({ clip: strip });
+  await page.waitForTimeout(900);
+  const two = await page.screenshot({ clip: strip });
+  expect(one.equals(two), "the page behind goes on moving").toBe(false);
   // the keys stay in it
   await page.keyboard.press("Tab");
   await expect(page.locator(".formula-ask-stay")).toBeFocused();
@@ -413,6 +436,15 @@ test("a name pressed asks first, on the stage's own dark: Stay, Escape and the v
   await expect(ask).toBeVisible();
   await page.mouse.click(60, 860);
   await expect(ask).toBeHidden();
+  // a page whose window carried a note carries it here, set apart
+  const photo = page.locator(".formula-link").nth(5);
+  await photo.click();
+  await expect(ask).toBeVisible();
+  await expect(page.locator(".formula-ask-name")).toHaveText("Photography");
+  await expect(page.locator(".formula-ask-note")).toBeVisible();
+  await expect(page.locator(".formula-ask-note")).toHaveText("Work in progress — this part of the website will be completed later.");
+  await page.keyboard.press("Escape");
+  await expect(ask).toBeHidden();
   // a key held: no asking (nothing is being left)
   const prevented = await name.evaluate((a) => {
     let was = null;
@@ -429,6 +461,54 @@ test("a name pressed asks first, on the stage's own dark: Stay, Escape and the v
   await page.locator(".formula-ask-go").click();
   await page.waitForURL(/categories\/theories\.html$/);
   expect(errors).toEqual([]);
+});
+
+/* "now, just use the text from what would have been the popup windows on
+   page 4 for the same text in the home page now" (2026-09-30): what a name
+   says when it asks is what its node's window said on the map, word for
+   word — the map is switched off, so the words are kept on the names, and
+   this keeps the two copies the same. */
+test("what each name says when it asks is its page's window on the map, word for word", async ({ page }) => {
+  const src = fs.readFileSync(path.join(__dirname, "..", "node-scene.js"), "utf8");
+  const start = src.indexOf("const REAL_NODES = [");
+  const end = src.indexOf("\n];", start) + 3;
+  const nodes = new Function(src.slice(start, end) + "\nreturn REAL_NODES;")();
+  await page.goto("/index.html");
+  const names = await page.locator(".formula-link").evaluateAll((all) => all.map((a) => ({
+    href: a.getAttribute("href"), say: a.dataset.say || null, note: a.dataset.note || null,
+  })));
+  expect(names).toHaveLength(8);
+  for (const n of names) {
+    const node = nodes.find((x) => x.href === n.href);
+    expect(node, n.href + " is on the map's list").toBeTruthy();
+    expect(n.say, n.href).toBe(node.preview.description);
+    expect(n.note, n.href).toBe(node.preview.note || null);
+  }
+});
+
+/* "for the main titles, i want you to make them slightly particular when
+   hovered. give them a slight backdrop of particles, same colours as the
+   aldehyde" (2026-09-30). */
+test("a name pointed at stands on a slight backdrop of specks, which goes when the hand does", async ({ page }) => {
+  test.setTimeout(120000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/index.html");
+  await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
+  await jumpToSlide(page, "slide-formula");
+  await settled(page, 4);
+  await expect.poll(() => state(page), { timeout: 30000 }).toBe("lined");
+  // a name on the right, well clear of its line: above and below its lettering
+  const name = page.locator(".formula-link").nth(4);
+  const r = await name.boundingBox();
+  const pad = await name.evaluate((e) => parseFloat(getComputedStyle(e).paddingTop));
+  const above = { x: r.x + r.width / 2 - 40, y: r.y + 1, width: 80, height: pad - 3 };
+  await page.mouse.move(1380, 60);
+  await page.waitForTimeout(1500);
+  const before = await light(page, above);
+  await page.mouse.move(r.x + r.width * 0.2, r.y + r.height / 2, { steps: 4 });
+  await expect.poll(async () => (await light(page, above)).lit, { timeout: 8000 }).toBeGreaterThan(before.lit + 8);
+  await page.mouse.move(1380, 60, { steps: 4 });
+  await expect.poll(async () => (await light(page, above)).lit, { timeout: 8000 }).toBeLessThanOrEqual(before.lit + 3);
 });
 
 test("the names wait for the last stage, and a name tabbed to takes the page there", async ({ page }) => {

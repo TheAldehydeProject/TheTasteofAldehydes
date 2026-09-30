@@ -351,20 +351,45 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
   }
   .menu-overlay.open .menu-aldehydes { transform: none; }
   .menu-aldehydes .ma-mol { width: 190px; }
+  .menu-aldehydes .ma-cloud { width: 190px; }
   .menu-aldehydes .ma-caption { display: none; }
+  .menu-aldehydes .ma-words { width: 190px; gap: 1.2em; font-size: 9.5px; margin-top: 8px; }
 }
 @media (max-width: 700px) and (max-height: 739px) { .menu-aldehydes { display: none; } }
 
-/* Hairlines, a ring of words turning round it, vapour off the oxygen. */
-.ma-mol { display: block; width: 100%; height: auto; overflow: visible; }
+/* Hairlines in a cloud of specks in the home page's colours (nav.js draws
+   them, on a canvas under the drawing), vapour off the oxygen, and three
+   words under it (2026-09-30: "i dont want the circuling text around it
+   ... if you want to keep text then keep metallic cold and soapy"). The
+   ring of words that turned round it is gone. */
+.menu-aldehydes { isolation: isolate; }
+.ma-cloud {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+.ma-mol { position: relative; display: block; width: 100%; height: auto; overflow: visible; }
 .ma-orbit { fill: none; stroke: rgba(240, 239, 232, 0.16); stroke-width: 1; }
 .ma-orbit-2 { stroke-dasharray: 2 6; stroke: rgba(240, 239, 232, 0.22); }
-.ma-ring { transform-origin: 200px 200px; animation: ma-turn 90s linear infinite; }
-.ma-ring-text { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.2em; text-transform: uppercase; fill: #bdb9ae; }
 .ma-bonds line { stroke: #f0efe8; stroke-width: 2.2; stroke-linecap: butt; }
 .ma-atoms text { font-family: var(--sans); font-size: 34px; font-weight: 500; fill: #f0efe8; text-anchor: middle; dominant-baseline: middle; }
 .ma-vapour circle { fill: #f0efe8; opacity: 0; animation: ma-rise 4.8s ease-out infinite; }
-@keyframes ma-turn { to { transform: rotate(360deg); } }
+.ma-vapour .ma-gold { fill: #e0b252; }
+.ma-vapour .ma-violet { fill: #b89ce0; }
+.ma-words {
+  display: flex;
+  justify-content: center;
+  gap: 2.4em;
+  margin: 14px 0 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #bdb9ae;
+}
 @keyframes ma-rise {
   0% { opacity: 0; transform: translate(0, 0); }
   18% { opacity: 0.8; }
@@ -384,7 +409,7 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
 }
 /* With motion turned off: nothing turns, rises or comes in. */
 @media (prefers-reduced-motion: reduce) {
-  .ma-ring, .ma-vapour circle { animation: none; }
+  .ma-vapour circle { animation: none; }
   .ma-vapour circle { opacity: 0.5; }
   .menu-aldehydes { transition: none; transform: translateY(-50%); }
   .menu-overlay.open .menu-aldehydes { transform: translateY(-50%); }
@@ -991,10 +1016,13 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
 
 /* THE WAY OUT, ASKED FIRST (2026-09-30: "when you click it, I want a
    confirmation message to pop up to go to that thing. it should be on
-   theme"): the page veiled and a little out of focus, and on it a dark
-   sheet in the stage's own colours — the aldehyde's gold in its kicker, its
-   corners and its way on — the page's name set as the names are, Stay and
-   Go. landing.js opens and fills it. */
+   theme"): the page veiled and a little out of focus — and still moving
+   behind it — and on it a dark sheet in the stage's own colours, the
+   aldehyde's gold in its corners and its way on, specks of its colours
+   drifting in it: the page's name set as the names are, what the page is
+   (the map's own words for it) and its note if it has one, Stay and Go.
+   landing.js opens and fills it. (A kicker, "Leave the aldehyde", stood
+   over the name for a round; gone at the owner's word.) */
 .formula-ask {
   position: fixed;
   inset: 0;
@@ -1009,15 +1037,15 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
 }
 .formula-ask[hidden] { display: none; }
 .formula-ask.is-on {
-  background: rgba(14, 14, 15, 0.46);
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
+  background: rgba(14, 14, 15, 0.38);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
 }
 .formula-ask-sheet {
   position: relative;
   box-sizing: border-box;
-  width: min(420px, 100%);
-  padding: 24px 26px 24px;
+  width: min(440px, 100%);
+  padding: 26px 28px 24px;
   background: rgba(26, 26, 27, 0.9);
   border: 1px solid rgba(236, 232, 226, 0.16);
   box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
@@ -1038,37 +1066,17 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
 }
 .formula-ask-sheet::before { left: -1px; top: -1px; border-left-width: 1px; border-top-width: 1px; }
 .formula-ask-sheet::after { right: -1px; bottom: -1px; border-right-width: 1px; border-bottom-width: 1px; }
-.formula-ask-kicker {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: #e0b252;
-}
-/* the site's registration mark, with an electron in it */
-.formula-ask-mark {
-  position: relative;
-  width: 9px;
-  height: 9px;
-  border: 1px solid currentColor;
-}
-.formula-ask-mark::after {
-  content: "";
+/* the specks (landing.js), behind the words */
+.formula-ask-specks {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 3px;
-  height: 3px;
-  margin: -1.5px 0 0 -1.5px;
-  border-radius: 50%;
-  background: currentColor;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
+.formula-ask-sheet > :not(.formula-ask-specks) { position: relative; }
 .formula-ask-name {
-  margin: 16px 0 0;
+  margin: 0;
   font-family: var(--sans);
   font-style: italic;
   font-weight: 400;
@@ -1078,7 +1086,19 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
   color: #fff;
   text-shadow: var(--lettering-edge);
 }
-.formula-ask-say { margin: 10px 0 0; font-size: 13.5px; line-height: 1.55; color: rgba(236, 232, 226, 0.66); }
+.formula-ask-say { margin: 12px 0 0; font-size: 14px; line-height: 1.6; color: rgba(236, 232, 226, 0.74); max-width: 38ch; }
+/* a page's state, set apart as the map's window set it */
+.formula-ask-note {
+  margin: 12px 0 0;
+  padding-left: 12px;
+  border-left: 1px solid rgba(224, 178, 82, 0.5);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+  color: rgba(236, 232, 226, 0.56);
+}
+.formula-ask-note[hidden] { display: none; }
 .formula-ask-choose { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
 .formula-ask-stay,
 .formula-ask-go {
@@ -6576,15 +6596,19 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
    combinations' list or a note's window — brings this up rather than
    leaving at once: the fragrance, its house, Stay and Go. The page behind
    it is shaded, not blurred (the note's window may be under it, and
-   should still be read as there). */
+   should still be read as there). In a soft ORANGE rather than the page's
+   red, and calmer — its way on a hairline box faintly filled rather than a
+   block of colour, the shade lighter, coming up more slowly (2026-09-30:
+   "make this orange and less urgent"). */
 .net-leave {
+  --leave: #e3935a;
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  background: rgba(6, 6, 7, 0.46);
+  background: rgba(6, 6, 7, 0.34);
   opacity: 0;
-  transition: opacity 260ms ease;
+  transition: opacity 420ms ease;
 }
 .net-leave[hidden] { display: none; }
 .net-leave.is-on { opacity: 1; }
@@ -6597,10 +6621,10 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   -webkit-backdrop-filter: blur(22px) saturate(1.15);
   backdrop-filter: blur(22px) saturate(1.15);
   border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
   color: var(--ink);
-  transform: translateY(10px) scale(0.98);
-  transition: transform 360ms var(--net-ease);
+  transform: translateY(8px) scale(0.99);
+  transition: transform 520ms var(--net-ease);
 }
 .net-leave.is-on .net-leave-box { transform: none; }
 /* A registration tick at two corners, as the site's windows carry. */
@@ -6610,7 +6634,7 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   position: absolute;
   width: 10px;
   height: 10px;
-  border: 0 solid rgba(255, 90, 100, 0.8);
+  border: 0 solid rgba(227, 147, 90, 0.75);
 }
 .net-leave-box::before { left: -1px; top: -1px; border-left-width: 1px; border-top-width: 1px; }
 .net-leave-box::after { right: -1px; bottom: -1px; border-right-width: 1px; border-bottom-width: 1px; }
@@ -6620,7 +6644,8 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   font-size: 10px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #ff5a64;
+  color: var(--leave);
+  opacity: 0.85;
 }
 .net-leave-name { margin: 14px 0 0; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.1; }
 .net-leave-house {
@@ -6649,8 +6674,8 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
 }
 .net-leave-stay { background: none; border: 1px solid rgba(255, 255, 255, 0.3); color: var(--ink); }
 .net-leave-stay:hover, .net-leave-stay:focus-visible { border-color: var(--ink); outline: none; }
-.net-leave-go { background: #e5202e; border: 1px solid #e5202e; color: #fff; }
-.net-leave-go:hover, .net-leave-go:focus-visible { background: #ff3a46; border-color: #ff3a46; outline: none; }
+.net-leave-go { background: rgba(227, 147, 90, 0.12); border: 1px solid rgba(227, 147, 90, 0.7); color: #f4dcc8; }
+.net-leave-go:hover, .net-leave-go:focus-visible { background: rgba(227, 147, 90, 0.26); border-color: var(--leave); color: #fff; outline: none; }
 
 /* THE NAMES: one beside every accord's network once apart (a way there),
    and the black tags naming every note of the network you are at. */

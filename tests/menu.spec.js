@@ -156,11 +156,27 @@ test("the menu carries the smell of aldehydes on its right: the molecule, and on
   await expect(aside).toHaveAttribute("aria-hidden", "true");
   await page.locator(".menu-trigger").click();
   await expect.poll(() => aside.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
-  // The molecule: R–C(=O)–H in hairlines, a ring of what it smells of.
+  // The molecule: R–C(=O)–H in hairlines, in a cloud of specks in the home
+  // page's colours, and three words that stand still under it — no ring of
+  // words circling it (2026-09-30: "i dont want the circuling text around
+  // it ... if you want to keep text then keep metallic cold and soapy").
   await expect(aside.locator("svg.ma-mol")).toBeVisible();
   await expect(aside.locator(".ma-atoms text")).toHaveText(["C", "O", "R", "H"]);
   await expect(aside.locator(".ma-bonds line")).toHaveCount(4);
-  await expect(aside.locator("svg.ma-mol textPath")).toContainText("metallic");
+  await expect(aside.locator("textPath, .ma-ring")).toHaveCount(0);
+  await expect(aside.locator(".ma-words span")).toHaveText(["metallic", "cold", "soapy"]);
+  const cloud = await aside.locator(".ma-cloud").evaluate((c) => {
+    const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+    let gold = 0, violet = 0;
+    for (let k = 0; k < d.length; k += 4) {
+      if (d[k + 3] < 30) continue;
+      if (d[k] > d[k + 2] + 40) gold++;
+      else if (d[k + 2] > d[k + 1] + 30) violet++;
+    }
+    return { gold, violet };
+  });
+  expect(cloud.gold, "specks of the double bond's gold").toBeGreaterThan(40);
+  expect(cloud.violet, "and of the lone pair's violet").toBeGreaterThan(40);
   // The other two are gone, and so are the faces they needed.
   await expect(page.locator(".ma-fizz, .ma-big, .ma-sheet")).toHaveCount(0);
   expect(await page.evaluate(() => [...document.querySelectorAll("link[rel=stylesheet]")]

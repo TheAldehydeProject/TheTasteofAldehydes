@@ -192,6 +192,12 @@ it, the sticky slides standing below the canvas (see [the formula
 slide](2026-09-30-the-formula-slide.md), *In front of the specks*); nothing of the cloud is dimmed
 for it.
 
+**Under the way out it goes on moving** (the last round of 2026-09-30: "When the popup window
+happens, I also want the page in the back to keep moving"): it was paused while a name asked to be
+left for; now only the hand lets go of it. And **a name pointed at stands on a backdrop of the
+aldehyde's own specks** — its grey, gold and violet (`HAZE_*`; see [the formula
+slide](2026-09-30-the-formula-slide.md)).
+
 ## How to test it
 
 `tests/landing.spec.js`:

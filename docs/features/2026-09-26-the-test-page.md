@@ -1841,6 +1841,16 @@ Go carries the link as the page wrote it (`../houses/adar.html#part-07`), not th
 `.net-leave` in `network.js` (`askLeave`, `stay`); `state().leaving` is the fragrance being asked
 about.
 
+**Orange, and calmer** (2026-09-30: "also make this orange and less urgent", and "maybe change the
+text to 'This will take you to the information page of this perfume'"): the window is no longer in
+the page's red. Its kicker, its two corner ticks and its way on are a soft orange (`--leave`,
+`#e3935a`, on `.net-leave`), the kicker a little quieter; **Go to its page** is a hairline box in
+that orange, faintly filled, filling a little more under the hand — not a solid red block — and the
+shade behind is lighter (0.34, it was 0.46), the window coming up and going more slowly (420ms; it
+was 260ms, and the script waits 460ms, not 320, before hiding it). Its line is the owner's: *This
+will take you to the information page of this perfume.* (it was *This goes to its page, where it is
+written up.*). A test checks the orange hairline and its faint fill.
+
 ### The Sources, dark
 
 The sheet of references (**the sources**) is still paper where every other window is glass, but its

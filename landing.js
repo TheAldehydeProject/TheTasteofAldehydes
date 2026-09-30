@@ -233,8 +233,11 @@
   // the scrollbar move the page themselves, and the glide lets go. With
   // reduced motion the page's own scrolling, at once.
   // ============================================================
-  const GLIDE_W = 6.5;        // the spring's pace, per second (higher, quicker)
-  const WHEEL_SCALE = 0.85;   // how far a notch sends it, of its own size
+  // (Slower and less sensitive since the night of 2026-09-30: "make the
+  // scrolling smoother - as if making the scrolling less sensitive/slower".
+  // They were 6.5 and 0.85.)
+  const GLIDE_W = 4.2;        // the spring's pace, per second (higher, quicker)
+  const WHEEL_SCALE = 0.5;    // how far a notch sends it, of its own size
   let glideAt = container.scrollTop, glideTo = glideAt, glideV = 0, gliding = false, glideLast = 0, glideWrote = -1;
   // as far down as it may glide: the stage's end, when the map slides follow it
   const glideMost = () => (mapOn && intro ? stageEnd() : container.scrollHeight - container.clientHeight);
@@ -288,19 +291,32 @@
   // THE WAY OUT, ASKED FIRST (2026-09-30: "when you click it, I want a
   // confirmation message to pop up to go to that thing. it should be on
   // theme"). A name on the formula pressed brings up a dark sheet with the
-  // page's name, Stay and Go, over the page veiled; Escape, Stay or the
-  // veil put it away. Pressed with a key held (a new tab, a new window) a
-  // name goes where it goes without asking, since nothing is being left.
-  // A name tabbed to before the names are up takes the page to them.
+  // page's name and what the page is — the name's own `data-say`, the words
+  // its window said on the node map, and its `data-note` set apart ("use
+  // the text from what would have been the popup windows on page 4") —
+  // Stay and Go, over the page veiled, which goes on moving behind it
+  // (molecule.js), and specks of the aldehyde's colours drifting in the
+  // sheet (THE SHEET'S SPECKS, below); Escape, Stay or the veil put it
+  // away. Pressed with a key held (a new tab, a new window) a name goes
+  // where it goes without asking, since nothing is being left. A name
+  // tabbed to before the names are up takes the page to them.
   // ============================================================
   const ask = document.getElementById("formula-ask");
   if (ask) {
     const askName = ask.querySelector(".formula-ask-name");
+    const askSay = ask.querySelector(".formula-ask-say");
+    const askNote = ask.querySelector(".formula-ask-note");
     const askStay = ask.querySelector(".formula-ask-stay");
     const askGo = ask.querySelector(".formula-ask-go");
+    const specks = askSpecks(ask.querySelector(".formula-ask-specks"));
     let askFrom = null, askTimer = 0, asking = false;
     const openAsk = (a) => {
       askName.textContent = a.textContent.trim();
+      if (a.dataset.say) askSay.textContent = a.dataset.say;
+      if (askNote) {
+        askNote.textContent = a.dataset.note || "";
+        askNote.hidden = !a.dataset.note;
+      }
       askGo.setAttribute("href", a.getAttribute("href"));
       askFrom = a;
       asking = true;
@@ -310,6 +326,7 @@
       ask.classList.add("is-on");
       document.body.classList.add("ask-shown");
       a.classList.add("is-lit");
+      specks.start();
       window.setTimeout(() => { if (asking) askGo.focus({ preventScroll: true }); }, REDUCE_MOTION ? 0 : 60);
     };
     const stay = () => {
@@ -317,7 +334,7 @@
       asking = false;
       ask.classList.remove("is-on");
       document.body.classList.remove("ask-shown");
-      askTimer = window.setTimeout(() => { if (!asking) ask.hidden = true; }, REDUCE_MOTION ? 0 : 420);
+      askTimer = window.setTimeout(() => { if (!asking) { ask.hidden = true; specks.stop(); } }, REDUCE_MOTION ? 0 : 420);
       if (askFrom) {
         askFrom.classList.remove("is-lit");
         if (askFrom.isConnected) askFrom.focus({ preventScroll: true });
@@ -351,6 +368,82 @@
         if (a.matches(":focus-visible") && reading() < LAST - 0.05) toStage(LAST);
       });
     });
+  }
+
+  // THE SHEET'S SPECKS (2026-09-30: "I want the popup window to have some
+  // particles too"): a drift of specks in the aldehyde's own colours — its
+  // warm grey, the double bond's gold, the lone pair's violet — across the
+  // way out's sheet, behind its words: gathering in from all round as it
+  // opens, then turning slowly about their places and swirling a little as
+  // the aldehyde's do; thickest towards the sheet's right and foot, faint
+  // where the words stand. Drawn only while it asks; still with motion
+  // turned off.
+  function askSpecks(canvas) {
+    const none = { start() {}, stop() {} };
+    if (!canvas || !canvas.getContext) return none;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return none;
+    const TONES = [[0.5, "179,171,161"], [0.3, "224,178,82"], [0.2, "169,138,216"]];
+    const COUNT = 180, GATHER_MS = 900;
+    let specks = [], w = 0, h = 0, ratio = 1, raf = 0, born = 0;
+    let s = 91;
+    const rnd = () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
+    function lay() {
+      const r = canvas.getBoundingClientRect();
+      ratio = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 2);
+      w = Math.max(1, r.width); h = Math.max(1, r.height);
+      canvas.width = Math.round(w * ratio); canvas.height = Math.round(h * ratio);
+      s = 91;
+      specks = [];
+      for (let i = 0; i < COUNT; i++) {
+        // thickest towards the right and the foot, where the words are not
+        const x = Math.pow(rnd(), 0.55), y = Math.pow(rnd(), 0.7);
+        let t = rnd(), tone = TONES[0][1];
+        for (const [share, c] of TONES) { if (t < share) { tone = c; break; } t -= share; }
+        const a = rnd() * Math.PI * 2;
+        specks.push({
+          x: x * w, y: y * h, tone,
+          size: 0.6 + rnd() * 1.1,
+          alpha: 0.2 + rnd() * 0.5,
+          turn: 0.15 + rnd() * 0.35, orbit: 2 + rnd() * 5, phase: rnd() * 6.283,
+          fromX: Math.cos(a) * (w * 0.7), fromY: Math.sin(a) * (h * 0.7),
+        });
+      }
+    }
+    function frame(now) {
+      const t = (now - born) / 1000;
+      const come = REDUCE_MOTION ? 1 : smooth((now - born) / GATHER_MS);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      ctx.globalCompositeOperation = "lighter";
+      for (const p of specks) {
+        const a = REDUCE_MOTION ? p.phase : p.phase + t * p.turn;
+        let x = p.x + Math.cos(a) * p.orbit + (1 - come) * p.fromX;
+        let y = p.y + Math.sin(a * 1.3) * p.orbit * 0.7 + (1 - come) * p.fromY;
+        if (!REDUCE_MOTION) {
+          x += Math.sin(y * 0.021 + t * 0.4 + p.phase) * 2.2;
+          y += Math.cos(x * 0.019 - t * 0.35) * 1.8;
+        }
+        // faint where the words stand: the upper left
+        const quiet = 0.35 + 0.65 * smooth(Math.max(x / w - 0.45, 0) * 2.2 + Math.max(y / h - 0.62, 0) * 2.6);
+        const twinkle = REDUCE_MOTION ? 1 : 0.7 + 0.3 * Math.sin(t * 1.7 + p.phase * 9);
+        ctx.fillStyle = "rgba(" + p.tone + "," + (p.alpha * quiet * twinkle * come).toFixed(3) + ")";
+        ctx.beginPath();
+        ctx.arc(x, y, p.size, 0, 6.283);
+        ctx.fill();
+      }
+      ctx.globalCompositeOperation = "source-over";
+      raf = REDUCE_MOTION ? 0 : requestAnimationFrame(frame);
+    }
+    return {
+      start() {
+        cancelAnimationFrame(raf);
+        lay();
+        born = performance.now();
+        raf = requestAnimationFrame(frame);
+      },
+      stop() { cancelAnimationFrame(raf); raf = 0; },
+    };
   }
 
   // THE STAGE IS DARK. The Menu stands fixed over whatever is under it, so

@@ -199,9 +199,22 @@ const SITE_LINKS = [
 // two were taken out.
 //
 // The aldehyde itself, R–C(=O)–H, drawn in hairlines as a chemistry book
-// draws it (the site's own icon's molecule), a ring of what it smells of
-// turning slowly round it, and a vapour of specks rising off the oxygen.
-// SVG and the stylesheet alone, in the site's own two faces.
+// draws it (the site's own icon's molecule), in a cloud of specks in the
+// home page's colours, and a vapour of specks rising off the oxygen; under
+// it, three words for what it smells of. SVG, one small canvas and the
+// stylesheet, in the site's own two faces.
+//
+// THE CLOUD (2026-09-30: "i dont want the circuling text around it; i want
+// it to have particles similar in colour to that in the home page. not
+// identical, but in general. if you want to keep text then keep metallic
+// cold and soapy"): specks in the home page's warm grey, gold and violet —
+// the gold round the double bond, the violet in two lobes off the oxygen,
+// the grey a loose haze round the whole — each turning slowly about its
+// place and twinkling, drawn only while the menu is open. It is not the
+// home page's cloud (that is the real one, solved): it only says the same
+// thing in the same colours. The ring of words that turned round it —
+// metallic, cold, fizzing, soapy, waxy, clean linen, snuffed candle,
+// orange peel — is gone; METALLIC, COLD and SOAPY stand still under it.
 //
 // It is ornament, and is kept from a screen reader. It stands only where
 // there is room for it — beside the list on a wide window, in the corner
@@ -211,18 +224,17 @@ const SITE_LINKS = [
   const overlay = document.getElementById("site-menu-overlay");
   if (!overlay) return;
 
-  // What an aldehyde smells of, as a perfumer says it.
-  const WORDS = ["metallic", "cold", "fizzing", "soapy", "waxy", "clean linen", "snuffed candle", "orange peel"];
+  // What an aldehyde smells of, as a perfumer says it: the three the owner kept.
+  const WORDS = ["metallic", "cold", "soapy"];
 
   const aside = document.createElement("div");
   aside.className = "menu-aldehydes";
   aside.setAttribute("aria-hidden", "true");
   aside.innerHTML =
+    '<canvas class="ma-cloud"></canvas>' +
     '<svg class="ma-mol" viewBox="0 0 400 400">' +
-      '<defs><path id="ma-ring-path" d="M200,200 m-168,0 a168,168 0 1,1 336,0 a168,168 0 1,1 -336,0"/></defs>' +
       '<circle class="ma-orbit" cx="200" cy="200" r="150"/>' +
       '<circle class="ma-orbit ma-orbit-2" cx="200" cy="200" r="186"/>' +
-      '<g class="ma-ring"><text class="ma-ring-text"><textPath href="#ma-ring-path" textLength="1040" lengthAdjust="spacing"></textPath></text></g>' +
       // The bonds: C to O twice (a double bond), C to R and C to H at 120
       // degrees below, stopping short of every letter.
       '<g class="ma-bonds">' +
@@ -235,8 +247,8 @@ const SITE_LINKS = [
       "</g>" +
       '<g class="ma-vapour"></g>' +
     "</svg>" +
+    '<p class="ma-words">' + WORDS.map((w) => "<span>" + w + "</span>").join("") + "</p>" +
     '<p class="ma-caption"><span>R–CHO</span><span>The smell of aldehydes</span></p>';
-  aside.querySelector("textPath").textContent = WORDS.join("  ·  ") + "  ·  ";
   // The vapour: specks rising off the oxygen, each on a clock of its own.
   const vapour = aside.querySelector(".ma-vapour");
   for (let i = 0; i < 18; i++) {
@@ -244,6 +256,8 @@ const SITE_LINKS = [
     c.setAttribute("cx", String(200 + (Math.random() - 0.5) * 16));
     c.setAttribute("cy", "92");
     c.setAttribute("r", String(0.8 + Math.random() * 1.4));
+    // (in the lone pair's violet and the double bond's gold, by turns)
+    c.setAttribute("class", i % 3 === 0 ? "ma-gold" : "ma-violet");
     c.style.setProperty("--drift", ((Math.random() - 0.5) * 60).toFixed(1) + "px");
     c.style.setProperty("--rise", (-50 - Math.random() * 60).toFixed(1) + "px");
     c.style.animationDelay = (-Math.random() * 4.8).toFixed(2) + "s";
@@ -251,6 +265,71 @@ const SITE_LINKS = [
     vapour.appendChild(c);
   }
   overlay.appendChild(aside);
+
+  // THE CLOUD, on its canvas under the drawing, in the drawing's own 400 ×
+  // 400: where each speck belongs, in which colour, and its own clock.
+  const canvas = aside.querySelector(".ma-cloud");
+  const ctx = canvas.getContext && canvas.getContext("2d");
+  if (!ctx) return;
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const GREY = "186,178,167", GOLD = "224,178,82", VIOLET = "169,138,216";
+  let s = 17;
+  const rnd = () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
+  const gauss = () => Math.sqrt(-2 * Math.log(1 - rnd() * 0.999)) * Math.cos(2 * Math.PI * rnd());
+  const specks = [];
+  const add = (n, tone, at, sx, sy, alpha) => {
+    for (let i = 0; i < n; i++) {
+      specks.push({
+        x: at[0] + gauss() * sx, y: at[1] + gauss() * sy, tone,
+        r: 0.5 + rnd() * 1.1, a: alpha * (0.45 + rnd() * 0.55),
+        turn: (rnd() < 0.5 ? -1 : 1) * (0.1 + rnd() * 0.3), orbit: 1.5 + rnd() * 5, ph: rnd() * 6.283,
+      });
+    }
+  };
+  // the double bond: two lobes either side of C=O, in gold
+  add(150, GOLD, [176, 146], 13, 22, 0.8);
+  add(150, GOLD, [224, 146], 13, 22, 0.8);
+  // the lone pair: two lobes off the oxygen, up and out, in violet
+  add(110, VIOLET, [164, 86], 17, 13, 0.8);
+  add(110, VIOLET, [236, 86], 17, 13, 0.8);
+  // everything else: a loose haze round the whole, in the warm grey
+  add(260, GREY, [200, 196], 72, 70, 0.5);
+  add(60, GREY, [140, 246], 22, 18, 0.55);
+  add(60, GREY, [260, 246], 22, 18, 0.55);
+
+  let raf = 0, born = 0, size = 0, ratio = 1;
+  function frame(now) {
+    raf = 0;
+    const open = overlay.classList.contains("open");
+    const box = canvas.getBoundingClientRect();
+    if (!open || box.width < 2) return;          // shut, or no room for it
+    if (Math.round(box.width) !== size) {
+      size = Math.round(box.width);
+      ratio = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 2);
+      canvas.width = Math.round(size * ratio);
+      canvas.height = Math.round(size * ratio);
+    }
+    const k = (size / 400) * ratio;
+    const t = still.matches ? 0 : (now - born) / 1000;
+    ctx.setTransform(k, 0, 0, k, 0, 0);
+    ctx.clearRect(0, 0, 400, 400);
+    ctx.globalCompositeOperation = "lighter";
+    for (const p of specks) {
+      const a = p.ph + t * p.turn;
+      const x = p.x + Math.cos(a) * p.orbit + (still.matches ? 0 : Math.sin(p.y * 0.05 + t * 0.5) * 1.6);
+      const y = p.y + Math.sin(a) * p.orbit * 0.8;
+      const twinkle = still.matches ? 1 : 0.7 + 0.3 * Math.sin(t * 1.5 + p.ph * 7);
+      ctx.fillStyle = "rgba(" + p.tone + "," + (p.a * twinkle).toFixed(3) + ")";
+      ctx.beginPath();
+      ctx.arc(x, y, p.r, 0, 6.283);
+      ctx.fill();
+    }
+    ctx.globalCompositeOperation = "source-over";
+    if (!still.matches) raf = requestAnimationFrame(frame);
+  }
+  const wake = () => { if (!raf && overlay.classList.contains("open")) { born = born || performance.now(); raf = requestAnimationFrame(frame); } };
+  new MutationObserver(wake).observe(overlay, { attributes: true, attributeFilter: ["class"] });
+  window.addEventListener("resize", () => { size = 0; wake(); });
 })();
 
 // ============================================================

@@ -303,3 +303,13 @@ still draws either way`** — solid by default, flat with `?spheres=flat`, solid
 ## 2026-09-30, last — switched off, and kept
 
 The owner (2026-09-30): "PRESERVE PAGES 3 AND 4 IN THE CODE, BUT EXCLUDE THEM FROM THE WORKING VERSION OF THE PROJECT ... I WANT THIS CHANGE TO BE REVERSIBLE". The sentence and the map are **switched off and kept whole**: their markup (and the paper's) in `<template id="map-slides">` in `index.html`, and `node-scene.js`, `paper.js`, `thread.js` and `extras.js` not loaded on the page. **`MAP_SLIDES`** at the top of `landing.js` brings them all back after the home page's stage, exactly as they were; **`?map=on`** on the address shows them without changing anything, and every test of them runs that way (`HOME_WITH_MAP` in `tests/helpers.js`). See [the stage alone](2026-09-11-the-landing-slides-and-exit.md#2026-09-30-last--the-stage-alone-five-stages-and-pages-3-and-4-kept-switched-off).
+
+## 2026-09-30, the night — a window's words carried to the home page
+
+With the map switched off, the owner asked for its windows' words on the home page's way out ("use
+the text from what would have been the popup windows on page 4 for the same text in the home page
+now"). Each of the eight `preview.description`s — and Photography's `preview.note` — is copied onto
+its name on the formula slide as `data-say` (and `data-note`) in `index.html`, **word for word**;
+`tests/formula.spec.js` reads `REAL_NODES` and fails if the two copies part. Change a description
+here and change it there.
+

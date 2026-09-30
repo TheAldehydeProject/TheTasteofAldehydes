@@ -1546,7 +1546,7 @@
         '<p class="net-leave-kicker">Leave the library</p>' +
         '<h2 class="net-leave-name" id="net-leave-name"></h2>' +
         '<p class="net-leave-house"></p>' +
-        '<p class="net-leave-say" id="net-leave-say">This goes to its page, where it is written up.</p>' +
+        '<p class="net-leave-say" id="net-leave-say">This will take you to the information page of this perfume.</p>' +   // (the owner's words, 2026-09-30)
         '<div class="net-leave-choose">' +
           '<button type="button" class="net-leave-stay">Stay</button>' +
           '<a class="net-leave-go">Go to its page</a>' +
@@ -1576,7 +1576,7 @@
       leaveOpen = false;
       stage.dataset.leave = "";
       leave.classList.remove("is-on");
-      leaveTimer = window.setTimeout(() => { if (!leaveOpen) leave.hidden = true; }, still ? 0 : 320);
+      leaveTimer = window.setTimeout(() => { if (!leaveOpen) leave.hidden = true; }, still ? 0 : 460);   // (after its fade, style.css)
       if (leaveBack && leaveBack.isConnected && leaveBack.focus) leaveBack.focus({ preventScroll: true });
       leaveBack = null;
     }
