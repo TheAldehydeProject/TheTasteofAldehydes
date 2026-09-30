@@ -184,3 +184,28 @@ see [its report](2026-09-30-the-formula-slide.md)). What changed here:
   that now, and neither class is in the code.)
 - **`first-slide-dark`** covers both dark slides: it is on while the page is short of the formula
   slide's foot, less the Menu's.
+
+## 2026-09-30, last — the stage alone: five stages, and pages 3 and 4 kept, switched off
+
+The owner: "make it a smooth scrolling instead of incremental ... 5 increments ... gradual (not
+sudden like now)", and "PRESERVE PAGES 3 AND 4 IN THE CODE, BUT EXCLUDE THEM FROM THE WORKING
+VERSION OF THE PROJECT. I WANT JUST PAGES 1 AND 2 ... I WANT THIS CHANGE TO BE REVERSIBLE JUST IN
+CASE". So (see [the formula slide](2026-09-30-the-formula-slide.md) for the whole of it):
+
+- **The home page is the stage alone.** The title slide, the formula slide and the aldehyde stand
+  pinned on it, and the page scrolls down its run — natively, the way any page scrolls, nothing
+  snapping — through five stages; `landing.js` follows where it is, a little behind, and tells the
+  drawing as `window.__formula`, now **0 to 4**. The keys and the Scroll button go a stage at a time.
+  Nothing here takes the wheel any more while the map slides are off.
+- **The sentence and the node map are kept whole and switched off**: in `<template id="map-slides">`
+  in `index.html`, with the paper under the map, and their four scripts not loaded. **`MAP_SLIDES`**
+  at the top of `landing.js` brings them back after the stage, as they were — the long move, the way
+  out of the map, the paper, the thread and all — and **`?map=on`** on the address shows them without
+  changing anything. Every test of them runs that way (`HOME_WITH_MAP` in `tests/helpers.js`).
+- With them on, the page has three places to stand — the stage's end, the sentence, the map — and
+  moves between them as before, a whole slide at a time; the stage is scrolled natively up to its
+  end, where a wheel's run is held, and a further turn (after 450ms there) goes on to the sentence.
+  Snapping is on only past the stage (the stage's run carries a snap point at its end for it).
+- **`first-slide-dark`** is on while the stage is under the Menu: with the map slides off, always.
+- **A pinned slide reports the page's own place** as its `offsetTop`, so the tests' `jumpToSlide`
+  knows the title is the stage's start and the formula its end, and `toStage` goes to any stage.

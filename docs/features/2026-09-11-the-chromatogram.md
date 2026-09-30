@@ -60,3 +60,7 @@ grows visibly; turn the map and check the trace glides rather than twitching.
 ## Known issues / TODO
 
 None outstanding.
+
+## 2026-09-30, last — switched off, and kept
+
+The owner (2026-09-30): "PRESERVE PAGES 3 AND 4 IN THE CODE, BUT EXCLUDE THEM FROM THE WORKING VERSION OF THE PROJECT ... I WANT THIS CHANGE TO BE REVERSIBLE". The sentence and the map are **switched off and kept whole**: their markup (and the paper's) in `<template id="map-slides">` in `index.html`, and `node-scene.js`, `paper.js`, `thread.js` and `extras.js` not loaded on the page. **`MAP_SLIDES`** at the top of `landing.js` brings them all back after the home page's stage, exactly as they were; **`?map=on`** on the address shows them without changing anything, and every test of them runs that way (`HOME_WITH_MAP` in `tests/helpers.js`). See [the stage alone](2026-09-11-the-landing-slides-and-exit.md#2026-09-30-last--the-stage-alone-five-stages-and-pages-3-and-4-kept-switched-off).

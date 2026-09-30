@@ -141,3 +141,12 @@ after it ("to transition to this page from the title page, I want the title and 
 away"), **the title fades where it stands** as the page leaves it — held in place over the pinned
 aldehyde, lifting a little, gone by 0.45 of the way (`landing.js`) — rather than being carried off
 the top. See [the formula slide](2026-09-30-the-formula-slide.md).
+
+## 2026-09-30, last — the first of five stages
+
+The home page is one stage scrolled through five stages now ([the formula
+slide](2026-09-30-the-formula-slide.md)). The title is the first: it stands pinned with the
+aldehyde, and as the page is scrolled down the first leg it fades where it stands and lifts 26px,
+gone by 0.8 of the leg and taking no click once gone (`TITLE_GONE` in `landing.js`); the corner
+block and the Scroll button sooner (`CORNERS_GONE`). It is still white with its dark edge, and its
+slide has no ground of its own (the stage's dark is under it). The Scroll button goes on a stage.

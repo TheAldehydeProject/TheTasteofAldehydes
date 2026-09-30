@@ -299,3 +299,7 @@ still draws either way`** — solid by default, flat with `?spheres=flat`, solid
   described, standing under the Close;
 - **`on a phone every node opens its own window, on the screen`** — at 390px, held still: every name
   inside the screen, and a tap on each opens **its own** window, inside the screen.
+
+## 2026-09-30, last — switched off, and kept
+
+The owner (2026-09-30): "PRESERVE PAGES 3 AND 4 IN THE CODE, BUT EXCLUDE THEM FROM THE WORKING VERSION OF THE PROJECT ... I WANT THIS CHANGE TO BE REVERSIBLE". The sentence and the map are **switched off and kept whole**: their markup (and the paper's) in `<template id="map-slides">` in `index.html`, and `node-scene.js`, `paper.js`, `thread.js` and `extras.js` not loaded on the page. **`MAP_SLIDES`** at the top of `landing.js` brings them all back after the home page's stage, exactly as they were; **`?map=on`** on the address shows them without changing anything, and every test of them runs that way (`HOME_WITH_MAP` in `tests/helpers.js`). See [the stage alone](2026-09-11-the-landing-slides-and-exit.md#2026-09-30-last--the-stage-alone-five-stages-and-pages-3-and-4-kept-switched-off).

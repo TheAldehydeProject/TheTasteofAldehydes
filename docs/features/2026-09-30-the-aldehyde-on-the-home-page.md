@@ -167,6 +167,20 @@ the lens and the shake were the grain in it ("a little smoother"). None of the l
 the key or the caption layout is in the code (no `uFocus`, `uBlur`, `.molecule-key`,
 `.molecule-atom`).
 
+## The five stages, and the electronegative hand (2026-09-30, last)
+
+The aldehyde is the whole of the home page now, pinned while the page is scrolled through [five
+stages](2026-09-30-the-formula-slide.md): as it is first seen with the title; the title gone;
+**turned upright**; **its formula** drawn in it; and the Menu's names beside two lines of specks.
+`molecule.js` reads the stage from `window.__formula` (0 to 4) and nothing else.
+
+**The hand is electronegative** ("i want the cursor to have an electronegative character, sot he
+'electrons would be attracted to it'"): the specks near the pointer are drawn a part of the way to
+it and brighten, the nearer the more (`HAND_REACH`, `HAND_PULL`, `HAND_LIGHT`), worked out in the
+cloud's shader once a speck is placed on the window, and a small δ− stands beside the pointer. Once
+the formula is drawn the pull is gentler, and none round an atom's name (the clear spaces stay on
+their letters). None under reduced motion, and none on a finger.
+
 ## How to test it
 
 `tests/landing.spec.js`:

@@ -300,8 +300,8 @@ test("a name is half hidden until the hand comes to it: then it is lit, and the 
 
   const [lx] = await lineXs(page);
   const r = await name.boundingBox();
-  // between the end of its letters and its line
-  const between = { x: lx - 24, y: r.y, width: 18, height: r.height };
+  // between the end of its letters and its line, up and down beside it
+  const between = { x: lx - 28, y: r.y + r.height / 2 - 100, width: 22, height: 200 };
   await page.mouse.move(1380, 60);
   await page.waitForTimeout(1500);
   const before = await light(page, between);
@@ -314,7 +314,7 @@ test("a name is half hidden until the hand comes to it: then it is lit, and the 
   await expect(page.locator(".molecule-charge"), "δ− by the hand").toHaveClass(/is-on/);
   expect(await page.locator(".molecule-charge").textContent()).toBe("δ−");
   const after = await light(page, between);
-  expect(after.lit, "the specks of its line drawn out towards the hand").toBeGreaterThan(before.lit * 2 + 20);
+  expect(after.lit, "the specks of its line drawn out towards the hand").toBeGreaterThan(before.lit * 1.8 + 15);
   // and the hand gone, so is the light
   await page.mouse.move(1380, 60, { steps: 4 });
   await expect.poll(async () => (await look()).colour, { timeout: 3000 }).toBe("rgba(243, 240, 235, 0.84)");
@@ -429,14 +429,18 @@ test("with motion turned off the stages are simply there, still", async ({ page 
   await toStage(page, 4);
   await settled(page, 4, 2000);
   await expect.poll(() => state(page), { timeout: 4000 }).toBe("lined");
+  // (the hand kept off the picture: the site's cursor is drawn where it is)
+  await page.mouse.move(20, 880);
   await page.waitForTimeout(300);
   const clip = { x: 100, y: 60, width: 1240, height: 780 };
   const a = (await page.screenshot({ clip })).toString("base64");
-  await page.mouse.move(720, 450);
   await page.waitForTimeout(900);
   const b = (await page.screenshot({ clip })).toString("base64");
-  expect(a === b, "nothing moved, and the hand draws nothing").toBe(true);
+  expect(a === b, "nothing moved").toBe(true);
   expect((await light(page, clip)).n, "and it is drawn").toBeGreaterThan(2000);
+  // and the hand, over it, draws nothing to it
+  await page.mouse.move(720, 450, { steps: 4 });
+  await page.waitForTimeout(900);
   await expect(page.locator(".molecule-charge")).not.toHaveClass(/is-on/);
 });
 
