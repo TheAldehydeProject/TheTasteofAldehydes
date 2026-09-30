@@ -13,6 +13,7 @@ const {
   collectPageErrors,
   jumpToSlide,
   waitForMapSettled,
+  HOME_WITH_MAP,
 } = require("./helpers");
 
 const scrollTop = (page) =>
@@ -28,7 +29,7 @@ test.beforeEach(async ({ page }) => {
 
 test("the page holds still through the collapse and the line, then scrolls", async ({ page }) => {
   const errors = collectPageErrors(page);
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
   // Put the page's own idea of where it is back in step after jumping.
@@ -97,7 +98,7 @@ test("the page holds still through the collapse and the line, then scrolls", asy
 // through zero across the whole way out, which used to fade the sphere
 // to about four fifths before it had even reached the bottom edge.
 test("the black dot does not fade while it is still on screen", async ({ page }) => {
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
   await page.keyboard.press("ArrowDown"); // put the page's own idea of where it is back in step
@@ -145,11 +146,13 @@ test("the black dot does not fade while it is still on screen", async ({ page })
 });
 
 test("going down to the map is a plain scroll, with no collapse", async ({ page }) => {
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
 
+  await jumpToSlide(page, "slide-2");
+  await page.waitForTimeout(600);
   await page.keyboard.press("ArrowDown");
-  await page.waitForTimeout(1400);
-  await page.keyboard.press("ArrowDown");
+  await expect.poll(() => page.evaluate(() => document.getElementById("scroll-container").scrollTop), { timeout: 2000 })
+    .toBeGreaterThan(await page.evaluate(() => document.getElementById("slide-2").offsetTop));
 
   // The collapse belongs to the way up only; going down must never
   // trigger it, or arriving at the map would play it backwards.
@@ -163,7 +166,7 @@ test("going down to the map is a plain scroll, with no collapse", async ({ page 
 
 test("the map collapses into its centre, and the centre stays put", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" }); // holds the map still
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
 
@@ -202,7 +205,7 @@ test("the map collapses into its centre, and the centre stays put", async ({ pag
 
 test("the trace along the foot is the first thing to go", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
 
@@ -225,7 +228,7 @@ test("the trace along the foot is the first thing to go", async ({ page }) => {
 
 test("a line draws itself from the centre up to the top of the screen", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
 
@@ -260,7 +263,7 @@ test("a line draws itself from the centre up to the top of the screen", async ({
 // the other way the thread leaves exactly the same gap below the words,
 // so the two meet at the same point and it reads as connecting to them.
 test("the line that reforms stops at the sentence rather than crossing it", async ({ page }) => {
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
   await page.waitForTimeout(400);
@@ -312,7 +315,7 @@ test("the line that reforms stops at the sentence rather than crossing it", asyn
 // and a solid one drawn over each other on the way out, and then a
 // heavier line replaced by a lighter one in a single frame on arrival.
 test("the reforming line and the thread become one another without a seam", async ({ page }) => {
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
   await page.waitForTimeout(400);

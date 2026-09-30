@@ -8,7 +8,7 @@
 // wrong on a new page and the whole menu breaks, not just one link.
 // ============================================================
 const { test, expect } = require("@playwright/test");
-const { serveDependenciesLocally, collectPageErrors } = require("./helpers");
+const { serveDependenciesLocally, collectPageErrors, HOME_WITH_MAP } = require("./helpers");
 
 // Every page on the site, and how deep it sits, which is what
 // SITE_ROOT has to match.
@@ -119,7 +119,8 @@ test("the contact page says to send a carrier pigeon, or an email behind a check
    "even", which they took out of "even ideas" (2026-09-29). */
 test("the line on slide 2 names the site as its title does", async ({ page }) => {
   await serveDependenciesLocally(page);
-  await page.goto("/index.html");
+  // (kept, switched off, since 2026-09-30: on with ?map=on)
+  await page.goto(HOME_WITH_MAP);
   const title = (await page.locator("#slide-1 h1").textContent()).trim();
   expect(title).toBe("The Taste of Aldehydes");
   const line = (await page.locator("#slide-2 .intro-lede").textContent()).replace(/\s+/g, " ").trim();

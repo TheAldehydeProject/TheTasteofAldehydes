@@ -1,24 +1,26 @@
 // ============================================================
 // THE LANDING PAGE
 //
-// index.html is four full-screen panels ("slides") that you move
-// between with the wheel, the arrow keys, or the Scroll button: the
-// title, the formula (2026-09-30), the sentence and the map.
-// The moving is hand-written rather than left to the browser, so
-// it is worth checking it actually lands where it should.
+// index.html is, since 2026-09-30, THE STAGE alone: the title and the
+// formula pinned to the window with the aldehyde, scrolled smoothly through
+// five stages. The sentence and the node map that followed it are kept,
+// switched off (MAP_SLIDES in landing.js, and ?map=on on the address); the
+// tests of the way between them are run with them on, so what is kept keeps
+// working. The formula's own tests are in formula.spec.js.
 // ============================================================
 const { test, expect } = require("@playwright/test");
-const { serveDependenciesLocally, collectPageErrors, blockThreeJs, jumpToSlide } = require("./helpers");
+const { serveDependenciesLocally, collectPageErrors, blockThreeJs, jumpToSlide, toStage, stageAt, HOME_WITH_MAP } = require("./helpers");
 
 const scrollTop = (page) =>
   page.evaluate(() => document.getElementById("scroll-container").scrollTop);
 const slideTop = (page, id) =>
   page.evaluate((id) => document.getElementById(id).offsetTop, id);
-// Down to the sentence the way a visitor goes: to the formula, then on.
+// One leg of the stage: how far the page is scrolled from one stage to the next.
+const legOf = (page) => page.evaluate(() => document.querySelector(".stage-run").offsetHeight / 4);
+// Down to the sentence (the map slides on): to the end of the stage, then on.
 async function toTheSentence(page) {
-  await page.keyboard.press("ArrowDown");
-  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(await slideTop(page, "slide-formula"));
-  await page.waitForTimeout(300);
+  await jumpToSlide(page, "slide-formula");
+  await page.waitForTimeout(700);
   await page.keyboard.press("ArrowDown");
   const two = await slideTop(page, "slide-2");
   await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(two);
@@ -30,38 +32,94 @@ test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
 });
 
-// The formula slide stands between the title and the sentence since
-// 2026-09-30 ("introduce a 4th page, between the first and second").
-test("the landing page has exactly four slides, the formula between the title and the sentence", async ({ page }) => {
+/* PAGES 3 AND 4 SWITCHED OFF, AND KEPT (2026-09-30: "PRESERVE PAGES 3 AND 4
+   IN THE CODE, BUT EXCLUDE THEM FROM THE WORKING VERSION OF THE PROJECT. I
+   WANT JUST PAGES 1 AND 2 ... I WANT THIS CHANGE TO BE REVERSIBLE"). The home
+   page is the stage alone, and nothing of the sentence and the map is on it
+   or loaded for it; they are kept whole in a <template>, with one switch in
+   landing.js to bring them back, and ?map=on shows them as they were. */
+test("the home page is the stage alone, the sentence and the map kept whole and switched off", async ({ page }) => {
   await page.goto("/index.html");
-  await expect(page.locator(".slide")).toHaveCount(4);
+  expect(await page.locator(".slide").evaluateAll((all) => all.map((s) => s.id))).toEqual(["slide-1", "slide-formula"]);
+  await expect(page.locator("#slide-2")).toHaveCount(0);
+  await expect(page.locator("#slide-3")).toHaveCount(0);
+  await expect(page.locator(".paper")).toHaveCount(0);
+  await expect(page.locator("body")).toHaveClass(/stage-only/);
+  await expect(page.locator("#slide-1")).toBeVisible();
+  // kept whole, where nothing draws it
+  const kept = await page.evaluate(() => {
+    const t = document.getElementById("map-slides");
+    return t && [Array.from(t.content.querySelectorAll(".slide")).map((s) => s.id), !!t.content.querySelector(".paper #node-canvas, #node-canvas")];
+  });
+  expect(kept).toEqual([["slide-2", "slide-3"], true]);
+  // and none of the four scripts that draw them loaded
+  await page.waitForTimeout(600);
+  const loaded = await page.evaluate(() => performance.getEntriesByType("resource").map((e) => e.name.split("?")[0].split("/").pop()));
+  for (const f of ["node-scene.js", "paper.js", "thread.js", "extras.js"]) expect(loaded, f).not.toContain(f);
+  // the one switch, and it is off
+  const src = require("fs").readFileSync(require("path").join(__dirname, "..", "landing.js"), "utf8");
+  expect(src).toMatch(/const MAP_SLIDES = false;/);
+});
+
+test("with the switch on the sentence and the map come back after the stage, as they were", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto(HOME_WITH_MAP);
   expect(await page.locator(".slide").evaluateAll((all) => all.map((s) => s.id)))
     .toEqual(["slide-1", "slide-formula", "slide-2", "slide-3"]);
-  await expect(page.locator("#slide-1")).toBeVisible();
+  await expect(page.locator("body")).toHaveClass(/map-on/);
+  await expect(page.locator("body > .paper"), "the paper back under the page").toHaveCount(1);
+  await expect.poll(() => page.evaluate(() => performance.getEntriesByType("resource").map((e) => e.name.split("/").pop()).filter((n) => /^(node-scene|paper|thread|extras)\.js$/.test(n)).length),
+    { timeout: 6000 }).toBe(4);
+  await expect(page.locator(".node3d-label"), "the map drawn").toHaveCount(8, { timeout: 8000 });
+  // the sentence straight after the stage
+  expect(await slideTop(page, "slide-2")).toBe(await page.evaluate(() => {
+    const s = document.getElementById("aldehyde-stage"); return s.offsetTop + s.offsetHeight;
+  }));
+  expect(errors).toEqual([]);
 });
 
-test("the Scroll button moves to the second slide", async ({ page }) => {
+/* THE FIVE STAGES, a stage at a time by the keys and the Scroll button —
+   smoothly (the page itself scrolls, and the stage follows it). */
+test("the Scroll button goes on a stage", async ({ page }) => {
   await page.goto("/index.html");
   expect(await scrollTop(page)).toBe(0);
+  const leg = await legOf(page);
 
   await page.locator("#scroll-cue").click();
-  const target = await slideTop(page, "slide-formula");
-  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(target);
+  await expect.poll(async () => Math.abs((await scrollTop(page)) - leg), { timeout: 8000 }).toBeLessThan(2);
+  await expect.poll(() => stageAt(page), { timeout: 4000 }).toBeCloseTo(1, 2);
+  await expect(page.locator("#aldehyde-stage")).toHaveAttribute("data-stage", "2");
 });
 
-test("arrow keys move one slide at a time, and stop at the ends", async ({ page }) => {
+test("arrow keys go a stage at a time, and stop at the ends", async ({ page }) => {
   await page.goto("/index.html");
+  const leg = await legOf(page);
+  const at = async (k) => expect.poll(async () => Math.abs((await scrollTop(page)) - k * leg), { timeout: 8000 }).toBeLessThan(2);
 
   await page.keyboard.press("ArrowDown");
-  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(await slideTop(page, "slide-formula"));
+  await at(1);
+  await page.keyboard.press("ArrowDown");
+  await at(2);
 
   await page.keyboard.press("ArrowUp");
-  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(0);
+  await at(1);
+  await page.keyboard.press("ArrowUp");
+  await at(0);
 
   // Already at the top — pressing up again should not go anywhere odd.
   await page.keyboard.press("ArrowUp");
   await page.waitForTimeout(500);
   expect(await scrollTop(page)).toBe(0);
+
+  // End goes to the last stage, and down from there stays there
+  await page.keyboard.press("End");
+  await at(4);
+  await page.keyboard.press("ArrowDown");
+  await page.waitForTimeout(600);
+  await at(4);
+  await expect.poll(() => stageAt(page), { timeout: 4000 }).toBeCloseTo(4, 2);
+  await page.keyboard.press("Home");
+  await at(0);
 });
 
 // Regression test: the arrow keys used to keep driving the slides while
@@ -82,7 +140,8 @@ test("arrow keys do nothing while the menu is open, and work again once it close
   await expect(page.locator(".menu-overlay")).not.toHaveClass(/open/);
 
   await page.keyboard.press("ArrowDown");
-  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(await slideTop(page, "slide-formula"));
+  const leg = await legOf(page);
+  await expect.poll(async () => Math.abs((await scrollTop(page)) - leg), { timeout: 8000 }).toBeLessThan(2);
 });
 
 // Both corners of the title slide — the block bottom right and the
@@ -108,28 +167,21 @@ for (const [what, selector] of [
     // holds its opacity and the scroll cannot move it.
     await expect.poll(() => page.locator(selector).evaluate((el) => el.style.animationName), { timeout: 6000 }).toBe("none");
 
-    // Park the page partway down by hand, rather than waiting out the
-    // site's own long scroll, and check it responds to where the page is.
-    const park = (fraction) =>
-      page.evaluate((f) => {
-        const container = document.getElementById("scroll-container");
-        container.style.scrollSnapType = "none";
-        container.scrollTop = document.getElementById("slide-formula").offsetTop * f;
-      }, fraction);
+    // Park the page part of the way through the first leg of the stage,
+    // and check it responds to where the page is (a little behind it, as
+    // the stage follows the page).
+    const park = (fraction) => toStage(page, fraction);
 
     await park(0.2);
-    await page.waitForTimeout(150);
-    const partway = await shown();
-    expect(partway, "should already be going").toBeLessThan(0.7);
-    expect(partway, "but not gone yet").toBeGreaterThan(0);
+    await expect.poll(shown, { timeout: 3000, message: "should already be going" }).toBeLessThan(0.7);
+    await page.waitForTimeout(400);
+    expect(await shown(), "but not gone yet").toBeGreaterThan(0);
 
-    await park(0.5);
-    await page.waitForTimeout(150);
-    expect(await shown(), "gone well before the second slide").toBeLessThan(0.05);
+    await park(0.55);
+    await expect.poll(shown, { timeout: 3000, message: "gone well before the second stage" }).toBeLessThan(0.05);
 
     await park(0);
-    await page.waitForTimeout(150);
-    expect(await shown(), "and back again on the way up").toBeGreaterThan(0.9);
+    await expect.poll(shown, { timeout: 3000, message: "and back again on the way up" }).toBeGreaterThan(0.9);
   });
 }
 
@@ -142,13 +194,8 @@ test("the Scroll button stops taking clicks once it has faded", async ({ page })
     page.locator(".scroll-cue").evaluate((el) => getComputedStyle(el).pointerEvents);
   expect(await clickable(), "should work where it can be seen").not.toBe("none");
 
-  await page.evaluate(() => {
-    const container = document.getElementById("scroll-container");
-    container.style.scrollSnapType = "none";
-    container.scrollTop = document.getElementById("slide-2").offsetTop;
-  });
-  await page.waitForTimeout(150);
-  expect(await clickable()).toBe("none");
+  await toStage(page, 1);
+  await expect.poll(clickable, { timeout: 3000 }).toBe("none");
 });
 
 test("the page still works with animations turned off in the operating system", async ({ page }) => {
@@ -159,7 +206,9 @@ test("the page still works with animations turned off in the operating system", 
   await page.goto("/index.html");
 
   await page.locator("#scroll-cue").click();
-  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(await slideTop(page, "slide-formula"));
+  const leg = await legOf(page);
+  await expect.poll(async () => Math.abs((await scrollTop(page)) - leg), { timeout: 8000 }).toBeLessThan(2);
+  expect(await stageAt(page), "and the stage is there at once").toBeCloseTo(1, 2);
 
   expect(errors).toEqual([]);
 });
@@ -195,7 +244,7 @@ test("on the long move between the sentence and the map, the page is moved befor
     });
   });
   const errors = collectPageErrors(page);
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await page.waitForTimeout(600);
 
   const two = await toTheSentence(page);
@@ -257,7 +306,7 @@ test("the long move to the map sets off at once and eases evenly", async ({ page
     });
     window.addEventListener("keydown", () => { window.__marks = [{ key: true }]; }, true);
   });
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await page.waitForTimeout(600);
   const two = await toTheSentence(page);
 
@@ -411,9 +460,11 @@ test("the aldehyde glows big in the middle of the dark first slide, the double b
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html");
   await expect(page.locator(".molecule"), "drawn").toHaveClass(/molecule-drawn/, { timeout: 4000 });
-  // the private page's dark ground, and the title in its light ink
-  const ground = await page.locator("#slide-1").evaluate((e) => getComputedStyle(e).backgroundColor);
+  // the private page's dark ground (the stage's, the slides on it
+  // see-through), and the title in its light ink
+  const ground = await page.locator("#aldehyde-stage").evaluate((e) => getComputedStyle(e).backgroundColor);
   expect(ground).toBe("rgb(31, 31, 32)");
+  expect(await page.locator("#slide-1").evaluate((e) => getComputedStyle(e).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
   // the title in white (2026-09-30, later: "not opposite colour, but rather
   // white with an added layer that makes it more visible", and of the five
   // tried, "the second one"): not inverted any more, with a close dark edge
@@ -457,13 +508,15 @@ test("the aldehyde glows big in the middle of the dark first slide, the double b
   expect(errors).toEqual([]);
 });
 
-test("the Menu is light over the dark first slides, and dark again on the sentence", async ({ page }) => {
+test("the Menu is light over the dark stage, and dark again on the sentence", async ({ page }) => {
   await page.goto("/index.html");
   const menu = page.locator(".menu-trigger");
   await expect.poll(() => menu.evaluate((e) => getComputedStyle(e).color)).toBe("rgb(236, 232, 226)");
   await jumpToSlide(page, "slide-formula");
   await page.waitForTimeout(200);
   expect(await menu.evaluate((e) => getComputedStyle(e).color), "the formula is dark too").toBe("rgb(236, 232, 226)");
+  // (with the map slides on, the sentence after it is white)
+  await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-2");
   await expect.poll(() => menu.evaluate((e) => getComputedStyle(e).color), { timeout: 3000 }).toBe("rgb(23, 23, 15)");
   await jumpToSlide(page, "slide-1");
@@ -529,7 +582,7 @@ test("without the 3D library the first slide is the title alone on its dark grou
   await expect.poll(() => h1.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
   await page.waitForTimeout(2600);
   await expect(page.locator(".molecule")).not.toHaveClass(/molecule-drawn/);
-  expect(await page.locator("#slide-1").evaluate((e) => getComputedStyle(e).backgroundColor)).toBe("rgb(31, 31, 32)");
+  expect(await page.locator("#aldehyde-stage").evaluate((e) => getComputedStyle(e).backgroundColor)).toBe("rgb(31, 31, 32)");
   expect(errors).toEqual([]);
 });
 

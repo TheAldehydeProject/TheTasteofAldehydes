@@ -36,49 +36,48 @@
 // CURL NOISE stays: every speck swirls a little about its own place, as
 // smoke in a slow current, worked out in the same pass that draws it.
 //
-// THE FORMULA (the same day, later): "when you scroll, I want us to
-// introduce a 4th page, between the first and second ... the title and
-// text to fade away; 3d model of the aldehyde to become more concrete and
-// I want you to add in the element backbone ... displayed horizontally,
-// where the O is facing upwards. This rearranging should be done after the
-// title fades away. When it is rearranged, I want a part of the particles
-// to flow in very slim lines and fill 4 areas on each sides. This should
-// be symmetrical, and the areas should be equally spaced from each other.
-// These 8 areas should be texts that are made up of the particles (but not
-// taking from them by number or volume) and they should be the contents of
-// the menu." And then, of the names: "the text itself to be the same as the
-// title in the way it appears ... make some particles, similar to that of
-// the aldehyde molecule around each of the word", "it should be a proper
-// cloud like in the title", "remove the lines connecting the aldehyde to the
-// words ... make it look a little minimalist and neat ... make the whole
-// second page reactive to the scroll wheel". So the drawing stands still in
-// the window across both slides (it is pinned, style.css), and the
-// formula's sequence is ONE NUMBER the wheel moves (window.__formula, set by
-// landing.js, which runs the stage; here `S`), whichever way it is turned:
+// THE FIVE STAGES (the same day, later). The drawing stands still in the
+// window (it is pinned, style.css) while the page is scrolled down the
+// stage (index.html), and follows how far down it is, smoothly, both ways —
+// ONE NUMBER, window.__formula, 0 to 4, set by landing.js (here `S`): the
+// owner's "5 increments ... gradual (not sudden like now)":
 //
-//   THE TURNING (`u`, the first TURN of it): the cloud turns to face you,
-//     flat, the O at the top and the two H below it either side, draws in
-//     close round the bonds (more concrete), its swirl calms, and the
-//     formula comes up in it — the bonds drawn out of the C in bright
-//     specks, the C=O as two lines, and the atoms named as a chemistry book
-//     names them.
-//   THE GATHERING (`f`, the next GATHER): a cloud of specks gathers round
-//     each of the Menu's eight pages, four each side of the formula, and the
-//     specks of its letters come up in it and condense into them, nearest
-//     the formula first — as the title's specks settle into its letters.
-//     They are their own specks, as many as the letters and the clouds need:
-//     the aldehyde loses none. Nothing runs between the aldehyde and them.
-//   THE NAMES (`r`, the rest): each name comes up over its specks, set as
-//     the title is, and they let go back into its cloud; pointed at, a
-//     name's cloud brightens and stirs.
+//   1  (S 0) the aldehyde as it is first seen, the title in front of it
+//   2  (S 1) the same, the title gone (landing.js fades it)
+//   3  (S 2) the aldehyde TURNED UPRIGHT: from S 1 to 2 it turns to face
+//      you, flat, the O at the top and the two H below it either side
+//   4  (S 3) its FORMULA drawn in it: from S 2 to 3 the cloud draws in close
+//      round the bonds (more concrete), its swirl calms, the bonds are drawn
+//      out of the C in bright specks, the C=O as two lines, and the atoms
+//      named as a chemistry book names them
+//   5  (S 4) THE LINES and the names: from S 3 two lines of specks come down
+//      the window, top to bottom, one either side of the formula, and the
+//      Menu's eight pages come up on the outside of them (landing.js) —
+//      "particles that appear in straight lines from the left and right, and
+//      on the outer perimeter, you will have the words. the particles should
+//      go from top to bottom, and should have some movement - exactly like in
+//      the aldehyde molecule". So they fall, slowly, all the while, each
+//      swirling a little about its way as the aldehyde's specks do.
+//
+// THE ELECTRONEGATIVE HAND ("i want the cursor to have an electronegative
+// character, so the electrons would be attracted to it"): wherever the
+// pointer is over the stage, the specks near it — the aldehyde's and the
+// lines' — are drawn towards it, and brighten, and a small δ− stands beside
+// it. A name pointed at is lit, and so are the specks of its line beside
+// it: "the whole thing will be illuminated and you can click it".
+//
+// Before the five stages (the same evening) the formula stood on a slide of
+// its own after the title, and the names came up out of clouds of their own,
+// and before that out of streams of specks from the aldehyde; none of that is
+// in this file now.
 //
 // It gathers as the title does, in from a wide shell round the slide to
 // its places; it sways about the side the private page shows it from and
-// leans a little to the pointer. It draws only while one of the two dark
-// slides is on the screen. With reduced motion it is simply there, still,
-// and changes at once. If the drawing cannot be made, it is not there: the
-// title stands alone on its dark ground, and the formula slide is the eight
-// links, plainly.
+// leans a little to the pointer. It draws only while the stage is on the
+// screen. With reduced motion it is simply there, still, changes at once,
+// and the hand draws nothing to it. If the drawing cannot be made, it is not
+// there: the title stands alone on its dark ground, and the last stage is
+// the eight names, plainly.
 //
 // This is one of two files here that write a shader of their own (the
 // other is node-scene.js): a shader that fails to compile takes the whole
@@ -91,7 +90,6 @@
   const first = document.getElementById("slide-1");
   const formula = document.getElementById("slide-formula");
   const wrap = document.getElementById("molecule");
-  const container = document.getElementById("scroll-container");
   if (!D || !first || !wrap || !window.THREE) return;
   const links = formula ? Array.from(formula.querySelectorAll(".formula-link")) : [];
 
@@ -123,15 +121,10 @@
   // its middle up and down, 2.2 across, whichever the window is shorter in.
   const FOV = 32, FIT_TALL = 2.3, FIT_WIDE = 2.2;
 
-  // THE FORMULA. How long each state takes to come, and to go again.
-  // The formula's sequence is one number, `S`, 0 to 1, which follows how
-  // far landing.js has taken the stage (window.__formula — the wheel's):
-  // the first TURN of it the aldehyde turning into its formula, the next
-  // GATHER the clouds gathering round the names and their letters
-  // condensing out of them, and the rest the names coming up and their
-  // specks letting go. It follows at FOLLOW a second at most, so a jump
-  // (the page moved by a finger) is still a movement.
-  const TURN = 0.3, GATHER = 0.45, FOLLOW = 1.25;
+  // THE STAGES. `S` is window.__formula (0 to 4, landing.js). The turning
+  // is from S 1 to 2, the formula from 2 to 3, the lines from 3 (drawn down
+  // the window over LINES_OVER of a stage), the names after them (landing.js).
+  const LINES_OVER = 0.72;
   // How close the cloud draws in round the bonds (1 not at all), how strong
   // each part is drawn once it has, and how much it still swirls.
   const TIGHT = { rest: 0.5, pi: 0.88, lone: 0.84 };
@@ -147,14 +140,21 @@
   const BOND_INK = [1.0, 0.96, 0.9];
   const ATOM_SIZE = 0.23;      // the names' letters, angstrom
   const CLEAR = 0.78;          // the clear space round each, of that
-  // The threads and the names.
-  // The names' clouds: how much of the gathering each speck of a letter
-  // takes, from its place in the cloud to its place in the letter; how many
-  // specks of its own each cloud has for every square pixel of the name; and
-  // the page's light ink the letters settle in.
-  const TRAVEL = 0.55;
-  const CLOUD_DENSITY = 1.05;
-  const INK = [0.95, 0.93, 0.9];
+  // THE LINES: how many specks to a pixel of a line's length; how far off it
+  // they stand (most on it, some a little off, a few in a haze); how fast
+  // they fall, pixels a second; and how much they swirl about their way, as
+  // the aldehyde's do.
+  const LINE_DENSITY = 3;
+  const LINE_SPREAD = [[0.62, 1.2], [0.28, 3.6], [0.1, 10]];   // [share, pixels either side]
+  const FALL = [16, 44];
+  const LINE_SWIRL = 3.2;
+  // THE ELECTRONEGATIVE HAND: how far its pull reaches, how much of the way
+  // to it a speck at its heart is drawn, and how much brighter it is there.
+  const HAND_REACH = 0.16;     // of the window's height, for the aldehyde's specks
+  const HAND_PULL = 0.45;
+  const LINE_REACH = 150;      // pixels, for the lines'
+  const LINE_PULL = 0.5;
+  const HAND_LIGHT = 0.55;
 
   const phone = () => window.innerWidth < 700;
   const smooth = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
@@ -261,9 +261,13 @@
     }`;
 
   // The cloud: each speck at its place (drawn in towards the bonds as the
-  // formula comes, `uConcrete`), swirled by the curl noise, gathered in.
+  // formula comes, `uConcrete`), swirled by the curl noise, gathered in —
+  // and drawn a little of the way to the hand where it is near it (`uHand`,
+  // where the pointer is on the drawing, -1 to 1 each way; `uPull`, how
+  // much it is there).
   const VERTEX = `
-    uniform float uTime, uFlow, uFreq, uGather, uSize, uTwo, uConcrete, uTight, uClear;
+    uniform float uTime, uFlow, uFreq, uGather, uSize, uTwo, uConcrete, uTight, uClear, uPull, uAspect;
+    uniform vec2 uHand;
     uniform vec3 uAtoms[4];
     attribute float aSeed;
     attribute vec3 aStart, aColour, aCore;
@@ -291,8 +295,20 @@
       p = mix(aStart, p, g);
       vec4 mv = modelViewMatrix * vec4(p, 1.0);
       gl_Position = projectionMatrix * mv;
+      // the hand: the electrons drawn to it
+      float near = 0.0;
+      if (uPull > 0.0) {
+        vec2 at = gl_Position.xy / gl_Position.w;
+        vec2 d = uHand - at;
+        vec2 dd = vec2(d.x * uAspect, d.y);
+        near = exp(-dot(dd, dd) / (${HAND_REACH.toFixed(3)} * ${HAND_REACH.toFixed(3)} * 4.0)) * uPull;
+        // (as the formula, gentler, and never round an atom's name: the
+        // clear space stays where the name is)
+        near *= mix(1.0, 0.55 * keep * keep, uConcrete);
+        gl_Position.xy += d * ${HAND_PULL.toFixed(3)} * near * gl_Position.w;
+      }
       gl_PointSize = uSize;
-      vColour = aColour * g * mix(1.0, keep, uConcrete);
+      vColour = aColour * g * mix(1.0, keep, uConcrete) * (1.0 + ${HAND_LIGHT.toFixed(3)} * near);
     }`;
 
   // A soft round speck, as the private page's: full in the middle, four
@@ -326,84 +342,70 @@
       vColour = vec3(${BOND_INK.map((v) => v.toFixed(3)).join(", ")}) * shown;
     }`;
 
-  // The names' clouds and letters, drawn straight onto the window in its
-  // own pixels. Every speck belongs to one name (`aInfo.x`) and has a place
-  // in that name's CLOUD (`aCloud`, and a depth, `aDepth`), in a colour of
-  // the aldehyde's (`aTone`). The cloud's own specks (`aKind` 1) come up
-  // there as the clouds gather (uFlow). A letter's (`aKind` 0) comes up there
-  // too, each on its own beat (`aInfo.y`: nearest the formula first), and
-  // then condenses into its place in a letter (`aTarget`), in the page's
-  // light ink — as the title's specks settle into its letters; once the
-  // name has come up over them (uLetGo) each lets go, back into the cloud.
-  // Nothing runs between the aldehyde and the names (the owner: "remove the
-  // lines connecting the aldehyde to the words").
-  const TEXT_VERTEX = `
-    uniform vec2 uRes, uCentre[8];
-    uniform vec3 uInk;
-    uniform float uHot[8], uFlow, uLetGo, uTime, uSize, uSwirl;
-    attribute vec2 aTarget, aCloud;
-    attribute float aDepth, aKind;
-    attribute vec4 aInfo;
+  // THE LINES, drawn straight onto the window in its own pixels. Every speck
+  // belongs to one of the two (`aLine.x`, -1 the left, 1 the right), stands
+  // `aLine.y` pixels off it and falls down it at `aLine.z` pixels a second,
+  // from its own start (`aLine.w`, of the way down), round and round,
+  // swirling a little about its way. The lines come down the window as the
+  // last stage comes (`uDraw`, the head of them), are broken where the
+  // formula stands on a narrow window (`uGap`, top and foot), and are lit
+  // beside a name the hand is on (`uHot`, at `uWordY`); and the hand draws
+  // their specks to it.
+  const LINE_VERTEX = `
+    uniform vec2 uRes, uLineX, uGap, uHandPx;
+    uniform float uTime, uDraw, uSize, uSwirl, uPull, uWordH;
+    uniform float uHot[8], uWordY[8];
+    attribute vec4 aLine;
     attribute vec3 aTone;
     varying vec3 vColour;
     varying float vAlpha;
     ${NOISE}
-    // Where a speck is in its name's cloud: turning slowly about the cloud's
-    // upright, a little either way (it has depth, as the aldehyde's has),
-    // and swirling; "near" is how much nearer than the middle it stands.
-    vec2 cloudPlace(int k, float hot, out float near) {
-      float tw = uTime * 0.14;
-      float turn = 0.18 * sin(uTime * 0.19 + float(k) * 1.7);
-      vec2 rel = aCloud - uCentre[k];
-      near = clamp(1.0 + (-rel.x * sin(turn) + aDepth * cos(turn)) / 220.0, 0.75, 1.25);
-      vec2 swirl = uSwirl * (1.0 + 0.6 * hot) * vec2(
-        snoise(vec3(aCloud * 0.011, aDepth * 0.011 + tw + aInfo.w * 3.0)),
-        snoise(vec3(aCloud * 0.011 + 17.3, aDepth * 0.011 + tw - aInfo.w * 3.0)));
-      return uCentre[k] + vec2(rel.x * cos(turn) + aDepth * sin(turn), rel.y) + swirl;
-    }
     void main() {
-      int k = int(aInfo.x + 0.5);
-      float hot = uHot[k];
-      float twinkle = 0.82 + 0.18 * sin(uTime * 1.7 + aInfo.w * 60.0);
-      float near = 1.0;
-      vec2 p;
-      vec3 c;
-      float alpha;
-      if (aKind < 0.5) {
-        // a letter's speck: up in the cloud, then into its letter
-        float local = clamp((uFlow - aInfo.y) / ${TRAVEL.toFixed(3)}, 0.0, 1.0);
-        if (local <= 0.0) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
-        vec2 home = cloudPlace(k, hot, near);
-        float into = smoothstep(0.3, 1.0, local);
-        p = mix(home, aTarget, into);
-        c = mix(aTone, uInk, into);
-        alpha = smoothstep(0.0, 0.3, local) * mix(near * twinkle, 1.0, into);
-        // letting go, once the name has come up: back into the cloud
-        float go = smoothstep(0.0, 1.0, clamp((uLetGo - 0.12 - aInfo.w * 0.3) / 0.58, 0.0, 1.0));
-        p = mix(p, home, go);
-        c = mix(c, aTone, go);
-        alpha = mix(alpha, near * twinkle, go);
-      } else {
-        // the cloud's own: coming up round the name as the clouds gather
-        float on = clamp((uFlow - aInfo.y * 0.6) / 0.4, 0.0, 1.0);
-        if (on <= 0.0) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
-        p = cloudPlace(k, hot, near);
-        c = aTone;
-        alpha = near * twinkle * smoothstep(0.0, 1.0, on);
+      float pad = 24.0;
+      float span = uRes.y + 2.0 * pad;
+      float y = mod(aLine.w * span + aLine.z * uTime, span) - pad;
+      float x = (aLine.x < 0.0 ? uLineX.x : uLineX.y) + aLine.y;
+      float seed = fract(aLine.w * 7.31 + aLine.z * 0.013);
+      // its swirl, as the aldehyde's specks swirl
+      vec2 p = vec2(x, y) + uSwirl * vec2(
+        snoise(vec3(x * 0.011, y * 0.011, uTime * 0.12 + seed * 3.0)),
+        snoise(vec3(x * 0.011 + 17.3, y * 0.011, uTime * 0.12 - seed * 3.0)));
+      // come down the window, top to bottom, the head soft
+      float head = uDraw * (uRes.y + 90.0);
+      float on = 1.0 - smoothstep(head - 90.0, head, p.y);
+      // broken where the formula stands, on a narrow window
+      if (uGap.y > uGap.x) on *= smoothstep(uGap.x - 4.0, uGap.x - 26.0, p.y) + smoothstep(uGap.y + 4.0, uGap.y + 26.0, p.y);
+      if (on <= 0.001) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
+      // lit beside a name the hand is on
+      float hot = 0.0;
+      for (int k = 0; k < 4; k++) {
+        float wy = aLine.x < 0.0 ? uWordY[k] : uWordY[k + 4];
+        float wh = aLine.x < 0.0 ? uHot[k] : uHot[k + 4];
+        float dy = (p.y - wy) / uWordH;
+        hot = max(hot, wh * exp(-dy * dy));
       }
-      vColour = mix(c, vec3(1.0), hot * 0.3);
-      vAlpha = alpha * (1.0 + 0.3 * hot);
+      // the hand: the electrons drawn to it
+      float near = 0.0;
+      if (uPull > 0.0) {
+        vec2 d = uHandPx - p;
+        near = exp(-dot(d, d) / (${LINE_REACH.toFixed(1)} * ${LINE_REACH.toFixed(1)})) * uPull;
+        p += d * ${LINE_PULL.toFixed(3)} * near;
+      }
+      float twinkle = 0.8 + 0.2 * sin(uTime * 1.6 + seed * 60.0);
+      vColour = mix(aTone, vec3(1.0), 0.35 * hot) * (1.0 + 0.9 * hot + ${HAND_LIGHT.toFixed(3)} * near);
+      vAlpha = on * twinkle;
       gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
-      gl_PointSize = uSize * (1.0 + 0.15 * hot) * near;
+      gl_PointSize = uSize * (0.8 + 0.4 * seed) * (1.0 + 0.25 * hot);
     }`;
-  const TEXT_FRAGMENT = `
+  const LINE_FRAGMENT = `
+    uniform float uAlpha;
     varying vec3 vColour;
     varying float vAlpha;
     ${SPECK}
     void main() {
       float a = speck();
       if (a < 0.0) discard;
-      gl_FragColor = vec4(vColour, vAlpha * a);
+      gl_FragColor = vec4(vColour, uAlpha * vAlpha * a);
     }`;
 
   // ---- the specks ----------------------------------------------------------
@@ -438,6 +440,7 @@
     }
   }
 
+  const hand = { x: 0, y: 0 };   // where the hand is on the drawing, -1 to 1 each way
   const parts = {};
   const core = [0, 0, 0];
   for (const name of ["rest", "lone", "pi"]) {
@@ -478,6 +481,7 @@
         uGather: { value: REDUCE ? 1 : 0 }, uSize: { value: 2 }, uAlpha: { value: PEAK[name] }, uTwo: { value: 1 },
         uConcrete: { value: 0 }, uTight: { value: TIGHT[name] }, uClear: { value: ATOM_SIZE * CLEAR },
         uAtoms: { value: [atom.O, atom.C, Hs[0], Hs[1]] },
+        uHand: { value: new THREE.Vector2() }, uPull: { value: 0 }, uAspect: { value: 1 },
       },
       transparent: true,
       depthWrite: false,
@@ -535,44 +539,41 @@
     return { el, at };
   });
 
-  // ---- the threads and the names ----------------------------------------
-  const textGeo = new THREE.BufferGeometry();
-  const textMat = new THREE.ShaderMaterial({
-    vertexShader: TEXT_VERTEX,
-    fragmentShader: TEXT_FRAGMENT,
+  // ---- the lines -------------------------------------------------------------
+  const lineGeo = new THREE.BufferGeometry();
+  const lineMat = new THREE.ShaderMaterial({
+    vertexShader: LINE_VERTEX,
+    fragmentShader: LINE_FRAGMENT,
     uniforms: {
       uRes: { value: new THREE.Vector2(1, 1) },
-      uInk: { value: new THREE.Vector3(...INK) },
-      uHot: { value: new Float32Array(8) },
-      uFlow: { value: 0 }, uLetGo: { value: 0 }, uTime: { value: 0 }, uSize: { value: 2 },
-      uSwirl: { value: 6 },
-      uCentre: { value: Array.from({ length: 8 }, () => new THREE.Vector2()) },
+      uLineX: { value: new THREE.Vector2() },
+      uGap: { value: new THREE.Vector2(0, 0) },
+      uHandPx: { value: new THREE.Vector2() },
+      uTime: { value: 0 }, uDraw: { value: 0 }, uSize: { value: 2 }, uSwirl: { value: LINE_SWIRL },
+      uPull: { value: 0 }, uWordH: { value: 30 }, uAlpha: { value: 1 },
+      uHot: { value: new Float32Array(8) }, uWordY: { value: new Float32Array(8) },
     },
     transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
   });
-  const text = new THREE.Points(textGeo, textMat);
-  text.frustumCulled = false;
-  text.renderOrder = 5;
-  text.visible = false;
-  scene.add(text);
+  const lines = new THREE.Points(lineGeo, lineMat);
+  lines.frustumCulled = false;
+  lines.renderOrder = 5;
+  lines.visible = false;
+  scene.add(lines);
 
   // A shader that did not compile takes the drawing with it: check, and step aside.
   try {
     bonds.visible = true;
-    // (the names' geometry is made once the page is laid out; one speck to compile against)
-    textGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
-    textGeo.setAttribute("aTarget", new THREE.BufferAttribute(new Float32Array(2), 2));
-    textGeo.setAttribute("aCloud", new THREE.BufferAttribute(new Float32Array(2), 2));
-    textGeo.setAttribute("aDepth", new THREE.BufferAttribute(new Float32Array(1), 1));
-    textGeo.setAttribute("aInfo", new THREE.BufferAttribute(new Float32Array(4), 4));
-    textGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
-    textGeo.setAttribute("aKind", new THREE.BufferAttribute(new Float32Array(1), 1));
-    text.visible = true;
+    // (the lines' specks are made once the page is laid out; one speck to compile against)
+    lineGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
+    lineGeo.setAttribute("aLine", new THREE.BufferAttribute(new Float32Array(4), 4));
+    lineGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
+    lines.visible = true;
     renderer.compile(scene, camera);
     const programs = renderer.info.programs || [];
     if (programs.some((p) => p.diagnostics && p.diagnostics.runnable === false)) throw new Error("shader");
     bonds.visible = false;
-    text.visible = false;
+    lines.visible = false;
   } catch (e) {
     renderer.dispose();
     names.forEach((n) => n.el.remove());
@@ -580,11 +581,17 @@
     return;
   }
 
+  // THE δ− by the hand, where the specks are drawn to it.
+  const charge = document.createElement("span");
+  charge.className = "molecule-charge";
+  charge.textContent = "δ−";
+  wrap.appendChild(charge);
+
   // ---- framing -------------------------------------------------------------
   // In the middle of the window, as large as the private page draws it; and,
-  // as the formula, as large as the room between the names leaves it.
+  // upright and as the formula, as large as the room between the lines leaves it.
   let W = 1, H = 1, distCloud = 10, distForm = 10, denseCloud = 1, denseForm = 1, pxForm = 100;
-  let firstTop = 0, formulaTop = 1, band = false;
+  let band = false;
   const half = Math.tan((FOV * Math.PI) / 360);
   const density = (px) => Math.max(0.5, Math.min(1, (px / 190) ** 2));
   function size() {
@@ -601,189 +608,127 @@
     // fainter — as the private page does
     const px = (H / 2) / (half * distCloud);
     denseCloud = density(px);
-    // the formula, in the room the names leave it (never larger than the cloud)
     pxForm = px;
-    if (formula && links.length === 8) {
-      const box = formula.getBoundingClientRect();
-      const rects = links.map((a) => a.getBoundingClientRect());
-      band = getComputedStyle(links[0].parentNode).getPropertyValue("--formula-layout").trim() === "band";
-      let halfW, halfH;
-      if (band) {
-        const top = Math.max(...[0, 1, 4, 5].map((i) => rects[i].bottom)) - box.top;
-        const bottom = Math.min(...[2, 3, 6, 7].map((i) => rects[i].top)) - box.top;
-        halfH = (bottom - top) / 2 - 12;
-        halfW = W / 2 - 18;
-      } else {
-        halfW = Math.min(...[0, 1, 2, 3].map((i) => box.left + W / 2 - rects[i].right)) - 28;
-        halfH = H / 2 - 64;
-      }
-      pxForm = Math.max(20, Math.min(px * 1.05, halfW / FORM_EXTENT, halfH / FORM_EXTENT));
-    }
+    const room = layLines();
+    if (room) pxForm = Math.max(20, Math.min(px * 1.05, room.halfW / FORM_EXTENT, room.halfH / FORM_EXTENT));
     distForm = (H / 2) / (half * pxForm);
     denseForm = density(pxForm);
-    firstTop = first.offsetTop;
-    formulaTop = formula ? formula.offsetTop : firstTop + H;
     const scale = renderer.getPixelRatio();
     const cut = soft ? 0.2 : 1;
     for (const name in parts) {
       const u = parts[name].material.uniforms;
       u.uSize.value = (small ? 1.25 : 1.5) * GROW[name] * scale;
       u.uTwo.value = soft || small ? 0 : 1;
+      u.uAspect.value = W / H;
       parts[name].geometry.setDrawRange(0, Math.min(D.parts[name].n, Math.round(SHARE[name] * EMPHASIS[name] * cut)));
     }
     bonds.material.uniforms.uSize.value = (small ? 1.8 : 2.2) * scale;
-    textMat.uniforms.uSize.value = (small ? 1.55 : 1.75) * scale;
-    textMat.uniforms.uRes.value.set(W, H);
-    textMat.uniforms.uSwirl.value = small ? 3 : 4;
+    lineMat.uniforms.uSize.value = (small ? 1.8 : 2.1) * scale;
+    lineMat.uniforms.uRes.value.set(W, H);
+    lineMat.uniforms.uSwirl.value = small ? LINE_SWIRL * 0.8 : LINE_SWIRL;
     names.forEach((n) => { n.el.style.fontSize = (ATOM_SIZE * pxForm).toFixed(1) + "px"; });
-    write();
     drewAt = -1;
     if (REDUCE || !running) draw(performance.now());
   }
 
-  // WRITING THE NAMES: each link's own words drawn where the page lays them
-  // out (so a name that wraps on a phone is written as it wraps), and the
-  // inked pixels taken as places for specks — each with a place in the
-  // name's CLOUD as well, and a beat to come in on, nearest the formula
-  // first.
-  //
-  // THE CLOUD ROUND A NAME, as the aldehyde's is a cloud and kept plain (the
-  // owner: "a little minimalist and neat (especially the words)"): one soft
-  // oval of specks round the word, thickest at its middle and thinning
-  // outwards in every direction (towards you and away as well), a few
-  // further out in a haze; the same on every name, mostly the aldehyde's
-  // warm grey with a little of its gold and its violet, every speck lit by
-  // how thick the cloud is where it stands, so it glows at its heart.
-  const gauss = () => Math.sqrt(-2 * Math.log(1 - rand() * 0.999)) * Math.cos(2 * Math.PI * rand());
+  // LAYING THE LINES: each on the edge of the column between its names and
+  // the formula (the grid's own columns, style.css), the length of the
+  // window; and where each name stands, to light the line beside it. On a
+  // narrow window (the BAND) the two stand close, down the channel between
+  // the two columns, and are broken where the formula stands. Returns the
+  // room the formula has between them.
   const GREY = [0.7, 0.67, 0.63];
   function toneOf() {
     const x = rand();
-    return x < 0.16 ? COLOUR.pi : x < 0.32 ? COLOUR.lone : GREY;
+    return x < 0.18 ? COLOUR.pi : x < 0.32 ? COLOUR.lone : GREY;
   }
-  let written = false;
-  function write() {
-    if (!formula || links.length !== 8) return;
-    const box = formula.getBoundingClientRect();
-    const targets = [], clouds = [], depths = [], info = [], tones = [], kind = [];
-    const small = phone();
-    let shape = null;
-    function shapeFor(r) {
-      const w = r.width, h = r.height;
-      return {
-        cx: r.left - box.left + w / 2, cy: r.top - box.top + h / 2,
-        sx: w * 0.34 + h * 0.4, sy: h * 0.55, sz: h * 0.5,
-        hx: w * 0.5 + h * 0.5, hy: h * 0.95, hz: h * 0.7,
-      };
+  const spread = () => {
+    let x = rand();
+    for (const [share, px] of LINE_SPREAD) { if (x < share) return px; x -= share; }
+    return LINE_SPREAD[0][1];
+  };
+  const gauss = () => Math.sqrt(-2 * Math.log(1 - rand() * 0.999)) * Math.cos(2 * Math.PI * rand());
+  let laidFor = "";
+  function layLines() {
+    if (!formula || links.length !== 8) return null;
+    const menu = links[0].parentNode;
+    const cs = getComputedStyle(menu);
+    band = cs.getPropertyValue("--formula-layout").trim() === "band";
+    const cols = cs.gridTemplateColumns.split(/\s+/).map(parseFloat);
+    const box = wrap.getBoundingClientRect();
+    const m = menu.getBoundingClientRect();
+    const left = m.left - box.left + (parseFloat(cs.paddingLeft) || 0) + (cols[0] || 0);
+    const right = left + (cols[1] || 0);
+    const u = lineMat.uniforms;
+    u.uLineX.value.set(left, right);
+    const rects = links.map((a) => a.getBoundingClientRect());
+    rects.forEach((r, k) => { u.uWordY.value[k] = r.top - box.top + r.height / 2; });
+    u.uWordH.value = Math.max(16, rects[0].height * 0.9);
+    let halfW, halfH;
+    if (band) {
+      const top = Math.max(...[0, 1, 4, 5].map((i) => rects[i].bottom)) - box.top;
+      const foot = Math.min(...[2, 3, 6, 7].map((i) => rects[i].top)) - box.top;
+      u.uGap.value.set(top + 6, foot - 6);
+      halfH = (foot - top) / 2 - 12;
+      halfW = W / 2 - 18;
+    } else {
+      u.uGap.value.set(0, 0);
+      halfW = (right - left) / 2 - 26;
+      halfH = H / 2 - 64;
     }
-    const cloudAt = () => {
-      const haze = rand() < 0.12;
-      const x = shape.cx + gauss() * (haze ? shape.hx : shape.sx);
-      const y = shape.cy + gauss() * (haze ? shape.hy : shape.sy);
-      const z = gauss() * (haze ? shape.hz : shape.sz);
-      const thick = Math.exp(-0.5 * (((x - shape.cx) / shape.sx) ** 2 + ((y - shape.cy) / shape.sy) ** 2 + (z / shape.sz) ** 2));
-      const lit = (0.14 + 0.86 * Math.pow(thick, 0.9)) * (0.8 + 0.2 * rand());
-      const tone = toneOf();
-      clouds.push(x, y);
-      depths.push(z);
-      tones.push(tone[0] * lit, tone[1] * lit, tone[2] * lit);
-    };
-    links.forEach((a, k) => {
-      const r = a.getBoundingClientRect();
-      const side = k < 4 ? -1 : 1;
-      shape = shapeFor(r);
-      textMat.uniforms.uCentre.value[k].set(shape.cx, shape.cy);
-      const t = a.firstChild && a.firstChild.nodeType === 3 ? a.firstChild : null;
-      const cs = getComputedStyle(a);
-      const font = cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
-      const sizePx = parseFloat(cs.fontSize) || 20;
-      const SS = 3;
-      const cw = Math.max(1, Math.ceil(r.width * SS)), ch = Math.max(1, Math.ceil(r.height * SS));
-      const ink = document.createElement("canvas");
-      ink.width = cw; ink.height = ch;
-      const g = ink.getContext("2d");
-      g.setTransform(SS, 0, 0, SS, 0, 0);
-      g.font = font;
-      g.fillStyle = "#000";
-      g.textBaseline = "alphabetic";
-      let inner = side < 0 ? 0 : Infinity;
-      if (t) {
-        const re = /\S+/g;
-        let m;
-        while ((m = re.exec(t.data))) {
-          const range = document.createRange();
-          range.setStart(t, m.index);
-          range.setEnd(t, m.index + m[0].length);
-          const wr = range.getBoundingClientRect();
-          const mt = g.measureText(m[0]);
-          const asc = mt.fontBoundingBoxAscent || wr.height * 0.78;
-          const desc = mt.fontBoundingBoxDescent || wr.height * 0.22;
-          g.fillText(m[0], wr.left - r.left, wr.top - r.top + (wr.height - (asc + desc)) / 2 + asc);
-          inner = side < 0 ? Math.max(inner, wr.right) : Math.min(inner, wr.left);
-        }
+    // the specks themselves, made again only when the window's height or the
+    // number wanted changes
+    const want = Math.round(H * LINE_DENSITY * (phone() ? 0.7 : 1) * (soft ? 0.3 : 1));
+    const key = want + "|" + Math.round(H);
+    if (key !== laidFor) {
+      laidFor = key;
+      seed = 11;
+      const n = want * 2;
+      const line = new Float32Array(n * 4), tone = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) {
+        const side = i < want ? -1 : 1;
+        line[i * 4] = side;
+        line[i * 4 + 1] = gauss() * spread();
+        line[i * 4 + 2] = FALL[0] + rand() * (FALL[1] - FALL[0]);
+        line[i * 4 + 3] = rand();
+        const t = toneOf();
+        // lit by how near the line it stands, so the line glows at its middle
+        const lit = (0.7 + 0.3 * Math.exp(-Math.abs(line[i * 4 + 1]) / 3)) * (0.8 + 0.2 * rand());
+        tone[i * 3] = t[0] * lit; tone[i * 3 + 1] = t[1] * lit; tone[i * 3 + 2] = t[2] * lit;
       }
-      if (!isFinite(inner) || !inner) inner = side < 0 ? r.right : r.left;
-      const ex = inner - box.left;   // the name's end nearer the formula
-      const data = g.getImageData(0, 0, cw, ch).data;
-      const step = Math.max(0.9, sizePx / 24);
-      const span = Math.max(1, r.width);
-      for (let y = 0; y < r.height; y += step) {
-        for (let x = 0; x < r.width; x += step) {
-          const jx = x + rand() * step, jy = y + rand() * step;
-          const i = (Math.min(ch - 1, Math.floor(jy * SS)) * cw + Math.min(cw - 1, Math.floor(jx * SS))) * 4 + 3;
-          if (data[i] < 120) continue;
-          const tx = r.left - box.left + jx, ty = r.top - box.top + jy;
-          // in nearest the formula first, so the name comes from its near end
-          const far = Math.abs(tx - ex) / span;
-          targets.push(tx, ty);
-          info.push(k, (1 - TRAVEL) * Math.min(1, far * 0.86 + rand() * 0.14), 0, rand());
-          cloudAt();
-          kind.push(0);
-        }
-      }
-      // and the cloud's own specks, as many as the name is large
-      const many = Math.round(r.width * r.height * CLOUD_DENSITY * (small ? 0.6 : 1) * (soft ? 0.3 : 1));
-      for (let c = 0; c < many; c++) {
-        targets.push(0, 0);
-        info.push(k, rand(), 0, rand());
-        cloudAt();
-        kind.push(1);
-      }
-    });
-    const n = kind.length;
-    textGeo.dispose();
-    textGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
-    textGeo.setAttribute("aTarget", new THREE.BufferAttribute(new Float32Array(targets), 2));
-    textGeo.setAttribute("aCloud", new THREE.BufferAttribute(new Float32Array(clouds), 2));
-    textGeo.setAttribute("aDepth", new THREE.BufferAttribute(new Float32Array(depths), 1));
-    textGeo.setAttribute("aInfo", new THREE.BufferAttribute(new Float32Array(info), 4));
-    textGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(tones), 3));
-    textGeo.setAttribute("aKind", new THREE.BufferAttribute(new Float32Array(kind), 1));
-    textGeo.setDrawRange(0, n);
-    written = n > 0;
-    if (stage) stage.classList.toggle("formula-written", written);
+      lineGeo.dispose();
+      lineGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+      lineGeo.setAttribute("aLine", new THREE.BufferAttribute(line, 4));
+      lineGeo.setAttribute("aTone", new THREE.BufferAttribute(tone, 3));
+      lineGeo.setDrawRange(0, n);
+    }
+    return { halfW, halfH };
   }
 
-  // ---- the hand on a name ------------------------------------------------
+  // ---- the hand ------------------------------------------------------------
+  // A name is lit while the hand or the keys are on it, and while it asks
+  // to be left for (landing.js marks it `is-lit`).
   const hot = new Float32Array(8), hotTo = new Float32Array(8);
-  links.forEach((a, k) => {
-    const on = () => { hotTo[k] = 1; drewAt = -1; };
-    const off = () => { hotTo[k] = document.activeElement === a || a.matches(":hover") ? 1 : 0; drewAt = -1; };
-    a.addEventListener("pointerenter", on);
-    a.addEventListener("pointerleave", () => { hotTo[k] = document.activeElement === a ? 1 : 0; drewAt = -1; });
-    a.addEventListener("focus", on);
-    a.addEventListener("blur", off);
-  });
-
-  // ---- the frame -----------------------------------------------------------
+  const litNow = (a) => a.matches(":hover") || a.matches(":focus-visible") || a.classList.contains("is-lit");
+  // (read on every frame; these only ask for one when the drawing is still)
+  const again = () => { drewAt = -1; };
+  links.forEach((a) => ["pointerenter", "pointerleave", "focus", "blur"].forEach((ev) => a.addEventListener(ev, again)));
+  // The hand itself, on a mouse or a pen (a finger has none to hover with).
   let lean = { x: 0, y: 0 }, leanTo = { x: 0, y: 0 };
+  const pointer = { x: 0, y: 0, on: false };
+  const eased = { x: 0, y: 0 };
+  let pull = 0;
   window.addEventListener("pointermove", (e) => {
     if (e.pointerType === "touch") return;
     leanTo = { x: (e.clientX / window.innerWidth - 0.5) * 2, y: (e.clientY / window.innerHeight - 0.5) * 2 };
+    if (!pointer.on) { eased.x = e.clientX; eased.y = e.clientY; }
+    pointer.x = e.clientX; pointer.y = e.clientY; pointer.on = true;
   }, { passive: true });
+  document.documentElement.addEventListener("pointerleave", () => { pointer.on = false; });
+  window.addEventListener("blur", () => { pointer.on = false; });
 
-  let S = 0, u = 0, f = 0, r = 0;   // the sequence, and its three parts: the turning, the gathering, the names
-  let shownNames = -1;
-  const qCloud = new THREE.Quaternion(), qForm = new THREE.Quaternion(), qTurn = new THREE.Quaternion();
+  let S = 0;
+  const qCloud = new THREE.Quaternion(), qForm = new THREE.Quaternion();
   const euler = new THREE.Euler();
   const v = new THREE.Vector3();
   function toScreen(p) {
@@ -802,23 +747,25 @@
     const t = REDUCE ? 0 : (now - born) / 1000;
     const gather = REDUCE ? 1 : Math.min(1, (now - born) / GATHER_MS);
 
-    // how far the sequence is: as far as the stage has been taken
-    // (landing.js, by the wheel), followed at FOLLOW a second at most
-    const to = Math.max(0, Math.min(1, +window.__formula || 0));
-    const most = (FOLLOW * dt) / 1000;
-    S = REDUCE ? to : S + Math.max(-most, Math.min(most, to - S));
-    u = smooth(S / TURN);
-    f = Math.max(0, Math.min(1, (S - TURN) / GATHER));
-    r = Math.max(0, Math.min(1, (S - TURN - GATHER) / (1 - TURN - GATHER)));
+    // where the stage is (landing.js follows the page, smoothly)
+    S = Math.max(0, Math.min(4, +window.__formula || 0));
+    const turned = ease(S - 1);    // upright
+    const formed = ease(S - 2);    // its formula
+    const down = smooth((S - 3) / LINES_OVER);   // the lines come down
 
-    const up = smooth(r / 0.4);
-    // the names come up over their specks as the title does over its own
-    const shown = Math.round(up * 100) / 100;
-    if (written && shown !== shownNames) {
-      links.forEach((a) => { a.style.opacity = shown; });
-      shownNames = shown;
-    }
-    const e = ease(u);
+    // the hand
+    const box = wrap.getBoundingClientRect();
+    const handOn = !REDUCE && pointer.on && !document.body.classList.contains("ask-shown") &&
+      pointer.y >= box.top && pointer.y <= box.bottom;
+    pull += ((handOn ? 1 : 0) - pull) * Math.min(1, dt / 220);
+    if (pull < 0.002) pull = 0;
+    const follow = Math.min(1, dt / 70);
+    eased.x += (pointer.x - eased.x) * follow;
+    eased.y += (pointer.y - eased.y) * follow;
+    hand.x = ((eased.x - box.left) / W) * 2 - 1;
+    hand.y = 1 - ((eased.y - box.top) / H) * 2;
+    charge.style.transform = "translate(" + (eased.x - box.left + 13).toFixed(1) + "px," + (eased.y - box.top + 15).toFixed(1) + "px)";
+    charge.classList.toggle("is-on", pull > 0.5);
 
     if (!REDUCE) { lean.x += (leanTo.x - lean.x) * 0.04; lean.y += (leanTo.y - lean.y) * 0.04; }
     const sway = REDUCE ? 0 : Math.sin((t * 2 * Math.PI) / SWAY_S);
@@ -826,26 +773,28 @@
     qCloud.setFromEuler(euler).multiply(CLOUD_BODY);
     euler.set(lean.y * LEAN * 0.6, FORM_SWAY * sway + lean.x * LEAN * 0.6, 0);
     qForm.setFromEuler(euler).multiply(FORM_BODY);
-    mol.quaternion.copy(qCloud).slerp(qForm, e);
-    camera.position.set(0, 0, distCloud + (distForm - distCloud) * e);
+    mol.quaternion.copy(qCloud).slerp(qForm, turned);
+    camera.position.set(0, 0, distCloud + (distForm - distCloud) * turned);
     camera.updateMatrixWorld();   // (the names are placed before the frame is drawn)
     scene.updateMatrixWorld();
 
-    const dense = denseCloud + (denseForm - denseCloud) * e;
+    const dense = denseCloud + (denseForm - denseCloud) * turned;
     for (const name in parts) {
       const m = parts[name].material.uniforms;
       m.uTime.value = t * PACE; m.uGather.value = gather;
-      m.uConcrete.value = e;
-      m.uFlow.value = REDUCE ? 0 : FLOW * (1 - (1 - FORM_FLOW) * e);
-      m.uAlpha.value = (PEAK[name] + (FORM_PEAK[name] - PEAK[name]) * e) * dense;
+      m.uConcrete.value = formed;
+      m.uFlow.value = REDUCE ? 0 : FLOW * (1 - (1 - FORM_FLOW) * formed);
+      m.uAlpha.value = (PEAK[name] + (FORM_PEAK[name] - PEAK[name]) * formed) * dense;
+      m.uHand.value.set(hand.x, hand.y);
+      m.uPull.value = pull;
     }
 
     // the formula: the bonds drawn out of the C, then the names of the atoms
-    const grow = smooth((u - 0.25) / 0.55);
+    const grow = smooth((S - 2.05) / 0.6);
     bonds.visible = grow > 0;
     bonds.material.uniforms.uGrow.value = grow * 1.1;
     bonds.material.uniforms.uAlpha.value = 0.9 * dense;
-    const named = smooth((u - 0.6) / 0.4);
+    const named = smooth((S - 2.45) / 0.5);
     if (named > 0 || namesShown) {
       for (const n of names) {
         const s = toScreen(n.at);
@@ -855,34 +804,42 @@
       namesShown = named > 0;
     }
 
-    // the names' clouds and letters
-    text.visible = written && f > 0;
-    for (let k = 0; k < 8; k++) hot[k] += (hotTo[k] - hot[k]) * (REDUCE ? 1 : 0.12);
-    if (text.visible) {
-      const m = textMat.uniforms;
-      for (let k = 0; k < 8; k++) m.uHot.value[k] = hot[k];
-      m.uFlow.value = f;
-      m.uLetGo.value = r;
+    // the lines, and the names lit beside them
+    for (let k = 0; k < links.length && k < 8; k++) {
+      hotTo[k] = litNow(links[k]) ? 1 : 0;
+      hot[k] += (hotTo[k] - hot[k]) * (REDUCE ? 1 : Math.min(1, dt / 90));
+    }
+    lines.visible = laidFor !== "" && down > 0;
+    if (lines.visible) {
+      const m = lineMat.uniforms;
       m.uTime.value = t;
+      m.uDraw.value = down;
+      m.uPull.value = pull;
+      m.uHandPx.value.set(eased.x - box.left, eased.y - box.top);
+      for (let k = 0; k < 8; k++) m.uHot.value[k] = hot[k];
     }
 
     renderer.render(scene, camera);
 
-    // Where it is, said on the drawing for anything that wants to know
-    // (the tests): cloud, turning, formula, gathering, written, named.
-    const state = u <= 0 ? "cloud" : u < 1 ? "turning" : f <= 0 ? "formula" : f < 1 ? "gathering" : r < 1 ? "written" : "named";
+    // Where it is, said on the drawing for anything that wants to know (the
+    // tests): cloud (the first two stages), turning, turned, forming,
+    // formula, lining, lined.
+    const state = S <= 1.001 ? "cloud" : S < 1.999 ? "turning" : S <= 2.001 ? "turned" : S < 2.999 ? "forming"
+      : S <= 3.001 ? "formula" : down < 0.999 ? "lining" : "lined";
     if (state !== wrap.dataset.state) wrap.dataset.state = state;
-    return to !== S || hot.some((h, k) => Math.abs(h - hotTo[k]) > 0.001);
+    return hot.some((h, k) => Math.abs(h - hotTo[k]) > 0.001);
   }
 
-  // Drawn only while the dark slides are on the screen, and not under the
-  // menu or About me — and, with motion turned off, only when something has
-  // changed (the stage moved on, a name pointed at, the window resized).
+  // Drawn only while the stage is on the screen, and not under the menu,
+  // About me or the way out — and, with motion turned off, only when
+  // something has changed (the stage moved on, a name pointed at, the
+  // window resized).
   let seen = true, running = false, drawn = 0, drewAt = -1;
   function loop(now) {
     running = false;
     if (!seen) return;
-    const covered = document.body.classList.contains("menu-open") || document.body.classList.contains("about-shown");
+    const body = document.body.classList;
+    const covered = body.contains("menu-open") || body.contains("about-shown") || body.contains("ask-shown");
     const changed = !REDUCE || drewAt !== (+window.__formula || 0);
     if (!covered && changed && (!soft || now - drawn > 80)) {
       const more = draw(now);
@@ -901,9 +858,9 @@
   new ResizeObserver(() => {
     window.clearTimeout(resizing);
     resizing = window.setTimeout(size, 120);
-  }).observe(stage || first);
+  }).observe(first);
   size();
-  // the names written again once the page's own face has come
+  // laid again once the page's own face has come (the names' places move)
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => size());
   wrap.classList.add("molecule-drawn");
   wake();

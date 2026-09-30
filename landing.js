@@ -1,10 +1,41 @@
 // ============================================================
-// Behavior for index.html's four locked slides: gentle
-// scrolling between them (by wheel, keys, or the "Scroll"
-// button on the title slide). They are the title, the formula
-// (2026-09-30), the sentence and the map, and the ones that matter
-// here are found by name rather than by place, so a slide added in
-// between moves nothing: the map is #slide-3 wherever it stands.
+// Behaviour for index.html: THE STAGE, scrolled smoothly through its
+// five stages — and, when they are switched on, the two slides that
+// used to follow it (the sentence and the node map).
+//
+// THE STAGE (2026-09-30, the owner: "make it a smooth scrolling instead
+// of incremental; I want you to make sure that there are 5 increments ...
+// gradual (not sudden like now)"). The title, the formula and the
+// aldehyde behind them stand pinned to the window (style.css) while the
+// page is scrolled down the stage's run, and how far down it is, is how far
+// through the five stages the page is:
+//
+//   1  the aldehyde as it is first seen, the title in front of it
+//   2  the same, the title gone
+//   3  the aldehyde turned upright
+//   4  the same, its formula drawn in it
+//   5  the Menu's eight pages, beside two lines of specks
+//
+// The page scrolls as any page does — the wheel, a trackpad, a finger, the
+// scrollbar — and nothing here holds it; the keys and the Scroll button go
+// on (or back) a whole stage, smoothly. Where it is, is followed a little
+// behind (FOLLOW_S), so a notch of a wheel is a glide rather than a step,
+// and told to the drawing as one number, the sixth window global:
+//
+//   window.__formula   0 to 4, the stage (0 the first, 4 the fifth), and
+//                      how far between two it is
+//
+// The title fades as the page leaves the first stage, and the eight names
+// come up with the last (`--names` on the stage, 0 to 1). A name pressed
+// asks first (THE WAY OUT, below).
+//
+// PAGES 3 AND 4 — the sentence and the node map — are SWITCHED OFF
+// (2026-09-30: "PRESERVE PAGES 3 AND 4 IN THE CODE, BUT EXCLUDE THEM FROM
+// THE WORKING VERSION ... I WANT THIS CHANGE TO BE REVERSIBLE"). They are
+// kept whole in index.html's <template id="map-slides">, with the four
+// scripts that draw them; MAP_SLIDES below brings them back, after the
+// stage, as they were — and ?map=on on the address shows them without
+// changing anything. Everything from THE MAP SLIDES down is theirs.
 //
 // Everything here is wrapped in a function that runs itself, so
 // none of these names (slides, container, goTo, ease...) escape
@@ -15,18 +46,42 @@
 // all, and whatever it was responsible for silently disappears.
 // ============================================================
 (function () {
-  const slides = Array.from(document.querySelectorAll(".slide"));
   const container = document.getElementById("scroll-container");
-  if (!container || !slides.length) return; // not the landing page
-  // The map, which the long move and the way out of it belong to; and the
-  // formula slide, which with the title is THE STAGE (below).
-  const MAP = Math.max(0, slides.indexOf(document.getElementById("slide-3")));
-  const FORMULA = slides.indexOf(document.getElementById("slide-formula"));
+  const stage = document.getElementById("aldehyde-stage");
+  if (!container || !stage) return; // not the landing page
 
-  let activeIndex = 0;
-  let animating = false;
+  // THE SWITCH. false: the stage alone, as the owner asked. true: the
+  // sentence and the node map after it again, as they were.
+  const MAP_SLIDES = false;
+  const mapOn = MAP_SLIDES || /[?&]map=on\b/.test(location.search);
 
   const REDUCE_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (mapOn) {
+    // The kept slides after the stage, the paper under them where it stood
+    // (before the page), and the four scripts that draw them, in the order
+    // they always ran (after this one, whose frame loop has to run first).
+    const kept = document.getElementById("map-slides");
+    if (kept) {
+      const parts = kept.content.cloneNode(true);
+      const paper = parts.querySelector(".paper");
+      if (paper) container.parentNode.insertBefore(paper, container);
+      container.appendChild(parts);
+    }
+    document.body.classList.add("map-on");
+    ["node-scene.js", "paper.js", "thread.js", "extras.js"].forEach((src) => {
+      const script = document.createElement("script");
+      script.src = (window.SITE_ROOT || "") + src;
+      script.async = false;
+      document.body.appendChild(script);
+    });
+  } else {
+    document.body.classList.add("stage-only");
+  }
+
+  const run = stage.querySelector(".stage-run");
+  const intro = document.getElementById("slide-2");
+  const map = document.getElementById("slide-3");
 
   function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
   // THE LONG MOVE, between the sentence and the map, eases on a sine
@@ -38,48 +93,27 @@
   // so the curtain, the grid and the map, all of which are keyed to how
   // far down the page is, come in as evenly as it moves.
   function easeLong(t) { return (1 - Math.cos(Math.PI * t)) / 2; }
+  const clamp01 = (x) => Math.max(0, Math.min(1, x));
+  const smooth = (x) => { x = clamp01(x); return x * x * (3 - 2 * x); };
 
-  // True while the menu or a node's preview window is open over the top
-  // of the slides. The arrow keys belong to whatever is in front at that
-  // point — scrolling the page around behind it just looks broken.
+  // True while the menu, a node's preview window, About me or the way out
+  // is open over the top of the page. The keys belong to whatever is in
+  // front at that point — scrolling the page around behind it just looks
+  // broken.
   function overlayOpen() {
     return document.body.classList.contains("menu-open") ||
            document.body.classList.contains("preview-open") ||
-           document.body.classList.contains("about-shown");   // About me (title.js)
+           document.body.classList.contains("about-shown") ||   // About me (title.js)
+           document.body.classList.contains("ask-shown");       // the way out (below)
   }
 
-  // ============================================================
-  // LEAVING THE MAP
-  //
-  // Going back up from the node map is not a plain scroll. The page is
-  // held still while the map falls into its own centre, then while a
-  // line draws itself from that centre up to the top of the screen, and
-  // only then does it move. Two numbers on window carry the state, so
-  // the four files that have to take part can each read it without
-  // knowing about the others:
-  //
-  //   window.__exit    0 to 1, the collapse    (node-scene.js, paper.js,
-  //                                             extras.js, thread.js)
-  //   window.__reform  0 to 1, the line        (thread.js)
-  //
-  // Both sit at 0 the rest of the time, so nothing else in the site has
-  // to care that any of this exists.
-  // ============================================================
-  const EXIT_MS = 820;     // how long the map takes to fall inwards
-  const REFORM_MS = 520;   // and the line to draw itself back out
-
   // THE PAGE IS MOVED FIRST ON EVERY FRAME. Everything else on this
-  // page draws from where the page is — the paper's curtain and grid,
-  // the map's arrival (through __p23), the thread — each in a frame loop
-  // of its own. This one used to start a fresh request for every step
-  // of a move, which put it LAST in each frame: every drawing read where
-  // the page had been a frame before (the map two, since it reads what
-  // the paper wrote), so at full speed they trailed the page by ten
-  // pixels or so and caught up in lurches whenever a frame ran long.
-  // So this file keeps ONE loop, started now — before node-scene.js,
-  // paper.js, thread.js and extras.js start theirs, since it is loaded
-  // before them — which runs every step of every move at the head of
-  // the frame. With nothing moving it does nothing.
+  // page draws from where the page is — the aldehyde (through __formula)
+  // and, with the map slides on, the paper's curtain and grid, the map's
+  // arrival (through __p23), the thread — each in a frame loop of its own.
+  // So this file keeps ONE loop, started now — before any of theirs, since
+  // it is loaded before them — which runs every step of every move at the
+  // head of the frame. With nothing moving it does nothing.
   const phases = new Set();
   function tick(now) {
     requestAnimationFrame(tick);
@@ -103,10 +137,238 @@
     phases.add(phase);
   }
 
+  // ============================================================
+  // THE STAGE
+  // ============================================================
+  const STAGES = 5;
+  const LAST = STAGES - 1;
+  const FOLLOW_S = 0.16;       // how far behind the page the stage follows, in seconds (a time constant)
+  // The title (with its line and its square) fades over the first leg,
+  // lifting a little as it goes; the corner block and the Scroll button a
+  // little sooner. The names come up over the last leg, once its lines are
+  // on their way down (molecule.js).
+  const TITLE_GONE = 0.8, CORNERS_GONE = 0.5, TITLE_LIFT = 26;
+  const NAMES_FROM = 3.3, NAMES_OVER = 0.62;
+
+  const leg = () => Math.max(1, (run ? run.offsetHeight : window.innerHeight * 3.2) / LAST);
+  const stageTop = () => stage.offsetTop;
+  const stageEnd = () => stageTop() + LAST * leg();   // the page at the fifth stage
+  // Where the page is, in stages.
+  const reading = () => Math.max(0, Math.min(LAST, (container.scrollTop - stageTop()) / leg()));
+
+  let shown = reading(), followOn = false, followLast = 0;
+  window.__formula = shown;
+  const title = document.querySelector(".title-content");
+  const corners = [document.querySelector(".title-block"), document.querySelector(".scroll-cue")];
+  let wrote = "";
+
+  // The page as the stage says: the title fading, the names coming up.
+  function place() {
+    window.__formula = shown;
+    const titleShown = 1 - smooth(shown / TITLE_GONE);
+    const cornersShown = 1 - smooth(shown / CORNERS_GONE);
+    const names = smooth((shown - NAMES_FROM) / NAMES_OVER);
+    // which stage it is at, 1 to 5, for anything that wants to know
+    const at = String(Math.min(STAGES, Math.floor(shown + 0.5) + 1));
+    if (stage.dataset.stage !== at) stage.dataset.stage = at;
+    const key = titleShown.toFixed(3) + "|" + cornersShown.toFixed(3) + "|" + names.toFixed(3);
+    if (key === wrote) return;
+    wrote = key;
+    if (title) {
+      title.style.opacity = titleShown.toFixed(3);
+      title.style.transform = "translateY(" + (-(1 - titleShown) * TITLE_LIFT).toFixed(1) + "px)";
+      // nothing invisible should still take a click (the square, About me)
+      title.style.pointerEvents = titleShown < 0.02 ? "none" : "";
+    }
+    corners.forEach((el) => {
+      if (!el) return;
+      el.style.opacity = cornersShown.toFixed(3);
+      el.style.pointerEvents = cornersShown < 0.02 ? "none" : "";
+    });
+    stage.style.setProperty("--names", names.toFixed(3));
+    stage.classList.toggle("names-here", names > 0.6);
+  }
+
+  function follow(now) {
+    const dt = followLast ? Math.min(0.1, (now - followLast) / 1000) : 1 / 60;
+    followLast = now;
+    const to = reading();
+    shown = REDUCE_MOTION ? to : shown + (to - shown) * (1 - Math.exp(-dt / FOLLOW_S));
+    if (Math.abs(to - shown) < 0.0004) shown = to;
+    place();
+    if (shown === to) { phases.delete(follow); followOn = false; followLast = 0; }
+  }
+  function moved() {
+    if (REDUCE_MOTION) { shown = reading(); place(); return; }
+    if (!followOn) { followOn = true; followLast = 0; phases.add(follow); }
+  }
+  container.addEventListener("scroll", moved, { passive: true });
+  window.addEventListener("resize", moved);
+
+  // The corner block arrives with a "rise" keyframe animation whose fill is
+  // "both", which keeps hold of opacity for the life of the element — and
+  // an animation outranks the plain styles set above, so until it is
+  // cleared nothing here has any effect on it. Handing over once it has
+  // finished playing keeps the entrance and lets the stage take it from
+  // there (it comes up last, at 1.9s, once the title has gathered).
+  corners.forEach((el) => {
+    if (!el) return;
+    const takeOver = () => { el.style.animation = "none"; wrote = ""; place(); };
+    el.addEventListener("animationend", takeOver, { once: true });
+    setTimeout(takeOver, 3000);
+  });
+  place();
+
+  // A stage on, or back, smoothly: the keys and the Scroll button.
+  function toStage(k) {
+    k = Math.max(0, Math.min(LAST, k));
+    container.scrollTo({ top: Math.round(stageTop() + k * leg()), behavior: REDUCE_MOTION ? "auto" : "smooth" });
+  }
+  function stepStage(dir) {
+    const at = reading();
+    toStage(dir > 0 ? Math.floor(at + 0.05) + 1 : Math.ceil(at - 0.05) - 1);
+  }
+
+  // ============================================================
+  // THE WAY OUT, ASKED FIRST (2026-09-30: "when you click it, I want a
+  // confirmation message to pop up to go to that thing. it should be on
+  // theme"). A name on the formula pressed brings up a dark sheet with the
+  // page's name, Stay and Go, over the page veiled; Escape, Stay or the
+  // veil put it away. Pressed with a key held (a new tab, a new window) a
+  // name goes where it goes without asking, since nothing is being left.
+  // A name tabbed to before the names are up takes the page to them.
+  // ============================================================
+  const ask = document.getElementById("formula-ask");
+  if (ask) {
+    const askName = ask.querySelector(".formula-ask-name");
+    const askStay = ask.querySelector(".formula-ask-stay");
+    const askGo = ask.querySelector(".formula-ask-go");
+    let askFrom = null, askTimer = 0, asking = false;
+    const openAsk = (a) => {
+      askName.textContent = a.textContent.trim();
+      askGo.setAttribute("href", a.getAttribute("href"));
+      askFrom = a;
+      asking = true;
+      window.clearTimeout(askTimer);
+      ask.hidden = false;
+      void ask.offsetWidth;
+      ask.classList.add("is-on");
+      document.body.classList.add("ask-shown");
+      a.classList.add("is-lit");
+      window.setTimeout(() => { if (asking) askGo.focus({ preventScroll: true }); }, REDUCE_MOTION ? 0 : 60);
+    };
+    const stay = () => {
+      if (!asking) return;
+      asking = false;
+      ask.classList.remove("is-on");
+      document.body.classList.remove("ask-shown");
+      askTimer = window.setTimeout(() => { if (!asking) ask.hidden = true; }, REDUCE_MOTION ? 0 : 420);
+      if (askFrom) {
+        askFrom.classList.remove("is-lit");
+        if (askFrom.isConnected) askFrom.focus({ preventScroll: true });
+      }
+      askFrom = null;
+    };
+    askStay.addEventListener("click", stay);
+    ask.addEventListener("click", (e) => { if (e.target === ask) stay(); });
+    ask.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); stay(); }
+      else if (e.key === "Tab") {
+        // the keys stay in it while it asks
+        const f = [askStay, askGo];
+        const at = f.indexOf(document.activeElement);
+        e.preventDefault();
+        f[(at + (e.shiftKey ? f.length - 1 : 1)) % f.length].focus();
+      }
+    });
+    stage.addEventListener("click", (e) => {
+      const a = e.target.closest && e.target.closest(".formula-link");
+      if (!a || !stage.contains(a)) return;
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      openAsk(a);
+    });
+    stage.querySelectorAll(".formula-link").forEach((a) => {
+      a.addEventListener("focus", () => {
+        if (a.matches(":focus-visible") && reading() < LAST - 0.05) toStage(LAST);
+      });
+    });
+  }
+
+  // THE STAGE IS DARK. The Menu stands fixed over whatever is under it, so
+  // while the stage is still under it the body says so (`first-slide-dark`),
+  // and the stylesheet turns the Menu light — which, with the map slides
+  // off, is always.
+  const MENU_FOOT = 48;   // the Menu's own foot, from the top of the window
+  const underMenu = () =>
+    document.body.classList.toggle("first-slide-dark",
+      container.scrollTop < stage.offsetTop + stage.offsetHeight - MENU_FOOT);
+  container.addEventListener("scroll", underMenu, { passive: true });
+  window.addEventListener("resize", underMenu);
+  underMenu();
+
+  // ============================================================
+  // THE MAP SLIDES (switched off; everything below is theirs)
+  //
+  // With them on, the page has three places to stand, and moves between
+  // them as it always did — the stage (at its fifth stage), the sentence,
+  // and the map: gently, a whole slide at a time, by the wheel, the keys
+  // or a finger; the move onto the map long; and going back up off the
+  // map, the map falling into its own centre first. Within the stage, the
+  // page scrolls as above.
+  // ============================================================
+  if (!mapOn || !intro || !map) {
+    // --- the keys: a stage at a time, and the Scroll button the same
+    window.addEventListener("keydown", (e) => {
+      if (overlayOpen() || e.altKey || e.ctrlKey || e.metaKey) return;
+      if (e.target && e.target.closest && e.target.closest("input, textarea, select, [contenteditable]")) return;
+      // (Space presses a button or a link it is on, as it always does)
+      if (e.key === " " && e.target && e.target.closest && e.target.closest("button, a, summary")) return;
+      if (e.key === "ArrowDown" || e.key === "PageDown" || (e.key === " " && !e.shiftKey)) { e.preventDefault(); stepStage(1); }
+      else if (e.key === "ArrowUp" || e.key === "PageUp" || (e.key === " " && e.shiftKey)) { e.preventDefault(); stepStage(-1); }
+      else if (e.key === "Home") { e.preventDefault(); toStage(0); }
+      else if (e.key === "End") { e.preventDefault(); toStage(LAST); }
+    });
+    const cue = document.getElementById("scroll-cue");
+    if (cue) cue.addEventListener("click", () => stepStage(1));
+    return;
+  }
+
+  const MAP = 2;
+  const places = () => [stageEnd(), intro.offsetTop, map.offsetTop];
+  let activeIndex = 0;
+  let animating = false;
+
+  // Which of the three the page is at, read off where it is.
+  function whereIs() {
+    const y = container.scrollTop, [a, b, c] = places();
+    return y < (a + b) / 2 ? 0 : y < (b + c) / 2 ? 1 : 2;
+  }
+
+  // ============================================================
+  // LEAVING THE MAP
+  //
+  // Going back up from the node map is not a plain scroll. The page is
+  // held still while the map falls into its own centre, then while a
+  // line draws itself from that centre up to the top of the screen, and
+  // only then does it move. Two numbers on window carry the state, so
+  // the four files that have to take part can each read it without
+  // knowing about the others:
+  //
+  //   window.__exit    0 to 1, the collapse    (node-scene.js, paper.js,
+  //                                             extras.js, thread.js)
+  //   window.__reform  0 to 1, the line        (thread.js)
+  //
+  // Both sit at 0 the rest of the time, so nothing else in the site has
+  // to care that any of this exists.
+  // ============================================================
+  const EXIT_MS = 820;     // how long the map takes to fall inwards
+  const REFORM_MS = 520;   // and the line to draw itself back out
+
   /** The plain scroll, used on its own and as the last step of the exit. */
-  function scrollToSlide(index, onDone) {
+  function scrollToPlace(index, onDone) {
     const startY = container.scrollTop;
-    const endY = slides[index].offsetTop;
+    const endY = places()[index];
     const distance = endY - startY;
 
     if (distance === 0) {
@@ -119,7 +381,7 @@
     // the browser tries to immediately snap back while we're mid-animation,
     // which is what made this look broken/not-smooth before. Turning snap
     // off for the duration of the animation, then back on once we land
-    // exactly on the target slide, fixes that.
+    // on one of the slides, fixes that. (On the stage there is none.)
     container.style.scrollSnapType = "none";
 
     // The move onto the node map slide is much longer than the others:
@@ -135,19 +397,20 @@
       (t) => { container.scrollTop = startY + distance * curve(t); },
       () => {
         activeIndex = index;
-        container.style.scrollSnapType = "y mandatory";
+        container.style.scrollSnapType = index === 0 ? "none" : "y mandatory";
         onDone();
       }
     );
   }
 
   function goTo(index) {
-    index = Math.max(0, Math.min(slides.length - 1, index));
-    const endY = slides[index].offsetTop;
+    index = Math.max(0, Math.min(MAP, index));
+    const endY = places()[index];
 
     if (REDUCE_MOTION) {
       container.scrollTop = endY;
       activeIndex = index;
+      container.style.scrollSnapType = index === 0 ? "none" : "y mandatory";
       return;
     }
     if (container.scrollTop === endY) return;
@@ -158,7 +421,7 @@
     if (activeIndex === MAP && index < MAP) {
       runPhase(EXIT_MS, (t) => { window.__exit = t; }, () => {
         runPhase(REFORM_MS, (t) => { window.__reform = t; }, () => {
-          scrollToSlide(index, () => {
+          scrollToPlace(index, () => {
             // Released only once the page has arrived, so nothing springs
             // back into place while any of it is still on screen.
             window.__exit = 0;
@@ -170,165 +433,43 @@
       return;
     }
 
-    scrollToSlide(index, () => {
-      animating = false;
-      // back up on to the formula from below: whatever of it is not there
-      // yet comes (it is all there if it was when the page left it)
-      if (index === FORMULA) stageTo(2);
-    });
+    scrollToPlace(index, () => { animating = false; });
   }
 
-  // ============================================================
-  // THE STAGE — the title and the formula, run by the wheel
-  // (2026-09-30: "make the whole second page reactive to the scroll
-  // wheel", and asked, "the wheel drives it")
-  //
-  // One number, `q`, is where the stage is: 0 the title, 1 the page arrived
-  // at the formula slide (between the two, the page part of the way down,
-  // the title fading as it goes), and from 1 to 2 the formula's own
-  // sequence while the page is held there — the aldehyde turning into its
-  // formula, the clouds gathering round the names, the names coming up.
-  // The wheel moves where it is going (`qTo`) by as much as it is turned,
-  // and `q` follows on a spring, never faster than its leg allows, so a
-  // notch and a flick both move it smoothly; turned back, it all goes
-  // back. The sequence is told to molecule.js as one number, a sixth
-  // window global:
-  //
-  //   window.__formula  0 to 1, how far the formula's sequence is
-  //
-  // Keys and the Scroll button play it through (down from the title to
-  // the end, up from the formula to the title); a turn of the wheel once
-  // it is complete goes on to the sentence. A finger, a scrollbar or a
-  // jump moves the page itself, and the stage follows: arriving at the
-  // formula slide that way plays the sequence through.
-  // ============================================================
-  const WHEEL_LEG1 = 0.8;      // of the window's height, the wheel's turn from the title to the formula slide
-  const WHEEL_LEG2 = 1500;     // px of the wheel's turn through the formula's sequence
-  const RATE_LEG1 = 1 / 0.95;  // q per second at most: the page's move
-  const RATE_LEG2 = 1 / 4.2;   // the sequence, played through
-  const RATE_BACK = 1 / 1.4;   // and back
-  const SPRING = 90;           // how tightly q follows where it is going
-  const SETTLE_MS = 320;       // a wheel stopped between the two slides settles on the nearer
-  const LEAVE_AFTER_MS = 450;  // how long complete before a further turn leaves for the sentence
-  let q = 0, qTo = 0, qv = 0, placed = 0, stageLast = 0, stageOn = false, written = -1, settleTimer = 0, fullSince = 0;
-  window.__formula = 0;
-  const onStage = () => FORMULA >= 0 && (activeIndex === 0 || activeIndex === FORMULA);
-  function stageTop(x) {
-    const a = slides[0].offsetTop, b = slides[FORMULA].offsetTop;
-    return a + Math.max(0, Math.min(1, x)) * (b - a);
-  }
-  function placeStage() {
-    // the page is moved only between the two slides (and on to the formula
-    // slide exactly): past it, it is somebody else's to move
-    if (q < 1 || placed < 1) {
-      const y = Math.round(stageTop(q));
-      if (Math.abs(container.scrollTop - y) >= 1) { container.scrollTop = y; written = container.scrollTop; }
-    }
-    // which slide it is on, while it is the stage that moves the page (once
-    // the page has gone on past the formula, the sequence may still be
-    // finishing, and the page is not on the stage any more)
-    if (q < 1 || placed < 1) activeIndex = q >= 0.5 ? FORMULA : 0;
-    placed = q;
-    window.__formula = Math.max(0, Math.min(1, q - 1));
-    if (q >= 2 - 1e-4) { if (!fullSince) fullSince = performance.now(); } else fullSince = 0;
-  }
-  function stagePhase(now) {
-    const dt = stageLast ? Math.min(0.1, (now - stageLast) / 1000) : 1 / 60;
-    stageLast = now;
-    const rate = q < 1 || (q === 1 && qTo < 1) ? RATE_LEG1 : qTo > q ? RATE_LEG2 : RATE_BACK;
-    qv += (SPRING * (qTo - q) - 2 * Math.sqrt(SPRING) * qv) * dt;
-    qv = Math.max(-rate, Math.min(rate, qv));
-    q += qv * dt;
-    if ((qTo - q) * Math.sign(qv) < 0 || Math.abs(qTo - q) < 0.0008) { q = qTo; qv = 0; }
-    placeStage();
-    if (q === qTo) {
-      phases.delete(stagePhase);
-      stageOn = false;
-      stageLast = 0;
-      if (q <= 0 || q >= 1) container.style.scrollSnapType = "y mandatory";
-    }
-  }
-  function stageTo(x) {
-    if (FORMULA < 0) return;
-    qTo = Math.max(0, Math.min(2, x));
-    if (REDUCE_MOTION) { q = qTo; qv = 0; placeStage(); container.style.scrollSnapType = "y mandatory"; return; }
-    if (q === qTo) return;
-    container.style.scrollSnapType = "none";
-    if (!stageOn) { stageOn = true; stageLast = 0; phases.add(stagePhase); }
-  }
-  function stageWheel(delta) {
-    window.clearTimeout(settleTimer);
-    const h = Math.max(1, slides[FORMULA].offsetTop - slides[0].offsetTop);
-    // the wheel's turn in the stage's own measure, leg by leg
-    let d = delta, x = qTo;
-    for (let legs = 0; legs < 2 && d !== 0; legs++) {
-      const per = x < 1 || (x === 1 && d < 0) ? h * WHEEL_LEG1 : WHEEL_LEG2;
-      const end = d > 0 ? (x < 1 ? 1 : 2) : (x > 1 ? 1 : 0);   // the end of this leg, the way it is turned
-      const room = Math.abs(end - x), want = Math.abs(d) / per;
-      if (want < room) { x += Math.sign(d) * want; break; }
-      x = end;
-      d -= Math.sign(d) * room * per;
-      if (end === 0 || end === 2) break;
-    }
-    stageTo(x);
-    // stopped part of the way between the two slides: settle on the nearer
-    settleTimer = window.setTimeout(() => {
-      if (qTo > 0 && qTo < 1) stageTo(qTo < 0.5 ? 0 : 1);
-    }, SETTLE_MS);
-  }
-  // The page moved by something else — a finger, the scrollbar, a jump —
-  // and the stage follows where it is.
+  // Keep activeIndex correct if the page is moved by some other means
+  // (the scrollbar, a finger); on the stage, no snapping, and a wheel's
+  // run carried past the stage's end is held at it, so the page goes on
+  // from there only by a turn of its own.
+  let wheelAt = 0, endSince = 0;
   container.addEventListener("scroll", () => {
-    if (FORMULA < 0 || animating || Math.abs(container.scrollTop - written) <= 1) return;
-    const y = container.scrollTop, a = slides[0].offsetTop, b = slides[FORMULA].offsetTop;
-    if (y < b - 1) {
-      q = qTo = placed = Math.max(0, (y - a) / Math.max(1, b - a)); qv = 0;
-      window.__formula = 0;
-    } else if (y <= b + 1 && q < 1) {
-      // arrived at the formula slide under a finger: play it through
-      q = placed = 1; qv = 0; written = y;
-      stageTo(2);
-    } else if (y > b + 1 && q < 2) {
-      q = qTo = placed = 2; qv = 0; window.__formula = 1;   // gone on past it: it is all there when the page comes back
+    if (animating) return;
+    const y = container.scrollTop, end = stageEnd();
+    if (activeIndex === 0 && y > end + 1 && performance.now() - wheelAt < 260) {
+      container.scrollTop = end;
+      return;
     }
+    activeIndex = whereIs();
+    container.style.scrollSnapType = activeIndex === 0 && y < end - 1 ? "none" : "y mandatory";
+    if (activeIndex === 0 && y >= end - 1) { if (!endSince) endSince = performance.now(); } else endSince = 0;
   }, { passive: true });
 
-  // Keep activeIndex correct if the user scrolls by some other means
-  // (scrollbar drag, touch) rather than through goTo().
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && !animating) {
-          activeIndex = slides.indexOf(entry.target);
-        }
-      });
-    },
-    { threshold: 0.6 }
-  );
-  slides.forEach((slide) => observer.observe(slide));
-
-  // --- Wheel / trackpad: on the stage it runs the stage (above); anywhere
-  // else one gentle gesture moves exactly one slide.
+  // --- Wheel / trackpad: within the stage the page scrolls itself; past it,
+  // one gentle gesture moves exactly one slide.
   let wheelLock = false;
+  const LEAVE_AFTER_MS = 450;  // how long at the stage's end before a turn goes on to the sentence
   container.addEventListener(
     "wheel",
     (e) => {
+      if (overlayOpen()) { e.preventDefault(); return; }
+      if (animating) { e.preventDefault(); return; }
+      const y = container.scrollTop, end = stageEnd();
+      if (activeIndex === 0 && (e.deltaY < 0 || y < end - 1)) { wheelAt = performance.now(); return; }
       e.preventDefault();
-      if (overlayOpen()) return;
-      if (!animating && !wheelLock && onStage()) {
-        const px = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaMode === 2 ? e.deltaY * window.innerHeight : e.deltaY;
-        const d = Math.max(-240, Math.min(240, px));
-        // complete, a further turn down goes on to the sentence
-        if (d > 0 && qTo >= 2 && q >= 2 - 1e-4 && performance.now() - fullSince > LEAVE_AFTER_MS) {
-          wheelLock = true;
-          setTimeout(() => { wheelLock = false; }, 1000);
-          goTo(FORMULA + 1);
-          return;
-        }
-        if (d !== 0) stageWheel(d);
+      if (activeIndex === 0 && (!endSince || performance.now() - endSince < LEAVE_AFTER_MS)) {
+        if (!endSince) endSince = performance.now();
         return;
       }
-      if (wheelLock || animating) return;
+      if (wheelLock) return;
       wheelLock = true;
       setTimeout(() => { wheelLock = false; }, 1000);
       if (e.deltaY > 0) goTo(activeIndex + 1);
@@ -337,116 +478,23 @@
     { passive: false }
   );
 
-  // A step by the keys or the Scroll button: through the whole stage at
-  // once (down from the title to the end of the formula; up from the
-  // formula to the title), and on from the formula to the sentence.
+  // A step by the keys or the Scroll button: a stage at a time on the
+  // stage, and on from its end to the sentence; a slide at a time after it.
   function step(dir) {
-    if (!animating && onStage()) {
-      if (dir > 0 && activeIndex === 0) { stageTo(2); return; }
-      if (dir < 0) { stageTo(0); return; }
-      // still on its way to the formula slide: arrive first
-      if (q < 1) { stageTo(2); return; }
-      stageTo(2);   // on to the sentence, finishing on the way
-    }
+    if (animating) return;
+    if (activeIndex === 0 && (dir < 0 || reading() < LAST - 0.02)) { stepStage(dir); return; }
     goTo(activeIndex + dir);
   }
 
   // --- Keyboard
   window.addEventListener("keydown", (e) => {
-    if (overlayOpen()) return;
+    if (overlayOpen() || e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.target && e.target.closest && e.target.closest("input, textarea, select, [contenteditable]")) return;
     if (e.key === "ArrowDown" || e.key === "PageDown") { e.preventDefault(); step(1); }
     else if (e.key === "ArrowUp" || e.key === "PageUp") { e.preventDefault(); step(-1); }
   });
 
-  // --- "Scroll" button on the title slide
+  // --- "Scroll" button on the title
   const scrollCue = document.getElementById("scroll-cue");
   if (scrollCue) scrollCue.addEventListener("click", () => step(1));
-
-  // ============================================================
-  // THE CORNERS OF THE TITLE SLIDE
-  //
-  //   the title block ("A portfolio / 2026 edition"), bottom right
-  //   the "Scroll" button, bottom left
-  //
-  // Each fades out on its own as you leave the first slide and back in
-  // as you return, tied to how far down the page actually is rather
-  // than to any animation — so it tracks a slow drag or a flicked
-  // wheel equally, and reverses the moment you turn around.
-  //
-  // Driven from the scroll event rather than a frame loop: they have
-  // nothing to say while the page is still, and a listener that only
-  // runs when something moved costs nothing the rest of the time.
-  // ============================================================
-  // THE TITLE ITSELF goes the same way since 2026-09-30, but later and in
-  // place: the owner's "to transition to this page from the title page, I
-  // want the title and text to fade away". The aldehyde behind it stands
-  // still while the page moves, so the title is held where it stands too
-  // (`pinned`: moved down by exactly as far as the page has gone up) and
-  // only lifts a little as it fades, gone by `by` of the way (0.45). The
-  // aldehyde comes together as its formula once it has gone — molecule.js
-  // starts that at half way, reading where the page is for itself.
-  function fadeOnLeavingSlideOne(element, by = 1 / 3, lift = 18, pinned = false) {
-    if (!element) return;
-
-    const update = () => {
-      const from = slides[0].offsetTop;
-      const to = slides[1].offsetTop;
-      const leg = to - from || 1;
-      const gone = Math.max(0, container.scrollTop - from);
-      const progress = Math.min(1, gone / leg);
-      // Gone by a third of the way down, so it leaves early and isn't
-      // still hanging about over the second slide.
-      const shown = Math.max(0, 1 - progress / by);
-      element.style.opacity = shown.toFixed(3);
-      // Lifted very slightly as it goes, so it reads as leaving rather
-      // than simply dimming in place.
-      const y = (pinned ? Math.min(gone, leg) : 0) - Math.min(1, progress / by) * lift;
-      element.style.transform = "translateY(" + y.toFixed(1) + "px)";
-      // Nothing invisible should still be clickable — the Scroll button
-      // is a button, and this is the whole of what stops it catching a
-      // click it can no longer be seen to deserve.
-      element.style.pointerEvents = shown < 0.02 ? "none" : "";
-    };
-
-    // The title block arrives with a "rise" keyframe animation whose
-    // fill is "both", which keeps hold of opacity and transform for the
-    // life of the element — and an animation outranks the plain styles
-    // set above, so until it is cleared nothing here has any effect.
-    // Handing over once it has finished playing keeps the entrance and
-    // lets the scroll take it from there. (The Scroll button has no
-    // such animation and simply works from the start; under reduced
-    // motion neither does, so the timer below covers that too.)
-    const takeOver = () => {
-      element.style.animation = "none";
-      update();
-    };
-    element.addEventListener("animationend", takeOver, { once: true });
-    // (After the title has gathered, since 2026-09-29: the block comes up
-    // last, at 1.9s, so it is handed over after that.)
-    setTimeout(takeOver, 3000);
-
-    container.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    update();
-  }
-
-  fadeOnLeavingSlideOne(document.querySelector(".title-block"));
-  fadeOnLeavingSlideOne(document.querySelector(".scroll-cue"));
-  fadeOnLeavingSlideOne(document.querySelector(".title-content"), 0.45, 26, true);
-
-  // THE FIRST SLIDES ARE DARK (2026-09-30: the aldehyde's own dark ground,
-  // the title and the formula after it). The Menu stands fixed over
-  // whatever slide is under it, so while a dark one is still under it the
-  // body says so (`first-slide-dark`), and the stylesheet turns the Menu
-  // light.
-  const first = document.getElementById("slide-formula") || document.getElementById("slide-1");
-  if (first) {
-    const MENU_FOOT = 48;   // the Menu's own foot, from the top of the window
-    const underMenu = () =>
-      document.body.classList.toggle("first-slide-dark",
-        container.scrollTop < first.offsetTop + first.offsetHeight - MENU_FOOT);
-    container.addEventListener("scroll", underMenu, { passive: true });
-    window.addEventListener("resize", underMenu);
-    underMenu();
-  }
 })();

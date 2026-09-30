@@ -293,6 +293,8 @@ const TRANSITION = "dissolve";
   requestAnimationFrame(frame);
 
   window.addEventListener("resize", measure);
-  window.addEventListener("load", measure);
+  // (loaded by landing.js since 2026-09-30, so the page may have finished
+  // loading before this runs)
+  if (document.readyState === "complete") measure(); else window.addEventListener("load", measure);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
 })();

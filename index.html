@@ -40,32 +40,35 @@
 </head>
 <body class="snap-page">
 
-<!-- Wash, squared paper and static. Purely decorative; all three are
-     drawn and faded in by paper.js. -->
-<div class="paper" aria-hidden="true">
-  <div class="paper-wash"></div>
-  <canvas class="paper-grid"></canvas>
-  <canvas class="paper-noise"></canvas>
-</div>
-
 <main id="scroll-container">
 
-  <!-- THE DARK STAGE (2026-09-30): the title slide and the formula slide
-       after it, on one dark ground, with THE ALDEHYDE standing still in the
-       middle of both while the page moves (`.molecule` sticks to the top of
-       the window for as long as either is under it). Drawn by molecule.js
-       from aldehyde-data.js. -->
+  <!-- THE STAGE (2026-09-30): the whole of the home page. The title and the
+       formula stand on one dark ground with THE ALDEHYDE in the middle of
+       both, and all three stay where they are (each sticks to the top of the
+       window) while the page is scrolled down the stage's own length — its
+       STAGE RUN, the empty room at its foot. How far down it is, is how far
+       through its FIVE STAGES the page is, smoothly, both ways:
+
+         1  the aldehyde as it is first seen, the title in front of it
+         2  the same, the title gone
+         3  the aldehyde turned upright, to face you
+         4  the same, its formula drawn in it
+         5  the Menu's eight pages, beside two lines of specks
+
+       (landing.js reads the scroll, molecule.js draws, from
+       aldehyde-data.js.) Once, the sentence and the node map followed it:
+       they are kept, switched off, in MAP-SLIDES below. -->
   <div class="aldehyde-stage" id="aldehyde-stage">
     <div class="molecule" id="molecule" aria-hidden="true">
       <canvas class="molecule-canvas"></canvas>
     </div>
 
-    <!-- SLIDE 1 — TITLE. Edit: the big line, the line under it. The
-         square at the title opens ABOUT ME (below, after the slides) —
-         the owner's own words, 2026-09-29. The aldehyde glows behind it:
-         formaldehyde's electron cloud, the double bond in gold and
-         oxygen's lone pair in violet. The title INVERTS what is behind it
-         (2026-09-30), so it reads over the glow as over the ground. -->
+    <!-- STAGES 1 AND 2 — THE TITLE. Edit: the big line, the line under it.
+         The square at the title opens ABOUT ME (below) — the owner's own
+         words, 2026-09-29. The aldehyde glows behind it: formaldehyde's
+         electron cloud, the double bond in gold and oxygen's lone pair in
+         violet. The title is white with a dark edge, and fades where it
+         stands as the page goes on. -->
     <section class="slide title-slide dark-surface" id="slide-1">
       <div class="title-content">
         <div class="title-line">
@@ -87,13 +90,13 @@
       </button>
     </section>
 
-    <!-- THE FORMULA SLIDE (2026-09-30) — a trial of another way into the
-         site than the map on the last slide. The title fades, the aldehyde
-         comes together as its formula (H2C=O, flat, the O at the top), and
-         threads of specks run out of it to the eight pages of the Menu, four
-         each side, whose names are written in specks where these links
-         stand. The links are the real ones; the specks are drawn over them.
-         Without the drawing they are simply these words.
+    <!-- STAGES 3 TO 5 — THE FORMULA. The aldehyde turns upright, its formula
+         is drawn in it, and then two lines of specks come down the window,
+         top to bottom, one each side, and the Menu's eight pages stand on
+         the outside of them, half hidden until the hand comes to one (the
+         specks are drawn to the hand: it is ELECTRONEGATIVE). Pressed, a name
+         asks first (FORMULA-ASK, below). The links are the real ones; without
+         the drawing they are simply these words.
          THE SAME EIGHT AS THE MENU (SITE_LINKS in nav.js, without Home), in
          its order: the first four down the left, the next four down the
          right. A page added to the Menu is added here too (a test says so). -->
@@ -109,6 +112,30 @@
         <a class="formula-link" href="contact.html">Contact</a>
       </nav>
     </section>
+
+    <!-- The stage's run: the room the page is scrolled down while all of the
+         above stands still. Four legs, one from each stage to the next. -->
+    <div class="stage-run" aria-hidden="true"></div>
+  </div>
+
+</main>
+
+<!-- MAP-SLIDES — SWITCHED OFF (2026-09-30), KEPT WHOLE. The owner: "PRESERVE
+     PAGES 3 AND 4 IN THE CODE, BUT EXCLUDE THEM FROM THE WORKING VERSION OF
+     THE PROJECT ... I WANT THIS CHANGE TO BE REVERSIBLE". Pages 3 and 4 —
+     the sentence and the node map — and the paper under the map, exactly as
+     they were. Nothing in a <template> is drawn, read or found by a search.
+     TO BRING THEM BACK: set MAP_SLIDES to true at the top of landing.js,
+     which puts these after the stage and loads the four scripts that draw
+     them (node-scene.js, paper.js, thread.js, extras.js). To see them
+     without changing anything, add ?map=on to the page's address. -->
+<template id="map-slides">
+  <!-- Wash, squared paper and static. Purely decorative; all three are
+       drawn and faded in by paper.js. -->
+  <div class="paper" aria-hidden="true">
+    <div class="paper-wash"></div>
+    <canvas class="paper-grid"></canvas>
+    <canvas class="paper-noise"></canvas>
   </div>
 
   <!--
@@ -137,8 +164,24 @@
       <div class="node-labels" id="node-labels"></div>
     </div>
   </section>
+</template>
 
-</main>
+<!-- FORMULA-ASK — THE WAY OUT, ASKED FIRST (2026-09-30: "when you click it,
+     I want a confirmation message to pop up to go to that thing. it should
+     be on theme"). A name pressed on the formula brings this up rather than
+     leaving at once: the page's name, Stay, and Go. Filled and opened by
+     landing.js; opened with a key held (a new tab), a name simply goes. -->
+<div class="formula-ask" id="formula-ask" hidden>
+  <section class="formula-ask-sheet" role="alertdialog" aria-modal="true" aria-labelledby="formula-ask-name" aria-describedby="formula-ask-say">
+    <p class="formula-ask-kicker"><span class="formula-ask-mark" aria-hidden="true"></span>Leave the aldehyde</p>
+    <h2 class="formula-ask-name" id="formula-ask-name">The page</h2>
+    <p class="formula-ask-say" id="formula-ask-say">This goes to its page.</p>
+    <div class="formula-ask-choose">
+      <button type="button" class="formula-ask-stay">Stay</button>
+      <a class="formula-ask-go" href="#">Go to the page</a>
+    </div>
+  </section>
+</div>
 
 <!-- ABOUT ME — the owner's, word for word (2026-09-29): "a square at the
      title which will blur out the page and bring up an 'about me' page
@@ -172,9 +215,7 @@
 <script src="landing.js"></script>
 <script src="aldehyde-data.js"></script>
 <script src="molecule.js"></script>
-<script src="node-scene.js"></script>
-<script src="paper.js"></script>
-<script src="thread.js"></script>
-<script src="extras.js"></script>
+<!-- node-scene.js, paper.js, thread.js and extras.js drew pages 3 and 4, and
+     are loaded by landing.js only when those are switched on (MAP-SLIDES). -->
 </body>
 </html>

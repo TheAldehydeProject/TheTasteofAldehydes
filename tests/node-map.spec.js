@@ -12,6 +12,7 @@ const {
   collectPageErrors,
   jumpToSlide,
   waitForMapSettled,
+  HOME_WITH_MAP,
 } = require("./helpers");
 
 // The labels the map is expected to show, from REAL_NODES.
@@ -33,7 +34,7 @@ test.describe("the map itself", () => {
 
   test("draws itself, with one clickable label per node", async ({ page }) => {
     const errors = collectPageErrors(page);
-    await page.goto("/index.html");
+    await page.goto(HOME_WITH_MAP);
     await jumpToSlide(page, "slide-3");
     await waitForMapSettled(page);
 
@@ -54,7 +55,7 @@ test.describe("the map itself", () => {
 
   test("hovering a node tells the rest of the page which one is active", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" }); // holds the map still
-    await page.goto("/index.html");
+    await page.goto(HOME_WITH_MAP);
     await jumpToSlide(page, "slide-3");
     await waitForMapSettled(page);
 
@@ -84,7 +85,7 @@ test.describe("the map itself", () => {
   // to act over depends on the machine. The peak rate depends on
   // neither.
   test("a drag across the window turns the map a good way round", async ({ page }) => {
-    await page.goto("/index.html");
+    await page.goto(HOME_WITH_MAP);
     await jumpToSlide(page, "slide-3");
     await waitForMapSettled(page);
 
@@ -127,7 +128,7 @@ test.describe("the map itself", () => {
   });
 
   test("nodes report meaningfully different distances from the camera", async ({ page }) => {
-    await page.goto("/index.html");
+    await page.goto(HOME_WITH_MAP);
     await jumpToSlide(page, "slide-3");
     await waitForMapSettled(page);
 
@@ -149,7 +150,7 @@ test.describe("the preview window", () => {
   test.beforeEach(async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await serveDependenciesLocally(page);
-    await page.goto("/index.html");
+    await page.goto(HOME_WITH_MAP);
     await jumpToSlide(page, "slide-3");
     await waitForMapSettled(page);
   });
@@ -235,7 +236,7 @@ test("falls back to a plain list of links when the 3D library is unavailable", a
   // fault. Anything else reported is a real problem.
   const errors = collectPageErrors(page, ["ERR_FAILED", "Failed to load resource"]);
   await blockThreeJs(page);
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
 
   await expect(page.locator(".node-fallback-list")).toBeAttached();
   await expect(page.locator("#node-canvas")).toHaveCount(0);
@@ -254,7 +255,7 @@ test("falls back to a plain list of links when the 3D library is unavailable", a
 // step with it.
 test("the trace has ranks of itself receding behind it", async ({ page }) => {
   await serveDependenciesLocally(page);
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
   await page.waitForTimeout(600);
@@ -325,7 +326,7 @@ test("the trace has ranks of itself receding behind it", async ({ page }) => {
    node the same distance from the hub, and no two of them crowded. */
 test("the eight nodes stand evenly over the sphere", async ({ page }) => {
   await serveDependenciesLocally(page);
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await page.waitForTimeout(600);
 
   const spread = await page.evaluate(() => {
@@ -365,7 +366,7 @@ test("at rest, no two node labels overlap", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await page.waitForTimeout(1500);
   const nearest = await page.evaluate(() => {
@@ -386,7 +387,7 @@ test("at rest, no two node labels overlap", async ({ page }) => {
    own saying the page is unfinished. */
 test("the Photography node says it is a work in progress", async ({ page }) => {
   await serveDependenciesLocally(page);
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
 
@@ -452,7 +453,7 @@ test.describe("the map's spheres and its ground", () => {
   test("the spheres are lit unless asked to be flat, and the map still draws either way", async ({ page }) => {
     for (const [query, want] of [["", "solid"], ["?spheres=flat", "flat"], ["?spheres=solid", "solid"]]) {
       const errors = collectPageErrors(page);
-      await page.goto("/index.html" + query);
+      await page.goto(HOME_WITH_MAP + query.replace("?", "&"));
       await jumpToSlide(page, "slide-3");
       await waitForMapSettled(page);
       expect(await page.evaluate(() => document.documentElement.dataset.spheres), query || "by default").toBe(want);
@@ -463,7 +464,7 @@ test.describe("the map's spheres and its ground", () => {
 
   test("the slide under the map is nearly white, not grey", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto("/index.html");
+    await page.goto(HOME_WITH_MAP);
     await jumpToSlide(page, "slide-3");
     await waitForMapSettled(page);
     await page.waitForTimeout(800);
@@ -484,7 +485,7 @@ test("every node's window shows a picture of the page it goes to", async ({ page
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
   for (let i = 0; i < EXPECTED_LABELS.length; i++) {
@@ -518,7 +519,7 @@ test("on a phone every node opens its own window, on the screen", async ({ brows
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, reducedMotion: "reduce" });
   const page = await context.newPage();
   await serveDependenciesLocally(page);
-  await page.goto("/index.html");
+  await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
   const names = await page.$$eval(".node3d-label .node3d-text", (els) => els.map((e) => {

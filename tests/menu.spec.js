@@ -6,7 +6,7 @@
 // page you're on, and that its links are actually wired up.
 // ============================================================
 const { test, expect } = require("@playwright/test");
-const { serveDependenciesLocally, jumpToSlide, waitForMapSettled, collectPageErrors } = require("./helpers");
+const { serveDependenciesLocally, jumpToSlide, waitForMapSettled, collectPageErrors, HOME_WITH_MAP } = require("./helpers");
 
 test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
@@ -98,7 +98,8 @@ test("menu links from a nested page resolve correctly, not relative to the folde
 // slide. It doesn't any more: there is one menu and it behaves the same
 // everywhere, which is what these check has not crept back.
 test("the menu opens the same way on every slide of the landing page", async ({ page }) => {
-  await page.goto("/index.html");
+  // (the sentence and the map switched on, as they are kept: 2026-09-30)
+  await page.goto(HOME_WITH_MAP);
   await page.waitForTimeout(400);
 
   for (const slide of ["slide-1", "slide-formula", "slide-2", "slide-3"]) {

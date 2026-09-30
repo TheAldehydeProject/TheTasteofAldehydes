@@ -7,7 +7,7 @@
 // so the shape of what they do is worth pinning down.
 // ============================================================
 const { test, expect } = require("@playwright/test");
-const { serveDependenciesLocally, jumpToSlide } = require("./helpers");
+const { serveDependenciesLocally, jumpToSlide, HOME_WITH_MAP } = require("./helpers");
 
 test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
@@ -27,7 +27,7 @@ test.describe("the paper background", () => {
   // made. It is kept out of the wipe entirely and comes up evenly over
   // the whole window instead.
   test("the grain is never cut by the wipe, only faded up", async ({ page }) => {
-    await page.goto("/index.html");
+    await page.goto(HOME_WITH_MAP);
 
     for (const fraction of [0.2, 0.45, 0.7]) {
       await jumpToSlide(page, "slide-3", fraction);
@@ -73,7 +73,7 @@ test.describe("the paper background", () => {
   // a plain circle and a duck's wake before now, so the shape is worth
   // pinning down.
   test("wipes in from the top, with the sides ahead of the middle", async ({ page }) => {
-    await page.goto("/index.html");
+    await page.goto(HOME_WITH_MAP);
     await jumpToSlide(page, "slide-3", 0.5); // halfway between slide 2 and 3
     await page.waitForTimeout(400);
 
@@ -108,7 +108,7 @@ test.describe("the paper background", () => {
   });
 
   test("the middle of the page is the last part of it to fill in", async ({ page }) => {
-    await page.goto("/index.html");
+    await page.goto(HOME_WITH_MAP);
     await jumpToSlide(page, "slide-3", 0.45);
     await page.waitForTimeout(400);
 
@@ -132,7 +132,7 @@ test.describe("the paper background", () => {
   // sudden flash the wipe is supposed to avoid. So the sweep has to
   // reach past the bottom of the page well before the mask comes off.
   test("the page is completely covered before the mask is taken off", async ({ page }) => {
-    await page.goto("/index.html");
+    await page.goto(HOME_WITH_MAP);
 
     let lastMasked = null;
     for (let f = 0.5; f <= 1.0001; f += 0.02) {
@@ -156,7 +156,7 @@ test.describe("the paper background", () => {
   });
 
   test("is fully revealed by the time the map has arrived", async ({ page }) => {
-    await page.goto("/index.html");
+    await page.goto(HOME_WITH_MAP);
     await jumpToSlide(page, "slide-3");
     await page.waitForTimeout(800);
 
@@ -169,7 +169,7 @@ test.describe("the paper background", () => {
   test("the map and the thread are not masked by the background's arrival", async ({ page }) => {
     // The circle is only supposed to cut the background. The map and the
     // line down the middle fade in on their own and must not be clipped.
-    await page.goto("/index.html");
+    await page.goto(HOME_WITH_MAP);
     await jumpToSlide(page, "slide-3", 0.5);
     await page.waitForTimeout(300);
 
