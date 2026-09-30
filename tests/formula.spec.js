@@ -201,7 +201,9 @@ test("the aldehyde comes together as its formula — flat, the O at the top, the
   for (const [i, box] of boxes.entries()) {
     expect(box.opacity, `name ${i + 1} up`).toBe(1);
     expect(box.colour, "the page's light ink").toBe("rgb(243, 240, 235)");
-    expect(box.face, "in the title's face").toEqual(title);
+    // the title's face and its italic, a weight lighter ("a little minimalist and neat")
+    expect(box.face.slice(0, 2), "in the title's face").toEqual(title.slice(0, 2));
+    expect(+box.face[2], "and lighter").toBeLessThan(+title[2]);
     const above = await light(page, { x: box.x, y: box.y - 22, width: box.width, height: 20 });
     const below = await light(page, { x: box.x, y: box.y + box.height + 2, width: box.width, height: 20 });
     expect(above.lit, `specks above name ${i + 1}`).toBeGreaterThan(20);
