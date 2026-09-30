@@ -140,6 +140,14 @@ Then, the same evening, what the page is now:
   the line, some a little off it, a few in a haze (`LINE_SPREAD`), `LINE_DENSITY` to a pixel of its
   length, in the aldehyde's warm grey with some of its gold and violet, lit by how near the line they
   stand. Their own specks: the aldehyde loses none.
+- **The middle is the aldehyde's room** ("move the lines and words a little to the side ... nicely
+  divided and to give the middle aldehyde some space"): the middle column is `--formula-gap`,
+  `clamp(460px, 54vw, 900px)` (it was 44vw), and the formula is framed to three quarters of the
+  room between the lines (`halfW` in `layLines`), so the width goes to space round it rather than to
+  a larger formula. **Every row has room for a name on two lines** (`--formula-row`), each name in
+  the middle of its row, so **Explorations & Researches**, set on two lines in its own order
+  ("feel free to put Reseach and eplorations as two lines"; its second line a `.formula-line`),
+  keeps the rows evenly spaced.
 - **On a narrow window** (the **band**, under 900px) the two columns stay but two rows stand above
   the formula and two below each side, and the lines run down **the narrow channel between the
   columns** — still inside the names — **broken where the formula stands** (`uGap`).

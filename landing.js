@@ -271,7 +271,10 @@
     };
     askStay.addEventListener("click", stay);
     ask.addEventListener("click", (e) => { if (e.target === ask) stay(); });
-    ask.addEventListener("keydown", (e) => {
+    // (on the whole page while it asks: the keys may not be in it yet, in
+    // the moment before Go takes them)
+    window.addEventListener("keydown", (e) => {
+      if (!asking) return;
       if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); stay(); }
       else if (e.key === "Tab") {
         // the keys stay in it while it asks

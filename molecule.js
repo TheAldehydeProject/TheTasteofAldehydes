@@ -673,7 +673,8 @@
       halfW = W / 2 - 18;
     } else {
       u.uGap.value.set(0, 0);
-      halfW = (right - left) / 2 - 26;
+      // (a quarter of the room left clear either side: the aldehyde's space)
+      halfW = ((right - left) / 2) * 0.78;
       halfH = H / 2 - 64;
     }
     // the specks themselves, made again only when the window's height or the

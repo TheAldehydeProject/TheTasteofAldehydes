@@ -845,18 +845,25 @@ body.first-slide-dark .about.is-open { background: rgba(20, 20, 21, 0.5); }
    side, the lines down the narrow channel between the columns and broken
    where the formula stands). */
 .formula-slide { justify-content: center; }
+/* The middle column is the aldehyde's room, wide (2026-09-30: "move the
+   lines and words a little to the side ... nicely divided and to give the
+   middle aldehyde some space"); every row has room for a name on two lines
+   (`--formula-row`), the names in the middle of theirs, so a name on two
+   lines keeps the rows evenly spaced. */
 .formula-menu {
   --formula-layout: flank;
-  --formula-gap: clamp(420px, 44vw, 700px);
+  --formula-gap: clamp(460px, 54vw, 900px);
+  --formula-size: clamp(17px, 1.6vw, 26px);
+  --formula-row: calc(var(--formula-size) * 2.4 + 32px);
   --line-inset: 30px;
   position: absolute;
   inset: 0;
   z-index: 2;
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--formula-gap) minmax(0, 1fr);
-  grid-template-rows: repeat(4, auto);
+  grid-template-rows: repeat(4, var(--formula-row));
   align-content: center;
-  row-gap: clamp(46px, 11vh, 124px);
+  row-gap: clamp(20px, 7.5vh, 96px);
   padding: 0 clamp(24px, 4vw, 72px);
 }
 /* THE NAMES, set as the title is — italic, white, the dark edge — lighter,
@@ -872,10 +879,11 @@ body.first-slide-dark .about.is-open { background: rgba(20, 20, 21, 0.5); }
 .formula-link {
   --veil-top: 16px;
   display: block;
+  align-self: center;
   font-family: var(--sans);
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(17px, 1.6vw, 26px);
+  font-size: var(--formula-size);
   line-height: 1.2;
   letter-spacing: 0.012em;
   color: rgba(243, 240, 235, 0.84);
@@ -911,6 +919,9 @@ body.first-slide-dark .about.is-open { background: rgba(20, 20, 21, 0.5); }
   outline: none;
 }
 .aldehyde-stage:not(.names-here) .formula-link { pointer-events: none; }
+/* a long name's second line ("feel free to put Reseach and eplorations as
+   two lines") */
+.formula-line { display: block; }
 .formula-link:nth-child(-n+4) { grid-column: 1; justify-self: end; text-align: right; margin-right: calc(var(--line-inset) - 22px); }
 .formula-link:nth-child(n+5) { grid-column: 3; justify-self: start; text-align: left; margin-left: calc(var(--line-inset) - 22px); }
 .formula-link:nth-child(4n+1) { grid-row: 1; }
@@ -936,6 +947,7 @@ body.first-slide-dark .about.is-open { background: rgba(20, 20, 21, 0.5); }
 @media (max-width: 899px) {
   .formula-menu {
     --formula-layout: band;
+    --formula-size: clamp(16px, 2.4vw, 20px);
     --line-inset: 14px;
     grid-template-columns: minmax(0, 1fr) 30px minmax(0, 1fr);
     grid-template-rows: auto auto minmax(0, 1fr) auto auto;
@@ -946,7 +958,6 @@ body.first-slide-dark .about.is-open { background: rgba(20, 20, 21, 0.5); }
   .formula-link {
     --veil-top: 8px;
     align-self: center;
-    font-size: clamp(16px, 2.4vw, 20px);
     white-space: normal;
     padding: var(--veil-top) 10px;
   }

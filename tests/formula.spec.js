@@ -125,18 +125,26 @@ test("the last stage carries the Menu's eight pages, in its order, four down eac
   for (const x of right) expect(Math.abs(x.l - right[0].l)).toBeLessThan(1.5);
   // mirrored about the middle of the window
   expect(Math.abs(left[0].r + right[0].l - 1440), "symmetrical").toBeLessThan(2);
-  // row by row, level with each other, and every row as far from the next
-  for (let i = 0; i < 4; i++) expect(Math.abs(left[i].t - right[i].t)).toBeLessThan(1.5);
-  const gaps = [1, 2, 3].map((i) => left[i].t - left[i - 1].t);
+  // row by row, level with each other (a name on two lines in the middle of
+  // its row, as a name on one is), and every row as far from the next
+  const mid = (x) => (x.t + x.b) / 2;
+  for (let i = 0; i < 4; i++) expect(Math.abs(mid(left[i]) - mid(right[i]))).toBeLessThan(1.5);
+  const gaps = [1, 2, 3].map((i) => mid(left[i]) - mid(left[i - 1]));
   for (const g of gaps) expect(Math.abs(g - gaps[0]), "equally spaced").toBeLessThan(1.5);
   expect(gaps[0]).toBeGreaterThan(60);
-  expect(Math.abs((left[0].t + left[3].b) / 2 - 450), "about the middle up and down").toBeLessThan(6);
+  expect(Math.abs((mid(left[0]) + mid(left[3])) / 2 - 450), "about the middle up and down").toBeLessThan(6);
+  // the long one on two lines, in its own words' order
+  const long = page.locator(".formula-link").nth(2);
+  expect(await long.evaluate((a) => a.textContent.replace(/\s+/g, " ").trim())).toBe("Explorations & Researches");
+  expect(await long.evaluate((a) => Math.round(a.getBoundingClientRect().height / parseFloat(getComputedStyle(a).lineHeight))), "on two lines").toBeGreaterThanOrEqual(2);
   // ON THE OUTSIDE of the two lines: the names between each line and its edge of the window
   const [lx, rx] = await lineXs(page);
   expect(Math.abs(lx + rx - 1440), "the lines mirrored too").toBeLessThan(2);
   for (const x of left) expect(x.r, "a name on the left outside its line").toBeLessThanOrEqual(lx);
   for (const x of right) expect(x.l, "a name on the right outside its line").toBeGreaterThanOrEqual(rx);
   expect(lx - left[0].r, "and near it").toBeLessThan(40);
+  // and the middle, the aldehyde's room, wide: over half the window
+  expect(rx - lx, "room in the middle").toBeGreaterThan(1440 * 0.5);
 });
 
 test("five stages, smoothly: the title, the title gone, the aldehyde upright, its formula, and the names", async ({ page }) => {
