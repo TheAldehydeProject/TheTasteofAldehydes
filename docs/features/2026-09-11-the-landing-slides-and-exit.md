@@ -144,12 +144,18 @@ None outstanding.
   exploration. “The Taste of Aldehydes” will act as a library for information, interpretations,
   theories and ideas.* `tests/pages.spec.js` reads it whole.
 
-## 2026-09-30 — an aldehyde in the middle of the first slide
+## 2026-09-30 — the first slide dark, an aldehyde in the middle of it
 
-The first slide has **a big aldehyde in the middle** (formaldehyde's electron cloud, the double
-bond gold and the lone pair violet, swirling in curl noise and drawn through a lens), and the
-title is its caption, low on the slide. It is drawn by `molecule.js` from `aldehyde-data.js`,
-which load after `landing.js`; see [its report](2026-09-30-the-aldehyde-on-the-home-page.md).
-Nothing about the slides' moving changed: it draws only while the first slide is on the screen,
-takes no pointer and no wheel, and sets none of the landing page's five `window` globals nor
-reads them. The thread still leaves from under the title, wherever the title is.
+The first slide is **dark** now — the grey of the private page the molecule was first drawn on —
+with **a big aldehyde glowing in the middle** (formaldehyde's electron cloud, the double bond gold
+and the lone pair violet) and the title in front of it. It is drawn by `molecule.js` from
+`aldehyde-data.js`, which load after `landing.js`; see [its
+report](2026-09-30-the-aldehyde-on-the-home-page.md). Nothing about the slides' moving changed:
+the drawing draws only while the first slide is on the screen, takes no pointer and no wheel, and
+sets none of the landing page's five `window` globals nor reads them.
+
+One thing here is `landing.js`'s: **the Menu is fixed over whatever slide is under it**, so while
+the page has not left the first slide (its scroll short of the first slide's height, less the
+Menu's own foot, `MENU_FOOT`), `landing.js` puts **`first-slide-dark`** on the body, and the
+stylesheet turns the Menu's ink light and its ground on a phone dark. The thread still leaves from
+under the title; over the dark slide it is not seen until the second.

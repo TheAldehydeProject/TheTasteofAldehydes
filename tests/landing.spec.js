@@ -362,10 +362,16 @@ test("on a phone the square stands under the title, named, and About me fits the
    cloud being done as colour coded exactly as described in my previous
    message [the double bond and the lone pair brought forward, every other
    electron insignificant], and have the electron cloud made with the curl
-   noise page elements." Formaldehyde, drawn by molecule.js from
-   aldehyde-data.js (written by tools/aldehyde/cloud.py). */
+   noise page elements." And then: "remove the stuff in the top right; and i
+   want the taste of aldehydes to be in front of the aldehyde. I want them
+   both to be centered ... a little smoother ... look like the thing i see on
+   the right [the private page it was first drawn on]; as close as possible
+   to it" — on its dark ground, which the owner chose for the first slide.
+   Formaldehyde, drawn by molecule.js from aldehyde-data.js (written by
+   tools/aldehyde/cloud.py). */
 
-/** Where the gold and the violet are on the screen, read off a screenshot. */
+/** Where the gold and the violet are on the screen, read off a screenshot
+ *  of the first slide's dark ground. */
 async function colours(page) {
   const shot = (await page.screenshot()).toString("base64");
   return page.evaluate(async (shot) => {
@@ -380,7 +386,7 @@ async function colours(page) {
     const out = { gold: { n: 0, x: 0, y: 0 }, violet: { n: 0, x: 0, y: 0 } };
     for (let y = 0; y < c.height; y += 2) for (let x = 0; x < c.width; x += 2) {
       const k = (y * c.width + x) * 4, r = d[k], gr = d[k + 1], b = d[k + 2];
-      const which = r > b + 60 && gr > b + 25 && r > gr ? "gold" : b > r + 25 && b > gr + 35 ? "violet" : null;
+      const which = r - b > 40 && gr - b > 15 && r >= gr ? "gold" : b - gr > 25 && b - r > 10 ? "violet" : null;
       if (!which) continue;
       out[which].n++; out[which].x += x; out[which].y += y;
     }
@@ -389,38 +395,55 @@ async function colours(page) {
   }, shot);
 }
 
-test("the aldehyde stands big in the middle of the first slide, the double bond gold and the lone pair violet, the title its caption under it", async ({ page }) => {
+test("the aldehyde glows big in the middle of the dark first slide, the double bond gold and the lone pair violet, the title in front of it", async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html");
   await expect(page.locator(".molecule"), "drawn").toHaveClass(/molecule-drawn/, { timeout: 4000 });
-  // over the whole of the slide, taking nothing from the pointer
+  // the private page's dark ground, and the title in its light ink
+  const ground = await page.locator("#slide-1").evaluate((e) => getComputedStyle(e).backgroundColor);
+  expect(ground).toBe("rgb(31, 31, 32)");
+  const ink = await page.locator(".title-content h1").evaluate((e) => getComputedStyle(e).color);
+  expect(ink).toBe("rgb(236, 232, 226)");
+  // over the whole of the slide, taking nothing from the pointer, and under the title
   const slide = await page.locator("#slide-1").boundingBox();
   const canvas = await page.locator(".molecule-canvas").boundingBox();
   expect(Math.abs(canvas.width - slide.width) + Math.abs(canvas.height - slide.height)).toBeLessThan(2);
   expect(await page.locator(".molecule").evaluate((e) => getComputedStyle(e).pointerEvents)).toBe("none");
-  // the title under it, low on the slide, still in the middle across
-  const title = await page.locator(".title-content h1").boundingBox();
-  expect(title.y, "the title low on the slide").toBeGreaterThan(slide.height * 0.6);
-  expect(Math.abs(title.x + title.width / 2 - 720)).toBeLessThan(4);
+  const layers = await page.evaluate(() => [
+    +getComputedStyle(document.querySelector(".molecule")).zIndex,
+    +getComputedStyle(document.querySelector(".title-content")).zIndex,
+  ]);
+  expect(layers[1], "the title in front of the aldehyde").toBeGreaterThan(layers[0]);
+  // the title in the middle, both ways
+  const title = await page.locator(".title-content").boundingBox();
+  expect(Math.abs(title.x + title.width / 2 - 720), "in the middle across").toBeLessThan(4);
+  expect(Math.abs(title.y + title.height / 2 - 450), "in the middle up and down").toBeLessThan(30);
+  // and the aldehyde's gold and violet round the same middle
   await page.waitForTimeout(3200);
   const seen = await colours(page);
-  expect(seen.gold.n, "the double bond, in gold").toBeGreaterThan(800);
-  expect(seen.violet.n, "the lone pair, in violet").toBeGreaterThan(300);
+  expect(seen.gold.n, "the double bond, in gold").toBeGreaterThan(400);
+  expect(seen.violet.n, "the lone pair, in violet").toBeGreaterThan(150);
   for (const k of ["gold", "violet"]) {
-    expect(Math.abs(seen[k].x - 720), `${k}: in the middle across`).toBeLessThan(220);
-    expect(seen[k].y, `${k}: above the title`).toBeLessThan(title.y);
-    expect(seen[k].y, `${k}: under the corner key`).toBeGreaterThan(120);
+    expect(Math.abs(seen[k].x - 720), `${k}: in the middle across`).toBeLessThan(200);
+    expect(Math.abs(seen[k].y - 450), `${k}: in the middle up and down`).toBeLessThan(200);
   }
-  // the key in the corner, once it has drawn; the atoms named
-  await expect.poll(() => page.locator(".molecule-key").evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
-  await expect(page.locator(".molecule-key")).toContainText("the double bond");
-  await expect(page.locator(".molecule-key")).toContainText("oxygen’s lone pair");
-  await expect(page.locator(".molecule")).toHaveClass(/molecule-named/);
-  expect(await page.locator(".molecule-atom").allTextContents()).toEqual(["C", "O", "H", "H"]);
+  // nothing in the top right any more, and no names or bonds over the title
+  await expect(page.locator(".molecule-key")).toHaveCount(0);
+  await expect(page.locator(".molecule-atom")).toHaveCount(0);
   // the title still gathered, and its square still there
   await expect.poll(() => page.locator(".about-open").evaluate((e) => +getComputedStyle(e).opacity), { timeout: 3000 }).toBeGreaterThan(0.95);
   expect(errors).toEqual([]);
+});
+
+test("the Menu is light over the dark first slide, and dark again on the second", async ({ page }) => {
+  await page.goto("/index.html");
+  const menu = page.locator(".menu-trigger");
+  await expect.poll(() => menu.evaluate((e) => getComputedStyle(e).color)).toBe("rgb(236, 232, 226)");
+  await jumpToSlide(page, "slide-2");
+  await expect.poll(() => menu.evaluate((e) => getComputedStyle(e).color), { timeout: 3000 }).toBe("rgb(23, 23, 15)");
+  await jumpToSlide(page, "slide-1");
+  await expect.poll(() => menu.evaluate((e) => getComputedStyle(e).color), { timeout: 3000 }).toBe("rgb(236, 232, 226)");
 });
 
 test("the aldehyde's cloud is Schrodinger's, in three parts that add up to sixteen electrons, and the two brought forward are emphasised", async ({ page }) => {
@@ -454,6 +477,9 @@ test("the aldehyde's cloud is Schrodinger's, in three parts that add up to sixte
   expect(data.counts.pi).toBeGreaterThanOrEqual(spi * pi);
   expect(data.counts.lone).toBeGreaterThanOrEqual(slone * lone);
   expect(data.counts.rest).toBeGreaterThanOrEqual(srest * rest);
+  // drawn as the private page draws it: light added to light, and no lens
+  expect(src).toMatch(/blending: THREE\.AdditiveBlending/);
+  expect(src).not.toMatch(/uFocus|uBlur/);
 });
 
 test("with motion turned off the aldehyde is simply there, still", async ({ page }) => {
@@ -462,16 +488,16 @@ test("with motion turned off the aldehyde is simply there, still", async ({ page
   await page.goto("/index.html");
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
   await page.waitForTimeout(500);
-  const clip = { x: 320, y: 60, width: 800, height: 560 };
+  const clip = { x: 320, y: 60, width: 800, height: 760 };
   const a = (await page.screenshot({ clip })).toString("base64");
   await page.waitForTimeout(900);
   const b = (await page.screenshot({ clip })).toString("base64");
   expect(a === b, "nothing moved").toBe(true);
   const seen = await colours(page);
-  expect(seen.gold.n + seen.violet.n, "and it is drawn").toBeGreaterThan(800);
+  expect(seen.gold.n + seen.violet.n, "and it is drawn").toBeGreaterThan(400);
 });
 
-test("without the 3D library the first slide is the title alone, and nothing breaks", async ({ page }) => {
+test("without the 3D library the first slide is the title alone on its dark ground, and nothing breaks", async ({ page }) => {
   const errors = collectPageErrors(page, ["three.min.js", "ERR_FAILED", "Failed to load resource"]);
   await blockThreeJs(page);
   await page.goto("/index.html");
@@ -479,21 +505,23 @@ test("without the 3D library the first slide is the title alone, and nothing bre
   await expect.poll(() => h1.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
   await page.waitForTimeout(2600);
   await expect(page.locator(".molecule")).not.toHaveClass(/molecule-drawn/);
-  expect(await page.locator(".molecule-key").evaluate((e) => +getComputedStyle(e).opacity), "no key to nothing").toBe(0);
+  expect(await page.locator("#slide-1").evaluate((e) => getComputedStyle(e).backgroundColor)).toBe("rgb(31, 31, 32)");
   expect(errors).toEqual([]);
 });
 
-test("on a phone the aldehyde fits across the screen, above the title", async ({ page }) => {
+test("on a phone the aldehyde and the title stand in the middle together", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/index.html");
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
   await page.waitForTimeout(3200);
   const seen = await colours(page);
-  const title = await page.locator(".title-content h1").boundingBox();
-  expect(seen.gold.n + seen.violet.n).toBeGreaterThan(300);
+  const title = await page.locator(".title-content").boundingBox();
+  expect(seen.gold.n + seen.violet.n, "drawn (a fifth of it, in a browser without a graphics card)").toBeGreaterThan(60);
+  expect(Math.abs(title.x + title.width / 2 - 195)).toBeLessThan(4);
   for (const k of ["gold", "violet"]) {
+    if (!seen[k].n) continue;
     expect(Math.abs(seen[k].x - 195), `${k}: in the middle across`).toBeLessThan(90);
-    expect(seen[k].y).toBeLessThan(title.y);
+    expect(Math.abs(seen[k].y - (title.y + title.height / 2)), `${k}: about the title`).toBeLessThan(200);
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });

@@ -8,7 +8,9 @@
 # are insignificant, but the lone pair and the double bond each have an
 # assigned emphasized parameter to them" — and then, "a big aldehyde
 # molecule in the very middle of [the home page's first slide], with the
-# electron cloud being done as colour coded exactly as described".
+# electron cloud being done as colour coded exactly as described" — and then,
+# of the private page that first drew it, "i actually want it to look like
+# the thing i see on the right; as close as possible to it".
 #
 # This solves formaldehyde, H2C=O (the smallest aldehyde there is),
 # approximately: density-functional theory, B3LYP in a cc-pVDZ basis, with
@@ -16,11 +18,12 @@
 # clouds that add up exactly to the whole —
 #
 #   pi    the C=O double bond's second pair (its pi orbital), 2 electrons
-#   lone  oxygen's lone pair, as a chemist draws it: the p lone pair lying
-#         in the molecule's plane, gathered onto the oxygen (an intrinsic
-#         bond orbital; the loosest-held solution is nearly it, but spills
-#         along the C-H bonds, which on the home page read as the lone pair
-#         belonging to the hydrogens), 2
+#   lone  oxygen's lone pair, the loosest held (the highest occupied
+#         orbital), lying in the molecule's plane and spilling a little along
+#         the C-H bonds, 2 — as the private page drew it. (For one round the
+#         home page drew the pair gathered wholly onto the oxygen instead,
+#         an intrinsic bond orbital; the owner then asked for the private
+#         page's look as close as possible, and this is its cloud.)
 #   rest  every other electron, 12 (the innermost pairs, the single bonds
 #         and oxygen's second, deeper lone pair)
 #
@@ -42,13 +45,12 @@ import os, json, base64
 import numpy as np
 from pyscf import gto, dft
 from pyscf.dft import numint
-from pyscf.lo import iao, ibo
 
 ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
 OUT = os.path.join(ROOT, "aldehyde-data.js")
 BOHR = 0.529177
 STEP = 0.03          # a speck's place is kept to 0.03 angstrom (a byte a coordinate)
-COUNTS = {"rest": 12000, "pi": 20000, "lone": 20000}
+COUNTS = {"rest": 14000, "pi": 23000, "lone": 23000}
 
 # Formaldehyde as measured, in angstrom: in the yz plane, C=O along z, so
 # the pi orbitals stand along x.
@@ -59,19 +61,18 @@ mol = gto.M(atom="\n".join(f"{a} {x} {y} {z}" for a, x, y, z in ATOMS), basis="c
 mf = dft.RKS(mol); mf.xc = "b3lyp"; mf.kernel()
 C = mf.mo_coeff; nocc = mol.nelectron // 2
 
-# Which orbital is which. The occupied orbitals are gathered into the ones a
-# chemist draws (intrinsic bond orbitals: the same sixteen electrons, the
-# same whole cloud): the pi bond is the one made of p functions along x
-# alone; the lone pair is the one most on oxygen's p function along y.
+# Which orbital is which: the pi bond is the occupied one made of p
+# functions along x alone; the lone pair is the highest occupied, and is
+# mostly oxygen's p function along y.
 labels = mol.ao_labels(fmt=False)
 S = mol.intor("int1e_ovlp")
-L = ibo.ibo(mol, C[:, :nocc], iaos=iao.iao(mol, C[:, :nocc]), verbose=0)
+L = C[:, :nocc]
 px = np.array([l[2].endswith("p") and l[3] == "x" for l in labels])
 oy = np.array([l[0] == 1 and l[2].endswith("p") and l[3] == "y" for l in labels])
 share = lambda c, m: float((c * (S @ c))[m].sum())
 PI = max(range(nocc), key=lambda i: share(L[:, i], px))
-LONE = max(range(nocc), key=lambda i: share(L[:, i], oy))
-assert share(L[:, PI], px) > 0.95 and share(L[:, LONE], oy) > 0.6 and PI != LONE
+LONE = nocc - 1
+assert share(L[:, PI], px) > 0.95 and share(L[:, LONE], oy) > 0.4 and PI != LONE
 
 h = 0.05
 xs, ys, zs = np.arange(-3.2, 3.2, h), np.arange(-3.6, 3.6, h), np.arange(-3.4, 4.4, h)

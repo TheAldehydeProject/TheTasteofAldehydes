@@ -449,51 +449,39 @@ body.menu-open > *:not(.menu-trigger):not(.menu-overlay):not(.cursor-ring):not(.
 .title-content { text-align: center; }
 
 /* THE ALDEHYDE (molecule.js, 2026-09-30 — "a big aldehyde molecule in
-   the very middle of it"): formaldehyde's electron cloud over the whole
-   of the first slide, standing in the middle of the room above the title,
-   which is its caption now, low on the slide. Nothing on it takes the
-   pointer; it leans to it from the window. The key in the top right
-   corner, and the atoms' names, come up only once it has drawn. */
-.title-slide:has(.molecule) { align-items: flex-end; }
-.title-slide:has(.molecule) .title-content { position: relative; z-index: 2; margin-bottom: clamp(84px, 13vh, 140px); }
+   the very middle of it", and then "the taste of aldehydes ... in front of
+   the aldehyde ... both ... centered ... as close as possible" to the
+   private page it was first drawn on). The first slide takes that page's
+   dark grey — its five tokens turned over here, as a dark page's are on its
+   body class, so the title, its line, the square, the scroll cue and the
+   corner block all follow — and the molecule's cloud glows over the whole
+   of it, the title in front of it in the middle. Nothing on the drawing
+   takes the pointer; it leans to it from the window. */
+.title-slide {
+  --bg: #1f1f20;
+  --bg-2: #28282a;
+  --line: #3a3a3b;
+  --ink: #ece8e2;
+  --ink-rgb: 236, 232, 226;
+  --muted: #8f8b86;
+  background: var(--bg);
+  color: var(--ink);
+}
+.title-slide .title-content { position: relative; z-index: 2; }
+/* the title read in front of the glowing cloud: a soft shadow of the ground round its letters */
+.title-slide .title-content h1,
+.title-slide .title-sub { text-shadow: 0 0 18px rgba(31, 31, 32, 0.95), 0 0 42px rgba(31, 31, 32, 0.75); }
+.title-slide .title-sub,
+.title-slide .about-open-word { color: #c4bfb8; text-shadow: 0 0 10px rgba(31, 31, 32, 1), 0 0 24px rgba(31, 31, 32, 0.95), 0 0 48px rgba(31, 31, 32, 0.8); }
 .molecule { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .molecule-canvas { display: block; width: 100%; height: 100%; }
-.molecule-atom {
-  position: absolute;
-  left: 0;
-  top: 0;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink);
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-.molecule-named .molecule-atom { opacity: 0.7; }
-.molecule-key {
-  position: absolute;
-  top: 28px;
-  right: 28px;
-  z-index: 2;
-  display: grid;
-  gap: 5px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--muted);
-  text-align: right;
-  opacity: 0;
-  transition: opacity 0.9s ease 1.9s;
-  pointer-events: none;
-}
-.molecule.molecule-drawn ~ .molecule-key { opacity: 1; }
-.molecule-key-name { color: var(--ink); margin-bottom: 3px; }
-.molecule-key-name sub { font-size: 0.75em; }
-.molecule-key i { display: inline-block; width: 7px; height: 7px; margin-left: 9px; border-radius: 50%; vertical-align: 0; }
-.molecule-key-pi { background: #b07d1a; }
-.molecule-key-lone { background: #6647bd; }
-.molecule-key-rest { background: var(--ink); opacity: 0.35; }
-@media (prefers-reduced-motion: reduce) {
-  .molecule-atom, .molecule-key { transition: none; }
-}
+/* The Menu stands over the first slide's dark ground until the page leaves
+   it (landing.js puts `first-slide-dark` on the body). */
+body.first-slide-dark:not(.menu-open) .menu-trigger { color: #ece8e2; }
+body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
+/* About me opens from the first slide, over its dark ground: its veil is
+   that ground's, the sheet the paper it always was. */
+body.first-slide-dark .about.is-open { background: rgba(20, 20, 21, 0.5); }
 .title-content h1 {
   font-size: clamp(32px, 5.6vw, 68px);
   line-height: 1.1;
@@ -3036,9 +3024,6 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--brass); outline
   .slide { padding: 0 24px; flex-direction: column !important; justify-content: center; gap: 20px; }
   .title-block { right: 16px; bottom: 16px; }
   .scroll-cue { left: 16px; bottom: 16px; }
-  .slide.title-slide:has(.molecule) { justify-content: flex-end; }
-  .title-slide:has(.molecule) .title-content { margin-bottom: 96px; }
-  .molecule-key { top: 22px; right: 16px; font-size: 10px; gap: 4px; }
   .page-content, .work-header, .article-body { padding-left: 24px; padding-right: 24px; }
   .gallery-entry { flex-direction: column; padding: 32px 24px; gap: 20px; }
   .gallery-entry .entry-text { max-width: none; }

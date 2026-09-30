@@ -4,7 +4,14 @@
 // The owner, 2026-09-30: "redesign the front page of home. I want a big
 // aldehyde molecule in the very middle of it, with the electron cloud
 // being done as colour coded exactly as described in my previous message,
-// and have the electron cloud made with the curl noise page elements."
+// and have the electron cloud made with the curl noise page elements." And
+// then, of the first try: "i want the taste of aldehydes to be in front of
+// the aldehyde. I want them both to be centered ... make the actual
+// aldehyde look a little smoother, and isntead of the way it looks, i
+// actually want it to look like the thing i see on the right; as close as
+// possible to it" — the thing on the right being the private page where it
+// was first drawn (The Aldehyde Cloud), on its dark ground. So the first
+// slide is that page's dark grey, and this draws the molecule as it does.
 //
 // The molecule is formaldehyde, H2C=O, the smallest aldehyde there is, as
 // Schrodinger's equation has it (solved once, by tools/aldehyde/cloud.py,
@@ -13,32 +20,30 @@
 //
 //   the double bond   its second pair, in GOLD, brought forward
 //   the lone pair     oxygen's loosest pair, in VIOLET, brought forward
-//   the rest          every other electron, in faint ink
+//   the rest          every other electron, faint
 //
 // "The colour coding exactly as described" is the owner's note before:
 // "the normal electrons are insignificant, but the lone pair and the double
 // bond each have an assigned emphasized parameter to them, which makes
 // them stand out". Those parameters are EMPHASIS below: x1 is a part's
 // true share of the specks; x3 draws it as if it held three times its
-// electrons.
+// electrons. The specks add up to light where they crowd (they are drawn
+// additively, as light is), and the two brought forward are lit by how
+// dense their cloud is where each speck stands, so their lobes read as
+// shapes rather than haze — all as the private page draws it.
 //
-// "The curl noise page elements" are pmndrs' GPGPU Curl Noise DOF: specks
-// carried by CURL NOISE (a smooth, swirling flow that neither bunches nor
-// thins them, like smoke in a slow current) and drawn through a LENS
-// (sharp where the focus is, soft wide discs in front of it and behind),
-// under a camera that moves a little as if held. There, the flow is worked
-// out in one pass into a picture and read back by the next; each speck's
-// place is a function of where it started and the time, so here it is
-// worked out in the same pass that draws it, which is the same arithmetic
-// with one step fewer. Every speck swirls about its own place in the cloud,
-// so the orbitals keep their shape while the whole of it moves.
+// Of "the curl noise page elements" (pmndrs' GPGPU Curl Noise DOF) the
+// CURL NOISE stays: every speck swirls a little about its own place, as
+// smoke in a slow current, worked out in the same pass that draws it. The
+// lens and the held camera went with the first try: their soft discs and
+// wander were the grain in it, and the private page has neither.
 //
-// It gathers as the title does, from a wide shell round the slide in to
-// its places; it sways (never turning end on, where the two parts would
-// stand on each other), and it leans a little to the pointer. It draws
-// only while the first slide is on the screen. With reduced motion it is
-// simply there, still, focus and all. If the drawing cannot be made, it
-// is not there, and the slide is the title alone.
+// It gathers as the title does, in from a wide shell round the slide to
+// its places; it sways about the side the private page shows it from and
+// leans a little to the pointer. The title stands in front of it, in the
+// middle. It draws only while the first slide is on the screen. With
+// reduced motion it is simply there, still. If the drawing cannot be made,
+// it is not there, and the slide is the title alone on its dark ground.
 //
 // This is one of two files here that write a shader of their own (the
 // other is node-scene.js): a shader that fails to compile takes the whole
@@ -49,57 +54,60 @@
   const D = window.ALDEHYDE;
   const slide = document.getElementById("slide-1");
   const wrap = document.getElementById("molecule");
-  const titleEl = document.querySelector(".title-content");
-  if (!D || !slide || !wrap || !titleEl || !window.THREE) return;
+  if (!D || !slide || !wrap || !window.THREE) return;
 
   const REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // HOW STRONGLY EACH PART IS DRAWN. x1 is its true share of the specks
   // (two electrons of sixteen for the double bond and for the lone pair,
-  // twelve for the rest); the data holds enough for up to x4 of the two
-  // and x0.4 of the rest.
+  // twelve for the rest); the data holds enough for the two to be drawn a
+  // little over x3 and the rest a little over x0.3.
   const EMPHASIS = { pi: 3, lone: 3, rest: 0.3 };
-  const SHARE = { pi: 5000, lone: 5000, rest: 30000 };   // sixteen electrons as 40,000 specks
-  // Their colours, on the white page: gold, violet, and the page's own ink.
-  const COLOUR = { pi: [0.69, 0.49, 0.1], lone: [0.4, 0.28, 0.74], rest: [0.09, 0.09, 0.06] };
-  const ALPHA = { pi: 0.92, lone: 0.92, rest: 0.4 };
+  const SHARE = { pi: 7500, lone: 7500, rest: 45000 };   // sixteen electrons as 60,000 specks
+  // As the private page draws them, on its dark ground: gold, violet, and a
+  // warm grey for the rest; how strong each is; how much larger a speck of
+  // the two brought forward is.
+  const COLOUR = { pi: [0xe0 / 255, 0xb2 / 255, 0x52 / 255], lone: [0xa9 / 255, 0x8a / 255, 0xd8 / 255], rest: [0x9a / 255, 0x94 / 255, 0x8c / 255] };
+  const PEAK = { pi: 1, lone: 1, rest: 0.4 };
+  const GROW = { pi: 1.5, lone: 1.5, rest: 1 };
 
   const GATHER_MS = 2600;   // the specks coming in to their places, as the title gathers
-  const SWAY = 0.26;        // how far it sways either side of its side, radians
-  const SWAY_S = 34;        // and how slowly: one sway in 34 seconds
-  // The side it is seen from: three-quarters on, as a textbook draws a solid, so the C=O, the
-  // double bond's lobes and the lone pair's point three different ways, a third of a turn apart.
-  const SIDE = { yaw: 0.785, pitch: 0.615 };
-  const LEAN = 0.1;         // how far it leans to the pointer
-  const FLOW = 0.3;         // how far a speck is carried off its place by the flow, angstrom
-  const FREQ = 0.55;        // how fine the flow's swirls are
-  const FOCUS_SWING = 0.9;  // the focus drifting through the molecule, angstrom either side
-  const BLUR = 0.11;        // how wide a speck grows out of focus: of an angstrom's width, per angstrom
-  const FIT = 1.8;          // the cloud's reach from its middle, angstrom (what is framed)
+  // The side it is seen from, and its sway about it: the private page's.
+  const SIDE = { yaw: 0.62, pitch: 0.24 };
+  const SWAY = 0.4;         // either side, radians
+  const SWAY_S = 26;        // one sway in 26 seconds
+  const LEAN = 0.06;        // how far it leans to the pointer
+  const FLOW = 0.12;        // how far a speck is carried off its place by the curl noise, angstrom
+  const FREQ = 0.55;        // how fine its swirls are
+  const PACE = 0.5;         // and how slowly they change
+  // The framing: the private page's, the cloud 2.3 angstrom either side of
+  // its middle up and down, 2.2 across, whichever the window is shorter in.
+  const FOV = 32, FIT_TALL = 2.3, FIT_WIDE = 2.2;
 
   const phone = () => window.innerWidth < 700;
 
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas: wrap.querySelector("canvas"), antialias: true, alpha: true, premultipliedAlpha: false });
+    renderer = new THREE.WebGLRenderer({ canvas: wrap.querySelector("canvas"), antialias: true, alpha: true });
   } catch (e) {
     wrap.remove();
     return;
   }
-  renderer.setClearColor(0xffffff, 0);
+  renderer.setClearColor(0x000000, 0);
   // A machine drawing without a graphics card (a test's browser, an old
   // laptop) works the flow out on its processor, which everything else on
   // the page shares: it gets a fifth of the specks, one swirl rather than
   // two, and a new frame a twelfth of a second at most.
+  // `?molecule=full` on the address draws it whole there too (for a picture of it).
   let soft = false;
-  try {
+  if (!/[?&]molecule=full\b/.test(location.search)) try {
     const gl = renderer.getContext();
     const info = gl.getExtension("WEBGL_debug_renderer_info");
     soft = /swiftshader|llvmpipe|software/i.test(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : "");
   } catch (e) { /* not knowing is fine */ }
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 200);
+  const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 200);
   const turn = new THREE.Group();   // the sway, the lean
   const body = new THREE.Group();   // the molecule: C=O across, the double bond's lobes up, the H towards you
   body.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(
@@ -107,7 +115,7 @@
   turn.add(body);
   scene.add(turn);
 
-  // ---- the shader: curl noise, and the lens --------------------------------
+  // ---- the shader: curl noise, and a soft speck --------------------------
   // Simplex noise in three dimensions: Ashima Arts and Stefan Gustavson
   // (MIT), as the pmndrs example uses it; the curl of three of them.
   const NOISE = `
@@ -175,45 +183,40 @@
     }`;
 
   const VERTEX = `
-    uniform float uTime, uFlow, uFreq, uGather, uFocus, uBlur, uSize, uAlpha, uTwo;
-    attribute float aShade, aSeed;
-    attribute vec3 aStart;
-    varying float vAlpha, vSoft;
+    uniform float uTime, uFlow, uFreq, uGather, uSize, uTwo;
+    attribute float aSeed;
+    attribute vec3 aStart, aColour;
+    varying vec3 vColour;
     ${NOISE}
     void main() {
       vec3 home = position;
-      float t = uTime;
-      // the flow: each speck swirls about its own place, as smoke in a slow current
-      vec3 drift = curlNoise(home * uFreq + vec3(0.13, 0.09, -0.11) * t);
-      if (uTwo > 0.5) drift += 0.5 * curlNoise(home * uFreq * 2.3 - vec3(0.17, -0.05, 0.12) * t);
-      vec3 p = home + uFlow * drift;
+      vec3 p = home;
+      // the curl noise: each speck swirls a little about its own place
+      if (uFlow > 0.0) {
+        vec3 drift = curlNoise(home * uFreq + vec3(0.13, 0.09, -0.11) * uTime);
+        if (uTwo > 0.5) drift += 0.5 * curlNoise(home * uFreq * 2.3 - vec3(0.17, -0.05, 0.12) * uTime);
+        p += uFlow * drift;
+      }
       // the gathering: in from a shell round the slide, each on its own delay
       float g = clamp((uGather - aSeed * 0.42) / 0.58, 0.0, 1.0);
       g = g * g * (3.0 - 2.0 * g);
       p = mix(aStart, p, g);
       vec4 mv = modelViewMatrix * vec4(p, 1.0);
       gl_Position = projectionMatrix * mv;
-      // the lens: how far out of focus, in angstrom; a speck grows into a soft disc
-      float off = abs(-mv.z - uFocus);
-      float size = uSize + off * uBlur;
-      gl_PointSize = size;
-      vSoft = clamp(off / 1.6, 0.0, 1.0);
-      // a disc spreads the same light over more of the page, so it is fainter
-      float spread = clamp(pow(uSize / size, 1.2) * 2.6, 0.12, 1.0);
-      vAlpha = uAlpha * (0.3 + 0.7 * aShade) * spread * g;
+      gl_PointSize = uSize;
+      vColour = aColour * g;
     }`;
 
+  // A soft round speck, as the private page's: full in the middle, four
+  // fifths of it a third of the way out, nothing at its edge.
   const FRAGMENT = `
-    uniform vec3 uColour;
-    varying float vAlpha, vSoft;
+    uniform float uAlpha;
+    varying vec3 vColour;
     void main() {
-      vec2 c = 2.0 * gl_PointCoord - 1.0;
-      float r = dot(c, c);
+      float r = length(2.0 * gl_PointCoord - 1.0);
       if (r > 1.0) discard;
-      // sharp: a solid speck; soft: a flat disc with a faint bright rim, as a lens draws one
-      float disc = mix(1.0, 0.75 + 0.25 * smoothstep(0.55, 0.95, r), vSoft);
-      float edge = 1.0 - smoothstep(0.82, 1.0, r);
-      gl_FragColor = vec4(uColour, vAlpha * disc * edge);
+      float a = r < 0.35 ? mix(1.0, 0.8, r / 0.35) : mix(0.8, 0.0, (r - 0.35) / 0.65);
+      gl_FragColor = vec4(vColour, uAlpha * a);
     }`;
 
   // ---- the specks ----------------------------------------------------------
@@ -227,17 +230,22 @@
   const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
 
   const parts = {};
-  for (const name of ["rest", "pi", "lone"]) {
+  for (const name of ["rest", "lone", "pi"]) {
     const d = D.parts[name];
     const q = new Int8Array(decode(d.xyz).buffer);
     const shade = decode(d.shade);
     const n = d.n;
     const pos = new Float32Array(n * 3), start = new Float32Array(n * 3);
-    const sh = new Float32Array(n), sd = new Float32Array(n);
+    const col = new Float32Array(n * 3), sd = new Float32Array(n);
+    const [cr, cg, cb] = COLOUR[name];
     for (let i = 0; i < n; i++) {
       // a byte a coordinate, and a hair of jitter so no lattice shows
       for (let a = 0; a < 3; a++) pos[i * 3 + a] = (q[i * 3 + a] + rand() - 0.5) * D.step;
-      sh[i] = name === "rest" ? 0.6 : Math.pow(shade[i] / 255, 1.1);
+      // lit as the private page lights it: the two brought forward by how
+      // dense their cloud is where the speck stands, and every speck a little
+      // brighter or darker than the next
+      const lit = (0.78 + rand() * 0.22) * (name === "rest" ? 1 : 0.12 + 0.88 * Math.pow(shade[i] / 255, 1.1));
+      col[i * 3] = cr * lit; col[i * 3 + 1] = cg * lit; col[i * 3 + 2] = cb * lit;
       sd[i] = rand();
       // where it comes in from: a wide shell round the molecule
       const u = rand() * 2 - 1, th = rand() * Math.PI * 2, rr = 7 + rand() * 3;
@@ -247,39 +255,31 @@
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
     geo.setAttribute("aStart", new THREE.BufferAttribute(start, 3));
-    geo.setAttribute("aShade", new THREE.BufferAttribute(sh, 1));
+    geo.setAttribute("aColour", new THREE.BufferAttribute(col, 3));
     geo.setAttribute("aSeed", new THREE.BufferAttribute(sd, 1));
     const mat = new THREE.ShaderMaterial({
       vertexShader: VERTEX,
       fragmentShader: FRAGMENT,
       uniforms: {
         uTime: { value: 0 }, uFlow: { value: REDUCE ? 0 : FLOW }, uFreq: { value: FREQ },
-        uGather: { value: REDUCE ? 1 : 0 }, uFocus: { value: 10 }, uBlur: { value: 1 },
-        uSize: { value: 2 }, uAlpha: { value: ALPHA[name] }, uTwo: { value: 1 },
-        uColour: { value: new THREE.Vector3(...COLOUR[name]) },
+        uGather: { value: REDUCE ? 1 : 0 }, uSize: { value: 2 }, uAlpha: { value: PEAK[name] }, uTwo: { value: 1 },
       },
       transparent: true,
       depthWrite: false,
       depthTest: false,
+      blending: THREE.AdditiveBlending,
     });
     const pts = new THREE.Points(geo, mat);
     pts.frustumCulled = false;
-    pts.renderOrder = { rest: 1, lone: 2, pi: 3 }[name];   // what is brought forward is drawn over the rest
+    pts.renderOrder = { rest: 1, lone: 2, pi: 3 }[name];
     body.add(pts);
     parts[name] = pts;
   }
 
-  // The skeleton, in hairlines, and the atoms named: the double bond as two lines.
-  const A = D.atoms;
-  const bondPts = [];
-  const at = (i, dy) => new THREE.Vector3(A[i][1], A[i][2] + dy, A[i][3]);
-  bondPts.push(at(0, 0.055), at(1, 0.055), at(0, -0.055), at(1, -0.055), at(0, 0), at(2, 0), at(0, 0), at(3, 0));
-  const bonds = new THREE.LineSegments(
-    new THREE.BufferGeometry().setFromPoints(bondPts),
-    new THREE.LineBasicMaterial({ color: 0x17170f, transparent: true, opacity: 0, depthTest: false }));
-  bonds.renderOrder = 3;
-  body.add(bonds);
-  const labels = Array.from(wrap.querySelectorAll(".molecule-atom"));
+  // (The private page draws the skeleton in hairlines and names the atoms.
+  // Here the title stands in front of the molecule, and they ran under its
+  // letters — the H-C bond an underline to "Taste" — so they are left off:
+  // the title is the lettering on this slide. That was the first version.)
 
   // A shader that did not compile takes the drawing with it: check, and step aside.
   try {
@@ -293,32 +293,29 @@
   }
 
   // ---- framing -------------------------------------------------------------
-  // The molecule stands in the middle of the room the slide leaves above the
-  // title (the title is its caption, under it), as large as that room lets it.
-  let W = 1, H = 1, pxPerA = 100, dist = 20;
-  const half = Math.tan((camera.fov * Math.PI) / 360);
+  // In the middle of the slide, as large as the private page draws it.
+  let W = 1, H = 1, dist = 10;
+  const half = Math.tan((FOV * Math.PI) / 360);
   function size() {
     const r = slide.getBoundingClientRect();
     W = Math.max(1, r.width); H = Math.max(1, r.height);
     const small = phone();
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2));
     renderer.setSize(W, H, false);
-    const t = titleEl.getBoundingClientRect();
-    const top = small ? 70 : 64, bottom = Math.max(top + 160, t.top - r.top - (small ? 18 : 26));
-    const room = bottom - top;
-    // (it is wider than it is tall, three-quarters on: the hydrogens reach out to the left)
-    pxPerA = Math.min((room / 2) / FIT, (W / 2 - (small ? 8 : 48)) / (FIT * (small ? 1.3 : 1.08)));
-    dist = (H / 2) / (half * pxPerA);
     camera.aspect = W / H;
-    // raise the picture so the molecule's middle is the middle of that room
-    camera.setViewOffset(W, H, 0, H / 2 - (top + bottom) / 2, W, H);
     camera.updateProjectionMatrix();
+    dist = Math.max(FIT_TALL / half, FIT_WIDE / (half * camera.aspect));
+    // one angstrom on screen; the specks sized in angstrom so they grow and
+    // shrink with the cloud, and a smaller cloud, packing them closer, drawn
+    // fainter — as the private page does
+    const px = (H / 2) / (half * dist);
+    const dense = Math.max(0.5, Math.min(1, (px / 190) ** 2));
     const scale = renderer.getPixelRatio();
-    const cut = soft ? 0.2 : small ? 0.6 : 1;
+    const cut = soft ? 0.2 : 1;
     for (const name in parts) {
       const u = parts[name].material.uniforms;
-      u.uSize.value = (small ? 1.5 : 1.7) * scale;
-      u.uBlur.value = BLUR * pxPerA * scale;
+      u.uSize.value = (small ? 1.25 : 1.5) * GROW[name] * scale;
+      u.uAlpha.value = PEAK[name] * dense;
       u.uTwo.value = soft || small ? 0 : 1;
       parts[name].geometry.setDrawRange(0, Math.min(D.parts[name].n, Math.round(SHARE[name] * EMPHASIS[name] * cut)));
     }
@@ -333,7 +330,6 @@
   }, { passive: true });
 
   const born = performance.now();
-  const v3 = new THREE.Vector3();
   function draw(now) {
     const t = REDUCE ? 0 : (now - born) / 1000;
     const gather = REDUCE ? 1 : Math.min(1, (now - born) / GATHER_MS);
@@ -341,27 +337,12 @@
     turn.rotation.set(
       SIDE.pitch + lean.y * LEAN,
       SIDE.yaw + (REDUCE ? 0 : SWAY * Math.sin((t * 2 * Math.PI) / SWAY_S)) + lean.x * LEAN, 0);
-    // a camera held in the hand: the smallest wander, as the pmndrs camera shakes
-    const shake = REDUCE ? 0 : 1;
-    camera.position.set(0.05 * shake * Math.sin(t * 0.7), 0.04 * shake * Math.sin(t * 0.9 + 1), dist);
-    camera.rotation.set(0, 0, 0.004 * shake * Math.sin(t * 0.5));
-    // the focus drifting through the molecule, front to back and back
-    const focus = dist + (REDUCE ? 0 : FOCUS_SWING * Math.sin((t * 2 * Math.PI) / 16));
+    camera.position.set(0, 0, dist);
     for (const name in parts) {
       const u = parts[name].material.uniforms;
-      u.uTime.value = t; u.uGather.value = gather; u.uFocus.value = focus;
+      u.uTime.value = t * PACE; u.uGather.value = gather;
     }
-    bonds.material.opacity = 0.34 * Math.max(0, (gather - 0.6) / 0.4);
     renderer.render(scene, camera);
-    // the atoms' names, beside them
-    body.updateMatrixWorld();
-    labels.forEach((el, i) => {
-      v3.set(A[i][1], A[i][2], A[i][3]).applyMatrix4(body.matrixWorld).project(camera);
-      const x = (v3.x + 1) / 2 * W, y = (1 - v3.y) / 2 * H;
-      const off = i === 1 ? [16, -14] : i === 0 ? [-14, -14] : [0, -14];
-      el.style.transform = "translate(" + (x + off[0]).toFixed(1) + "px," + (y + off[1]).toFixed(1) + "px) translate(-50%, -50%)";
-    });
-    wrap.classList.toggle("molecule-named", gather > 0.85);
   }
 
   // Drawn only while the first slide is on the screen, and not under the menu or About me.

@@ -107,13 +107,22 @@ By eye: open the home page and watch the first two seconds; `index.html?title-at
 - The sheet's words are the owner's; its heading (*The Taste of Aldehydes*) and its numbering are
   the page's.
 
-## 2026-09-30 — the title as the aldehyde's caption
+## 2026-09-30 — the title in front of the aldehyde, on a dark ground
 
 The owner asked for "a big aldehyde molecule in the very middle" of the first slide (see [the
-aldehyde on the home page](2026-09-30-the-aldehyde-on-the-home-page.md)). The title, its line
-and the square for About me are **its caption now, low on the slide** (`align-items: flex-end`
-and a margin under the title, `.title-slide:has(.molecule)`; on a phone `justify-content:
-flex-end`), still in the middle across. Nothing else about them changed: the title still gathers
-out of specks (it reads the letters wherever they are set), the square still opens About me, and
-the thread still leaves from under the title. Without `molecule.js`'s markup the rule does not
-apply and the title stands in the middle as it did.
+aldehyde on the home page](2026-09-30-the-aldehyde-on-the-home-page.md)). For one round the
+title, its line and the square were **its caption, low on the slide**; the owner then asked for
+"the taste of aldehydes to be in front of the aldehyde ... both ... centered", and for the slide
+to be the dark ground of the private page the molecule was first drawn on. So now:
+
+- **The title stands where it always stood, in the middle**, in front of the molecule (`z-index`
+  over the drawing), **in light ink** — the first slide turns the page's tokens over to the dark
+  grey (`.title-slide`) — with **a soft shadow of the ground round its letters** so the glow
+  behind never takes them; its line and the square's words are a lighter grey with a stronger
+  shadow. The caption layout (`.title-slide:has(.molecule)`) is gone.
+- **The gathering specks are drawn in the title's own ink** (`title.js` reads the title's
+  colour), so they are light here; they were a fixed near-black, and would have gathered unseen.
+- **About me** opens with a veil of the dark ground over the slide (`body.first-slide-dark
+  .about.is-open`); the sheet is the paper it always was.
+- The title still gathers, the square still opens About me, and the thread still leaves from
+  under the title (over the dark slide it is not seen until the second).

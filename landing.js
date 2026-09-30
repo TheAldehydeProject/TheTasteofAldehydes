@@ -266,4 +266,18 @@
 
   fadeOnLeavingSlideOne(document.querySelector(".title-block"));
   fadeOnLeavingSlideOne(document.querySelector(".scroll-cue"));
+
+  // THE FIRST SLIDE IS DARK (2026-09-30: the aldehyde's own dark ground).
+  // The Menu stands fixed over whatever slide is under it, so while the
+  // first slide is still under it the body says so (`first-slide-dark`),
+  // and the stylesheet turns the Menu light.
+  const first = document.getElementById("slide-1");
+  if (first) {
+    const MENU_FOOT = 48;   // the Menu's own foot, from the top of the window
+    const underMenu = () =>
+      document.body.classList.toggle("first-slide-dark", container.scrollTop < first.offsetHeight - MENU_FOOT);
+    container.addEventListener("scroll", underMenu, { passive: true });
+    window.addEventListener("resize", underMenu);
+    underMenu();
+  }
 })();

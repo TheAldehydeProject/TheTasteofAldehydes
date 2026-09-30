@@ -137,6 +137,8 @@
       const LAND = 1550, LET_GO = 900;
       const ease = (x) => 1 - Math.pow(1 - x, 3);
       const t0 = performance.now();
+      // the specks in the title's own ink (light on the first slide's dark ground since 2026-09-30)
+      const speckInk = getComputedStyle(title).color || "#16161a";
       let revealed = false;
       const frame = (now) => {
         const t = HOLD >= 0 ? HOLD : now - t0;
@@ -146,7 +148,7 @@
         // go, drifting a little as they fade.
         const out = t < LAND ? 1 : Math.max(0, 1 - (t - LAND) / LET_GO);
         if (!revealed && t >= LAND - 260) { revealed = true; done = true; window.clearTimeout(safety); reveal(); }
-        g.fillStyle = "#16161a";
+        g.fillStyle = speckInk;
         for (let i = 0; i < N; i++) {
           const o = i * 7;
           const x = Math.max(0, Math.min(1, (t - P[o + 4]) / P[o + 5]));
