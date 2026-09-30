@@ -7,7 +7,7 @@
 // it is worth checking it actually lands where it should.
 // ============================================================
 const { test, expect } = require("@playwright/test");
-const { serveDependenciesLocally, collectPageErrors } = require("./helpers");
+const { serveDependenciesLocally, collectPageErrors, blockThreeJs, jumpToSlide } = require("./helpers");
 
 const scrollTop = (page) =>
   page.evaluate(() => document.getElementById("scroll-container").scrollTop);
@@ -355,4 +355,145 @@ test("on a phone the square stands under the title, named, and About me fits the
   const sheet = await page.locator(".about-sheet").boundingBox();
   expect(sheet.x).toBeGreaterThanOrEqual(0);
   expect(sheet.x + sheet.width).toBeLessThanOrEqual(390);
+});
+
+/* THE ALDEHYDE — the owner, 2026-09-30: "redesign the front page of home.
+   I want a big aldehyde molecule in the very middle of it, with the electron
+   cloud being done as colour coded exactly as described in my previous
+   message [the double bond and the lone pair brought forward, every other
+   electron insignificant], and have the electron cloud made with the curl
+   noise page elements." Formaldehyde, drawn by molecule.js from
+   aldehyde-data.js (written by tools/aldehyde/cloud.py). */
+
+/** Where the gold and the violet are on the screen, read off a screenshot. */
+async function colours(page) {
+  const shot = (await page.screenshot()).toString("base64");
+  return page.evaluate(async (shot) => {
+    const img = new Image();
+    img.src = "data:image/png;base64," + shot;
+    await img.decode();
+    const c = document.createElement("canvas");
+    c.width = img.width; c.height = img.height;
+    const g = c.getContext("2d");
+    g.drawImage(img, 0, 0);
+    const d = g.getImageData(0, 0, c.width, c.height).data;
+    const out = { gold: { n: 0, x: 0, y: 0 }, violet: { n: 0, x: 0, y: 0 } };
+    for (let y = 0; y < c.height; y += 2) for (let x = 0; x < c.width; x += 2) {
+      const k = (y * c.width + x) * 4, r = d[k], gr = d[k + 1], b = d[k + 2];
+      const which = r > b + 60 && gr > b + 25 && r > gr ? "gold" : b > r + 25 && b > gr + 35 ? "violet" : null;
+      if (!which) continue;
+      out[which].n++; out[which].x += x; out[which].y += y;
+    }
+    for (const k in out) if (out[k].n) { out[k].x /= out[k].n; out[k].y /= out[k].n; }
+    return out;
+  }, shot);
+}
+
+test("the aldehyde stands big in the middle of the first slide, the double bond gold and the lone pair violet, the title its caption under it", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/index.html");
+  await expect(page.locator(".molecule"), "drawn").toHaveClass(/molecule-drawn/, { timeout: 4000 });
+  // over the whole of the slide, taking nothing from the pointer
+  const slide = await page.locator("#slide-1").boundingBox();
+  const canvas = await page.locator(".molecule-canvas").boundingBox();
+  expect(Math.abs(canvas.width - slide.width) + Math.abs(canvas.height - slide.height)).toBeLessThan(2);
+  expect(await page.locator(".molecule").evaluate((e) => getComputedStyle(e).pointerEvents)).toBe("none");
+  // the title under it, low on the slide, still in the middle across
+  const title = await page.locator(".title-content h1").boundingBox();
+  expect(title.y, "the title low on the slide").toBeGreaterThan(slide.height * 0.6);
+  expect(Math.abs(title.x + title.width / 2 - 720)).toBeLessThan(4);
+  await page.waitForTimeout(3200);
+  const seen = await colours(page);
+  expect(seen.gold.n, "the double bond, in gold").toBeGreaterThan(800);
+  expect(seen.violet.n, "the lone pair, in violet").toBeGreaterThan(300);
+  for (const k of ["gold", "violet"]) {
+    expect(Math.abs(seen[k].x - 720), `${k}: in the middle across`).toBeLessThan(220);
+    expect(seen[k].y, `${k}: above the title`).toBeLessThan(title.y);
+    expect(seen[k].y, `${k}: under the corner key`).toBeGreaterThan(120);
+  }
+  // the key in the corner, once it has drawn; the atoms named
+  await expect.poll(() => page.locator(".molecule-key").evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
+  await expect(page.locator(".molecule-key")).toContainText("the double bond");
+  await expect(page.locator(".molecule-key")).toContainText("oxygen’s lone pair");
+  await expect(page.locator(".molecule")).toHaveClass(/molecule-named/);
+  expect(await page.locator(".molecule-atom").allTextContents()).toEqual(["C", "O", "H", "H"]);
+  // the title still gathered, and its square still there
+  await expect.poll(() => page.locator(".about-open").evaluate((e) => +getComputedStyle(e).opacity), { timeout: 3000 }).toBeGreaterThan(0.95);
+  expect(errors).toEqual([]);
+});
+
+test("the aldehyde's cloud is Schrodinger's, in three parts that add up to sixteen electrons, and the two brought forward are emphasised", async ({ page }) => {
+  await page.goto("/index.html");
+  const data = await page.evaluate(() => {
+    const D = window.ALDEHYDE;
+    return {
+      molecule: D.molecule,
+      atoms: D.atoms.map((a) => a[0]),
+      electrons: Object.fromEntries(Object.entries(D.parts).map(([k, p]) => [k, p.electrons])),
+      counts: Object.fromEntries(Object.entries(D.parts).map(([k, p]) => [k, p.n])),
+      bytes: Object.fromEntries(Object.entries(D.parts).map(([k, p]) => [k, atob(p.xyz).length === p.n * 3 && atob(p.shade).length === p.n])),
+    };
+  });
+  expect(data.molecule).toBe("H2C=O");
+  expect(data.atoms).toEqual(["C", "O", "H", "H"]);
+  expect(data.electrons).toEqual({ rest: 12, pi: 2, lone: 2 });
+  expect(Object.values(data.bytes).every(Boolean), "every part whole").toBe(true);
+  // how strongly each is drawn is molecule.js's, and the data holds enough for it
+  const src = require("fs").readFileSync(require("path").join(__dirname, "..", "molecule.js"), "utf8");
+  const m = src.match(/const EMPHASIS = \{ pi: ([\d.]+), lone: ([\d.]+), rest: ([\d.]+) \}/);
+  const share = src.match(/const SHARE = \{ pi: (\d+), lone: (\d+), rest: (\d+) \}/);
+  expect(m, "EMPHASIS written as it was").not.toBeNull();
+  const [pi, lone, rest] = m.slice(1).map(Number);
+  expect(pi).toBeGreaterThan(1);
+  expect(lone).toBeGreaterThan(1);
+  expect(rest, "every other electron insignificant").toBeLessThan(1);
+  const [spi, slone, srest] = share.slice(1).map(Number);
+  expect(spi / srest, "the shares are the electrons' own: 2 to 12").toBeCloseTo(2 / 12, 5);
+  expect(slone).toBe(spi);
+  expect(data.counts.pi).toBeGreaterThanOrEqual(spi * pi);
+  expect(data.counts.lone).toBeGreaterThanOrEqual(slone * lone);
+  expect(data.counts.rest).toBeGreaterThanOrEqual(srest * rest);
+});
+
+test("with motion turned off the aldehyde is simply there, still", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/index.html");
+  await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
+  await page.waitForTimeout(500);
+  const clip = { x: 320, y: 60, width: 800, height: 560 };
+  const a = (await page.screenshot({ clip })).toString("base64");
+  await page.waitForTimeout(900);
+  const b = (await page.screenshot({ clip })).toString("base64");
+  expect(a === b, "nothing moved").toBe(true);
+  const seen = await colours(page);
+  expect(seen.gold.n + seen.violet.n, "and it is drawn").toBeGreaterThan(800);
+});
+
+test("without the 3D library the first slide is the title alone, and nothing breaks", async ({ page }) => {
+  const errors = collectPageErrors(page, ["three.min.js", "ERR_FAILED", "Failed to load resource"]);
+  await blockThreeJs(page);
+  await page.goto("/index.html");
+  const h1 = page.locator(".title-content h1");
+  await expect.poll(() => h1.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
+  await page.waitForTimeout(2600);
+  await expect(page.locator(".molecule")).not.toHaveClass(/molecule-drawn/);
+  expect(await page.locator(".molecule-key").evaluate((e) => +getComputedStyle(e).opacity), "no key to nothing").toBe(0);
+  expect(errors).toEqual([]);
+});
+
+test("on a phone the aldehyde fits across the screen, above the title", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/index.html");
+  await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
+  await page.waitForTimeout(3200);
+  const seen = await colours(page);
+  const title = await page.locator(".title-content h1").boundingBox();
+  expect(seen.gold.n + seen.violet.n).toBeGreaterThan(300);
+  for (const k of ["gold", "violet"]) {
+    expect(Math.abs(seen[k].x - 195), `${k}: in the middle across`).toBeLessThan(90);
+    expect(seen[k].y).toBeLessThan(title.y);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });

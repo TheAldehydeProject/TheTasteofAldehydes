@@ -98,11 +98,12 @@ is the one that matters and the meta is the no-JavaScript fallback. Don't delete
 Start here. Each page is standalone, loads `nav.js` for the shared menu and cursor, and
 then loads whatever draws *that* page — nothing else. No page script knows about any
 other, and none of them share state (the one exception is the landing page's six layers,
-which talk through five `window` globals; see the landing page's report).
+which talk through five `window` globals; see the landing page's report — its seventh,
+`molecule.js`, talks to none).
 
 | page | what it is | scripts it loads beyond `nav.js` | report |
 |---|---|---|---|
-| `index.html` | three scroll-snapped **slides**: the title — which **gathers** out of specks as the page loads, with **a square** beside it that opens **About me** over the page out of focus — the italic line, the 3D **node map**, each node's window showing **a picture** of its page | `title.js`, `landing.js`, `node-scene.js`, `paper.js`, `thread.js`, `extras.js` (and Three.js from a CDN) | [title and About me](docs/features/2026-09-29-the-title-and-about-me.md), [node map](docs/features/2026-09-11-the-node-map.md), [slides](docs/features/2026-09-11-the-landing-slides-and-exit.md), [paper](docs/features/2026-09-11-the-paper.md), [thread](docs/features/2026-09-11-the-thread.md), [chromatogram](docs/features/2026-09-11-the-chromatogram.md) |
+| `index.html` | three scroll-snapped **slides**: **a big aldehyde** in the middle of the first — formaldehyde's electron cloud as **Schrödinger's equation** has it, **the double bond gold and oxygen's lone pair violet**, every other electron faint, its specks **swirling in curl noise** and drawn **through a lens** (2026-09-30) — with the title as its caption under it, which **gathers** out of specks as the page loads, with **a square** beside it that opens **About me** over the page out of focus — the italic line, the 3D **node map**, each node's window showing **a picture** of its page | `title.js`, `landing.js`, `aldehyde-data.js`, `molecule.js`, `node-scene.js`, `paper.js`, `thread.js`, `extras.js` (and Three.js from a CDN) | [the aldehyde](docs/features/2026-09-30-the-aldehyde-on-the-home-page.md), [title and About me](docs/features/2026-09-29-the-title-and-about-me.md), [node map](docs/features/2026-09-11-the-node-map.md), [slides](docs/features/2026-09-11-the-landing-slides-and-exit.md), [paper](docs/features/2026-09-11-the-paper.md), [thread](docs/features/2026-09-11-the-thread.md), [chromatogram](docs/features/2026-09-11-the-chromatogram.md) |
 | `categories/scent-descriptions.html` | two **views** of one category: the **houses** — a **helix** of particles round a central **axis**: one house at the **front**, on the axis, the rest turned away round it above and below — smaller and fainter the further round — joined to it by **spokes** of particles turning with them in depth and tied on at each house's edge — nothing drawn over a house — travelled along by the wheel, a drag, the keys, the numbers on the axis and **the way round** at the side, with each house's own **motifs** rising over the page when it is rested on — and the **fragrances**, a **table** nearly the whole page (number, name, house, date) with an **aside** on its left — *Individual* over *Fragrances*, the count, readings, **the scale** and a small **mark** of specks — and on its right the choice of showing it as a **list**, **boxes** or **cards**, each fragrance opening **in the page** rather than navigating away (the old **index** kept underneath it), the one view going into the other by **the crossing**, the houses' axis travelling across to become the table's **divider** | `search.js`, `contact-sheet.js`, `beaker.js`, `qimu-pieces.js`, `motifs.js`, `index-page.js`, `notes-data.js`, `notes.js`, `fragrance-reader.js`, `fragrance-line.js`, `views.js` | [the fragrance line](docs/features/2026-09-25-the-fragrance-line.md), [the axis](docs/features/2026-09-24-the-axis.md), [the old hang](docs/features/2026-09-24-the-hang.md), [the motifs](docs/features/2026-09-23-the-chain-and-its-motifs.md), [the old contact sheet](docs/features/2026-09-13-the-contact-sheet.md), [index and views](docs/features/2026-09-17-the-index-pages-and-views.md), [the reader](docs/features/2026-09-22-the-fragrance-reader.md) |
 | `categories/theories.html` | the **structure**: a technical drawing in three dimensions you scroll *into* | `search.js`, `page-search.js`, `structure.js` | [structure](docs/features/2026-09-14-the-structure.md) |
 | `categories/favorites.html` | the **chamber**: two injectors firing particle streams into a tilted **orbit** round the word FAVOURITES, which opens into a menu of **chapters** — and opening one **bursts** into that chapter's own page, black and silver, with arrows either side of its name to step to the next, its favourites opening in a **drawer** under their row — each in the owner's own words beside its picture in an upright frame, which the sun answers — Chapter 1 ending with the three that nearly made it, **the sun** standing behind Chapter 1 and **the moon** behind Chapter 2, on one sphere, morphing into each other in place | `search.js`, `page-search.js`, `notes-data.js`, `notes.js`, `sun.js`, `moon.js`, `chamber.js` | [chamber](docs/features/2026-09-15-the-chamber.md) |
@@ -137,8 +138,8 @@ Four of those page scripts are elaborate: `chamber.js` (~4,150 lines), `motifs.j
 `views.js` (~400), `house.js` (~350), `pineward-gallery.js` (~380), `tombstone.js`
 (~330), `index-page.js` (~310), `nav.js` (~620), `thread.js` (~290), `grande.js` (~280),
 `search.js` (~290), `beaker.js` (~260), `extras.js` (~250), `primer.js` (~230), `landing.js` (~270),
-`title.js` (~220), `search-page.js` (~200), `photography.js` (~190), `find-ground.js` (~180), `explorations.js` (~990), `network.js` (~4,170), `note-figures.js` (~1,080), `contact.js` (~160)
-and `page-search.js` (~110) — and `tools/seo.py` (~190), `tools/qimu-pieces.py` (~390), `tools/note-library/catalogue.py` (~170) and `tools/previews.js` (~80), run by hand and never by the site. `qimu-pieces.js` is data, not a script: the pieces Qimu's staves carry, written by the second.
+`title.js` (~220), `molecule.js` (~390), `search-page.js` (~200), `photography.js` (~190), `find-ground.js` (~180), `explorations.js` (~990), `network.js` (~4,170), `note-figures.js` (~1,080), `contact.js` (~160)
+and `page-search.js` (~110) — and `tools/seo.py` (~190), `tools/qimu-pieces.py` (~390), `tools/note-library/catalogue.py` (~170), `tools/aldehyde/cloud.py` (~120) and `tools/previews.js` (~80), run by hand and never by the site. `qimu-pieces.js` is data, not a script: the pieces Qimu's staves carry, written by the second; so is `aldehyde-data.js`, the home page's molecule, written by `tools/aldehyde/cloud.py`.
 These drift with every round; `wc -l *.js` is the answer, not this paragraph.
 
 **Read the matching report in `docs/features/` before editing one of them.**
@@ -200,8 +201,11 @@ on, and a stray server sitting on it makes the whole suite fail (see Tests below
 There is no build or lint step, so nothing catches a mistake before the browser does —
 open the console after any change to a drawing.
 
-`node-scene.js` is the one to be most careful with, and it is the **only** file here
-that writes a WebGL shader for its drawing (a small program that runs on the graphics card) —
+`node-scene.js` is the one to be most careful with, and it and **`molecule.js`** (the home
+page's aldehyde, since 2026-09-30: curl noise and a lens, worked out as each speck is drawn) are
+the **only** files here that write a WebGL shader for their drawing (a small program that runs
+on the graphics card) — `molecule.js` checks its own after compiling and steps aside, leaving
+the title alone on the slide —
 `network.js` draws in WebGL too, through the library's own spheres, cylinders, lines and points, with **two
 small additions** to the library's own shaders (`perNode`: each sphere's own opacity, its glow from within and its rim; `glowSize`: each glow's own size) — and the test
 page comes up blank if either ever fails, the same way. (For one night, 2026-09-28, it had two
@@ -224,7 +228,7 @@ Playwright drives a real browser against the repo served over HTTP (the config s
 `python3 -m http.server` itself, so nothing needs to be running first). `npm run report`
 opens the HTML report; failures also leave a screenshot and a trace in `test-results/`.
 
-**A clean run is 449 passed, 0 failed, and takes seven to forty minutes.** If you get a
+**A clean run is 454 passed, 0 failed, and takes seven to forty minutes.** If you get a
 number wildly different from that, check the shape of the failures before believing
 them: **a hundred-odd tests all failing in about 300ms each means the web server is
 down, not that the site is broken.** The config serves on **port 4321** and reuses a
@@ -245,11 +249,14 @@ Fonts requests and answers them locally, Three.js from the version pinned in
 tests stop testing what actually ships. Nothing in `package.json` is needed to view or
 publish the site; it exists only for the tests — and for `tools/previews.js`, which borrows the
 tests' browser to photograph each page for the home page's map (`node tools/previews.js`; see [the
-node map](docs/features/2026-09-11-the-node-map.md)). (The two Python tools need nothing
+node map](docs/features/2026-09-11-the-node-map.md)). (Two of the Python tools need nothing
 installed: `tools/seo.py` writes what search engines see into every page's `<head>`, and the
 sitemap — see [its report](docs/features/2026-09-26-search-engines-and-the-address.md); and
 `tools/qimu-pieces.py` reads the openings of Qimu's pieces out of their scores into
-`qimu-pieces.js` — see [the newer houses](docs/features/2026-09-21-the-newer-houses.md).)
+`qimu-pieces.js` — see [the newer houses](docs/features/2026-09-21-the-newer-houses.md). The
+third, `tools/aldehyde/cloud.py`, solves formaldehyde with `numpy` and `pyscf` — `pip install
+numpy pyscf` first — and writes `aldehyde-data.js`; see [the aldehyde on the home
+page](docs/features/2026-09-30-the-aldehyde-on-the-home-page.md).)
 
 **What each spec file covers is written up in that feature's report**, under "How to
 test it". Two spec files are the exception and belong to no one feature: the browserless
@@ -326,7 +333,7 @@ Two states are easy to forget when reviewing a change:
   `node-scene.js`, `contact-sheet.js`, `motifs.js`, `structure.js`, `chamber.js`, `sun.js`, `moon.js`, `pineward.js`,
   `adar.js`, `almost-human.js`, `ataraxia.js`, `grande.js`, `tombstone.js`, `abstraits.js`,
   `qimu.js`, `house.js`, `essay.js`, `calculator.js`, `tale.js`, `primer.js`,
-  `index-page.js`, `explorations.js` (the first form drawn once and never turning; an arrow shows the next without a transformation),
+  `index-page.js`, `molecule.js` (the aldehyde simply there, still: no gathering, flow, sway or shake), `explorations.js` (the first form drawn once and never turning; an arrow shows the next without a transformation),
   `network.js` (never turning on its own and sending no signal; the air standing still; expanding, collapsing, combining and every journey made at once — a drag still turns it; a tag's lines there at once; the figures in the note window stand still; no bead on the line between the chosen),
   `fragrance-reader.js`, `fragrance-line.js` (the mark
   still, the items simply there and a change of layout at once),
@@ -349,6 +356,7 @@ built that way, what was tried and was wrong, how to test it, and anything still
 
 | feature | file | report |
 |---|---|---|
+| The aldehyde in the middle of the home page — formaldehyde's electron cloud, curl noise and a lens | `molecule.js`, `aldehyde-data.js`, `tools/aldehyde/` | [report](docs/features/2026-09-30-the-aldehyde-on-the-home-page.md) |
 | The title gathering out of specks, and About me behind the square beside it | `title.js` | [report](docs/features/2026-09-29-the-title-and-about-me.md) |
 | The smell of aldehydes on the right of the menu — the molecule | `nav.js` | [report](docs/features/2026-09-29-the-smell-of-aldehydes-in-the-menu.md) |
 | The Fragrances view as a whole-page table with three ways of showing it, and the crossing from the Houses | `fragrance-line.js`, `views.js` | [report](docs/features/2026-09-25-the-fragrance-line.md) |
@@ -387,7 +395,9 @@ The one thing worth repeating here, because it is a contract between files rathe
 inside one: **the landing page's six scripts communicate only through five `window`
 globals** — `__p23`, `__mapField`, `__mapReadout`, `__exit` and `__reform`. That table is
 in the landing page's report. These files deliberately never touch each other's DOM or
-internals. (The README says `thread.js` sets `__p23` — it doesn't, `paper.js` does.)
+internals. (The README says `thread.js` sets `__p23` — it doesn't, `paper.js` does.) The
+aldehyde on the first slide (`molecule.js`, 2026-09-30) is a seventh and talks to none of them:
+it reads where the title is and whether the Menu or About me is open, off the page itself.
 
 ## Content conventions
 
@@ -662,6 +672,7 @@ internals. (The README says `thread.js` sets `__p23` — it doesn't, `paper.js` 
   the picture. Haxan's are the owner's own photographs and say *Pictures: my own*. **A favourite's
   picture is credited under it** (*Picture: …*), from its `data-credit` and
   `data-credit-href` — a new favourite with a `data-image` needs both.
+- **The home page's aldehyde is `aldehyde-data.js`**, written by `tools/aldehyde/cloud.py` (with `numpy` and `pyscf`), never by hand; how strongly each part is drawn (`EMPHASIS`), its colours and its movement are numbers at the top of `molecule.js`.
 - **Sound lives in `audio/`** — only the piano Qimu & Musicians' staves play (`audio/piano/`,
   seventeen recorded notes, CC BY 3.0, with a README and a credit on the page). A sound file
   that is not the owner's is credited on the page that plays it, as a picture is.
@@ -807,6 +818,8 @@ obvious from the code, ask rather than guessing — then add it to this list.
 | **the icon** | `favicon.svg`: an aldehyde, R–C(=O)–H, black on white, **set as a chemistry book sets it** since 2026-09-27 ("do the favicon from scratch ... something you would find in a nice and neat chemistry book"): ChemDraw's ACS style — **Arial's own letters** as outlines (from Liberation Sans), each centred on its atom, bonds as thick as the letters' strokes stopping one even margin short of every letter, the C=O double bond two lines either side of its axis, R and H at 120° below — a little heavier than a book's, the same amount on letters and bonds, so it reads in a tab. `apple-touch-icon.png` the same on a plain white square. Before that it was drawn **by hand** (2026-09-26), then as geometric shapes in one line ("more so chemical and very technical"), made bolder twice ("more visible"). |
 | **small script** (a diagram) | The smaller, quieter lettering under a name in an essay page's diagram — *(linalool)* under *compound*, *oxidized* under *compound changed*, *(thioalcohols)* under *by S. Hominis* on Skin — the owner's words for it (2026-09-29). `ed-tiny` in `style.css` (`ed-tiny-lit` under a name that is lit). |
 | **Diagram N** / **Table N** (an essay page) | How a diagram on an essay page is named, in its caption: *Diagram 2; showing the pH scale and where your skin lies on it.* — the owner's format, numbered in page order (2026-09-29, Skin: nine). `.essay-figure-no`. A table is named the same way under it, counted apart — *Table 1; showing …* (Skin: two; `.essay-table-figure`). |
+| **the aldehyde** (the home page) | What stands in the middle of the home page's first slide since 2026-09-30 (`molecule.js`, `aldehyde-data.js`) — the owner's "a big aldehyde molecule in the very middle": **formaldehyde**, H₂C=O, as its electron cloud, solved from Schrödinger's equation by `tools/aldehyde/cloud.py`, in three parts that add up to its sixteen electrons — **the double bond** (gold), **the lone pair** (violet, the chemist's, on the oxygen) and **every other electron** (faint ink) — each drawn at its **emphasis** (`EMPHASIS`: ×1 is its true share of the specks; ×3, ×3 and ×0.3). Its specks move by **the flow** (curl noise, swirling about their places) and are drawn through **the lens** (sharp at the focus, soft discs before and behind it, the focus drifting through it) — "the curl noise page elements", from pmndrs' *GPGPU Curl Noise DOF*. Seen **three-quarters on**, swaying, leaning to the pointer; **the key** in the top right corner names the colours. The title is its caption, under it. (Not the menu's **smell of aldehydes**, which is a drawing of R–C(=O)–H in hairlines, nor the icon.) |
+| **The Aldehyde Cloud** | The private page (not on the site) where the aldehyde was first tried, 2026-09-30: formaldehyde with four views (all sixteen electrons, the double bond, oxygen's lone pair, the empty place), then lauric aldehyde (C-12), then formaldehyde again with **emphasis** sliders. Its files are not in the repository. |
 | **the gathering** (the title) | What the home page's title does as it loads (`title.js`, 2026-09-29 — "add an animation to the title page for when you load it in"): specks drift in from all over the first slide and settle into the letters, left to right, the letters come up over them and the specks let go; then the line under it, the square and the corner block. The title is held back meanwhile (`title-coming` on `<html>`), and there by 3s whatever happens. `?title-at=` holds it at a moment. None with reduced motion. |
 | **About me** / **the square** (the title) | The square beside the home page's title (`.about-open`, a registration mark with a breathing dot; *About me* beside it under the hand, under the title on a phone), and what it opens (`#about`): the owner's two paragraphs, *About me* and *How the name came to be*, on a sheet over the page gone out of focus, coming up one after the other — "a square at the title which will blur out the page and bring up a 'about me' page (on the same page more or less)" (2026-09-29). Escape, its close or the page round it put it away; the slides stay still while it is open (`about-shown` on the body). |
 | **the smell of aldehydes** (the menu) | The typography on the right of the menu (`nav.js`, `.menu-aldehydes`, 2026-09-29 — "add some typography in the menu for the smell of aldehydes on the right side ... code several variations ... ill decide"): **the molecule** — R–C(=O)–H in hairlines, a ring of what it smells of turning round it, vapour rising off the oxygen — the one the owner chose. Only beside the list from 1160px, and small in the corner under it on a tall phone. **Removed** the same day, the two not chosen: **the particles** (the word in specks, fizzing) and **the specimen** (five faces on a ruled ground, three formulas), with `MENU_TYPE`, `?menu-type=` and their three fonts. |

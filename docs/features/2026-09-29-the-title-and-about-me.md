@@ -106,3 +106,14 @@ By eye: open the home page and watch the first two seconds; `index.html?title-at
 
 - The sheet's words are the owner's; its heading (*The Taste of Aldehydes*) and its numbering are
   the page's.
+
+## 2026-09-30 — the title as the aldehyde's caption
+
+The owner asked for "a big aldehyde molecule in the very middle" of the first slide (see [the
+aldehyde on the home page](2026-09-30-the-aldehyde-on-the-home-page.md)). The title, its line
+and the square for About me are **its caption now, low on the slide** (`align-items: flex-end`
+and a margin under the title, `.title-slide:has(.molecule)`; on a phone `justify-content:
+flex-end`), still in the middle across. Nothing else about them changed: the title still gathers
+out of specks (it reads the letters wherever they are set), the square still opens About me, and
+the thread still leaves from under the title. Without `molecule.js`'s markup the rule does not
+apply and the title stands in the middle as it did.

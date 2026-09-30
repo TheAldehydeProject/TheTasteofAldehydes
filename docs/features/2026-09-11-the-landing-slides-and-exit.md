@@ -143,3 +143,13 @@ None outstanding.
 - **Slide 2 says *theories and ideas*** — the owner took *even* out: *A personal project of perfume
   exploration. “The Taste of Aldehydes” will act as a library for information, interpretations,
   theories and ideas.* `tests/pages.spec.js` reads it whole.
+
+## 2026-09-30 — an aldehyde in the middle of the first slide
+
+The first slide has **a big aldehyde in the middle** (formaldehyde's electron cloud, the double
+bond gold and the lone pair violet, swirling in curl noise and drawn through a lens), and the
+title is its caption, low on the slide. It is drawn by `molecule.js` from `aldehyde-data.js`,
+which load after `landing.js`; see [its report](2026-09-30-the-aldehyde-on-the-home-page.md).
+Nothing about the slides' moving changed: it draws only while the first slide is on the screen,
+takes no pointer and no wheel, and sets none of the landing page's five `window` globals nor
+reads them. The thread still leaves from under the title, wherever the title is.
