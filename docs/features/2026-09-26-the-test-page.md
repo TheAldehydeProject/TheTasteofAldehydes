@@ -1837,6 +1837,7 @@ still read as there): *Leave the library*, the fragrance's name, its house, *Thi
 where it is written up.*, and **Stay** and **Go to its page** (the red one, which has the keys). Stay,
 Escape or a press round it leaves everything as it was — the tags, the list, the note's window; Go
 goes. Opened with a key held (a new tab or window) a link goes without asking, since nothing is left.
+Go carries the link as the page wrote it (`../houses/adar.html#part-07`), not the whole address.
 `.net-leave` in `network.js` (`askLeave`, `stay`); `state().leaving` is the fragrance being asked
 about.
 
