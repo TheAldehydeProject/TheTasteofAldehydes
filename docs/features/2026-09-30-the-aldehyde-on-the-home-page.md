@@ -181,6 +181,17 @@ cloud's shader once a speck is placed on the window, and a small δ− stands be
 the formula is drawn the pull is gentler, and none round an atom's name (the clear spaces stay on
 their letters). None under reduced motion, and none on a finger.
 
+**Calm at the title, and every change gradual** (the night of 2026-09-30: "when youre still at the
+title, make it way less reactive to the cursor ... EVERYTHING should be smooth and gradual"): while
+the title stands, the pull and the lean after the pointer are `REACT_TITLE` (12%) of themselves,
+coming up to the whole over the first leg and a little, and the δ− shows only once they are felt.
+The turning, the formula, the bonds and the atoms' names are each spread over the whole of their
+leg and a little into the one before, on a gentle curve (`TURN_FROM`, `FORM_FROM`), so one change is
+always under way as the last one ends. **The title is drawn over the cloud** now — it had been under
+it, the sticky slides standing below the canvas (see [the formula
+slide](2026-09-30-the-formula-slide.md), *In front of the specks*); nothing of the cloud is dimmed
+for it.
+
 ## How to test it
 
 `tests/landing.spec.js`:

@@ -10,12 +10,14 @@ else: (1) the aldehyde as it is first seen, with the title in front of it; (2) t
 gone; (3) the aldehyde **turned upright**, the O at the top; (4) the same, **its formula drawn in
 it** — the bonds in bright specks, the atoms named; (5) **two lines of specks come down the window,
 top to bottom, either side of it**, falling slowly and swirling as the aldehyde's specks do, and **the
-Menu's eight pages stand on the outside of them, half hidden** until the hand comes to one. The page
-scrolls as any page does and every stage blends into the next as far as it is scrolled. **The hand
-is electronegative**: the specks near the pointer are drawn to it, and brighten, and a small δ−
-stands beside it; a name pointed at is lit and the specks of its line drawn out towards it; **a name
-pressed asks first**, in a dark sheet in the stage's colours. **Pages 3 and 4 — the sentence and the
-node map — are switched off, and kept whole**, one switch away. The title is white with a dark edge.
+Menu's eight pages stand on the outside of them, quiet** — faint — until the hand comes to one, and
+then come up gradually to the whole of themselves. The page **glides** as far as it is turned, and
+every stage blends into the next, each change spread over the whole of its leg. **The hand is
+electronegative**: the specks near the pointer are drawn to it, and brighten, and a small δ− stands
+beside it — only a little at the title; a name pointed at is lit and the specks of its line drawn out
+towards it; **a name pressed asks first**, in a dark sheet in the stage's colours. **Pages 3 and 4 —
+the sentence and the node map — are switched off, and kept whole**, one switch away. The title is
+white with a dark edge, **in front of** the specks (it was drawn behind them for a day).
 
 ## What the owner asked
 
@@ -57,6 +59,27 @@ Then, the same evening, what the page is now:
 >
 > i want the cursor to have an electronegative character, sot he "electrons would be attracted to it"
 
+Then the room in the middle:
+
+> please move the lines and words a little to the side. feel free to put Reseach and eplorations as
+> two lines like research enter explorations. I want it to be nicely divided and to give the middle
+> aldehyde some space.
+
+And last, the same night:
+
+> okay, fix the text, i dont want it to be literally half of it gone; i meant like opacity be low and
+> then when you hover it it will gradually increase to 100% also please make the scrolling a little
+> smoother, and also when youre still at the title, make it way less reactive to the cursor. I want
+> you to change the subtitle to "A Perfume Portfolio" and also make the about me window way more
+> aesthetic and agree with the page theme. I need you to make it smoother. when you scroll it feels
+> very very incremental. EVERYTHING should be smooth and gradual; and not incremental. remove the "a
+> portfolio 2026 edition text"
+>
+> also make the title a little more visible; i feel the word aldehydes is not very visible.
+>
+> i also want you to make the title more readable, but not at the expense of the particles behind
+> it. make sure of that
+
 ## Why / key decisions
 
 ### Pages 3 and 4, switched off and kept (`index.html`, `landing.js`)
@@ -82,22 +105,30 @@ Then, the same evening, what the page is now:
 
 ### The five stages (`index.html`, `style.css`, `landing.js`)
 
-- **Native scrolling, the page held still**: the title slide, the formula slide and the aldehyde
+- **The page held still while it scrolls**: the title slide, the formula slide and the aldehyde
   (`.molecule`) are all `position: sticky` at the top of the stage, one over the other, and the
   stage ends in **the stage run** (`.stage-run`): four legs of `--stage-leg` (80% of the window's
-  height), one from each stage to the next. The page scrolls down the run as any page does — the
-  wheel, a trackpad, a finger, the scrollbar — while nothing on it moves; **how far down it is, is
-  how far through the five stages it is**. Nothing snaps (the owner: "smooth scrolling instead of
-  incremental"): there is no snapping on the stage at all, and a wheel stopped between two stages
-  stays where it stopped. (Until this round the wheel was taken and a spring driven through two
-  legs, settling on the nearer slide: that is what read as "sudden".)
-- **Followed a little behind** (`FOLLOW_S`, 0.16s, a time constant): so a notch of a mouse wheel is
-  a glide rather than a step. The stage is told to the drawing as **`window.__formula`, 0 to 4** —
-  the sixth landing-page global, which was 0 to 1 over the formula's sequence alone.
-- **The keys and the Scroll button go a stage at a time**, smoothly (the page's own smooth scroll):
-  down and up, Page Down and Page Up, Space and Shift+Space, Home to the first, End to the last. The
-  page is in a scrolling box of its own, which the keys would not otherwise reach. (Space is left to
-  a button or a link it is on.)
+  height), one from each stage to the next. The page scrolls down the run while nothing on it moves;
+  **how far down it is, is how far through the five stages it is**. Nothing snaps (the owner:
+  "smooth scrolling instead of incremental"): a wheel stopped between two stages stays where it
+  stopped.
+- **The glide** (`landing.js`, `glideToY`, `glidePhase`): a mouse wheel moves the page a notch at a
+  time, and a browser's own smooth scrolling still reads as a notch at a time — "when you scroll it
+  feels very very incremental". So **the wheel is taken** on the whole page and every notch moves
+  **a target**; the page **glides** to it on a spring that is critically damped (it arrives without
+  overshooting), at `GLIDE_W` (6.5 a second), a notch sending it `WHEEL_SCALE` (0.85) of its own
+  size. Notches that come quickly add to the target while the page is still on its way, so a turn
+  of the wheel is one long glide, not steps; a trackpad's many small deltas are glided the same way.
+  **A finger, the scrollbar and reduced motion are left to the browser**: the page scrolls natively,
+  and anything that scrolls the page other than the glide makes it let go (`glideWrote`).
+- **Followed a very little behind** (`FOLLOW_S`, 0.07s, a time constant; it was 0.16 with the
+  browser's own scrolling, and the two together read as a lag). The stage is told to the drawing as
+  **`window.__formula`, 0 to 4** — the sixth landing-page global, which was 0 to 1 over the formula's
+  sequence alone.
+- **The keys and the Scroll button go a stage at a time**, on the same glide: down and up, Page Down
+  and Page Up, Space and Shift+Space, Home to the first, End to the last; pressed again on the way,
+  the next stage on from where it is going. The page is in a scrolling box of its own, which the keys
+  would not otherwise reach. (Space is left to a button or a link it is on.)
 - **Both slides let the hand through** but for the eight names (`pointer-events`), and neither has
   a ground of its own: the stage's dark is under both, so the formula slide, over the title slide,
   hides nothing of it. The slides are see-through (`rgba(0,0,0,0)`); the stage is `#1f1f20`.
@@ -107,13 +138,19 @@ Then, the same evening, what the page is now:
 
 ### Stage 1 to 2 — the title fades where it stands (`landing.js`)
 
-- As the first leg goes, the title (with its line and its square) fades and lifts 26px, gone by
-  `TITLE_GONE` (0.8) of the leg, taking no click once gone; the corner block and the Scroll button
-  sooner (`CORNERS_GONE`, 0.5). The corner block's arrival animation holds its opacity until it has
-  played, and is handed over after (as before).
+- As the first leg goes, the title (with its line and its square) fades and lifts 26px over **the
+  whole of the leg** (`TITLE_GONE`, 1; it was gone by 0.8), taking no click once gone; the Scroll
+  button a little sooner (`CORNERS_GONE`, 0.7). **The corner block** (*A portfolio · 2026 edition*)
+  **is gone**, at the owner's word ("remove the "a portfolio 2026 edition text"").
 
 ### Stages 2 to 4 — upright, then the formula (`molecule.js`)
 
+- **Every change is spread over the whole of its leg and a little into the one before**, on a gentle
+  curve (`smooth`), so something is always on its way and nothing waits for the one before it to
+  stop ("EVERYTHING should be smooth and gradual"): the turning from `TURN_FROM` (0.85) to 2, the
+  formula from `FORM_FROM` (1.95) to 3, the bonds from 2 over 0.85 of a stage, the atoms' names from
+  2.3 over 0.65, the lines from 3 over `LINES_OVER` (0.85), the names from 3.25 over 0.75. Each ran
+  over its own leg alone on a steeper curve before, and started when the one before had stopped.
 - **`S`** is `window.__formula`. From **S 1 to 2 the aldehyde turns upright** (`turned`): one
   rotation, eased, from the cloud's side (the private page's) to facing you (`FORM_BODY`: the O up,
   the H either side below, the double bond's lobes towards you), swaying a little either side of
@@ -133,7 +170,7 @@ Then, the same evening, what the page is now:
   standing on the edge of the grid's middle column (`.formula-menu`; `molecule.js` reads the
   columns), **the length of the window**, and the names **on the outside of them**, `--line-inset`
   (30px) off — four down the left ending by its line, four down the right beginning by its, mirrored.
-  The lines **come down the window from the top** as the stage comes (`LINES_OVER`, 0.72 of the
+  The lines **come down the window from the top** as the stage comes (`LINES_OVER`, 0.85 of the
   leg, a soft head), and then **fall**, every speck its own speed (`FALL`, 16 to 44px a second),
   round and round, **swirling a little about its way as the aldehyde's specks do** (`LINE_SWIRL`,
   the same simplex noise) — "some movement - exactly like in the aldehyde molecule". Most specks on
@@ -153,15 +190,17 @@ Then, the same evening, what the page is now:
   columns** — still inside the names — **broken where the formula stands** (`uGap`).
 - **The names are the page's own links**, the same eight as the Menu in its order (a test says so),
   set as the title is — italic, white, the dark edge — lighter (400), and they come up with the last
-  stage (`--names`, 0 to 1, set by `landing.js` from 3.3 over 0.62 of a stage, so they come even
-  without the drawing), taking the hand only once there (`names-here`). A name **tabbed to** before
-  then takes the page to the last stage.
-- **"Half concealed"**: the lower half of every line of a name sunk in **a veil** — a mask, one band
-  to a line of the lettering (`mask-size` 1.2em, repeated, `--veil-top` its padding), so a name that
-  wraps on a phone is half hidden line by line — and the whole a little dim (84%). The name's
-  padding leaves room inside the mask for the dark edge and the light (cut by the mask, the light
-  showed as a box). **Pointed at or tabbed to, the veil draws down off it** (its band grown to 40em)
-  and the name is lit — white, with a soft light round the letters.
+  stage (`--names`, 0 to 1, set by `landing.js` from `NAMES_FROM` 3.25 over `NAMES_OVER` 0.75 of a
+  stage, so they come even without the drawing), taking the hand only once there (`names-here`). A
+  name **tabbed to** before then takes the page to the last stage.
+- **Quiet until the hand comes** ("i dont want it to be literally half of it gone; i meant like
+  opacity be low and then when you hover it it will gradually increase to 100%"): at rest a name is
+  drawn at **36%** of itself (`filter: opacity(0.36)`, on top of the `--names` the stage sets, so the
+  two never fight); **pointed at or tabbed to it comes up to the whole of itself over 0.9s**, eased,
+  and is lit — white, with a soft light round the letters — and goes back as gradually when the hand
+  leaves. Nothing of it is hidden. (For one round it was **half concealed**: the lower half of every
+  line of a name sunk in **a veil**, a mask drawn down off it under the hand — the owner's words
+  taken literally. None of it, `--veil-top` or the mask, is in the code.)
 
 ### The electronegative hand (`molecule.js`)
 
@@ -177,6 +216,10 @@ Then, the same evening, what the page is now:
 - **The formula keeps its shape**: once it is drawn the pull is gentler, and none at all round an
   atom's name — the first try dragged the clear spaces off their letters, and the O, which stands
   over the cloud inverted, went dark on the bright specks that took its place.
+- **Calm at the title** ("when youre still at the title, make it way less reactive to the cursor"):
+  the pull and the lean after the pointer are `REACT_TITLE` (12%) of themselves while the title
+  stands, coming up to the whole of themselves over the first leg and a little (`react`), and the δ−
+  stands only once they are strong enough to be felt.
 - None under reduced motion, and none on a finger (there is no hovering).
 
 ### The way out, asked first (`index.html`, `landing.js`, `style.css`)
@@ -198,22 +241,30 @@ Then, the same evening, what the page is now:
   it blue over the gold and green over the violet. Of **five treatments tried** — plain white;
   **white with a close dark edge**; the cloud masked by the letters; masked with the edge; a wider
   mask with the edge — the owner chose **the second** ("of the masks, I want it to be the second
-  one"): three tight shadows of the dark ground round every letter (`--lettering-edge`). Neither
-  the inversion nor the mask is in the code.
+  one"): tight shadows of the dark ground round every letter (`--lettering-edge`). Neither the
+  inversion nor the mask is in the code.
+- **In front of the specks** ("i feel the word aldehydes is not very visible ... but not at the
+  expense of the particles behind it"). The title was being drawn **behind** the aldehyde: a sticky
+  element makes a layer of its own, and the two slides, at no z-index, stood under the aldehyde's
+  canvas (z-index 1), so the brightest specks were drawn over the letters — which is why
+  *Aldehydes*, over the middle of the cloud, read speckled and washed out. The slides stand at
+  z-index 2 now (`.aldehyde-stage > .slide`), and the title's edge is **tighter** — four shadows of
+  the ground within 8px of the letters rather than the wider edge the names keep — so it reads
+  without a shade behind it: nothing dims, blurs or thins the specks, and they are as bright as ever
+  between and round the letters. Its weight is the site's own (500).
 
 ### Smoothness
 
-- The page itself does the scrolling; the stage is one number followed by one frame phase
-  (`follow`, in `landing.js`'s one loop, at the head of every frame), which stops once it has
-  arrived. The fades are three inline styles and one custom property, written only when they
+- The glide moves the page and the stage is one number following it, both frame phases in
+  `landing.js`'s one loop at the head of every frame, each stopping once it has arrived. The fades are three inline styles and one custom property, written only when they
   change. The lines' shader puts a speck not yet reached off the screen at once. Nothing is read off
   the page's layout while it draws but the drawing's own box; the lines and the names are laid out
   once, on load, when the page's face has come, and on a resize.
 - **It draws only while the stage is on the screen** (with the map on, a test counts none once the
   map is showing), and not under the Menu, About me or the way out.
-- **With reduced motion** the stages follow the page at once, and the drawing is simply there,
+- **With reduced motion** the wheel is the browser's own, the stages follow the page at once, and the drawing is simply there,
   still — no flow, no fall, no swirl, no pull — drawn again only when something has changed.
-  **Without the drawing** the last stage is the eight names, plainly, veiled and lit as ever, and a
+  **Without the drawing** the last stage is the eight names, plainly, quiet and lit as ever, and a
   name still asks first.
 
 ### Before the five stages (the same evening; none of it in the code)
@@ -226,7 +277,10 @@ Then, the same evening, what the page is now:
   from four places down its side (with **couriers** after), then condensing out of **a cloud of their
   own** round each name — a border of specks, lobes in gold, violet and grey (`LOBE_TONES`), a mask of
   the name, and last one soft oval — the links' own letters held back meanwhile (`formula-written`).
-  All replaced by the lines and the veiled names.
+  All replaced by the lines and the names.
+- **The browser's own scrolling** (the first try at five stages): the page left to scroll as any page
+  does, the stage following it 0.16s behind — a mouse wheel still went a notch at a time. Replaced
+  by the glide.
 
 ## How to test it
 
@@ -239,13 +293,14 @@ Then, the same evening, what the page is now:
   title gone; the lone pair's violet moved to the top; the atoms named only at the fourth, O above
   C, the H either side below; the names only at the fifth, beside two lit lines; and back.
 - **`the wheel scrolls it smoothly, as far as it is turned and back, and nothing snaps`** — three
-  notches, the stage followed frame by frame: never a jump, never back, a glide, and it stays where
-  it stopped.
+  notches, the stage followed frame by frame: never a jump, never back, a glide to exactly as far as
+  they send it, and it stays where it stopped.
 - **`the lines come down the window from the top as the last stage comes`**.
-- **`a name is half hidden until the hand comes to it: then it is lit, and the specks of its line
-  are drawn to the hand`** — the veil a band to a line of the lettering, drawn off it under the hand;
-  the δ−; specks between the name and its line.
-- **`the electronegative hand draws the aldehyde's own specks to it`**.
+- **`a name is quiet until the hand comes to it: then it comes up gradually to the whole of itself,
+  and the specks of its line are drawn to the hand`** — under 45% at rest, part way after a quarter
+  of a second, whole after; no mask; the δ−; specks between the name and its line.
+- **`the electronegative hand draws the aldehyde's own specks to it`** — and at the title, far less
+  (no δ−, the specks less stirred).
 - **`a name pressed asks first, on the stage's own dark: Stay, Escape and the veil keep the page, Go
   goes, and a key held goes at once`**.
 - **`the names wait for the last stage, and a name tabbed to takes the page there`**.
@@ -259,17 +314,23 @@ Then, the same evening, what the page is now:
 `tests/landing.spec.js`: **the home page is the stage alone** (two slides, the sentence and the map
 kept whole in the template, none of their scripts loaded, the switch off) and **with the switch on
 they come back after the stage, as they were**; the Scroll button and the keys go a stage at a time;
-the corners fade over the first leg; the long move and its frames with the map on. The map's, the
+the Scroll button fades over the first leg; **the corner block is gone** and the line under the
+title reads *A Perfume Portfolio*; both slides stand in front of the aldehyde; the long move and its
+frames with the map on. The map's, the
 paper's, the way out of the map's and the sentence's own tests all run with `?map=on`. By eye: scroll
 down slowly and quickly with a wheel and a trackpad, stop between stages, point at the names and at
 the aldehyde, press a name; on a phone, swipe and tap.
 
 ## Known issues / TODO
 
-- The numbers: `--stage-leg` (how much scrolling a stage takes) in `style.css`; `FOLLOW_S`,
-  `TITLE_GONE`, `CORNERS_GONE`, `NAMES_FROM`, `NAMES_OVER` in `landing.js`; `LINES_OVER`, `TIGHT`,
-  `FORM_PEAK`, `BOND_*`, `ATOM_SIZE`, `CLEAR`, `LINE_*`, `FALL`, `HAND_*` at the top of
-  `molecule.js`; the veil in `.formula-link`.
+- The numbers: `--stage-leg` (how much scrolling a stage takes) in `style.css`; `GLIDE_W`,
+  `WHEEL_SCALE`, `FOLLOW_S`, `TITLE_GONE`, `CORNERS_GONE`, `NAMES_FROM`, `NAMES_OVER` in
+  `landing.js`; `TURN_FROM`, `FORM_FROM`, `LINES_OVER`, `REACT_TITLE`, `TIGHT`, `FORM_PEAK`,
+  `BOND_*`, `ATOM_SIZE`, `CLEAR`, `LINE_*`, `FALL`, `HAND_*` at the top of `molecule.js`; how quiet
+  a name is at rest, and how long it takes to come up, in `.formula-link`.
+- The glide is for a mouse wheel and a trackpad. A trackpad already scrolls smoothly on its own, and
+  is glided anyway so the two feel the same; if it ever feels heavy there, `WHEEL_SCALE` is the
+  number.
 - Pages 3 and 4 are the owner's to bring back (`MAP_SLIDES`), or to let go of for good.
 - The names are the Menu's by a test, not by being read from `nav.js`: a page added to the Menu is
   added to the stage's markup too (the test fails until it is); a ninth needs a row more in the grid.

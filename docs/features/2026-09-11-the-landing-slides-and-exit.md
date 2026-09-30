@@ -193,10 +193,14 @@ VERSION OF THE PROJECT. I WANT JUST PAGES 1 AND 2 ... I WANT THIS CHANGE TO BE R
 CASE". So (see [the formula slide](2026-09-30-the-formula-slide.md) for the whole of it):
 
 - **The home page is the stage alone.** The title slide, the formula slide and the aldehyde stand
-  pinned on it, and the page scrolls down its run — natively, the way any page scrolls, nothing
-  snapping — through five stages; `landing.js` follows where it is, a little behind, and tells the
-  drawing as `window.__formula`, now **0 to 4**. The keys and the Scroll button go a stage at a time.
-  Nothing here takes the wheel any more while the map slides are off.
+  pinned on it, and the page scrolls down its run — nothing snapping — through five stages;
+  `landing.js` follows where it is, a very little behind, and tells the drawing as
+  `window.__formula`, now **0 to 4**. The keys and the Scroll button go a stage at a time. **The
+  wheel glides it** since the night of 2026-09-30 ("when you scroll it feels very very incremental"):
+  taken on the whole page, every notch moving a target the page follows on a critically damped
+  spring (`GLIDE_W`, `WHEEL_SCALE`), and the keys and the Scroll button on the same glide; a finger,
+  the scrollbar and reduced motion are left to the browser. For its first round the page scrolled
+  natively, and a mouse wheel still went a notch at a time.
 - **The sentence and the node map are kept whole and switched off**: in `<template id="map-slides">`
   in `index.html`, with the paper under the map, and their four scripts not loaded. **`MAP_SLIDES`**
   at the top of `landing.js` brings them back after the stage, as they were — the long move, the way

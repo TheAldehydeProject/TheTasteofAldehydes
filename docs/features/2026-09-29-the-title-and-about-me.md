@@ -123,7 +123,8 @@ to be the dark ground of the private page the molecule was first drawn on. So no
 - **The gathering specks are drawn in the title's own ink** (`title.js` reads the title's
   colour), so they are light here; they were a fixed near-black, and would have gathered unseen.
 - **About me** opens with a veil of the dark ground over the slide (`body.first-slide-dark
-  .about.is-open`); the sheet is the paper it always was.
+  .about.is-open`); the sheet is the paper it always was. (Dark itself since the night of
+  2026-09-30 — see the last section.)
 - The title still gathers, the square still opens About me, and the thread still leaves from
   under the title (over the dark slide it is not seen until the second).
 
@@ -150,3 +151,48 @@ aldehyde, and as the page is scrolled down the first leg it fades where it stand
 gone by 0.8 of the leg and taking no click once gone (`TITLE_GONE` in `landing.js`); the corner
 block and the Scroll button sooner (`CORNERS_GONE`). It is still white with its dark edge, and its
 slide has no ground of its own (the stage's dark is under it). The Scroll button goes on a stage.
+
+## 2026-09-30, the night — A Perfume Portfolio, the corner block gone, the title in front, About me dark
+
+> I want you to change the subtitle to "A Perfume Portfolio" and also make the about me window way
+> more aesthetic and agree with the page theme ... remove the "a portfolio 2026 edition text"
+>
+> also make the title a little more visible; i feel the word aldehydes is not very visible.
+>
+> i also want you to make the title more readable, but not at the expense of the particles behind
+> it. make sure of that
+
+- **The line under the title reads *A Perfume Portfolio*** (`.title-sub`; it was *Perfumes and my
+  notes about them*). The site's description for search engines is unchanged — it is the page's
+  `<head>`, not its lettering.
+- **The block in the corner is gone** — *A portfolio · 2026 edition* — its markup (`.title-block`),
+  its styles, its arrival animation and its phone rule with it. `landing.js` fades only the Scroll
+  button now; a test says the block is not on the page.
+- **The title is drawn in front of the specks.** It had been drawn behind them since the stage was
+  made pinned: a sticky element makes a layer of its own, and the title's slide, at no z-index,
+  stood under the aldehyde's canvas, so the brightest specks were drawn over the letters —
+  *Aldehydes*, over the middle of the cloud, read speckled and washed out. The two slides stand at
+  z-index 2 now, over the drawing's 1, and a test says so. **Its edge is tighter** — four shadows of
+  the ground within 8px of the letters — so it reads without anything behind it being dimmed,
+  blurred or thinned: the specks are as bright as ever between and round the letters (the owner's
+  "not at the expense of the particles"). The line under it and the square's words keep the wider
+  `--lettering-edge`. Its weight is the site's own.
+- **The title fades over the whole of the first leg** (`TITLE_GONE` 1; it was 0.8), and the pointer
+  hardly stirs the aldehyde while it stands (see [the formula slide](2026-09-30-the-formula-slide.md),
+  *Calm at the title*).
+- **About me is the stage's own dark** ("agree with the page theme"): the page behind goes out of
+  focus under a veil of the stage's near-black (`rgba(14,14,15,0.42)`, blurred 14px) — on every
+  slide, not only the dark ones, so there is no `body.first-slide-dark .about.is-open` rule any
+  more — and the sheet is dark glass (a graphite gradient, blurred behind, a hairline border), not
+  the paper it was:
+  - a hairline across its head running **gold into violet** — the double bond and the lone pair;
+  - its corner ticks in the aldehyde's **gold**, drawing out as it opens;
+  - *The Taste of Aldehydes* at its head in gold mono after the site's registration mark with an
+    **electron** in it (the way out's kicker, `.formula-ask`, is the same);
+  - **the aldehyde in hairlines** in its top right corner, faint gold — R–C(=O)–H as the menu's
+    molecule draws it (`.about-glyph`; not on a phone, where the sheet is narrow);
+  - the two headings in the title's italic, white with the dark edge, each numbered in gold (01,
+    02), its rule a gold hairline fading out, drawing under it as before;
+  - the owner's paragraphs in warm white at 80%.
+  It opens as it did: the sheet rising, the two parts one after the other. The owner's words are
+  unchanged.
