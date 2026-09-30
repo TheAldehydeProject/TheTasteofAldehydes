@@ -143,7 +143,9 @@
   // The threads and the names.
   const TRAVEL = 0.46;         // of the flow, one speck's way from the molecule to its place
   const SPLIT = 0.7;           // of that, along the thread; the rest into the letters
-  const COURIERS = 56;         // specks that keep running along each thread
+  const COURIERS = 96;         // specks that keep each stream running, into the name's cloud
+  const LETGO_MS = 1900, LETGO_BACK_MS = 450;   // the name coming up over its specks, and them letting go
+  const CLOUD_DENSITY = 1.1;   // the cloud round each name: its own specks for every square pixel of the name
   const INK = [0.93, 0.91, 0.88];
   // Where each thread leaves from, down each side (the left's; the right's
   // mirror them), in angstrom on the formula as it faces you — oxygen's lone
@@ -297,13 +299,19 @@
 
   // A soft round speck, as the private page's: full in the middle, four
   // fifths of it a third of the way out, nothing at its edge.
+  const SPECK = `
+    float speck() {
+      float r = length(2.0 * gl_PointCoord - 1.0);
+      if (r > 1.0) return -1.0;
+      return r < 0.35 ? mix(1.0, 0.8, r / 0.35) : mix(0.8, 0.0, (r - 0.35) / 0.65);
+    }`;
   const FRAGMENT = `
     uniform float uAlpha;
     varying vec3 vColour;
+    ${SPECK}
     void main() {
-      float r = length(2.0 * gl_PointCoord - 1.0);
-      if (r > 1.0) discard;
-      float a = r < 0.35 ? mix(1.0, 0.8, r / 0.35) : mix(0.8, 0.0, (r - 0.35) / 0.65);
+      float a = speck();
+      if (a < 0.0) discard;
       gl_FragColor = vec4(vColour, uAlpha * a);
     }`;
 
@@ -320,23 +328,30 @@
       vColour = vec3(${BOND_INK.map((v) => v.toFixed(3)).join(", ")}) * shown;
     }`;
 
-  // The threads and the names, drawn straight onto the window in its own
+  // The streams and the names, drawn straight onto the window in its own
   // pixels. Each speck belongs to one name (`aInfo.x`): until it sets off
   // (`aInfo.y`, when in the flow) it is nowhere; then it runs along that
-  // name's thread — a curve from where it leaves the molecule (uS) to the
+  // name's stream — a curve from where it leaves the molecule (uS) to the
   // near end of the name (uE), through uA and uB — held within a pixel of
   // it (`aInfo.z`), in the colour of what it left; then along the name's
   // middle to its own place in a letter, and settles there in the page's
-  // light ink. The COURIERS (`aKind` 1) only ever run along the thread.
+  // light ink. Once the name has come up over them (uLetGo), each LETS GO,
+  // as the title's do, and drifts out to its own place in the name's CLOUD
+  // (`aCloud`), taking a colour of the aldehyde's (`aTone`), and swirls
+  // there. The COURIERS (`aKind` 1) keep the stream running: along the
+  // curve, and out into the cloud, fading.
   const TEXT_VERTEX = `
-    uniform vec2 uRes, uS[8], uA[8], uB[8], uE[8];
+    uniform vec2 uRes, uS[8], uA[8], uB[8], uE[8], uCentre[8];
     uniform vec3 uFrom[8], uInk;
-    uniform float uHot[8], uPhase[8], uFlow, uTime, uCourier, uSize;
-    attribute vec2 aTarget;
+    uniform float uHot[8], uPhase[8], uFlow, uLetGo, uTime, uCourier, uSize, uSwirl;
+    attribute vec2 aTarget, aCloud;
+    attribute float aDepth;
     attribute vec4 aInfo;
+    attribute vec3 aTone;
     attribute float aKind;
     varying vec3 vColour;
     varying float vAlpha;
+    ${NOISE}
     vec2 bez(vec2 p0, vec2 p1, vec2 p2, vec2 p3, float t) {
       float s = 1.0 - t;
       return s * s * s * p0 + 3.0 * s * s * t * p1 + 3.0 * s * t * t * p2 + t * t * t * p3;
@@ -351,11 +366,26 @@
       d = d / max(length(d), 0.001);
       return p + vec2(-d.y, d.x) * off;
     }
+    // Where a speck is in its name's cloud: turning slowly about the cloud's
+    // upright, a little either way (it has depth, as the aldehyde's has),
+    // and swirling; "near" is how much nearer than the middle it stands.
+    vec2 cloudPlace(int k, float hot, out float near) {
+      float tw = uTime * 0.16;
+      float turn = 0.28 * sin(uTime * 0.21 + float(k) * 1.7);
+      vec2 rel = aCloud - uCentre[k];
+      near = clamp(1.0 + (-rel.x * sin(turn) + aDepth * cos(turn)) / 220.0, 0.7, 1.3);
+      vec2 swirl = uSwirl * (1.0 + 0.9 * hot) * vec2(
+        snoise(vec3(aCloud * 0.011, aDepth * 0.011 + tw + aInfo.w * 3.0)),
+        snoise(vec3(aCloud * 0.011 + 17.3, aDepth * 0.011 + tw - aInfo.w * 3.0)));
+      return uCentre[k] + vec2(rel.x * cos(turn) + aDepth * sin(turn), rel.y) + swirl;
+    }
     void main() {
       int k = int(aInfo.x + 0.5);
       float hot = uHot[k];
-      vec2 p;
-      float alpha, ink;
+      vec2 p, home = vec2(0.0);
+      float alpha, ink, near = 1.0;
+      vec3 c;
+      float twinkle = 0.8 + 0.2 * sin(uTime * 1.7 + aInfo.w * 60.0);
       if (aKind < 0.5) {
         float local = clamp((uFlow - aInfo.y) / ${TRAVEL.toFixed(3)}, 0.0, 1.0);
         if (local <= 0.0) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
@@ -372,29 +402,55 @@
           alpha = 1.0;
           ink = smoothstep(0.1, 1.0, q);
         }
-        // settled: breathing a little, and stirred by the hand
-        float settled = step(0.999, local);
-        alpha *= mix(1.0, 0.86 + 0.14 * sin(uTime * 1.3 + aInfo.w * 40.0), settled);
-        p += settled * hot * 0.9 * vec2(sin(uTime * 3.1 + aInfo.w * 53.0), cos(uTime * 2.7 + aInfo.w * 31.0));
+        c = mix(uFrom[k], uInk, ink);
+        // letting go, once the name has come up: out of the letter into
+        // the cloud, each on its own beat
+        float go = smoothstep(0.0, 1.0, clamp((uLetGo - 0.12 - aInfo.w * 0.3) / 0.58, 0.0, 1.0));
+        if (go > 0.0) {
+          home = cloudPlace(k, hot, near);
+          p = mix(p, home, go);
+          c = mix(c, aTone, go);
+          alpha = mix(alpha, near * twinkle, go);
+        }
+      } else if (aKind > 1.5) {
+        // the cloud's own specks: once the name is up, poured out of the
+        // stream's end into their places round it, one after another
+        float go = clamp((uLetGo - 0.08 - aInfo.y * 0.6) / 0.32, 0.0, 1.0);
+        if (go <= 0.0) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
+        home = cloudPlace(k, hot, near);
+        float e = 1.0 - pow(1.0 - go, 3.0);
+        p = mix(uE[k], home, e);
+        c = mix(uFrom[k], aTone, smoothstep(0.0, 0.7, go));
+        alpha = near * twinkle * smoothstep(0.0, 0.25, go);
       } else {
+        // the stream: along the curve, then out into the cloud, fading
         float s = fract(uPhase[k] + aInfo.y);
-        p = along(k, s, aInfo.z);
-        alpha = uCourier * (0.5 + 0.5 * hot) * pow(sin(3.14159 * s), 0.7);
-        ink = 0.35;
+        const float OUT = 0.8;
+        if (s < OUT) {
+          p = along(k, s / OUT, aInfo.z);
+          alpha = smoothstep(0.0, 0.06, s / OUT);
+          c = mix(uFrom[k], uInk, 0.25 * s / OUT);
+        } else {
+          float q = (s - OUT) / (1.0 - OUT);
+          home = cloudPlace(k, hot, near);
+          p = mix(uE[k], home, smoothstep(0.0, 1.0, q));
+          alpha = 1.0 - q;
+          c = mix(uFrom[k], aTone, q);
+        }
+        alpha *= uCourier * (0.75 + 0.25 * hot);
       }
-      vec3 c = mix(uFrom[k], uInk, ink);
-      vColour = mix(c, vec3(1.0), hot * 0.45);
-      vAlpha = alpha * (0.96 + 0.3 * hot);
+      vColour = mix(c, vec3(1.0), hot * 0.35);
+      vAlpha = alpha * (1.0 + 0.35 * hot);
       gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
-      gl_PointSize = uSize * (1.0 + 0.2 * hot);
+      gl_PointSize = uSize * (1.0 + 0.2 * hot) * near;
     }`;
   const TEXT_FRAGMENT = `
     varying vec3 vColour;
     varying float vAlpha;
+    ${SPECK}
     void main() {
-      float r = length(2.0 * gl_PointCoord - 1.0);
-      if (r > 1.0) discard;
-      float a = r < 0.35 ? mix(1.0, 0.8, r / 0.35) : mix(0.8, 0.0, (r - 0.35) / 0.65);
+      float a = speck();
+      if (a < 0.0) discard;
       gl_FragColor = vec4(vColour, vAlpha * a);
     }`;
 
@@ -542,7 +598,9 @@
       uInk: { value: new THREE.Vector3(...INK) },
       uHot: { value: new Float32Array(8) },
       uPhase: { value: new Float32Array(8) },
-      uFlow: { value: 0 }, uTime: { value: 0 }, uCourier: { value: 0 }, uSize: { value: 2 },
+      uFlow: { value: 0 }, uLetGo: { value: 0 }, uTime: { value: 0 }, uCourier: { value: 0 }, uSize: { value: 2 },
+      uSwirl: { value: 6 },
+      uCentre: { value: Array.from({ length: 8 }, () => new THREE.Vector2()) },
     },
     transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
   });
@@ -558,7 +616,10 @@
     // (the names' geometry is made once the page is laid out; one speck to compile against)
     textGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
     textGeo.setAttribute("aTarget", new THREE.BufferAttribute(new Float32Array(2), 2));
+    textGeo.setAttribute("aCloud", new THREE.BufferAttribute(new Float32Array(2), 2));
+    textGeo.setAttribute("aDepth", new THREE.BufferAttribute(new Float32Array(1), 1));
     textGeo.setAttribute("aInfo", new THREE.BufferAttribute(new Float32Array(4), 4));
+    textGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
     textGeo.setAttribute("aKind", new THREE.BufferAttribute(new Float32Array(1), 1));
     text.visible = true;
     renderer.compile(scene, camera);
@@ -627,6 +688,7 @@
     bonds.material.uniforms.uSize.value = (small ? 1.8 : 2.2) * scale;
     textMat.uniforms.uSize.value = (small ? 1.55 : 1.75) * scale;
     textMat.uniforms.uRes.value.set(W, H);
+    textMat.uniforms.uSwirl.value = small ? 4 : 6.5;
     names.forEach((n) => { n.el.style.fontSize = (ATOM_SIZE * pxForm).toFixed(1) + "px"; });
     write();
     whereIsThePage();
@@ -635,17 +697,74 @@
 
   // WRITING THE NAMES: each link's own words drawn where the page lays them
   // out (so a name that wraps on a phone is written as it wraps), and the
-  // inked pixels taken as places for specks. Where each thread ends — the
-  // near end of its name, half way down it — is taken with them.
+  // inked pixels taken as places for specks. Where each stream ends — the
+  // near end of its name, half way down it — is taken with them, and, for
+  // every speck, its place in the name's CLOUD: round the name, hugging its
+  // edge and thinning outwards (as an electron's cloud thins), a few further
+  // out in a haze, in the aldehyde's colours — most of it its warm grey,
+  // some gold, some violet, more of whichever the stream left.
   const E = Array.from({ length: 8 }, () => ({ x: 0, y: 0, side: -1, row: 0 }));
+  const gauss = () => Math.sqrt(-2 * Math.log(1 - rand() * 0.999)) * Math.cos(2 * Math.PI * rand());
+  const GREY = [0.66, 0.63, 0.59];
+  const LIGHT = [0.84, 0.8, 0.75];
+  // the lobes' colours, taking turns along a name, by the stream that feeds
+  // it: the lone pair's violet first, the double bond's gold first, and the
+  // C-H bond's and the H's light grey with gold and with violet
+  const LOBE_TONES = [[COLOUR.lone, COLOUR.pi], [COLOUR.pi, COLOUR.lone], [LIGHT, COLOUR.pi], [LIGHT, COLOUR.lone]];
   let written = false;
   function write() {
     if (!formula || links.length !== 8) return;
     const box = formula.getBoundingClientRect();
-    const targets = [], info = [], kind = [];
+    const targets = [], clouds = [], depths = [], info = [], tones = [], kind = [];
+    const small = phone();
+    // THE CLOUD ROUND A NAME, as the aldehyde's is a cloud: a few lobes of
+    // specks strung along the word, thickest at their middles and thinning
+    // outwards in every direction (towards you and away as well), in a thin
+    // haze of the aldehyde's grey; each lobe gold or violet or a light grey,
+    // taking turns, and every speck lit by how thick the cloud is where it
+    // stands — so it glows at its heart as the aldehyde does.
+    let shape = null;
+    function shapeFor(r, row) {
+      const w = r.width, h = r.height;
+      const cx = r.left - box.left + w / 2, cy = r.top - box.top + h / 2;
+      const n = Math.max(1, Math.round(w / (h * 1.7)));
+      const [A, B] = LOBE_TONES[row];
+      const blobs = [];
+      for (let i = 0; i < n; i++) {
+        const x = n === 1 ? cx : r.left - box.left + w * (0.14 + 0.72 * (i / (n - 1)));
+        blobs.push({ x, sx: n === 1 ? w * 0.38 : (w * 0.72 / (n - 1)) * 0.62 + 4, tone: i % 2 ? B : A });
+      }
+      return { cx, cy, w, h, blobs, sy: h * 0.62, sz: h * 0.55, hx: w * 0.5 + h * 0.5, hy: h * 1.15, hz: h * 0.9 };
+    }
+    function thick(x, y, z) {
+      let d = 0;
+      for (const b of shape.blobs) d += Math.exp(-0.5 * (((x - b.x) / b.sx) ** 2 + ((y - shape.cy) / shape.sy) ** 2 + (z / shape.sz) ** 2));
+      return d;
+    }
+    const cloudAt = (r, row) => {
+      let x, y, z, b = null;
+      if (rand() < 0.22) {   // the haze
+        x = shape.cx + gauss() * shape.hx; y = shape.cy + gauss() * shape.hy; z = gauss() * shape.hz;
+      } else {
+        b = shape.blobs[Math.floor(rand() * shape.blobs.length)];
+        x = b.x + gauss() * b.sx; y = shape.cy + gauss() * shape.sy; z = gauss() * shape.sz;
+      }
+      const lit = 0.1 + 0.9 * Math.pow(Math.min(1, thick(x, y, z)), 1.2);
+      let tone = b ? b.tone : GREY;
+      if (!b) {   // a speck of the haze takes the colour of the lobe nearest it, faintly
+        const near = shape.blobs.reduce((m, o) => Math.abs(o.x - x) < Math.abs(m.x - x) ? o : m);
+        tone = rand() < 0.35 ? near.tone : GREY;
+      }
+      const j = 0.8 + 0.2 * rand();
+      clouds.push(x, y);
+      depths.push(z);
+      tones.push(tone[0] * lit * j, tone[1] * lit * j, tone[2] * lit * j);
+    };
     links.forEach((a, k) => {
       const r = a.getBoundingClientRect();
       const side = k < 4 ? -1 : 1;
+      shape = shapeFor(r, k % 4);
+      textMat.uniforms.uCentre.value[k].set(shape.cx, shape.cy);
       const t = a.firstChild && a.firstChild.nodeType === 3 ? a.firstChild : null;
       const cs = getComputedStyle(a);
       const font = cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
@@ -691,20 +810,33 @@
           const far = Math.abs(tx - ex) / span;
           targets.push(tx, ty);
           info.push(k, (1 - TRAVEL) * Math.min(1, far * 0.86 + rand() * 0.14), (rand() - 0.5) * 1.6, rand());
+          cloudAt(r, k % 4);
           kind.push(0);
         }
       }
       for (let c = 0; c < COURIERS; c++) {
         targets.push(0, 0);
-        info.push(k, c / COURIERS + rand() * 0.02, (rand() - 0.5) * 1.2, rand());
+        info.push(k, c / COURIERS + rand() * 0.02, (rand() - 0.5) * 1.4, rand());
+        cloudAt(r, k % 4);
         kind.push(1);
+      }
+      // and the cloud's own specks, as many as the name is large
+      const many = Math.round(r.width * r.height * CLOUD_DENSITY * (small ? 0.55 : 1) * (soft ? 0.3 : 1));
+      for (let c = 0; c < many; c++) {
+        targets.push(0, 0);
+        info.push(k, rand(), 0, rand());
+        cloudAt(r, k % 4);
+        kind.push(2);
       }
     });
     const n = kind.length;
     textGeo.dispose();
     textGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
     textGeo.setAttribute("aTarget", new THREE.BufferAttribute(new Float32Array(targets), 2));
+    textGeo.setAttribute("aCloud", new THREE.BufferAttribute(new Float32Array(clouds), 2));
+    textGeo.setAttribute("aDepth", new THREE.BufferAttribute(new Float32Array(depths), 1));
     textGeo.setAttribute("aInfo", new THREE.BufferAttribute(new Float32Array(info), 4));
+    textGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(tones), 3));
     textGeo.setAttribute("aKind", new THREE.BufferAttribute(new Float32Array(kind), 1));
     textGeo.setDrawRange(0, n);
     written = n > 0;
@@ -742,7 +874,8 @@
     leanTo = { x: (e.clientX / window.innerWidth - 0.5) * 2, y: (e.clientY / window.innerHeight - 0.5) * 2 };
   }, { passive: true });
 
-  let u = 0, f = 0;          // the rearranging, and the flow
+  let u = 0, f = 0, r = 0;   // the rearranging, the flow, and the names letting go
+  let shownNames = -1;
   const qCloud = new THREE.Quaternion(), qForm = new THREE.Quaternion(), qTurn = new THREE.Quaternion();
   const euler = new THREE.Euler();
   const v = new THREE.Vector3();
@@ -765,10 +898,23 @@
     // the two clocks, whichever way the page is going (and back, whatever
     // the page, once landing.js says it is leaving: see goTo there)
     const going = want && !document.body.classList.contains("formula-leaving") ? 1 : 0;
-    if (REDUCE) { u = going; f = going; }
-    else if (going) { if (u < 1) u = Math.min(1, u + dt / REARRANGE_MS); else f = Math.min(1, f + dt / FLOW_MS); }
+    if (REDUCE) { u = going; f = going; r = going; }
+    else if (going) {
+      if (u < 1) u = Math.min(1, u + dt / REARRANGE_MS);
+      else if (f < 1) f = Math.min(1, f + dt / FLOW_MS);
+      else r = Math.min(1, r + dt / LETGO_MS);
+    }
+    else if (r > 0) r = Math.max(0, r - dt / LETGO_BACK_MS);
     else if (f > 0) f = Math.max(0, f - dt / FLOW_BACK_MS);
     else u = Math.max(0, u - dt / REARRANGE_BACK_MS);
+
+    const up = smooth(r / 0.4);
+    // the names come up over their specks as the title does over its own
+    const shown = Math.round(up * 100) / 100;
+    if (written && shown !== shownNames) {
+      links.forEach((a) => { a.style.opacity = shown; });
+      shownNames = shown;
+    }
     const e = ease(u);
 
     if (!REDUCE) { lean.x += (leanTo.x - lean.x) * 0.04; lean.y += (leanTo.y - lean.y) * 0.04; }
@@ -831,6 +977,7 @@
         m.uPhase.value[k] = (m.uPhase.value[k] + dt / 1000 * (0.16 + 0.34 * hot[k])) % 1;
       }
       m.uFlow.value = f;
+      m.uLetGo.value = r;
       m.uTime.value = t;
       m.uCourier.value = REDUCE ? f : smooth((f - 0.82) / 0.18);
     }
@@ -841,7 +988,7 @@
     // (the tests): cloud, turning, formula, flowing, written.
     // And the body told whether the names are out, which is all landing.js
     // knows of it: it holds the page on its way back up until they are in.
-    const state = u <= 0 ? "cloud" : u < 1 ? "turning" : f <= 0 ? "formula" : f < 1 ? "flowing" : "written";
+    const state = u <= 0 ? "cloud" : u < 1 ? "turning" : f <= 0 ? "formula" : f < 1 ? "flowing" : r < 1 ? "written" : "named";
     if (state !== wrap.dataset.state) {
       wrap.dataset.state = state;
       document.body.classList.toggle("formula-shown", f > 0);
@@ -851,7 +998,7 @@
   // Drawn only while the dark slides are on the screen, and not under the
   // menu or About me.
   let seen = true, running = false, drawn = 0;
-  const settled = () => REDUCE || (want ? f >= 1 && u >= 1 : u <= 0 && f <= 0);
+  const settled = () => REDUCE || (want ? r >= 1 && f >= 1 && u >= 1 : u <= 0 && f <= 0 && r <= 0);
   function loop(now) {
     running = false;
     if (!seen) return;

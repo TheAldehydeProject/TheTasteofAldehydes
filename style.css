@@ -469,15 +469,24 @@ body.menu-open > *:not(.menu-trigger):not(.menu-overlay):not(.cursor-ring):not(.
   background: var(--bg);
   color: var(--ink);
 }
-/* THE TITLE INVERTS WHAT IS BEHIND IT (2026-09-30 — "make the main text
-   be inverse of the colours behind it"): drawn in white and taken away
-   from what is under it (`difference`), so over the dark ground it is
-   nearly white, over the gold nearly blue and over the violet a dark
-   green, and it reads wherever the glow is. (It stood in a soft shadow of
-   the ground before, which hid the cloud round its letters.) */
-.title-slide .title-content { position: relative; z-index: 2; mix-blend-mode: difference; color: #fff; }
+/* THE TITLE IN WHITE, WITH A DARK EDGE (2026-09-30 — "not opposite colour,
+   but rather white with an added layer that makes it more visible. play
+   around with masks", and then, of five tried, "I want it to be the second
+   one"). It stood inverted for a round (`difference`), which read but
+   turned it blue over the gold and green over the violet. Now it is white
+   with a close dark edge round every letter (`--lettering-edge`), so the
+   glow behind it never takes a letter; the names on the formula slide are
+   set the same. (The cloud masked by the letters — thinned away round
+   them — was the third and fourth of the five, and is not in the code.) */
+:root {
+  --lettering-edge: 0 0 1px rgba(20, 20, 21, 0.9), 0 0 6px rgba(20, 20, 21, 0.55), 0 0 18px rgba(20, 20, 21, 0.35);
+}
+.title-slide .title-content { position: relative; z-index: 2; color: #fff; }
+.title-slide .title-content h1,
 .title-slide .title-sub,
-.title-slide .about-open-word { color: #cfcfcf; }
+.title-slide .about-open-word { text-shadow: var(--lettering-edge); }
+.title-slide .title-sub,
+.title-slide .about-open-word { color: #dcd8d2; }
 /* THE STAGE the first two slides stand on (2026-09-30): the aldehyde is
    pinned to the window for as long as either is under it — it is the
    stage's first child, standing no room of its own (its negative margin)
@@ -786,7 +795,7 @@ body.first-slide-dark .about.is-open { background: rgba(20, 20, 21, 0.5); }
 .formula-slide { justify-content: center; }
 .formula-menu {
   --formula-layout: flank;
-  --formula-gap: clamp(380px, 42vw, 660px);
+  --formula-gap: clamp(400px, 43vw, 680px);
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -794,21 +803,26 @@ body.first-slide-dark .about.is-open { background: rgba(20, 20, 21, 0.5); }
   grid-template-columns: minmax(0, 1fr) var(--formula-gap) minmax(0, 1fr);
   grid-template-rows: repeat(4, auto);
   align-content: center;
-  row-gap: clamp(46px, 11vh, 124px);
+  row-gap: clamp(54px, 12.5vh, 140px);
   padding: 0 clamp(24px, 4vw, 72px);
 }
+/* Set as the title is (2026-09-30, later: "I want the text itself to be the
+   same as the title in the way it appears"): italic, white, the same edge
+   — and it comes up as the title does, over specks that have gathered
+   into its letters (molecule.js sets its opacity as they land). */
 .formula-link {
   display: block;
   font-family: var(--sans);
+  font-style: italic;
   font-weight: 500;
-  font-size: clamp(17px, 1.6vw, 27px);
-  line-height: 1.25;
-  letter-spacing: 0.005em;
-  color: var(--ink);
+  font-size: clamp(18px, 1.85vw, 30px);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  color: #fff;
+  text-shadow: var(--lettering-edge);
   text-decoration: none;
   white-space: nowrap;
   padding: 4px 0;
-  transition: color 0.4s ease;
 }
 .formula-link:nth-child(-n+4) { grid-column: 1; justify-self: end; text-align: right; }
 .formula-link:nth-child(n+5) { grid-column: 3; justify-self: start; text-align: left; }
@@ -816,10 +830,10 @@ body.first-slide-dark .about.is-open { background: rgba(20, 20, 21, 0.5); }
 .formula-link:nth-child(4n+2) { grid-row: 2; }
 .formula-link:nth-child(4n+3) { grid-row: 3; }
 .formula-link:nth-child(4n+4) { grid-row: 4; }
-.formula-link:hover { color: #fff; }
-/* Written in specks: the words themselves not shown, the link still there
-   to be pointed at, pressed and tabbed to. */
-.aldehyde-stage.formula-written .formula-link { color: transparent; }
+/* Once the drawing can write them: not shown until the specks have
+   gathered into them (molecule.js brings them up), the link still there to
+   be pointed at, pressed and tabbed to. */
+.aldehyde-stage.formula-written .formula-link { opacity: 0; }
 /* The atoms' names on the formula, placed by molecule.js: set as a
    chemistry book sets them (the icon's letters), inverting what is behind
    them as the title does. */
@@ -849,8 +863,7 @@ body.first-slide-dark .about.is-open { background: rgba(20, 20, 21, 0.5); }
     display: flex;
     align-items: center;
     min-height: 2.5em;
-    font-size: clamp(15px, 2.3vw, 19px);
-    font-weight: 600;
+    font-size: clamp(16px, 2.4vw, 20px);
     line-height: 1.2;
     white-space: normal;
     padding: 0;

@@ -67,7 +67,7 @@
   // ============================================================
   const EXIT_MS = 820;     // how long the map takes to fall inwards
   const REFORM_MS = 520;   // and the line to draw itself back out
-  const FORMULA_HOLD_MS = 1100;   // the longest the page waits for the names to go back in (see goTo)
+  const FORMULA_HOLD_MS = 1500;   // the longest the page waits for the names to go back in (see goTo)
 
   // THE PAGE IS MOVED FIRST ON EVERY FRAME. Everything else on this
   // page draws from where the page is — the paper's curtain and grid,

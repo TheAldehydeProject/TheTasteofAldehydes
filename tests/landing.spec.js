@@ -382,9 +382,10 @@ test("on a phone the square stands under the title, named, and About me fits the
 
 /** Where the gold and the violet are on the screen, read off a screenshot
  *  of the first slide's dark ground. */
-async function colours(page) {
-  const shot = (await page.screenshot()).toString("base64");
-  return page.evaluate(async (shot) => {
+async function colours(page, clip) {
+  const shot = (await page.screenshot(clip ? { clip } : {})).toString("base64");
+  const at = clip || { x: 0, y: 0 };
+  return page.evaluate(async ({ shot, at }) => {
     const img = new Image();
     img.src = "data:image/png;base64," + shot;
     await img.decode();
@@ -400,9 +401,9 @@ async function colours(page) {
       if (!which) continue;
       out[which].n++; out[which].x += x; out[which].y += y;
     }
-    for (const k in out) if (out[k].n) { out[k].x /= out[k].n; out[k].y /= out[k].n; }
+    for (const k in out) if (out[k].n) { out[k].x = at.x + out[k].x / out[k].n; out[k].y = at.y + out[k].y / out[k].n; }
     return out;
-  }, shot);
+  }, { shot, at });
 }
 
 test("the aldehyde glows big in the middle of the dark first slide, the double bond gold and the lone pair violet, the title in front of it", async ({ page }) => {
@@ -413,15 +414,18 @@ test("the aldehyde glows big in the middle of the dark first slide, the double b
   // the private page's dark ground, and the title in its light ink
   const ground = await page.locator("#slide-1").evaluate((e) => getComputedStyle(e).backgroundColor);
   expect(ground).toBe("rgb(31, 31, 32)");
-  // the title in white, taken away from what is behind it (2026-09-30: "the
-  // main text be inverse of the colours behind it"), with no shadow of the
-  // ground round it any more
+  // the title in white (2026-09-30, later: "not opposite colour, but rather
+  // white with an added layer that makes it more visible", and of the five
+  // tried, "the second one"): not inverted any more, with a close dark edge
+  // — and nothing cut out of the aldehyde behind it
   const ink = await page.locator(".title-content").evaluate((e) => ({
     colour: getComputedStyle(e.querySelector("h1")).color,
     blend: getComputedStyle(e).mixBlendMode,
-    shadow: getComputedStyle(e.querySelector("h1")).textShadow,
+    edge: getComputedStyle(e.querySelector("h1")).textShadow !== "none",
   }));
-  expect(ink).toEqual({ colour: "rgb(255, 255, 255)", blend: "difference", shadow: "none" });
+  expect(ink).toEqual({ colour: "rgb(255, 255, 255)", blend: "normal", edge: true });
+  expect(require("fs").readFileSync(require("path").join(__dirname, "..", "molecule.js"), "utf8"),
+    "no mask of the title's letters").not.toMatch(/uMask|maskCanvas/);
   // over the whole of the slide, taking nothing from the pointer, and under the title
   const slide = await page.locator("#slide-1").boundingBox();
   const canvas = await page.locator(".molecule-canvas").boundingBox();
@@ -534,9 +538,11 @@ test("on a phone the aldehyde and the title stand in the middle together", async
   await page.goto("/index.html");
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
   await page.waitForTimeout(3200);
-  const seen = await colours(page);
+  // (above the corner's small print, whose letters' coloured fringes would
+  // count for gold now that the title masks most of the gold behind it)
+  const seen = await colours(page, { x: 0, y: 0, width: 390, height: 720 });
   const title = await page.locator(".title-content").boundingBox();
-  expect(seen.gold.n + seen.violet.n, "drawn (a fifth of it, in a browser without a graphics card)").toBeGreaterThan(60);
+  expect(seen.gold.n + seen.violet.n, "drawn (a fifth of it, in a browser without a graphics card)").toBeGreaterThan(40);
   expect(Math.abs(title.x + title.width / 2 - 195)).toBeLessThan(4);
   for (const k of ["gold", "violet"]) {
     if (!seen[k].n) continue;

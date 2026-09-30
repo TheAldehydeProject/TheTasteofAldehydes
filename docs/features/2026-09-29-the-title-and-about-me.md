@@ -127,13 +127,16 @@ to be the dark ground of the private page the molecule was first drawn on. So no
 - The title still gathers, the square still opens About me, and the thread still leaves from
   under the title (over the dark slide it is not seen until the second).
 
-## 2026-09-30, later — the title inverted, and fading where it stands
+## 2026-09-30, later — the title white with a dark edge, and fading where it stands
 
 "I want you to make the main text be inverse of the colours behind it (or make it visible with a
-mask)": the title, its line and the square are **white, taken away from what is behind them**
-(`mix-blend-mode: difference` on `.title-content`), so over the gold they are a deep blue, over the
-violet a dark green, and over the ground nearly white; **the soft shadow of the ground round the
-letters is gone** (under `difference` it printed black halos). And since the formula slide stands
+mask)": for one round the title was **white, taken away from what is behind it**
+(`mix-blend-mode: difference`), deep blue over the gold and dark green over the violet. Then: "not
+opposite colour, but rather white with an added layer that makes it more visible. play around with
+masks". Five were tried and photographed, and the owner chose the second: **white, with a close dark
+edge** round every letter (`--lettering-edge`), over the aldehyde as it is (see [the formula
+slide](2026-09-30-the-formula-slide.md), where the five are listed; the three that masked the cloud
+with the letters are not in the code). The soft shadow of the ground it stood in before is gone. And since the formula slide stands
 after it ("to transition to this page from the title page, I want the title and text to fade
 away"), **the title fades where it stands** as the page leaves it — held in place over the pinned
 aldehyde, lifting a little, gone by 0.45 of the way (`landing.js`) — rather than being carried off

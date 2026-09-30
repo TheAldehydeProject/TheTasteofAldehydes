@@ -11,13 +11,17 @@
 // and fill 4 areas on each sides. This should be symmetrical, and the
 // areas should be equally spaced from each other. These 8 ares should be
 // texts that are made up of the particles ... and they should be the
-// contents of the menu." (molecule.js; its report is
+// contents of the menu." And then: "I want the eight subcategories to have
+// a stream of particles leave the aldehyde molecule and go towards them
+// (each), and then I wanat the text itself to be the same as the title in
+// the way it appears. then make some particles, similar to that of the
+// aldehyde molecule around each of the word." (molecule.js; its report is
 // docs/features/2026-09-30-the-formula-slide.md.)
 //
 // The drawing says where it is on itself, `data-state` on #molecule —
-// cloud, turning, formula, flowing, written — which is what these wait on:
-// in the tests' browser, which draws without a graphics card, the whole
-// way takes several seconds more than it does on a real machine.
+// cloud, turning, formula, flowing, written, named — which is what these
+// wait on: in the tests' browser, which draws without a graphics card, the
+// whole way takes several seconds more than it does on a real machine.
 // ============================================================
 const fs = require("fs");
 const path = require("path");
@@ -39,8 +43,8 @@ async function toTheFormula(page) {
   await page.keyboard.press("ArrowDown");
   await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(await slideTop(page, "slide-formula"));
 }
-const written = (page, timeout = 60000) =>
-  page.waitForFunction(() => document.getElementById("molecule").dataset.state === "written", null, { timeout });
+const named = (page, timeout = 60000) =>
+  page.waitForFunction(() => document.getElementById("molecule").dataset.state === "named", null, { timeout });
 
 // The atoms' names on the formula, where they stand on the window.
 const atoms = (page) => page.locator(".formula-atom").evaluateAll((all) => all.map((a) => {
@@ -132,23 +136,31 @@ test("the title fades where it stands as the page leaves it, and only then does 
   expect(errors).toEqual([]);
 });
 
-test("the aldehyde comes together as its formula — flat, the O at the top, the H either side below — and writes the Menu's pages in specks", async ({ page }) => {
-  test.setTimeout(120000);
+test("the aldehyde comes together as its formula — flat, the O at the top, the H either side below — and the Menu's pages gather out of its streams", async ({ page }) => {
+  test.setTimeout(150000);
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html");
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
   await page.waitForTimeout(600);
-  // every state the drawing passes through, in order
+  // every state the drawing passes through, in order, and when each name's
+  // own letters first came up
   await page.evaluate(() => {
     const m = document.getElementById("molecule");
     window.__states = [m.dataset.state];
+    window.__up = null;
     new MutationObserver(() => window.__states.push(m.dataset.state)).observe(m, { attributes: true, attributeFilter: ["data-state"] });
+    const first = document.querySelector(".formula-link");
+    new MutationObserver(() => {
+      if (window.__up === null && parseFloat(first.style.opacity) > 0) window.__up = m.dataset.state;
+    }).observe(first, { attributes: true, attributeFilter: ["style"] });
   });
   await toTheFormula(page);
-  await written(page);
+  await named(page, 120000);
   const states = await page.evaluate(() => window.__states.filter((s, i, all) => s !== all[i - 1]));
-  expect(states, "the cloud turns, is the formula, and then writes").toEqual(["cloud", "turning", "formula", "flowing", "written"]);
+  expect(states, "the cloud turns, is the formula, its streams write the names, and the names come up")
+    .toEqual(["cloud", "turning", "formula", "flowing", "written", "named"]);
+  expect(await page.evaluate(() => window.__up), "a name's letters come up only once its specks have gathered").toBe("written");
 
   // THE FORMULA as a book prints it
   const at = await atoms(page);
@@ -164,35 +176,47 @@ test("the aldehyde comes together as its formula — flat, the O at the top, the
   expect(Math.abs((H1.x + H2.x) / 2 - C.x), "either side, evenly").toBeLessThan(14);
   expect(Math.abs(C.x - 720), "in the middle").toBeLessThan(12);
 
-  // THE NAMES, written in specks where the links stand: the links' own
-  // letters are not shown, and the specks are
+  // THE NAMES, up in full, set as the title is — and a cloud of specks round
+  // each, above it and below it
   await expect(page.locator("#aldehyde-stage")).toHaveClass(/formula-written/);
-  const colour = await page.locator(".formula-link").first().evaluate((e) => getComputedStyle(e).color);
-  expect(colour, "the page's own letters not shown").toBe("rgba(0, 0, 0, 0)");
-  const boxes = await page.locator(".formula-link").evaluateAll((all) =>
-    all.map((a) => { const r = a.getBoundingClientRect(); return { x: r.left, y: r.top, width: r.width, height: r.height }; }));
+  const title = await page.locator(".title-content h1").evaluate((e) => {
+    const cs = getComputedStyle(e);
+    return [cs.fontFamily, cs.fontStyle, cs.fontWeight];
+  });
+  const boxes = await page.locator(".formula-link").evaluateAll((all) => all.map((a) => {
+    const r = a.getBoundingClientRect();
+    const cs = getComputedStyle(a);
+    return { x: r.left, y: r.top, width: r.width, height: r.height, opacity: +cs.opacity, colour: cs.color, face: [cs.fontFamily, cs.fontStyle, cs.fontWeight] };
+  }));
   for (const [i, box] of boxes.entries()) {
-    const seen = await light(page, box);
-    expect(seen.n, `name ${i + 1} written in specks`).toBeGreaterThan(40);
+    expect(box.opacity, `name ${i + 1} up`).toBe(1);
+    expect(box.colour).toBe("rgb(255, 255, 255)");
+    expect(box.face, "in the title's face").toEqual(title);
+    const above = await light(page, { x: box.x, y: box.y - 22, width: box.width, height: 20 });
+    const below = await light(page, { x: box.x, y: box.y + box.height + 2, width: box.width, height: 20 });
+    expect(above.n, `specks above name ${i + 1}`).toBeGreaterThan(8);
+    expect(below.n, `specks below name ${i + 1}`).toBeGreaterThan(8);
   }
   expect(errors).toEqual([]);
 });
 
-test("a name pointed at brightens, and is the page's own link", async ({ page }) => {
-  test.setTimeout(120000);
+test("a name pointed at brightens its cloud, and is the page's own link", async ({ page }) => {
+  test.setTimeout(150000);
+  await page.emulateMedia({ reducedMotion: "reduce" });   // still, so only the hand changes it
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html");
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
-  await toTheFormula(page);
-  await written(page);
+  await page.locator("#scroll-cue").click();
+  await named(page, 8000);
   const link = page.locator(".formula-link", { hasText: "Theories" });
   const box = await link.boundingBox();
-  const clip = { x: box.x - 4, y: box.y - 4, width: box.width + 8, height: box.height + 8 };
+  // the cloud round it, above and below the letters
+  const clip = { x: box.x - 30, y: box.y - 34, width: box.width + 60, height: 30 };
   const still = await light(page, clip);
   await link.hover();
-  await page.waitForTimeout(1500);
+  await page.waitForTimeout(600);
   const lit = await light(page, clip);
-  expect(lit.sum, "brighter under the hand").toBeGreaterThan(still.sum * 1.04);
+  expect(lit.sum, "brighter under the hand").toBeGreaterThan(still.sum * 1.02);
   await link.click();
   await expect(page).toHaveURL(/categories\/theories\.html$/);
 });
@@ -204,7 +228,7 @@ test("going back up, the names go back into the aldehyde before the page moves, 
   await page.goto("/index.html");
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
   await toTheFormula(page);
-  await written(page);
+  await named(page, 120000);
   await expect(page.locator("body")).toHaveClass(/formula-shown/);
   const parked = await scrollTop(page);
   await page.mouse.move(720, 60);
@@ -224,8 +248,8 @@ test("going back up, the names go back into the aldehyde before the page moves, 
   const moved = frames.find((f) => f.top !== parked);
   const inAgain = frames.find((f) => !f.shown);
   expect(inAgain, "the names went back in").toBeTruthy();
-  // held until they were in (or, on a slow machine, for a second at most)
-  expect(moved.t >= inAgain.t - 1 || moved.t > 1000, `the page moved at ${Math.round(moved.t)}ms, the names in at ${Math.round(inAgain.t)}ms`).toBe(true);
+  // held until they were in (or, on a slow machine, for a second and a half at most)
+  expect(moved.t >= inAgain.t - 1 || moved.t > 1400, `the page moved at ${Math.round(moved.t)}ms, the names in at ${Math.round(inAgain.t)}ms`).toBe(true);
   await expect.poll(() => state(page), { timeout: 15000 }).toBe("cloud");
   await expect(page.locator("body")).not.toHaveClass(/formula-leaving/);
   await expect.poll(() => page.locator(".title-content").evaluate((e) => +getComputedStyle(e).opacity)).toBeGreaterThan(0.98);
@@ -239,7 +263,7 @@ test("with motion turned off the formula and its names are simply there, still",
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
   await page.locator("#scroll-cue").click();
   await expect.poll(() => scrollTop(page), { timeout: 4000 }).toBe(await slideTop(page, "slide-formula"));
-  await written(page, 4000);
+  await named(page, 4000);
   await page.waitForTimeout(300);
   const clip = { x: 100, y: 150, width: 1240, height: 600 };
   const a = (await page.screenshot({ clip })).toString("base64");
@@ -260,7 +284,7 @@ test("without the 3D library the formula slide is the eight links, plainly", asy
   await expect(links).toHaveCount(8);
   for (let i = 0; i < 8; i++) {
     await expect(links.nth(i)).toBeVisible();
-    expect(await links.nth(i).evaluate((e) => getComputedStyle(e).color)).toBe("rgb(236, 232, 226)");
+    expect(await links.nth(i).evaluate((e) => [getComputedStyle(e).color, +getComputedStyle(e).opacity])).toEqual(["rgb(255, 255, 255)", 1]);
   }
   expect(errors).toEqual([]);
 });
@@ -272,7 +296,7 @@ test("on a phone the names stand two above and two below the formula each side, 
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
   await page.locator("#scroll-cue").click();
   await expect.poll(() => scrollTop(page), { timeout: 4000 }).toBe(await slideTop(page, "slide-formula"));
-  await written(page, 4000);
+  await named(page, 4000);
   const boxes = await page.locator(".formula-link").evaluateAll((all) =>
     all.map((a) => { const r = a.getBoundingClientRect(); return { l: r.left, r: r.right, t: r.top, b: r.bottom }; }));
   const [O, , H1, H2] = await atoms(page);
