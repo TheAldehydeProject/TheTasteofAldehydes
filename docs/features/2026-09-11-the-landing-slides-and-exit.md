@@ -172,9 +172,15 @@ see [its report](2026-09-30-the-formula-slide.md)). What changed here:
 - **The Scroll button and the first key press go to the formula**; the corners fade over that leg
   as before, and **so does the title**, later (gone by 0.45) and **pinned** — moved down as far as
   the page goes up, so it fades where it stands over the pinned aldehyde.
-- **Leaving the formula upwards is held** while its names are out: `molecule.js` says they are
-  (`formula-shown` on the body), this file says it is leaving (`formula-leaving`), and the page
-  waits until they are in, or `FORMULA_HOLD_MS` (1.1s) at most, before it scrolls — as the way out
-  of the map holds for the collapse. A plain scroll otherwise.
+- **The title and the formula are one stage, run by the wheel** (the owner's "make the whole second
+  page reactive to the scroll wheel"; asked, "the wheel drives it"): on those two slides the wheel
+  no longer moves a slide at a time but moves one number, `q`, by as much as it is turned — the
+  page between the two slides, then the formula's sequence with the page held — and `q` follows on
+  a spring; the keys and the Scroll button play it through; a further turn once it is complete goes
+  on to the sentence. The sequence is told to `molecule.js` as **a sixth `window` global,
+  `__formula`**. See [the formula slide](2026-09-30-the-formula-slide.md#the-wheel-runs-it-landingjs).
+  (For one round leaving the formula upwards was held while its names went back in, with two
+  classes on the body, `formula-shown` and `formula-leaving`; going back up through the stage does
+  that now, and neither class is in the code.)
 - **`first-slide-dark`** covers both dark slides: it is on while the page is short of the formula
   slide's foot, less the Menu's.

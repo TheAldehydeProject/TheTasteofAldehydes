@@ -807,18 +807,20 @@ body.first-slide-dark .about.is-open { background: rgba(20, 20, 21, 0.5); }
   padding: 0 clamp(24px, 4vw, 72px);
 }
 /* Set as the title is (2026-09-30, later: "I want the text itself to be the
-   same as the title in the way it appears"): italic, white, the same edge
-   — and it comes up as the title does, over specks that have gathered
-   into its letters (molecule.js sets its opacity as they land). */
+   same as the title in the way it appears"): italic, the same edge — and it
+   comes up as the title does, over specks that have gathered into its
+   letters (molecule.js sets its opacity as they land). Lighter and a little
+   smaller than it was, and opened out a hair ("a little minimalist and
+   neat (especially the words)"). */
 .formula-link {
   display: block;
   font-family: var(--sans);
   font-style: italic;
-  font-weight: 500;
-  font-size: clamp(18px, 1.85vw, 30px);
+  font-weight: 400;
+  font-size: clamp(17px, 1.6vw, 26px);
   line-height: 1.2;
-  letter-spacing: -0.005em;
-  color: #fff;
+  letter-spacing: 0.012em;
+  color: #f3f0eb;
   text-shadow: var(--lettering-edge);
   text-decoration: none;
   white-space: nowrap;

@@ -19,7 +19,7 @@
   const container = document.getElementById("scroll-container");
   if (!container || !slides.length) return; // not the landing page
   // The map, which the long move and the way out of it belong to; and the
-  // formula slide, which has a way out of its own.
+  // formula slide, which with the title is THE STAGE (below).
   const MAP = Math.max(0, slides.indexOf(document.getElementById("slide-3")));
   const FORMULA = slides.indexOf(document.getElementById("slide-formula"));
 
@@ -67,7 +67,6 @@
   // ============================================================
   const EXIT_MS = 820;     // how long the map takes to fall inwards
   const REFORM_MS = 520;   // and the line to draw itself back out
-  const FORMULA_HOLD_MS = 1500;   // the longest the page waits for the names to go back in (see goTo)
 
   // THE PAGE IS MOVED FIRST ON EVERY FRAME. Everything else on this
   // page draws from where the page is — the paper's curtain and grid,
@@ -171,28 +170,128 @@
       return;
     }
 
-    // LEAVING THE FORMULA upwards (2026-09-30): the names the aldehyde
-    // wrote go back into it along their threads BEFORE the page moves, so
-    // the title comes back over the aldehyde and not over the names. The
-    // body says the names are out (`formula-shown`, molecule.js's) and
-    // this says the page is on its way back (`formula-leaving`), which
-    // molecule.js reads; the page is held until the names are in, or
-    // FORMULA_HOLD_MS at most, and the class stays until it has arrived.
-    const body = document.body;
-    if (FORMULA >= 0 && activeIndex === FORMULA && index < FORMULA && body.classList.contains("formula-shown")) {
-      body.classList.add("formula-leaving");
-      const held = performance.now();
-      const hold = (now) => {
-        if (body.classList.contains("formula-shown") && now - held < FORMULA_HOLD_MS) return;
-        phases.delete(hold);
-        scrollToSlide(index, () => { body.classList.remove("formula-leaving"); animating = false; });
-      };
-      phases.add(hold);
-      return;
-    }
-
-    scrollToSlide(index, () => { animating = false; });
+    scrollToSlide(index, () => {
+      animating = false;
+      // back up on to the formula from below: whatever of it is not there
+      // yet comes (it is all there if it was when the page left it)
+      if (index === FORMULA) stageTo(2);
+    });
   }
+
+  // ============================================================
+  // THE STAGE — the title and the formula, run by the wheel
+  // (2026-09-30: "make the whole second page reactive to the scroll
+  // wheel", and asked, "the wheel drives it")
+  //
+  // One number, `q`, is where the stage is: 0 the title, 1 the page arrived
+  // at the formula slide (between the two, the page part of the way down,
+  // the title fading as it goes), and from 1 to 2 the formula's own
+  // sequence while the page is held there — the aldehyde turning into its
+  // formula, the clouds gathering round the names, the names coming up.
+  // The wheel moves where it is going (`qTo`) by as much as it is turned,
+  // and `q` follows on a spring, never faster than its leg allows, so a
+  // notch and a flick both move it smoothly; turned back, it all goes
+  // back. The sequence is told to molecule.js as one number, a sixth
+  // window global:
+  //
+  //   window.__formula  0 to 1, how far the formula's sequence is
+  //
+  // Keys and the Scroll button play it through (down from the title to
+  // the end, up from the formula to the title); a turn of the wheel once
+  // it is complete goes on to the sentence. A finger, a scrollbar or a
+  // jump moves the page itself, and the stage follows: arriving at the
+  // formula slide that way plays the sequence through.
+  // ============================================================
+  const WHEEL_LEG1 = 0.8;      // of the window's height, the wheel's turn from the title to the formula slide
+  const WHEEL_LEG2 = 1500;     // px of the wheel's turn through the formula's sequence
+  const RATE_LEG1 = 1 / 0.95;  // q per second at most: the page's move
+  const RATE_LEG2 = 1 / 4.2;   // the sequence, played through
+  const RATE_BACK = 1 / 1.4;   // and back
+  const SPRING = 90;           // how tightly q follows where it is going
+  const SETTLE_MS = 320;       // a wheel stopped between the two slides settles on the nearer
+  const LEAVE_AFTER_MS = 450;  // how long complete before a further turn leaves for the sentence
+  let q = 0, qTo = 0, qv = 0, placed = 0, stageLast = 0, stageOn = false, written = -1, settleTimer = 0, fullSince = 0;
+  window.__formula = 0;
+  const onStage = () => FORMULA >= 0 && (activeIndex === 0 || activeIndex === FORMULA);
+  function stageTop(x) {
+    const a = slides[0].offsetTop, b = slides[FORMULA].offsetTop;
+    return a + Math.max(0, Math.min(1, x)) * (b - a);
+  }
+  function placeStage() {
+    // the page is moved only between the two slides (and on to the formula
+    // slide exactly): past it, it is somebody else's to move
+    if (q < 1 || placed < 1) {
+      const y = Math.round(stageTop(q));
+      if (Math.abs(container.scrollTop - y) >= 1) { container.scrollTop = y; written = container.scrollTop; }
+    }
+    // which slide it is on, while it is the stage that moves the page (once
+    // the page has gone on past the formula, the sequence may still be
+    // finishing, and the page is not on the stage any more)
+    if (q < 1 || placed < 1) activeIndex = q >= 0.5 ? FORMULA : 0;
+    placed = q;
+    window.__formula = Math.max(0, Math.min(1, q - 1));
+    if (q >= 2 - 1e-4) { if (!fullSince) fullSince = performance.now(); } else fullSince = 0;
+  }
+  function stagePhase(now) {
+    const dt = stageLast ? Math.min(0.1, (now - stageLast) / 1000) : 1 / 60;
+    stageLast = now;
+    const rate = q < 1 || (q === 1 && qTo < 1) ? RATE_LEG1 : qTo > q ? RATE_LEG2 : RATE_BACK;
+    qv += (SPRING * (qTo - q) - 2 * Math.sqrt(SPRING) * qv) * dt;
+    qv = Math.max(-rate, Math.min(rate, qv));
+    q += qv * dt;
+    if ((qTo - q) * Math.sign(qv) < 0 || Math.abs(qTo - q) < 0.0008) { q = qTo; qv = 0; }
+    placeStage();
+    if (q === qTo) {
+      phases.delete(stagePhase);
+      stageOn = false;
+      stageLast = 0;
+      if (q <= 0 || q >= 1) container.style.scrollSnapType = "y mandatory";
+    }
+  }
+  function stageTo(x) {
+    if (FORMULA < 0) return;
+    qTo = Math.max(0, Math.min(2, x));
+    if (REDUCE_MOTION) { q = qTo; qv = 0; placeStage(); container.style.scrollSnapType = "y mandatory"; return; }
+    if (q === qTo) return;
+    container.style.scrollSnapType = "none";
+    if (!stageOn) { stageOn = true; stageLast = 0; phases.add(stagePhase); }
+  }
+  function stageWheel(delta) {
+    window.clearTimeout(settleTimer);
+    const h = Math.max(1, slides[FORMULA].offsetTop - slides[0].offsetTop);
+    // the wheel's turn in the stage's own measure, leg by leg
+    let d = delta, x = qTo;
+    for (let legs = 0; legs < 2 && d !== 0; legs++) {
+      const per = x < 1 || (x === 1 && d < 0) ? h * WHEEL_LEG1 : WHEEL_LEG2;
+      const end = d > 0 ? (x < 1 ? 1 : 2) : (x > 1 ? 1 : 0);   // the end of this leg, the way it is turned
+      const room = Math.abs(end - x), want = Math.abs(d) / per;
+      if (want < room) { x += Math.sign(d) * want; break; }
+      x = end;
+      d -= Math.sign(d) * room * per;
+      if (end === 0 || end === 2) break;
+    }
+    stageTo(x);
+    // stopped part of the way between the two slides: settle on the nearer
+    settleTimer = window.setTimeout(() => {
+      if (qTo > 0 && qTo < 1) stageTo(qTo < 0.5 ? 0 : 1);
+    }, SETTLE_MS);
+  }
+  // The page moved by something else — a finger, the scrollbar, a jump —
+  // and the stage follows where it is.
+  container.addEventListener("scroll", () => {
+    if (FORMULA < 0 || animating || Math.abs(container.scrollTop - written) <= 1) return;
+    const y = container.scrollTop, a = slides[0].offsetTop, b = slides[FORMULA].offsetTop;
+    if (y < b - 1) {
+      q = qTo = placed = Math.max(0, (y - a) / Math.max(1, b - a)); qv = 0;
+      window.__formula = 0;
+    } else if (y <= b + 1 && q < 1) {
+      // arrived at the formula slide under a finger: play it through
+      q = placed = 1; qv = 0; written = y;
+      stageTo(2);
+    } else if (y > b + 1 && q < 2) {
+      q = qTo = placed = 2; qv = 0; window.__formula = 1;   // gone on past it: it is all there when the page comes back
+    }
+  }, { passive: true });
 
   // Keep activeIndex correct if the user scrolls by some other means
   // (scrollbar drag, touch) rather than through goTo().
@@ -208,13 +307,28 @@
   );
   slides.forEach((slide) => observer.observe(slide));
 
-  // --- Wheel / trackpad: one gentle gesture moves exactly one slide.
+  // --- Wheel / trackpad: on the stage it runs the stage (above); anywhere
+  // else one gentle gesture moves exactly one slide.
   let wheelLock = false;
   container.addEventListener(
     "wheel",
     (e) => {
       e.preventDefault();
-      if (wheelLock || animating || overlayOpen()) return;
+      if (overlayOpen()) return;
+      if (!animating && !wheelLock && onStage()) {
+        const px = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaMode === 2 ? e.deltaY * window.innerHeight : e.deltaY;
+        const d = Math.max(-240, Math.min(240, px));
+        // complete, a further turn down goes on to the sentence
+        if (d > 0 && qTo >= 2 && q >= 2 - 1e-4 && performance.now() - fullSince > LEAVE_AFTER_MS) {
+          wheelLock = true;
+          setTimeout(() => { wheelLock = false; }, 1000);
+          goTo(FORMULA + 1);
+          return;
+        }
+        if (d !== 0) stageWheel(d);
+        return;
+      }
+      if (wheelLock || animating) return;
       wheelLock = true;
       setTimeout(() => { wheelLock = false; }, 1000);
       if (e.deltaY > 0) goTo(activeIndex + 1);
@@ -223,16 +337,30 @@
     { passive: false }
   );
 
+  // A step by the keys or the Scroll button: through the whole stage at
+  // once (down from the title to the end of the formula; up from the
+  // formula to the title), and on from the formula to the sentence.
+  function step(dir) {
+    if (!animating && onStage()) {
+      if (dir > 0 && activeIndex === 0) { stageTo(2); return; }
+      if (dir < 0) { stageTo(0); return; }
+      // still on its way to the formula slide: arrive first
+      if (q < 1) { stageTo(2); return; }
+      stageTo(2);   // on to the sentence, finishing on the way
+    }
+    goTo(activeIndex + dir);
+  }
+
   // --- Keyboard
   window.addEventListener("keydown", (e) => {
     if (overlayOpen()) return;
-    if (e.key === "ArrowDown" || e.key === "PageDown") { e.preventDefault(); goTo(activeIndex + 1); }
-    else if (e.key === "ArrowUp" || e.key === "PageUp") { e.preventDefault(); goTo(activeIndex - 1); }
+    if (e.key === "ArrowDown" || e.key === "PageDown") { e.preventDefault(); step(1); }
+    else if (e.key === "ArrowUp" || e.key === "PageUp") { e.preventDefault(); step(-1); }
   });
 
   // --- "Scroll" button on the title slide
   const scrollCue = document.getElementById("scroll-cue");
-  if (scrollCue) scrollCue.addEventListener("click", () => goTo(1));
+  if (scrollCue) scrollCue.addEventListener("click", () => step(1));
 
   // ============================================================
   // THE CORNERS OF THE TITLE SLIDE

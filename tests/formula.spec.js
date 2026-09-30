@@ -15,13 +15,17 @@
 // a stream of particles leave the aldehyde molecule and go towards them
 // (each), and then I wanat the text itself to be the same as the title in
 // the way it appears. then make some particles, similar to that of the
-// aldehyde molecule around each of the word." (molecule.js; its report is
+// aldehyde molecule around each of the word." Then: "it should be a proper
+// cloud like in the title", and "remove the lines connecting the aldehyde to
+// the words ... make it look a little minimalist and neat ... make the whole
+// second page reactive to the scroll wheel" (asked: the wheel drives it).
+// (molecule.js and landing.js; the report is
 // docs/features/2026-09-30-the-formula-slide.md.)
 //
 // The drawing says where it is on itself, `data-state` on #molecule —
-// cloud, turning, formula, flowing, written, named — which is what these
-// wait on: in the tests' browser, which draws without a graphics card, the
-// whole way takes several seconds more than it does on a real machine.
+// cloud, turning, formula, gathering, written, named — which is what these
+// wait on: in the tests' browser, which draws without a graphics card, it
+// all takes longer than it does on a real machine.
 // ============================================================
 const fs = require("fs");
 const path = require("path");
@@ -110,7 +114,7 @@ test("the formula slide carries the Menu's eight pages, in its order, four down 
   expect(Math.abs((left[0].t + left[3].b) / 2 - 450)).toBeLessThan(6);
 });
 
-test("the title fades where it stands as the page leaves it, and only then does the aldehyde come together", async ({ page }) => {
+test("the title fades where it stands as the page leaves it, and the aldehyde comes together only on the formula slide", async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html");
@@ -129,15 +133,18 @@ test("the title fades where it stands as the page leaves it, and only then does 
   expect(Math.abs(during.y - before.y), "held where it stands, not carried off with the page").toBeLessThan(30);
   expect(await state(page), "the aldehyde waits for the title to go").toBe("cloud");
 
-  // past half way: gone, and the aldehyde turning into its formula
+  // past half way: gone, the aldehyde still waiting
   await park(page, 0.6);
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(300);
   expect(await page.locator(".title-content").evaluate((e) => +getComputedStyle(e).opacity)).toBeLessThan(0.02);
+  expect(await state(page)).toBe("cloud");
+  // arrived (by a finger, say): it plays through
+  await park(page, 1);
   await expect.poll(() => state(page), { timeout: 8000 }).not.toBe("cloud");
   expect(errors).toEqual([]);
 });
 
-test("the aldehyde comes together as its formula — flat, the O at the top, the H either side below — and the Menu's pages gather out of its streams", async ({ page }) => {
+test("the aldehyde comes together as its formula — flat, the O at the top, the H either side below — and the Menu's pages condense out of clouds of their own", async ({ page }) => {
   test.setTimeout(150000);
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -158,9 +165,11 @@ test("the aldehyde comes together as its formula — flat, the O at the top, the
   });
   await toTheFormula(page);
   await named(page, 120000);
-  const states = await page.evaluate(() => window.__states.filter((s, i, all) => s !== all[i - 1]));
-  expect(states, "the cloud turns, is the formula, its streams write the names, and the names come up")
-    .toEqual(["cloud", "turning", "formula", "flowing", "written", "named"]);
+  // (the moment it is the formula alone may pass within one frame: it is the
+  // turning's end and the gathering's start)
+  const states = await page.evaluate(() => window.__states.filter((s, i, all) => s !== all[i - 1] && s !== "formula"));
+  expect(states, "the cloud turns into the formula, the names' clouds gather, their letters condense, and the names come up")
+    .toEqual(["cloud", "turning", "gathering", "written", "named"]);
   expect(await page.evaluate(() => window.__up), "a name's letters come up only once its specks have gathered").toBe("written");
 
   // THE FORMULA as a book prints it
@@ -191,7 +200,7 @@ test("the aldehyde comes together as its formula — flat, the O at the top, the
   }));
   for (const [i, box] of boxes.entries()) {
     expect(box.opacity, `name ${i + 1} up`).toBe(1);
-    expect(box.colour).toBe("rgb(255, 255, 255)");
+    expect(box.colour, "the page's light ink").toBe("rgb(243, 240, 235)");
     expect(box.face, "in the title's face").toEqual(title);
     const above = await light(page, { x: box.x, y: box.y - 22, width: box.width, height: 20 });
     const below = await light(page, { x: box.x, y: box.y + box.height + 2, width: box.width, height: 20 });
@@ -222,38 +231,81 @@ test("a name pointed at brightens its cloud, and is the page's own link", async 
   await expect(page).toHaveURL(/categories\/theories\.html$/);
 });
 
-test("going back up, the names go back into the aldehyde before the page moves, and the title comes back", async ({ page }) => {
-  test.setTimeout(120000);
+test("going back up, the names go before the page moves, and the title comes back", async ({ page }) => {
+  test.setTimeout(150000);
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html");
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
   await toTheFormula(page);
   await named(page, 120000);
-  await expect(page.locator("body")).toHaveClass(/formula-shown/);
   const parked = await scrollTop(page);
   await page.mouse.move(720, 60);
   await page.evaluate(() => {
     window.__back = [];
     const c = document.getElementById("scroll-container");
-    const t0 = performance.now();
-    const tick = (now) => {
-      window.__back.push({ t: now - t0, top: c.scrollTop, shown: document.body.classList.contains("formula-shown") });
+    const m = document.getElementById("molecule");
+    const tick = () => {
+      window.__back.push({ top: c.scrollTop, state: m.dataset.state });
       requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
   });
   await page.keyboard.press("ArrowUp");
-  await expect.poll(() => scrollTop(page), { timeout: 15000 }).toBe(0);
+  await expect.poll(() => scrollTop(page), { timeout: 20000 }).toBe(0);
   const frames = await page.evaluate(() => window.__back);
   const moved = frames.find((f) => f.top !== parked);
-  const inAgain = frames.find((f) => !f.shown);
-  expect(inAgain, "the names went back in").toBeTruthy();
-  // held until they were in (or, on a slow machine, for a second and a half at most)
-  expect(moved.t >= inAgain.t - 1 || moved.t > 1400, `the page moved at ${Math.round(moved.t)}ms, the names in at ${Math.round(inAgain.t)}ms`).toBe(true);
+  expect(moved, "the page went back up").toBeTruthy();
+  expect(["formula", "turning", "cloud"], "the names had gone before the page moved").toContain(moved.state);
   await expect.poll(() => state(page), { timeout: 15000 }).toBe("cloud");
-  await expect(page.locator("body")).not.toHaveClass(/formula-leaving/);
   await expect.poll(() => page.locator(".title-content").evaluate((e) => +getComputedStyle(e).opacity)).toBeGreaterThan(0.98);
+  expect(errors).toEqual([]);
+});
+
+/* THE WHEEL RUNS IT (the owner: "make the whole second page reactive to the
+   scroll wheel", and asked, "the wheel drives it"): a turn takes it as far
+   as it is turned, a turn stopped between the two slides settles on the
+   nearer, the formula's sequence goes only as far as the wheel takes it,
+   turned back it all goes back — and once it is complete, a further turn
+   goes on to the sentence. */
+test("the wheel runs the stage, as far as it is turned and back again", async ({ page }) => {
+  test.setTimeout(150000);
+  const errors = collectPageErrors(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/index.html");
+  await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
+  await page.waitForTimeout(600);
+  await page.mouse.move(720, 450);
+  const formulaTop = await slideTop(page, "slide-formula");
+  const far = () => page.evaluate(() => window.__formula);
+  // a little: the page part of the way, then settled back on the title
+  await page.mouse.wheel(0, 120);
+  await expect.poll(() => scrollTop(page), { timeout: 3000 }).toBeGreaterThan(20);
+  await expect.poll(() => scrollTop(page), { timeout: 5000 }).toBe(0);
+  // more than half the way: on to the formula slide, and no further
+  for (let i = 0; i < 4; i++) { await page.mouse.wheel(0, 120); await page.waitForTimeout(60); }
+  await expect.poll(() => scrollTop(page), { timeout: 5000 }).toBe(formulaTop);
+  await page.waitForTimeout(500);
+  expect(await far(), "the sequence waits for the wheel").toBe(0);
+  // on through the sequence, part of the way: gathering, the names not up
+  for (let i = 0; i < 6; i++) { await page.mouse.wheel(0, 120); await page.waitForTimeout(60); }
+  await expect.poll(far, { timeout: 5000 }).toBeGreaterThan(0.4);
+  await page.waitForTimeout(800);
+  const part = await far();
+  expect(part, "as far as it was turned").toBeLessThan(0.6);
+  await expect.poll(() => state(page), { timeout: 30000 }).toBe("gathering");
+  expect(await scrollTop(page), "the page held on the formula meanwhile").toBe(formulaTop);
+  // back again, all the way
+  for (let i = 0; i < 20; i++) { await page.mouse.wheel(0, -120); await page.waitForTimeout(40); }
+  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(0);
+  expect(await far()).toBe(0);
+  await expect.poll(() => state(page), { timeout: 20000 }).toBe("cloud");
+  // all the way down, and once complete a further turn goes on to the sentence
+  for (let i = 0; i < 24; i++) { await page.mouse.wheel(0, 120); await page.waitForTimeout(40); }
+  await expect.poll(far, { timeout: 10000 }).toBe(1);
+  await page.waitForTimeout(700);
+  await page.mouse.wheel(0, 120);
+  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(await slideTop(page, "slide-2"));
   expect(errors).toEqual([]);
 });
 
@@ -285,7 +337,7 @@ test("without the 3D library the formula slide is the eight links, plainly", asy
   await expect(links).toHaveCount(8);
   for (let i = 0; i < 8; i++) {
     await expect(links.nth(i)).toBeVisible();
-    expect(await links.nth(i).evaluate((e) => [getComputedStyle(e).color, +getComputedStyle(e).opacity])).toEqual(["rgb(255, 255, 255)", 1]);
+    expect(await links.nth(i).evaluate((e) => [getComputedStyle(e).color, +getComputedStyle(e).opacity])).toEqual(["rgb(243, 240, 235)", 1]);
   }
   expect(errors).toEqual([]);
 });
