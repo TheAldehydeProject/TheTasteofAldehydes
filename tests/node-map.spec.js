@@ -159,7 +159,7 @@ test.describe("the preview window", () => {
     await page.locator(".node3d-label", { hasText: "Scent descriptions" }).click({ force: true });
 
     await expect(page.locator(".node-preview-modal")).toBeVisible();
-    await expect(page).toHaveURL(/index\.html$/); // did not navigate
+    await expect(page).toHaveURL(/index\.html(\?map=on)?$/); // did not navigate
     await expect(page.locator(".node-preview-desc")).toContainText("I describe things");
     await expect(page.locator(".node-preview-button")).toHaveAttribute(
       "href",

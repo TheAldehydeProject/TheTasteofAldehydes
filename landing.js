@@ -449,7 +449,10 @@
       return;
     }
     activeIndex = whereIs();
-    container.style.scrollSnapType = activeIndex === 0 && y < end - 1 ? "none" : "y mandatory";
+    // no snapping on the stage (it is turned on only on arriving at a
+    // slide after it, as it always was: a page held part of the way between
+    // the sentence and the map stays where it is held)
+    if (activeIndex === 0) container.style.scrollSnapType = "none";
     if (activeIndex === 0 && y >= end - 1) { if (!endSince) endSince = performance.now(); } else endSince = 0;
   }, { passive: true });
 
