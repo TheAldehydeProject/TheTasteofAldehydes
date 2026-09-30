@@ -457,7 +457,9 @@ body.menu-open > *:not(.menu-trigger):not(.menu-overlay):not(.cursor-ring):not(.
    corner block all follow — and the molecule's cloud glows over the whole
    of it, the title in front of it in the middle. Nothing on the drawing
    takes the pointer; it leans to it from the window. */
-.title-slide {
+.aldehyde-stage,
+.title-slide,
+.formula-slide {
   --bg: #1f1f20;
   --bg-2: #28282a;
   --line: #3a3a3b;
@@ -467,16 +469,33 @@ body.menu-open > *:not(.menu-trigger):not(.menu-overlay):not(.cursor-ring):not(.
   background: var(--bg);
   color: var(--ink);
 }
-.title-slide .title-content { position: relative; z-index: 2; }
-/* the title read in front of the glowing cloud: a soft shadow of the ground round its letters */
-.title-slide .title-content h1,
-.title-slide .title-sub { text-shadow: 0 0 18px rgba(31, 31, 32, 0.95), 0 0 42px rgba(31, 31, 32, 0.75); }
+/* THE TITLE INVERTS WHAT IS BEHIND IT (2026-09-30 — "make the main text
+   be inverse of the colours behind it"): drawn in white and taken away
+   from what is under it (`difference`), so over the dark ground it is
+   nearly white, over the gold nearly blue and over the violet a dark
+   green, and it reads wherever the glow is. (It stood in a soft shadow of
+   the ground before, which hid the cloud round its letters.) */
+.title-slide .title-content { position: relative; z-index: 2; mix-blend-mode: difference; color: #fff; }
 .title-slide .title-sub,
-.title-slide .about-open-word { color: #c4bfb8; text-shadow: 0 0 10px rgba(31, 31, 32, 1), 0 0 24px rgba(31, 31, 32, 0.95), 0 0 48px rgba(31, 31, 32, 0.8); }
-.molecule { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.title-slide .about-open-word { color: #cfcfcf; }
+/* THE STAGE the first two slides stand on (2026-09-30): the aldehyde is
+   pinned to the window for as long as either is under it — it is the
+   stage's first child, standing no room of its own (its negative margin)
+   — and goes up with the formula slide when the page leaves them. */
+.molecule {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  margin-bottom: -100vh;
+  margin-bottom: -100svh;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
 .molecule-canvas { display: block; width: 100%; height: 100%; }
-/* The Menu stands over the first slide's dark ground until the page leaves
-   it (landing.js puts `first-slide-dark` on the body). */
+/* The Menu stands over the first slides' dark ground until the page leaves
+   them (landing.js puts `first-slide-dark` on the body). */
 body.first-slide-dark:not(.menu-open) .menu-trigger { color: #ece8e2; }
 body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
 /* About me opens from the first slide, over its dark ground: its veil is
@@ -744,6 +763,101 @@ body.first-slide-dark .about.is-open { background: rgba(20, 20, 21, 0.5); }
 }
 @media (prefers-reduced-motion: reduce) {
   .about, .about-sheet, .about-part, .about-part h2::after, .about-sheet::before, .about-sheet::after { transition: none; }
+}
+
+/* ==================================================================
+   THE FORMULA SLIDE (2026-09-30) — between the title and the sentence
+   ==================================================================
+   The aldehyde comes together as its formula in the middle (molecule.js)
+   and threads of specks run out of it to the Menu's eight pages, four each
+   side, symmetrical and equally spaced: "These 8 areas should be texts
+   that are made up of the particles ... and they should be the contents of
+   the menu." The links below are the real ones and stand exactly where
+   their names are written in specks; once the specks can be drawn
+   (`formula-written` on the stage) their own letters are not shown.
+   Without the drawing they are these words, in the same places.
+
+   Two layouts, told to molecule.js by `--formula-layout`: FLANK on a wide
+   window (four down the left, the formula, four down the right, every row
+   the same distance from the next) and BAND on a narrow one (two columns
+   again, two rows above the formula and two below, the formula in a band
+   across the middle and the threads running up and down the channel
+   between the columns). */
+.formula-slide { justify-content: center; }
+.formula-menu {
+  --formula-layout: flank;
+  --formula-gap: clamp(380px, 42vw, 660px);
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--formula-gap) minmax(0, 1fr);
+  grid-template-rows: repeat(4, auto);
+  align-content: center;
+  row-gap: clamp(46px, 11vh, 124px);
+  padding: 0 clamp(24px, 4vw, 72px);
+}
+.formula-link {
+  display: block;
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: clamp(17px, 1.6vw, 27px);
+  line-height: 1.25;
+  letter-spacing: 0.005em;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 4px 0;
+  transition: color 0.4s ease;
+}
+.formula-link:nth-child(-n+4) { grid-column: 1; justify-self: end; text-align: right; }
+.formula-link:nth-child(n+5) { grid-column: 3; justify-self: start; text-align: left; }
+.formula-link:nth-child(4n+1) { grid-row: 1; }
+.formula-link:nth-child(4n+2) { grid-row: 2; }
+.formula-link:nth-child(4n+3) { grid-row: 3; }
+.formula-link:nth-child(4n+4) { grid-row: 4; }
+.formula-link:hover { color: #fff; }
+/* Written in specks: the words themselves not shown, the link still there
+   to be pointed at, pressed and tabbed to. */
+.aldehyde-stage.formula-written .formula-link { color: transparent; }
+/* The atoms' names on the formula, placed by molecule.js: set as a
+   chemistry book sets them (the icon's letters), inverting what is behind
+   them as the title does. */
+.formula-atom {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: Arial, "Liberation Sans", "Helvetica Neue", Helvetica, sans-serif;
+  font-weight: 400;
+  line-height: 1;
+  color: #fff;
+  mix-blend-mode: difference;
+  opacity: 0;
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+@media (max-width: 899px) {
+  .formula-menu {
+    --formula-layout: band;
+    grid-template-columns: minmax(0, 1fr) 36px minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+    align-content: stretch;
+    row-gap: 12px;
+    padding: 72px 16px;
+  }
+  .formula-link {
+    display: flex;
+    align-items: center;
+    min-height: 2.5em;
+    font-size: clamp(15px, 2.3vw, 19px);
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: normal;
+    padding: 0;
+  }
+  .formula-link:nth-child(-n+4) { justify-content: flex-end; }
+  .formula-link:nth-child(4n+3) { grid-row: 4; }
+  .formula-link:nth-child(4n+4) { grid-row: 5; }
 }
 
 /* ==================================================================

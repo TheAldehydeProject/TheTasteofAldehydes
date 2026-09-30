@@ -1,7 +1,10 @@
 // ============================================================
-// Behavior for index.html's three locked slides: gentle
+// Behavior for index.html's four locked slides: gentle
 // scrolling between them (by wheel, keys, or the "Scroll"
-// button on the title slide).
+// button on the title slide). They are the title, the formula
+// (2026-09-30), the sentence and the map, and the ones that matter
+// here are found by name rather than by place, so a slide added in
+// between moves nothing: the map is #slide-3 wherever it stands.
 //
 // Everything here is wrapped in a function that runs itself, so
 // none of these names (slides, container, goTo, ease...) escape
@@ -15,6 +18,10 @@
   const slides = Array.from(document.querySelectorAll(".slide"));
   const container = document.getElementById("scroll-container");
   if (!container || !slides.length) return; // not the landing page
+  // The map, which the long move and the way out of it belong to; and the
+  // formula slide, which has a way out of its own.
+  const MAP = Math.max(0, slides.indexOf(document.getElementById("slide-3")));
+  const FORMULA = slides.indexOf(document.getElementById("slide-formula"));
 
   let activeIndex = 0;
   let animating = false;
@@ -60,6 +67,7 @@
   // ============================================================
   const EXIT_MS = 820;     // how long the map takes to fall inwards
   const REFORM_MS = 520;   // and the line to draw itself back out
+  const FORMULA_HOLD_MS = 1100;   // the longest the page waits for the names to go back in (see goTo)
 
   // THE PAGE IS MOVED FIRST ON EVERY FRAME. Everything else on this
   // page draws from where the page is — the paper's curtain and grid,
@@ -119,7 +127,7 @@
     // the curtain, the grid, the static and the constellation leaving
     // the centre all happen during it, and rushing them turns a sequence
     // into a flicker. This is the number to change if it drags.
-    const long = index === 2 || activeIndex === 2;
+    const long = index === MAP || activeIndex === MAP;
     const duration = long ? 2400 : 1100;
     const curve = long ? easeLong : ease;
 
@@ -148,7 +156,7 @@
     animating = true;
 
     // Leaving the map upwards: collapse, reform, and only then scroll.
-    if (activeIndex === 2 && index < 2) {
+    if (activeIndex === MAP && index < MAP) {
       runPhase(EXIT_MS, (t) => { window.__exit = t; }, () => {
         runPhase(REFORM_MS, (t) => { window.__reform = t; }, () => {
           scrollToSlide(index, () => {
@@ -160,6 +168,26 @@
           });
         });
       });
+      return;
+    }
+
+    // LEAVING THE FORMULA upwards (2026-09-30): the names the aldehyde
+    // wrote go back into it along their threads BEFORE the page moves, so
+    // the title comes back over the aldehyde and not over the names. The
+    // body says the names are out (`formula-shown`, molecule.js's) and
+    // this says the page is on its way back (`formula-leaving`), which
+    // molecule.js reads; the page is held until the names are in, or
+    // FORMULA_HOLD_MS at most, and the class stays until it has arrived.
+    const body = document.body;
+    if (FORMULA >= 0 && activeIndex === FORMULA && index < FORMULA && body.classList.contains("formula-shown")) {
+      body.classList.add("formula-leaving");
+      const held = performance.now();
+      const hold = (now) => {
+        if (body.classList.contains("formula-shown") && now - held < FORMULA_HOLD_MS) return;
+        phases.delete(hold);
+        scrollToSlide(index, () => { body.classList.remove("formula-leaving"); animating = false; });
+      };
+      phases.add(hold);
       return;
     }
 
@@ -221,21 +249,31 @@
   // nothing to say while the page is still, and a listener that only
   // runs when something moved costs nothing the rest of the time.
   // ============================================================
-  function fadeOnLeavingSlideOne(element) {
+  // THE TITLE ITSELF goes the same way since 2026-09-30, but later and in
+  // place: the owner's "to transition to this page from the title page, I
+  // want the title and text to fade away". The aldehyde behind it stands
+  // still while the page moves, so the title is held where it stands too
+  // (`pinned`: moved down by exactly as far as the page has gone up) and
+  // only lifts a little as it fades, gone by `by` of the way (0.45). The
+  // aldehyde comes together as its formula once it has gone — molecule.js
+  // starts that at half way, reading where the page is for itself.
+  function fadeOnLeavingSlideOne(element, by = 1 / 3, lift = 18, pinned = false) {
     if (!element) return;
 
     const update = () => {
       const from = slides[0].offsetTop;
       const to = slides[1].offsetTop;
       const leg = to - from || 1;
-      const progress = Math.max(0, Math.min(1, (container.scrollTop - from) / leg));
+      const gone = Math.max(0, container.scrollTop - from);
+      const progress = Math.min(1, gone / leg);
       // Gone by a third of the way down, so it leaves early and isn't
       // still hanging about over the second slide.
-      const shown = Math.max(0, 1 - progress * 3);
+      const shown = Math.max(0, 1 - progress / by);
       element.style.opacity = shown.toFixed(3);
       // Lifted very slightly as it goes, so it reads as leaving rather
       // than simply dimming in place.
-      element.style.transform = "translateY(" + (progress * -18).toFixed(1) + "px)";
+      const y = (pinned ? Math.min(gone, leg) : 0) - Math.min(1, progress / by) * lift;
+      element.style.transform = "translateY(" + y.toFixed(1) + "px)";
       // Nothing invisible should still be clickable — the Scroll button
       // is a button, and this is the whole of what stops it catching a
       // click it can no longer be seen to deserve.
@@ -266,16 +304,19 @@
 
   fadeOnLeavingSlideOne(document.querySelector(".title-block"));
   fadeOnLeavingSlideOne(document.querySelector(".scroll-cue"));
+  fadeOnLeavingSlideOne(document.querySelector(".title-content"), 0.45, 26, true);
 
-  // THE FIRST SLIDE IS DARK (2026-09-30: the aldehyde's own dark ground).
-  // The Menu stands fixed over whatever slide is under it, so while the
-  // first slide is still under it the body says so (`first-slide-dark`),
-  // and the stylesheet turns the Menu light.
-  const first = document.getElementById("slide-1");
+  // THE FIRST SLIDES ARE DARK (2026-09-30: the aldehyde's own dark ground,
+  // the title and the formula after it). The Menu stands fixed over
+  // whatever slide is under it, so while a dark one is still under it the
+  // body says so (`first-slide-dark`), and the stylesheet turns the Menu
+  // light.
+  const first = document.getElementById("slide-formula") || document.getElementById("slide-1");
   if (first) {
     const MENU_FOOT = 48;   // the Menu's own foot, from the top of the window
     const underMenu = () =>
-      document.body.classList.toggle("first-slide-dark", container.scrollTop < first.offsetHeight - MENU_FOOT);
+      document.body.classList.toggle("first-slide-dark",
+        container.scrollTop < first.offsetTop + first.offsetHeight - MENU_FOOT);
     container.addEventListener("scroll", underMenu, { passive: true });
     window.addEventListener("resize", underMenu);
     underMenu();

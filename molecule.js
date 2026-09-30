@@ -1,5 +1,5 @@
 // ============================================================
-// THE ALDEHYDE (index.html only, the first slide)
+// THE ALDEHYDE (index.html only, the first two slides)
 //
 // The owner, 2026-09-30: "redesign the front page of home. I want a big
 // aldehyde molecule in the very middle of it, with the electron cloud
@@ -34,27 +34,64 @@
 //
 // Of "the curl noise page elements" (pmndrs' GPGPU Curl Noise DOF) the
 // CURL NOISE stays: every speck swirls a little about its own place, as
-// smoke in a slow current, worked out in the same pass that draws it. The
-// lens and the held camera went with the first try: their soft discs and
-// wander were the grain in it, and the private page has neither.
+// smoke in a slow current, worked out in the same pass that draws it.
+//
+// THE FORMULA (the same day, later): "when you scroll, I want us to
+// introduce a 4th page, between the first and second ... the title and
+// text to fade away; 3d model of the aldehyde to become more concrete and
+// I want you to add in the element backbone ... displayed horizontally,
+// where the O is facing upwards. This rearranging should be done after the
+// title fades away. When it is rearranged, I want a part of the particles
+// to flow in very slim lines and fill 4 areas on each sides. This should
+// be symmetrical, and the areas should be equally spaced from each other.
+// These 8 areas should be texts that are made up of the particles (but not
+// taking from them by number or volume) and they should be the contents of
+// the menu." So the drawing stands still in the window across both slides
+// (it is pinned, style.css), and has two states it moves between on its own
+// clock, whichever way the page goes:
+//
+//   THE REARRANGING (`u`)  begins once the title has gone (half way down to
+//     the formula slide; landing.js fades the title by 0.45): the cloud
+//     turns to face you, flat, the O at the top and the two H below it
+//     either side, draws in close round the bonds (more concrete), its
+//     swirl calms, and the formula comes up in it — the bonds drawn out
+//     of the C in bright specks, the C=O as two lines, and the atoms named
+//     as a chemistry book names them.
+//   THE FLOW (`f`)  once it has: from four places down each side of the
+//     formula (oxygen's lone pair, the double bond, the C-H bond and the H)
+//     a slim thread of specks runs out to each of the Menu's eight pages
+//     and writes its name in specks where the page's own link stands. The
+//     specks are their own, as many as the letters need: the cloud loses
+//     none of its own. A few keep running along each thread afterwards, so
+//     the names stay tied to the molecule; pointed at, a name and its
+//     thread brighten and stir.
+//
+// Going back up, the names are drawn back in along their threads, the
+// formula lets go and turns back, and the title comes back over it.
 //
 // It gathers as the title does, in from a wide shell round the slide to
 // its places; it sways about the side the private page shows it from and
-// leans a little to the pointer. The title stands in front of it, in the
-// middle. It draws only while the first slide is on the screen. With
-// reduced motion it is simply there, still. If the drawing cannot be made,
-// it is not there, and the slide is the title alone on its dark ground.
+// leans a little to the pointer. It draws only while one of the two dark
+// slides is on the screen. With reduced motion it is simply there, still,
+// and changes at once. If the drawing cannot be made, it is not there: the
+// title stands alone on its dark ground, and the formula slide is the eight
+// links, plainly.
 //
 // This is one of two files here that write a shader of their own (the
 // other is node-scene.js): a shader that fails to compile takes the whole
 // drawing with it, so after compiling it checks, and quietly steps aside.
-// It talks to no other script and sets no global.
+// It talks to no other script and sets no global: where the page is it
+// reads off the page.
 // ============================================================
 (function () {
   const D = window.ALDEHYDE;
-  const slide = document.getElementById("slide-1");
+  const stage = document.getElementById("aldehyde-stage");
+  const first = document.getElementById("slide-1");
+  const formula = document.getElementById("slide-formula");
   const wrap = document.getElementById("molecule");
-  if (!D || !slide || !wrap || !window.THREE) return;
+  const container = document.getElementById("scroll-container");
+  if (!D || !first || !wrap || !window.THREE) return;
+  const links = formula ? Array.from(formula.querySelectorAll(".formula-link")) : [];
 
   const REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -84,7 +121,42 @@
   // its middle up and down, 2.2 across, whichever the window is shorter in.
   const FOV = 32, FIT_TALL = 2.3, FIT_WIDE = 2.2;
 
+  // THE FORMULA. How long each state takes to come, and to go again.
+  const REARRANGE_MS = 1500, REARRANGE_BACK_MS = 800;
+  const FLOW_MS = 2500, FLOW_BACK_MS = 680;
+  const AT = 0.5;              // how far down to the formula slide it begins: the title is gone by 0.45
+  // How close the cloud draws in round the bonds (1 not at all), how strong
+  // each part is drawn once it has, and how much it still swirls.
+  const TIGHT = { rest: 0.5, pi: 0.88, lone: 0.84 };
+  const FORM_PEAK = { rest: 0.72, pi: 0.78, lone: 0.74 };
+  const FORM_FLOW = 0.3;       // of FLOW
+  const FORM_SWAY = 0.14;      // it sways a little either side of facing you, radians
+  const FORM_EXTENT = 1.45;    // the formula and its cloud, angstrom either side of its middle
+  // The formula itself: the bonds in bright specks, stopping short of each
+  // atom's name; the C=O as two lines; the names as a chemistry book sets them.
+  const BOND_STEP = 0.004;     // angstrom between specks along a bond
+  const BOND_PAIR = 0.075;     // either side of the C=O's axis, angstrom
+  const BOND_GAP = 0.19;       // how far short of an atom's middle a bond stops
+  const BOND_INK = [1.0, 0.96, 0.9];
+  const ATOM_SIZE = 0.23;      // the names' letters, angstrom
+  const CLEAR = 0.78;          // the clear space round each, of that
+  // The threads and the names.
+  const TRAVEL = 0.46;         // of the flow, one speck's way from the molecule to its place
+  const SPLIT = 0.7;           // of that, along the thread; the rest into the letters
+  const COURIERS = 56;         // specks that keep running along each thread
+  const INK = [0.93, 0.91, 0.88];
+  // Where each thread leaves from, down each side (the left's; the right's
+  // mirror them), in angstrom on the formula as it faces you — oxygen's lone
+  // pair, the double bond, the C-H bond, the H — with the colour of what it
+  // leaves; and, on a narrow window, from above and below it, near its
+  // middle, to run up and down the channel between the two columns.
+  const FROM = [COLOUR.lone, COLOUR.pi, [0.86, 0.83, 0.79], [0.86, 0.83, 0.79]];
+  const LEAVE_FLANK = [[-0.48, 1.16], [-0.3, 0.3], [-0.56, -0.66], [-1.12, -1.03]];
+  const LEAVE_BAND = [[-0.07, 1.36], [-0.2, 1.24], [-0.2, -1.12], [-0.07, -1.22]];
+
   const phone = () => window.innerWidth < 700;
+  const smooth = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+  const ease = (x) => { x = Math.max(0, Math.min(1, x)); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
 
   let renderer;
   try {
@@ -108,12 +180,18 @@
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 200);
-  const turn = new THREE.Group();   // the sway, the lean
-  const body = new THREE.Group();   // the molecule: C=O across, the double bond's lobes up, the H towards you
-  body.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(
+  const mol = new THREE.Group();    // the molecule, turned between its two ways of standing
+  scene.add(mol);
+  // The cloud as the private page shows it: C=O across, the double bond's
+  // lobes up, the H towards you — and seen from its side, swaying.
+  const CLOUD_BODY = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(
     new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1), new THREE.Vector3(1, 0, 0)));
-  turn.add(body);
-  scene.add(turn);
+  // The formula as a book prints it: flat, facing you, the O at the top,
+  // the two H below either side, the double bond's lobes towards you.
+  const FORM_BODY = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(
+    new THREE.Vector3(0, 0, 1), new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0)));
+  // a place on the formula as it faces you (angstrom across, up) in the molecule's own terms
+  const onFormula = (x, y) => new THREE.Vector3(0, x, y);
 
   // ---- the shader: curl noise, and a soft speck --------------------------
   // Simplex noise in three dimensions: Ashima Arts and Stefan Gustavson
@@ -182,14 +260,17 @@
       return normalize(vec3(x, y, z) / (2.0 * e));
     }`;
 
+  // The cloud: each speck at its place (drawn in towards the bonds as the
+  // formula comes, `uConcrete`), swirled by the curl noise, gathered in.
   const VERTEX = `
-    uniform float uTime, uFlow, uFreq, uGather, uSize, uTwo;
+    uniform float uTime, uFlow, uFreq, uGather, uSize, uTwo, uConcrete, uTight, uClear;
+    uniform vec3 uAtoms[4];
     attribute float aSeed;
-    attribute vec3 aStart, aColour;
+    attribute vec3 aStart, aColour, aCore;
     varying vec3 vColour;
     ${NOISE}
     void main() {
-      vec3 home = position;
+      vec3 home = mix(position, aCore + (position - aCore) * uTight, uConcrete);
       vec3 p = home;
       // the curl noise: each speck swirls a little about its own place
       if (uFlow > 0.0) {
@@ -200,11 +281,18 @@
       // the gathering: in from a shell round the slide, each on its own delay
       float g = clamp((uGather - aSeed * 0.42) / 0.58, 0.0, 1.0);
       g = g * g * (3.0 - 2.0 * g);
+      // as the formula, a clear space round each atom for its name, as a
+      // book leaves the paper bare round a letter (in the molecule's plane:
+      // it faces you then)
+      float keep = 1.0;
+      if (uConcrete > 0.0) {
+        for (int i = 0; i < 4; i++) keep = min(keep, smoothstep(uClear * 0.55, uClear, length(p.yz - uAtoms[i].yz)));
+      }
       p = mix(aStart, p, g);
       vec4 mv = modelViewMatrix * vec4(p, 1.0);
       gl_Position = projectionMatrix * mv;
       gl_PointSize = uSize;
-      vColour = aColour * g;
+      vColour = aColour * g * mix(1.0, keep, uConcrete);
     }`;
 
   // A soft round speck, as the private page's: full in the middle, four
@@ -219,6 +307,97 @@
       gl_FragColor = vec4(vColour, uAlpha * a);
     }`;
 
+  // The bonds: specks strung along them, drawn out of the C (`aT` is how
+  // far along from it) as the formula comes.
+  const BOND_VERTEX = `
+    uniform float uSize, uGrow;
+    attribute float aT;
+    varying vec3 vColour;
+    void main() {
+      float shown = smoothstep(aT, aT + 0.08, uGrow);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      gl_PointSize = uSize;
+      vColour = vec3(${BOND_INK.map((v) => v.toFixed(3)).join(", ")}) * shown;
+    }`;
+
+  // The threads and the names, drawn straight onto the window in its own
+  // pixels. Each speck belongs to one name (`aInfo.x`): until it sets off
+  // (`aInfo.y`, when in the flow) it is nowhere; then it runs along that
+  // name's thread — a curve from where it leaves the molecule (uS) to the
+  // near end of the name (uE), through uA and uB — held within a pixel of
+  // it (`aInfo.z`), in the colour of what it left; then along the name's
+  // middle to its own place in a letter, and settles there in the page's
+  // light ink. The COURIERS (`aKind` 1) only ever run along the thread.
+  const TEXT_VERTEX = `
+    uniform vec2 uRes, uS[8], uA[8], uB[8], uE[8];
+    uniform vec3 uFrom[8], uInk;
+    uniform float uHot[8], uPhase[8], uFlow, uTime, uCourier, uSize;
+    attribute vec2 aTarget;
+    attribute vec4 aInfo;
+    attribute float aKind;
+    varying vec3 vColour;
+    varying float vAlpha;
+    vec2 bez(vec2 p0, vec2 p1, vec2 p2, vec2 p3, float t) {
+      float s = 1.0 - t;
+      return s * s * s * p0 + 3.0 * s * s * t * p1 + 3.0 * s * t * t * p2 + t * t * t * p3;
+    }
+    vec2 bezD(vec2 p0, vec2 p1, vec2 p2, vec2 p3, float t) {
+      float s = 1.0 - t;
+      return 3.0 * s * s * (p1 - p0) + 6.0 * s * t * (p2 - p1) + 3.0 * t * t * (p3 - p2);
+    }
+    vec2 along(int k, float t, float off) {
+      vec2 p = bez(uS[k], uA[k], uB[k], uE[k], t);
+      vec2 d = bezD(uS[k], uA[k], uB[k], uE[k], t);
+      d = d / max(length(d), 0.001);
+      return p + vec2(-d.y, d.x) * off;
+    }
+    void main() {
+      int k = int(aInfo.x + 0.5);
+      float hot = uHot[k];
+      vec2 p;
+      float alpha, ink;
+      if (aKind < 0.5) {
+        float local = clamp((uFlow - aInfo.y) / ${TRAVEL.toFixed(3)}, 0.0, 1.0);
+        if (local <= 0.0) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
+        if (local < ${SPLIT.toFixed(3)}) {
+          float t = local / ${SPLIT.toFixed(3)};
+          t = mix(t, t * t * (3.0 - 2.0 * t), 0.4);
+          p = along(k, t, aInfo.z * (0.35 + 0.65 * sin(3.14159 * t)));
+          alpha = smoothstep(0.0, 0.1, t);
+          ink = 0.0;
+        } else {
+          float q = (local - ${SPLIT.toFixed(3)}) / ${(1 - SPLIT).toFixed(3)};
+          p = vec2(mix(uE[k].x, aTarget.x, smoothstep(0.0, 0.75, q)),
+                   mix(uE[k].y, aTarget.y, smoothstep(0.3, 1.0, q)));
+          alpha = 1.0;
+          ink = smoothstep(0.1, 1.0, q);
+        }
+        // settled: breathing a little, and stirred by the hand
+        float settled = step(0.999, local);
+        alpha *= mix(1.0, 0.86 + 0.14 * sin(uTime * 1.3 + aInfo.w * 40.0), settled);
+        p += settled * hot * 0.9 * vec2(sin(uTime * 3.1 + aInfo.w * 53.0), cos(uTime * 2.7 + aInfo.w * 31.0));
+      } else {
+        float s = fract(uPhase[k] + aInfo.y);
+        p = along(k, s, aInfo.z);
+        alpha = uCourier * (0.5 + 0.5 * hot) * pow(sin(3.14159 * s), 0.7);
+        ink = 0.35;
+      }
+      vec3 c = mix(uFrom[k], uInk, ink);
+      vColour = mix(c, vec3(1.0), hot * 0.45);
+      vAlpha = alpha * (0.96 + 0.3 * hot);
+      gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
+      gl_PointSize = uSize * (1.0 + 0.2 * hot);
+    }`;
+  const TEXT_FRAGMENT = `
+    varying vec3 vColour;
+    varying float vAlpha;
+    void main() {
+      float r = length(2.0 * gl_PointCoord - 1.0);
+      if (r > 1.0) discard;
+      float a = r < 0.35 ? mix(1.0, 0.8, r / 0.35) : mix(0.8, 0.0, (r - 0.35) / 0.65);
+      gl_FragColor = vec4(vColour, vAlpha * a);
+    }`;
+
   // ---- the specks ----------------------------------------------------------
   function decode(b64) {
     const s = atob(b64);
@@ -229,18 +408,43 @@
   let seed = 7;
   const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
 
+  // The atoms, and the bonds the cloud draws in round.
+  const atom = {};
+  const Hs = [];
+  for (const [sym, x, y, z] of D.atoms) {
+    const v = new THREE.Vector3(x, y, z);
+    if (sym === "H") Hs.push(v); else atom[sym] = v;
+  }
+  Hs.sort((a, b) => a.y - b.y);   // the left one first, as the formula faces you
+  const BONDS = [[atom.C, atom.O], [atom.C, Hs[0]], [atom.C, Hs[1]]];
+  const nearest = new THREE.Vector3(), seg = new THREE.Vector3(), rel = new THREE.Vector3();
+  function coreOf(x, y, z, out) {
+    let best = Infinity;
+    for (const [a, b] of BONDS) {
+      seg.subVectors(b, a);
+      rel.set(x - a.x, y - a.y, z - a.z);
+      const t = Math.max(0, Math.min(1, rel.dot(seg) / seg.lengthSq()));
+      nearest.copy(a).addScaledVector(seg, t);
+      const d = (nearest.x - x) ** 2 + (nearest.y - y) ** 2 + (nearest.z - z) ** 2;
+      if (d < best) { best = d; out[0] = nearest.x; out[1] = nearest.y; out[2] = nearest.z; }
+    }
+  }
+
   const parts = {};
+  const core = [0, 0, 0];
   for (const name of ["rest", "lone", "pi"]) {
     const d = D.parts[name];
     const q = new Int8Array(decode(d.xyz).buffer);
     const shade = decode(d.shade);
     const n = d.n;
-    const pos = new Float32Array(n * 3), start = new Float32Array(n * 3);
+    const pos = new Float32Array(n * 3), start = new Float32Array(n * 3), cores = new Float32Array(n * 3);
     const col = new Float32Array(n * 3), sd = new Float32Array(n);
     const [cr, cg, cb] = COLOUR[name];
     for (let i = 0; i < n; i++) {
       // a byte a coordinate, and a hair of jitter so no lattice shows
       for (let a = 0; a < 3; a++) pos[i * 3 + a] = (q[i * 3 + a] + rand() - 0.5) * D.step;
+      coreOf(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2], core);
+      cores[i * 3] = core[0]; cores[i * 3 + 1] = core[1]; cores[i * 3 + 2] = core[2];
       // lit as the private page lights it: the two brought forward by how
       // dense their cloud is where the speck stands, and every speck a little
       // brighter or darker than the next
@@ -255,6 +459,7 @@
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
     geo.setAttribute("aStart", new THREE.BufferAttribute(start, 3));
+    geo.setAttribute("aCore", new THREE.BufferAttribute(cores, 3));
     geo.setAttribute("aColour", new THREE.BufferAttribute(col, 3));
     geo.setAttribute("aSeed", new THREE.BufferAttribute(sd, 1));
     const mat = new THREE.ShaderMaterial({
@@ -263,6 +468,8 @@
       uniforms: {
         uTime: { value: 0 }, uFlow: { value: REDUCE ? 0 : FLOW }, uFreq: { value: FREQ },
         uGather: { value: REDUCE ? 1 : 0 }, uSize: { value: 2 }, uAlpha: { value: PEAK[name] }, uTwo: { value: 1 },
+        uConcrete: { value: 0 }, uTight: { value: TIGHT[name] }, uClear: { value: ATOM_SIZE * CLEAR },
+        uAtoms: { value: [atom.O, atom.C, Hs[0], Hs[1]] },
       },
       transparent: true,
       depthWrite: false,
@@ -272,55 +479,261 @@
     const pts = new THREE.Points(geo, mat);
     pts.frustumCulled = false;
     pts.renderOrder = { rest: 1, lone: 2, pi: 3 }[name];
-    body.add(pts);
+    mol.add(pts);
     parts[name] = pts;
   }
 
-  // (The private page draws the skeleton in hairlines and names the atoms.
-  // Here the title stands in front of the molecule, and they ran under its
-  // letters — the H-C bond an underline to "Taste" — so they are left off:
-  // the title is the lettering on this slide. That was the first version.)
+  // ---- the formula ---------------------------------------------------------
+  // The bonds, each stopping BOND_GAP short of the atoms at its ends; the
+  // C=O as two lines either side of its axis, in the molecule's own plane.
+  const bondPos = [], bondT = [];
+  function strand(a, b, shift) {
+    const dir = new THREE.Vector3().subVectors(b, a);
+    const len = dir.length();
+    dir.normalize();
+    const from = a.clone().addScaledVector(dir, BOND_GAP).add(shift);
+    const run = len - 2 * BOND_GAP;
+    for (let s = 0; s <= run; s += BOND_STEP) {
+      const p = from.clone().addScaledVector(dir, s);
+      bondPos.push(p.x, p.y, p.z);
+      bondT.push((BOND_GAP + s) / len);
+    }
+  }
+  const across = new THREE.Vector3(0, 1, 0);   // in the plane, square to the C=O
+  strand(atom.C, atom.O, across.clone().multiplyScalar(BOND_PAIR));
+  strand(atom.C, atom.O, across.clone().multiplyScalar(-BOND_PAIR));
+  strand(atom.C, Hs[0], new THREE.Vector3());
+  strand(atom.C, Hs[1], new THREE.Vector3());
+  const bondGeo = new THREE.BufferGeometry();
+  bondGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(bondPos), 3));
+  bondGeo.setAttribute("aT", new THREE.BufferAttribute(new Float32Array(bondT), 1));
+  const bonds = new THREE.Points(bondGeo, new THREE.ShaderMaterial({
+    vertexShader: BOND_VERTEX,
+    fragmentShader: FRAGMENT,
+    uniforms: { uSize: { value: 2 }, uGrow: { value: 0 }, uAlpha: { value: 0 } },
+    transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+  }));
+  bonds.frustumCulled = false;
+  bonds.renderOrder = 4;
+  bonds.visible = false;
+  mol.add(bonds);
+
+  // The atoms' names, on the page over the drawing (crisper than specks).
+  const names = [["O", atom.O], ["C", atom.C], ["H", Hs[0]], ["H", Hs[1]]].map(([sym, at]) => {
+    const el = document.createElement("span");
+    el.className = "formula-atom";
+    el.textContent = sym;
+    wrap.appendChild(el);
+    return { el, at };
+  });
+
+  // ---- the threads and the names ----------------------------------------
+  const textGeo = new THREE.BufferGeometry();
+  const textMat = new THREE.ShaderMaterial({
+    vertexShader: TEXT_VERTEX,
+    fragmentShader: TEXT_FRAGMENT,
+    uniforms: {
+      uRes: { value: new THREE.Vector2(1, 1) },
+      uS: { value: Array.from({ length: 8 }, () => new THREE.Vector2()) },
+      uA: { value: Array.from({ length: 8 }, () => new THREE.Vector2()) },
+      uB: { value: Array.from({ length: 8 }, () => new THREE.Vector2()) },
+      uE: { value: Array.from({ length: 8 }, () => new THREE.Vector2()) },
+      uFrom: { value: Array.from({ length: 8 }, (_, i) => new THREE.Vector3(...FROM[i % 4])) },
+      uInk: { value: new THREE.Vector3(...INK) },
+      uHot: { value: new Float32Array(8) },
+      uPhase: { value: new Float32Array(8) },
+      uFlow: { value: 0 }, uTime: { value: 0 }, uCourier: { value: 0 }, uSize: { value: 2 },
+    },
+    transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+  });
+  const text = new THREE.Points(textGeo, textMat);
+  text.frustumCulled = false;
+  text.renderOrder = 5;
+  text.visible = false;
+  scene.add(text);
 
   // A shader that did not compile takes the drawing with it: check, and step aside.
   try {
+    bonds.visible = true;
+    // (the names' geometry is made once the page is laid out; one speck to compile against)
+    textGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
+    textGeo.setAttribute("aTarget", new THREE.BufferAttribute(new Float32Array(2), 2));
+    textGeo.setAttribute("aInfo", new THREE.BufferAttribute(new Float32Array(4), 4));
+    textGeo.setAttribute("aKind", new THREE.BufferAttribute(new Float32Array(1), 1));
+    text.visible = true;
     renderer.compile(scene, camera);
     const programs = renderer.info.programs || [];
     if (programs.some((p) => p.diagnostics && p.diagnostics.runnable === false)) throw new Error("shader");
+    bonds.visible = false;
+    text.visible = false;
   } catch (e) {
     renderer.dispose();
+    names.forEach((n) => n.el.remove());
     wrap.remove();
     return;
   }
 
   // ---- framing -------------------------------------------------------------
-  // In the middle of the slide, as large as the private page draws it.
-  let W = 1, H = 1, dist = 10;
+  // In the middle of the window, as large as the private page draws it; and,
+  // as the formula, as large as the room between the names leaves it.
+  let W = 1, H = 1, distCloud = 10, distForm = 10, denseCloud = 1, denseForm = 1, pxForm = 100;
+  let firstTop = 0, formulaTop = 1, band = false;
   const half = Math.tan((FOV * Math.PI) / 360);
+  const density = (px) => Math.max(0.5, Math.min(1, (px / 190) ** 2));
   function size() {
-    const r = slide.getBoundingClientRect();
+    const r = wrap.getBoundingClientRect();
     W = Math.max(1, r.width); H = Math.max(1, r.height);
     const small = phone();
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2));
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
     camera.updateProjectionMatrix();
-    dist = Math.max(FIT_TALL / half, FIT_WIDE / (half * camera.aspect));
+    distCloud = Math.max(FIT_TALL / half, FIT_WIDE / (half * camera.aspect));
     // one angstrom on screen; the specks sized in angstrom so they grow and
     // shrink with the cloud, and a smaller cloud, packing them closer, drawn
     // fainter — as the private page does
-    const px = (H / 2) / (half * dist);
-    const dense = Math.max(0.5, Math.min(1, (px / 190) ** 2));
+    const px = (H / 2) / (half * distCloud);
+    denseCloud = density(px);
+    // the formula, in the room the names leave it (never larger than the cloud)
+    pxForm = px;
+    if (formula && links.length === 8) {
+      const box = formula.getBoundingClientRect();
+      const rects = links.map((a) => a.getBoundingClientRect());
+      band = getComputedStyle(links[0].parentNode).getPropertyValue("--formula-layout").trim() === "band";
+      let halfW, halfH;
+      if (band) {
+        const top = Math.max(...[0, 1, 4, 5].map((i) => rects[i].bottom)) - box.top;
+        const bottom = Math.min(...[2, 3, 6, 7].map((i) => rects[i].top)) - box.top;
+        halfH = (bottom - top) / 2 - 12;
+        halfW = W / 2 - 18;
+      } else {
+        halfW = Math.min(...[0, 1, 2, 3].map((i) => box.left + W / 2 - rects[i].right)) - 28;
+        halfH = H / 2 - 64;
+      }
+      pxForm = Math.max(20, Math.min(px * 1.05, halfW / FORM_EXTENT, halfH / FORM_EXTENT));
+    }
+    distForm = (H / 2) / (half * pxForm);
+    denseForm = density(pxForm);
+    firstTop = first.offsetTop;
+    formulaTop = formula ? formula.offsetTop : firstTop + H;
     const scale = renderer.getPixelRatio();
     const cut = soft ? 0.2 : 1;
     for (const name in parts) {
       const u = parts[name].material.uniforms;
       u.uSize.value = (small ? 1.25 : 1.5) * GROW[name] * scale;
-      u.uAlpha.value = PEAK[name] * dense;
       u.uTwo.value = soft || small ? 0 : 1;
       parts[name].geometry.setDrawRange(0, Math.min(D.parts[name].n, Math.round(SHARE[name] * EMPHASIS[name] * cut)));
     }
-    if (REDUCE) draw(performance.now());
+    bonds.material.uniforms.uSize.value = (small ? 1.8 : 2.2) * scale;
+    textMat.uniforms.uSize.value = (small ? 1.55 : 1.75) * scale;
+    textMat.uniforms.uRes.value.set(W, H);
+    names.forEach((n) => { n.el.style.fontSize = (ATOM_SIZE * pxForm).toFixed(1) + "px"; });
+    write();
+    whereIsThePage();
+    if (REDUCE || !running) draw(performance.now());
   }
+
+  // WRITING THE NAMES: each link's own words drawn where the page lays them
+  // out (so a name that wraps on a phone is written as it wraps), and the
+  // inked pixels taken as places for specks. Where each thread ends — the
+  // near end of its name, half way down it — is taken with them.
+  const E = Array.from({ length: 8 }, () => ({ x: 0, y: 0, side: -1, row: 0 }));
+  let written = false;
+  function write() {
+    if (!formula || links.length !== 8) return;
+    const box = formula.getBoundingClientRect();
+    const targets = [], info = [], kind = [];
+    links.forEach((a, k) => {
+      const r = a.getBoundingClientRect();
+      const side = k < 4 ? -1 : 1;
+      const t = a.firstChild && a.firstChild.nodeType === 3 ? a.firstChild : null;
+      const cs = getComputedStyle(a);
+      const font = cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
+      const sizePx = parseFloat(cs.fontSize) || 20;
+      const SS = 3;
+      const cw = Math.max(1, Math.ceil(r.width * SS)), ch = Math.max(1, Math.ceil(r.height * SS));
+      const ink = document.createElement("canvas");
+      ink.width = cw; ink.height = ch;
+      const g = ink.getContext("2d");
+      g.setTransform(SS, 0, 0, SS, 0, 0);
+      g.font = font;
+      g.fillStyle = "#000";
+      g.textBaseline = "alphabetic";
+      let inner = side < 0 ? 0 : Infinity;
+      if (t) {
+        const re = /\S+/g;
+        let m;
+        while ((m = re.exec(t.data))) {
+          const range = document.createRange();
+          range.setStart(t, m.index);
+          range.setEnd(t, m.index + m[0].length);
+          const wr = range.getBoundingClientRect();
+          const mt = g.measureText(m[0]);
+          const asc = mt.fontBoundingBoxAscent || wr.height * 0.78;
+          const desc = mt.fontBoundingBoxDescent || wr.height * 0.22;
+          g.fillText(m[0], wr.left - r.left, wr.top - r.top + (wr.height - (asc + desc)) / 2 + asc);
+          inner = side < 0 ? Math.max(inner, wr.right) : Math.min(inner, wr.left);
+        }
+      }
+      if (!isFinite(inner) || !inner) inner = side < 0 ? r.right : r.left;
+      const ex = inner - box.left + side * -7, ey = r.top + r.height / 2 - box.top;
+      E[k] = { x: ex, y: ey, side, row: k % 4 };
+      const data = g.getImageData(0, 0, cw, ch).data;
+      const step = Math.max(0.9, sizePx / 24);
+      const span = Math.max(1, r.width);
+      for (let y = 0; y < r.height; y += step) {
+        for (let x = 0; x < r.width; x += step) {
+          const jx = x + rand() * step, jy = y + rand() * step;
+          const i = (Math.min(ch - 1, Math.floor(jy * SS)) * cw + Math.min(cw - 1, Math.floor(jx * SS))) * 4 + 3;
+          if (data[i] < 120) continue;
+          const tx = r.left - box.left + jx, ty = r.top - box.top + jy;
+          // set off nearest the thread first, so the name fills in from its near end
+          const far = Math.abs(tx - ex) / span;
+          targets.push(tx, ty);
+          info.push(k, (1 - TRAVEL) * Math.min(1, far * 0.86 + rand() * 0.14), (rand() - 0.5) * 1.6, rand());
+          kind.push(0);
+        }
+      }
+      for (let c = 0; c < COURIERS; c++) {
+        targets.push(0, 0);
+        info.push(k, c / COURIERS + rand() * 0.02, (rand() - 0.5) * 1.2, rand());
+        kind.push(1);
+      }
+    });
+    const n = kind.length;
+    textGeo.dispose();
+    textGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+    textGeo.setAttribute("aTarget", new THREE.BufferAttribute(new Float32Array(targets), 2));
+    textGeo.setAttribute("aInfo", new THREE.BufferAttribute(new Float32Array(info), 4));
+    textGeo.setAttribute("aKind", new THREE.BufferAttribute(new Float32Array(kind), 1));
+    textGeo.setDrawRange(0, n);
+    written = n > 0;
+    if (stage) stage.classList.toggle("formula-written", written);
+  }
+
+  // ---- where the page is, and so which way it is going -------------------
+  // Towards the formula once the page is past half way down to it (the
+  // title gone), and back towards the cloud above that.
+  let want = 0;
+  function whereIsThePage() {
+    if (!container || !formula) { want = 0; return; }
+    const p = (container.scrollTop - firstTop) / Math.max(1, formulaTop - firstTop);
+    const was = want;
+    want = p >= AT ? 1 : 0;
+    if (want !== was) wake();
+  }
+  if (container) container.addEventListener("scroll", whereIsThePage, { passive: true });
+
+  // ---- the hand on a name ------------------------------------------------
+  const hot = new Float32Array(8), hotTo = new Float32Array(8);
+  links.forEach((a, k) => {
+    const on = () => { hotTo[k] = 1; wake(); };
+    const off = () => { hotTo[k] = document.activeElement === a || a.matches(":hover") ? 1 : 0; wake(); };
+    a.addEventListener("pointerenter", on);
+    a.addEventListener("pointerleave", () => { hotTo[k] = document.activeElement === a ? 1 : 0; wake(); });
+    a.addEventListener("focus", on);
+    a.addEventListener("blur", off);
+  });
 
   // ---- the frame -----------------------------------------------------------
   let lean = { x: 0, y: 0 }, leanTo = { x: 0, y: 0 };
@@ -329,39 +742,139 @@
     leanTo = { x: (e.clientX / window.innerWidth - 0.5) * 2, y: (e.clientY / window.innerHeight - 0.5) * 2 };
   }, { passive: true });
 
+  let u = 0, f = 0;          // the rearranging, and the flow
+  const qCloud = new THREE.Quaternion(), qForm = new THREE.Quaternion(), qTurn = new THREE.Quaternion();
+  const euler = new THREE.Euler();
+  const v = new THREE.Vector3();
+  function toScreen(p) {
+    v.copy(p).applyMatrix4(mol.matrixWorld).project(camera);
+    return { x: (v.x + 1) / 2 * W, y: (1 - v.y) / 2 * H };
+  }
+  let namesShown = true;
+
   const born = performance.now();
+  let last = born;
   function draw(now) {
+    // (a slow frame moves the clocks on by a quarter of a second at most:
+    // a machine without a graphics card is slow, not stopped)
+    const dt = Math.min(250, Math.max(0, now - last));
+    last = now;
     const t = REDUCE ? 0 : (now - born) / 1000;
     const gather = REDUCE ? 1 : Math.min(1, (now - born) / GATHER_MS);
+
+    // the two clocks, whichever way the page is going (and back, whatever
+    // the page, once landing.js says it is leaving: see goTo there)
+    const going = want && !document.body.classList.contains("formula-leaving") ? 1 : 0;
+    if (REDUCE) { u = going; f = going; }
+    else if (going) { if (u < 1) u = Math.min(1, u + dt / REARRANGE_MS); else f = Math.min(1, f + dt / FLOW_MS); }
+    else if (f > 0) f = Math.max(0, f - dt / FLOW_BACK_MS);
+    else u = Math.max(0, u - dt / REARRANGE_BACK_MS);
+    const e = ease(u);
+
     if (!REDUCE) { lean.x += (leanTo.x - lean.x) * 0.04; lean.y += (leanTo.y - lean.y) * 0.04; }
-    turn.rotation.set(
-      SIDE.pitch + lean.y * LEAN,
-      SIDE.yaw + (REDUCE ? 0 : SWAY * Math.sin((t * 2 * Math.PI) / SWAY_S)) + lean.x * LEAN, 0);
-    camera.position.set(0, 0, dist);
+    const sway = REDUCE ? 0 : Math.sin((t * 2 * Math.PI) / SWAY_S);
+    euler.set(SIDE.pitch + lean.y * LEAN, SIDE.yaw + SWAY * sway + lean.x * LEAN, 0);
+    qCloud.setFromEuler(euler).multiply(CLOUD_BODY);
+    euler.set(lean.y * LEAN * 0.6, FORM_SWAY * sway + lean.x * LEAN * 0.6, 0);
+    qForm.setFromEuler(euler).multiply(FORM_BODY);
+    mol.quaternion.copy(qCloud).slerp(qForm, e);
+    camera.position.set(0, 0, distCloud + (distForm - distCloud) * e);
+    camera.updateMatrixWorld();   // (the names are placed before the frame is drawn)
+    scene.updateMatrixWorld();
+
+    const dense = denseCloud + (denseForm - denseCloud) * e;
     for (const name in parts) {
-      const u = parts[name].material.uniforms;
-      u.uTime.value = t * PACE; u.uGather.value = gather;
+      const m = parts[name].material.uniforms;
+      m.uTime.value = t * PACE; m.uGather.value = gather;
+      m.uConcrete.value = e;
+      m.uFlow.value = REDUCE ? 0 : FLOW * (1 - (1 - FORM_FLOW) * e);
+      m.uAlpha.value = (PEAK[name] + (FORM_PEAK[name] - PEAK[name]) * e) * dense;
     }
+
+    // the formula: the bonds drawn out of the C, then the names of the atoms
+    const grow = smooth((u - 0.3) / 0.55);
+    bonds.visible = grow > 0;
+    bonds.material.uniforms.uGrow.value = grow * 1.1;
+    bonds.material.uniforms.uAlpha.value = 0.9 * dense;
+    const named = smooth((u - 0.6) / 0.4);
+    if (named > 0 || namesShown) {
+      for (const n of names) {
+        const s = toScreen(n.at);
+        n.el.style.transform = "translate(" + s.x.toFixed(1) + "px," + s.y.toFixed(1) + "px) translate(-50%,-50%)";
+        n.el.style.opacity = named.toFixed(3);
+      }
+      namesShown = named > 0;
+    }
+
+    // the threads and the names written in specks
+    text.visible = written && f > 0;
+    if (text.visible) {
+      const m = textMat.uniforms;
+      const pick = band ? LEAVE_BAND : LEAVE_FLANK;
+      for (let k = 0; k < 8; k++) {
+        const end = E[k];
+        const [lx, ly] = pick[end.row];
+        const s = toScreen(onFormula(-lx * end.side, ly));
+        m.uS.value[k].set(s.x, s.y);
+        m.uE.value[k].set(end.x, end.y);
+        if (band) {
+          // up or down the channel, and in to the name at its level
+          m.uA.value[k].set(s.x, s.y + (end.y - s.y) * 0.72);
+          m.uB.value[k].set(s.x, end.y);
+        } else {
+          // out sideways from the molecule and in sideways to the name
+          m.uA.value[k].set(s.x + (end.x - s.x) * 0.55, s.y);
+          m.uB.value[k].set(end.x - (end.x - s.x) * 0.4, end.y);
+        }
+        hot[k] += (hotTo[k] - hot[k]) * (REDUCE ? 1 : 0.12);
+        m.uHot.value[k] = hot[k];
+        m.uPhase.value[k] = (m.uPhase.value[k] + dt / 1000 * (0.16 + 0.34 * hot[k])) % 1;
+      }
+      m.uFlow.value = f;
+      m.uTime.value = t;
+      m.uCourier.value = REDUCE ? f : smooth((f - 0.82) / 0.18);
+    }
+
     renderer.render(scene, camera);
+
+    // Where it is, said on the drawing for anything that wants to know
+    // (the tests): cloud, turning, formula, flowing, written.
+    // And the body told whether the names are out, which is all landing.js
+    // knows of it: it holds the page on its way back up until they are in.
+    const state = u <= 0 ? "cloud" : u < 1 ? "turning" : f <= 0 ? "formula" : f < 1 ? "flowing" : "written";
+    if (state !== wrap.dataset.state) {
+      wrap.dataset.state = state;
+      document.body.classList.toggle("formula-shown", f > 0);
+    }
   }
 
-  // Drawn only while the first slide is on the screen, and not under the menu or About me.
+  // Drawn only while the dark slides are on the screen, and not under the
+  // menu or About me.
   let seen = true, running = false, drawn = 0;
+  const settled = () => REDUCE || (want ? f >= 1 && u >= 1 : u <= 0 && f <= 0);
   function loop(now) {
     running = false;
     if (!seen) return;
     const covered = document.body.classList.contains("menu-open") || document.body.classList.contains("about-shown");
     if (!covered && (!soft || now - drawn > 80)) { draw(now); drawn = now; }
+    else last = now;
+    if (REDUCE && settled()) return;
     running = true;
     requestAnimationFrame(loop);
   }
-  function wake() { if (!running && !REDUCE && seen) { running = true; requestAnimationFrame(loop); } }
+  function wake() { if (!running && seen) { running = true; requestAnimationFrame(loop); } }
   new IntersectionObserver((entries) => {
     seen = entries[entries.length - 1].isIntersecting;
-    if (seen) { if (REDUCE) draw(performance.now()); else wake(); }
-  }).observe(slide);
-  new ResizeObserver(size).observe(slide);
+    if (seen) wake();
+  }).observe(stage || first);
+  let resizing = 0;
+  new ResizeObserver(() => {
+    window.clearTimeout(resizing);
+    resizing = window.setTimeout(size, 120);
+  }).observe(stage || first);
   size();
+  // the names written again once the page's own face has come
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => size());
   wrap.classList.add("molecule-drawn");
-  if (REDUCE) draw(performance.now()); else wake();
+  wake();
 })();

@@ -159,3 +159,22 @@ the page has not left the first slide (its scroll short of the first slide's hei
 Menu's own foot, `MENU_FOOT`), `landing.js` puts **`first-slide-dark`** on the body, and the
 stylesheet turns the Menu's ink light and its ground on a phone dark. The thread still leaves from
 under the title; over the dark slide it is not seen until the second.
+
+## 2026-09-30, later — four slides: the formula before the sentence
+
+A slide stands between the title and the sentence now, **the formula slide** (`#slide-formula`;
+see [its report](2026-09-30-the-formula-slide.md)). What changed here:
+
+- **The slides that matter are found by name, not by place.** The long move and the way out of
+  the map belong to `#slide-3` wherever it stands (`MAP`), and the paper and the thread read
+  `#slide-2` and `#slide-3` by name; before, all three counted the map as the third slide. The ids
+  stayed: `slide-2` is still the sentence and `slide-3` the map.
+- **The Scroll button and the first key press go to the formula**; the corners fade over that leg
+  as before, and **so does the title**, later (gone by 0.45) and **pinned** — moved down as far as
+  the page goes up, so it fades where it stands over the pinned aldehyde.
+- **Leaving the formula upwards is held** while its names are out: `molecule.js` says they are
+  (`formula-shown` on the body), this file says it is leaving (`formula-leaving`), and the page
+  waits until they are in, or `FORMULA_HOLD_MS` (1.1s) at most, before it scrolls — as the way out
+  of the map holds for the collapse. A plain scroll otherwise.
+- **`first-slide-dark`** covers both dark slides: it is on while the page is short of the formula
+  slide's foot, less the Menu's.

@@ -57,3 +57,11 @@ works.
 ## Known issues / TODO
 
 None outstanding. Keep both `TRANSITION` treatments working; neither has been retired.
+
+## 2026-09-30 — out of the foot of the dark slides
+
+The formula slide stands between the title and the sentence since 2026-09-30, and the title fades
+where it stands. So the first leg **leaves from the foot of the dark stage** the first two slides
+stand on (`#aldehyde-stage`), not from under the title: from under the title it would have run
+down through the formula. The sentence and the map are read by name (`#slide-2`, `#slide-3`), not
+as the second and third slides. See [the formula slide](2026-09-30-the-formula-slide.md).

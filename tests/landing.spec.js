@@ -1,8 +1,9 @@
 // ============================================================
 // THE LANDING PAGE
 //
-// index.html is three full-screen panels ("slides") that you move
-// between with the wheel, the arrow keys, or the Scroll button.
+// index.html is four full-screen panels ("slides") that you move
+// between with the wheel, the arrow keys, or the Scroll button: the
+// title, the formula (2026-09-30), the sentence and the map.
 // The moving is hand-written rather than left to the browser, so
 // it is worth checking it actually lands where it should.
 // ============================================================
@@ -13,14 +14,29 @@ const scrollTop = (page) =>
   page.evaluate(() => document.getElementById("scroll-container").scrollTop);
 const slideTop = (page, id) =>
   page.evaluate((id) => document.getElementById(id).offsetTop, id);
+// Down to the sentence the way a visitor goes: to the formula, then on.
+async function toTheSentence(page) {
+  await page.keyboard.press("ArrowDown");
+  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(await slideTop(page, "slide-formula"));
+  await page.waitForTimeout(300);
+  await page.keyboard.press("ArrowDown");
+  const two = await slideTop(page, "slide-2");
+  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(two);
+  await page.waitForTimeout(300);
+  return two;
+}
 
 test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
 });
 
-test("the landing page has exactly three slides", async ({ page }) => {
+// The formula slide stands between the title and the sentence since
+// 2026-09-30 ("introduce a 4th page, between the first and second").
+test("the landing page has exactly four slides, the formula between the title and the sentence", async ({ page }) => {
   await page.goto("/index.html");
-  await expect(page.locator(".slide")).toHaveCount(3);
+  await expect(page.locator(".slide")).toHaveCount(4);
+  expect(await page.locator(".slide").evaluateAll((all) => all.map((s) => s.id)))
+    .toEqual(["slide-1", "slide-formula", "slide-2", "slide-3"]);
   await expect(page.locator("#slide-1")).toBeVisible();
 });
 
@@ -29,7 +45,7 @@ test("the Scroll button moves to the second slide", async ({ page }) => {
   expect(await scrollTop(page)).toBe(0);
 
   await page.locator("#scroll-cue").click();
-  const target = await slideTop(page, "slide-2");
+  const target = await slideTop(page, "slide-formula");
   await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(target);
 });
 
@@ -37,7 +53,7 @@ test("arrow keys move one slide at a time, and stop at the ends", async ({ page 
   await page.goto("/index.html");
 
   await page.keyboard.press("ArrowDown");
-  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(await slideTop(page, "slide-2"));
+  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(await slideTop(page, "slide-formula"));
 
   await page.keyboard.press("ArrowUp");
   await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(0);
@@ -66,7 +82,7 @@ test("arrow keys do nothing while the menu is open, and work again once it close
   await expect(page.locator(".menu-overlay")).not.toHaveClass(/open/);
 
   await page.keyboard.press("ArrowDown");
-  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(await slideTop(page, "slide-2"));
+  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(await slideTop(page, "slide-formula"));
 });
 
 // Both corners of the title slide — the block bottom right and the
@@ -98,7 +114,7 @@ for (const [what, selector] of [
       page.evaluate((f) => {
         const container = document.getElementById("scroll-container");
         container.style.scrollSnapType = "none";
-        container.scrollTop = document.getElementById("slide-2").offsetTop * f;
+        container.scrollTop = document.getElementById("slide-formula").offsetTop * f;
       }, fraction);
 
     await park(0.2);
@@ -143,7 +159,7 @@ test("the page still works with animations turned off in the operating system", 
   await page.goto("/index.html");
 
   await page.locator("#scroll-cue").click();
-  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(await slideTop(page, "slide-2"));
+  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(await slideTop(page, "slide-formula"));
 
   expect(errors).toEqual([]);
 });
@@ -182,10 +198,7 @@ test("on the long move between the sentence and the map, the page is moved befor
   await page.goto("/index.html");
   await page.waitForTimeout(600);
 
-  await page.keyboard.press("ArrowDown");
-  const two = await slideTop(page, "slide-2");
-  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(two);
-  await page.waitForTimeout(300);
+  const two = await toTheSentence(page);
 
   await page.evaluate(() => { window.__watch = true; });
   await page.keyboard.press("ArrowDown");
@@ -246,10 +259,7 @@ test("the long move to the map sets off at once and eases evenly", async ({ page
   });
   await page.goto("/index.html");
   await page.waitForTimeout(600);
-  await page.keyboard.press("ArrowDown");
-  const two = await slideTop(page, "slide-2");
-  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBe(two);
-  await page.waitForTimeout(300);
+  const two = await toTheSentence(page);
 
   await page.keyboard.press("ArrowDown");
   const three = await slideTop(page, "slide-3");
@@ -403,8 +413,15 @@ test("the aldehyde glows big in the middle of the dark first slide, the double b
   // the private page's dark ground, and the title in its light ink
   const ground = await page.locator("#slide-1").evaluate((e) => getComputedStyle(e).backgroundColor);
   expect(ground).toBe("rgb(31, 31, 32)");
-  const ink = await page.locator(".title-content h1").evaluate((e) => getComputedStyle(e).color);
-  expect(ink).toBe("rgb(236, 232, 226)");
+  // the title in white, taken away from what is behind it (2026-09-30: "the
+  // main text be inverse of the colours behind it"), with no shadow of the
+  // ground round it any more
+  const ink = await page.locator(".title-content").evaluate((e) => ({
+    colour: getComputedStyle(e.querySelector("h1")).color,
+    blend: getComputedStyle(e).mixBlendMode,
+    shadow: getComputedStyle(e.querySelector("h1")).textShadow,
+  }));
+  expect(ink).toEqual({ colour: "rgb(255, 255, 255)", blend: "difference", shadow: "none" });
   // over the whole of the slide, taking nothing from the pointer, and under the title
   const slide = await page.locator("#slide-1").boundingBox();
   const canvas = await page.locator(".molecule-canvas").boundingBox();
@@ -436,10 +453,13 @@ test("the aldehyde glows big in the middle of the dark first slide, the double b
   expect(errors).toEqual([]);
 });
 
-test("the Menu is light over the dark first slide, and dark again on the second", async ({ page }) => {
+test("the Menu is light over the dark first slides, and dark again on the sentence", async ({ page }) => {
   await page.goto("/index.html");
   const menu = page.locator(".menu-trigger");
   await expect.poll(() => menu.evaluate((e) => getComputedStyle(e).color)).toBe("rgb(236, 232, 226)");
+  await jumpToSlide(page, "slide-formula");
+  await page.waitForTimeout(200);
+  expect(await menu.evaluate((e) => getComputedStyle(e).color), "the formula is dark too").toBe("rgb(236, 232, 226)");
   await jumpToSlide(page, "slide-2");
   await expect.poll(() => menu.evaluate((e) => getComputedStyle(e).color), { timeout: 3000 }).toBe("rgb(23, 23, 15)");
   await jumpToSlide(page, "slide-1");

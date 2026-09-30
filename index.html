@@ -50,37 +50,66 @@
 
 <main id="scroll-container">
 
-  <!-- SLIDE 1 — TITLE. Edit: the big line, the line under it. The
-       square at the title opens ABOUT ME (below, after the slides) —
-       the owner's own words, 2026-09-29.
-       THE ALDEHYDE stands in the middle of it, the title in front of it
-       (2026-09-30): formaldehyde's electron cloud on the dark ground of
-       the private page it was first drawn on, the double bond in gold and
-       oxygen's lone pair in violet, drawn by molecule.js from
-       aldehyde-data.js. -->
-  <section class="slide title-slide dark-surface" id="slide-1">
+  <!-- THE DARK STAGE (2026-09-30): the title slide and the formula slide
+       after it, on one dark ground, with THE ALDEHYDE standing still in the
+       middle of both while the page moves (`.molecule` sticks to the top of
+       the window for as long as either is under it). Drawn by molecule.js
+       from aldehyde-data.js. -->
+  <div class="aldehyde-stage" id="aldehyde-stage">
     <div class="molecule" id="molecule" aria-hidden="true">
       <canvas class="molecule-canvas"></canvas>
     </div>
-    <div class="title-content">
-      <div class="title-line">
-        <h1>The Taste of Aldehydes</h1>
-        <button class="about-open" type="button" aria-haspopup="dialog" aria-controls="about" aria-expanded="false">
-          <span class="about-open-box" aria-hidden="true"><span class="about-open-mark"></span></span>
-          <span class="about-open-word">About me</span>
-        </button>
+
+    <!-- SLIDE 1 — TITLE. Edit: the big line, the line under it. The
+         square at the title opens ABOUT ME (below, after the slides) —
+         the owner's own words, 2026-09-29. The aldehyde glows behind it:
+         formaldehyde's electron cloud, the double bond in gold and
+         oxygen's lone pair in violet. The title INVERTS what is behind it
+         (2026-09-30), so it reads over the glow as over the ground. -->
+    <section class="slide title-slide dark-surface" id="slide-1">
+      <div class="title-content">
+        <div class="title-line">
+          <h1>The Taste of Aldehydes</h1>
+          <button class="about-open" type="button" aria-haspopup="dialog" aria-controls="about" aria-expanded="false">
+            <span class="about-open-box" aria-hidden="true"><span class="about-open-mark"></span></span>
+            <span class="about-open-word">About me</span>
+          </button>
+        </div>
+        <p class="title-sub">Perfumes and my notes about them</p>
       </div>
-      <p class="title-sub">Perfumes and my notes about them</p>
-    </div>
-    <div class="title-block">
-      <span>A portfolio</span>
-      <span>2026 edition</span>
-    </div>
-    <button class="scroll-cue" id="scroll-cue" aria-label="Scroll to next section">
-      <span>Scroll</span>
-      <svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 4v15M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-    </button>
-  </section>
+      <div class="title-block">
+        <span>A portfolio</span>
+        <span>2026 edition</span>
+      </div>
+      <button class="scroll-cue" id="scroll-cue" aria-label="Scroll to next section">
+        <span>Scroll</span>
+        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 4v15M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+    </section>
+
+    <!-- THE FORMULA SLIDE (2026-09-30) — a trial of another way into the
+         site than the map on the last slide. The title fades, the aldehyde
+         comes together as its formula (H2C=O, flat, the O at the top), and
+         threads of specks run out of it to the eight pages of the Menu, four
+         each side, whose names are written in specks where these links
+         stand. The links are the real ones; the specks are drawn over them.
+         Without the drawing they are simply these words.
+         THE SAME EIGHT AS THE MENU (SITE_LINKS in nav.js, without Home), in
+         its order: the first four down the left, the next four down the
+         right. A page added to the Menu is added here too (a test says so). -->
+    <section class="slide formula-slide dark-surface" id="slide-formula">
+      <nav class="formula-menu" aria-label="The pages of the site">
+        <a class="formula-link" href="categories/scent-descriptions.html">Scent descriptions</a>
+        <a class="formula-link" href="categories/theories.html">Theories</a>
+        <a class="formula-link" href="categories/researches.html">Explorations &amp; Researches</a>
+        <a class="formula-link" href="categories/favorites.html">Favourites</a>
+        <a class="formula-link" href="categories/note-library.html">Note Library</a>
+        <a class="formula-link" href="categories/other-2.html">Photography</a>
+        <a class="formula-link" href="search.html">Search</a>
+        <a class="formula-link" href="contact.html">Contact</a>
+      </nav>
+    </section>
+  </div>
 
   <!--
     SLIDE 2 — a single centered, italic line: the owner's own, with the

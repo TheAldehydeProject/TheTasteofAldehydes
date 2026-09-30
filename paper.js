@@ -21,7 +21,11 @@
   if (!container || !gridCanvas || !noiseCanvas) return;
 
   const slides = Array.from(container.querySelectorAll(".slide"));
-  if (slides.length < 3) return;
+  // The sentence and the map, by name: the formula slide stands before
+  // them since 2026-09-30.
+  const intro = document.getElementById("slide-2");
+  const map = document.getElementById("slide-3");
+  if (slides.length < 3 || !intro || !map) return;
 
   const REDUCE_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -525,8 +529,8 @@
     // at the foot of this function.
     const moving = lastTop >= 0 && Math.abs(top - lastTop) > 0.25;
     lastTop = top;
-    const leg = (slides[2].offsetTop - slides[1].offsetTop) || 1;
-    const raw = clamp((top - slides[1].offsetTop) / leg);
+    const leg = (map.offsetTop - intro.offsetTop) || 1;
+    const raw = clamp((top - intro.offsetTop) / leg);
 
     // The map arrives on the plain progress. The paper is deliberately
     // ahead of it now: the exponent below is less than 1, so it is

@@ -101,7 +101,7 @@ test("the menu opens the same way on every slide of the landing page", async ({ 
   await page.goto("/index.html");
   await page.waitForTimeout(400);
 
-  for (const slide of ["slide-1", "slide-2", "slide-3"]) {
+  for (const slide of ["slide-1", "slide-formula", "slide-2", "slide-3"]) {
     if (slide !== "slide-1") {
       await jumpToSlide(page, slide);
       if (slide === "slide-3") await waitForMapSettled(page);

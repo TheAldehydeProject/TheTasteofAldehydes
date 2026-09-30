@@ -2,7 +2,8 @@
 Date: 2026-09-30
 Files touched: `molecule.js` (new), `aldehyde-data.js` (new, written by the tool),
 `tools/aldehyde/cloud.py` (new), `index.html`, `style.css`, `landing.js`, `title.js`,
-`tools/seo.py`, `tests/landing.spec.js`
+`tools/seo.py`, `tests/landing.spec.js` (and, for the formula slide the same day,
+[its own report](2026-09-30-the-formula-slide.md))
 
 What changed: The home page's first slide is **dark** now, the dark grey of the private page the
 molecule was first drawn on, and **a big aldehyde glows in the middle of it**: formaldehyde,
@@ -118,9 +119,9 @@ paper cannot glow, so they were asked, and chose **a dark first slide**.
   cursor reads its colour anyway. The slides after it are white as they were. The browser's own
   bar on a phone is the same grey (`THEME` in `tools/seo.py`).
 - **The title in front, in the middle.** It stands where it always stood, above the drawing
-  (`z-index`), the molecule's middle at the slide's middle. **A soft shadow of the ground round
-  its letters** keeps it read over the glow, and its line and the square's words are in a lighter
-  grey with a stronger one (they were lost over the gold).
+  (`z-index`), the molecule's middle at the slide's middle. **It inverts what is behind it**
+  (since the formula slide, later the same day; it stood in a soft shadow of the ground before,
+  its line and the square's words in a lighter grey with a stronger one).
 - **The Menu**, fixed over whatever slide is under it, is **light while the first slide is under
   it**: `landing.js` puts `first-slide-dark` on the body while the page has not left it, and the
   stylesheet turns the Menu's ink and its phone ground over.
@@ -128,7 +129,8 @@ paper cannot glow, so they were asked, and chose **a dark first slide**.
   here; they were a fixed near-black.
 - **About me** opens over the dark slide with a veil of the ground, the sheet the paper it always
   was.
-- **It draws only while the first slide is on the screen**, and not under the Menu or About me.
+- **It draws only while the first slide is on the screen**, and not under the Menu or About me
+  (since the formula slide, 2026-09-30 later: while either dark slide is).
 - **A machine drawing without a graphics card** (the tests' browser, an old laptop) works the
   flow out on its processor, which the rest of the page shares: there it gets a fifth of the
   specks, one swirl, and a new frame a twelfth of a second at most. **`?molecule=full`** on the
@@ -137,7 +139,18 @@ paper cannot glow, so they were asked, and chose **a dark first slide**.
   library, or if its shader will not compile**, it is not there at all, and the slide is the title
   alone on its dark ground (it checks after compiling, and steps aside).
 - **It talks to no other script and sets no global**: the landing page's five `window` globals are
-  untouched.
+  untouched. (Since the formula slide it and `landing.js` share two classes on the body,
+  `formula-shown` and `formula-leaving` — see [its report](2026-09-30-the-formula-slide.md).)
+
+## 2026-09-30, later — the formula slide, and the title inverted
+
+"okay, that is actually perfect. let us tweak a few things": **the title inverts what is behind
+it** (white, `mix-blend-mode: difference` — the soft shadow of the ground round its letters is
+gone), and **a fourth slide stands after this one**, where the aldehyde comes together as its
+formula, flat, the O at the top, and writes the Menu's pages in specks either side of it. The
+aldehyde is **pinned** now (`position: sticky` in `.aldehyde-stage`, which the first two slides
+stand on), and `molecule.js` draws both states. All of it is in [the formula slide's
+report](2026-09-30-the-formula-slide.md).
 
 ## The first try (the morning of 2026-09-30) — replaced
 

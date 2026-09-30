@@ -1,8 +1,10 @@
 // ============================================================
 // THE THREAD (index.html only)
 // One straight line down the middle of the landing page: it
-// leaves the title, meets the second slide's sentence, and picks
-// up again below it to end on the centre of the node map. It is
+// comes out of the foot of the dark first slides (it left the
+// title until the formula slide stood under it, 2026-09-30),
+// meets the sentence, and picks up again below it to end on the
+// centre of the node map. It is
 // simply there — it does not draw itself as you scroll.
 //
 // What changes is its character on the last leg, and there are
@@ -29,7 +31,14 @@ const TRANSITION = "dissolve";
   const slides = Array.from(container.querySelectorAll(".slide"));
   const titleEl = document.querySelector(".title-content");
   const introEl = document.querySelector(".intro-lede");
-  if (slides.length < 3 || !titleEl || !introEl) return;
+  // The sentence and the map, by name (the formula slide stands before
+  // them since 2026-09-30), and the dark stage the first two slides stand
+  // on: the thread leaves from its foot rather than from the title, since
+  // the title fades there and the formula stands in the way down.
+  const intro = document.getElementById("slide-2");
+  const map = document.getElementById("slide-3");
+  const stage = document.getElementById("aldehyde-stage");
+  if (slides.length < 3 || !titleEl || !introEl || !intro || !map) return;
 
   const REDUCE_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const NS = "http://www.w3.org/2000/svg";
@@ -122,13 +131,13 @@ const TRANSITION = "dissolve";
     centreX = Math.round(width / 2);
     const title = place(titleEl);
     const intro = place(introEl);
-    centreY = slides[2].offsetTop + slides[2].offsetHeight / 2;
+    centreY = map.offsetTop + map.offsetHeight / 2;
     top0 = intro.bottom + GAP;
     bottom0 = centreY;
 
     toText.setAttribute("x1", centreX);
     toText.setAttribute("x2", centreX);
-    toText.setAttribute("y1", title.bottom + GAP);
+    toText.setAttribute("y1", stage ? place(stage).bottom : title.bottom + GAP);
     toText.setAttribute("y2", intro.top - GAP);
 
     if (forking) {
@@ -268,8 +277,8 @@ const TRANSITION = "dissolve";
     // column as the page travels. By the time it hands over it is
     // already the same line in the same place at the same strength, so
     // the swap is not something you can see happen.
-    const leg = (slides[2].offsetTop - slides[1].offsetTop) || 1;
-    const onMap = Math.max(0, Math.min(1, (container.scrollTop - slides[1].offsetTop) / leg));
+    const leg = (map.offsetTop - intro.offsetTop) || 1;
+    const onMap = Math.max(0, Math.min(1, (container.scrollTop - intro.offsetTop) / leg));
     const x = centreX + (hubX - centreX) * onMap;
     const ink = THREAD_INK + (REFORM_INK - THREAD_INK) * onMap;
 
