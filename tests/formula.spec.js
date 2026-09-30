@@ -227,9 +227,10 @@ test("five stages, smoothly: the title, the title gone, the aldehyde upright, it
   expect(errors).toEqual([]);
 });
 
-// "a smooth scrolling instead of incremental": the page scrolls as any page
-// does, the stage follows it smoothly, and a wheel stopped between two
-// stages stays where it stopped.
+// "a smooth scrolling instead of incremental", and then "EVERYTHING should
+// be smooth and gradual; and not incremental": the wheel's notches glide
+// the page on a spring, the stage follows it, and a wheel stopped between
+// two stages stays where it stopped.
 test("the wheel scrolls it smoothly, as far as it is turned and back, and nothing snaps", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
@@ -249,7 +250,8 @@ test("the wheel scrolls it smoothly, as far as it is turned and back, and nothin
   const seen = await page.evaluate(() => window.__seen);
   const leg = await page.evaluate(() => document.querySelector(".stage-run").offsetHeight / 4);
   const end = seen[seen.length - 1];
-  expect(end, "as far as it was turned: three notches of a leg").toBeCloseTo(300 / leg, 1);
+  // (the glide sends the page 0.85 of a notch — WHEEL_SCALE in landing.js)
+  expect(end, "as far as it was turned: three notches of a leg").toBeCloseTo((300 * 0.85) / leg, 1);
   const steps = seen.slice(1).map((v, i) => v - seen[i]);
   expect(Math.max(...steps), "never a jump").toBeLessThan(0.15);
   expect(Math.min(...steps), "never back").toBeGreaterThanOrEqual(-1e-6);
@@ -285,7 +287,7 @@ test("the lines come down the window from the top as the last stage comes", asyn
   expect((await strip(760)).lit, "and at the foot once it is there").toBeGreaterThan(30);
 });
 
-test("a name is half hidden until the hand comes to it: then it is lit, and the specks of its line are drawn to the hand", async ({ page }) => {
+test("a name is quiet until the hand comes to it: then it comes up gradually to the whole of itself, and the specks of its line are drawn to the hand", async ({ page }) => {
   test.setTimeout(120000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html");
@@ -294,17 +296,16 @@ test("a name is half hidden until the hand comes to it: then it is lit, and the 
   await settled(page, 4);
   await expect.poll(() => state(page), { timeout: 30000 }).toBe("lined");
   const name = page.locator(".formula-link").nth(1);
-  const look = () => name.evaluate((e) => {
-    const cs = getComputedStyle(e);
-    return { colour: cs.color, veil: cs.maskSize || cs.webkitMaskSize, image: cs.maskImage || cs.webkitMaskImage };
+  // how much of itself it shows: its quiet (a filter) times its coming up (opacity)
+  const quiet = () => name.evaluate((e) => {
+    const m = /opacity\(([\d.]+)\)/.exec(getComputedStyle(e).filter);
+    return (m ? +m[1] : 1) * +getComputedStyle(e).opacity;
   });
-  // half hidden: veiled, one band to a line of the lettering, and a little dim
-  const hidden = await look();
-  expect(hidden.image, "a veil over it").toMatch(/gradient/);
-  expect(hidden.colour).toBe("rgba(243, 240, 235, 0.84)");
-  const band = parseFloat(hidden.veil.split(" ")[1]);
-  const lineHeight = await name.evaluate((e) => parseFloat(getComputedStyle(e).lineHeight));
-  expect(Math.abs(band - lineHeight), "its veil a band to a line").toBeLessThan(1.5);
+  // quiet: low, but whole — nothing of it hidden away (it was half veiled for a round)
+  const rest = await quiet();
+  expect(rest, "low at rest").toBeLessThan(0.45);
+  expect(rest, "but there").toBeGreaterThan(0.2);
+  expect(await name.evaluate((e) => getComputedStyle(e).maskImage || getComputedStyle(e).webkitMaskImage), "no veil").toBe("none");
 
   const [lx] = await lineXs(page);
   const r = await name.boundingBox();
@@ -313,19 +314,21 @@ test("a name is half hidden until the hand comes to it: then it is lit, and the 
   await page.mouse.move(1380, 60);
   await page.waitForTimeout(1500);
   const before = await light(page, between);
-  // the hand on it
-  await page.mouse.move(r.x + r.width / 2, r.y + r.height / 2, { steps: 6 });
-  await expect.poll(async () => (await look()).colour, { timeout: 3000 }).toBe("rgb(255, 255, 255)");
-  await page.waitForTimeout(1600);
-  const lit = await look();
-  expect(parseFloat(lit.veil.split(" ")[1]), "the veil drawn off it").toBeGreaterThan(r.height * 3);
+  // the hand on it: it comes up, gradually, to the whole of itself
+  await page.mouse.move(r.x + r.width / 2, r.y + r.height / 2, { steps: 4 });
+  await page.waitForTimeout(250);
+  const partway = await quiet();
+  expect(partway, "on its way up").toBeGreaterThan(rest + 0.02);
+  expect(partway, "gradually, not at once").toBeLessThan(0.97);
+  await expect.poll(quiet, { timeout: 3000 }).toBeGreaterThan(0.99);
+  await page.waitForTimeout(1200);
   await expect(page.locator(".molecule-charge"), "δ− by the hand").toHaveClass(/is-on/);
-  expect(await page.locator(".molecule-charge").textContent()).toBe("δ−");
+  expect(await page.locator(".molecule-charge").textContent()).toBe("\u03b4\u2212");
   const after = await light(page, between);
   expect(after.lit, "the specks of its line drawn out towards the hand").toBeGreaterThan(before.lit * 1.8 + 15);
-  // and the hand gone, so is the light
+  // and the hand gone, quiet again
   await page.mouse.move(1380, 60, { steps: 4 });
-  await expect.poll(async () => (await look()).colour, { timeout: 3000 }).toBe("rgba(243, 240, 235, 0.84)");
+  await expect.poll(quiet, { timeout: 3000 }).toBeLessThan(0.45);
 });
 
 test("the electronegative hand draws the aldehyde's own specks to it", async ({ page }) => {
@@ -345,6 +348,18 @@ test("the electronegative hand draws the aldehyde's own specks to it", async ({ 
   const after = await light(page, box);
   expect(after.sum, "specks drawn out towards the hand, and brighter").toBeGreaterThan(before.sum * 1.05);
   await expect(page.locator(".molecule-charge")).toHaveClass(/is-on/);
+  // at the title it is felt only a little ("way less reactive to the cursor"):
+  // no δ−, and the specks by the hand barely drawn
+  await toStage(page, 0);
+  await settled(page, 0);
+  await page.mouse.move(40, 860);
+  await page.waitForTimeout(2500);
+  const calm = await light(page, box);
+  await page.mouse.move(1080, 445, { steps: 6 });
+  await page.waitForTimeout(2200);
+  await expect(page.locator(".molecule-charge"), "no δ− at the title").not.toHaveClass(/is-on/);
+  const stirred = await light(page, box);
+  expect(Math.abs(stirred.sum - calm.sum) / calm.sum, "barely stirred").toBeLessThan(Math.abs(after.sum - before.sum) / before.sum);
   // away off the page, nothing is drawn
   await page.mouse.move(-10, 450);
   await page.evaluate(() => document.documentElement.dispatchEvent(new PointerEvent("pointerleave")));

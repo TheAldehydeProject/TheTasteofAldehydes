@@ -148,8 +148,14 @@ test("arrow keys do nothing while the menu is open, and work again once it close
 // Scroll button bottom left — leave on their own as you go down and
 // come back as you return, tracking the scroll rather than playing a
 // fixed animation, so they reverse the moment you turn round.
+// (The corner block, "A portfolio, 2026 edition", was taken off at the
+// owner's word, 2026-09-30; the Scroll button is the corner left.)
+test("the corner block is gone", async ({ page }) => {
+  await page.goto("/index.html");
+  await expect(page.locator(".title-block")).toHaveCount(0);
+  await expect(page.locator(".title-sub")).toHaveText("A Perfume Portfolio");
+});
 for (const [what, selector] of [
-  ["title block", ".title-block"],
   ["Scroll button", ".scroll-cue"],
 ]) {
   test(`the ${what} fades out on the way down and back in on the way up`, async ({ page }) => {
@@ -172,12 +178,12 @@ for (const [what, selector] of [
     // the stage follows the page).
     const park = (fraction) => toStage(page, fraction);
 
-    await park(0.2);
+    await park(0.35);
     await expect.poll(shown, { timeout: 3000, message: "should already be going" }).toBeLessThan(0.7);
     await page.waitForTimeout(400);
     expect(await shown(), "but not gone yet").toBeGreaterThan(0);
 
-    await park(0.55);
+    await park(0.75);
     await expect.poll(shown, { timeout: 3000, message: "gone well before the second stage" }).toBeLessThan(0.05);
 
     await park(0);
@@ -482,11 +488,16 @@ test("the aldehyde glows big in the middle of the dark first slide, the double b
   const canvas = await page.locator(".molecule-canvas").boundingBox();
   expect(Math.abs(canvas.width - slide.width) + Math.abs(canvas.height - slide.height)).toBeLessThan(2);
   expect(await page.locator(".molecule").evaluate((e) => getComputedStyle(e).pointerEvents)).toBe("none");
+  // the title in front of the aldehyde: its slide, pinned and so a layer of
+  // its own, above the drawing's (it was under it, the specks over the
+  // letters, for a round of 2026-09-30)
   const layers = await page.evaluate(() => [
     +getComputedStyle(document.querySelector(".molecule")).zIndex,
-    +getComputedStyle(document.querySelector(".title-content")).zIndex,
+    +getComputedStyle(document.getElementById("slide-1")).zIndex,
+    +getComputedStyle(document.getElementById("slide-formula")).zIndex,
   ]);
   expect(layers[1], "the title in front of the aldehyde").toBeGreaterThan(layers[0]);
+  expect(layers[2], "and the names").toBeGreaterThan(layers[0]);
   // the title in the middle, both ways
   const title = await page.locator(".title-content").boundingBox();
   expect(Math.abs(title.x + title.width / 2 - 720), "in the middle across").toBeLessThan(4);

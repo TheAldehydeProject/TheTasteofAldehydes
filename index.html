@@ -63,7 +63,9 @@
       <canvas class="molecule-canvas"></canvas>
     </div>
 
-    <!-- STAGES 1 AND 2 — THE TITLE. Edit: the big line, the line under it.
+    <!-- STAGES 1 AND 2 — THE TITLE. Edit: the big line, the line under it
+         ("A Perfume Portfolio", the owner's, 2026-09-30; it was "Perfumes and my
+         notes about them").
          The square at the title opens ABOUT ME (below) — the owner's own
          words, 2026-09-29. The aldehyde glows behind it: formaldehyde's
          electron cloud, the double bond in gold and oxygen's lone pair in
@@ -78,11 +80,7 @@
             <span class="about-open-word">About me</span>
           </button>
         </div>
-        <p class="title-sub">Perfumes and my notes about them</p>
-      </div>
-      <div class="title-block">
-        <span>A portfolio</span>
-        <span>2026 edition</span>
+        <p class="title-sub">A Perfume Portfolio</p>
       </div>
       <button class="scroll-cue" id="scroll-cue" aria-label="Scroll to next section">
         <span>Scroll</span>
@@ -186,7 +184,9 @@
 
 <!-- ABOUT ME — the owner's, word for word (2026-09-29): "a square at the
      title which will blur out the page and bring up an 'about me' page
-     (on the same page more or less)". Opened by the square at the title
+     (on the same page more or less)"; in the home page's own dark since
+     2026-09-30 ("make the about me window way more aesthetic and agree
+     with the page theme"). Opened by the square at the title
      (title.js); without the script it is simply not shown. Its words are
      the owner's; do not tidy them. -->
 <div class="about" id="about" role="dialog" aria-modal="true" aria-labelledby="about-title" hidden>
@@ -196,6 +196,19 @@
       <span class="about-close-word">Close</span>
     </button>
     <p class="about-kicker">The Taste of Aldehydes</p>
+    <!-- an aldehyde, R–C(=O)–H, in hairlines, as the icon sets it -->
+    <svg class="about-glyph" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+      <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+        <path d="M56.5 30 V52 M63.5 30 V52" />
+        <path d="M53 66 L33 78 M67 66 L87 78" />
+      </g>
+      <g fill="currentColor" font-family="Arial, 'Liberation Sans', Helvetica, sans-serif" font-size="15" text-anchor="middle">
+        <text x="60" y="25">O</text>
+        <text x="60" y="66">C</text>
+        <text x="24" y="90">R</text>
+        <text x="96" y="90">H</text>
+      </g>
+    </svg>
     <section class="about-part">
       <h2 id="about-title"><span class="about-no">01</span>About me</h2>
       <p>I like smelling stuff and learning, and this website is essentially my record of combining the two. As of now, I have accrued many experiences, research hours and conversations with people who have more than dipped their toes in this industry, and since this is becoming quite a large part of my life, I wanted to make a portfolio in which I would keep a record of everything that was worth noting down. My opinions, theories and thoughts, all in one place.</p>

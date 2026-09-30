@@ -121,10 +121,18 @@
   // its middle up and down, 2.2 across, whichever the window is shorter in.
   const FOV = 32, FIT_TALL = 2.3, FIT_WIDE = 2.2;
 
-  // THE STAGES. `S` is window.__formula (0 to 4, landing.js). The turning
-  // is from S 1 to 2, the formula from 2 to 3, the lines from 3 (drawn down
-  // the window over LINES_OVER of a stage), the names after them (landing.js).
-  const LINES_OVER = 0.72;
+  // THE STAGES. `S` is window.__formula (0 to 4, landing.js). Each change is
+  // spread over the whole of its leg and a little into the one before, on a
+  // gentle curve (2026-09-30: "EVERYTHING should be smooth and gradual; and
+  // not incremental"), so something is always on its way and nothing waits
+  // for the one before it to stop: the turning from TURN_FROM to 2, the
+  // formula from FORM_FROM to 3, the lines down the window from 3 over
+  // LINES_OVER, the names after them (landing.js).
+  const TURN_FROM = 0.85, FORM_FROM = 1.95, LINES_OVER = 0.85;
+  // At the title the hand is felt only a little (the owner: "when youre
+  // still at the title, make it way less reactive to the cursor"): its pull
+  // and the lean are REACT_TITLE of themselves there, whole by the formula.
+  const REACT_TITLE = 0.12;
   // How close the cloud draws in round the bonds (1 not at all), how strong
   // each part is drawn once it has, and how much it still swirls.
   const TIGHT = { rest: 0.5, pi: 0.88, lone: 0.84 };
@@ -158,7 +166,6 @@
 
   const phone = () => window.innerWidth < 700;
   const smooth = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
-  const ease = (x) => { x = Math.max(0, Math.min(1, x)); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
 
   let renderer;
   try {
@@ -750,9 +757,10 @@
 
     // where the stage is (landing.js follows the page, smoothly)
     S = Math.max(0, Math.min(4, +window.__formula || 0));
-    const turned = ease(S - 1);    // upright
-    const formed = ease(S - 2);    // its formula
-    const down = smooth((S - 3) / LINES_OVER);   // the lines come down
+    const turned = smooth((S - TURN_FROM) / (2 - TURN_FROM));   // upright
+    const formed = smooth((S - FORM_FROM) / (3 - FORM_FROM));   // its formula
+    const down = smooth((S - 3) / LINES_OVER);                  // the lines come down
+    const react = REACT_TITLE + (1 - REACT_TITLE) * smooth((S - 0.15) / 1.1);
 
     // the hand
     const box = wrap.getBoundingClientRect();
@@ -766,9 +774,9 @@
     hand.x = ((eased.x - box.left) / W) * 2 - 1;
     hand.y = 1 - ((eased.y - box.top) / H) * 2;
     charge.style.transform = "translate(" + (eased.x - box.left + 13).toFixed(1) + "px," + (eased.y - box.top + 15).toFixed(1) + "px)";
-    charge.classList.toggle("is-on", pull > 0.5);
+    charge.classList.toggle("is-on", pull * react > 0.4);
 
-    if (!REDUCE) { lean.x += (leanTo.x - lean.x) * 0.04; lean.y += (leanTo.y - lean.y) * 0.04; }
+    if (!REDUCE) { lean.x += (leanTo.x * react - lean.x) * 0.04; lean.y += (leanTo.y * react - lean.y) * 0.04; }
     const sway = REDUCE ? 0 : Math.sin((t * 2 * Math.PI) / SWAY_S);
     euler.set(SIDE.pitch + lean.y * LEAN, SIDE.yaw + SWAY * sway + lean.x * LEAN, 0);
     qCloud.setFromEuler(euler).multiply(CLOUD_BODY);
@@ -787,15 +795,15 @@
       m.uFlow.value = REDUCE ? 0 : FLOW * (1 - (1 - FORM_FLOW) * formed);
       m.uAlpha.value = (PEAK[name] + (FORM_PEAK[name] - PEAK[name]) * formed) * dense;
       m.uHand.value.set(hand.x, hand.y);
-      m.uPull.value = pull;
+      m.uPull.value = pull * react;
     }
 
     // the formula: the bonds drawn out of the C, then the names of the atoms
-    const grow = smooth((S - 2.05) / 0.6);
+    const grow = smooth((S - 2) / 0.85);
     bonds.visible = grow > 0;
     bonds.material.uniforms.uGrow.value = grow * 1.1;
     bonds.material.uniforms.uAlpha.value = 0.9 * dense;
-    const named = smooth((S - 2.45) / 0.5);
+    const named = smooth((S - 2.3) / 0.65);
     if (named > 0 || namesShown) {
       for (const n of names) {
         const s = toScreen(n.at);
@@ -825,8 +833,8 @@
     // Where it is, said on the drawing for anything that wants to know (the
     // tests): cloud (the first two stages), turning, turned, forming,
     // formula, lining, lined.
-    const state = S <= 1.001 ? "cloud" : S < 1.999 ? "turning" : S <= 2.001 ? "turned" : S < 2.999 ? "forming"
-      : S <= 3.001 ? "formula" : down < 0.999 ? "lining" : "lined";
+    const state = S <= 1.02 ? "cloud" : S < 1.98 ? "turning" : S <= 2.02 ? "turned" : S < 2.98 ? "forming"
+      : S <= 3.02 ? "formula" : down < 0.999 ? "lining" : "lined";
     if (state !== wrap.dataset.state) wrap.dataset.state = state;
     return hot.some((h, k) => Math.abs(h - hotTo[k]) > 0.001);
   }

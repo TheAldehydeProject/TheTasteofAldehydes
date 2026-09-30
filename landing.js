@@ -16,11 +16,12 @@
 //   4  the same, its formula drawn in it
 //   5  the Menu's eight pages, beside two lines of specks
 //
-// The page scrolls as any page does — the wheel, a trackpad, a finger, the
-// scrollbar — and nothing here holds it; the keys and the Scroll button go
-// on (or back) a whole stage, smoothly. Where it is, is followed a little
-// behind (FOLLOW_S), so a notch of a wheel is a glide rather than a step,
-// and told to the drawing as one number, the sixth window global:
+// The page GLIDES down the stage (THE GLIDE, below): a wheel's notches only
+// move where it is going, and it follows on a spring, so a run of notches is
+// one gradual movement rather than a step at a time; the keys and the
+// Scroll button go on (or back) a whole stage the same way; a finger and the
+// scrollbar move it themselves. Where it is, is told to the drawing as one
+// number, the sixth window global:
 //
 //   window.__formula   0 to 4, the stage (0 the first, 4 the fifth), and
 //                      how far between two it is
@@ -142,13 +143,13 @@
   // ============================================================
   const STAGES = 5;
   const LAST = STAGES - 1;
-  const FOLLOW_S = 0.16;       // how far behind the page the stage follows, in seconds (a time constant)
-  // The title (with its line and its square) fades over the first leg,
-  // lifting a little as it goes; the corner block and the Scroll button a
-  // little sooner. The names come up over the last leg, once its lines are
-  // on their way down (molecule.js).
-  const TITLE_GONE = 0.8, CORNERS_GONE = 0.5, TITLE_LIFT = 26;
-  const NAMES_FROM = 3.3, NAMES_OVER = 0.62;
+  const FOLLOW_S = 0.07;       // how far behind the page the stage follows, in seconds (a time constant)
+  // The title (with its line and its square) fades over the whole of the
+  // first leg, lifting a little as it goes; the Scroll button a little
+  // sooner. The names come up over the last leg, once its lines are on
+  // their way down (molecule.js).
+  const TITLE_GONE = 1, CORNERS_GONE = 0.7, TITLE_LIFT = 26;
+  const NAMES_FROM = 3.25, NAMES_OVER = 0.75;
 
   const leg = () => Math.max(1, (run ? run.offsetHeight : window.innerHeight * 3.2) / LAST);
   const stageTop = () => stage.offsetTop;
@@ -159,7 +160,7 @@
   let shown = reading(), followOn = false, followLast = 0;
   window.__formula = shown;
   const title = document.querySelector(".title-content");
-  const corners = [document.querySelector(".title-block"), document.querySelector(".scroll-cue")];
+  const corners = [document.querySelector(".scroll-cue")];
   let wrote = "";
 
   // The page as the stage says: the title fading, the names coming up.
@@ -205,12 +206,11 @@
   container.addEventListener("scroll", moved, { passive: true });
   window.addEventListener("resize", moved);
 
-  // The corner block arrives with a "rise" keyframe animation whose fill is
-  // "both", which keeps hold of opacity for the life of the element — and
-  // an animation outranks the plain styles set above, so until it is
-  // cleared nothing here has any effect on it. Handing over once it has
-  // finished playing keeps the entrance and lets the stage take it from
-  // there (it comes up last, at 1.9s, once the title has gathered).
+  // (Anything here arriving with a "rise" animation of its own — whose fill
+  // is "both", which keeps hold of opacity for the life of the element, and
+  // outranks the plain styles set above — is handed over once it has
+  // played, or at 3s. The corner block, "A portfolio, 2026 edition", which
+  // came up that way, was taken off at the owner's word, 2026-09-30.)
   corners.forEach((el) => {
     if (!el) return;
     const takeOver = () => { el.style.animation = "none"; wrote = ""; place(); };
@@ -219,13 +219,68 @@
   });
   place();
 
-  // A stage on, or back, smoothly: the keys and the Scroll button.
+  // ============================================================
+  // THE GLIDE (2026-09-30, later: "make the scrolling a little smoother
+  // ... when you scroll it feels very very incremental. EVERYTHING should be
+  // smooth and gradual; and not incremental"). A mouse wheel moves a page a
+  // notch at a time, and everything drawn from where the page is moved in
+  // steps with it. So on the stage the wheel is taken: a notch moves only
+  // where the page is GOING (`glideTo`), by WHEEL_SCALE of itself, and the
+  // page follows on a spring, critically damped (GLIDE_W) — setting off
+  // gently, never overshooting, settling softly — so a run of notches is one
+  // movement, and a trackpad's own stream of small turns runs on as smoothly.
+  // The keys and the Scroll button go a stage on the same way. A finger and
+  // the scrollbar move the page themselves, and the glide lets go. With
+  // reduced motion the page's own scrolling, at once.
+  // ============================================================
+  const GLIDE_W = 6.5;        // the spring's pace, per second (higher, quicker)
+  const WHEEL_SCALE = 0.85;   // how far a notch sends it, of its own size
+  let glideAt = container.scrollTop, glideTo = glideAt, glideV = 0, gliding = false, glideLast = 0, glideWrote = -1;
+  // as far down as it may glide: the stage's end, when the map slides follow it
+  const glideMost = () => (mapOn && intro ? stageEnd() : container.scrollHeight - container.clientHeight);
+  function glidePhase(now) {
+    const dt = glideLast ? Math.min(0.05, (now - glideLast) / 1000) : 1 / 60;
+    glideLast = now;
+    const pull = GLIDE_W * GLIDE_W * (glideTo - glideAt) - 2 * GLIDE_W * glideV;
+    glideV += pull * dt;
+    glideAt += glideV * dt;
+    if (Math.abs(glideTo - glideAt) < 0.4 && Math.abs(glideV) < 4) { glideAt = glideTo; glideV = 0; }
+    container.scrollTop = glideAt;
+    glideWrote = container.scrollTop;
+    if (glideAt === glideTo) stopGlide();
+  }
+  function stopGlide() { phases.delete(glidePhase); gliding = false; glideLast = 0; glideV = 0; }
+  function glideToY(y) {
+    y = Math.max(0, Math.min(glideMost(), y));
+    if (REDUCE_MOTION) { container.scrollTop = y; return; }
+    if (!gliding) { glideAt = container.scrollTop; glideV = 0; glideLast = 0; gliding = true; phases.add(glidePhase); }
+    glideTo = y;
+  }
+  // the page moved by something else while it glides: let go
+  container.addEventListener("scroll", () => {
+    if (gliding && Math.abs(container.scrollTop - glideWrote) > 2) stopGlide();
+  }, { passive: true });
+  // The wheel, on the stage. (With the map slides on, they have their say
+  // first: `slideWheel`, below, takes a turn past the stage's end.)
+  let slideWheel = null;
+  container.addEventListener("wheel", (e) => {
+    if (e.ctrlKey) return;                          // a pinch: the browser's own zoom
+    if (REDUCE_MOTION && !slideWheel) return;       // the page's own scrolling
+    e.preventDefault();
+    if (overlayOpen()) return;
+    const d = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaMode === 2 ? e.deltaY * window.innerHeight : e.deltaY;
+    if (slideWheel && slideWheel(e, d)) return;
+    glideToY((gliding ? glideTo : container.scrollTop) + d * WHEEL_SCALE);
+  }, { passive: false });
+
+  // A stage on, or back, gliding: the keys and the Scroll button.
   function toStage(k) {
     k = Math.max(0, Math.min(LAST, k));
-    container.scrollTo({ top: Math.round(stageTop() + k * leg()), behavior: REDUCE_MOTION ? "auto" : "smooth" });
+    glideToY(Math.round(stageTop() + k * leg()));
   }
   function stepStage(dir) {
-    const at = reading();
+    // (from where it is going, if it is on its way somewhere)
+    const at = Math.max(0, Math.min(LAST, ((gliding ? glideTo : container.scrollTop) - stageTop()) / leg()));
     toStage(dir > 0 ? Math.floor(at + 0.05) + 1 : Math.ceil(at - 0.05) - 1);
   }
 
@@ -409,6 +464,7 @@
   function goTo(index) {
     index = Math.max(0, Math.min(MAP, index));
     const endY = places()[index];
+    stopGlide();
 
     if (REDUCE_MOTION) {
       container.scrollTop = endY;
@@ -440,17 +496,11 @@
   }
 
   // Keep activeIndex correct if the page is moved by some other means
-  // (the scrollbar, a finger); on the stage, no snapping, and a wheel's
-  // run carried past the stage's end is held at it, so the page goes on
-  // from there only by a turn of its own.
-  let wheelAt = 0, endSince = 0;
+  // (the scrollbar, a finger); on the stage, no snapping.
+  let endSince = 0;
   container.addEventListener("scroll", () => {
     if (animating) return;
     const y = container.scrollTop, end = stageEnd();
-    if (activeIndex === 0 && y > end + 1 && performance.now() - wheelAt < 260) {
-      container.scrollTop = end;
-      return;
-    }
     activeIndex = whereIs();
     // no snapping on the stage (it is turned on only on arriving at a
     // slide after it, as it always was: a page held part of the way between
@@ -459,30 +509,25 @@
     if (activeIndex === 0 && y >= end - 1) { if (!endSince) endSince = performance.now(); } else endSince = 0;
   }, { passive: true });
 
-  // --- Wheel / trackpad: within the stage the page scrolls itself; past it,
-  // one gentle gesture moves exactly one slide.
+  // --- Wheel / trackpad: on the stage it glides (above), held at the stage's
+  // end; past it, one gentle gesture moves exactly one slide.
   let wheelLock = false;
   const LEAVE_AFTER_MS = 450;  // how long at the stage's end before a turn goes on to the sentence
-  container.addEventListener(
-    "wheel",
-    (e) => {
-      if (overlayOpen()) { e.preventDefault(); return; }
-      if (animating) { e.preventDefault(); return; }
-      const y = container.scrollTop, end = stageEnd();
-      if (activeIndex === 0 && (e.deltaY < 0 || y < end - 1)) { wheelAt = performance.now(); return; }
-      e.preventDefault();
-      if (activeIndex === 0 && (!endSince || performance.now() - endSince < LEAVE_AFTER_MS)) {
-        if (!endSince) endSince = performance.now();
-        return;
-      }
-      if (wheelLock) return;
-      wheelLock = true;
-      setTimeout(() => { wheelLock = false; }, 1000);
-      if (e.deltaY > 0) goTo(activeIndex + 1);
-      else if (e.deltaY < 0) goTo(activeIndex - 1);
-    },
-    { passive: false }
-  );
+  slideWheel = (e, d) => {
+    if (animating) return true;
+    const y = gliding ? glideTo : container.scrollTop, end = stageEnd();
+    if (activeIndex === 0 && (d < 0 || y < end - 1)) return false;   // the stage's own
+    if (activeIndex === 0 && (!endSince || performance.now() - endSince < LEAVE_AFTER_MS)) {
+      if (!endSince && container.scrollTop >= end - 1) endSince = performance.now();
+      return true;
+    }
+    if (wheelLock) return true;
+    wheelLock = true;
+    setTimeout(() => { wheelLock = false; }, 1000);
+    if (d > 0) goTo(activeIndex + 1);
+    else if (d < 0) goTo(activeIndex - 1);
+    return true;
+  };
 
   // A step by the keys or the Scroll button: a stage at a time on the
   // stage, and on from its end to the sentence; a slide at a time after it.
