@@ -64,13 +64,14 @@ async function light(page, box) {
     const g = c.getContext("2d");
     g.drawImage(img, 0, 0);
     const d = g.getImageData(0, 0, c.width, c.height).data;
-    let n = 0, sum = 0;
+    let n = 0, lit = 0, sum = 0;
     for (let k = 0; k < d.length; k += 4) {
       const v = (d[k] + d[k + 1] + d[k + 2]) / 3;
       if (v > 110) n++;
+      if (v > 50) lit++;   // anything plainly lighter than the dark ground (31)
       sum += v;
     }
-    return { n, sum };
+    return { n, lit, sum };
   }, shot);
 }
 
@@ -194,8 +195,8 @@ test("the aldehyde comes together as its formula — flat, the O at the top, the
     expect(box.face, "in the title's face").toEqual(title);
     const above = await light(page, { x: box.x, y: box.y - 22, width: box.width, height: 20 });
     const below = await light(page, { x: box.x, y: box.y + box.height + 2, width: box.width, height: 20 });
-    expect(above.n, `specks above name ${i + 1}`).toBeGreaterThan(8);
-    expect(below.n, `specks below name ${i + 1}`).toBeGreaterThan(8);
+    expect(above.lit, `specks above name ${i + 1}`).toBeGreaterThan(20);
+    expect(below.lit, `specks below name ${i + 1}`).toBeGreaterThan(20);
   }
   expect(errors).toEqual([]);
 });
