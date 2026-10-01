@@ -30,7 +30,7 @@ const PORT = 8765;
 // Each page, the name its picture is saved under, and how long it is
 // given to draw itself before it is taken. `then` is anything done
 // first — a word typed into the search — and `after` anything done once
-// it has drawn: a key pressed, so the Note Library's "Open menu here"
+// it has drawn: a key pressed, so the Note Library's "Search" and "Open menu"
 // goes away.
 const PAGES = [
   { name: "scent-descriptions", url: "scent-descriptions/", wait: 5200 },

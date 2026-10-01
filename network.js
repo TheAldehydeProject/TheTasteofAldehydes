@@ -105,7 +105,7 @@
 //   put away. Left alone, they glow.
 //
 //   THE OPENING: a spark at the centre and the one network wiring itself
-//   outwards; then THE WORD, "Open menu here", over the page out of focus.
+//   outwards; then THE WORD, "Search" and "Open menu", over the page out of focus.
 //
 //   GLOW: the nodes faceted, in a deep rouge, lit from within with a rim
 //   of it burning round every edge and a glow round them ("revert to the
@@ -247,7 +247,7 @@
   const SWEEP = 0.62;
   const FLOAT = 0.018;                  // every node's own slow drift, at rest
   const LOAD_MS = 1900;                 // the page wiring itself as it opens
-  const COACH_MS = 4200;                // "Open menu here", after it has opened
+  const COACH_MS = 4200;                // "Search" and "Open menu", after it has opened
   const IDLE_MS = 7000;                 // left alone this long, the arrows glow
   const COMBINE_MS = 2200;              // into combinations, and back
   const SPREAD = 0.62;                  // ... loosened by this much
@@ -1368,15 +1368,16 @@
     const markCtx = markCanvas.getContext("2d");
 
     // THE WORD AS IT OPENS: the page out of focus, and a line pointing at
-    // each of the two arrows — "Search here" at the search's, "Open menu
-    // here" at the menu's (the first since 2026-10-01: "when you load the
-    // page in, put some text pointing to it too") — for a few seconds, or
-    // until the hand does anything.
+    // each of the two arrows — "Search" at the search's, "Open menu" at the
+    // menu's (the first since 2026-10-01: "when you load the page in, put
+    // some text pointing to it too"; both without the "here" they had
+    // until the same day: "remove the words here from the text Open menu
+    // and Search") — for a few seconds, or until the hand does anything.
     const coach = el("div", "net-coach");
     coach.setAttribute("aria-hidden", "true");
     coach.innerHTML =
-      '<p class="net-coach-say" data-for="search"><span class="net-coach-line"></span><span class="net-coach-word">Search here</span></p>' +
-      '<p class="net-coach-say" data-for="menu"><span class="net-coach-line"></span><span class="net-coach-word">Open menu here</span></p>';
+      '<p class="net-coach-say" data-for="search"><span class="net-coach-line"></span><span class="net-coach-word">Search</span></p>' +
+      '<p class="net-coach-say" data-for="menu"><span class="net-coach-line"></span><span class="net-coach-word">Open menu</span></p>';
     stage.appendChild(coach);
 
     // THE FOOT: the button that expands it and, on its right, the one that
@@ -2906,7 +2907,7 @@
     // ============================================================
     // THE WORD AS IT OPENS, AND THE ARROWS WHEN LEFT ALONE. Once the page
     // has wired itself, everything but the arrows goes out of focus and a
-    // line points at the menu's: "Open menu here", for a few seconds or
+    // line points at each arrow: "Search", "Open menu", for a few seconds or
     // until the hand does anything. And whenever the page has been left
     // alone for a while, the two arrows glow, and the line at the top right
     // saying what can be done comes back.

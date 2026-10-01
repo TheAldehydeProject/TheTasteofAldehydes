@@ -223,7 +223,9 @@ test("the Note Library is drawn as one red network, the menu put away, and nothi
 /* AS IT OPENS: the network WIRES ITSELF from a spark at the centre
    outwards, and only then does the chrome come in — and then the page goes
    out of focus but for the two arrows, and a line points at the menu's:
-   "Open menu here", until the hand does anything (or a few seconds). */
+   "Open menu" (and "Search" at the search's), until the hand does anything
+   (or a few seconds). Both said "… here" until 2026-10-01: "remove the
+   words here from the text Open menu and Search". */
 test("as it opens it wires itself in, and then points at the menu's arrow over the page out of focus", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
@@ -258,15 +260,16 @@ test("as it opens it wires itself in, and then points at the menu's arrow over t
   expect((await state(page)).coaching).toBe(true);
   const coach = page.locator(".net-coach");
   await expect(coach).toBeVisible();
-  await expect(coach).toContainText("Open menu here");
+  await expect(page.locator('.net-coach-say[data-for="menu"] .net-coach-word')).toHaveText("Open menu");
   expect(await coach.evaluate((c) => getComputedStyle(c).backdropFilter || getComputedStyle(c).webkitBackdropFilter), "out of focus").toContain("blur");
   const z = await page.evaluate(() => [".net-coach", ".net-rail", ".net-dock"].map((c) => +getComputedStyle(document.querySelector(c)).zIndex));
   expect(z[1], "the arrows over it").toBeGreaterThan(z[0]);
   expect(z[2], "and the rest under it").toBeLessThan(z[0]);
-  // One line at each arrow: "Search here" at the search's (2026-10-01:
+  // One line at each arrow: "Search" at the search's (2026-10-01:
   // "when you load the page in, put some text pointing to it too"), "Open
-  // menu here" at the menu's.
-  await expect(coach).toContainText("Search here");
+  // menu" at the menu's — neither saying "here" any more.
+  await expect(page.locator('.net-coach-say[data-for="search"] .net-coach-word')).toHaveText("Search");
+  await expect(coach).not.toContainText("here");
   for (const which of ["search", "menu"]) {
     const at = '.net-coach-say[data-for="' + which + '"]';
     const say = await page.locator(at).boundingBox();

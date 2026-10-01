@@ -1941,9 +1941,11 @@ The owner:
 - **The search's arrow is a magnifying glass** (`.net-glass`, a small SVG: a lens and its
   handle in the arrows' hairline), turned a quarter towards the search bar while that is out.
   It was a chevron with a small ring under it. The menu's arrow keeps its chevron.
-- **The word as it opens points at both**: *Search here* at the search's arrow and *Open menu
-  here* at the menu's, each line level with its arrow's middle (`.net-coach-say[data-for]`),
-  and both arrows glowing while it is up. Anything the hand does puts it away, as before.
+- **The word as it opens points at both**: *Search* at the search's arrow and *Open menu* at the
+  menu's, each line level with its arrow's middle (`.net-coach-say[data-for]`), and both arrows
+  glowing while it is up. Anything the hand does puts it away, as before. They said *Search
+  here* and *Open menu here* for an hour, until the owner: "remove the words here from the text
+  Open menu and Search".
 - **As sharp as the screen.** The drawing was made at 1.5 device pixels a point on a phone, and
   a machine whose frames came slowly (the middle of ninety over 21ms) was taken down to **0.6 of
   that** — a plain screen too, below its own pixel — **and never back up**: one slow stretch,
@@ -1958,8 +1960,9 @@ The owner:
   (`holdLow`), so it never goes up and down. The note window's figure is drawn as sharp
   (`SHARP()`); it was 1.5 on a phone.
 
-How to test it: **`as it opens it wires itself in …`** now also checks both lines, each level
-with its arrow, and the glass (a circle and a stroke, no chevron); **`the library is drawn as sharp
+How to test it: **`as it opens it wires itself in …`** now also checks both lines — *Search* and
+*Open menu*, neither saying "here" — each level with its arrow, and the glass (a circle and a
+stroke, no chevron); **`the library is drawn as sharp
 as a plain screen, however slowly it draws`** (1, and 1 still after it is told of a machine forty
 milliseconds a frame — `NetScene.judge(ms, times)`, which feeds the judgement as its own frames
 would); **`on a phone's screen … drawn at two device pixels a point, let down no further than one
