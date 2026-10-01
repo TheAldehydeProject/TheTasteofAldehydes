@@ -656,6 +656,53 @@ test("Les Abstraits has its armoire with iris on one side and a drip down the wh
     .toBe(true);
 });
 
+/* THE ARMOIRE STANDS CLEAR OF THE SCALE, AND IS SOLID. "there is a small
+   interesection between the scroll parameter on the left in the les
+   abstraits page ... and the wardrobe in the bottom. I want you to make the
+   wardrobe more solid and mechanical please too. And fix the intersection"
+   (2026-10-01). The scale down the side (house.js's rank) stands in the
+   same margin as the armoire, a third to two thirds of the way down the
+   window, and the armoire stood over it: its line down the armoire's left
+   side, its ticks on its crown. Read off the page's canvas once the armoire
+   is built and its door open, at four windows wide enough to show the
+   scale: nothing drawn where the scale stands, its ticks at their longest
+   and a little round it, and the armoire still there beside it or under it
+   — and drawn SOLID, in fills at full strength, where it was a scatter of
+   specks none stronger than two thirds. */
+test("Les Abstraits' armoire stands clear of the scale down the side, and is drawn solid", async ({ page }) => {
+  await page.clock.install();
+  for (const [w, h] of [[1440, 900], [1280, 720], [1100, 800], [1920, 1080]]) {
+    await page.setViewportSize({ width: w, height: h });
+    await page.goto(ABSTRAITS);
+    await page.clock.runFor(5000);
+    const seen = await page.evaluate(() => {
+      const el = document.querySelector(".human-field");
+      const g = el.getContext("2d", { willReadFrequently: true });
+      const r = el.width / innerWidth;
+      const count = (x1, x2, y1, y2, least) => {
+        x1 = Math.max(0, x1); y1 = Math.max(0, y1);
+        const d = g.getImageData(Math.round(x1 * r), Math.round(y1 * r), Math.round((x2 - x1) * r), Math.round((y2 - y1) * r)).data;
+        let n = 0;
+        for (let i = 3; i < d.length; i += 4) if (d[i] > least) n++;
+        return n;
+      };
+      const box = document.querySelector(".human-rank").getBoundingClientRect();
+      const margin = Math.max(0, (innerWidth - 940) / 2);
+      return {
+        shown: box.width > 0 && box.height > 0,
+        // The line, the gap and the ticks at 16px, the longest they grow.
+        over: count(box.left - 6, box.left + 27 + 6, box.top - 6, box.bottom + 6, 10),
+        armoire: count(0, Math.max(margin, 120), innerHeight * 0.3, innerHeight, 10),
+        solid: count(0, Math.max(margin, 120), innerHeight * 0.3, innerHeight, 230),
+      };
+    });
+    expect(seen.shown, `${w}×${h}: the scale is shown`).toBe(true);
+    expect(seen.over, `${w}×${h}: nothing drawn where the scale stands`).toBeLessThan(4);
+    expect(seen.armoire, `${w}×${h}: the armoire is there`).toBeGreaterThan(3000);
+    expect(seen.solid, `${w}×${h}: and drawn solid`).toBeGreaterThan(1500);
+  }
+});
+
 /* QIMU & MUSICIANS: A SCORE IN THE MARGINS. "add some complex notes;
    and some 5 lines in which they will exist ... nicely animated ...
    dont make them always 4/4 ... make it random (as long as its an

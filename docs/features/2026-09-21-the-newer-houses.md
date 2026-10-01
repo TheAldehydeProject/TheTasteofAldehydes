@@ -1414,3 +1414,85 @@ made here of the CC BY-SA scores is CC BY-SA too; the data files' heads say so.
 - **The Nocturne Op. 19** waits for photographs large enough to read.
 - The drum parts are a drummer's performance written down: a flam or a buzz roll the recording has is
   written as the strokes it is made of.
+
+## 2026-10-01, the very last — Les Abstraits' armoire solid, and clear of the scale
+
+> Also please there is a small interesection between the scroll parameter on the left in the les
+> abstraits page in SD and the wardrobe in the bottom. I want you to make the wardrobe more solid and
+> mechanical please too. And fix the intersection.
+
+Files touched: `abstraits.js` (the armoire rewritten), `tests/houses.spec.js` (one test new).
+
+### The intersection
+
+The **scale down the side** — `house.js`'s rank, a hairline 34% of the window tall, centred, 28px in
+from the left, its ticks beside it — stands in the same left margin as the armoire, which stands on
+the floor of the window. On a window of ordinary height the two met: the scale's line ran down the
+armoire's left side and its ticks sat on its crown (at 1440 × 900 the armoire's top was at 426px and
+the scale reached 603px). The armoire now **reads where the scale stands off the page** (`scaleBox`
+in `abstraits.js` — the rank's own box, its ticks allowed to grow to their 16px) and stands clear of
+it, **beside it or under it, whichever leaves it the larger** (`build`): beside it, from 18px past
+the scale to just short of the column's edge; under it, its top 18px below the scale's foot. At 1440
+× 900, 1366 × 768, 1536 × 864 and 1920 × 1080 it stands beside the scale; at 1280 × 720 and 1280 ×
+800 under it; at 1100 (the scale is shown down to 1080px, and the margin is narrow there) small and
+under it, quiet behind the writing, as it was. Below 1080px there is no scale and nothing changes. The Houses view of Scent
+descriptions has no scale on its left, and its armoire (`motifs.js`) is as it was.
+
+How big it can be is **measured off the drawing itself**, not guessed (`reachOf`): the armoire is
+drawn once, at load, into a context that only notes where every line goes, which gives how far it
+reaches left of its front (the cornice), right of it (its side and the open door) and above the floor
+(the plate on the cornice), per pixel of its width.
+
+### Solid and mechanical
+
+It was drawn in walnut specks along its lines — a few worn away, the whole leaning a hair, a broken
+pediment of scrolls on top, an arched panel, bun feet. It is **solid joinery** now, every face filled
+and every edge ruled, nothing worn and nothing leaning:
+
+- **Its side seen**: it stands in the left margin and is looked at from the page, so its right side
+  shows, receding up and to the right (`ox`, `oy`), and so do the side and top of everything that
+  stands out from it — the plinth, the cornice's three courses and the plate.
+- **Feet** tapering to the floor, **shod in brass**, the far one seen behind; a **shadow** under it.
+- **The cornice**: three courses stepping out, **a row of dentils** under the first, and **a plate
+  screwed on** at the middle of the top, four screws (it was a box on top for one draft — flattened).
+- **The doors**: two **raised panels** each — a field and four bevels down to the frame, each bevel
+  shaded by the way it faces (`raised`), a little grain in the field — and **three brass barrel
+  hinges** to a door, each with its knuckle, its pin and a highlight (`hingeAt`).
+- **A lock** in the shut door, its key in it and the bow hanging; **a drawer** with **two bail pulls**
+  (a plate, two screws, the handle hanging) and a keyhole.
+- **The right door swings open on its hinges** as the armoire is finished (`SWING`, 1.3s, from 60% of
+  the way through the build): its outside, panels and all, turning edge-on and past it to show **its
+  inside, a looking-glass**, with its edge. It used to stand ajar from the start.
+- **The inside**, seen through it, is dark — its back **boarded**, its **left wall and its floor seen
+  in depth** — with light falling in from the open side; **the shelf** a board with its top seen and a
+  shadow under it, the folded clothes on it; **the rail** a steel rod in two brass brackets; **the
+  clothes solid cloth**, back to front (the blazer, the dress, the trousers), each shaded darker away
+  from the open door, the hangers drawn first so the cloth hides them as it did; and **the irises** on
+  its floor, their violet stronger against the dark.
+- It **builds up from the floor behind a brass line** as the page opens, as the specks did.
+
+Over the writing it is **quieter than the specks were** (`WOOD_QUIET`, 0.2 against `QUIET`'s 0.28),
+because a solid thing carries more ink: strong to the column's edge in a margin and quiet by the
+time the writing begins 64px in (`hush`, which takes the armoire back after it is drawn, by a
+gradient across the window); without margins — a phone — quiet all the way across. The orris powder
+drifts out past the open door rather than out of a gap. Once built, open and in bloom it is still
+drawn once into a picture of its own (`still`).
+
+### How to test it
+
+- `npm test -- tests/houses.spec.js --grep "Abstraits"` — **`Les Abstraits' armoire stands clear of
+  the scale down the side, and is drawn solid`** (new): at 1440 × 900, 1280 × 720, 1100 × 800 and 1920
+  × 1080, once built and open, **nothing is drawn where the scale stands** (its ticks at their longest
+  and a little round it), the armoire is there, and much of it at full strength — the specks were never
+  stronger than two thirds. The armoire's old test still finds it in the margin, with iris, and the
+  blazer, the dress and the trousers in it.
+- By eye: the page at 1440 × 900 and 1280 × 720, scrolled to the middle; the armoire being built in the
+  first three seconds, its door swinging open.
+
+### Known issues / TODO
+
+- **At 1280 × 720 it is smaller than it was** (about 105px across its front where it was 136), because there is
+  not room for it beside the scale there and it stands under it. Shortening the scale on this page
+  alone would give it back its size; the scale was left as every house has it.
+- Only the page's armoire changed. **The Houses view's armoire** (`motifs.js`) is still the geometric
+  one in walnut hairlines the owner asked for on 2026-09-25, which is a different thing on purpose.
