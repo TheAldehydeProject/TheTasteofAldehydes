@@ -436,11 +436,14 @@ test("a name pressed asks first, on the stage's own dark: Stay, Escape and the v
   const look = await page.evaluate(() => ({
     sheet: getComputedStyle(document.querySelector(".formula-ask-sheet")).backgroundColor,
     corner: getComputedStyle(document.querySelector(".formula-ask-sheet"), "::before").borderTopColor,
-    veil: getComputedStyle(document.getElementById("formula-ask")).backdropFilter,
+    // (on its veil, faded in at one size since 2026-10-01, as About me's is)
+    veil: getComputedStyle(document.getElementById("formula-ask"), "::before").backdropFilter,
+    veilOn: +getComputedStyle(document.getElementById("formula-ask"), "::before").opacity,
   }));
   expect(look.corner).toBe("rgba(224, 178, 82, 0.9)");
   expect(look.sheet).toMatch(/^rgba\(26, 26, 27/);
   expect(look.veil).toMatch(/blur/);
+  expect(look.veilOn, "and it is up").toBeGreaterThan(0);
   // specks in it ("I want the popup window to have some particles too"),
   // in the aldehyde's colours
   await expect.poll(() => page.evaluate(() => {

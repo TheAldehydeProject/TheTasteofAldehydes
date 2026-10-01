@@ -287,7 +287,10 @@ The owner:
 - **The page behind goes on moving** ("When the popup window happens, I also want the page in the
   back to keep moving"): the drawing is no longer paused under it — the aldehyde swirls, the lines
   fall — only the hand lets go of it; the veil is a little lighter (0.38, blurred 4px; it was 0.46
-  and 5px) so the movement reads through it.
+  and 5px) so the movement reads through it. **The veil is a layer of its own, blurred at its one
+  size and faded in** (`.formula-ask::before`, 2026-10-01) — it was the blur itself growing from
+  nothing to 4px, which has the browser work the whole window out again at every size on the way,
+  the lag About me had; the same cure as About me's.
 - **Specks in it** ("I want the popup window to have some particles too"): a small canvas behind the
   sheet's words (`.formula-ask-specks`, drawn by `landing.js`, *THE SHEET'S SPECKS*): 180 specks in
   the aldehyde's grey, gold and violet, gathering in from all round as it opens, then turning slowly

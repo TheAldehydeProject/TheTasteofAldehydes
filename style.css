@@ -1040,17 +1040,25 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
   display: grid;
   place-items: center;
   padding: 18px;
-  background: rgba(14, 14, 15, 0);
-  -webkit-backdrop-filter: blur(0px);
-  backdrop-filter: blur(0px);
-  transition: background 0.4s ease, backdrop-filter 0.4s ease, -webkit-backdrop-filter 0.4s ease;
 }
 .formula-ask[hidden] { display: none; }
-.formula-ask.is-on {
+/* The page behind veiled and out of focus: one blur, at its one size,
+   faded in — never the blur itself growing, which had the browser work
+   the whole window out again at every size on the way (as About me did
+   until 2026-10-01; the same cure). */
+.formula-ask::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   background: rgba(14, 14, 15, 0.38);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  will-change: opacity;
 }
+.formula-ask.is-on::before { opacity: 1; }
 .formula-ask-sheet {
   position: relative;
   box-sizing: border-box;
@@ -1128,7 +1136,7 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
 .formula-ask-go { background: #ece8e2; border: 1px solid #ece8e2; color: #1f1f20; }
 .formula-ask-go:hover, .formula-ask-go:focus-visible { background: #e0b252; border-color: #e0b252; outline: none; }
 @media (prefers-reduced-motion: reduce) {
-  .formula-ask, .formula-ask-sheet, .formula-link { transition: none; }
+  .formula-ask, .formula-ask::before, .formula-ask-sheet, .formula-link { transition: none; }
 }
 
 /* ==================================================================
@@ -6632,12 +6640,15 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   inset: 0;
   display: grid;
   place-items: center;
-  background: rgba(6, 6, 7, 0.34);
-  opacity: 0;
-  transition: opacity 420ms ease;
+  /* It fades in two parts, its darkening and its box, never as a whole: a
+     layer part-faded hides from the box's blur whatever stands behind it,
+     so a note's window read through the box, sharp, until the fade was
+     done and the blur snapped on (2026-10-01). */
+  background: rgba(6, 6, 7, 0);
+  transition: background-color 420ms ease;
 }
 .net-leave[hidden] { display: none; }
-.net-leave.is-on { opacity: 1; }
+.net-leave.is-on { background: rgba(6, 6, 7, 0.34); }
 .net-leave-box {
   position: relative;
   width: min(400px, calc(100% - 40px));
@@ -6651,10 +6662,11 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   border: 1px solid rgba(var(--leave-rgb), 0.3);
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
   color: var(--ink);
+  opacity: 0;
   transform: translateY(8px) scale(0.99);
-  transition: transform 520ms var(--net-ease);
+  transition: opacity 420ms ease, transform 520ms var(--net-ease);
 }
-.net-leave.is-on .net-leave-box { transform: none; }
+.net-leave.is-on .net-leave-box { opacity: 1; transform: none; }
 /* in combinations, the combinations' gold */
 .net-stage.is-combining .net-leave {
   --leave: #e6b44a;

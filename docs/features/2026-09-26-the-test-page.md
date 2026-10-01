@@ -1921,3 +1921,11 @@ reads the word at its leisure; the press that puts it away is still tested. And 
 that arrive at a note's own address** (`works/test-page.html#note-vanilla`, and the site's search's
 link to Orris) read the open note through `noteNow`, which answers nothing rather than failing
 while the arriving page has not run its script yet.
+
+**The way out no longer shows a note's window through it as it comes** (2026-10-01, seen in this
+round's pictures, and the code before it the same): the way out faded in as a whole, and a layer
+part-faded hides from the box's blur whatever stands behind it — so for the length of its fade a
+note's window read through the box, sharp (*Deity*, *5 Year* beside *Grande Parfums*), until the blur
+snapped on at the end. Its darkening and its box fade apart now (`.net-leave`'s background,
+`.net-leave-box`'s opacity), and the box blurs what is behind it from the first frame.
+
