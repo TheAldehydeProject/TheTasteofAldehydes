@@ -947,7 +947,9 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
    light round its letters, and the specks of its line are drawn to the hand
    (molecule.js). The quiet is a filter, so it multiplies with the opacity
    the names come up with in the last stage (`--names`, 0 to 1, set by
-   landing.js as the page is scrolled); they take the hand only once there. */
+   landing.js as the page is scrolled); they take the hand as soon as they
+   are there at all (`names-here`, since 2026-10-01: "make the text
+   clickable even when it isnt fully apparent"). */
 .formula-link {
   display: block;
   align-self: center;

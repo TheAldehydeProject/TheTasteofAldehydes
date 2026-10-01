@@ -360,3 +360,10 @@ because the first frame reads them before the TUNING block below would have defi
 
 Tested: `it is drawn white on near-black, not blue on a night sky` keeps the ground under a
 tone of 30 and now also over 18 (the old ground was about 12).
+
+## 2026-10-01 — the reading written only when it changes, the marks contained
+
+The reading in the corner was written every frame (`readoutSaid` now keeps what it last said), and
+the stations' marks, which are moved and sized every frame as the drawing breathes, stand in a box
+contained from the page (`contain: layout style` on `.structure-marks`), so laying them out never
+lays out the page round them. Style work on a phone roughly halved. See [the site on a phone](2026-09-21-the-site-on-a-phone.md#2026-10-01--every-page-measured-on-a-phone-and-made-smoother) for how it was measured.

@@ -378,3 +378,9 @@ pages](2026-09-17-the-essay-pages.md). The page's name, *Explorations & Research
 now (it was a paragraph, and the page had none), and the box holding the page is its `<main>` —
 see [search engines](2026-09-26-search-engines-and-the-address.md). The field's own changes are in
 [its report](2026-09-26-the-explorations-field.md).
+
+## 2026-10-01 — the index's ring drawn only while it can be seen
+
+On Scent descriptions the old Fragrances index stands in the Fragrances view, and its ring (the
+mark) went on turning every frame while the Houses were the page. It draws only while it is on the
+window (an `IntersectionObserver` in `index-page.js`), measured again when it comes back. See [the site on a phone](2026-09-21-the-site-on-a-phone.md#2026-10-01--every-page-measured-on-a-phone-and-made-smoother) for how it was measured.

@@ -542,3 +542,9 @@ Tested: **`the tesseract is the classic one: a cube square inside a cube, corner
 `tests/index-pages.spec.js` — read off the form's own code: no turn through the fourth dimension, a
 perspective of its own, and its sixteen corners eight on the outer cube and eight at 0.55, all square
 and centred.
+
+## 2026-10-01 — the bar's variable on the bar
+
+`--run`, how far the hold or the transformation has got, was set on the whole field every frame,
+and handed down to everything in it; it is set on the bar itself (`.re-run`), and only when it
+changes. Style work a second on a phone 132 → 32 ms. The test reads it there. See [the site on a phone](2026-09-21-the-site-on-a-phone.md#2026-10-01--every-page-measured-on-a-phone-and-made-smoother) for how it was measured.

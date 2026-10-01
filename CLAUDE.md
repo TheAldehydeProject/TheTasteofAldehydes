@@ -306,7 +306,7 @@ faults deliberately left standing between 700px and wherever they stop because t
 says so, are in [the phone
 report](docs/features/2026-09-21-the-site-on-a-phone.md) under "Nothing above 700px moved".
 
-Seven things follow, and they are the ones to keep in mind when adding a drawing:
+Eight things follow, and they are the ones to keep in mind when adding a drawing:
 
 - **A thing standing over the page is sized against the viewport, not by a media query.**
   The notes window is `min(430px, calc(100vw - 36px))` wide and `min(74vh, 640px)` tall,
@@ -341,6 +341,14 @@ Seven things follow, and they are the ones to keep in mind when adding a drawing
   at any size. Every one of those is keyed to the width anyway (`tighten`, `ONE_WIDEST`,
   `SIDE_NARROW`), because the rule is a rule. Key a new one the same way and say in the
   comment what it is leaving behind.
+
+- **A drawing pays for every speck, every frame — so draw cheaply** (2026-10-01, measured on
+  every page: see [the phone report](docs/features/2026-09-21-the-site-on-a-phone.md#2026-10-01--every-page-measured-on-a-phone-and-made-smoother)).
+  Set a colour once and vary `globalAlpha`, never a `"rgba(…)"` string per speck; draw what has
+  stopped moving once, into a picture of its own, and lay that down; never write the page (a
+  reading, a style) when nothing has changed, and never read the page's layout after writing it
+  in the same frame; stop a drawing that cannot be seen. On a phone, fewer, stronger specks in a
+  3D drawing are the same light for less work.
 
 `tests/mobile.spec.js` is the guard: no page scrolls sideways at 390px, the crowd is
 drawn, and a tap brings a figure home.

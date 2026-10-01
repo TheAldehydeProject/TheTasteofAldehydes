@@ -1904,3 +1904,20 @@ How to test it: **`whatever window is opened, the drawing behind goes on turning
 the Sources over it (at least 80% of the free pace), and apart, an accord's own turning under a
 note's window. **`a fragrance pressed asks before the library is left`** reads the way out gold from
 the combinations' list and rouge from a note's window afterwards.
+
+On a phone, also this day (part of the round's smoothness pass): **the fillers are the icosahedron
+undivided** — twenty facets, not eighty (`FILLER_FACETS`), a few pixels across there, and most of
+the 900,000 vertices a frame the library asked of a phone's graphics chip; the notes keep theirs,
+and a desktop both. And since the drawing now goes on turning behind its windows, **a note's window
+and the way out stand on the veil's blur alone** on a phone, in a glass a little more opaque, with
+no blur of their own. See [the site on a phone](2026-09-21-the-site-on-a-phone.md#2026-10-01--every-page-measured-on-a-phone-and-made-smoother) for how it was measured.
+
+**Two tests made steady, not changed** (2026-10-01): **`as it opens it wires itself in …`** failed
+now and then when two library pages were drawing at once in the suite — the old code exactly as
+often (run against the commit before this round: two in four) — because the word stays **4.2
+seconds of the clock** (`COACH_MS`) and a machine that busy can spend them between the page opening
+and the test looking. The test now holds that one timer off (`unCoach`, found by its name) so it
+reads the word at its leisure; the press that puts it away is still tested. And **the two tests
+that arrive at a note's own address** (`works/test-page.html#note-vanilla`, and the site's search's
+link to Orris) read the open note through `noteNow`, which answers nothing rather than failing
+while the arriving page has not run its script yet.

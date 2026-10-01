@@ -347,3 +347,102 @@ pointer, and that is most of what these pages are.
   why it has not been done.
 - 37 frames a second on the map is playable rather than smooth. The next thing to try
   there is fewer wake specks on a narrow window.
+
+## 2026-10-01 — every page measured on a phone, and made smoother
+
+The owner:
+
+> now finally; i want you to make it really optimal in the case of it being used for the phone;
+> and I want you to make sure all the animations on all the pages are smooth. take your time, do
+> it as well as you can, and make sure that everything will run smoothly. Run tests for
+> EVERYTHING this time, make measurements of all the information necessary, and then make sure
+> that visually it will work nicely.
+
+### How it was measured
+
+Every page (24 of them: home, the eight Menu pages, the nine houses, the individual fragrances,
+five essays) was opened twice — **at a laptop's size** (1440 × 900) and **as a phone** (390 × 844
+at three device pixels to one, a touch screen, the processor slowed four times to stand in for a
+mid-range phone) — left for four and a half seconds, then watched for three seconds standing still
+and three seconds scrolling (about 540px a second). For each: the gaps between frames (how many
+missed a sixtieth of a second), long stalls, and from Chrome's own counters how much **script**,
+**style** and **layout** work the page's one thread did each second. Then the scripts were
+profiled function by function on the phone setting. The old site was served beside the new and
+measured the same way, so every number below is old → new on the same machine.
+
+One thing to know reading them: this machine has no graphics card, so a canvas is painted, and
+3D drawn, in software on the page's own thread. On a phone a graphics chip does that. So the
+**frame counts here are pessimistic** — a drawn page that misses frames here may not on a phone —
+and the **script, style and layout columns are the trustworthy ones**: they are the same work on
+any machine, and on a phone they are what competes with the drawing for the one thread. (Asking
+Chromium here to paint off the thread made it slower still — its stand-in graphics chip is itself
+software — so that was dropped.)
+
+### What was wrong, and what was done
+
+- **Drawings redrawing what never changes.** Les Abstraits drew its armoire — thousands of specks,
+  each with a colour of its own — every frame, though once it has built and bloomed it never
+  moves; it is a picture now, made once (`still` in `abstraits.js`). Phone, script a second
+  **455 → 51 ms**; laptop 270 → 15.
+- **A colour written out as words for every speck.** Tombstone, Almost Human and ADAR set every
+  speck's colour as a string — `"rgba(…,0.412)"` — which the browser then reads back, thousands
+  of times a frame. Each sets its ink once and varies only `globalAlpha`, a number: the same
+  drawing (compared pixel for pixel, still: identical, Tombstone within 0.004 of a shade on
+  average). Phone: **Tombstone 346 → 91 ms**, **Almost Human 295 → 95**, **ADAR 136 → 70**.
+- **Layout forced every frame, standing still.** The essays' reading rule wrote its percentage
+  and its section's name every frame (`essay.js`); the cursor wrote its ring every frame and
+  asked what is under the pointer on every mouse movement (`nav.js`, laptops only); Theories
+  wrote its reading every frame (`structure.js`). Each now writes only what has changed. **Every
+  essay: 60 layouts a second while idle → none** (181 → 0 on a laptop, where the cursor added
+  its own); **every desktop page: the cursor's 60 a second → none.** The rule's fill is a
+  transform now, not a height, so scrolling an essay no longer lays the page out either (60 a
+  second → none on the phone).
+- **A property set on a whole drawing every frame.** The Explorations field's bar was driven by
+  `--run` on the field, handed down to everything in it and restyled each frame; it is set on
+  the bar alone. Phone, style work **132 → 32 ms** a second.
+- **Reading the page right after writing it.** The home page's aldehyde read its own box every
+  frame, straight after `landing.js` had set the page for that frame — a layout forced every
+  frame of a scroll. It reads it when the page scrolls. Home, phone: **frames missing their slot
+  28% → 1% standing, 30% → 7% scrolling; long stalls 1.3s → 0.7s** in a load.
+- **Drawing what cannot be seen.** The old Fragrances index's ring on Scent descriptions turned
+  on while the Houses were the page (`index-page.js`); it draws only while it is on the window.
+- **Theories' station marks** move and grow every frame with the drawing — that is what they are
+  — so they still lay themselves out every frame, but inside a box contained from the page
+  (`contain: layout style` on `.structure-marks`); its style work halved.
+
+### On a phone's graphics chip
+
+What 3D cannot be timed here was counted: the draw calls and vertices each frame asks of the
+chip.
+
+- **The Note Library** asked for about **900,000 vertices a frame**, most of them its 2,600 filler
+  nodes, each an icosahedron divided once (eighty facets) — a few pixels across on a phone. On a
+  window under 700px the fillers are the icosahedron undivided (twenty facets), about **a quarter
+  of the vertices**; the notes keep their eighty, and a desktop keeps both (`FILLER_FACETS` in
+  `network.js`). And now that the drawing goes on turning behind its windows (asked for the same
+  day), every blur over it is worked out again each frame — so on a phone the note window and the
+  way out stand on the veil's blur alone, in a glass a little more opaque, with no second blur of
+  their own.
+- **The home page's aldehyde** draws its ~58,000 specks on a phone some 2.2 times smaller than on a
+  laptop, every one working its swirl out from scratch each frame — over twice a laptop's specks to
+  the inch. On a window under 700px it draws **half of them, each twice as strong**
+  (`PHONE_THIN` in `molecule.js`): the same light in the same place (screenshots side by side are
+  all but the same), for half the work.
+
+### How to test it
+
+The suite is the guard for behaviour; the measurement is a script kept out of the repository (it
+needs nothing the tests do not, but takes twenty minutes): Playwright opens each page in Chromium,
+records every animation frame (`requestAnimationFrame`) and long task, and reads
+`Performance.getMetrics` before and after; the phone is `Emulation.setCPUThrottlingRate` 4 with a
+390 × 844 touch screen. By hand, on a phone: open each page and scroll it, open About me, open a
+note in the Note Library and let it turn behind.
+
+### Known issues / TODO
+
+- **The 3D pages cannot be timed on this machine**, only counted. On a phone the Note Library is
+  still the heaviest page on the site.
+- **Theories, Explorations & Researches and the Houses view** still do the most script of the drawn
+  pages on a phone (about 160–210 ms a second at a quarter of the speed, so a few milliseconds a
+  frame on a real one) — each has thousands of specks to place every frame, and nothing of theirs
+  stands still to be kept.

@@ -225,3 +225,12 @@ put it beside the private page. To change the molecule's data, `python3 tools/al
 - The molecule is formaldehyde, the smallest aldehyde; the private page showed lauric aldehyde
   (C-12) the same way, and the tool could be pointed at it (its chain would need the framing
   rethought: it is fifteen ångström long).
+
+## 2026-10-01 — half the specks on a phone, each twice as strong
+
+On a window under 700px the cloud is drawn some 2.2 times smaller than on a laptop, with all its
+~58,000 specks, each working its swirl out every frame — over twice a laptop's to the inch. There it
+draws half of them, each twice as strong (`PHONE_THIN` in `molecule.js`, the alpha divided by it):
+the same light in the same place for half the graphics chip's work. Its own clock now runs only
+while it is drawn, and its box is read when the page scrolls — see [the five
+stages](2026-09-30-the-formula-slide.md). See [the site on a phone](2026-09-21-the-site-on-a-phone.md#2026-10-01--every-page-measured-on-a-phone-and-made-smoother) for how it was measured.

@@ -1130,3 +1130,14 @@ the house's way in. One `<a class="house-return">` as the first thing in each he
 house`** — on all nine: one button, to its own `#house-NN`, above the name, at the top of the page,
 the kicker exactly where it stood (234px at 900 tall); and Tombstone's, pressed, lands on the Houses
 view with Tombstone at the front.
+
+## 2026-10-01 — Les Abstraits and Tombstone lighter to draw
+
+Part of the round's smoothness pass, nothing to see. **Les Abstraits' armoire, once it stands, is
+a picture**: built and in bloom it never moves again, but it was drawn speck by speck — thousands,
+each its own colour — every frame; now it is drawn once into a picture the size of the window
+(`still` in `abstraits.js`, made again on a resize) and laid down each frame, the powder and the
+drip over it as before. **Tombstone** sets each shade once and how much of it a speck or its
+reflection shows as `globalAlpha` (`tint` in `tombstone.js`), where it wrote a colour as words
+twice a speck. Script a second on a phone: Les Abstraits 455 → 51 ms, Tombstone 346 → 91. Both
+compare pixel for pixel with what they were. See [the site on a phone](2026-09-21-the-site-on-a-phone.md#2026-10-01--every-page-measured-on-a-phone-and-made-smoother) for how it was measured.

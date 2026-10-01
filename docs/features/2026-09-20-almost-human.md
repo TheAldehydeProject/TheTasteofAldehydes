@@ -470,3 +470,9 @@ report](2026-09-17-images-folder-per-house.md).
 Almost Human, like every house, has **Back to the houses** at the top of its page, above its name, back to
 the Houses view with Almost Human at the front. It is written up with the rest in [the newer
 houses](2026-09-21-the-newer-houses.md#2026-09-29--a-return-button-at-the-top-of-every-house).
+
+## 2026-10-01 — the crowd lighter to draw
+
+Every speck of the crowd and the rain is the one ink: it is set once a frame, and how much of it a
+speck shows is `globalAlpha` (`alpha` in `almost-human.js`) — it was a colour written as words
+for every speck. The same drawing, pixel for pixel; script a second on a phone 295 → 95 ms. See [the site on a phone](2026-09-21-the-site-on-a-phone.md#2026-10-01--every-page-measured-on-a-phone-and-made-smoother) for how it was measured.

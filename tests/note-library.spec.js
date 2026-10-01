@@ -111,6 +111,9 @@ async function look(page, points = []) {
   }, { shot, points });
 }
 const state = (page) => page.evaluate(() => window.NetScene.state());
+/** Which note's window is up — read across a page arriving, when the
+ *  library's script may not have run yet (or the page is still changing). */
+const noteNow = (page) => page.evaluate(() => window.NetScene ? window.NetScene.state().note : null).catch(() => null);
 async function open(page, size = { width: 1440, height: 900 }) {
   await page.setViewportSize(size);
   await page.goto(TEST_PAGE);
@@ -224,6 +227,17 @@ test("the Note Library is drawn as one red network, the menu put away, and nothi
 test("as it opens it wires itself in, and then points at the menu's arrow over the page out of focus", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
+  // The word stays a few seconds of the clock (COACH_MS), and with two of
+  // these pages drawing at once in software those seconds can pass between
+  // the page opening and this test reading it — which failed the old code
+  // the same way (2026-10-01). So the timer that puts it away on its own
+  // (`unCoach`, by name) is held off here; the press below still does.
+  await page.addInitScript(() => {
+    const later = window.setTimeout;
+    window.setTimeout = function (f, ms, ...rest) {
+      return later.call(window, f, f && f.name === "unCoach" ? 600000 : ms, ...rest);
+    };
+  });
   await open(page);
   const stage = page.locator(".net-stage");
   expect((await state(page)).loaded, "wiring itself in, first").toBe(false);
@@ -1510,7 +1524,7 @@ test("the test page is the Note Library now: out of the menu, and its old addres
   await expect(page).toHaveURL(/\/note-library\/#note-vanilla$/);
   // Arriving at a note's own address opens its window, the page come
   // apart and gone to its accord.
-  await expect.poll(async () => (await state(page)).note, { timeout: 60000 }).toBe("Vanilla");
+  await expect.poll(() => noteNow(page), { timeout: 60000 }).toBe("Vanilla");
   await expect(page.locator(".net-note")).toBeVisible();
   await expect(page.locator(".net-stage")).toHaveAttribute("data-focus", "GOU", { timeout: 30000 });
 });
@@ -1523,10 +1537,10 @@ test("the site's search finds a note, by any of its spellings, and its link open
   await page.goto("/search/?q=iris%20butter");
   const row = page.locator(".find-results a", { hasText: "Orris" }).first();
   await expect(row).toBeVisible({ timeout: 15000 });
-  await expect(row).toHaveAttribute("href", /note-library\.html#note-orris$/);
+  await expect(row).toHaveAttribute("href", /\/note-library\/#note-orris$/);   // (its own address since 2026-10-01)
   await expect(page.locator(".find-filter[data-kind='Note']")).toBeVisible();
   await row.click();
-  await expect.poll(async () => (await state(page)).note, { timeout: 60000 }).toBe("Orris");
+  await expect.poll(() => noteNow(page), { timeout: 60000 }).toBe("Orris");
 });
 
 test.describe("the library with animation turned off", () => {
