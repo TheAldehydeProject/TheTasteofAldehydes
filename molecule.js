@@ -159,26 +159,35 @@
   const CLEAR = 0.78;          // the clear space round each, of that
   // THE LINES: how many specks to a pixel of a line's length; how far off it
   // they stand (most on it, some a little off, a few in a haze); how fast
-  // they fall, pixels a second (a little slower since the night of
-  // 2026-09-30: "make the lines slightly slower the way go down"; they fell
-  // at 16 to 44); and how much they swirl about their way, as the
-  // aldehyde's do.
+  // they fall, pixels a second — half as fast since 2026-10-01 ("slow down
+  // the particles in the lines by about half"; 11 to 30 from the night of
+  // 2026-09-30, "slightly slower", and 16 to 44 before that); how much they
+  // swirl about their way, as the aldehyde's do, and how quickly the swirl
+  // turns over (halved with the fall, `LINE_STIR`).
   const LINE_DENSITY = 3;
   const LINE_SPREAD = [[0.62, 1.2], [0.28, 3.6], [0.1, 10]];   // [share, pixels either side]
-  const FALL = [11, 30];
+  const FALL = [5.5, 15];
   const LINE_SWIRL = 3.2;
+  const LINE_STIR = 0.06;
   // A NAME'S BACKDROP (2026-09-30: "make them slightly particular when
   // hovered. give them a slight backdrop of particles, same colours as the
   // aldehyde"): a soft oval of specks behind a name the hand or the keys
-  // are on — the aldehyde's gold, violet and grey — gathering in to it as
-  // it comes up and swirling as the aldehyde's do. How many to a name, how
-  // far out they stand, of the name's own half-size and pixels more, how
-  // quickly they come and go, and how bright they are at most.
-  const HAZE_PER_NAME = 420;
+  // are on — the aldehyde's gold, violet and grey — swirling as the
+  // aldehyde's do. **Many small ones, coming one by one** since 2026-10-01
+  // ("not to have such a sudden burst of large particles, rather the
+  // gradual appearance of many small ones ... when you hover one of the 8
+  // titles"): each speck shows at a moment of its own as the backdrop comes
+  // up (`HAZE_STAGGER` of the way, each its own share of it), settling the
+  // last little way into its place as it does — it was 420 a name, twice
+  // the size, all coming at once and drawn in from half as far again. How
+  // many to a name, how far out they stand, of the name's own half-size and
+  // pixels more, how quickly they come and go, and how bright at most.
+  const HAZE_PER_NAME = 1000;
   const HAZE_REACH = [0.62, 14];    // [of the name's half-width, pixels]
   const HAZE_RISE = [0.72, 9];      // the same, up and down
-  const HAZE_EASE = 420;            // ms, the time constant it comes up and goes on
+  const HAZE_EASE = 650;            // ms, the time constant it comes up and goes on (420 until 2026-10-01)
   const HAZE_ALPHA = 0.95;
+  const HAZE_STAGGER = 0.75;        // the share of its coming over which the specks' own moments are spread
   const HAZE_TONES = [[0.34, "rest"], [0.36, "pi"], [0.3, "lone"]];   // [share, the aldehyde's colour]
   // THE ELECTRONEGATIVE HAND: how far its pull reaches, how much of the way
   // to it a speck at its heart is drawn, and how much brighter it is there.
@@ -399,8 +408,8 @@
       float seed = fract(aLine.w * 7.31 + aLine.z * 0.013);
       // its swirl, as the aldehyde's specks swirl
       vec2 p = vec2(x, y) + uSwirl * vec2(
-        snoise(vec3(x * 0.011, y * 0.011, uTime * 0.12 + seed * 3.0)),
-        snoise(vec3(x * 0.011 + 17.3, y * 0.011, uTime * 0.12 - seed * 3.0)));
+        snoise(vec3(x * 0.011, y * 0.011, uTime * ${LINE_STIR.toFixed(3)} + seed * 3.0)),
+        snoise(vec3(x * 0.011 + 17.3, y * 0.011, uTime * ${LINE_STIR.toFixed(3)} - seed * 3.0)));
       // come down the window, top to bottom, the head soft
       float head = uDraw * (uRes.y + 90.0);
       float on = 1.0 - smoothstep(head - 90.0, head, p.y);
@@ -462,9 +471,11 @@
       if (heat <= 0.002) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
       float seed = aHaze.w;
       vec2 off = aHaze.yz * vec2(hw * ${HAZE_REACH[0].toFixed(3)} + ${HAZE_REACH[1].toFixed(1)}, hh * ${HAZE_RISE[0].toFixed(3)} + ${HAZE_RISE[1].toFixed(1)});
-      // gathered in as it comes up
-      float come = smoothstep(0.0, 1.0, heat);
-      off *= mix(1.55, 1.0, come);
+      // each speck at a moment of its own as it comes up, and settling the
+      // last little way into its place as it does
+      float from = seed * ${HAZE_STAGGER.toFixed(3)};
+      float come = smoothstep(from, from + ${(1 - HAZE_STAGGER).toFixed(3)}, heat);
+      off *= mix(1.12, 1.0, come);
       vec2 p = vec2(cx, cy) + off;
       // a slow turn of its own, and the aldehyde's swirl
       float a = uTime * (0.25 + 0.35 * seed) + seed * 40.0;
@@ -486,7 +497,7 @@
       vColour = aTone * (1.0 + ${HAND_LIGHT.toFixed(3)} * near);
       vAlpha = come * shape * twinkle;
       gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
-      gl_PointSize = uSize * (0.7 + 0.6 * seed);
+      gl_PointSize = uSize * (0.75 + 0.5 * fract(seed * 13.7));
     }`;
 
   // ---- the specks ----------------------------------------------------------
@@ -750,7 +761,7 @@
     lineMat.uniforms.uSize.value = (small ? 1.8 : 2.1) * scale;
     lineMat.uniforms.uRes.value.set(W, H);
     lineMat.uniforms.uSwirl.value = small ? LINE_SWIRL * 0.8 : LINE_SWIRL;
-    hazeMat.uniforms.uSize.value = (small ? 2.2 : 2.6) * scale;
+    hazeMat.uniforms.uSize.value = (small ? 1.4 : 1.6) * scale;    // small (it was 2.2 and 2.6)
     hazeMat.uniforms.uRes.value.set(W, H);
     hazeMat.uniforms.uSwirl.value = lineMat.uniforms.uSwirl.value;
     names.forEach((n) => { n.el.style.fontSize = (ATOM_SIZE * pxForm).toFixed(1) + "px"; });

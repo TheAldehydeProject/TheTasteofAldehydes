@@ -415,13 +415,20 @@
     const ctx = canvas.getContext("2d");
     if (!ctx) return none;
     const TONES = [[0.5, "179,171,161"], [0.3, "224,178,82"], [0.2, "169,138,216"]];
-    const COUNT = 180, GATHER_MS = 900;
+    // MANY SMALL ONES, COMING ONE BY ONE (2026-10-01: "not to have such a
+    // sudden burst of large particles, rather the gradual appearance of
+    // many small ones"): each shows at a moment of its own over the first
+    // `APPEAR_MS`, fading in over `FADE_MS` where it stands and settling
+    // the last few pixels into its place — it was 180 twice the size, all
+    // flying in together from all round over 0.9s.
+    const COUNT = window.innerWidth < 700 ? 360 : 560;
+    const APPEAR_MS = 1500, FADE_MS = 600, SETTLE = 6;
     let specks = [], w = 0, h = 0, ratio = 1, raf = 0, born = 0;
     let s = 91;
     const rnd = () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
     function lay() {
       const r = canvas.getBoundingClientRect();
-      ratio = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 2);
+      ratio = Math.min(window.devicePixelRatio || 1, 2);
       w = Math.max(1, r.width); h = Math.max(1, r.height);
       canvas.width = Math.round(w * ratio); canvas.height = Math.round(h * ratio);
       s = 91;
@@ -434,20 +441,25 @@
         const a = rnd() * Math.PI * 2;
         specks.push({
           x: x * w, y: y * h, tone,
-          size: 0.6 + rnd() * 1.1,
-          alpha: 0.2 + rnd() * 0.5,
-          turn: 0.15 + rnd() * 0.35, orbit: 2 + rnd() * 5, phase: rnd() * 6.283,
-          fromX: Math.cos(a) * (w * 0.7), fromY: Math.sin(a) * (h * 0.7),
+          size: 0.3 + rnd() * 0.5,
+          alpha: 0.3 + rnd() * 0.55,
+          turn: 0.15 + rnd() * 0.35, orbit: 1.5 + rnd() * 4, phase: rnd() * 6.283,
+          at: rnd() * APPEAR_MS,
+          fromX: Math.cos(a) * SETTLE, fromY: Math.sin(a) * SETTLE,
         });
       }
+      // by colour, so the pen is changed three times a frame, not hundreds
+      specks.sort((p, q) => (p.tone < q.tone ? -1 : p.tone > q.tone ? 1 : 0));
     }
     function frame(now) {
       const t = (now - born) / 1000;
-      const come = REDUCE_MOTION ? 1 : smooth((now - born) / GATHER_MS);
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
       ctx.clearRect(0, 0, w, h);
       ctx.globalCompositeOperation = "lighter";
+      let pen = "";
       for (const p of specks) {
+        const come = REDUCE_MOTION ? 1 : smooth((now - born - p.at) / FADE_MS);
+        if (come <= 0) continue;
         const a = REDUCE_MOTION ? p.phase : p.phase + t * p.turn;
         let x = p.x + Math.cos(a) * p.orbit + (1 - come) * p.fromX;
         let y = p.y + Math.sin(a * 1.3) * p.orbit * 0.7 + (1 - come) * p.fromY;
@@ -458,11 +470,13 @@
         // faint where the words stand: the upper left
         const quiet = 0.35 + 0.65 * smooth(Math.max(x / w - 0.45, 0) * 2.2 + Math.max(y / h - 0.62, 0) * 2.6);
         const twinkle = REDUCE_MOTION ? 1 : 0.7 + 0.3 * Math.sin(t * 1.7 + p.phase * 9);
-        ctx.fillStyle = "rgba(" + p.tone + "," + (p.alpha * quiet * twinkle * come).toFixed(3) + ")";
+        if (p.tone !== pen) { ctx.fillStyle = "rgb(" + p.tone + ")"; pen = p.tone; }
+        ctx.globalAlpha = Math.min(1, p.alpha * quiet * twinkle * come);
         ctx.beginPath();
         ctx.arc(x, y, p.size, 0, 6.283);
         ctx.fill();
       }
+      ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = "source-over";
       raf = REDUCE_MOTION ? 0 : requestAnimationFrame(frame);
     }

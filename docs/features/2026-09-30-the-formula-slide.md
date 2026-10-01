@@ -351,6 +351,28 @@ The owner:
   does, the stage following it 0.16s behind — a mouse wheel still went a notch at a time. Replaced
   by the glide.
 
+### 2026-10-01 — the lines half as fast, and the specks coming many and small
+
+The owner: "in the home page, i want you to slow downt he particles in the lines by about half.
+Then, when you open one of the 8 tabs, i want the window to pop up not to have such a sudden burst
+of large particles, rather the gradual appearance of many small ones. the same applies when you
+hover one of the 8 titles."
+
+- **The lines fall half as fast** — 5.5 to 15 pixels a second (`FALL`; 11 to 30 before) — and
+  their swirl turns over half as fast (`LINE_STIR`, 0.06; 0.12 before), so the whole of their
+  movement is halved, not only the fall.
+- **A name's backdrop**: 1,000 specks a name (`HAZE_PER_NAME`; 420), about two thirds the size
+  (`uSize` 1.6, 1.4 on a phone; 2.6 and 2.2), and **each at a moment of its own**: as the
+  backdrop comes up, the specks show one after another across three quarters of its coming
+  (`HAZE_STAGGER`, each its own share by its seed), each settling the last little way into its
+  place (from 1.12 times as far; the whole was drawn in from 1.55 at once) — and as it goes,
+  they go one by one the other way. It comes up and goes a little slower (`HAZE_EASE` 650ms; 420).
+- **The way out's specks**: 560 on a laptop and 360 on a phone (180 before), a third to half the
+  size, and **each fading in where it stands at a moment of its own** over the first second and a
+  half (`APPEAR_MS`, `FADE_MS`), settling the last six pixels into its place — they all flew in
+  together from all round over 0.9s. Drawn with the pen's colour set three times a frame and its
+  strength as its alpha, so many more cost little more; drawn as sharp as the screen up to two.
+
 ## How to test it
 
 `tests/formula.spec.js`:
