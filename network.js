@@ -4122,18 +4122,21 @@
       },
       accords: () => accords.map((A) => ({ code: A.code, name: A.name, count: A.notes.length, members: A.members.length, links: A.links, type: A.type, reach: A.reach, R: A.R, middle: A.coreGroup.visible })),
       /** A filler of an accord's network standing clear of every note on
-          the window — to press, and find that nothing answers. */
+          the window — and of every note's name, which answers a press too
+          since 2026-10-01 — to press, and find that nothing answers. */
       filler: (code) => {
         const A = accords.find((x) => x.code === code);
         if (!A) return null;
         scene.updateMatrixWorld();
         const spots = A.notes.map((n) => { const p = project(P[n.i * 3], P[n.i * 3 + 1], P[n.i * 3 + 2]); return [toX(p), toY(p)]; });
+        const named = tags.filter((g) => g.show > 0.05 && g.box).map((g) => g.box);
+        const underName = (x, y) => named.some(([bx, by, bw, bh]) => x > bx - 10 && x < bx + bw + 10 && y > by - 10 && y < by + bh + 10);
         for (const m of A.members) {
           if (m.kind === 0 || vis[m.i] < 0.9) continue;
           const p = project(P[m.i * 3], P[m.i * 3 + 1], P[m.i * 3 + 2]);
           const x = toX(p), y = toY(p);
           if (p.z > 1 || x < room() + 40 || x > W - 40 || y < 40 || y > H - 160) continue;
-          if (spots.every(([sx, sy]) => Math.hypot(sx - x, sy - y) > 40)) return { x, y, i: m.i };
+          if (spots.every(([sx, sy]) => Math.hypot(sx - x, sy - y) > 40) && !underName(x, y)) return { x, y, i: m.i };
         }
         return null;
       },

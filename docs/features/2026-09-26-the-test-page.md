@@ -2002,4 +2002,7 @@ and a half, and taken back up`**. The other 3D drawings on the site are in
 opens its window`** (none pressable as one network or seeing every accord; at Floral, a name pressed
 is that note's window — pressed where it is, since a name drifts as its network turns); **`every
 note's window says what its pyramidal distribution is`**; **`the Note Library is named beside the
-Menu`**. With motion turned off, a drag of 160px still turns it (now more than 0.15 of a radian).
+Menu`**. With motion turned off, a drag of 160px still turns it (now more than 0.15 of a radian). And
+**`NetScene.filler`**, which finds a filler to press and find that nothing answers, keeps clear of the
+names as well as the notes now: in the full run one stood under *Caramel*'s name, and the press opened
+Caramel — the name doing what it should.
