@@ -475,7 +475,10 @@
       note lying outside the zone and the share lying inside it, so they
       cannot disagree — the owner asked for changing one to set the
       other to whatever is left, always. Setting `.value` does not raise
-      another `input`, so there is no loop to guard against. */
+      another `input`, so there is no loop to guard against.
+      AND ONE EMPTIED SETS THE OTHER TO NOUGHT (2026-10-01 — "when you
+      remove a number from IC or BC completly, I want the other number to
+      go to zero"): it used to keep whatever it had last been given. */
   function pairUp(el) {
     const id = el.id || "";
     const other = id.indexOf("ic-") === 0 ? "bc-" + id.slice(3)
@@ -483,6 +486,9 @@
     if (!other) return;
     const mate = shell.querySelector("#" + (window.CSS && CSS.escape ? CSS.escape(other) : other));
     if (!mate) return;
+    // Emptied — not merely half typed, which a number field also reads
+    // as empty, but with nothing in it at all.
+    if (el.value === "" && !(el.validity && el.validity.badInput)) { mate.value = "0"; return; }
     const v = parseFloat(el.value);
     if (!isFinite(v)) return;
     const left = Math.round((100 - Math.max(0, Math.min(100, v))) * 1000) / 1000;

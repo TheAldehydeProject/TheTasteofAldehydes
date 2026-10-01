@@ -71,7 +71,7 @@ const REAL_NODES = [
   {
     label: "Scent descriptions", sub: "notes on things I've smelled and tried to describe",
     href: "scent-descriptions/", pos: [0.27, 2.8, 1.53],
-    preview: { image: "images/Previews/scent-descriptions.jpg", description: "Here I describe things, from scents to houses to notes to anything else." },
+    preview: { image: "images/Previews/scent-descriptions.jpg", description: "Here I describe perfumes and perfume houses." },
   },
   {
     label: "Theories", sub: "some frameworks that I came up with myself",

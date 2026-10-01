@@ -274,3 +274,18 @@ that draws. The home page's aldehyde, Theories, the chamber and the sun and moon
 and what was measured, is in [the phone report](2026-09-21-the-site-on-a-phone.md#2026-10-01-last--the-3d-drawings-as-sharp-as-the-screen).
 The menu's aldehyde, in the menu itself, is drawn at the screen's own up to two (it was 1.5 on a
 phone). Tested in `mobile.spec.js`.
+
+## 2026-10-01, later — the Menu in a slimmer face
+
+> Also the menu font, change it to a more minimalist font. not robotic or whatever, but slimmer maybe
+
+The Menu's names — Home to Contact, the big ones — are set in **Jost, light** (300), a slim geometric
+sans, where they were the site's Archivo at 500. `nav.js` asks Google Fonts for it once, on whatever
+page it is on (`link[data-menu-face]`), rather than every page asking in its head: only the Menu sets
+in it. Until it arrives, or if it cannot, the names stand in Archivo as before. The word *Menu* itself,
+the chrome's mono, is unchanged, and so is the smell of aldehydes beside the list.
+
+`tests/menu.spec.js`, **`the menu's names are set in Jost, light`**, on three pages. (The tests answer
+every font request with nothing, so they check the face asked for, not its letters; it was looked at
+with Jost served from a copy for the picture.)
+

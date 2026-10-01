@@ -156,6 +156,19 @@ test("the corner block is gone", async ({ page }) => {
   await expect(page.locator(".title-block")).toHaveCount(0);
   await expect(page.locator(".title-sub")).toHaveText("A Perfume Portfolio");
 });
+/* THE SCROLL BUTTON IN THE MIDDLE (2026-10-01): "move the scroll button
+   in the home page to the center middle" — at the foot of the window, in
+   the middle of it, on a desktop and on a phone. */
+test("the Scroll button stands in the middle at the foot", async ({ page }) => {
+  for (const size of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(size);
+    await page.goto("/index.html");
+    const box = await page.locator("#scroll-cue").boundingBox();
+    expect(Math.abs(box.x + box.width / 2 - size.width / 2), size.width + ": in the middle").toBeLessThan(2);
+    expect(size.height - (box.y + box.height), size.width + ": at the foot").toBeLessThan(40);
+  }
+});
+
 for (const [what, selector] of [
   ["Scroll button", ".scroll-cue"],
 ]) {

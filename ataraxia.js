@@ -11,10 +11,15 @@
 //               it and thinning to nothing either side, so a band has
 //               a bright core and no edge you can point at.
 //   THE CREST   a swell of brightness travelling along a band's own
-//               length on its own slow clock. THE SPECKS NEVER MOVE;
-//               what moves is where the light is. That is the whole of
-//               the glow, and it is why the page reads as lit rather
-//               than as printed.
+//               length on its own slow clock — what moves most is where
+//               the light is. That is the whole of the glow, and it is
+//               why the page reads as lit rather than as printed.
+//   THE DRIFT   and the specks themselves move, only slightly (the
+//               owner, 2026-10-01: "introduce SLIGHT movement to the
+//               streaks that go across the page"): they flow along their
+//               band a few pixels a second, each wanders a pixel or two
+//               about its place, and a slow swell runs along the band.
+//               Until then they never moved at all.
 //   THE KINDLE  what answers the hand: the specks within reach of the
 //               pointer burn brighter, eased in and out so it arrives
 //               rather than switching on — and each one the hand has
@@ -115,6 +120,15 @@
   const CREST_EVERY = [11, 23];    // seconds for one pass of the crest along a band
   const CREST_WIDE = 0.3;          // how much of a band it lights at once
   const CREST_LIFT = 2.4;          // and how much brighter it draws it
+
+  // THE DRIFT. The flow's speed and way are the band's own, taken from
+  // its crest's clock; a speck wanders on its twinkle's clock, so none of
+  // it changes where the bands stand.
+  const FLOW = [3, 8];             // px a second, the specks along their band
+  const WANDER = 1.6;              // px either side a speck wanders about its place
+  const SWELL = 2.6;               // px either side, the slow swell along a band
+  const SWELL_LONG = 320;          // px from one swell to the next
+  const SWELL_EVERY = 9;           // seconds for it to pass
 
   const TWINKLE = 0.2;             // how much a speck breathes about its own strength
   const TWINKLE_EVERY = [3.5, 11]; // seconds for one breath
@@ -288,10 +302,21 @@
       if (mid - band.reach > height || mid + band.reach < 0) return;
 
       const crest = REDUCE_MOTION ? 0.5 : (clock / band.every + band.at) % 1;
+      // How far the band's specks have flowed along it, as a share of it.
+      const flowed = REDUCE_MOTION ? 0
+        : (clock * (FLOW[0] + (FLOW[1] - FLOW[0]) * (band.every - CREST_EVERY[0]) / (CREST_EVERY[1] - CREST_EVERY[0]))
+          * (band.at < 0.5 ? 1 : -1)) / band.len;
 
       band.specks.forEach((sp) => {
-        const along = (sp.t - 0.5) * band.len;
-        const across = sp.off * band.thick;
+        // Where along it the speck has flowed to, round the band and on
+        // again — its ends are faded out, so the turn is never seen.
+        const t = ((sp.t + flowed) % 1 + 1) % 1;
+        const along = (t - 0.5) * band.len;
+        let across = sp.off * band.thick;
+        if (!REDUCE_MOTION) {
+          across += WANDER * Math.sin((clock * sp.rate * 0.6 + sp.phase) * Math.PI * 2)
+            + SWELL * Math.sin(along / SWELL_LONG * Math.PI * 2 - clock / SWELL_EVERY * Math.PI * 2 + band.at * 6.3);
+        }
         const x = width * 0.5 + along * band.cos - across * band.sin;
         if (x < -20 || x > width + 20) return;
         const y = mid + along * band.sin + across * band.cos;
@@ -300,7 +325,7 @@
         // THE BODY OF THE BAND: fading out at the two ends, and away
         // from the spine. Squared across, so the middle of a band is
         // plainly its middle.
-        const ends = Math.min(1, Math.min(sp.t, 1 - sp.t) / ENDS);
+        const ends = Math.min(1, Math.min(t, 1 - t) / ENDS);
         const near = 1 - Math.abs(sp.off);
         const body = ends * near * near;
         if (body < 0.02) return;
@@ -309,7 +334,7 @@
         // short way round, so the crest runs off one end and back on
         // at the other instead of stopping.
         let lift = 1;
-        const gap = Math.abs(sp.t - crest);
+        const gap = Math.abs(t - crest);
         const off = Math.min(gap, 1 - gap);
         if (off < CREST_WIDE) {
           const into = 1 - off / CREST_WIDE;

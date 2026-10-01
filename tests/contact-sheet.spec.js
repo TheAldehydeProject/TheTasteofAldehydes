@@ -1036,8 +1036,11 @@ test("Les Abstraits' armoire is drawn in lines rather than specks, with irises g
    with something on it in the armoire" (2026-09-25, night). Read off the
    motifs' canvas inside the open half of the armoire, which was a faint
    tone and a few hairlines: the clothes are drawn solid over it — hung
-   from the rail in the upper part, and folded on the shelf and the floor
-   of it below. */
+   from the rail, and folded on the shelf above it and on the floor of it.
+   Since 2026-10-01 they are their real size ("pants, a dress and some
+   blazer"), so the shelf is near the top and they hang most of the way
+   down; and each hanger is inside its garment, so between a garment's
+   shoulders nothing of its hanger is drawn over it. */
 test("Les Abstraits' armoire has clothes on hangers and folded on its shelf", async ({ page }) => {
   test.setTimeout(60000);
   await page.goto(SHEET);
@@ -1054,7 +1057,8 @@ test("Les Abstraits' armoire has clothes on hangers and folded on its shelf", as
     const baseY = H - Math.max(18, H * 0.04), left = Math.max(14, W * 0.1 - wide / 2);
     const legH = tall * 0.13, body = tall * 0.72, drawerH = body * 0.13;
     const doorTop = -(legH + body) + 8, doorBot = -legH - drawerH - 5;
-    const bT = doorTop + 10, bB = doorBot - 7, shelfY = bT + (bB - bT) * 0.7;
+    const cm = tall / 210;
+    const bT = doorTop + 10, shelfY = bT + 16 * cm, railY = shelfY + 10 * cm;
     const x1 = left + wide / 2 + 14, x2 = left + wide - 14;
     const solid = (ya, yb) => {
       let n = 0;
@@ -1062,9 +1066,9 @@ test("Les Abstraits' armoire has clothes on hangers and folded on its shelf", as
         for (let x = Math.round(x1 * ratio); x < Math.round(x2 * ratio); x++) if (d[(y * c.width + x) * 4 + 3] > 200) n++;
       return n / (ratio * ratio);
     };
-    return { hung: solid(doorTop + 30, shelfY - 40), folded: solid(shelfY - 26, doorBot) };
+    return { hung: solid(railY + 20 * cm, railY + 60 * cm), folded: solid(shelfY - 26, shelfY + 2) + solid(doorBot - 20, doorBot) };
   });
-  expect(out.hung, "clothes hung from the rail").toBeGreaterThan(1200);
+  expect(out.hung, "clothes hung from the rail, most of the way down").toBeGreaterThan(3000);
   expect(out.folded, "and folded on the shelf and the floor of it").toBeGreaterThan(500);
 });
 
@@ -1790,7 +1794,7 @@ test("the search finds a picture by what it is called", async ({ page }) => {
   const frames = await page.$$eval(".sheet-frame", (els) => els.length);
   expect(dimmed, "everything that doesn't match should step back").toBe(frames - 1);
   await expect(page.locator(".sheet-frame:not(.dimmed) .sheet-caption")).toHaveText(
-    "ADAR The House That You Have Never Heard Of"
+    "ADAR The House That You Have Never Heard of"
   );
 
   // Escape clears it and puts the sheet back.

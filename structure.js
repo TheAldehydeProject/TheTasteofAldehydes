@@ -426,6 +426,17 @@
   spine.setAttribute("aria-label", "Drag to travel along the road, or press to go to the next theory");
   shell.appendChild(spine);
 
+  // AND ITS TWIN, beside it at the foot, going the other way: pressed,
+  // back to the theory before — the owner, 2026-10-01: "add an option at
+  // the bottom to go back a theory (exactly as there is an option to go
+  // forward)". Lit when pointed at, as the wheel is, and saying so.
+  const back = document.createElement("button");
+  back.type = "button";
+  back.className = "structure-back";
+  back.setAttribute("aria-label", "Go back to the theory before");
+  back.innerHTML = '<span class="structure-back-say" aria-hidden="true"><span class="structure-back-mark"></span>back<span class="structure-back-more">&nbsp;a theory</span></span>';
+  shell.appendChild(back);
+
   // The names are real links standing over the drawing rather than
   // lettering inside it, so they can be tabbed to, read out and
   // followed like anything else on the site. Each is sized to the
@@ -1515,6 +1526,13 @@
   spine.addEventListener("click", () => {
     if (dragged > 6) return;
     const want = stops.find((stop) => stop.at.z - eye > SHOW_BEST + 1.5) || stops[0];
+    travelTo(want.at.z - SHOW_BEST - drifted);
+  });
+  // The twin: back to the station before, and round to the last from the
+  // first.
+  back.addEventListener("click", () => {
+    const before = stops.filter((stop) => stop.at.z - eye < SHOW_BEST - 1.5);
+    const want = before[before.length - 1] || stops[stops.length - 1];
     travelTo(want.at.z - SHOW_BEST - drifted);
   });
 

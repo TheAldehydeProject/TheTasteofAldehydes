@@ -30,6 +30,19 @@ test("menu opens and closes by the button", async ({ page }) => {
   await expect(trigger).toHaveAttribute("aria-expanded", "false");
 });
 
+/* IN A SLIMMER FACE (2026-10-01): "change it to a more minimalist font.
+   not robotic or whatever, but slimmer maybe" — Jost, light, asked for by
+   nav.js on every page. */
+test("the menu's names are set in Jost, light", async ({ page }) => {
+  for (const at of ["/index.html", "/theories/", "/houses/adar.html"]) {
+    await page.goto(at);
+    expect(await page.locator("link[data-menu-face]").getAttribute("href"), at).toMatch(/family=Jost:wght@300/);
+    const face = await page.locator(".menu-list a").first().evaluate((a) => [getComputedStyle(a).fontFamily, getComputedStyle(a).fontWeight]);
+    expect(face[0], at).toMatch(/^"?Jost"?,/);
+    expect(face[1], at).toBe("300");
+  }
+});
+
 test("Escape closes the menu", async ({ page }) => {
   await page.goto("/index.html");
   await page.locator(".menu-trigger").click();

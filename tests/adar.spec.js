@@ -284,7 +284,7 @@ test("the house is what the sheet's second picture points at", async ({ page }) 
   const second = page.locator(".sheet-frame").nth(1);
   await expect(second).toHaveAttribute("href", "../houses/adar.html");
   await expect(second.locator(".sheet-caption"))
-    .toHaveText("ADAR The House That You Have Never Heard Of");
+    .toHaveText("ADAR The House That You Have Never Heard of");
 });
 
 /* THE INTRODUCTION IS WRITTEN — 2026-09-25, in the owner's words, in

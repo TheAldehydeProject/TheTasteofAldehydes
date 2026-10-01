@@ -476,3 +476,9 @@ houses](2026-09-21-the-newer-houses.md#2026-09-29--a-return-button-at-the-top-of
 Every speck of the crowd and the rain is the one ink: it is set once a frame, and how much of it a
 speck shows is `globalAlpha` (`alpha` in `almost-human.js`) — it was a colour written as words
 for every speck. The same drawing, pixel for pixel; script a second on a phone 295 → 95 ms. See [the site on a phone](2026-09-21-the-site-on-a-phone.md#2026-10-01--every-page-measured-on-a-phone-and-made-smoother) for how it was measured.
+
+## 2026-10-01, later — Dear Future's MID, and a capital I
+
+At the owner's word, *Maaaaaaaybe I* (and one other *i*) are capitals, and **Dear Future's MID** has
+the room above it every other stage has — it stood hard under the last item of the list before it.
+See [the newer houses](2026-09-21-the-newer-houses.md#2026-10-01-later--the-words-a-capital-i-adars-of-dear-futures-mid).

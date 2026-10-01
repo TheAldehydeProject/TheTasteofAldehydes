@@ -1968,3 +1968,38 @@ milliseconds a frame — `NetScene.judge(ms, times)`, which feeds the judgement 
 would); **`on a phone's screen … drawn at two device pixels a point, let down no further than one
 and a half, and taken back up`**. The other 3D drawings on the site are in
 [the phone report](2026-09-21-the-site-on-a-phone.md).
+
+## 2026-10-01, later — the names pressable, the page named, the pyramid said, a quarter of the turn
+
+> make the words also clickable in Note descriptions, expanded view in each of the accord views ...
+> add the word "Note library" next to the menu in note library ... Add a description in the
+> pyrammidal distribution of every note window: "This refers to the perfume distribution in which
+> you can find this note on either the top, mid or base (or none of the above)." ... also please
+> make the movement in note library less responsibe, by a factor of 4 ... in note descriptions,
+> instead of "against" note x, then it should be "when compared to"
+
+- **The names are ways in.** At an accord, once expanded, the black names beside the nodes (**the
+  tags**, `.net-label`) open their note's window when pressed, as pressing the node does
+  (`select`), and show it under the hand (a red edge). Only there: not on the one network, not seeing
+  every accord, not on a journey, not in combinations (`pressable` in `chrome()`; a name is
+  `is-on` while it is). The list stays `aria-hidden` — the search is the way to a note by the keys.
+- **The page is named beside the Menu**, as every other page is: *Note Library*, in the chrome's
+  mono with a rule before it (`.page-where`, in the page's own markup; the dark page's own `--line`
+  and `--muted` make it light).
+- **The pyramid is said** under its heading in every note's window, in the owner's words
+  (`.net-note-explain`), with a note on the site or without.
+- **A drag turns it a quarter as far** (`DRAG`, 0.0056 → 0.0014 radians a pixel), and its fling with
+  it, since the fling is measured from the drag. **The wheel's zoom is unchanged**: "the movement" is
+  read as the turning, the thing a hand moves; a pinch is the fingers' own distance and also as it was.
+- **A variation's line says *when compared to*** where it said *against* (*Bourbon vanilla* … *WHEN
+  COMPARED TO VANILLA*, in the window's mono capitals; `tellVariation`).
+
+### How to test it
+
+`tests/note-library.spec.js`: **`a drag turns it freely, any way, a quarter as far as it did`** (a
+300px drag turns it 0.3 to 0.7 of a radian, longer drags still turn it round and tip it over — it was
+`a drag turns it freely, any way`, and needed only 300px); **`at an accord, a note's name pressed
+opens its window`** (none pressable as one network or seeing every accord; at Floral, a name pressed
+is that note's window — pressed where it is, since a name drifts as its network turns); **`every
+note's window says what its pyramidal distribution is`**; **`the Note Library is named beside the
+Menu`**. With motion turned off, a drag of 160px still turns it (now more than 0.15 of a radian).

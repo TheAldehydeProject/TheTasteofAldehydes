@@ -382,6 +382,17 @@ curosr. by a factor of 2 (or half). i want them half as reactive." The lines' sp
 aldehyde's own specks. A name's backdrop, which took its pull off the lines' until now, keeps the
 pull it had (`HAZE_PULL`, 0.175).
 
+### 2026-10-01, later — the Scroll button in the middle; Scent descriptions said anew
+
+> move the scroll button in the home page to the center middle.
+
+**The Scroll button** stands **in the middle of the window, at its foot** (`left: 50%`, drawn back by
+half its width), on a desktop and on a phone; it stood in the bottom left corner. What it does, and
+its fading, are unchanged. And **Scent descriptions' line** in its window — the way out asked first —
+is the owner's new one, *Here I describe perfumes and perfume houses.*, word for word the node map's
+`preview` for it in `node-scene.js` as well (a test holds the two together). `tests/landing.spec.js`,
+**`the Scroll button stands in the middle at the foot`**.
+
 ## How to test it
 
 `tests/formula.spec.js`:

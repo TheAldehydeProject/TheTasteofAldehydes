@@ -1141,3 +1141,151 @@ drip over it as before. **Tombstone** sets each shade once and how much of it a 
 reflection shows as `globalAlpha` (`tint` in `tombstone.js`), where it wrote a colour as words
 twice a speck. Script a second on a phone: Les Abstraits 455 → 51 ms, Tombstone 346 → 91. Both
 compare pixel for pixel with what they were. See [the site on a phone](2026-09-21-the-site-on-a-phone.md#2026-10-01--every-page-measured-on-a-phone-and-made-smoother) for how it was measured.
+
+## 2026-10-01, later — Qimu plays whole pieces; Les Abstraits' clothes their real size; Ataraxia's bands move a little
+
+> if you can, for the Qimu and Musicians SD; I want you to actually try and find chinese piano
+> compositions. additionally, when you hover it, i want them to play the entre composition and the
+> notes change visually too as it plays. keep the site as it is
+
+### Chinese piano pieces: looked for, not found in a form that could be used
+
+**Not done, and why.** What was wanted is a Chinese piano piece **free to use** and **written down
+as data** (a score a program can read note by note — what the Polish pieces are), because the staves
+engrave and play whatever they are given note for note and nothing may be invented. What was found:
+
+- **Out of copyright, and real Chinese piano music** — Huang Zi's *Prelude* and his fugues and
+  inventions (he died in 1938), Xiao Youmei's nocturnes (1940), Zhao Yuanren's *Peace March* (1915,
+  the first Chinese piano piece usually named) — exist **only as scanned pages** on IMSLP, and this
+  session's network reaches GitHub and nothing of IMSLP, Wikipedia, MuseScore or archive.org.
+- **The well-known Chinese piano pieces** — He Luting's *Buffalo Boy's Flute* (1934), the piano
+  *Colourful Clouds Chasing the Moon* and *Flute and Drum at Sunset* — are **under copyright**.
+- **No collection of Chinese piano music as data** turned up on GitHub; the nearest are folk-song
+  melodies (the Essen collection) and guqin pieces in staff notation, neither of which is a piano
+  piece.
+
+So the staves still carry the eighteen Polish pieces. Two ways on, for the owner to choose: send
+pictures of a free score's pages (Huang Zi's *Prelude* on IMSLP, say) and they can be read and
+written in by hand; or traditional Chinese melodies, free to use, with a piano part written for them
+here — which would no longer be a real piano composition.
+
+### The whole of a piece, and the stave turning over as it plays
+
+**Pointed at with the sound on, a stave plays its piece to its last note** — every bar of it, in the
+order it is played, its repeats and its first and second endings as the score has them — and **the
+stave turns over** as the piano reaches the end of what is on it: the next of the piece's bars are
+**written on left to right** (`TURN`, 0.42 s) as the bars it was played past **fade off it**
+(`TURN_FADE`), its lines staying where they are. Where the key or the metre changes, the stave starts
+a new line with the new ones at its head, as an engraver does. **Let go, it goes back to its
+opening**, written on again. At the end of the piece it breathes for a beat and begins again, while
+the hand is on it; on a phone a tap plays the piece through once. Nothing else about the page
+changed: the staves, the silent playheads and the names are as they were.
+
+**Where the bars come from.** `tools/qimu-pieces.py` now writes **two files** from the same scores:
+`qimu-pieces.js` as before (the openings, which the staves show and the Houses view draws — byte for
+byte the same file) and **`qimu-whole.js`**, every bar of each piece once (`bars`, as a bar of
+`qimu-pieces.js` is, with `k` and `m` where its key or metre differs from its first) and the
+**order** they are played in (`order`, runs of bars). The order is read off the score's own list of
+its sections where it has one (`*>[A,A,B,…]` — one is written without commas and is read greedily),
+and otherwise off its repeat signs, first endings taken the first time and second the second
+(`order_of`). A whole piece has things its opening did not, and the tool takes them as an engraver
+of a margin must: **grace notes** left out; a **change of clef** kept to the hand's own staff, with
+ledger lines; a **third voice** folded into the other two as chord notes where it sounds with them
+(20 times) and otherwise left out (6 notes in the whole set); a **double sharp or flat** written as
+the note it sounds (52); a voice that **does not fill its bar** filled with a hidden rest (8). The
+tool prints all of it per piece. **The openings it reads are exactly the ones on the page** — checked
+bar for bar against `qimu-pieces.js` for all eighteen.
+
+**Fetched only when the sound is turned on** (`fetchWhole`, a script tag): 1.3 MB written out, about
+74 KB as the site sends it. Until it has arrived a stave plays its opening on a loop, as it always
+did. 2,027 bars are played across the eighteen pieces, from 12 (the two krakowiaks, about half a
+minute each) to 346 (the Walc rewolucyjny with its repeats).
+
+**In `qimu.js`**: `compose()` says how many bars it took (`count`); a stave keeps its opening
+(`home`) and the width it was given (`room`); `pageFrom()` lays out the next page from a place in the
+piece's order, up to a change of key or metre; the player holds **pages**, each at its `offset` in
+seconds from the first note, and lays the next one out only when its notes are within `LOOK` of
+being heard (`nextPage`); `show()` puts a page on the stave, keeping the last one to fade off. With
+motion turned off, a stave is simply drawn again as it turns over. `heardLog` entries carry the page
+(`page`, and `from`, where in the order it begins).
+
+### Les Abstraits' clothes, their real size, the hangers inside them
+
+> For the les abstraits, I want you to make the clothes hanger disappear behind the clothes (the
+> same way they would in real life) make the clothes also realistic sizes. i want there to be pants,
+> a dress and some blazer.
+
+Both armoires — the house's own page (`abstraits.js`, in specks) and the Houses view's motif
+(`motifs.js`, in hairlines). The coat, the dress and the shirt are gone; there are **a blazer, a
+dress and a pair of trousers**, laid out **in centimetres against a two-metre armoire** (`cm` =
+the armoire's height ÷ 210): the blazer 44 cm across the shoulders and 74 long with its lapels, two
+buttons, flap pockets and a breast pocket; the dress 75 long with short sleeves, a scooped neck, a
+waist and a full skirt; the trousers **folded over the hanger's bar at the knee**, the two legs side
+by side with their creases and turned-up hems, the waistband half behind. Real sizes need room to
+hang, so **the shelf moved up** to near the top of the inside, with the folded stacks on it, and
+the rail under it; a folded stack stands on the floor of it too. A door ajar shows only half a metre
+of the inside, so the clothes **hang a little turned** (`TURNED`, three quarters of their width
+seen), as clothes on a rail do, **back to front**: the blazer behind on the left, half behind the
+shut door, the dress in front of it, the trousers in front on the right — what stands behind
+another is hidden by it, and what is past the edges of the opening is hidden by the doors (clipped
+to the opening on the Houses view; on the page, its specks are not laid there).
+
+**The hangers are inside the clothes**, as they are in life: each hanger is drawn **first**, and its
+garment over it — so only its **hook** shows over the rail, and **the triangle over the trousers**,
+which hang over its bar; through the dress's scooped neck is the back of the dress, higher, not the
+hanger. On the page, where everything is specks and nothing covers anything, a hanger's specks are
+simply not laid where its garment is, and nor are a garment's where one in front of it is, nor the
+inside's faint dark specks behind any of them (`hidden`). The irises on the page stand in front of
+the clothes, on the floor of the armoire.
+
+### Ataraxia's bands move, slightly
+
+> in ataraxia, introduce SLIGHT movement to the streaks that go across the page.
+
+Until now **the specks never moved** — only the light (the crest) travelled. Now they move a little
+(`ataraxia.js`, THE DRIFT): each band's specks **flow along it** 3 to 8 px a second, its own way
+(`FLOW`, taken from its crest's clock, so no new number is rolled and the bands stand where they
+stood), round and on again past its faded ends; each speck **wanders** a pixel or two about its place
+(`WANDER`, on its twinkle's clock); and a slow **swell** runs along the band (`SWELL`, 2.6 px, a pass
+every 9 s). None of it with motion turned off. The kindle, the quiet over the writing and the bloom
+are as they were.
+
+### How to test it
+
+- `tests/houses.spec.js`, **`Qimu & Musicians plays a stave's whole piece, turning it over as it
+  goes`** (new): the whole of the pieces is not fetched until the sound is on; every stave's piece,
+  page after page, begins at its opening, takes up each page where the last left off and ends at its
+  last bar played (`QimuScore.pages`, `QimuScore.whole`, new); pointed at, a stave turns over, and
+  what is heard then is exactly the notes now written on it; let go, it is silent and showing its
+  opening again. The sound test and the phone test now read the opening's notes off page 0.
+- `tests/houses.spec.js`, **`Les Abstraits has its armoire …`**: a blazer, a dress and trousers hung
+  in it (read off their colours). `tests/contact-sheet.spec.js`, **`Les Abstraits' armoire has
+  clothes on hangers and folded on its shelf`**: the clothes solid most of the way down the inside
+  now, and folded on the shelf near the top and on the floor.
+- By eye: the armoire on the Houses view with Les Abstraits rested on, and on the house's page;
+  Ataraxia's bands drifting.
+
+### Known issues / TODO
+
+- **No Chinese pieces yet** — above; the owner's to choose how.
+- **A long piece is long.** The longest — Żeleński's Allegro con moto, the Walc rewolucyjny, Les
+  Charmes de la campagne — take seven to nine minutes with the hand held on them; that is what "the
+  entire composition" is. Taking the hand off stops it, and it starts from the top next time.
+- **Ledger lines where a hand changes clef.** A stave keeps a hand to its own staff, so a left hand
+  that goes up into the treble (and the other way round) is written with ledger lines; nothing else
+  about the notes is changed.
+
+## 2026-10-01, later — the words: a capital I, ADAR's "of", Dear Future's MID
+
+> for ADAR house, make the "of" not capitalized in the subtitle. in SD, make sure that any "I" are
+> capitalized. (such as dear future in almost human "Maaaaaaaybe i ") additionally, put more space
+> after the mid in dear future
+
+At the owner's word, the one kind of correction the writing gets: **every lowercase *i* standing for
+the owner is a capital** across the houses and the individual fragrances — fourteen in all: nine in
+ADAR, two in Almost Human (*Maaaaaaaybe I*), and *im* → *Im* once each in Ataraxia, Les Abstraits
+and Tombstone (the missing apostrophe is the owner's, and kept). ADAR's subtitle is **The House That
+You Have Never Heard of**, on its page, in its title and what a shared link shows, and on the Houses
+view. **Dear Future's MID** stood hard under the last item of the list above it (a list had no space
+after it before a stage label, where a paragraph has 26px); it has the same 26px now
+(`.human-list + .human-stage`), and so would any stage after a list.

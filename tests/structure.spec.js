@@ -392,6 +392,38 @@ test("the spine is the wheel: it can be dragged, and pressed", async ({ page }) 
     "pressing it should go on").toBeGreaterThan(dragged);
 });
 
+/* AND ITS TWIN GOES BACK (2026-10-01): "add an option at the bottom to go
+   back a theory (exactly as there is an option to go forward)". Beside the
+   wheel at the foot, saying so; pressed, it goes back to the theory before
+   — and from the first, round to the last. */
+test("beside the wheel, its twin goes back a theory", async ({ page }) => {
+  await page.goto(PAGE);
+  await waitForStructure(page);
+  await page.waitForTimeout(800);
+  const back = page.locator(".structure-back");
+  await expect(back).toHaveAttribute("aria-label", /back/i);
+  await expect(back).toContainText("back a theory");
+  const at = await back.boundingBox(), wheel = await page.locator(".structure-spine").boundingBox();
+  expect(at.x + at.width, "on the wheel's left").toBeLessThanOrEqual(wheel.x + 1);
+  expect(at.y + at.height, "at the foot").toBeGreaterThan((await page.evaluate(() => innerHeight)) - 2);
+  const which = () => page.evaluate(() => +document.querySelector(".structure-readout").textContent.trim().slice(0, 2));
+  const wheelPress = async () => { await page.locator(".structure-spine").click({ position: { x: wheel.width / 2, y: wheel.height - 30 } }); await page.waitForTimeout(1500); };
+  await wheelPress();
+  await wheelPress();
+  await wheelPress();
+  const there = await which();
+  expect(there, "gone on").toBeGreaterThan(1);
+  await back.click();
+  await page.waitForTimeout(1500);
+  expect(await which(), "back one").toBe(there - 1);
+  // Back to the first, and round to the last.
+  for (let k = there - 1; k > 1; k--) { await back.click(); await page.waitForTimeout(1300); }
+  expect(await which()).toBe(1);
+  await back.click();
+  await page.waitForTimeout(1800);
+  expect(await which(), "round to the last").toBe(await page.locator(".structure-stop").count());
+});
+
 test("a station is the thing you click, and nothing else on the drawing is",
   async ({ page }) => {
   await page.goto(PAGE);

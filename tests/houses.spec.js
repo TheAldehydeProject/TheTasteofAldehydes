@@ -589,10 +589,12 @@ test("Les Abstraits has its armoire with iris on one side and a drip down the wh
       get() { return d.get.call(this); },
       set(v) { if (/^rgba\(112,\s*94,\s*156/.test(String(v))) window.__iris = true; d.set.call(this, v); },
     });
-    // THE CLOTHES in it — a coat, a dress and a shirt — read off the
-    // colours its specks are drawn in.
+    // THE CLOTHES in it — a blazer, a dress and a pair of trousers since
+    // 2026-10-01 ("i want there to be pants, a dress and some blazer"; a
+    // coat, a dress and a shirt until then) — read off the colours its
+    // specks are drawn in.
     const f = Object.getOwnPropertyDescriptor(P, "fillStyle");
-    const CLOTHES = { "118, 104, 92": "coat", "154, 132, 168": "dress", "140, 156, 180": "shirt" };
+    const CLOTHES = { "92, 98, 114": "blazer", "154, 132, 168": "dress", "176, 156, 128": "trousers" };
     Object.defineProperty(P, "fillStyle", {
       get() { return f.get.call(this); },
       set(v) {
@@ -629,8 +631,8 @@ test("Les Abstraits has its armoire with iris on one side and a drip down the wh
   const atTop = await read();
   expect(atTop.armoire, "the armoire in the left margin").toBeGreaterThan(1500);
   expect(await page.evaluate(() => window.__iris), "with iris in it").toBe(true);
-  expect(await page.evaluate(() => [...window.__clothes].sort()), "and a coat, a dress and a shirt hung in it")
-    .toEqual(["coat", "dress", "shirt"]);
+  expect(await page.evaluate(() => [...window.__clothes].sort()), "and a blazer, a dress and trousers hung in it")
+    .toEqual(["blazer", "dress", "trousers"]);
   expect(atTop.top, "the drop gathering at the very top of the page").toBeGreaterThan(10);
   expect(atTop.foot, "and nothing at the foot of the window while the page is at its top").toBeLessThan(20);
   // CARRIED WITH THE PAGE: scrolled, the top of the page — and the bead
@@ -857,7 +859,9 @@ test("Qimu & Musicians has a square sound button, and a stave pointed at plays e
   await expect(page.locator("html")).toHaveAttribute("data-qimu-playing", String(one.i));
   await page.waitForTimeout(2500);
   const music = await page.evaluate((i) => window.QimuScore.music(i), one.i);
-  let played = (await heard()).filter((h) => h.stave === one.i && h.lap === 0);
+  // (Its opening: the stave turns over to the rest of its piece as it
+  // is played — the next test.)
+  let played = (await heard()).filter((h) => h.stave === one.i && h.lap === 0 && h.page === 0);
   expect(played.length, "notes played").toBeGreaterThan(0);
   expect(played.map((h) => h.pitches), "exactly the notes written, in order")
     .toEqual(music.slice(0, played.length).map((n) => n.pitches));
@@ -894,6 +898,62 @@ test("Qimu & Musicians has a square sound button, and a stave pointed at plays e
   await onto(seen[0]);
   await page.waitForTimeout(800);
   expect((await heard()).length, "silent once it is off again").toBe(before);
+  expect(errors).toEqual([]);
+});
+
+/* THE WHOLE PIECE (2026-10-01): "when you hover it, i want them to play
+   the entire composition and the notes change visually too as it plays".
+   A stave played goes on past its opening to its piece's last bar, every
+   bar of it in the order it is played (repeats and endings as the score
+   has them), and TURNS OVER to the next of its bars as the piano reaches
+   them — what is heard is still what is written on it. The whole of the
+   pieces is fetched only once the sound is turned on; let go, a stave
+   goes back to its opening. */
+test("Qimu & Musicians plays a stave's whole piece, turning it over as it goes", async ({ page }) => {
+  test.setTimeout(90000);
+  const errors = collectPageErrors(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(QIMU);
+  await page.waitForTimeout(3200);
+  expect(await page.evaluate(() => typeof window.QIMU_WHOLE), "not fetched until the sound is on").toBe("undefined");
+  await page.locator(".qimu-sound").click();
+  await expect.poll(() => page.evaluate(() => window.QimuScore.samples().length), { timeout: 10000 }).toBe(17);
+  await expect.poll(() => page.evaluate(() => Array.isArray(window.QIMU_WHOLE) && window.QIMU_WHOLE.length), { timeout: 10000 }).toBe(18);
+
+  // Every stave's piece, page after page, is the whole of it in order.
+  const covers = await page.evaluate(() => window.QimuScore.staves().map((s, i) => {
+    const pages = window.QimuScore.pages(i), whole = window.QimuScore.whole(i);
+    return { pages: pages.length, ends: pages[pages.length - 1].to, played: whole.played,
+      joined: pages.every((p, k) => !k || p.from === pages[k - 1].to), first: pages[0].from };
+  }));
+  covers.forEach((c, i) => {
+    expect(c.first, `stave ${i} begins at its opening`).toBe(0);
+    expect(c.joined, `stave ${i}: each page takes up where the last left off`).toBe(true);
+    expect(c.ends, `stave ${i}: to its last bar`).toBe(c.played);
+    expect(c.pages, `stave ${i}: more than its opening`).toBeGreaterThan(1);
+  });
+
+  const staves = (await page.evaluate(() => window.QimuScore.boxes())).filter((b) => b.written && b.y > 70 && b.y + b.h < 860);
+  const one = staves[0];
+  await page.mouse.move(one.x + one.w * 0.5, one.y + one.h * 0.5, { steps: 4 });
+  await expect(page.locator("html")).toHaveAttribute("data-qimu-playing", String(one.i));
+  // It turns over, and what it plays now is what it shows now.
+  await expect.poll(() => page.evaluate((i) => window.QimuScore.boxes()[i].page, one.i), { timeout: 30000 }).toBeGreaterThan(0);
+  await page.waitForTimeout(300);
+  const { box, music, heard } = await page.evaluate((i) => ({ box: window.QimuScore.boxes()[i],
+    music: window.QimuScore.music(i), heard: window.QimuScore.heard() }), one.i);
+  expect(box.from, "the next of its bars").toBeGreaterThan(0);
+  const now = heard.filter((h) => h.stave === one.i && h.lap === 0 && h.from === box.from);
+  expect(now.length, "notes played off the page it turned to").toBeGreaterThan(0);
+  expect(now.map((h) => h.pitches), "exactly the notes now written, in order").toEqual(music.slice(0, now.length).map((n) => n.pitches));
+
+  // Let go: silence, and its opening again.
+  await page.mouse.move(700, 20, { steps: 3 });
+  await expect(page.locator("html")).not.toHaveAttribute("data-qimu-playing", /./);
+  expect((await page.evaluate(() => window.QimuScore.boxes()))[one.i].page).toBe(0);
+  const opening = await page.evaluate((i) => window.QimuScore.staves()[i], one.i);
+  const pieces = await page.evaluate(() => window.QIMU_PIECES.map((p) => p.title));
+  expect(pieces, "showing its opening").toContain(opening.title);
   expect(errors).toEqual([]);
 });
 
@@ -957,7 +1017,7 @@ test.describe("Qimu & Musicians on a phone", () => {
     await expect(playing).toHaveAttribute("data-qimu-playing", String(one.i));
     await page.waitForTimeout(1500);
     const music = await page.evaluate((i) => window.QimuScore.music(i), one.i);
-    const played = (await heard()).filter((h) => h.stave === one.i && h.lap === 0);
+    const played = (await heard()).filter((h) => h.stave === one.i && h.lap === 0 && h.page === 0);
     expect(played.length, "notes played").toBeGreaterThan(0);
     expect(played.map((h) => h.pitches), "exactly the notes written, in order").toEqual(music.slice(0, played.length).map((n) => n.pitches));
     expect((await page.evaluate(() => window.QimuScore.boxes()))[one.i].named, "its name under it").toBeGreaterThan(0.5);

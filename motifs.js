@@ -581,6 +581,10 @@
   const WAVE_SPEED = [0.08, 0.13];       // px per ms, the ripple along the band
   const CREST_SPEED = [0.26, 0.4];       // px per ms, the swell along it
   const SHAKE_REACH = 3.2;               // the shaken air, in band-widths either side
+  // AND IT COMES UP SLOWLY: a band takes BAND_IN to appear rather than the
+  // FADE_IN_MS everything else does — the owner, 2026-10-01: "make the
+  // cross streaks appear slower".
+  const BAND_IN = 2600;                  // ms
   function band() {
     const angle = rand(6, 22) * (Math.random() < 0.5 ? -1 : 1) * Math.PI / 180;
     const cy = rand(H * 0.12, H * 0.88);
@@ -605,6 +609,7 @@
     }
     return {
       life: rand(8500, 12000),
+      fadeIn: BAND_IN,
       draw(c, age, a) {
         const crest = (age * crestSpeed) % (len + 600) - 300;
         const swell = (s) => 0.4 + 0.6 * Math.exp(-Math.pow((s - crest) / 260, 2));
@@ -815,19 +820,23 @@
     put([[hinge, doorTop], [hinge + openW, doorTop - skew]]);
     put([[hinge + openW * 0.3, doorBot + skew * 0.3 - 10], [hinge + openW * 0.3, doorTop - skew * 0.3 + 10]], 0.6);
     // Through the gap, the inside in perspective: its back set in, the
-    // corners run back to it, a hanging rail across the top and one shelf
-    // below it — "put folded clothes and hangers with something on it in
-    // the armoire" (2026-09-25, night).
+    // corners run back to it, a shelf near the top and a hanging rail under
+    // it — "put folded clothes and hangers with something on it in the
+    // armoire" (2026-09-25, night). The shelf was half way down, under
+    // short clothes, until the clothes were made their real size
+    // (2026-10-01): an armoire is about two metres tall (`cm`), and a
+    // dress needs most of its height to hang in.
     const inL = mid + 2, inR = hinge, bL = inL + 10, bR = inR - 5, bT = doorTop + 10, bB = doorBot - 7;
+    const cm = tall / 210;
     box(bL, bT, bR, bB, 0.45);
     put([[inL, doorBot], [bL, bB]], 0.45); put([[inR, doorBot], [bR, bB]], 0.45);
     put([[inL, doorTop], [bL, bT]], 0.45); put([[inR, doorTop], [bR, bT]], 0.45);
-    const shelfY = bT + (bB - bT) * 0.7;
+    const shelfY = bT + 16 * cm;
     put([[inL, shelfY + 6], [bL, shelfY]], 0.45);
     put([[bL, shelfY], [bR, shelfY]], 0.45);
     put([[bR, shelfY], [inR, shelfY + 6]], 0.45);
     // THE RAIL, half way back, on a small bracket at either wall.
-    const railY = (doorTop + bT) / 2 + 12, railL = (inL + bL) / 2, railR = (inR + bR) / 2;
+    const railY = shelfY + 10 * cm, railL = (inL + bL) / 2, railR = (inR + bR) / 2;
     put([[railL, railY], [railR, railY]], 0.9);
     put([[railL, railY - 5], [railL, railY + 3]], 0.7); put([[railR, railY - 5], [railR, railY + 3]], 0.7);
     put(arcPts(railL + 2, railY, 1.6, 0, Math.PI * 2, 8), 0.7, true);
@@ -920,22 +929,35 @@
       return { x: cl.x, leaves, grass, soil, litter, stems };
     });
 
-    // THE CLOTHES. Three hangers on the rail — a long coat at the back, a
-    // dress, and a shirt in front — each on a wire hanger with its hook
-    // over the rail, swaying a hair about it; and folded clothes in stacks
-    // on the shelf and on the floor of the inside, every fold its own
-    // width, its own colour, set a little off the one under it. Drawn as
-    // the rest of it is — hairlines, a flat tone — in front of the inside,
-    // and they come in from the floor up once the door is drawn.
+    // THE CLOTHES — since 2026-10-01 a pair of TROUSERS, a DRESS and a
+    // BLAZER ("i want there to be pants, a dress and some blazer"), at
+    // their REAL SIZES against a two-metre armoire (`cm`: a blazer 44cm
+    // across the shoulders and 74 long, a dress 75 long, trousers folded
+    // over a hanger's bar, half their length) — so they are wide, and
+    // stand overlapping, back to front, the one behind cut off by the one
+    // in front and by the edge of the opening, as clothes seen through a
+    // door left ajar are. AND EACH HANGER IS INSIDE ITS GARMENT, as it is
+    // in life: drawn first, under the garment, so only its hook over the
+    // rail shows above the collar — and the triangle above the trousers,
+    // which hang over its bar. ("make the clothes hanger disappear behind
+    // the clothes (the same way they would in real life)".) Folded clothes
+    // stand in stacks on the shelf above, and one on the floor of it, every
+    // fold its own width, its own colour, set a little off the one under
+    // it. Drawn as the rest of it is — hairlines, a flat tone — in front
+    // of the inside, and they come in from the floor up once the door is
+    // drawn.
     const room = railR - railL, gs = room / 84;
-    // As long as they can hang and still clear the folded stacks on the shelf.
-    const hangLong = shelfY - railY - 11 * gs - 34;
     const CLOTH = ["206, 196, 178", "150, 136, 176", "118, 128, 142", "176, 150, 120", "224, 220, 212", "104, 112, 96", "168, 120, 112"];
+    // Where each hangs along the rail, in cm from the opening's left edge,
+    // back to front. They hang a little turned, as clothes on a rail do
+    // (`TURNED`, how much of their width is seen), or no two would show
+    // through a door half a metre wide.
+    const TURNED = 0.74;
     const garments = [
-      { kind: "coat", x: railL + room * 0.24, tone: "112, 100, 90", long: hangLong * rand(0.94, 1), at: 1650 },
-      { kind: "dress", x: railL + room * 0.76, tone: "150, 136, 176", long: hangLong * rand(0.84, 0.92), at: 1800 },
-      { kind: "shirt", x: railL + room * 0.5, tone: "214, 220, 228", long: hangLong * rand(0.52, 0.6), at: 1950 },
-    ].map((g) => ({ ...g, phase: rand(0, 6.3), sway: rand(0.008, 0.014) }));
+      { kind: "blazer", x: inL + 9 * cm, tone: "92, 98, 114", at: 1650 },
+      { kind: "dress", x: inL + 27.5 * cm, tone: "150, 136, 176", at: 1800 },
+      { kind: "trousers", x: inL + 40 * cm, tone: "176, 156, 128", at: 1950 },
+    ].map((g) => ({ ...g, phase: rand(0, 6.3), sway: rand(0.006, 0.011) }));
     const fold = (x, base, width, n, at) => {
       const out = [];
       let y = base;
@@ -948,10 +970,10 @@
     };
     const stackW = Math.min(40, room * 0.42);
     const folded = [
-      ...fold(bL + 3, shelfY + 3, stackW, 3 + Math.floor(Math.random() * 2), 1350),
+      ...fold(bL + 3, shelfY + 3, stackW, 2 + Math.floor(Math.random() * 2), 1350),
       ...fold(bR - 3 - stackW * 0.92, shelfY + 3, stackW * 0.92, 2 + Math.floor(Math.random() * 2), 1420),
-      ...fold(bL + 6, doorBot - 3, stackW * 1.1, 4 + Math.floor(Math.random() * 2), 1200),
     ];
+    const floorStack = fold(inL + 3, doorBot - 3, stackW * 1.05, 2 + Math.floor(Math.random() * 2), 1200);
 
     /** A quadratic curve, as points. */
     const qb = (a0, a1, a2, n) => Array.from({ length: n + 1 }, (_, i) => {
@@ -959,8 +981,10 @@
       return [u * u * a0[0] + 2 * u * t * a1[0] + t * t * a2[0], u * u * a0[1] + 2 * u * t * a1[1] + t * t * a2[1]];
     });
 
-    /** One garment on its hanger: the outline, filled — the paper first,
-        so what is behind it is behind it — and its seams. */
+    /** One garment: its hanger first — so the garment hides it, as it
+        does in life, all but its hook — then its outline, filled (the
+        paper first, so what is behind it is behind it), and its seams.
+        Laid out in cm from the hook (`P`). */
     function garment(c, g, k, age, a) {
       const drop = (1 - k) * -6;
       const ang = Math.sin(age / 2600 + g.phase) * g.sway;
@@ -970,96 +994,129 @@
         return [hx + dx * cs - dy * sn, hy + drop + dx * sn + dy * cs];
       };
       const tw = (p) => toWindow(...at(p));
+      const P = (x, y) => [hx + x * cm * TURNED, hy + y * cm];
       const path = (pts, close) => {
         c.beginPath();
         pts.forEach((p, i) => { const [x, y] = tw(p); if (i) c.lineTo(x, y); else c.moveTo(x, y); });
         if (close) c.closePath();
       };
-      const sw = 15 * gs, top = hy + 11 * gs, L = g.long;
-      let body = [], seams = [], dots = [];
-      if (g.kind === "shirt") {
-        body = [
-          [hx - 4 * gs, hy + 6 * gs], [hx - sw, top],
-          ...qb([hx - sw, top], [hx - sw - 4 * gs, top + L * 0.4], [hx - sw - 2 * gs, top + L * 0.62], 6).slice(1),
-          [hx - sw + 4 * gs, top + L * 0.64], [hx - sw + 5 * gs, top + L * 0.22],
-          ...qb([hx - sw + 5 * gs, top + L * 0.3], [hx - sw + 3 * gs, top + L * 0.7], [hx - sw + 4 * gs, top + L], 5).slice(1),
-          ...qb([hx - sw + 4 * gs, top + L], [hx, top + L + 6 * gs], [hx + sw - 4 * gs, top + L], 6).slice(1),
-          ...qb([hx + sw - 4 * gs, top + L], [hx + sw - 3 * gs, top + L * 0.7], [hx + sw - 5 * gs, top + L * 0.3], 5).slice(1),
-          [hx + sw - 5 * gs, top + L * 0.22], [hx + sw - 4 * gs, top + L * 0.64],
-          ...qb([hx + sw + 2 * gs, top + L * 0.62], [hx + sw + 4 * gs, top + L * 0.4], [hx + sw, top], 6),
-          [hx + 4 * gs, hy + 6 * gs], [hx, hy + 15 * gs],
+      const mirror = (pts) => pts.map(([x, y]) => [2 * hx - x, y]);
+      let body = [], behind = null, inner = null, seams = [], dots = [], hw = 20, bar = false;
+      if (g.kind === "blazer") {
+        hw = 20.5;
+        // Half of it, from the back of the collar round to the middle of
+        // the hem, and the other half its mirror.
+        const half = [
+          P(-3.5, 3.6), P(-7.5, 5), P(-15, 7.6), P(-22, 10.4),
+          ...qb(P(-22, 10.4), P(-25, 32), P(-24.2, 69), 6).slice(1),
+          P(-12.5, 70.5), P(-13, 66), P(-21.6, 66.5),
+          ...qb(P(-21.6, 66.5), P(-22.4, 74), P(-21.8, 79.5), 3).slice(1),
+          ...qb(P(-21.8, 79.5), P(-10, 80.5), P(-4.5, 79.5), 4).slice(1),
+          ...qb(P(-4.5, 79.5), P(-1, 78.5), P(0, 76), 3).slice(1),
         ];
-        // The collar's two points, the placket and its buttons, a pocket.
+        body = half.concat(mirror(half).reverse().slice(1));
         seams = [
-          [[hx - 4 * gs, hy + 6 * gs], [hx - 3 * gs, hy + 17 * gs], [hx, hy + 15 * gs]],
-          [[hx + 4 * gs, hy + 6 * gs], [hx + 3 * gs, hy + 17 * gs], [hx, hy + 15 * gs]],
-          [[hx, hy + 15 * gs], [hx, top + L + 5 * gs]],
-          [[hx - sw + 7 * gs, top + L * 0.16], [hx - 4 * gs, top + L * 0.16], [hx - 4 * gs, top + L * 0.3], [hx - sw + 7 * gs, top + L * 0.3], [hx - sw + 7 * gs, top + L * 0.16]],
+          // The sleeves' inner edges, and their cuffs.
+          ...[-1, 1].map((sd) => qb(P(sd * 17, 29), P(sd * 14, 50), P(sd * 12.6, 70.2), 5)),
+          ...[-1, 1].map((sd) => [P(sd * 12.8, 66.6), P(sd * 24.4, 65.6)]),
+          // The lapels: down from the collar to the notch, out to the
+          // point, and in to the button where the fronts cross.
+          ...[-1, 1].map((sd) => [P(sd * 3.5, 3.6), P(sd * 5.4, 17), P(sd * 8.6, 18.6), P(sd * 10.8, 20.4), P(sd * 1.2, 44)]),
+          [P(-5.4, 17), P(-7.4, 16.4)], [P(5.4, 17), P(7.4, 16.4)],
+          // The front edge below the button, curving away to the hem.
+          qb(P(0.8, 44), P(0.4, 70), P(-4.5, 79.5), 5),
+          // Flap pockets, and the breast pocket's welt.
+          [P(-18.6, 57.6), P(-9.4, 57.6), P(-9.4, 61), P(-18.6, 61), P(-18.6, 57.6)],
+          [P(9.4, 57.6), P(18.6, 57.6), P(18.6, 61), P(9.4, 61), P(9.4, 57.6)],
+          [P(9, 31), P(16, 30.4)],
         ];
-        for (let d = 0.12; d < 0.95; d += 0.2) dots.push([hx + 1.6 * gs, top + L * d]);
+        dots = [P(1.2, 44), P(1.2, 54.5)];
       } else if (g.kind === "dress") {
-        const waist = top + L * 0.34, hemW = sw * 1.45;
-        body = [
-          [hx - 5 * gs, hy + 7 * gs], [hx - sw * 0.7, top],
-          ...qb([hx - sw * 0.7, top], [hx - sw * 0.5, top + L * 0.2], [hx - sw * 0.55, waist], 5).slice(1),
-          ...qb([hx - sw * 0.55, waist], [hx - hemW * 0.8, top + L * 0.7], [hx - hemW, top + L], 6).slice(1),
-          ...qb([hx - hemW, top + L], [hx, top + L + 5 * gs], [hx + hemW, top + L], 8).slice(1),
-          ...qb([hx + hemW, top + L], [hx + hemW * 0.8, top + L * 0.7], [hx + sw * 0.55, waist], 6).slice(1),
-          ...qb([hx + sw * 0.55, waist], [hx + sw * 0.5, top + L * 0.2], [hx + sw * 0.7, top], 5).slice(1),
-          [hx + 5 * gs, hy + 7 * gs],
-          ...qb([hx + 5 * gs, hy + 7 * gs], [hx, hy + 18 * gs], [hx - 5 * gs, hy + 7 * gs], 5).slice(1),
+        hw = 16.5;
+        // Short sleeves, a scooped neck, fitted to the waist and falling
+        // to a full skirt.
+        const half = [
+          P(-6.5, 4.8), P(-11.5, 7), P(-18, 9.4), P(-21, 19.5), P(-15.4, 21.6),
+          ...qb(P(-15.4, 21.6), P(-14, 30), P(-13, 39), 3).slice(1),
+          ...qb(P(-13, 39), P(-21, 60), P(-27, 80), 5).slice(1),
+          ...qb(P(-27, 80), P(-13, 82.2), P(0, 82.4), 4).slice(1),
         ];
-        // The waist seam, and the pleats falling from it.
+        body = half.concat(mirror(half).reverse().slice(1), qb(P(6.5, 4.8), P(0, 17), P(-6.5, 4.8), 5).slice(1));
+        // Through the scooped front, the back of it — higher at the neck,
+        // and over the hanger.
+        inner = [...qb(P(-6.5, 4.8), P(0, 7.2), P(6.5, 4.8), 5), ...qb(P(6.5, 4.8), P(0, 17), P(-6.5, 4.8), 5).slice(1)];
         seams = [
-          qb([hx - sw * 0.55, waist], [hx, waist + 2.5 * gs], [hx + sw * 0.55, waist], 5),
-          ...[-0.5, -0.15, 0.2, 0.55].map((f) => qb([hx + f * sw * 0.9, waist + 2 * gs], [hx + f * sw * 1.3, top + L * 0.7], [hx + f * hemW * 1.2, top + L + 3 * gs], 5)),
+          qb(P(-13, 39), P(0, 41), P(13, 39), 5),
+          [P(-18, 9.4), P(-15.6, 21)], [P(18, 9.4), P(15.6, 21)],
+          ...[-0.5, -0.17, 0.17, 0.5].map((f) => qb(P(f * 22, 41), P(f * 30, 62), P(f * 46, 81.6), 5)),
         ];
       } else {
-        const lap = top + L * 0.3, belt = top + L * 0.4;
+        hw = 20; bar = true;
+        // Folded over the bar at the knee, the two legs side by side: the
+        // halves with the hems hanging in front, a little apart at the
+        // foot, and the halves with the waistband behind them, shorter.
+        behind = [P(-13, 15), P(15.6, 15), P(15.2, 57), P(-12.6, 57)];
         body = [
-          [hx - 4 * gs, hy + 6 * gs], [hx - sw - 2 * gs, top],
-          ...qb([hx - sw - 2 * gs, top], [hx - sw - 5 * gs, top + L * 0.35], [hx - sw - 3 * gs, top + L * 0.58], 5).slice(1),
-          [hx - sw + 2 * gs, top + L * 0.6], [hx - sw + 3 * gs, top + L * 0.26],
-          [hx - sw + 2 * gs, top + L], [hx + sw - 2 * gs, top + L],
-          [hx + sw - 3 * gs, top + L * 0.26], [hx + sw - 2 * gs, top + L * 0.6],
-          ...qb([hx + sw + 3 * gs, top + L * 0.58], [hx + sw + 5 * gs, top + L * 0.35], [hx + sw + 2 * gs, top], 5),
-          [hx + 4 * gs, hy + 6 * gs],
+          ...qb(P(-14, 17), P(-14, 12.8), P(-10, 12.8), 3),
+          P(10, 12.8), ...qb(P(10, 12.8), P(14, 12.8), P(14, 17), 3).slice(1),
+          P(12.6, 65), P(1.5, 65), P(0, 30), P(-1.5, 65), P(-12.6, 65),
         ];
-        // The lapels, the front edge, the belt with its buckle, pockets.
         seams = [
-          [[hx - 4 * gs, hy + 6 * gs], [hx - 8 * gs, top + 4 * gs], [hx - 1 * gs, lap]],
-          [[hx + 4 * gs, hy + 6 * gs], [hx + 8 * gs, top + 4 * gs], [hx + 1 * gs, lap]],
-          [[hx + 1 * gs, lap], [hx + 1 * gs, top + L]],
-          [[hx - sw + 2.4 * gs, belt], [hx + sw - 2.4 * gs, belt]],
-          [[hx - sw + 2.4 * gs, belt + 3 * gs], [hx + sw - 2.4 * gs, belt + 3 * gs]],
-          [[hx - 3 * gs, belt - 1 * gs], [hx + 3 * gs, belt - 1 * gs], [hx + 3 * gs, belt + 4 * gs], [hx - 3 * gs, belt + 4 * gs], [hx - 3 * gs, belt - 1 * gs]],
-          [[hx - sw + 5 * gs, top + L * 0.62], [hx - 4 * gs, top + L * 0.6]],
-          [[hx + 4 * gs, top + L * 0.6], [hx + sw - 5 * gs, top + L * 0.62]],
+          // Each leg's crease, and its hem turned up.
+          [P(-7.2, 15.5), P(-7, 64.8)], [P(7.2, 15.5), P(7, 64.8)],
+          [P(-12.6, 62.4), P(-1.4, 62.4)], [P(1.4, 62.4), P(12.6, 62.4)],
         ];
       }
       c.lineJoin = "round";
-      path(body, true);
-      c.fillStyle = "rgba(250, 248, 244," + 0.94 * k * a + ")";
-      c.fill();
-      c.fillStyle = "rgba(" + g.tone + "," + 0.42 * k * a + ")";
-      c.fill();
-      c.strokeStyle = "rgba(" + WALNUT + "," + 0.6 * k * a + ")";
-      c.lineWidth = 0.8;
-      c.stroke();
-      c.strokeStyle = "rgba(" + WALNUT + "," + 0.34 * k * a + ")";
-      c.lineWidth = 0.6;
-      seams.forEach((s) => { path(s); c.stroke(); });
-      c.fillStyle = "rgba(" + WALNUT + "," + 0.6 * k * a + ")";
-      dots.forEach((d) => { const [x, y] = tw(d); c.fillRect(x - 0.8, y - 0.8, 1.6, 1.6); });
-      // THE HANGER, over all of it: its hook over the rail, its two
-      // shoulders and the bar between them.
+      // THE HANGER, under all of it: its hook over the rail, its two
+      // shoulders and — for the trousers — the bar they hang over.
       c.strokeStyle = "rgba(" + WALNUT + "," + 0.78 * k * a + ")";
       c.lineWidth = 0.9;
-      const hw = sw * 0.92;
-      path([[hx - hw, hy + 12 * gs], [hx, hy + 4 * gs], [hx + hw, hy + 12 * gs], [hx - hw, hy + 12 * gs]]);
+      path([P(-hw, 14), P(0, 4.6), P(hw, 14), P(-hw, 14)]);
       c.stroke();
-      const [kx, ky] = tw([hx, hy + 4 * gs]), [ox, oy] = tw([hx, hy - 3]);
+      const [kx, ky] = tw(P(0, 4.6)), [ox, oy] = tw([hx, hy - 3]);
       c.beginPath(); c.moveTo(kx, ky); c.lineTo(ox, oy + 1.5); c.arc(ox + 2.4, oy + 1.5, 2.4, Math.PI, Math.PI * 2.1); c.stroke();
+      const solid = (pts, tone, lift) => {
+        path(pts, true);
+        c.fillStyle = "rgba(250, 248, 244," + 0.96 * k * a + ")";
+        c.fill();
+        c.fillStyle = "rgba(" + tone + "," + lift * k * a + ")";
+        c.fill();
+        c.strokeStyle = "rgba(" + WALNUT + "," + 0.6 * k * a + ")";
+        c.lineWidth = 0.8;
+        c.stroke();
+      };
+      if (behind) {
+        solid(behind, g.tone, 0.5);
+        // The waistband, and its loops.
+        c.strokeStyle = "rgba(" + WALNUT + "," + 0.34 * k * a + ")";
+        c.lineWidth = 0.6;
+        path([P(-12.8, 53.4), P(15.4, 53.4)]); c.stroke();
+        [-8, 1.5, 11].forEach((x) => { path([P(x, 53.4), P(x, 57)]); c.stroke(); });
+      }
+      solid(body, g.tone, 0.42);
+      if (inner) solid(inner, g.tone, 0.62);
+      c.strokeStyle = "rgba(" + WALNUT + "," + 0.34 * k * a + ")";
+      c.lineWidth = 0.6;
+      seams.forEach((sm) => { path(sm); c.stroke(); });
+      c.fillStyle = "rgba(" + WALNUT + "," + 0.6 * k * a + ")";
+      dots.forEach((d) => { const [x, y] = tw(d); c.fillRect(x - 0.9, y - 0.9, 1.8, 1.8); });
+      // Over the bar, the fold of the trousers is round it: the bar shows
+      // either side of them and not through them.
+      if (bar) {
+        c.strokeStyle = "rgba(" + WALNUT + "," + 0.3 * k * a + ")";
+        c.lineWidth = 0.6;
+        path(qb(P(-13.6, 15.6), P(0, 17.4), P(13.6, 15.6), 4)); c.stroke();
+      }
+    }
+    /** The opening the clothes are seen through: what of them is past
+        its edges is behind the doors. */
+    function opening(c) {
+      const corners = [[inL, doorTop], [inR, doorTop], [inR, doorBot], [inL, doorBot]].map((p) => toWindow(...p));
+      c.beginPath();
+      corners.forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y)));
+      c.closePath();
+      c.clip();
     }
 
     /** One folded thing: a flat block with its folded edge rounded at one
@@ -1310,10 +1367,15 @@
           const [x1, y1] = toWindow(inL, doorTop), [x2, y2] = toWindow(inR, doorBot);
           c.fillStyle = "rgba(20, 16, 14," + (0.05 * door * a) + ")";
           c.fillRect(x1, y1, x2 - x1, y2 - y1);
-          // THE CLOTHES, the folded ones from the floor up, then the three
-          // hangers, back to front.
+          // THE CLOTHES: the folded ones on the shelf, the three on their
+          // hangers back to front, seen through the opening, and the
+          // stack on the floor in front of them.
           folded.forEach((f) => { const k = ease((age - f.at) / 450); if (k > 0) folded1(c, f, k, a * door); });
+          c.save();
+          opening(c);
           garments.forEach((g) => { const k = ease((age - g.at) / 550); if (k > 0) garment(c, g, k, age, a * door); });
+          c.restore();
+          floorStack.forEach((f) => { const k = ease((age - f.at) / 450); if (k > 0) folded1(c, f, k, a * door); });
         }
         // A speck at every joint the lines have reached.
         c.fillStyle = "rgba(" + WALNUT + "," + (0.85 * a) + ")";
@@ -2329,7 +2391,7 @@
       if (t.life && age > t.life && !t.ending) t.ending = { at: now, from: t.shown || 0, over: 1100 };
       // A thing that arrives by its own means (`sharp`: Almost Human's
       // figures glitch in) is not faded up as well.
-      let alpha = t.sharp ? 1 : ease(age / FADE_IN_MS);
+      let alpha = t.sharp ? 1 : ease(age / (t.fadeIn || FADE_IN_MS));
       if (t.ending) alpha = t.ending.from * (1 - ease((now - t.ending.at) / t.ending.over));
       else t.shown = alpha;
       if (t.ending && now - t.ending.at >= t.ending.over) {

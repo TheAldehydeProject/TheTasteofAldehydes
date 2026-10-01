@@ -367,3 +367,22 @@ The reading in the corner was written every frame (`readoutSaid` now keeps what 
 the stations' marks, which are moved and sized every frame as the drawing breathes, stand in a box
 contained from the page (`contain: layout style` on `.structure-marks`), so laying them out never
 lays out the page round them. Style work on a phone roughly halved. See [the site on a phone](2026-09-21-the-site-on-a-phone.md#2026-10-01--every-page-measured-on-a-phone-and-made-smoother) for how it was measured.
+
+## 2026-10-01, later — back a theory, beside the wheel
+
+> for the theories, i want you to add an option at the bottom to go back a theory (exactly as there
+> is an option to go forward)
+
+The way forward at the foot is **the wheel** (`.structure-spine`): pressed rather than dragged, it
+goes on to the next station. **Its twin now stands beside it on the left** (`.structure-back`), the
+same lit ground coming up under the hand, saying **back a theory** with a chevron pointing back up the
+road — faint always, plain when pointed at — and pressed, it goes **back to the station before**, and
+from the first **round to the last**, as the wheel goes round from the last to the first. It is low (96px)
+and stands **over** the stations rather than under them, as the wheel does, so a station passing the
+foot cannot cover it; it comes up with the rest of the chrome as the page sets itself up. On a phone
+it says only **back**, above the line said at the top of the road.
+
+`tests/structure.spec.js`, **`beside the wheel, its twin goes back a theory`**: on the wheel's left,
+at the foot, saying so; three presses of the wheel and one of the twin go back exactly one; back to
+the first, and once more round to the last.
+

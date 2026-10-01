@@ -27,10 +27,11 @@
 // out a little faster while the pointer is near.
 // And since the night of 2026-09-25, CLOTHES — "put folded clothes and
 // hangers with something on it in the armoire", which the owner wanted
-// in this armoire as well as the hover's: a rail across the top of the
-// inside with a coat, a dress and a shirt on wire hangers, and a shelf
-// half way down with folded clothes stacked on it, all in specks as the
-// rest of it is. The irises stand under the shelf.
+// in this armoire as well as the hover's — and since 2026-10-01 a blazer,
+// a dress and a pair of trousers at their real sizes, on a rail under a
+// shelf of folded clothes near the top, each hanger hidden inside its
+// garment as it is in life (THE CLOTHES, below), all in specks as the
+// rest of it is. The irises stand in front of them, on the floor of it.
 //
 // THE DRIP is in the right margin — and since the night of 2026-09-25 it
 // runs THE WHOLE LENGTH OF THE PAGE, at the owner's "the dropping thing
@@ -224,98 +225,149 @@
   }
 
   // ============================================================
-  // THE CLOTHES in the open half: a rail and three hangers, a shelf and
-  // folded clothes on it. Every speck carries its own colour (`c`).
+  // THE CLOTHES in the open half — since 2026-10-01 a BLAZER, a DRESS and
+  // a pair of TROUSERS ("i want there to be pants, a dress and some
+  // blazer"), at their REAL SIZES against a two-metre armoire (`cm`), on
+  // a rail under a shelf of folded clothes near the top, hanging a little
+  // turned as clothes on a rail do (`TURNED`), back to front: what is
+  // behind a garment in front of it is hidden, and so is what is past the
+  // edges of the opening — and EACH HANGER IS INSIDE ITS GARMENT, as in
+  // life, so only its hook shows over the rail (and the triangle over the
+  // trousers, which hang over its bar): "make the clothes hanger disappear
+  // behind the clothes (the same way they would in real life)". Every
+  // speck carries its own colour (`c`). Until then it was a coat, a dress
+  // and a shirt, small, on a rail over a shelf half way down, their
+  // hangers drawn over them.
   // ============================================================
-  const COAT = "118, 104, 92", DRESS = "154, 132, 168", SHIRT = "140, 156, 180";
+  const BLAZER = "92, 98, 114", DRESS = "154, 132, 168", TROUSERS = "176, 156, 128";
   const FOLDS = ["206, 196, 178", "150, 136, 176", "118, 128, 142", "176, 150, 120", "104, 112, 96", "168, 120, 112"];
+  const TURNED = 0.74;
+  let hidden = [];                 // the garments' outlines, which the inside does not show through
   function dressUp(mid, hinge, doorTop, doorBot, tall, wide) {
     clothes = [];
-    const line = (pts, c, a, gap) => {
+    hidden = [];
+    const inL = mid + 6, inR = hinge - 4, room = inR - inL, gs = Math.max(0.5, room / 84);
+    const cm = tall / 210;
+    const inPoly = (pts, x, y) => {
+      let odd = false;
+      for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+        const [xi, yi] = pts[i], [xj, yj] = pts[j];
+        if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) odd = !odd;
+      }
+      return odd;
+    };
+    // What a speck of a garment may not be drawn over: the opening's
+    // edges, and every garment in front of it.
+    let front = [];
+    const shown = (x, y) => x >= inL - 1 && x <= inR + 1 && !front.some((poly) => inPoly(poly, x, y));
+    const keep = (p) => { if (shown(p.x, p.y)) clothes.push(p); };
+    const line = (pts, c, a, gap, also) => {
       const out = [];
       along(pts, gap || 1.7, out, tall);
-      out.forEach((p) => { p.c = c; p.tone = a * (0.8 + random() * 0.4); clothes.push(p); });
+      out.forEach((p) => { p.c = c; p.tone = a * (0.8 + random() * 0.4); if (!also || !also.some((poly) => inPoly(poly, p.x, p.y))) keep(p); });
     };
     /** Specks scattered through a closed outline, thinner than its edge. */
     const fillIn = (pts, c, a, step) => {
       let l = Infinity, r = -Infinity, t = Infinity, b = -Infinity;
       pts.forEach(([x, y]) => { l = Math.min(l, x); r = Math.max(r, x); t = Math.min(t, y); b = Math.max(b, y); });
-      const inPoly = (x, y) => {
-        let odd = false;
-        for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
-          const [xi, yi] = pts[i], [xj, yj] = pts[j];
-          if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) odd = !odd;
-        }
-        return odd;
-      };
       for (let y = t; y < b; y += step) for (let x = l; x < r; x += step) {
         const px = x + between(-0.8, 0.8), py = y + between(-0.8, 0.8);
-        if (random() < 0.25 || !inPoly(px, py)) continue;
-        clothes.push({ x: px, y: py, up: -py / tall, s: between(0.8, 1.4), tone: a * (0.6 + random() * 0.6), c });
+        if (random() < 0.25 || !inPoly(pts, px, py)) continue;
+        keep({ x: px, y: py, up: -py / tall, s: between(0.8, 1.4), tone: a * (0.6 + random() * 0.6), c });
       }
     };
     const qb = (a0, a1, a2, n) => Array.from({ length: n + 1 }, (_, i) => {
       const t = i / n, u = 1 - t;
       return [u * u * a0[0] + 2 * u * t * a1[0] + t * t * a2[0], u * u * a0[1] + 2 * u * t * a1[1] + t * t * a2[1]];
     });
-    const inL = mid + 6, inR = hinge - 4, room = inR - inL, gs = Math.max(0.5, room / 84);
-    const railY = doorTop + 12;
-    const shelfY = doorTop + (doorBot - doorTop) * 0.6;
-    // The rail, on a bracket at either end, and the shelf with its edge.
+    // The shelf near the top, and the rail under it on a bracket at
+    // either end.
+    const shelfY = doorTop + 16 * cm;
+    const railY = shelfY + 10 * cm;
+    line([[mid + 2, shelfY], [hinge, shelfY]], WALNUT, 0.7, 1.4);
+    line([[mid + 2, shelfY + 4], [hinge, shelfY + 4]], WALNUT, 0.45, 1.8);
     line([[inL - 3, railY], [inR + 3, railY]], WALNUT, 0.7, 1.4);
     line([[inL - 3, railY - 5], [inL - 3, railY + 3]], WALNUT, 0.6, 1.4);
     line([[inR + 3, railY - 5], [inR + 3, railY + 3]], WALNUT, 0.6, 1.4);
-    line([[mid + 2, shelfY], [hinge, shelfY]], WALNUT, 0.7, 1.4);
-    line([[mid + 2, shelfY + 4], [hinge, shelfY + 4]], WALNUT, 0.45, 1.8);
-    const hang = shelfY - railY - 11 * gs - 32;
-    const sw = 15 * gs, top = railY + 11 * gs;
-    const garment = (hx, kind, L) => {
-      let body;
-      if (kind === "shirt") {
-        body = [[hx - 4 * gs, railY + 6 * gs], [hx - sw, top], [hx - sw - 3 * gs, top + L * 0.6], [hx - sw + 3 * gs, top + L * 0.62],
-          [hx - sw + 4 * gs, top + L * 0.22], ...qb([hx - sw + 4 * gs, top + L * 0.3], [hx - sw + 3 * gs, top + L * 0.7], [hx - sw + 4 * gs, top + L], 4),
-          ...qb([hx - sw + 4 * gs, top + L], [hx, top + L + 6 * gs], [hx + sw - 4 * gs, top + L], 5),
-          ...qb([hx + sw - 4 * gs, top + L], [hx + sw - 3 * gs, top + L * 0.7], [hx + sw - 4 * gs, top + L * 0.3], 4),
-          [hx + sw - 4 * gs, top + L * 0.22], [hx + sw - 3 * gs, top + L * 0.62], [hx + sw + 3 * gs, top + L * 0.6], [hx + sw, top],
-          [hx + 4 * gs, railY + 6 * gs], [hx, railY + 15 * gs], [hx - 4 * gs, railY + 6 * gs]];
-        fillIn(body, SHIRT, 0.3, 2.6);
-        line(body, SHIRT, 0.75);
-        line([[hx, railY + 15 * gs], [hx, top + L + 4 * gs]], COAT, 0.35, 2.4);
-        for (let d = 0.12; d < 0.95; d += 0.2) clothes.push({ x: hx + 1.6 * gs, y: top + L * d, up: -(top + L * d) / tall, s: 1.5, tone: 0.6, c: COAT });
+
+    /** One garment's shapes, laid out in cm from its hook. */
+    const shapes = (kind, hx) => {
+      const P = (x, y) => [hx + x * cm * TURNED, railY + y * cm];
+      const mirror = (pts) => pts.map(([x, y]) => [2 * hx - x, y]);
+      const out = { body: [], behind: null, inner: null, seams: [], dots: [], hw: 20 };
+      if (kind === "blazer") {
+        out.hw = 20.5;
+        const half = [
+          P(-3.5, 3.6), P(-7.5, 5), P(-15, 7.6), P(-22, 10.4),
+          ...qb(P(-22, 10.4), P(-25, 32), P(-24.2, 69), 5).slice(1),
+          P(-12.5, 70.5), P(-13, 66), P(-21.6, 66.5),
+          ...qb(P(-21.6, 66.5), P(-22.4, 74), P(-21.8, 79.5), 3).slice(1),
+          ...qb(P(-21.8, 79.5), P(-10, 80.5), P(-4.5, 79.5), 3).slice(1),
+          ...qb(P(-4.5, 79.5), P(-1, 78.5), P(0, 76), 3).slice(1),
+        ];
+        out.body = half.concat(mirror(half).reverse().slice(1));
+        out.seams = [
+          ...[-1, 1].map((sd) => qb(P(sd * 17, 29), P(sd * 14, 50), P(sd * 12.6, 70.2), 4)),
+          ...[-1, 1].map((sd) => [P(sd * 3.5, 3.6), P(sd * 5.4, 17), P(sd * 8.6, 18.6), P(sd * 10.8, 20.4), P(sd * 1.2, 44)]),
+          qb(P(0.8, 44), P(0.4, 70), P(-4.5, 79.5), 4),
+          [P(-18.6, 57.6), P(-9.4, 57.6), P(-9.4, 61), P(-18.6, 61), P(-18.6, 57.6)],
+          [P(9.4, 57.6), P(18.6, 57.6), P(18.6, 61), P(9.4, 61), P(9.4, 57.6)],
+          [P(9, 31), P(16, 30.4)],
+        ];
+        out.dots = [P(1.2, 44), P(1.2, 54.5)];
       } else if (kind === "dress") {
-        const waist = top + L * 0.34, hemW = sw * 1.45;
-        body = [[hx - 5 * gs, railY + 7 * gs], [hx - sw * 0.7, top], ...qb([hx - sw * 0.7, top], [hx - sw * 0.5, top + L * 0.2], [hx - sw * 0.55, waist], 4),
-          ...qb([hx - sw * 0.55, waist], [hx - hemW * 0.8, top + L * 0.7], [hx - hemW, top + L], 5),
-          ...qb([hx - hemW, top + L], [hx, top + L + 5 * gs], [hx + hemW, top + L], 6),
-          ...qb([hx + hemW, top + L], [hx + hemW * 0.8, top + L * 0.7], [hx + sw * 0.55, waist], 5),
-          ...qb([hx + sw * 0.55, waist], [hx + sw * 0.5, top + L * 0.2], [hx + sw * 0.7, top], 4),
-          [hx + 5 * gs, railY + 7 * gs], ...qb([hx + 5 * gs, railY + 7 * gs], [hx, railY + 18 * gs], [hx - 5 * gs, railY + 7 * gs], 4)];
-        fillIn(body, DRESS, 0.34, 2.6);
-        line(body, DRESS, 0.8);
-        line(qb([hx - sw * 0.55, waist], [hx, waist + 2.5 * gs], [hx + sw * 0.55, waist], 5), DRESS, 0.6);
-        [-0.45, 0, 0.45].forEach((f) => line(qb([hx + f * sw * 0.9, waist + 2 * gs], [hx + f * sw * 1.3, top + L * 0.7], [hx + f * hemW * 1.2, top + L], 5), DRESS, 0.45, 2.4));
+        out.hw = 16.5;
+        const half = [
+          P(-6.5, 4.8), P(-11.5, 7), P(-18, 9.4), P(-21, 19.5), P(-15.4, 21.6),
+          ...qb(P(-15.4, 21.6), P(-14, 30), P(-13, 39), 3).slice(1),
+          ...qb(P(-13, 39), P(-21, 60), P(-27, 80), 4).slice(1),
+          ...qb(P(-27, 80), P(-13, 82.2), P(0, 82.4), 3).slice(1),
+        ];
+        out.body = half.concat(mirror(half).reverse().slice(1), qb(P(6.5, 4.8), P(0, 17), P(-6.5, 4.8), 4).slice(1));
+        out.inner = [...qb(P(-6.5, 4.8), P(0, 7.2), P(6.5, 4.8), 4), ...qb(P(6.5, 4.8), P(0, 17), P(-6.5, 4.8), 4).slice(1)];
+        out.seams = [
+          qb(P(-13, 39), P(0, 41), P(13, 39), 4),
+          ...[-0.5, 0, 0.5].map((f) => qb(P(f * 22, 41), P(f * 30, 62), P(f * 46, 81.6), 4)),
+        ];
       } else {
-        const lap = top + L * 0.3, belt = top + L * 0.4;
-        body = [[hx - 4 * gs, railY + 6 * gs], [hx - sw - 2 * gs, top], [hx - sw - 4 * gs, top + L * 0.58], [hx - sw + 2 * gs, top + L * 0.6],
-          [hx - sw + 3 * gs, top + L * 0.26], [hx - sw + 2 * gs, top + L], [hx + sw - 2 * gs, top + L], [hx + sw - 3 * gs, top + L * 0.26],
-          [hx + sw - 2 * gs, top + L * 0.6], [hx + sw + 4 * gs, top + L * 0.58], [hx + sw + 2 * gs, top], [hx + 4 * gs, railY + 6 * gs]];
-        fillIn(body, COAT, 0.34, 2.6);
-        line(body.concat([body[0]]), COAT, 0.8);
-        line([[hx - 4 * gs, railY + 6 * gs], [hx - 8 * gs, top + 4 * gs], [hx - gs, lap], [hx + 8 * gs, top + 4 * gs], [hx + 4 * gs, railY + 6 * gs]], COAT, 0.6);
-        line([[hx + gs, lap], [hx + gs, top + L]], COAT, 0.5, 2.2);
-        line([[hx - sw + 2.4 * gs, belt], [hx + sw - 2.4 * gs, belt]], COAT, 0.6, 1.6);
+        out.behind = [P(-13, 15), P(15.6, 15), P(15.2, 57), P(-12.6, 57)];
+        out.body = [
+          ...qb(P(-14, 17), P(-14, 12.8), P(-10, 12.8), 3),
+          P(10, 12.8), ...qb(P(10, 12.8), P(14, 12.8), P(14, 17), 3).slice(1),
+          P(12.6, 65), P(1.5, 65), P(0, 30), P(-1.5, 65), P(-12.6, 65),
+        ];
+        out.seams = [[P(-7.2, 15.5), P(-7, 64.8)], [P(7.2, 15.5), P(7, 64.8)],
+          [P(-12.6, 62.4), P(-1.4, 62.4)], [P(1.4, 62.4), P(12.6, 62.4)]];
       }
-      // The hanger over it, and its hook over the rail.
-      const hw = sw * 0.92;
-      line([[hx - hw, railY + 12 * gs], [hx, railY + 4 * gs], [hx + hw, railY + 12 * gs], [hx - hw, railY + 12 * gs]], WALNUT, 0.85, 1.3);
-      line([[hx, railY + 4 * gs], [hx, railY - 2]].concat(arc(hx + 2.4, railY - 2, 2.4, Math.PI, Math.PI * 2.1, 6)), WALNUT, 0.85, 1.1);
+      out.hanger = [P(-out.hw, 14), P(0, 4.6), P(out.hw, 14), P(-out.hw, 14)];
+      out.hook = [P(0, 4.6), [hx, railY - 2]].concat(arc(hx + 2.4, railY - 2, 2.4, Math.PI, Math.PI * 2.1, 6));
+      return out;
     };
-    garment(inL + room * 0.24, "coat", hang);
-    garment(inL + room * 0.76, "dress", hang * 0.88);
-    garment(inL + room * 0.5, "shirt", hang * 0.56);
+    const hung = [
+      { kind: "blazer", x: inL + 9 * cm, c: BLAZER },
+      { kind: "dress", x: inL + 27.5 * cm, c: DRESS },
+      { kind: "trousers", x: inL + 40 * cm, c: TROUSERS },
+    ].map((g) => ({ ...g, ...shapes(g.kind, g.x) }));
+    // Front to back, so each knows what stands in front of it.
+    for (let i = hung.length - 1; i >= 0; i--) {
+      const g = hung[i];
+      front = hung.slice(i + 1).flatMap((o) => [o.body, o.behind].filter(Boolean));
+      const own = [g.body, g.behind, g.inner].filter(Boolean);
+      // The hanger, where its own garment does not cover it.
+      line(g.hanger, WALNUT, 0.85, 1.3, own);
+      line(g.hook, WALNUT, 0.85, 1.1, own);
+      if (g.behind) { fillIn(g.behind, g.c, 0.36, 2.4); line(g.behind.concat([g.behind[0]]), g.c, 0.85, 1.4, [g.body]); }
+      fillIn(g.body, g.c, 0.42, 2.3);
+      line(g.body.concat([g.body[0]]), g.c, 1, 1.3);
+      if (g.inner) { fillIn(g.inner, g.c, 0.6, 2); line(g.inner, g.c, 0.7, 1.4); }
+      g.seams.forEach((sm) => line(sm, g.c, 0.62, 1.8));
+      g.dots.forEach(([x, y]) => keep({ x, y, up: -y / tall, s: 1.6, tone: 0.7, c: WALNUT }));
+      hidden.push(...[g.body, g.behind].filter(Boolean));
+    }
+    front = [];
     // Folded clothes on the shelf, in two stacks, each fold its own.
     const stackW = Math.min(40, room * 0.42);
-    [[inL + 1, 3 + Math.floor(random() * 2)], [inR - stackW * 0.92 - 1, 2 + Math.floor(random() * 2)]].forEach(([x0, n], si) => {
+    [[inL + 1, 2 + Math.floor(random() * 2)], [inR - stackW * 0.92 - 1, 2 + Math.floor(random() * 2)]].forEach(([x0, n], si) => {
       let y = shelfY + 2;
       for (let i = 0; i < n; i++) {
         const h = between(5, 7.5) * Math.max(0.7, gs), w = stackW * (si ? 0.92 : 1) * between(0.86, 1), off = between(-2, 2);
@@ -328,6 +380,8 @@
         y = T;
       }
     });
+    // The inside does not show through what hangs in front of it.
+    inside = inside.filter((p) => !hidden.some((poly) => inPoly(poly, p.x, p.y)));
   }
 
   const place = (x, y) => [frame.left + x + y * frame.lean, frame.baseY + y];

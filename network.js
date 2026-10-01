@@ -278,7 +278,10 @@
   const GHOST = 0.1;
   const SPIN = 0.00008;                 // the one network's turn, radians a ms
   const NET_SPIN = 0.00014;             // each accord's
-  const DRAG = 0.0056;
+  // How far a drag turns it, radians a pixel — a quarter of what it was
+  // (0.0056) since 2026-10-01: "make the movement in note library less
+  // responsive, by a factor of 4". Its fling goes with it.
+  const DRAG = 0.0014;
   const PITCH_MAX = 1.45;
   const ONE_PITCH = 0.36, APART_PITCH = 0.2;
   const PULSES = 140;
@@ -1654,7 +1657,12 @@
     for (let k = 0; k < MOST; k++) {
       const li = el("li", "net-label");
       tagList.appendChild(li);
-      tags.push({ el: li, node: -1, show: 0, w: 0, h: 0 });
+      const g = { el: li, node: -1, show: 0, w: 0, h: 0, on: false };
+      tags.push(g);
+      // A NAME PRESSED IS ITS NOTE PRESSED (2026-10-01 — "make the words
+      // also clickable ... in each of the accord views"): at an accord, the
+      // names beside the nodes open each note's window, as the node does.
+      li.addEventListener("click", () => { if (g.on && g.node >= 0) select(g.node); });
     }
 
     // ============================================================
@@ -2662,7 +2670,10 @@
         '<p class="net-note-say"></p>' +
         '<figure class="net-note-figure"><canvas class="net-note-drawing"></canvas></figure>' +
         '<section class="net-note-part net-note-aka"><h3></h3></section>' +
-        '<section class="net-note-part net-note-tiers"><h3>Pyramidal distribution</h3></section>' +
+        // What the pyramid is, said under its heading in every window
+        // (2026-10-01), in the owner's own words.
+        '<section class="net-note-part net-note-tiers"><h3>Pyramidal distribution</h3>' +
+        '<p class="net-note-explain">This refers to the perfume distribution in which you can find this note on either the top, mid or base (or none of the above).</p></section>' +
         '<section class="net-note-part net-note-with"><h3>Most frequent combinations</h3><div class="net-note-chips"></div></section>' +
         '<section class="net-note-part net-note-stats"><h3>Statistics</h3><dl class="net-note-facts"></dl></section>' +
         "</div>";
@@ -2780,7 +2791,7 @@
       });
       return p;
     }
-    /** A variation pressed: what it means against the note, under the
+    /** A variation pressed: what it means when compared to the note, under the
         row — pressed again, or another pressed, it closes or changes. */
     function tellVariation(b) {
       const n = noteShown;
@@ -2797,7 +2808,7 @@
       told.classList.toggle("is-same", m.same);
       const head = told.appendChild(el("p", "net-note-means-head"));
       head.appendChild(el("span", "net-note-means-name")).textContent = name;
-      head.appendChild(el("span", "net-note-means-against")).textContent = m.same ? "no change" : "against " + n.name;
+      head.appendChild(el("span", "net-note-means-against")).textContent = m.same ? "no change" : "when compared to " + n.name;
       told.appendChild(el("p", "net-note-means-say")).textContent = m.say || "Not written yet.";
       if (m.cites.length) told.appendChild(citeLine(m.cites));
       told.hidden = false;
@@ -3846,11 +3857,15 @@
           if (x1 < x2 + w2 + 3 && x2 < x1 + w1 + 3 && y1 < y2 + h2 + 2 && y2 < y1 + h1 + 2) { g.want = 0; break; }
         }
       });
+      // Pressable only at an accord, standing named, and never mid-way.
+      const pressable = focus >= 0 && uTo === 1 && cmbTo !== 1 && !flight && apartNow();
       tags.forEach((g) => {
         const next = g.show + (g.want - g.show) * (still ? 1 : 0.16);
         g.show = Math.abs(next - g.want) < 0.01 ? g.want : next;
         if (g.show !== g.want || g.next !== undefined) tagsMoving = true;
         fadeTo(g.el, g.show);
+        const on = pressable && g.node >= 0 && g.show > 0.5 && g.next === undefined;
+        if (on !== g.on) { g.on = on; g.el.classList.toggle("is-on", on); }
       });
       if (hovered >= 0 && !flight && hovered !== selected) {
         const n = nodes[hovered].note;

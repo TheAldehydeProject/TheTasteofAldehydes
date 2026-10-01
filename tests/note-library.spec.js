@@ -1333,8 +1333,12 @@ test("every note in the library has a figure of its own, in particles", async ({
 });
 
 /* FREELY WITH ROTATION: a drag turns it round and tips it nearly straight
-   up or down; the wheel brings it closer; the hint goes. */
-test("a drag turns it freely, any way", async ({ page }) => {
+   up or down; the wheel brings it closer; the hint goes. A QUARTER AS
+   RESPONSIVE since 2026-10-01 ("make the movement in note library less
+   responsive, by a factor of 4"): a drag of 300px turns it about 0.4 of a
+   radian, where it turned it about 1.7 — so it is turned round, and tipped
+   over, with longer drags than it was. */
+test("a drag turns it freely, any way, a quarter as far as it did", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
   await open(page);
@@ -1346,15 +1350,80 @@ test("a drag turns it freely, any way", async ({ page }) => {
   await page.mouse.up();
   await page.waitForTimeout(400);
   const b = await state(page);
-  expect(Math.abs(b.yaw - a.yaw), "turned round").toBeGreaterThan(1.2);
+  const turned = Math.abs(b.yaw - a.yaw);
+  expect(turned, "turned a little").toBeGreaterThan(0.3);
+  expect(turned, "and no more than a little: a quarter of what it was").toBeLessThan(0.7);
   await expect(stage, "and the hint goes").toHaveClass(/is-turned/);
-  await page.mouse.move(700, 200);
+  // Further, and over: longer drags.
+  await page.mouse.move(100, 450);
   await page.mouse.down();
-  await page.mouse.move(700, 700, { steps: 16 });
+  await page.mouse.move(1340, 450, { steps: 24 });
   await page.mouse.up();
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(400);
+  expect(Math.abs((await state(page)).yaw - a.yaw), "turned round").toBeGreaterThan(1.2);
+  for (let k = 0; k < 2; k++) {
+    await page.mouse.move(700, 120);
+    await page.mouse.down();
+    await page.mouse.move(700, 820, { steps: 16 });
+    await page.mouse.up();
+    await page.waitForTimeout(300);
+  }
+  await page.waitForTimeout(300);
   expect((await state(page)).pitch, "tipped nearly straight over").toBeGreaterThan(1.3);
   expect(errors).toEqual([]);
+});
+
+/* AT AN ACCORD, A NAME IS ITS NOTE (2026-10-01): "make the words also
+   clickable in Note descriptions, expanded view in each of the accord
+   views". The names beside the nodes of the network you are at open that
+   note's window when pressed, as pressing its node does — and nowhere
+   else are they pressable. */
+test("at an accord, a note's name pressed opens its window", async ({ page }) => {
+  test.setTimeout(150000);
+  const errors = collectPageErrors(page);
+  await open(page);
+  await settle(page);
+  expect(await page.locator(".net-label.is-on").count(), "nothing pressable as one network").toBe(0);
+  await expandIt(page);
+  await expect.poll(async () => (await state(page)).flying, { timeout: 20000 }).toBe(false);
+  expect(await page.locator(".net-label.is-on").count(), "nor seeing every accord").toBe(0);
+  await goTo(page, 3, "FLO");
+  await expect.poll(() => page.locator(".net-label.is-on").count(), { timeout: 8000 }).toBeGreaterThan(3);
+  // (A name drifts as its network turns, so it is pressed where it is.)
+  const name = page.locator(".net-label.is-on").nth(1);
+  const word = (await name.textContent()).trim();
+  const at = await name.boundingBox();
+  await page.mouse.click(at.x + at.width / 2, at.y + at.height / 2);
+  await expect.poll(async () => (await state(page)).note, { timeout: 5000 }).toBe(word);
+  await expect(page.locator(".net-note-name")).toHaveText(word);
+  expect(errors).toEqual([]);
+});
+
+/* WHAT THE PYRAMID IS, said under its heading in every note's window
+   (2026-10-01), in the owner's own words. */
+test("every note's window says what its pyramidal distribution is", async ({ page }) => {
+  test.setTimeout(120000);
+  await open(page);
+  await settle(page);
+  await expandIt(page);
+  await goTo(page, 3, "FLO");
+  await expect.poll(() => page.locator(".net-label.is-on").count(), { timeout: 8000 }).toBeGreaterThan(0);
+  const at = await page.locator(".net-label.is-on").first().boundingBox();
+  await page.mouse.click(at.x + at.width / 2, at.y + at.height / 2);
+  await expect(page.locator(".net-note-tiers .net-note-explain")).toHaveText(
+    "This refers to the perfume distribution in which you can find this note on either the top, mid or base (or none of the above).");
+});
+
+/* THE PAGE NAMED BESIDE THE MENU, as every other page is (2026-10-01:
+   "add the word 'Note library' next to the menu in note library"). */
+test("the Note Library is named beside the Menu", async ({ page }) => {
+  await open(page);
+  const where = page.locator(".page-where");
+  await expect(where).toHaveText("Note Library");
+  const menu = await page.locator(".menu-trigger").boundingBox();
+  const box = await where.boundingBox();
+  expect(box.x, "beside the Menu").toBeGreaterThan(menu.x + menu.width);
+  expect(Math.abs(box.y + box.height / 2 - (menu.y + menu.height / 2)), "on its line").toBeLessThan(6);
 });
 
 /* SIXTY FRAMES A SECOND: every frame's own work — the drawing's and the
@@ -1624,7 +1693,7 @@ test.describe("the library with animation turned off", () => {
     await page.mouse.move(860, 420, { steps: 8 });
     await page.mouse.up();
     await page.waitForTimeout(200);
-    expect(Math.abs((await state(page)).yaw - a), "but a drag still turns it").toBeGreaterThan(0.6);
+    expect(Math.abs((await state(page)).yaw - a), "but a drag still turns it").toBeGreaterThan(0.15);
     expect(errors).toEqual([]);
   });
 });

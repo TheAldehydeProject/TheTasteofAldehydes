@@ -306,9 +306,12 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
 .menu-overlay.open .menu-list li:nth-child(7) { transition-delay: 0.50s; }
 .menu-overlay.open .menu-list li:nth-child(n + 8) { transition-delay: 0.56s; }
 
+/* In Jost, light, since 2026-10-01 — "a more minimalist font ... slimmer
+   maybe" (nav.js asks for it); it was the site's Archivo at 500. */
 .menu-list a {
-  font-family: var(--sans);
-  font-weight: 500;
+  font-family: "Jost", var(--sans);
+  font-weight: 300;
+  letter-spacing: 0.005em;
   font-size: clamp(28px, 5vw, 48px);
   text-decoration: none;
   color: #f0efe8;
@@ -605,10 +608,14 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
 }
 .title-sub { font-size: 17px; color: var(--muted); margin: 18px 0 0; }
 
+/* In the middle, at the foot of the window (2026-10-01 — "move the scroll
+   button in the home page to the center middle"; it stood in the bottom
+   left corner). */
 .scroll-cue {
   position: absolute;
   bottom: 28px;
-  left: 28px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -3032,6 +3039,64 @@ body.structured .page-where { color: rgba(226, 232, 242, 0.55); border-left-colo
 }
 .structure-spine:hover, .structure-spine.held, .structure-spine:focus-visible { opacity: 1; }
 .structure-spine:focus-visible { outline: 1px solid rgba(142, 180, 226, 0.5); outline-offset: -2px; }
+/* THE WHEEL'S TWIN (2026-10-01): beside it on the left, at the foot, the
+   same lit ground under the hand, going back a theory — and saying so,
+   faintly always and plainly when pointed at. Low, and over the stations
+   rather than under them as the wheel is, so nothing passing can cover
+   it. */
+.structure-back {
+  position: fixed;
+  bottom: 0;
+  right: calc(50% + min(340px, 36vw) / 2);
+  width: min(190px, 18vw);
+  height: 96px;
+  border: none;
+  padding: 0 0 34px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  z-index: 3;
+  --lit: 0;
+}
+.structure-back::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(205, 218, 235, 0.05), rgba(205, 218, 235, 0));
+  opacity: var(--lit);
+  transition: opacity 0.4s var(--menu-ease);
+}
+.structure-back:hover, .structure-back:focus-visible { --lit: 1; }
+.structure-back:focus-visible { outline: 1px solid rgba(142, 180, 226, 0.5); outline-offset: -2px; }
+.structure-back-say {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-right: 18px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: rgba(226, 232, 242, 0.3);
+  white-space: nowrap;
+  transition: color 0.4s var(--menu-ease);
+}
+.structure-back:hover .structure-back-say,
+.structure-back:focus-visible .structure-back-say { color: rgba(226, 232, 242, 0.78); }
+/* A chevron, pointing back up the road. */
+.structure-back-mark {
+  width: 6px;
+  height: 6px;
+  border-left: 1px solid currentColor;
+  border-top: 1px solid currentColor;
+  transform: rotate(45deg) translateY(2px);
+}
+.structure:not(.lit) .structure-back { opacity: 0; pointer-events: none; }
+.structure .structure-back { transition: opacity 0.9s var(--menu-ease); }
 
 /* A station is the thing you click: the link is laid over the
    assembly rather than beside it, and structure.js sizes it to
@@ -3233,6 +3298,14 @@ body.structured .page-where { color: rgba(226, 232, 242, 0.55); border-left-colo
   /* The two numbers stay: they are how you know where you are. */
   .structure-readout { top: 16px; right: 16px; font-size: 10px; letter-spacing: 0.08em; }
   .structure-spine { width: min(260px, 60vw); }
+  .structure-back { right: calc(50% + min(260px, 60vw) / 2); width: min(190px, 20vw); }
+}
+/* On a phone its word is shorter, and stands above the line said at the
+   top of the road rather than beside it. */
+@media (max-width: 700px) {
+  .structure-back { padding-bottom: 62px; height: 124px; }
+  .structure-back-say { padding-right: 10px; }
+  .structure-back-more { display: none; }
 }
 
 /* And on a phone the line under a station's name wraps rather than
@@ -3418,7 +3491,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--brass); outline
 @media (max-width: 860px) {
   .menu-overlay { padding: 0 24px; }
   .slide { padding: 0 24px; flex-direction: column !important; justify-content: center; gap: 20px; }
-  .scroll-cue { left: 16px; bottom: 16px; }
+  .scroll-cue { bottom: 16px; }
   .page-content, .work-header, .article-body { padding-left: 24px; padding-right: 24px; }
   .gallery-entry { flex-direction: column; padding: 32px 24px; gap: 20px; }
   .gallery-entry .entry-text { max-width: none; }
@@ -6278,6 +6351,8 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
 .net-note-part { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--net-rule); }
 .net-note-found { display: grid; gap: 6px; }
 .net-note-none { margin-top: 8px !important; font-size: 12px; color: var(--muted); }
+/* What the pyramid is, under its heading (2026-10-01). */
+.net-note-explain { margin-top: 6px !important; font-size: 12px; line-height: 1.55; color: var(--muted); max-width: 46ch; }
 .net-note-drop summary {
   display: flex;
   align-items: baseline;
@@ -6793,6 +6868,10 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
 }
 /* In combinations, a note taken as a tag is named black on white. */
 .net-label.is-tag { background: #f4f0ea; color: #141008; }
+/* At an accord a name is its note's way in (2026-10-01): pressable, and
+   showing it under the hand. */
+.net-label.is-on { pointer-events: auto; cursor: pointer; transition: background-color 160ms ease, box-shadow 160ms ease; }
+.net-label.is-on:hover { background: #1c0b0d; color: #fff; box-shadow: 0 0 0 1px rgba(255, 58, 68, 0.55); }
 
 /* On a phone: the arrows under the Menu, what they pull out the width of
    the window beside them, the foot across it, the note window nearly all
@@ -9775,6 +9854,9 @@ ol.human-list li::before {
 }
 .human-stage + p { margin-top: 0; }
 .human-part .human-text p + .human-stage { margin-top: 26px; }
+/* And after a list as after a paragraph: Dear Future's MID stood hard
+   under its last item (2026-10-01, "put more space after the mid"). */
+.human-part .human-text .human-list + .human-stage { margin-top: 26px; }
 
 /* THE RANK down the side, and the reading in the corner. Pineward's
    trunk and ADAR's sounding by a third name: the LINE is the whole of

@@ -192,6 +192,19 @@ const SITE_LINKS = [
   const same = (path) => path.replace(/index\.html$/, "");
   const currentPath = same(window.location.pathname);
 
+  // THE MENU'S OWN FACE (2026-10-01 — "change it to a more minimalist
+  // font. not robotic or whatever, but slimmer maybe"): Jost, light — a
+  // slim geometric sans — asked for here, once, rather than on every page,
+  // since the Menu is on every page and only the Menu sets in it. Until it
+  // arrives (or if it cannot) the names stand in the site's own face.
+  if (!document.querySelector("link[data-menu-face]")) {
+    const face = document.createElement("link");
+    face.rel = "stylesheet";
+    face.href = "https://fonts.googleapis.com/css2?family=Jost:wght@300;400&display=swap";
+    face.dataset.menuFace = "";
+    document.head.appendChild(face);
+  }
+
   const trigger = document.createElement("button");
   trigger.className = "menu-trigger";
   trigger.type = "button";

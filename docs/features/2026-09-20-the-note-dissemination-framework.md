@@ -499,3 +499,17 @@ same (`.calc-head h2`).
 
 Tested in `tests/calculator.spec.js`: **`the pairs' names are in the writing's face over a blue
 hairline, and the blue subheadings larger`**.
+
+## 2026-10-01 — IC or BC emptied, the other to nought
+
+> In the note dissemination framework calculator, when you remove a number from IC or BC completly,
+> I want the other number to go to zero.
+
+IC and BC are two halves of one hundred, and typing either sets the other; **emptying either now
+sets the other to 0** (`pairUp` in `calculator.js`) — it used to keep whatever it had last been given.
+Only a field with nothing in it at all: one half-typed (a lone minus, which a number field also reads
+as empty) changes nothing. Read as the owner wrote it — *zero*, the number, not the other emptied too.
+
+`tests/calculator.spec.js`, **`IC and BC are two halves of one hundred, whichever one is typed in`**,
+now also empties each in turn and reads the other as 0.
+

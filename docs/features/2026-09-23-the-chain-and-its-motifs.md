@@ -930,3 +930,33 @@ In `tests/contact-sheet.spec.js`:
   loose`** — the times now read off the music itself, over a few rests on the house: a piece keeps
   its own time, so the metres vary from stave to stave rather than within one.
 - Faint and still, and short five-line staves: unchanged.
+
+## 2026-10-01 — Ataraxia's bands come up slower; Les Abstraits' clothes their real size
+
+> in houses in SD; make the cross streaks appear slower.
+
+The "cross streaks" are **Ataraxia's bands** — the streaks of particles crossing the Houses view
+while Ataraxia is rested on (the owner's word for the same bands on the house's own page is "the
+streaks that go across the page", the next note in the same message). Each now **comes up over 2.6
+seconds** (`BAND_IN`) where everything else on the view takes 0.9 (`FADE_IN_MS`): a thing the motifs
+make may carry a `fadeIn` of its own, and a band does. How often they come, how long they stand, the
+wave and the shaken air are unchanged.
+
+> For the les abstraits, I want you to make the clothes hanger disappear behind the clothes (the
+> same way they would in real life) make the clothes also realistic sizes. i want there to be pants,
+> a dress and some blazer.
+
+**The armoire's clothes** are a blazer, a dress and a pair of trousers now, at their real sizes in a
+two-metre armoire, each hanger drawn first and hidden by its garment but for its hook (and the
+triangle over the trousers, which hang over its bar), seen through the opening, the shelf of folded
+clothes moved up to the top to give them room. The whole of it — sizes, order, why they hang a
+little turned — is in [the newer houses' report](2026-09-21-the-newer-houses.md#les-abstraits-clothes-their-real-size-the-hangers-inside-them),
+since the house's own armoire was changed the same way. In `motifs.js`: `garments`, `TURNED`,
+`garment()` (laid out in cm from the hook, `P`), `opening()` (the clip) and `floorStack`.
+
+### How to test it
+
+`tests/contact-sheet.spec.js`, **`Les Abstraits' armoire has clothes on hangers and folded on its
+shelf`**, reads the clothes solid most of the way down the inside, and folded on the shelf near the
+top and the floor. **`Ataraxia's bands cross the page strongly`** still holds with the slower coming
+up (read 3.5 seconds after resting).

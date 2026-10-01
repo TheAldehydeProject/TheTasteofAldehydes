@@ -231,6 +231,15 @@ test("IC and BC are two halves of one hundred, whichever one is typed in",
   expect(await pair(), "and the other way round too").toEqual(["60", "40"]);
   await put(page, "ic-Top", 0);
   expect(await pair()).toEqual(["0", "100"]);
+  // EMPTIED, the other goes to nought (2026-10-01: "when you remove a
+  // number from IC or BC completly, I want the other number to go to
+  // zero") — either way round.
+  await put(page, "ic-Top", 30);
+  await put(page, "ic-Top", "");
+  expect(await pair(), "IC emptied: BC to nought").toEqual(["", "0"]);
+  await put(page, "bc-Top", 45);
+  await put(page, "bc-Top", "");
+  expect(await pair(), "BC emptied: IC to nought").toEqual(["0", ""]);
 
   // On the default model as well, which has only the one pair.
   await page.locator('.calc-model[data-model="plain"]').click();

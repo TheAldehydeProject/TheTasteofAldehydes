@@ -40,7 +40,12 @@
 //
 // POINTING AT A STAVE PLAYS IT — that stave, from its first note, as it
 // is written, both hands, in time, on a recorded grand piano (`key`,
-// `play`), and only while the hand is on its lines. It starts silent: a
+// `play`), and only while the hand is on its lines — and on past its
+// opening to the end of its piece (2026-10-01: "play the entire
+// composition and the notes change visually too as it plays"), the stave
+// TURNING OVER to the next of its bars as the piano reaches them (THE
+// WHOLE PIECE, below; qimu-whole.js). Let go, it goes back to its
+// opening. It starts silent: a
 // browser will not let a page make a sound until it has been pressed, so
 // the square button at the top of the page (`.qimu-sound`) is how the
 // sound is turned on, and off again.
@@ -112,6 +117,8 @@
   const NAME_PX = 10.5;
   const NAME_FONT = "300 " + NAME_PX + "px Archivo, 'Helvetica Neue', Arial, sans-serif";
   const NAME_IN = 0.12;            // how much of the way it comes up a frame
+  const TURN = 0.42;               // seconds, the next of a piece's bars written onto a stave as it is played
+  const TURN_FADE = 0.3;           // and the bars it is played past fading off it
 
   let seed = 77013;
   const random = () => {
@@ -675,9 +682,77 @@
     const music = marks.filter((m) => m.note && m.struck)
       .map((m) => ({ at: m.at, secs: (m.dur + m.hold) * perUnit, pitches: m.pitches, low: m.low, strong: m.strong, mark: m }))
       .sort((p, q) => p.at - q.at || (p.low ? 1 : 0) - (q.low ? 1 : 0));
-    return { marks, tops, bars: edges.slice(1), times, length: clock, end: x, stretch, piece,
+    return { marks, tops, bars: edges.slice(1), times, length: clock, end: x, stretch, piece, count: bars.length,
       info: scoreOf(piece, bars), music, beat: 60 / piece.tempo,
       tall: grand ? GAP * 14 : GAP * 4, deep: Math.max(...bars.map((b) => b.deep)) };
+  }
+
+  // ============================================================
+  // THE WHOLE PIECE — the owner, 2026-10-01: "when you hover it, i want
+  // them to play the entire composition and the notes change visually
+  // too as it plays". A stave shows its piece's opening; played, it goes
+  // on past it to the piece's last note, every bar of it in the order it
+  // is played (its repeats and first and second endings as the score has
+  // them), and as the piano reaches the end of what is on the stave the
+  // stave TURNS OVER to the next of its bars — written on left to right
+  // as the bars it was played past fade off it — as a page is turned. A
+  // stave starts a new line where the key or the metre changes, with the
+  // new ones at its head, as an engraver would. Let go, it goes back to
+  // its opening.
+  //
+  // The bars are qimu-whole.js, written by tools/qimu-pieces.py from the
+  // same scores, and fetched only once the sound is turned on; until it
+  // has arrived a stave plays its opening, as it always did.
+  // ============================================================
+  let wholeAsked = false;
+  function fetchWhole() {
+    if (wholeAsked || window.QIMU_WHOLE) return;
+    wholeAsked = true;
+    const tag = document.createElement("script");
+    tag.src = (window.SITE_ROOT || "../") + "qimu-whole.js";
+    tag.async = true;
+    document.head.appendChild(tag);
+  }
+  const wholes = new Map();
+  /** The whole of a stave's piece: its bars and the order they are
+      played in, laid end to end (`seq`) — or null while it is not here. */
+  function wholeOf(piece) {
+    if (wholes.has(piece.file)) return wholes.get(piece.file);
+    const w = (window.QIMU_WHOLE || []).find((one) => one.file === piece.file);
+    if (!w) return null;
+    const seq = [];
+    w.order.forEach(([a, b]) => { for (let k = a; k < b; k++) seq.push(k); });
+    const one = { ...w, seq };
+    wholes.set(piece.file, one);
+    return one;
+  }
+  /** The stave's next page of its piece, from `from` in the order it is
+      played: as many bars as the stave holds, up to a change of key or
+      metre. */
+  function pageFrom(s, w, from) {
+    const first = w.bars[w.seq[from]];
+    const k = first.k || 0, m = first.m || 0;
+    const list = [];
+    for (let i = from; i < w.seq.length; i++) {
+      const bar = w.bars[w.seq[i]];
+      if ((bar.k || 0) !== k || (bar.m || 0) !== m) break;
+      list.push(bar);
+    }
+    const sig = w.keys[k];
+    const piece = { ...s.piece, meter: w.meters[m], sig, count: sig.filter(Boolean).length, sharps: sig.some((v) => v > 0), bars: list };
+    const score = compose(s.room, s.tops.length > 1, piece);
+    return { score, from, to: from + score.count };
+  }
+  /** What a stave shows, changed: the bars it was showing kept a moment
+      to fade off as the new ones are written on. */
+  let drawnAt = 0;
+  function show(s, score) {
+    if (s.showing === score) return;
+    s.prev = { marks: s.marks, bars: s.bars };
+    s.turned = drawnAt;
+    s.showing = score;
+    Object.assign(s, { marks: score.marks, bars: score.bars, times: score.times, length: score.length, end: score.end,
+      info: score.info, music: score.music, deep: score.deep, long: score.end + 8 });
   }
 
   // ============================================================
@@ -734,7 +809,7 @@
         else deck.push(piece);
       }
       staves.push({ x0, y, long: score.end + 8, ...score, seen: null, named: 0,
-        quiet: wide ? 1 : QUIET, turn: order });
+        quiet: wide ? 1 : QUIET, turn: order, room: long, home: score, showing: score });
       order++;
     }
   }
@@ -798,6 +873,7 @@
 
   function draw(clock) {
     if (!width) return;
+    drawnAt = clock;
     ink.clearRect(0, 0, width, height);
     const scroll = window.scrollY;
     // The page grows as parts are opened; the score keeps up.
@@ -816,16 +892,27 @@
       if (top > height + 40 || top + s.deep + 60 < -60) return;
       if (s.seen === null) s.seen = REDUCE_MOTION ? -99 : clock;
       const since = clock - s.seen;
-      const reach = REDUCE_MOTION ? s.long : s.long * ease(since / WRITE);
       // THE PLAYHEAD: once written, along the stave at its own tempo, the
       // staves taking turns so only a few are playing at once — in
       // silence. The stave under the hand, with the sound on, is the one
       // that is HEARD, and its playhead is where the piano is, read off
-      // the sound's own clock (`heardAt`).
+      // the sound's own clock (`heardAt`) — on the page of its piece the
+      // piano has reached, turned to as it is reached.
       let head = -1, now = -1;
       const heard = player && player.s === s ? heardAt() : null;
-      if (heard !== null) {
-        if (heard >= 0 && heard < s.length) { now = heard; head = headAt(s, heard); }
+      const pg = heard !== null ? pageNow(player, heard) : null;
+      if (pg) show(s, pg.score);
+      // Written on as it is first seen — and again, faster, each time it
+      // turns over to another of its piece's bars. Its lines are not
+      // written again: they ease to the new bars' length.
+      const turning = s.turned === undefined || REDUCE_MOTION ? 99 : clock - s.turned;
+      s.lineLong = REDUCE_MOTION || s.lineLong === undefined ? s.long : s.lineLong + (s.long - s.lineLong) * 0.12;
+      const written = REDUCE_MOTION ? 1 : ease(since / WRITE);
+      const reach = s.long * Math.min(written, ease(turning / TURN));
+      const lines = s.lineLong * written;
+      if (pg) {
+        const t = heard - pg.offset;
+        if (t >= 0 && t < s.length) { now = t; head = headAt(s, t); }
       } else {
         const silent = since - WRITE - (s.turn % 3) * 1.4;
         if (!REDUCE_MOTION && silent > 0) {
@@ -837,14 +924,19 @@
       s.q = q;
       ink.strokeStyle = "rgba(" + BLUE + "," + (LINE * q).toFixed(3) + ")";
       s.tops.forEach((t) => {
-        for (let k = 0; k < 5; k++) mLine(ink, s.x0, top + t + k * GAP, s.x0 + reach, top + t + k * GAP, 0.7);
+        for (let k = 0; k < 5; k++) mLine(ink, s.x0, top + t + k * GAP, s.x0 + lines, top + t + k * GAP, 0.7);
       });
       // The bar lines, through both staves of a braced pair, and the
       // brace that holds the two together. It ends on a plain bar line:
       // the piece goes on past it.
       const foot = top + s.tops[s.tops.length - 1] + 4 * GAP;
       s.bars.forEach((bx) => { if (bx <= reach) mLine(ink, s.x0 + bx, top, s.x0 + bx, foot, 0.7); });
-      if (s.tops.length > 1 && reach > 8) {
+      if (s.prev && turning < TURN_FADE) {
+        ink.strokeStyle = "rgba(" + BLUE + "," + (LINE * q * (1 - ease(turning / TURN_FADE))).toFixed(3) + ")";
+        s.prev.bars.forEach((bx) => { if (bx > reach) mLine(ink, s.x0 + bx, top, s.x0 + bx, foot, 0.7); });
+        ink.strokeStyle = "rgba(" + BLUE + "," + (LINE * q).toFixed(3) + ")";
+      }
+      if (s.tops.length > 1 && lines > 8) {
         mLine(ink, s.x0, top, s.x0, foot, 0.7);
         ink.lineWidth = 1.2;
         ink.beginPath();
@@ -861,6 +953,12 @@
       }
       ink.save();
       ink.translate(s.x0, top);
+      // What it was showing, fading off as the next is written on.
+      if (s.prev && turning < TURN_FADE) {
+        const fade = 1 - ease(turning / TURN_FADE);
+        ink.fillStyle = ink.strokeStyle = "rgba(" + BLUE + "," + Math.min(STRONGEST, NOTE * q * fade).toFixed(3) + ")";
+        s.prev.marks.forEach((m) => { if (m.x > reach) m.fn(ink); });
+      } else if (s.prev) s.prev = null;
       s.marks.forEach((m) => {
         if (m.x > reach) return;
         let a = NOTE;
@@ -924,10 +1022,12 @@
   // going along it at the piano's own time, and the notes lifting as they
   // sound. The tune is played a little louder than what is under it, the
   // notes on the beat a little louder than the ones between, and the
-  // left hand softest, as a pianist would. At the end it breathes for a
-  // beat and plays it again, for as long as the hand is on it. Take the
-  // hand off the lines and the piano stops, its notes damped rather than
-  // cut. On a phone a tap on a stave plays it through once.
+  // left hand softest, as a pianist would. It goes on past what the stave
+  // first shows to the end of the piece, turning the stave over as it
+  // goes; at the end it breathes for a beat and plays it again, for as
+  // long as the hand is on it. Take the hand off the lines and the piano
+  // stops, its notes damped rather than cut. On a phone a tap on a stave
+  // plays the piece through once.
   //
   // It starts silent: a browser will not let a page make a sound until it
   // has been pressed, so the square button at the top of the page is how
@@ -1048,6 +1148,7 @@
   /** The seventeen recordings, fetched once, the first time the sound is
       turned on. What fails to arrive is simply not in the bank. */
   function load() {
+    fetchWhole();
     if (loading) return loading;
     const a = wake();
     if (!a || !window.fetch) return (loading = Promise.resolve());
@@ -1125,19 +1226,41 @@
   }
 
   // ============================================================
-  // THE PLAYER: one stave at a time, the one under the hand.
+  // THE PLAYER: one stave at a time, the one under the hand — its whole
+  // piece, a page of it at a time (`pages`, each at its `offset` in
+  // seconds from the first note).
   // ============================================================
-  let player = null;               // { s, start, lap, next, once, voices }
+  let player = null;               // { s, start, pages, sched, next, once, voices }
   const heardLog = [];             // for the tests: what the piano was asked to play
-  const period = (s) => s.length + s.beat;
 
-  /** Where the piano is on the playing stave, in seconds from its start
-      (below nought before the first note; past its length in the breath). */
+  /** Where the piano is on the playing stave's piece, in seconds from its
+      first note (below nought before it). */
   function heardAt() {
     if (!player || !audio) return null;
     const t = audio.ctx.currentTime - player.start;
-    if (t < 0) return -1;
-    return player.once ? t : t % period(player.s);
+    return t < 0 ? -1 : t;
+  }
+
+  /** The page of the piece the piano is on at `t`: the last one begun. */
+  function pageNow(p, t) {
+    let pg = p.pages[0];
+    for (const one of p.pages) { if (one.offset <= t) pg = one; else break; }
+    return pg;
+  }
+
+  /** The page after `pg`: the next of the piece's bars, or — the piece
+      over — after a breath of one beat, its opening again (or nothing,
+      played through once on a phone). Without the whole piece here yet,
+      the opening is all there is. */
+  function nextPage(p, pg) {
+    const s = p.s, w = wholeOf(s.piece);
+    const after = pg.offset + pg.score.length;
+    if (w && pg.to < w.seq.length) {
+      const one = pageFrom(s, w, pg.to);
+      if (one.score.music.length || one.score.count) return { ...one, offset: after, lap: pg.lap };
+    }
+    if (p.once) return null;
+    return { score: s.home, from: 0, to: s.home.count, offset: after + s.beat, lap: pg.lap + 1 };
   }
 
   /** Everything due in the next moment, handed to the sound's own clock,
@@ -1145,18 +1268,26 @@
   function pump() {
     if (!player || !audio) return;
     const now = audio.ctx.currentTime;
-    const p = player, list = p.s.music;
-    if (!list.length) return;
+    const p = player;
     for (let n = 0; n < 400; n++) {
-      if (p.next >= list.length) {
-        if (p.once) {
-          if (now > p.start + p.s.length + 1) stop();
-          return;
+      let pg = p.pages[p.sched];
+      if (p.next >= pg.score.music.length) {
+        // This page's notes are all handed over: the next page, set out
+        // as soon as it is near — or, played through, silence.
+        if (p.start + pg.offset + pg.score.length > now + LOOK) break;
+        if (p.sched + 1 >= p.pages.length) {
+          const more = nextPage(p, pg);
+          if (!more) {
+            if (now > p.start + pg.offset + pg.score.length + 1) stop();
+            return;
+          }
+          p.pages.push(more);
         }
-        p.lap++; p.next = 0;
+        p.sched++; p.next = 0;
+        continue;
       }
-      const note = list[p.next];
-      const when = p.start + p.lap * period(p.s) + note.at;
+      const note = pg.score.music[p.next];
+      const when = p.start + pg.offset + note.at;
       if (when > now + LOOK) break;
       p.next++;
       if (when < now - 0.02) continue;
@@ -1171,26 +1302,31 @@
         const loud = (top && chord.length > 1 ? LOUD.tune : base) * (0.94 + Math.random() * 0.1);
         key(midi, when + i * 0.009, note.secs, loud, p.voices);
       });
-      heardLog.push({ stave: staves.indexOf(p.s), at: note.at, pitches: note.pitches.slice(), lap: p.lap });
+      heardLog.push({ stave: staves.indexOf(p.s), at: note.at, page: p.sched, from: pg.from, pitches: note.pitches.slice(), lap: pg.lap });
     }
     // What has been let go of for good is forgotten.
     if (p.voices.length > 200) p.voices = p.voices.filter((v) => v.off > now - 2);
+    // With motion turned off nothing is drawn every frame: a stave is
+    // drawn again as it turns over.
+    if (REDUCE_MOTION && player && player.s.showing !== pageNow(player, heardAt()).score) draw(0);
   }
 
   function play(s, once) {
-    if (!sound || !s || !s.music.length) return;
+    if (!sound || !s || !s.home.music.length) return;
     if (player && player.s === s) { if (!once) player.once = false; return; }
     stop();
     const a = wake();
     if (!a) return;
     load();
-    player = { s, start: a.ctx.currentTime + LEAD, lap: 0, next: 0, once: !!once, voices: [] };
+    player = { s, start: a.ctx.currentTime + LEAD, pages: [{ score: s.home, from: 0, to: s.home.count, offset: 0, lap: 0 }],
+      sched: 0, next: 0, once: !!once, voices: [] };
     document.documentElement.dataset.qimuPlaying = String(staves.indexOf(s));
     pump();
   }
 
   /** The hand is off the lines: every note still sounding is damped, and
-      every note not yet begun is never begun. */
+      every note not yet begun is never begun — and the stave goes back
+      to its opening. */
   function stop() {
     if (!player) return;
     const now = audio ? audio.ctx.currentTime : 0;
@@ -1202,7 +1338,10 @@
         v.stop(now + 0.6);
       } catch (e) { /* already stopped */ }
     });
+    const s = player.s;
     player = null;
+    show(s, s.home);
+    if (REDUCE_MOTION) draw(0);
     delete document.documentElement.dataset.qimuPlaying;
   }
   window.setInterval(pump, 50);
@@ -1216,7 +1355,8 @@
     for (const s of staves) {
       const top = s.y - scroll;
       if (y < top - pad || y > top + s.tall + pad) continue;
-      if (x < s.x0 - Math.max(8, pad) || x > s.x0 + s.long + Math.max(8, pad)) continue;
+      const long = Math.max(s.long, s.home.end + 8);
+      if (x < s.x0 - Math.max(8, pad) || x > s.x0 + long + Math.max(8, pad)) continue;
       if (s.seen === null) continue;
       const d = y < top ? top - y : y > top + s.tall ? y - top - s.tall : 0;
       if (d < far) { far = d; best = s; }
@@ -1346,8 +1486,30 @@
   // plays, in order; and what the piano has been asked to play.
   window.QimuScore = {
     staves: () => staves.map((s) => ({ grand: s.tops.length > 1, ...s.info })),
-    boxes: () => staves.map((s, i) => ({ i, x: s.x0, y: s.y - window.scrollY, w: s.long, h: s.tall, deep: s.deep,
-      written: s.seen !== null, named: s.named, strength: s.q })),
+    boxes: () => staves.map((s, i) => {
+      const k = player && player.s === s ? player.pages.findIndex((pg) => pg.score === s.showing) : -1;
+      return { i, x: s.x0, y: s.y - window.scrollY, w: s.long, h: s.tall, deep: s.deep,
+        written: s.seen !== null, named: s.named, strength: s.q,
+        // Which page of its piece it is showing (0, its opening) and where
+        // in the order the piece is played that page begins.
+        page: k > 0 ? k : 0, from: k > 0 ? player.pages[k].from : 0 };
+    }),
+    // The whole of each piece, once it has arrived: its bars as played.
+    whole: (i) => { const w = wholeOf(staves[i].piece); return w ? { bars: w.bars.length, played: w.seq.length } : null; },
+    // Every page a stave turns through, its piece played to the end: where
+    // in the order each begins and ends, its time signature and how many
+    // notes it sounds.
+    pages: (i) => {
+      const s = staves[i], w = wholeOf(s.piece);
+      if (!w) return null;
+      const out = [{ from: 0, to: s.home.count, written: s.home.info.written[0], notes: s.home.music.length }];
+      for (let from = s.home.count; from < w.seq.length;) {
+        const pg = pageFrom(s, w, from);
+        out.push({ from, to: pg.to, written: pg.score.info.written[0], notes: pg.score.music.length });
+        from = pg.to;
+      }
+      return out;
+    },
     music: (i) => staves[i].music.map((n) => ({ at: n.at, secs: n.secs, pitches: n.pitches.slice(), low: n.low })),
     heard: () => heardLog.slice(),
     samples: () => [...bank.keys()],
