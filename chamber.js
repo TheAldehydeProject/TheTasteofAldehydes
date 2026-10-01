@@ -3289,16 +3289,17 @@
   // hold that far out — see `takes` in move().
   let nearestSource = 99;
 
+  // How sharp it is drawn: nav.js's `Sharpness` (2026-10-01).
+  const sharp = window.Sharpness ? window.Sharpness(() => resize()) : null;
   function resize() {
-    // A PHONE DRAWS AT A LOWER RATIO. Every canvas here is capped at
-    // two device pixels to one CSS pixel, which on a desktop is
-    // right and on a phone at three is still a million-odd pixels to
-    // fill sixty times a second on a fraction of the power. Narrow
-    // screens get 1.5, which is a little over half the fill and no
-    // difference anybody can see at that size. Nothing above 700
-    // changes at all.
-    const ratio = Math.min(window.innerWidth < 700 ? 1.5 : 2,
-                           window.devicePixelRatio || 1);
+    // TWO DEVICE PIXELS TO A POINT AT MOST, a phone too. A phone had
+    // 1.5 — a little over half the fill — until 2026-10-01, when every
+    // 3D drawing on the site was made as sharp as the screen allows up
+    // to two (the owner's "really not HD on the phone"): on a screen at
+    // three, 1.5 left the hairlines and the specks visibly soft. A machine
+    // that cannot keep up at that is let down a step at a time, never
+    // below 1.5 (nav.js, `Sharpness`).
+    const ratio = sharp ? sharp.ratio : Math.min(2, window.devicePixelRatio || 1);
     width = Math.max(1, window.innerWidth);
     height = Math.max(1, window.innerHeight);
     midX = width / 2;
@@ -4099,6 +4100,7 @@
       return;
     }
     asleep = false;
+    if (sharp) sharp.frame(now);      // (the chamber's own frames only: not while a chapter is up)
     clearing();
     if (REDUCE_MOTION) {
       // Nothing is watched happening: the orbit is settled once into

@@ -639,17 +639,18 @@
   let built = REDUCE_MOTION ? 1 : 0;
   let began = 0;
   let vignette = null;
+  // How sharp it is drawn: nav.js's `Sharpness` (2026-10-01).
+  const sharp = window.Sharpness ? window.Sharpness(() => resize()) : null;
 
   function resize() {
-    // A PHONE DRAWS AT A LOWER RATIO. Every canvas here is capped at
-    // two device pixels to one CSS pixel, which on a desktop is
-    // right and on a phone at three is still a million-odd pixels to
-    // fill sixty times a second on a fraction of the power. Narrow
-    // screens get 1.5, which is a little over half the fill and no
-    // difference anybody can see at that size. Nothing above 700
-    // changes at all.
-    const ratio = Math.min(window.innerWidth < 700 ? 1.5 : 2,
-                           window.devicePixelRatio || 1);
+    // TWO DEVICE PIXELS TO A POINT AT MOST, a phone too. A phone had
+    // 1.5 — a little over half the fill — until 2026-10-01, when every
+    // 3D drawing on the site was made as sharp as the screen allows up
+    // to two (the owner's "really not HD on the phone"): on a screen at
+    // three, 1.5 left the hairlines and the specks visibly soft. A machine
+    // that cannot keep up at that is let down a step at a time, never
+    // below 1.5 (nav.js, `Sharpness`).
+    const ratio = sharp ? sharp.ratio : Math.min(2, window.devicePixelRatio || 1);
     width = Math.max(1, window.innerWidth);
     height = Math.max(1, window.innerHeight);
     midX = width / 2;
@@ -852,6 +853,11 @@
     // frames and everything else is drawn into it.
     const air = Math.min(1, built / INTRO_AIR);
     const many = Math.min(inAir, swarm.length);
+    // Each speck's colour set only when it changes, and its strength as
+    // the pen's own alpha — not a colour written out as words for every
+    // speck, which was a string made and read a thousand times a frame
+    // (2026-10-01, measured on a phone).
+    let toneNow = "";
     for (let n = 0; n < many; n++) {
       const speck = swarm[n];
       const depth = speck.z - eye;
@@ -879,9 +885,11 @@
       if (speck.glow && lit > 0.22) {
         stamp(speck.cool ? stampCool : stampWhite, px, py, size * 3.4, lit * 0.5);
       }
-      paint.fillStyle = rgba(tone, lit);
+      if (tone !== toneNow) { paint.fillStyle = "rgb(" + tone + ")"; toneNow = tone; }
+      paint.globalAlpha = Math.max(0, Math.min(1, lit * BRIGHT));
       paint.fillRect(px - size / 2, py - size / 2, size, size);
     }
+    paint.globalAlpha = 1;
   }
 
   // ============================================================
@@ -1420,6 +1428,7 @@
     requestAnimationFrame(frame);
     const on = Math.min(3, (now - last) / 16.7) || 1;
     last = now;
+    if (sharp) sharp.frame(now);
     if (!REDUCE_MOTION) {
       clock += on / 60;
       // Setting up. Timed off the wall clock rather than counted in

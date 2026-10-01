@@ -703,12 +703,19 @@
   let band = false;
   const half = Math.tan((FOV * Math.PI) / 360);
   const density = (px) => Math.max(0.5, Math.min(1, (px / 190) ** 2));
+  // How sharp it is drawn: nav.js's `Sharpness` (2026-10-01).
+  const sharp = window.Sharpness ? window.Sharpness(() => size()) : null;
   function size() {
     box = null;
     const r = wrap.getBoundingClientRect();
     W = Math.max(1, r.width); H = Math.max(1, r.height);
     const small = phone();
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2));
+    // as sharp as the screen up to two, a phone too (it had 1.5 until
+    // 2026-10-01 — "really not HD on the phone"); half the specks there
+    // (`PHONE_THIN`) keep the fill under what it was; and a machine that
+    // cannot keep up at that let down a step at a time, never below 1.5
+    // (nav.js, `Sharpness`)
+    renderer.setPixelRatio(sharp ? sharp.ratio : Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
     camera.updateProjectionMatrix();
@@ -1055,6 +1062,7 @@
       // (a frame skipped on a machine without a graphics card is still time
       // gone: the clock counts it at the next one drawn)
       if (!soft || now - drawn > 80) {
+        if (sharp) sharp.frame(now);
         const more = draw(now);
         drawn = now;
         drewAt = more ? -1 : (+window.__formula || 0);

@@ -96,6 +96,61 @@
   };
 })();
 
+// ============================================================
+// HOW SHARP A 3D DRAWING IS (2026-10-01 — "sometimes the note library
+// looks really not HD on the phone ... check every other 3D render")
+//
+// As sharp as the screen allows, up to two device pixels a point — a
+// phone too, which had 1.5 and showed it. And on a machine that cannot
+// keep up at that (the middle of ninety frames over 21ms apart), a step
+// softer at a time — an eighth — to three quarters of it at most, and
+// never below the screen's own pixel; back up a step at a time once its
+// frames are quick again (under 17.5ms), unless going up has just brought
+// the slowness back, when it stays. The opening's frames are not judged.
+//
+// Here because every page loads nav.js before anything that draws. A
+// drawing asks for one — `const sharp = window.Sharpness(resize)` — reads
+// `sharp.ratio` when it sizes its canvas, and calls `sharp.frame(now)` at
+// the head of every frame it draws, BEFORE it draws: a step is taken
+// there, by calling `resize`, so the canvas is never left blank between
+// frames. The Note Library has its own (network.js), from which this is
+// taken. `sharp.judge(ms, times)` is for the tests.
+// ============================================================
+window.Sharpness = function (resize) {
+  const MOST = Math.min(window.devicePixelRatio || 1, 2);
+  const LEAST = Math.max(Math.min(MOST, 1), MOST * 0.75);
+  const STEP = MOST / 8;
+  const gaps = new Float32Array(90);
+  let ratio = MOST, n = 0, last = 0, from = 0, lowered = 0, raised = 0, hold = false, clock = 0;
+  function frame(t) {
+    if (!from) from = t + 1500;
+    if ((window.KeepTime && window.KeepTime.standIn) || t < from) { last = 0; n = 0; return; }
+    if (last && t - last < 200) gaps[n++ % gaps.length] = t - last;
+    last = t;
+    if (n < gaps.length || n % 30 !== 0) return;
+    const mid = Array.from(gaps).sort((a, b) => a - b)[gaps.length >> 1];
+    if (mid > 21 && ratio > LEAST) {
+      if (raised && t - raised < 6000) hold = true;
+      ratio = Math.max(LEAST, ratio - STEP); lowered = t; n = 0; resize();
+    } else if (mid < 17.5 && ratio < MOST && !hold && t - lowered > 4000) {
+      ratio = Math.min(MOST, ratio + STEP); raised = t; n = 0; resize();
+    }
+  }
+  return {
+    get ratio() { return ratio; },
+    frame,
+    judge(ms, times = 1) {
+      for (let k = 0; k < times; k++) {
+        let t = clock = Math.max(performance.now(), clock, from) + 10000;
+        last = 0;
+        for (let i = 0; i <= gaps.length; i++) { frame(t); t += ms; }
+        clock = t;
+      }
+      return ratio;
+    },
+  };
+};
+
 const SITE_LINKS = [
   { label: "Home", href: "" },
   { label: "Scent descriptions", href: "scent-descriptions/" },
@@ -324,7 +379,7 @@ const SITE_LINKS = [
     if (!open || box.width < 2) return;          // shut, or no room for it
     if (Math.round(box.width) !== size) {
       size = Math.round(box.width);
-      ratio = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 2);
+      ratio = Math.min(window.devicePixelRatio || 1, 2);    // a phone too, since 2026-10-01: a 3D drawing as sharp as the screen, up to two
       canvas.width = Math.round(size * ratio);
       canvas.height = Math.round(size * ratio);
     }

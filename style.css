@@ -5372,17 +5372,23 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   transition: transform 300ms var(--net-ease), margin 300ms var(--net-ease);
 }
 .net-arrow.is-out .net-chev { margin-left: -3px; transform: rotate(135deg); }
-/* The search's arrow carries a small ring under its chevron: a lens. */
-.net-arrow[data-pull="search"]::before {
-  content: "";
+/* The search's is a magnifying glass (2026-10-01; it was a chevron with a
+   small ring under it): a lens and its handle in the arrows' hairline,
+   turned a little towards what it pulls out while that is out. */
+.net-glass {
   position: absolute;
-  right: 5px;
-  bottom: 5px;
-  width: 5px;
-  height: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  transition: transform 300ms var(--net-ease);
 }
+.net-arrow.is-out .net-glass { transform: rotate(-90deg); }
 .net-arrow-say {
   position: absolute;
   left: calc(100% + 10px);
@@ -5416,7 +5422,8 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
 }
 .net-stage.is-idle .net-arrow::after { animation: net-glow 2.6s ease-in-out infinite; }
 .net-stage.is-idle .net-arrow[data-pull="menu"]::after { animation-delay: 0.4s; }
-.net-stage.is-coaching .net-arrow[data-pull="menu"]::after { animation: net-glow 1.6s ease-in-out infinite; }
+.net-stage.is-coaching .net-arrow::after { animation: net-glow 1.6s ease-in-out infinite; }
+.net-stage.is-coaching .net-arrow[data-pull="menu"]::after { animation-delay: 0.3s; }
 @keyframes net-glow {
   0%, 100% { opacity: 0.35; }
   50% { opacity: 1; }
@@ -6442,7 +6449,7 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
 .net-coach-say {
   position: absolute;
   left: 70px;
-  top: 116px;
+  top: 116px;                     /* the menu's arrow, the second in the rail */
   display: flex;
   align-items: center;
   gap: 12px;
@@ -6455,7 +6462,9 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   transform: translateX(10px);
   transition: transform 520ms var(--net-ease);
 }
+.net-coach-say[data-for="search"] { top: 76px; }   /* the search's, the first */
 .net-stage.is-coaching .net-coach-say { transform: none; }
+.net-stage.is-coaching .net-coach-say[data-for="menu"] { transition-delay: 80ms; }
 /* The words trimmed to their capitals and their baseline, so that it is
    the middle of the letters — not of the line they sit on — that stands
    level with the arrow's middle (2026-09-28: "allign the text with the
@@ -6795,6 +6804,7 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   .net-find { left: 52px; top: 64px; width: calc(100% - 64px); }
   .net-panel { left: 52px; top: 104px; width: calc(100% - 64px); max-height: calc(100% - 250px); }
   .net-coach-say { left: 58px; top: 104px; font-size: 19px; }
+  .net-coach-say[data-for="search"] { top: 64px; }
   .net-dock { left: 12px; right: 12px; bottom: 12px; transform: none; }
   .net-nav { width: 100%; }
   .net-drop { flex: 1; min-width: 0; }
@@ -6828,8 +6838,8 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
 }
 @media (prefers-reduced-motion: reduce) {
   .net-stage.is-idle .net-arrow::after,
-  .net-stage.is-coaching .net-arrow[data-pull="menu"]::after { animation: none; opacity: 0.8; }
-  .net-veil, .net-note, .net-sources, .net-coach, .net-coach-say, .net-panel, .net-find,
+  .net-stage.is-coaching .net-arrow::after { animation: none; opacity: 0.8; }
+  .net-veil, .net-note, .net-sources, .net-coach, .net-coach-say, .net-panel, .net-find, .net-glass,
   .net-leave, .net-leave-box { transition: none; }
   .net-note.is-rising { transition: none; }
   .net-result.is-new { animation: none; }

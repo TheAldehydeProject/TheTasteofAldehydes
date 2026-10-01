@@ -1304,7 +1304,10 @@
     const rail = el("div", "net-rail");
     rail.innerHTML =
       '<button type="button" class="net-arrow" data-pull="search" aria-expanded="false" aria-controls="net-find" aria-label="Open the search">' +
-        '<span class="net-chev" aria-hidden="true"></span><span class="net-arrow-say" aria-hidden="true">Search</span></button>' +
+        // a magnifying glass, in the arrows' hairline (2026-10-01: "make the
+        // search button ... have a logo of a magnifying glass")
+        '<svg class="net-glass" viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.6" cy="6.6" r="4.3"/><path d="M9.8 9.8 14 14"/></svg>' +
+        '<span class="net-arrow-say" aria-hidden="true">Search</span></button>' +
       '<button type="button" class="net-arrow" data-pull="menu" aria-expanded="false" aria-controls="net-menu" aria-label="Open the menu">' +
         '<span class="net-chev" aria-hidden="true"></span><span class="net-arrow-say" aria-hidden="true">Menu</span></button>';
     stage.appendChild(rail);
@@ -1365,11 +1368,15 @@
     const markCtx = markCanvas.getContext("2d");
 
     // THE WORD AS IT OPENS: the page out of focus, and a line pointing at
-    // the menu's arrow — "Open menu here" — for a few seconds, or until the
-    // hand does anything.
+    // each of the two arrows — "Search here" at the search's, "Open menu
+    // here" at the menu's (the first since 2026-10-01: "when you load the
+    // page in, put some text pointing to it too") — for a few seconds, or
+    // until the hand does anything.
     const coach = el("div", "net-coach");
     coach.setAttribute("aria-hidden", "true");
-    coach.innerHTML = '<p class="net-coach-say"><span class="net-coach-line"></span><span class="net-coach-word">Open menu here</span></p>';
+    coach.innerHTML =
+      '<p class="net-coach-say" data-for="search"><span class="net-coach-line"></span><span class="net-coach-word">Search here</span></p>' +
+      '<p class="net-coach-say" data-for="menu"><span class="net-coach-line"></span><span class="net-coach-word">Open menu here</span></p>';
     stage.appendChild(coach);
 
     // THE FOOT: the button that expands it and, on its right, the one that
@@ -1665,6 +1672,17 @@
     let W = 1, H = 1, fitMin = 1;
     let dOne = 16, dAll = 60;
     let raf = 0, quality = 1;
+    // HOW SHARP IT IS DRAWN: the screen's own pixels, up to two to a point —
+    // a phone too (2026-10-01: "sometimes the note library looks really not
+    // HD on the phone and a little on the pc too"). A phone was given 1.5,
+    // and a machine whose frames came slowly was taken down to 0.6 of that
+    // — a plain screen too, below its own pixel — and never back up, so a
+    // slow moment as the page opened left the whole visit soft. A slow
+    // machine is let down now to `SHARP_LEAST` of it at most, never below
+    // the screen's own pixel, and taken back up once its frames are quick.
+    const SHARP = () => Math.min(window.devicePixelRatio || 1, 2);
+    const SHARP_LEAST = 0.75;
+    const sharpness = () => Math.max(Math.min(SHARP(), 1), SHARP() * quality);
     let uVel = 0;                         // how fast it is coming apart (or together), per ms
     let flashes = 0, flashTo = [];        // how many flashes have gone, and where the last went
     let cmb = 0, cmbTo = 0;               // 0: the red network; 1: combinations
@@ -1802,7 +1820,7 @@
     const fit = (r) => r / Math.sin(fitMin);
     function size() {
       W = stage.clientWidth; H = stage.clientHeight;
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, W < 700 ? 1.5 : 2) * quality);
+      renderer.setPixelRatio(sharpness());
       renderer.setSize(W, H, false);
       camera.aspect = W / Math.max(1, H);
       camera.updateProjectionMatrix();
@@ -3877,7 +3895,7 @@
       if (!drawing.w) {
         const r = c.getBoundingClientRect();
         if (!r.width) return;
-        const ratio = Math.min(window.devicePixelRatio || 1, W < 700 ? 1.5 : 2);
+        const ratio = SHARP();
         drawing.w = r.width; drawing.h = r.height;
         c.width = Math.round(r.width * ratio);
         c.height = Math.round(r.height * ratio);
@@ -3968,16 +3986,27 @@
     // ============================================================
     const took = new Float32Array(240), gaps = new Float32Array(90);
     let tookN = 0, gapN = 0, lastFrame = 0;
+    // When the drawing was last made softer and last made sharper, and
+    // whether going back up has been seen to bring the slowness back (then
+    // it stays where it is, rather than going up and down).
+    let lowered = 0, raised = 0, holdLow = false;
+    let judgedTo = 0;      // (the clock `judge`, for the tests, keeps)
     function record(ms, t) {
       // A frame the page drew for itself while clicked off (nav.js) says
-      // nothing about how quickly this machine draws.
-      if (window.KeepTime && window.KeepTime.standIn) { lastFrame = 0; return; }
+      // nothing about how quickly this machine draws — and nor do the
+      // frames of the opening, which build the network as they go.
+      if ((window.KeepTime && window.KeepTime.standIn) || !loaded) { lastFrame = 0; gapN = 0; return; }
       took[tookN++ % took.length] = ms;
       if (lastFrame && t - lastFrame < 200) gaps[gapN++ % gaps.length] = t - lastFrame;
       lastFrame = t;
-      if (gapN >= gaps.length && gapN % 30 === 0 && quality > 0.6) {
-        const sorted = Array.from(gaps).sort((a, b) => a - b);
-        if (sorted[gaps.length >> 1] > 21) { quality = Math.max(0.6, quality - 0.15); gapN = 0; size(); }
+      if (gapN < gaps.length || gapN % 30 !== 0) return;
+      const sorted = Array.from(gaps).sort((a, b) => a - b);
+      const mid = sorted[gaps.length >> 1];
+      if (mid > 21 && quality > SHARP_LEAST) {
+        if (raised && t - raised < 6000) holdLow = true;
+        quality = Math.max(SHARP_LEAST, quality - 0.125); lowered = t; gapN = 0; size();
+      } else if (mid < 17.5 && quality < 1 && !holdLow && t - lowered > 4000) {
+        quality = Math.min(1, quality + 0.125); raised = t; gapN = 0; size();
       }
     }
     function loop(t) {
@@ -3999,7 +4028,7 @@
         u, state: stage.dataset.state, focus: focus < 0 ? "centre" : accords[focus].code, flying: !!flight,
         selected: selected >= 0 ? nodes[selected].note.name : null, filter, previewing, query: query.value, hits: hits.map((n) => n.name),
         dim: notes.filter((n) => opacity[n.i] < 0.5).length, faintest: Math.min(...opacity),
-        segments: segs, quality, panel: panelOpen, search: searchOpen, target: cam.T.length(), pitch: cam.pitch, yaw: cam.yaw,
+        segments: segs, quality, sharpness: renderer.getPixelRatio(), panel: panelOpen, search: searchOpen, target: cam.T.length(), pitch: cam.pitch, yaw: cam.yaw,
         nodes: T, shown: shown(), answering: answering(), litNodes: lit.filter((l) => l > 0.3).length,
         note: noteOpen && noteShown ? noteShown.name : null, loaded, coaching: coachOn, idle,
         combine: cmbTo === 1, cmb, tags: chosen.map((n) => n.name), matched: matched.slice(), partners: partners.size,
@@ -4026,6 +4055,18 @@
       },
       /** Leave the page to itself this many ms ago, as if the hand had gone. */
       leave: (ms) => { lastInput = performance.now() - ms; },
+      // For the tests: what it makes of a machine whose frames come `ms`
+      // apart, judged as it judges its own (a window of them, then the
+      // middle one), `times` over.
+      judge: (ms, times = 1) => {
+        for (let k = 0; k < times; k++) {
+          let t = judgedTo = Math.max(performance.now(), judgedTo) + 10000;
+          lastFrame = 0;
+          for (let n = 0; n <= gaps.length; n++) { record(1, t); t += ms; }
+          judgedTo = t;
+        }
+        return renderer.getPixelRatio();
+      },
       /** Press a note: it is chosen, and its window opens. */
       open: (name) => { const n = notes.find((x) => x.name === name); if (n) select(n.i, true); return !!n; },
       notes: () => notes.map((n) => ({ id: n.id, name: n.name, no: n.no, uses: n.uses, code: n.A.code })),

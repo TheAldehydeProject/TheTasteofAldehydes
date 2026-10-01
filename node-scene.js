@@ -254,12 +254,11 @@ const REAL_NODES = [
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 200);
   const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-  // A PHONE DRAWS AT A LOWER RATIO, and this is the page that most
-  // needs it: every fragment here goes through a shader, so the fill
-  // is the whole cost. Narrow screens get 1.5 rather than 2, which is
-  // a little over half the work. Nothing above 700 changes.
-  renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio, window.innerWidth < 700 ? 1.5 : 2));
+  // TWO DEVICE PIXELS TO A POINT AT MOST, a phone too (2026-10-01: every
+  // 3D drawing on the site is drawn as sharp as the screen allows up to
+  // two — "really not HD on the phone"; a phone had 1.5, a little over
+  // half the work and visibly soft on a screen at three).
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
   const rig = new THREE.Group();
   scene.add(rig);

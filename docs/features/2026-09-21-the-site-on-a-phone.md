@@ -429,6 +429,45 @@ chip.
   (`PHONE_THIN` in `molecule.js`): the same light in the same place (screenshots side by side are
   all but the same), for half the work.
 
+### 2026-10-01, last — the 3D drawings as sharp as the screen
+
+The owner, the same day: "sometimes the note library looks really not HD on the phone and a little
+on the pc too. Can you fix that? Also check every other 3D render to see if that applies too. If
+it does, fix it. After that, run a smoothness test to see if everything is running normally."
+
+- **What was soft.** Every 3D drawing on the site was drawn at **1.5 device pixels a point on a
+  phone** — half a screen-at-three's sharpness each way, which shows in hairlines and specks. And
+  the Note Library let a machine whose frames came slowly down to **0.6 of that, on any screen —
+  a plain one too, below its own pixel — and never back up**; its own report has the whole of it.
+- **What they are drawn at now: the screen's own, up to two, a phone too** — the home page's
+  aldehyde (`molecule.js`), the Note Library and its figures, the theories structure, the RE
+  field, the houses' helix, the chamber, the sun and moon, the menu's aldehyde, and the node map
+  (switched off). The flat drawings — a house's ground, the title's specks, the paper — keep the
+  phone's 1.5.
+- **And as sharp as the machine can keep smooth.** Measured on the phone (CPU four times slowed,
+  and no graphics chip, so every extra pixel is paid for in full), two cost the home page 59 → 48
+  frames a second, Theories 38 → 27 and Favourites a little; the RE field and the Houses held 59.
+  So the heavy ones — the home page's aldehyde, Theories, the chamber, the sun and moon — ask
+  **`window.Sharpness`** (`nav.js`, the Note Library's rule made for every page): drawn at two;
+  on a machine whose frames come slowly (the middle of ninety over 21ms) a step — an eighth —
+  softer at a time, to three quarters at most and never below the screen's own pixel; back up
+  once they are quick (under 17.5ms), unless going up has just brought the slowness back. The
+  opening's frames are not judged. A drawing reads `sharp.ratio` when it sizes its canvas and
+  calls `sharp.frame(now)` at the head of each frame it draws, before drawing, so a step never
+  leaves the canvas blank. Watched for 24 seconds on that phone: the home page settles at 1.5
+  and 59.8 frames a second, Theories at 1.5 and 46.8, Favourites at 1.5 and 42 — what each had
+  before (59, 40, 42–45), and on a phone that keeps up, two. (The RE field and the Houses, which
+  held 59 at two on it, are simply drawn at two.)
+- **Theories' swarm** set its colour as words for every speck, as Tombstone, Almost Human and ADAR
+  did until this morning: once per change of colour now, its strength as the pen's alpha
+  (`drawSwarm`). That part of its work 75 → 25 ms a second on the phone, and the page 40 → 47
+  frames a second. Pixel for pixel the same (the difference between two loads of the old page is
+  its random grain, and the same).
+- **The smoothness test**, every page on a laptop and on the phone, against the morning's: every
+  page but those above at 57–60 frames a second idle and scrolling (Ataraxia and Grande Parfums
+  dip when scrolled on the phone, as before); the Note Library cannot be timed without a graphics
+  chip (four frames a second here, before and after).
+
 ### How to test it
 
 The suite is the guard for behaviour; the measurement is a script kept out of the repository (it

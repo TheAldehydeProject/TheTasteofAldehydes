@@ -262,3 +262,15 @@ drawn again and again by the page's own frames and move; and **in front, no time
   and each asking (`elementFromPoint`) makes the browser lay the page out first if anything has
   changed. And the ring is written only when it moves: standing still and settled, `follow` writes
   nothing (it wrote the same transform sixty times a second).
+
+## 2026-10-01, last — `window.Sharpness`, for the 3D drawings
+
+`nav.js` carries a second thing every page's drawings may ask for, beside **the page keeps its own
+time**: **`window.Sharpness(resize)`**, how many device pixels a point a 3D drawing is drawn at —
+the screen's own up to two, a phone too, and on a machine whose frames come slowly a step softer
+at a time, to three quarters at most and never below the screen's own pixel, back up once they
+are quick. It is here for the same reason `KeepTime` is: every page loads `nav.js` before anything
+that draws. The home page's aldehyde, Theories, the chamber and the sun and moon ask for one; why,
+and what was measured, is in [the phone report](2026-09-21-the-site-on-a-phone.md#2026-10-01-last--the-3d-drawings-as-sharp-as-the-screen).
+The menu's aldehyde, in the menu itself, is drawn at the screen's own up to two (it was 1.5 on a
+phone). Tested in `mobile.spec.js`.

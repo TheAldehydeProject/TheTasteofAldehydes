@@ -263,16 +263,29 @@ test("as it opens it wires itself in, and then points at the menu's arrow over t
   const z = await page.evaluate(() => [".net-coach", ".net-rail", ".net-dock"].map((c) => +getComputedStyle(document.querySelector(c)).zIndex));
   expect(z[1], "the arrows over it").toBeGreaterThan(z[0]);
   expect(z[2], "and the rest under it").toBeLessThan(z[0]);
-  const say = await page.locator(".net-coach-say").boundingBox();
-  const word = await page.locator(".net-coach-word").boundingBox();
-  const line = await page.locator(".net-coach-line").boundingBox();
-  const arrow = await page.locator('.net-arrow[data-pull="menu"]').boundingBox();
-  const middle = arrow.y + arrow.height / 2;
-  // "allign the text with the center of the arrow": the words, the line and
-  // the arrow's middle level to a pixel or two.
-  expect(Math.abs(line.y + line.height / 2 - middle), "the line level with the arrow's middle").toBeLessThan(1.5);
-  expect(Math.abs(word.y + word.height / 2 - middle), "the words level with it too").toBeLessThan(2.5);
-  expect(say.x, "beside it").toBeGreaterThan(arrow.x + arrow.width - 2);
+  // One line at each arrow: "Search here" at the search's (2026-10-01:
+  // "when you load the page in, put some text pointing to it too"), "Open
+  // menu here" at the menu's.
+  await expect(coach).toContainText("Search here");
+  for (const which of ["search", "menu"]) {
+    const at = '.net-coach-say[data-for="' + which + '"]';
+    const say = await page.locator(at).boundingBox();
+    const word = await page.locator(at + " .net-coach-word").boundingBox();
+    const line = await page.locator(at + " .net-coach-line").boundingBox();
+    const arrow = await page.locator('.net-arrow[data-pull="' + which + '"]').boundingBox();
+    const middle = arrow.y + arrow.height / 2;
+    // "allign the text with the center of the arrow": the words, the line and
+    // the arrow's middle level to a pixel or two.
+    expect(Math.abs(line.y + line.height / 2 - middle), which + ": the line level with the arrow's middle").toBeLessThan(1.5);
+    expect(Math.abs(word.y + word.height / 2 - middle), which + ": the words level with it too").toBeLessThan(2.5);
+    expect(say.x, which + ": beside it").toBeGreaterThan(arrow.x + arrow.width - 2);
+  }
+  // and the search's is a magnifying glass, a lens and its handle
+  // ("have a logo of a magnifying glass")
+  const glass = page.locator('.net-arrow[data-pull="search"] svg.net-glass');
+  await expect(glass.locator("circle")).toHaveCount(1);
+  await expect(glass.locator("path")).toHaveCount(1);
+  await expect(page.locator('.net-arrow[data-pull="search"] .net-chev')).toHaveCount(0);
   // It asks nothing of the hand: the press goes through, and puts it away.
   await page.locator('.net-arrow[data-pull="menu"]').click();
   await expect.poll(async () => (await state(page)).coaching).toBe(false);
@@ -1497,6 +1510,34 @@ test("the centre is the Sources: found by the hand, and pressed it opens them, t
   await expect(sheet).toBeHidden();
   await expect(page.locator(".net-note"), "the note's window still there under it").toBeVisible();
   expect(errors).toEqual([]);
+});
+
+/* AS SHARP AS THE SCREEN (2026-10-01: "sometimes the note library looks
+   really not HD on the phone and a little on the pc too"). It was drawn at
+   1.5 device pixels a point on a phone, and a machine whose frames came
+   slowly was taken down to 0.6 of that — a plain screen too, below its own
+   pixel — and never back up. Now: the screen's own up to two, a phone too;
+   a slow machine let down to 0.75 of that at most and never below the
+   screen's own pixel; and taken back up once its frames are quick. */
+test("the library is drawn as sharp as a plain screen, however slowly it draws", async ({ page }) => {
+  test.setTimeout(90000);
+  await open(page);
+  await expect.poll(async () => (await state(page)).loaded, { timeout: 30000 }).toBe(true);
+  expect((await state(page)).sharpness, "a plain screen's own pixel").toBe(1);
+  expect(await page.evaluate(() => window.NetScene.judge(40, 6)), "and never below it, however slow").toBe(1);
+});
+test.describe("on a phone's screen", () => {
+  test.use({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
+  test("the library is drawn at two device pixels a point, let down no further than one and a half, and taken back up", async ({ page }) => {
+    test.setTimeout(90000);
+    await page.goto(LIBRARY);
+    await expect.poll(async () => page.evaluate(() => window.NetScene && window.NetScene.state().loaded), { timeout: 30000 }).toBe(true);
+    expect((await state(page)).sharpness, "two, not the 1.5 it was").toBe(2);
+    const canvas = await page.locator("canvas.net-canvas").evaluate((c) => c.width / c.clientWidth);
+    expect(canvas, "and the canvas is that sharp").toBeCloseTo(2, 1);
+    expect(await page.evaluate(() => window.NetScene.judge(40, 8)), "slow: no lower than 1.5").toBe(1.5);
+    expect(await page.evaluate(() => window.NetScene.judge(16, 6)), "quick again: back up").toBe(2);
+  });
 });
 
 /* WITHOUT JAVASCRIPT the catalogue is the page, the same way. */

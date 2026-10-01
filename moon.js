@@ -330,9 +330,12 @@
       }
     }
 
+    // How sharp it is drawn: nav.js's `Sharpness` (2026-10-01) — let down
+    // a step at a time on a machine that cannot keep up, never below 1.5.
+    const sharp = window.Sharpness ? window.Sharpness(() => size()) : null;
     function size() {
       const w = window.innerWidth, h = window.innerHeight;
-      ratio = Math.min(w < 700 ? 1.5 : 2, window.devicePixelRatio || 1);
+      ratio = sharp ? sharp.ratio : Math.min(2, window.devicePixelRatio || 1);    // a phone too, since 2026-10-01, as the sun
       width = w; height = h;
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);
@@ -571,6 +574,7 @@
         if (up >= 1) freed = -1;
       }
       clock += dt * rate;
+      if (sharp) sharp.frame(now);
       draw(clock);
     }
 

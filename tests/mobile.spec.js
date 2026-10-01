@@ -177,3 +177,50 @@ test.describe("on a phone", () => {
       .toBeLessThan(apart * 0.9);
   });
 });
+
+/* EVERY 3D DRAWING AS SHARP AS THE SCREEN, up to two device pixels a point
+   — a phone too (2026-10-01: "sometimes the note library looks really not
+   HD on the phone ... check every other 3D render to see if that applies
+   too"). Each was drawn at 1.5 on a phone, which on a screen at three is
+   half its sharpness each way. (The Note Library has its own test, with
+   what it does on a slow machine.) The flat drawings — a house's ground, a
+   title's specks — keep the phone's 1.5. */
+test.describe("on a phone's sharp screen", () => {
+  test.use({ viewport: PHONE, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
+  test("every 3D drawing is drawn at two device pixels a point", async ({ page }) => {
+    test.setTimeout(120000);
+    await serveDependenciesLocally(page);
+    const DRAWINGS = [
+      ["/index.html", ".molecule-canvas", "the home page's aldehyde"],
+      ["/theories/", "canvas.structure-field", "the structure"],
+      ["/explorations-and-researches/", "canvas.re-canvas", "the field"],
+      ["/scent-descriptions/", "canvas.sheet-field", "the houses' helix"],
+      ["/favourites/", "canvas.chamber-field", "the chamber"],
+    ];
+    for (const [url, pick, what] of DRAWINGS) {
+      await page.goto(url);
+      const canvas = page.locator(pick).first();
+      await expect.poll(() => canvas.evaluate((c) => c.clientWidth > 0 ? c.width / c.clientWidth : 0), { timeout: 20000, message: what })
+        .toBeCloseTo(2, 1);
+    }
+  });
+  // …and as sharp as the machine can keep smooth: nav.js's `Sharpness`,
+  // which the heavy ones ask, lets a slow machine down a step at a time to
+  // 1.5 and no further, and takes it back up once it is quick.
+  test("a slow machine is let down to one and a half and no further, and taken back up", async ({ page }) => {
+    await page.goto("/contact/");
+    const r = await page.evaluate(() => {
+      let resized = 0;
+      const sharp = window.Sharpness(() => { resized++; });
+      return { start: sharp.ratio, slow: sharp.judge(40, 8), quick: sharp.judge(16, 6), resized };
+    });
+    expect(r.start).toBe(2);
+    expect(r.slow).toBe(1.5);
+    expect(r.quick).toBe(2);
+  });
+});
+test("on a plain screen a slow machine is never drawn below its own pixel", async ({ page }) => {
+  await page.goto("/contact/");
+  const r = await page.evaluate(() => { const sharp = window.Sharpness(() => {}); return [sharp.ratio, sharp.judge(40, 8)]; });
+  expect(r).toEqual([1, 1]);
+});

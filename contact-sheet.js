@@ -280,7 +280,7 @@
     R = Math.min(W * RADIUS, RADIUS_MOST);
     frontH = Math.max(FRONT_FEWEST, Math.min(FRONT_MOST, room * FRONT, (W - 40) / SHAPE * 0.72));
     frontW = frontH * SHAPE;
-    ratio = Math.min(window.devicePixelRatio || 1, W < 700 ? 1.5 : 2);
+    ratio = Math.min(window.devicePixelRatio || 1, 2);    // a phone too, since 2026-10-01: a 3D drawing as sharp as the screen, up to two
     field.width = Math.round(W * ratio);
     field.height = Math.round(H * ratio);
     field.style.width = W + "px";

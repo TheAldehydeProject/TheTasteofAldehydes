@@ -1929,3 +1929,39 @@ note's window read through the box, sharp (*Deity*, *5 Year* beside *Grande Parf
 snapped on at the end. Its darkening and its box fade apart now (`.net-leave`'s background,
 `.net-leave-box`'s opacity), and the box blurs what is behind it from the first frame.
 
+
+## 2026-10-01, last — a magnifying glass, a word at it, and drawn as sharp as the screen
+
+The owner:
+
+> make the search button in the note library above the menu have a logo of a magnifying glass,
+> and when you load the page in, put some text pointint to it too please. Finally sometimes the
+> note library looks really not HD on the phone and a little on the pc too. Can you fix that?
+
+- **The search's arrow is a magnifying glass** (`.net-glass`, a small SVG: a lens and its
+  handle in the arrows' hairline), turned a quarter towards the search bar while that is out.
+  It was a chevron with a small ring under it. The menu's arrow keeps its chevron.
+- **The word as it opens points at both**: *Search here* at the search's arrow and *Open menu
+  here* at the menu's, each line level with its arrow's middle (`.net-coach-say[data-for]`),
+  and both arrows glowing while it is up. Anything the hand does puts it away, as before.
+- **As sharp as the screen.** The drawing was made at 1.5 device pixels a point on a phone, and
+  a machine whose frames came slowly (the middle of ninety over 21ms) was taken down to **0.6 of
+  that** — a plain screen too, below its own pixel — **and never back up**: one slow stretch,
+  most often the opening, which builds the network as it goes, left the whole visit soft. That
+  was the "not HD" on the phone (down to 0.9 a point on a screen at three) and "a little on the
+  pc" (0.6 on a plain screen). Now: **the screen's own pixels up to two, a phone too** (`SHARP`);
+  the frames **judged only once it has opened**; a slow machine let down **an eighth at a time to
+  `SHARP_LEAST`, three quarters, and never below the screen's own pixel** (`sharpness()`) — so a
+  plain screen is never let down at all, and a sharp one no lower than 1.5; and **taken back up**
+  an eighth at a time once its frames are quick again (the middle under 17.5ms, four seconds
+  after it was let down) — unless going up has just brought the slowness back, when it stays
+  (`holdLow`), so it never goes up and down. The note window's figure is drawn as sharp
+  (`SHARP()`); it was 1.5 on a phone.
+
+How to test it: **`as it opens it wires itself in …`** now also checks both lines, each level
+with its arrow, and the glass (a circle and a stroke, no chevron); **`the library is drawn as sharp
+as a plain screen, however slowly it draws`** (1, and 1 still after it is told of a machine forty
+milliseconds a frame — `NetScene.judge(ms, times)`, which feeds the judgement as its own frames
+would); **`on a phone's screen … drawn at two device pixels a point, let down no further than one
+and a half, and taken back up`**. The other 3D drawings on the site are in
+[the phone report](2026-09-21-the-site-on-a-phone.md).

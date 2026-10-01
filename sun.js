@@ -392,13 +392,17 @@
     // ============================================================
     // THE WINDOW
     // ============================================================
+    // How sharp it is drawn: nav.js's `Sharpness` (2026-10-01) — let down
+    // a step at a time on a machine that cannot keep up, never below 1.5.
+    const sharp = window.Sharpness ? window.Sharpness(() => size()) : null;
     function size() {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      // A PHONE DRAWS AT A LOWER RATIO — a little over half the fill,
-      // and no difference anybody can see at that size. Nothing above
-      // 700px changes at all.
-      ratio = Math.min(w < 700 ? 1.5 : 2, window.devicePixelRatio || 1);
+      // Two device pixels to a point at most, a phone too: 1.5 there (a
+      // little over half the fill) until 2026-10-01, when every 3D drawing
+      // was made as sharp as the screen allows up to two ("really not HD
+      // on the phone").
+      ratio = sharp ? sharp.ratio : Math.min(2, window.devicePixelRatio || 1);
       width = w;
       height = h;
       canvas.width = Math.round(width * ratio);
@@ -746,6 +750,7 @@
         if (up >= 1) freed = -1;
       }
       clock += dt * rate;
+      if (sharp) sharp.frame(now);
       draw(clock);
     }
 

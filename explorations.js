@@ -783,7 +783,7 @@
     const first = !N;
     const was = [W, H];
     W = w; H = h;
-    ratio = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 2);
+    ratio = Math.min(window.devicePixelRatio || 1, 2);    // a phone too, since 2026-10-01: a 3D drawing as sharp as the screen, up to two
     canvas.width = Math.round(W * ratio);
     canvas.height = Math.round(H * ratio);
     S = Math.min(W * 0.42, H * 0.34);
