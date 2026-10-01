@@ -960,3 +960,17 @@ since the house's own armoire was changed the same way. In `motifs.js`: `garment
 shelf`**, reads the clothes solid most of the way down the inside, and folded on the shelf near the
 top and the floor. **`Ataraxia's bands cross the page strongly`** still holds with the slower coming
 up (read 3.5 seconds after resting).
+
+## 2026-10-01, last — Qimu's music from all over the world
+
+Qimu & Musicians' staves and loose bars on the Houses view are still the same pieces as the house's
+own page, and so, since the owner's *"make it so that not all of them are polish ... One can be
+piano, another can be a drum version, a third can be a guitar version"*, they are pieces from all over
+the world: piano pieces from a dozen countries and China, guitar pieces on a guitar's octave treble,
+and drum grooves on a percussion stave, cymbals as crosses (see [the newer
+houses](2026-09-21-the-newer-houses.md#2026-10-01-last--qimus-music-from-all-over-the-world-piano-guitar-and-drums)).
+The engraver block is the house page's, word for word (a test keeps them so), and it learnt a clef for
+each hand, the guitar's and the drum stave's clefs, crosses and ghost notes, and any tuplet. Here a
+guitar's or a drum kit's stave is never braced (`composeScore`). Still silent, still unnamed.
+
+How to test it: `npm test -- tests/contact-sheet.spec.js --grep Qimu`.

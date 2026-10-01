@@ -1672,9 +1672,10 @@
   //   a third of the window — and written out left to right as a score is
   //   read: a clef, a key signature and a time signature, and then bars
   //   of A REAL PIECE, note for note as its score has them — the same
-  //   eighteen as the house's own page (qimu-pieces.js: piano pieces by
-  //   Polish composers of the early nineteenth century hardly anyone
-  //   plays now), from a bar of its opening, engraved by the house page's
+  //   pieces as the house's own page (qimu-pieces.js: since 2026-10-01
+  //   pieces from all over the world — for the piano, the guitar on its
+  //   octave treble, and drum grooves on a percussion stave), from a bar
+  //   of its opening, engraved by the house page's
   //   own engraver (`qimu.js`), copied here word for word because no page
   //   script knows about another (a test keeps the two the same). Now and
   //   then two staves braced — a piano's grand staff — carrying both
@@ -1714,13 +1715,19 @@
   // outside it is each page's own — the size of a stave (`GAP`), where the
   // staves stand, and how they are drawn and played.
   //
-  // THE MUSIC is `QIMU_PIECES` (qimu-pieces.js): the openings of eighteen
-  // piano pieces hardly anyone plays now, note for note as their scores
-  // have them. A PITCH is a STEP — how many letters above middle C (C4 is
-  // 0, D4 1, C5 7, B3 −1) — and an ALTER (−1 a flat, 1 a sharp), printed
-  // where the step stands on its stave with whatever sign the score puts
-  // before it. Everything is drawn in paths, because a music font cannot
-  // be counted on.
+  // THE MUSIC is `QIMU_PIECES` (qimu-pieces.js): the openings of pieces
+  // from all over the world — for the piano, for the guitar, and grooves
+  // for the drums — note for note as their scores have them (or, for the
+  // drums, as they were played). A PITCH is a STEP — how many letters
+  // above middle C (C4 is 0, D4 1, C5 7, B3 −1) — and an ALTER (−1 a
+  // flat, 1 a sharp), printed where the step stands on its stave with
+  // whatever sign the score puts before it. Each hand is in a CLEF
+  // (`clef`, a letter a hand: G the treble, F the bass, g a guitar's
+  // treble, sounding an octave under where it is written, X a drum
+  // stave's); a DRUM's note says which drum (`dr`), stands where a drum
+  // stave puts it, and is drawn as a cross where it is a cymbal, in
+  // brackets where it is a ghost. Everything is drawn in paths, because a
+  // music font cannot be counted on.
   // ============================================================
   const RX = GAP * 0.6, RY = GAP * 0.42;
   const yAt = (top, p) => top + 4 * GAP - p * GAP / 2;   // p: 0 the bottom line, 8 the top
@@ -1849,6 +1856,28 @@
     c.stroke();
     c.beginPath(); c.arc(x - 0.35 * G, top + 5.3 * G, 0.3 * G, 0, Math.PI * 2); c.fill();
   }
+  /** A guitar's treble clef: the treble with an 8 under it, because it
+      sounds an octave lower than it is written. */
+  function mTreble8(c, x, top) {
+    mTreble(c, x, top);
+    mText(c, "8", x - GAP * 0.35, top + GAP * 6.4, GAP * 1.15, "normal");
+  }
+  /** A drum stave's clef: two thick strokes across its middle. */
+  function mPerc(c, x, top) {
+    c.fillRect(x - GAP * 0.55, top + GAP, GAP * 0.38, GAP * 2);
+    c.fillRect(x + GAP * 0.17, top + GAP, GAP * 0.38, GAP * 2);
+  }
+  /** A cymbal's note: a cross where a head would be. */
+  function mCross(c, x, y) {
+    mLine(c, x - RX * 0.95, y - RY * 1.25, x + RX * 0.95, y + RY * 1.25, 1.1);
+    mLine(c, x - RX * 0.95, y + RY * 1.25, x + RX * 0.95, y - RY * 1.25, 1.1);
+  }
+  /** A ghost note, barely played: its head in brackets. */
+  function mGhost(c, x, y) {
+    c.lineWidth = 0.8;
+    c.beginPath(); c.arc(x + RX * 0.9, y, RY * 2.1, Math.PI * 0.72, Math.PI * 1.28); c.stroke();
+    c.beginPath(); c.arc(x - RX * 0.9, y, RY * 2.1, -Math.PI * 0.28, Math.PI * 0.28); c.stroke();
+  }
   function mBass(c, x, top) {
     const G = GAP;
     c.lineWidth = 1.3;
@@ -1867,34 +1896,48 @@
   const letterOf = (d) => ((d % 7) + 7) % 7;
   const midiOf = (d, alter) => 60 + 12 * Math.floor(d / 7) + SEMIS[letterOf(d)] + alter;
   // Where a step stands on its stave: the treble's bottom line is E4,
-  // the bass's is G2.
-  const posOf = (d, low) => (low ? d + 10 : d - 2);
-  // Every length here is a whole number of 48ths of a semiquaver — a
-  // triplet's third and a demisemiquaver's half both are — so a length
-  // read off the file is put back exactly on that grid.
-  const exact = (v) => Math.round(v * 48) / 48;
+  // the bass's is G2; a guitar's music is written on the treble, and a
+  // drum stave's notes stand where the treble's would.
+  const posOf = (d, cf) => (cf === "F" ? d + 10 : d - 2);
+  // Every length here is a whole number of 240240ths of a semiquaver — a
+  // triplet's third, a quintuplet's fifth, a septuplet's seventh, the
+  // eleventh and thirteenth of Liszt's runs and a demisemiquaver's half
+  // all are — so a length read off the file is put back exactly on it.
+  const exact = (v) => Math.round(v * 240240) / 240240;
   const DOTTED = [0.75, 1.5, 3, 6, 12, 24];
-  const isDotted = (e) => !e.trip && DOTTED.includes(e.dur);
-  // What a note is written as: a triplet quaver is a quaver, a dotted
-  // crotchet a crotchet with a dot.
-  const valueOf = (e) => exact(e.trip ? e.dur * 1.5 : isDotted(e) ? e.dur / 1.5 : e.dur);
+  const TWICE = [0.875, 1.75, 3.5, 7, 14, 28];
+  const dotsOf = (e) => (e.trip || e.tu ? 0 : DOTTED.includes(e.dur) ? 1 : TWICE.includes(e.dur) ? 2 : 0);
+  const isDotted = (e) => dotsOf(e) > 0;
+  // What a note is written as: a triplet quaver is a quaver, a quintuplet
+  // semiquaver a semiquaver, a dotted crotchet a crotchet with a dot.
+  const valueOf = (e) => exact(e.tu ? e.dur * e.tu[0] / e.tu[1] : e.trip ? e.dur * 1.5
+    : dotsOf(e) === 2 ? e.dur / 1.75 : dotsOf(e) ? e.dur / 1.5 : e.dur);
   const tailsOf = (e) => { const v = valueOf(e); return v >= 4 ? 0 : v >= 2 ? 1 : v >= 1 ? 2 : 3; };
+
+  // A DRUM'S SOUND, as a General MIDI drum: which is struck.
+  const KIT = { kick: 36, snare: 38, side: 37, tom1: 48, tom2: 45, tom3: 43, hh: 42, hho: 46, hhp: 44, crash: 49, ride: 51, bell: 53 };
+  const CROSSED = new Set(["hh", "hho", "hhp", "crash", "ride", "bell", "side"]);
+  /** What a note of a chord sounds: its pitch (a guitar's an octave
+      under where it is written), or the drum it strikes. */
+  const soundOf = (e, i) => (e.kit ? KIT[e.kit[i]] : midiOf(e.ds[i], e.alter[i]) + e.oct);
 
   /** Bar `n` of a piece as EVENTS to lay out and engrave: each hand one
       or two VOICES — the right hand alone on a single stave, both on a
-      braced pair. */
+      braced pair (a guitar and a drum kit have the one). */
   function barOf(piece, n, grand) {
     const src = piece.bars[n];
     const num = Number(piece.meter[0]), den = Number(piece.meter[1]);
+    const clef = piece.clef || "GF", oct = piece.inst === "guitar" ? -12 : 0;
     // The beat: a dotted crotchet in 3/8, 6/8, 9/8 and 12/8; the lower
     // number otherwise.
     const beat = den === 8 && num % 3 === 0 ? 6 : 16 / den;
     const voices = [];
-    (grand ? ["right", "left"] : ["right"]).forEach((hand) => {
-      const low = hand === "left", two = src[hand].length > 1;
-      src[hand].forEach((list, vi) => voices.push({ low, vi, two, list: list.map((e) => ({
-        t: exact(e.t), dur: exact(e.dur), ds: e.ds || [], alter: e.al || [], acc: e.acc || [],
-        rest: !!e.rest, hidden: !!e.hidden, trip: !!e.trip,
+    (grand && src.left ? ["right", "left"] : ["right"]).forEach((hand, h) => {
+      const low = hand === "left", two = src[hand].length > 1, cf = clef[h] || (low ? "F" : "G");
+      src[hand].forEach((list, vi) => voices.push({ low, vi, two, cf, list: list.map((e) => ({
+        t: exact(e.t), dur: exact(e.dur), ds: e.ds || [], alter: e.al || (e.ds || []).map(() => 0), acc: e.acc || [],
+        rest: !!e.rest, hidden: !!e.hidden, trip: !!e.trip, tu: e.tu || null, cf, oct,
+        kit: e.dr || null, vel: e.vl || null, ghost: e.gh || null,
         // Two voices on one stave: the upper's stems up, the lower's down.
         up: two ? vi === 0 : e.up === undefined ? null : !!e.up,
         beam: e.beam ? hand + vi + ":" + e.beam : null,
@@ -1909,7 +1952,7 @@
   // column each stands in, counted out from the heads.
   function signCols(e) {
     const cols = [], col = new Map();
-    e.ds.map((d, i) => [posOf(d, e.low), i]).filter(([, i]) => e.acc[i]).sort((p, q) => q[0] - p[0]).forEach(([p, i]) => {
+    e.ds.map((d, i) => [posOf(d, e.cf), i]).filter(([, i]) => e.acc[i]).sort((p, q) => q[0] - p[0]).forEach(([p, i]) => {
       let k = 0;
       while (cols[k] && cols[k].some((q) => Math.abs(q - p) < 6)) k++;
       (cols[k] = cols[k] || []).push(p);
@@ -1918,7 +1961,7 @@
     return { n: cols.length, col };
   }
   const hasSecond = (e) => {
-    const ps = e.ds.map((d) => posOf(d, e.low)).sort((a, b) => a - b);
+    const ps = e.ds.map((d) => posOf(d, e.cf)).sort((a, b) => a - b);
     return ps.some((p, i) => i && p - ps[i - 1] === 1);
   };
 
@@ -1939,8 +1982,8 @@
       x += signs * 5.5;
       xs.set(t, x);
       const next = i + 1 < onsets.length ? onsets[i + 1] : bar.units;
-      const dotted = here.some(isDotted), seconds = here.some((e) => !e.rest && hasSecond(e));
-      x += spacing(next - t) + (dotted ? 3 : 0) + (seconds ? RX * 1.4 : 0);
+      const dotted = Math.max(0, ...here.map(dotsOf)), seconds = here.some((e) => !e.rest && hasSecond(e));
+      x += spacing(next - t) + dotted * 3 + (seconds ? RX * 1.4 : 0);
     });
     bar.width = x + 4;
     // A whole bar's rest stands in the middle of the bar.
@@ -1964,14 +2007,14 @@
     const dirOf = (list, v) => {
       const said = list.find((e) => e.up !== null);
       if (said) return said.up;
-      const ps = list.flatMap((e) => e.ds.map((d) => posOf(d, e.low)));
+      const ps = list.flatMap((e) => e.ds.map((d) => posOf(d, e.cf)));
       return ps.reduce((a, p) => (Math.abs(p - 4) > Math.abs(a - 4) ? p : a), 4) < 4;
     };
     // The heads of a note or chord, from the lowest: the upper of a
     // second stands on the far side of its stem, as it is engraved.
     const headsOf = (e, hx, top, up) => {
       const order = e.ds.map((d, i) => i).sort((i, j) => e.ds[i] - e.ds[j]);
-      const ps = order.map((i) => posOf(e.ds[i], e.low));
+      const ps = order.map((i) => posOf(e.ds[i], e.cf));
       const off = ps.map(() => 0);
       if (up) { for (let k = 1; k < ps.length; k++) if (ps[k] - ps[k - 1] === 1 && !off[k - 1]) off[k] = 1; }
       else { for (let k = ps.length - 2; k >= 0; k--) if (ps[k + 1] - ps[k] === 1 && !off[k + 1]) off[k] = -1; }
@@ -1995,12 +2038,28 @@
       for (let q = 10; q <= hi; q += 2) { const y = yAt(top, q); put(hx, (c) => mLine(c, x1, y, x2, y, 0.8)); }
     };
     const dots = (c, e, hs) => {
-      if (!isDotted(e)) return;
+      const n = dotsOf(e);
+      if (!n) return;
       const dx = Math.max(...hs.map((h) => h.x)) + RX + 3;
-      hs.forEach((h) => mDot(c, dx, h.y - (h.p % 2 === 0 ? GAP / 2 : 0)));
+      hs.forEach((h) => { for (let k = 0; k < n; k++) mDot(c, dx + k * 3, h.y - (h.p % 2 === 0 ? GAP / 2 : 0)); });
+    };
+    // A head: a cymbal's a cross, a ghost's in brackets — and over an
+    // open hi-hat, a small ring.
+    const head = (c, e, h, open, whole) => {
+      if (e.kit && CROSSED.has(e.kit[h.i])) mCross(c, h.x, h.y);
+      else if (whole) mWhole(c, h.x, h.y);
+      else mHead(c, h.x, h.y, open);
+      if (e.ghost && e.ghost[h.i]) mGhost(c, h.x, h.y);
+    };
+    const ring = (c, e, x, y) => {
+      if (!e.kit || !e.kit.includes("hho")) return;
+      c.lineWidth = 0.8;
+      c.beginPath(); c.arc(x, y, GAP * 0.38, 0, Math.PI * 2); c.stroke();
     };
     const sounds = (e, hs, hx, draw) => put(hx, draw, {
-      pitches: hs.map((h) => midiOf(e.ds[h.i], e.alter[h.i])),
+      pitches: hs.map((h) => soundOf(e, h.i)),
+      kit: e.kit ? hs.map((h) => e.kit[h.i]) : null,
+      vel: e.vel ? hs.map((h) => e.vel[h.i]) : null,
       heads: hs.map((h) => [h.x, h.y]),
       at: e.at, dur: e.dur, hold: e.hold || 0, struck: e.struck !== false, low: e.low, strong: e.strong,
     });
@@ -2026,10 +2085,11 @@
       e.hs = hs; e.stemUp = up;
       deep = Math.max(deep, lo + RY, stem && !up ? tip : 0);
       sounds(e, hs, hx, (c) => {
-        hs.forEach((h) => (value >= 16 ? mWhole(c, h.x, h.y) : mHead(c, h.x, h.y, open)));
+        hs.forEach((h) => head(c, e, h, open, value >= 16));
         if (stem) mLine(c, vx, up ? lo : hi, vx, tip, 0.9);
         if (tails) mFlag(c, vx, tip, up, tails);
         dots(c, e, hs);
+        ring(c, e, up ? vx : hx, up ? tip - GAP * 1.1 : hi - GAP * 1.4);
       });
     }
     function beamed(list, top, v) {
@@ -2061,9 +2121,10 @@
         ledgers(hs, xs[i], top);
         deep = Math.max(deep, far[i] + RY, up ? 0 : beamY(sx[i]));
         sounds(e, hs, xs[i], (c) => {
-          hs.forEach((h) => mHead(c, h.x, h.y, false));
+          hs.forEach((h) => head(c, e, h, false, false));
           mLine(c, sx[i], far[i], sx[i], beamY(sx[i]), 0.9);
           dots(c, e, hs);
+          ring(c, e, sx[i], up ? beamY(sx[i]) - GAP * 1.1 : near[i] - GAP * 1.4);
         });
       });
       const last = xs[xs.length - 1];
@@ -2084,16 +2145,17 @@
           });
         }
       });
-      // A triplet's number on the beam's side: 3, or 6 over six of them.
+      // A triplet's number on the beam's side: 3, or 6 over six of them —
+      // and a quintuplet's 5, a septuplet's 7.
       const runs = [];
       list.forEach((e, i) => {
-        if (!e.trip) return;
+        if (!e.trip && !e.tu) return;
         const run = runs[runs.length - 1];
-        if (run && run.to === i - 1) run.to = i; else runs.push({ from: i, to: i });
+        if (run && run.to === i - 1 && !!run.tu === !!e.tu) run.to = i; else runs.push({ from: i, to: i, tu: e.tu });
       });
       runs.forEach((r) => {
         const x = (sx[r.from] + sx[r.to]) / 2, y = beamY(x) + (up ? -GAP * 1.3 : GAP * 1.3);
-        const label = r.to - r.from === 5 ? "6" : "3";
+        const label = r.tu ? String(r.tu[0]) : r.to - r.from === 5 ? "6" : "3";
         if (!up) deep = Math.max(deep, y + GAP);
         put(xs[r.to], (c) => mText(c, label, x, y, GAP * 1.3, "italic"));
       });
@@ -2119,9 +2181,11 @@
   function heading(piece, tops, put) {
     const order = piece.sharps ? [8, 5, 9, 6, 3] : [4, 7, 3, 6, 2];
     const tx = GAP * 4.6 + piece.count * GAP * 0.85;
+    const clef = piece.clef || "GF";
     tops.forEach((top, i) => {
-      const low = i === 1;
-      put(GAP * 1.4, (c) => (low ? mBass(c, GAP * 1.5, top) : mTreble(c, GAP * 1.7, top)));
+      const cf = clef[i] || (i ? "F" : "G"), low = cf === "F";
+      put(GAP * 1.4, (c) => (low ? mBass(c, GAP * 1.5, top) : cf === "X" ? mPerc(c, GAP * 1.6, top)
+        : cf === "g" ? mTreble8(c, GAP * 1.7, top) : mTreble(c, GAP * 1.7, top)));
       for (let k = 0; k < piece.count; k++) {
         const kx = GAP * 4 + k * GAP * 0.85, ky = yAt(top, order[k] - (low ? 2 : 0));
         put(kx, (c) => (piece.sharps ? mSharp(c, kx, ky) : mFlat(c, kx, ky)));
@@ -2181,11 +2245,12 @@
     const hand = (bar, low) => bar.voices.filter((v) => v.low === low).map((v) => sum(v.list));
     return {
       composer: piece.composer, title: piece.title, file: piece.file,
+      inst: piece.inst || "piano", clef: piece.clef || "GF",
       written: [piece.meter.join("/")],
       bars: bars.map((bar) => ({
         n: bar.n, meter: bar.meter.join("/"), units: bar.units, pickup: bar.pickup,
         right: hand(bar, false), left: bar.voices.some((v) => v.low) ? hand(bar, true) : null,
-        pitches: bar.voices.flatMap((v) => v.list).filter((e) => !e.rest).map((e) => e.ds.map((d, i) => midiOf(d, e.alter[i]))),
+        pitches: bar.voices.flatMap((v) => v.list).filter((e) => !e.rest).map((e) => e.ds.map((d, i) => soundOf(e, i))),
       })),
     };
   }
@@ -2207,7 +2272,10 @@
     const piece = pick(PIECES);
     const from = Math.floor(Math.random() * piece.bars.length);
     const shown = piece.bars.slice(from);
-    if (!shown.some(rightPlays) || !shown.every(rightHigh)) grand = true;
+    // A guitar and a drum kit have one stave; a piano's right hand, written
+    // low or silent, both.
+    if (!piece.bars[0].left) grand = false;
+    else if (!shown.some(rightPlays) || !shown.every(rightHigh)) grand = true;
     const marks = [];
     const tops = grand ? [0, GAP * 10] : [0];
     const put = (x, fn) => marks.push({ x, fn });

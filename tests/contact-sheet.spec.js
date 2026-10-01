@@ -1438,7 +1438,8 @@ test("Qimu & Musicians' music is complex, with no dynamics or ornaments, on stav
    since the house page's staves became the openings of real pieces
    (2026-09-28) these are the same pieces. Read off the music itself while
    Qimu is rested on, staves and then loose passages: every one is one of
-   the eighteen pieces in qimu-pieces.js, its bars the piece's own and one
+   the pieces in qimu-pieces.js — piano, guitar or drums, from all over the
+   world since 2026-10-01 — its bars the piece's own and one
    after another, their pitches exactly the score's, every bar lasting what
    the piece's time signature says (an upbeat less) in every voice of every
    hand — and the page asks the browser for no sound at all. */
@@ -1450,9 +1451,13 @@ test("Qimu & Musicians' music on the Houses view is the same real pieces, and ma
     if (window.AudioContext) window.AudioContext = count(window.AudioContext);
     if (window.webkitAudioContext) window.webkitAudioContext = count(window.webkitAudioContext);
   });
-  const LENGTH = { "4/4": 16, "3/4": 12, "2/4": 8, "6/8": 12, "12/8": 24, "3/8": 6 };
+  const LENGTH = { "4/4": 16, "3/4": 12, "2/4": 8, "2/2": 16, "6/8": 12, "12/8": 24, "9/8": 18, "3/8": 6,
+    "5/8": 10, "6/4": 24, "3/2": 24, "5/4": 20 };
   const SEMIS = [0, 2, 4, 5, 7, 9, 11];
+  const KIT = { kick: 36, snare: 38, side: 37, tom1: 48, tom2: 45, tom3: 43, hh: 42, hho: 46, hhp: 44, crash: 49, ride: 51, bell: 53 };
   const midi = (d, a) => 60 + 12 * Math.floor(d / 7) + SEMIS[((d % 7) + 7) % 7] + a;
+  const sounds = (piece, e) => (e.dr ? e.dr.map((k) => KIT[k])
+    : e.ds.map((d, q) => midi(d, e.al[q]) - (piece.inst === "guitar" ? 12 : 0)));
   await page.goto(SHEET);
   await waitForSheet(page);
   await pointAt(page, 8);
@@ -1480,7 +1485,7 @@ test("Qimu & Musicians' music on the Houses view is the same real pieces, and ma
       b.right.forEach((v, k) => expect(v, `${s.kind} ${i} bar ${j}, right hand voice ${k}`).toBeCloseTo(b.units, 4));
       if (s.grand) b.left.forEach((v, k) => expect(v, `${s.kind} ${i} bar ${j}, left hand voice ${k}`).toBeCloseTo(b.units, 4));
       const hands = s.grand ? [...src.right, ...src.left] : src.right;
-      const want = hands.flat().filter((e) => !e.rest).map((e) => e.ds.map((d, q) => midi(d, e.al[q])));
+      const want = hands.flat().filter((e) => !e.rest).map((e) => sounds(piece, e));
       expect(b.pitches, `${s.kind} ${i} bar ${j}: the score's own notes`).toEqual(want);
     });
   });

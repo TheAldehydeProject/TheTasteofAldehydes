@@ -1289,3 +1289,128 @@ You Have Never Heard of**, on its page, in its title and what a shared link show
 view. **Dear Future's MID** stood hard under the last item of the list above it (a list had no space
 after it before a stage label, where a paragraph has 26px); it has the same 26px now
 (`.human-list + .human-stage`), and so would any stage after a list.
+
+## 2026-10-01, last — Qimu's music from all over the world: piano, guitar and drums
+
+> yk what, forget the chinese aspect; but make it so that not all of them are polish. I want you to
+> search online and find some stuff from all over the world; and get compositions that way. the more
+> complex, the better. One can be piano, another can be a drum version, a third can be a guitar
+> version. not limited to three, but these three instruments are the ones you can look for.
+
+And then, with photographs of two manuscripts by Xiao Youmei: *"this is the only chinese one i found,
+which you can work with"*.
+
+**Forty-one pieces now, from twenty-odd countries** (`qimu-pieces.js`, `qimu-whole.js`, written by
+`tools/qimu-pieces.py`), where there were eighteen Polish ones:
+
+- **The piano** — eight still from Poland (Szymanowska ×3, Żeleński ×2, Krogulski, Sowiński,
+  Wysocki); three from Polish archives by composers from elsewhere (Isouard of Malta, Schall of
+  Denmark, Rossini's *Tancredi* polonaise); and from the Mutopia Project, Debussy's *Première
+  Arabesque*, Liszt's second Ballade, Rachmaninoff's G minor Prelude Op. 23 No. 5, Scriabin's Prelude
+  Op. 11 No. 1, Tchaikovsky's *Dumka*, Albéniz's *Rumores de la Caleta*, Alkan's *Toccatina*,
+  Joplin's *Elite Syncopations*, Pejačević's *Gondellied*, Bartók's first Romanian Folk Dance, a
+  Scarlatti sonata, Grieg's *Albumblad* and Grigor Iliev's *A Child's Wish* (Bulgaria, 2006). Chosen
+  for being hard: tuplets of five, seven, eleven and thirteen in the Liszt and the Scriabin,
+  Rachmaninoff's thick chords, Alkan's repeated notes, Joplin's syncopation.
+- **China — Xiao Youmei's *Vorwärts Marsch im Schneesturm*, Op. 23**, transcribed **by hand** from
+  the owner's photographs of the composer's manuscript into `tools/xiao-youmei/vorwaerts-marsch.ly`:
+  a three-bar introduction, two repeated strains in B flat with a first and second ending (the first
+  marked *Fine*), a Trio in E flat in two repeated halves, and *Marsch D.C. al Fine* — written out in
+  the order it is played, ending on the Fine. Read bar by bar off straightened, labelled close-ups of
+  the photographs (each system levelled and every line and space named in the margin, so no note's
+  place was guessed). **The march and the Trio's first sixteen bars are clear and written as they
+  stand; the Trio's last eight bars, at the foot of the page, are the faintest, and what is written
+  there is the closest reading of them** — the file says so. Dynamics and slurs are left out, as the
+  site's staves carry none. Xiao Youmei died in 1940; the music is in the public domain. **The
+  Nocturne Op. 19** the owner also sent could not be read note for note at the size of its
+  photographs, and is not on the page.
+- **The guitar** — Tárrega's *Recuerdos de la Alhambra* (its tremolo) and *Capricho Árabe*,
+  Matiegka's Sonata Op. 31 No. 5, Horetzky's Study No. 60, Gaspar Sanz's *Preludio* and
+  *Greensleaves*, all from the Mutopia Project.
+- **The drums** — ten grooves played by real drummers on an electronic kit, from Google Magenta's
+  Groove MIDI Dataset: afrobeat (Nigeria), highlife (Ghana), Afro-Cuban, samba (Brazil), joropo and a
+  merengue in five (Venezuela), chacarera (Argentina, in 3/4), Middle Eastern, reggae (Jamaica) and a
+  New Orleans second line.
+
+### How the music is read
+
+`tools/qimu-pieces.py` reads three kinds of source into the same bars the engraver draws:
+
+- **\*\*kern** (Polish Music Heritage), as before.
+- **LilyPond** (the Mutopia Project's editions, and the march) — read **by LilyPond itself**:
+  `tools/qimu-events.ly` is handed to it as its settings and writes down every note and rest it
+  hears, with each staff's clef and key, the bar numbers and metre, and every repeat sign, first and
+  second ending (`read_ly`). An old score is brought up to date with LilyPond's own `convert-ly`, and a
+  few things it leaves are mended on the way (a music function written the old way, a number run into
+  the command after it, settings that no longer exist). What LilyPond does not say — which notes a
+  beam joins — is worked out as an engraver would: a beat's quavers and shorter together. The order
+  the bars are played in is read off the repeat signs and endings (`_play`). LilyPond comes from PyPI
+  (`pip install lilypond==2.24.3`). Gottschalk's *The Dying Swan* was chosen and dropped: its score no
+  longer opens in today's LilyPond.
+- **MIDI** (the drums) — a performance is not a score, so it is **written down as a drummer reads
+  one** (`read_groove`): the drummer's lean ahead of or behind the beat taken off, every beat set on
+  whichever of a semiquaver, quaver-triplet or semiquaver-triplet grid fits it clearly best, the hands
+  (stems up) over the feet (stems down), silent beats merged into proper rests, the count-in before
+  the groove left out — and **how hard each stroke was struck kept**, so it is played back as it was
+  played.
+
+### How it is drawn — the engraver, in both files
+
+The shared block from *THE ENGRAVER* to *THE ENGRAVER ENDS* (`qimu.js` and `motifs.js`, word for word
+the same, a test says so) learnt:
+
+- **A clef for each hand** (`clef` on a piece, a letter a hand: `G` treble, `F` bass, `g` a guitar's
+  treble with its 8 under it, `X` a drum stave's two thick strokes), and **a change of clef** in a
+  piece's whole: a stave turns over to a new line there, with the new clef at its head, as it already
+  did at a change of key or metre (`c` on a bar of `qimu-whole.js`).
+- **A guitar** is written on its treble an octave above where it sounds, and played an octave lower.
+- **A drum kit**: each note says which drum it is (`dr`), stands where a drum stave puts it (bass drum
+  in the bottom space, snare in the third, toms round it, cymbals above the stave, the hi-hat pedal
+  under it), is drawn as **a cross where it is a cymbal**, **in brackets where it is a ghost note**,
+  with **a small ring over an open hi-hat**.
+- **Any tuplet** (`tu`: five, seven, eleven, thirteen in the time of four, eight or sixteen), its
+  number on the beam's side; and **double dots**. Lengths are kept on a grid of 1/240240 of a
+  semiquaver, which every one of those divides.
+- A guitar's or a drum kit's stave is never a braced pair.
+
+### How it sounds
+
+- **The guitar** — fourteen notes of a nylon-string classical guitar, multisampled by quartertone on
+  Freesound (CC BY 3.0), as Tone.js publishes them, in `audio/guitar/` (`pluck`): a note between two
+  of them the nearer one moved, a chord strummed a little wider than a piano's, each note let ring a
+  little past its written length.
+- **The drums** — a kit of real drums and cymbals from the Versilian Community Sample Library (CC0),
+  one stroke each, trimmed and levelled, in `audio/drums/` (`strike`): bass drum, snare, cross-stick,
+  two toms (the floor tom the low tom tuned down), hi-hat closed, open and by the foot, crash, ride and
+  its bell. **Struck as hard as the drummer struck them** — softer and darker for a soft stroke — and
+  **an open hi-hat closed by the next closed one**, as a foot closes it.
+- Both are fetched with the piano, once, the first time the sound is turned on.
+
+**Credited at the foot of the page**: the guitar's samples, the drum kit, the Groove MIDI Dataset (and
+its authors), Polish Music Heritage, the Mutopia Project with the typesetter of every share-alike or
+attribution score named (Joram Berger, tanukiyarou, Knute Snortum, Stewart Holmes, Glen Larsen and
+Franck Decrock, Grigor Iliev), and Xiao Youmei's march as transcribed from his manuscript. What is
+made here of the CC BY-SA scores is CC BY-SA too; the data files' heads say so.
+
+### How to test it
+
+- `npm test -- tests/houses.spec.js --grep "Qimu|stave|engraves"` — every stave is the opening of one
+  of the pieces, note for note (a guitar's sounding an octave under, a drum's the drum it strikes);
+  **the pieces come from more than fifteen countries, Poland's under a third of them, with guitar
+  pieces, drum grooves and Xiao Youmei's march among them, every source credited**; with only the
+  guitar and drum pieces served, **every stave is a single stave in a guitar's or a drum stave's clef,
+  and played, a guitar stave plucks what it shows and a drum stave strikes the kit**; a stave still
+  plays its whole piece, turning over.
+- `npm test -- tests/contact-sheet.spec.js --grep Qimu` — the Houses view's staves are the same pieces,
+  silent, with the same engraver.
+- To see it: the sound on, point at a stave with crosses on it (the drums) or an 8 under its clef (the
+  guitar).
+
+### Known issues / TODO
+
+- **The last eight bars of Xiao Youmei's Trio** are the closest reading of the faintest part of the
+  photographs, and worth checking against a clearer copy if the owner finds one. Its tempo (a march's
+  112) is not marked in the manuscript.
+- **The Nocturne Op. 19** waits for photographs large enough to read.
+- The drum parts are a drummer's performance written down: a flam or a buzz roll the recording has is
+  written as the strokes it is made of.

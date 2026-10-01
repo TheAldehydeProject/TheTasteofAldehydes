@@ -708,19 +708,25 @@ test("Qimu & Musicians keeps a quiet score in its margins, carried with the page
 });
 
 /* AND IT IS REAL MUSIC: "actually find sheet music from some obscure
-   piano pieces and display that" (2026-09-28). Every stave, at three
-   sizes of window, is the opening of one of the eighteen pieces in
+   piano pieces and display that" (2026-09-28) — and, since 2026-10-01,
+   from all over the world, for the piano, the guitar and the drums. Every
+   stave, at three sizes of window, is the opening of one of the pieces in
    qimu-pieces.js — the piece's own bars, from its first, in order, their
-   pitches exactly the score's, both hands on a braced pair and the right
-   hand alone otherwise; every bar lasts what the piece's time signature
-   says (an upbeat less), in every voice of every hand; the time signature
-   written is the piece's own. And every piece comes round before any
-   comes round again. (Until then this checked a key, an octave's reach and
-   a range, because the music was made up here.) */
-test("Qimu & Musicians' staves are the openings of real piano pieces, note for note", async ({ page }) => {
-  const LENGTH = { "4/4": 16, "3/4": 12, "2/4": 8, "6/8": 12, "12/8": 24, "3/8": 6 };
+   pitches exactly the score's (a guitar's an octave under where they are
+   written, a drum's the drum it strikes), both hands on a braced pair and
+   the right hand alone otherwise; every bar lasts what the piece's time
+   signature says (an upbeat less), in every voice of every hand; the time
+   signature written is the piece's own. And every piece comes round
+   before any comes round again. (Until then this checked a key, an
+   octave's reach and a range, because the music was made up here.) */
+test("Qimu & Musicians' staves are the openings of real pieces, note for note", async ({ page }) => {
+  const LENGTH = { "4/4": 16, "3/4": 12, "2/4": 8, "2/2": 16, "6/8": 12, "12/8": 24, "9/8": 18, "3/8": 6,
+    "5/8": 10, "6/4": 24, "3/2": 24, "5/4": 20 };
   const SEMIS = [0, 2, 4, 5, 7, 9, 11];
+  const KIT = { kick: 36, snare: 38, side: 37, tom1: 48, tom2: 45, tom3: 43, hh: 42, hho: 46, hhp: 44, crash: 49, ride: 51, bell: 53 };
   const midi = (d, a) => 60 + 12 * Math.floor(d / 7) + SEMIS[((d % 7) + 7) % 7] + a;
+  const sounds = (piece, e) => (e.dr ? e.dr.map((k) => KIT[k])
+    : e.ds.map((d, q) => midi(d, e.al[q]) - (piece.inst === "guitar" ? 12 : 0)));
   let bars = 0;
   const meters = new Set(), titles = new Set();
   for (const [w, h] of [[1440, 900], [1920, 1080], [390, 844]]) {
@@ -729,7 +735,7 @@ test("Qimu & Musicians' staves are the openings of real piano pieces, note for n
     await page.evaluate(() => document.querySelectorAll("details").forEach((d) => { d.open = true; }));
     await page.waitForTimeout(700);
     const { staves, pieces } = await page.evaluate(() => ({ staves: window.QimuScore.staves(), pieces: window.QIMU_PIECES }));
-    expect(pieces.length, "eighteen pieces").toBe(18);
+    expect(pieces.length, "pieces from all over the world").toBeGreaterThan(30);
     expect(staves.length, "staves down the page").toBeGreaterThan(2);
     // Every piece before any comes round again.
     const firsts = staves.slice(0, Math.min(staves.length, pieces.length)).map((s) => s.title);
@@ -750,7 +756,7 @@ test("Qimu & Musicians' staves are the openings of real piano pieces, note for n
         else expect(b.left, `stave ${i}: a single stave carries the right hand alone`).toBeNull();
         // The pitches, exactly the score's.
         const hands = s.grand ? [...src.right, ...src.left] : src.right;
-        const want = hands.flat().filter((e) => !e.rest).map((e) => e.ds.map((d, q) => midi(d, e.al[q])));
+        const want = hands.flat().filter((e) => !e.rest).map((e) => sounds(piece, e));
         expect(b.pitches, `stave ${i} bar ${j}: the score's own notes`).toEqual(want);
       });
     });
@@ -758,6 +764,76 @@ test("Qimu & Musicians' staves are the openings of real piano pieces, note for n
   expect(bars, "bars written").toBeGreaterThan(20);
   expect(titles.size, "many pieces").toBeGreaterThan(8);
   expect(meters.size, "in several metres, not always 4/4").toBeGreaterThan(3);
+});
+
+/* FROM ALL OVER THE WORLD, the owner, 2026-10-01: "make it so that not
+   all of them are polish ... find some stuff from all over the world ...
+   One can be piano, another can be a drum version, a third can be a
+   guitar version." The pieces come from many countries, Poland's not
+   most of them; there are guitar pieces and drum grooves among them, and
+   Xiao Youmei's march, transcribed from his manuscript. */
+test("Qimu & Musicians' pieces come from all over the world, for piano, guitar and drums", async ({ page }) => {
+  await page.goto(QIMU);
+  const pieces = await page.evaluate(() => window.QIMU_PIECES.map((p) => ({ composer: p.composer, title: p.title, inst: p.inst || "piano" })));
+  const where = (p) => p.title.includes(" · ") && p.inst === "drums" ? p.title.split(" · ").pop() : p.composer.split(" · ").pop();
+  const countries = new Set(pieces.map(where));
+  expect(countries.size, [...countries].join(", ")).toBeGreaterThan(15);
+  const polish = pieces.filter((p) => where(p) === "Poland").length;
+  expect(polish, "some Polish, not most").toBeGreaterThan(0);
+  expect(polish, "some Polish, not most").toBeLessThan(pieces.length / 3);
+  expect(pieces.filter((p) => p.inst === "guitar").length, "guitar pieces").toBeGreaterThan(4);
+  expect(pieces.filter((p) => p.inst === "drums").length, "drum grooves").toBeGreaterThan(4);
+  expect(pieces.some((p) => /Xiao Youmei/.test(p.composer) && /China/.test(p.composer)), "Xiao Youmei's march").toBe(true);
+  // And every source is credited at the foot of the page.
+  const credit = await page.locator(".house-credit").textContent();
+  for (const word of ["Guitar", "Drums", "Groove MIDI Dataset", "Versilian", "Mutopia", "Polish Music Heritage", "Xiao Youmei"]) {
+    expect(credit, word).toContain(word);
+  }
+});
+
+/* A GUITAR'S STAVE AND A DRUM KIT'S. With only the guitar pieces and the
+   drum grooves on the page, every stave is one stave (never a braced
+   pair): a guitar's in the treble an octave above where it sounds, a
+   drum kit's on a percussion stave. Played, a guitar stave sounds a
+   recorded guitar, each note an octave under where it is written; a
+   drum stave strikes the drums it shows, from the recorded kit. */
+test("Qimu & Musicians engraves and plays a guitar and a drum kit", async ({ page }) => {
+  test.setTimeout(90000);
+  const errors = collectPageErrors(page);
+  await page.route("**/qimu-pieces.js", async (route) => {
+    const answer = await route.fetch();
+    const body = (await answer.text()) + "\nwindow.QIMU_PIECES = window.QIMU_PIECES.filter((p) => p.inst);\n";
+    await route.fulfill({ response: answer, body });
+  });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(QIMU);
+  await page.waitForTimeout(3200);
+  const staves = await page.evaluate(() => window.QimuScore.staves());
+  expect(staves.length).toBeGreaterThan(2);
+  staves.forEach((s, i) => {
+    expect(["guitar", "drums"], `stave ${i}`).toContain(s.inst);
+    expect(s.grand, `stave ${i}: one stave`).toBe(false);
+    expect(s.clef[0], `stave ${i}: ${s.inst}'s clef`).toBe(s.inst === "guitar" ? "g" : "X");
+  });
+  await page.locator(".qimu-sound").click();
+  await expect.poll(() => page.evaluate(() => [window.QimuScore.strings().length, window.QimuScore.kit().length]), { timeout: 10000 }).toEqual([14, 11]);
+  const boxes = (await page.evaluate(() => window.QimuScore.boxes())).filter((b) => b.written && b.y > 70 && b.y + b.h < 860);
+  for (const want of ["drums", "guitar"]) {
+    const one = boxes.find((b) => staves[b.i].inst === want);
+    if (!one) continue;
+    await page.mouse.move(one.x + one.w * 0.5, one.y + one.h * 0.5, { steps: 4 });
+    await expect(page.locator("html")).toHaveAttribute("data-qimu-playing", String(one.i));
+    await page.waitForTimeout(1500);
+    const { heard, music } = await page.evaluate((i) => ({ heard: window.QimuScore.heard().filter((h) => h.stave === i && h.page === 0),
+      music: window.QimuScore.music(i) }), one.i);
+    expect(heard.length, `${want}: played`).toBeGreaterThan(1);
+    expect(heard.map((h) => h.pitches), `${want}: what is written`).toEqual(music.slice(0, heard.length).map((n) => n.pitches));
+    if (want === "drums") expect(heard.every((h) => Array.isArray(h.kit) && h.kit.length), "struck on the kit").toBe(true);
+    else expect(heard.every((h) => !h.kit), "plucked, not struck").toBe(true);
+    await page.mouse.move(700, 20, { steps: 3 });
+    await expect(page.locator("html")).not.toHaveAttribute("data-qimu-playing", /./);
+  }
+  expect(errors).toEqual([]);
 });
 
 /* ITS NAME: "give their name when hovering that piece in a light font
@@ -918,7 +994,7 @@ test("Qimu & Musicians plays a stave's whole piece, turning it over as it goes",
   expect(await page.evaluate(() => typeof window.QIMU_WHOLE), "not fetched until the sound is on").toBe("undefined");
   await page.locator(".qimu-sound").click();
   await expect.poll(() => page.evaluate(() => window.QimuScore.samples().length), { timeout: 10000 }).toBe(17);
-  await expect.poll(() => page.evaluate(() => Array.isArray(window.QIMU_WHOLE) && window.QIMU_WHOLE.length), { timeout: 10000 }).toBe(18);
+  await expect.poll(() => page.evaluate(() => Array.isArray(window.QIMU_WHOLE) && window.QIMU_WHOLE.length === window.QIMU_PIECES.length), { timeout: 10000 }).toBe(true);
 
   // Every stave's piece, page after page, is the whole of it in order.
   const covers = await page.evaluate(() => window.QimuScore.staves().map((s, i) => {

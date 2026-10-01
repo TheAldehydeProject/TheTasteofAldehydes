@@ -21,26 +21,38 @@
 // WHAT IT IS: short STAVES standing in the margins either side of the
 // writing, one under another down the whole length of the page — a
 // score kept in the margins — and each of them THE OPENING OF A REAL
-// PIECE, note for note as its score has it: eighteen piano pieces by
-// Polish composers of the first half of the nineteenth century whom
-// hardly anyone plays now — Maria Szymanowska's preludes and a caprice,
-// Władysław Żeleński, Józef Krogulski, Józef Elsner, Franciszek Mirecki's
-// krakowiaks, Wojciech Sowiński, Kasper Napoleon Wysocki — out of Polish
-// Music Heritage in Open Access (polishscores.org, © The Fryderyk Chopin
-// Institute, CC BY 4.0, credited at the foot of the page). They are in
-// qimu-pieces.js, written by tools/qimu-pieces.py from the scores
-// themselves. A stave carries the piece's key and time signatures and as
-// many of its opening bars as it has room for — the right hand alone, or
-// both hands on a braced pair — with every accidental, beam, tie and
-// slur the score has. (Until then the music was made up here, a bar at a
-// time, in a key and a metre; that composer is gone.)
+// PIECE, note for note as its score has it. Until 2026-10-01 they were
+// eighteen piano pieces by Polish composers hardly anyone plays now; then
+// the owner: "make it so that not all of them are polish ... find some
+// stuff from all over the world ... One can be piano, another can be a
+// drum version, a third can be a guitar version." So now they are pieces
+// from all over the world: for the PIANO, from Poland still (Maria
+// Szymanowska, Żeleński, Krogulski, Sowiński, Wysocki), Malta, Denmark,
+// Italy, France, Hungary, Russia, Spain, the United States, Croatia,
+// Norway, Bulgaria — and China, Xiao Youmei's "Vorwärts Marsch im
+// Schneesturm", transcribed by hand from the photographs of his
+// manuscript the owner found; for the GUITAR, Tárrega, Matiegka,
+// Horetzky, Sanz and Greensleaves; and for the DRUMS, grooves played by
+// real drummers — afrobeat, highlife, Afro-Cuban, samba, joropo, a
+// merengue in five, chacarera, Middle Eastern, reggae, a New Orleans
+// second line — written down as a drummer reads them. They are in
+// qimu-pieces.js, written by tools/qimu-pieces.py from the scores (and
+// the recordings) themselves, credited at the foot of the page. A stave
+// carries the piece's clef, key and time signatures and as many of its
+// opening bars as it has room for — a piano's right hand alone, or both
+// hands on a braced pair; a guitar on its treble an octave above where it
+// sounds; a drum kit on a percussion stave, its cymbals as crosses — with
+// every accidental, beam, tie and slur the score has. (Until 2026-09-28
+// the music was made up here, a bar at a time; that composer is gone.)
 //
 // ITS NAME, when the hand is on it: the piece and its composer, under
 // the stave, in a light face (`NAME_*`), coming up and going again.
 //
 // POINTING AT A STAVE PLAYS IT — that stave, from its first note, as it
 // is written, both hands, in time, on a recorded grand piano (`key`,
-// `play`), and only while the hand is on its lines — and on past its
+// `play`) — or a recorded guitar (`pluck`), or a recorded drum kit,
+// struck as hard as the drummer struck it (`strike`) — and only while the
+// hand is on its lines — and on past its
 // opening to the end of its piece (2026-10-01: "play the entire
 // composition and the notes change visually too as it plays"), the stave
 // TURNING OVER to the next of its bars as the piano reaches them (THE
@@ -135,13 +147,19 @@
   // outside it is each page's own — the size of a stave (`GAP`), where the
   // staves stand, and how they are drawn and played.
   //
-  // THE MUSIC is `QIMU_PIECES` (qimu-pieces.js): the openings of eighteen
-  // piano pieces hardly anyone plays now, note for note as their scores
-  // have them. A PITCH is a STEP — how many letters above middle C (C4 is
-  // 0, D4 1, C5 7, B3 −1) — and an ALTER (−1 a flat, 1 a sharp), printed
-  // where the step stands on its stave with whatever sign the score puts
-  // before it. Everything is drawn in paths, because a music font cannot
-  // be counted on.
+  // THE MUSIC is `QIMU_PIECES` (qimu-pieces.js): the openings of pieces
+  // from all over the world — for the piano, for the guitar, and grooves
+  // for the drums — note for note as their scores have them (or, for the
+  // drums, as they were played). A PITCH is a STEP — how many letters
+  // above middle C (C4 is 0, D4 1, C5 7, B3 −1) — and an ALTER (−1 a
+  // flat, 1 a sharp), printed where the step stands on its stave with
+  // whatever sign the score puts before it. Each hand is in a CLEF
+  // (`clef`, a letter a hand: G the treble, F the bass, g a guitar's
+  // treble, sounding an octave under where it is written, X a drum
+  // stave's); a DRUM's note says which drum (`dr`), stands where a drum
+  // stave puts it, and is drawn as a cross where it is a cymbal, in
+  // brackets where it is a ghost. Everything is drawn in paths, because a
+  // music font cannot be counted on.
   // ============================================================
   const RX = GAP * 0.6, RY = GAP * 0.42;
   const yAt = (top, p) => top + 4 * GAP - p * GAP / 2;   // p: 0 the bottom line, 8 the top
@@ -270,6 +288,28 @@
     c.stroke();
     c.beginPath(); c.arc(x - 0.35 * G, top + 5.3 * G, 0.3 * G, 0, Math.PI * 2); c.fill();
   }
+  /** A guitar's treble clef: the treble with an 8 under it, because it
+      sounds an octave lower than it is written. */
+  function mTreble8(c, x, top) {
+    mTreble(c, x, top);
+    mText(c, "8", x - GAP * 0.35, top + GAP * 6.4, GAP * 1.15, "normal");
+  }
+  /** A drum stave's clef: two thick strokes across its middle. */
+  function mPerc(c, x, top) {
+    c.fillRect(x - GAP * 0.55, top + GAP, GAP * 0.38, GAP * 2);
+    c.fillRect(x + GAP * 0.17, top + GAP, GAP * 0.38, GAP * 2);
+  }
+  /** A cymbal's note: a cross where a head would be. */
+  function mCross(c, x, y) {
+    mLine(c, x - RX * 0.95, y - RY * 1.25, x + RX * 0.95, y + RY * 1.25, 1.1);
+    mLine(c, x - RX * 0.95, y + RY * 1.25, x + RX * 0.95, y - RY * 1.25, 1.1);
+  }
+  /** A ghost note, barely played: its head in brackets. */
+  function mGhost(c, x, y) {
+    c.lineWidth = 0.8;
+    c.beginPath(); c.arc(x + RX * 0.9, y, RY * 2.1, Math.PI * 0.72, Math.PI * 1.28); c.stroke();
+    c.beginPath(); c.arc(x - RX * 0.9, y, RY * 2.1, -Math.PI * 0.28, Math.PI * 0.28); c.stroke();
+  }
   function mBass(c, x, top) {
     const G = GAP;
     c.lineWidth = 1.3;
@@ -288,34 +328,48 @@
   const letterOf = (d) => ((d % 7) + 7) % 7;
   const midiOf = (d, alter) => 60 + 12 * Math.floor(d / 7) + SEMIS[letterOf(d)] + alter;
   // Where a step stands on its stave: the treble's bottom line is E4,
-  // the bass's is G2.
-  const posOf = (d, low) => (low ? d + 10 : d - 2);
-  // Every length here is a whole number of 48ths of a semiquaver — a
-  // triplet's third and a demisemiquaver's half both are — so a length
-  // read off the file is put back exactly on that grid.
-  const exact = (v) => Math.round(v * 48) / 48;
+  // the bass's is G2; a guitar's music is written on the treble, and a
+  // drum stave's notes stand where the treble's would.
+  const posOf = (d, cf) => (cf === "F" ? d + 10 : d - 2);
+  // Every length here is a whole number of 240240ths of a semiquaver — a
+  // triplet's third, a quintuplet's fifth, a septuplet's seventh, the
+  // eleventh and thirteenth of Liszt's runs and a demisemiquaver's half
+  // all are — so a length read off the file is put back exactly on it.
+  const exact = (v) => Math.round(v * 240240) / 240240;
   const DOTTED = [0.75, 1.5, 3, 6, 12, 24];
-  const isDotted = (e) => !e.trip && DOTTED.includes(e.dur);
-  // What a note is written as: a triplet quaver is a quaver, a dotted
-  // crotchet a crotchet with a dot.
-  const valueOf = (e) => exact(e.trip ? e.dur * 1.5 : isDotted(e) ? e.dur / 1.5 : e.dur);
+  const TWICE = [0.875, 1.75, 3.5, 7, 14, 28];
+  const dotsOf = (e) => (e.trip || e.tu ? 0 : DOTTED.includes(e.dur) ? 1 : TWICE.includes(e.dur) ? 2 : 0);
+  const isDotted = (e) => dotsOf(e) > 0;
+  // What a note is written as: a triplet quaver is a quaver, a quintuplet
+  // semiquaver a semiquaver, a dotted crotchet a crotchet with a dot.
+  const valueOf = (e) => exact(e.tu ? e.dur * e.tu[0] / e.tu[1] : e.trip ? e.dur * 1.5
+    : dotsOf(e) === 2 ? e.dur / 1.75 : dotsOf(e) ? e.dur / 1.5 : e.dur);
   const tailsOf = (e) => { const v = valueOf(e); return v >= 4 ? 0 : v >= 2 ? 1 : v >= 1 ? 2 : 3; };
+
+  // A DRUM'S SOUND, as a General MIDI drum: which is struck.
+  const KIT = { kick: 36, snare: 38, side: 37, tom1: 48, tom2: 45, tom3: 43, hh: 42, hho: 46, hhp: 44, crash: 49, ride: 51, bell: 53 };
+  const CROSSED = new Set(["hh", "hho", "hhp", "crash", "ride", "bell", "side"]);
+  /** What a note of a chord sounds: its pitch (a guitar's an octave
+      under where it is written), or the drum it strikes. */
+  const soundOf = (e, i) => (e.kit ? KIT[e.kit[i]] : midiOf(e.ds[i], e.alter[i]) + e.oct);
 
   /** Bar `n` of a piece as EVENTS to lay out and engrave: each hand one
       or two VOICES — the right hand alone on a single stave, both on a
-      braced pair. */
+      braced pair (a guitar and a drum kit have the one). */
   function barOf(piece, n, grand) {
     const src = piece.bars[n];
     const num = Number(piece.meter[0]), den = Number(piece.meter[1]);
+    const clef = piece.clef || "GF", oct = piece.inst === "guitar" ? -12 : 0;
     // The beat: a dotted crotchet in 3/8, 6/8, 9/8 and 12/8; the lower
     // number otherwise.
     const beat = den === 8 && num % 3 === 0 ? 6 : 16 / den;
     const voices = [];
-    (grand ? ["right", "left"] : ["right"]).forEach((hand) => {
-      const low = hand === "left", two = src[hand].length > 1;
-      src[hand].forEach((list, vi) => voices.push({ low, vi, two, list: list.map((e) => ({
-        t: exact(e.t), dur: exact(e.dur), ds: e.ds || [], alter: e.al || [], acc: e.acc || [],
-        rest: !!e.rest, hidden: !!e.hidden, trip: !!e.trip,
+    (grand && src.left ? ["right", "left"] : ["right"]).forEach((hand, h) => {
+      const low = hand === "left", two = src[hand].length > 1, cf = clef[h] || (low ? "F" : "G");
+      src[hand].forEach((list, vi) => voices.push({ low, vi, two, cf, list: list.map((e) => ({
+        t: exact(e.t), dur: exact(e.dur), ds: e.ds || [], alter: e.al || (e.ds || []).map(() => 0), acc: e.acc || [],
+        rest: !!e.rest, hidden: !!e.hidden, trip: !!e.trip, tu: e.tu || null, cf, oct,
+        kit: e.dr || null, vel: e.vl || null, ghost: e.gh || null,
         // Two voices on one stave: the upper's stems up, the lower's down.
         up: two ? vi === 0 : e.up === undefined ? null : !!e.up,
         beam: e.beam ? hand + vi + ":" + e.beam : null,
@@ -330,7 +384,7 @@
   // column each stands in, counted out from the heads.
   function signCols(e) {
     const cols = [], col = new Map();
-    e.ds.map((d, i) => [posOf(d, e.low), i]).filter(([, i]) => e.acc[i]).sort((p, q) => q[0] - p[0]).forEach(([p, i]) => {
+    e.ds.map((d, i) => [posOf(d, e.cf), i]).filter(([, i]) => e.acc[i]).sort((p, q) => q[0] - p[0]).forEach(([p, i]) => {
       let k = 0;
       while (cols[k] && cols[k].some((q) => Math.abs(q - p) < 6)) k++;
       (cols[k] = cols[k] || []).push(p);
@@ -339,7 +393,7 @@
     return { n: cols.length, col };
   }
   const hasSecond = (e) => {
-    const ps = e.ds.map((d) => posOf(d, e.low)).sort((a, b) => a - b);
+    const ps = e.ds.map((d) => posOf(d, e.cf)).sort((a, b) => a - b);
     return ps.some((p, i) => i && p - ps[i - 1] === 1);
   };
 
@@ -360,8 +414,8 @@
       x += signs * 5.5;
       xs.set(t, x);
       const next = i + 1 < onsets.length ? onsets[i + 1] : bar.units;
-      const dotted = here.some(isDotted), seconds = here.some((e) => !e.rest && hasSecond(e));
-      x += spacing(next - t) + (dotted ? 3 : 0) + (seconds ? RX * 1.4 : 0);
+      const dotted = Math.max(0, ...here.map(dotsOf)), seconds = here.some((e) => !e.rest && hasSecond(e));
+      x += spacing(next - t) + dotted * 3 + (seconds ? RX * 1.4 : 0);
     });
     bar.width = x + 4;
     // A whole bar's rest stands in the middle of the bar.
@@ -385,14 +439,14 @@
     const dirOf = (list, v) => {
       const said = list.find((e) => e.up !== null);
       if (said) return said.up;
-      const ps = list.flatMap((e) => e.ds.map((d) => posOf(d, e.low)));
+      const ps = list.flatMap((e) => e.ds.map((d) => posOf(d, e.cf)));
       return ps.reduce((a, p) => (Math.abs(p - 4) > Math.abs(a - 4) ? p : a), 4) < 4;
     };
     // The heads of a note or chord, from the lowest: the upper of a
     // second stands on the far side of its stem, as it is engraved.
     const headsOf = (e, hx, top, up) => {
       const order = e.ds.map((d, i) => i).sort((i, j) => e.ds[i] - e.ds[j]);
-      const ps = order.map((i) => posOf(e.ds[i], e.low));
+      const ps = order.map((i) => posOf(e.ds[i], e.cf));
       const off = ps.map(() => 0);
       if (up) { for (let k = 1; k < ps.length; k++) if (ps[k] - ps[k - 1] === 1 && !off[k - 1]) off[k] = 1; }
       else { for (let k = ps.length - 2; k >= 0; k--) if (ps[k + 1] - ps[k] === 1 && !off[k + 1]) off[k] = -1; }
@@ -416,12 +470,28 @@
       for (let q = 10; q <= hi; q += 2) { const y = yAt(top, q); put(hx, (c) => mLine(c, x1, y, x2, y, 0.8)); }
     };
     const dots = (c, e, hs) => {
-      if (!isDotted(e)) return;
+      const n = dotsOf(e);
+      if (!n) return;
       const dx = Math.max(...hs.map((h) => h.x)) + RX + 3;
-      hs.forEach((h) => mDot(c, dx, h.y - (h.p % 2 === 0 ? GAP / 2 : 0)));
+      hs.forEach((h) => { for (let k = 0; k < n; k++) mDot(c, dx + k * 3, h.y - (h.p % 2 === 0 ? GAP / 2 : 0)); });
+    };
+    // A head: a cymbal's a cross, a ghost's in brackets — and over an
+    // open hi-hat, a small ring.
+    const head = (c, e, h, open, whole) => {
+      if (e.kit && CROSSED.has(e.kit[h.i])) mCross(c, h.x, h.y);
+      else if (whole) mWhole(c, h.x, h.y);
+      else mHead(c, h.x, h.y, open);
+      if (e.ghost && e.ghost[h.i]) mGhost(c, h.x, h.y);
+    };
+    const ring = (c, e, x, y) => {
+      if (!e.kit || !e.kit.includes("hho")) return;
+      c.lineWidth = 0.8;
+      c.beginPath(); c.arc(x, y, GAP * 0.38, 0, Math.PI * 2); c.stroke();
     };
     const sounds = (e, hs, hx, draw) => put(hx, draw, {
-      pitches: hs.map((h) => midiOf(e.ds[h.i], e.alter[h.i])),
+      pitches: hs.map((h) => soundOf(e, h.i)),
+      kit: e.kit ? hs.map((h) => e.kit[h.i]) : null,
+      vel: e.vel ? hs.map((h) => e.vel[h.i]) : null,
       heads: hs.map((h) => [h.x, h.y]),
       at: e.at, dur: e.dur, hold: e.hold || 0, struck: e.struck !== false, low: e.low, strong: e.strong,
     });
@@ -447,10 +517,11 @@
       e.hs = hs; e.stemUp = up;
       deep = Math.max(deep, lo + RY, stem && !up ? tip : 0);
       sounds(e, hs, hx, (c) => {
-        hs.forEach((h) => (value >= 16 ? mWhole(c, h.x, h.y) : mHead(c, h.x, h.y, open)));
+        hs.forEach((h) => head(c, e, h, open, value >= 16));
         if (stem) mLine(c, vx, up ? lo : hi, vx, tip, 0.9);
         if (tails) mFlag(c, vx, tip, up, tails);
         dots(c, e, hs);
+        ring(c, e, up ? vx : hx, up ? tip - GAP * 1.1 : hi - GAP * 1.4);
       });
     }
     function beamed(list, top, v) {
@@ -482,9 +553,10 @@
         ledgers(hs, xs[i], top);
         deep = Math.max(deep, far[i] + RY, up ? 0 : beamY(sx[i]));
         sounds(e, hs, xs[i], (c) => {
-          hs.forEach((h) => mHead(c, h.x, h.y, false));
+          hs.forEach((h) => head(c, e, h, false, false));
           mLine(c, sx[i], far[i], sx[i], beamY(sx[i]), 0.9);
           dots(c, e, hs);
+          ring(c, e, sx[i], up ? beamY(sx[i]) - GAP * 1.1 : near[i] - GAP * 1.4);
         });
       });
       const last = xs[xs.length - 1];
@@ -505,16 +577,17 @@
           });
         }
       });
-      // A triplet's number on the beam's side: 3, or 6 over six of them.
+      // A triplet's number on the beam's side: 3, or 6 over six of them —
+      // and a quintuplet's 5, a septuplet's 7.
       const runs = [];
       list.forEach((e, i) => {
-        if (!e.trip) return;
+        if (!e.trip && !e.tu) return;
         const run = runs[runs.length - 1];
-        if (run && run.to === i - 1) run.to = i; else runs.push({ from: i, to: i });
+        if (run && run.to === i - 1 && !!run.tu === !!e.tu) run.to = i; else runs.push({ from: i, to: i, tu: e.tu });
       });
       runs.forEach((r) => {
         const x = (sx[r.from] + sx[r.to]) / 2, y = beamY(x) + (up ? -GAP * 1.3 : GAP * 1.3);
-        const label = r.to - r.from === 5 ? "6" : "3";
+        const label = r.tu ? String(r.tu[0]) : r.to - r.from === 5 ? "6" : "3";
         if (!up) deep = Math.max(deep, y + GAP);
         put(xs[r.to], (c) => mText(c, label, x, y, GAP * 1.3, "italic"));
       });
@@ -540,9 +613,11 @@
   function heading(piece, tops, put) {
     const order = piece.sharps ? [8, 5, 9, 6, 3] : [4, 7, 3, 6, 2];
     const tx = GAP * 4.6 + piece.count * GAP * 0.85;
+    const clef = piece.clef || "GF";
     tops.forEach((top, i) => {
-      const low = i === 1;
-      put(GAP * 1.4, (c) => (low ? mBass(c, GAP * 1.5, top) : mTreble(c, GAP * 1.7, top)));
+      const cf = clef[i] || (i ? "F" : "G"), low = cf === "F";
+      put(GAP * 1.4, (c) => (low ? mBass(c, GAP * 1.5, top) : cf === "X" ? mPerc(c, GAP * 1.6, top)
+        : cf === "g" ? mTreble8(c, GAP * 1.7, top) : mTreble(c, GAP * 1.7, top)));
       for (let k = 0; k < piece.count; k++) {
         const kx = GAP * 4 + k * GAP * 0.85, ky = yAt(top, order[k] - (low ? 2 : 0));
         put(kx, (c) => (piece.sharps ? mSharp(c, kx, ky) : mFlat(c, kx, ky)));
@@ -602,11 +677,12 @@
     const hand = (bar, low) => bar.voices.filter((v) => v.low === low).map((v) => sum(v.list));
     return {
       composer: piece.composer, title: piece.title, file: piece.file,
+      inst: piece.inst || "piano", clef: piece.clef || "GF",
       written: [piece.meter.join("/")],
       bars: bars.map((bar) => ({
         n: bar.n, meter: bar.meter.join("/"), units: bar.units, pickup: bar.pickup,
         right: hand(bar, false), left: bar.voices.some((v) => v.low) ? hand(bar, true) : null,
-        pitches: bar.voices.flatMap((v) => v.list).filter((e) => !e.rest).map((e) => e.ds.map((d, i) => midiOf(d, e.alter[i]))),
+        pitches: bar.voices.flatMap((v) => v.list).filter((e) => !e.rest).map((e) => e.ds.map((d, i) => soundOf(e, i))),
       })),
     };
   }
@@ -680,7 +756,8 @@
     // sounds, with how long it is held — read off the very marks that are
     // drawn, so what is heard is what is written, note for note.
     const music = marks.filter((m) => m.note && m.struck)
-      .map((m) => ({ at: m.at, secs: (m.dur + m.hold) * perUnit, pitches: m.pitches, low: m.low, strong: m.strong, mark: m }))
+      .map((m) => ({ at: m.at, secs: (m.dur + m.hold) * perUnit, pitches: m.pitches, low: m.low, strong: m.strong, mark: m,
+        kit: m.kit, vel: m.vel, inst: piece.inst || "piano" }))
       .sort((p, q) => p.at - q.at || (p.low ? 1 : 0) - (q.low ? 1 : 0));
     return { marks, tops, bars: edges.slice(1), times, length: clock, end: x, stretch, piece, count: bars.length,
       info: scoreOf(piece, bars), music, beat: 60 / piece.tempo,
@@ -696,8 +773,8 @@
   // them), and as the piano reaches the end of what is on the stave the
   // stave TURNS OVER to the next of its bars — written on left to right
   // as the bars it was played past fade off it — as a page is turned. A
-  // stave starts a new line where the key or the metre changes, with the
-  // new ones at its head, as an engraver would. Let go, it goes back to
+  // stave starts a new line where the key, the metre or a hand's clef
+  // changes, with the new ones at its head, as an engraver would. Let go, it goes back to
   // its opening.
   //
   // The bars are qimu-whole.js, written by tools/qimu-pieces.py from the
@@ -731,15 +808,16 @@
       metre. */
   function pageFrom(s, w, from) {
     const first = w.bars[w.seq[from]];
-    const k = first.k || 0, m = first.m || 0;
+    const k = first.k || 0, m = first.m || 0, c = first.c || 0;
     const list = [];
     for (let i = from; i < w.seq.length; i++) {
       const bar = w.bars[w.seq[i]];
-      if ((bar.k || 0) !== k || (bar.m || 0) !== m) break;
+      if ((bar.k || 0) !== k || (bar.m || 0) !== m || (bar.c || 0) !== c) break;
       list.push(bar);
     }
     const sig = w.keys[k];
-    const piece = { ...s.piece, meter: w.meters[m], sig, count: sig.filter(Boolean).length, sharps: sig.some((v) => v > 0), bars: list };
+    const piece = { ...s.piece, meter: w.meters[m], sig, count: sig.filter(Boolean).length, sharps: sig.some((v) => v > 0), bars: list,
+      clef: (w.clefs || ["GF"])[c] };
     const score = compose(s.room, s.tops.length > 1, piece);
     return { score, from, to: from + score.count };
   }
@@ -803,7 +881,9 @@
       let score = null;
       for (let tries = 0; tries < PIECES.length && !score; tries++) {
         const piece = nextPiece();
-        const grand = random() < GRAND || !plays(piece, "right") || !alone(piece);
+        // A guitar and a drum kit have one stave; a piano both hands now
+        // and then.
+        const grand = !!piece.bars[0].left && (random() < GRAND || !plays(piece, "right") || !alone(piece));
         const one = compose(long, grand, piece);
         if (one.stretch >= 0.8 || tries === PIECES.length - 1) score = one;
         else deck.push(piece);
@@ -1036,6 +1116,26 @@
   const PIANO = [["C2", 36], ["Ds2", 39], ["Fs2", 42], ["A2", 45], ["C3", 48], ["Ds3", 51], ["Fs3", 54],
     ["A3", 57], ["C4", 60], ["Ds4", 63], ["Fs4", 66], ["A4", 69], ["C5", 72], ["Ds5", 75], ["Fs5", 78],
     ["A5", 81], ["C6", 84]];
+  // THE GUITAR AND THE DRUMS (2026-10-01: "One can be piano, another can
+  // be a drum version, a third can be a guitar version"). The guitar is
+  // a recorded nylon-string classical guitar — fourteen of its notes, a
+  // major third or so apart, from quartertone's multisampled classical
+  // guitar on Freesound (CC BY 3.0, credited at the foot of the page), in
+  // audio/guitar/ — played as the piano is, a note between two of them
+  // the nearer one moved. A guitar's note is let ring a little past its
+  // written length, as a string does. The drums are a kit of real drums
+  // and cymbals from the Versilian Community Sample Library (CC0), one
+  // stroke each, in audio/drums/: struck as hard as the drummer struck
+  // them — softer and darker for a ghost note — and an open hi-hat
+  // closed by the next closed one, as a foot would close it.
+  const GUITAR = [["D2", 38], ["Fs2", 42], ["A2", 45], ["Cs3", 49], ["E3", 52], ["G3", 55], ["B3", 59],
+    ["Ds4", 63], ["Fs4", 66], ["A4", 69], ["Cs5", 73], ["E5", 76], ["G5", 79], ["As5", 82]];
+  const DRUMS = ["kick", "snare", "side", "tom1", "tom2", "hh", "hho", "hhp", "crash", "ride", "bell"];
+  // How loud each drum is in the kit, and what each is played from (the
+  // floor tom is the low tom, tuned down).
+  const MIX = { kick: 0.95, snare: 0.62, side: 0.5, tom1: 0.6, tom2: 0.62, tom3: 0.66, hh: 0.3, hho: 0.3, hhp: 0.26,
+    crash: 0.36, ride: 0.3, bell: 0.34 };
+  const PLAYED_FROM = { tom3: ["tom2", 0.8] };
   const LOOK = 0.2;                // seconds of music scheduled ahead of the sound's clock
   const LEAD = 0.08;               // seconds between the hand arriving and the first note
   const OVERLAP = 0.03;            // legato: a note let go a hair after the next is struck
@@ -1049,6 +1149,8 @@
   let audio = null;
   let loading = null;
   const bank = new Map();          // midi → decoded recording
+  const strings = new Map();       // the guitar's, likewise
+  const kit = new Map();           // a drum's name → its recording
 
   /** The room: a short, soft hall of the page's own making — two
       channels of noise, each smoothed and falling away over two
@@ -1145,27 +1247,30 @@
     } catch (e) { /* nothing to unlock */ }
   }
 
-  /** The seventeen recordings, fetched once, the first time the sound is
-      turned on. What fails to arrive is simply not in the bank. */
+  /** The recordings — the piano's seventeen, the guitar's fourteen and
+      the drums — fetched once, the first time the sound is turned on.
+      What fails to arrive is simply not in its bank. */
   function load() {
     fetchWhole();
     if (loading) return loading;
     const a = wake();
     if (!a || !window.fetch) return (loading = Promise.resolve());
     const root = window.SITE_ROOT || "../";
-    loading = Promise.all(PIANO.map(([name, midi]) =>
-      fetch(root + "audio/piano/" + name + ".mp3")
-        .then((answer) => { if (!answer.ok) throw new Error(name); return answer.arrayBuffer(); })
-        .then((bytes) => new Promise((done, fail) => a.ctx.decodeAudioData(bytes, done, fail)))
-        .then((recording) => { bank.set(midi, recording); })
-        .catch(() => {})));
+    const one = (path, into, key) => fetch(root + path)
+      .then((answer) => { if (!answer.ok) throw new Error(path); return answer.arrayBuffer(); })
+      .then((bytes) => new Promise((done, fail) => a.ctx.decodeAudioData(bytes, done, fail)))
+      .then((recording) => { into.set(key, recording); })
+      .catch(() => {});
+    loading = Promise.all(PIANO.map(([name, midi]) => one("audio/piano/" + name + ".mp3", bank, midi))
+      .concat(GUITAR.map(([name, midi]) => one("audio/guitar/" + name + ".mp3", strings, midi)))
+      .concat(DRUMS.map((name) => one("audio/drums/" + name + ".mp3", kit, name))));
     return loading;
   }
 
   /** The recording nearest a note, and how far it has to be moved. */
-  function nearest(midi) {
+  function nearest(midi, from = bank) {
     let best = null, far = 99;
-    bank.forEach((recording, at) => {
+    from.forEach((recording, at) => {
       const d = Math.abs(midi - at);
       if (d < far || (d === far && at > best.at)) { far = d; best = { recording, at }; }
     });
@@ -1199,6 +1304,60 @@
     voice.connect(out);
     voice.connect(room);
     voices.push({ gain: voice.gain, stop: (t) => {}, off });
+  }
+
+  /** ONE NOTE of the guitar: plucked, and let ring a little past its
+      written length, as a string is. */
+  function pluck(midi, when, secs, loud, voices) {
+    const near = nearest(midi, strings);
+    if (!near) { synth(midi, when, secs, loud, voices); return; }
+    const { ctx, out, room } = audio;
+    const string = ctx.createBufferSource();
+    string.buffer = near.recording;
+    string.playbackRate.value = Math.pow(2, (midi - near.at) / 12);
+    const finger = ctx.createGain();
+    const off = when + Math.min(3, Math.max(0.3, secs) + 0.45);
+    finger.gain.setValueAtTime(loud, when);
+    finger.gain.setValueAtTime(loud, off);
+    finger.gain.setTargetAtTime(0, off, 0.12);
+    string.connect(finger);
+    finger.connect(out);
+    finger.connect(room);
+    string.start(when);
+    string.stop(off + 1);
+    voices.push({ gain: finger.gain, stop: (t) => string.stop(t), off });
+  }
+
+  /** ONE STROKE on a drum, as hard as it was struck (`vel`, 1 to 127). */
+  let openHat = null;
+  function strike(name, when, vel, voices) {
+    const { ctx, out, room } = audio;
+    const [from, rate] = PLAYED_FROM[name] || [name, 1];
+    const recording = kit.get(from);
+    const force = Math.pow(Math.max(1, Math.min(127, vel || 90)) / 127, 1.4);
+    // A hi-hat closed by the foot or struck closed cuts off the open one.
+    if ((name === "hh" || name === "hhp") && openHat && openHat.off > when) {
+      openHat.gain.setTargetAtTime(0, when, 0.03);
+      openHat.off = when;
+    }
+    if (!recording) return;
+    const skin = ctx.createBufferSource();
+    skin.buffer = recording;
+    skin.playbackRate.value = rate;
+    // Struck softly, a drum is darker as well as quieter.
+    const tone = ctx.createBiquadFilter();
+    tone.type = "lowpass";
+    tone.frequency.value = 1400 + 16000 * force;
+    const level = ctx.createGain();
+    level.gain.value = (MIX[name] || 0.5) * (0.25 + 0.75 * force);
+    skin.connect(tone).connect(level);
+    level.connect(out);
+    if (name !== "kick" && name !== "hh" && name !== "hhp") level.connect(room);
+    skin.start(when);
+    const off = when + recording.duration / rate;
+    const voice = { gain: level.gain, stop: (t) => skin.stop(t), off };
+    if (name === "hho") openHat = voice;
+    voices.push(voice);
   }
 
   /** ONE NOTE of the score, from `when` for `secs`, at `loud`. */
@@ -1291,16 +1450,25 @@
       if (when > now + LOOK) break;
       p.next++;
       if (when < now - 0.02) continue;
+      if (note.kit) {
+        // The drums: every stroke of the moment, as hard as it was struck.
+        note.kit.forEach((name, i) => strike(name, when + (i ? 0.002 : 0), note.vel ? note.vel[i] : 90, p.voices));
+        heardLog.push({ stave: staves.indexOf(p.s), at: note.at, page: p.sched, from: pg.from, pitches: note.pitches.slice(), lap: pg.lap, kit: note.kit.slice() });
+        continue;
+      }
       // A little of a hand in it: the notes of a chord a hair apart from
       // the bottom up, and each a shade louder or softer than the last.
       const base = note.low ? LOUD.left
         : note.pitches.length > 1 ? LOUD.under
         : note.strong ? LOUD.tune : LOUD.between;
       const chord = note.pitches.slice().sort((x, y) => x - y);
+      // A guitar's chord is strummed a little wider than a piano's.
+      const guitar = note.inst === "guitar";
       chord.forEach((midi, i) => {
         const top = !note.low && i === chord.length - 1;
         const loud = (top && chord.length > 1 ? LOUD.tune : base) * (0.94 + Math.random() * 0.1);
-        key(midi, when + i * 0.009, note.secs, loud, p.voices);
+        if (guitar) pluck(midi, when + i * 0.016, note.secs, loud * 1.15, p.voices);
+        else key(midi, when + i * 0.009, note.secs, loud, p.voices);
       });
       heardLog.push({ stave: staves.indexOf(p.s), at: note.at, page: p.sched, from: pg.from, pitches: note.pitches.slice(), lap: pg.lap });
     }
@@ -1513,6 +1681,10 @@
     music: (i) => staves[i].music.map((n) => ({ at: n.at, secs: n.secs, pitches: n.pitches.slice(), low: n.low })),
     heard: () => heardLog.slice(),
     samples: () => [...bank.keys()],
+    strings: () => [...strings.keys()],
+    kit: () => [...kit.keys()],
+    // Each stave's instrument: piano, guitar or drums.
+    instruments: () => staves.map((s) => s.piece.inst || "piano"),
     notes: () => {
       const scroll = window.scrollY;
       const out = [];
