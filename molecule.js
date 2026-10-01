@@ -128,7 +128,16 @@
   // for the one before it to stop: the turning from TURN_FROM to 2, the
   // formula from FORM_FROM to 3, the lines down the window from 3 over
   // LINES_OVER, the names after them (landing.js).
-  const TURN_FROM = 0.85, FORM_FROM = 1.95, LINES_OVER = 0.85;
+  const TURN_FROM = 0.95, FORM_FROM = 1.95, LINES_OVER = 0.85;   // (the turn from 0.85 until 2026-10-01, when its leg grew)
+  // THE TURN UPRIGHT, prolonged and smoothed (2026-10-01: "prolongue the
+  // horizontal to vertical transformation of the aldehyde. thats the only
+  // part that looks fast. I want you to smooth it out"). Its leg of the
+  // page is the longest (LEGS in landing.js), and the turn itself does not
+  // follow the page straight: it follows it on a spring, critically damped
+  // (TURN_W, per second) — setting off gently and coming to rest softly — so
+  // however quickly the page is scrolled, or a key pressed, it turns over two
+  // seconds or so, never faster. The formula waits for it to stand upright.
+  const TURN_W = 2.6;
   // At the title the hand is felt only a little (the owner: "when youre
   // still at the title, make it way less reactive to the cursor"): its pull
   // and the lean are REACT_TITLE of themselves there, whole by the formula.
@@ -879,20 +888,37 @@
   }
   let namesShown = true;
 
-  const born = performance.now();
-  let last = born;
+  // The drawing's own clock: it runs only while the drawing is drawn, so
+  // that coming back from under the menu or About me it carries on from
+  // where it was, rather than jumping on by however long it was covered.
+  let clock = 0, last = performance.now();
+  let turnAt = -1, turnV = 0;   // the turn upright as drawn, and how fast it is turning
   function draw(now) {
     // (a slow frame moves the clocks on by a quarter of a second at most:
     // a machine without a graphics card is slow, not stopped)
     const dt = Math.min(250, Math.max(0, now - last));
     last = now;
-    const t = REDUCE ? 0 : (now - born) / 1000;
-    const gather = REDUCE ? 1 : Math.min(1, (now - born) / GATHER_MS);
+    clock += dt;
+    const t = REDUCE ? 0 : clock / 1000;
+    const gather = REDUCE ? 1 : Math.min(1, clock / GATHER_MS);
 
     // where the stage is (landing.js follows the page, smoothly)
     S = Math.max(0, Math.min(4, +window.__formula || 0));
-    const turned = smooth((S - TURN_FROM) / (2 - TURN_FROM));   // upright
-    const formed = smooth((S - FORM_FROM) / (3 - FORM_FROM));   // its formula
+    // the turn upright: where the page says, followed on its spring
+    const turnTo = smooth((S - TURN_FROM) / (2 - TURN_FROM));
+    if (REDUCE || turnAt < 0) { turnAt = turnTo; turnV = 0; }
+    else {
+      for (let left = dt / 1000; left > 1e-6; left -= 1 / 120) {
+        const h = Math.min(1 / 120, left);
+        turnV += (TURN_W * TURN_W * (turnTo - turnAt) - 2 * TURN_W * turnV) * h;
+        turnAt += turnV * h;
+      }
+      if (Math.abs(turnTo - turnAt) < 0.0005 && Math.abs(turnV) < 0.002) { turnAt = turnTo; turnV = 0; }
+    }
+    const turned = Math.max(0, Math.min(1, turnAt));                    // upright
+    wrap.turned = turned;   // (for the tests: how far it has turned, 0 to 1)
+    const upright = smooth((turned - 0.72) / 0.28);                      // and the formula may come
+    const formed = Math.min(smooth((S - FORM_FROM) / (3 - FORM_FROM)), upright);   // its formula
     const down = smooth((S - 3) / LINES_OVER);                  // the lines come down
     const react = REACT_TITLE + (1 - REACT_TITLE) * smooth((S - 0.15) / 1.1);
 
@@ -933,11 +959,11 @@
     }
 
     // the formula: the bonds drawn out of the C, then the names of the atoms
-    const grow = smooth((S - 2) / 0.85);
+    const grow = Math.min(smooth((S - 2) / 0.85), upright);
     bonds.visible = grow > 0;
     bonds.material.uniforms.uGrow.value = grow * 1.1;
     bonds.material.uniforms.uAlpha.value = 0.9 * dense;
-    const named = smooth((S - 2.3) / 0.65);
+    const named = Math.min(smooth((S - 2.3) / 0.65), upright);
     if (named > 0 || namesShown) {
       for (const n of names) {
         const s = toScreen(n.at);
@@ -978,10 +1004,11 @@
     // Where it is, said on the drawing for anything that wants to know (the
     // tests): cloud (the first two stages), turning, turned, forming,
     // formula, lining, lined.
-    const state = S <= 1.02 ? "cloud" : S < 1.98 ? "turning" : S <= 2.02 ? "turned" : S < 2.98 ? "forming"
-      : S <= 3.02 ? "formula" : down < 0.999 ? "lining" : "lined";
+    // (turning for as long as it is still turning, whatever the page says)
+    const state = S <= 1.02 && turned < 0.01 ? "cloud" : S < 1.98 || turned < 0.995 ? "turning" : S <= 2.02 ? "turned"
+      : S < 2.98 ? "forming" : S <= 3.02 ? "formula" : down < 0.999 ? "lining" : "lined";
     if (state !== wrap.dataset.state) wrap.dataset.state = state;
-    return hot.some((h, k) => Math.abs(h - hotTo[k]) > 0.001 || heat[k] !== hotTo[k]);
+    return turnAt !== turnTo || hot.some((h, k) => Math.abs(h - hotTo[k]) > 0.001 || heat[k] !== hotTo[k]);
   }
 
   // Drawn only while the stage is on the screen, and not under the menu or
@@ -990,17 +1017,27 @@
   // moving"), the hand letting go of it — and, with motion turned off, only when
   // something has changed (the stage moved on, a name pointed at, the
   // window resized).
-  let seen = true, running = false, drawn = 0, drewAt = -1;
+  // (Under the menu or About me it stops only once either has come all the
+  // way up — COVER_MS — so it never stands still while it can still be seen:
+  // stopping the moment About me was pressed read as the page catching.)
+  const COVER_MS = 650;
+  let seen = true, running = false, drawn = 0, drewAt = -1, coverSince = 0;
   function loop(now) {
     running = false;
     if (!seen) return;
     const body = document.body.classList;
-    const covered = body.contains("menu-open") || body.contains("about-shown");
+    if (body.contains("menu-open") || body.contains("about-shown")) { if (!coverSince) coverSince = now; }
+    else coverSince = 0;
+    const covered = coverSince > 0 && now - coverSince > COVER_MS;
     const changed = !REDUCE || drewAt !== (+window.__formula || 0);
-    if (!covered && changed && (!soft || now - drawn > 80)) {
-      const more = draw(now);
-      drawn = now;
-      drewAt = more ? -1 : (+window.__formula || 0);
+    if (!covered && changed) {
+      // (a frame skipped on a machine without a graphics card is still time
+      // gone: the clock counts it at the next one drawn)
+      if (!soft || now - drawn > 80) {
+        const more = draw(now);
+        drawn = now;
+        drewAt = more ? -1 : (+window.__formula || 0);
+      }
     } else last = now;
     running = true;
     requestAnimationFrame(loop);

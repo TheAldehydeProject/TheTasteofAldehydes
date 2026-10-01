@@ -9,14 +9,14 @@
 // working. The formula's own tests are in formula.spec.js.
 // ============================================================
 const { test, expect } = require("@playwright/test");
-const { serveDependenciesLocally, collectPageErrors, blockThreeJs, jumpToSlide, toStage, stageAt, HOME_WITH_MAP } = require("./helpers");
+const { serveDependenciesLocally, collectPageErrors, blockThreeJs, jumpToSlide, toStage, stageY, stageAt, HOME_WITH_MAP } = require("./helpers");
 
 const scrollTop = (page) =>
   page.evaluate(() => document.getElementById("scroll-container").scrollTop);
 const slideTop = (page, id) =>
   page.evaluate((id) => document.getElementById(id).offsetTop, id);
-// One leg of the stage: how far the page is scrolled from one stage to the next.
-const legOf = (page) => page.evaluate(() => document.querySelector(".stage-run").offsetHeight / 4);
+// The first leg of the stage: how far the page is scrolled from the first stage to the second.
+const legOf = (page) => stageY(page, 1);
 // Down to the sentence (the map slides on): to the end of the stage, then on.
 async function toTheSentence(page) {
   await jumpToSlide(page, "slide-formula");
@@ -93,8 +93,9 @@ test("the Scroll button goes on a stage", async ({ page }) => {
 
 test("arrow keys go a stage at a time, and stop at the ends", async ({ page }) => {
   await page.goto("/index.html");
-  const leg = await legOf(page);
-  const at = async (k) => expect.poll(async () => Math.abs((await scrollTop(page)) - k * leg), { timeout: 8000 }).toBeLessThan(2);
+  const ys = [];
+  for (let k = 0; k <= 4; k++) ys.push(await stageY(page, k));
+  const at = async (k) => expect.poll(async () => Math.abs((await scrollTop(page)) - ys[k]), { timeout: 8000 }).toBeLessThan(2);
 
   await page.keyboard.press("ArrowDown");
   await at(1);
@@ -385,7 +386,12 @@ test("the square at the title opens About me over the page, out of focus", async
   await expect(about).toContainText("How the name came to be");
   await expect(about).toContainText("why not \u201cThe Taste of Aldehydes\u201d?");
   // The page behind it out of focus.
-  expect(await about.evaluate((e) => getComputedStyle(e).backdropFilter || getComputedStyle(e).webkitBackdropFilter)).toMatch(/blur/);
+  // (by a blur that never changes, on a layer behind the sheet, faded in —
+  // "make it not lag when it opens about me", 2026-10-01 — and not a second
+  // one in the sheet)
+  expect(await about.evaluate((e) => getComputedStyle(e, "::before").backdropFilter || getComputedStyle(e, "::before").webkitBackdropFilter)).toMatch(/blur/);
+  await expect.poll(() => about.evaluate((e) => +getComputedStyle(e, "::before").opacity)).toBe(1);
+  expect(await page.locator(".about-sheet").evaluate((e) => getComputedStyle(e).backdropFilter)).toBe("none");
   // A wheel inside it moves no slide.
   const box = await page.locator(".about-sheet").boundingBox();
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);

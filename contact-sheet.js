@@ -1,5 +1,5 @@
 // ============================================================
-// THE HOUSES — the axis (categories/scent-descriptions.html)
+// THE HOUSES — the axis (scent-descriptions/index.html)
 //
 // The owner, 2026-09-24, the second time that day: "I also want you to
 // redisign the houses part again. I want it to be something to do with

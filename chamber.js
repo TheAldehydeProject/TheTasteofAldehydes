@@ -1,5 +1,5 @@
 // ============================================================
-// THE CHAMBER (categories/favorites.html only)
+// THE CHAMBER (favourites/index.html only)
 //
 // The favourites live inside a CHAMBER: two injectors, at OPPOSITE
 // CORNERS of the window — top right and bottom left — firing a fine

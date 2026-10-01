@@ -13,7 +13,7 @@
 const { test, expect } = require("@playwright/test");
 const { serveDependenciesLocally, collectPageErrors } = require("./helpers");
 
-const SHEET = "/categories/scent-descriptions.html";
+const SHEET = "/scent-descriptions/";
 
 /** Get to the Fragrances view, which is not what the page opens as —
     AS THE OLD TABLE, which is kept under the line at the owner's word

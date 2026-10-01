@@ -1,5 +1,5 @@
 // ============================================================
-// THE TWO VIEWS — categories/scent-descriptions.html
+// THE TWO VIEWS — scent-descriptions/index.html
 //
 // That category can be looked at two ways, and the two buttons across
 // the top of the page are the whole of the switch:

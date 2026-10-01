@@ -1,6 +1,6 @@
 // @ts-check
 /* ============================================================
-   CONTACT — contact.html and contact.js.
+   CONTACT — contact/index.html and contact.js.
 
    The owner, 2026-09-26: "in contact, add a captcha that hides the
    contact information (let it be filer contact information)". The
@@ -20,7 +20,7 @@ const fs = require("fs");
 const path = require("path");
 const { serveDependenciesLocally, collectPageErrors } = require("./helpers");
 
-const CONTACT = "/contact.html";
+const CONTACT = "/contact/";
 
 test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
@@ -33,7 +33,7 @@ async function steady(page) {
 }
 
 test("the details are not in the page's source to be harvested", () => {
-  const source = fs.readFileSync(path.join(__dirname, "..", "contact.html"), "utf8");
+  const source = fs.readFileSync(path.join(__dirname, "..", "contact", "index.html"), "utf8");
   expect(source).not.toContain("example.com");
   expect(source).not.toContain("@your");
   expect(source).not.toMatch(/mailto:/);

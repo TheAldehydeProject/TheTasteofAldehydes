@@ -6,7 +6,7 @@
 // two on the right, and a long TABLE standing in the bottom left
 // corner of the window.
 //
-//   categories/researches.html — the researches, numbered, titled and
+//   explorations-and-researches/index.html — the researches, numbered, titled and
 //   dated.
 //
 //   the Individual fragrances view of the contact sheet page — every

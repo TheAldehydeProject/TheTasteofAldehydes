@@ -1,5 +1,5 @@
 // ============================================================
-// A PAGE'S OWN SEARCH — categories/theories.html, categories/favorites.html
+// A PAGE'S OWN SEARCH — theories/index.html, favourites/index.html
 //
 // The contact sheet and the index pages already carry a search of
 // their own. This builds the same thing for the two pages that do not:

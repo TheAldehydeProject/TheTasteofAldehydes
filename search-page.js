@@ -1,5 +1,5 @@
 // ============================================================
-// THE SEARCH PAGE — search.html
+// THE SEARCH PAGE — search/index.html (thetasteofaldehydes.com/search)
 //
 // The one place that looks over the whole site. It keeps NO LIST of
 // what is on the site: it fetches the pages below and reads each of
@@ -8,8 +8,8 @@
 // the moment it is added, without anything being written down twice.
 //
 // THE PAGES IT LOOKS IN are the only thing here to keep up to date,
-// one line each, with the trail that says where a thing found in it
-// lives. A new page means a new line.
+// one line each — its address from the site's root — with the trail that
+// says where a thing found in it lives. A new page means a new line.
 //
 // Everything is fetched once, on the first search, and kept.
 // ============================================================
@@ -24,7 +24,7 @@
   const saying = document.querySelector(".find-saying");
 
   const PAGES = [
-    { url: "categories/scent-descriptions.html", trail: ["Scent descriptions"] },
+    { url: "scent-descriptions/", trail: ["Scent descriptions"] },
     { url: "houses/pineward.html", trail: ["Scent descriptions", "Houses", "Pineward"] },
     { url: "houses/adar.html", trail: ["Scent descriptions", "Houses", "ADAR"] },
     { url: "houses/almost-human.html", trail: ["Scent descriptions", "Houses", "Almost Human"] },
@@ -35,19 +35,19 @@
     { url: "houses/tombstone.html", trail: ["Scent descriptions", "Houses", "Tombstone"] },
     { url: "houses/qimu-and-musicians.html", trail: ["Scent descriptions", "Houses", "Qimu & Musicians"] },
     { url: "individual-fragrances/individual-fragrances.html", trail: ["Scent descriptions", "Fragrances"] },
-    { url: "categories/theories.html", trail: ["Theories"] },
+    { url: "theories/", trail: ["Theories"] },
     { url: "works/theory-01.html", trail: ["Theories", "The Architecture of Sunscreen"] },
     { url: "works/theory-02.html", trail: ["Theories", "The Architecture of Sweat"] },
     { url: "works/theory-03.html", trail: ["Theories", "The Note Dissemination Framework"] },
-    { url: "categories/favorites.html", trail: ["Favourites"] },
-    { url: "categories/researches.html", trail: ["Explorations & Researches"] },
+    { url: "favourites/", trail: ["Favourites"] },
+    { url: "explorations-and-researches/", trail: ["Explorations & Researches"] },
     { url: "works/my-personal-introduction-to-perfume.html", trail: ["Explorations & Researches", "My Personal Introduction to Perfume"] },
     { url: "works/dupes-designers-and-niches.html", trail: ["Explorations & Researches", "Dupes, Designers and Niches"] },
     { url: "works/buying-a-perfume.html", trail: ["Explorations & Researches", "Buying a Perfume"] },
     { url: "works/skin.html", trail: ["Explorations & Researches", "Skin"] },
     { url: "works/resins-in-perfumery.html", trail: ["Explorations & Researches", "Resins in Perfumery"] },
-    { url: "categories/note-library.html", trail: ["Note Library"] },
-    { url: "categories/other-2.html", trail: ["Photography"] },
+    { url: "note-library/", trail: ["Note Library"] },
+    { url: "photography/", trail: ["Photography"] },
   ];
 
   let everything = null;
@@ -61,13 +61,16 @@
     if (everything) return Promise.resolve(everything);
     if (reading) return reading;
     document.body.classList.add("find-reading");
+    // (the pages are written from the site's root; this page stands a
+    // folder in, at /search/, since 2026-10-01)
+    const root = typeof window.SITE_ROOT === "string" ? window.SITE_ROOT : "";
     reading = Promise.all(PAGES.map((page) =>
-      fetch(page.url, { credentials: "same-origin" })
+      fetch(root + page.url, { credentials: "same-origin" })
         .then((answer) => (answer.ok ? answer.text() : ""))
         .then((html) => {
           if (!html) return [];
           const doc = new DOMParser().parseFromString(html, "text/html");
-          return window.SiteSearch.collect(doc, new URL(page.url, window.location.href).href, page.trail);
+          return window.SiteSearch.collect(doc, new URL(root + page.url, window.location.href).href, page.trail);
         })
         .catch(() => [])
     )).then((lots) => {

@@ -20,7 +20,7 @@
 const { test, expect } = require("@playwright/test");
 const { serveDependenciesLocally, collectPageErrors } = require("./helpers");
 
-const PAGE = "/categories/theories.html";
+const PAGE = "/theories/";
 
 /** Which stations are on the page, and how strongly. */
 const drawnNow = (page) =>
@@ -301,7 +301,7 @@ test("clicking a station lays it out and writes a card beside it", async ({ page
   await page.waitForTimeout(900);
 
   expect(page.url(), "the first click opens it, it does not follow it")
-    .toContain("theories.html");
+    .toContain("/theories/");
   await expect(page.locator(".structure-stop.open")).toHaveCount(1);
 
   // The figure has come out of the frame and been set out on the
@@ -354,7 +354,7 @@ test("a set-out station goes back: on escape, and on travelling", async ({ page 
   await page.waitForTimeout(700);
   expect(await page.locator(".structure-stop.open").count(),
     "travelling puts it back").toBe(0);
-  expect(page.url(), "and does not follow the link").toContain("theories.html");
+  expect(page.url(), "and does not follow the link").toContain("/theories/");
 });
 
 test("the spine is the wheel: it can be dragged, and pressed", async ({ page }) => {

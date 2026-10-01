@@ -13,8 +13,8 @@
 const { test, expect } = require("@playwright/test");
 const { serveDependenciesLocally, collectPageErrors } = require("./helpers");
 
-const RESEARCHES = "/categories/researches.html";
-const SHEET = "/categories/scent-descriptions.html";
+const RESEARCHES = "/explorations-and-researches/";
+const SHEET = "/scent-descriptions/";
 
 /** The rows showing right now, read off what each row SAYS it is
  *  rather than off its lettering — the same thing the sorting reads. */
@@ -350,7 +350,7 @@ test("without the script the table is still the table", async ({ page }) => {
    window. The owner photographed it. */
 test("the fragrances view keeps its own layout all the way through a swipe",
   async ({ page }) => {
-  await page.goto("/categories/scent-descriptions.html");
+  await page.goto("/scent-descriptions/");
   await page.waitForFunction(() => document.querySelector(".sheet.settled"),
     null, { timeout: 20000 });
 

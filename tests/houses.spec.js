@@ -20,7 +20,7 @@ const ABSTRAITS = "/houses/les-abstraits.html";
 const TALE = "/houses/tale-parfums.html";
 const TOMBSTONE = "/houses/tombstone.html";
 const QIMU = "/houses/qimu-and-musicians.html";
-const SHEET = "/categories/scent-descriptions.html";
+const SHEET = "/scent-descriptions/";
 
 test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
@@ -1680,7 +1680,7 @@ test("every house has a return button at the top, back to the houses at that hou
     await page.goto("/houses/" + house + ".html");
     const back = page.locator(".house-return");
     await expect(back, house).toHaveCount(1);
-    await expect(back).toHaveAttribute("href", "../categories/scent-descriptions.html#house-" + no);
+    await expect(back).toHaveAttribute("href", "../scent-descriptions/#house-" + no);
     await expect(back).toHaveText(/Back to the houses/i);
     const b = await back.boundingBox(), h = await page.locator("h1").boundingBox();
     expect(b.y + b.height, house + ": above the name").toBeLessThan(h.y);
@@ -1694,7 +1694,7 @@ test("every house has a return button at the top, back to the houses at that hou
   // Pressed, it lands on that house.
   await page.goto("/houses/tombstone.html");
   await page.locator(".house-return").click();
-  await page.waitForURL("**/categories/scent-descriptions.html#house-08");
+  await page.waitForURL("**/scent-descriptions/#house-08");
   await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
   await expect(page.locator("#sheet")).toHaveAttribute("data-front", "8");
 });

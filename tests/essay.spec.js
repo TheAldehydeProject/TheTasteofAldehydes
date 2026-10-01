@@ -139,11 +139,11 @@ test("without its script the page is still all of its writing", async ({ page })
 });
 
 test("the theories and the researches reach their own pieces", async ({ page }) => {
-  await page.goto("/categories/theories.html");
+  await page.goto("/theories/");
   const first = page.locator(".work-row").first();
   await expect(first).toHaveAttribute("href", "../works/theory-01.html");
 
-  await page.goto("/categories/researches.html");
+  await page.goto("/explorations-and-researches/");
   // 000 stands first since 2026-09-23; since 2026-09-27 Dupes, Designers
   // and Niches and Buying a Perfume stand before the research, and since
   // 2026-09-28 Skin at 003, so the resins research is 004.
@@ -228,7 +228,7 @@ test("no theory carries a picture", async ({ page }) => {
 test("Explorations 002 is Buying a Perfume, written in the owner's words, its subtitle on its own page only",
   async ({ page }) => {
   const errors = collectPageErrors(page);
-  await page.goto("/categories/researches.html");
+  await page.goto("/explorations-and-researches/");
   const row = page.locator('.index-table tbody tr[data-no="2"]');
   await expect(row).toHaveCount(1);
   await expect(row.locator(".index-no")).toHaveText("002");
@@ -289,7 +289,7 @@ test("Explorations 002 is Buying a Perfume, written in the owner's words, its su
 test("Explorations 001 is Dupes, Designers and Niches, written, with its subtitle on its own page only",
   async ({ page }) => {
   const errors = collectPageErrors(page);
-  await page.goto("/categories/researches.html");
+  await page.goto("/explorations-and-researches/");
   const row = page.locator('.index-table tbody tr[data-no="1"]');
   await expect(row.locator(".index-no")).toHaveText("001");
   await expect(row.locator(".index-kind")).toHaveText("Exploration");
@@ -330,7 +330,7 @@ test("Explorations 001 is Dupes, Designers and Niches, written, with its subtitl
 test("Researches 003 is Skin: the owner's research with its two tables, its diagrams, its footnotes and its sources",
   async ({ page }) => {
   const errors = collectPageErrors(page);
-  await page.goto("/categories/researches.html");
+  await page.goto("/explorations-and-researches/");
   const row = page.locator('.index-table tbody tr[data-no="3"]');
   await expect(row.locator(".index-no")).toHaveText("003");
   await expect(row.locator(".index-kind")).toHaveText("Research");
@@ -652,7 +652,7 @@ test("Skin's diagrams are numbered, and drawn as the owner asked", async ({ page
    wont exist)". The row stays, at 005, drawn quieter and no link; the
    page is gone and nothing on the site points at it. */
 test("Cold vs Warm Incense has no page: its row stays, lighter and not a link", async ({ page, request }) => {
-  await page.goto("/categories/researches.html");
+  await page.goto("/explorations-and-researches/");
   const row = page.locator('.index-table tbody tr[data-name="Cold vs Warm Incense"]');
   await expect(row).toHaveAttribute("data-open", "no");
   await expect(row.locator(".index-no")).toHaveText("005");

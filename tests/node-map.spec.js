@@ -163,7 +163,7 @@ test.describe("the preview window", () => {
     await expect(page.locator(".node-preview-desc")).toContainText("I describe things");
     await expect(page.locator(".node-preview-button")).toHaveAttribute(
       "href",
-      "categories/scent-descriptions.html"
+      "scent-descriptions/"
     );
   });
 

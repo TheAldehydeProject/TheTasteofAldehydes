@@ -326,7 +326,10 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
 .menu-aldehydes {
   position: absolute;
   top: 50%;
-  right: 64px;
+  /* a little to the left of the window's edge (2026-10-01: "move the whole
+     diagram a little to the left"): it stood 64px in; now about 90px
+     further at a laptop's width, and never nearer the list than 90px */
+  right: clamp(64px, calc(14vw - 48px), 220px);
   width: min(460px, calc(100vw - 850px));
   color: #f0efe8;
   opacity: 0;
@@ -357,11 +360,12 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
 }
 @media (max-width: 700px) and (max-height: 739px) { .menu-aldehydes { display: none; } }
 
-/* Hairlines in a cloud of specks in the home page's colours (nav.js draws
-   them, on a canvas under the drawing), vapour off the oxygen, and three
-   words under it (2026-09-30: "i dont want the circuling text around it
-   ... if you want to keep text then keep metallic cold and soapy"). The
-   ring of words that turned round it is gone. */
+/* Hairlines in a cloud of specks in the home page's colours, standing in a
+   sphere round it (nav.js draws them, on a canvas under the drawing), and
+   three words under it (2026-09-30: "i dont want the circuling text around
+   it ... if you want to keep text then keep metallic cold and soapy"). The
+   ring of words that turned round it is gone, and so (2026-10-01) is the
+   vapour that rose off the oxygen. */
 .menu-aldehydes { isolation: isolate; }
 .ma-cloud {
   position: absolute;
@@ -376,9 +380,6 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
 .ma-orbit-2 { stroke-dasharray: 2 6; stroke: rgba(240, 239, 232, 0.22); }
 .ma-bonds line { stroke: #f0efe8; stroke-width: 2.2; stroke-linecap: butt; }
 .ma-atoms text { font-family: var(--sans); font-size: 34px; font-weight: 500; fill: #f0efe8; text-anchor: middle; dominant-baseline: middle; }
-.ma-vapour circle { fill: #f0efe8; opacity: 0; animation: ma-rise 4.8s ease-out infinite; }
-.ma-vapour .ma-gold { fill: #e0b252; }
-.ma-vapour .ma-violet { fill: #b89ce0; }
 .ma-words {
   display: flex;
   justify-content: center;
@@ -389,11 +390,6 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: #bdb9ae;
-}
-@keyframes ma-rise {
-  0% { opacity: 0; transform: translate(0, 0); }
-  18% { opacity: 0.8; }
-  100% { opacity: 0; transform: translate(var(--drift), var(--rise)); }
 }
 .ma-caption {
   display: flex;
@@ -409,8 +405,6 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
 }
 /* With motion turned off: nothing turns, rises or comes in. */
 @media (prefers-reduced-motion: reduce) {
-  .ma-vapour circle { animation: none; }
-  .ma-vapour circle { opacity: 0.5; }
   .menu-aldehydes { transition: none; transform: translateY(-50%); }
   .menu-overlay.open .menu-aldehydes { transform: translateY(-50%); }
 }
@@ -572,7 +566,9 @@ body.stage-only #scroll-container { color-scheme: dark; scrollbar-color: #3a3a3b
 .aldehyde-stage > .formula-slide,
 .formula-slide .formula-menu { pointer-events: none; }
 .stage-run {
-  height: calc(var(--stage-leg) * 4);
+  /* the four legs' sum: landing.js lays it from its LEGS (the second, the
+     turning upright, is 1.7 legs long since 2026-10-01) */
+  height: calc(var(--stage-leg) * 4.7);
   /* where the page stops at the end of the stage, when the map slides are on */
   scroll-snap-align: end;
 }
@@ -732,16 +728,30 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
   display: grid;
   padding: 28px;
   overflow-y: auto;
-  background: rgba(14, 14, 15, 0);
-  -webkit-backdrop-filter: blur(0px);
-  backdrop-filter: blur(0px);
-  transition: background 0.6s ease, backdrop-filter 0.6s ease, -webkit-backdrop-filter 0.6s ease;
 }
 .about[hidden] { display: none; }
-.about.is-open {
+/* THE PAGE OUT OF FOCUS, opened without a lag (2026-10-01: "make it not lag
+   when it opens about me"). The blur is one that never changes, on a layer
+   of its own behind the sheet, and it is FADED IN — its opacity, which the
+   browser animates by itself — where the blur's own size used to be
+   animated from nothing, a new blur worked out every frame, and the sheet
+   carried a second blur of its own inside the first, which its own near
+   opaque ground hid anyway. */
+.about::before {
+  content: "";
+  position: fixed;
+  inset: 0;
   background: rgba(14, 14, 15, 0.42);
-  -webkit-backdrop-filter: blur(14px) saturate(1.1);
-  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  will-change: opacity;
+}
+.about.is-open::before { opacity: 1; }
+@media (max-width: 700px) {
+  .about::before { -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 }
 .about-sheet {
   position: relative;
@@ -752,11 +762,9 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
   color: #ece8e2;
   background:
     linear-gradient(90deg, rgba(224, 178, 82, 0) 4%, rgba(224, 178, 82, 0.6) 30%, rgba(169, 138, 216, 0.5) 70%, rgba(169, 138, 216, 0) 96%) top / 100% 1px no-repeat,
-    linear-gradient(180deg, rgba(38, 38, 40, 0.86), rgba(24, 24, 26, 0.93));
+    linear-gradient(180deg, rgba(38, 38, 40, 0.9), rgba(24, 24, 26, 0.95));
   border: 1px solid rgba(236, 232, 226, 0.13);
   box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
   outline: none;
   opacity: 0;
   transform: translateY(16px) scale(0.985);
@@ -888,7 +896,7 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
   .about-glyph { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .about, .about-sheet, .about-part, .about-part h2::after, .about-sheet::before, .about-sheet::after, .about-glyph { transition: none; }
+  .about, .about::before, .about-sheet, .about-part, .about-part h2::after, .about-sheet::before, .about-sheet::after, .about-glyph { transition: none; }
 }
 
 /* ==================================================================
@@ -6599,9 +6607,17 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
    should still be read as there). In a soft ORANGE rather than the page's
    red, and calmer — its way on a hairline box faintly filled rather than a
    block of colour, the shade lighter, coming up more slowly (2026-09-30:
-   "make this orange and less urgent"). */
+   "make this orange and less urgent").
+   ITS COLOUR IS THE NETWORK'S (2026-10-01: "when youre in the expanded view,
+   the window colour should be red-ish, it should only be kept yellow in the
+   combinations part"): a calm rouge — the library's red, quietened — with
+   the sheet faintly washed in it, and the combinations' gold only while
+   combining, when the network is gold. (`--leave` the colour, `--leave-rgb`
+   the same as numbers, for its washes.) */
 .net-leave {
-  --leave: #e3935a;
+  --leave: #e2737a;
+  --leave-rgb: 226, 115, 122;
+  --leave-ink: #f6d6d8;
   position: absolute;
   inset: 0;
   display: grid;
@@ -6617,16 +6633,24 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   width: min(400px, calc(100% - 40px));
   box-sizing: border-box;
   padding: 20px 22px 22px;
-  background: var(--net-glass);
+  background:
+    linear-gradient(160deg, rgba(var(--leave-rgb), 0.13), rgba(var(--leave-rgb), 0.03) 60%),
+    var(--net-glass);
   -webkit-backdrop-filter: blur(22px) saturate(1.15);
   backdrop-filter: blur(22px) saturate(1.15);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(var(--leave-rgb), 0.3);
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
   color: var(--ink);
   transform: translateY(8px) scale(0.99);
   transition: transform 520ms var(--net-ease);
 }
 .net-leave.is-on .net-leave-box { transform: none; }
+/* in combinations, the combinations' gold */
+.net-stage.is-combining .net-leave {
+  --leave: #e6b44a;
+  --leave-rgb: 230, 180, 74;
+  --leave-ink: #f6e2ae;
+}
 /* A registration tick at two corners, as the site's windows carry. */
 .net-leave-box::before,
 .net-leave-box::after {
@@ -6634,7 +6658,7 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   position: absolute;
   width: 10px;
   height: 10px;
-  border: 0 solid rgba(227, 147, 90, 0.75);
+  border: 0 solid rgba(var(--leave-rgb), 0.75);
 }
 .net-leave-box::before { left: -1px; top: -1px; border-left-width: 1px; border-top-width: 1px; }
 .net-leave-box::after { right: -1px; bottom: -1px; border-right-width: 1px; border-bottom-width: 1px; }
@@ -6674,8 +6698,8 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
 }
 .net-leave-stay { background: none; border: 1px solid rgba(255, 255, 255, 0.3); color: var(--ink); }
 .net-leave-stay:hover, .net-leave-stay:focus-visible { border-color: var(--ink); outline: none; }
-.net-leave-go { background: rgba(227, 147, 90, 0.12); border: 1px solid rgba(227, 147, 90, 0.7); color: #f4dcc8; }
-.net-leave-go:hover, .net-leave-go:focus-visible { background: rgba(227, 147, 90, 0.26); border-color: var(--leave); color: #fff; outline: none; }
+.net-leave-go { background: rgba(var(--leave-rgb), 0.12); border: 1px solid rgba(var(--leave-rgb), 0.7); color: var(--leave-ink); }
+.net-leave-go:hover, .net-leave-go:focus-visible { background: rgba(var(--leave-rgb), 0.26); border-color: var(--leave); color: #fff; outline: none; }
 
 /* THE NAMES: one beside every accord's network once apart (a way there),
    and the black tags naming every note of the network you are at. */

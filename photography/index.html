@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photography — The Taste of Aldehydes</title>
+<!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
+<meta name="description" content="Photography: pictures taken alongside the writing — mostly of the things being described, sometimes of the places they brought to mind.">
+<link rel="canonical" href="https://thetasteofaldehydes.com/photography/">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta name="theme-color" content="#fafaf9">
+<meta property="og:site_name" content="The Taste of Aldehydes">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Photography">
+<meta property="og:description" content="Photography: pictures taken alongside the writing — mostly of the things being described, sometimes of the places they brought to mind.">
+<meta property="og:url" content="https://thetasteofaldehydes.com/photography/">
+<meta property="og:image" content="https://thetasteofaldehydes.com/images/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Photography">
+<meta name="twitter:description" content="Photography: pictures taken alongside the writing — mostly of the things being described, sometimes of the places they brought to mind.">
+<meta name="twitter:image" content="https://thetasteofaldehydes.com/images/social-card.png">
+<meta name="twitter:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://thetasteofaldehydes.com/"}, {"@type": "ListItem", "position": 2, "name": "Photography", "item": "https://thetasteofaldehydes.com/photography/"}]}</script>
+<!-- SEARCH ENGINES: end -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<!--
+  PHOTOGRAPHY — this was the second "Other" page, and it is the
+  photographs now.
+
+  IT IS LAID OUT THE WAY A PHOTOGRAPHER LAYS OUT WORK, and the things it
+  borrows are all borrowed on purpose:
+
+    THE SHEET     the frames run in a grid that a wide one breaks, the
+                  way a contact sheet is broken by the frame you have
+                  chosen out of it.
+    THE EDGE      every frame is numbered down its own margin, where a
+                  roll carries its numbers.
+    THE SET       the work is in sets rather than in one long run, each
+                  with its own number, its title and a line about it.
+    THE READING   what a caption carries is what a photographer writes
+                  on the back of a print: where, when, and on what.
+
+  TO ADD A PHOTOGRAPH: copy one whole <figure class="photo-frame"> block
+  inside a set's <div class="photo-grid">. Put the picture in
+  images/Photography/, uncomment the <img> and give it an alt. A frame
+  with its <img> still commented out is drawn as the hatch every
+  placeholder on this site is drawn as, so an unfinished set still reads
+  as a set.
+
+  Give a frame class="photo-frame photo-wide" and it takes two columns —
+  that is the one it has chosen out of the sheet. Keep it to one or two
+  a set or it stops meaning anything.
+
+  TO ADD A SET: copy one whole <section class="photo-set">, number it on
+  from the last, and write its line.
+
+  SINCE 2026-09-29 THE PAGE HAS NO SETS: the owner asked for most of it
+  removed and "This part of the webpage will be completed later" where
+  Set 01 began. To put the first set back, replace that line with this
+  (and give the page its readings and its foot again):
+
+    <section class="photo-set">
+      <div class="photo-set-head">
+        <p class="photo-set-no">Set 01</p>
+        <h2>Untitled set</h2>
+        <p class="photo-set-say">What this set is.</p>
+      </div>
+      <div class="photo-grid">
+        <figure class="photo-frame photo-wide">
+          <a class="photo-plate" href="../images/Photography/your-picture.jpg">
+            <img src="../images/Photography/your-picture.jpg" alt="Describe the picture">
+            <span class="photo-mark" aria-hidden="true"></span>
+          </a>
+          <figcaption>
+            <span class="photo-no" aria-hidden="true">01</span>
+            <span class="photo-say">Title</span>
+            <span class="photo-meta">place · date</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+  photography.js brings the frames up as you reach them and opens one
+  into the viewer. Without it they are all simply there, and each is a
+  link to its own picture, which still works.
+-->
+<body class="photography-page">
+
+<main class="photo-page">
+
+  <header class="photo-head">
+    <p class="photo-kicker">Photographs</p>
+    <h1>Photography</h1>
+    <p class="photo-lede">
+      Pictures taken alongside the writing — mostly of the things being
+      described, sometimes of the places they brought to mind. They are
+      here as their own work rather than as illustration.
+    </p>
+  </header>
+
+  <!-- WHERE SET 01 BEGAN. The owner, 2026-09-29: "remove most of the
+       contents of the photography page, and write where "set 1" begins;
+       This part of the webpage will be completed later". The sets, their
+       frames, the readings (Sets, Frames, Latest, Rights) and the line at
+       the foot went; a set's markup is kept in the comment at the top of
+       this page, to be put back when there are pictures. -->
+  <p class="photo-later">This part of the webpage will be completed later</p>
+
+</main>
+
+<script>window.SITE_ROOT = "../";</script>
+<script src="../nav.js"></script>
+<script src="../search.js"></script>
+<script src="../page-search.js"></script>
+<script src="../photography.js"></script>
+</body>
+</html>

@@ -106,14 +106,27 @@ async function jumpToSlide(page, slideId, fraction) {
 /**
  * THE HOME PAGE'S STAGE (2026-09-30): scroll straight to one of its five
  * stages, 0 (the title) to 4 (the names), or part of the way between two.
+ * The legs between them are not all one length (since 2026-10-01 the
+ * second, the aldehyde turning upright, is longer): landing.js says them on
+ * the stage, `data-legs`, each a number of `--stage-leg`s.
  */
+const STAGE_Y = (k) => {
+  const stage = document.getElementById("aldehyde-stage");
+  const legs = (stage.dataset.legs || "1 1 1 1").split(" ").map(Number);
+  const unit = stage.querySelector(".stage-run").offsetHeight / legs.reduce((a, b) => a + b, 0);
+  let y = 0;
+  for (let i = 0; i < legs.length && k > i; i++) y += legs[i] * Math.min(1, k - i);
+  return y * unit;
+};
+/** How far down the stage, in pixels, stage k is (0 to 4). */
+const stageY = (page, k) => page.evaluate(`(${STAGE_Y})(${k})`);
 async function toStage(page, k) {
-  await page.evaluate((k) => {
+  await page.evaluate(`(() => {
     const container = document.getElementById("scroll-container");
     const stage = document.getElementById("aldehyde-stage");
     container.style.scrollSnapType = "none";
-    container.scrollTop = stage.offsetTop + (k * stage.querySelector(".stage-run").offsetHeight) / 4;
-  }, k);
+    container.scrollTop = stage.offsetTop + (${STAGE_Y})(${k});
+  })()`);
 }
 /** Where the stage is, as landing.js tells the drawing (0 to 4). */
 const stageAt = (page) => page.evaluate(() => +window.__formula);
@@ -135,6 +148,7 @@ async function waitForMapSettled(page) {
 
 module.exports = {
   toStage,
+  stageY,
   stageAt,
   HOME_WITH_MAP,
   serveDependenciesLocally,

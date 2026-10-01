@@ -1,5 +1,5 @@
 // ============================================================
-// THE FIELD — categories/researches.html (Explorations & Researches)
+// THE FIELD — explorations-and-researches/index.html (Explorations & Researches)
 //
 // The owner, 2026-09-26: "Delete the right side of the page, and move
 // the table upwards, so that it takes up abour 3/5ths of the page on the

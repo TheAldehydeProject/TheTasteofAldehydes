@@ -45,7 +45,7 @@ test("clicking a menu link closes the menu", async ({ page }) => {
   await expect(page.locator(".menu-overlay")).toHaveClass(/open/);
 
   await page.locator(".menu-list a", { hasText: "Contact" }).click();
-  await expect(page).toHaveURL(/contact\.html$/);
+  await expect(page).toHaveURL(/\/contact\/$/);
 });
 
 // Visiting the site at its bare address ("/") is the normal case, and
@@ -59,11 +59,17 @@ test("the page you are on is marked in the menu, including at the bare site addr
   await page.goto("/index.html");
   await expect(page.locator(".menu-list a.menu-current")).toHaveText("Home");
 
-  await page.goto("/categories/theories.html");
+  await page.goto("/theories/");
   await expect(page.locator(".menu-list a.menu-current")).toHaveText("Theories");
 
-  await page.goto("/contact.html");
+  await page.goto("/contact/");
   await expect(page.locator(".menu-list a.menu-current")).toHaveText("Contact");
+  // every Menu page at an address of its own name (2026-10-01), "/x/" and
+  // "/x/index.html" the same page, and only it marked
+  await page.goto("/note-library/index.html");
+  await expect(page.locator(".menu-list a.menu-current")).toHaveText("Note Library");
+  await page.goto("/houses/adar.html");
+  await expect(page.locator(".menu-list a.menu-current")).toHaveCount(0);
 });
 
 test("menu lists every page in SITE_LINKS, in order", async ({ page }) => {
@@ -85,13 +91,13 @@ test("menu lists every page in SITE_LINKS, in order", async ({ page }) => {
 });
 
 test("menu links from a nested page resolve correctly, not relative to the folder", async ({ page }) => {
-  // A page inside /categories/ sets SITE_ROOT to "../". If that is
-  // wrong, links come out as /categories/categories/... and 404.
-  await page.goto("/categories/theories.html");
+  // A page a folder in (/theories/) sets SITE_ROOT to "../". If that is
+  // wrong, links come out as /theories/theories/... and 404.
+  await page.goto("/theories/");
   const hrefs = await page.$$eval(".menu-list a", (as) => as.map((a) => a.getAttribute("href")));
-  expect(hrefs).toContain("../index.html");
-  expect(hrefs).toContain("../categories/favorites.html");
-  expect(hrefs).toContain("../contact.html");
+  expect(hrefs).toContain("../");
+  expect(hrefs).toContain("../favourites/");
+  expect(hrefs).toContain("../contact/");
 });
 
 // The landing page once opened this menu three different ways, one per
@@ -150,7 +156,7 @@ test("the menu opens the same way on every slide of the landing page", async ({ 
 test("the menu carries the smell of aldehydes on its right: the molecule, and only it", async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/categories/theories.html");
+  await page.goto("/theories/");
   const aside = page.locator(".menu-aldehydes");
   await expect(aside).toHaveCount(1);
   await expect(aside).toHaveAttribute("aria-hidden", "true");
@@ -177,6 +183,28 @@ test("the menu carries the smell of aldehydes on its right: the molecule, and on
   });
   expect(cloud.gold, "specks of the double bond's gold").toBeGreaterThan(40);
   expect(cloud.violet, "and of the lone pair's violet").toBeGreaterThan(40);
+  // NOT ONLY RISING: no vapour going up off the oxygen, and the specks all
+  // round it, in a sphere (2026-10-01: "shouldnt have particles coming up
+  // exclusively; i want them to be around it and kind of exist in a sphere
+  // around it") — in every quarter of the drawing, out towards its rings,
+  // and below the molecule as much as above it, the sphere turning.
+  await expect(aside.locator(".ma-vapour")).toHaveCount(0);
+  const quarters = () => aside.locator(".ma-cloud").evaluate((c) => {
+    const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+    const q = [0, 0, 0, 0], k = c.width / 400;
+    for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) {
+      if (d[(y * c.width + x) * 4 + 3] < 25) continue;
+      const dx = x / k - 200, dy = y / k - 196, r = Math.hypot(dx, dy);
+      if (r < 120 || r > 190) continue;          // out towards the rings, clear of the molecule
+      q[(dx < 0 ? 0 : 1) + (dy < 0 ? 0 : 2)]++;
+    }
+    return q;
+  });
+  const q1 = await quarters();
+  for (const n of q1) expect(n, "specks all round it: " + q1).toBeGreaterThan(60);
+  expect(q1[2] + q1[3], "below it as well as above (where its lobes are too)").toBeGreaterThan((q1[0] + q1[1]) * 0.4);
+  await page.waitForTimeout(900);
+  expect((await quarters()).join(), "turning").not.toBe(q1.join());
   // The other two are gone, and so are the faces they needed.
   await expect(page.locator(".ma-fizz, .ma-big, .ma-sheet")).toHaveCount(0);
   expect(await page.evaluate(() => [...document.querySelectorAll("link[rel=stylesheet]")]
@@ -184,18 +212,20 @@ test("the menu carries the smell of aldehydes on its right: the molecule, and on
   const list = await page.locator(".menu-list").boundingBox();
   const box = await aside.boundingBox();
   expect(box.x, "right of the list, clear of it").toBeGreaterThan(list.x + list.width + 40);
-  expect(box.x + box.width).toBeLessThanOrEqual(1440 - 40);
+  // a little to the left of where it stood, 64px in (2026-10-01: "move the
+  // whole diagram a little to the left")
+  expect(box.x + box.width, "in from the edge").toBeLessThanOrEqual(1440 - 140);
   await page.keyboard.press("Escape");
   await expect.poll(() => aside.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeLessThan(0.05);
   // The address that showed the others shows the molecule.
-  await page.goto("/categories/theories.html?menu-type=particles");
+  await page.goto("/theories/?menu-type=particles");
   await expect(page.locator(".menu-aldehydes svg.ma-mol")).toHaveCount(1);
   // No room beside the list on a narrow desktop window: not there.
   await page.setViewportSize({ width: 1024, height: 768 });
   await expect(aside).toBeHidden();
   // On a tall phone, small in the corner under the list, on the screen.
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/categories/theories.html");
+  await page.goto("/theories/");
   await page.locator(".menu-trigger").click();
   await expect.poll(() => aside.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
   const small = await aside.boundingBox();

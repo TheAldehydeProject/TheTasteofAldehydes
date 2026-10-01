@@ -37,7 +37,7 @@ const print = (page, sel) => page.evaluate((sel) => {
 test("clicked off, Explorations & Researches' field keeps moving", async ({ page }) => {
   const errors = collectPageErrors(page);
   await clickedOff(page);
-  await page.goto("/categories/researches.html");
+  await page.goto("/explorations-and-researches/");
   await expect(page.locator(".re-field")).toHaveClass(/is-drawn/);
   await expect.poll(() => page.evaluate(() => window.KeepTime.frames), { timeout: 5000 }).toBeGreaterThan(5);
   const a = await print(page, ".re-canvas");
@@ -52,7 +52,7 @@ test("clicked off, the Note Library's network keeps turning", async ({ page }) =
   const errors = collectPageErrors(page);
   await clickedOff(page);
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto("/categories/note-library.html");
+  await page.goto("/note-library/");
   await expect(page.locator(".net-stage")).toHaveClass(/is-drawn/, { timeout: 30000 });
   await expect.poll(() => page.evaluate(() => window.KeepTime.frames), { timeout: 10000 }).toBeGreaterThan(5);
   const p1 = await page.evaluate(() => window.NetScene.note("Vanilla"));
@@ -72,7 +72,7 @@ test("clicked off, a house's ground keeps moving too", async ({ page }) => {
 });
 
 test("in front and looked at, the browser's own frames and no stand-in", async ({ page }) => {
-  await page.goto("/categories/researches.html");
+  await page.goto("/explorations-and-researches/");
   await page.waitForTimeout(1500);
   expect(await page.evaluate(() => window.KeepTime.frames), "no timer drew a frame").toBe(0);
 });

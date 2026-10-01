@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explorations &amp; Researches — The Taste of Aldehydes</title>
+<!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
+<meta name="description" content="Explorations &amp; Researches. Here you will find my researches and my explorations: a guide to perfume, dupes, designers and niches, resins in perfumery, and more.">
+<link rel="canonical" href="https://thetasteofaldehydes.com/explorations-and-researches/">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta name="theme-color" content="#fafaf9">
+<meta property="og:site_name" content="The Taste of Aldehydes">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Explorations &amp; Researches">
+<meta property="og:description" content="Explorations &amp; Researches. Here you will find my researches and my explorations: a guide to perfume, dupes, designers and niches, resins in perfumery, and more.">
+<meta property="og:url" content="https://thetasteofaldehydes.com/explorations-and-researches/">
+<meta property="og:image" content="https://thetasteofaldehydes.com/images/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Explorations &amp; Researches">
+<meta name="twitter:description" content="Explorations &amp; Researches. Here you will find my researches and my explorations: a guide to perfume, dupes, designers and niches, resins in perfumery, and more.">
+<meta name="twitter:image" content="https://thetasteofaldehydes.com/images/social-card.png">
+<meta name="twitter:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://thetasteofaldehydes.com/"}, {"@type": "ListItem", "position": 2, "name": "Explorations & Researches", "item": "https://thetasteofaldehydes.com/explorations-and-researches/"}]}</script>
+<!-- SEARCH ENGINES: end -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<!--
+  EXPLORATIONS & RESEARCHES — the pieces where I go and find out rather
+  than describe. Two
+  kinds of them: a RESEARCH is a material at a time, an EXPLORATION is
+  going out after a smell. The file is still called researches.html
+  because renaming it would break every link into it for no gain.
+
+  This category is laid out as an INDEX: its name and what it is at the
+  top left, and the list itself under them — the left three fifths of
+  the window — scrolling inside its own box with its headings stuck to
+  the top. The right two fifths are THE FIELD, a drawing in specks
+  (explorations.js): a cloud of specks turning in three dimensions round
+  a mathematical FORM — the owner's seventeen, from a geodesic sphere to
+  a helix — which holds for twelve seconds and then, over six, turns
+  into the next, on its own clock: the table does not conduct it any
+  more, at the owner's word ("I want the shapes to not change based on
+  which research you hover"). The owner, 2026-09-26: "Delete
+  the right side of the page, and move the table upwards ... On the right
+  side, I want you to make something extravagant with the particles that
+  reacts ot the thing being hovered on the left", and then "a general
+  abstract geometric particulate thing". (The right side was a line of
+  text and two plates, the first a drawn ring; the heading over the
+  paragraph said "Information". All three went. For one round each work
+  had a figure of its own — a pyramid, a bottle, two smokes — which went
+  too.)
+
+  TO ADD A WORK: copy one whole <tr> below. What a row carries is
+  written ON the row (data-no, data-name, data-kind, data-date) and not
+  read off the lettering, so sorting by date still sorts by date; the
+  number is the work's own and does not change when the table is sorted.
+  data-kind is either "Research" (gone and found out, written up) or
+  "Exploration" (gone and had a look), and it is what the third column
+  reads.
+  Nothing on a row has anything to do with the field.
+  A row with data-open="no" is one that hasn't been written yet: it is
+  drawn quieter and is not a link.
+
+  index-page.js does the sorting and the searching. Without it the
+  table is the same table in the order it is written here, and every
+  row that is a link still is one.
+-->
+<body class="researches-page">
+
+<main class="index-page">
+
+  <header class="index-head">
+    <!-- The paragraph stands under the name, at the owner's word
+         (2026-09-26): "under the title RE, not under introduction". -->
+    <h1 class="index-name">Explorations &amp; Researches</h1>
+    <div class="index-say">
+      <p class="index-say-lede">
+        Here you will find my researches and my explorations. Researches
+        are where I look into stuff from primary or secondary sources.
+        Explorations are pieces of work where I myself am the primary
+        source.
+      </p>
+    </div>
+  </header>
+
+  <!-- THE FIELD: drawn by explorations.js, on its own clock — a form held
+       twelve seconds, then six turning into the next. The arrows either
+       side of its name go on to the next form, or back, at once. -->
+  <figure class="re-field">
+    <canvas class="re-canvas" aria-hidden="true"></canvas>
+    <figcaption class="re-caption">
+      <button class="re-step re-prev" type="button" aria-label="The form before"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M6.5 1.5 3 5l3.5 3.5"/></svg></button>
+      <span class="re-caption-no"></span>
+      <span class="re-caption-name"></span>
+      <button class="re-step re-next" type="button" aria-label="The next form"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M3.5 1.5 7 5 3.5 8.5"/></svg></button>
+    </figcaption>
+  </figure>
+
+  <div class="index-board">
+    <div class="index-search">
+      <span class="index-search-mark" aria-hidden="true"></span>
+      <input class="index-search-field" type="search" placeholder="Search explorations &amp; researches" aria-label="Search the explorations and researches">
+      <span class="index-count" aria-hidden="true">010</span>
+    </div>
+
+    <div class="index-scroll" tabindex="0">
+      <table class="index-table">
+        <thead>
+          <tr>
+            <th scope="col"><button class="index-sort sorted" type="button" data-key="no">No.</button></th>
+            <th scope="col"><button class="index-sort" type="button" data-key="name">Work</button></th>
+            <th scope="col"><button class="index-sort" type="button" data-key="kind">Research/Exploration</button></th>
+            <th scope="col"><button class="index-sort" type="button" data-key="date">Date</button></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 000, at the owner's word: "make it 000. It should be the
+               first result." A number of nought sorts before every other,
+               so it stands first however the table is sorted by number. -->
+          <tr data-no="0" data-name="My Personal Introduction to Perfume" data-kind="Exploration" data-date="2026-09-23">
+            <td class="index-no">000</td>
+            <td class="index-what"><a href="../works/my-personal-introduction-to-perfume.html">My Personal Introduction to Perfume</a></td>
+            <td class="index-kind">Exploration</td>
+            <td class="index-date">23.09.2026</td>
+          </tr>
+          <!-- 001 and 002, at the owner's word (2026-09-27): "Add two
+               explorations in the RE tab: the first should be 001 (move
+               everything down), and called Dupes, Designers and Niches.
+               The second should be 002, and called 'Buying a Perfume'".
+               Buying a Perfume was already here at 002 (as "Buying A
+               Perfume - A Philosophical Exploration") and keeps its page;
+               everything after it moved down one, and the last of the
+               empty rows went to make room, so the table still runs 000
+               to 009. -->
+          <tr data-no="1" data-name="Dupes, Designers and Niches" data-kind="Exploration" data-date="2026-09-27">
+            <td class="index-no">001</td>
+            <td class="index-what"><a href="../works/dupes-designers-and-niches.html">Dupes, Designers and Niches</a></td>
+            <td class="index-kind">Exploration</td>
+            <td class="index-date">27.09.2026</td>
+          </tr>
+          <tr data-no="2" data-name="Buying a Perfume" data-kind="Exploration" data-date="2026-09-27">
+            <td class="index-no">002</td>
+            <td class="index-what"><a href="../works/buying-a-perfume.html">Buying a Perfume</a></td>
+            <td class="index-kind">Exploration</td>
+            <td class="index-date">27.09.2026</td>
+          </tr>
+          <!-- 003, at the owner's word (2026-09-28): "also please add this
+               into RE, where this should be 003" — Skin, a research.
+               Everything after it moved down one and the last of the
+               empty rows went, so the table still runs 000 to 009. -->
+          <tr data-no="3" data-name="Skin" data-kind="Research" data-date="2026-09-28">
+            <td class="index-no">003</td>
+            <td class="index-what"><a href="../works/skin.html">Skin</a></td>
+            <td class="index-kind">Research</td>
+            <td class="index-date">28.09.2026</td>
+          </tr>
+          <tr data-no="4" data-name="Resins in Perfumery" data-kind="Research" data-date="2026-02-14">
+            <td class="index-no">004</td>
+            <td class="index-what"><a href="../works/resins-in-perfumery.html">Resins in Perfumery</a></td>
+            <td class="index-kind">Research</td>
+            <td class="index-date">14.02.2026</td>
+          </tr>
+          <!-- COLD VS WARM INCENSE HAS NO PAGE (2026-09-28): "remove the page
+               for cold vs warm incenses, and make the text lighter gray
+               (since the page wont exist)". It was never written; the row
+               stays, drawn lighter and not a link, as an unwritten row is. -->
+          <tr data-no="5" data-name="Cold vs Warm Incense" data-kind="Exploration" data-date="2026-09-21" data-open="no">
+            <td class="index-no">005</td>
+            <td class="index-what">Cold vs Warm Incense</td>
+            <td class="index-kind">Exploration</td>
+            <td class="index-date">21.09.2026</td>
+          </tr>
+          <tr data-no="6" data-name="Exploring the smell of a forest part 1" data-kind="Exploration" data-date="" data-open="no">
+            <td class="index-no">006</td>
+            <td class="index-what">Exploring the smell of a forest part 1</td>
+            <td class="index-kind">Exploration</td>
+            <td class="index-date">—</td>
+          </tr>
+          <tr data-no="7" data-name="Exploring the smell of rain part 1" data-kind="Exploration" data-date="" data-open="no">
+            <td class="index-no">007</td>
+            <td class="index-what">Exploring the smell of rain part 1</td>
+            <td class="index-kind">Exploration</td>
+            <td class="index-date">—</td>
+          </tr>
+          <tr data-no="8" data-name="Untitled" data-kind="" data-date="" data-open="no">
+            <td class="index-no">008</td>
+            <td class="index-what">Untitled</td>
+            <td class="index-kind">—</td>
+            <td class="index-date">—</td>
+          </tr>
+          <tr data-no="9" data-name="Untitled" data-kind="" data-date="" data-open="no">
+            <td class="index-no">009</td>
+            <td class="index-what">Untitled</td>
+            <td class="index-kind">—</td>
+            <td class="index-date">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<script>window.SITE_ROOT = "../";</script>
+<script src="../nav.js"></script>
+<script src="../search.js"></script>
+<script src="../index-page.js"></script>
+<script src="../explorations.js"></script>
+</body>
+</html>

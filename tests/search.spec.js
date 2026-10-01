@@ -14,7 +14,7 @@
 const { test, expect } = require("@playwright/test");
 const { serveDependenciesLocally, collectPageErrors } = require("./helpers");
 
-const SHEET = "/categories/scent-descriptions.html";
+const SHEET = "/scent-descriptions/";
 
 test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
@@ -23,7 +23,7 @@ test.beforeEach(async ({ page }) => {
 test("the search page finds a fragrance misspelt, and says where it lives",
   async ({ page }) => {
   const errors = collectPageErrors(page);
-  await page.goto("/search.html?q=murkwod");
+  await page.goto("/search/?q=murkwod");
 
   const first = page.locator(".find-row").first();
   await expect(first.locator(".find-what")).toHaveText("Murkwood", { timeout: 15000 });
@@ -37,7 +37,7 @@ test("the search page finds a fragrance misspelt, and says where it lives",
 });
 
 test("following an answer opens the thing itself", async ({ page }) => {
-  await page.goto("/search.html?q=murkwood");
+  await page.goto("/search/?q=murkwood");
   const first = page.locator(".find-row").first();
   await expect(first).toBeVisible({ timeout: 15000 });
   await first.click();
@@ -53,7 +53,7 @@ test("following an answer opens the thing itself", async ({ page }) => {
 });
 
 test("a search with no answers says so", async ({ page }) => {
-  await page.goto("/search.html?q=zzzznothing");
+  await page.goto("/search/?q=zzzznothing");
   await expect(page.locator(".find-nothing")).toBeVisible({ timeout: 15000 });
   await expect(page.locator(".find-row")).toHaveCount(0);
   await expect(page.locator(".find-count")).toHaveText("000");
@@ -88,12 +88,12 @@ test("a page's own search looks over that page, and hands on what it cannot answ
   await page.locator(".sheet-search-field").fill("qqzzvv");
   await expect(page.locator(".sheet-found-none")).toBeVisible();
   await page.locator(".sheet-search-field").press("Enter");
-  await expect(page).toHaveURL(/search\.html\?q=qqzzvv$/);
+  await expect(page).toHaveURL(/\/search\/\?q=qqzzvv$/);
   await expect(page.locator(".find-nothing")).toBeVisible({ timeout: 15000 });
 });
 
 test("the theories page searches theories and nothing else", async ({ page }) => {
-  await page.goto("/categories/theories.html");
+  await page.goto("/theories/");
   await page.waitForTimeout(1200);
   await page.locator(".page-find-trigger").click();
   await page.locator(".page-find-field").fill("sweat");

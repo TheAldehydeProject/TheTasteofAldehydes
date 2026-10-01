@@ -21,7 +21,7 @@
 const { test, expect } = require("@playwright/test");
 const { serveDependenciesLocally, collectPageErrors } = require("./helpers");
 
-const SHEET = "/categories/scent-descriptions.html";
+const SHEET = "/scent-descriptions/";
 
 /** Wait for the wall to have been hung and every swing to have died. */
 async function waitForSheet(page) {

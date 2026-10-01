@@ -26,7 +26,7 @@
 #
 # and NOINDEX on what is not the site itself — its search page, the
 # sandbox pages, the templates, and the pages left forwarding from
-# where the houses and the test page used to be. It writes sitemap.xml (every page that is
+# where the houses, the test page and the Menu's pages used to be. It writes sitemap.xml (every page that is
 # indexed) and robots.txt (which names the sitemap, and keeps out the
 # archived copy of an old view in archive/, which is left untouched).
 #
@@ -40,18 +40,18 @@ os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 BASE = "https://thetasteofaldehydes.com/"
 SITE = "The Taste of Aldehydes"
 HOME = ("Home", "")
-SD = ("Scent descriptions", "categories/scent-descriptions.html")
-TH = ("Theories", "categories/theories.html")
-RE_ = ("Explorations & Researches", "categories/researches.html")
+SD = ("Scent descriptions", "scent-descriptions/")
+TH = ("Theories", "theories/")
+RE_ = ("Explorations & Researches", "explorations-and-researches/")
 
 P = {
  "index.html": dict(type="website", desc="A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for information, interpretations, theories and ideas.", crumbs=None),
- "categories/scent-descriptions.html": dict(desc="Scent descriptions: nine perfume houses, from Pineward and ADAR to Tombstone and Qimu & Musicians, and individual fragrances, each described.", crumbs=[HOME]),
- "categories/theories.html": dict(desc="Theories — some frameworks that I came up with myself: The Architecture of Sunscreen, The Architecture of Sweat and The Note Dissemination Framework.", crumbs=[HOME]),
- "categories/favorites.html": dict(desc="Favourites — things I like, no other criteria than that: fragrances in chapters, among them Des Cendres, Haxan and De Profundis.", crumbs=[HOME]),
- "categories/researches.html": dict(desc="Explorations & Researches. Here you will find my researches and my explorations: a guide to perfume, dupes, designers and niches, resins in perfumery, and more.", crumbs=[HOME]),
- "categories/note-library.html": dict(desc="The Note Library: every note named in a fragrance on this site, as a network in three dimensions — what each is, its variations, and its sources.", crumbs=[HOME]),
- "categories/other-2.html": dict(desc="Photography: pictures taken alongside the writing — mostly of the things being described, sometimes of the places they brought to mind.", crumbs=[HOME]),
+ "scent-descriptions/index.html": dict(desc="Scent descriptions: nine perfume houses, from Pineward and ADAR to Tombstone and Qimu & Musicians, and individual fragrances, each described.", crumbs=[HOME]),
+ "theories/index.html": dict(desc="Theories — some frameworks that I came up with myself: The Architecture of Sunscreen, The Architecture of Sweat and The Note Dissemination Framework.", crumbs=[HOME]),
+ "favourites/index.html": dict(desc="Favourites — things I like, no other criteria than that: fragrances in chapters, among them Des Cendres, Haxan and De Profundis.", crumbs=[HOME]),
+ "explorations-and-researches/index.html": dict(desc="Explorations & Researches. Here you will find my researches and my explorations: a guide to perfume, dupes, designers and niches, resins in perfumery, and more.", crumbs=[HOME]),
+ "note-library/index.html": dict(desc="The Note Library: every note named in a fragrance on this site, as a network in three dimensions — what each is, its variations, and its sources.", crumbs=[HOME]),
+ "photography/index.html": dict(desc="Photography: pictures taken alongside the writing — mostly of the things being described, sometimes of the places they brought to mind.", crumbs=[HOME]),
  "houses/pineward.html": dict(type="article", desc="Pineward, the house that smells like trees: forty-seven fragrances described with their notes and photographs — Murkwood, Snoqualmie, White Fir and more.", crumbs=[HOME, SD]),
  "houses/adar.html": dict(type="article", desc="ADAR, the house that you have never heard of: eleven fragrances described with their notes — Amber Zero, Aetherialism, Incantu, Lignum Dei, Tyrian and more.", crumbs=[HOME, SD]),
  "houses/almost-human.html": dict(type="article", desc="Almost Human, abstraction done quite well: Burning Bridges, Dear Future, Desert Hope, Ritual Code and Silent Rain, described with their olfactory landscapes.", crumbs=[HOME, SD]),
@@ -70,10 +70,10 @@ P = {
  "works/resins-in-perfumery.html": dict(type="article", desc="Resins in perfumery: what a resin is, and then examples of the most frequently used ones, as well as what makes them unique.", crumbs=[HOME, RE_]),
  "works/skin.html": dict(type="article", desc="Skin, and how it affects the perfume you wear: pH, bacteria, oily, dry and moisturized skin, diet, hormones and medications, and the geography of the skin.", crumbs=[HOME, RE_]),
  "works/buying-a-perfume.html": dict(type="article", desc="Buying a Perfume, simplifying the thought process: night or day, inside or out, summer or winter, safe or divisive, and the special cases.", crumbs=[HOME, RE_]),
- "contact.html": dict(desc="Get in touch with The Taste of Aldehydes, a personal project of perfume exploration: send a carrier pigeon, or an email.", crumbs=[HOME]),
+ "contact/index.html": dict(desc="Get in touch with The Taste of Aldehydes, a personal project of perfume exploration: send a carrier pigeon, or an email.", crumbs=[HOME]),
  # Not for search engines: the site's own search, the sandbox and the
  # templates, and the pages left standing where the houses used to be.
- "search.html": dict(desc="Search The Taste of Aldehydes: every house, fragrance, note and piece of writing on the site.", noindex=True),
+ "search/index.html": dict(desc="Search The Taste of Aldehydes: every house, fragrance, note and piece of writing on the site.", noindex=True),
   "works/test-node-a.html": dict(desc="A sandbox page, not a part of the site.", noindex=True),
  "works/test-node-b.html": dict(desc="A sandbox page, not a part of the site.", noindex=True),
  "works/example-article-work.html": dict(desc="A template for a piece of writing, not a part of the site.", noindex=True),
@@ -83,17 +83,28 @@ P = {
 for slug in ["adar", "almost-human", "ataraxia", "grande-parfums", "les-abstraits", "pineward"]:
     P["works/%s.html" % slug] = dict(desc=P["houses/%s.html" % slug]["desc"], noindex=True, canonical="houses/%s.html" % slug)
 P["works/individual-fragrances.html"] = dict(desc=P["individual-fragrances/individual-fragrances.html"]["desc"], noindex=True, canonical="individual-fragrances/individual-fragrances.html")
+# THE MENU'S PAGES AT ADDRESSES OF THEIR OWN NAMES (2026-10-01: "I want the
+# page to be thetasteofaldehydes.com/x where x is the name of the thing on
+# the menu"): each is a folder's index.html, known by the folder's address,
+# and the old addresses forward to them (and /home to the home page).
+MENU_MOVES = {"categories/scent-descriptions.html": "scent-descriptions", "categories/theories.html": "theories",
+              "categories/researches.html": "explorations-and-researches", "categories/favorites.html": "favourites",
+              "categories/note-library.html": "note-library", "categories/other-2.html": "photography",
+              "search.html": "search", "contact.html": "contact"}
+for old, new in MENU_MOVES.items():
+    P[old] = dict(desc=P[new + "/index.html"]["desc"], noindex=True, canonical=new + "/")
+P["home/index.html"] = dict(desc=P["index.html"]["desc"], noindex=True, canonical="")
 # The test page became the Note Library (2026-09-29), and forwards there.
-P["works/test-page.html"] = dict(desc=P["categories/note-library.html"]["desc"], noindex=True, canonical="categories/note-library.html")
+P["works/test-page.html"] = dict(desc=P["note-library/index.html"]["desc"], noindex=True, canonical="note-library/")
 
 # THE THEME COLOUR: each page's own ground, read off the page as it is
 # drawn. A page not named here is on the site's white paper.
 PAPER = "#fafaf9"
 THEME = {
  "index.html": "#1f1f20",   # the first slide's dark ground, since 2026-09-30
- "categories/scent-descriptions.html": "#ffffff",
- "categories/note-library.html": "#1f1f20", "works/test-page.html": "#1f1f20",
- "categories/theories.html": "#15171d",
+ "scent-descriptions/index.html": "#ffffff",
+ "note-library/index.html": "#1f1f20", "works/test-page.html": "#1f1f20",
+ "theories/index.html": "#15171d",
  "houses/adar.html": "#07070a", "works/adar.html": "#07070a",
  "houses/ataraxia.html": "#1b1d21", "works/ataraxia.html": "#1b1d21",
  "houses/grande-parfums.html": "#f6f2e8", "works/grande-parfums.html": "#f6f2e8",
@@ -102,13 +113,15 @@ THEME = {
  "houses/qimu-and-musicians.html": "#e2ebf6",
  "houses/tale-parfums.html": "#fbf8f0",
  "houses/tombstone.html": "#ecebe8",
- "search.html": "#191c21",
+ "search/index.html": "#191c21",
 }
 for essay in ["theory-01", "theory-02", "theory-03", "resins-in-perfumery", "skin",
               "buying-a-perfume", "dupes-designers-and-niches", "my-personal-introduction-to-perfume"]:
     THEME["works/%s.html" % essay] = "#0a0b0e"
 
 def esc(t): return H.escape(t, quote=True)
+# A page's address: a folder's index.html is known by the folder.
+def addr(path): return "" if path == "index.html" else re.sub(r"(^|/)index\.html$", r"\1", path)
 
 done = []
 for path, meta in P.items():
@@ -120,7 +133,7 @@ for path, meta in P.items():
     short = title.replace(" — " + SITE, "").strip() or SITE
     depth = path.count("/")
     root = "../" * depth
-    canon = BASE + (meta.get("canonical", path) if path != "index.html" else "")
+    canon = BASE + (meta["canonical"] if "canonical" in meta else addr(path))
     lines = ["<!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->",
              '<meta name="description" content="%s">' % esc(meta["desc"])]
     # A forwarding page names the house's own address already, as one of
@@ -159,7 +172,7 @@ for path, meta in P.items():
                          "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": SITE, "url": BASE}})
         if meta.get("crumbs"):
             items = [{"@type": "ListItem", "position": i + 1, "name": n, "item": BASE + u}
-                     for i, (n, u) in enumerate(meta["crumbs"] + [(short, path)])]
+                     for i, (n, u) in enumerate(meta["crumbs"] + [(short, addr(path))])]
             data.append({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": items})
         for d in data:
             lines.append('<script type="application/ld+json">' + json.dumps(d, ensure_ascii=False) + "</script>")
@@ -178,12 +191,12 @@ urls.sort(key=lambda p: (order.get(p, 1), p))
 xml = ['<?xml version="1.0" encoding="UTF-8"?>',
        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
 for p in urls:
-    loc = BASE + ("" if p == "index.html" else p)
-    pri = "1.0" if p == "index.html" else "0.8" if p.startswith(("categories/", "houses/")) else "0.6"
+    loc = BASE + addr(p)
+    pri = "1.0" if p == "index.html" else "0.8" if p.startswith(tuple(MENU_MOVES.values()) + ("houses/",)) else "0.6"
     xml.append("  <url><loc>%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>" % (esc(loc), today, pri))
 xml.append("</urlset>")
 open("sitemap.xml", "w").write("\n".join(xml) + "\n")
 open("robots.txt", "w").write("User-agent: *\nAllow: /\n# A copy of an earlier view, kept as it was; not a page of the site.\nDisallow: /archive/\n\nSitemap: %ssitemap.xml\n" % BASE)
 print(len(done), "pages;", len(urls), "in the sitemap")
-missing = [f for f in os.popen("ls *.html categories/*.html houses/*.html individual-fragrances/*.html works/*.html").read().split() if f not in P]
+missing = [f for f in os.popen("ls *.html */*.html").read().split() if f not in P and not f.startswith("archive/")]
 print("pages without an entry:", missing)

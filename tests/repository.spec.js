@@ -42,7 +42,9 @@ test("every link between pages points at a file that exists", async () => {
       if (href.startsWith("mailto:") || href.startsWith("#") || href.startsWith("data:")) continue;
 
       const target = path.resolve(path.dirname(file), href.split("#")[0].split("?")[0]);
-      if (fs.existsSync(target)) continue;
+      // (a link to a folder — every Menu page is one since 2026-10-01 — is
+      // a link to its index.html, which has to be there)
+      if (fs.existsSync(target) && (!fs.statSync(target).isDirectory() || fs.existsSync(path.join(target, "index.html")))) continue;
 
       // A PICTURE THAT IS NOT THERE YET IS NOT A BROKEN LINK. The
       // pages name the photograph they want for each piece — ADAR's
@@ -75,8 +77,8 @@ test("the links defined in JavaScript point at pages that exist", async () => {
     expect(hrefs.length, `${name} should define some links`).toBeGreaterThan(0);
 
     for (const href of hrefs) {
-      // These are written relative to the site root.
-      if (!fs.existsSync(path.join(ROOT, href))) problems.push(`${name} -> ${href}`);
+      // These are written relative to the site root; a folder is its index.html.
+      if (!fs.existsSync(path.join(ROOT, href, href === "" || href.endsWith("/") ? "index.html" : ""))) problems.push(`${name} -> ${href}`);
     }
   }
 
@@ -242,6 +244,20 @@ test("every old address still forwards, and carries its anchor", () => {
     "works/les-abstraits.html": "../houses/les-abstraits.html",
     "works/individual-fragrances.html":
       "../individual-fragrances/individual-fragrances.html",
+    "works/test-page.html": "../note-library/",
+    // THE MENU'S PAGES AT ADDRESSES OF THEIR OWN NAMES (2026-10-01: "I want
+    // the page to be thetasteofaldehydes.com/x where x is the name of the
+    // thing on the menu"), and their old addresses kept, forwarding — the
+    // query too (a search's ?q=) — and /home to the home page.
+    "categories/scent-descriptions.html": "../scent-descriptions/",
+    "categories/theories.html": "../theories/",
+    "categories/researches.html": "../explorations-and-researches/",
+    "categories/favorites.html": "../favourites/",
+    "categories/note-library.html": "../note-library/",
+    "categories/other-2.html": "../photography/",
+    "search.html": "search/",
+    "contact.html": "contact/",
+    "home/index.html": "../",
   };
 
   const wrong = [];
@@ -250,12 +266,15 @@ test("every old address still forwards, and carries its anchor", () => {
     if (!fs.existsSync(at)) { wrong.push(`${from} is missing entirely`); continue; }
     const html = fs.readFileSync(at, "utf8");
 
-    // The page it points at has to be a real file.
-    const lands = path.join(ROOT, "works", to);
+    // The page it points at has to be a real file (a folder's index.html).
+    const lands = path.join(path.dirname(at), to, to.endsWith("/") ? "index.html" : "");
     if (!fs.existsSync(lands)) wrong.push(`${from} forwards to ${to}, which does not exist`);
+    if (from.startsWith("categories/") || from === "search.html" || from === "contact.html") {
+      if (!/location\.search\s*\+\s*location\.hash/.test(html)) wrong.push(`${from} does not carry the query across`);
+    }
 
     // The script, carrying the anchor. This is the one that matters.
-    if (!/location\.replace\(\s*"([^"]+)"\s*\+\s*location\.hash\s*\)/.test(html)) {
+    if (!/location\.replace\(\s*"([^"]+)"\s*\+\s*(location\.search\s*\+\s*)?location\.hash\s*\)/.test(html)) {
       wrong.push(`${from} does not forward by script with the anchor kept`);
     } else {
       const said = /location\.replace\(\s*"([^"]+)"\s*\+/.exec(html)[1];
@@ -280,18 +299,28 @@ test("nothing inside the site links at a forwarding page", () => {
   const stale = [
     "works/pineward.html", "works/adar.html", "works/almost-human.html",
     "works/ataraxia.html", "works/grande-parfums.html", "works/les-abstraits.html",
-    "works/individual-fragrances.html",
+    "works/individual-fragrances.html", "works/test-page.html",
+    "categories/scent-descriptions.html", "categories/theories.html", "categories/researches.html",
+    "categories/favorites.html", "categories/note-library.html", "categories/other-2.html",
+    "search.html", "contact.html",
   ];
+  const signposts = [...stale, "home/index.html"];
   const found = [];
   for (const page of htmlFiles()) {
     const from = path.relative(ROOT, page).split(path.sep).join("/");
-    if (stale.includes(from)) continue;            // the signposts themselves
+    if (signposts.includes(from) || from.startsWith("archive/")) continue;   // the signposts themselves
     const src = withoutComments(fs.readFileSync(page, "utf8"));
-    for (const old of stale) {
-      const leaf = old.replace("works/", "");
-      const re = new RegExp(`(?:href|src)="[^"]*works/${leaf.replace(".", "\\.")}`, "g");
-      if (re.test(src)) found.push(`${from} links at ${old}`);
+    const dir = path.dirname(page);
+    for (const [, href] of src.matchAll(/(?:href|src)="([^"#?]+)/g)) {
+      if (/^([a-z]+:|\/\/)/.test(href)) continue;
+      const to = path.relative(ROOT, path.resolve(dir, href)).split(path.sep).join("/");
+      if (stale.includes(to) || to === "home" || to === "home/index.html") found.push(`${from} links at ${to}`);
     }
+  }
+  // and the links written in the scripts, from the site's root
+  for (const name of ["nav.js", "node-scene.js", "search.js", "search-page.js"]) {
+    const src = fs.readFileSync(path.join(ROOT, name), "utf8");
+    for (const old of stale) if (src.includes(`"${old}`)) found.push(`${name} links at ${old}`);
   }
   expect(found, "links pointing at a forwarding page instead of the real one").toEqual([]);
 });
@@ -359,7 +388,7 @@ test("every page tells search engines what it is, on the site's own address", ()
   const listed = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
   listed.forEach((loc) => {
     expect(loc.startsWith(base), loc).toBe(true);
-    const file = loc === base ? "index.html" : loc.slice(base.length);
+    const file = loc === base ? "index.html" : loc.slice(base.length).replace(/\/$/, "/index.html");
     expect(fs.existsSync(path.join(ROOT, file)), `${loc} is a page that exists`).toBe(true);
   });
   expect(fs.readFileSync(path.join(ROOT, "robots.txt"), "utf8")).toContain("Sitemap: " + base + "sitemap.xml");
@@ -379,10 +408,11 @@ test("every page tells search engines what it is, on the site's own address", ()
     const hidden = /<meta name="robots" content="noindex/.test(head);
     const canonical = head.match(/<link rel="canonical" href="([^"]+)"/)[1];
     if (hidden) {
-      expect(listed.some((loc) => loc.endsWith("/" + name) || (name === "index.html" && loc === base)), `${name} is left out of the sitemap`).toBe(false);
+      expect(listed.some((loc) => loc === base + name.replace(/(^|\/)index\.html$/, "$1")), `${name} is left out of the sitemap`).toBe(false);
       continue;
     }
-    expect(canonical, `${name}: its address on the site's own domain`).toBe(name === "index.html" ? base : base + name);
+    // (a folder's index.html is known by the folder: thetasteofaldehydes.com/theories/)
+    expect(canonical, `${name}: its address on the site's own domain`).toBe(name === "index.html" ? base : base + name.replace(/(^|\/)index\.html$/, "$1"));
     expect(listed, `${name} is in the sitemap`).toContain(canonical);
     for (const property of ["og:title", "og:description", "og:url", "og:image", "og:site_name"]) {
       expect(count(new RegExp(`<meta property="${property}" content="[^"]+">`, "g")), `${name}: ${property}`).toBe(1);
@@ -400,7 +430,7 @@ test("every page tells search engines what it is, on the site's own address", ()
     });
   }
   // What is not the site itself is kept out.
-  for (const hidden of ["search.html", "works/test-page.html", "works/test-node-a.html", "works/example-article-work.html", "works/pineward.html"]) {
+  for (const hidden of ["search/index.html", "search.html", "categories/theories.html", "home/index.html", "works/test-page.html", "works/test-node-a.html", "works/example-article-work.html", "works/pineward.html"]) {
     expect(fs.readFileSync(path.join(ROOT, hidden), "utf8"), hidden).toContain('<meta name="robots" content="noindex, follow">');
   }
   // And the home page carries the site's name for a search engine to show.

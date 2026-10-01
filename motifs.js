@@ -1,6 +1,6 @@
 // ============================================================
 // THE MOTIFS — what comes up over the Houses view while you rest
-// on a house (categories/scent-descriptions.html)
+// on a house (scent-descriptions/index.html)
 //
 // The owner, 2026-09-23: "whenever you hover one of them, motifs from
 // that page start occuring and appearing on the SD Houses page, while

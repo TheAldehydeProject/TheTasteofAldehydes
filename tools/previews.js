@@ -33,20 +33,20 @@ const PORT = 8765;
 // it has drawn: a key pressed, so the Note Library's "Open menu here"
 // goes away.
 const PAGES = [
-  { name: "scent-descriptions", url: "categories/scent-descriptions.html", wait: 5200 },
-  { name: "theories", url: "categories/theories.html", wait: 5600 },
-  { name: "researches", url: "categories/researches.html", wait: 3200 },
-  { name: "favourites", url: "categories/favorites.html", wait: 4200 },
+  { name: "scent-descriptions", url: "scent-descriptions/", wait: 5200 },
+  { name: "theories", url: "theories/", wait: 5600 },
+  { name: "researches", url: "explorations-and-researches/", wait: 3200 },
+  { name: "favourites", url: "favourites/", wait: 4200 },
   {
-    name: "note-library", url: "categories/note-library.html", wait: 5000,
+    name: "note-library", url: "note-library/", wait: 5000,
     after: async (page) => { await page.keyboard.press("Shift"); await page.waitForTimeout(1400); },
   },
-  { name: "photography", url: "categories/other-2.html", wait: 1800 },
+  { name: "photography", url: "photography/", wait: 1800 },
   {
-    name: "search", url: "search.html", wait: 2600,
+    name: "search", url: "search/", wait: 2600,
     then: async (page) => { await page.locator("input").first().fill("pine"); },
   },
-  { name: "contact", url: "contact.html", wait: 2600 },
+  { name: "contact", url: "contact/", wait: 2600 },
 ];
 
 (async () => {

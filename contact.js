@@ -1,5 +1,5 @@
 // ============================================================
-// THE CONTACT DETAILS, BEHIND A CAPTCHA — contact.html
+// THE CONTACT DETAILS, BEHIND A CAPTCHA — contact/index.html
 //
 // The owner, 2026-09-26: "in contact, add a captcha that hides the
 // contact information (let it be filer contact information)" — and

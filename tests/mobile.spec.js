@@ -27,12 +27,12 @@ const PHONE = { width: 390, height: 844 };
 
 const PAGES = [
   "/index.html",
-  "/categories/scent-descriptions.html",
-  "/categories/theories.html",
-  "/categories/favorites.html",
-  "/categories/researches.html",
-  "/categories/other-2.html",
-  "/categories/note-library.html",
+  "/scent-descriptions/",
+  "/theories/",
+  "/favourites/",
+  "/explorations-and-researches/",
+  "/photography/",
+  "/note-library/",
   "/houses/pineward.html",
   "/houses/adar.html",
   "/houses/almost-human.html",
@@ -45,8 +45,8 @@ const PAGES = [
   "/works/buying-a-perfume.html",
   "/works/dupes-designers-and-niches.html",
   "/works/my-personal-introduction-to-perfume.html",
-  "/search.html",
-  "/contact.html",
+  "/search/",
+  "/contact/",
 ];
 
 test.describe("on a phone", () => {

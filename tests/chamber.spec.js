@@ -40,7 +40,7 @@
 const { test, expect } = require("@playwright/test");
 const { serveDependenciesLocally, collectPageErrors } = require("./helpers");
 
-const PAGE = "/categories/favorites.html";
+const PAGE = "/favourites/";
 
 /** How much ink one canvas of the drawing has laid down in a square of
     the window. `which` is ".chamber-field" (everything further than

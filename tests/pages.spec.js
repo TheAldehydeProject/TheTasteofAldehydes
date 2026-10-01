@@ -14,14 +14,14 @@ const { serveDependenciesLocally, collectPageErrors, HOME_WITH_MAP } = require("
 // SITE_ROOT has to match.
 const PAGES = [
   { url: "/index.html", root: "", title: /The Taste of Aldehydes/ },
-  { url: "/contact.html", root: "", title: /Contact/ },
-  { url: "/search.html", root: "", title: /Search/ },
-  { url: "/categories/scent-descriptions.html", root: "../", title: /Scent descriptions/ },
-  { url: "/categories/theories.html", root: "../", title: /Theories/ },
-  { url: "/categories/favorites.html", root: "../", title: /Favourites/ },
-  { url: "/categories/researches.html", root: "../", title: /Explorations/ },
-  { url: "/categories/other-2.html", root: "../", title: /Photography/ },
-  { url: "/categories/note-library.html", root: "../", title: /Note Library/ },
+  { url: "/contact/", root: "../", title: /Contact/ },
+  { url: "/search/", root: "../", title: /Search/ },
+  { url: "/scent-descriptions/", root: "../", title: /Scent descriptions/ },
+  { url: "/theories/", root: "../", title: /Theories/ },
+  { url: "/favourites/", root: "../", title: /Favourites/ },
+  { url: "/explorations-and-researches/", root: "../", title: /Explorations/ },
+  { url: "/photography/", root: "../", title: /Photography/ },
+  { url: "/note-library/", root: "../", title: /Note Library/ },
   { url: "/works/example-gallery-work.html", root: "../", title: /Vetiver/ },
   { url: "/works/example-article-work.html", root: "../", title: /vetiver/ },
   // ADAR names the photograph it wants for each fragrance and works
@@ -94,7 +94,7 @@ test("every menu link on every page points at a page that exists", async ({ page
    other words are the check's own; nothing to follow and no address on
    the page until the check is passed (tests/contact.spec.js has that). */
 test("the contact page says to send a carrier pigeon, or an email behind a check", async ({ page }) => {
-  await page.goto("/contact.html");
+  await page.goto("/contact/");
   await expect(page.locator(".page-content h1")).toHaveText("Get in touch, send a carrier pigeon.");
   const rest = await page.evaluate(() => {
     const content = document.querySelector(".page-content").cloneNode(true);

@@ -3,7 +3,7 @@
 //
 // One way of looking things up, used in three places:
 //
-//   THE SEARCH PAGE (search.html) looks over the WHOLE site. It has no
+//   THE SEARCH PAGE (search/index.html) looks over the WHOLE site. It has no
 //   list of its own to keep: it fetches the pages named in its own
 //   manifest and reads them with the same collector the pages use on
 //   themselves, so anything added to a page is findable the moment it
@@ -28,7 +28,7 @@
 // still reachable by hand.
 // ============================================================
 (function () {
-  const SEARCH_PAGE = "search.html";
+  const SEARCH_PAGE = "search/";
 
   // ============================================================
   // MATCHING

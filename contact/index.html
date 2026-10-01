@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — The Taste of Aldehydes</title>
+<!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
+<meta name="description" content="Get in touch with The Taste of Aldehydes, a personal project of perfume exploration: send a carrier pigeon, or an email.">
+<link rel="canonical" href="https://thetasteofaldehydes.com/contact/">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta name="theme-color" content="#fafaf9">
+<meta property="og:site_name" content="The Taste of Aldehydes">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Contact">
+<meta property="og:description" content="Get in touch with The Taste of Aldehydes, a personal project of perfume exploration: send a carrier pigeon, or an email.">
+<meta property="og:url" content="https://thetasteofaldehydes.com/contact/">
+<meta property="og:image" content="https://thetasteofaldehydes.com/images/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Contact">
+<meta name="twitter:description" content="Get in touch with The Taste of Aldehydes, a personal project of perfume exploration: send a carrier pigeon, or an email.">
+<meta name="twitter:image" content="https://thetasteofaldehydes.com/images/social-card.png">
+<meta name="twitter:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://thetasteofaldehydes.com/"}, {"@type": "ListItem", "position": 2, "name": "Contact", "item": "https://thetasteofaldehydes.com/contact/"}]}</script>
+<!-- SEARCH ENGINES: end -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<!--
+  CONTACT. The owner, 2026-09-24: "remove the email and remove
+  everything. Get in touch, send a carrier pigeon. put that instead".
+  So that sentence stands at the head of the page.
+
+  AND UNDER IT, THE DETAILS BEHIND A CAPTCHA — the owner, 2026-09-26:
+  "in contact, add a captcha that hides the contact information (let it
+  be filer contact information)". contact.js draws a few characters in
+  specks; typed back, they show the details. Then, the same night: "for
+  the contact information, keep this: Get in touch, send a carrier
+  pigeon. Below it add :or just send an email: and there add the stuff
+  that i told you to" — so the owner's "or just send an email:" stands
+  under the sentence, as the head of the captcha, and the one detail it
+  shows is the (filler) email. On 2026-09-29 the line became "... or an
+  email:", at the owner's word ('rewrite "or just send an email:" to "...
+  or an email:"').
+
+  THE DETAILS ARE FILLER, and they are NOT written in this page in the
+  clear — so that a program reading pages for addresses finds none. They
+  are in `data-sealed` below, scrambled; contact.js unscrambles them
+  once the characters are typed. To change them, the details are a list
+  of [label, what it says, link or ""], written as JSON, each character
+  XORed with the word "aldehydes" in turn, then base64 — the same steps
+  contact.js takes backwards (`unseal`).
+-->
+<main class="page-content contact-page">
+  <h1>Get in touch, send a carrier pigeon.</h1>
+
+  <section class="contact-lock" aria-labelledby="contact-lock-name"
+           data-sealed="OjdGIAUYDQlRTU4MAAQVCyUWGQ0JFQQcSgYcDE5IRwUYDQkHDlYMAAQVCyUWGQ0JFQQcSgYcDE45OA==">
+    <p class="contact-or" id="contact-lock-name">... or an email:</p>
+    <form class="contact-check" hidden>
+      <div class="contact-captcha">
+        <canvas class="contact-captcha-canvas" role="img" aria-label="Characters drawn in specks, to type into the box below"></canvas>
+        <button class="contact-captcha-new" type="button" aria-label="Draw new characters">New characters</button>
+      </div>
+      <label class="contact-captcha-label" for="contact-captcha-field">Type the characters above</label>
+      <div class="contact-captcha-row">
+        <input class="contact-captcha-field" id="contact-captcha-field" type="text" autocomplete="off"
+               autocapitalize="characters" spellcheck="false" maxlength="10">
+        <button class="contact-captcha-go" type="submit">Show the email</button>
+      </div>
+      <p class="contact-captcha-say" aria-live="polite"></p>
+    </form>
+    <dl class="contact-details" hidden></dl>
+    <p class="contact-lock-nojs">The email is shown once a short check is passed, and the check needs JavaScript.</p>
+  </section>
+</main>
+
+<script>window.SITE_ROOT = "../";</script>
+<script src="../nav.js"></script>
+<script src="../contact.js"></script>
+</body>
+</html>

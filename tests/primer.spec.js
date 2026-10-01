@@ -22,7 +22,7 @@ test.beforeEach(async ({ page }) => {
    sorted by number: turned round, it is last, and turned back it is
    first again. */
 test("it is 000, the first result, and an exploration", async ({ page }) => {
-  await page.goto("/categories/researches.html");
+  await page.goto("/explorations-and-researches/");
   const first = page.locator(".index-table tbody tr").first();
   await expect(first.locator(".index-no")).toHaveText("000");
   await expect(first.locator(".index-kind")).toHaveText("Exploration");

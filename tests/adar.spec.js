@@ -280,7 +280,7 @@ test("without its script the page is still all of its writing", async ({ page })
 });
 
 test("the house is what the sheet's second picture points at", async ({ page }) => {
-  await page.goto("/categories/scent-descriptions.html");
+  await page.goto("/scent-descriptions/");
   const second = page.locator(".sheet-frame").nth(1);
   await expect(second).toHaveAttribute("href", "../houses/adar.html");
   await expect(second.locator(".sheet-caption"))

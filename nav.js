@@ -10,7 +10,13 @@
 // SITE_ROOT tells this script how many folders deep the current
 // page is, so links work correctly wherever the page lives:
 //   - on index.html (at the root itself), use ""
-//   - on a page inside /categories/ or /works/, use "../"
+//   - on a page a folder in — every Menu page (/theories/,
+//     /note-library/ …), a house, a piece in /works/ — use "../"
+//
+// THE MENU'S PAGES ARE AT ADDRESSES OF THEIR OWN NAMES (2026-10-01: "I
+// want the page to be thetasteofaldehydes.com/x where x is the name of the
+// thing on the menu"): each is the index.html of a folder of that name,
+// and its link is the folder ("theories/"); the old addresses forward.
 //
 // To add or rename a page in the menu, edit the SITE_LINKS list
 // below — that's the only place it needs to change.
@@ -91,15 +97,15 @@
 })();
 
 const SITE_LINKS = [
-  { label: "Home", href: "index.html" },
-  { label: "Scent descriptions", href: "categories/scent-descriptions.html" },
-  { label: "Theories", href: "categories/theories.html" },
-  { label: "Explorations & Researches", href: "categories/researches.html" },
-  { label: "Favourites", href: "categories/favorites.html" },
-  { label: "Note Library", href: "categories/note-library.html" },
-  { label: "Photography", href: "categories/other-2.html" },
-  { label: "Search", href: "search.html" },
-  { label: "Contact", href: "contact.html" },
+  { label: "Home", href: "" },
+  { label: "Scent descriptions", href: "scent-descriptions/" },
+  { label: "Theories", href: "theories/" },
+  { label: "Explorations & Researches", href: "explorations-and-researches/" },
+  { label: "Favourites", href: "favourites/" },
+  { label: "Note Library", href: "note-library/" },
+  { label: "Photography", href: "photography/" },
+  { label: "Search", href: "search/" },
+  { label: "Contact", href: "contact/" },
 ];
 
 // ============================================================
@@ -123,11 +129,13 @@ const SITE_LINKS = [
 
 (function () {
   const root = typeof window.SITE_ROOT === "string" ? window.SITE_ROOT : "";
-  // A URL ending in "/" — which is how the site root is normally visited —
-  // has no filename on the end of it, and the server quietly serves
-  // index.html for it. Without treating that empty case as index.html, the
-  // Home link never gets marked as the page you're currently on.
-  const currentPath = window.location.pathname.split("/").pop() || "index.html";
+  // WHICH PAGE THIS IS, by its whole address. Every page in the Menu is a
+  // folder of its own name since 2026-10-01 (thetasteofaldehydes.com/theories/,
+  // served as its index.html), so the name on the end of the address says
+  // nothing — every one of them ends in "/" — and "/x/" and "/x/index.html"
+  // are the same page.
+  const same = (path) => path.replace(/index\.html$/, "");
+  const currentPath = same(window.location.pathname);
 
   const trigger = document.createElement("button");
   trigger.className = "menu-trigger";
@@ -146,10 +154,10 @@ const SITE_LINKS = [
   SITE_LINKS.forEach((link) => {
     const li = document.createElement("li");
     const a = document.createElement("a");
-    a.href = root + link.href;
+    // (Home is the site's own address: the root, or "./" from the root)
+    a.href = root + link.href || "./";
     a.textContent = link.label;
-    const linkFile = link.href.split("/").pop();
-    if (linkFile === currentPath) a.classList.add("menu-current");
+    if (same(new URL(a.href, window.location.href).pathname) === currentPath) a.classList.add("menu-current");
     li.appendChild(a);
     list.appendChild(li);
   });
@@ -200,21 +208,28 @@ const SITE_LINKS = [
 //
 // The aldehyde itself, R–C(=O)–H, drawn in hairlines as a chemistry book
 // draws it (the site's own icon's molecule), in a cloud of specks in the
-// home page's colours, and a vapour of specks rising off the oxygen; under
-// it, three words for what it smells of. SVG, one small canvas and the
-// stylesheet, in the site's own two faces.
+// home page's colours; under it, three words for what it smells of. SVG,
+// one small canvas and the stylesheet, in the site's own two faces.
 //
 // THE CLOUD (2026-09-30: "i dont want the circuling text around it; i want
 // it to have particles similar in colour to that in the home page. not
 // identical, but in general. if you want to keep text then keep metallic
 // cold and soapy"): specks in the home page's warm grey, gold and violet —
-// the gold round the double bond, the violet in two lobes off the oxygen,
-// the grey a loose haze round the whole — each turning slowly about its
-// place and twinkling, drawn only while the menu is open. It is not the
-// home page's cloud (that is the real one, solved): it only says the same
-// thing in the same colours. The ring of words that turned round it —
-// metallic, cold, fizzing, soapy, waxy, clean linen, snuffed candle,
-// orange peel — is gone; METALLIC, COLD and SOAPY stand still under it.
+// the gold round the double bond, the violet in two lobes off the oxygen —
+// each turning slowly about its place and twinkling, drawn only while the
+// menu is open. It is not the home page's cloud (that is the real one,
+// solved): it only says the same thing in the same colours. The ring of
+// words that turned round it — metallic, cold, fizzing, soapy, waxy, clean
+// linen, snuffed candle, orange peel — is gone; METALLIC, COLD and SOAPY
+// stand still under it.
+//
+// THE SPHERE (2026-10-01: "the aldehyde in the menu shouldnt have particles
+// coming up exclusively; i want them to be around it and kind of exist in a
+// sphere around it"): the vapour that rose off the oxygen is gone, and the
+// specks round the molecule stand in a sphere about it instead, most of them
+// out towards its two rings and some within, turning slowly about a leaning
+// axis — the nearer side larger and brighter, the far side faint — each
+// breathing a little in and out of its place.
 //
 // It is ornament, and is kept from a screen reader. It stands only where
 // there is room for it — beside the list on a wide window, in the corner
@@ -245,25 +260,9 @@ const SITE_LINKS = [
         '<text x="200" y="203">C</text><text x="200" y="111">O</text>' +
         '<text x="126" y="259">R</text><text x="274" y="259">H</text>' +
       "</g>" +
-      '<g class="ma-vapour"></g>' +
     "</svg>" +
     '<p class="ma-words">' + WORDS.map((w) => "<span>" + w + "</span>").join("") + "</p>" +
     '<p class="ma-caption"><span>R–CHO</span><span>The smell of aldehydes</span></p>';
-  // The vapour: specks rising off the oxygen, each on a clock of its own.
-  const vapour = aside.querySelector(".ma-vapour");
-  for (let i = 0; i < 18; i++) {
-    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    c.setAttribute("cx", String(200 + (Math.random() - 0.5) * 16));
-    c.setAttribute("cy", "92");
-    c.setAttribute("r", String(0.8 + Math.random() * 1.4));
-    // (in the lone pair's violet and the double bond's gold, by turns)
-    c.setAttribute("class", i % 3 === 0 ? "ma-gold" : "ma-violet");
-    c.style.setProperty("--drift", ((Math.random() - 0.5) * 60).toFixed(1) + "px");
-    c.style.setProperty("--rise", (-50 - Math.random() * 60).toFixed(1) + "px");
-    c.style.animationDelay = (-Math.random() * 4.8).toFixed(2) + "s";
-    c.style.animationDuration = (3.6 + Math.random() * 2.4).toFixed(2) + "s";
-    vapour.appendChild(c);
-  }
   overlay.appendChild(aside);
 
   // THE CLOUD, on its canvas under the drawing, in the drawing's own 400 ×
@@ -292,10 +291,30 @@ const SITE_LINKS = [
   // the lone pair: two lobes off the oxygen, up and out, in violet
   add(110, VIOLET, [164, 86], 17, 13, 0.8);
   add(110, VIOLET, [236, 86], 17, 13, 0.8);
-  // everything else: a loose haze round the whole, in the warm grey
-  add(260, GREY, [200, 196], 72, 70, 0.5);
-  add(60, GREY, [140, 246], 22, 18, 0.55);
-  add(60, GREY, [260, 246], 22, 18, 0.55);
+  // a little of everything else close round the bonds, in the warm grey
+  add(110, GREY, [200, 196], 48, 46, 0.45);
+  add(40, GREY, [140, 246], 20, 16, 0.5);
+  add(40, GREY, [260, 246], 20, 16, 0.5);
+
+  // THE SPHERE round it all: a place on a sphere about the drawing's middle
+  // for each speck (as many out towards its rings as within), in three
+  // dimensions, turned each frame about a leaning axis and seen in a gentle
+  // perspective.
+  const MID = [200, 196], R = 168, FOCAL = 760, TILT = 0.42, TURN = 0.11;
+  const sphere = [];
+  for (let i = 0; i < 640; i++) {
+    const u = rnd() * 2 - 1, th = rnd() * 6.283, w = Math.sqrt(1 - u * u);
+    // most near the shell, some well within it
+    const r = R * (rnd() < 0.72 ? 0.84 + rnd() * 0.2 : 0.38 + rnd() * 0.46);
+    const pick = rnd();
+    sphere.push({
+      x: r * w * Math.cos(th), y: r * u, z: r * w * Math.sin(th),
+      tone: pick < 0.16 ? GOLD : pick < 0.3 ? VIOLET : GREY,
+      size: 0.45 + rnd() * 0.95, a: 0.3 + rnd() * 0.55,
+      breathe: 0.02 + rnd() * 0.04, ph: rnd() * 6.283,
+    });
+  }
+  const cosT = Math.cos(TILT), sinT = Math.sin(TILT);
 
   let raf = 0, born = 0, size = 0, ratio = 1;
   function frame(now) {
@@ -314,6 +333,21 @@ const SITE_LINKS = [
     ctx.setTransform(k, 0, 0, k, 0, 0);
     ctx.clearRect(0, 0, 400, 400);
     ctx.globalCompositeOperation = "lighter";
+    // the sphere: the far side first, faint and small, the near side last
+    const spin = 0.6 + t * TURN, cs = Math.cos(spin), sn = Math.sin(spin);
+    for (const p of sphere) {
+      const b = 1 + (still.matches ? 0 : p.breathe * Math.sin(t * 0.8 + p.ph));
+      // turned about the upright, then leant towards you
+      const x1 = (p.x * cs + p.z * sn) * b, z1 = (-p.x * sn + p.z * cs) * b, y1 = p.y * b;
+      const y2 = y1 * cosT - z1 * sinT, z2 = y1 * sinT + z1 * cosT;
+      const f = FOCAL / (FOCAL - z2);
+      const near = (z2 / R + 1) / 2;                    // 0 the far side, 1 the near
+      const twinkle = still.matches ? 1 : 0.75 + 0.25 * Math.sin(t * 1.3 + p.ph * 5);
+      ctx.fillStyle = "rgba(" + p.tone + "," + (p.a * (0.22 + 0.78 * near) * twinkle).toFixed(3) + ")";
+      ctx.beginPath();
+      ctx.arc(MID[0] + x1 * f, MID[1] + y2 * f, p.size * f * (0.7 + 0.5 * near), 0, 6.283);
+      ctx.fill();
+    }
     for (const p of specks) {
       const a = p.ph + t * p.turn;
       const x = p.x + Math.cos(a) * p.orbit + (still.matches ? 0 : Math.sin(p.y * 0.05 + t * 0.5) * 1.6);

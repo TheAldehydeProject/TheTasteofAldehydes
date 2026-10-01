@@ -1,5 +1,5 @@
 // ============================================================
-// PHOTOGRAPHY — categories/other-2.html only
+// PHOTOGRAPHY — photography/index.html only
 //
 // The page is laid out in its own markup and is complete without this
 // file. What this adds is the two things a sheet of photographs wants

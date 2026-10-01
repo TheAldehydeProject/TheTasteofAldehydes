@@ -31,7 +31,7 @@
 const fs = require("fs");
 const path = require("path");
 const { test, expect } = require("@playwright/test");
-const { serveDependenciesLocally, collectPageErrors, blockThreeJs, jumpToSlide, toStage, stageAt, HOME_WITH_MAP } = require("./helpers");
+const { serveDependenciesLocally, collectPageErrors, blockThreeJs, jumpToSlide, toStage, stageY, stageAt, HOME_WITH_MAP } = require("./helpers");
 
 const state = (page) => page.evaluate(() => document.getElementById("molecule").dataset.state);
 const settled = (page, k, timeout = 8000) => expect.poll(() => stageAt(page), { timeout }).toBeCloseTo(k, 2);
@@ -227,6 +227,47 @@ test("five stages, smoothly: the title, the title gone, the aldehyde upright, it
   expect(errors).toEqual([]);
 });
 
+/* "just prolongue the horizontal to vertical transformation of the
+   aldehyde. thats the only part that looks fast. I want you to smooth it
+   out" (2026-10-01). Its leg of the page is the longest (LEGS in landing.js)
+   and the turn follows the page on a spring of its own, so a key pressed —
+   the quickest way there — turns it over two seconds and more, never faster
+   than about ninety degrees a second; it took a second, at up to 160. */
+test("the turn upright is prolonged and smooth: its leg the longest, and never quick", async ({ page }) => {
+  test.setTimeout(90000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/index.html");
+  await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
+  const legs = (await page.locator("#aldehyde-stage").getAttribute("data-legs")).split(" ").map(Number);
+  expect(legs).toHaveLength(4);
+  expect(legs[1], "the turning leg the longest").toBeGreaterThan(Math.max(legs[0], legs[2], legs[3]) * 1.5);
+  await page.keyboard.press("ArrowDown");
+  await settled(page, 1);
+  await page.waitForTimeout(800);
+  await page.evaluate(() => {
+    window.__turn = []; const m = document.getElementById("molecule"); const t0 = performance.now();
+    const f = (t) => { window.__turn.push([t - t0, m.turned]); if (t - t0 < 6000) requestAnimationFrame(f); };
+    requestAnimationFrame(f);
+  });
+  await page.keyboard.press("ArrowDown");
+  await page.waitForTimeout(6300);
+  const turn = await page.evaluate(() => window.__turn);
+  const start = turn.find(([, v]) => v > 0.02), end = turn.find(([, v]) => v > 0.98);
+  expect(start && end, "it turned").toBeTruthy();
+  expect(end[0] - start[0], "over two seconds and more").toBeGreaterThan(1800);
+  // its speed over each quarter of a second (this browser draws it every
+  // fifth frame), in degrees: a turn is about ninety
+  let peak = 0;
+  for (let i = 0; i < turn.length; i++) {
+    const j = turn.findIndex(([t]) => t >= turn[i][0] + 250);
+    if (j < 0) break;
+    peak = Math.max(peak, ((turn[j][1] - turn[i][1]) * 91) / ((turn[j][0] - turn[i][0]) / 1000));
+  }
+  expect(peak, "never quick").toBeLessThan(100);
+  expect(turn[turn.length - 1][1], "and upright at the end").toBeCloseTo(1, 2);
+  await expect.poll(() => state(page), { timeout: 4000 }).toBe("turned");
+});
+
 // "a smooth scrolling instead of incremental", and then "EVERYTHING should
 // be smooth and gradual; and not incremental": the wheel's notches glide
 // the page on a spring, the stage follows it, and a wheel stopped between
@@ -248,7 +289,7 @@ test("the wheel scrolls it smoothly, as far as it is turned and back, and nothin
   for (let i = 0; i < 3; i++) { await page.mouse.wheel(0, 100); await page.waitForTimeout(60); }
   await page.waitForTimeout(3200);
   const seen = await page.evaluate(() => window.__seen);
-  const leg = await page.evaluate(() => document.querySelector(".stage-run").offsetHeight / 4);
+  const leg = await stageY(page, 1);   // the first leg (the second, the turning, is longer)
   const end = seen[seen.length - 1];
   // (the glide sends the page half a notch — WHEEL_SCALE in landing.js;
   // it was 0.85 until the owner asked for it "less sensitive/slower")
@@ -388,7 +429,7 @@ test("a name pressed asks first, on the stage's own dark: Stay, Escape and the v
   await expect(page.locator(".formula-ask-note")).toBeHidden();
   await expect(page.locator(".formula-ask-kicker")).toHaveCount(0);
   await expect(page.locator("#formula-ask")).not.toContainText("Leave the aldehyde");
-  await expect(page.locator(".formula-ask-go")).toHaveAttribute("href", "categories/theories.html");
+  await expect(page.locator(".formula-ask-go")).toHaveAttribute("href", "theories/");
   await expect(page.locator(".formula-ask-go")).toBeFocused();
   expect(new URL(page.url()).pathname, "not gone yet").toBe("/index.html");
   // on theme: the stage's dark, its gold, the page behind out of focus
@@ -459,7 +500,7 @@ test("a name pressed asks first, on the stage's own dark: Stay, Escape and the v
   // Go
   await name.click();
   await page.locator(".formula-ask-go").click();
-  await page.waitForURL(/categories\/theories\.html$/);
+  await page.waitForURL(/\/theories\/$/);
   expect(errors).toEqual([]);
 });
 

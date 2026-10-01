@@ -1,5 +1,5 @@
 // ============================================================
-// THE NOTE LIBRARY AS NETWORKS — categories/note-library.html
+// THE NOTE LIBRARY AS NETWORKS — note-library/index.html
 //
 // Since 2026-09-29 THIS IS THE NOTE LIBRARY: "replace the note library page
 // with the test page. Remove all content from the previous note library
@@ -3321,7 +3321,13 @@
       }
       ph = phase();
       cp = combo();
-      const slow = selected >= 0 ? 0.25 : hovered >= 0 ? 0.35 : 1;
+      // (A node under the hand slows it, so it can be pressed — but never a
+      // window: whatever is opened over it, it goes on turning behind at its
+      // own pace, 2026-10-01: "when you open anything any popup, i want the
+      // thing in the back to keep moving. regardless of what you open". A
+      // note chosen used to slow it to a quarter.)
+      const windowOpen = noteOpen || sourcesOpen || leaveOpen;
+      const slow = !windowOpen && selected < 0 && hovered >= 0 ? 0.35 : 1;
       if (!still) {
         psi += wall * SPIN * (1 - ph.move) * slow * (tagging ? 0.35 : 1);
         accords.forEach((A) => { A.spin += wall * A.rate * ph.move * slow; });
@@ -3995,6 +4001,7 @@
         litAccords: accords.filter((A) => A.members.some((n) => lit[n.i] > 0.3)).map((A) => A.code),
         tagging: tagAt > 0 && performance.now() - tagAt < TAG_MS,
         centreHover: hubHover, sources: sourcesOpen, leaving: leaveOpen ? stage.dataset.leave : null,
+        turn: psi, spins: accords.map((A) => A.spin),
       }),
       /** The galaxies far out: what kind each is, and how many specks. */
       galaxies: () => galaxies.map((G) => ({ kind: G.kind, specks: G.specks, opacity: G.pts.material.opacity })),

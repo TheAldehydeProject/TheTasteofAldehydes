@@ -70,32 +70,32 @@ const REAL_NODES = [
   // run that again when a page has changed enough to look different.
   {
     label: "Scent descriptions", sub: "notes on things I've smelled and tried to describe",
-    href: "categories/scent-descriptions.html", pos: [0.27, 2.8, 1.53],
+    href: "scent-descriptions/", pos: [0.27, 2.8, 1.53],
     preview: { image: "images/Previews/scent-descriptions.jpg", description: "Here I describe things, from scents to houses to notes to anything else." },
   },
   {
     label: "Theories", sub: "some frameworks that I came up with myself",
-    href: "categories/theories.html", pos: [-1.98, 2.0, -1.52],
+    href: "theories/", pos: [-1.98, 2.0, -1.52],
     preview: { image: "images/Previews/theories.jpg", description: "Some frameworks that I came up with myself." },
   },
   {
     label: "Explorations & Researches", sub: "things I looked into properly and wrote up",
-    href: "categories/researches.html", pos: [2.96, 1.2, -0.26],
+    href: "explorations-and-researches/", pos: [2.96, 1.2, -0.26],
     preview: { image: "images/Previews/researches.jpg", description: "Researches and explorations: where I go and find out, rather than describe." },
   },
   {
     label: "Favourites", sub: "things I like",
-    href: "categories/favorites.html", pos: [-2.15, 0.4, 2.34],
+    href: "favourites/", pos: [-2.15, 0.4, 2.34],
     preview: { image: "images/Previews/favourites.jpg", description: "The ones I keep coming back to, kept by chapter." },
   },
   {
     label: "Note Library", sub: "every note I have named, shelved and explained",
-    href: "categories/note-library.html", pos: [0.0, -0.4, -3.17],
+    href: "note-library/", pos: [0.0, -0.4, -3.17],
     preview: { image: "images/Previews/note-library.jpg", description: "Every note named in a fragrance on this site, shelved by family, each with a brief explanation of what it is." },
   },
   {
     label: "Photography", sub: "frames in sets, and what is written on the back",
-    href: "categories/other-2.html", pos: [2.0, -1.2, 2.19],
+    href: "photography/", pos: [2.0, -1.2, 2.19],
     preview: {
       image: "images/Previews/photography.jpg",
       description: "The frames stand in sets, numbered down the margin, each with what a photographer writes on the back of a print.",
@@ -110,12 +110,12 @@ const REAL_NODES = [
   },
   {
     label: "Search", sub: "one field over the whole site",
-    href: "search.html", pos: [-2.49, -2.0, -0.22],
+    href: "search/", pos: [-2.49, -2.0, -0.22],
     preview: { image: "images/Previews/search.jpg", description: "One field over everything written here, and where each answer lives." },
   },
   {
     label: "Contact", sub: "the ways to reach me",
-    href: "contact.html", pos: [1.23, -2.8, -0.94],
+    href: "contact/", pos: [1.23, -2.8, -0.94],
     // It went straight to its page until every node was given a picture
     // of where it goes (2026-09-29), and a picture needs the window.
     preview: { image: "images/Previews/contact.jpg", description: "Get in touch: by carrier pigeon, or by an email kept behind a small captcha." },

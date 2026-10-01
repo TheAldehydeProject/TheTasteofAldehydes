@@ -1,6 +1,6 @@
 // ============================================================
 // THE FRAGRANCES, A WHOLE-PAGE TABLE — the Fragrances view of
-// categories/scent-descriptions.html
+// scent-descriptions/index.html
 //
 // (The file keeps the name it was given when this view was a LINE, as
 // contact-sheet.js keeps its name and draws the axis: renaming it would

@@ -6,351 +6,42 @@
 <title>Scent descriptions — The Taste of Aldehydes</title>
 <!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
 <meta name="description" content="Scent descriptions: nine perfume houses, from Pineward and ADAR to Tombstone and Qimu &amp; Musicians, and individual fragrances, each described.">
-<link rel="canonical" href="https://thetasteofaldehydes.com/categories/scent-descriptions.html">
+<meta name="robots" content="noindex, follow">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
-<meta name="theme-color" content="#ffffff">
-<meta property="og:site_name" content="The Taste of Aldehydes">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Scent descriptions">
-<meta property="og:description" content="Scent descriptions: nine perfume houses, from Pineward and ADAR to Tombstone and Qimu &amp; Musicians, and individual fragrances, each described.">
-<meta property="og:url" content="https://thetasteofaldehydes.com/categories/scent-descriptions.html">
-<meta property="og:image" content="https://thetasteofaldehydes.com/images/social-card.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">
-<meta property="og:locale" content="en_GB">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Scent descriptions">
-<meta name="twitter:description" content="Scent descriptions: nine perfume houses, from Pineward and ADAR to Tombstone and Qimu &amp; Musicians, and individual fragrances, each described.">
-<meta name="twitter:image" content="https://thetasteofaldehydes.com/images/social-card.png">
-<meta name="twitter:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://thetasteofaldehydes.com/"}, {"@type": "ListItem", "position": 2, "name": "Scent descriptions", "item": "https://thetasteofaldehydes.com/categories/scent-descriptions.html"}]}</script>
+<meta name="theme-color" content="#fafaf9">
 <!-- SEARCH ENGINES: end -->
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css">
-<script>
-  /* The page's own contents are held back for the moment between the
-     first paint and this page's script taking over. Without it the
-     browser shows the no-script version first — every picture in a
-     plain grid — and then the script sweeps it all away, which reads
-     as the page blinking its whole contents at you before it starts.
-
-     It undoes itself if that script never arrives, so the no-script
-     version of this page is still exactly what you get without one. */
-  document.documentElement.classList.add("js-coming");
-  var ready = function () {
-    document.documentElement.classList.remove("js-coming");
-  };
-  /* If that script never arrives — blocked, missing, or broken — then
-     the page's own contents ARE the page, so they are shown the moment
-     everything else has finished loading. The timer is only a last
-     resort behind that. */
-  window.addEventListener("load", ready);
-  setTimeout(ready, 4000);
-</script>
-</head>
 <!--
-  This page is one full "body of work" — a category — and it can be
-  looked at TWO WAYS, which the two buttons across the top switch
-  between:
+  THIS PAGE MOVED, AND THIS IS THE SIGNPOST LEFT WHERE IT STOOD.
 
-    HOUSES, the hang. Every house hangs from a picture rail on a hook,
-    high and low in turn, with a museum label under it — its number and
-    its name. The wall is hung picture by picture as the page arrives,
-    and a picture swings when the pointer brushes it. Resting the pointer
-    on a house brings that house's own motifs up over the wall while the
-    rest goes out of focus; pressing it opens the house.
+  Every page in the Menu lives at an address of its own name since
+  2026-10-01 — the owner: "I want the page to be thetasteofaldehydes.com/x
+  where x is the name of the thing on the menu" — so this one is at
+  /scent-descriptions/. Anything already linked or bookmarked at the old address
+  still has to work, so the old address keeps a page like this one.
 
-    FRAGRANCES, an index of every fragrance written up anywhere on
-    this site: its number, its name, the house it belongs
-    to and the date it was written about. The headings are buttons —
-    press one to sort by that column, press it again to turn the sort
-    round — the table scrolls inside its own box with the headings
-    stuck to the top of it, and the field above it searches. Every row
-    is a link to that fragrance where it stands in its house's page.
+  IT FORWARDS THREE WAYS, and it needs all three:
 
-    THE DATES IN THAT TABLE ARE PLACEHOLDERS. Each row carries what it
-    sorts by on itself (data-no, data-name, data-house, data-date), so
-    changing a date means changing it in two places on the row: the
-    data-date, which is what it sorts by, and the lettering, which is
-    what is read.
+    THE SCRIPT   goes at once AND CARRIES THE QUERY AND THE ANCHOR with it
+                 (a house's way back is `#house-08`, a search `?q=`); a
+                 meta refresh drops them. `replace` rather than `assign`,
+                 so the back button steps over this page.
+    THE META     the fallback with no JavaScript.
+    THE LINK     for anyone who has both turned off.
 
-  views.js switches the two; neither view knows about the other.
-
-  A FRAME'S CAPTION IS IN TWO PARTS. <span class="sheet-name"> is the
-  house's name and is always printed; <span class="sheet-say"> is the
-  line about it and is only shown while the picture is pointed at. Keep
-  the space between the two spans — the page's own search reads the
-  caption's text, and butted together they read as one run-on word.
-  The name is printed on the label under the picture, after its
-  number; the say hangs under that when the picture is pointed at. A house with no say yet simply has none.
-
-  TO ADD A HOUSE: copy one whole <a class="sheet-frame"> block below,
-  point its href at the house's page in /houses/, point the <img> at
-  its picture, write the caption, and give it a data-motif naming its
-  motifs in motifs.js (or leave that off, and resting on it only puts
-  the rest of the page out of focus). Nothing else needs changing —
-  the hang comes from however many of these blocks are here, in the
-  order they stand.
-
-  Every picture on the hang is its own size, and a picture is cropped
-  to fill its frame rather than squashed.
-
-  TO ADD A NEW CATEGORY ENTIRELY: duplicate this whole file, rename
-  it inside /categories/, update the <h1> and the lede, and add a
-  line for it in the SITE_LINKS list near the top of nav.js. A
-  category that wants a plain list instead of a sheet can copy any
-  of the other pages in this folder.
+  Nothing else is on the page: it is a signpost, not a page.
 -->
-<body class="sheet-page">
-
-<div class="sheet-head">
-  <h1>Scent descriptions</h1>
-
-  <!-- What this sheet is, written small beside the Menu — the only
-       place the category is named on the page now that the title has
-       gone. It is inside this block rather than loose in the page:
-       the note in style.css says why. -->
-  <p class="sheet-where">Scent descriptions</p>
-
-  <!-- Search. It has to be in here rather than loose in the page, and
-       for the same reason the two buttons do: a direct child of <body>
-       is given an opacity transition by the rule that dims the page
-       behind the menu, and that rule outranks anything written for it
-       — so loose in the page it could not be held back on the way in
-       without being seen fading away. -->
-  <div class="sheet-search">
-    <input class="sheet-search-field" type="search" placeholder="Search" aria-label="Search this sheet">
-    <button class="sheet-search-trigger" type="button" aria-label="Search">
-      <span class="sheet-search-mark" aria-hidden="true"></span>
-      <span class="sheet-search-word">Search</span>
-    </button>
-  </div>
-
-  <!-- The two ways of looking at the category. They have to be inside
-       this block rather than loose in the page: the note in style.css
-       says why. -->
-  <nav class="sheet-filters" aria-label="How to look at this category">
-    <button class="sheet-filter is-on" type="button" data-view="houses">Houses</button>
-    <button class="sheet-filter" type="button" data-view="fragrances">Fragrances</button>
-  </nav>
-
-</div>
-
-<main class="views">
-
-<!-- THE HOUSES. The sheet is wrapped rather than loose in the page,
-     and it has to be: see the note in style.css. -->
-<section class="view" data-view="houses" aria-label="Houses">
-<div class="sheet-stage">
-
-<div class="sheet" id="sheet">
-
-  <a class="sheet-frame" data-motif="pineward" href="../houses/pineward.html">
-    <img src="../images/Pineward/batch-1-photograph-40-web.jpg" alt="Pineward">
-    <span class="sheet-caption"><span class="sheet-name">Pineward</span> <span class="sheet-say">The House That Smells Like Trees</span></span>
-  </a>
-
-  <a class="sheet-frame" data-motif="adar" href="../houses/adar.html">
-    <img src="../images/ADAR/adar-title-page-web.jpg" alt="ADAR">
-    <span class="sheet-caption"><span class="sheet-name">ADAR</span> <span class="sheet-say">The House That You Have Never Heard Of</span></span>
-  </a>
-
-  <!-- The third house. The picture is the owner's own `This one`; the
-       original is images/Almost-Human/This one.webp at 5152 x 7728 and
-       4.2MB, so what is loaded is the 1600px copy in house-web/ beside
-       it. It is portrait and this frame is square, so it is cropped to
-       its middle, which is where the bottle stands. -->
-  <a class="sheet-frame" data-motif="almost-human" href="../houses/almost-human.html">
-    <img src="../images/Almost-Human/house-web/this-one.webp" alt="Almost Human">
-    <span class="sheet-caption"><span class="sheet-name">Almost Human</span> <span class="sheet-say">Abstraction Done Quite Well</span></span>
-  </a>
-
-  <!-- The fourth house. Its picture goes in images/Ataraxia/ and is
-       uncommented here once it is there; until then this frame is
-       drawn as the hatch every placeholder on this site is drawn as,
-       and it is still a link to the house. -->
-  <a class="sheet-frame" data-motif="ataraxia" href="../houses/ataraxia.html">
-    <img src="../images/Ataraxia/Ataraxia House.jpg" alt="Ataraxia">
-    <span class="sheet-caption"><span class="sheet-name">Ataraxia</span> <span class="sheet-say">A Gothic Avante Garde House</span></span>
-  </a>
-
-  <!-- The fifth house. -->
-  <a class="sheet-frame" data-motif="grande" href="../houses/grande-parfums.html">
-    <img src="../images/Grande/House Picture.webp" alt="Grande Parfums">
-    <span class="sheet-caption"><span class="sheet-name">Grande Parfums</span> <span class="sheet-say">The House I Met at an Expo</span></span>
-  </a>
-
-  <!-- The sixth house. -->
-  <a class="sheet-frame" data-motif="les-abstraits" href="../houses/les-abstraits.html">
-    <img src="../images/Les-Abstraits/Les Abstraits Cover.webp" alt="Les Abstraits">
-    <span class="sheet-caption"><span class="sheet-name">Les Abstraits</span> <span class="sheet-say">Eugen’s Ideas and Antoine Lie’s Execution</span></span>
-  </a>
-
-  <!-- The seventh house, in the frame that was the first empty one.
-       The picture is the drawing off Bad Lily's label, which the owner
-       named "Tale - Use image for the house". -->
-  <a class="sheet-frame" data-motif="tale" href="../houses/tale-parfums.html">
-    <img src="../images/Tale/Tale - Use image for the house.webp" alt="Tale Parfums">
-    <span class="sheet-caption"><span class="sheet-name">Tale Parfums</span> <span class="sheet-say">A House That Very Deservedly Won the Art and Olfaction Awards in 2025</span></span>
-  </a>
-
-  <!-- The eighth house. The picture is the owner's "Picture of House
-       (tombstone)". -->
-  <a class="sheet-frame" data-motif="tombstone" href="../houses/tombstone.html">
-    <img src="../images/Tombstone/Picture of House (tombstone).webp" alt="Tombstone">
-    <span class="sheet-caption"><span class="sheet-name">Tombstone</span> <span class="sheet-say">A House That Expanded on Death</span></span>
-  </a>
-
-  <!-- The ninth house. The picture is the record sleeve the owner sent
-       with its four bottles. -->
-  <a class="sheet-frame" data-motif="qimu" href="../houses/qimu-and-musicians.html">
-    <img src="../images/Qimu and Musicians/Qimu_Musicians_1.webp" alt="Qimu &amp; Musicians">
-    <span class="sheet-caption"><span class="sheet-name">Qimu &amp; Musicians</span> <span class="sheet-say">A House of Music and Fragrance</span></span>
-  </a>
-
-  <!--
-    NINE HOUSES, and the hang stops at nine for now — the owner's
-    "Keep houses only up to 9". A tenth is another block like the ones
-    above, with a `data-motif` naming its motifs in motifs.js (or none).
-  -->
-
-</div>
-
-
-</div>
-</section>
-
-<!-- THE INDIVIDUAL FRAGRANCES: the same category read as a list. -->
-<!-- `hidden` is written here rather than left to views.js, and that is
-     not tidiness: a script at the foot of the page is fetched, and
-     while the parser waits for it the browser is free to paint what it
-     has — which was this view, for one frame, every time the page was
-     opened. What the page opens as has to be true in the markup. -->
-<section class="view" data-view="fragrances" aria-label="Fragrances" hidden>
-<div class="index-page">
-
-  <header class="index-head">
-    <p class="index-name">Fragrances</p>
-    <p class="index-col">The ones with no house here</p>
-    <div class="index-say">
-      <p class="index-say-lede">
-        Perfumes I have something to say about that belong to none of the
-        houses on the Houses view — one to a line, each with the house it
-        did come from, in whatever order you ask for.
-      </p>
-      <p class="index-say-head">Sorting</p>
-      <p class="index-say-meta">Press a heading to sort by it; press it again to turn it round.</p>
-    </div>
-  </header>
-
-  <div class="index-right">
-    <p class="index-line">Perfumes with no house on this site — smelled, and being written up.</p>
-    <div class="index-plates">
-      <figure class="index-plate">
-        <canvas class="index-mark" aria-hidden="true"></canvas>
-        <figcaption>001</figcaption>
-      </figure>
-      <figure class="index-plate">
-        <!-- <img src="../images/fragrances-02.jpg" alt=""> -->
-        <div aria-hidden="true"></div>
-        <figcaption>002</figcaption>
-      </figure>
-    </div>
-  </div>
-
-  <div class="index-board">
-    <div class="index-search">
-      <span class="index-search-mark" aria-hidden="true"></span>
-      <input class="index-search-field" type="search" placeholder="Search fragrances" aria-label="Search the fragrances">
-      <span class="index-count" aria-hidden="true">008</span>
-    </div>
-
-    <div class="index-scroll" tabindex="0">
-      <table class="index-table">
-        <thead>
-          <tr>
-            <th scope="col"><button class="index-sort sorted" type="button" data-key="no">No.</button></th>
-            <th scope="col"><button class="index-sort" type="button" data-key="name">Fragrance</button></th>
-            <th scope="col"><button class="index-sort" type="button" data-key="house">House</button></th>
-            <th scope="col"><button class="index-sort" type="button" data-key="date">Date</button></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr data-no="1" data-name="CV99" data-house="Lussur" data-date="2026-09-24">
-            <td class="index-no">001</td>
-            <td class="index-what"><a href="../individual-fragrances/individual-fragrances.html#part-01">CV99</a></td>
-            <td class="index-of">Lussur</td>
-            <td class="index-date">24.09.2026</td>
-          </tr>
-          <tr data-no="2" data-name="De Profundis" data-house="Serge Lutens" data-date="2026-09-24">
-            <td class="index-no">002</td>
-            <td class="index-what"><a href="../individual-fragrances/individual-fragrances.html#part-02">De Profundis</a></td>
-            <td class="index-of">Serge Lutens</td>
-            <td class="index-date">24.09.2026</td>
-          </tr>
-          <tr data-no="3" data-name="Haxan" data-house="Prissana" data-date="2026-09-24">
-            <td class="index-no">003</td>
-            <td class="index-what"><a href="../individual-fragrances/individual-fragrances.html#part-03">Haxan</a></td>
-            <td class="index-of">Prissana</td>
-            <td class="index-date">24.09.2026</td>
-          </tr>
-          <tr data-no="4" data-name="Tobacolor" data-house="Dior" data-date="2026-09-24">
-            <td class="index-no">004</td>
-            <td class="index-what"><a href="../individual-fragrances/individual-fragrances.html#part-04">Tobacolor</a></td>
-            <td class="index-of">Dior</td>
-            <td class="index-date">24.09.2026</td>
-          </tr>
-          <tr data-no="5" data-name="Flamenco EDP" data-house="Ramon Monegal" data-date="2026-09-24">
-            <td class="index-no">005</td>
-            <td class="index-what"><a href="../individual-fragrances/individual-fragrances.html#part-05">Flamenco EDP</a></td>
-            <td class="index-of">Ramon Monegal</td>
-            <td class="index-date">24.09.2026</td>
-          </tr>
-          <tr data-no="6" data-name="French Riviera" data-house="Mancera" data-date="2026-09-24">
-            <td class="index-no">006</td>
-            <td class="index-what"><a href="../individual-fragrances/individual-fragrances.html#part-06">French Riviera</a></td>
-            <td class="index-of">Mancera</td>
-            <td class="index-date">24.09.2026</td>
-          </tr>
-          <tr data-no="7" data-name="Velvet Fog" data-house="Casa Goa" data-date="2026-09-24">
-            <td class="index-no">007</td>
-            <td class="index-what"><a href="../individual-fragrances/individual-fragrances.html#part-07">Velvet Fog</a></td>
-            <td class="index-of">Casa Goa</td>
-            <td class="index-date">24.09.2026</td>
-          </tr>
-          <tr data-no="8" data-name="House of Ellixirz" data-house="Matca" data-date="2026-09-25">
-            <td class="index-no">008</td>
-            <td class="index-what"><a href="../individual-fragrances/individual-fragrances.html#part-08">House of Ellixirz</a></td>
-            <td class="index-of">Matca</td>
-            <td class="index-date">25.09.2026</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-</div>
-</section>
-
+<link rel="canonical" href="../scent-descriptions/">
+<meta name="robots" content="noindex">
+<script>location.replace("../scent-descriptions/" + location.search + location.hash);</script>
+<meta http-equiv="refresh" content="0; url=../scent-descriptions/">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="page-content">
+  <h1>Scent descriptions has moved</h1>
+  <p class="category-lede">This page now lives at
+    <a href="../scent-descriptions/">/scent-descriptions/</a>. You should be taken there automatically.</p>
 </main>
-
-<script>window.SITE_ROOT = "../";</script>
-<script src="../nav.js"></script>
-<script src="../search.js"></script>
-<script src="../contact-sheet.js"></script>
-<script src="../beaker.js"></script>
-<script src="../qimu-pieces.js"></script>
-<script src="../motifs.js"></script>
-<script src="../index-page.js"></script>
-<script src="../notes-data.js"></script>
-<script src="../notes.js"></script>
-<script src="../fragrance-reader.js"></script>
-<script src="../fragrance-line.js"></script>
-<script src="../views.js"></script>
 </body>
 </html>

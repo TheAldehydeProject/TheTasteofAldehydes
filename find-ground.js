@@ -1,5 +1,5 @@
 // ============================================================
-// THE SEARCH PAGE'S GROUND — search.html
+// THE SEARCH PAGE'S GROUND — search/index.html
 //
 // The page was near-white with a squared plan painted on it in CSS and
 // a corner sight at each end. The sight in the top left landed on the

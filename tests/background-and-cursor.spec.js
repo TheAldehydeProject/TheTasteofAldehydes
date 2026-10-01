@@ -263,7 +263,7 @@ test.describe("the cursor over pictures", () => {
   });
 
   test("stands above everything, including the pictures on the Houses view", async ({ page }) => {
-    await page.goto("/categories/scent-descriptions.html");
+    await page.goto("/scent-descriptions/");
     await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
     const box = await page.locator(".sheet-frame").first().boundingBox();
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 2 });

@@ -34,7 +34,7 @@ const fs = require("fs");
 const path = require("path");
 const { serveDependenciesLocally, collectPageErrors } = require("./helpers");
 
-const SHEET = "/categories/scent-descriptions.html";
+const SHEET = "/scent-descriptions/";
 
 async function toTheTable(page) {
   await serveDependenciesLocally(page);
@@ -59,7 +59,7 @@ const acrossOf = (page) => page.$$eval(".frag-item:not([hidden])", (all) => {
 /** The page with `n` more fragrances in its table than it has — the
     "large amount of fragrances" the owner is building it for. */
 async function withMany(page, n) {
-  await page.route("**/categories/scent-descriptions.html", async (route) => {
+  await page.route("**/scent-descriptions/", async (route) => {
     const res = await route.fetch();
     let html = await res.text();
     let extra = "";
@@ -418,7 +418,7 @@ test("the search takes the others off the page as it is typed, in every layout, 
   await page.locator(".frag-list-field").fill("something nowhere");
   await page.locator(".frag-list-field").press("Enter");
   await page.waitForTimeout(500);
-  expect(page.url()).toContain("scent-descriptions.html");
+  expect(page.url()).toContain("/scent-descriptions/");
   expect(errors).toEqual([]);
 });
 
@@ -454,7 +454,7 @@ test("pressing a row or a card opens its fragrance in the page", async ({ page }
 test("the old Fragrances view is kept, in the archive and in the page", async ({ page }) => {
   const root = path.join(__dirname, "..");
   const kept = fs.readFileSync(path.join(root, "archive", "fragrances-view-2026-09-24.html"), "utf8");
-  const live = fs.readFileSync(path.join(root, "categories", "scent-descriptions.html"), "utf8");
+  const live = fs.readFileSync(path.join(root, "scent-descriptions", "index.html"), "utf8");
   const section = (html) => html.slice(html.indexOf('<section class="view" data-view="fragrances"'),
     html.indexOf("</section>", html.indexOf('<section class="view" data-view="fragrances"')) + 10);
   // What has changed in the page since is what the owner asked for:

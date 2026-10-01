@@ -149,13 +149,40 @@
   // sooner. The names come up over the last leg, once its lines are on
   // their way down (molecule.js).
   const TITLE_GONE = 1, CORNERS_GONE = 0.7, TITLE_LIFT = 26;
-  const NAMES_FROM = 3.25, NAMES_OVER = 0.75;
+  const NAMES_FROM = 3.25, NAMES_OVER = 0.75, NAMES_PRESSABLE = 0.03;
 
-  const leg = () => Math.max(1, (run ? run.offsetHeight : window.innerHeight * 3.2) / LAST);
+  // THE LEGS, each as long as `--stage-leg` (style.css) times its number
+  // here. The second — the aldehyde turning upright — is the longest
+  // (2026-10-01: "prolongue the horizontal to vertical transformation of the
+  // aldehyde. thats the only part that looks fast"): the page goes further
+  // for it, so a turn of the wheel turns it less. The run is laid to their
+  // sum, and says them on the stage (`data-legs`) for anything that wants to
+  // know where a stage is (the tests).
+  const LEGS = [1, 1.7, 1, 1];
+  const LEGS_SUM = LEGS.reduce((a, b) => a + b, 0);
+  if (run) run.style.height = "calc(var(--stage-leg) * " + LEGS_SUM + ")";
+  stage.dataset.legs = LEGS.join(" ");
+  const leg = () => Math.max(1, (run ? run.offsetHeight : window.innerHeight * 3.2) / LEGS_SUM);   // one --stage-leg
   const stageTop = () => stage.offsetTop;
-  const stageEnd = () => stageTop() + LAST * leg();   // the page at the fifth stage
+  // How far down the stage a stage is (0 to 4, and part of the way between two)…
+  const legsTo = (k) => {
+    k = Math.max(0, Math.min(LAST, k));
+    let y = 0;
+    for (let i = 0; i < LAST && k > i; i++) y += LEGS[i] * Math.min(1, k - i);
+    return y * leg();
+  };
+  // …and which stage a place down it is.
+  const stageOf = (y) => {
+    let left = y / leg();
+    for (let i = 0; i < LAST; i++) {
+      if (left <= LEGS[i]) return i + Math.max(0, left) / LEGS[i];
+      left -= LEGS[i];
+    }
+    return LAST;
+  };
+  const stageEnd = () => stageTop() + legsTo(LAST);   // the page at the fifth stage
   // Where the page is, in stages.
-  const reading = () => Math.max(0, Math.min(LAST, (container.scrollTop - stageTop()) / leg()));
+  const reading = () => Math.max(0, Math.min(LAST, stageOf(container.scrollTop - stageTop())));
 
   let shown = reading(), followOn = false, followLast = 0;
   window.__formula = shown;
@@ -187,7 +214,11 @@
       el.style.pointerEvents = cornersShown < 0.02 ? "none" : "";
     });
     stage.style.setProperty("--names", names.toFixed(3));
-    stage.classList.toggle("names-here", names > 0.6);
+    // A name takes the hand as soon as it is there at all, however faint —
+    // quiet at rest, or still coming up (2026-10-01: "make the text
+    // clickable even when it isnt fully apparent"; it waited until the names
+    // were over half way up).
+    stage.classList.toggle("names-here", names > NAMES_PRESSABLE);
   }
 
   function follow(now) {
@@ -279,11 +310,11 @@
   // A stage on, or back, gliding: the keys and the Scroll button.
   function toStage(k) {
     k = Math.max(0, Math.min(LAST, k));
-    glideToY(Math.round(stageTop() + k * leg()));
+    glideToY(Math.round(stageTop() + legsTo(k)));
   }
   function stepStage(dir) {
     // (from where it is going, if it is on its way somewhere)
-    const at = Math.max(0, Math.min(LAST, ((gliding ? glideTo : container.scrollTop) - stageTop()) / leg()));
+    const at = Math.max(0, Math.min(LAST, stageOf((gliding ? glideTo : container.scrollTop) - stageTop())));
     toStage(dir > 0 ? Math.floor(at + 0.05) + 1 : Math.ceil(at - 0.05) - 1);
   }
 

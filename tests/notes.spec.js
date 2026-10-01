@@ -161,7 +161,7 @@ test("every key points at a part that is really on its page", () => {
 test("the Fragrances view is its own page, not an index of the houses",
   async ({ page }) => {
   await serveDependenciesLocally(page);
-  await page.goto("/categories/scent-descriptions.html");
+  await page.goto("/scent-descriptions/");
   await page.click('.sheet-filter[data-view="fragrances"]');
   await page.waitForTimeout(900);
 
@@ -382,7 +382,7 @@ test("the individual fragrances run 01 to 08 with nothing missing", () => {
   expect(keys.length).toBe(8);
 
   // THE TABLE AGREES, name for name and number for number.
-  const sheet = read("categories/scent-descriptions.html");
+  const sheet = read("scent-descriptions/index.html");
   const view = sheet.slice(sheet.indexOf('data-view="fragrances"'));
   const named = (id) => {
     const at = page.indexOf('id="part-' + id + '"');

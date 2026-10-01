@@ -1,6 +1,6 @@
 // ============================================================
 // THE FRAGRANCE READER — the Fragrances view of
-// categories/scent-descriptions.html
+// scent-descriptions/index.html
 //
 // Pressing a fragrance in that table used to LEAVE THE PAGE for
 // individual-fragrances/individual-fragrances.html. The owner asked for it not to:
@@ -230,7 +230,7 @@
       shots.forEach((shot, n) => {
         const img = document.createElement("img");
         // The fetched page's paths are relative to its own folder, and
-        // this page stands in categories/ — the same depth, so they
+        // this page stands a folder in (scent-descriptions/) — the same depth, so they
         // resolve the same way. Taken off the attribute rather than off
         // `.src`, which the parser has already made absolute against
         // THIS page's address and would have been right by luck.

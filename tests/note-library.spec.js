@@ -1,6 +1,6 @@
 // @ts-check
 /* ============================================================
-   THE NOTE LIBRARY — categories/note-library.html, drawn by network.js.
+   THE NOTE LIBRARY — note-library/index.html, drawn by network.js.
 
    Since 2026-09-29 what was the test page (works/test-page.html, which
    forwards here): "replace the note library page with the test page.
@@ -69,7 +69,7 @@ const fs = require("fs");
 const path = require("path");
 const { serveDependenciesLocally, blockThreeJs, collectPageErrors } = require("./helpers");
 
-const LIBRARY = "/categories/note-library.html";
+const LIBRARY = "/note-library/";
 const TEST_PAGE = LIBRARY;                 // the page these tests were written for, now the library
 
 /** What the window shows, read back off a screenshot: how many pixels are
@@ -1381,7 +1381,7 @@ test("without its 3D library the page says so, and lists every note", async ({ p
 // says "Not written yet." in its window until it is.
 const WAITING = new Set();
 test("the catalogue: the owner first, the rest in order, two sources to every description written", () => {
-  const html = fs.readFileSync(path.join(__dirname, "..", "categories", "note-library.html"), "utf8");
+  const html = fs.readFileSync(path.join(__dirname, "..", "note-library", "index.html"), "utf8");
   const text = (h) => h.replace(/<[^>]+>/g, "").replace(/&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
   const list = html.match(/<section class="lib-sources" id="sources">([\s\S]*?)<\/section>/)[1];
   const items = [...list.matchAll(/<li id="source-(\d+)"( class="lib-source-me")?>([\s\S]*?)<\/li>/g)];
@@ -1507,7 +1507,7 @@ test("the test page is the Note Library now: out of the menu, and its old addres
   expect(fs.readFileSync(path.join(__dirname, "..", "search-page.js"), "utf8"), "not in the search's pages").not.toMatch(/test-page/);
   expect(fs.existsSync(path.join(__dirname, "..", "note-library.js")), "the periodic table's script is gone").toBe(false);
   await page.goto("/works/test-page.html#note-vanilla");
-  await expect(page).toHaveURL(/categories\/note-library\.html#note-vanilla$/);
+  await expect(page).toHaveURL(/\/note-library\/#note-vanilla$/);
   // Arriving at a note's own address opens its window, the page come
   // apart and gone to its accord.
   await expect.poll(async () => (await state(page)).note, { timeout: 60000 }).toBe("Vanilla");
@@ -1520,7 +1520,7 @@ test("the test page is the Note Library now: out of the menu, and its old addres
    note's window. */
 test("the site's search finds a note, by any of its spellings, and its link opens the note", async ({ page }) => {
   test.setTimeout(120000);
-  await page.goto("/search.html?q=iris%20butter");
+  await page.goto("/search/?q=iris%20butter");
   const row = page.locator(".find-results a", { hasText: "Orris" }).first();
   await expect(row).toBeVisible({ timeout: 15000 });
   await expect(row).toHaveAttribute("href", /note-library\.html#note-orris$/);
@@ -1595,17 +1595,20 @@ test("a fragrance pressed asks before the library is left", async ({ page }) => 
   await first.click();
   const ask = page.locator(".net-leave");
   await expect(ask, "it asks").toBeVisible();
-  expect(page.url(), "and has not gone").toContain("note-library.html");
+  expect(page.url(), "and has not gone").toContain("/note-library/");
   await expect(page.locator(".net-leave-box")).toHaveAttribute("role", "alertdialog");
   if (name) await expect(page.locator(".net-leave-name")).toHaveText(name);
   await expect(page.locator(".net-leave-go")).toHaveAttribute("href", href);
   expect((await state(page)).leaving).toBe(key);
   await expect(page.locator(".net-leave-go"), "the way on has the keys").toBeFocused();
-  // orange, and calm: its way on a hairline box, not a block of red
-  // (2026-09-30: "make this orange and less urgent")
-  const go = await page.locator(".net-leave-go").evaluate((e) => ({ border: getComputedStyle(e).borderTopColor, fill: getComputedStyle(e).backgroundColor }));
-  expect(go.border).toBe("rgba(227, 147, 90, 0.7)");
-  expect(go.fill).toBe("rgba(227, 147, 90, 0.12)");
+  // calm: its way on a hairline box, not a block of colour (2026-09-30:
+  // "make this orange and less urgent") — and in combinations, the
+  // combinations' gold (2026-10-01: "it should only be kept yellow in the
+  // combinations part")
+  const goLook = () => page.locator(".net-leave-go").evaluate((e) => ({ border: getComputedStyle(e).borderTopColor, fill: getComputedStyle(e).backgroundColor }));
+  let go = await goLook();
+  expect(go.border).toBe("rgba(230, 180, 74, 0.7)");
+  expect(go.fill).toBe("rgba(230, 180, 74, 0.12)");
   // Escape: stays, and everything is as it was.
   await page.keyboard.press("Escape");
   await expect(ask).toBeHidden();
@@ -1616,7 +1619,7 @@ test("a fragrance pressed asks before the library is left", async ({ page }) => 
   await expect(ask).toBeVisible();
   await page.locator(".net-leave-stay").click();
   await expect(ask).toBeHidden();
-  expect(page.url()).toContain("note-library.html");
+  expect(page.url()).toContain("/note-library/");
   // And from a note's window: the fragrances in its tiers ask the same.
   await page.locator(".net-back").click();
   await page.evaluate(() => window.NetScene.open("Benzoin"));
@@ -1627,6 +1630,11 @@ test("a fragrance pressed asks before the library is left", async ({ page }) => 
   const tierHref = await inTier.getAttribute("href");
   await inTier.click();
   await expect(ask).toBeVisible();
+  // out of combinations, red-ish, as the network is ("when youre in the
+  // expanded view, the window colour should be red-ish")
+  go = await goLook();
+  expect(go.border).toBe("rgba(226, 115, 122, 0.7)");
+  expect(go.fill).toBe("rgba(226, 115, 122, 0.12)");
   // Go goes.
   await page.locator(".net-leave-go").click();
   await page.waitForURL("**/" + tierHref.replace(/^\.\.\//, ""));
@@ -1649,4 +1657,49 @@ test("the galaxies far out are twelve, no two of a kind, and quiet", async ({ pa
     expect(G.specks).toBeGreaterThan(10);
     expect(G.opacity, G.kind + ": less emphasized than the 0.75 they were").toBeLessThan(0.7);
   });
+});
+
+/* "in the notes library, when you open anything any popup, i want the thing
+   in the back to keep moving. regardless of what you open" (2026-10-01). A
+   note chosen used to slow the whole to a quarter; now whatever window is
+   over it — a note's, the sources, the way out — it goes on turning behind
+   at its own pace, together and apart. */
+test("whatever window is opened, the drawing behind goes on turning at its own pace", async ({ page }) => {
+  test.setTimeout(150000);
+  const errors = collectPageErrors(page);
+  await open(page);
+  await settle(page);
+  // how fast it turns, a second at a time (the whole, or an accord's own)
+  const rate = (which) => page.evaluate(async (which) => {
+    const read = () => { const s = window.NetScene.state(); return which < 0 ? s.turn : s.spins[which]; };
+    const a = read(), t0 = performance.now();
+    await new Promise((r) => setTimeout(r, 1500));
+    return Math.abs(read() - a) / ((performance.now() - t0) / 1000);
+  }, which);
+  await page.mouse.move(1420, 120);
+  const free = await rate(-1);
+  expect(free, "it turns").toBeGreaterThan(0);
+  // a note's window
+  await page.evaluate(() => window.NetScene.open("Cedarwood"));
+  await expect(page.locator(".net-note")).toBeVisible();
+  expect(await rate(-1), "under a note's window, at its own pace").toBeGreaterThan(free * 0.8);
+  // the sources, over it
+  await page.locator(".net-note-cite").first().click();
+  await expect(page.locator(".net-sources")).toBeVisible();
+  expect((await state(page)).sources).toBe(true);
+  expect(await rate(-1), "under the sources").toBeGreaterThan(free * 0.8);
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".net-sources")).toBeHidden();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".net-note")).toBeHidden();
+  // apart: an accord's own turning, with a note of it open and without
+  await expandIt(page);
+  await page.mouse.move(1420, 120);
+  const k = (await page.evaluate(() => window.NetScene.accords().findIndex((A) => A.code === "WOO")));
+  const apart = await rate(k);
+  expect(apart, "apart, each accord turns").toBeGreaterThan(0);
+  await page.evaluate(() => window.NetScene.open("Cedarwood"));
+  await expect(page.locator(".net-note")).toBeVisible();
+  expect(await rate(k), "and goes on under a note's window").toBeGreaterThan(apart * 0.8);
+  expect(errors).toEqual([]);
 });

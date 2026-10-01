@@ -1,5 +1,5 @@
 // ============================================================
-// THE STRUCTURE (categories/theories.html only)
+// THE STRUCTURE (theories/index.html only)
 //
 // The theories are a STRUCTURE you travel through — read as a
 // technical drawing rather than as a night sky. A frame of ribs and

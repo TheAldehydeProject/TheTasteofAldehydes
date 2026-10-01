@@ -315,7 +315,7 @@ test("without its script the page is still all of its writing", async ({ page })
 });
 
 test("the piece is what the sheet's first picture points at", async ({ page }) => {
-  await page.goto("/categories/scent-descriptions.html");
+  await page.goto("/scent-descriptions/");
   const first = page.locator(".sheet-frame").first();
   await expect(first).toHaveAttribute("href", "../houses/pineward.html");
   await expect(first.locator(".sheet-caption"))
