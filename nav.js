@@ -286,6 +286,15 @@ const SITE_LINKS = [
 // axis — the nearer side larger and brighter, the far side faint — each
 // breathing a little in and out of its place.
 //
+// AN ELECTRON CLOUD (2026-10-01, later: "add particles to it and make them
+// many more but also smaller. I want it to be like an electron cloud"):
+// three times the specks — some 2,900 in the lobes and 1,900 in the sphere —
+// at half the size, so it reads as a density rather than as dots: thick where the electrons are most often found and
+// thinning out from there. Drawn a colour at a time with each speck's
+// strength as the pen's alpha (no colour written out for every speck), and
+// as small squares, which at this size are the same as round ones. Half as
+// many on a phone.
+//
 // It is ornament, and is kept from a screen reader. It stands only where
 // there is room for it — beside the list on a wide window, in the corner
 // under it on a tall phone. With motion turned off it stands still.
@@ -317,7 +326,9 @@ const SITE_LINKS = [
       "</g>" +
     "</svg>" +
     '<p class="ma-words">' + WORDS.map((w) => "<span>" + w + "</span>").join("") + "</p>" +
-    '<p class="ma-caption"><span>R–CHO</span><span>The smell of aldehydes</span></p>';
+    // the name on the left and the formula on the right (2026-10-01; the
+    // other way round until then)
+    '<p class="ma-caption"><span>The smell of aldehydes</span><span>R–CHO</span></p>';
   overlay.appendChild(aside);
 
   // THE CLOUD, on its canvas under the drawing, in the drawing's own 400 ×
@@ -327,29 +338,31 @@ const SITE_LINKS = [
   if (!ctx) return;
   const still = window.matchMedia("(prefers-reduced-motion: reduce)");
   const GREY = "186,178,167", GOLD = "224,178,82", VIOLET = "169,138,216";
+  const TONES = [GREY, GOLD, VIOLET];
   let s = 17;
   const rnd = () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
   const gauss = () => Math.sqrt(-2 * Math.log(1 - rnd() * 0.999)) * Math.cos(2 * Math.PI * rnd());
+  const MANY = window.innerWidth < 700 ? 0.5 : 1;       // half as many on a phone
   const specks = [];
   const add = (n, tone, at, sx, sy, alpha) => {
-    for (let i = 0; i < n; i++) {
+    for (let i = 0, all = Math.round(n * MANY); i < all; i++) {
       specks.push({
         x: at[0] + gauss() * sx, y: at[1] + gauss() * sy, tone,
-        r: 0.5 + rnd() * 1.1, a: alpha * (0.45 + rnd() * 0.55),
+        r: 0.28 + rnd() * 0.5, a: alpha * (0.45 + rnd() * 0.55),
         turn: (rnd() < 0.5 ? -1 : 1) * (0.1 + rnd() * 0.3), orbit: 1.5 + rnd() * 5, ph: rnd() * 6.283,
       });
     }
   };
   // the double bond: two lobes either side of C=O, in gold
-  add(150, GOLD, [176, 146], 13, 22, 0.8);
-  add(150, GOLD, [224, 146], 13, 22, 0.8);
+  add(600, GOLD, [176, 146], 13, 22, 1);
+  add(600, GOLD, [224, 146], 13, 22, 1);
   // the lone pair: two lobes off the oxygen, up and out, in violet
-  add(110, VIOLET, [164, 86], 17, 13, 0.8);
-  add(110, VIOLET, [236, 86], 17, 13, 0.8);
+  add(440, VIOLET, [164, 86], 17, 13, 1);
+  add(440, VIOLET, [236, 86], 17, 13, 1);
   // a little of everything else close round the bonds, in the warm grey
-  add(110, GREY, [200, 196], 48, 46, 0.45);
-  add(40, GREY, [140, 246], 20, 16, 0.5);
-  add(40, GREY, [260, 246], 20, 16, 0.5);
+  add(480, GREY, [200, 196], 48, 46, 0.55);
+  add(160, GREY, [140, 246], 20, 16, 0.6);
+  add(160, GREY, [260, 246], 20, 16, 0.6);
 
   // THE SPHERE round it all: a place on a sphere about the drawing's middle
   // for each speck (as many out towards its rings as within), in three
@@ -357,7 +370,7 @@ const SITE_LINKS = [
   // perspective.
   const MID = [200, 196], R = 168, FOCAL = 760, TILT = 0.42, TURN = 0.11;
   const sphere = [];
-  for (let i = 0; i < 640; i++) {
+  for (let i = 0, all = Math.round(1900 * MANY); i < all; i++) {
     const u = rnd() * 2 - 1, th = rnd() * 6.283, w = Math.sqrt(1 - u * u);
     // most near the shell, some well within it
     const r = R * (rnd() < 0.72 ? 0.84 + rnd() * 0.2 : 0.38 + rnd() * 0.46);
@@ -365,7 +378,7 @@ const SITE_LINKS = [
     sphere.push({
       x: r * w * Math.cos(th), y: r * u, z: r * w * Math.sin(th),
       tone: pick < 0.16 ? GOLD : pick < 0.3 ? VIOLET : GREY,
-      size: 0.45 + rnd() * 0.95, a: 0.3 + rnd() * 0.55,
+      size: 0.22 + rnd() * 0.45, a: 0.32 + rnd() * 0.55,
       breathe: 0.02 + rnd() * 0.04, ph: rnd() * 6.283,
     });
   }
@@ -388,31 +401,36 @@ const SITE_LINKS = [
     ctx.setTransform(k, 0, 0, k, 0, 0);
     ctx.clearRect(0, 0, 400, 400);
     ctx.globalCompositeOperation = "lighter";
-    // the sphere: the far side first, faint and small, the near side last
+    // (light added to light, so the order they are drawn in does not show:
+    // a colour at a time)
+    // the sphere: the far side faint and small, the near side brighter
     const spin = 0.6 + t * TURN, cs = Math.cos(spin), sn = Math.sin(spin);
-    for (const p of sphere) {
-      const b = 1 + (still.matches ? 0 : p.breathe * Math.sin(t * 0.8 + p.ph));
-      // turned about the upright, then leant towards you
-      const x1 = (p.x * cs + p.z * sn) * b, z1 = (-p.x * sn + p.z * cs) * b, y1 = p.y * b;
-      const y2 = y1 * cosT - z1 * sinT, z2 = y1 * sinT + z1 * cosT;
-      const f = FOCAL / (FOCAL - z2);
-      const near = (z2 / R + 1) / 2;                    // 0 the far side, 1 the near
-      const twinkle = still.matches ? 1 : 0.75 + 0.25 * Math.sin(t * 1.3 + p.ph * 5);
-      ctx.fillStyle = "rgba(" + p.tone + "," + (p.a * (0.22 + 0.78 * near) * twinkle).toFixed(3) + ")";
-      ctx.beginPath();
-      ctx.arc(MID[0] + x1 * f, MID[1] + y2 * f, p.size * f * (0.7 + 0.5 * near), 0, 6.283);
-      ctx.fill();
+    for (const tone of TONES) {
+      ctx.fillStyle = "rgb(" + tone + ")";
+      for (const p of sphere) {
+        if (p.tone !== tone) continue;
+        const b = 1 + (still.matches ? 0 : p.breathe * Math.sin(t * 0.8 + p.ph));
+        // turned about the upright, then leant towards you
+        const x1 = (p.x * cs + p.z * sn) * b, z1 = (-p.x * sn + p.z * cs) * b, y1 = p.y * b;
+        const y2 = y1 * cosT - z1 * sinT, z2 = y1 * sinT + z1 * cosT;
+        const f = FOCAL / (FOCAL - z2);
+        const near = (z2 / R + 1) / 2;                    // 0 the far side, 1 the near
+        const twinkle = still.matches ? 1 : 0.75 + 0.25 * Math.sin(t * 1.3 + p.ph * 5);
+        const r = p.size * f * (0.7 + 0.5 * near);
+        ctx.globalAlpha = p.a * (0.22 + 0.78 * near) * twinkle;
+        ctx.fillRect(MID[0] + x1 * f - r, MID[1] + y2 * f - r, r * 2, r * 2);
+      }
+      for (const p of specks) {
+        if (p.tone !== tone) continue;
+        const a = p.ph + t * p.turn;
+        const x = p.x + Math.cos(a) * p.orbit + (still.matches ? 0 : Math.sin(p.y * 0.05 + t * 0.5) * 1.6);
+        const y = p.y + Math.sin(a) * p.orbit * 0.8;
+        const twinkle = still.matches ? 1 : 0.7 + 0.3 * Math.sin(t * 1.5 + p.ph * 7);
+        ctx.globalAlpha = p.a * twinkle;
+        ctx.fillRect(x - p.r, y - p.r, p.r * 2, p.r * 2);
+      }
     }
-    for (const p of specks) {
-      const a = p.ph + t * p.turn;
-      const x = p.x + Math.cos(a) * p.orbit + (still.matches ? 0 : Math.sin(p.y * 0.05 + t * 0.5) * 1.6);
-      const y = p.y + Math.sin(a) * p.orbit * 0.8;
-      const twinkle = still.matches ? 1 : 0.7 + 0.3 * Math.sin(t * 1.5 + p.ph * 7);
-      ctx.fillStyle = "rgba(" + p.tone + "," + (p.a * twinkle).toFixed(3) + ")";
-      ctx.beginPath();
-      ctx.arc(x, y, p.r, 0, 6.283);
-      ctx.fill();
-    }
+    ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = "source-over";
     if (!still.matches) raf = requestAnimationFrame(frame);
   }

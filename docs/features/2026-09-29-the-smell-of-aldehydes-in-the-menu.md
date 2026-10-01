@@ -118,3 +118,22 @@ By eye: open the Menu.
 How to test it: the menu test in `tests/menu.spec.js` now also counts the lit specks out towards the
 rings in each quarter of the drawing (all four, below it as well as above), sees two moments differ
 (it turns), finds no `.ma-vapour`, and the drawing ending at least 140px in from the window's edge.
+
+## 2026-10-01, later — an electron cloud, and the caption the other way round
+
+The owner: "for the menu aledhyde, i want you to add particles to it and make them many more but
+also smaller. I want it to be like an electron cloud" — and "make the r-CHO on the right and 'The
+smell of aldehydes' on the left under the aldehyde molecule in the menu page".
+
+- **Three times the specks, at half the size**: some 2,900 in the lobes (gold round the C=O,
+  violet off the oxygen, the warm grey close round the bonds and at R and H — 710 before) and
+  1,900 in the sphere (640 before), each 0.28 to 0.78 of a unit across in the drawing's own 400
+  (0.5 to 1.6 before), so the whole reads as **a density** — thick where the electrons are most
+  often found, thinning from there — rather than as dots. Each speck a little stronger, so the
+  cloud gives the light it gave before. Half as many on a phone (`MANY`).
+- **Drawn a colour at a time**, each speck's strength as the pen's alpha and each a small square
+  (at this size the same as a round one): no colour written out for every speck, as there was —
+  so three and a half times the specks cost no more. Timed with the menu open, before and after:
+  the same frames (16.7ms in the middle of them).
+- **The caption**: *The smell of aldehydes* on the left, *R–CHO* on the right (`.ma-caption`).
+

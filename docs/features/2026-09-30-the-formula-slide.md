@@ -373,6 +373,15 @@ hover one of the 8 titles."
   together from all round over 0.9s. Drawn with the pen's colour set three times a frame and its
   strength as its alpha, so many more cost little more; drawn as sharp as the screen up to two.
 
+### 2026-10-01, later — the lines half as reactive to the hand
+
+"make the line particles on either side of the aldehyde on the home page less reactive to the
+curosr. by a factor of 2 (or half). i want them half as reactive." The lines' specks are drawn
+**half as far** to the hand (`LINE_PULL` 0.25; 0.5) and **brighten half as much** near it
+(`LINE_LIGHT`, half of `HAND_LIGHT`); how far the hand reaches is unchanged, and so are the
+aldehyde's own specks. A name's backdrop, which took its pull off the lines' until now, keeps the
+pull it had (`HAZE_PULL`, 0.175).
+
 ## How to test it
 
 `tests/formula.spec.js`:

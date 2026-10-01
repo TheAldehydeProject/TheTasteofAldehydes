@@ -194,7 +194,13 @@
   const HAND_REACH = 0.16;     // of the window's height, for the aldehyde's specks
   const HAND_PULL = 0.45;
   const LINE_REACH = 150;      // pixels, for the lines'
-  const LINE_PULL = 0.5;
+  // the lines half as moved by it as they were, and half as lit (2026-10-01:
+  // "make the line particles on either side of the aldehyde on the home page
+  // less reactive to the cursor ... i want them half as reactive"; 0.5 and
+  // the whole of `HAND_LIGHT` before) — a name's backdrop keeps its own
+  const LINE_PULL = 0.25;
+  const LINE_LIGHT = 0.5;      // of HAND_LIGHT
+  const HAZE_PULL = 0.175;
   const HAND_LIGHT = 0.55;
 
   const phone = () => window.innerWidth < 700;
@@ -432,7 +438,7 @@
         p += d * ${LINE_PULL.toFixed(3)} * near;
       }
       float twinkle = 0.8 + 0.2 * sin(uTime * 1.6 + seed * 60.0);
-      vColour = mix(aTone, vec3(1.0), 0.35 * hot) * (1.0 + 0.9 * hot + ${HAND_LIGHT.toFixed(3)} * near);
+      vColour = mix(aTone, vec3(1.0), 0.35 * hot) * (1.0 + 0.9 * hot + ${(HAND_LIGHT * LINE_LIGHT).toFixed(3)} * near);
       vAlpha = on * twinkle;
       gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
       gl_PointSize = uSize * (0.8 + 0.4 * seed) * (1.0 + 0.25 * hot);
@@ -488,7 +494,7 @@
       if (uPull > 0.0) {
         vec2 d = uHandPx - p;
         near = exp(-dot(d, d) / (${(LINE_REACH * 0.7).toFixed(1)} * ${(LINE_REACH * 0.7).toFixed(1)})) * uPull;
-        p += d * ${(LINE_PULL * 0.35).toFixed(3)} * near;
+        p += d * ${HAZE_PULL.toFixed(3)} * near;
       }
       // brightest at its middle, fading out to its edge
       float r = length(aHaze.yz);
