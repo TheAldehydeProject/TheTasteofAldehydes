@@ -3027,7 +3027,10 @@ body.structured .page-where { color: rgba(226, 232, 242, 0.55); border-left-colo
    assembly rather than beside it, and structure.js sizes it to
    whatever that assembly is doing on the screen this frame — so
    nothing here may give one a size or a transform of its own. */
-.structure-marks { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+/* (its marks are moved and sized every frame, as the drawing breathes:
+   contained, so laying them out again never lays out the page round them —
+   2026-10-01) */
+.structure-marks { position: fixed; inset: 0; pointer-events: none; z-index: 2; contain: layout style; }
 .structure-stop {
   position: absolute;
   display: block;
@@ -4248,13 +4251,18 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   background: rgba(150, 160, 176, 0.35);
   margin-left: 3px;
 }
+/* (filled by a transform rather than its height since 2026-10-01: growing
+   its height laid the page out again every frame of a scroll; scaled, the
+   browser moves it by itself) */
 .essay-rule-run {
   position: absolute;
   left: -1px;
   top: 0;
   width: 3px;
   background: #8eb4e2;
-  height: 0;
+  height: 100%;
+  transform: scaleY(0);
+  transform-origin: 50% 0;
 }
 .essay-marks { list-style: none; margin: 0; padding: 0; }
 .essay-mark {
@@ -6778,6 +6786,19 @@ html:not(.lib-drawing) .net-fallback { position: static; max-width: 760px; margi
   .net-drop { flex: 1; min-width: 0; }
   .net-drop-button { min-width: 0; width: 100%; }
   .net-note { width: calc(100% - 24px); max-height: calc(100% - 96px); padding: 14px 16px 0; }
+  /* ONE BLUR, NOT TWO, on a phone (2026-10-01): the drawing goes on
+     turning behind a window now, so every blur over it is worked out
+     again every frame, at the phone's full density. The veil blurs the
+     page; the window and the way out stand on it in a glass a little
+     more opaque, with no blur of their own. */
+  .net-veil { -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .net-note, .net-leave-box { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .net-note { background: rgba(24, 22, 24, 0.86); }
+  .net-leave-box {
+    background:
+      linear-gradient(160deg, rgba(var(--leave-rgb), 0.13), rgba(var(--leave-rgb), 0.03) 60%),
+      rgba(24, 22, 24, 0.9);
+  }
   .net-sources { width: calc(100% - 24px); max-height: calc(100% - 96px); padding: 16px 18px 0; }
   .net-sources-body { margin: 14px -18px 0; padding: 0 18px 18px; }
   .net-sources-title { font-size: 28px; }

@@ -249,3 +249,16 @@ drawn again and again by the page's own frames and move; and **in front, no time
 - **`.about`, the home page's About me, is excluded from the menu's dimming rule** — it is built on
   the body, and so was in the trap the notes window fell into (see *the glitch on the way out*). See
   [the title and About me](2026-09-29-the-title-and-about-me.md).
+
+## 2026-10-01 — the Menu's pages at their own addresses; the cursor does less each frame
+
+- **The Menu's links are the pages' folders** (`theories/`, `favourites/` …) and Home is the site's
+  own address (`""` in `SITE_LINKS`, written `./` at the root and `../` a folder in) — see [the
+  addresses](2026-10-01-addresses-of-their-own-names.md). **The page you are on** was found by
+  comparing the last part of the address, its file's name; every Menu page's address ends in `/`
+  now, so it compares whole addresses, `/x/` and `/x/index.html` one page (`same` in `nav.js`).
+- **The cursor asks what is under it once a frame, at the head of the frame** (`readWanted`, read
+  in `follow`), not on every movement of the mouse — which reports more often than the screen draws,
+  and each asking (`elementFromPoint`) makes the browser lay the page out first if anything has
+  changed. And the ring is written only when it moves: standing still and settled, `follow` writes
+  nothing (it wrote the same transform sixty times a second).

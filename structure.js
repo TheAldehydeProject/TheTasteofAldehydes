@@ -1355,6 +1355,7 @@
   // ============================================================
   // DRAWING
   // ============================================================
+  let readoutSaid = "";
   function draw(on) {
     eye = travel + drifted;
     placeCarriage();
@@ -1405,10 +1406,12 @@
     // reads as drift however small it is. The drawing may move; the
     // reading is where you have got to.
     const along = Math.min(1, Math.max(0, travel / ROAD));
-    readout.textContent =
-      (shown ? shown.number : nearest ? nearest.number : "--") +
+    // (written only when it changes: the same words written again are a
+    // change to the page all the same, laid out again every frame)
+    const said = (shown ? shown.number : nearest ? nearest.number : "--") +
       " / " + String(stops.length).padStart(2, "0") +
       "   ·   " + String(Math.round(along * 100)).padStart(3, "0") + "%";
+    if (said !== readoutSaid) { readout.textContent = said; readoutSaid = said; }
     cue.classList.toggle("gone", along > 0.02 || opened > 0.02);
     hint.classList.toggle("gone", opened < 0.6);
   }

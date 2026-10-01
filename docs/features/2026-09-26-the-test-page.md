@@ -1873,3 +1873,34 @@ with the card).
 - **`the galaxies far out are twelve, no two of a kind, and quiet`**;
 - the Sources test reads the sheet **dark with light ink**, solid, where the note window is glass;
 - the middle-node test reads the tag as *Go to NN · Spice*, with nothing after it.
+
+## 2026-10-01 — turning behind every window, and the way out red but in combinations
+
+The owner:
+
+> in the notes library, when you open anything any popup, i want the thing in the back to keep
+> moving. regardless of what you open.
+>
+> for the notes library, when youre in the expanded view, the window colour should be red-ish, it
+> should only be kept yellow in the combinations part of the note library.
+
+- **Whatever is opened, the drawing goes on turning behind it at its own pace.** A note chosen
+  slowed the whole — the one network's turn and every accord's own — to a quarter (`slow`, 0.25,
+  while `selected`), which under its window read as stopped. Now no window slows it: a note's, the
+  Sources, the way out (`windowOpen` in `frame()`). A node under the hand still slows it to a little
+  over a third so it can be pressed — but never while a window is open. The test hooks say how far
+  it has turned (`turn`, and each accord's `spins`).
+- **The way out is red, calmly, but in combinations.** It was a soft orange everywhere since
+  2026-09-30 ("make this orange and less urgent"), which against the red network read as the yellow
+  the owner names. Its colour is the network's now: **a calm rouge** (`--leave`, `#e2737a`, the
+  library's red quietened) out of combinations — the one network and the expanded view — with the
+  sheet faintly washed in it and its edge and its two ticks in it; and **the combinations' gold**
+  (`#e6b44a`) while combining, when the network is gold (`.net-stage.is-combining .net-leave`). It is
+  as calm as it was: its way on a hairline box, faintly filled, filling a little more under the hand.
+  `--leave-rgb` and `--leave-ink` carry the same colour for its washes and its words.
+
+How to test it: **`whatever window is opened, the drawing behind goes on turning at its own pace`**
+— the turning measured over a second and a half with nothing open, under a note's window and under
+the Sources over it (at least 80% of the free pace), and apart, an accord's own turning under a
+note's window. **`a fragrance pressed asks before the library is left`** reads the way out gold from
+the combinations' list and rouge from a note's window afterwards.

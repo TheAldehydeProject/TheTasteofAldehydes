@@ -1,6 +1,7 @@
 # The formula slide, and the home page's five stages
 Date: 2026-09-30
 Files touched: `index.html`, `molecule.js`, `landing.js`, `thread.js`, `paper.js`, `style.css`,
+(2026-10-01: `landing.js`, `molecule.js`, `style.css`, `tests/helpers.js`, `tests/formula.spec.js`, `tests/landing.spec.js`)
 `tests/formula.spec.js` (new), `tests/helpers.js`, `tests/landing.spec.js`, `tests/menu.spec.js`,
 `tests/leaving-the-map.spec.js`, `tests/node-map.spec.js`, `tests/background-and-cursor.spec.js`,
 `tests/pages.spec.js`
@@ -81,6 +82,40 @@ And last, the same night:
 > it. make sure of that
 
 ## Why / key decisions
+
+### 2026-10-01 — the turn upright prolonged, and the names pressable as soon as they show
+
+The owner:
+
+> next, I want you to make the text clickable even when it isnt fully apparent on the home page.
+> Next, i would like you to just prolongue the horizontal to vertical transformation of the
+> aldehyde. thats the only part that looks fast. I want you to smooth it out.
+
+- **The names take the hand as soon as they are there at all** (`NAMES_PRESSABLE`, 0.03 of
+  themselves, in `landing.js`): quiet at rest, or still coming up as the last stage comes. They
+  waited until they were over half way up (`names > 0.6`), so a name already to be seen could not
+  be pressed.
+- **The turn upright has the longest leg of the page.** The legs are no longer all one length:
+  `LEGS` in `landing.js`, `[1, 1.7, 1, 1]` of `--stage-leg` — the second, the turning, 1.7 — and
+  the run is laid to their sum (4.7 legs; `style.css` says the same before the script runs). The
+  page says them on the stage (`data-legs`), where the tests read where a stage is; `__formula` is
+  still 0 to 4, a stage a whole number, however long its leg.
+- **And the turn follows the page on a spring of its own** (`TURN_W`, 2.6 a second, critically
+  damped, in `molecule.js`): where the page says it should be is eased in and out, so however
+  quickly the page goes — a flick of the wheel, a key, the Scroll button — it turns over about two
+  and a half seconds and never faster than about seventy degrees a second. Measured, from stage 2:
+  a key press turned it in **1.0s, peaking at 159° a second; now 2.4s, peaking at 72°**; a quick
+  flick of the wheel **1.4s at up to 103° a second; now 3.0s at up to 68°**. The turn starts at
+  `TURN_FROM` 0.95 (it was 0.85, which left stage 2 turned a few degrees already). The formula
+  waits for it — the cloud drawing in, the bonds and the atoms' names come only once it is nearly
+  upright (`upright`) — and the drawing says `turning` until it is (`data-state`).
+- **The drawing's own clock** runs only while it is drawn: under the Menu or About me it stopped
+  and the swirl and the sway, reckoned by the wall clock, leapt on by however long it had been
+  covered the moment it came back. Now it carries on from where it was. (On a machine drawing
+  without a graphics card, where it draws every fifth frame, the clock still counts the frames
+  between.)
+- **Its box is read when the page moves, not as it draws**: read straight after `landing.js` had set
+  the page for the frame, it made the browser lay the page out again every frame of a scroll.
 
 ### Pages 3 and 4, switched off and kept (`index.html`, `landing.js`)
 
@@ -286,10 +321,13 @@ And last, the same night:
 - The glide moves the page and the stage is one number following it, both frame phases in
   `landing.js`'s one loop at the head of every frame, each stopping once it has arrived. The fades are three inline styles and one custom property, written only when they
   change. The lines' shader puts a speck not yet reached off the screen at once. Nothing is read off
-  the page's layout while it draws but the drawing's own box; the lines and the names are laid out
-  once, on load, when the page's face has come, and on a resize.
+  the page's layout while it draws — the drawing's own box is read when the page scrolls (since
+  2026-10-01) — and the lines and the names are laid out once, on load, when the page's face has
+  come, and on a resize.
 - **It draws only while the stage is on the screen** (with the map on, a test counts none once the
-  map is showing), and not under the Menu or About me — but under the way out it goes on.
+  map is showing), and not under the Menu or About me once either has come all the way up
+  (`COVER_MS`, 650ms; it stopped the moment they were pressed, which read as the page catching) —
+  but under the way out it goes on.
 - **With reduced motion** the wheel is the browser's own, the stages follow the page at once, and the drawing is simply there,
   still — no flow, no fall, no swirl, no pull — drawn again only when something has changed.
   **Without the drawing** the last stage is the eight names, plainly, quiet and lit as ever, and a
@@ -320,6 +358,9 @@ And last, the same night:
   names`** — each stage in turn (`data-stage`, `data-state`: cloud, turned, formula, lined): the
   title gone; the lone pair's violet moved to the top; the atoms named only at the fourth, O above
   C, the H either side below; the names only at the fifth, beside two lit lines; and back.
+- **`the turn upright is prolonged and smooth: its leg the longest, and never quick`** — the
+  second of `data-legs` the longest by half again; from a key, the turn takes over 1.8s and never
+  goes faster than 100° a second (2026-10-01).
 - **`the wheel scrolls it smoothly, as far as it is turned and back, and nothing snaps`** — three
   notches, the stage followed frame by frame: never a jump, never back, a glide to exactly as far as
   they send it, and it stays where it stopped.
@@ -355,7 +396,9 @@ the aldehyde, press a name; on a phone, swipe and tap.
 
 ## Known issues / TODO
 
-- The numbers: `--stage-leg` (how much scrolling a stage takes) in `style.css`; `GLIDE_W`,
+- The numbers: `--stage-leg` (how much scrolling a stage takes) in `style.css` and `LEGS` (how many
+  of them each leg is) in `landing.js`; `TURN_W` (how quickly the turn upright follows) in
+  `molecule.js`; `GLIDE_W`,
   `WHEEL_SCALE`, `FOLLOW_S`, `TITLE_GONE`, `CORNERS_GONE`, `NAMES_FROM`, `NAMES_OVER` in
   `landing.js`; `TURN_FROM`, `FORM_FROM`, `LINES_OVER`, `REACT_TITLE`, `TIGHT`, `FORM_PEAK`,
   `BOND_*`, `ATOM_SIZE`, `CLEAR`, `LINE_*`, `FALL`, `HAZE_*`, `HAND_*` at the top of `molecule.js`;

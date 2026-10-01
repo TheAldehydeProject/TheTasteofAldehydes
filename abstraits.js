@@ -65,7 +65,8 @@
 (function () {
   const canvas = document.querySelector(".human-field");
   if (!canvas) return;
-  const ink = canvas.getContext("2d");
+  let ink = canvas.getContext("2d");
+  const page = ink;   // (`ink` is lent to the armoire's own picture while it is made, below)
   if (!ink) return;
 
   const REDUCE_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -381,20 +382,48 @@
     });
   }
 
-  function draw(clock, dt) {
-    if (!width) return;
-    ink.clearRect(0, 0, width, height);
-
-    // THE ARMOIRE, built up from the floor.
-    const built = REDUCE_MOTION ? 1 : ease(clock / BUILD);
+  // THE ARMOIRE, ONCE IT STANDS, IS A PICTURE. Built and in bloom, nothing
+  // of it moves again (its specks stand where they were laid, and only the
+  // powder and the drip move), but it was drawn speck by speck — thousands,
+  // each its own colour — every frame, which was most of what this page
+  // asked of a phone (2026-10-01). So once it is whole it is drawn once,
+  // into a picture of its own the size of the window, and that is laid
+  // down each frame; a resize makes it again.
+  let still = null, stillFor = "";
+  function drawArmoire(built, bloom) {
     [wood, inside, clothes].forEach((list, which) => list.forEach((p) => {
       if (p.up > built * 1.05) return;
       const [x, y] = place(p.x, p.y);
       fill(which === 2 ? p.c : which ? DARK : WALNUT, p.tone, x);
       ink.fillRect(x, y, p.s, p.s);
     }));
-    const bloom = REDUCE_MOTION ? 1 : ease((clock - BUILD * 0.85) / BLOOM);
     if (bloom > 0) irises.forEach((f) => drawIris(f, bloom));
+  }
+
+  function draw(clock, dt) {
+    if (!width) return;
+    ink.clearRect(0, 0, width, height);
+
+    // THE ARMOIRE, built up from the floor.
+    const built = REDUCE_MOTION ? 1 : ease(clock / BUILD);
+    const bloom = REDUCE_MOTION ? 1 : ease((clock - BUILD * 0.85) / BLOOM);
+    if (built >= 1 && bloom >= 1) {
+      const key = canvas.width + "x" + canvas.height;
+      if (stillFor !== key) {
+        still = still || document.createElement("canvas");
+        still.width = canvas.width; still.height = canvas.height;
+        const made = still.getContext("2d");
+        made.setTransform(canvas.width / width, 0, 0, canvas.height / height, 0, 0);
+        ink = made;
+        drawArmoire(1, 1);
+        ink = page;
+        stillFor = key;
+      }
+      ink.save();
+      ink.setTransform(1, 0, 0, 1, 0, 0);
+      ink.drawImage(still, 0, 0);
+      ink.restore();
+    } else drawArmoire(built, bloom);
 
     // THE ORRIS POWDER, out of the gap, faster while the hand is near.
     const [gx] = place(frame.hinge, 0);

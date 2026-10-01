@@ -96,3 +96,25 @@ By eye: open the Menu.
 - **The vapour** off the oxygen is in the same violet and gold now (it was white).
 - **Three words stand still under it**, spaced across in the mono: *METALLIC  COLD  SOAPY*
   (`.ma-words`), over the caption as before.
+
+## 2026-10-01 — a sphere of specks round it, and the whole a little to the left
+
+> the aldehyde in the menu shouldnt have particles coming up exclusively; i want them to be around
+> it and kind of exist in a sphere around it. also move the whole diagram a little to the left.
+
+- **The vapour is gone** — the eighteen specks that rose off the oxygen (`.ma-vapour`, `ma-rise`).
+  None of it is in the code; a test says so.
+- **A sphere of specks round the molecule** (`sphere` in `nav.js`, on the same canvas): 640 places on
+  a sphere about the drawing's middle, nearly three in four out towards its two rings and the rest
+  well within, in the warm grey with some gold and violet, **turning slowly about a leaning axis**
+  (`TURN`, `TILT`) in a gentle perspective (`FOCAL`) — the near side larger and brighter, the far side
+  small and faint — each speck breathing a little in and out of its place. The gold and violet lobes
+  round the C=O and off the oxygen stay, and the grey haze round the bonds is less (it was the cloud's
+  loose round body, which the sphere is now). With motion turned off it is drawn once, still.
+- **The whole diagram stands further in from the right**: `right: clamp(64px, calc(14vw - 48px),
+  220px)` — about 90px further left at a laptop's width (1440), 150 at 1920, never nearer the list
+  than about 90px. On a phone it stays in its corner.
+
+How to test it: the menu test in `tests/menu.spec.js` now also counts the lit specks out towards the
+rings in each quarter of the drawing (all four, below it as well as above), sees two moments differ
+(it turns), finds no `.ma-vapour`, and the drawing ending at least 140px in from the window's edge.

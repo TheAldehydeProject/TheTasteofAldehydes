@@ -298,14 +298,27 @@
     });
   }
 
+  // Drawn only while it can be seen (2026-10-01): on Scent descriptions
+  // this index stands in the Fragrances view, under the table that is
+  // drawn over it — and it went on turning, sixty times a second, while
+  // the Houses were the page and it was not on it at all.
   const began = performance.now();
+  let seen = true, running = false;
   function frame(now) {
+    if (!seen) { running = false; return; }
     draw((now - began) / 1000);
     requestAnimationFrame(frame);
+  }
+  const wake = () => { if (!running && seen && !REDUCE_MOTION) { running = true; requestAnimationFrame(frame); } };
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((entries) => {
+      seen = entries[entries.length - 1].isIntersecting;
+      if (seen) { size(); wake(); }   // (measured again: it may have been laid out hidden)
+    }).observe(canvas);
   }
 
   size();
   if (REDUCE_MOTION) draw(0);
-  else requestAnimationFrame(frame);
+  else wake();
   window.addEventListener("resize", () => { size(); if (REDUCE_MOTION) draw(0); });
 })();

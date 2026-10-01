@@ -366,13 +366,19 @@
     // writing, so the left of the page is quiet rather than blank.
     // Where each one stands is worked out from the clock and wrapped,
     // never added up, so it cannot drift away from where it started.
+    // (One ink, set once, and how much of it each speck shows as a number,
+    // `globalAlpha` — not a colour written out as words for every speck,
+    // which the browser had to read back thousands of times a frame;
+    // 2026-10-01.)
+    ink.fillStyle = "rgb(" + INK + ")";
     dust.forEach((mote) => {
       const down = (mote.v * height + clock * mote.fall) % height;
       const y = down < 0 ? down + height : down;
       const x = mote.u * width + Math.sin(clock * 0.15 + mote.sway) * 6;
-      ink.fillStyle = rgba(DUST_INK * mote.ink);
+      ink.globalAlpha = Math.min(1, DUST_INK * mote.ink);
       ink.fillRect(Math.round(x), Math.round(y), mote.size, mote.size);
     });
+    ink.globalAlpha = 1;
 
     // THE HAZE the void stands in, stamped rather than generated.
     stampHalo(r);
@@ -402,6 +408,7 @@
     }
 
     // WHAT FALLS ROUND IT.
+    ink.fillStyle = ink.strokeStyle = "rgb(" + INK + ")";
     specks.forEach((s) => {
       const way = s.turn + s.way * clock * s.rate * Math.PI * 2 + carried;
       const at = s.out * small;
@@ -420,13 +427,12 @@
       const rim = Math.exp(-Math.pow((s.out - VOID_R - RIM * 0.5) / RIM, 2));
       const ahead = SPECK_INK * (0.35 + 0.65 * rim) * (1 - from * 0.55) * shown * lit(x);
       if (ahead < 0.015) return;
-      ink.fillStyle = rgba(ahead);
+      ink.globalAlpha = Math.min(1, ahead);
       // Near the void a speck is drawn as the short arc it is
       // travelling along; further out it is a square like every other
       // speck on this site.
       if (rim > 0.35) {
         const long = (STREAK * rim) / at;
-        ink.strokeStyle = rgba(ahead);
         ink.lineWidth = Math.max(1, s.size - 0.6);
         ink.beginPath();
         ink.arc(cx, cy, at, way - long * s.way, way);
@@ -436,6 +442,8 @@
         ink.fillRect(Math.round(x), Math.round(y), size, size);
       }
     });
+
+    ink.globalAlpha = 1;
 
     // THE VOID ITSELF, taken back out of the drawing: anything that
     // strayed inside it is cleared, so the hole is a hole rather than a

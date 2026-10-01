@@ -586,8 +586,13 @@
     b.addEventListener("click", () => go(b.classList.contains("re-prev") ? -1 : 1));
   });
   let said = "";
+  let ran = "";
   function caption() {
-    field.style.setProperty("--run", phase.q.toFixed(3));
+    // (said on the bar itself, not on the whole field: a property set on
+    // the field is handed down to everything in it, and the browser worked
+    // the field's styles out again every frame — 2026-10-01)
+    const q = phase.q.toFixed(3);
+    if (q !== ran) { run.style.setProperty("--run", q); ran = q; }
     const shown = to >= 0 && phase.q >= 0.5 ? to : cur;
     const say = cur + ">" + to + ":" + shown;
     if (say === said) return;

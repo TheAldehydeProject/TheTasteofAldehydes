@@ -531,7 +531,7 @@ test("the field holds each form twelve seconds and turns into the next over six,
   const field = page.locator(".re-field");
   const name = page.locator(".re-caption-name");
   const state = () => field.evaluate((f) => ({ figure: f.dataset.figure, phase: f.dataset.phase, shown: f.dataset.shown,
-    run: parseFloat(f.style.getPropertyValue("--run")) }));
+    run: parseFloat(f.querySelector(".re-run").style.getPropertyValue("--run")) }));
   await expect(field).toHaveAttribute("data-cycle", CYCLE.join(","));
   await page.clock.runFor(2500);
   expect(await state()).toMatchObject({ figure: "geodesic", phase: "hold" });

@@ -698,11 +698,13 @@
   // ---- framing -------------------------------------------------------------
   // In the middle of the window, as large as the private page draws it; and,
   // upright and as the formula, as large as the room between the lines leaves it.
-  let W = 1, H = 1, distCloud = 10, distForm = 10, denseCloud = 1, denseForm = 1, pxForm = 100;
+  let W = 1, H = 1, distCloud = 10, distForm = 10, denseCloud = 1, denseForm = 1, pxForm = 100, thin = 1;
+  const PHONE_THIN = 0.5;    // the share of the specks drawn on a phone (each the brighter for it)
   let band = false;
   const half = Math.tan((FOV * Math.PI) / 360);
   const density = (px) => Math.max(0.5, Math.min(1, (px / 190) ** 2));
   function size() {
+    box = null;
     const r = wrap.getBoundingClientRect();
     W = Math.max(1, r.width); H = Math.max(1, r.height);
     const small = phone();
@@ -723,12 +725,19 @@
     denseForm = density(pxForm);
     const scale = renderer.getPixelRatio();
     const cut = soft ? 0.2 : 1;
+    // ON A PHONE, HALF THE SPECKS, EACH TWICE AS STRONG (2026-10-01). The
+    // cloud is drawn some two and a quarter times smaller there, with every
+    // one of its specks, each working its swirl out from scratch every frame
+    // — more than twice as many to the inch as on a desktop. Half of them,
+    // twice as bright, is the same light in the same place for half the
+    // work, and still twice a desktop's to the inch.
+    thin = small ? PHONE_THIN : 1;
     for (const name in parts) {
       const u = parts[name].material.uniforms;
       u.uSize.value = (small ? 1.25 : 1.5) * GROW[name] * scale;
       u.uTwo.value = soft || small ? 0 : 1;
       u.uAspect.value = W / H;
-      parts[name].geometry.setDrawRange(0, Math.min(D.parts[name].n, Math.round(SHARE[name] * EMPHASIS[name] * cut)));
+      parts[name].geometry.setDrawRange(0, Math.min(D.parts[name].n, Math.round(SHARE[name] * EMPHASIS[name] * cut * thin)));
     }
     bonds.material.uniforms.uSize.value = (small ? 1.8 : 2.2) * scale;
     lineMat.uniforms.uSize.value = (small ? 1.8 : 2.1) * scale;
@@ -856,6 +865,16 @@
     hazeGeo.setDrawRange(0, n);
   }
 
+  // ---- where the drawing stands on the window --------------------------------
+  // Read when the page has scrolled or the window changed — at the head of a
+  // frame, before anything has been written in it — and kept.
+  let box = null;
+  const boxNow = () => box || (box = wrap.getBoundingClientRect());
+  const container = document.getElementById("scroll-container");
+  const forget = () => { box = null; };
+  if (container) container.addEventListener("scroll", () => { box = wrap.getBoundingClientRect(); }, { passive: true });
+  window.addEventListener("resize", forget);
+
   // ---- the hand ------------------------------------------------------------
   // A name is lit while the hand or the keys are on it, and while it asks
   // to be left for (landing.js marks it `is-lit`).
@@ -922,8 +941,10 @@
     const down = smooth((S - 3) / LINES_OVER);                  // the lines come down
     const react = REACT_TITLE + (1 - REACT_TITLE) * smooth((S - 0.15) / 1.1);
 
-    // the hand
-    const box = wrap.getBoundingClientRect();
+    // the hand (where the drawing stands, read when the page moves, not
+    // here: read here, straight after landing.js has set the page for this
+    // frame, it made the browser lay the page out again every frame)
+    const box = boxNow();
     const handOn = !REDUCE && pointer.on && !document.body.classList.contains("ask-shown") &&
       pointer.y >= box.top && pointer.y <= box.bottom;
     pull += ((handOn ? 1 : 0) - pull) * Math.min(1, dt / 220);
@@ -953,7 +974,7 @@
       m.uTime.value = t * PACE; m.uGather.value = gather;
       m.uConcrete.value = formed;
       m.uFlow.value = REDUCE ? 0 : FLOW * (1 - (1 - FORM_FLOW) * formed);
-      m.uAlpha.value = (PEAK[name] + (FORM_PEAK[name] - PEAK[name]) * formed) * dense;
+      m.uAlpha.value = Math.min(1, (PEAK[name] + (FORM_PEAK[name] - PEAK[name]) * formed) * dense / thin);
       m.uHand.value.set(hand.x, hand.y);
       m.uPull.value = pull * react;
     }

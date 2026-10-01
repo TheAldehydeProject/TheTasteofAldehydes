@@ -196,3 +196,32 @@ slide has no ground of its own (the stage's dark is under it). The Scroll button
   - the owner's paragraphs in warm white at 80%.
   It opens as it did: the sheet rising, the two parts one after the other. The owner's words are
   unchanged.
+
+## 2026-10-01 — About me opens without a lag
+
+The owner: "additionally, make it not lag when it opens about me."
+
+What made it catch, three things together:
+
+- **The blur behind it was animated from nothing** — `backdrop-filter: blur(0px)` to
+  `blur(14px) saturate(1.1)` over 0.6s on the whole window, a new blur worked out every frame —
+  **and the sheet carried a second blur of its own** (`blur(18px)`) inside the first, which its
+  own nearly opaque ground (86 to 93%) all but hid: two passes over the window for one effect.
+- **The aldehyde stopped dead the moment the square was pressed** (`molecule.js` drew nothing
+  while `about-shown` was on the body), while the blur was still only starting to come in, so the
+  specks were seen to freeze — which reads as the page catching.
+- **And when it closed, the aldehyde leapt**: its swirl and sway were reckoned by the wall clock,
+  so they jumped on by however long About me had been open.
+
+Now: **one blur that never changes** (12px; 8px on a phone, where the window is small and the
+blur costs most), on a layer of its own behind the sheet (`.about::before`), **faded in by its
+opacity** — which the browser animates by itself, without the page's own work each frame — and
+none in the sheet, whose ground is a touch more opaque (90 to 95%) in its place. The aldehyde
+**goes on moving while About me comes up** and stops only once it is all the way up
+(`COVER_MS`, 650ms, in `molecule.js`; under the Menu the same), then carries on from where it
+stopped, on its own clock. It looks as it did — screenshots side by side are the same.
+
+How to test it: **`the square at the title opens About me over the page, out of focus`** in
+`tests/landing.spec.js` reads the blur off `.about::before`, sees it fade up to the whole of
+itself, and that the sheet has no blur of its own. By eye: open and close it while the aldehyde
+moves.

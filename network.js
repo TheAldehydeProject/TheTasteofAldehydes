@@ -839,11 +839,19 @@
     // translucent (not) — sharing one opacity per node.
     // perNode: the one addition to the library's shader — each node's own
     // opacity, its glow from within taken in its own colour, and the rim.
+    // ON A PHONE THE FILLERS ARE CUT ONCE, NOT TWICE (2026-10-01): an
+    // icosahedron as it is, twenty facets, not divided into eighty. There
+    // are some two thousand six hundred of them, a few pixels across on a
+    // phone, and divided they were most of the nine hundred thousand
+    // corners the graphics card was asked to work out every frame; a
+    // phone's does a fraction of what a desktop's does. The notes keep
+    // theirs, and a desktop keeps both.
     const opacity = new Float32Array(T).fill(1);
     const N = NOTE_COUNT;
+    const FILLER_FACETS = window.innerWidth < 700 ? 0 : 1;
     const sets = [
       { geo: new THREE.IcosahedronGeometry(1, 1), from: 0, count: N },
-      { geo: new THREE.IcosahedronGeometry(1, 1), from: N, count: T - N },
+      { geo: new THREE.IcosahedronGeometry(1, FILLER_FACETS), from: N, count: T - N },
     ];
     function perNode(material) {
       material.onBeforeCompile = (sh) => {

@@ -392,16 +392,31 @@
 
   // How far through the piece the reading is. It is the SCROLL and
   // nothing else — the field may drift, the reading may not.
+  // Read only when the page has moved (or been resized, or a tick
+  // pressed), and written only where something changed: it was read and
+  // written every frame, and writing the same words again is still a
+  // change to the page, which the browser lays out again — sixty times a
+  // second on a page standing still, which a phone feels (2026-10-01).
+  let ruleAt = null, ruleSize = "", ruleHeight = "", ruleSaid = "", ruleTick = -2, ruleName = "";
+  // (the page growing or shrinking under a still window — a footnote
+  // opened, the face arriving — is read again too)
+  if (window.ResizeObserver) new ResizeObserver(() => { ruleAt = null; }).observe(document.body);
   function readRule(down) {
     if (!rule) return;
+    const size = window.innerWidth + "x" + window.innerHeight + ":" + pinned;
+    if (down === ruleAt && size === ruleSize) return;
+    ruleAt = down; ruleSize = size;
     const room = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     const through = Math.max(0, Math.min(1, down / room));
-    run.style.height = (through * 100).toFixed(2) + "%";
-    readout.textContent = String(Math.round(through * 100)).padStart(2, "0") + "%";
+    const height = "scaleY(" + through.toFixed(4) + ")";
+    if (height !== ruleHeight) { run.style.transform = height; ruleHeight = height; }
+    const said = String(Math.round(through * 100)).padStart(2, "0") + "%";
+    if (said !== ruleSaid) { readout.textContent = said; ruleSaid = said; }
 
     const at = readingAt(down);
-    ticks.forEach((tick, i) => tick.classList.toggle("here", i === at));
-    hereName.textContent = nameOf(sections[at]);
+    if (at !== ruleTick) { ticks.forEach((tick, i) => tick.classList.toggle("here", i === at)); ruleTick = at; }
+    const name = nameOf(sections[at]);
+    if (name !== ruleName) { hereName.textContent = name; ruleName = name; }
   }
 
   // ============================================================

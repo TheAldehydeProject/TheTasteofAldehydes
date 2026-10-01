@@ -521,9 +521,13 @@ const SITE_LINKS = [
     }
     dot.style.transform = "translate(" + tx + "px," + ty + "px) translate(-50%,-50%)";
     // pointer-events:none on the ring/dot means elementFromPoint sees
-    // straight through them to whatever's actually underneath.
-    reread(false);
+    // straight through them to whatever's actually underneath. Read once a
+    // frame, at its head (`follow`), not on every movement: a mouse reports
+    // more often than the screen draws, and asking what is under a point
+    // makes the browser lay the page out first if anything has changed.
+    readWanted = true;
   }, { passive: true });
+  let readWanted = false;
 
   // A page that moves under a still pointer — scrolling, a picture
   // arriving, a drawing opening over the page — changes what is under
@@ -546,10 +550,14 @@ const SITE_LINKS = [
   // the stretch relax away to nothing before its angle stops mattering.
   let ringAngle = 0;
 
+  let wrote = "";
   function follow() {
     requestAnimationFrame(follow);
+    if (readWanted) { readWanted = false; reread(false); }
     const dx = tx - rx;
     const dy = ty - ry;
+    // (still, and settled: nothing to write — the ring stays where it is)
+    if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05 && wrote) return;
     rx += dx * LAG;
     ry += dy * LAG;
 
@@ -558,9 +566,9 @@ const SITE_LINKS = [
     const speed = Math.min(60, Math.hypot(dx, dy));
     if (speed > 1) ringAngle = (Math.atan2(dy, dx) * 180) / Math.PI;
     const pull = speed * STRETCH;
-    ring.style.transform =
-      "translate(" + rx.toFixed(1) + "px," + ry.toFixed(1) + "px) translate(-50%,-50%)" +
+    const t = "translate(" + rx.toFixed(1) + "px," + ry.toFixed(1) + "px) translate(-50%,-50%)" +
       " rotate(" + ringAngle.toFixed(1) + "deg) scale(" + (1 + pull * 0.16).toFixed(3) + "," + (1 - pull * 0.1).toFixed(3) + ")";
+    if (t !== wrote) { ring.style.transform = t; wrote = t; }
   }
   requestAnimationFrame(follow);
 })();

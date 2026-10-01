@@ -215,6 +215,18 @@
 
   let handX = -99999, handY = -99999, handOn = 0;
 
+  // ONE COLOUR A SHADE, AND HOW MUCH OF IT AS A NUMBER (2026-10-01). Every
+  // speck and its reflection set a colour of their own, written out as
+  // words — "rgba(…,0.412)" — which the browser then had to read back,
+  // twice a speck, thousands a frame. The colour is set only when the
+  // shade changes now, and how strongly it is laid is `globalAlpha`: the
+  // same drawing, for a fraction of the work.
+  let inkTone = "";
+  function tint(tone, a) {
+    if (tone !== inkTone) { ink.fillStyle = "rgb(" + tone + ")"; inkTone = tone; }
+    ink.globalAlpha = a > 1 ? 1 : a;
+  }
+
   /** Draw one speck standing at (x, y) above the line, and its
       reflection below. */
   function speck(x, y, s, alpha, tone, clock) {
@@ -222,7 +234,7 @@
     const q = quiet(x);
     const shown = alpha * q;
     if (shown < 0.006) return;
-    ink.fillStyle = "rgba(" + tone + "," + Math.min(1, shown).toFixed(3) + ")";
+    tint(tone, shown);
     ink.fillRect(x, y, s, s);
     // THE REFLECTION: turned over the horizon, fainter the deeper it
     // lies, drawn in streaks (every third line of it missing), and
@@ -239,20 +251,21 @@
         dx += HAND_RING * into * into * handOn * Math.sin(d * 0.16 - clock * 7);
       }
     }
-    ink.fillStyle = "rgba(" + tone + "," + Math.min(1, shown * REFLECT * (1 - deep * 0.6)).toFixed(3) + ")";
+    tint(tone, shown * REFLECT * (1 - deep * 0.6));
     ink.fillRect(x + dx, ry, s * 1.6, Math.max(0.8, s * 0.7));
   }
 
   function draw(clock) {
     if (!width) return;
+    ink.globalAlpha = 1;
     ink.clearRect(0, 0, width, height);
+    inkTone = "";
     const want = handX < -9000 ? 0 : 1;
     handOn += (want - handOn) * (REDUCE_MOTION ? 1 : 0.05);
 
     // THE FLOOR: a hairline at the horizon, faint.
     for (let x = 0; x < width; x += 3) {
-      const q = quiet(x);
-      ink.fillStyle = "rgba(" + STONE + "," + (0.16 * q).toFixed(3) + ")";
+      tint(STONE, 0.16 * quiet(x));
       ink.fillRect(x, horizon, 1.6, 0.8);
     }
 
@@ -301,9 +314,10 @@
       const shade = Math.sin(Math.min(1, t / 0.9) * Math.PI);
       const q = quiet(x);
       if (shade * f.tone * q < 0.006) return;
-      ink.fillStyle = "rgba(" + MIST + "," + (shade * f.tone * q).toFixed(3) + ")";
+      tint(MIST, shade * f.tone * q);
       ink.fillRect(x, y, f.size, f.size);
     });
+    ink.globalAlpha = 1;
   }
 
   // ============================================================

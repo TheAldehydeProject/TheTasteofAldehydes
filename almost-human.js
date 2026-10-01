@@ -146,7 +146,11 @@
     return seed / 4294967296;
   };
   const between = (a, b) => a + (b - a) * random();
-  const rgba = (a) => "rgba(" + INK + "," + Math.max(0, Math.min(1, a)).toFixed(3) + ")";
+  // Every speck here is the one ink: it is set once a frame, and how much
+  // of it a speck shows is `globalAlpha`, a number — it was a colour
+  // written out as words for every speck, which the browser had to read
+  // back thousands of times a frame (2026-10-01).
+  const alpha = (a) => (a > 1 ? 1 : a < 0 ? 0 : a);
 
   // ============================================================
   // AND THE THING THAT IS NOT PEOPLE
@@ -706,7 +710,9 @@
 
   function draw(down, clock) {
     if (!ink || !width) return;
+    ink.globalAlpha = 1;
     ink.clearRect(0, 0, width, height);
+    ink.fillStyle = "rgb(" + INK + ")";
     const idle = REDUCE_MOTION ? 0 : IDLE;
     const tick = Math.floor(clock * GLITCH_RATE);
     const step = REDUCE_MOTION ? 0 : 0.016;
@@ -801,7 +807,7 @@
           // Drawn two pixels square whatever the speck's own size is:
           // a hundred and fifty specks strung round a ring only read as
           // a ring if they nearly touch.
-          ink.fillStyle = rgba(shown);
+          ink.globalAlpha = alpha(shown);
           ink.fillRect(Math.round(x), Math.round(y), 2, 2);
           return;
         }
@@ -823,10 +829,11 @@
 
         if (y < -8 || y > height + 8) return;
         if (shown < 0.012) return;
-        ink.fillStyle = rgba(shown);
+        ink.globalAlpha = alpha(shown);
         ink.fillRect(Math.round(x), Math.round(y), one.size, one.size);
       });
     });
+    ink.globalAlpha = 1;
   }
 
   /** THE RAIN, falling. It is the one thing on this page that travels
@@ -844,7 +851,7 @@
       }
       const shown = drop.ink * lit(drop.x);
       if (shown < 0.012) return;
-      ink.fillStyle = rgba(shown);
+      ink.globalAlpha = alpha(shown);
       drop.beads.forEach((at) => {
         const y = drop.y - drop.long * at;
         if (y < -4 || y > height + 4) return;

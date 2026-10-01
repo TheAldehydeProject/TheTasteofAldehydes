@@ -266,3 +266,13 @@ room round it, because a phone rounds the corners of a home-screen icon itself.
 
 The home page's description in `tools/seo.py` follows slide 2, which lost its *even* at the owner's
 word: *… theories and ideas.* The tool was run again; nothing else changed.
+
+## 2026-10-01 — every Menu page at an address of its own name
+
+The Menu's pages moved into folders of their names (thetasteofaldehydes.com/theories/ and so on —
+see [their report](2026-10-01-addresses-of-their-own-names.md)), and `tools/seo.py` follows: its
+keys are the new files (`theories/index.html`), **a folder's `index.html` is known by the folder**
+(`addr()`: its canonical, its `og:url`, its place in a trail and in the sitemap are
+`https://thetasteofaldehydes.com/theories/`), the eight old addresses and `/home/` are signposts with
+`noindex` and their own canonical, and the pages without an entry are looked for in every folder.
+The sitemap lists 26 pages. The tests read a folder's address the same way.

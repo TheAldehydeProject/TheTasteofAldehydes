@@ -490,3 +490,15 @@ curve in it), level, starting at the lit arc and stopping just short of the writ
 first line; diagram 9's arm one open path starting at the shoulder's end and ending at the armpit,
 with no capsule left; and two named tables, *Table 1* and *Table 2*, each caption under its table
 in the "…; showing …" format, the first in the owner's words.
+
+## 2026-10-01 — the rule read only when the page moves
+
+**The rule down the left was read and written every frame** — the page's height, every section's
+place, the percentage and the section's name — even with the page standing still, and writing the
+same words again is still a change the browser lays the page out for: sixty layouts a second on an
+essay nobody was scrolling, which a phone pays for. Now `readRule` in `essay.js` reads only when the
+page has moved, the window changed, a tick been pressed (`pinned`), or the page grown or shrunk under
+a still window (a `ResizeObserver` on the body — a footnote opened, the face arriving), and writes
+only what has changed. It reads exactly as it did. (The drawing behind still draws every frame; it is
+a canvas, and costs no layout.) Part of the round's smoothness pass — see [the site on a
+phone](2026-09-21-the-site-on-a-phone.md#2026-10-01--every-page-measured-on-a-phone-and-made-smoother).
