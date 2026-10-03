@@ -100,3 +100,32 @@ The line under the sentence is the owner's **… or an email:** now (`.contact-o
 they typed them), and nothing else on the page changed. The test is **`under the sentence, the
 owner's '... or an email:', and the check under that`**, and `tests/pages.spec.js` reads the page's
 text with it.
+
+## 2026-10-03 — checked against crawlers
+
+> can youcheck that the email and the recaptcha will protect against web crawlers.
+
+Checked, as a crawler would see it:
+- **A program that reads the page** — what nearly every address harvester is — finds **no address**:
+  the page's source has no address in it at all (searched for anything shaped like one), only the
+  sealed details, which are the JSON XORed with *aldehydes* and then base64, and contain no `@`.
+  Every other page of the site, its `sitemap.xml` and its `robots.txt` have none either.
+- **A program that runs the page's script** (a browser driven by a program) still finds none: the
+  address is only put on the page once the characters drawn in specks are typed back — and reading
+  those is reading a picture.
+- **What it does not stop**: someone who sets out to get the address from this page in particular.
+  The check is made in the browser (the site has no server to make the other kind), so the way to
+  unseal the details is in `contact.js`, and anyone reading it can undo it by hand. That is the trade
+  every site without a server makes; a free mail service's own spam filtering is the second line.
+- **The repository is public**: an address written in plain in it is an address in the clear, however
+  well the page hides it. The tests wrote the filler address out (`hello@example.com`), so a real one
+  put in the same way would have been in plain in `tests/contact.spec.js`. **The tests now unseal the
+  page's own details** (`sealedDetails()`) and check the address shown against that, and look for
+  anything shaped like an address rather than for `example.com` — so when the real address goes in,
+  it need be written only sealed, in `data-sealed`, and nowhere else. (This report and `CLAUDE.md` name
+  the filler, which is not anyone's.)
+
+To seal the real details: the same JSON, `[["Email","name@domain","mailto:name@domain"]]`, each
+character XORed with the next letter of *aldehydes* in turn, then base64 — `unseal` in `contact.js`
+run backwards. `tests/contact.spec.js`, **`the details are not in the page's source to be harvested`**
+and **`typed right, the details are shown, in either case`**, read whatever is sealed.

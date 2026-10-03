@@ -190,3 +190,17 @@ not a section.
 The mist no longer stops while the page is hidden (`primer.js` stepped it only while
 `!document.hidden`): the owner asked for every animation to go on "even when you click off of the
 page". See [the page shell](2026-09-11-the-page-shell-and-menu.md#2026-09-28--the-page-keeps-its-own-time).
+
+## 2026-10-03 — one face on the page
+
+> for the , RE part, My Personal Introduction to Perfume should all be the same font in its page.
+
+The page was in two faces: Archivo for its writing and headings, and the site's mono (IBM Plex Mono)
+for its kicker, its readings (*Written*, *Sections*, *Filed under*), its section numbers, the labels
+in its diagrams and tables, the rule down its left, its way back and its footnotes' pop-up. **It is
+all Archivo now**: every one of those draws in the `--mono` token, so on this page the token is turned
+over to the reading face (`.primer-page main, .essay-back, .essay-rule, .primer-tip { --mono:
+var(--sans) }` in `style.css`) and nothing else is touched — the same capitals and spacing, in one
+face. **The site's Menu**, which is the same on every page, keeps its own. (Italic Archivo, in
+*to Perfume* and the owner's own emphasis, is the same face.) Checked by reading every element's face
+off the page: none but the Menu's is the mono.

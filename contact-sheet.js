@@ -723,7 +723,7 @@
   // ============================================================
   let last = 0, snapAt = 0, looping = false;
   function loop(now) {
-    if (!sheet.offsetParent) { looping = false; return; }   // the other view is showing
+    if (!sheet.offsetParent) { looping = false; letGoAuto(); return; }   // the other view is showing
     const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
     last = now;
     if (snapAt && now > snapAt && !dragging) {
@@ -735,7 +735,8 @@
     if (Math.abs(target - pos) < 0.0005) pos = target;
     place();
     draw(now);
-    if (REDUCE_MOTION && pos === target && !snapAt && !bursts.length) { looping = false; return; }
+    autoRest(now);
+    if (REDUCE_MOTION && pos === target && !snapAt && !bursts.length && (byHand || resting)) { looping = false; return; }
     requestAnimationFrame(loop);
   }
   function wake() {
@@ -885,6 +886,7 @@
   // ============================================================
   let waiting = null;
   let resting = null;
+  let byHand = null;   // the house the hand (or the keys) rests on, if it is the hand's
   function rest(frame) {
     if (resting === frame) return;
     if (resting) resting.classList.remove("hot");
@@ -910,11 +912,43 @@
   function leave(frame) {
     clearTimeout(waiting);
     waiting = null;
+    if (byHand === frame) byHand = null;
     if (resting !== frame) return;
     resting = null;
     frame.classList.remove("hot");
     sheet.classList.remove("musing");
     if (window.HouseMotifs) window.HouseMotifs.stop();
+    stillSince = 0;
+    wake();
+  }
+
+  // THE HOUSE AT THE FRONT, RESTED ON BY ITSELF (2026-10-03: "Make the
+  // animations be automatic in SD whenever one of the perfumes is in the
+  // middle. not just hover"). Once the helix has come to rest with a house
+  // at the front — AUTO_REST_MS after it stops — that house's motifs come up
+  // as if the hand were on it; travelling on lets them go, and the next
+  // house's come up when it stops in its turn. The hand still has its way: a
+  // house it rests on takes the motifs while it is there, and the house at
+  // the front has them back once it leaves. Not while the page is being
+  // searched or left, nor before it has been drawn.
+  const AUTO_REST_MS = 650;
+  // (`?rest=hand` on the address leaves it to the hand alone, as it was —
+  // for the tests that read what the hand alone sets off)
+  const AUTO_REST = !/[?&]rest=hand\b/.test(location.search);
+  let stillSince = 0;
+  function letGoAuto() {
+    if (resting && resting !== byHand) leave(resting);
+  }
+  function autoRest(now) {
+    if (!AUTO_REST) return;
+    const still = pos === target && Number.isInteger(target) && !dragging && !snapAt;
+    if (!still) { stillSince = 0; letGoAuto(); return; }
+    if (byHand || !sheet.classList.contains("drawn") || sheet.classList.contains("searching") ||
+        document.body.classList.contains("sheet-leaving")) return;
+    const frame = frames[Math.round(target)];
+    if (!frame || resting === frame) return;
+    if (!stillSince) stillSince = now;
+    if (REDUCE_MOTION || now - stillSince >= AUTO_REST_MS) rest(frame);
   }
   frames.forEach((frame, i) => {
     frame.addEventListener("pointerenter", (e) => {
@@ -924,6 +958,7 @@
         waiting = null;
         if (!sheet.classList.contains("drawn") || sheet.classList.contains("searching")) return;
         if (document.body.classList.contains("sheet-leaving")) return;
+        byHand = frame;
         rest(frame);
       }, HOVER_WAIT_MS);
     });
@@ -932,7 +967,7 @@
     frame.addEventListener("focus", () => {
       if (Math.round(target) !== i) go(i);
       clearTimeout(waiting);
-      waiting = setTimeout(() => { waiting = null; if (sheet.classList.contains("drawn")) rest(frame); }, HOVER_WAIT_MS);
+      waiting = setTimeout(() => { waiting = null; if (sheet.classList.contains("drawn")) { byHand = frame; rest(frame); } }, HOVER_WAIT_MS);
     });
     frame.addEventListener("blur", () => leave(frame));
 
@@ -962,6 +997,8 @@
     frames.forEach((frame) => frame.classList.remove("chosen", "hot"));
     sheet.classList.remove("musing");
     resting = null;
+    byHand = null;
+    stillSince = 0;
     if (window.HouseMotifs) window.HouseMotifs.stop(true);
   });
 

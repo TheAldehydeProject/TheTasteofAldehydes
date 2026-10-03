@@ -576,11 +576,21 @@
   // is SHAKEN by it: each of those trembles quickly about its own place,
   // hardest where the crest is and nearest the band, still further out
   // and away from it. No shadow, no mote, no haze, no stroke.
+  //
+  // SMOOTHER (2026-10-03: "make the movements of the streaks in the
+  // ataraxia SD page smoother"): the air SWAYS rather than trembles — once
+  // every one to two seconds, where it shook three to six times a second
+  // (`rate`) — the ripple and the swell travel along the band a little more
+  // slowly, and the band is drawn in one ink set once, how much of it each
+  // speck shows being `globalAlpha` — it wrote a colour out as words for
+  // every one of thousands of specks a frame, which dropped frames, and a
+  // dropped frame is a jolt.
   const WAVE_LENGTH = [240, 420];        // px from one ripple to the next
   const WAVE_HEIGHT = [5, 9];            // px either side, at a crest
-  const WAVE_SPEED = [0.08, 0.13];       // px per ms, the ripple along the band
-  const CREST_SPEED = [0.26, 0.4];       // px per ms, the swell along it
+  const WAVE_SPEED = [0.05, 0.08];       // px per ms, the ripple along the band (0.08 to 0.13 until 2026-10-03)
+  const CREST_SPEED = [0.18, 0.28];      // px per ms, the swell along it (0.26 to 0.4)
   const SHAKE_REACH = 3.2;               // the shaken air, in band-widths either side
+  const SWAY_RATE = [0.0035, 0.0065];    // the air's sway, radians per ms (0.018 to 0.04, a tremble, until 2026-10-03)
   // AND IT COMES UP SLOWLY: a band takes BAND_IN to appear rather than the
   // FADE_IN_MS everything else does — the owner, 2026-10-01: "make the
   // cross streaks appear slower".
@@ -605,7 +615,7 @@
       const side = Math.random() < 0.5 ? -1 : 1;
       const out = wide * (0.9 + Math.pow(Math.random(), 1.6) * SHAKE_REACH);
       air.push({ s, off: side * out, size: rand(1, 1.7), tone: rand(0.2, 0.44),
-        rate: rand(0.018, 0.04), ph: rand(0, 6.3), fall: Math.exp(-(out - wide) / (wide * 1.6)) });
+        rate: rand(SWAY_RATE[0], SWAY_RATE[1]), ph: rand(0, 6.3), fall: Math.exp(-(out - wide) / (wide * 1.6)) });
     }
     return {
       life: rand(8500, 12000),
@@ -614,11 +624,13 @@
         const crest = (age * crestSpeed) % (len + 600) - 300;
         const swell = (s) => 0.4 + 0.6 * Math.exp(-Math.pow((s - crest) / 260, 2));
         const at = (s, off) => [x0 + s * cos - off * sin, y0 + s * sin + off * cos];
+        const was = c.globalAlpha;
+        c.fillStyle = "rgb(30, 31, 36)";
         specks.forEach((p) => {
           const lift = height * swell(p.s) * Math.sin((Math.PI * 2 * p.s) / lambda - age * omega);
           const [x, y] = at(p.s, p.off + lift);
           if (!clearOf(x, y, 2)) return;
-          c.fillStyle = "rgba(30, 31, 36," + (a * p.tone) + ")";
+          c.globalAlpha = was * a * p.tone;
           c.fillRect(x - p.size / 2, y - p.size / 2, p.size, p.size);
         });
         air.forEach((p) => {
@@ -627,9 +639,10 @@
           const shake = height * 0.55 * sw * p.fall * Math.sin(age * p.rate + p.ph);
           const [x, y] = at(p.s + shake * 0.3, p.off + lift + shake);
           if (!clearOf(x, y, 2)) return;
-          c.fillStyle = "rgba(30, 31, 36," + (a * p.tone * (0.6 + 0.4 * sw)) + ")";
+          c.globalAlpha = was * a * p.tone * (0.6 + 0.4 * sw);
           c.fillRect(x - p.size / 2, y - p.size / 2, p.size, p.size);
         });
+        c.globalAlpha = was;
       },
     };
   }

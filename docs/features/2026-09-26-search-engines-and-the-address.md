@@ -276,3 +276,13 @@ keys are the new files (`theories/index.html`), **a folder's `index.html` is kno
 `https://thetasteofaldehydes.com/theories/`), the eight old addresses and `/home/` are signposts with
 `noindex` and their own canonical, and the pages without an entry are looked for in every folder.
 The sitemap lists 26 pages. The tests read a folder's address the same way.
+
+## 2026-10-03 — the icon white on black
+
+> Inverse the colours of the icon please, where its not black on white but white on blakck.
+
+`favicon.svg` is **white on black**: its square black, its letters and bonds white; nothing else of it
+changed — the letters, the bonds and their weights are the chemistry book's as they were.
+`apple-touch-icon.png`, a phone's copy, is made again from it at 180 × 180 on black (drawn by the
+tests' browser from the SVG itself). `tests/repository.spec.js` still finds both where every page
+points at them.

@@ -32,11 +32,29 @@ async function steady(page) {
   await page.addInitScript(() => { Math.random = () => 0.1; });
 }
 
+/** Anything that looks like an email address — what a harvester looks for. */
+const AN_EMAIL = /[\w.+-]+@[\w-]+\.[\w.-]+/;
+/** The details sealed in the page, unsealed as contact.js does — so no test
+ *  here has to write the address out (2026-10-03: the repository is public,
+ *  and an address written in a test is an address in the clear). */
+function sealedDetails() {
+  const source = fs.readFileSync(path.join(__dirname, "..", "contact", "index.html"), "utf8");
+  const sealed = /data-sealed="([^"]+)"/.exec(source)[1];
+  const bytes = Buffer.from(sealed, "base64").toString("binary"), key = "aldehydes";
+  let out = "";
+  for (let i = 0; i < bytes.length; i++) out += String.fromCharCode(bytes.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+  return JSON.parse(out);
+}
+
 test("the details are not in the page's source to be harvested", () => {
   const source = fs.readFileSync(path.join(__dirname, "..", "contact", "index.html"), "utf8");
-  expect(source).not.toContain("example.com");
+  expect(source, "no address in the clear").not.toMatch(AN_EMAIL);
   expect(source).not.toContain("@your");
   expect(source).not.toMatch(/mailto:/);
+  // and none in what it looks like sealed either
+  const [[, email]] = sealedDetails();
+  expect(email, "an address is sealed in it").toMatch(AN_EMAIL);
+  expect(source).not.toContain(email.split("@")[1]);
   // And the owner's sentence is still the head of the page.
   expect(source).toContain("<h1>Get in touch, send a carrier pigeon.</h1>");
 });
@@ -77,7 +95,7 @@ test("the details stay hidden until the characters are typed, and a wrong answer
   await expect(page.locator(".contact-captcha-say")).toContainText("Not quite");
   await expect(page.locator(".contact-details")).toBeHidden();
   expect(Number(await page.locator(".contact-lock").getAttribute("data-drawn")), "new characters drawn").toBeGreaterThan(drawn);
-  expect(await page.content()).not.toContain("example.com");
+  expect(await page.content(), "no address on the page, its script run").not.toMatch(AN_EMAIL);
   expect(errors).toEqual([]);
 });
 
@@ -92,8 +110,11 @@ test("typed right, the details are shown, in either case", async ({ page }) => {
   await expect(page.locator(".contact-check")).toBeHidden();
   // An email, and only the email: what the owner's line says it is.
   await expect(details.locator("dt")).toHaveText(["Email"]);
-  await expect(details.locator("a")).toHaveAttribute("href", "mailto:hello@example.com");
-  await expect(details.locator("a")).toHaveText("hello@example.com");
+  const [[label, email, href]] = sealedDetails();
+  expect(label).toBe("Email");
+  await expect(details.locator("a")).toHaveAttribute("href", href);
+  await expect(details.locator("a")).toHaveText(email);
+  expect(href).toBe("mailto:" + email);
   expect(errors).toEqual([]);
 });
 

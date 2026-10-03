@@ -289,3 +289,12 @@ the chrome's mono, is unchanged, and so is the smell of aldehydes beside the lis
 every font request with nothing, so they check the face asked for, not its letters; it was looked at
 with Jost served from a copy for the picture.)
 
+
+## 2026-10-03 — Scent Descriptions, with its capital
+
+> in the menu, capitalize the word descriptions for SD
+
+The Menu says **Scent Descriptions** (`SITE_LINKS` in `nav.js`), and so does the home page's last
+stage, whose eight names are the Menu's (a test holds the two together). The page's own heading, its
+`<title>`, the search's trail and the node map (switched off) say *Scent descriptions* as before:
+only the Menu was asked for. `tests/menu.spec.js`, **`menu lists every page in SITE_LINKS, in order`**.

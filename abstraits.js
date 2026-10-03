@@ -14,30 +14,25 @@
 // butter, smooth and calming, a museum piece, "good night and sweet
 // dreams", drying down to a powdery cacao. So:
 //
-// THE ARMOIRE stands in the left margin on the floor of the window. It
-// was drawn in specks along its lines in an old walnut, a few worn away
-// and the whole of it leaning a hair, under a broken pediment of scrolls;
-// since 2026-10-01 — "make the wardrobe more solid and mechanical" — it
-// is SOLID WALNUT JOINERY: its side seen in depth, feet shod in brass, a
-// drawer with two bail pulls, two doors with raised panels on brass
-// barrel hinges, a lock with its key, a cornice of three courses with
-// dentils and a plate screwed on top (THE ARMOIRE, SOLID AND MADE, below).
-// It BUILDS itself up from the floor as the page opens, behind a brass
-// line, and then its right door SWINGS OPEN on its hinges — a
-// looking-glass on its inside — and in the dark behind it stand THREE
-// IRISES — three falls hanging and three standards up, each with its
-// touch of gold — and ORRIS POWDER, the iris's own butter, drifts out of
-// the opening: a speck at a time, violet-grey, slowing and rising and
-// gone. It drifts out a little faster while the pointer is near. It
-// stands CLEAR OF THE SCALE down the side of the page (house.js's rank),
-// which it used to stand over.
-// And since the night of 2026-09-25, CLOTHES — "put folded clothes and
-// hangers with something on it in the armoire", which the owner wanted
-// in this armoire as well as the hover's — and since 2026-10-01 a blazer,
-// a dress and a pair of trousers at their real sizes, on a rail under a
-// shelf of folded clothes near the top, each hanger hidden inside its
-// garment as it is in life (THE CLOTHES, below), solid cloth as the rest
-// of it is solid. The irises stand in front of them, on the floor of it.
+// THE ARMOIRE stands in the left margin on the floor of the window. Since
+// 2026-10-03 — "The wardrobe in the main les abstraits page should be not
+// realistic. I want it to match the closet when hovering, in being
+// minimalist, and geometric. It should also slightly bigger and maybe a 3
+// door closet too" — it is the Houses view's armoire (motifs.js) on the
+// house's own page, made wider for a THIRD DOOR: plain geometry in walnut
+// hairlines, a speck at each joint, DRAWN UP FROM THE FLOOR as the page
+// opens (THE ARMOIRE, MINIMAL AND GEOMETRIC, below). Its left and middle
+// doors are shut; its right one stands ajar, and through it the inside in
+// perspective, a shelf of folded clothes, a rail with a blazer, a dress and
+// a pair of trousers on it at their real sizes (each hanger hidden inside
+// its garment, as in life), and a stack on the floor of it. THE IRISES grow
+// at its feet, a tuft at each front leg — Belle Âme's orris — and ORRIS
+// POWDER, the iris's own butter, drifts out of the open door: a speck at a
+// time, violet-grey, slowing and rising and gone, a little faster while the
+// pointer is near. It stands CLEAR OF THE SCALE down the side of the page
+// (house.js's rank), which it used to stand over. (It was drawn in specks,
+// a few worn away, leaning a hair, until 2026-10-01, and for that one day
+// solid walnut joinery, its door swinging open onto a looking-glass.)
 //
 // THE DRIP is in the right margin — and since the night of 2026-09-25 it
 // runs THE WHOLE LENGTH OF THE PAGE, at the owner's "the dropping thing
@@ -65,16 +60,14 @@
 //
 // THE ARMOIRE LIVES ON THE WINDOW: it stands in the room, and the page
 // scrolls over it. The drip and the beaker live ON THE PAGE. Over the
-// writing everything is drawn at QUIET (the armoire, being solid, at
-// WOOD_QUIET).
+// writing everything is drawn at QUIET.
 //
 // WITHOUT THIS SCRIPT the page is exactly what it was before it.
 // ============================================================
 (function () {
   const canvas = document.querySelector(".human-field");
   if (!canvas) return;
-  let ink = canvas.getContext("2d");
-  const page = ink;   // (`ink` is lent to the armoire's own picture while it is made, below)
+  const ink = canvas.getContext("2d");
   if (!ink) return;
 
   const REDUCE_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -93,7 +86,6 @@
   const SOFT = 70;
 
   const BUILD = 2.2;               // seconds, the armoire drawn up from the floor
-  const BLOOM = 1.6;               // and its irises opening after
   const PUFF_EVERY = 0.075;        // seconds between one speck of powder and the next
   const PUFF_NEAR = 0.03;          // and while the pointer is near
   // SLOWER AND LESS, at the owner's "make the dripping slower, less
@@ -136,519 +128,620 @@
   }
 
   // ============================================================
-  // THE ARMOIRE, SOLID AND MADE — since 2026-10-01: "make the wardrobe
-  // more solid and mechanical". It was drawn in specks along its lines,
-  // a few worn away, leaning a hair, its crown a broken pediment of
-  // scrolls; it is a piece of joinery now, in solid walnut: a carcass
-  // with its SIDE seen (it stands in the left margin and is looked at
-  // from the page, so its right side shows, receding), feet shod in
-  // brass, a plinth, a drawer with two bail pulls, two doors with RAISED
-  // PANELS (a field, and four bevels down to the frame, lit from the top
-  // left), three brass BARREL HINGES to a door, a lock with its key, and
-  // a cornice of three courses stepping out with a row of dentils under
-  // them and a plate screwed on top — every edge ruled, nothing worn and
-  // nothing leaning. It is BUILT UP from the floor behind a brass line as
-  // the page opens, and then its right door SWINGS OPEN on its hinges,
-  // its inside face a looking-glass, onto the inside: dark, its back
-  // boarded, its floor and its left wall seen in depth, a shelf of folded
-  // clothes, a rail, the clothes on it and the irises on its floor.
+  // THE ARMOIRE, MINIMAL AND GEOMETRIC — since 2026-10-03: "The wardrobe
+  // in the main les abstraits page should be not realistic. I want it to
+  // match the closet when hovering, in being minimalist, and geometric. It
+  // should also slightly bigger and maybe a 3 door closet too." So it is
+  // the Houses view's armoire (motifs.js, `armoire()`) on the house's own
+  // page, made wider for a third door: plain geometry in walnut hairlines,
+  // a speck only at each joint — a carcass on four tapered legs (two in
+  // front, two seen behind them) with a shallow V of an apron, THREE
+  // DRAWERS with a knob each, THREE DOORS — the left and the middle shut,
+  // each with its panels and a diamond set in the upper one, a keyhole in
+  // the middle one; the right one ajar on its hinge, and through it the
+  // inside in perspective, its back set in, the corners run to it — a
+  // stepped cornice and a broken pediment in two straight rakes with a
+  // diamond finial. It DRAWS ITSELF UP FROM THE FLOOR, every line growing
+  // from its lower end. Inside, a shelf of folded clothes near the top, the
+  // rail under it, the blazer, the dress and the trousers on their hangers
+  // (each hanger inside its garment, as in life), drawn as the hover draws
+  // them — paper, a flat tone, a hairline — and a stack on the floor of it.
+  // THE IRISES grow at its feet, a tuft at each front leg, as the hover's
+  // do: sword leaves out of one crown, stems rising past them, three falls
+  // and three standards, one bud shut in each, swaying a little; and the
+  // orris powder drifts out of the open door.
+  //
+  // For one round (2026-10-01) it was solid walnut joinery, its side seen
+  // in depth, brass-shod, its door swinging open onto a looking-glass, and
+  // before that specks along its lines, a few worn away, leaning a hair,
+  // under a broken pediment of scrolls; none of either is in this file now.
   //
   // THE SCALE DOWN THE SIDE (house.js's rank) stands in this same margin,
   // a third to two thirds of the way down the window, and the armoire
-  // stood over it — the line ran down its left side and its ticks sat on
-  // its crown (the owner: "a small intersection between the scroll
-  // parameter on the left ... and the wardrobe"). It stands clear of it
-  // now: beside it, or under it — whichever leaves it the larger (`fit`).
+  // stood over it until 2026-10-01 (the owner: "a small intersection between
+  // the scroll parameter on the left ... and the wardrobe"). It stands clear
+  // of it: beside it, or under it — whichever leaves it the larger (`build`).
   //
   // Everything is measured in the armoire's own frame: x from 0 to `W`
   // across its front, y from 0 at the floor up.
   // ============================================================
-  const FACE = "136, 100, 72";       // the front, walnut
-  const FACE_IN = "150, 114, 84";    // the inside of a door
-  const SIDE = "98, 70, 50";         // the side, in its own shade
-  const TOP = "166, 130, 98";        // what faces up, lit
-  const FIELD = "148, 110, 80";      // a raised panel's field
-  const BEVEL = { top: "178, 140, 106", left: "162, 124, 92", right: "116, 84, 60", bottom: "100, 72, 52" };
-  const EDGE = "58, 40, 30";         // every edge, ruled
-  const HOLLOW = "34, 26, 24";       // the inside: its back
-  const WALL = "56, 42, 34";         //   its left wall
-  const FLOOR = "70, 52, 40";        //   its floor
-  const BOARD = "68, 52, 42";        //   the joins in its back
-  const BRASS = "186, 146, 76", BRASS_EDGE = "112, 80, 36", BRASS_LIT = "238, 212, 150";
-  const STEEL = "178, 180, 188";
-  const GLASS = "206, 212, 224";
-  const HANGER = "176, 138, 100";
-  const WOOD_QUIET = 0.2;            // over the writing, a solid thing is quieter than a speck
-  const SWING = 1.3;                 // seconds, the door opening
+  const WALNUT = "88, 62, 44";
+  const BEARD = GOLD;
+  const LEAF_TONES = ["96, 112, 88", "84, 104, 76", "110, 124, 96", "92, 108, 70", "104, 116, 84"];
+  const DRY = "152, 132, 98";            // a leaf's browned tip, and old leaf on the ground
+  const SOIL = "98, 86, 72";
+  const IRIS_FROM = 0.4;                 // seconds, the leaves start once the legs stand
+  const IRIS_STEMS_AFTER = 0.5;          // seconds after the leaves, the stems
+  const IRIS_OPEN_AFTER = 1.6;           // seconds after the leaves, the flowers open
+  const IRIS_SWAY = 2.4;                 // px at the top of a stem, either way
+  const TALL_OF = 1.42;                  // its height, of its front's width (three doors make it wide)
+  const PAPER = "250, 248, 244";
+  // The clothes' own colours, and the folded ones'; how much of a garment's
+  // width is seen, hanging a little turned on the rail.
+  const BLAZER = "92, 98, 114", DRESS = "154, 132, 168", TROUSERS = "176, 156, 128";
+  const FOLDS = ["206, 196, 178", "150, 136, 176", "118, 128, 142", "176, 150, 120", "104, 112, 96", "168, 120, 112"];
+  const TURNED = 0.74;
 
-  const rgba = (c, a) => "rgba(" + c + ", " + Math.max(0, Math.min(1, a)).toFixed(3) + ")";
-  const shade = (c, k) => c.split(",").map((v) => Math.round(Math.min(255, +v * k))).join(", ");
+  const rgba = (c, a) => "rgba(" + c + "," + Math.max(0, Math.min(1, a)).toFixed(3) + ")";
   const arc = (cx, cy, r, from, to, n) => Array.from({ length: n + 1 }, (_, i) => {
     const t = from + (to - from) * (i / n);
     return [cx + Math.cos(t) * r, cy + Math.sin(t) * r];
   });
-  const rect4 = (x1, y1, x2, y2) => [[x1, y1], [x2, y1], [x2, y2], [x1, y2]];
+  const qb = (a0, a1, a2, n) => Array.from({ length: n + 1 }, (_, i) => {
+    const t = i / n, u = 1 - t;
+    return [u * u * a0[0] + 2 * u * t * a1[0] + t * t * a2[0], u * u * a0[1] + 2 * u * t * a1[1] + t * t * a2[1]];
+  });
 
   let shape = null, frame = null;
 
-  /** The armoire's measurements, for a front `W` wide. */
-  function measure(W) {
-    const T = W * 2.05;
-    const s = W * 0.065;                       // the frame round the doors
-    const footH = T * 0.045, plinthH = T * 0.034;
-    const base = -footH, top = base - T * 0.8;
-    const drawerH = T * 0.085;
-    const drawerBot = base - plinthH, drawerTop = drawerBot - drawerH;
-    const doorTop = top + s, doorBot = drawerTop - s * 0.55;
-    const mid = W / 2, hinge = W - s;
-    return {
-      W, T, s, footH, plinthH, base, top, drawerTop, drawerBot, doorTop, doorBot, mid, hinge,
-      ov: W * 0.05,                            // how far the cornice stands out
-      ox: W * 0.11, oy: -W * 0.055,            // how the side recedes
-      c1: T * 0.016, c2: T * 0.014, c3: T * 0.02, plaqueH: T * 0.03,
-      dw: hinge - mid - 0.5,                   // a door's width
-      skew: T * 0.03,                          // its far edge, swung towards you, the taller
-      thick: Math.max(2, s * 0.45),
-      open: Math.acos(-0.42),                  // how far it swings: a little past square
-    };
-  }
+  /** The armoire for a front `W` wide: every line of it (to be drawn from
+   *  the floor up), its joints, the inside, the clothes and the irises. */
+  function design(W) {
+    seed = 52231;
+    const T = W * TALL_OF;
+    const legH = T * 0.11, body = T * 0.75, crown = T * 0.05;
+    const bottom = -legH, top = -(legH + body), mid = W / 2;
+    const drawerH = body * 0.11;
+    const doorTop = top + T * 0.022, doorBot = bottom - drawerH - T * 0.014;
+    const m = W * 0.035;                       // the frame round the doors
+    const d1 = W / 3, d2 = (W * 2) / 3, hinge = W - m;
 
-  function poly(g, pts, fillC, fillA, edgeA, edgeC) {
-    g.beginPath();
-    g.moveTo(pts[0][0], pts[0][1]);
-    for (let i = 1; i < pts.length; i++) g.lineTo(pts[i][0], pts[i][1]);
-    g.closePath();
-    if (fillC) { g.fillStyle = rgba(fillC, fillA); g.fill(); }
-    if (edgeA) { g.strokeStyle = rgba(edgeC || EDGE, edgeA); g.stroke(); }
-  }
-  const sideOf = (m, x, y1, y2) => [[x, y1], [x + m.ox, y1 + m.oy], [x + m.ox, y2 + m.oy], [x, y2]];
-  const topOf = (m, x1, x2, y) => [[x1, y], [x2, y], [x2 + m.ox, y + m.oy], [x1 + m.ox, y + m.oy]];
-  /** A block: its side, its top if it is seen, its front — `deep` as a
-   *  share of the carcass's own depth. */
-  function block(g, m, x1, y1, x2, y2, lit, deep) {
-    const d = deep ? { ox: m.ox * deep, oy: m.oy * deep } : m;
-    g.lineWidth = 0.8;
-    poly(g, sideOf(d, x2, y1, y2), SIDE, 0.98, 0.8);
-    if (lit) poly(g, topOf(d, x1, x2, y1), TOP, 0.98, 0.8);
-    poly(g, rect4(x1, y1, x2, y2), FACE, 0.98, 0.9);
-  }
-  function screw(g, x, y, r) {
-    g.lineWidth = 0.5;
-    poly(g, arc(x, y, r, 0, Math.PI * 2, 8), BRASS, 0.95, 0.8, BRASS_EDGE);
-    g.beginPath(); g.moveTo(x - r * 0.7, y + r * 0.35); g.lineTo(x + r * 0.7, y - r * 0.35);
-    g.strokeStyle = rgba(BRASS_EDGE, 0.9); g.stroke();
-  }
-  function line(g, x1, y1, x2, y2, c, a, w) {
-    g.lineWidth = w;
-    g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2);
-    g.strokeStyle = rgba(c, a); g.stroke();
-  }
-
-  /** A RAISED PANEL in a face mapped by `at(u, v)`: a field, and four
-   *  bevels down to the frame, each shaded by which way it faces. */
-  function raised(g, at, u1, v1, u2, v2, bu, bv, grain) {
-    const O = [at(u1, v1), at(u2, v1), at(u2, v2), at(u1, v2)];
-    const I = [at(u1 + bu, v1 + bv), at(u2 - bu, v1 + bv), at(u2 - bu, v2 - bv), at(u1 + bu, v2 - bv)];
-    const cx = (I[0][0] + I[2][0]) / 2, cy = (I[0][1] + I[2][1]) / 2;
-    g.lineWidth = 0.6;
-    [[0, 1], [1, 2], [2, 3], [3, 0]].forEach(([a, b]) => {
-      const dx = (O[a][0] + O[b][0]) / 2 - cx, dy = (O[a][1] + O[b][1]) / 2 - cy;
-      const h = Math.hypot(dx, dy) || 1;
-      const face = dy / h < -0.6 ? "top" : dy / h > 0.6 ? "bottom" : dx < 0 ? "left" : "right";
-      poly(g, [O[a], O[b], I[b], I[a]], BEVEL[face], 0.98, 0.5);
-    });
-    poly(g, I, FIELD, 0.98, 0.55);
-    if (grain && !g.dry) for (let k = 1; k <= 3; k++) {
-      const u = u1 + bu + (u2 - u1 - 2 * bu) * (k / 4 + Math.sin(k * 7.1) * 0.05);
-      const [x1, y1] = at(u, v1 + bv * 1.6), [x2, y2] = at(u + Math.sin(k * 3.3) * 0.03, v2 - bv * 1.6);
-      g.lineWidth = 0.5;
-      g.beginPath(); g.moveTo(x1, y1);
-      g.quadraticCurveTo((x1 + x2) / 2 + Math.sin(k * 5.7) * 2.5, (y1 + y2) / 2, x2, y2);
-      g.strokeStyle = rgba(EDGE, 0.1); g.stroke();
-    }
-  }
-
-  /** A BARREL HINGE on the line x, its middle at y, h tall. */
-  function hingeAt(g, m, x, y, h) {
-    const w = Math.max(2.4, m.W * 0.017);
-    g.lineWidth = 0.6;
-    poly(g, rect4(x - w * 0.32, y - h / 2 - 1.4, x + w * 0.32, y + h / 2 + 1.4), BRASS_EDGE, 0.95);
-    poly(g, rect4(x - w / 2, y - h / 2, x + w / 2, y + h / 2), BRASS, 0.98, 0.9, BRASS_EDGE);
-    line(g, x - w / 2, y, x + w / 2, y, BRASS_EDGE, 0.9, 0.6);
-    line(g, x - w * 0.18, y - h / 2 + 1, x - w * 0.18, y + h / 2 - 1, BRASS_LIT, 0.8, 0.5);
-  }
-
-  /** A door, in the face `at(u, v)` — u from its hinge to its meeting
-   *  edge, v from its top to its foot. Its outside has two raised panels;
-   *  its inside, a looking-glass. */
-  function door(g, m, at, outside) {
-    g.lineWidth = 0.9;
-    poly(g, [at(0, 0), at(1, 0), at(1, 1), at(0, 1)], outside ? FACE : FACE_IN, 0.98, 0.9);
-    if (outside) {
-      raised(g, at, 0.17, 0.055, 0.83, 0.6, 0.075, 0.022, true);
-      raised(g, at, 0.17, 0.655, 0.83, 0.94, 0.075, 0.04, true);
-      return;
-    }
-    if (g.dry) return;
-    g.lineWidth = 0.6;
-    poly(g, [at(0.14, 0.05), at(0.86, 0.05), at(0.86, 0.95), at(0.14, 0.95)], GLASS, 0.96, 0.7);
-    poly(g, [at(0.5, 0.05), at(0.68, 0.05), at(0.14, 0.64), at(0.14, 0.44)], "255, 255, 255", 0.42);
-    poly(g, [at(0.76, 0.05), at(0.82, 0.05), at(0.14, 0.8), at(0.14, 0.73)], "255, 255, 255", 0.3);
-  }
-
-  /** A foot: tapering to the floor, shod in brass. */
-  function foot(g, m, x1, x2, dy, tone) {
-    const inset = (x2 - x1) * 0.16, y0 = m.base + dy, y1 = dy, shoe = m.footH * 0.3;
-    g.lineWidth = 0.8;
-    poly(g, [[x1, y0], [x2, y0], [x2 - inset, y1], [x1 + inset, y1]], tone, 0.98, 0.85);
-    const k = shoe / m.footH;
-    poly(g, [[x1 + inset * (1 - k), y1 - shoe], [x2 - inset * (1 - k), y1 - shoe], [x2 - inset, y1], [x1 + inset, y1]],
-      BRASS, 0.96, 0.8, BRASS_EDGE);
-  }
-
-  /** A bail pull: a brass plate, two posts, and the handle hanging from them. */
-  function pull(g, x, y, a) {
-    g.lineWidth = 0.6;
-    poly(g, rect4(x - a * 1.7, y - a * 0.5, x + a * 1.7, y + a * 0.5), BRASS, 0.96, 0.8, BRASS_EDGE);
-    [-1, 1].forEach((sd) => screw(g, x + sd * a * 1.15, y, a * 0.3));
-    g.lineWidth = 1.5;
-    g.beginPath();
-    arc(x, y, a * 1.15, 0.05, Math.PI - 0.05, 12).forEach(([px, py], i) => (i ? g.lineTo(px, py) : g.moveTo(px, py)));
-    g.strokeStyle = rgba(BRASS_EDGE, 0.95); g.stroke();
-    g.lineWidth = 0.5;
-    g.strokeStyle = rgba(BRASS_LIT, 0.85); g.stroke();
-  }
-
-  /** The lock in the shut door, and its key hanging in it. */
-  function lock(g, m, x, y) {
-    const w = Math.max(4, m.W * 0.034), h = w * 2;
-    g.lineWidth = 0.6;
-    poly(g, [[x - w / 2, y - h / 2 + w * 0.3], [x - w * 0.2, y - h / 2], [x + w * 0.2, y - h / 2], [x + w / 2, y - h / 2 + w * 0.3],
-      [x + w / 2, y + h / 2], [x - w / 2, y + h / 2]], BRASS, 0.97, 0.85, BRASS_EDGE);
-    poly(g, arc(x, y - h * 0.12, w * 0.17, 0, Math.PI * 2, 8), HOLLOW, 0.95);
-    poly(g, rect4(x - w * 0.08, y - h * 0.12, x + w * 0.08, y + h * 0.16), HOLLOW, 0.95);
-    // The key: its shank out of the keyhole, its bow hanging.
-    line(g, x, y - h * 0.08, x, y + h * 0.42, BRASS_EDGE, 0.95, 1.4);
-    g.lineWidth = 1.3;
-    g.beginPath();
-    arc(x, y + h * 0.42 + w * 0.55, w * 0.55, 0, Math.PI * 2, 14).forEach(([px, py], i) => (i ? g.lineTo(px, py) : g.moveTo(px, py)));
-    g.strokeStyle = rgba(BRASS_EDGE, 0.95); g.stroke();
-    g.lineWidth = 0.5;
-    g.strokeStyle = rgba(BRASS_LIT, 0.8); g.stroke();
-  }
-
-  // ============================================================
-  // THE CLOTHES in the open half — since 2026-10-01 a BLAZER, a DRESS and
-  // a pair of TROUSERS ("i want there to be pants, a dress and some
-  // blazer"), at their REAL SIZES against a two-metre armoire (`cm`), on
-  // a rail under a shelf of folded clothes near the top, hanging a little
-  // turned as clothes on a rail do (`TURNED`), back to front: what is
-  // behind a garment in front of it is hidden, and so is what is past the
-  // edges of the opening — and EACH HANGER IS INSIDE ITS GARMENT, as in
-  // life, so only its hook shows over the rail (and the triangle over the
-  // trousers, which hang over its bar): "make the clothes hanger disappear
-  // behind the clothes (the same way they would in real life)". Since the
-  // armoire became solid (later that day) they are solid cloth too, drawn
-  // back to front, each shaded darker on the side away from the open door.
-  // Until then they were specks; before that a coat, a dress and a shirt,
-  // small, on a rail over a shelf half way down, their hangers over them.
-  // ============================================================
-  const BLAZER = "92, 98, 114", DRESS = "154, 132, 168", TROUSERS = "176, 156, 128";
-  const FOLDS = ["206, 196, 178", "150, 136, 176", "118, 128, 142", "176, 150, 120", "104, 112, 96", "168, 120, 112"];
-  const TURNED = 0.74;
-  function dressUp(m) {
-    const inL = m.mid + 6, inR = m.hinge - 4, room = inR - inL, gs = Math.max(0.5, room / 84);
-    const cm = m.T / 210;
-    const qb = (a0, a1, a2, n) => Array.from({ length: n + 1 }, (_, i) => {
-      const t = i / n, u = 1 - t;
-      return [u * u * a0[0] + 2 * u * t * a1[0] + t * t * a2[0], u * u * a0[1] + 2 * u * t * a1[1] + t * t * a2[1]];
-    });
-    const shelfY = m.doorTop + 16 * cm;
-    const railY = shelfY + 10 * cm;
-
-    /** One garment's shapes, laid out in cm from its hook. */
-    const shapes = (kind, hx) => {
-      const P = (x, y) => [hx + x * cm * TURNED, railY + y * cm];
-      const mirror = (pts) => pts.map(([x, y]) => [2 * hx - x, y]);
-      const out = { body: [], behind: null, inner: null, seams: [], dots: [], hw: 20 };
-      if (kind === "blazer") {
-        out.hw = 20.5;
-        const half = [
-          P(-3.5, 3.6), P(-7.5, 5), P(-15, 7.6), P(-22, 10.4),
-          ...qb(P(-22, 10.4), P(-25, 32), P(-24.2, 69), 5).slice(1),
-          P(-12.5, 70.5), P(-13, 66), P(-21.6, 66.5),
-          ...qb(P(-21.6, 66.5), P(-22.4, 74), P(-21.8, 79.5), 3).slice(1),
-          ...qb(P(-21.8, 79.5), P(-10, 80.5), P(-4.5, 79.5), 3).slice(1),
-          ...qb(P(-4.5, 79.5), P(-1, 78.5), P(0, 76), 3).slice(1),
-        ];
-        out.body = half.concat(mirror(half).reverse().slice(1));
-        out.seams = [
-          ...[-1, 1].map((sd) => qb(P(sd * 17, 29), P(sd * 14, 50), P(sd * 12.6, 70.2), 4)),
-          ...[-1, 1].map((sd) => [P(sd * 3.5, 3.6), P(sd * 5.4, 17), P(sd * 8.6, 18.6), P(sd * 10.8, 20.4), P(sd * 1.2, 44)]),
-          qb(P(0.8, 44), P(0.4, 70), P(-4.5, 79.5), 4),
-          [P(-18.6, 57.6), P(-9.4, 57.6), P(-9.4, 61), P(-18.6, 61), P(-18.6, 57.6)],
-          [P(9.4, 57.6), P(18.6, 57.6), P(18.6, 61), P(9.4, 61), P(9.4, 57.6)],
-          [P(9, 31), P(16, 30.4)],
-        ];
-        out.dots = [P(1.2, 44), P(1.2, 54.5)];
-      } else if (kind === "dress") {
-        out.hw = 16.5;
-        const half = [
-          P(-6.5, 4.8), P(-11.5, 7), P(-18, 9.4), P(-21, 19.5), P(-15.4, 21.6),
-          ...qb(P(-15.4, 21.6), P(-14, 30), P(-13, 39), 3).slice(1),
-          ...qb(P(-13, 39), P(-21, 60), P(-27, 80), 4).slice(1),
-          ...qb(P(-27, 80), P(-13, 82.2), P(0, 82.4), 3).slice(1),
-        ];
-        out.body = half.concat(mirror(half).reverse().slice(1), qb(P(6.5, 4.8), P(0, 17), P(-6.5, 4.8), 4).slice(1));
-        out.inner = [...qb(P(-6.5, 4.8), P(0, 7.2), P(6.5, 4.8), 4), ...qb(P(6.5, 4.8), P(0, 17), P(-6.5, 4.8), 4).slice(1)];
-        out.seams = [
-          qb(P(-13, 39), P(0, 41), P(13, 39), 4),
-          ...[-0.5, 0, 0.5].map((f) => qb(P(f * 22, 41), P(f * 30, 62), P(f * 46, 81.6), 4)),
-        ];
-      } else {
-        out.behind = [P(-13, 15), P(15.6, 15), P(15.2, 57), P(-12.6, 57)];
-        out.body = [
-          ...qb(P(-14, 17), P(-14, 12.8), P(-10, 12.8), 3),
-          P(10, 12.8), ...qb(P(10, 12.8), P(14, 12.8), P(14, 17), 3).slice(1),
-          P(12.6, 65), P(1.5, 65), P(0, 30), P(-1.5, 65), P(-12.6, 65),
-        ];
-        out.seams = [[P(-7.2, 15.5), P(-7, 64.8)], [P(7.2, 15.5), P(7, 64.8)],
-          [P(-12.6, 62.4), P(-1.4, 62.4)], [P(1.4, 62.4), P(12.6, 62.4)]];
+    // EVERY LINE, with how far up the armoire it starts and ends.
+    const lines = [];
+    const put = (pts, weight, bare) => {
+      let len = 0;
+      const at = [0];
+      for (let i = 1; i < pts.length; i++) {
+        len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+        at.push(len);
       }
-      out.hanger = [P(-out.hw, 14), P(0, 4.6), P(out.hw, 14), P(-out.hw, 14)];
-      out.hook = [P(0, 4.6), [hx, railY - 2]].concat(arc(hx + 2.4, railY - 2, 2.4, Math.PI, Math.PI * 2.1, 6));
-      out.from = hx - out.hw * cm * TURNED * 1.3;
-      out.to = hx + out.hw * cm * TURNED * 1.3;
+      const ys = pts.map((p) => -p[1] / T);
+      lines.push({ pts, at, len: Math.max(0.01, len), from: Math.min(...ys), to: Math.max(...ys), weight: weight || 1, bare: !!bare });
+    };
+    const box = (x1, y1, x2, y2, weight) => {
+      put([[x1, y2], [x1, y1]], weight); put([[x2, y2], [x2, y1]], weight);
+      put([[x1, y2], [x2, y2]], weight); put([[x1, y1], [x2, y1]], weight);
+    };
+    const diamond = (cx, cy, rx, ry, weight) => put([[cx, cy + ry], [cx + rx, cy], [cx, cy - ry], [cx - rx, cy], [cx, cy + ry]], weight);
+
+    // THE LEGS: two in front, tapering to the floor, and two behind them.
+    const legAt = [W * 0.05, W * 0.95];
+    const lw = Math.max(2.5, W * 0.012);
+    legAt.forEach((lx) => {
+      put([[lx - lw, 0], [lx - lw * 2.4, bottom]]);
+      put([[lx + lw, 0], [lx + lw * 2.4, bottom]]);
+      put([[lx - lw, 0], [lx + lw, 0]]);
+    });
+    [W * 0.2, W * 0.8].forEach((lx) => put([[lx, -5], [lx, bottom + 8]], 0.5));
+    // The apron: a shallow V under the carcass between the front legs.
+    put([[legAt[0] + lw * 2.4, bottom], [mid - W * 0.18, bottom + T * 0.016], [mid, bottom + T * 0.026],
+      [mid + W * 0.18, bottom + T * 0.016], [legAt[1] - lw * 2.4, bottom]]);
+    // The carcass, and a plinth line along its foot.
+    box(0, top, W, bottom);
+    put([[-3, bottom - 4], [W + 3, bottom - 4]], 0.7);
+    // THREE DRAWERS, one under each door, a knob in each.
+    const dTop = bottom - drawerH, dBot = bottom - 8;
+    [[m, d1 - 1.5], [d1 + 1.5, d2 - 1.5], [d2 + 1.5, W - m]].forEach(([x1, x2]) => {
+      box(x1, dTop, x2, dBot, 0.8);
+      put(arc((x1 + x2) / 2, (dTop + dBot) / 2, 2.4, 0, Math.PI * 2, 10), 0.8, true);
+    });
+    // THE TWO SHUT DOORS, the left and the middle: an upper panel with a
+    // diamond set in it, a lower one; a keyhole in the middle one.
+    const pMid = doorTop + (doorBot - doorTop) * 0.58;
+    [[m, d1 - 1.5], [d1 + 1.5, d2 - 1.5]].forEach(([x1, x2], k) => {
+      const inset = (x2 - x1) * 0.15;
+      box(x1, doorTop, x2, doorBot);
+      box(x1 + inset, doorTop + T * 0.03, x2 - inset, pMid, 0.7);
+      diamond((x1 + x2) / 2, (doorTop + T * 0.03 + pMid) / 2, (x2 - x1 - inset * 2) * 0.32, (pMid - doorTop - T * 0.03) * 0.3, 0.7);
+      box(x1 + inset, pMid + T * 0.025, x2 - inset, doorBot - T * 0.025, 0.7);
+      if (k === 1) {
+        put(arc(x1 + 7, pMid + 5, 1.8, 0, Math.PI * 2, 8), 0.8, true);
+        put([[x1 + 7, pMid + 7], [x1 + 7, pMid + 12]], 0.8);
+      }
+    });
+    // THE RIGHT DOOR, ajar: swung out on its hinge at the right edge, so
+    // it is seen narrow and in perspective beyond the carcass.
+    const openW = (hinge - d2) * 0.5, skew = T * 0.035;
+    put([[hinge, doorBot], [hinge + openW, doorBot + skew]]);
+    put([[hinge + openW, doorBot + skew], [hinge + openW, doorTop - skew]]);
+    put([[hinge, doorTop], [hinge + openW, doorTop - skew]]);
+    put([[hinge + openW * 0.3, doorBot + skew * 0.3 - 10], [hinge + openW * 0.3, doorTop - skew * 0.3 + 10]], 0.6);
+    // Through it, the inside in perspective: its back set in, the corners
+    // run back to it, a shelf near the top and a rail under it.
+    const inL = d2 + 1.5, inR = hinge;
+    const bL = inL + W * 0.035, bR = inR - W * 0.018, bT = doorTop + T * 0.03, bB = doorBot - T * 0.02;
+    const cm = T / 210;
+    box(bL, bT, bR, bB, 0.45);
+    put([[inL, doorBot], [bL, bB]], 0.45); put([[inR, doorBot], [bR, bB]], 0.45);
+    put([[inL, doorTop], [bL, bT]], 0.45); put([[inR, doorTop], [bR, bT]], 0.45);
+    const shelfY = bT + 16 * cm;
+    put([[inL, shelfY + 6], [bL, shelfY]], 0.45);
+    put([[bL, shelfY], [bR, shelfY]], 0.45);
+    put([[bR, shelfY], [inR, shelfY + 6]], 0.45);
+    const railY = shelfY + 10 * cm, railL = (inL + bL) / 2, railR = (inR + bR) / 2;
+    put([[railL, railY], [railR, railY]], 0.9);
+    put([[railL, railY - 5], [railL, railY + 3]], 0.7); put([[railR, railY - 5], [railR, railY + 3]], 0.7);
+    // The crown: a cornice in two steps, and a broken pediment — two
+    // straight rakes stopping short of the middle — with a diamond finial.
+    const c1 = top - crown * 0.45, c2 = top - crown;
+    put([[-5, top], [-5, c1]], 0.9); put([[W + 5, top], [W + 5, c1]], 0.9);
+    put([[-5, top], [W + 5, top]], 0.9);
+    put([[-10, c1], [-10, c2]]); put([[W + 10, c1], [W + 10, c2]]);
+    put([[-10, c1], [W + 10, c1]]); put([[-10, c2], [W + 10, c2]]);
+    const rise = T * 0.08, gapHalf = W * 0.05;
+    const rake = (x) => c2 - rise * (1 - Math.abs(x - mid) / (mid + 10));
+    put([[-10, c2], [mid - gapHalf, rake(mid - gapHalf)]]);
+    put([[W + 10, c2], [mid + gapHalf, rake(mid + gapHalf)]]);
+    put([[4, c2], [mid - gapHalf, rake(mid - gapHalf) + 7]], 0.55);
+    put([[W - 4, c2], [mid + gapHalf, rake(mid + gapHalf) + 7]], 0.55);
+    put([[mid, c2], [mid, c2 - rise * 0.5]], 0.8);
+    diamond(mid, c2 - rise * 0.5 - 7, 6, 7, 0.9);
+
+    // THE JOINTS, one speck each — the only specks the armoire has.
+    const joints = [];
+    const seenAt = new Set();
+    lines.forEach((l) => l.pts.forEach((p, i) => {
+      const key = Math.round(p[0]) + "," + Math.round(p[1]);
+      if (seenAt.has(key) || l.weight < 0.6 || l.bare) return;
+      seenAt.add(key);
+      joints.push({ x: p[0], y: p[1], l, at: l.at[i] });
+    }));
+
+    // THE CLOTHES, at their real sizes against a two-metre armoire (`cm`),
+    // hanging a little turned, back to front; folded ones on the shelf and
+    // on the floor of it.
+    const room = railR - railL, gs = room / 84;
+    const garments = [
+      { kind: "blazer", x: inL + 9 * cm, tone: BLAZER, at: 0.9 },
+      { kind: "dress", x: inL + 27.5 * cm, tone: DRESS, at: 1.0 },
+      { kind: "trousers", x: inL + 40 * cm, tone: TROUSERS, at: 1.1 },
+    ];
+    const fold = (x, base, width, n, at) => {
+      const out = [];
+      let y = base;
+      for (let i = 0; i < n; i++) {
+        const h = between(5, 7.5) * Math.max(0.7, gs), w = width * between(0.86, 1), off = between(-2.2, 2.2);
+        out.push({ x: x + off + (width - w) / 2, y, w, h, tone: FOLDS[Math.floor(random() * FOLDS.length)], at: at + i * 0.09, open: random() < 0.5 ? -1 : 1 });
+        y -= h;
+      }
       return out;
     };
-    // Back to front: each drawn over the one behind it.
-    const hung = [
-      { kind: "blazer", x: inL + 9 * cm, c: BLAZER },
-      { kind: "dress", x: inL + 27.5 * cm, c: DRESS },
-      { kind: "trousers", x: inL + 40 * cm, c: TROUSERS },
-    ].map((g) => ({ ...g, ...shapes(g.kind, g.x) }));
-    // Folded clothes on the shelf, in two stacks, each fold its own.
-    const stacks = [];
     const stackW = Math.min(40, room * 0.42);
-    [[inL + 1, 2 + Math.floor(random() * 2)], [inR - stackW * 0.92 - 1, 2 + Math.floor(random() * 2)]].forEach(([x0, n], si) => {
-      let y = shelfY - Math.max(2, 2.2 * cm);
-      for (let i = 0; i < n; i++) {
-        const h = between(5, 7.5) * Math.max(0.7, gs), w = stackW * (si ? 0.92 : 1) * between(0.86, 1), off = between(-2, 2);
-        const L = x0 + off, R = L + w, T = y - h, B = y, open = random() < 0.5;
-        const c = FOLDS[Math.floor(random() * FOLDS.length)];
-        const rim = open ? [[R, T], [L + 3, T], ...arc(L + 3, (T + B) / 2, h / 2, -Math.PI / 2, -Math.PI * 1.5, 6), [L + 3, B], [R, B]]
-          : [[L, T], [R - 3, T], ...arc(R - 3, (T + B) / 2, h / 2, -Math.PI / 2, Math.PI / 2, 6), [R - 3, B], [L, B]];
-        stacks.push({ rim, c, fold: open ? [[L + 3, T + h * 0.5], [R - 2, T + h * 0.5]] : [[L + 2, T + h * 0.5], [R - 3, T + h * 0.5]] });
-        y = T;
-      }
+    const folded = [
+      ...fold(bL + 3, shelfY + 3, stackW, 2 + Math.floor(random() * 2), 0.75),
+      ...fold(bR - 3 - stackW * 0.92, shelfY + 3, stackW * 0.92, 2 + Math.floor(random() * 2), 0.82),
+    ];
+    const floorStack = fold(inL + 3, doorBot - 3, stackW * 1.05, 2 + Math.floor(random() * 2), 0.6);
+
+    // THE IRISES: a tuft at each front leg — every leaf out of one small
+    // crown, nothing about one quite what the next is; soil, grass and a dry
+    // bit of old leaf round it; stems rising past the leaves, the last in
+    // each tuft a bud.
+    const pick = (list) => list[Math.floor(random() * list.length)];
+    const clumps = [
+      { x: legAt[0] + 3, out: -0.5, big: 1, stems: 3 },
+      { x: legAt[1] - 2, out: 1, big: 0.88, stems: 2 },
+    ].map((cl) => {
+      const n = 9 + Math.floor(random() * 4);
+      const fan = Array.from({ length: n }, () => between(-1, 1)).sort((p, q) => p - q);
+      const leaves = fan.map((f) => {
+        const young = random() < 0.22;
+        return {
+          x: cl.x + f * 3 + between(-1.2, 1.2),
+          y: -between(0, 4),
+          tilt: f * between(0.35, 0.6) + cl.out * 0.08 + between(-0.1, 0.1),
+          long: T * (0.3 - Math.abs(f) * 0.12) * between(0.65, 1.15) * cl.big * (young ? 0.4 : 1) * 0.85,
+          broad: between(3.4, 6.8),
+          c1: f * between(0.1, 0.35) + between(-0.15, 0.15),
+          c2: f * between(0.2, 0.6) + between(-0.25, 0.25),
+          flop: !young && random() < 0.2 ? { at: between(0.5, 0.78), by: Math.sign(f || cl.out) * between(0.9, 1.7) } : null,
+          tone: pick(LEAF_TONES),
+          dry: !young && random() < 0.3 ? between(0.08, 0.22) : 0,
+          rib: random() < 0.45,
+          shade: between(0.22, 0.36),
+          delay: Math.abs(f) * 0.38 + between(0, 0.16),
+          phase: between(0, 6.3),
+        };
+      });
+      const grass = Array.from({ length: 5 }, () => ({ x: cl.x + between(-13, 13), long: between(6, 16), tilt: between(-0.6, 0.6), bend: between(-0.5, 0.5) }));
+      const soil = Array.from({ length: 16 }, () => {
+        const u = between(-1, 1);
+        return { x: cl.x + u * 13, y: -Math.max(0, (1 - u * u) * between(0, 3.2)), s: between(0.8, 1.8), k: between(0.25, 0.6) };
+      });
+      const litter = Array.from({ length: 2 }, () => ({ x: cl.x + between(-15, 15), long: between(6, 11), ang: between(-0.3, 0.3), curl: between(-3, 3) }));
+      const stems = Array.from({ length: cl.stems }, (_, i) => ({
+        x: cl.x + between(-3, 3) + cl.out * 3,
+        tilt: cl.out * between(0.08, 0.28) + between(-0.08, 0.08),
+        long: T * (i === 0 ? between(0.33, 0.4) : between(0.22, 0.32)) * cl.big * 0.85,
+        bend: between(-0.14, 0.14),
+        bract: between(0.38, 0.58),
+        bud: i === cl.stems - 1,
+        size: between(14, 18) * cl.big,
+        turn: between(-0.22, 0.22),
+        falls: [-1, 0, 1].map((k) => ({ k, ang: between(-0.14, 0.14), long: between(0.85, 1.15), fat: between(0.42, 0.56), wave: between(-1.5, 2) })),
+        stds: [-1, 0, 1].map((k) => ({ k, ang: between(-0.1, 0.1), long: between(0.85, 1.12), fat: between(0.26, 0.34) })),
+        delay: i * between(0.22, 0.52),
+        phase: between(0, 6.3),
+      }));
+      return { x: cl.x, leaves, grass, soil, litter, stems };
     });
-    Object.assign(m, { inL, inR, cm, shelfY, railY, hung, stacks });
+
+    return { W, T, lines, joints, doorTop, doorBot, hinge, openW, inL, inR, bL, bR, cm, shelfY, railY,
+      garments, folded, floorStack, clumps, legAt };
   }
 
-  /** A garment, solid: its hanger first, so the cloth hides it. */
-  function garment(g, m, o) {
-    const path = (pts) => {
-      g.beginPath();
-      g.moveTo(pts[0][0], pts[0][1]);
-      for (let i = 1; i < pts.length; i++) g.lineTo(pts[i][0], pts[i][1]);
-    };
-    const edge = shade(o.c, 0.62);
-    g.lineWidth = 1.5;
-    path(o.hanger); g.closePath(); g.strokeStyle = rgba(HANGER, 0.95); g.stroke();
-    g.lineWidth = 1;
-    path(o.hook); g.strokeStyle = rgba(STEEL, 0.95); g.stroke();
-    // Darker on the side away from the open door, where less light falls.
-    const lightOf = () => {
-      const grad = g.createLinearGradient(o.from, 0, o.to, 0);
-      grad.addColorStop(0, "rgba(20, 14, 12, 0.3)");
-      grad.addColorStop(0.55, "rgba(20, 14, 12, 0.04)");
-      grad.addColorStop(1, "rgba(255, 246, 236, 0.1)");
-      return grad;
-    };
-    [o.behind, o.body].forEach((pts, k) => {
-      if (!pts) return;
-      path(pts); g.closePath();
-      g.fillStyle = rgba(k ? o.c : shade(o.c, 0.82), 0.98); g.fill();
-      g.fillStyle = lightOf(); g.fill();
-      g.lineWidth = 0.8; g.strokeStyle = rgba(edge, 0.95); g.stroke();
-    });
-    if (o.inner) {
-      path(o.inner); g.closePath();
-      g.fillStyle = rgba(shade(o.c, 0.7), 0.98); g.fill();
-      g.lineWidth = 0.7; g.strokeStyle = rgba(edge, 0.9); g.stroke();
-    }
-    g.lineWidth = 0.7;
-    o.seams.forEach((sm) => { path(sm); g.strokeStyle = rgba(edge, 0.75); g.stroke(); });
-    o.dots.forEach(([x, y]) => poly(g, arc(x, y, Math.max(1, m.cm * 1.1), 0, Math.PI * 2, 8), "52, 46, 44", 0.95));
-  }
+  // ---- drawing, in the armoire's own frame ----------------------------------
 
-  function iris(g, m, f, bloom) {
-    const bx = f.x, by = m.doorBot + m.oy * 0.4;      // standing on the floor of it
-    const tx = f.x + f.turn * 20, ty = f.top;
+  /** Every line, grown from its lower end as far as the build has reached;
+   *  the inside's faint tone and the clothes once the door is drawn; a
+   *  speck at every joint reached. */
+  function drawFrame(g, m, built, clock, a) {
+    const reach = built * 1.15;
+    g.lineCap = "round";
+    g.lineJoin = "round";
     g.lineWidth = 1.1;
-    g.strokeStyle = rgba(STEM, 0.92 * bloom);
-    g.beginPath(); g.moveTo(bx, by); g.quadraticCurveTo(bx + f.turn * 10, (by + ty) / 2, tx, ty); g.stroke();
-    g.beginPath(); g.moveTo(bx, by); g.quadraticCurveTo(bx - 6, by - 26, bx - 3 + f.turn * 8, by - 48 * bloom); g.stroke();
-    const r = Math.min(12, m.W * 0.07) * bloom;
+    m.lines.forEach((l) => {
+      const k = Math.max(0, Math.min(1, (reach - l.from) / Math.max(0.06, l.to - l.from)));
+      l.k = k;
+      if (k <= 0) return;
+      const upTo = l.len * k;
+      g.strokeStyle = rgba(WALNUT, 0.66 * l.weight * a);
+      g.beginPath();
+      g.moveTo(l.pts[0][0], l.pts[0][1]);
+      for (let i = 1; i < l.pts.length; i++) {
+        const seg = l.at[i] - l.at[i - 1];
+        if (l.at[i] <= upTo || seg <= 0) { g.lineTo(l.pts[i][0], l.pts[i][1]); continue; }
+        const t = (upTo - l.at[i - 1]) / seg;
+        g.lineTo(l.pts[i - 1][0] + (l.pts[i][0] - l.pts[i - 1][0]) * t, l.pts[i - 1][1] + (l.pts[i][1] - l.pts[i - 1][1]) * t);
+        break;
+      }
+      g.stroke();
+    });
+    if (g.dry) return;
+    // The inside, a faint tone once the door has been drawn; the clothes.
+    const door = ease((reach - (-m.doorBot / m.T)) / 0.3);
+    if (door > 0) {
+      g.fillStyle = rgba("20, 16, 14", 0.05 * door * a);
+      g.fillRect(m.inL, m.doorTop, m.inR - m.inL, m.doorBot - m.doorTop);
+      const since = REDUCE_MOTION ? 99 : clock - BUILD * 0.55;
+      m.folded.forEach((f) => { const k = ease((since - f.at) / 0.45); if (k > 0) folded1(g, f, k, a * door); });
+      g.save();
+      g.beginPath(); g.rect(m.inL, m.doorTop, m.inR - m.inL, m.doorBot - m.doorTop); g.clip();
+      m.garments.forEach((o) => { const k = ease((since - o.at) / 0.55); if (k > 0) garment(g, m, o, k, a * door); });
+      g.restore();
+      m.floorStack.forEach((f) => { const k = ease((since - f.at) / 0.45); if (k > 0) folded1(g, f, k, a * door); });
+    }
+    g.fillStyle = rgba(WALNUT, 0.85 * a);
+    m.joints.forEach((j) => {
+      if (j.l.k <= 0 || j.at > j.l.len * j.l.k + 0.01) return;
+      g.fillRect(j.x - 1, j.y - 1, 2, 2);
+    });
+  }
+
+  /** One garment: its hanger first — so the garment hides it, as it does
+   *  in life, all but its hook — then its outline, filled (the paper first,
+   *  so what is behind it is behind it), and its seams. In cm from its hook. */
+  function garment(g, m, o, k, a) {
+    const drop = (1 - k) * -6;
+    const hx = o.x, hy = m.railY, cm = m.cm;
+    const P = (x, y) => [hx + x * cm * TURNED, hy + drop + y * cm];
+    const path = (pts, close) => {
+      g.beginPath();
+      pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
+      if (close) g.closePath();
+    };
+    const mirror = (pts) => pts.map(([x, y]) => [2 * hx - x, y]);
+    let body = [], behind = null, inner = null, seams = [], dots = [], hw = 20, bar = false;
+    if (o.kind === "blazer") {
+      hw = 20.5;
+      const half = [
+        P(-3.5, 3.6), P(-7.5, 5), P(-15, 7.6), P(-22, 10.4),
+        ...qb(P(-22, 10.4), P(-25, 32), P(-24.2, 69), 6).slice(1),
+        P(-12.5, 70.5), P(-13, 66), P(-21.6, 66.5),
+        ...qb(P(-21.6, 66.5), P(-22.4, 74), P(-21.8, 79.5), 3).slice(1),
+        ...qb(P(-21.8, 79.5), P(-10, 80.5), P(-4.5, 79.5), 4).slice(1),
+        ...qb(P(-4.5, 79.5), P(-1, 78.5), P(0, 76), 3).slice(1),
+      ];
+      body = half.concat(mirror(half).reverse().slice(1));
+      seams = [
+        ...[-1, 1].map((sd) => qb(P(sd * 17, 29), P(sd * 14, 50), P(sd * 12.6, 70.2), 5)),
+        ...[-1, 1].map((sd) => [P(sd * 12.8, 66.6), P(sd * 24.4, 65.6)]),
+        ...[-1, 1].map((sd) => [P(sd * 3.5, 3.6), P(sd * 5.4, 17), P(sd * 8.6, 18.6), P(sd * 10.8, 20.4), P(sd * 1.2, 44)]),
+        [P(-5.4, 17), P(-7.4, 16.4)], [P(5.4, 17), P(7.4, 16.4)],
+        qb(P(0.8, 44), P(0.4, 70), P(-4.5, 79.5), 5),
+        [P(-18.6, 57.6), P(-9.4, 57.6), P(-9.4, 61), P(-18.6, 61), P(-18.6, 57.6)],
+        [P(9.4, 57.6), P(18.6, 57.6), P(18.6, 61), P(9.4, 61), P(9.4, 57.6)],
+        [P(9, 31), P(16, 30.4)],
+      ];
+      dots = [P(1.2, 44), P(1.2, 54.5)];
+    } else if (o.kind === "dress") {
+      hw = 16.5;
+      const half = [
+        P(-6.5, 4.8), P(-11.5, 7), P(-18, 9.4), P(-21, 19.5), P(-15.4, 21.6),
+        ...qb(P(-15.4, 21.6), P(-14, 30), P(-13, 39), 3).slice(1),
+        ...qb(P(-13, 39), P(-21, 60), P(-27, 80), 5).slice(1),
+        ...qb(P(-27, 80), P(-13, 82.2), P(0, 82.4), 4).slice(1),
+      ];
+      body = half.concat(mirror(half).reverse().slice(1), qb(P(6.5, 4.8), P(0, 17), P(-6.5, 4.8), 5).slice(1));
+      inner = [...qb(P(-6.5, 4.8), P(0, 7.2), P(6.5, 4.8), 5), ...qb(P(6.5, 4.8), P(0, 17), P(-6.5, 4.8), 5).slice(1)];
+      seams = [
+        qb(P(-13, 39), P(0, 41), P(13, 39), 5),
+        [P(-18, 9.4), P(-15.6, 21)], [P(18, 9.4), P(15.6, 21)],
+        ...[-0.5, -0.17, 0.17, 0.5].map((f) => qb(P(f * 22, 41), P(f * 30, 62), P(f * 46, 81.6), 5)),
+      ];
+    } else {
+      hw = 20; bar = true;
+      behind = [P(-13, 15), P(15.6, 15), P(15.2, 57), P(-12.6, 57)];
+      body = [
+        ...qb(P(-14, 17), P(-14, 12.8), P(-10, 12.8), 3),
+        P(10, 12.8), ...qb(P(10, 12.8), P(14, 12.8), P(14, 17), 3).slice(1),
+        P(12.6, 65), P(1.5, 65), P(0, 30), P(-1.5, 65), P(-12.6, 65),
+      ];
+      seams = [[P(-7.2, 15.5), P(-7, 64.8)], [P(7.2, 15.5), P(7, 64.8)],
+        [P(-12.6, 62.4), P(-1.4, 62.4)], [P(1.4, 62.4), P(12.6, 62.4)]];
+    }
+    // THE HANGER, under all of it: its hook over the rail, its shoulders.
+    g.strokeStyle = rgba(WALNUT, 0.78 * k * a);
     g.lineWidth = 0.9;
-    g.strokeStyle = rgba(IRIS, 0.95 * bloom);
-    g.fillStyle = rgba("138, 120, 188", 0.92 * bloom);
-    const petal = (ang, long, fat) => {
+    path([P(-hw, 14), P(0, 4.6), P(hw, 14), P(-hw, 14)]);
+    g.stroke();
+    const [kx, ky] = P(0, 4.6);
+    g.beginPath(); g.moveTo(kx, ky); g.lineTo(hx, hy + drop - 1.5); g.arc(hx + 2.4, hy + drop - 1.5, 2.4, Math.PI, Math.PI * 2.1); g.stroke();
+    const solid = (pts, tone, lift) => {
+      path(pts, true);
+      g.fillStyle = rgba(PAPER, 0.96 * k * a);
+      g.fill();
+      g.fillStyle = rgba(tone, lift * k * a);
+      g.fill();
+      g.strokeStyle = rgba(WALNUT, 0.6 * k * a);
+      g.lineWidth = 0.8;
+      g.stroke();
+    };
+    if (behind) {
+      solid(behind, o.tone, 0.5);
+      g.strokeStyle = rgba(WALNUT, 0.34 * k * a);
+      g.lineWidth = 0.6;
+      path([P(-12.8, 53.4), P(15.4, 53.4)]); g.stroke();
+      [-8, 1.5, 11].forEach((x) => { path([P(x, 53.4), P(x, 57)]); g.stroke(); });
+    }
+    solid(body, o.tone, 0.42);
+    if (inner) solid(inner, o.tone, 0.62);
+    g.strokeStyle = rgba(WALNUT, 0.34 * k * a);
+    g.lineWidth = 0.6;
+    seams.forEach((sm) => { path(sm); g.stroke(); });
+    g.fillStyle = rgba(WALNUT, 0.6 * k * a);
+    dots.forEach(([x, y]) => g.fillRect(x - 0.9, y - 0.9, 1.8, 1.8));
+    if (bar) {
+      g.strokeStyle = rgba(WALNUT, 0.3 * k * a);
+      g.lineWidth = 0.6;
+      path(qb(P(-13.6, 15.6), P(0, 17.4), P(13.6, 15.6), 4)); g.stroke();
+    }
+  }
+
+  /** One folded thing: a flat block with its folded edge rounded at one
+   *  end, and the fold across it. */
+  function folded1(g, f, k, a) {
+    const drop = (1 - k) * -5;
+    const y1 = f.y - f.h + drop, y2 = f.y + drop, L = f.x, R = f.x + f.w, r = Math.min(3, f.h / 2);
+    g.beginPath();
+    if (f.open < 0) { g.moveTo(L + r, y1); g.lineTo(R, y1); g.lineTo(R, y2); g.lineTo(L + r, y2); g.arc(L + r, (y1 + y2) / 2, (y2 - y1) / 2, Math.PI / 2, Math.PI * 1.5); }
+    else { g.moveTo(R - r, y1); g.lineTo(L, y1); g.lineTo(L, y2); g.lineTo(R - r, y2); g.arc(R - r, (y1 + y2) / 2, (y2 - y1) / 2, Math.PI / 2, -Math.PI / 2, true); }
+    g.closePath();
+    g.fillStyle = rgba(PAPER, 0.94 * k * a);
+    g.fill();
+    g.fillStyle = rgba(f.tone, 0.5 * k * a);
+    g.fill();
+    g.strokeStyle = rgba(WALNUT, 0.56 * k * a);
+    g.lineWidth = 0.7;
+    g.stroke();
+    g.strokeStyle = rgba(WALNUT, 0.26 * k * a);
+    g.beginPath();
+    const my = (y1 + y2) / 2 + 0.5;
+    if (f.open < 0) { g.moveTo(L + r + 2, my); g.lineTo(L + (R - L) * 0.62, my); }
+    else { g.moveTo(R - r - 2, my); g.lineTo(R - (R - L) * 0.62, my); }
+    g.stroke();
+  }
+
+  // ---- the irises, at its feet (the hover's, motifs.js) ----------------------
+  const swayOf = (clock, phase, up) => (REDUCE_MOTION ? 0 : Math.sin(clock / 2.1 + phase) * IRIS_SWAY * up);
+
+  /** The ground a tuft stands in: a little shadow, soil, grass, and a dry
+   *  bit of old leaf. */
+  function ground(g, cl, grown, a) {
+    if (grown <= 0) return;
+    g.fillStyle = rgba("58, 56, 44", 0.16 * grown * a);
+    g.beginPath(); g.ellipse(cl.x, 0, 12, 2.4, 0, 0, Math.PI * 2); g.fill();
+    cl.soil.forEach((p) => {
+      g.fillStyle = rgba(SOIL, p.k * grown * a);
+      g.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s);
+    });
+    g.lineWidth = 0.7;
+    g.strokeStyle = rgba(DRY, 0.5 * grown * a);
+    cl.litter.forEach((l) => {
+      const x2 = l.x + Math.cos(l.ang) * l.long, y2 = -0.5 + Math.sin(l.ang) * l.long * 0.3;
+      g.beginPath(); g.moveTo(l.x, -0.5); g.quadraticCurveTo((l.x + x2) / 2, (y2 - 0.5) / 2 + l.curl, x2, y2); g.stroke();
+    });
+    g.strokeStyle = rgba(STEM, 0.42 * grown * a);
+    g.lineWidth = 0.6;
+    cl.grass.forEach((gr) => {
+      const len = gr.long * grown;
+      g.beginPath(); g.moveTo(gr.x, 0);
+      g.quadraticCurveTo(gr.x + Math.sin(gr.tilt) * len * 0.5 + gr.bend * len * 0.3, -Math.cos(gr.tilt) * len * 0.5,
+        gr.x + Math.sin(gr.tilt) * len + gr.bend * len * 0.4, -Math.cos(gr.tilt) * len);
+      g.stroke();
+    });
+  }
+
+  /** A sword leaf out of the crown: a centre line bending twice (and
+   *  flopping over, for some), narrow at the base, broad a little way up,
+   *  tapering to the tip; browned at the tip for some, a paler midrib for
+   *  others. */
+  function leaf(g, lf, grown, clock, a) {
+    const len = lf.long * grown;
+    if (len < 2) return;
+    const N = 12, sw = REDUCE_MOTION ? 0 : Math.sin(clock / 2.1 + lf.phase) * 0.035;
+    const pts = [[lf.x, lf.y, lf.tilt]];
+    let x = lf.x, y = lf.y;
+    for (let i = 1; i <= N; i++) {
+      const t = i / N;
+      let ang = lf.tilt + lf.c1 * t + lf.c2 * t * t + sw * t;
+      if (lf.flop && t > lf.flop.at) ang += lf.flop.by * ease(((t - lf.flop.at) / (1 - lf.flop.at)) * 1.6);
+      x += (Math.sin(ang) * len) / N;
+      y -= (Math.cos(ang) * len) / N;
+      pts.push([x, y, ang]);
+    }
+    const half = (t) => (lf.broad * (0.3 + 0.7 * Math.min(1, t / 0.18)) * Math.pow(1 - t, 0.75)) / 2;
+    const L = [], R = [];
+    pts.forEach(([px, py, ang], i) => {
+      const w = half(i / N), nx = Math.cos(ang), ny = Math.sin(ang);
+      L.push([px - nx * w, py - ny * w]);
+      R.push([px + nx * w, py + ny * w]);
+    });
+    const outline = (from) => {
+      g.beginPath();
+      g.moveTo(L[from][0], L[from][1]);
+      for (let i = from + 1; i <= N; i++) g.lineTo(L[i][0], L[i][1]);
+      for (let i = N; i >= from; i--) g.lineTo(R[i][0], R[i][1]);
+      g.closePath();
+    };
+    outline(0);
+    g.fillStyle = rgba(lf.tone, lf.shade * a);
+    g.fill();
+    g.strokeStyle = rgba(lf.tone, (lf.shade + 0.3) * a);
+    g.lineWidth = 0.7;
+    g.stroke();
+    if (lf.dry && grown > 0.9) {
+      outline(Math.round(N * (1 - lf.dry)));
+      g.fillStyle = rgba(DRY, 0.5 * a);
+      g.fill();
+    }
+    if (lf.rib) {
+      g.strokeStyle = rgba("196, 204, 176", 0.3 * a);
+      g.lineWidth = 0.6;
+      g.beginPath();
+      for (let i = 1; i < N - 1; i++) (i === 1 ? g.moveTo(pts[i][0], pts[i][1]) : g.lineTo(pts[i][0], pts[i][1]));
+      g.stroke();
+    }
+  }
+
+  /** One petal from the heart of the flower. */
+  function petal(g, x, y, ang, long, fat, wave) {
+    const ca = Math.cos(ang), sa = Math.sin(ang), px = -sa, py = ca, w = long * fat;
+    const tip = [x + ca * long, y + sa * long];
+    g.beginPath();
+    g.moveTo(x, y);
+    g.quadraticCurveTo(x + ca * long * 0.45 + px * w, y + sa * long * 0.45 + py * w, tip[0] + px * w * 0.45, tip[1] + py * w * 0.45);
+    g.quadraticCurveTo(tip[0] + ca * (w * 0.35 + wave), tip[1] + sa * (w * 0.35 + wave), tip[0] - px * w * 0.45, tip[1] - py * w * 0.45);
+    g.quadraticCurveTo(x + ca * long * 0.45 - px * w, y + sa * long * 0.45 - py * w, x, y);
+    g.fill();
+    g.stroke();
+  }
+
+  /** A stem rising past the leaves, a bract part way up it, and what is at
+   *  the top of it: a bud, or three falls and three standards. */
+  function stem(g, m, st, grown, open, clock, a) {
+    const len = st.long * grown;
+    if (len < 2) return;
+    const s = swayOf(clock, st.phase, len / (m.T * 0.3));
+    const dx = Math.sin(st.tilt), dy = -Math.cos(st.tilt);
+    const at = (t) => [st.x + dx * len * t + st.bend * len * 0.3 * Math.sin(t * Math.PI * 0.9) + s * t * t, dy * len * t];
+    const [bx, by] = at(0), [cx2, cy2] = at(0.5), [tx, ty] = at(1);
+    g.strokeStyle = rgba(STEM, 0.62 * a);
+    g.lineWidth = 1.2;
+    g.beginPath(); g.moveTo(bx, by); g.quadraticCurveTo(cx2 * 2 - (bx + tx) / 2, cy2 * 2 - (by + ty) / 2, tx, ty); g.stroke();
+    if (grown > st.bract) {
+      const [kx, ky] = at(st.bract);
+      const side = st.tilt >= 0 ? 1 : -1;
+      g.fillStyle = rgba(STEM, 0.3 * a);
+      g.beginPath(); g.moveTo(kx, ky + 6); g.quadraticCurveTo(kx + side * 5, ky - 4, kx + side * 3, ky - 14); g.quadraticCurveTo(kx + side * 1, ky - 3, kx, ky + 6); g.fill(); g.stroke();
+    }
+    if (grown < 0.98) return;
+    g.fillStyle = rgba(STEM, 0.4 * a);
+    g.beginPath(); g.moveTo(tx - 2, ty + 9); g.lineTo(tx + 1.5, ty - 2); g.lineTo(tx + 3.5, ty + 7); g.closePath(); g.fill(); g.stroke();
+    const r = st.size;
+    if (st.bud || open < 0.35) {
+      const h = r * (0.9 + (st.bud ? 0 : open * 0.6));
+      g.fillStyle = rgba(IRIS, 0.34 * a);
+      g.strokeStyle = rgba(IRIS, 0.7 * a);
+      g.lineWidth = 0.9;
       g.beginPath();
       g.moveTo(tx, ty);
-      g.quadraticCurveTo(tx + Math.cos(ang - fat) * r * long * 0.8, ty + Math.sin(ang - fat) * r * long * 0.8, tx + Math.cos(ang) * r * long, ty + Math.sin(ang) * r * long);
-      g.quadraticCurveTo(tx + Math.cos(ang + fat) * r * long * 0.8, ty + Math.sin(ang + fat) * r * long * 0.8, tx, ty);
+      g.quadraticCurveTo(tx - r * 0.34, ty - h * 0.5, tx + st.turn * 6, ty - h);
+      g.quadraticCurveTo(tx + r * 0.3, ty - h * 0.45, tx, ty);
       g.fill(); g.stroke();
-    };
-    [-1.05, 0, 1.05].forEach((k) => petal(Math.PI / 2 + k + f.turn, k ? 1.55 : 1.2, 0.42));
-    [-0.38, 0, 0.38].forEach((k) => petal(-Math.PI / 2 + k + f.turn, k ? 1.2 : 1.35, 0.3));
-    g.fillStyle = rgba(GOLD, 0.9 * bloom);
-    [-1.05, 0, 1.05].forEach((k) => {
-      const ang = Math.PI / 2 + k + f.turn;
-      g.fillRect(tx + Math.cos(ang) * r * 0.45 - 0.8, ty + Math.sin(ang) * r * 0.45 - 0.8, 1.6, 1.6);
-    });
-  }
-
-  /** The inside, seen through the open door: its back, boarded; its left
-   *  wall and its floor in depth; the shelf, the rail, what hangs and the
-   *  irises — all of it inside the opening. */
-  function inside(g, m, bloom) {
-    const L = m.mid + 0.5, R = m.hinge, T0 = m.doorTop, B0 = m.doorBot;
-    g.save();
-    g.beginPath(); g.rect(L, T0, R - L, B0 - T0); g.clip();
-    poly(g, rect4(L, T0, R, B0), HOLLOW, 0.98);
-    const step = Math.max(5, m.W * 0.05);
-    for (let x = L + m.ox + step; x < R; x += step) line(g, x, T0, x, B0 + m.oy, BOARD, 0.9, 0.7);
-    poly(g, [[L, T0], [L + m.ox, T0 + m.oy], [L + m.ox, B0 + m.oy], [L, B0]], WALL, 0.98);
-    poly(g, [[L, B0], [R, B0], [R + m.ox, B0 + m.oy], [L + m.ox, B0 + m.oy]], FLOOR, 0.98);
-    // The shelf: a board with its edge to you and its top seen.
-    const st = Math.max(2, 2.2 * m.cm), sy = m.shelfY;
-    poly(g, topOf(m, L, R, sy - st), "116, 86, 62", 0.98);
-    poly(g, rect4(L, sy - st, R, sy), TOP, 0.98, 0.6);
-    const under = g.createLinearGradient(0, sy, 0, sy + 7 * m.cm);
-    under.addColorStop(0, "rgba(0, 0, 0, 0.35)");
-    under.addColorStop(1, "rgba(0, 0, 0, 0)");
-    g.fillStyle = under; g.fillRect(L, sy, R - L, 7 * m.cm);
-    m.stacks.forEach((k) => {
-      g.lineWidth = 0.7;
-      poly(g, k.rim, k.c, 0.97, 0.9, shade(k.c, 0.6));
-      line(g, k.fold[0][0], k.fold[0][1], k.fold[1][0], k.fold[1][1], shade(k.c, 0.72), 0.7, 0.5);
-    });
-    // The rail, a steel rod in a bracket at either end.
-    [m.inL - 3, m.inR + 3].forEach((x) => {
+      return;
+    }
+    const o = (open - 0.35) / 0.65;
+    const fx = tx, fy = ty - r * 0.35;
+    g.lineWidth = 0.9;
+    st.falls.forEach((f) => {
+      const ang = Math.PI / 2 + f.k * (0.55 + 0.45 * o) + st.turn + f.ang;
+      const long = r * (f.k ? 1.35 : 1.05) * f.long * (0.5 + 0.5 * o);
+      g.fillStyle = rgba(IRIS, 0.3 * a);
+      g.strokeStyle = rgba(IRIS, 0.72 * a);
+      petal(g, fx, fy, ang, long, f.fat, f.wave);
+      g.strokeStyle = rgba(IRIS, 0.42 * a * o);
       g.lineWidth = 0.5;
-      poly(g, rect4(x - 2, m.railY - 4, x + 2, m.railY + 3), BRASS, 0.95, 0.8, BRASS_EDGE);
+      [-0.16, 0, 0.16].forEach((v) => {
+        g.beginPath(); g.moveTo(fx + Math.cos(ang) * long * 0.2, fy + Math.sin(ang) * long * 0.2);
+        g.lineTo(fx + Math.cos(ang + v) * long * 0.62, fy + Math.sin(ang + v) * long * 0.62); g.stroke();
+      });
+      g.lineWidth = 0.9;
+      g.fillStyle = rgba(BEARD, 0.6 * a * o);
+      for (let d = 0.16; d < 0.5; d += 0.07) {
+        const j = Math.sin(d * 97 + f.ang * 40) * 0.8;
+        g.fillRect(fx + Math.cos(ang) * long * d - 0.6 + j, fy + Math.sin(ang) * long * d - 0.6 - j, 1.2, 1.2);
+      }
+      g.fillStyle = rgba("214, 206, 230", 0.4 * a * o);
+      g.strokeStyle = rgba(IRIS, 0.4 * a * o);
+      petal(g, fx, fy, ang, long * 0.5, 0.22, 0);
     });
-    line(g, m.inL - 3, m.railY, m.inR + 3, m.railY, STEEL, 0.95, 1.6);
-    line(g, m.inL - 3, m.railY - 0.5, m.inR + 3, m.railY - 0.5, "255, 255, 255", 0.5, 0.5);
-    m.hung.forEach((o) => garment(g, m, o));
-    if (bloom > 0) m.irises.forEach((f) => iris(g, m, f, bloom));
-    // The light that falls in through the open door.
-    const light = g.createLinearGradient(R, 0, L, 0);
-    light.addColorStop(0, "rgba(255, 238, 214, 0.12)");
-    light.addColorStop(0.6, "rgba(255, 238, 214, 0)");
-    g.fillStyle = light; g.fillRect(L, T0, R - L, B0 - T0);
-    g.restore();
+    st.stds.forEach((f) => {
+      const ang = -Math.PI / 2 + f.k * 0.32 * o + st.turn + f.ang;
+      g.fillStyle = rgba(IRIS, 0.2 * a);
+      g.strokeStyle = rgba(IRIS, 0.66 * a);
+      petal(g, fx, fy, ang, r * (f.k ? 1.05 : 1.25) * f.long * (0.6 + 0.4 * o), f.fat, -0.5);
+    });
   }
 
-  /** THE WHOLE ARMOIRE, as far as it is built, its door as far as it has
-   *  swung and its irises as far as they have opened. `g` is in the
-   *  armoire's own frame; `g.dry` only measures. */
-  function paint(g, m, built, swing, bloom) {
-    const { W, ov, ox, oy, base, top, mid, hinge, doorTop, doorBot, drawerTop, drawerBot, s } = m;
-    const reveal = -(m.rise || W * 2.2) * built - 2;
-    if (!g.dry) {
-      g.save();
-      g.beginPath(); g.rect(-ov - 8, reveal, W + 2 * ov + ox + 80, -reveal + 10); g.clip();
-      // Its shadow on the floor.
-      g.save();
-      g.translate(W / 2 + ox * 0.4, -1);
-      g.scale(1, 0.08);
-      const sh = g.createRadialGradient(0, 0, 0, 0, 0, W * 0.78);
-      sh.addColorStop(0, "rgba(46, 34, 52, 0.26)");
-      sh.addColorStop(1, "rgba(46, 34, 52, 0)");
-      g.fillStyle = sh;
-      g.fillRect(-W, -W, W * 2, W * 2);
-      g.restore();
-    }
-    g.lineJoin = "round";
-    // The far foot, behind; the carcass, its side and its front.
-    foot(g, m, W * 0.83 + ox, W * 0.98 + ox, oy, SIDE);
-    g.lineWidth = 0.9;
-    poly(g, sideOf(m, W, top, base), SIDE, 0.98, 0.85);
-    poly(g, rect4(0, top, W, base), FACE, 0.98, 0.9);
-    // The plinth, its bead, and the feet under it.
-    block(g, m, -ov * 0.4, base - m.plinthH, W + ov * 0.4, base);
-    line(g, -ov * 0.4, base - m.plinthH + 2.2, W + ov * 0.4, base - m.plinthH + 2.2, BEVEL.top, 0.9, 0.8);
-    foot(g, m, W * 0.02, W * 0.17, 0, FACE);
-    foot(g, m, W * 0.83, W * 0.98, 0, FACE);
-    // The cornice: three courses stepping out, dentils under the first,
-    // and a plate screwed on top.
-    const y2 = top - m.c1, y3 = y2 - m.c2, y4 = y3 - m.c3;
-    block(g, m, -ov * 0.35, y2, W + ov * 0.35, top);
-    const dg = Math.max(4, W * 0.045);
-    for (let x = -ov * 0.35 + dg * 0.5; x + dg * 0.5 < W + ov * 0.35; x += dg) {
-      poly(g, rect4(x, top - m.c1 * 0.78, x + dg * 0.5, top - m.c1 * 0.22), BEVEL.bottom, 0.9);
-    }
-    block(g, m, -ov * 0.7, y3, W + ov * 0.7, y2);
-    block(g, m, -ov, y4, W + ov, y3, true);
-    const px = W * 0.17;
-    block(g, m, mid - px, y4 - m.plaqueH, mid + px, y4, true, 0.3);
-    g.lineWidth = 0.5;
-    poly(g, rect4(mid - px + 3, y4 - m.plaqueH + 2.5, mid + px - 3, y4 - 2.5), null, 0, 0.5);
-    const sr = Math.max(1, W * 0.008);
-    [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([a, b]) =>
-      screw(g, mid + a * (px - 4.5), y4 - m.plaqueH / 2 + b * (m.plaqueH / 2 - 4), sr));
-
-    // The drawer, with its pulls and its keyhole.
-    const atD = (u, v) => [s + (W - 2 * s) * u, drawerTop + (drawerBot - drawerTop) * v];
-    g.lineWidth = 0.9;
-    poly(g, rect4(s, drawerTop, W - s, drawerBot), FACE, 0.98, 0.9);
-    raised(g, atD, 0.025, 0.12, 0.975, 0.88, 0.018, 0.16, false);
-    const pa = Math.max(2.4, (drawerBot - drawerTop) * 0.17);
-    pull(g, W * 0.27, (drawerTop + drawerBot) / 2 - pa * 0.6, pa);
-    pull(g, W * 0.73, (drawerTop + drawerBot) / 2 - pa * 0.6, pa);
-    poly(g, arc(mid, (drawerTop + drawerBot) / 2, Math.max(1.4, pa * 0.4), 0, Math.PI * 2, 8), BRASS, 0.95, 0.8, BRASS_EDGE);
-
-    // The left door, shut, with the lock and its key.
-    const atL = (u, v) => [s + (mid - 0.5 - s) * u, doorTop + (doorBot - doorTop) * v];
-    door(g, m, atL, true);
-    const [lx, ly] = atL(0.88, 0.47);
-    lock(g, m, lx, ly);
-
-    // The inside, then the right door over it, as far as it has swung.
-    const th = m.open * swing;
-    if (!g.dry && th > 0.02) inside(g, m, bloom);
-    const fx = hinge - m.dw * Math.cos(th), lift = m.skew * Math.sin(th);
-    const atR = (u, v) => {
-      const yt = doorTop - lift * u, yb = doorBot + lift * u;
-      return [hinge + (fx - hinge) * u, yt + (yb - yt) * v];
-    };
-    if (Math.abs(fx - hinge) > 0.6) door(g, m, atR, th < Math.PI / 2);
-    // Its edge, once it has swung far enough to show it.
-    const e = m.thick * Math.max(0, Math.min(1, (th - 1.25) / 0.3));
-    if (e > 0.2) {
-      const [ax, ay] = atR(1, 0), [bx, by] = atR(1, 1);
-      g.lineWidth = 0.7;
-      poly(g, [[ax, ay], [ax + e, ay + 0.5], [bx + e, by - 0.5], [bx, by]], SIDE, 0.98, 0.85);
-    }
-    // The meeting of the two doors, and the hinges, three to a door.
-    line(g, mid, doorTop, mid, doorBot, EDGE, 0.9, th > 0.02 ? 0.8 : 1.1);
-    const dh = doorBot - doorTop, hh = Math.max(7, dh * 0.07);
-    [0.1, 0.5, 0.9].forEach((v) => {
-      hingeAt(g, m, s, doorTop + dh * v, hh);
-      hingeAt(g, m, hinge, doorTop + dh * v, hh);
+  /** The irises: the ground, the leaves, then the stems, then the flowers. */
+  function drawIrises(g, m, clock, a) {
+    const since = REDUCE_MOTION ? 99 : clock - IRIS_FROM;
+    if (since <= 0) return;
+    m.clumps.forEach((cl) => {
+      ground(g, cl, ease(since / 0.7), a);
+      cl.leaves.forEach((lf) => leaf(g, lf, ease((since - lf.delay) / 1.5), clock, a));
+      cl.stems.forEach((st) => stem(g, m, st,
+        ease((since - IRIS_STEMS_AFTER - st.delay) / 1.2),
+        ease((since - IRIS_OPEN_AFTER - st.delay) / 1.4), clock, a));
     });
-
-    if (!g.dry) {
-      g.restore();
-      // While it is being built, the line it is built up behind.
-      if (built < 1) line(g, -ov - 4, reveal, W + ov + ox + 4, reveal, BRASS, 0.85, 1);
-    }
   }
+  // When the irises are whole (and so may be drawn over a picture of the rest).
+  const IRIS_WHOLE = IRIS_FROM + IRIS_OPEN_AFTER + 0.52 * 2 + 1.5;
 
   /** How far the armoire reaches either side of its front and above the
-   *  floor, for a front 100px wide — the drawing measured, not guessed. */
+   *  floor, and below it, for a front 100px wide — the drawing measured,
+   *  not guessed. */
   function reachOf() {
     let x1 = Infinity, x2 = -Infinity, y1 = Infinity;
     const see = (x, y) => { x1 = Math.min(x1, x); x2 = Math.max(x2, x); y1 = Math.min(y1, y); };
@@ -656,11 +749,14 @@
       get(t, k) {
         if (k in t) return t[k];
         if (k === "moveTo" || k === "lineTo") return see;
+        if (k === "quadraticCurveTo") return (cx, cy, x, y) => see(x, y);
         return () => ({ addColorStop() {} });
       },
       set() { return true; },
     });
-    paint(g, measure(100), 1, 1, 1);
+    const m = design(100);
+    drawFrame(g, m, 1, 99, 1);
+    drawIrises(g, m, 99, 1);
     return { left: -x1 / 100, right: x2 / 100, rise: -y1 / 100 };
   }
   const REACH = reachOf();
@@ -677,43 +773,39 @@
   }
 
   function build() {
-    seed = 52231;
     const room = margin();
     const baseY = height - Math.max(12, height * 0.03);
     const across = REACH.left + REACH.right;
-    const most = Math.min(210, (height * 0.86) / REACH.rise);
+    // A LITTLE BIGGER (2026-10-03): up to 280px across its front (the solid
+    // one stopped at 210), up to nine tenths of the window tall, and reaching
+    // a little into the writing column's own margin, where there is no
+    // writing yet — strong only to its edge (`hush`).
+    const most = Math.min(280, (height * 0.9) / REACH.rise);
     const scale = scaleBox();
-    const under = scale ? (baseY - scale.bottom - 18) / REACH.rise : Infinity;
+    const under = scale ? (baseY - scale.bottom - 10) / REACH.rise : Infinity;
     let W, from;
     if (room > 120) {
-      // In the margin, up to the column's edge; clear of the scale —
+      // In the margin, a little into the column's own; clear of the scale —
       // beside it, or under it, whichever leaves it the larger.
-      const to = room - 4;
+      const to = room + 48;
       const beside = (x) => Math.min(most, (to - x) / across);
-      from = 16;
-      W = beside(16);
+      from = 14;
+      W = beside(14);
       if (scale) {
-        const a = beside(scale.right + 18), b = Math.min(W, under);
-        if (a >= b) { W = a; from = scale.right + 18; } else W = b;
+        const a = beside(scale.right + 12), b = Math.min(W, under);
+        if (a >= b) { W = a; from = scale.right + 12; } else W = b;
       }
     } else {
       // On a window without margins, a small one in the corner, quiet
       // behind the writing — under the scale, if it is shown.
       from = 8;
-      W = Math.min(width * 0.26, 110, most, under);
+      W = Math.min(width * 0.34, 150, most, under);
     }
-    W = Math.max(40, W);
+    W = Math.max(50, W);
     const left = from + REACH.left * W;
-    shape = measure(W);
-    shape.rise = REACH.rise * W;
-    dressUp(shape);
-    shape.irises = [0.3, 0.55, 0.78].map((k, i) => ({
-      x: shape.mid + 2 + (shape.hinge - shape.mid - 2) * k,
-      top: shape.doorBot - (shape.doorBot - shape.doorTop) * [0.28, 0.34, 0.31][i],
-      turn: between(-0.2, 0.2),
-    }));
+    shape = design(W);
     frame = { left, baseY, wide: W, tall: shape.T, hinge: shape.hinge, doorTop: shape.doorTop, doorBot: shape.doorBot,
-      reach: shape.dw * 0.42 };      // how far the open door stands out past its hinge
+      reach: shape.openW };
     stillFor = "";
     // THE DRIP, in the other margin, and the beaker under it at the foot
     // of the page — on a window without margins, a small one at the edge.
@@ -753,16 +845,16 @@
   const fill = (tone, a, x) => { ink.fillStyle = "rgba(" + tone + "," + Math.max(0, Math.min(1, a * quiet(x))).toFixed(3) + ")"; };
 
   /** Over the writing the armoire is quiet: it is drawn whole, and then
-   *  taken back by how far over the writing it stands. */
+   *  taken back by how far over the writing it stands — strong to the
+   *  column's edge, quiet by the time the writing begins, 64px in; without
+   *  margins, quiet all the way across. */
   function hush(g) {
-    // Strong to the column's edge, and quiet by the time its writing
-    // begins, 64px in; without margins, quiet all the way across.
     let a = 0, b = 1;
     if (width > COLUMN) { a = margin(); b = a + 60; }
     b = Math.max(a + 1, Math.min(b, width / 2));
     const k = (x) => Math.max(0, Math.min(1, x / width));
     const grad = g.createLinearGradient(0, 0, width, 0);
-    const gone = "rgba(0, 0, 0, " + (1 - WOOD_QUIET) + ")";
+    const gone = "rgba(0, 0, 0, " + (1 - QUIET) + ")";
     grad.addColorStop(0, "rgba(0, 0, 0, 0)");
     grad.addColorStop(k(a), "rgba(0, 0, 0, 0)");
     grad.addColorStop(k(b), gone);
@@ -776,52 +868,58 @@
     g.restore();
   }
 
-  // THE ARMOIRE, ONCE IT STANDS, IS A PICTURE. Built, swung open and in
-  // bloom, nothing of it moves again (only the powder and the drip move),
-  // so once it is whole it is drawn once, into a picture of its own the
-  // size of the window, and that is laid down each frame; a resize makes
-  // it again. (It was drawn speck by speck, every frame, until 2026-10-01,
-  // which was most of what this page asked of a phone.)
+  // THE ARMOIRE, ONCE IT STANDS, IS A PICTURE: built and its clothes in, the
+  // lines, the inside and the clothes never move again, so they are drawn
+  // once into a picture of their own the size of the window and laid down
+  // each frame; only the irises, which sway, are drawn over it every frame.
+  // A resize makes it again.
   let still = null, stillFor = "";
-  function drawArmoire(built, swing, bloom) {
-    ink.save();
-    ink.translate(frame.left, frame.baseY);
-    paint(ink, shape, built, swing, bloom);
-    ink.restore();
-    hush(ink);
-  }
-
-  function draw(clock, dt) {
-    if (!width) return;
-    ink.clearRect(0, 0, width, height);
-
-    // THE ARMOIRE, built up from the floor, its door swinging open as it
-    // is finished, and its irises opening behind it.
+  const CLOTHES_IN = BUILD * 0.55 + 1.75;
+  function drawArmoire(clock) {
     const built = REDUCE_MOTION ? 1 : ease(clock / BUILD);
-    const swing = REDUCE_MOTION ? 1 : ease((clock - BUILD * 0.6) / SWING);
-    const bloom = REDUCE_MOTION ? 1 : ease((clock - BUILD * 0.85) / BLOOM);
-    if (built >= 1 && swing >= 1 && bloom >= 1) {
+    const whole = REDUCE_MOTION || (built >= 1 && clock > CLOTHES_IN);
+    if (whole) {
       const key = canvas.width + "x" + canvas.height;
       if (stillFor !== key) {
         still = still || document.createElement("canvas");
         still.width = canvas.width; still.height = canvas.height;
         const made = still.getContext("2d");
         made.setTransform(canvas.width / width, 0, 0, canvas.height / height, 0, 0);
-        ink = made;
-        drawArmoire(1, 1, 1);
-        ink = page;
+        made.clearRect(0, 0, width, height);
+        made.translate(frame.left, frame.baseY);
+        drawFrame(made, shape, 1, 99, 1);
         stillFor = key;
       }
       ink.save();
       ink.setTransform(1, 0, 0, 1, 0, 0);
       ink.drawImage(still, 0, 0);
       ink.restore();
-    } else drawArmoire(built, swing, bloom);
+    } else {
+      ink.save();
+      ink.translate(frame.left, frame.baseY);
+      drawFrame(ink, shape, built, clock, 1);
+      ink.restore();
+    }
+    ink.save();
+    ink.translate(frame.left, frame.baseY);
+    drawIrises(ink, shape, clock, 1);
+    ink.restore();
+    hush(ink);
+    return built;
+  }
+
+  function draw(clock, dt) {
+    if (!width) return;
+    ink.clearRect(0, 0, width, height);
+
+    // THE ARMOIRE, drawn up from the floor, its clothes coming in once its
+    // door is drawn and its irises growing at its feet.
+    const built = drawArmoire(clock);
 
     // THE ORRIS POWDER, out of the open door, faster while the hand is near.
     const [gx] = place(frame.hinge, 0);
     const near = Math.hypot(handX - gx, handY - (frame.baseY - frame.tall * 0.5)) < frame.tall * 0.7;
-    if (!REDUCE_MOTION && bloom > 0.5 && clock - lastPuff > (near ? PUFF_NEAR : PUFF_EVERY)) {
+    if (!REDUCE_MOTION && built >= 1 && clock - lastPuff > (near ? PUFF_NEAR : PUFF_EVERY)) {
       lastPuff = clock;
       powder.push({ x: frame.hinge + between(2, frame.reach), y: between(frame.doorTop + 20, frame.doorBot - 20), born: clock,
         vx: between(8, 30), vy: -between(4, 16), s: between(0.9, 1.8), life: between(3, 5.4) });

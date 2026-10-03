@@ -50,21 +50,22 @@
 //      round the bonds (more concrete), its swirl calms, the bonds are drawn
 //      out of the C in bright specks, the C=O as two lines, and the atoms
 //      named as a chemistry book names them
-//   5  (S 4) THE LINES and the names: from S 3 two lines of specks come down
-//      the window, top to bottom, one either side of the formula, and the
-//      Menu's eight pages come up on the outside of them (landing.js) —
-//      "particles that appear in straight lines from the left and right, and
-//      on the outer perimeter, you will have the words. the particles should
-//      go from top to bottom, and should have some movement - exactly like in
-//      the aldehyde molecule". So they fall, slowly, all the while, each
-//      swirling a little about its way as the aldehyde's specks do.
+//   5  (S 4) THE DRIFT and the names: from S 3 the room either side of the
+//      formula fills with a very light drift of specks, falling slowly and
+//      flowing a little as ADAR's dust does, and the Menu's eight pages come
+//      up in it, scattered a little (style.css, landing.js) — "remove the two
+//      parallel particle lines ... the space on the left and right is
+//      occupied by the 8 categories ... slightly haphazardly arranged. and
+//      have VERY LIGHT AND FLOWY PARTICLES; very similar to the adar page"
+//      (2026-10-03). Until then two LINES of specks came down the window,
+//      one either side of the formula, the names on the outside of them;
+//      none of that is in this file now.
 //
 // THE ELECTRONEGATIVE HAND ("i want the cursor to have an electronegative
 // character, so the electrons would be attracted to it"): wherever the
 // pointer is over the stage, the specks near it — the aldehyde's and the
-// lines' — are drawn towards it, and brighten, and a small δ− stands beside
-// it. A name pointed at is lit, and so are the specks of its line beside
-// it: "the whole thing will be illuminated and you can click it".
+// drift's — are drawn towards it, and brighten, and a small δ− stands beside
+// it. A name pointed at is lit, with a backdrop of specks of its own.
 //
 // Before the five stages (the same evening) the formula stood on a slide of
 // its own after the title, and the names came up out of clouds of their own,
@@ -126,9 +127,9 @@
   // gentle curve (2026-09-30: "EVERYTHING should be smooth and gradual; and
   // not incremental"), so something is always on its way and nothing waits
   // for the one before it to stop: the turning from TURN_FROM to 2, the
-  // formula from FORM_FROM to 3, the lines down the window from 3 over
-  // LINES_OVER, the names after them (landing.js).
-  const TURN_FROM = 0.95, FORM_FROM = 1.95, LINES_OVER = 0.85;   // (the turn from 0.85 until 2026-10-01, when its leg grew)
+  // formula from FORM_FROM to 3, the drift coming up from 3 over
+  // DRIFT_OVER, the names after it (landing.js).
+  const TURN_FROM = 0.95, FORM_FROM = 1.95, DRIFT_OVER = 0.85;   // (the turn from 0.85 until 2026-10-01, when its leg grew)
   // THE TURN UPRIGHT, prolonged and smoothed (2026-10-01: "prolongue the
   // horizontal to vertical transformation of the aldehyde. thats the only
   // part that looks fast. I want you to smooth it out"). Its leg of the
@@ -157,18 +158,20 @@
   const BOND_INK = [1.0, 0.96, 0.9];
   const ATOM_SIZE = 0.23;      // the names' letters, angstrom
   const CLEAR = 0.78;          // the clear space round each, of that
-  // THE LINES: how many specks to a pixel of a line's length; how far off it
-  // they stand (most on it, some a little off, a few in a haze); how fast
-  // they fall, pixels a second — half as fast since 2026-10-01 ("slow down
-  // the particles in the lines by about half"; 11 to 30 from the night of
-  // 2026-09-30, "slightly slower", and 16 to 44 before that); how much they
-  // swirl about their way, as the aldehyde's do, and how quickly the swirl
-  // turns over (halved with the fall, `LINE_STIR`).
-  const LINE_DENSITY = 3;
-  const LINE_SPREAD = [[0.62, 1.2], [0.28, 3.6], [0.1, 10]];   // [share, pixels either side]
-  const FALL = [5.5, 15];
-  const LINE_SWIRL = 3.2;
-  const LINE_STIR = 0.06;
+  // THE DRIFT (2026-10-03, in place of the two lines): ADAR's dust, on the
+  // stage's dark — how many specks to a square pixel of the room either side
+  // of the formula; how fast they fall, pixels a second (ADAR's own, 3 to
+  // 11); how far each sways from side to side and how slowly; how far the
+  // slow flow under them carries them, and how slowly it turns over; how
+  // strong a speck is at most; and how much of them is the aldehyde's gold
+  // and violet, the rest a pale warm grey, as ADAR's silver is on its dark.
+  const DRIFT_DENSITY = 0.0028;
+  const DRIFT_FALL = [3, 11];
+  const DRIFT_SWAY = 6, DRIFT_SWAY_RATE = 0.15;
+  const DRIFT_FLOW = 9, DRIFT_STIR = 0.035;
+  const DRIFT_INK = 1;
+  const DRIFT_TONES = [[0.12, "pi"], [0.1, "lone"]];
+  const LINE_SWIRL = 3.2;   // (a name's backdrop swirls by it)
   // A NAME'S BACKDROP (2026-09-30: "make them slightly particular when
   // hovered. give them a slight backdrop of particles, same colours as the
   // aldehyde"): a soft oval of specks behind a name the hand or the keys
@@ -193,11 +196,9 @@
   // to it a speck at its heart is drawn, and how much brighter it is there.
   const HAND_REACH = 0.16;     // of the window's height, for the aldehyde's specks
   const HAND_PULL = 0.45;
-  const LINE_REACH = 150;      // pixels, for the lines'
-  // the lines half as moved by it as they were, and half as lit (2026-10-01:
-  // "make the line particles on either side of the aldehyde on the home page
-  // less reactive to the cursor ... i want them half as reactive"; 0.5 and
-  // the whole of `HAND_LIGHT` before) — a name's backdrop keeps its own
+  const LINE_REACH = 150;      // pixels, for the drift's (the lines' reach, kept)
+  // the drift as little moved by it as the lines were made (2026-10-01: "i
+  // want them half as reactive") — a name's backdrop keeps its own
   const LINE_PULL = 0.25;
   const LINE_LIGHT = 0.5;      // of HAND_LIGHT
   const HAZE_PULL = 0.175;
@@ -388,48 +389,39 @@
       vColour = vec3(${BOND_INK.map((v) => v.toFixed(3)).join(", ")}) * shown;
     }`;
 
-  // THE LINES, drawn straight onto the window in its own pixels. Every speck
-  // belongs to one of the two (`aLine.x`, -1 the left, 1 the right), stands
-  // `aLine.y` pixels off it and falls down it at `aLine.z` pixels a second,
-  // from its own start (`aLine.w`, of the way down), round and round,
-  // swirling a little about its way. The lines come down the window as the
-  // last stage comes (`uDraw`, the head of them), are broken where the
-  // formula stands on a narrow window (`uGap`, top and foot), and are lit
-  // beside a name the hand is on (`uHot`, at `uWordY`); and the hand draws
-  // their specks to it.
-  const LINE_VERTEX = `
-    uniform vec2 uRes, uLineX, uGap, uHandPx;
-    uniform float uTime, uDraw, uSize, uSwirl, uPull, uWordH;
-    uniform float uHot[8], uWordY[8];
-    attribute vec4 aLine;
+  // THE DRIFT, drawn straight onto the window in its own pixels. Every speck
+  // belongs to a room (`aDrift.x`: -1 the left of the formula, 1 the right,
+  // 0 the whole window on a narrow one), stands at its own share across it
+  // (`aDrift.y`) and falls down it at `aDrift.w` pixels a second from its own
+  // start (`aDrift.z`, of the way down), round and round — swaying a few
+  // pixels from side to side as ADAR's dust does, and carried a little by a
+  // slow flow under it. It comes up as the last stage comes (`uDraw`), thins
+  // out towards the formula, and the hand draws it to it.
+  const DRIFT_VERTEX = `
+    uniform vec2 uRes, uHandPx;
+    uniform vec4 uRoom;
+    uniform float uTime, uDraw, uSize, uPull;
+    attribute vec4 aDrift;
     attribute vec3 aTone;
     varying vec3 vColour;
     varying float vAlpha;
     ${NOISE}
     void main() {
-      float pad = 24.0;
+      float pad = 16.0;
       float span = uRes.y + 2.0 * pad;
-      float y = mod(aLine.w * span + aLine.z * uTime, span) - pad;
-      float x = (aLine.x < 0.0 ? uLineX.x : uLineX.y) + aLine.y;
-      float seed = fract(aLine.w * 7.31 + aLine.z * 0.013);
-      // its swirl, as the aldehyde's specks swirl
-      vec2 p = vec2(x, y) + uSwirl * vec2(
-        snoise(vec3(x * 0.011, y * 0.011, uTime * ${LINE_STIR.toFixed(3)} + seed * 3.0)),
-        snoise(vec3(x * 0.011 + 17.3, y * 0.011, uTime * ${LINE_STIR.toFixed(3)} - seed * 3.0)));
-      // come down the window, top to bottom, the head soft
-      float head = uDraw * (uRes.y + 90.0);
-      float on = 1.0 - smoothstep(head - 90.0, head, p.y);
-      // broken where the formula stands, on a narrow window
-      if (uGap.y > uGap.x) on *= smoothstep(uGap.x - 4.0, uGap.x - 26.0, p.y) + smoothstep(uGap.y + 4.0, uGap.y + 26.0, p.y);
-      if (on <= 0.001) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
-      // lit beside a name the hand is on
-      float hot = 0.0;
-      for (int k = 0; k < 4; k++) {
-        float wy = aLine.x < 0.0 ? uWordY[k] : uWordY[k + 4];
-        float wh = aLine.x < 0.0 ? uHot[k] : uHot[k + 4];
-        float dy = (p.y - wy) / uWordH;
-        hot = max(hot, wh * exp(-dy * dy));
-      }
+      float y = mod(aDrift.z * span + aDrift.w * uTime, span) - pad;
+      float x0 = aDrift.x < -0.5 ? 0.0 : aDrift.x > 0.5 ? uRoom.z : 0.0;
+      float x1 = aDrift.x < -0.5 ? uRoom.x : aDrift.x > 0.5 ? uRes.x : uRes.x;
+      float x = x0 + aDrift.y * (x1 - x0);
+      float seed = fract(aDrift.z * 7.31 + aDrift.w * 0.013 + aDrift.y * 3.7);
+      // ADAR's sway, and the slow flow under it
+      x += sin(uTime * ${DRIFT_SWAY_RATE.toFixed(3)} * (0.7 + 0.6 * seed) + seed * 6.283) * ${DRIFT_SWAY.toFixed(1)};
+      vec2 p = vec2(x, y) + ${DRIFT_FLOW.toFixed(1)} * vec2(
+        snoise(vec3(x * 0.004, y * 0.004, uTime * ${DRIFT_STIR.toFixed(3)} + seed * 3.0)),
+        0.4 * snoise(vec3(x * 0.004 + 17.3, y * 0.004, uTime * ${DRIFT_STIR.toFixed(3)} - seed * 3.0)));
+      // thinning out towards the formula, the side it stands on
+      float inner = aDrift.x < -0.5 ? x1 - p.x : aDrift.x > 0.5 ? p.x - x0 : 999.0;
+      float edge = smoothstep(-10.0, 70.0, inner);
       // the hand: the electrons drawn to it
       float near = 0.0;
       if (uPull > 0.0) {
@@ -437,11 +429,12 @@
         near = exp(-dot(d, d) / (${LINE_REACH.toFixed(1)} * ${LINE_REACH.toFixed(1)})) * uPull;
         p += d * ${LINE_PULL.toFixed(3)} * near;
       }
-      float twinkle = 0.8 + 0.2 * sin(uTime * 1.6 + seed * 60.0);
-      vColour = mix(aTone, vec3(1.0), 0.35 * hot) * (1.0 + 0.9 * hot + ${(HAND_LIGHT * LINE_LIGHT).toFixed(3)} * near);
-      vAlpha = on * twinkle;
+      float twinkle = 0.7 + 0.3 * sin(uTime * 0.9 + seed * 60.0);
+      vColour = aTone * (1.0 + ${(HAND_LIGHT * LINE_LIGHT).toFixed(3)} * near);
+      vAlpha = uDraw * edge * twinkle;
+      if (vAlpha <= 0.002) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
       gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
-      gl_PointSize = uSize * (0.8 + 0.4 * seed) * (1.0 + 0.25 * hot);
+      gl_PointSize = uSize * (seed < 0.15 ? 1.5 : 0.85 + 0.3 * fract(seed * 11.0));
     }`;
   const LINE_FRAGMENT = `
     uniform float uAlpha;
@@ -455,7 +448,7 @@
     }`;
 
   // A NAME'S BACKDROP, drawn straight onto the window in its pixels like the
-  // lines: every speck belongs to one name (`aHaze.x`) and stands at its own
+  // drift: every speck belongs to one name (`aHaze.x`) and stands at its own
   // place in an oval round it (`aHaze.yz`, in the name's own half-sizes),
   // drawn in from half as far again as the name comes up (`uHeat`), swirling
   // a little, and drawn a part of the way to the hand.
@@ -637,27 +630,25 @@
     return { el, at };
   });
 
-  // ---- the lines -------------------------------------------------------------
-  const lineGeo = new THREE.BufferGeometry();
-  const lineMat = new THREE.ShaderMaterial({
-    vertexShader: LINE_VERTEX,
+  // ---- the drift -------------------------------------------------------------
+  const driftGeo = new THREE.BufferGeometry();
+  const driftMat = new THREE.ShaderMaterial({
+    vertexShader: DRIFT_VERTEX,
     fragmentShader: LINE_FRAGMENT,
     uniforms: {
       uRes: { value: new THREE.Vector2(1, 1) },
-      uLineX: { value: new THREE.Vector2() },
-      uGap: { value: new THREE.Vector2(0, 0) },
+      uRoom: { value: new THREE.Vector4() },
       uHandPx: { value: new THREE.Vector2() },
-      uTime: { value: 0 }, uDraw: { value: 0 }, uSize: { value: 2 }, uSwirl: { value: LINE_SWIRL },
-      uPull: { value: 0 }, uWordH: { value: 30 }, uAlpha: { value: 1 },
-      uHot: { value: new Float32Array(8) }, uWordY: { value: new Float32Array(8) },
+      uTime: { value: 0 }, uDraw: { value: 0 }, uSize: { value: 2 },
+      uPull: { value: 0 }, uAlpha: { value: DRIFT_INK },
     },
     transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
   });
-  const lines = new THREE.Points(lineGeo, lineMat);
-  lines.frustumCulled = false;
-  lines.renderOrder = 5;
-  lines.visible = false;
-  scene.add(lines);
+  const drift = new THREE.Points(driftGeo, driftMat);
+  drift.frustumCulled = false;
+  drift.renderOrder = 5;
+  drift.visible = false;
+  scene.add(drift);
 
   // ---- a name's backdrop -----------------------------------------------------
   const hazeGeo = new THREE.BufferGeometry();
@@ -684,11 +675,11 @@
   // A shader that did not compile takes the drawing with it: check, and step aside.
   try {
     bonds.visible = true;
-    // (the lines' specks are made once the page is laid out; one speck to compile against)
-    lineGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
-    lineGeo.setAttribute("aLine", new THREE.BufferAttribute(new Float32Array(4), 4));
-    lineGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
-    lines.visible = true;
+    // (the drift's specks are made once the page is laid out; one speck to compile against)
+    driftGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
+    driftGeo.setAttribute("aDrift", new THREE.BufferAttribute(new Float32Array(4), 4));
+    driftGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
+    drift.visible = true;
     hazeGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
     hazeGeo.setAttribute("aHaze", new THREE.BufferAttribute(new Float32Array(4), 4));
     hazeGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
@@ -697,7 +688,7 @@
     const programs = renderer.info.programs || [];
     if (programs.some((p) => p.diagnostics && p.diagnostics.runnable === false)) throw new Error("shader");
     bonds.visible = false;
-    lines.visible = false;
+    drift.visible = false;
     haze.visible = false;
   } catch (e) {
     renderer.dispose();
@@ -714,7 +705,7 @@
 
   // ---- framing -------------------------------------------------------------
   // In the middle of the window, as large as the private page draws it; and,
-  // upright and as the formula, as large as the room between the lines leaves it.
+  // upright and as the formula, as large as the room between the names leaves it.
   let W = 1, H = 1, distCloud = 10, distForm = 10, denseCloud = 1, denseForm = 1, pxForm = 100, thin = 1;
   const PHONE_THIN = 0.5;    // the share of the specks drawn on a phone (each the brighter for it)
   let band = false;
@@ -743,7 +734,7 @@
     const px = (H / 2) / (half * distCloud);
     denseCloud = density(px);
     pxForm = px;
-    const room = layLines();
+    const room = layDrift();
     if (room) pxForm = Math.max(20, Math.min(px * 1.05, room.halfW / FORM_EXTENT, room.halfH / FORM_EXTENT));
     distForm = (H / 2) / (half * pxForm);
     denseForm = density(pxForm);
@@ -764,36 +755,26 @@
       parts[name].geometry.setDrawRange(0, Math.min(D.parts[name].n, Math.round(SHARE[name] * EMPHASIS[name] * cut * thin)));
     }
     bonds.material.uniforms.uSize.value = (small ? 1.8 : 2.2) * scale;
-    lineMat.uniforms.uSize.value = (small ? 1.8 : 2.1) * scale;
-    lineMat.uniforms.uRes.value.set(W, H);
-    lineMat.uniforms.uSwirl.value = small ? LINE_SWIRL * 0.8 : LINE_SWIRL;
+    driftMat.uniforms.uSize.value = (small ? 2 : 2.4) * scale;
+    driftMat.uniforms.uRes.value.set(W, H);
     hazeMat.uniforms.uSize.value = (small ? 1.4 : 1.6) * scale;    // small (it was 2.2 and 2.6)
     hazeMat.uniforms.uRes.value.set(W, H);
-    hazeMat.uniforms.uSwirl.value = lineMat.uniforms.uSwirl.value;
+    hazeMat.uniforms.uSwirl.value = small ? LINE_SWIRL * 0.8 : LINE_SWIRL;
     names.forEach((n) => { n.el.style.fontSize = (ATOM_SIZE * pxForm).toFixed(1) + "px"; });
     drewAt = -1;
     if (REDUCE || !running) draw(performance.now());
   }
 
-  // LAYING THE LINES: each on the edge of the column between its names and
-  // the formula (the grid's own columns, style.css), the length of the
-  // window; and where each name stands, to light the line beside it. On a
-  // narrow window (the BAND) the two stand close, down the channel between
-  // the two columns, and are broken where the formula stands. Returns the
-  // room the formula has between them.
-  const GREY = [0.7, 0.67, 0.63];
-  function toneOf() {
-    const x = rand();
-    return x < 0.18 ? COLOUR.pi : x < 0.32 ? COLOUR.lone : GREY;
-  }
-  const spread = () => {
-    let x = rand();
-    for (const [share, px] of LINE_SPREAD) { if (x < share) return px; x -= share; }
-    return LINE_SPREAD[0][1];
-  };
+  // LAYING THE DRIFT: in the room either side of the formula — from the
+  // window's edge to the edge of the grid's middle column (style.css) — the
+  // whole height of the window; on a narrow window (the BAND, the names above
+  // and below the formula) across the whole of it. And where each name
+  // stands, for its backdrop. Returns the room the formula has between the
+  // names.
+  const PALE = [0.86, 0.84, 0.8];
   const gauss = () => Math.sqrt(-2 * Math.log(1 - rand() * 0.999)) * Math.cos(2 * Math.PI * rand());
   let laidFor = "";
-  function layLines() {
+  function layDrift() {
     if (!formula || links.length !== 8) return null;
     const menu = links[0].parentNode;
     const cs = getComputedStyle(menu);
@@ -803,10 +784,8 @@
     const m = menu.getBoundingClientRect();
     const left = m.left - box.left + (parseFloat(cs.paddingLeft) || 0) + (cols[0] || 0);
     const right = left + (cols[1] || 0);
-    const u = lineMat.uniforms;
-    u.uLineX.value.set(left, right);
+    driftMat.uniforms.uRoom.value.set(left, 0, right, 0);
     const rects = links.map((a) => a.getBoundingClientRect());
-    rects.forEach((r, k) => { u.uWordY.value[k] = r.top - box.top + r.height / 2; });
     // each name's backdrop stands round the name's own lettering (the link
     // less its padding)
     const hu = hazeMat.uniforms;
@@ -819,45 +798,45 @@
       hu.uHalfH.value[k] = Math.max(6, r.height / 2 - padY);
     });
     layHaze();
-    u.uWordH.value = Math.max(16, rects[0].height * 0.9);
     let halfW, halfH;
     if (band) {
       const top = Math.max(...[0, 1, 4, 5].map((i) => rects[i].bottom)) - box.top;
       const foot = Math.min(...[2, 3, 6, 7].map((i) => rects[i].top)) - box.top;
-      u.uGap.value.set(top + 6, foot - 6);
       halfH = (foot - top) / 2 - 12;
       halfW = W / 2 - 18;
     } else {
-      u.uGap.value.set(0, 0);
       // (a quarter of the room left clear either side: the aldehyde's space)
       halfW = ((right - left) / 2) * 0.78;
       halfH = H / 2 - 64;
     }
-    // the specks themselves, made again only when the window's height or the
-    // number wanted changes
-    const want = Math.round(H * LINE_DENSITY * (phone() ? 0.7 : 1) * (soft ? 0.3 : 1));
-    const key = want + "|" + Math.round(H);
+    // the specks themselves, made again only when the room changes
+    const sides = band ? [[0, W]] : [[-1, Math.max(0, left)], [1, Math.max(0, W - right)]];
+    const counts = sides.map(([, w]) => Math.round(w * H * DRIFT_DENSITY * (phone() ? 0.7 : 1) * (soft ? 0.3 : 1) * (band ? 0.6 : 1)));
+    const key = counts.join("|") + "|" + Math.round(H) + "|" + band;
     if (key !== laidFor) {
       laidFor = key;
       seed = 11;
-      const n = want * 2;
-      const line = new Float32Array(n * 4), tone = new Float32Array(n * 3);
-      for (let i = 0; i < n; i++) {
-        const side = i < want ? -1 : 1;
-        line[i * 4] = side;
-        line[i * 4 + 1] = gauss() * spread();
-        line[i * 4 + 2] = FALL[0] + rand() * (FALL[1] - FALL[0]);
-        line[i * 4 + 3] = rand();
-        const t = toneOf();
-        // lit by how near the line it stands, so the line glows at its middle
-        const lit = (0.7 + 0.3 * Math.exp(-Math.abs(line[i * 4 + 1]) / 3)) * (0.8 + 0.2 * rand());
-        tone[i * 3] = t[0] * lit; tone[i * 3 + 1] = t[1] * lit; tone[i * 3 + 2] = t[2] * lit;
-      }
-      lineGeo.dispose();
-      lineGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
-      lineGeo.setAttribute("aLine", new THREE.BufferAttribute(line, 4));
-      lineGeo.setAttribute("aTone", new THREE.BufferAttribute(tone, 3));
-      lineGeo.setDrawRange(0, n);
+      const n = counts.reduce((a, b) => a + b, 0);
+      const dr = new Float32Array(n * 4), tone = new Float32Array(n * 3);
+      let i = 0;
+      sides.forEach(([side], k) => {
+        for (let j = 0; j < counts[k]; j++, i++) {
+          dr[i * 4] = side;
+          dr[i * 4 + 1] = rand();
+          dr[i * 4 + 2] = rand();
+          dr[i * 4 + 3] = DRIFT_FALL[0] + rand() * (DRIFT_FALL[1] - DRIFT_FALL[0]);
+          let x = rand(), c = PALE;
+          for (const [share, name] of DRIFT_TONES) { if (x < share) { c = COLOUR[name]; break; } x -= share; }
+          // ADAR's: most faint, a few a little stronger
+          const ink = 0.25 + 0.75 * rand();
+          tone[i * 3] = c[0] * ink; tone[i * 3 + 1] = c[1] * ink; tone[i * 3 + 2] = c[2] * ink;
+        }
+      });
+      driftGeo.dispose();
+      driftGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+      driftGeo.setAttribute("aDrift", new THREE.BufferAttribute(dr, 4));
+      driftGeo.setAttribute("aTone", new THREE.BufferAttribute(tone, 3));
+      driftGeo.setDrawRange(0, n);
     }
     return { halfW, halfH };
   }
@@ -902,7 +881,7 @@
   // ---- the hand ------------------------------------------------------------
   // A name is lit while the hand or the keys are on it, and while it asks
   // to be left for (landing.js marks it `is-lit`).
-  const hot = new Float32Array(8), hotTo = new Float32Array(8), heat = new Float32Array(8);
+  const hotTo = new Float32Array(8), heat = new Float32Array(8);
   const litNow = (a) => a.matches(":hover") || a.matches(":focus-visible") || a.classList.contains("is-lit");
   // (read on every frame; these only ask for one when the drawing is still)
   const again = () => { drewAt = -1; };
@@ -962,7 +941,7 @@
     wrap.turned = turned;   // (for the tests: how far it has turned, 0 to 1)
     const upright = smooth((turned - 0.72) / 0.28);                      // and the formula may come
     const formed = Math.min(smooth((S - FORM_FROM) / (3 - FORM_FROM)), upright);   // its formula
-    const down = smooth((S - 3) / LINES_OVER);                  // the lines come down
+    const down = smooth((S - 3) / DRIFT_OVER);                  // the drift comes up
     const react = REACT_TITLE + (1 - REACT_TITLE) * smooth((S - 0.15) / 1.1);
 
     // the hand (where the drawing stands, read when the page moves, not
@@ -1018,22 +997,20 @@
       namesShown = named > 0;
     }
 
-    // the lines, and the names lit beside them
+    // the drift, and the names lit with their backdrops
     for (let k = 0; k < links.length && k < 8; k++) {
       hotTo[k] = litNow(links[k]) ? 1 : 0;
-      hot[k] += (hotTo[k] - hot[k]) * (REDUCE ? 1 : Math.min(1, dt / 90));
-      // (the backdrop comes and goes more slowly, as the name itself does)
+      // (the backdrop comes and goes slowly, as the name itself does)
       heat[k] += (hotTo[k] - heat[k]) * (REDUCE ? 1 : Math.min(1, dt / HAZE_EASE));
       if (Math.abs(heat[k] - hotTo[k]) < 0.002) heat[k] = hotTo[k];
     }
-    lines.visible = laidFor !== "" && down > 0;
-    if (lines.visible) {
-      const m = lineMat.uniforms;
+    drift.visible = laidFor !== "" && down > 0;
+    if (drift.visible) {
+      const m = driftMat.uniforms;
       m.uTime.value = t;
       m.uDraw.value = down;
       m.uPull.value = pull;
       m.uHandPx.value.set(eased.x - box.left, eased.y - box.top);
-      for (let k = 0; k < 8; k++) m.uHot.value[k] = hot[k];
     }
     haze.visible = hazeLaid && down > 0 && heat.some((h) => h > 0.002);
     if (haze.visible) {
@@ -1048,12 +1025,12 @@
 
     // Where it is, said on the drawing for anything that wants to know (the
     // tests): cloud (the first two stages), turning, turned, forming,
-    // formula, lining, lined.
+    // formula, drifting (the drift coming up), drift (it there, and the names).
     // (turning for as long as it is still turning, whatever the page says)
     const state = S <= 1.02 && turned < 0.01 ? "cloud" : S < 1.98 || turned < 0.995 ? "turning" : S <= 2.02 ? "turned"
-      : S < 2.98 ? "forming" : S <= 3.02 ? "formula" : down < 0.999 ? "lining" : "lined";
+      : S < 2.98 ? "forming" : S <= 3.02 ? "formula" : down < 0.999 ? "drifting" : "drift";
     if (state !== wrap.dataset.state) wrap.dataset.state = state;
-    return turnAt !== turnTo || hot.some((h, k) => Math.abs(h - hotTo[k]) > 0.001 || heat[k] !== hotTo[k]);
+    return turnAt !== turnTo || heat.some((h, k) => h !== hotTo[k]);
   }
 
   // Drawn only while the stage is on the screen, and not under the menu or

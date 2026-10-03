@@ -16,6 +16,12 @@
 //   4  the same, its formula drawn in it
 //   5  the Menu's eight pages, beside two lines of specks
 //
+// THE PAGE PLAYS ITSELF (2026-10-03: "change the scrolling feature for it
+// to be automatic. it should be still as slow as it is now"): once the title
+// has gathered it goes on through the five stages by itself, on the glide
+// below, resting at each, and ends on the names (THE PAGE PLAYS ITSELF,
+// below). A wheel, a finger, a key or the Scroll button takes over from it.
+//
 // The page GLIDES down the stage (THE GLIDE, below): a wheel's notches only
 // move where it is going, and it follows on a spring, so a run of notches is
 // one gradual movement rather than a step at a time; the keys and the
@@ -184,6 +190,11 @@
   // Where the page is, in stages.
   const reading = () => Math.max(0, Math.min(LAST, stageOf(container.scrollTop - stageTop())));
 
+  // A RELOAD STARTS AT THE TITLE (2026-10-03, the owner's "something flashes
+  // when you reset the page"): whatever the browser remembers of where the
+  // page was, it opens at the first stage, as it plays itself from there.
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  container.scrollTop = 0;
   let shown = reading(), followOn = false, followLast = 0;
   window.__formula = shown;
   const title = document.querySelector(".title-content");
@@ -219,6 +230,8 @@
     // clickable even when it isnt fully apparent"; it waited until the names
     // were over half way up).
     stage.classList.toggle("names-here", names > NAMES_PRESSABLE);
+    // (held back by the page's head until now: index.html, `stage-coming`)
+    document.documentElement.classList.remove("stage-coming");
   }
 
   function follow(now) {
@@ -292,7 +305,7 @@
   }
   // the page moved by something else while it glides: let go
   container.addEventListener("scroll", () => {
-    if (gliding && Math.abs(container.scrollTop - glideWrote) > 2) stopGlide();
+    if (gliding && Math.abs(container.scrollTop - glideWrote) > 2) { stopGlide(); stopAuto(); }
   }, { passive: true });
   // The wheel, on the stage. (With the map slides on, they have their say
   // first: `slideWheel`, below, takes a turn past the stage's end.)
@@ -317,6 +330,59 @@
     const at = Math.max(0, Math.min(LAST, stageOf((gliding ? glideTo : container.scrollTop) - stageTop())));
     toStage(dir > 0 ? Math.floor(at + 0.05) + 1 : Math.ceil(at - 0.05) - 1);
   }
+
+  // ============================================================
+  // THE PAGE PLAYS ITSELF (2026-10-03: "I actually want you to change the
+  // scrolling feature for it to be automatic. it should be still as slow as
+  // it is now"). Once the title has gathered and been read (AUTO_FIRST), the
+  // page goes on a stage at a time by itself, on THE GLIDE — the very spring
+  // a key or the Scroll button moves it on, so exactly as slowly — and rests
+  // at each stage for AUTO_REST before going on: the title gone, the turn
+  // upright (the longest rest, for the turn to finish on its own spring,
+  // molecule.js), the formula; and it ends on the names, and stays there.
+  // While the Menu, About me or the way out is open over it, it waits.
+  //
+  // THE HAND TAKES OVER: a wheel, a finger, a key that moves the page, the
+  // Scroll button, or the page moved by anything but the glide (the
+  // scrollbar), and it stops for the rest of the visit — the page is the
+  // visitor's from then on, as it always was. Not with motion turned off
+  // (the stages there at once would be jumps), nor with the map slides on;
+  // and `?auto=off` on the address keeps it still without changing anything
+  // (the tests that read a stage as it is held).
+  // ============================================================
+  const AUTO_FIRST = 4200;                    // ms from the page opening (the title gathers over the first 2.6s)
+  const AUTO_REST = [0, 1600, 2600, 2400];    // ms at stages 2, 3 and 4 (index: the stage arrived at) before going on
+  let auto = !REDUCE_MOTION && !mapOn && !/[?&]auto=off\b/.test(location.search);
+  let autoAt = 0, autoSince = performance.now(), autoWait = AUTO_FIRST;
+  stage.dataset.auto = auto ? "on" : "off";
+  function stopAuto() {
+    if (!auto) return;
+    auto = false;
+    phases.delete(autoPhase);
+    stage.dataset.auto = "off";
+  }
+  function autoPhase(now) {
+    // (waiting behind anything open over the page, and while it glides)
+    if (overlayOpen() || document.hidden || gliding) { autoSince = now; return; }
+    if (now - autoSince < autoWait) return;
+    autoAt += 1;
+    toStage(autoAt);
+    autoSince = now;
+    autoWait = AUTO_REST[autoAt] || 0;
+    if (autoAt >= LAST) { auto = false; phases.delete(autoPhase); stage.dataset.auto = "done"; }
+  }
+  if (auto) phases.add(autoPhase);
+  // the visitor's hand
+  container.addEventListener("wheel", (e) => { if (!e.ctrlKey) stopAuto(); }, { passive: true, capture: true });
+  container.addEventListener("touchmove", stopAuto, { passive: true });
+  window.addEventListener("keydown", (e) => {
+    if (overlayOpen()) return;
+    if (/^(Arrow(Up|Down)|Page(Up|Down)|Home|End|Tab| )$/.test(e.key)) stopAuto();
+  }, true);
+  // the page moved by anything but the glide: the scrollbar, a finger
+  container.addEventListener("scroll", () => {
+    if (auto && !gliding && Math.abs(container.scrollTop - glideWrote) > 2 && container.scrollTop > 2) stopAuto();
+  }, { passive: true });
 
   // ============================================================
   // THE WAY OUT, ASKED FIRST (2026-09-30: "when you click it, I want a
@@ -526,7 +592,7 @@
       else if (e.key === "End") { e.preventDefault(); toStage(LAST); }
     });
     const cue = document.getElementById("scroll-cue");
-    if (cue) cue.addEventListener("click", () => stepStage(1));
+    if (cue) cue.addEventListener("click", () => { stopAuto(); stepStage(1); });
     return;
   }
 

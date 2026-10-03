@@ -90,7 +90,7 @@ test("menu lists every page in SITE_LINKS, in order", async ({ page }) => {
   const labels = await page.$$eval(".menu-list a", (as) => as.map((a) => a.textContent.trim()));
   expect(labels).toEqual([
     "Home",
-    "Scent descriptions",
+    "Scent Descriptions",
     "Theories",
     "Explorations & Researches",
     "Favourites",

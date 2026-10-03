@@ -974,3 +974,19 @@ each hand, the guitar's and the drum stave's clefs, crosses and ghost notes, and
 guitar's or a drum kit's stave is never braced (`composeScore`). Still silent, still unnamed.
 
 How to test it: `npm test -- tests/contact-sheet.spec.js --grep Qimu`.
+
+## 2026-10-03 — Ataraxia's streaks move smoothly; motifs by themselves at the front
+
+> make the movements of the streaks in the ataraxia SD page smoother
+
+**Ataraxia's bands** (`band()` in `motifs.js`): the air either side of a band **sways** rather than
+trembles — once every one to two seconds (`SWAY_RATE`, 0.0035 to 0.0065 radians a millisecond) where
+it shook three to six times a second (0.018 to 0.04) — and the ripple and the swell travel along the
+band a little more slowly (`WAVE_SPEED` 0.05 to 0.08 px/ms, was 0.08 to 0.13; `CREST_SPEED` 0.18 to
+0.28, was 0.26 to 0.4). And a band is drawn in **one ink set once**, how much of it each speck shows
+being `globalAlpha`: it wrote a colour out as words for each of thousands of specks a frame, which
+dropped frames, and a dropped frame is a jolt. How the bands look, how many there are and how slowly
+they come up are unchanged; `tests/contact-sheet.spec.js`'s two tests of them pass as they were.
+
+**The house at the front now brings its motifs up by itself** once the helix stops there, not only
+on hover — see [the axis](2026-09-24-the-axis.md#2026-10-03--the-house-at-the-front-brings-its-motifs-up-by-itself).

@@ -910,19 +910,21 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
    THE FORMULA (2026-09-30) — stages 3 to 5 of the home page's stage
    ==================================================================
    The aldehyde turns upright and its formula is drawn in it (molecule.js);
-   then, as the last stage, two lines of specks come down the window, top to
-   bottom, either side of it, and the Menu's eight pages stand on the
-   OUTSIDE of them — "particles that appear in straight lines from the left
-   and right, and on the outer perimeter, you will have the words" — four
-   down each side, symmetrical and equally spaced. Each line stands on the
-   edge of the column between the names and the formula (molecule.js reads
-   the grid's own columns), `--line-inset` from the names.
+   then, as the last stage, the room either side of it fills with a very
+   light drift of specks, ADAR's dust on the stage's dark (molecule.js), and
+   the Menu's eight pages stand in it, four each side — SCATTERED A LITTLE
+   (2026-10-03: "the space on the left and right is occupied by the 8
+   categories being shown, i want them to be slightly haphazardly
+   arranged"): each a share of its column further out (`--k`) and a share of
+   its row up or down (`--j`), its own, so no two sides mirror and no two rows
+   line up. Until then two lines of specks came down the window either side
+   of the formula and the names stood on the outside of them, four down each
+   side, symmetrical and equally spaced.
 
    Two layouts, told to molecule.js by `--formula-layout`: FLANK on a wide
-   window (four down the left, the formula, four down the right) and BAND on
-   a narrow one (two columns, two rows above the formula and two below each
-   side, the lines down the narrow channel between the columns and broken
-   where the formula stands). */
+   window (four on the left, the formula, four on the right) and BAND on a
+   narrow one (two columns, two rows above the formula and two below each
+   side, scattered less). */
 .formula-slide { justify-content: center; }
 /* The middle column is the aldehyde's room, wide (2026-09-30: "move the
    lines and words a little to the side ... nicely divided and to give the
@@ -935,6 +937,10 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
   --formula-size: clamp(17px, 1.6vw, 26px);
   --formula-row: calc(var(--formula-size) * 2.4 + 32px);
   --line-inset: 30px;
+  /* one of the names' columns: the window less the formula's room and the
+     sides' padding, halved — what a name's scatter is a share of */
+  --col: calc((100vw - var(--formula-gap)) / 2 - clamp(24px, 4vw, 72px));
+  --scatter-row: var(--formula-row);
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -973,6 +979,7 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
   padding: 16px 22px;
   opacity: var(--names, 1);
   pointer-events: auto;
+  transform: translate(calc(var(--k, 0) * var(--col)), calc(var(--j, 0) * var(--scatter-row)));
   filter: opacity(0.36);
   transition: filter 0.9s var(--menu-ease), color 0.9s ease, text-shadow 0.9s ease;
 }
@@ -985,6 +992,8 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
   outline: none;
 }
 .aldehyde-stage:not(.names-here) .formula-link { pointer-events: none; }
+/* held back until landing.js has placed them (index.html's head, 2026-10-03) */
+html.stage-coming .formula-link { opacity: 0; }
 /* a long name's second line ("feel free to put Reseach and eplorations as
    two lines") */
 .formula-line { display: block; }
@@ -994,6 +1003,15 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
 .formula-link:nth-child(4n+2) { grid-row: 2; }
 .formula-link:nth-child(4n+3) { grid-row: 3; }
 .formula-link:nth-child(4n+4) { grid-row: 4; }
+/* the scatter: out to the left on the left, out to the right on the right */
+.formula-link:nth-child(1) { --k: -0.04; --j: -0.2; }
+.formula-link:nth-child(2) { --k: -0.3; --j: 0.22; }
+.formula-link:nth-child(3) { --k: -0.12; --j: -0.05; }
+.formula-link:nth-child(4) { --k: -0.24; --j: 0.27; }
+.formula-link:nth-child(5) { --k: 0.18; --j: 0.18; }
+.formula-link:nth-child(6) { --k: 0.05; --j: -0.24; }
+.formula-link:nth-child(7) { --k: 0.34; --j: 0.1; }
+.formula-link:nth-child(8) { --k: 0.14; --j: -0.12; }
 /* The atoms' names on the formula, placed by molecule.js: set as a
    chemistry book sets them (the icon's letters), inverting what is behind
    them. */
@@ -1015,6 +1033,9 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
     --formula-layout: band;
     --formula-size: clamp(16px, 2.4vw, 20px);
     --line-inset: 14px;
+    /* scattered less in the narrow columns */
+    --col: calc((100vw - 50px) / 2 * 0.3);
+    --scatter-row: 12px;
     grid-template-columns: minmax(0, 1fr) 30px minmax(0, 1fr);
     grid-template-rows: auto auto minmax(0, 1fr) auto auto;
     align-content: stretch;
@@ -11822,6 +11843,17 @@ html.tale-coming .tale-page .human-readout { opacity: 0 !important; }
    and `pd-small` for words — so the whole set is recoloured here.
    ================================================================== */
 .primer-page { --gold: #e0b672; --gold-rgb: 224, 182, 114; }
+/* ONE FACE ON THE PAGE (2026-10-03: "My Personal Introduction to Perfume
+   should all be the same font in its page"): the mono the site spends on its
+   readings, labels, numbers and diagrams is the page's own Archivo here — in
+   its writing and its diagrams, its way back, the rule down its left and its
+   footnotes' pop-up. Every one of them draws in `--mono`, so it is turned
+   over here and nothing else is touched. The site's Menu, the same on every
+   page, keeps its own. */
+.primer-page main,
+.primer-page .essay-back,
+.primer-page .essay-rule,
+.primer-page .primer-tip { --mono: var(--sans); }
 .primer-mist {
   position: fixed;
   left: 0;

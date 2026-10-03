@@ -153,7 +153,7 @@ window.Sharpness = function (resize) {
 
 const SITE_LINKS = [
   { label: "Home", href: "" },
-  { label: "Scent descriptions", href: "scent-descriptions/" },
+  { label: "Scent Descriptions", href: "scent-descriptions/" },
   { label: "Theories", href: "theories/" },
   { label: "Explorations & Researches", href: "explorations-and-researches/" },
   { label: "Favourites", href: "favourites/" },

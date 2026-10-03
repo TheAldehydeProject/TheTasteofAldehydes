@@ -35,8 +35,13 @@
 <link rel="stylesheet" href="style.css">
 <!-- The title gathers out of specks as the page loads (title.js): held
      back until it does, so it is not seen first and then gathered. The
-     stylesheet brings it up by itself after three seconds whatever. -->
-<script>if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("title-coming");</script>
+     stylesheet brings it up by itself after three seconds whatever. And the
+     eight names of the last stage are held back until landing.js has said
+     how far up they are (`stage-coming`, 2026-10-03): until then the
+     stylesheet showed them whole, and a reload flashed the last stage
+     before the title. If landing.js never comes, the page's own load lets
+     them go, as the js-coming pages do. -->
+<script>document.documentElement.classList.add("stage-coming"); window.addEventListener("load", function () { document.documentElement.classList.remove("stage-coming"); }); if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("title-coming");</script>
 </head>
 <body class="snap-page">
 
@@ -107,7 +112,7 @@
          Change one and change the other; a test says they agree. -->
     <section class="slide formula-slide dark-surface" id="slide-formula">
       <nav class="formula-menu" aria-label="The pages of the site">
-        <a class="formula-link" href="scent-descriptions/" data-say="Here I describe perfumes and perfume houses.">Scent descriptions</a>
+        <a class="formula-link" href="scent-descriptions/" data-say="Here I describe perfumes and perfume houses.">Scent Descriptions</a>
         <a class="formula-link" href="theories/" data-say="Some frameworks that I came up with myself.">Theories</a>
         <a class="formula-link" href="explorations-and-researches/" data-say="Researches and explorations: where I go and find out, rather than describe.">Explorations &amp; <span class="formula-line">Researches</span></a>
         <a class="formula-link" href="favourites/" data-say="The ones I keep coming back to, kept by chapter.">Favourites</a>

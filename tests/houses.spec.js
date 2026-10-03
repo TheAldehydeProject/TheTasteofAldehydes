@@ -666,10 +666,12 @@ test("Les Abstraits has its armoire with iris on one side and a drip down the wh
    side, its ticks on its crown. Read off the page's canvas once the armoire
    is built and its door open, at four windows wide enough to show the
    scale: nothing drawn where the scale stands, its ticks at their longest
-   and a little round it, and the armoire still there beside it or under it
-   — and drawn SOLID, in fills at full strength, where it was a scatter of
-   specks none stronger than two thirds. */
-test("Les Abstraits' armoire stands clear of the scale down the side, and is drawn solid", async ({ page }) => {
+   and a little round it, and the armoire still there beside it or under it.
+   And since 2026-10-03 — "should be not realistic. I want it to match the
+   closet when hovering, in being minimalist, and geometric" — it is drawn
+   in HAIRLINES, as the hover's is, not in the solid fills it had for a day:
+   little of it at full strength. */
+test("Les Abstraits' armoire stands clear of the scale down the side, and is drawn in hairlines", async ({ page }) => {
   await page.clock.install();
   for (const [w, h] of [[1440, 900], [1280, 720], [1100, 800], [1920, 1080]]) {
     await page.setViewportSize({ width: w, height: h });
@@ -699,7 +701,9 @@ test("Les Abstraits' armoire stands clear of the scale down the side, and is dra
     expect(seen.shown, `${w}×${h}: the scale is shown`).toBe(true);
     expect(seen.over, `${w}×${h}: nothing drawn where the scale stands`).toBeLessThan(4);
     expect(seen.armoire, `${w}×${h}: the armoire is there`).toBeGreaterThan(3000);
-    expect(seen.solid, `${w}×${h}: and drawn solid`).toBeGreaterThan(1500);
+    // (the clothes inside are paper and a flat tone, as the hover's are; the
+    // armoire itself is lines — the solid one was nearly all fill)
+    expect(seen.solid, `${w}×${h}: in hairlines, not solid`).toBeLessThan(seen.armoire * 0.4);
   }
 });
 

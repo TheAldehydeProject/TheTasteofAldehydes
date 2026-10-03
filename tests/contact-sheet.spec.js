@@ -22,6 +22,10 @@ const { test, expect } = require("@playwright/test");
 const { serveDependenciesLocally, collectPageErrors } = require("./helpers");
 
 const SHEET = "/scent-descriptions/";
+// The sheet with the motifs left to the hand alone, as they were until
+// 2026-10-03 — for the tests that read what the hand alone sets off (the
+// house at the front brings its own up by itself now).
+const SHEET_HAND = "/scent-descriptions/?rest=hand";
 
 /** Wait for the wall to have been hung and every swing to have died. */
 async function waitForSheet(page) {
@@ -460,7 +464,7 @@ test("the old startup flick is gone", async ({ page }) => {
 test("resting on a house brings its motifs after a moment, behind the houses, blurring nothing",
   async ({ page }) => {
   const errors = collectPageErrors(page);
-  await page.goto(SHEET);
+  await page.goto(SHEET_HAND);
   await waitForSheet(page);
   // Timed in the page itself, from the pointer arriving on the house to
   // the wall going out of focus round it.
@@ -1084,7 +1088,7 @@ test("Les Abstraits' armoire has clothes on hangers and folded on its shelf", as
 test("ADAR's wells bend the page towards them, and let it go again", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
-  await page.goto(SHEET);
+  await page.goto(SHEET_HAND);
   await waitForSheet(page);
   await pointAt(page, 1);
   await page.waitForTimeout(3200);
@@ -1315,7 +1319,7 @@ test("Grande Parfums' particles rise and burst into smaller ones, twice as many 
       return fillRect.apply(this, arguments);
     };
   });
-  await page.goto(SHEET);
+  await page.goto(SHEET_HAND);
   await waitForSheet(page);
   await pointAt(page, 4);
   await page.waitForTimeout(8500);
@@ -1516,6 +1520,41 @@ test("the Houses view engraves Qimu's music with the house page's own code", () 
   }
 });
 
+/* THE HOUSE AT THE FRONT BRINGS ITS MOTIFS UP BY ITSELF (2026-10-03: "Make
+   the animations be automatic in SD whenever one of the perfumes is in the
+   middle. not just hover"): once the helix has stopped with a house at the
+   front, its motifs come up as if the hand were on it; travelling on lets
+   them go, and the next house's come up when it stops in its turn. */
+test("the house at the front brings its motifs up by itself, and the next one its own when the helix stops there", async ({ page }) => {
+  test.setTimeout(60000);
+  await page.goto(SHEET);
+  await waitForSheet(page);
+  const sheet = page.locator(".sheet");
+  const hot = () => page.evaluate(() => { const f = document.querySelector(".sheet-frame.hot"); return f ? f.querySelector(".sheet-caption").textContent.trim() : null; });
+  // no hand anywhere near a house
+  await page.mouse.move(1420, 880);
+  await expect(sheet).toHaveClass(/musing/, { timeout: 5000 });
+  expect(await hot(), "the front house's own").toMatch(/^Pineward/);
+  const ink = () => page.evaluate(() => {
+    const c = document.querySelector(".sheet-motifs");
+    const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+    let n = 0;
+    for (let i = 3; i < d.length; i += 64) if (d[i] > 20) n++;
+    return n;
+  });
+  await expect.poll(ink, { timeout: 6000 }).toBeGreaterThan(50);
+  // on to the next: let go while it travels, and the next one's once it stops
+  await page.keyboard.press("ArrowDown");
+  await expect.poll(hot, { timeout: 6000 }).toMatch(/^ADAR/);
+  await expect(sheet).toHaveClass(/musing/);
+  // left to the hand alone (?rest=hand), nothing comes up by itself
+  await page.goto(SHEET_HAND);
+  await waitForSheet(page);
+  await page.mouse.move(1420, 880);
+  await page.waitForTimeout(2500);
+  await expect(sheet).not.toHaveClass(/musing/);
+});
+
 /* CROSSING THE WALL SETS NOTHING OFF. The pointer passing over house
    after house on its way somewhere else must not start any of them.
 
@@ -1530,7 +1569,7 @@ test("the Houses view engraves Qimu's music with the house page's own code", () 
    A visit longer than it may, because that is a rest. The sweep has to
    produce enough short visits for that to mean something. */
 test("passing over the houses does not set their motifs off", async ({ page }) => {
-  await page.goto(SHEET);
+  await page.goto(SHEET_HAND);
   await waitForSheet(page);
   await page.evaluate(() => {
     const sheet = document.getElementById("sheet");
@@ -1574,7 +1613,7 @@ test("passing over the houses does not set their motifs off", async ({ page }) =
    gradually, they dont disappear." A moment after leaving there is
    still some of them; a little later there is none. */
 test("leaving a house lets its motifs fade rather than vanish", async ({ page }) => {
-  await page.goto(SHEET);
+  await page.goto(SHEET_HAND);
   await waitForSheet(page);
   await pointAt(page, 4);
   await page.waitForTimeout(2600);

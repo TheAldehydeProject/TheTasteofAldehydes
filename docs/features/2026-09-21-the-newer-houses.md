@@ -1496,3 +1496,39 @@ drawn once into a picture of its own (`still`).
   alone would give it back its size; the scale was left as every house has it.
 - Only the page's armoire changed. **The Houses view's armoire** (`motifs.js`) is still the geometric
   one in walnut hairlines the owner asked for on 2026-09-25, which is a different thing on purpose.
+
+## 2026-10-03 — Les Abstraits' armoire, minimal and geometric, with three doors
+
+> The wardrobe in the main les abstraits page should be not realistic. I want it to match the closet
+> when hovering, in being minimalist, and geometric. It should also slightly bigger and maybe a 3 door
+> closet too.
+
+The solid walnut joinery of 2026-10-01 is gone, out of the code (its side in depth, brass, raised
+panels, barrel hinges, the swinging door and its looking-glass, the dark inside). **The page's armoire
+is the Houses view's** (`armoire()` in `motifs.js`), brought onto the page in `abstraits.js` (THE
+ARMOIRE, MINIMAL AND GEOMETRIC) and made wider for **a third door**: plain geometry in walnut
+hairlines, a speck at each joint, every line **grown from its lower end** as the page opens; four
+tapered legs (two seen behind) and a V of an apron; **three drawers**, a knob in each; **three doors**
+— the left and the middle shut, each with its panels and a diamond, a keyhole in the middle one; the
+right one **ajar**, and through it the inside in perspective (the back set in, the corners run to it, a
+shelf near the top, the rail), the folded clothes, **the blazer, the dress and the trousers** drawn as
+the hover draws them (paper, a flat tone, a hairline; each hanger inside its garment) and a stack on
+its floor; a stepped cornice, a broken pediment in two rakes, a diamond finial. **The irises grow at
+its feet**, a tuft at each front leg, as the hover's do — sword leaves out of one crown, stems, three
+falls and three standards, a bud in each tuft — and sway; the orris powder drifts out of the open
+door. The drawing is the hover's code, carried across (`design`, `drawFrame`, `garment`, `folded1`,
+`ground`, `leaf`, `petal`, `stem`), made at the window's size and seeded, so it is the same armoire
+every time; once it is drawn, everything but the swaying irises is laid down as one picture (`still`).
+
+**A little bigger**: its front up to 280px across (the solid one stopped at 210), up to nine tenths of
+the window tall, and reaching a little into the writing column's own margin, where there is no writing
+— 48px in, strong to the column's edge and quiet by the writing (`hush`). It is three doors wide, so it
+is wider for its height (`TALL_OF`, 1.42). **Still clear of the scale**: beside it or under it, which
+ever leaves it the larger, as the solid one was — at 1440 × 900 under it, about 190px across where
+the solid one was 150; at 1920 × 1080 beside it, 280; measured, it never meets the scale.
+
+Tested in `tests/houses.spec.js`: **`Les Abstraits' armoire stands clear of the scale down the side,
+and is drawn in hairlines`** (nothing where the scale stands at four windows; the armoire there; most
+of it not solid — the clothes are paper and tone, as the hover's), and **`Les Abstraits has its
+armoire with iris …`**, which still finds the iris's violet and the blazer, the dress and the trousers
+by their colours (the irises come a little sooner than the hover's, so they are there by 2.6s).

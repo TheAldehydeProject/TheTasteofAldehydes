@@ -393,26 +393,99 @@ is the owner's new one, *Here I describe perfumes and perfume houses.*, word for
 `preview` for it in `node-scene.js` as well (a test holds the two together). `tests/landing.spec.js`,
 **`the Scroll button stands in the middle at the foot`**.
 
+### 2026-10-03 — the page plays itself; no flash on a reload; the lines gone, the names scattered in a drift
+
+> something flashes when you reset the page, can you recreate that? i think it is the scrolled version
+> of the page
+>
+> I actually want you to change the scrolling feature for it to be automatic. it should be still as
+> slow as it is now.
+>
+> I would also like to rework the home page; i would like you to remove the two parallel particle
+> lines; and then change it so that in the space on the left and right is occupied by the 8
+> categories being shown, i want them to be slightly haphazardly arranged. and have VERY LIGHT AND
+> FLOWY PARTICLES; very similar to the adar page. i dont want the scrolling thing adar has
+
+Asked which, the owner chose to have the flash fixed, and the home page (not Scent descriptions) to
+play itself.
+
+**The flash, found.** Reloading the page showed, for a moment after it was drawn and before its
+scripts had run, **the eight names of the last stage** over the dark, and then the title gathering —
+recorded frame by frame (the old page marked, so its frames could be told from the new one's): the
+stylesheet set the names at `opacity: var(--names, 1)`, so until `landing.js` had said `--names: 0`
+they stood whole. It was not the browser remembering where the page was — the stage's own scroller
+was back at the top from the first frame. **They are held back by the page's own head now**
+(`stage-coming` on `<html>`, `html.stage-coming .formula-link { opacity: 0 }`), let go by `landing.js`
+the first time it places them, or by the page's `load` if it never comes; and the page **opens at the
+title on a reload** whatever is remembered (`history.scrollRestoration = "manual"`, the scroller at 0).
+
+**The page plays itself** (`landing.js`, THE PAGE PLAYS ITSELF). Once the title has gathered and been
+read (`AUTO_FIRST`, 4.2s from the page opening), it goes on **a stage at a time on the glide** — the
+very spring a key or the Scroll button moves it on, so it is exactly as slow as it was — and **rests
+at each stage** (`AUTO_REST`: 1.6s with the title gone, 2.6s upright, for the turn to finish on its
+own spring, 2.4s at the formula), and ends on the names, about nineteen seconds in, and stays.
+**It waits** while the Menu, About me or the way out is open, or the tab is hidden. **The hand takes
+over**: a wheel, a finger moving the page, a key that moves it (the arrows, Page Up and Down, Home,
+End, Space, Tab), the Scroll button, or the page moved by anything but the glide (the scrollbar) —
+and it stops for the rest of the visit, the page the visitor's as it always was. Not with motion
+turned off, nor with the map slides on. `data-auto` on the stage says on, off or done; **`?auto=off`**
+on the address keeps it still without changing anything (the tests that hold a stage).
+
+**The lines are gone, out of the code** (`LINE_VERTEX`, `lineGeo`, `layLines`, `uLineX`, `uGap`,
+`uHot`, `FALL`, `LINE_DENSITY`, `LINE_SPREAD`, `LINE_STIR` — none of it is left), and with them the
+names lit beside a line. In their place **the drift** (`molecule.js`, `DRIFT_*`): **ADAR's dust on the
+stage's dark** — specks in the room either side of the formula, from the window's edge to the edge of
+the grid's middle column, the whole height of the window, falling slowly (3 to 11 pixels a second,
+ADAR's own), swaying a few pixels from side to side as ADAR's do (`DRIFT_SWAY`), carried a little by a
+slow flow under them (`DRIFT_FLOW`, `DRIFT_STIR`), twinkling, most a pale warm grey and some the
+aldehyde's gold and violet; **thinning out towards the formula**; coming up as the last stage comes
+(`DRIFT_OVER`); drawn to the electronegative hand as the lines were (`LINE_PULL`, `LINE_REACH`). On a
+narrow window it is across the whole of it, thinner. **None of ADAR's log** — the scale it falls
+through there, which the owner did not want. `data-state`'s last two are **drifting** and **drift**
+(they were lining and lined).
+
+**The names, scattered** (`style.css`): still four on each side of the formula in the Menu's order,
+each now a share of its column further out (`--k`) and a share of its row up or down (`--j`), its own,
+so no side lines up on one edge, no two rows are level, and the two sides do not mirror; scattered
+less on a narrow window (`--col`, `--scatter-row` there). The backdrop of specks a name stands on
+under the hand is as it was. **Scent Descriptions** is set with its capital D, as the Menu is now.
+
+### How it was tested (2026-10-03)
+
+`tests/formula.spec.js`: **`a reload opens at the title, the names never shown before the page has
+placed them`** (new — with `landing.js` held back, every name at nothing; scrolled to the last stage
+and reloaded, the page at the first); **`the page plays itself through the five stages, on its own
+glide, to the names; a wheel takes over`** (new — the title read first, then every stage, gliding
+between them and resting at each, ending `done` at the fifth; a wheel early on and it stops where the
+wheel left it); **`the last stage carries the Menu's eight pages, in its order, four either side of
+the formula, scattered a little`**; **`the drift comes up in the rooms either side of the formula as
+the last stage comes, and nothing of the lines is left`**; **`the electronegative hand draws the
+drift's specks to it`**; and the five stages, the quiet names, the backdrop, motion off and the phone
+read for the drift where they read for the lines.
+
 ## How to test it
 
 `tests/formula.spec.js`:
-- **`the last stage carries the Menu's eight pages, in its order, four down each side, symmetrical
-  and equally spaced, on the outside of the lines`** — against `SITE_LINKS` in `nav.js`; the names
-  between each line and its edge of the window.
+- **`the last stage carries the Menu's eight pages, in its order, four either side of the formula,
+  scattered a little`** — against `SITE_LINKS` in `nav.js`; no side lined up, no rows level.
+- **`a reload opens at the title, the names never shown before the page has placed them`**.
+- **`the page plays itself through the five stages, on its own glide, to the names; a wheel takes
+  over`**.
 - **`five stages, smoothly: the title, the title gone, the aldehyde upright, its formula, and the
-  names`** — each stage in turn (`data-stage`, `data-state`: cloud, turned, formula, lined): the
+  names`** — each stage in turn (`data-stage`, `data-state`: cloud, turned, formula, drift): the
   title gone; the lone pair's violet moved to the top; the atoms named only at the fourth, O above
-  C, the H either side below; the names only at the fifth, beside two lit lines; and back.
+  C, the H either side below; the names only at the fifth, in the drift; and back.
 - **`the turn upright is prolonged and smooth: its leg the longest, and never quick`** — the
   second of `data-legs` the longest by half again; from a key, the turn takes over 1.8s and never
   goes faster than 100° a second (2026-10-01).
 - **`the wheel scrolls it smoothly, as far as it is turned and back, and nothing snaps`** — three
   notches, the stage followed frame by frame: never a jump, never back, a glide to exactly as far as
   they send it, and it stays where it stopped.
-- **`the lines come down the window from the top as the last stage comes`**.
-- **`a name is quiet until the hand comes to it: then it comes up gradually to the whole of itself,
-  and the specks of its line are drawn to the hand`** — under 45% at rest, part way after a quarter
-  of a second, whole after; no mask; the δ−; specks between the name and its line.
+- **`the drift comes up in the rooms either side of the formula as the last stage comes, and
+  nothing of the lines is left`**.
+- **`a name is quiet until the hand comes to it: then it comes up gradually to the whole of
+  itself`** — under 45% at rest, part way after a quarter of a second, whole after; no mask; the δ−.
+- **`the electronegative hand draws the drift's specks to it`**.
 - **`the electronegative hand draws the aldehyde's own specks to it`** — and at the title, far less
   (no δ−, the specks less stirred).
 - **`a name pressed asks first, on the stage's own dark: Stay, Escape and the veil keep the page, Go
@@ -425,8 +498,8 @@ is the owner's new one, *Here I describe perfumes and perfume houses.*, word for
 - **`with motion turned off the stages are simply there, still`**.
 - **`without the 3D library the last stage is the eight names, plainly, and a name still asks
   first`**.
-- **`on a phone the names stand two above and two below the formula each side, the lines down the
-  channel between, and nothing scrolls sideways`**.
+- **`on a phone the names stand two above and two below the formula each side, scattered a little,
+  in the drift, and nothing scrolls sideways`**.
 - **`the aldehyde stops drawing once the stage is off the screen`** (with the map on).
 
 `tests/landing.spec.js`: **the home page is the stage alone** (two slides, the sentence and the map
