@@ -658,10 +658,12 @@ test("Ataraxia's bands are plain particles on a wave, with no shadows", async ({
     window.__watch = false;
     const full = window.__frames.filter((f) => f.length === 400);
     // Of the first specks drawn in one frame, how many are drawn in the
-    // same place in the next.
+    // same place three frames on (the next frame until 2026-10-03, when
+    // the streaks were made smoother — slower — and a speck could move
+    // less than the tenth of a pixel read here from one frame to the next).
     let same = 0, pairs = 0;
-    for (let i = 1; i < full.length; i++) {
-      const before = new Set(full[i - 1]);
+    for (let i = 3; i < full.length; i++) {
+      const before = new Set(full[i - 3]);
       full[i].forEach((p) => { pairs++; if (before.has(p)) same++; });
     }
     return { ...window.__seen, still: same / Math.max(1, pairs), frames: full.length };

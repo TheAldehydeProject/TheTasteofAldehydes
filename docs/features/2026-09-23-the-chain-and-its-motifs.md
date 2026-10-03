@@ -986,7 +986,11 @@ band a little more slowly (`WAVE_SPEED` 0.05 to 0.08 px/ms, was 0.08 to 0.13; `C
 0.28, was 0.26 to 0.4). And a band is drawn in **one ink set once**, how much of it each speck shows
 being `globalAlpha`: it wrote a colour out as words for each of thousands of specks a frame, which
 dropped frames, and a dropped frame is a jolt. How the bands look, how many there are and how slowly
-they come up are unchanged; `tests/contact-sheet.spec.js`'s two tests of them pass as they were.
+they come up are unchanged. Of `tests/contact-sheet.spec.js`'s two tests of them, **`Ataraxia's bands
+are plain particles on a wave, with no shadows`** read whether the specks move by comparing each frame
+with the next, to a tenth of a pixel — and slower, a speck can move less than that in one frame: the
+second full run found 62% of them in the same place (it must be under half). It compares each frame
+with the one three before it now, where 5 to 11% stand still; what it proves is the same.
 
 **The house at the front now brings its motifs up by itself** once the helix stops there, not only
 on hover — see [the axis](2026-09-24-the-axis.md#2026-10-03--the-house-at-the-front-brings-its-motifs-up-by-itself).
