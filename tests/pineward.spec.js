@@ -403,14 +403,19 @@ test("a tree stays lit for a moment after the pointer leaves it",
 });
 
 /* THE INTRODUCTION, REPLACED — 2026-09-25: "replace the introduction
-   paragraph with" the owner's own two, word for word. */
-test("the introduction is the owner's two paragraphs", async ({ page }) => {
+   paragraph with" the owner's own two, word for word. And on 2026-10-03
+   the first split in two, the owner's own words again: how hard it was to
+   smell them all from Europe, a thank you to Scentorium, and then
+   "Stylistically, ...". */
+test("the introduction is the owner's three paragraphs, Scentorium thanked", async ({ page }) => {
   await page.goto(PAGE);
   const paras = page.locator("#introduction .pine-text p");
-  await expect(paras).toHaveCount(2);
+  await expect(paras).toHaveCount(3);
   await expect(paras.first()).toHaveText(/^Pineward is a fragrance house that prides itself with fragrances that smell like a forest/);
-  await expect(paras.first()).toContainText("such as Fanghorn II, which smells like something from J.R. Tolkeins Works).");
-  await expect(paras.nth(1)).toHaveText(/\(both of which I feel they have done quite well\)\.$/);
+  await expect(paras.first()).toHaveText(/so I owe a big thank you to Scentorium on this one\.$/);
+  await expect(paras.nth(1)).toHaveText(/^Stylistically, Pineward tend to focus on either an honest turpentine-y approach/);
+  await expect(paras.nth(1)).toContainText("such as Fanghorn II, which smells like something from J.R. Tolkeins Works).");
+  await expect(paras.nth(2)).toHaveText(/\(both of which I feel they have done quite well\)\.$/);
 });
 
 /* THE GALLERY'S VIEWER NEVER GOES BLANK, however fast it is stepped
