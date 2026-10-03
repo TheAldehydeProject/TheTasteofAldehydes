@@ -4,7 +4,7 @@ The owner's own names, as uploaded.
 
   Qimu_Musicians_1.webp
                   the record sleeve — the house's picture on the Houses
-                  view of Scent descriptions.
+                  view of Scent Descriptions.
 
   Perfumes/       one to a fragrance, the bottle on white (1000 x 1000),
                   numbered as the owner numbered them — which is the

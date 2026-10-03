@@ -298,7 +298,7 @@
     });
   }
 
-  // Drawn only while it can be seen (2026-10-01): on Scent descriptions
+  // Drawn only while it can be seen (2026-10-01): on Scent Descriptions
   // this index stands in the Fragrances view, under the table that is
   // drawn over it — and it went on turning, sixty times a second, while
   // the Houses were the page and it was not on it at all.

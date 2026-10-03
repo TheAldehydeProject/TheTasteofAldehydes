@@ -1281,7 +1281,7 @@ html.stage-coming .formula-link { opacity: 0; }
 .node3d-label.flip .node3d-sub { left: auto; right: 29px; text-align: right; }
 
 /* ==================================================================
-   NODE CLICK PREVIEW (trial: Scent descriptions)
+   NODE CLICK PREVIEW (trial: Scent Descriptions)
    The rest of the page defocuses behind it — same dark tone the
    menu overlay uses, for the same "coming forward" reason.
    ================================================================== */
@@ -5113,7 +5113,7 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
    window, bracketed at its corners and captioned at its foot.
 
    ALL OF IT UNDER `.researches-page`: `.index-page` is shared with the
-   Fragrances view's old index on Scent descriptions, which keeps its own
+   Fragrances view's old index on Scent Descriptions, which keeps its own
    layout.
    ================================================================== */
 .researches-page .index-page {
@@ -7123,7 +7123,7 @@ body.find-reading .find-reading-note { opacity: 1; }
    than as a list appearing. */
 .find-row {
   display: grid;
-  /* The trail is the longest thing on a row — *Scent descriptions ·
+  /* The trail is the longest thing on a row — *Scent Descriptions ·
      Houses · Pineward · Trunk* — so it gets the wider of the two
      flexible columns, or it is cut off mid-word. */
   grid-template-columns: 52px minmax(0, 1fr) 92px minmax(0, 1.5fr);
@@ -9553,7 +9553,7 @@ html.photo-viewing, html.photo-viewing body { overflow: hidden; }
 /* ==================================================================
    ALMOST HUMAN — works/almost-human.html
 
-   The third house in Scent descriptions. Pineward is paper turned
+   The third house in Scent Descriptions. Pineward is paper turned
    faintly green and ADAR is black; this one is the site's OWN paper,
    untinted, and it spends no accent colour anywhere — what it spends
    instead is density. The figures down the margins are drawn on a
@@ -11560,7 +11560,7 @@ a.note-cite:hover { color: var(--ink); }
    house as well as forward a house" (2026-09-26). The two stand together
    on the right of every house's foot, the one before and the one after,
    the ninth and the first wrapping round to each other; the way back to
-   Scent descriptions keeps the left. Set in each foot's own mono. */
+   Scent Descriptions keeps the left. Set in each foot's own mono. */
 .house-steps {
   display: flex;
   flex-wrap: wrap;
@@ -12151,7 +12151,7 @@ body.human-page:not(.tale-page) .human-head {
    THE FRAGRANCES, A WHOLE-PAGE TABLE — fragrance-line.js (2026-09-25,
    night)
 
-   The Fragrances view of Scent descriptions, in three columns: THE
+   The Fragrances view of Scent Descriptions, in three columns: THE
    ASIDE on the left (the name, the count, the readings, the scale and
    the mark), THE ITEMS in the middle — nearly the whole page, scrolling
    in their own box — and THE OPTIONS on the right, which show the items

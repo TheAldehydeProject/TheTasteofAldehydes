@@ -16,7 +16,7 @@ const PAGES = [
   { url: "/index.html", root: "", title: /The Taste of Aldehydes/ },
   { url: "/contact/", root: "../", title: /Contact/ },
   { url: "/search/", root: "../", title: /Search/ },
-  { url: "/scent-descriptions/", root: "../", title: /Scent descriptions/ },
+  { url: "/scent-descriptions/", root: "../", title: /Scent Descriptions/ },
   { url: "/theories/", root: "../", title: /Theories/ },
   { url: "/favourites/", root: "../", title: /Favourites/ },
   { url: "/explorations-and-researches/", root: "../", title: /Explorations/ },

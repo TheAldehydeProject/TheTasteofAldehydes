@@ -1025,7 +1025,7 @@
 
     /** Everything this page can answer for, read off the page itself. */
     const mine = () => (window.SiteSearch
-      ? window.SiteSearch.collect(document, window.location.href, ["Scent descriptions"])
+      ? window.SiteSearch.collect(document, window.location.href, ["Scent Descriptions"])
       : []);
     let everything = null;
 

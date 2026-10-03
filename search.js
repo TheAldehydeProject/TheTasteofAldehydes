@@ -18,7 +18,7 @@
 //   worse one sorts below a better one.
 //
 // WHAT A RESULT IS: a name, where it was found (which is a trail —
-// Scent descriptions · Houses · Pineward), and a link that opens the
+// Scent Descriptions · Houses · Pineward), and a link that opens the
 // thing itself. Where a link carries a #part-06 on the end, the page
 // it lands on opens that part: see `openFromHash` at the foot of this
 // file, which every page that has parts calls.

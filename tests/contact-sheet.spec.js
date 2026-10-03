@@ -1719,7 +1719,7 @@ test("pressing a house steps the page back before opening it", async ({ page }) 
 // for anything reading the page rather than looking at it.
 test("the heading is there for a reader, and out of sight for a looker", async ({ page }) => {
   await page.goto(SHEET);
-  await expect(page.locator(".sheet-head h1")).toHaveText("Scent descriptions");
+  await expect(page.locator(".sheet-head h1")).toHaveText("Scent Descriptions");
   const box = await page.locator(".sheet-head h1").boundingBox();
   expect(box.width, "it should not be taking up the page").toBeLessThan(3);
 });
@@ -1771,7 +1771,7 @@ test("the category names itself once the page has drawn itself", async ({ page }
   await expect(page.locator(".gallery-entry")).toHaveCount(0);
 
   const name = page.locator(".sheet-where");
-  await expect(name).toHaveText("Scent descriptions");
+  await expect(name).toHaveText("Scent Descriptions");
   const showingName = () =>
     page.evaluate(() =>
       parseFloat(getComputedStyle(document.querySelector(".sheet-where")).opacity));
@@ -1923,7 +1923,7 @@ test("without its script the page is still the plain grid of pictures",
   const frames = page.locator(".sheet-frame");
   await expect(frames.first()).toBeVisible({ timeout: 6000 });
   expect(await frames.count()).toBeGreaterThan(4);
-  await expect(page.locator(".sheet-head h1")).toHaveText("Scent descriptions");
+  await expect(page.locator(".sheet-head h1")).toHaveText("Scent Descriptions");
 });
 
 /* AN ADDRESS NAMES THE HOUSE TO BE AT: `#house-08` opens the Houses view

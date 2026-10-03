@@ -295,6 +295,13 @@ with Jost served from a copy for the picture.)
 > in the menu, capitalize the word descriptions for SD
 
 The Menu says **Scent Descriptions** (`SITE_LINKS` in `nav.js`), and so does the home page's last
-stage, whose eight names are the Menu's (a test holds the two together). The page's own heading, its
-`<title>`, the search's trail and the node map (switched off) say *Scent descriptions* as before:
-only the Menu was asked for. `tests/menu.spec.js`, **`menu lists every page in SITE_LINKS, in order`**.
+stage, whose eight names are the Menu's (a test holds the two together). `tests/menu.spec.js`,
+**`menu lists every page in SITE_LINKS, in order`**.
+
+**And everywhere else, later the same day** — asked whether the rest should follow, the owner chose
+*everywhere*: the page's own heading and the name at its top left, its `<title>` and what search
+engines and a shared link read (`SD` in `tools/seo.py`, the tool run), every house's kicker
+(*Scent Descriptions · 02*) and its way back (*← Scent Descriptions*), the individual fragrances',
+the search's trails (`PAGES` in `search-page.js`) and the page's own search (`contact-sheet.js`),
+the node map's label (switched off), the two templates and the signpost at the old address. The
+tests that read any of them read the capital.

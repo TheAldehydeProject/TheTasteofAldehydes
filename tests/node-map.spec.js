@@ -17,7 +17,7 @@ const {
 
 // The labels the map is expected to show, from REAL_NODES.
 const EXPECTED_LABELS = [
-  "Scent descriptions",
+  "Scent Descriptions",
   "Theories",
   "Explorations & Researches",
   "Favourites",
@@ -156,7 +156,7 @@ test.describe("the preview window", () => {
   });
 
   test("opens from the node that has one, instead of navigating away", async ({ page }) => {
-    await page.locator(".node3d-label", { hasText: "Scent descriptions" }).click({ force: true });
+    await page.locator(".node3d-label", { hasText: "Scent Descriptions" }).click({ force: true });
 
     await expect(page.locator(".node-preview-modal")).toBeVisible();
     await expect(page).toHaveURL(/index\.html(\?map=on)?$/); // did not navigate
@@ -171,7 +171,7 @@ test.describe("the preview window", () => {
   // clicked, and the copy above the window comes up from that same
   // moment. The name is only ever in one place.
   test("the node's name moves out of the map and onto its window", async ({ page }) => {
-    const label = page.locator(".node3d-label", { hasText: "Scent descriptions" });
+    const label = page.locator(".node3d-label", { hasText: "Scent Descriptions" });
     const inTheMap = () =>
       label.locator(".node3d-text").evaluate((el) => parseFloat(el.style.opacity || "1"));
     const onTheWindow = () =>
@@ -180,7 +180,7 @@ test.describe("the preview window", () => {
     expect(await inTheMap(), "the map has the name to begin with").toBeGreaterThan(0.9);
 
     await label.click({ force: true });
-    await expect(page.locator(".node-preview-title")).toHaveText("Scent descriptions");
+    await expect(page.locator(".node-preview-title")).toHaveText("Scent Descriptions");
 
     // Gone from the map straight away — not eased out, and not waiting
     // for the window to land.
@@ -199,7 +199,7 @@ test.describe("the preview window", () => {
   // on had collapsed to a 300x150 box in the corner, so all of it was
   // cut off. It has to cover the whole window.
   test("the line connecting the branch to the window covers the whole screen", async ({ page }) => {
-    await page.locator(".node3d-label", { hasText: "Scent descriptions" }).click({ force: true });
+    await page.locator(".node3d-label", { hasText: "Scent Descriptions" }).click({ force: true });
     const arm = page.locator(".node-preview-arm-svg");
     await expect(arm).toBeAttached();
 
@@ -214,7 +214,7 @@ test.describe("the preview window", () => {
   });
 
   test("closes with the Close button and with Escape", async ({ page }) => {
-    const label = page.locator(".node3d-label", { hasText: "Scent descriptions" });
+    const label = page.locator(".node3d-label", { hasText: "Scent Descriptions" });
 
     await label.click({ force: true });
     await expect(page.locator(".node-preview-modal")).toBeVisible();

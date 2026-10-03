@@ -1,7 +1,7 @@
 // ============================================================
 // PINEWARD (houses/pineward.html)
 //
-// The first piece in Scent descriptions, and a long one: an
+// The first piece in Scent Descriptions, and a long one: an
 // introduction and forty-seven parts, each of which is a fragrance: a picture and a
 // few paragraphs. Fifty-two of anything listed straight down a page is
 // a wall, so a part is COMPACTED — only its number, a small picture

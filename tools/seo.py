@@ -19,7 +19,7 @@
 #   A THEME COLOUR  the page's own ground, which a phone's browser paints
 #                   its bar in (`THEME`, below);
 #   STRUCTURED DATA the site's name for the home page, the trail each
-#                   page stands in (Home › Scent descriptions › ADAR),
+#                   page stands in (Home › Scent Descriptions › ADAR),
 #                   which a search engine may show in place of the address,
 #                   and, for a piece of writing, that it is an article of
 #                   the site's;
@@ -40,13 +40,13 @@ os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 BASE = "https://thetasteofaldehydes.com/"
 SITE = "The Taste of Aldehydes"
 HOME = ("Home", "")
-SD = ("Scent descriptions", "scent-descriptions/")
+SD = ("Scent Descriptions", "scent-descriptions/")
 TH = ("Theories", "theories/")
 RE_ = ("Explorations & Researches", "explorations-and-researches/")
 
 P = {
  "index.html": dict(type="website", desc="A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for information, interpretations, theories and ideas.", crumbs=None),
- "scent-descriptions/index.html": dict(desc="Scent descriptions: nine perfume houses, from Pineward and ADAR to Tombstone and Qimu & Musicians, and individual fragrances, each described.", crumbs=[HOME]),
+ "scent-descriptions/index.html": dict(desc="Scent Descriptions: nine perfume houses, from Pineward and ADAR to Tombstone and Qimu & Musicians, and individual fragrances, each described.", crumbs=[HOME]),
  "theories/index.html": dict(desc="Theories — some frameworks that I came up with myself: The Architecture of Sunscreen, The Architecture of Sweat and The Note Dissemination Framework.", crumbs=[HOME]),
  "favourites/index.html": dict(desc="Favourites — things I like, no other criteria than that: fragrances in chapters, among them Des Cendres, Haxan and De Profundis.", crumbs=[HOME]),
  "explorations-and-researches/index.html": dict(desc="Explorations & Researches. Here you will find my researches and my explorations: a guide to perfume, dupes, designers and niches, resins in perfumery, and more.", crumbs=[HOME]),

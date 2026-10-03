@@ -1938,7 +1938,7 @@
   }
 
   /** THE PICTURE, PLACED IN ITS FRAME once it has loaded — the same way
-      the Fragrances view of Scent descriptions places its pictures, and
+      the Fragrances view of Scent Descriptions places its pictures, and
       for the same reason: the owner asked there for "the image itself"
       to fill its box with nothing behind it, and for the fragrance to be
       what is seen. So the picture covers its upright frame, and is moved

@@ -1,7 +1,7 @@
 // ============================================================
 // ATARAXIA — houses/ataraxia.html
 //
-// The fourth house in Scent descriptions. The page is DARK GRAY, and
+// The fourth house in Scent Descriptions. The page is DARK GRAY, and
 // what crosses it is BANDS OF GLOWING WHITE PARTICLES — each band a
 // long drift of specks running from one side of the window to the
 // other at an angle of its own.

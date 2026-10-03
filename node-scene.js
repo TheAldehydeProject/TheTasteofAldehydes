@@ -69,7 +69,7 @@ const REAL_NODES = [
   // preview, a picture in images/Previews/ taken by tools/previews.js —
   // run that again when a page has changed enough to look different.
   {
-    label: "Scent descriptions", sub: "notes on things I've smelled and tried to describe",
+    label: "Scent Descriptions", sub: "notes on things I've smelled and tried to describe",
     href: "scent-descriptions/", pos: [0.27, 2.8, 1.53],
     preview: { image: "images/Previews/scent-descriptions.jpg", description: "Here I describe perfumes and perfume houses." },
   },
@@ -802,7 +802,7 @@ const REAL_NODES = [
   resize();
 
   // ============================================================
-  // NODE CLICK PREVIEW (trial: Scent descriptions)
+  // NODE CLICK PREVIEW (trial: Scent Descriptions)
   //
   // The arm that reaches the window IS the node's own branch — not a
   // second curve drawn alongside it, which is what it used to be and

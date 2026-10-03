@@ -1570,7 +1570,7 @@ test("Tombstone carries its five, in alphabetical order, with both pictures each
     all.map((img) => ({ src: img.getAttribute("src"), ok: img.complete && img.naturalWidth > 0 })));
   expect(plates.length, "two pictures to a fragrance").toBe(10);
   plates.forEach((one) => expect(one.ok, `${one.src} should load`).toBe(true));
-  await expect(page.locator(".human-kicker")).toHaveText("Scent descriptions · 08");
+  await expect(page.locator(".human-kicker")).toHaveText("Scent Descriptions · 08");
 });
 
 /* QIMU & MUSICIANS: four, in the order the owner numbered them. Guitarist and
@@ -1600,7 +1600,7 @@ test("Qimu & Musicians carries its four: two written, one coming soon, one waiti
   expect(drummer).toBe("Description coming soon.");
   await expect(page.locator("#introduction-name + .human-text")).toHaveText("I will write it later.");
   await expect(page.locator(".human-head h1 em")).toHaveText("A House of Music and Fragrance");
-  await expect(page.locator(".human-kicker")).toHaveText("Scent descriptions · 09");
+  await expect(page.locator(".human-kicker")).toHaveText("Scent Descriptions · 09");
 });
 
 /* TOMBSTONE, WRITTEN — 2026-09-24. Three things the owner asked for in
