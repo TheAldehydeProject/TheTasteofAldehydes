@@ -919,7 +919,11 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
    its row up or down (`--j`), its own, so no two sides mirror and no two rows
    line up. Until then two lines of specks came down the window either side
    of the formula and the names stood on the outside of them, four down each
-   side, symmetrical and equally spaced.
+   side, symmetrical and equally spaced. SCATTERED FURTHER the same evening
+   ("it feels too organized ... make it a little less organized"): a short
+   name up to two thirds of its column out, a long one less (it has less
+   room), two stepping a little in towards the formula, and up to half a row
+   up or down — so the four on a side read as four, not as a column.
 
    Two layouts, told to molecule.js by `--formula-layout`: FLANK on a wide
    window (four on the left, the formula, four on the right) and BAND on a
@@ -1003,15 +1007,17 @@ html.stage-coming .formula-link { opacity: 0; }
 .formula-link:nth-child(4n+2) { grid-row: 2; }
 .formula-link:nth-child(4n+3) { grid-row: 3; }
 .formula-link:nth-child(4n+4) { grid-row: 4; }
-/* the scatter: out to the left on the left, out to the right on the right */
-.formula-link:nth-child(1) { --k: -0.04; --j: -0.2; }
-.formula-link:nth-child(2) { --k: -0.3; --j: 0.22; }
-.formula-link:nth-child(3) { --k: -0.12; --j: -0.05; }
-.formula-link:nth-child(4) { --k: -0.24; --j: 0.27; }
-.formula-link:nth-child(5) { --k: 0.18; --j: 0.18; }
-.formula-link:nth-child(6) { --k: 0.05; --j: -0.24; }
-.formula-link:nth-child(7) { --k: 0.34; --j: 0.1; }
-.formula-link:nth-child(8) { --k: 0.14; --j: -0.12; }
+/* the scatter: out to the left on the left, out to the right on the right
+   (a positive --k on the left, or a negative one on the right, is a step in
+   towards the formula) */
+.formula-link:nth-child(1) { --k: -0.1; --j: -0.45; }
+.formula-link:nth-child(2) { --k: -0.6; --j: 0.34; }
+.formula-link:nth-child(3) { --k: 0.12; --j: -0.12; }
+.formula-link:nth-child(4) { --k: -0.42; --j: 0.5; }
+.formula-link:nth-child(5) { --k: 0.3; --j: 0.4; }
+.formula-link:nth-child(6) { --k: -0.08; --j: -0.36; }
+.formula-link:nth-child(7) { --k: 0.64; --j: 0.14; }
+.formula-link:nth-child(8) { --k: 0.22; --j: -0.3; }
 /* The atoms' names on the formula, placed by molecule.js: set as a
    chemistry book sets them (the icon's letters), inverting what is behind
    them. */
@@ -1050,6 +1056,10 @@ html.stage-coming .formula-link { opacity: 0; }
   .formula-link:nth-child(n+5) { margin-left: calc(var(--line-inset) - 10px); }
   .formula-link:nth-child(4n+3) { grid-row: 4; }
   .formula-link:nth-child(4n+4) { grid-row: 5; }
+  /* no step in towards the middle here: the other side's names are just
+     across a narrow channel */
+  .formula-link:nth-child(3) { --k: -0.1; }
+  .formula-link:nth-child(6) { --k: 0.08; }
 }
 
 /* THE WAY OUT, ASKED FIRST (2026-09-30: "when you click it, I want a

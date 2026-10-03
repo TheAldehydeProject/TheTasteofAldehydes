@@ -165,11 +165,25 @@
   // slow flow under them carries them, and how slowly it turns over; how
   // strong a speck is at most; and how much of them is the aldehyde's gold
   // and violet, the rest a pale warm grey, as ADAR's silver is on its dark.
-  const DRIFT_DENSITY = 0.0028;
+  // LOOSER the same evening (the owner: "it feels too organized ... make the
+  // border between the start and end of the particles more subtle ... I want
+  // it to resemble more the adar left side"): about half as many, smaller and
+  // fainter, as ADAR's dust is; and NO EDGE — the specks are spread from the
+  // window's edge on into the aldehyde's room, as many as anywhere out to
+  // DRIFT_FULL of the way to the names' inner edge and fewer and fainter from
+  // there to none at DRIFT_REACH of it, so the drift thins out into the
+  // aldehyde's own cloud rather than stopping at a line (it filled the room
+  // evenly to 70px short of that edge until then); and it lies in slow
+  // PATCHES, thicker here and thinner there, drifting (`DRIFT_PATCH`: how
+  // much of a speck's light the thin of a patch takes, how big a patch is in
+  // pixels, and how slowly they move).
+  const DRIFT_DENSITY = 0.0018;
+  const DRIFT_FULL = 0.45, DRIFT_REACH = 1.4;
+  const DRIFT_PATCH = [0.75, 380, 0.014];
   const DRIFT_FALL = [3, 11];
   const DRIFT_SWAY = 6, DRIFT_SWAY_RATE = 0.15;
   const DRIFT_FLOW = 9, DRIFT_STIR = 0.035;
-  const DRIFT_INK = 1;
+  const DRIFT_INK = 0.8;
   const DRIFT_TONES = [[0.12, "pi"], [0.1, "lone"]];
   const LINE_SWIRL = 3.2;   // (a name's backdrop swirls by it)
   // A NAME'S BACKDROP (2026-09-30: "make them slightly particular when
@@ -390,13 +404,15 @@
     }`;
 
   // THE DRIFT, drawn straight onto the window in its own pixels. Every speck
-  // belongs to a room (`aDrift.x`: -1 the left of the formula, 1 the right,
-  // 0 the whole window on a narrow one), stands at its own share across it
-  // (`aDrift.y`) and falls down it at `aDrift.w` pixels a second from its own
-  // start (`aDrift.z`, of the way down), round and round — swaying a few
-  // pixels from side to side as ADAR's dust does, and carried a little by a
-  // slow flow under it. It comes up as the last stage comes (`uDraw`), thins
-  // out towards the formula, and the hand draws it to it.
+  // belongs to a side (`aDrift.x`: -1 the left of the formula, 1 the right,
+  // 0 the whole window on a narrow one), stands at its own distance in from
+  // the window's edge (`aDrift.y`, of the way to the names' inner edge, and
+  // further — or of the window, on a narrow one) and falls down it at
+  // `aDrift.w` pixels a second from its own start (`aDrift.z`, of the way
+  // down), round and round — swaying a few pixels from side to side as ADAR's
+  // dust does, and carried a little by a slow flow under it. It comes up as
+  // the last stage comes (`uDraw`), grows fainter as it reaches into the
+  // aldehyde's room, lies in slow patches, and the hand draws it to it.
   const DRIFT_VERTEX = `
     uniform vec2 uRes, uHandPx;
     uniform vec4 uRoom;
@@ -410,18 +426,21 @@
       float pad = 16.0;
       float span = uRes.y + 2.0 * pad;
       float y = mod(aDrift.z * span + aDrift.w * uTime, span) - pad;
-      float x0 = aDrift.x < -0.5 ? 0.0 : aDrift.x > 0.5 ? uRoom.z : 0.0;
-      float x1 = aDrift.x < -0.5 ? uRoom.x : aDrift.x > 0.5 ? uRes.x : uRes.x;
-      float x = x0 + aDrift.y * (x1 - x0);
+      // the room, from the window's edge to the names' inner edge
+      float room = max(1.0, aDrift.x < -0.5 ? uRoom.x : uRes.x - uRoom.z);
+      float x = aDrift.x < -0.5 ? aDrift.y * room : aDrift.x > 0.5 ? uRes.x - aDrift.y * room : aDrift.y * uRes.x;
       float seed = fract(aDrift.z * 7.31 + aDrift.w * 0.013 + aDrift.y * 3.7);
       // ADAR's sway, and the slow flow under it
       x += sin(uTime * ${DRIFT_SWAY_RATE.toFixed(3)} * (0.7 + 0.6 * seed) + seed * 6.283) * ${DRIFT_SWAY.toFixed(1)};
       vec2 p = vec2(x, y) + ${DRIFT_FLOW.toFixed(1)} * vec2(
         snoise(vec3(x * 0.004, y * 0.004, uTime * ${DRIFT_STIR.toFixed(3)} + seed * 3.0)),
         0.4 * snoise(vec3(x * 0.004 + 17.3, y * 0.004, uTime * ${DRIFT_STIR.toFixed(3)} - seed * 3.0)));
-      // thinning out towards the formula, the side it stands on
-      float inner = aDrift.x < -0.5 ? x1 - p.x : aDrift.x > 0.5 ? p.x - x0 : 999.0;
-      float edge = smoothstep(-10.0, 70.0, inner);
+      // fainter as it reaches into the aldehyde's room (and fewer: laid so)
+      float r = aDrift.x < -0.5 ? p.x / room : aDrift.x > 0.5 ? (uRes.x - p.x) / room : 0.0;
+      float edge = 1.0 - 0.7 * smoothstep(${DRIFT_FULL.toFixed(3)}, ${DRIFT_REACH.toFixed(3)}, r);
+      // the patches, thicker here and thinner there
+      float thin = 1.0 - ${DRIFT_PATCH[0].toFixed(3)} * (1.0 - smoothstep(-0.35, 0.45,
+        snoise(vec3(p / ${DRIFT_PATCH[1].toFixed(1)}, uTime * ${DRIFT_PATCH[2].toFixed(4)} + 9.0))));
       // the hand: the electrons drawn to it
       float near = 0.0;
       if (uPull > 0.0) {
@@ -431,10 +450,10 @@
       }
       float twinkle = 0.7 + 0.3 * sin(uTime * 0.9 + seed * 60.0);
       vColour = aTone * (1.0 + ${(HAND_LIGHT * LINE_LIGHT).toFixed(3)} * near);
-      vAlpha = uDraw * edge * twinkle;
+      vAlpha = uDraw * edge * thin * twinkle;
       if (vAlpha <= 0.002) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
       gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
-      gl_PointSize = uSize * (seed < 0.15 ? 1.5 : 0.85 + 0.3 * fract(seed * 11.0));
+      gl_PointSize = uSize * (seed < 0.12 ? 1.45 : 0.7 + 0.35 * fract(seed * 11.0));
     }`;
   const LINE_FRAGMENT = `
     uniform float uAlpha;
@@ -755,7 +774,7 @@
       parts[name].geometry.setDrawRange(0, Math.min(D.parts[name].n, Math.round(SHARE[name] * EMPHASIS[name] * cut * thin)));
     }
     bonds.material.uniforms.uSize.value = (small ? 1.8 : 2.2) * scale;
-    driftMat.uniforms.uSize.value = (small ? 2 : 2.4) * scale;
+    driftMat.uniforms.uSize.value = (small ? 1.8 : 2.1) * scale;
     driftMat.uniforms.uRes.value.set(W, H);
     hazeMat.uniforms.uSize.value = (small ? 1.4 : 1.6) * scale;    // small (it was 2.2 and 2.6)
     hazeMat.uniforms.uRes.value.set(W, H);
@@ -810,8 +829,11 @@
       halfH = H / 2 - 64;
     }
     // the specks themselves, made again only when the room changes
+    // (on a wide window each side's specks reach on past the names' inner
+    // edge, fewer as they go: as many as that much more room, evenly filled)
     const sides = band ? [[0, W]] : [[-1, Math.max(0, left)], [1, Math.max(0, W - right)]];
-    const counts = sides.map(([, w]) => Math.round(w * H * DRIFT_DENSITY * (phone() ? 0.7 : 1) * (soft ? 0.3 : 1) * (band ? 0.6 : 1)));
+    const spread = band ? 1 : DRIFT_FULL + (DRIFT_REACH - DRIFT_FULL) / 2;
+    const counts = sides.map(([, w]) => Math.round(w * H * spread * DRIFT_DENSITY * (phone() ? 0.7 : 1) * (soft ? 0.3 : 1) * (band ? 0.6 : 1)));
     const key = counts.join("|") + "|" + Math.round(H) + "|" + band;
     if (key !== laidFor) {
       laidFor = key;
@@ -822,7 +844,14 @@
       sides.forEach(([side], k) => {
         for (let j = 0; j < counts[k]; j++, i++) {
           dr[i * 4] = side;
-          dr[i * 4 + 1] = rand();
+          // how far in: anywhere across a narrow window; on a wide one, as
+          // likely anywhere out to DRIFT_FULL of the room and less and less
+          // likely from there to DRIFT_REACH
+          let r = rand();
+          if (side) {
+            do { r = rand() * DRIFT_REACH; } while (rand() > 1 - smooth((r - DRIFT_FULL) / (DRIFT_REACH - DRIFT_FULL)));
+          }
+          dr[i * 4 + 1] = r;
           dr[i * 4 + 2] = rand();
           dr[i * 4 + 3] = DRIFT_FALL[0] + rand() * (DRIFT_FALL[1] - DRIFT_FALL[0]);
           let x = rand(), c = PALE;

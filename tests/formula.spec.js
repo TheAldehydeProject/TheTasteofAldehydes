@@ -113,7 +113,7 @@ test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
 });
 
-test("the last stage carries the Menu's eight pages, in its order, four either side of the formula, scattered a little", async ({ page }) => {
+test("the last stage carries the Menu's eight pages, in its order, four either side of the formula, scattered", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html?auto=off");
   // the same eight as the Menu (nav.js), without Home, in its order
@@ -130,10 +130,23 @@ test("the last stage carries the Menu's eight pages, in its order, four either s
   const b = await boxes(page);
   const left = b.slice(0, 4), right = b.slice(4);
   const mid = (x) => (x.t + x.b) / 2;
-  // four on the left of the formula's room and four on the right, inside the window
+  // four on the left of the formula and four on the right, inside the window
+  // — one or two stepping a little into its room (since the scatter was
+  // loosened, 2026-10-03), never far, and every one well clear of it
   const [lx, rx] = await roomXs(page);
-  for (const x of left) { expect(x.r, "a name on the left of the formula").toBeLessThanOrEqual(lx + 1); expect(x.l).toBeGreaterThanOrEqual(0); }
-  for (const x of right) { expect(x.l, "a name on the right of it").toBeGreaterThanOrEqual(rx - 1); expect(x.r).toBeLessThanOrEqual(1440); }
+  const step = (rx - lx) * 0.08;
+  const formula = await atoms(page);
+  const formulaL = Math.min(...formula.map((a) => a.x)) - 60, formulaR = Math.max(...formula.map((a) => a.x)) + 60;
+  for (const x of left) {
+    expect(x.r, "a name on the left of the formula").toBeLessThanOrEqual(lx + step);
+    expect(x.r, "clear of it").toBeLessThan(formulaL);
+    expect(x.l).toBeGreaterThanOrEqual(0);
+  }
+  for (const x of right) {
+    expect(x.l, "a name on the right of it").toBeGreaterThanOrEqual(rx - step);
+    expect(x.l, "clear of it").toBeGreaterThan(formulaR);
+    expect(x.r).toBeLessThanOrEqual(1440);
+  }
   // the middle, the aldehyde's room, wide: over half the window
   expect(rx - lx, "room in the middle").toBeGreaterThan(1440 * 0.5);
   // still in the Menu's order down each side
@@ -141,15 +154,17 @@ test("the last stage carries the Menu's eight pages, in its order, four either s
     expect(mid(left[i]), "down the left in order").toBeGreaterThan(mid(left[i - 1]) + 30);
     expect(mid(right[i]), "down the right in order").toBeGreaterThan(mid(right[i - 1]) + 30);
   }
-  // SCATTERED A LITTLE ("slightly haphazardly arranged"): no side lined up
-  // on one edge, no two rows level, the two sides not mirrored
+  // SCATTERED ("slightly haphazardly arranged", and then "it feels too
+  // organized ... make it a little less organized"): no side anything like
+  // lined up on one edge, no two rows level, the two sides not mirrored, the
+  // names down a side nowhere near evenly spaced
   const spread = (xs) => Math.max(...xs) - Math.min(...xs);
-  expect(spread(left.map((x) => x.r)), "the left not lined up").toBeGreaterThan(30);
-  expect(spread(right.map((x) => x.l)), "nor the right").toBeGreaterThan(30);
-  const level = [0, 1, 2, 3].filter((i) => Math.abs(mid(left[i]) - mid(right[i])) < 6);
+  expect(spread(left.map((x) => x.r)), "the left not lined up").toBeGreaterThan(120);
+  expect(spread(right.map((x) => x.l)), "nor the right").toBeGreaterThan(120);
+  const level = [0, 1, 2, 3].filter((i) => Math.abs(mid(left[i]) - mid(right[i])) < 20);
   expect(level.length, "rows not level across").toBeLessThan(2);
   const gaps = [1, 2, 3].map((i) => mid(left[i]) - mid(left[i - 1]));
-  expect(spread(gaps), "not equally spaced").toBeGreaterThan(12);
+  expect(spread(gaps), "not equally spaced").toBeGreaterThan(60);
   // the long one on two lines, in its own words' order
   const long = page.locator(".formula-link").nth(2);
   expect(await long.evaluate((a) => a.textContent.replace(/\s+/g, " ").trim())).toBe("Explorations & Researches");
@@ -221,12 +236,17 @@ test("five stages, smoothly: the title, the title gone, the aldehyde upright, it
   await page.waitForTimeout(1200);
   const [lx, rx] = await roomXs(page);
   // specks all down both rooms, top to foot, faint — none of the lines' glow
+  // (read with the names and the cursor out of the picture, so what is
+  // counted is specks; few, as ADAR's dust is few, and fewer still here,
+  // where a browser without a graphics card draws three in ten of them)
+  const hidden = await page.addStyleTag({ content: ".formula-link, .cursor-ring, .cursor-dot { visibility: hidden !important; }" });
   for (const [x, w] of [[8, lx - 16], [rx + 8, 1440 - rx - 16]]) {
     for (const y of [40, 360, 700]) {
       const there = await light(page, { x, y, width: w, height: 140 });
-      expect(there.lit, `specks at ${Math.round(x)},${y}`).toBeGreaterThan(12);
+      expect(there.lit, `specks at ${Math.round(x)},${y}`).toBeGreaterThan(3);
     }
   }
+  await hidden.evaluate((e) => e.remove());
 
   // and back, all the way
   await toStage(page, 0);
@@ -326,8 +346,10 @@ test("the drift comes up in the rooms either side of the formula as the last sta
   await toStage(page, 3);
   await settled(page, 3);
   const [lx, rx] = await roomXs(page);
-  // the left room, clear of the names (above the first of them) and of the Menu
-  const room = () => light(page, { x: 8, y: 70, width: lx - 16, height: 90 });
+  // the left room, under the Menu, top to foot — the names (which come up
+  // with the stage too) and the cursor out of the picture
+  await page.addStyleTag({ content: ".formula-link, .cursor-ring, .cursor-dot { visibility: hidden !important; }" });
+  const room = () => light(page, { x: 8, y: 70, width: lx - 16, height: 780 });
   const none = (await room()).lit;
   expect(none, "no drift before the last stage").toBeLessThan(6);
   await toStage(page, 3.4);
@@ -339,6 +361,14 @@ test("the drift comes up in the rooms either side of the formula as the last sta
   await settled(page, 4);
   await expect.poll(() => state(page)).toBe("drift");
   expect((await room()).lit, "and there once it is").toBeGreaterThan(Math.max(some, 15));
+  // NO EDGE where it stops (2026-10-03: "make the border between the start
+  // and end of the particles more subtle"): it thins out into the
+  // aldehyde's room — some way in from the names' edge there are still a
+  // few, fewer than in the room itself, and fewer again further in
+  const band = async (x0, x1) => (await light(page, { x: Math.round(x0), y: 70, width: Math.round(x1 - x0), height: 780 })).lit / (x1 - x0);
+  const outer = await band(8, lx * 0.4), fringe = await band(lx * 1.02, lx * 1.2);
+  expect(fringe, "a few past the names' edge").toBeGreaterThan(0);
+  expect(fringe, "fewer than in the room").toBeLessThan(outer);
   // no line of specks on the edge of the formula's room, where they stood
   const edge = await light(page, { x: lx - 6, y: 300, width: 12, height: 300 });
   const beside = await light(page, { x: lx - 160, y: 300, width: 12, height: 300 });
@@ -388,17 +418,18 @@ test("a name is quiet until the hand comes to it: then it comes up gradually to 
 test("the electronegative hand draws the drift's specks to it", async ({ page }) => {
   test.setTimeout(120000);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/index.html?auto=off");
+  // (every speck drawn, as a browser with a graphics card draws them: the
+  // drift is sparse, and three in ten are too few round one hand to count)
+  await page.goto("/index.html?auto=off&molecule=full");
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
   await jumpToSlide(page, "slide-formula");
   await settled(page, 4);
   await expect.poll(() => state(page), { timeout: 30000 }).toBe("drift");
-  // an empty part of the left room, below the last name on the left
-  const b = await boxes(page);
-  const hand = { x: 150, y: Math.min(840, b[3].b + 80) };
-  // round the hand — the site's cursor and the δ− kept out of the picture
-  await page.addStyleTag({ content: ".cursor-ring, .cursor-dot, .molecule-charge { visibility: hidden !important; }" });
-  const box = { x: hand.x - 45, y: hand.y - 45, width: 90, height: 90 };
+  // round the hand in the left room — the names, the site's cursor and the
+  // δ− kept out of the picture
+  await page.addStyleTag({ content: ".formula-link, .cursor-ring, .cursor-dot, .molecule-charge { visibility: hidden !important; }" });
+  const hand = { x: 150, y: 450 };
+  const box = { x: hand.x - 60, y: hand.y - 60, width: 120, height: 120 };
   const sumOver = async (n) => { let t = 0; for (let i = 0; i < n; i++) { t += (await light(page, box)).lit; await page.waitForTimeout(150); } return t / n; };
   await page.mouse.move(1380, 60);
   await page.waitForTimeout(1800);

@@ -450,6 +450,34 @@ so no side lines up on one edge, no two rows are level, and the two sides do not
 less on a narrow window (`--col`, `--scatter-row` there). The backdrop of specks a name stands on
 under the hand is as it was. **Scent Descriptions** is set with its capital D, as the Menu is now.
 
+### 2026-10-03, later — less organized, and no edge to the drift
+
+> You know what i dont like the home page, it feels too organized. Can you make it a little less
+> organized, and make the border between thebstart and wnd of the particles more subtle? I want it to
+> resemble more the adar left side.
+
+**The drift has no edge** (`molecule.js`, `DRIFT_FULL`, `DRIFT_REACH`, `DRIFT_PATCH`). It filled the
+room either side evenly from the window's edge to 70px short of the names' inner edge, and stopped
+there — a plain line down each side of the aldehyde, which is the border the owner saw. Now each
+side's specks are spread from the window's edge on into the aldehyde's room: as many as anywhere out
+to **0.45** of the way to the names' inner edge, and from there fewer and fainter (laid fewer, drawn
+fainter) to none at **1.4** of it — so it thins out into the aldehyde's own cloud instead of
+stopping. **And it lies in slow patches**: a speck's light is taken down by up to three quarters
+where a slow noise says thin, so the field is thicker here and thinner there, and the patches drift.
+**More like ADAR's left side**, which is very few specks, small and faint: about half as many as
+before (`DRIFT_DENSITY` 0.0018, was 0.0028, over the larger spread), smaller (`uSize` 2.1, was 2.4,
+most specks 0.7 to 1.05 of that) and fainter (`DRIFT_INK` 0.8, was 1). It falls, sways and answers the
+hand as before. (A shader word: the patches' strength was first named `patch`, which is a reserved
+word in the graphics card's language, and the whole drawing went blank — renamed `thin`, and the
+page checked for shader errors before anything else.)
+
+**The names, scattered further** (`style.css`, `--k`, `--j`): a short name up to about two thirds of
+its column out (Theories, Search), a long one less (it has less room), **two stepping a little in
+towards the formula** (Explorations & Researches on the left, Photography on the right — never more
+than a few tens of pixels, still well clear of it), and up to half a row up or down, so the four on a
+side no longer read as a column of four. On a narrow window (two above the formula and two below) none
+steps inwards: the other side's names are just across a narrow channel.
+
 ### How it was tested (2026-10-03)
 
 `tests/formula.spec.js`: **`a reload opens at the title, the names never shown before the page has
@@ -467,14 +495,18 @@ read for the drift where they read for the lines.
 
 `tests/formula.spec.js`:
 - **`the last stage carries the Menu's eight pages, in its order, four either side of the formula,
-  scattered a little`** — against `SITE_LINKS` in `nav.js`; no side lined up, no rows level.
+  scattered`** — against `SITE_LINKS` in `nav.js`; each side's edges spread over 120px, no rows level
+  within 20px, the gaps down a side differing by over 60px; a name may step into the formula's room
+  by no more than 8% of it, and every name stands 60px clear of the formula's atoms (2026-10-03,
+  later: it was 30px, 6px and 12px, and no step in).
 - **`a reload opens at the title, the names never shown before the page has placed them`**.
 - **`the page plays itself through the five stages, on its own glide, to the names; a wheel takes
   over`**.
 - **`five stages, smoothly: the title, the title gone, the aldehyde upright, its formula, and the
   names`** — each stage in turn (`data-stage`, `data-state`: cloud, turned, formula, drift): the
   title gone; the lone pair's violet moved to the top; the atoms named only at the fourth, O above
-  C, the H either side below; the names only at the fifth, in the drift; and back.
+  C, the H either side below; the names only at the fifth, in the drift (counted with the names
+  hidden, a few specks in every box down both rooms); and back.
 - **`the turn upright is prolonged and smooth: its leg the longest, and never quick`** — the
   second of `data-legs` the longest by half again; from a key, the turn takes over 1.8s and never
   goes faster than 100° a second (2026-10-01).
@@ -482,10 +514,14 @@ read for the drift where they read for the lines.
   notches, the stage followed frame by frame: never a jump, never back, a glide to exactly as far as
   they send it, and it stays where it stopped.
 - **`the drift comes up in the rooms either side of the formula as the last stage comes, and
-  nothing of the lines is left`**.
+  nothing of the lines is left`** — read over the whole height of the left room with the names
+  hidden; and **no edge**: just past the names' inner edge there are still a few specks, fewer than
+  in the room (2026-10-03, later).
 - **`a name is quiet until the hand comes to it: then it comes up gradually to the whole of
   itself`** — under 45% at rest, part way after a quarter of a second, whole after; no mask; the δ−.
-- **`the electronegative hand draws the drift's specks to it`**.
+- **`the electronegative hand draws the drift's specks to it`** — with `?molecule=full`, every
+  speck drawn (a browser without a graphics card draws three in ten, and the drift is sparse now),
+  the names hidden.
 - **`the electronegative hand draws the aldehyde's own specks to it`** — and at the title, far less
   (no δ−, the specks less stirred).
 - **`a name pressed asks first, on the stage's own dark: Stay, Escape and the veil keep the page, Go
@@ -518,8 +554,8 @@ the aldehyde, press a name; on a phone, swipe and tap.
   of them each leg is) in `landing.js`; `TURN_W` (how quickly the turn upright follows) in
   `molecule.js`; `GLIDE_W`,
   `WHEEL_SCALE`, `FOLLOW_S`, `TITLE_GONE`, `CORNERS_GONE`, `NAMES_FROM`, `NAMES_OVER` in
-  `landing.js`; `TURN_FROM`, `FORM_FROM`, `LINES_OVER`, `REACT_TITLE`, `TIGHT`, `FORM_PEAK`,
-  `BOND_*`, `ATOM_SIZE`, `CLEAR`, `LINE_*`, `FALL`, `HAZE_*`, `HAND_*` at the top of `molecule.js`;
+  `landing.js`; `TURN_FROM`, `FORM_FROM`, `DRIFT_OVER`, `REACT_TITLE`, `TIGHT`, `FORM_PEAK`,
+  `BOND_*`, `ATOM_SIZE`, `CLEAR`, `DRIFT_*`, `HAZE_*`, `HAND_*` at the top of `molecule.js`;
   how quiet a name is at rest, and how long it takes to come up, in `.formula-link`; the sheet's
   specks (`COUNT`, `GATHER_MS`) in `askSpecks` in `landing.js`.
 - The glide is for a mouse wheel and a trackpad. A trackpad already scrolls smoothly on its own, and
