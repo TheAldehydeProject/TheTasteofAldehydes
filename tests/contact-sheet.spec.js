@@ -684,7 +684,9 @@ test("Ataraxia's bands are plain particles on a wave, with no shadows", async ({
    root from the top starts at the window's very edge, not under the
    chrome's band. Read off the motifs' canvas: the red petals drawn along
    its foot, the same ones still there later, all of them gone once the
-   house is left; and where the roots begin. */
+   house is left; and where the roots begin. With the hand alone resting
+   (`?rest=hand`): Tombstone is brought to the front to be pointed at, and
+   since 2026-10-03 the house at the front brings its motifs back by itself. */
 test("Tombstone's petals fall and gather on the ground until the house is left, and roots grow from the very top", async ({ page }) => {
   test.setTimeout(90000);
   await page.addInitScript(() => {
@@ -721,7 +723,7 @@ test("Tombstone's petals fall and gather on the ground until the house is left, 
       return lineTo.apply(this, arguments);
     };
   });
-  await page.goto(SHEET);
+  await page.goto(SHEET_HAND);
   await waitForSheet(page);
   await pointAt(page, 7);
   // What lies along the foot of the window in the latest frame drawn.

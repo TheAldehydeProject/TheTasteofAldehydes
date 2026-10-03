@@ -2006,3 +2006,11 @@ Menu`**. With motion turned off, a drag of 160px still turns it (now more than 0
 **`NetScene.filler`**, which finds a filler to press and find that nothing answers, keeps clear of the
 names as well as the notes now: in the full run one stood under *Caramel*'s name, and the press opened
 Caramel — the name doing what it should.
+
+## 2026-10-03 — the filler read again before it is pressed
+
+Nothing on the page changed. In the full run of 2026-10-03 (forty-five minutes, the machine under
+load) **`once apart, a note pressed opens its own window …; a filler never answers`** pressed a
+filler it had found 600ms before, and by then the network had turned enough to bring *Pistachio*
+onto that spot, which opened. On its own it passed twice. The test now asks `NetScene.filler` again
+just before the press, so the spot is the one the filler is standing on at that moment.

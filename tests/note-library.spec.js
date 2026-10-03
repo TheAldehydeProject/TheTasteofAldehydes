@@ -834,7 +834,11 @@ test("once apart, a note pressed opens its own window over the page out of focus
   await page.mouse.move(filler.x, filler.y);
   await page.waitForTimeout(300);
   await expect(page.locator(".net-hover")).not.toHaveClass(/is-on/);
-  await page.mouse.click(filler.x, filler.y);
+  // Read again just before the press: the network turns, and on a machine
+  // under load a note or its name could have come round onto the old spot.
+  const still = await page.evaluate(() => window.NetScene.filler("GOU"));
+  expect(still, "a filler clear of the notes").not.toBeNull();
+  await page.mouse.click(still.x, still.y);
   await page.waitForTimeout(300);
   await expect(stage).toHaveAttribute("data-selected", "");
   await expect(stage).toHaveAttribute("data-focus", "GOU");
