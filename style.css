@@ -3662,6 +3662,10 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--brass); outline
 .pine-text { max-width: 62ch; }
 .pine-text p { margin: 0 0 16px; color: var(--muted); }
 .pine-intro .pine-text { margin-top: 22px; }
+/* A link in the writing — Scentorium, in the introduction (2026-10-03) —
+   in ink, as Les Abstraits' last word is. */
+.pine-text a { color: var(--ink); text-underline-offset: 3px; }
+.pine-text a:hover { color: var(--muted); }
 
 /* THE PARTS. Closed, one is a number, a small picture and a title on a
    ruled line — fifty-two of those read as an index rather than as a

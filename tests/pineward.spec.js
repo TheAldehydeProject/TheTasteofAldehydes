@@ -413,6 +413,10 @@ test("the introduction is the owner's three paragraphs, Scentorium thanked", asy
   await expect(paras).toHaveCount(3);
   await expect(paras.first()).toHaveText(/^Pineward is a fragrance house that prides itself with fragrances that smell like a forest/);
   await expect(paras.first()).toHaveText(/so I owe a big thank you to Scentorium for this\.$/);
+  // Scentorium is a link to its own site, in a new window (2026-10-03).
+  const shop = paras.first().locator("a", { hasText: "Scentorium" });
+  await expect(shop).toHaveAttribute("href", "https://scentorium.eu");
+  await expect(shop).toHaveAttribute("target", "_blank");
   await expect(paras.nth(1)).toHaveText(/^Stylistically, Pineward tend to focus on either an honest turpentine-y approach/);
   await expect(paras.nth(1)).toContainText("such as Fanghorn II, which smells like something from J.R. Tolkeins Works).");
   await expect(paras.nth(2)).toHaveText(/\(both of which I feel they have done quite well\)\.$/);
