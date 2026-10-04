@@ -3,6 +3,7 @@ Date: 2026-09-30
 Files touched: `index.html`, `molecule.js`, `landing.js`, `thread.js`, `paper.js`, `style.css`,
 (2026-10-01: `landing.js`, `molecule.js`, `style.css`, `tests/helpers.js`, `tests/formula.spec.js`, `tests/landing.spec.js`)
 (2026-10-03, last: `landing.js`, `molecule.js`, `index.html`, `style.css`, `tests/formula.spec.js`, `tests/landing.spec.js`)
+(2026-10-04: `landing.js`, `molecule.js`, `index.html`, `style.css`, `tests/formula.spec.js`, `tests/landing.spec.js`)
 `tests/formula.spec.js` (new), `tests/helpers.js`, `tests/landing.spec.js`, `tests/menu.spec.js`,
 `tests/leaving-the-map.spec.js`, `tests/node-map.spec.js`, `tests/background-and-cursor.spec.js`,
 `tests/pages.spec.js`
@@ -10,14 +11,15 @@ Files touched: `index.html`, `molecule.js`, `landing.js`, `thread.js`, `paper.js
 What changed: **The home page is one stage, scrolled smoothly through five stages**, and nothing
 else: (1) the aldehyde as it is first seen, with the title in front of it; (2) the same, the title
 gone; (3) the aldehyde **turned upright**, the O at the top; (4) the same, **its formula drawn in
-it** — the bonds in bright specks, the atoms named; (5) **the Menu's eight pages either side of it,
-each the R of an aldehyde**, in **the aldehyde's sillage** — its own specks spreading into the room —
-with **the aldehydes of perfumery in the gaps** (since 2026-10-03, last; two lines of specks, and then a
-drift, stood there before), **quiet** — faint — until the hand comes to one, and then coming up
-gradually to the whole of themselves. **One scroll plays it all the way** (2026-10-03, later): it
-stands at the title until it is scrolled, then **glides** on through every stage, resting at each, to
-the names; one scroll up, all the way back. Every stage blends into the next, each change spread over
-the whole of its leg. **The hand is
+it** — the bonds in bright specks, the atoms named; (5) **the Menu's eight pages on an orbit round
+it** (since 2026-10-04) — a tilted ring of specks going slowly round the aldehyde, each page beside an
+electron of its own on it — in **the aldehyde's sillage**, its own specks spreading into the room (two
+lines of specks, then a drift, then for a day each name the R of an aldehyde with the aldehydes of
+perfumery in the gaps, stood there before), **quiet** — faint — until the hand comes to one, and then
+coming up gradually to the whole of themselves, its electron and the ring by it lit gold. **One scroll
+glides it all the way** (2026-10-04): it stands at the title until it is scrolled, then goes to the
+names **in one continuous, gradual movement of about four seconds**; one scroll up, all the way back.
+Every stage blends into the next, each change spread over the whole of its leg. **The hand is
 electronegative**: the specks near the pointer are drawn to it, and brighten, and a small δ− stands
 beside it — only a little at the title; a name pointed at is lit and the specks of its line drawn out
 towards it; **a name pressed asks first**, in a dark sheet in the stage's colours. **Pages 3 and 4 —
@@ -590,6 +592,93 @@ failed on this machine on the code before the round as after (its 160 frames can
 the glide comes to rest), and now waits for the page to come to rest before checking that it stays; and
 the way out's veil is waited for rather than read the moment it is pressed.
 
+### 2026-10-04 — one glide of four seconds; the chemicals gone; the orbit
+
+> The auto scroll thing is too really, bad. I want it to be a continuous auto scroll upon detecting a
+> scrolling motion from the user rthat will smoothly in the span of about 4 seconds go all the way to
+> the bottom, it beeds to be gradual. For the menu in the second page, i dont like it. I want you ti
+> remove the chemicals and redesign it again. KEEP THE MIDDLE ALDEHYDE AS IT IS. DO NOT TOUCH IT
+> NEITHER IN ANIMATION NOR IN REACTION NOR IN ANY WAY.
+
+"The menu in the second page" was read as the last stage's eight names and what stood round them (the
+stage the page scrolls on to from the title), and "the chemicals" as the round before's two
+additions: each name's aldehyde group, and the sixteen aldehydes of perfumery drawn in the gaps. **The
+aldehyde is untouched** — its cloud, its colours, its swirl, its turn upright, its formula, how the hand
+moves it and where it stands: `git diff` shows no line of its drawing changed, and its four atoms were
+measured standing on exactly the same pixels before and after at seven window sizes (1440 × 900,
+1920 × 1080, 1280 × 800, 1024 × 768, 960 × 700, 820 × 1180 and a phone, 390 × 844). The room the
+names leave it — the grid's middle column on a wide window, the two rows above and below it on a narrow
+one — frames it, so neither was changed.
+
+**One glide, all the way** (`landing.js`, ONE SCROLL, ONE GLIDE, ALL THE WAY). The round before went a
+stage at a time and rested over a second at each, and the whole took about seventeen seconds — the
+owner's "really bad". Now **one scroll carries the page from the title to the names in one movement of
+`AUTO_MS`, four seconds** (measured: 4.1s from the turn of the wheel to the names standing), and one
+scroll up all the way back the same. It is a **curve laid on the clock** (`curve`), not the spring the
+hand-driven page glides on: a quintic from where the page is to where it is going, at rest at both ends
+with no jerk — so it **sets off gently, gathers, and comes to rest as gently**, and stops nowhere on the
+way (the stages come and go as it passes, each blended into the next as before). A shorter way — a
+scroll from part of the way down — takes its share of the four seconds, never under `AUTO_LEAST`
+(1.2s). **Turned round on the way** (`PLAY_TURN` of a turn the other way), the curve is laid again from
+where the page is *and how fast it is going*, so it eases out of the way it was going rather than
+jolting. Each frame moves it by the clock's own time — so it takes its four seconds on a slow machine
+too — with only a stall of over a quarter of a second not counted. What counts as a scroll is as it
+was (a turn of the wheel or a trackpad, its run-on the same scroll; a swipe, the page's own scrolling
+held off; a key; the Scroll button); it waits while the Menu, About me or the way out is open, or the
+tab is hidden; the scrollbar moved on the way and it lets go where it was put. `AUTO_REST` and the
+stage-by-stage stepping are gone; `?auto=off` still keeps the hand-driven page for the tests that hold a
+stage.
+
+**The chemicals, gone** — no `.formula-tail`, `data-chain`, `TAIL_BOND`, `AIR_*`, `AIR_LIST`, `layAir`
+or `drawAir` anywhere (a test says so); the 2D pictures they were drawn from went with them.
+
+**The orbit** (`landing.js` THE ORBIT, `molecule.js` `ORBIT_*`, `style.css` `.orbit-laid`). The eight
+names stand **on an orbit round the aldehyde**, as electrons stand round a nucleus — a **ring** of fine
+specks, an ellipse wider than the aldehyde's room (`ORBIT_PAST`, 1.08 of its half-width) and most of the
+window high (`ORBIT_TALL`, 0.43 of it each way), **turned a little** (`ORBIT_TILT`, rising to the right),
+its specks going slowly round (`ORBIT_TURN`, a few the other way, `ORBIT_BACK`) and standing a few pixels
+off its line (`ORBIT_OFF`), in the aldehyde's warm grey with some gold and violet (`ORBIT_TONES`). On it,
+**an electron for each page** — a small knot of brighter specks (`ELECTRON`) — at its own place round the
+ring (`ORBIT_AT`, in degrees: the first four of the Menu's order down the left, the next four down the
+right, a little off a mirror so the two sides differ and no rows line up), and **each name beside its
+electron**, level with it, written away from the aldehyde: the left four's letters ending 14px short of
+theirs, the right four's starting 14px past. The names keep their quiet, their coming up under the hand, their backdrop
+of specks, and asking first. **A name lit — by the hand, the keys, or while it is being asked for — lights
+its electron and the ring either side of it (`ORBIT_LIT`) in the aldehyde's gold**, coming up and going
+with the name. The ring is **traced round from the top, both ways**, as the last stage comes; it is quiet
+under the names' letters; the electronegative hand draws it as it draws the sillage. It stands well
+outside the aldehyde's cloud and nothing of it is drawn into it.
+
+How it is built: `landing.js` works out where the ring stands from the grid's own middle column
+(`--orbit-cx`, `--orbit-cy`, `--orbit-rx`, `--orbit-ry`, `--orbit-tilt` on the names' nav) and where each
+electron is (`--ox`, `--oy` and its angle `--oa` on each name), and puts `orbit-laid` on the nav, which
+the stylesheet places the names by (`position: absolute` at their electrons); `molecule.js` reads the
+same numbers off the page — as it reads where the names stand — and draws the ring and the electrons in
+its own WebGL drawing, one more set of specks in the window's pixels (`ORBIT_VERTEX`), so there is no
+second picture of the window over it. Laid again whenever the window changes size. **On a narrow window
+(the band, under 900px) there is no orbit**: the names stand two above and two below the formula each
+side as they did, because the aldehyde is framed between those rows there and is not to move; widen the
+window and the orbit is laid again. Without the script, or without the 3D library, the names stand in the
+grid as they always did.
+
+**How it was tested**: `tests/formula.spec.js` — **`the last stage carries the Menu's eight pages, in its
+order, on an orbit round the aldehyde, each beside its electron`** (every electron on the ring, each name
+level with its electron and 6 to 24px from it on the far side from the aldehyde, the Menu's order down
+each side, the two sides not mirrored, every name clear of the aldehyde's cloud, Explorations &
+Researches on two lines, and nothing of the chemicals in the page or the code); **`the orbit is drawn
+round the aldehyde, and a name under the hand lights its electron and the ring round it, in gold`**
+(with `?molecule=full`: each electron drawn, the ring lit along its length far more than just off it,
+gold by a name under the hand and gone when the hand goes); **`on a narrow window there is no orbit, and
+the names stand two by two as they did`**; **`the page waits at the title until it is scrolled, and one
+turn of the wheel glides it to the names in one gradual movement of about four seconds; one turn up, all
+the way back`** (where the page is, frame by frame: between 3.2 and 5.2 seconds, never back, standing
+still nowhere for 150ms on the way, at under half its middle's speed in its first and last 15%);
+**`the rest of a turn is the same scroll, and a turn the other way turns it round without a jolt; the
+scrollbar lets go`**; the swipe's, unchanged; and the sillage and the hand's tests with the ring and the
+electrons left out of what they count. `tests/landing.spec.js` — **`the Scroll button glides the page all
+the way to the names, in one movement`**, and an arrow key. By eye, screenshots at 1440, 1920, 1280 ×
+680, 1024, 960 and a phone, the last stage at rest and with a name under the hand.
+
 ### How it was tested (2026-10-03)
 
 `tests/formula.spec.js`: **`a reload opens at the title, the names never shown before the page has
@@ -606,18 +695,17 @@ read for the drift where they read for the lines.
 ## How to test it
 
 `tests/formula.spec.js`:
-- **`the page waits at the title until it is scrolled, and one turn of the wheel plays it all the way to
-  the names, resting at each stage; one turn up, all the way back`**, **`the rest of a turn is the same
-  scroll, and a turn the other way turns it round; the scrollbar lets go`** and **`on a phone one swipe
-  plays it all the way, and the page's own scrolling is held off`** (2026-10-03, last).
-- **`every name is the R of an aldehyde: a chain and its C=O after it, towards the formula, gold and
-  violet, and lit with it`** and **`the aldehydes of perfumery stand in the gaps as the last stage comes:
-  named, clear of the names, the formula and each other`** (2026-10-03, last).
-- **`the last stage carries the Menu's eight pages, in its order, four either side of the formula,
-  scattered`** — against `SITE_LINKS` in `nav.js`; each side's edges spread over 120px, no rows level
-  within 20px, the gaps down a side differing by over 60px; a name may step into the formula's room
-  by no more than 8% of it, and every name stands 60px clear of the formula's atoms (2026-10-03,
-  later: it was 30px, 6px and 12px, and no step in).
+- **`the page waits at the title until it is scrolled, and one turn of the wheel glides it to the names
+  in one gradual movement of about four seconds; one turn up, all the way back`**, **`the rest of a turn
+  is the same scroll, and a turn the other way turns it round without a jolt; the scrollbar lets go`**
+  and **`on a phone one swipe plays it all the way, and the page's own scrolling is held off`**
+  (2026-10-04; a stage at a time on 2026-10-03, last).
+- **`the last stage carries the Menu's eight pages, in its order, on an orbit round the aldehyde, each
+  beside its electron`** — against `SITE_LINKS` in `nav.js`; and nothing of the chemicals left
+  (2026-10-04; four either side, scattered, until then).
+- **`the orbit is drawn round the aldehyde, and a name under the hand lights its electron and the ring
+  round it, in gold`** and **`on a narrow window there is no orbit, and the names stand two by two as
+  they did`** (2026-10-04).
 - **`a reload opens at the title, the names never shown before the page has placed them`**.
 - **`five stages, smoothly: the title, the title gone, the aldehyde upright, its formula, and the
   names`** — each stage in turn (`data-stage`, `data-state`: cloud, turned, formula, drift): the
@@ -632,13 +720,13 @@ read for the drift where they read for the lines.
   back, a glide to exactly as far as they send it, and, once at rest, it stays where it stopped.
 - **`the sillage comes up as the last stage comes: the aldehyde's own specks spreading into the room on
   every side, thinning as they go, and nothing of the drift or the lines left`** — read still, the names
-  hidden and the aldehydes in the gaps left out of what is counted: none before the last stage, some as
+  hidden and the orbit's ring and electrons left out of what is counted: none before the last stage, some as
   it comes, more once it is; specks above and below the formula and in all four corners; more to a
   pixel just outside the cloud than at the window's edges (2026-10-03, last; it was the drift's).
 - **`a name is quiet until the hand comes to it: then it comes up gradually to the whole of
   itself`** — under 45% at rest, part way after a quarter of a second, whole after; no mask; the δ−.
 - **`the electronegative hand draws the sillage's specks to it`** — with `?molecule=full`, every
-  speck drawn, the names hidden, the hand where no aldehyde of the gaps stands.
+  speck drawn, the names hidden, the hand well off the orbit's ring.
 - **`the electronegative hand draws the aldehyde's own specks to it`** — and at the title, far less
   (no δ−, the specks less stirred).
 - **`a name pressed asks first, on the stage's own dark: Stay, Escape and the veil keep the page, Go
@@ -657,24 +745,27 @@ read for the drift where they read for the lines.
 
 `tests/landing.spec.js`: **the home page is the stage alone** (two slides, the sentence and the map
 kept whole in the template, none of their scripts loaded, the switch off) and **with the switch on
-they come back after the stage, as they were**; the Scroll button and an arrow key play it all the way,
-and on the hand-driven page the keys go a stage at a time;
+they come back after the stage, as they were**; the Scroll button and an arrow key glide it all the way
+in one movement, and on the hand-driven page the keys go a stage at a time;
 the Scroll button fades over the first leg; **the corner block is gone** and the line under the
 title reads *A Perfume Portfolio*; both slides stand in front of the aldehyde; the long move and its
 frames with the map on. The map's, the
 paper's, the way out of the map's and the sentence's own tests all run with `?map=on`. By eye: one turn of a
-wheel, and a trackpad's flick, from the title (it plays to the names) and one back up; turn the other
-way part of the way down; point at the names (their aldehyde groups light) and at the aldehyde, press a
-name; look at the gaps at a few window sizes; on a phone, swipe and tap.
+wheel, and a trackpad's flick, from the title (it glides to the names in about four seconds, without
+stopping) and one back up; turn the other way part of the way down; point at the names (each electron
+and the ring by it light gold) and at the aldehyde, press a name; look at the orbit at a few window
+sizes, and narrow the window past 900px (the orbit goes, the names stand two by two); on a phone, swipe
+and tap.
 
 ## Known issues / TODO
 
 - The numbers: `--stage-leg` (how much scrolling a stage takes) in `style.css` and `LEGS` (how many
-  of them each leg is) in `landing.js`; how long it rests at each stage as one scroll plays it
-  (`AUTO_REST`), and how much of a turn sets it going or turns it round (`PLAY_FROM`, `PLAY_TURN`,
-  `PLAY_GAP`, `SWIPE`) in `landing.js`; the sillage (`SILL_*`) and the aldehydes in the gaps
-  (`AIR_*`, and which there are and in what order they find room, `AIR_LIST`) in `molecule.js`; each
-  name's chain (`data-chain` in `index.html`) and its colours (`.formula-tail` in `style.css`); `TURN_W` (how quickly the turn upright follows) in
+  of them each leg is) in `landing.js`; how long one scroll takes the whole way (`AUTO_MS`, four
+  seconds) and a short way at least (`AUTO_LEAST`), and how much of a turn sets it going or turns it
+  round (`PLAY_FROM`, `PLAY_TURN`, `PLAY_GAP`, `SWIPE`) in `landing.js`; the orbit's shape and where
+  each electron stands (`ORBIT_TILT`, `ORBIT_TALL`, `ORBIT_PAST`, `ORBIT_AT`) in `landing.js`, and how
+  it is drawn (`ORBIT_DENSITY`, `ORBIT_OFF`, `ORBIT_TURN`, `ORBIT_BACK`, `ORBIT_INK`, `ELECTRON`,
+  `ORBIT_LIT`, `ORBIT_TONES`) in `molecule.js`; the sillage (`SILL_*`) in `molecule.js`; `TURN_W` (how quickly the turn upright follows) in
   `molecule.js`; `GLIDE_W`,
   `WHEEL_SCALE`, `FOLLOW_S`, `TITLE_GONE`, `CORNERS_GONE`, `NAMES_FROM`, `NAMES_OVER` in
   `landing.js`; `TURN_FROM`, `FORM_FROM`, `DRIFT_OVER`, `REACT_TITLE`, `TIGHT`, `FORM_PEAK`,
@@ -686,9 +777,11 @@ name; look at the gaps at a few window sizes; on a phone, swipe and tap.
   number.
 - Pages 3 and 4 are the owner's to bring back (`MAP_SLIDES`), or to let go of for good.
 - The names are the Menu's by a test, not by being read from `nav.js`: a page added to the Menu is
-  added to the stage's markup too (the test fails until it is); a ninth needs a row more in the grid.
-- **Another aldehyde in the gaps** is one line in `AIR_LIST` (its name, and its corners and bonds built
-  with `chainOf`, `ringOf`, `add`, `cho`); it stands only if there is room for it, in its turn. Their
-  smells are not written beside them, deliberately — names only, as a figure in a book is labelled.
-- On a phone the names carry no aldehyde group (the two columns stand across a 30px channel); a way to
-  give them one there — above or below each name, towards the formula — is open.
+  added to the stage's markup too (the test fails until it is); a ninth needs a row more in the grid
+  **and a ninth angle in `ORBIT_AT`** — until it has one, the orbit is not laid and the names stand in
+  the grid.
+- On a narrow window (under 900px) there is no orbit — the names stand two by two as before, because
+  the aldehyde is framed between their rows there. A ring there would mean moving the names, and so the
+  aldehyde; it is open, if the owner wants one.
+- The glide is laid on the clock, so a machine that draws slowly shows it in fewer, larger steps rather
+  than taking longer; a stall of over a quarter of a second is not counted (it waits instead).

@@ -50,17 +50,17 @@
 //      round the bonds (more concrete), its swirl calms, the bonds are drawn
 //      out of the C in bright specks, the C=O as two lines, and the atoms
 //      named as a chemistry book names them
-//   5  (S 4) THE SILLAGE, THE ALDEHYDES OF PERFUMERY and the names: from
-//      S 3 the aldehyde's own scent spreads out of it into the room on every
-//      side, the aldehydes a perfumer reaches for come up in the gaps as a
-//      chemistry book draws them, and the Menu's eight pages come up,
-//      scattered a little, each the R of an aldehyde (style.css, landing.js)
-//      — "rework the words and the particles surrounding the main aldehyde
-//      molecule. that stays 100% as it is ... fill in the gaps and make it
-//      all thematic" (2026-10-03, last). For that day a very light drift of
-//      specks fell either side, as ADAR's dust does; and until it two LINES
-//      of specks came down the window, the names on the outside of them;
-//      none of either is in this file now.
+//   5  (S 4) THE SILLAGE and THE ORBIT: from S 3 the aldehyde's own scent
+//      spreads out of it into the room on every side ("rework ... the
+//      particles surrounding the main aldehyde molecule", 2026-10-03, last),
+//      and on a wide window the Menu's eight pages come up on a ring of
+//      specks round it, each beside an electron of its own (2026-10-04:
+//      "remove the chemicals and redesign it again. KEEP THE MIDDLE
+//      ALDEHYDE AS IT IS"; landing.js places them). For a day a very light
+//      drift of specks fell either side, as ADAR's dust does, and for a day
+//      the aldehydes of perfumery stood in the gaps; until then two LINES of
+//      specks came down the window, the names on the outside of them; none
+//      of it is in this file now.
 //
 // THE ELECTRONEGATIVE HAND ("i want the cursor to have an electronegative
 // character, so the electrons would be attracted to it"): wherever the
@@ -129,8 +129,8 @@
   // not incremental"), so something is always on its way and nothing waits
   // for the one before it to stop: the turning from TURN_FROM to 2, the
   // formula from FORM_FROM to 3, the last stage — the sillage, the
-  // aldehydes in the gaps — coming up from 3 over DRIFT_OVER, the names
-  // after it (landing.js).
+  // orbit — coming up from 3 over DRIFT_OVER, the names after it
+  // (landing.js).
   const TURN_FROM = 0.95, FORM_FROM = 1.95, DRIFT_OVER = 0.85;   // (the turn from 0.85 until 2026-10-01, when its leg grew)
   // THE TURN UPRIGHT, prolonged and smoothed (2026-10-01: "prolongue the
   // horizontal to vertical transformation of the aldehyde. thats the only
@@ -185,24 +185,32 @@
   const SILL_WANDER = [10, 0.07], SILL_STIR = 0.03;
   const SILL_INK = 0.85;
   const SILL_TONES = [[0.16, "pi"], [0.14, "lone"]];
-  // THE ALDEHYDES OF PERFUMERY, in the gaps (the same round): the aldehydes a
-  // perfumer reaches for, drawn as a chemistry book draws them — skeletal
-  // formulas, the carbons at the corners, only the oxygens named — in fine
-  // lines of specks, the C=O's double bond in the aldehyde's GOLD and the
-  // oxygen's lone pair a faint VIOLET haze round its O, as the big one is
-  // coloured; each with its name in small type under it. They stand in
-  // whatever room the names and the formula leave (laid once, wherever the
-  // most room is), each turned its own way, drifting a few pixels and
-  // turning a little, coming up one by one as the last stage comes, and
-  // drawn a little to the hand. The bond in pixels (of the window's width,
-  // and its least and most), how much smaller the farther ones are, how
-  // strong at most, how many tries each is given to find a place, and the
-  // room kept round the names, the formula and each other.
-  const AIR_BOND = [0.0118, 11, 19];
-  const AIR_DEPTH = [0.74, 1];
-  const AIR_INK = 0.64;
-  const AIR_TRIES = 140;
-  const AIR_KEEP = { name: 16, formula: 1.1, apart: 26, edge: 14 };
+  // THE ORBIT (2026-10-04, in place of the aldehydes of perfumery — the
+  // owner: "For the menu in the second page, i dont like it. I want you to
+  // remove the chemicals and redesign it again. KEEP THE MIDDLE ALDEHYDE AS
+  // IT IS"): on a wide window the Menu's eight pages stand on an orbit round
+  // the aldehyde, drawn here — a tilted ring of specks going slowly round it,
+  // as electrons go round a nucleus, where landing.js says it stands
+  // (`--orbit-*` on the names' nav) — and an ELECTRON for each page, a small
+  // knot of brighter specks beside its name (its place round the ring,
+  // `--oa` on the name). Under the hand (or the keys, or while the page is
+  // asked for) a name's electron and the stretch of ring round it light up
+  // in the aldehyde's gold, as gradually as the name comes up. It is traced
+  // round from the top, both ways, as the last stage comes; quiet under the
+  // names' letters; drawn to the electronegative hand as the sillage is.
+  // Nothing of it touches the aldehyde: it stands well outside its cloud.
+  // How many specks to a pixel of the ring; how far off it they stand, most
+  // and a few (pixels); how fast they go round (turns a second), and how
+  // many go the other way; how strong at most; an electron's specks, how far
+  // they spread round the ring (radians) and off it (pixels); how far round
+  // a lit electron the ring lights (radians).
+  const ORBIT_DENSITY = 0.85;
+  const ORBIT_OFF = [2.2, 9];
+  const ORBIT_TURN = [0.0028, 0.006], ORBIT_BACK = 0.12;
+  const ORBIT_INK = 1;
+  const ELECTRON = [30, 0.006, 2.6];
+  const ORBIT_LIT = 0.32;
+  const ORBIT_TONES = [[0.18, "pi"], [0.12, "lone"]];
   const LINE_SWIRL = 3.2;   // (a name's backdrop swirls by it)
   // A NAME'S BACKDROP (2026-09-30: "make them slightly particular when
   // hovered. give them a slight backdrop of particles, same colours as the
@@ -533,6 +541,68 @@
       gl_PointSize = uSize * (0.75 + 0.5 * fract(seed * 13.7));
     }`;
 
+  // THE ORBIT, drawn straight onto the window in its pixels like the
+  // sillage: every speck either goes round the ring (`aOrb.x` -1: from its
+  // own place, `aOrb.y` of a turn, at `aOrb.z` turns a second) or is one of
+  // a name's electron (`aOrb.x` the name, 0 to 7: a hair round the ring from
+  // its place, `aOrb.y` radians), standing `aOff` pixels off the ring. The
+  // ring is an ellipse about `uMid`, `uRx` by `uRy`, turned `uTilt`.
+  const ORBIT_VERTEX = `
+    uniform vec2 uRes, uHandPx, uMid;
+    uniform float uTime, uDraw, uReveal, uSize, uPull, uRx, uRy, uTilt;
+    uniform float uHeat[8], uAng[8], uWordX[8], uWordY[8], uHalfW[8], uHalfH[8];
+    attribute vec4 aOrb;
+    attribute float aOff;
+    attribute vec3 aTone;
+    varying vec3 vColour;
+    varying float vAlpha;
+    float round1(float a) { return mod(a + 3.14159265, 6.2831853) - 3.14159265; }
+    void main() {
+      float who = aOrb.x, seed = aOrb.w;
+      bool electron = who > -0.5;
+      float a = 6.2831853 * (aOrb.y + uTime * aOrb.z);
+      float own = 0.0;
+      if (electron) {
+        for (int i = 0; i < 8; i++) if (i == int(who + 0.5)) { a = uAng[i] + aOrb.y; own = uHeat[i]; }
+      }
+      vec2 e = vec2(cos(a) * uRx, sin(a) * uRy);
+      e += normalize(vec2(cos(a) / uRx, sin(a) / uRy)) * aOff;
+      float c = cos(uTilt), s = sin(uTilt);
+      vec2 p = uMid + vec2(e.x * c - e.y * s, e.x * s + e.y * c);
+      p += 1.2 * vec2(sin(uTime * 0.7 + seed * 40.0), cos(uTime * 0.6 + seed * 31.0));
+      // traced round from the top, both ways, as the last stage comes
+      float fromTop = abs(round1(a + 1.5707963)) / 3.14159265;
+      float shown = 1.0 - smoothstep(uReveal - 0.1, uReveal, fromTop);
+      // lit round a name the hand is on
+      float lit = own;
+      if (!electron) {
+        for (int i = 0; i < 8; i++) {
+          float d = round1(a - uAng[i]);
+          lit = max(lit, uHeat[i] * exp(-d * d / ${(ORBIT_LIT * ORBIT_LIT).toFixed(4)}));
+        }
+      }
+      // quiet under the names' letters
+      float under = 0.0;
+      for (int i = 0; i < 8; i++) {
+        float q = max(abs(p.x - uWordX[i]) / max(uHalfW[i], 1.0), abs(p.y - uWordY[i]) / max(uHalfH[i], 1.0));
+        under = max(under, 1.0 - smoothstep(0.95, 1.3, q));
+      }
+      // the hand: the electrons drawn to it
+      float near = 0.0;
+      if (uPull > 0.0) {
+        vec2 d = uHandPx - p;
+        near = exp(-dot(d, d) / (${LINE_REACH.toFixed(1)} * ${LINE_REACH.toFixed(1)})) * uPull;
+        p += d * ${LINE_PULL.toFixed(3)} * near;
+      }
+      vec3 gold = vec3(${COLOUR.pi.map((v) => v.toFixed(3)).join(", ")});
+      float twinkle = 0.75 + 0.25 * sin(uTime * 1.3 + seed * 50.0);
+      vColour = mix(aTone, gold * 1.15, lit * (electron ? 0.85 : 0.7)) * (1.0 + 0.9 * lit + ${(HAND_LIGHT * LINE_LIGHT).toFixed(3)} * near);
+      vAlpha = uDraw * shown * (1.0 - 0.85 * under) * (electron ? 0.6 + 0.7 * lit : (0.55 + 0.45 * lit) * twinkle);
+      if (vAlpha <= 0.002) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
+      gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
+      gl_PointSize = uSize * (electron ? ${ELECTRON[2].toFixed(2)} * (0.6 + 0.4 * fract(seed * 7.3)) * (1.0 + 0.25 * lit) : 0.7 + 0.5 * fract(seed * 13.0));
+    }`;
+
   // ---- the specks ----------------------------------------------------------
   function decode(b64) {
     const s = atob(b64);
@@ -707,6 +777,32 @@
   haze.visible = false;
   scene.add(haze);
 
+  // ---- the orbit --------------------------------------------------------------
+  const orbitGeo = new THREE.BufferGeometry();
+  const orbitMat = new THREE.ShaderMaterial({
+    vertexShader: ORBIT_VERTEX,
+    fragmentShader: LINE_FRAGMENT,
+    uniforms: {
+      uRes: { value: new THREE.Vector2(1, 1) },
+      uMid: { value: new THREE.Vector2() },
+      uHandPx: { value: new THREE.Vector2() },
+      uTime: { value: 0 }, uDraw: { value: 0 }, uReveal: { value: 0 }, uSize: { value: 2 },
+      uPull: { value: 0 }, uAlpha: { value: ORBIT_INK },
+      uRx: { value: 100 }, uRy: { value: 100 }, uTilt: { value: 0 },
+      uHeat: { value: new Float32Array(8) }, uAng: { value: new Float32Array(8) },
+      // (where the names' letters are: the backdrop's own numbers, shared)
+      uWordX: { value: hazeMat.uniforms.uWordX.value }, uWordY: { value: hazeMat.uniforms.uWordY.value },
+      uHalfW: { value: hazeMat.uniforms.uHalfW.value }, uHalfH: { value: hazeMat.uniforms.uHalfH.value },
+    },
+    transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+  });
+  const orbit = new THREE.Points(orbitGeo, orbitMat);
+  orbit.frustumCulled = false;
+  orbit.renderOrder = 6;
+  orbit.visible = false;
+  scene.add(orbit);
+  let orbitOn = false, orbitLaid = "";
+
   // A shader that did not compile takes the drawing with it: check, and step aside.
   try {
     bonds.visible = true;
@@ -719,12 +815,18 @@
     hazeGeo.setAttribute("aHaze", new THREE.BufferAttribute(new Float32Array(4), 4));
     hazeGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
     haze.visible = true;
+    orbitGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
+    orbitGeo.setAttribute("aOrb", new THREE.BufferAttribute(new Float32Array(4), 4));
+    orbitGeo.setAttribute("aOff", new THREE.BufferAttribute(new Float32Array(1), 1));
+    orbitGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
+    orbit.visible = true;
     renderer.compile(scene, camera);
     const programs = renderer.info.programs || [];
     if (programs.some((p) => p.diagnostics && p.diagnostics.runnable === false)) throw new Error("shader");
     bonds.visible = false;
     sill.visible = false;
     haze.visible = false;
+    orbit.visible = false;
   } catch (e) {
     renderer.dispose();
     names.forEach((n) => n.el.remove());
@@ -737,314 +839,6 @@
   charge.className = "molecule-charge";
   charge.textContent = "δ−";
   wrap.appendChild(charge);
-
-  // ---- the aldehydes of perfumery, in the gaps -------------------------------
-  // Each as a chemistry book draws it, a bond one long, up the page positive:
-  // its corners (`at`: [x, y], and a letter where an oxygen stands) and its
-  // bonds ([from, to, 1 or 2], or 3 for the inner line of a ring's double
-  // bond). A straight chain is a zig-zag from its tail to the aldehyde's
-  // carbon, the =O next along it; a ring is a hexagon with its first corner
-  // on the right, where the aldehyde's carbon goes on.
-  const zig = (k) => [k * 0.866, (k % 2) * 0.5];
-  function chainOf(n) {
-    const at = [], bonds = [];
-    for (let k = 0; k <= n; k++) at.push(k < n ? zig(k) : [...zig(k), "O"]);
-    for (let k = 0; k < n; k++) bonds.push([k, k + 1, k === n - 1 ? 2 : 1]);
-    return { at, bonds };
-  }
-  function ringOf(aromatic) {
-    const at = [], bonds = [];
-    for (let k = 0; k < 6; k++) at.push([Math.cos((k * Math.PI) / 3), Math.sin((k * Math.PI) / 3)]);
-    for (let k = 0; k < 6; k++) bonds.push([k, (k + 1) % 6, 1]);
-    if (aromatic) for (const k of [0, 2, 4]) bonds.push([k, k + 1, 3]);
-    return { at, bonds };
-  }
-  // (a corner more, bonded to corner `to`)
-  const add = (m, x, y, to, order = 1, label) => {
-    m.at.push(label ? [x, y, label] : [x, y]);
-    m.bonds.push([to, m.at.length - 1, order]);
-    return m.at.length - 1;
-  };
-  // the aldehyde's carbon on a ring's first corner, and its =O
-  const cho = (m) => { const c = add(m, 2, 0, 0); add(m, 2.5, 0.866, c, 2, "O"); return m; };
-  const AIR_LIST = [
-    ["C-12 MNA", () => { const m = chainOf(11); add(m, zig(9)[0], 1.5, 9); return m; }],
-    ["C-11 undecylenic", () => { const m = chainOf(11); m.bonds[0][2] = 2; return m; }],
-    ["Vanillin", () => { const m = cho(ringOf(true)); const o = add(m, -1, 1.732, 2, 1, "O"); add(m, -2, 1.732, o); add(m, -2, 0, 3, 1, "HO"); return m; }],
-    ["Cinnamal", () => { const m = ringOf(true); const a = add(m, 2, 0, 0); const b = add(m, 2.5, 0.866, a, 2); const c = add(m, 3.5, 0.866, b); add(m, 4, 0, c, 2, "O"); return m; }],
-    ["C-10 decanal", () => chainOf(10)],
-    ["Citral", () => { const m = chainOf(8); m.bonds[1][2] = 2; m.bonds[5][2] = 2; add(m, zig(1)[0], 1.5, 1); add(m, zig(5)[0], 1.5, 5); return m; }],
-    ["Benzaldehyde", () => cho(ringOf(true))],
-    ["Hydroxycitronellal", () => { const m = chainOf(8); add(m, zig(1)[0], 1.5, 1, 1, "OH"); add(m, 0, 1, 1); add(m, zig(5)[0], 1.5, 5); return m; }],
-    ["C-12 lauric", () => chainOf(12)],
-    ["Anisaldehyde", () => { const m = cho(ringOf(true)); const o = add(m, -2, 0, 3, 1, "O"); add(m, -2.5, 0.866, o); return m; }],
-    ["Melonal", () => { const m = chainOf(7); m.bonds[1][2] = 2; add(m, zig(1)[0], 1.5, 1); add(m, zig(5)[0], 1.5, 5); return m; }],
-    ["Safranal", () => { const m = cho(ringOf(false)); m.bonds.push([0, 1, 3], [2, 3, 3]); add(m, 1, 1.732, 1); add(m, 0.5, -1.866, 5); add(m, 1.366, -1.366, 5); return m; }],
-    ["Phenylacetaldehyde", () => { const m = ringOf(true); const a = add(m, 2, 0, 0); const b = add(m, 2.5, 0.866, a); add(m, 3.5, 0.866, b, 2, "O"); return m; }],
-    ["Cuminaldehyde", () => { const m = cho(ringOf(true)); const c = add(m, -2, 0, 3); add(m, -2.5, 0.866, c); add(m, -2.5, -0.866, c); return m; }],
-    ["C-9 nonanal", () => chainOf(9)],
-    ["C-8 octanal", () => chainOf(8)],
-  ];
-  const AIR_INKS = { bond: "rgb(226,220,210)", pi: "rgb(224,178,82)", lone: "rgb(169,138,216)", letter: "rgb(236,232,226)" };
-  // Drawn by the aldehyde's own renderer, over it, in a scene of their own
-  // measured in the window's pixels (y down): each a flat picture made once
-  // and only moved and turned as it is drawn — no picture of the whole
-  // window over the drawing (one, laid down every frame, had the last stage
-  // drawing at half the frames of the rest, measured).
-  const airScene = new THREE.Scene();
-  const airCam = new THREE.OrthographicCamera(0, 1, 0, 1, -10, 10);
-  const airPlane = new THREE.PlaneGeometry(1, 1);
-  let airPlaced = [], airRatio = 1;
-  const glyphs = {};
-  function texture(canvas) {
-    const t = new THREE.CanvasTexture(canvas);
-    t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter; t.generateMipmaps = false;
-    return t;
-  }
-  // a picture as a flat thing in that scene, w by h pixels
-  function plate(map, w, h) {
-    const mesh = new THREE.Mesh(airPlane, new THREE.MeshBasicMaterial({
-      map, transparent: true, opacity: 0, depthTest: false, depthWrite: false,
-      side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
-    }));
-    mesh.scale.set(w, -h, 1);   // (y down: the picture the right way up)
-    mesh.frustumCulled = false;
-    mesh.visible = false;
-    airScene.add(mesh);
-    return mesh;
-  }
-  // a letter — an O, an H — upright, as the formula's are set
-  function glyph(text, size) {
-    const key = text + "|" + size.toFixed(1) + "|" + airRatio;
-    if (glyphs[key]) return glyphs[key];
-    const c = document.createElement("canvas"), g = c.getContext("2d");
-    const font = size.toFixed(1) + "px Arial, 'Liberation Sans', Helvetica, sans-serif";
-    g.font = font;
-    const w = Math.ceil(g.measureText(text).width) + 2, h = Math.ceil(size * 1.3);
-    c.width = Math.ceil(w * airRatio); c.height = Math.ceil(h * airRatio);
-    g.scale(airRatio, airRatio);
-    g.font = font; g.textAlign = "center"; g.textBaseline = "middle"; g.fillStyle = AIR_INKS.letter;
-    g.fillText(text, w / 2, h / 2 + size * 0.04);
-    return (glyphs[key] = { map: texture(c), w, h });
-  }
-
-  // One molecule drawn once, in specks, into a picture of its own: its
-  // bonds as fine lines of specks (the double bond to an O in gold, with a
-  // little gold cloud along it; a ring's inner lines), and a faint violet
-  // haze round each O for its lone pair. The letters are drawn upright as
-  // it is laid down, not here. Its middle is the picture's middle.
-  function airSprite(m, L) {
-    const xs = m.at.map((a) => a[0]), ys = m.at.map((a) => a[1]);
-    const pad = 0.7;
-    const minX = Math.min(...xs) - pad, maxX = Math.max(...xs) + pad;
-    const minY = Math.min(...ys) - pad, maxY = Math.max(...ys) + pad;
-    const w = (maxX - minX) * L, h = (maxY - minY) * L;
-    const c = document.createElement("canvas");
-    c.width = Math.max(1, Math.ceil(w * airRatio)); c.height = Math.max(1, Math.ceil(h * airRatio));
-    const g = c.getContext("2d");
-    g.scale(airRatio, airRatio);
-    const P = (a) => [(a[0] - minX) * L, (maxY - a[1]) * L];
-    const strand = (x0, y0, x1, y1, ink) => {
-      const len = Math.hypot(x1 - x0, y1 - y0), n = Math.max(2, Math.round(len / 0.95));
-      const nx = -(y1 - y0) / len, ny = (x1 - x0) / len;
-      g.fillStyle = ink;
-      for (let i = 0; i <= n; i++) {
-        const t = i / n, j = (rand() - 0.5) * 0.5;
-        g.globalAlpha = 0.45 + 0.5 * rand();
-        g.beginPath();
-        g.arc(x0 + (x1 - x0) * t + nx * j, y0 + (y1 - y0) * t + ny * j, 0.5 + 0.25 * rand(), 0, 6.283);
-        g.fill();
-      }
-    };
-    const cloud = (x, y, n, sx, sy, ink, alpha) => {
-      g.fillStyle = ink;
-      for (let i = 0; i < n; i++) {
-        g.globalAlpha = alpha * (0.4 + 0.6 * rand());
-        g.beginPath();
-        g.arc(x + gauss() * sx, y + gauss() * sy, 0.45 + 0.3 * rand(), 0, 6.283);
-        g.fill();
-      }
-    };
-    const SHORT = 0.36 * L;                 // a bond stops short of a letter
-    const cx = m.at.slice(0, 6).reduce((s, a) => s + a[0], 0) / 6;   // (a ring's middle, for its inner lines)
-    const cy = m.at.slice(0, 6).reduce((s, a) => s + a[1], 0) / 6;
-    for (const [i, j, order] of m.bonds) {
-      let [x0, y0] = P(m.at[i]), [x1, y1] = P(m.at[j]);
-      const len = Math.hypot(x1 - x0, y1 - y0), ux = (x1 - x0) / len, uy = (y1 - y0) / len;
-      if (m.at[i][2]) { x0 += ux * SHORT; y0 += uy * SHORT; }
-      if (m.at[j][2]) { x1 -= ux * SHORT; y1 -= uy * SHORT; }
-      const nx = -uy, ny = ux;
-      if (order === 3) {
-        // a ring's double bond: an inner line, shorter, towards its middle
-        const [mx, my] = P([cx, cy]);
-        const side = Math.sign((mx - x0) * nx + (my - y0) * ny) || 1, off = 0.2 * L * side, cut = 0.17 * len;
-        strand(x0 + ux * cut + nx * off, y0 + uy * cut + ny * off, x1 - ux * cut + nx * off, y1 - uy * cut + ny * off, AIR_INKS.bond);
-      } else if (order === 2) {
-        const toO = m.at[i][2] === "O" || m.at[j][2] === "O";
-        const ink = toO ? AIR_INKS.pi : AIR_INKS.bond, off = 0.1 * L;
-        strand(x0 + nx * off, y0 + ny * off, x1 + nx * off, y1 + ny * off, ink);
-        strand(x0 - nx * off, y0 - ny * off, x1 - nx * off, y1 - ny * off, ink);
-        if (toO) cloud((x0 + x1) / 2, (y0 + y1) / 2, 34, 0.28 * L, 0.28 * L, AIR_INKS.pi, 0.45);
-      } else strand(x0, y0, x1, y1, AIR_INKS.bond);
-    }
-    // the lone pairs: a faint violet haze round every O
-    for (const a of m.at) if (a[2]) { const [x, y] = P(a); cloud(x, y, 46, 0.36 * L, 0.36 * L, AIR_INKS.lone, 0.38); }
-    g.globalAlpha = 1;
-    // where its middle is, and its letters, from the picture's middle
-    const ox = (minX + maxX) / 2, oy = (minY + maxY) / 2;
-    const letters = m.at.filter((a) => a[2]).map((a) => ({ x: (a[0] - ox) * L, y: -(a[1] - oy) * L, text: a[2],
-      // a hydrogen's side: away from the corner it hangs off
-      side: a[2].length > 1 ? (a[2][0] === "H" ? -1 : 1) : 0 }));
-    return { canvas: c, w, h, letters, pad: pad * L };
-  }
-  // its name, small, in the site's readings face
-  function airLabel(text, size) {
-    const c = document.createElement("canvas");
-    const g = c.getContext("2d");
-    const font = "500 " + size + "px 'IBM Plex Mono', ui-monospace, Menlo, monospace";
-    const word = text.toUpperCase();
-    // (spaced as the site's readings are, where the browser can)
-    const spaced = (gc) => { gc.font = font; if ("letterSpacing" in gc) gc.letterSpacing = (size * 0.1).toFixed(2) + "px"; };
-    spaced(g);
-    const w = Math.ceil(g.measureText(word).width) + 2, h = Math.ceil(size * 1.5);
-    c.width = Math.ceil(w * airRatio); c.height = Math.ceil(h * airRatio);
-    g.scale(airRatio, airRatio);
-    spaced(g);
-    g.textBaseline = "middle";
-    g.fillStyle = "rgb(214,208,200)";
-    g.fillText(word, 1, h / 2);
-    return { canvas: c, w, h };
-  }
-
-  // LAYING THEM IN THE GAPS: each, in turn, given AIR_TRIES places and
-  // turns at random, and put at the one furthest from everything already
-  // there that keeps clear of the window's edges, the Menu, the names (and
-  // their aldehyde groups), the formula and its cloud, and the others; one
-  // that finds nowhere is left out. The same places every time for one size
-  // of window.
-  function layAir(formHalf) {
-    airRatio = renderer.getPixelRatio();
-    airCam.right = W; airCam.bottom = H; airCam.updateProjectionMatrix();
-    // (what was laid before, taken away)
-    for (const m of airPlaced) for (const mesh of m.meshes) { airScene.remove(mesh); mesh.material.dispose(); if (mesh.userData.own) mesh.material.map.dispose(); }
-    airPlaced = [];
-    seed = 37;
-    const L0 = Math.max(AIR_BOND[1], Math.min(AIR_BOND[2], W * AIR_BOND[0])) * (phone() ? 0.86 : 1);
-    const labelSize = phone() ? 8 : 9;
-    const keep = AIR_KEEP;
-    const blocks = nameBoxes.map((b) => ({ l: b.l - keep.name, r: b.r + keep.name, t: b.t - keep.name, b: b.b + keep.name }));
-    const menu = document.querySelector(".menu-trigger");
-    if (menu) {
-      const r = menu.getBoundingClientRect(), box = wrap.getBoundingClientRect();
-      blocks.push({ l: r.left - box.left - 20, r: r.right - box.left + 30, t: r.top - box.top - 20, b: r.bottom - box.top + 24 });
-    }
-    const ex = { x: W / 2, y: H / 2, rx: formHalf * keep.formula, ry: formHalf * 1.06 * keep.formula };
-    const inFormula = (x, y) => ((x - ex.x) / ex.rx) ** 2 + ((y - ex.y) / ex.ry) ** 2 < 1;
-    const overlaps = (a, b) => a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b;
-    for (const [name, make] of AIR_LIST) {
-      const m = make();
-      const depth = AIR_DEPTH[0] + rand() * (AIR_DEPTH[1] - AIR_DEPTH[0]);
-      const sprite = airSprite(m, L0 * depth);
-      const label = airLabel(name, labelSize);
-      let best = null, bestScore = -1;
-      for (let t = 0; t < AIR_TRIES; t++) {
-        const turn = (rand() - 0.5) * 0.9;
-        const x = keep.edge + rand() * (W - 2 * keep.edge), y = keep.edge + rand() * (H - 2 * keep.edge);
-        const c = Math.abs(Math.cos(turn)), s = Math.abs(Math.sin(turn));
-        const bw = sprite.w * c + sprite.h * s, bh = sprite.w * s + sprite.h * c;
-        const half = Math.max(bw, label.w) / 2;
-        const box = { l: x - half, r: x + half, t: y - bh / 2, b: y + bh / 2 - 0.4 * sprite.pad + label.h };
-        if (box.l < keep.edge || box.t < keep.edge || box.r > W - keep.edge || box.b > H - keep.edge) continue;
-        if (blocks.some((b) => overlaps(box, b))) continue;
-        if (airPlaced.some((p) => overlaps(box, { l: p.box.l - keep.apart, r: p.box.r + keep.apart, t: p.box.t - keep.apart, b: p.box.b + keep.apart }))) continue;
-        // clear of the formula's cloud: round the box's edge, and its middle
-        let clear = !inFormula(x, y);
-        for (let k = 0; clear && k <= 12; k++) {
-          const f = k / 12;
-          clear = !inFormula(box.l + (box.r - box.l) * f, box.t) && !inFormula(box.l + (box.r - box.l) * f, box.b) &&
-            !inFormula(box.l, box.t + (box.b - box.t) * f) && !inFormula(box.r, box.t + (box.b - box.t) * f);
-        }
-        if (!clear) continue;
-        // as far as it can be from the others and the names
-        let score = 1e9;
-        for (const p of airPlaced) score = Math.min(score, Math.hypot(p.x - x, p.y - y));
-        for (const b of blocks) score = Math.min(score, Math.hypot((b.l + b.r) / 2 - x, (b.t + b.b) / 2 - y) * 1.3);
-        // (and from the window's edges, as if they were others: in the
-        // gaps, not lined up along the edges)
-        score = Math.min(score, 2.4 * Math.min(x, W - x, y, H - y));
-        if (score > bestScore) { bestScore = score; best = { x, y, turn, box, bh, under: bh / 2 - 0.4 * sprite.pad }; }
-      }
-      if (!best) continue;
-      // its plates: the molecule, its name, and its letters (shared)
-      const body = plate(texture(sprite.canvas), sprite.w, sprite.h);
-      const tag = plate(texture(label.canvas), label.w, label.h);
-      body.userData.own = tag.userData.own = true;
-      const size = Math.round(0.62 * L0 * depth * 2) / 2;
-      const letters = sprite.letters.map((l) => ({ l, o: glyph("O", size), h: l.side ? glyph("H", size) : null }));
-      const marks = letters.flatMap((x) => [x.o, x.h].filter(Boolean).map((gl) => plate(gl.map, gl.w, gl.h)));
-      airPlaced.push({
-        name, sprite, label, ...best, body, tag, letters, marks, size,
-        meshes: [body, tag, ...marks],
-        ink: 0.62 + 0.38 * depth,
-        // its own moment as the stage comes, and its own drift and turn
-        at: Math.min(0.6, airPlaced.length * 0.045 + rand() * 0.12),
-        phase: [rand() * 6.283, rand() * 6.283, rand() * 6.283],
-      });
-    }
-    // (for the tests: how many found a place, and where, on the drawing)
-    wrap.dataset.aldehydes = String(airPlaced.length);
-    wrap.aldehydes = airPlaced.map((p) => ({ name: p.name, x: p.x, y: p.y, box: p.box }));
-  }
-
-  // Every frame the last stage is there: each drifting a few pixels about
-  // its place and turning a little, coming up at its own moment and from a
-  // little further out, a little drawn to the hand and brightened by it; its
-  // letters upright; its name under it. Drawn over the aldehyde by the same
-  // renderer.
-  function drawAir(t, down, hx, hy, pull) {
-    if (!airPlaced.length) return;
-    for (const m of airPlaced) {
-      const show = down <= 0 ? 0 : REDUCE ? down : smooth((down - m.at) / 0.4);
-      for (const mesh of m.meshes) mesh.visible = show > 0;
-      if (show <= 0) continue;
-      const [p0, p1, p2] = m.phase;
-      let x = m.x + (REDUCE ? 0 : Math.sin(t * 0.11 + p0) * 5);
-      let y = m.y + (REDUCE ? 0 : Math.cos(t * 0.09 + p1) * 4);
-      // from a little further out, as it comes
-      x = W / 2 + (x - W / 2) * (1 + 0.06 * (1 - show));
-      y = H / 2 + (y - H / 2) * (1 + 0.06 * (1 - show));
-      const turn = m.turn + (REDUCE ? 0 : Math.sin(t * 0.07 + p2) * 0.06);
-      // the hand
-      let near = 0;
-      if (pull > 0) {
-        const dx = hx - x, dy = hy - y;
-        near = Math.exp(-(dx * dx + dy * dy) / (200 * 200)) * pull;
-        x += dx * 0.05 * near; y += dy * 0.05 * near;
-      }
-      const a = Math.min(1, AIR_INK * m.ink * show * (1 + 0.45 * near));
-      const cs = Math.cos(turn), sn = Math.sin(turn);
-      m.body.position.set(x, y, 0);
-      m.body.rotation.z = turn;
-      m.body.material.opacity = a;
-      // its letters, upright, where they stand once it is turned
-      let k = 0;
-      for (const { l, h } of m.letters) {
-        const lx = x + l.x * cs - l.y * sn, ly = y + l.x * sn + l.y * cs;
-        const o = m.marks[k++];
-        o.position.set(lx, ly, 0);
-        o.material.opacity = a;
-        // (an H beside its O)
-        if (h) { const hm = m.marks[k++]; hm.position.set(lx + l.side * m.size * 0.74, ly, 0); hm.material.opacity = a; }
-      }
-      // its name, under it
-      m.tag.position.set(x, y + m.under + m.label.h / 2, 0);
-      m.tag.material.opacity = a * 0.7;
-    }
-    if (down <= 0) return;
-    renderer.autoClear = false;
-    renderer.render(airScene, airCam);
-    renderer.autoClear = true;
-  }
 
   // ---- framing -------------------------------------------------------------
   // In the middle of the window, as large as the private page draws it; and,
@@ -1099,7 +893,7 @@
     }
     bonds.material.uniforms.uSize.value = (small ? 1.8 : 2.2) * scale;
     // the sillage leaves the edge of the formula's cloud and goes out past
-    // the window's corners; the aldehydes stand in the gaps it leaves
+    // the window's corners
     const formHalf = FORM_EXTENT * pxForm;
     const su = sillMat.uniforms;
     su.uSize.value = (small ? 1.7 : 1.9) * scale;
@@ -1107,9 +901,10 @@
     su.uMid.value.set(W / 2, H / 2);
     su.uFrom.value = formHalf * SILL_FROM;
     su.uReach.value = (Math.hypot(W, H) / 2) * SILL_REACH;
-    if (formula && links.length === 8) layAir(formHalf);
     hazeMat.uniforms.uSize.value = (small ? 1.4 : 1.6) * scale;    // small (it was 2.2 and 2.6)
     hazeMat.uniforms.uRes.value.set(W, H);
+    orbitMat.uniforms.uRes.value.set(W, H);
+    orbitMat.uniforms.uSize.value = 1.8 * scale;
     hazeMat.uniforms.uSwirl.value = small ? LINE_SWIRL * 0.8 : LINE_SWIRL;
     names.forEach((n) => { n.el.style.fontSize = (ATOM_SIZE * pxForm).toFixed(1) + "px"; });
     drewAt = -1;
@@ -1119,13 +914,12 @@
   // LAYING THE ROOM: where the formula's room is between the names — the
   // grid's middle column (style.css), or, on a narrow window (the BAND, the
   // names above and below the formula), between the rows — and where each
-  // name stands, for its backdrop and for the aldehydes in the gaps to keep
-  // clear of; and the sillage's specks, made again only when the window's
+  // name stands, for its backdrop and the orbit's quiet under it; and the
+  // orbit (`layOrbit`); and the sillage's specks, made again only when the window's
   // size changes. Returns the room the formula has between the names.
   const PALE = [0.86, 0.84, 0.8];
   const gauss = () => Math.sqrt(-2 * Math.log(1 - rand() * 0.999)) * Math.cos(2 * Math.PI * rand());
   let laidFor = "";
-  let nameBoxes = [];
   function layRoom() {
     if (!formula || links.length !== 8) return null;
     const menu = links[0].parentNode;
@@ -1149,6 +943,7 @@
       hu.uHalfH.value[k] = Math.max(6, r.height / 2 - padY);
     });
     layHaze();
+    layOrbit(cs, box);
     let halfW, halfH;
     if (band) {
       const top = Math.max(...[0, 1, 4, 5].map((i) => rects[i].bottom)) - box.top;
@@ -1160,19 +955,6 @@
       halfW = ((right - left) / 2) * 0.78;
       halfH = H / 2 - 64;
     }
-    // what the aldehydes in the gaps keep clear of: each name, and its
-    // aldehyde group (landing.js), on the drawing
-    nameBoxes = links.map((a, k) => {
-      const r = rects[k];
-      const b = { l: r.left - box.left, t: r.top - box.top, r: r.right - box.left, b: r.bottom - box.top };
-      const tail = a.querySelector(".formula-tail");
-      const tr = tail && getComputedStyle(tail).display !== "none" ? tail.getBoundingClientRect() : null;
-      if (tr && tr.width) {
-        b.l = Math.min(b.l, tr.left - box.left); b.r = Math.max(b.r, tr.right - box.left);
-        b.t = Math.min(b.t, tr.top - box.top); b.b = Math.max(b.b, tr.bottom - box.top);
-      }
-      return b;
-    });
     // the sillage's specks, made again only when the window's size changes
     const n = Math.round(W * H * SILL_DENSITY * (phone() ? 0.6 : 1) * (soft ? 0.15 : 1));
     const key = String(n);
@@ -1198,6 +980,58 @@
       sillGeo.setDrawRange(0, n);
     }
     return { halfW, halfH };
+  }
+
+  // THE ORBIT, laid where landing.js says it stands (on a wide window only),
+  // its specks made again only when its length changes.
+  function layOrbit(cs, box) {
+    const menu = links[0].parentNode;
+    orbitOn = !band && menu.classList.contains("orbit-laid");
+    if (!orbitOn) return;
+    const px = (name) => parseFloat(cs.getPropertyValue(name)) || 0;
+    const ou = orbitMat.uniforms;
+    const m = menu.getBoundingClientRect();
+    ou.uMid.value.set(m.left - box.left + px("--orbit-cx"), m.top - box.top + px("--orbit-cy"));
+    ou.uRx.value = Math.max(1, px("--orbit-rx"));
+    ou.uRy.value = Math.max(1, px("--orbit-ry"));
+    ou.uTilt.value = px("--orbit-tilt");
+    links.forEach((a, k) => { ou.uAng.value[k] = parseFloat(getComputedStyle(a).getPropertyValue("--oa")) || 0; });
+    // (the ring's length, near enough)
+    const rx = ou.uRx.value, ry = ou.uRy.value;
+    const length = Math.PI * (3 * (rx + ry) - Math.sqrt((3 * rx + ry) * (rx + 3 * ry)));
+    const ring = Math.round(length * ORBIT_DENSITY * (soft ? 0.3 : 1));
+    const per = Math.round(ELECTRON[0] * (soft ? 0.5 : 1));
+    const key = ring + "|" + per;
+    if (key === orbitLaid) return;
+    orbitLaid = key;
+    seed = 41;
+    const n = ring + per * 8;
+    const ob = new Float32Array(n * 4), off = new Float32Array(n), tone = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+      const who = i < ring ? -1 : Math.floor((i - ring) / per);
+      ob[i * 4] = who;
+      if (who < 0) {
+        ob[i * 4 + 1] = rand();
+        ob[i * 4 + 2] = (ORBIT_TURN[0] + rand() * (ORBIT_TURN[1] - ORBIT_TURN[0])) * (rand() < ORBIT_BACK ? -1 : 1);
+        // most on the ring, a few a little off it
+        off[i] = rand() < 0.8 ? gauss() * ORBIT_OFF[0] * 0.6 : gauss() * ORBIT_OFF[1] * 0.6;
+      } else {
+        ob[i * 4 + 1] = gauss() * ELECTRON[1] * 0.6;
+        off[i] = gauss() * 1.1;
+      }
+      ob[i * 4 + 3] = rand();
+      let x = rand(), c = PALE;
+      if (who >= 0) c = x < 0.65 ? COLOUR.pi : x < 0.85 ? COLOUR.lone : PALE;
+      else for (const [share, name] of ORBIT_TONES) { if (x < share) { c = COLOUR[name]; break; } x -= share; }
+      const ink = who >= 0 ? 0.8 + 0.3 * rand() : 0.35 + 0.65 * rand();
+      tone[i * 3] = c[0] * ink; tone[i * 3 + 1] = c[1] * ink; tone[i * 3 + 2] = c[2] * ink;
+    }
+    orbitGeo.dispose();
+    orbitGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+    orbitGeo.setAttribute("aOrb", new THREE.BufferAttribute(ob, 4));
+    orbitGeo.setAttribute("aOff", new THREE.BufferAttribute(off, 1));
+    orbitGeo.setAttribute("aTone", new THREE.BufferAttribute(tone, 3));
+    orbitGeo.setDrawRange(0, n);
   }
 
   // The specks of every name's backdrop, made once (a name's shape is in
@@ -1373,6 +1207,17 @@
       // the scent reaching out into the room as the last stage comes
       m.uOut.value = m.uFrom.value + (m.uReach.value + 120 - m.uFrom.value) * (REDUCE ? down : smooth(down * 1.1));
     }
+    orbit.visible = orbitOn && orbitLaid !== "" && down > 0;
+    if (orbit.visible) {
+      const m = orbitMat.uniforms;
+      m.uTime.value = t;
+      m.uDraw.value = down;
+      // traced round from the top as the last stage comes
+      m.uReveal.value = REDUCE ? 1.2 : smooth(down * 1.15) * 1.12;
+      m.uPull.value = pull;
+      m.uHandPx.value.set(eased.x - box.left, eased.y - box.top);
+      for (let k = 0; k < 8; k++) m.uHeat.value[k] = heat[k];
+    }
     haze.visible = hazeLaid && down > 0 && heat.some((h) => h > 0.002);
     if (haze.visible) {
       const m = hazeMat.uniforms;
@@ -1383,7 +1228,6 @@
     }
 
     renderer.render(scene, camera);
-    drawAir(t, down, eased.x - box.left, eased.y - box.top, pull);
 
     // Where it is, said on the drawing for anything that wants to know (the
     // tests): cloud (the first two stages), turning, turned, forming,

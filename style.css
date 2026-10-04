@@ -910,11 +910,13 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
    THE FORMULA (2026-09-30) — stages 3 to 5 of the home page's stage
    ==================================================================
    The aldehyde turns upright and its formula is drawn in it (molecule.js);
-   then, as the last stage, its scent spreads into the room — its SILLAGE —
-   with the aldehydes of perfumery in the gaps (molecule.js; for a day a
-   light drift of specks, ADAR's dust, fell either side instead), and the
-   Menu's eight pages stand in it, four each side, each the R of an
-   aldehyde (EVERY PAGE AN ALDEHYDE, below) — SCATTERED A LITTLE
+   then, as the last stage, its scent spreads into the room — its SILLAGE
+   (molecule.js; for a day a light drift of specks, ADAR's dust, fell either
+   side instead) — and, since 2026-10-04, the Menu's eight pages stand on
+   AN ORBIT round it, each beside its electron (THE ORBIT, below; for a day
+   each was the R of an aldehyde, with the aldehydes of perfumery drawn in
+   the gaps, and both are gone). Before the orbit they stood four each side,
+   SCATTERED A LITTLE
    (2026-10-03: "the space on the left and right is occupied by the 8
    categories being shown, i want them to be slightly haphazardly
    arranged"): each a share of its column further out (`--k`) and a share of
@@ -998,43 +1000,23 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
   outline: none;
 }
 .aldehyde-stage:not(.names-here) .formula-link { pointer-events: none; }
-/* EVERY PAGE AN ALDEHYDE (2026-10-03, last: "rework the words ... make it
-   all thematic"): each name the R of an aldehyde, R–CHO — after its last
-   letter, towards the formula, a short zig-zag of bonds and the C=O (drawn
-   by landing.js from the name's `data-chain`), as a chemistry book draws a
-   chain. In the name's own white, the double bond in the aldehyde's gold
-   and the O in the lone pair's violet; quiet with the name, and lit with it
-   — the gold brighter and a haze of violet coming up round the O. */
-.formula-link { position: relative; }
-.formula-tail {
+/* THE ORBIT (2026-10-04: "remove the chemicals and redesign it again"): on
+   a wide window each name stands beside its electron on the orbit round the
+   aldehyde (molecule.js draws the ring; landing.js says where each electron
+   is, `--ox`, `--oy`) — written away from the aldehyde, its letters 14px
+   off the electron: the first four to its left, the next four to its right,
+   level with it. Without the script the names stand in the grid as before;
+   on a narrow window, two by two as before. */
+.formula-menu.orbit-laid .formula-link {
   position: absolute;
-  overflow: visible;
-  pointer-events: none;
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  left: var(--ox);
+  top: var(--oy);
+  grid-column: auto;
+  grid-row: auto;
+  margin: 0;
+  transform: translate(calc(-100% + 8px), -50%);
 }
-.formula-link:nth-child(-n+4) .formula-tail { left: calc(100% - 22px + 0.24em); }
-.formula-link:nth-child(n+5) .formula-tail { right: calc(100% - 22px + 0.24em); transform: scaleX(-1); }
-.formula-tail .ft-bond { stroke: currentColor; stroke-width: 5.5; }
-.formula-tail .ft-pi { stroke: #d9ad54; stroke-width: 5.5; transition: stroke 0.9s ease; }
-.formula-tail .ft-o { stroke: #d6c6f2; stroke-width: 7.5; transition: stroke 0.9s ease; }
-.formula-tail .ft-lone {
-  fill: rgba(169, 138, 216, 0.55);
-  stroke: none;
-  opacity: 0.25;
-  filter: blur(6px);
-  transition: opacity 0.9s ease;
-}
-.formula-link:hover .ft-pi,
-.formula-link:focus-visible .ft-pi,
-.formula-link.is-lit .ft-pi { stroke: #f0c76e; }
-.formula-link:hover .ft-o,
-.formula-link:focus-visible .ft-o,
-.formula-link.is-lit .ft-o { stroke: #ece2ff; }
-.formula-link:hover .ft-lone,
-.formula-link:focus-visible .ft-lone,
-.formula-link.is-lit .ft-lone { opacity: 1; }
+.formula-menu.orbit-laid .formula-link:nth-child(n+5) { transform: translate(-8px, -50%); }
 /* held back until landing.js has placed them (index.html's head, 2026-10-03) */
 html.stage-coming .formula-link { opacity: 0; }
 /* a long name's second line ("feel free to put Reseach and eplorations as
@@ -1091,8 +1073,6 @@ html.stage-coming .formula-link { opacity: 0; }
     white-space: normal;
     padding: 8px 10px;
   }
-  /* no aldehyde group here: the names stand two by two across a narrow channel */
-  .formula-tail { display: none; }
   .formula-link:nth-child(-n+4) { margin-right: calc(var(--line-inset) - 10px); }
   .formula-link:nth-child(n+5) { margin-left: calc(var(--line-inset) - 10px); }
   .formula-link:nth-child(4n+3) { grid-row: 4; }

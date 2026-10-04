@@ -14,17 +14,17 @@
 //   2  the same, the title gone
 //   3  the aldehyde turned upright
 //   4  the same, its formula drawn in it
-//   5  the Menu's eight pages — each the R of an aldehyde, R–CHO (EVERY
-//      PAGE AN ALDEHYDE, below) — in the aldehyde's sillage, the aldehydes
-//      of perfumery in the gaps (molecule.js)
+//   5  the Menu's eight pages, on an orbit round the aldehyde (THE ORBIT,
+//      below), in its sillage (molecule.js)
 //
-// ONE SCROLL, ALL THE WAY (2026-10-03, later: "make the scrolling automatic
-// as in when you scroll once, it will go all the way down, not it will
-// scroll by itself after a second or so"): the page stands at the title
-// until it is scrolled, and then one scroll — a wheel, a finger, a key, the
-// Scroll button — plays it through the five stages to the names, on the
-// glide below, resting at each; scrolled up, all the way back (below). It
-// played itself once the title had been read, for a day.
+// ONE SCROLL, ONE GLIDE, ALL THE WAY (2026-10-04: "a continuous auto scroll
+// upon detecting a scrolling motion from the user that will smoothly in the
+// span of about 4 seconds go all the way to the bottom"): the page stands at
+// the title until it is scrolled, and then one scroll — a wheel, a finger, a
+// key, the Scroll button — carries it to the names in one continuous,
+// gradual movement of about four seconds; scrolled up, all the way back
+// (below). It played itself once the title had been read for a day, and
+// then went a stage at a time, resting at each, for another.
 //
 // The page GLIDES down the stage (THE GLIDE, below): it follows where it is
 // going on a spring, so every move is one gradual movement rather than a
@@ -268,59 +268,66 @@
   place();
 
   // ============================================================
-  // EVERY PAGE AN ALDEHYDE (2026-10-03, last — the owner: "rework the words
-  // and the particles surrounding the main aldehyde molecule ... fill in the
-  // gaps and make it all thematic"). Each of the eight names on the last
-  // stage is the R of an aldehyde, R–CHO, as the Menu's own aldehyde is drawn
-  // (nav.js): after its last letter, towards the formula, a short zig-zag of
-  // bonds — `data-chain` on the name, how many before the aldehyde's carbon,
-  // 1 to 3, so no two sides match — and the C=O, its double bond in the
-  // aldehyde's gold and its O in a haze of the lone pair's violet, as a
-  // chemistry book draws a chain: the carbons the corners, only the O named.
-  // Quiet with its name, and lit with it (style.css, `.formula-tail`). Drawn
-  // in shapes alone, so the name's own words are all the link says. Not on a
-  // narrow window, where the names stand two by two across a narrow channel.
+  // THE ORBIT (2026-10-04 — the owner: "For the menu in the second page, i
+  // dont like it. I want you to remove the chemicals and redesign it again.
+  // KEEP THE MIDDLE ALDEHYDE AS IT IS"). On a wide window the Menu's eight
+  // pages stand on an orbit round the aldehyde — a tilted ring of specks
+  // going slowly round it, as electrons go round a nucleus (molecule.js
+  // draws it) — each page beside an electron of its own on the ring: the
+  // first four down the left, the next four down the right, each name
+  // written away from the aldehyde, never over it. Here: where the ring
+  // stands (`--orbit-*` on the names' nav) and where each electron is
+  // (`--ox`, `--oy`, and its place round the ring, `--oa`, on each name),
+  // which the stylesheet places the names by and the drawing reads. Its
+  // width reaches just past the edges of the aldehyde's room (the grid's
+  // middle column, which frames the aldehyde and is not changed), its
+  // height most of the window's.
+  //
+  // On a narrow window (the band, under 900px) the names stand as they did,
+  // two above and two below the formula each side, and there is no ring:
+  // the aldehyde is framed between those rows there, and it is not to move.
+  // (Until this round: each name the R of an aldehyde, and the aldehydes of
+  // perfumery in the gaps — "remove the chemicals"; none of it is in the
+  // code.)
   // ============================================================
-  const TAIL_BOND = 104, TAIL_PAIR = 8, TAIL_O = [24, 28], TAIL_SHORT = 38;   // in hundredths of the name's em
-  const SVG_NS = "http://www.w3.org/2000/svg";
-  stage.querySelectorAll(".formula-link").forEach((a) => {
-    if (a.querySelector(".formula-tail")) return;
-    const n = Math.max(1, Math.min(3, Math.round(+a.dataset.chain || 1)));
-    // the corners: the name's end, the chain, the aldehyde's carbon, the O —
-    // each bond a sixth of a turn off level, up and down in turn, the =O up
-    const pts = [[0, 0]];
-    for (let i = 0; i <= n; i++) {
-      const [x, y] = pts[pts.length - 1];
-      pts.push([x + TAIL_BOND * 0.866, y + ((n - i) % 2 === 0 ? -0.5 : 0.5) * TAIL_BOND]);
+  const ORBIT_TILT = -0.15;   // radians the ring is turned (it rises to the right)
+  const ORBIT_TALL = 0.43;    // its half-height, of the window's height
+  const ORBIT_PAST = 1.08;    // its half-width, of the aldehyde's room's half-width (beyond its side electrons)
+  // where round the ring each name's electron stands, in degrees (0 the
+  // right, 90 the foot): the left side from the top down, then the right
+  // side from the top down — a little off a mirror, so the two sides differ
+  const ORBIT_AT = [238, 197, 160, 123, 301, 339, 19, 57];
+  const orbitMenu = stage.querySelector(".formula-menu");
+  function layOrbit() {
+    if (!orbitMenu) return;
+    const cs = getComputedStyle(orbitMenu);
+    const names = Array.from(orbitMenu.querySelectorAll(".formula-link"));
+    if (cs.getPropertyValue("--formula-layout").trim() === "band" || names.length !== ORBIT_AT.length) {
+      orbitMenu.classList.remove("orbit-laid");
+      return;
     }
-    const c = pts[n], o = pts[n + 1];
-    const ux = (o[0] - c[0]) / TAIL_BOND, uy = (o[1] - c[1]) / TAIL_BOND;
-    const end = [o[0] - ux * TAIL_SHORT, o[1] - uy * TAIL_SHORT];
-    const pair = (k) => "M" + (c[0] - uy * k).toFixed(1) + " " + (c[1] + ux * k).toFixed(1) +
-      "L" + (end[0] - uy * k).toFixed(1) + " " + (end[1] + ux * k).toFixed(1);
-    const minY = Math.min(...pts.map((p) => p[1])) - TAIL_O[1] - 6, maxY = Math.max(...pts.map((p) => p[1])) + 6;
-    const maxX = o[0] + TAIL_O[0] + 8;
-    const svg = document.createElementNS(SVG_NS, "svg");
-    svg.setAttribute("class", "formula-tail");
-    svg.setAttribute("aria-hidden", "true");
-    svg.setAttribute("focusable", "false");
-    svg.setAttribute("viewBox", "0 " + minY.toFixed(1) + " " + maxX.toFixed(1) + " " + (maxY - minY).toFixed(1));
-    svg.style.width = (maxX / 100).toFixed(3) + "em";
-    svg.style.height = ((maxY - minY) / 100).toFixed(3) + "em";
-    // (the name's end at the middle of its height)
-    svg.style.top = "calc(50% - " + (-minY / 100).toFixed(3) + "em)";
-    const el = (tag, attrs) => {
-      const e = document.createElementNS(SVG_NS, tag);
-      for (const k in attrs) e.setAttribute(k, attrs[k]);
-      svg.appendChild(e);
-      return e;
-    };
-    el("circle", { class: "ft-lone", cx: o[0].toFixed(1), cy: o[1].toFixed(1), r: "42" });
-    el("path", { class: "ft-bond", d: "M" + pts.slice(0, n + 1).map((p) => p[0].toFixed(1) + " " + p[1].toFixed(1)).join("L") });
-    el("path", { class: "ft-pi", d: pair(TAIL_PAIR) + pair(-TAIL_PAIR) });
-    el("ellipse", { class: "ft-o", cx: o[0].toFixed(1), cy: o[1].toFixed(1), rx: TAIL_O[0], ry: TAIL_O[1] });
-    a.appendChild(svg);
-  });
+    const r = orbitMenu.getBoundingClientRect();
+    const W = r.width, H = r.height;
+    const cols = cs.gridTemplateColumns.split(/\s+/).map(parseFloat);
+    const room = (cols[1] || W * 0.54) / 2;
+    const rx = (room * ORBIT_PAST) / Math.cos((19 * Math.PI) / 180), ry = H * ORBIT_TALL;
+    const cx = W / 2, cy = H / 2, c = Math.cos(ORBIT_TILT), s = Math.sin(ORBIT_TILT);
+    orbitMenu.style.setProperty("--orbit-cx", cx.toFixed(1) + "px");
+    orbitMenu.style.setProperty("--orbit-cy", cy.toFixed(1) + "px");
+    orbitMenu.style.setProperty("--orbit-rx", rx.toFixed(1) + "px");
+    orbitMenu.style.setProperty("--orbit-ry", ry.toFixed(1) + "px");
+    orbitMenu.style.setProperty("--orbit-tilt", String(ORBIT_TILT));
+    names.forEach((a, k) => {
+      const t = (ORBIT_AT[k] * Math.PI) / 180;
+      const ex = Math.cos(t) * rx, ey = Math.sin(t) * ry;
+      a.style.setProperty("--ox", (cx + ex * c - ey * s).toFixed(1) + "px");
+      a.style.setProperty("--oy", (cy + ex * s + ey * c).toFixed(1) + "px");
+      a.style.setProperty("--oa", t.toFixed(4));
+    });
+    orbitMenu.classList.add("orbit-laid");
+  }
+  layOrbit();
+  window.addEventListener("resize", layOrbit);
 
   // ============================================================
   // THE GLIDE (2026-09-30, later: "make the scrolling a little smoother
@@ -395,16 +402,20 @@
   }
 
   // ============================================================
-  // ONE SCROLL, ALL THE WAY (2026-10-03, later: "make the scrolling
-  // automatic as in when you scroll once, it will go all the way down, not
-  // it will scroll by itself after a second or so"). The page stands at the
-  // title until it is scrolled — and then ONE scroll, of any kind, plays it
-  // the whole way: on through the five stages, a stage at a time on THE
-  // GLIDE (the very spring it always moved on, so exactly as slowly as it
-  // played itself), resting at each (AUTO_REST: the title gone, the turn
-  // upright — the longest, for the turn to finish on its own spring,
-  // molecule.js — the formula), to the names, where it stops. Scrolled up,
-  // it plays back up to the title the same way.
+  // ONE SCROLL, ONE GLIDE, ALL THE WAY (2026-10-04: "I want it to be a
+  // continuous auto scroll upon detecting a scrolling motion from the user
+  // that will smoothly in the span of about 4 seconds go all the way to the
+  // bottom, it needs to be gradual"). The page stands at the title until it
+  // is scrolled — and then ONE scroll, of any kind, carries it the whole way
+  // in ONE CONTINUOUS MOVEMENT: from where it is to the names (or, scrolled
+  // up, to the title), AUTO_MS from the top to the foot (a shorter way, its
+  // share of that, never under AUTO_LEAST), setting off gently, gathering,
+  // and coming to rest as gently — no stop at any stage. It is a curve laid
+  // from where the page is to where it is going (`curve`), worked out from
+  // the clock: the start and the end at rest, and how fast it was already
+  // going if it is turned round on the way, so a turn round never jolts.
+  // (For one round, 2026-10-03, last, it went a stage at a time on the
+  // glide and rested at each; the owner found it "really bad".)
   //
   // A scroll is a turn of the wheel or a trackpad, a swipe of a finger, a
   // key that moves a page (the arrows, Page Up and Down, Space, Home, End)
@@ -414,8 +425,6 @@
   // tremble is not one) turns the page round from where it is. While the
   // Menu, About me or the way out is open over it, it waits; the page moved
   // by anything else (the scrollbar) and it lets go, where it was put.
-  // Until 2026-10-03, later, it set off by itself once the title had been
-  // read (AUTO_FIRST, 4.2s) and the hand took over from it — gone.
   //
   // Not with motion turned off (the page's own scrolling there, the stages
   // following it at once), nor with the map slides on (their own wheel);
@@ -424,13 +433,14 @@
   // a time — for the tests that hold a stage. `data-auto` on the stage
   // says which: ready, down, up, or off.
   // ============================================================
-  const AUTO_REST = [0, 1600, 2600, 2400];   // ms resting at stages 2, 3 and 4 (index: the stage arrived at), either way
+  const AUTO_MS = 4000;    // ms from the title to the names, the whole way
+  const AUTO_LEAST = 1200; // ms, however short the way
   const PLAY_FROM = 8;     // px of a wheel turned that is a scroll (a trackpad's tremble is not)
   const PLAY_TURN = 40;    // and of a turn the other way, while it plays, that turns it round
   const PLAY_GAP = 420;    // ms without a turn, and the next one is a new scroll
   const SWIPE = 12;        // px a finger moves along the page before it is a swipe
   const playable = !REDUCE_MOTION && !mapOn && !/[?&]auto=off\b/.test(location.search);
-  let playDir = 0, playTo = 0, playSince = 0;
+  let playDir = 0, playFrom = 0, playTo = 0, playV = 0, playMs = 1, playU = 0, playLast = 0, playWrote = -1;
   stage.dataset.auto = playable ? "ready" : "off";
   function stopPlay() {
     if (!playDir) return;
@@ -438,35 +448,50 @@
     phases.delete(playPhase);
     stage.dataset.auto = "ready";
   }
-  // The next stage on, from where the page is (not where it was going: a
-  // turn round goes back from the very place it is).
-  function nextFrom(dir) {
-    const at = Math.max(0, Math.min(LAST, stageOf(container.scrollTop - stageTop())));
-    return dir > 0 ? Math.floor(at + 0.02) + 1 : Math.ceil(at - 0.02) - 1;
+  // THE CURVE: from `playFrom` (going at `playV` pixels a second) to
+  // `playTo` (at rest) over `playMs`, at u of the way through it (0 to 1) —
+  // a quintic, so it sets off and comes to rest with no jerk at either end.
+  // Returns where the page is, and how fast it is going (pixels a second).
+  function curve(u) {
+    const d = playMs / 1000, u2 = u * u, u3 = u2 * u;
+    const reach = u3 * (10 - 15 * u + 6 * u2);           // from rest to rest
+    const carry = u - 6 * u3 + 8 * u3 * u - 3 * u3 * u2;  // what it was already going at
+    const dReach = 30 * u2 * (1 - u) * (1 - u);
+    const dCarry = 1 - 18 * u2 + 32 * u3 - 15 * u3 * u;
+    return {
+      at: playFrom + (playTo - playFrom) * reach + d * playV * carry,
+      v: ((playTo - playFrom) * dReach + d * playV * dCarry) / d,
+    };
   }
   // Set it going, one way: true if the scroll was taken (it always is, on
   // the stage: one already on its way that way is the same scroll).
   function play(dir) {
     if (!playable || !dir) return false;
     if (playDir === dir) return true;
-    const next = nextFrom(dir);
-    if (next < 0 || next > LAST) { stopPlay(); return true; }   // at the end it goes: nowhere further
-    playDir = dir;
-    playTo = next;
-    playSince = performance.now();
+    const most = glideMost(), at = container.scrollTop;
+    const to = dir > 0 ? most : 0;
+    if (Math.abs(to - at) < 1) { stopPlay(); return true; }   // already there: nowhere further
+    // (turned round on the way: from how fast it is going)
+    const v = playDir ? curve(playU).v : 0;
+    stopGlide();
+    playDir = dir; playFrom = at; playTo = to; playV = v;
+    playMs = Math.max(AUTO_LEAST, AUTO_MS * Math.abs(to - at) / Math.max(1, most));
+    playU = 0; playLast = 0; playWrote = at;
     stage.dataset.auto = dir > 0 ? "down" : "up";
-    toStage(next);
     phases.add(playPhase);
     return true;
   }
   function playPhase(now) {
-    // (waiting behind anything open over the page, and while it glides)
-    if (overlayOpen() || document.hidden || gliding) { playSince = now; return; }
-    if (playTo <= 0 || playTo >= LAST) { stopPlay(); return; }   // there
-    if (now - playSince < (AUTO_REST[playTo] || 0)) return;
-    playTo += playDir;
-    toStage(playTo);
-    playSince = now;
+    // (the clock's own time, so it takes its four seconds on a slow machine
+    // too — only a stall of more than a quarter of a second not counted)
+    const dt = playLast ? Math.min(250, now - playLast) : 0;
+    playLast = now;
+    // (waiting behind anything open over the page, or a hidden tab)
+    if (overlayOpen() || document.hidden) return;
+    playU = Math.min(1, playU + dt / playMs);
+    container.scrollTop = Math.max(0, Math.min(glideMost(), curve(playU).at));
+    playWrote = container.scrollTop;
+    if (playU >= 1) stopPlay();
   }
   // A wheel or a trackpad: its deltas gathered into one scroll — a new one
   // after PLAY_GAP without any.
@@ -495,9 +520,9 @@
   }, { passive: false });
   container.addEventListener("touchend", () => { touchY = null; }, { passive: true });
   // the page moved by anything but the glide — the scrollbar — while it
-  // rests between stages: let go, where it was put
+  // goes: let go, where it was put
   container.addEventListener("scroll", () => {
-    if (playDir && !gliding && Math.abs(container.scrollTop - glideWrote) > 2) stopPlay();
+    if (playDir && Math.abs(container.scrollTop - playWrote) > 2) stopPlay();
   }, { passive: true });
 
   // ============================================================

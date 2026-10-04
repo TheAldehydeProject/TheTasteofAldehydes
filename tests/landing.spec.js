@@ -78,26 +78,25 @@ test("with the switch on the sentence and the map come back after the stage, as 
   expect(errors).toEqual([]);
 });
 
-/* THE FIVE STAGES. One scroll plays the page all the way (2026-10-03, later:
-   "when you scroll once, it will go all the way down") — and the Scroll
-   button and the keys are a scroll too: on through every stage, resting at
-   each, to the names, smoothly (the page glides, and the stage follows it).
-   The hand-driven page (`?auto=off`) still goes a stage at a time. */
-test("the Scroll button plays the page all the way to the names, resting at each stage", async ({ page }) => {
+/* THE FIVE STAGES. One scroll carries the page all the way, in one gradual
+   glide of about four seconds (2026-10-04: "a continuous auto scroll upon
+   detecting a scrolling motion ... in the span of about 4 seconds go all the
+   way to the bottom, it needs to be gradual") — and the Scroll button and the
+   keys are a scroll too. The hand-driven page (`?auto=off`) still goes a
+   stage at a time. */
+test("the Scroll button glides the page all the way to the names, in one movement", async ({ page }) => {
   test.setTimeout(90000);
   await page.goto("/index.html");
   expect(await scrollTop(page)).toBe(0);
-  const leg = await legOf(page);
   const stage = page.locator("#aldehyde-stage");
-
+  const t0 = Date.now();
   await page.locator("#scroll-cue").click();
   await expect(stage).toHaveAttribute("data-auto", "down");
-  // the first stage on, where it rests a while
-  await expect.poll(async () => Math.abs((await scrollTop(page)) - leg), { timeout: 8000 }).toBeLessThan(2);
-  await expect.poll(() => stageAt(page), { timeout: 4000 }).toBeCloseTo(1, 2);
-  await expect(stage).toHaveAttribute("data-stage", "2");
-  // and on, all the way
-  await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 60000 });
+  // on its way, and past the first stage without stopping there
+  const leg = await legOf(page);
+  await expect.poll(() => scrollTop(page), { timeout: 4000 }).toBeGreaterThan(leg * 1.5);
+  await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 15000 });
+  expect(Date.now() - t0, "in a few seconds").toBeLessThan(9000);
   expect(await scrollTop(page)).toBeCloseTo(await stageY(page, 4), 0);
   await expect(stage).toHaveAttribute("data-stage", "5");
 });
@@ -174,7 +173,7 @@ test("arrow keys do nothing while the menu is open, and work again once it close
   await page.keyboard.press("ArrowDown");
   await expect(page.locator("#aldehyde-stage")).toHaveAttribute("data-auto", "down");
   const leg = await legOf(page);
-  await expect.poll(async () => Math.abs((await scrollTop(page)) - leg), { timeout: 8000 }).toBeLessThan(2);
+  await expect.poll(() => scrollTop(page), { timeout: 8000 }).toBeGreaterThan(leg);
 });
 
 // Both corners of the title slide — the block bottom right and the

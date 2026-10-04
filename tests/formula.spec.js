@@ -34,11 +34,13 @@
 // notch at a time, open it with `?auto=off`, the old hand-driven page.
 //
 // And the last of that day: "rework the words and the particles surrounding
-// the main aldehyde molecule. that stays 100% as it is, but the rest i need
-// changed. I want you to fill in the gaps and make it all thematic" — every
-// name the R of an aldehyde (R–CHO), the aldehydes of perfumery in the gaps,
-// and THE SILLAGE, the aldehyde's own scent spreading into the room, where
-// ADAR's drift was.
+// the main aldehyde molecule ... fill in the gaps and make it all thematic" —
+// THE SILLAGE, the aldehyde's own scent spreading into the room, where ADAR's
+// drift was (and for that day the chemicals, below). Then 2026-10-04: one
+// scroll glides the page the whole way, continuously, in about four seconds
+// ("it needs to be gradual"); and THE ORBIT — "remove the chemicals and
+// redesign it again. KEEP THE MIDDLE ALDEHYDE AS IT IS" — the eight pages on
+// a ring round the aldehyde, each beside an electron of its own.
 //
 // The drawing says where it is on itself, `data-state` on #molecule — cloud,
 // turning, turned, forming, formula, drifting, drift — and landing.js which
@@ -96,10 +98,11 @@ async function light(page, box) {
 }
 
 // The same over several boxes of one screenshot, leaving out what stands in
-// `avoid` (the aldehydes in the gaps): lit pixels to a pixel looked at.
-async function litPer(page, rects, avoid = []) {
+// `avoid` (boxes) and within `ring.pad` pixels of the orbit's ring: lit
+// pixels to a pixel looked at.
+async function litPer(page, rects, avoid = [], ring = null) {
   const shot = (await page.screenshot()).toString("base64");
-  return page.evaluate(async ({ shot, rects, avoid }) => {
+  return page.evaluate(async ({ shot, rects, avoid, ring }) => {
     const img = new Image();
     img.src = "data:image/png;base64," + shot;
     await img.decode();
@@ -111,16 +114,32 @@ async function litPer(page, rects, avoid = []) {
     let lit = 0, area = 0;
     for (const r of rects) for (let y = Math.max(0, r.y); y < Math.min(c.height, r.y + r.height); y++) for (let x = Math.max(0, r.x); x < Math.min(c.width, r.x + r.width); x++) {
       if (avoid.some((b) => x >= b.l && x <= b.r && y >= b.t && y <= b.b)) continue;
+      if (ring) {
+        const dx = x - ring.cx, dy = y - ring.cy, c = Math.cos(-ring.tilt), sn = Math.sin(-ring.tilt);
+        const ux = dx * c - dy * sn, uy = dx * sn + dy * c;
+        if (Math.abs(Math.hypot(ux / ring.rx, uy / ring.ry) - 1) * Math.min(ring.rx, ring.ry) < ring.pad) continue;
+      }
       area++;
       const k = (y * c.width + x) * 4;
       if ((d[k] + d[k + 1] + d[k + 2]) / 3 > 50) lit++;
     }
     return area ? lit / area : 0;
-  }, { shot, rects, avoid });
+  }, { shot, rects, avoid, ring });
 }
-// Where the aldehydes in the gaps stand (molecule.js), each box a little larger.
-const aldehydes = (page, pad = 0) => page.evaluate((pad) => (document.getElementById("molecule").aldehydes || [])
-  .map((a) => ({ name: a.name, l: a.box.l - pad, r: a.box.r + pad, t: a.box.t - pad, b: a.box.b + pad })), pad);
+// Where the orbit stands (landing.js says it on the names' nav), and each
+// name's electron on it; `pad`, how near its ring a pixel is left out.
+const orbitOf = (page, pad = 14) => page.evaluate((pad) => {
+  const menu = document.querySelector(".formula-menu"), cs = getComputedStyle(menu), m = menu.getBoundingClientRect();
+  const v = (n) => parseFloat(cs.getPropertyValue(n));
+  return {
+    laid: menu.classList.contains("orbit-laid"),
+    cx: m.left + v("--orbit-cx"), cy: m.top + v("--orbit-cy"), rx: v("--orbit-rx"), ry: v("--orbit-ry"), tilt: v("--orbit-tilt"), pad,
+    electrons: [...menu.querySelectorAll(".formula-link")].map((a) => {
+      const ls = getComputedStyle(a);
+      return { x: m.left + parseFloat(ls.getPropertyValue("--ox")), y: m.top + parseFloat(ls.getPropertyValue("--oy")), a: parseFloat(ls.getPropertyValue("--oa")) };
+    }),
+  };
+}, pad);
 
 // Where the gold and the violet are, read off a screenshot.
 async function colours(page) {
@@ -150,7 +169,12 @@ test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
 });
 
-test("the last stage carries the Menu's eight pages, in its order, four either side of the formula, scattered", async ({ page }) => {
+/* THE ORBIT (2026-10-04: "For the menu in the second page, i dont like it. I
+   want you to remove the chemicals and redesign it again"): on a wide window
+   the eight pages stand on a ring round the aldehyde, each beside an
+   electron of its own — four down the left, four down the right, written
+   away from the aldehyde and clear of it. */
+test("the last stage carries the Menu's eight pages, in its order, on an orbit round the aldehyde, each beside its electron", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html?auto=off");
   // the same eight as the Menu (nav.js), without Home, in its order
@@ -164,48 +188,140 @@ test("the last stage carries the Menu's eight pages, in its order, four either s
 
   await jumpToSlide(page, "slide-formula");
   await settled(page, 4);
-  const b = await boxes(page);
-  const left = b.slice(0, 4), right = b.slice(4);
-  const mid = (x) => (x.t + x.b) / 2;
-  // four on the left of the formula and four on the right, inside the window
-  // — one or two stepping a little into its room (since the scatter was
-  // loosened, 2026-10-03), never far, and every one well clear of it
+  const o = await orbitOf(page);
+  expect(o.laid, "laid on the orbit").toBe(true);
+  // the aldehyde's room, which frames it, as wide as it always was
   const [lx, rx] = await roomXs(page);
-  const step = (rx - lx) * 0.08;
-  const formula = await atoms(page);
-  const formulaL = Math.min(...formula.map((a) => a.x)) - 60, formulaR = Math.max(...formula.map((a) => a.x)) + 60;
-  for (const x of left) {
-    expect(x.r, "a name on the left of the formula").toBeLessThanOrEqual(lx + step);
-    expect(x.r, "clear of it").toBeLessThan(formulaL);
-    expect(x.l).toBeGreaterThanOrEqual(0);
-  }
-  for (const x of right) {
-    expect(x.l, "a name on the right of it").toBeGreaterThanOrEqual(rx - step);
-    expect(x.l, "clear of it").toBeGreaterThan(formulaR);
-    expect(x.r).toBeLessThanOrEqual(1440);
-  }
-  // the middle, the aldehyde's room, wide: over half the window
   expect(rx - lx, "room in the middle").toBeGreaterThan(1440 * 0.5);
-  // still in the Menu's order down each side
-  for (let i = 1; i < 4; i++) {
-    expect(mid(left[i]), "down the left in order").toBeGreaterThan(mid(left[i - 1]) + 30);
-    expect(mid(right[i]), "down the right in order").toBeGreaterThan(mid(right[i - 1]) + 30);
+  // the ring round the aldehyde, wider than its room and most of the window high
+  expect(o.rx * Math.cos(o.tilt)).toBeGreaterThan((rx - lx) / 2);
+  expect(o.ry).toBeGreaterThan(900 * 0.35);
+  // every electron on the ring
+  for (const e of o.electrons) {
+    const dx = e.x - o.cx, dy = e.y - o.cy, c = Math.cos(-o.tilt), sn = Math.sin(-o.tilt);
+    const ux = dx * c - dy * sn, uy = dx * sn + dy * c;
+    expect(Math.hypot(ux / o.rx, uy / o.ry), "on the ring").toBeCloseTo(1, 2);
   }
-  // SCATTERED ("slightly haphazardly arranged", and then "it feels too
-  // organized ... make it a little less organized"): no side anything like
-  // lined up on one edge, no two rows level, the two sides not mirrored, the
-  // names down a side nowhere near evenly spaced
-  const spread = (xs) => Math.max(...xs) - Math.min(...xs);
-  expect(spread(left.map((x) => x.r)), "the left not lined up").toBeGreaterThan(120);
-  expect(spread(right.map((x) => x.l)), "nor the right").toBeGreaterThan(120);
-  const level = [0, 1, 2, 3].filter((i) => Math.abs(mid(left[i]) - mid(right[i])) < 20);
-  expect(level.length, "rows not level across").toBeLessThan(2);
-  const gaps = [1, 2, 3].map((i) => mid(left[i]) - mid(left[i - 1]));
-  expect(spread(gaps), "not equally spaced").toBeGreaterThan(60);
+  // each name beside its electron, level with it, written away from the
+  // aldehyde: the first four on the left of theirs, the next four on the right
+  const lettering = await page.locator(".formula-link").evaluateAll((all) => all.map((a) => {
+    const r = a.getBoundingClientRect(), ls = getComputedStyle(a);
+    const px = parseFloat(ls.paddingLeft);
+    return { l: r.left + px, r: r.right - px, t: r.top, b: r.bottom, mid: (r.top + r.bottom) / 2 };
+  }));
+  lettering.forEach((n, i) => {
+    const e = o.electrons[i];
+    expect(Math.abs(n.mid - e.y), `name ${i + 1} level with its electron`).toBeLessThan(3);
+    if (i < 4) {
+      expect(e.x, `name ${i + 1} on the left`).toBeLessThan(720);
+      expect(e.x - n.r, "its letters just left of its electron").toBeGreaterThan(6);
+      expect(e.x - n.r).toBeLessThan(24);
+    } else {
+      expect(e.x, `name ${i + 1} on the right`).toBeGreaterThan(720);
+      expect(n.l - e.x, "its letters just right of its electron").toBeGreaterThan(6);
+      expect(n.l - e.x).toBeLessThan(24);
+    }
+    expect(n.l, "inside the window").toBeGreaterThanOrEqual(0);
+    expect(n.r).toBeLessThanOrEqual(1440);
+  });
+  // in the Menu's order down each side
+  for (let i = 1; i < 4; i++) {
+    expect(lettering[i].mid, "down the left in order").toBeGreaterThan(lettering[i - 1].mid + 30);
+    expect(lettering[i + 4].mid, "down the right in order").toBeGreaterThan(lettering[i + 3].mid + 30);
+  }
+  // not a mirror, nor a column: the ring is turned, and the two sides differ
+  expect([0, 1, 2, 3].filter((i) => Math.abs(lettering[i].mid - lettering[i + 4].mid) < 20).length, "rows not level across").toBeLessThan(2);
+  // every name clear of the aldehyde's cloud: an oval half as wide again as its
+  // H stand apart, and two thirds as tall again as its O and H
+  const [O, , H1, H2] = await atoms(page);
+  const cx = (H1.x + H2.x) / 2, cy = (O.y + H1.y) / 2, ax = ((H2.x - H1.x) / 2) * 1.5, ay = ((H1.y - O.y) / 2) * 1.6;
+  for (const [i, n] of lettering.entries()) {
+    for (const [x, y] of [[n.l, n.t], [n.r, n.t], [n.l, n.b], [n.r, n.b], [(n.l + n.r) / 2, n.mid]]) {
+      expect(((x - cx) / ax) ** 2 + ((y - cy) / ay) ** 2, `name ${i + 1} clear of the cloud`).toBeGreaterThan(1);
+    }
+  }
   // the long one on two lines, in its own words' order
   const long = page.locator(".formula-link").nth(2);
   expect(await long.evaluate((a) => a.textContent.replace(/\s+/g, " ").trim())).toBe("Explorations & Researches");
   expect(await long.evaluate((a) => Math.round(a.getBoundingClientRect().height / parseFloat(getComputedStyle(a).lineHeight))), "on two lines").toBeGreaterThanOrEqual(2);
+  // and nothing of the chemicals of the round before (2026-10-03, last)
+  await expect(page.locator(".formula-tail")).toHaveCount(0);
+  const code = fs.readFileSync(path.join(__dirname, "..", "molecule.js"), "utf8") + fs.readFileSync(path.join(__dirname, "..", "landing.js"), "utf8");
+  for (const gone of ["AIR_LIST", "layAir", "drawAir", "formula-tail", "TAIL_BOND", "data-chain"]) expect(code, gone).not.toContain(gone);
+});
+
+/* The orbit is drawn — its ring in specks, an electron by each name — and a
+   name the hand comes to lights its electron and the ring round it, in the
+   aldehyde's gold. */
+test("the orbit is drawn round the aldehyde, and a name under the hand lights its electron and the ring round it, in gold", async ({ page }) => {
+  test.setTimeout(90000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/index.html?auto=off&molecule=full");
+  await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
+  await toStage(page, 3);
+  await settled(page, 3);
+  const o = await orbitOf(page);
+  // round each electron: nothing before the last stage
+  const round = (e, r = 9) => ({ x: Math.round(e.x - r), y: Math.round(e.y - r), width: 2 * r, height: 2 * r });
+  await page.addStyleTag({ content: ".cursor-ring, .cursor-dot { visibility: hidden !important; }" });
+  await page.mouse.move(720, 880);
+  await page.waitForTimeout(400);
+  const none = await litPer(page, o.electrons.map((e) => round(e)));
+  await toStage(page, 4);
+  await settled(page, 4);
+  await expect.poll(() => state(page), { timeout: 30000 }).toBe("drift");
+  await page.waitForTimeout(1500);
+  for (const [i, e] of o.electrons.entries()) {
+    expect(await litPer(page, [round(e)]), `electron ${i + 1} drawn`).toBeGreaterThan(Math.max(0.05, none * 3));
+  }
+  // the ring itself: the length of it lit, between the electrons, far more than off it
+  const onRing = [], offRing = [];
+  for (let k = 0; k < 24; k++) {
+    const a = (k / 24) * Math.PI * 2 + 0.07;
+    const pt = (f) => {
+      const ex = Math.cos(a) * o.rx * f, ey = Math.sin(a) * o.ry * f, c = Math.cos(o.tilt), sn = Math.sin(o.tilt);
+      return { x: Math.round(o.cx + ex * c - ey * sn - 5), y: Math.round(o.cy + ex * sn + ey * c - 5), width: 10, height: 10 };
+    };
+    onRing.push(pt(1)); offRing.push(pt(1.12));
+  }
+  const names = await page.locator(".formula-link").evaluateAll((all) => all.map((a) => { const r = a.getBoundingClientRect(); return { l: r.left, r: r.right, t: r.top, b: r.bottom }; }));
+  const on = await litPer(page, onRing, names), off = await litPer(page, offRing, names);
+  expect(on, "the ring drawn").toBeGreaterThan(off * 1.6);
+  // a name under the hand: its electron and the ring by it, gold
+  const gold = async (box) => {
+    const shot = (await page.screenshot({ clip: box })).toString("base64");
+    return page.evaluate(async (shot) => {
+      const img = new Image(); img.src = "data:image/png;base64," + shot; await img.decode();
+      const c = document.createElement("canvas"); c.width = img.width; c.height = img.height;
+      const g = c.getContext("2d"); g.drawImage(img, 0, 0);
+      const d = g.getImageData(0, 0, c.width, c.height).data;
+      let n = 0;
+      for (let k = 0; k < d.length; k += 4) if (d[k] - d[k + 2] > 40 && d[k + 1] - d[k + 2] > 15 && d[k] > 90) n++;
+      return n;
+    }, shot);
+  };
+  const e = o.electrons[5];
+  const near = { x: Math.round(e.x - 70), y: Math.round(e.y - 70), width: 140, height: 140 };
+  const restGold = await gold(near);
+  const r = await page.locator(".formula-link").nth(5).boundingBox();
+  await page.mouse.move(r.x + r.width * 0.6, r.y + r.height / 2, { steps: 4 });
+  await expect.poll(() => gold(near), { timeout: 6000 }).toBeGreaterThan(restGold + 20);
+  await page.mouse.move(720, 880, { steps: 4 });
+  await expect.poll(() => gold(near), { timeout: 6000 }).toBeLessThan(restGold + 12);
+});
+
+/* On a narrow window the names stand as they did, two by two, and there is
+   no ring: the aldehyde is framed between their rows there, and it is not to
+   move ("KEEP THE MIDDLE ALDEHYDE AS IT IS"). */
+test("on a narrow window there is no orbit, and the names stand two by two as they did", async ({ page }) => {
+  await page.setViewportSize({ width: 820, height: 1180 });
+  await page.goto("/index.html?auto=off");
+  await toStage(page, 4);
+  await settled(page, 4);
+  expect((await orbitOf(page)).laid).toBe(false);
+  // and back on a wide one, it is laid again
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect.poll(async () => (await orbitOf(page)).laid).toBe(true);
 });
 
 test("five stages, smoothly: the title, the title gone, the aldehyde upright, its formula, and the names", async ({ page }) => {
@@ -263,7 +379,7 @@ test("five stages, smoothly: the title, the title gone, the aldehyde upright, it
   expect(Math.abs((C.x - H1.x) - (H2.x - C.x)), "either side, alike").toBeLessThan(10);
   expect(await names(), "no names yet").toBe(0);
 
-  // 5 — the names, the aldehyde's sillage spreading round them and the aldehydes of perfumery in the gaps
+  // 5 — the names on their orbit, and the aldehyde's sillage spreading round them
   await toStage(page, 4);
   await settled(page, 4);
   await expect.poll(() => state(page), { timeout: 30000 }).toBe("drift");
@@ -413,147 +529,20 @@ test("the sillage comes up as the last stage comes: the aldehyde's own specks sp
   await expect.poll(() => state(page)).toBe("drift");
   expect((await room()).lit, "and there once it is").toBeGreaterThan(Math.max(some, 15));
   // on every side: above the formula and below it, and in all four corners
-  // (the aldehydes in the gaps left out of what is counted)
-  const avoid = await aldehydes(page, 6);
+  // (the orbit's ring, and its electrons, left out of what is counted)
+  const ring = await orbitOf(page, 16);
+  const avoid = ring.electrons.map((e) => ({ l: e.x - 14, r: e.x + 14, t: e.y - 14, b: e.y + 14 }));
   for (const [x, y] of [[620, 16], [620, 790], [20, 20], [1220, 20], [20, 730], [1220, 730]]) {
-    expect(await litPer(page, [{ x, y, width: 200, height: 94 }], avoid), `specks at ${x},${y}`).toBeGreaterThan(0);
+    expect(await litPer(page, [{ x, y, width: 200, height: 94 }], avoid, ring), `specks at ${x},${y}`).toBeGreaterThan(0);
   }
   // thinning as it spreads: more to a pixel just outside the cloud than at the window's edges
-  const near = await litPer(page, [{ x: 240, y: 260, width: 110, height: 380 }, { x: 1090, y: 260, width: 110, height: 380 }], avoid);
-  const far = await litPer(page, [{ x: 8, y: 260, width: 110, height: 380 }, { x: 1322, y: 260, width: 110, height: 380 }], avoid);
+  const near = await litPer(page, [{ x: 240, y: 260, width: 110, height: 380 }, { x: 1090, y: 260, width: 110, height: 380 }], avoid, ring);
+  const far = await litPer(page, [{ x: 8, y: 260, width: 110, height: 380 }, { x: 1322, y: 260, width: 110, height: 380 }], avoid, ring);
   expect(near, "thicker near the aldehyde").toBeGreaterThan(far);
   expect(far, "and still some at the edge").toBeGreaterThan(0);
   // nothing of the lines, or of ADAR's drift, in the drawing's own code
   const code = fs.readFileSync(path.join(__dirname, "..", "molecule.js"), "utf8");
   for (const gone of ["LINE_VERTEX", "uLineX", "LINE_DENSITY", "lineGeo", "layLines", "DRIFT_DENSITY", "DRIFT_PATCH", "DRIFT_FALL", "aDrift", "layDrift"]) expect(code, gone).not.toContain(gone);
-});
-
-/* THE ALDEHYDES OF PERFUMERY, in the gaps (the same round): skeletal
-   formulas of the aldehydes a perfumer reaches for, each named, standing in
-   whatever room the names and the formula leave. Read still (motion off). */
-test("the aldehydes of perfumery stand in the gaps as the last stage comes: named, clear of the names, the formula and each other", async ({ page }) => {
-  test.setTimeout(120000);
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  const KNOWN = ["C-12 MNA", "C-11 undecylenic", "Vanillin", "Cinnamal", "C-10 decanal", "Citral", "Benzaldehyde", "Hydroxycitronellal",
-    "C-12 lauric", "Anisaldehyde", "Melonal", "Safranal", "Phenylacetaldehyde", "Cuminaldehyde", "C-9 nonanal", "C-8 octanal"];
-  for (const [w, h, least] of [[1440, 900, 12], [1024, 768, 8], [390, 844, 3]]) {
-    await page.setViewportSize({ width: w, height: h });
-    await page.goto("/index.html?molecule=full");
-    await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
-    // (the names and the cursor out of the picture)
-    await page.addStyleTag({ content: ".formula-link, .cursor-ring, .cursor-dot { visibility: hidden !important; }" });
-    const placed = await aldehydes(page);
-    expect(placed.length, `${w}: as many as find room`).toBeGreaterThanOrEqual(least);
-    expect(+(await page.locator("#molecule").getAttribute("data-aldehydes")), "said on the drawing").toBe(placed.length);
-    for (const p of placed) expect(KNOWN, p.name).toContain(p.name);
-    expect(new Set(placed.map((p) => p.name)).size, "each once").toBe(placed.length);
-    const boxes = placed.map((p) => ({ x: Math.round(p.l), y: Math.round(p.t), width: Math.round(p.r - p.l), height: Math.round(p.b - p.t) }));
-    // none before the last stage, and drawn once it is
-    await toStage(page, 3);
-    await settled(page, 3, 2000);
-    await page.waitForTimeout(400);
-    const before = await litPer(page, boxes);
-    await toStage(page, 4);
-    await settled(page, 4, 2000);
-    await expect.poll(() => state(page), { timeout: 4000 }).toBe("drift");
-    await page.waitForTimeout(400);
-    expect(before, `${w}: none before the last stage`).toBeLessThan(0.002);
-    for (const [i, b] of boxes.entries()) expect(await litPer(page, [b]), `${w}: ${placed[i].name} drawn`).toBeGreaterThan(0.01);
-    // clear of every name and its aldehyde group, of the formula, and of each other
-    const names = await page.locator(".formula-link").evaluateAll((all) => all.map((a) => {
-      const r = a.getBoundingClientRect(), t = a.querySelector(".formula-tail");
-      const q = t && getComputedStyle(t).display !== "none" ? t.getBoundingClientRect() : r;
-      return { l: Math.min(r.left, q.left), r: Math.max(r.right, q.right), t: Math.min(r.top, q.top), b: Math.max(r.bottom, q.bottom) };
-    }));
-    const formula = await atoms(page);
-    const f = { l: Math.min(...formula.map((a) => a.x)) - 30, r: Math.max(...formula.map((a) => a.x)) + 30,
-      t: Math.min(...formula.map((a) => a.y)) - 30, b: Math.max(...formula.map((a) => a.y)) + 30 };
-    const meet = (a, b) => a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b;
-    placed.forEach((b, i) => {
-      expect(b.l, b.name).toBeGreaterThanOrEqual(0);
-      expect(b.t, b.name).toBeGreaterThanOrEqual(0);
-      expect(b.r, b.name).toBeLessThanOrEqual(w);
-      expect(b.b, b.name).toBeLessThanOrEqual(h);
-      for (const n of names) expect(meet(b, n), `${w}: ${b.name} clear of the names`).toBe(false);
-      expect(meet(b, f), `${w}: ${b.name} clear of the formula`).toBe(false);
-      placed.slice(i + 1).forEach((q) => expect(meet(b, q), `${b.name} clear of ${q.name}`).toBe(false));
-    });
-    // each one's double bond to its O in the aldehyde's gold
-    if (w === 1440) {
-      const shot = (await page.screenshot()).toString("base64");
-      const gold = await page.evaluate(async ({ shot, boxes }) => {
-        const img = new Image(); img.src = "data:image/png;base64," + shot; await img.decode();
-        const c = document.createElement("canvas"); c.width = img.width; c.height = img.height;
-        const g = c.getContext("2d"); g.drawImage(img, 0, 0);
-        return boxes.map((b) => {
-          const d = g.getImageData(b.x, b.y, b.width, b.height).data;
-          let n = 0;
-          for (let k = 0; k < d.length; k += 4) if (d[k] - d[k + 2] > 30 && d[k + 1] - d[k + 2] > 12) n++;
-          return n;
-        });
-      }, { shot, boxes });
-      gold.forEach((n, i) => expect(n, `${placed[i].name}: its C=O gold`).toBeGreaterThan(3));
-    }
-  }
-});
-
-/* EVERY PAGE AN ALDEHYDE (the same round): each of the eight names is the R
-   of an aldehyde, R–CHO — a short zig-zag and the C=O after it, towards the
-   formula, its double bond gold and its O's lone pair a violet haze, quiet
-   with the name and lit with it; the name's own words all the link says. */
-test("every name is the R of an aldehyde: a chain and its C=O after it, towards the formula, gold and violet, and lit with it", async ({ page }) => {
-  test.setTimeout(90000);
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/index.html?auto=off");
-  await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
-  await jumpToSlide(page, "slide-formula");
-  await settled(page, 4);
-  await expect.poll(() => state(page), { timeout: 30000 }).toBe("drift");
-  const tails = await page.locator(".formula-link").evaluateAll((all) => all.map((a) => {
-    const t = a.querySelector(".formula-tail");
-    const r = t.getBoundingClientRect(), ar = a.getBoundingClientRect();
-    return {
-      name: a.textContent.replace(/\s+/g, " ").trim(), want: +a.dataset.chain,
-      chain: t.querySelector(".ft-bond").getAttribute("d").split("L").length - 1,
-      hidden: t.getAttribute("aria-hidden"), words: t.textContent, o: t.querySelectorAll(".ft-o").length,
-      pi: getComputedStyle(t.querySelector(".ft-pi")).stroke,
-      l: r.left, r: r.right, mid: (r.top + r.bottom) / 2, al: ar.left, ar: ar.right, at: ar.top, ab: ar.bottom,
-    };
-  }));
-  expect(tails).toHaveLength(8);
-  expect(tails.map((x) => x.name)).toEqual(["Scent Descriptions", "Theories", "Explorations & Researches", "Favourites", "Note Library", "Photography", "Search", "Contact"]);
-  const formula = await atoms(page);
-  const formulaL = Math.min(...formula.map((a) => a.x)), formulaR = Math.max(...formula.map((a) => a.x));
-  tails.forEach((x, i) => {
-    expect([1, 2, 3], x.name).toContain(x.want);
-    expect(x.chain, `${x.name}: as long a chain as it says`).toBe(x.want);
-    expect(x.o, `${x.name}: its O`).toBe(1);
-    expect(x.hidden).toBe("true");
-    expect(x.words, "no words of its own").toBe("");
-    expect(x.pi, "its C=O gold").toBe("rgb(217, 173, 84)");
-    expect(x.mid, `${x.name}: level with it`).toBeGreaterThan(x.at);
-    expect(x.mid).toBeLessThan(x.ab);
-    if (i < 4) {
-      expect(x.l, `${x.name}: after it, towards the formula`).toBeGreaterThan(x.ar - 30);
-      expect(x.r, "and clear of the formula").toBeLessThan(formulaL - 40);
-    } else {
-      expect(x.r, `${x.name}: before it, towards the formula`).toBeLessThan(x.al + 30);
-      expect(x.l, "and clear of the formula").toBeGreaterThan(formulaR + 40);
-    }
-  });
-  expect(new Set(tails.map((x) => x.want)).size, "not all one length").toBeGreaterThan(1);
-  // lit with its name: the lone pair's haze comes up round the O
-  const lone = () => page.locator(".formula-link").nth(1).locator(".ft-lone").evaluate((e) => +getComputedStyle(e).opacity);
-  await page.mouse.move(1380, 60);
-  await page.waitForTimeout(1200);
-  expect(await lone(), "faint at rest").toBeLessThan(0.4);
-  const r = await page.locator(".formula-link").nth(1).boundingBox();
-  await page.mouse.move(r.x + r.width / 2, r.y + r.height / 2, { steps: 4 });
-  await expect.poll(lone, { timeout: 3000 }).toBeGreaterThan(0.95);
-  // on a phone, none: the names stand two by two across a narrow channel
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.waitForTimeout(400);
-  expect(await page.locator(".formula-tail").evaluateAll((all) => all.map((t) => getComputedStyle(t).display))).toEqual(Array(8).fill("none"));
 });
 
 test("a name is quiet until the hand comes to it: then it comes up gradually to the whole of itself", async ({ page }) => {
@@ -603,15 +592,18 @@ test("the electronegative hand draws the sillage's specks to it", async ({ page 
   await jumpToSlide(page, "slide-formula");
   await settled(page, 4);
   await expect.poll(() => state(page), { timeout: 30000 }).toBe("drift");
-  // round the hand in the left room — the names, the aldehydes in the gaps,
-  // the site's cursor and the δ− kept out of the picture
+  // round the hand in the left room — the names, the site's cursor and the
+  // δ− kept out of the picture — well outside the orbit's ring and its
+  // electrons, so what is counted is the sillage
   await page.addStyleTag({ content: ".formula-link, .cursor-ring, .cursor-dot, .molecule-charge { visibility: hidden !important; }" });
-  // (a place in the left room with no aldehyde of the gaps near it)
-  const avoid = await aldehydes(page, 70);
-  const free = [];
-  for (let y = 160; y <= 760; y += 20) for (let x = 90; x <= 300; x += 15) if (!avoid.some((b) => x >= b.l && x <= b.r && y >= b.t && y <= b.b)) free.push({ x, y });
-  expect(free.length, "room for the hand").toBeGreaterThan(0);
-  const hand = free.reduce((best, p) => (Math.abs(p.y - 450) < Math.abs(best.y - 450) ? p : best));
+  const hand = { x: 130, y: 450 };
+  const o = await orbitOf(page);
+  {
+    const dx = hand.x - o.cx, dy = hand.y - o.cy, c = Math.cos(-o.tilt), sn = Math.sin(-o.tilt);
+    const ux = dx * c - dy * sn, uy = dx * sn + dy * c;
+    expect((Math.hypot(ux / o.rx, uy / o.ry) - 1) * Math.min(o.rx, o.ry), "the hand well off the ring").toBeGreaterThan(90);
+    for (const e of o.electrons) expect(Math.hypot(e.x - hand.x, e.y - hand.y), "and its electrons").toBeGreaterThan(130);
+  }
   const box = { x: hand.x - 60, y: hand.y - 60, width: 120, height: 120 };
   const sumOver = async (n) => { let t = 0; for (let i = 0; i < n; i++) { t += (await light(page, box)).lit; await page.waitForTimeout(150); } return t / n; };
   await page.mouse.move(1380, 60);
@@ -912,14 +904,16 @@ test("a reload opens at the title, the names never shown before the page has pla
   expect(await stageAt(page)).toBe(0);
 });
 
-/* ONE SCROLL, ALL THE WAY (2026-10-03, later: "make the scrolling automatic
-   as in when you scroll once, it will go all the way down, not it will scroll
-   by itself after a second or so"). It played itself once the title had been
-   read until then. Now it stands at the title until it is scrolled, and one
-   turn of the wheel plays it on through every stage — on its own glide,
-   resting at each — to the names; one turn up plays it all the way back. */
-test("the page waits at the title until it is scrolled, and one turn of the wheel plays it all the way to the names, resting at each stage; one turn up, all the way back", async ({ page }) => {
-  test.setTimeout(150000);
+/* ONE SCROLL, ONE GLIDE, ALL THE WAY (2026-10-04: "I want it to be a
+   continuous auto scroll upon detecting a scrolling motion from the user that
+   will smoothly in the span of about 4 seconds go all the way to the bottom,
+   it needs to be gradual"). It stands at the title until it is scrolled, and
+   one turn of the wheel carries it to the names in one movement, about four
+   seconds long, setting off and arriving gently and stopping nowhere on the
+   way; one turn up carries it all the way back. (It went a stage at a time,
+   resting at each, for the round before.) */
+test("the page waits at the title until it is scrolled, and one turn of the wheel glides it to the names in one gradual movement of about four seconds; one turn up, all the way back", async ({ page }) => {
+  test.setTimeout(120000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html");
   const stage = page.locator("#aldehyde-stage");
@@ -927,75 +921,111 @@ test("the page waits at the title until it is scrolled, and one turn of the whee
   await page.waitForTimeout(6500);
   expect(await stageAt(page), "nothing by itself").toBe(0);
   await page.mouse.move(720, 450);
+  // where the page is, frame by frame, from the turn on
+  const watch = () => page.evaluate(() => {
+    const seen = window.__run = []; const t0 = performance.now(); const c = document.getElementById("scroll-container");
+    const f = (t) => { if (window.__run !== seen) return; seen.push([t - t0, c.scrollTop]); if (t - t0 < 7000) requestAnimationFrame(f); };
+    requestAnimationFrame(f);
+  });
+  const run = () => page.evaluate(() => window.__run);
+  await watch();
   // one turn: a run of notches, as a wheel sends them
   for (let i = 0; i < 6; i++) { await page.mouse.wheel(0, 60); await page.waitForTimeout(40); }
   await expect(stage).toHaveAttribute("data-auto", "down");
-  const play = async (dir) => {
-    const seen = new Set();
-    const t0 = Date.now();
-    while (Date.now() - t0 < 80000 && (await stage.getAttribute("data-auto")) === dir) {
-      seen.add((await stageAt(page)).toFixed(2));
-      await page.waitForTimeout(250);
-    }
-    return [...seen];
-  };
-  const down = await play("down");
-  await expect(stage).toHaveAttribute("data-auto", "ready");
-  await settled(page, 4, 10000);
+  await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 15000 });
+  await settled(page, 4, 4000);
   await expect(stage).toHaveAttribute("data-stage", "5");
-  expect(down.filter((v) => +v > 0.05 && +v < 3.95 && Math.abs(+v - Math.round(+v)) > 0.05).length, "gliding between stages").toBeGreaterThan(4);
-  for (const k of ["1.00", "2.00", "3.00"]) expect(down, `resting at stage ${+k + 1}`).toContain(k);
+  await page.waitForTimeout(800);
+  const down = (await run()).filter(([t]) => t < 7000);
+  const end = down[down.length - 1][1];
+  const set = down.find(([, y]) => y > 2), there = down.find(([, y]) => y >= end - 1);
+  const took = there[0] - set[0];
+  expect(took, "about four seconds").toBeGreaterThan(3200);
+  expect(took).toBeLessThan(5200);
+  const steps = down.slice(1).map(([t, y], i) => [t - down[i][0], y - down[i][1]]);
+  expect(Math.min(...steps.map(([, d]) => d)), "never back").toBeGreaterThanOrEqual(-0.5);
+  // one movement: nowhere on the way does it stand still for a moment (the
+  // round before rested over a second at each stage)
+  const moving = down.filter(([t]) => t > set[0] + 300 && t < there[0] - 300);
+  let still = 0, longest = 0;
+  for (let i = 1; i < moving.length; i++) {
+    still = moving[i][1] - moving[i - 1][1] < 0.5 ? still + (moving[i][0] - moving[i - 1][0]) : 0;
+    longest = Math.max(longest, still);
+  }
+  expect(longest, "it stops nowhere on the way").toBeLessThan(150);
+  // gradual: it sets off gently and arrives gently — under half its middle's
+  // speed in its first and last 15%
+  const at = (t) => { const r = down.find(([tt]) => tt >= t); return r ? r[1] : end; };
+  const speed = (a, b) => (at(set[0] + b * took) - at(set[0] + a * took)) / ((b - a) * took);
+  expect(speed(0, 0.15), "setting off gently").toBeLessThan(speed(0.4, 0.6) * 0.5);
+  expect(speed(0.85, 1), "arriving gently").toBeLessThan(speed(0.4, 0.6) * 0.5);
   // further turns there go nowhere
   await page.mouse.wheel(0, 200);
   await page.waitForTimeout(600);
   await expect(stage).toHaveAttribute("data-auto", "ready");
-  expect(await stageAt(page)).toBeCloseTo(4, 2);
-  // one turn up: all the way back to the title
+  // one turn up: all the way back to the title, as gradually
+  await watch();
   await page.mouse.wheel(0, -100);
   await expect(stage).toHaveAttribute("data-auto", "up");
-  const up = await play("up");
-  await settled(page, 0, 10000);
+  await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 15000 });
+  await settled(page, 0, 4000);
   await expect(stage).toHaveAttribute("data-stage", "1");
-  for (const k of ["3.00", "2.00", "1.00"]) expect(up, `resting at stage ${+k + 1} on the way back`).toContain(k);
+  const up = await run();
+  const leave = up.find(([, y]) => y < end - 2), home = up.find(([, y]) => y <= 1);
+  expect(home[0] - leave[0], "back in about four seconds").toBeGreaterThan(3200);
+  expect(home[0] - leave[0]).toBeLessThan(5200);
 });
 
-test("the rest of a turn is the same scroll, and a turn the other way turns it round; the scrollbar lets go", async ({ page }) => {
+test("the rest of a turn is the same scroll, and a turn the other way turns it round without a jolt; the scrollbar lets go", async ({ page }) => {
   test.setTimeout(120000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html");
   const stage = page.locator("#aldehyde-stage");
+  const top = () => page.evaluate(() => document.getElementById("scroll-container").scrollTop);
   await page.mouse.move(720, 450);
   await page.mouse.wheel(0, 100);
   await expect(stage).toHaveAttribute("data-auto", "down");
-  await settled(page, 1, 10000);
+  await page.waitForTimeout(500);
   // a trackpad's run-on, or more notches: the same scroll — nothing hurried, nothing turned
   const frames = page.evaluate(() => new Promise((done) => {
-    const seen = []; const t0 = performance.now();
-    const at = (t) => { seen.push(+window.__formula); if (t - t0 < 1500) requestAnimationFrame(at); else done(seen); };
+    const seen = []; const t0 = performance.now(); const c = document.getElementById("scroll-container");
+    const at = (t) => { seen.push(c.scrollTop); if (t - t0 < 700) requestAnimationFrame(at); else done(seen); };
     requestAnimationFrame(at);
   }));
-  for (let i = 0; i < 10; i++) { await page.mouse.wheel(0, 50); await page.waitForTimeout(30); }
+  for (let i = 0; i < 6; i++) { await page.mouse.wheel(0, 50); await page.waitForTimeout(30); }
   const seen = await frames;
-  expect(Math.max(...seen.slice(1).map((v, i) => Math.abs(v - seen[i]))), "never a jump").toBeLessThan(0.1);
-  await expect(stage).toHaveAttribute("data-auto", "down");
-  await expect.poll(() => stageAt(page), { timeout: 15000 }).toBeGreaterThan(1.5);
-  // a turn the other way: back, from where it is, to the title
-  const was = await stageAt(page);
+  expect(Math.min(...seen.slice(1).map((v, i) => v - seen[i])), "still going on").toBeGreaterThanOrEqual(-0.5);
+  // still on its way — or, on a slow machine, already all the way there
+  if ((await stage.getAttribute("data-auto")) !== "down") {
+    const most = await page.evaluate(() => { const c = document.getElementById("scroll-container"); return c.scrollHeight - c.clientHeight; });
+    expect(await top(), "gone on all the way").toBeGreaterThan(most - 260);
+  }
+  // a turn the other way: back, from where it is, to the title — easing out
+  // of the way it was going, never a jump
+  const turning = page.evaluate(() => new Promise((done) => {
+    const seen = []; const t0 = performance.now(); const c = document.getElementById("scroll-container");
+    const at = (t) => { seen.push(c.scrollTop); if (t - t0 < 1500) requestAnimationFrame(at); else done(seen); };
+    requestAnimationFrame(at);
+  }));
+  const was = await top();
   await page.mouse.wheel(0, -120);
   await expect(stage).toHaveAttribute("data-auto", "up");
-  await page.waitForTimeout(800);
-  expect(await stageAt(page), "turned round").toBeLessThan(was);
-  await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 60000 });
+  const turn = await turning;
+  const jumps = turn.slice(1).map((v, i) => Math.abs(v - turn[i]));
+  expect(Math.max(...jumps), "no jolt").toBeLessThan(120);
+  await page.waitForTimeout(400);
+  expect(await top(), "turned round").toBeLessThan(was + 200);
+  await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 15000 });
   expect(await stageAt(page)).toBeCloseTo(0, 2);
-  // set going again, and the page moved by the scrollbar while it rests: it lets go there
+  // set going again, and the page moved by the scrollbar on the way: it lets go there
   await page.mouse.wheel(0, 100);
-  await settled(page, 1, 10000);
+  await page.waitForTimeout(1000);
   await page.evaluate(() => { document.getElementById("scroll-container").scrollTop += 140; });
   await expect(stage).toHaveAttribute("data-auto", "ready");
   await page.waitForTimeout(700);   // (the stage catching up with where the page was put)
-  const left = await stageAt(page);
-  await page.waitForTimeout(3500);
-  expect(await stageAt(page), "left where it was put").toBeCloseTo(left, 2);
+  const left = await top();
+  await page.waitForTimeout(2500);
+  expect(await top(), "left where it was put").toBe(left);
 });
 
 /* A swipe of a finger is a scroll: on a phone, one swipe up the page plays it
