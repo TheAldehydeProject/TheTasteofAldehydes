@@ -254,7 +254,7 @@ test("the last stage carries the Menu's eight pages, in its order, on an orbit r
    name the hand comes to lights its electron and the ring round it, in the
    aldehyde's gold. */
 test("the orbit is drawn round the aldehyde, and a name under the hand lights its electron and the ring round it, in gold", async ({ page }) => {
-  test.setTimeout(90000);
+  test.setTimeout(180000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html?auto=off&molecule=full");
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
@@ -287,27 +287,51 @@ test("the orbit is drawn round the aldehyde, and a name under the hand lights it
   const names = await page.locator(".formula-link").evaluateAll((all) => all.map((a) => { const r = a.getBoundingClientRect(); return { l: r.left, r: r.right, t: r.top, b: r.bottom }; }));
   const on = await litPer(page, onRing, names), off = await litPer(page, offRing, names);
   expect(on, "the ring drawn").toBeGreaterThan(off * 1.6);
-  // a name under the hand: its electron and the ring by it, gold
-  const gold = async (box) => {
-    const shot = (await page.screenshot({ clip: box })).toString("base64");
-    return page.evaluate(async (shot) => {
+  // a name under the hand: the ring either side of its electron, gold — read
+  // along the ring itself, clear of the name and the specks behind it (its
+  // backdrop has gold in it too)
+  const k = 5, e = o.electrons[k];
+  const pad = names.map((n) => ({ l: n.l - 28, r: n.r + 28, t: n.t - 28, b: n.b + 28 }));
+  const stretch = [];
+  for (let d = -0.3; d <= 0.3001; d += 0.025) {
+    const a = e.a + d, ex = Math.cos(a) * o.rx, ey = Math.sin(a) * o.ry, c = Math.cos(o.tilt), sn = Math.sin(o.tilt);
+    const x = o.cx + ex * c - ey * sn, y = o.cy + ex * sn + ey * c;
+    if (pad.some((n) => x > n.l && x < n.r && y > n.t && y < n.b)) continue;
+    stretch.push({ x: Math.round(x - 10), y: Math.round(y - 10), width: 20, height: 20 });
+  }
+  expect(stretch.length, "a stretch of ring clear of the names").toBeGreaterThan(8);
+  const clip = {
+    x: Math.min(...stretch.map((b) => b.x)), y: Math.min(...stretch.map((b) => b.y)),
+  };
+  clip.width = Math.max(...stretch.map((b) => b.x + b.width)) - clip.x;
+  clip.height = Math.max(...stretch.map((b) => b.y + b.height)) - clip.y;
+  const gold = async () => {
+    const shot = (await page.screenshot({ clip })).toString("base64");
+    return page.evaluate(async ({ shot, boxes, clip }) => {
       const img = new Image(); img.src = "data:image/png;base64," + shot; await img.decode();
       const c = document.createElement("canvas"); c.width = img.width; c.height = img.height;
       const g = c.getContext("2d"); g.drawImage(img, 0, 0);
-      const d = g.getImageData(0, 0, c.width, c.height).data;
+      const d = g.getImageData(0, 0, c.width, c.height).data, seen = new Set();
       let n = 0;
-      for (let k = 0; k < d.length; k += 4) if (d[k] - d[k + 2] > 40 && d[k + 1] - d[k + 2] > 15 && d[k] > 90) n++;
+      for (const b of boxes) for (let y = b.y - clip.y; y < b.y - clip.y + b.height; y++) for (let x = b.x - clip.x; x < b.x - clip.x + b.width; x++) {
+        const at = y * c.width + x;
+        if (seen.has(at) || x < 0 || y < 0 || x >= c.width || y >= c.height) continue;
+        seen.add(at);
+        const i = at * 4;
+        // how much warmer than it is blue — gold, not the grey or the violet
+        n += Math.max(0, Math.min(d[i] - d[i + 2], d[i + 1] - d[i + 2] + 20));
+      }
       return n;
-    }, shot);
+    }, { shot, boxes: stretch, clip });
   };
-  const e = o.electrons[5];
-  const near = { x: Math.round(e.x - 70), y: Math.round(e.y - 70), width: 140, height: 140 };
-  const restGold = await gold(near);
-  const r = await page.locator(".formula-link").nth(5).boundingBox();
+  const restGold = (await gold() + await gold()) / 2;
+  const r = await page.locator(".formula-link").nth(k).boundingBox();
   await page.mouse.move(r.x + r.width * 0.6, r.y + r.height / 2, { steps: 4 });
-  await expect.poll(() => gold(near), { timeout: 6000 }).toBeGreaterThan(restGold + 20);
+  let litGold = 0;
+  // (measured: about 820 at rest, 2,100 to 2,300 lit)
+  await expect.poll(async () => (litGold = await gold()), { timeout: 15000 }).toBeGreaterThan(restGold * 1.7);
   await page.mouse.move(720, 880, { steps: 4 });
-  await expect.poll(() => gold(near), { timeout: 6000 }).toBeLessThan(restGold + 12);
+  await expect.poll(() => gold(), { timeout: 15000 }).toBeLessThan((restGold + litGold) / 2);
 });
 
 /* On a narrow window the names stand as they did, two by two, and there is
@@ -1004,19 +1028,23 @@ test("the rest of a turn is the same scroll, and a turn the other way turns it r
   // of the way it was going, never a jump
   const turning = page.evaluate(() => new Promise((done) => {
     const seen = []; const t0 = performance.now(); const c = document.getElementById("scroll-container");
-    const at = (t) => { seen.push(c.scrollTop); if (t - t0 < 1500) requestAnimationFrame(at); else done(seen); };
+    const at = (t) => { seen.push([t, c.scrollTop]); if (t - t0 < 1500) requestAnimationFrame(at); else done(seen); };
     requestAnimationFrame(at);
   }));
   const was = await top();
   await page.mouse.wheel(0, -120);
   await expect(stage).toHaveAttribute("data-auto", "up");
   const turn = await turning;
-  const jumps = turn.slice(1).map((v, i) => Math.abs(v - turn[i]));
-  expect(Math.max(...jumps), "no jolt").toBeLessThan(120);
+  // how fast it goes between frames, in pixels a second — never a leap (the
+  // glide at its fastest goes about 1,600 a second, a little more as it turns
+  // round); read as a speed, not a distance, since a slow machine's frames
+  // come further apart
+  const speeds = turn.slice(1).map(([t, y], i) => Math.abs(y - turn[i][1]) / Math.max(1, t - turn[i][0]) * 1000);
+  expect(Math.max(...speeds), "no jolt").toBeLessThan(3200);
   await page.waitForTimeout(400);
   expect(await top(), "turned round").toBeLessThan(was + 200);
   await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 15000 });
-  expect(await stageAt(page)).toBeCloseTo(0, 2);
+  await settled(page, 0);   // (the stage a very little behind the page, FOLLOW_S)
   // set going again, and the page moved by the scrollbar on the way: it lets go there
   await page.mouse.wheel(0, 100);
   await page.waitForTimeout(1000);

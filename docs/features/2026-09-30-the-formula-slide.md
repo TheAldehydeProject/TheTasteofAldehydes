@@ -667,14 +667,17 @@ level with its electron and 6 to 24px from it on the far side from the aldehyde,
 each side, the two sides not mirrored, every name clear of the aldehyde's cloud, Explorations &
 Researches on two lines, and nothing of the chemicals in the page or the code); **`the orbit is drawn
 round the aldehyde, and a name under the hand lights its electron and the ring round it, in gold`**
-(with `?molecule=full`: each electron drawn, the ring lit along its length far more than just off it,
-gold by a name under the hand and gone when the hand goes); **`on a narrow window there is no orbit, and
+(with `?molecule=full`: each electron drawn, the ring lit along its length far more than just off it;
+a name under the hand turns the ring either side of its electron gold — read along the ring itself,
+clear of the name and its backdrop, which has gold in it too: about 820 at rest, 2,100 to 2,300 lit — and
+it goes back when the hand goes); **`on a narrow window there is no orbit, and
 the names stand two by two as they did`**; **`the page waits at the title until it is scrolled, and one
 turn of the wheel glides it to the names in one gradual movement of about four seconds; one turn up, all
 the way back`** (where the page is, frame by frame: between 3.2 and 5.2 seconds, never back, standing
 still nowhere for 150ms on the way, at under half its middle's speed in its first and last 15%);
 **`the rest of a turn is the same scroll, and a turn the other way turns it round without a jolt; the
-scrollbar lets go`**; the swipe's, unchanged; and the sillage and the hand's tests with the ring and the
+scrollbar lets go`** (the jolt read as a speed between frames, never over 3,200 pixels a second, so a
+slow machine's frames coming further apart do not read as one); the swipe's, unchanged; and the sillage and the hand's tests with the ring and the
 electrons left out of what they count. `tests/landing.spec.js` — **`the Scroll button glides the page all
 the way to the names, in one movement`**, and an arrow key. By eye, screenshots at 1440, 1920, 1280 ×
 680, 1024, 960 and a phone, the last stage at rest and with a name under the hand.
