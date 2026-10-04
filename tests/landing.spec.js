@@ -78,21 +78,51 @@ test("with the switch on the sentence and the map come back after the stage, as 
   expect(errors).toEqual([]);
 });
 
-/* THE FIVE STAGES, a stage at a time by the keys and the Scroll button —
-   smoothly (the page itself scrolls, and the stage follows it). */
-test("the Scroll button goes on a stage", async ({ page }) => {
+/* THE FIVE STAGES. One scroll plays the page all the way (2026-10-03, later:
+   "when you scroll once, it will go all the way down") — and the Scroll
+   button and the keys are a scroll too: on through every stage, resting at
+   each, to the names, smoothly (the page glides, and the stage follows it).
+   The hand-driven page (`?auto=off`) still goes a stage at a time. */
+test("the Scroll button plays the page all the way to the names, resting at each stage", async ({ page }) => {
+  test.setTimeout(90000);
   await page.goto("/index.html");
   expect(await scrollTop(page)).toBe(0);
   const leg = await legOf(page);
+  const stage = page.locator("#aldehyde-stage");
 
   await page.locator("#scroll-cue").click();
+  await expect(stage).toHaveAttribute("data-auto", "down");
+  // the first stage on, where it rests a while
   await expect.poll(async () => Math.abs((await scrollTop(page)) - leg), { timeout: 8000 }).toBeLessThan(2);
   await expect.poll(() => stageAt(page), { timeout: 4000 }).toBeCloseTo(1, 2);
-  await expect(page.locator("#aldehyde-stage")).toHaveAttribute("data-stage", "2");
+  await expect(stage).toHaveAttribute("data-stage", "2");
+  // and on, all the way
+  await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 60000 });
+  expect(await scrollTop(page)).toBeCloseTo(await stageY(page, 4), 0);
+  await expect(stage).toHaveAttribute("data-stage", "5");
 });
 
-test("arrow keys go a stage at a time, and stop at the ends", async ({ page }) => {
+test("an arrow key is a scroll too: down plays it all the way, and up all the way back", async ({ page }) => {
+  test.setTimeout(120000);
   await page.goto("/index.html");
+  const stage = page.locator("#aldehyde-stage");
+  await page.keyboard.press("ArrowDown");
+  await expect(stage).toHaveAttribute("data-auto", "down");
+  // pressed again on the way, the same way: the same scroll
+  await page.waitForTimeout(1200);
+  await page.keyboard.press("ArrowDown");
+  await expect(stage).toHaveAttribute("data-auto", "down");
+  await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 60000 });
+  await expect.poll(() => stageAt(page), { timeout: 4000 }).toBeCloseTo(4, 2);
+  // Home, or up, all the way back
+  await page.keyboard.press("Home");
+  await expect(stage).toHaveAttribute("data-auto", "up");
+  await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 60000 });
+  expect(await scrollTop(page)).toBe(0);
+});
+
+test("with the page driven by hand, arrow keys go a stage at a time, and stop at the ends", async ({ page }) => {
+  await page.goto("/index.html?auto=off");
   const ys = [];
   for (let k = 0; k <= 4; k++) ys.push(await stageY(page, k));
   const at = async (k) => expect.poll(async () => Math.abs((await scrollTop(page)) - ys[k]), { timeout: 8000 }).toBeLessThan(2);
@@ -140,7 +170,9 @@ test("arrow keys do nothing while the menu is open, and work again once it close
   await page.keyboard.press("Escape");
   await expect(page.locator(".menu-overlay")).not.toHaveClass(/open/);
 
+  // (a scroll, and the page sets off all the way)
   await page.keyboard.press("ArrowDown");
+  await expect(page.locator("#aldehyde-stage")).toHaveAttribute("data-auto", "down");
   const leg = await legOf(page);
   await expect.poll(async () => Math.abs((await scrollTop(page)) - leg), { timeout: 8000 }).toBeLessThan(2);
 });

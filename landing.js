@@ -14,19 +14,23 @@
 //   2  the same, the title gone
 //   3  the aldehyde turned upright
 //   4  the same, its formula drawn in it
-//   5  the Menu's eight pages, beside two lines of specks
+//   5  the Menu's eight pages — each the R of an aldehyde, R–CHO (EVERY
+//      PAGE AN ALDEHYDE, below) — in the aldehyde's sillage, the aldehydes
+//      of perfumery in the gaps (molecule.js)
 //
-// THE PAGE PLAYS ITSELF (2026-10-03: "change the scrolling feature for it
-// to be automatic. it should be still as slow as it is now"): once the title
-// has gathered it goes on through the five stages by itself, on the glide
-// below, resting at each, and ends on the names (THE PAGE PLAYS ITSELF,
-// below). A wheel, a finger, a key or the Scroll button takes over from it.
+// ONE SCROLL, ALL THE WAY (2026-10-03, later: "make the scrolling automatic
+// as in when you scroll once, it will go all the way down, not it will
+// scroll by itself after a second or so"): the page stands at the title
+// until it is scrolled, and then one scroll — a wheel, a finger, a key, the
+// Scroll button — plays it through the five stages to the names, on the
+// glide below, resting at each; scrolled up, all the way back (below). It
+// played itself once the title had been read, for a day.
 //
-// The page GLIDES down the stage (THE GLIDE, below): a wheel's notches only
-// move where it is going, and it follows on a spring, so a run of notches is
-// one gradual movement rather than a step at a time; the keys and the
-// Scroll button go on (or back) a whole stage the same way; a finger and the
-// scrollbar move it themselves. Where it is, is told to the drawing as one
+// The page GLIDES down the stage (THE GLIDE, below): it follows where it is
+// going on a spring, so every move is one gradual movement rather than a
+// step at a time; with `?auto=off` (and the map slides on) a wheel's notches
+// move only where it is going, the keys and the Scroll button a whole stage;
+// the scrollbar moves it itself. Where it is, is told to the drawing as one
 // number, the sixth window global:
 //
 //   window.__formula   0 to 4, the stage (0 the first, 4 the fifth), and
@@ -264,6 +268,61 @@
   place();
 
   // ============================================================
+  // EVERY PAGE AN ALDEHYDE (2026-10-03, last — the owner: "rework the words
+  // and the particles surrounding the main aldehyde molecule ... fill in the
+  // gaps and make it all thematic"). Each of the eight names on the last
+  // stage is the R of an aldehyde, R–CHO, as the Menu's own aldehyde is drawn
+  // (nav.js): after its last letter, towards the formula, a short zig-zag of
+  // bonds — `data-chain` on the name, how many before the aldehyde's carbon,
+  // 1 to 3, so no two sides match — and the C=O, its double bond in the
+  // aldehyde's gold and its O in a haze of the lone pair's violet, as a
+  // chemistry book draws a chain: the carbons the corners, only the O named.
+  // Quiet with its name, and lit with it (style.css, `.formula-tail`). Drawn
+  // in shapes alone, so the name's own words are all the link says. Not on a
+  // narrow window, where the names stand two by two across a narrow channel.
+  // ============================================================
+  const TAIL_BOND = 104, TAIL_PAIR = 8, TAIL_O = [24, 28], TAIL_SHORT = 38;   // in hundredths of the name's em
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  stage.querySelectorAll(".formula-link").forEach((a) => {
+    if (a.querySelector(".formula-tail")) return;
+    const n = Math.max(1, Math.min(3, Math.round(+a.dataset.chain || 1)));
+    // the corners: the name's end, the chain, the aldehyde's carbon, the O —
+    // each bond a sixth of a turn off level, up and down in turn, the =O up
+    const pts = [[0, 0]];
+    for (let i = 0; i <= n; i++) {
+      const [x, y] = pts[pts.length - 1];
+      pts.push([x + TAIL_BOND * 0.866, y + ((n - i) % 2 === 0 ? -0.5 : 0.5) * TAIL_BOND]);
+    }
+    const c = pts[n], o = pts[n + 1];
+    const ux = (o[0] - c[0]) / TAIL_BOND, uy = (o[1] - c[1]) / TAIL_BOND;
+    const end = [o[0] - ux * TAIL_SHORT, o[1] - uy * TAIL_SHORT];
+    const pair = (k) => "M" + (c[0] - uy * k).toFixed(1) + " " + (c[1] + ux * k).toFixed(1) +
+      "L" + (end[0] - uy * k).toFixed(1) + " " + (end[1] + ux * k).toFixed(1);
+    const minY = Math.min(...pts.map((p) => p[1])) - TAIL_O[1] - 6, maxY = Math.max(...pts.map((p) => p[1])) + 6;
+    const maxX = o[0] + TAIL_O[0] + 8;
+    const svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("class", "formula-tail");
+    svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("focusable", "false");
+    svg.setAttribute("viewBox", "0 " + minY.toFixed(1) + " " + maxX.toFixed(1) + " " + (maxY - minY).toFixed(1));
+    svg.style.width = (maxX / 100).toFixed(3) + "em";
+    svg.style.height = ((maxY - minY) / 100).toFixed(3) + "em";
+    // (the name's end at the middle of its height)
+    svg.style.top = "calc(50% - " + (-minY / 100).toFixed(3) + "em)";
+    const el = (tag, attrs) => {
+      const e = document.createElementNS(SVG_NS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      svg.appendChild(e);
+      return e;
+    };
+    el("circle", { class: "ft-lone", cx: o[0].toFixed(1), cy: o[1].toFixed(1), r: "42" });
+    el("path", { class: "ft-bond", d: "M" + pts.slice(0, n + 1).map((p) => p[0].toFixed(1) + " " + p[1].toFixed(1)).join("L") });
+    el("path", { class: "ft-pi", d: pair(TAIL_PAIR) + pair(-TAIL_PAIR) });
+    el("ellipse", { class: "ft-o", cx: o[0].toFixed(1), cy: o[1].toFixed(1), rx: TAIL_O[0], ry: TAIL_O[1] });
+    a.appendChild(svg);
+  });
+
+  // ============================================================
   // THE GLIDE (2026-09-30, later: "make the scrolling a little smoother
   // ... when you scroll it feels very very incremental. EVERYTHING should be
   // smooth and gradual; and not incremental"). A mouse wheel moves a page a
@@ -273,9 +332,11 @@
   // page follows on a spring, critically damped (GLIDE_W) — setting off
   // gently, never overshooting, settling softly — so a run of notches is one
   // movement, and a trackpad's own stream of small turns runs on as smoothly.
-  // The keys and the Scroll button go a stage on the same way. A finger and
-  // the scrollbar move the page themselves, and the glide lets go. With
-  // reduced motion the page's own scrolling, at once.
+  // The keys and the Scroll button go a stage on the same way. (Since one
+  // scroll plays the page all the way — ONE SCROLL, ALL THE WAY, below — the
+  // notches and the stages are the hand-driven page's, `?auto=off`, and the
+  // map slides'.) The scrollbar moves the page itself, and the glide lets
+  // go. With reduced motion the page's own scrolling, at once.
   // ============================================================
   // (Slower and less sensitive since the night of 2026-09-30: "make the
   // scrolling smoother - as if making the scrolling less sensitive/slower".
@@ -305,7 +366,7 @@
   }
   // the page moved by something else while it glides: let go
   container.addEventListener("scroll", () => {
-    if (gliding && Math.abs(container.scrollTop - glideWrote) > 2) { stopGlide(); stopAuto(); }
+    if (gliding && Math.abs(container.scrollTop - glideWrote) > 2) { stopGlide(); stopPlay(); }
   }, { passive: true });
   // The wheel, on the stage. (With the map slides on, they have their say
   // first: `slideWheel`, below, takes a turn past the stage's end.)
@@ -317,6 +378,8 @@
     if (overlayOpen()) return;
     const d = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaMode === 2 ? e.deltaY * window.innerHeight : e.deltaY;
     if (slideWheel && slideWheel(e, d)) return;
+    // one turn plays it all the way (ONE SCROLL, ALL THE WAY, below)
+    if (playable) { wheelPlay(d); return; }
     glideToY((gliding ? glideTo : container.scrollTop) + d * WHEEL_SCALE);
   }, { passive: false });
 
@@ -332,56 +395,109 @@
   }
 
   // ============================================================
-  // THE PAGE PLAYS ITSELF (2026-10-03: "I actually want you to change the
-  // scrolling feature for it to be automatic. it should be still as slow as
-  // it is now"). Once the title has gathered and been read (AUTO_FIRST), the
-  // page goes on a stage at a time by itself, on THE GLIDE — the very spring
-  // a key or the Scroll button moves it on, so exactly as slowly — and rests
-  // at each stage for AUTO_REST before going on: the title gone, the turn
-  // upright (the longest rest, for the turn to finish on its own spring,
-  // molecule.js), the formula; and it ends on the names, and stays there.
-  // While the Menu, About me or the way out is open over it, it waits.
+  // ONE SCROLL, ALL THE WAY (2026-10-03, later: "make the scrolling
+  // automatic as in when you scroll once, it will go all the way down, not
+  // it will scroll by itself after a second or so"). The page stands at the
+  // title until it is scrolled — and then ONE scroll, of any kind, plays it
+  // the whole way: on through the five stages, a stage at a time on THE
+  // GLIDE (the very spring it always moved on, so exactly as slowly as it
+  // played itself), resting at each (AUTO_REST: the title gone, the turn
+  // upright — the longest, for the turn to finish on its own spring,
+  // molecule.js — the formula), to the names, where it stops. Scrolled up,
+  // it plays back up to the title the same way.
   //
-  // THE HAND TAKES OVER: a wheel, a finger, a key that moves the page, the
-  // Scroll button, or the page moved by anything but the glide (the
-  // scrollbar), and it stops for the rest of the visit — the page is the
-  // visitor's from then on, as it always was. Not with motion turned off
-  // (the stages there at once would be jumps), nor with the map slides on;
-  // and `?auto=off` on the address keeps it still without changing anything
-  // (the tests that read a stage as it is held).
+  // A scroll is a turn of the wheel or a trackpad, a swipe of a finger, a
+  // key that moves a page (the arrows, Page Up and Down, Space, Home, End)
+  // or the Scroll button. The rest of the same turn — a wheel's further
+  // notches, a trackpad's own run-on — is the same scroll, and changes
+  // nothing; a turn the OTHER way (PLAY_TURN of it, so a trackpad's
+  // tremble is not one) turns the page round from where it is. While the
+  // Menu, About me or the way out is open over it, it waits; the page moved
+  // by anything else (the scrollbar) and it lets go, where it was put.
+  // Until 2026-10-03, later, it set off by itself once the title had been
+  // read (AUTO_FIRST, 4.2s) and the hand took over from it — gone.
+  //
+  // Not with motion turned off (the page's own scrolling there, the stages
+  // following it at once), nor with the map slides on (their own wheel);
+  // and `?auto=off` on the address keeps the old hand-driven page — a
+  // wheel's notches gliding as far as they are turned, the keys a stage at
+  // a time — for the tests that hold a stage. `data-auto` on the stage
+  // says which: ready, down, up, or off.
   // ============================================================
-  const AUTO_FIRST = 4200;                    // ms from the page opening (the title gathers over the first 2.6s)
-  const AUTO_REST = [0, 1600, 2600, 2400];    // ms at stages 2, 3 and 4 (index: the stage arrived at) before going on
-  let auto = !REDUCE_MOTION && !mapOn && !/[?&]auto=off\b/.test(location.search);
-  let autoAt = 0, autoSince = performance.now(), autoWait = AUTO_FIRST;
-  stage.dataset.auto = auto ? "on" : "off";
-  function stopAuto() {
-    if (!auto) return;
-    auto = false;
-    phases.delete(autoPhase);
-    stage.dataset.auto = "off";
+  const AUTO_REST = [0, 1600, 2600, 2400];   // ms resting at stages 2, 3 and 4 (index: the stage arrived at), either way
+  const PLAY_FROM = 8;     // px of a wheel turned that is a scroll (a trackpad's tremble is not)
+  const PLAY_TURN = 40;    // and of a turn the other way, while it plays, that turns it round
+  const PLAY_GAP = 420;    // ms without a turn, and the next one is a new scroll
+  const SWIPE = 12;        // px a finger moves along the page before it is a swipe
+  const playable = !REDUCE_MOTION && !mapOn && !/[?&]auto=off\b/.test(location.search);
+  let playDir = 0, playTo = 0, playSince = 0;
+  stage.dataset.auto = playable ? "ready" : "off";
+  function stopPlay() {
+    if (!playDir) return;
+    playDir = 0;
+    phases.delete(playPhase);
+    stage.dataset.auto = "ready";
   }
-  function autoPhase(now) {
+  // The next stage on, from where the page is (not where it was going: a
+  // turn round goes back from the very place it is).
+  function nextFrom(dir) {
+    const at = Math.max(0, Math.min(LAST, stageOf(container.scrollTop - stageTop())));
+    return dir > 0 ? Math.floor(at + 0.02) + 1 : Math.ceil(at - 0.02) - 1;
+  }
+  // Set it going, one way: true if the scroll was taken (it always is, on
+  // the stage: one already on its way that way is the same scroll).
+  function play(dir) {
+    if (!playable || !dir) return false;
+    if (playDir === dir) return true;
+    const next = nextFrom(dir);
+    if (next < 0 || next > LAST) { stopPlay(); return true; }   // at the end it goes: nowhere further
+    playDir = dir;
+    playTo = next;
+    playSince = performance.now();
+    stage.dataset.auto = dir > 0 ? "down" : "up";
+    toStage(next);
+    phases.add(playPhase);
+    return true;
+  }
+  function playPhase(now) {
     // (waiting behind anything open over the page, and while it glides)
-    if (overlayOpen() || document.hidden || gliding) { autoSince = now; return; }
-    if (now - autoSince < autoWait) return;
-    autoAt += 1;
-    toStage(autoAt);
-    autoSince = now;
-    autoWait = AUTO_REST[autoAt] || 0;
-    if (autoAt >= LAST) { auto = false; phases.delete(autoPhase); stage.dataset.auto = "done"; }
+    if (overlayOpen() || document.hidden || gliding) { playSince = now; return; }
+    if (playTo <= 0 || playTo >= LAST) { stopPlay(); return; }   // there
+    if (now - playSince < (AUTO_REST[playTo] || 0)) return;
+    playTo += playDir;
+    toStage(playTo);
+    playSince = now;
   }
-  if (auto) phases.add(autoPhase);
-  // the visitor's hand
-  container.addEventListener("wheel", (e) => { if (!e.ctrlKey) stopAuto(); }, { passive: true, capture: true });
-  container.addEventListener("touchmove", stopAuto, { passive: true });
-  window.addEventListener("keydown", (e) => {
-    if (overlayOpen()) return;
-    if (/^(Arrow(Up|Down)|Page(Up|Down)|Home|End|Tab| )$/.test(e.key)) stopAuto();
-  }, true);
-  // the page moved by anything but the glide: the scrollbar, a finger
+  // A wheel or a trackpad: its deltas gathered into one scroll — a new one
+  // after PLAY_GAP without any.
+  let turned = 0, turnedLast = 0;
+  function wheelPlay(d) {
+    const now = performance.now();
+    if (now - turnedLast > PLAY_GAP) turned = 0;
+    turnedLast = now;
+    if (playDir && Math.sign(d) === playDir) { turned = 0; return; }   // the same scroll, run on
+    turned += d;
+    if (Math.abs(turned) >= (playDir ? PLAY_TURN : PLAY_FROM)) { play(Math.sign(turned)); turned = 0; }
+  }
+  // A finger: a swipe up the page is a scroll down it. The page's own
+  // scrolling is held off, so a swipe is a scroll and nothing else (two
+  // fingers are a pinch, and are the browser's).
+  let touchY = null, swiped = false;
+  container.addEventListener("touchstart", (e) => {
+    touchY = e.touches.length === 1 ? e.touches[0].clientY : null;
+    swiped = false;
+  }, { passive: true });
+  container.addEventListener("touchmove", (e) => {
+    if (!playable || touchY === null || e.touches.length !== 1) return;
+    if (e.cancelable) e.preventDefault();
+    const dy = touchY - e.touches[0].clientY;
+    if (!swiped && !overlayOpen() && Math.abs(dy) >= SWIPE) { swiped = true; play(Math.sign(dy)); }
+  }, { passive: false });
+  container.addEventListener("touchend", () => { touchY = null; }, { passive: true });
+  // the page moved by anything but the glide — the scrollbar — while it
+  // rests between stages: let go, where it was put
   container.addEventListener("scroll", () => {
-    if (auto && !gliding && Math.abs(container.scrollTop - glideWrote) > 2 && container.scrollTop > 2) stopAuto();
+    if (playDir && !gliding && Math.abs(container.scrollTop - glideWrote) > 2) stopPlay();
   }, { passive: true });
 
   // ============================================================
@@ -462,7 +578,8 @@
     });
     stage.querySelectorAll(".formula-link").forEach((a) => {
       a.addEventListener("focus", () => {
-        if (a.matches(":focus-visible") && reading() < LAST - 0.05) toStage(LAST);
+        // (straight there, not played: the keys are on a name already)
+        if (a.matches(":focus-visible") && reading() < LAST - 0.05) { stopPlay(); toStage(LAST); }
       });
     });
   }
@@ -580,19 +697,25 @@
   // page scrolls as above.
   // ============================================================
   if (!mapOn || !intro || !map) {
-    // --- the keys: a stage at a time, and the Scroll button the same
+    // --- the keys and the Scroll button: a scroll, played all the way (ONE
+    // SCROLL, ALL THE WAY, above); with `?auto=off`, a stage at a time
     window.addEventListener("keydown", (e) => {
       if (overlayOpen() || e.altKey || e.ctrlKey || e.metaKey) return;
       if (e.target && e.target.closest && e.target.closest("input, textarea, select, [contenteditable]")) return;
       // (Space presses a button or a link it is on, as it always does)
       if (e.key === " " && e.target && e.target.closest && e.target.closest("button, a, summary")) return;
-      if (e.key === "ArrowDown" || e.key === "PageDown" || (e.key === " " && !e.shiftKey)) { e.preventDefault(); stepStage(1); }
-      else if (e.key === "ArrowUp" || e.key === "PageUp" || (e.key === " " && e.shiftKey)) { e.preventDefault(); stepStage(-1); }
-      else if (e.key === "Home") { e.preventDefault(); toStage(0); }
-      else if (e.key === "End") { e.preventDefault(); toStage(LAST); }
+      let dir = 0;
+      if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === "End" || (e.key === " " && !e.shiftKey)) dir = 1;
+      else if (e.key === "ArrowUp" || e.key === "PageUp" || e.key === "Home" || (e.key === " " && e.shiftKey)) dir = -1;
+      if (!dir) return;
+      e.preventDefault();
+      if (play(dir)) return;
+      if (e.key === "Home") toStage(0);
+      else if (e.key === "End") toStage(LAST);
+      else stepStage(dir);
     });
     const cue = document.getElementById("scroll-cue");
-    if (cue) cue.addEventListener("click", () => { stopAuto(); stepStage(1); });
+    if (cue) cue.addEventListener("click", () => { if (!play(1)) stepStage(1); });
     return;
   }
 

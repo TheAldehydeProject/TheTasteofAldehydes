@@ -50,21 +50,22 @@
 //      round the bonds (more concrete), its swirl calms, the bonds are drawn
 //      out of the C in bright specks, the C=O as two lines, and the atoms
 //      named as a chemistry book names them
-//   5  (S 4) THE DRIFT and the names: from S 3 the room either side of the
-//      formula fills with a very light drift of specks, falling slowly and
-//      flowing a little as ADAR's dust does, and the Menu's eight pages come
-//      up in it, scattered a little (style.css, landing.js) — "remove the two
-//      parallel particle lines ... the space on the left and right is
-//      occupied by the 8 categories ... slightly haphazardly arranged. and
-//      have VERY LIGHT AND FLOWY PARTICLES; very similar to the adar page"
-//      (2026-10-03). Until then two LINES of specks came down the window,
-//      one either side of the formula, the names on the outside of them;
-//      none of that is in this file now.
+//   5  (S 4) THE SILLAGE, THE ALDEHYDES OF PERFUMERY and the names: from
+//      S 3 the aldehyde's own scent spreads out of it into the room on every
+//      side, the aldehydes a perfumer reaches for come up in the gaps as a
+//      chemistry book draws them, and the Menu's eight pages come up,
+//      scattered a little, each the R of an aldehyde (style.css, landing.js)
+//      — "rework the words and the particles surrounding the main aldehyde
+//      molecule. that stays 100% as it is ... fill in the gaps and make it
+//      all thematic" (2026-10-03, last). For that day a very light drift of
+//      specks fell either side, as ADAR's dust does; and until it two LINES
+//      of specks came down the window, the names on the outside of them;
+//      none of either is in this file now.
 //
 // THE ELECTRONEGATIVE HAND ("i want the cursor to have an electronegative
 // character, so the electrons would be attracted to it"): wherever the
 // pointer is over the stage, the specks near it — the aldehyde's and the
-// drift's — are drawn towards it, and brighten, and a small δ− stands beside
+// sillage's — are drawn towards it, and brighten, and a small δ− stands beside
 // it. A name pointed at is lit, with a backdrop of specks of its own.
 //
 // Before the five stages (the same evening) the formula stood on a slide of
@@ -127,8 +128,9 @@
   // gentle curve (2026-09-30: "EVERYTHING should be smooth and gradual; and
   // not incremental"), so something is always on its way and nothing waits
   // for the one before it to stop: the turning from TURN_FROM to 2, the
-  // formula from FORM_FROM to 3, the drift coming up from 3 over
-  // DRIFT_OVER, the names after it (landing.js).
+  // formula from FORM_FROM to 3, the last stage — the sillage, the
+  // aldehydes in the gaps — coming up from 3 over DRIFT_OVER, the names
+  // after it (landing.js).
   const TURN_FROM = 0.95, FORM_FROM = 1.95, DRIFT_OVER = 0.85;   // (the turn from 0.85 until 2026-10-01, when its leg grew)
   // THE TURN UPRIGHT, prolonged and smoothed (2026-10-01: "prolongue the
   // horizontal to vertical transformation of the aldehyde. thats the only
@@ -158,33 +160,49 @@
   const BOND_INK = [1.0, 0.96, 0.9];
   const ATOM_SIZE = 0.23;      // the names' letters, angstrom
   const CLEAR = 0.78;          // the clear space round each, of that
-  // THE DRIFT (2026-10-03, in place of the two lines): ADAR's dust, on the
-  // stage's dark — how many specks to a square pixel of the room either side
-  // of the formula; how fast they fall, pixels a second (ADAR's own, 3 to
-  // 11); how far each sways from side to side and how slowly; how far the
-  // slow flow under them carries them, and how slowly it turns over; how
-  // strong a speck is at most; and how much of them is the aldehyde's gold
-  // and violet, the rest a pale warm grey, as ADAR's silver is on its dark.
-  // LOOSER the same evening (the owner: "it feels too organized ... make the
-  // border between the start and end of the particles more subtle ... I want
-  // it to resemble more the adar left side"): about half as many, smaller and
-  // fainter, as ADAR's dust is; and NO EDGE — the specks are spread from the
-  // window's edge on into the aldehyde's room, as many as anywhere out to
-  // DRIFT_FULL of the way to the names' inner edge and fewer and fainter from
-  // there to none at DRIFT_REACH of it, so the drift thins out into the
-  // aldehyde's own cloud rather than stopping at a line (it filled the room
-  // evenly to 70px short of that edge until then); and it lies in slow
-  // PATCHES, thicker here and thinner there, drifting (`DRIFT_PATCH`: how
-  // much of a speck's light the thin of a patch takes, how big a patch is in
-  // pixels, and how slowly they move).
-  const DRIFT_DENSITY = 0.0018;
-  const DRIFT_FULL = 0.45, DRIFT_REACH = 1.4;
-  const DRIFT_PATCH = [0.75, 380, 0.014];
-  const DRIFT_FALL = [3, 11];
-  const DRIFT_SWAY = 6, DRIFT_SWAY_RATE = 0.15;
-  const DRIFT_FLOW = 9, DRIFT_STIR = 0.035;
-  const DRIFT_INK = 0.8;
-  const DRIFT_TONES = [[0.12, "pi"], [0.1, "lone"]];
+  // THE SILLAGE (2026-10-03, last, in place of the drift — the owner:
+  // "rework the words and the particles surrounding the main aldehyde
+  // molecule ... fill in the gaps and make it all thematic"): the aldehyde's
+  // own scent leaving it. Its specks come off the edge of its cloud and go
+  // out into the room on every side, slowly, as a smell spreads — fast at
+  // first and slower as they go, as anything diffusing does (`SILL_EASE`: how
+  // far out is how far through its life to this power; a half would be a
+  // true diffusion) — curling a little as they go and wandering on a slow
+  // current under them, and fading as they reach the window's edge; in the
+  // aldehyde's warm grey, some of its gold and violet; reaching out further
+  // as the last stage comes; drawn to the electronegative hand. How many to
+  // a square pixel of the window; where they leave from and how far they go,
+  // of the formula's half-size and of the window's half-diagonal; how long a
+  // life is, seconds; how far a speck curls over it, radians; how far the
+  // current carries one, pixels and of its distance out, and how slowly it
+  // turns over; how strong a speck is at most. (ADAR's dust fell here for a
+  // day, in the rooms either side: it was ADAR's, not this page's.)
+  const SILL_DENSITY = 0.0048;
+  const SILL_FROM = 0.78, SILL_REACH = 1.08;
+  const SILL_EASE = 0.85;
+  const SILL_LIFE = [55, 120];
+  const SILL_CURL = 0.4;
+  const SILL_WANDER = [10, 0.07], SILL_STIR = 0.03;
+  const SILL_INK = 0.85;
+  const SILL_TONES = [[0.16, "pi"], [0.14, "lone"]];
+  // THE ALDEHYDES OF PERFUMERY, in the gaps (the same round): the aldehydes a
+  // perfumer reaches for, drawn as a chemistry book draws them — skeletal
+  // formulas, the carbons at the corners, only the oxygens named — in fine
+  // lines of specks, the C=O's double bond in the aldehyde's GOLD and the
+  // oxygen's lone pair a faint VIOLET haze round its O, as the big one is
+  // coloured; each with its name in small type under it. They stand in
+  // whatever room the names and the formula leave (laid once, wherever the
+  // most room is), each turned its own way, drifting a few pixels and
+  // turning a little, coming up one by one as the last stage comes, and
+  // drawn a little to the hand. The bond in pixels (of the window's width,
+  // and its least and most), how much smaller the farther ones are, how
+  // strong at most, how many tries each is given to find a place, and the
+  // room kept round the names, the formula and each other.
+  const AIR_BOND = [0.0118, 11, 19];
+  const AIR_DEPTH = [0.74, 1];
+  const AIR_INK = 0.64;
+  const AIR_TRIES = 140;
+  const AIR_KEEP = { name: 16, formula: 1.1, apart: 26, edge: 14 };
   const LINE_SWIRL = 3.2;   // (a name's backdrop swirls by it)
   // A NAME'S BACKDROP (2026-09-30: "make them slightly particular when
   // hovered. give them a slight backdrop of particles, same colours as the
@@ -210,8 +228,8 @@
   // to it a speck at its heart is drawn, and how much brighter it is there.
   const HAND_REACH = 0.16;     // of the window's height, for the aldehyde's specks
   const HAND_PULL = 0.45;
-  const LINE_REACH = 150;      // pixels, for the drift's (the lines' reach, kept)
-  // the drift as little moved by it as the lines were made (2026-10-01: "i
+  const LINE_REACH = 150;      // pixels, for the sillage's (the lines' reach, kept)
+  // the sillage as little moved by it as the lines were made (2026-10-01: "i
   // want them half as reactive") — a name's backdrop keeps its own
   const LINE_PULL = 0.25;
   const LINE_LIGHT = 0.5;      // of HAND_LIGHT
@@ -403,44 +421,41 @@
       vColour = vec3(${BOND_INK.map((v) => v.toFixed(3)).join(", ")}) * shown;
     }`;
 
-  // THE DRIFT, drawn straight onto the window in its own pixels. Every speck
-  // belongs to a side (`aDrift.x`: -1 the left of the formula, 1 the right,
-  // 0 the whole window on a narrow one), stands at its own distance in from
-  // the window's edge (`aDrift.y`, of the way to the names' inner edge, and
-  // further — or of the window, on a narrow one) and falls down it at
-  // `aDrift.w` pixels a second from its own start (`aDrift.z`, of the way
-  // down), round and round — swaying a few pixels from side to side as ADAR's
-  // dust does, and carried a little by a slow flow under it. It comes up as
-  // the last stage comes (`uDraw`), grows fainter as it reaches into the
-  // aldehyde's room, lies in slow patches, and the hand draws it to it.
-  const DRIFT_VERTEX = `
-    uniform vec2 uRes, uHandPx;
-    uniform vec4 uRoom;
-    uniform float uTime, uDraw, uSize, uPull;
-    attribute vec4 aDrift;
+  // THE SILLAGE, drawn straight onto the window in its own pixels. Every
+  // speck leaves the edge of the aldehyde's cloud (`uFrom`, pixels from the
+  // formula's middle, `uMid`) in its own direction (`aSill.x`, of a turn),
+  // and goes out to `uReach` over its own life (`aSill.z`, seconds) from its
+  // own moment in it (`aSill.y`), round and round — fast at first and slower
+  // as it goes (SILL_EASE), so thinning as it spreads, curling a little,
+  // carried on a slow current; it
+  // shows only as far out as the stage has let the scent reach (`uOut`), and
+  // fades in as it leaves the cloud and out as it nears the window's edge.
+  // The hand draws it to it.
+  const SILL_VERTEX = `
+    uniform vec2 uRes, uHandPx, uMid;
+    uniform float uTime, uDraw, uSize, uPull, uFrom, uReach, uOut;
+    attribute vec4 aSill;
     attribute vec3 aTone;
     varying vec3 vColour;
     varying float vAlpha;
     ${NOISE}
     void main() {
-      float pad = 16.0;
-      float span = uRes.y + 2.0 * pad;
-      float y = mod(aDrift.z * span + aDrift.w * uTime, span) - pad;
-      // the room, from the window's edge to the names' inner edge
-      float room = max(1.0, aDrift.x < -0.5 ? uRoom.x : uRes.x - uRoom.z);
-      float x = aDrift.x < -0.5 ? aDrift.y * room : aDrift.x > 0.5 ? uRes.x - aDrift.y * room : aDrift.y * uRes.x;
-      float seed = fract(aDrift.z * 7.31 + aDrift.w * 0.013 + aDrift.y * 3.7);
-      // ADAR's sway, and the slow flow under it
-      x += sin(uTime * ${DRIFT_SWAY_RATE.toFixed(3)} * (0.7 + 0.6 * seed) + seed * 6.283) * ${DRIFT_SWAY.toFixed(1)};
-      vec2 p = vec2(x, y) + ${DRIFT_FLOW.toFixed(1)} * vec2(
-        snoise(vec3(x * 0.004, y * 0.004, uTime * ${DRIFT_STIR.toFixed(3)} + seed * 3.0)),
-        0.4 * snoise(vec3(x * 0.004 + 17.3, y * 0.004, uTime * ${DRIFT_STIR.toFixed(3)} - seed * 3.0)));
-      // fainter as it reaches into the aldehyde's room (and fewer: laid so)
-      float r = aDrift.x < -0.5 ? p.x / room : aDrift.x > 0.5 ? (uRes.x - p.x) / room : 0.0;
-      float edge = 1.0 - 0.7 * smoothstep(${DRIFT_FULL.toFixed(3)}, ${DRIFT_REACH.toFixed(3)}, r);
-      // the patches, thicker here and thinner there
-      float thin = 1.0 - ${DRIFT_PATCH[0].toFixed(3)} * (1.0 - smoothstep(-0.35, 0.45,
-        snoise(vec3(p / ${DRIFT_PATCH[1].toFixed(1)}, uTime * ${DRIFT_PATCH[2].toFixed(4)} + 9.0))));
+      float seed = aSill.w;
+      float u = fract(aSill.y + uTime / aSill.z);
+      float r = uFrom + (uReach - uFrom) * pow(u, ${SILL_EASE.toFixed(3)});
+      float a = aSill.x * 6.2832 + ${SILL_CURL.toFixed(3)} * u * (seed < 0.5 ? 1.0 : -1.0);
+      // (a little taller than round, as the formula stands)
+      vec2 p = uMid + vec2(cos(a), sin(a) * 1.06) * r;
+      // the slow current under it, carrying it further the further out it is
+      // (one noise, turned into a way and how far: half the work of two)
+      float carry = ${SILL_WANDER[0].toFixed(1)} + ${SILL_WANDER[1].toFixed(3)} * (r - uFrom);
+      float n = snoise(vec3(p * 0.0035, uTime * ${SILL_STIR.toFixed(3)} + seed * 4.0));
+      float w = n * 3.6 + seed * 6.2832;
+      p += carry * (0.35 + 0.65 * abs(n)) * vec2(cos(w), sin(w));
+      // in as it leaves the cloud, out towards the edge, and only as far as
+      // the scent has reached
+      float fade = smoothstep(0.0, 0.06, u) * (1.0 - smoothstep(0.62, 1.0, u));
+      fade *= 1.0 - smoothstep(uOut - 90.0, uOut, r);
       // the hand: the electrons drawn to it
       float near = 0.0;
       if (uPull > 0.0) {
@@ -450,10 +465,10 @@
       }
       float twinkle = 0.7 + 0.3 * sin(uTime * 0.9 + seed * 60.0);
       vColour = aTone * (1.0 + ${(HAND_LIGHT * LINE_LIGHT).toFixed(3)} * near);
-      vAlpha = uDraw * edge * thin * twinkle;
+      vAlpha = uDraw * fade * twinkle;
       if (vAlpha <= 0.002) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
       gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
-      gl_PointSize = uSize * (seed < 0.12 ? 1.45 : 0.7 + 0.35 * fract(seed * 11.0));
+      gl_PointSize = uSize * (seed < 0.1 ? 1.4 : 0.65 + 0.4 * fract(seed * 11.0));
     }`;
   const LINE_FRAGMENT = `
     uniform float uAlpha;
@@ -467,7 +482,7 @@
     }`;
 
   // A NAME'S BACKDROP, drawn straight onto the window in its pixels like the
-  // drift: every speck belongs to one name (`aHaze.x`) and stands at its own
+  // sillage: every speck belongs to one name (`aHaze.x`) and stands at its own
   // place in an oval round it (`aHaze.yz`, in the name's own half-sizes),
   // drawn in from half as far again as the name comes up (`uHeat`), swirling
   // a little, and drawn a part of the way to the hand.
@@ -649,25 +664,26 @@
     return { el, at };
   });
 
-  // ---- the drift -------------------------------------------------------------
-  const driftGeo = new THREE.BufferGeometry();
-  const driftMat = new THREE.ShaderMaterial({
-    vertexShader: DRIFT_VERTEX,
+  // ---- the sillage -----------------------------------------------------------
+  const sillGeo = new THREE.BufferGeometry();
+  const sillMat = new THREE.ShaderMaterial({
+    vertexShader: SILL_VERTEX,
     fragmentShader: LINE_FRAGMENT,
     uniforms: {
       uRes: { value: new THREE.Vector2(1, 1) },
-      uRoom: { value: new THREE.Vector4() },
+      uMid: { value: new THREE.Vector2() },
       uHandPx: { value: new THREE.Vector2() },
       uTime: { value: 0 }, uDraw: { value: 0 }, uSize: { value: 2 },
-      uPull: { value: 0 }, uAlpha: { value: DRIFT_INK },
+      uFrom: { value: 100 }, uReach: { value: 800 }, uOut: { value: 800 },
+      uPull: { value: 0 }, uAlpha: { value: SILL_INK },
     },
     transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
   });
-  const drift = new THREE.Points(driftGeo, driftMat);
-  drift.frustumCulled = false;
-  drift.renderOrder = 5;
-  drift.visible = false;
-  scene.add(drift);
+  const sill = new THREE.Points(sillGeo, sillMat);
+  sill.frustumCulled = false;
+  sill.renderOrder = 5;
+  sill.visible = false;
+  scene.add(sill);
 
   // ---- a name's backdrop -----------------------------------------------------
   const hazeGeo = new THREE.BufferGeometry();
@@ -694,11 +710,11 @@
   // A shader that did not compile takes the drawing with it: check, and step aside.
   try {
     bonds.visible = true;
-    // (the drift's specks are made once the page is laid out; one speck to compile against)
-    driftGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
-    driftGeo.setAttribute("aDrift", new THREE.BufferAttribute(new Float32Array(4), 4));
-    driftGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
-    drift.visible = true;
+    // (the sillage's specks are made once the page is laid out; one speck to compile against)
+    sillGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
+    sillGeo.setAttribute("aSill", new THREE.BufferAttribute(new Float32Array(4), 4));
+    sillGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
+    sill.visible = true;
     hazeGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
     hazeGeo.setAttribute("aHaze", new THREE.BufferAttribute(new Float32Array(4), 4));
     hazeGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
@@ -707,7 +723,7 @@
     const programs = renderer.info.programs || [];
     if (programs.some((p) => p.diagnostics && p.diagnostics.runnable === false)) throw new Error("shader");
     bonds.visible = false;
-    drift.visible = false;
+    sill.visible = false;
     haze.visible = false;
   } catch (e) {
     renderer.dispose();
@@ -721,6 +737,314 @@
   charge.className = "molecule-charge";
   charge.textContent = "δ−";
   wrap.appendChild(charge);
+
+  // ---- the aldehydes of perfumery, in the gaps -------------------------------
+  // Each as a chemistry book draws it, a bond one long, up the page positive:
+  // its corners (`at`: [x, y], and a letter where an oxygen stands) and its
+  // bonds ([from, to, 1 or 2], or 3 for the inner line of a ring's double
+  // bond). A straight chain is a zig-zag from its tail to the aldehyde's
+  // carbon, the =O next along it; a ring is a hexagon with its first corner
+  // on the right, where the aldehyde's carbon goes on.
+  const zig = (k) => [k * 0.866, (k % 2) * 0.5];
+  function chainOf(n) {
+    const at = [], bonds = [];
+    for (let k = 0; k <= n; k++) at.push(k < n ? zig(k) : [...zig(k), "O"]);
+    for (let k = 0; k < n; k++) bonds.push([k, k + 1, k === n - 1 ? 2 : 1]);
+    return { at, bonds };
+  }
+  function ringOf(aromatic) {
+    const at = [], bonds = [];
+    for (let k = 0; k < 6; k++) at.push([Math.cos((k * Math.PI) / 3), Math.sin((k * Math.PI) / 3)]);
+    for (let k = 0; k < 6; k++) bonds.push([k, (k + 1) % 6, 1]);
+    if (aromatic) for (const k of [0, 2, 4]) bonds.push([k, k + 1, 3]);
+    return { at, bonds };
+  }
+  // (a corner more, bonded to corner `to`)
+  const add = (m, x, y, to, order = 1, label) => {
+    m.at.push(label ? [x, y, label] : [x, y]);
+    m.bonds.push([to, m.at.length - 1, order]);
+    return m.at.length - 1;
+  };
+  // the aldehyde's carbon on a ring's first corner, and its =O
+  const cho = (m) => { const c = add(m, 2, 0, 0); add(m, 2.5, 0.866, c, 2, "O"); return m; };
+  const AIR_LIST = [
+    ["C-12 MNA", () => { const m = chainOf(11); add(m, zig(9)[0], 1.5, 9); return m; }],
+    ["C-11 undecylenic", () => { const m = chainOf(11); m.bonds[0][2] = 2; return m; }],
+    ["Vanillin", () => { const m = cho(ringOf(true)); const o = add(m, -1, 1.732, 2, 1, "O"); add(m, -2, 1.732, o); add(m, -2, 0, 3, 1, "HO"); return m; }],
+    ["Cinnamal", () => { const m = ringOf(true); const a = add(m, 2, 0, 0); const b = add(m, 2.5, 0.866, a, 2); const c = add(m, 3.5, 0.866, b); add(m, 4, 0, c, 2, "O"); return m; }],
+    ["C-10 decanal", () => chainOf(10)],
+    ["Citral", () => { const m = chainOf(8); m.bonds[1][2] = 2; m.bonds[5][2] = 2; add(m, zig(1)[0], 1.5, 1); add(m, zig(5)[0], 1.5, 5); return m; }],
+    ["Benzaldehyde", () => cho(ringOf(true))],
+    ["Hydroxycitronellal", () => { const m = chainOf(8); add(m, zig(1)[0], 1.5, 1, 1, "OH"); add(m, 0, 1, 1); add(m, zig(5)[0], 1.5, 5); return m; }],
+    ["C-12 lauric", () => chainOf(12)],
+    ["Anisaldehyde", () => { const m = cho(ringOf(true)); const o = add(m, -2, 0, 3, 1, "O"); add(m, -2.5, 0.866, o); return m; }],
+    ["Melonal", () => { const m = chainOf(7); m.bonds[1][2] = 2; add(m, zig(1)[0], 1.5, 1); add(m, zig(5)[0], 1.5, 5); return m; }],
+    ["Safranal", () => { const m = cho(ringOf(false)); m.bonds.push([0, 1, 3], [2, 3, 3]); add(m, 1, 1.732, 1); add(m, 0.5, -1.866, 5); add(m, 1.366, -1.366, 5); return m; }],
+    ["Phenylacetaldehyde", () => { const m = ringOf(true); const a = add(m, 2, 0, 0); const b = add(m, 2.5, 0.866, a); add(m, 3.5, 0.866, b, 2, "O"); return m; }],
+    ["Cuminaldehyde", () => { const m = cho(ringOf(true)); const c = add(m, -2, 0, 3); add(m, -2.5, 0.866, c); add(m, -2.5, -0.866, c); return m; }],
+    ["C-9 nonanal", () => chainOf(9)],
+    ["C-8 octanal", () => chainOf(8)],
+  ];
+  const AIR_INKS = { bond: "rgb(226,220,210)", pi: "rgb(224,178,82)", lone: "rgb(169,138,216)", letter: "rgb(236,232,226)" };
+  // Drawn by the aldehyde's own renderer, over it, in a scene of their own
+  // measured in the window's pixels (y down): each a flat picture made once
+  // and only moved and turned as it is drawn — no picture of the whole
+  // window over the drawing (one, laid down every frame, had the last stage
+  // drawing at half the frames of the rest, measured).
+  const airScene = new THREE.Scene();
+  const airCam = new THREE.OrthographicCamera(0, 1, 0, 1, -10, 10);
+  const airPlane = new THREE.PlaneGeometry(1, 1);
+  let airPlaced = [], airRatio = 1;
+  const glyphs = {};
+  function texture(canvas) {
+    const t = new THREE.CanvasTexture(canvas);
+    t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter; t.generateMipmaps = false;
+    return t;
+  }
+  // a picture as a flat thing in that scene, w by h pixels
+  function plate(map, w, h) {
+    const mesh = new THREE.Mesh(airPlane, new THREE.MeshBasicMaterial({
+      map, transparent: true, opacity: 0, depthTest: false, depthWrite: false,
+      side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
+    }));
+    mesh.scale.set(w, -h, 1);   // (y down: the picture the right way up)
+    mesh.frustumCulled = false;
+    mesh.visible = false;
+    airScene.add(mesh);
+    return mesh;
+  }
+  // a letter — an O, an H — upright, as the formula's are set
+  function glyph(text, size) {
+    const key = text + "|" + size.toFixed(1) + "|" + airRatio;
+    if (glyphs[key]) return glyphs[key];
+    const c = document.createElement("canvas"), g = c.getContext("2d");
+    const font = size.toFixed(1) + "px Arial, 'Liberation Sans', Helvetica, sans-serif";
+    g.font = font;
+    const w = Math.ceil(g.measureText(text).width) + 2, h = Math.ceil(size * 1.3);
+    c.width = Math.ceil(w * airRatio); c.height = Math.ceil(h * airRatio);
+    g.scale(airRatio, airRatio);
+    g.font = font; g.textAlign = "center"; g.textBaseline = "middle"; g.fillStyle = AIR_INKS.letter;
+    g.fillText(text, w / 2, h / 2 + size * 0.04);
+    return (glyphs[key] = { map: texture(c), w, h });
+  }
+
+  // One molecule drawn once, in specks, into a picture of its own: its
+  // bonds as fine lines of specks (the double bond to an O in gold, with a
+  // little gold cloud along it; a ring's inner lines), and a faint violet
+  // haze round each O for its lone pair. The letters are drawn upright as
+  // it is laid down, not here. Its middle is the picture's middle.
+  function airSprite(m, L) {
+    const xs = m.at.map((a) => a[0]), ys = m.at.map((a) => a[1]);
+    const pad = 0.7;
+    const minX = Math.min(...xs) - pad, maxX = Math.max(...xs) + pad;
+    const minY = Math.min(...ys) - pad, maxY = Math.max(...ys) + pad;
+    const w = (maxX - minX) * L, h = (maxY - minY) * L;
+    const c = document.createElement("canvas");
+    c.width = Math.max(1, Math.ceil(w * airRatio)); c.height = Math.max(1, Math.ceil(h * airRatio));
+    const g = c.getContext("2d");
+    g.scale(airRatio, airRatio);
+    const P = (a) => [(a[0] - minX) * L, (maxY - a[1]) * L];
+    const strand = (x0, y0, x1, y1, ink) => {
+      const len = Math.hypot(x1 - x0, y1 - y0), n = Math.max(2, Math.round(len / 0.95));
+      const nx = -(y1 - y0) / len, ny = (x1 - x0) / len;
+      g.fillStyle = ink;
+      for (let i = 0; i <= n; i++) {
+        const t = i / n, j = (rand() - 0.5) * 0.5;
+        g.globalAlpha = 0.45 + 0.5 * rand();
+        g.beginPath();
+        g.arc(x0 + (x1 - x0) * t + nx * j, y0 + (y1 - y0) * t + ny * j, 0.5 + 0.25 * rand(), 0, 6.283);
+        g.fill();
+      }
+    };
+    const cloud = (x, y, n, sx, sy, ink, alpha) => {
+      g.fillStyle = ink;
+      for (let i = 0; i < n; i++) {
+        g.globalAlpha = alpha * (0.4 + 0.6 * rand());
+        g.beginPath();
+        g.arc(x + gauss() * sx, y + gauss() * sy, 0.45 + 0.3 * rand(), 0, 6.283);
+        g.fill();
+      }
+    };
+    const SHORT = 0.36 * L;                 // a bond stops short of a letter
+    const cx = m.at.slice(0, 6).reduce((s, a) => s + a[0], 0) / 6;   // (a ring's middle, for its inner lines)
+    const cy = m.at.slice(0, 6).reduce((s, a) => s + a[1], 0) / 6;
+    for (const [i, j, order] of m.bonds) {
+      let [x0, y0] = P(m.at[i]), [x1, y1] = P(m.at[j]);
+      const len = Math.hypot(x1 - x0, y1 - y0), ux = (x1 - x0) / len, uy = (y1 - y0) / len;
+      if (m.at[i][2]) { x0 += ux * SHORT; y0 += uy * SHORT; }
+      if (m.at[j][2]) { x1 -= ux * SHORT; y1 -= uy * SHORT; }
+      const nx = -uy, ny = ux;
+      if (order === 3) {
+        // a ring's double bond: an inner line, shorter, towards its middle
+        const [mx, my] = P([cx, cy]);
+        const side = Math.sign((mx - x0) * nx + (my - y0) * ny) || 1, off = 0.2 * L * side, cut = 0.17 * len;
+        strand(x0 + ux * cut + nx * off, y0 + uy * cut + ny * off, x1 - ux * cut + nx * off, y1 - uy * cut + ny * off, AIR_INKS.bond);
+      } else if (order === 2) {
+        const toO = m.at[i][2] === "O" || m.at[j][2] === "O";
+        const ink = toO ? AIR_INKS.pi : AIR_INKS.bond, off = 0.1 * L;
+        strand(x0 + nx * off, y0 + ny * off, x1 + nx * off, y1 + ny * off, ink);
+        strand(x0 - nx * off, y0 - ny * off, x1 - nx * off, y1 - ny * off, ink);
+        if (toO) cloud((x0 + x1) / 2, (y0 + y1) / 2, 34, 0.28 * L, 0.28 * L, AIR_INKS.pi, 0.45);
+      } else strand(x0, y0, x1, y1, AIR_INKS.bond);
+    }
+    // the lone pairs: a faint violet haze round every O
+    for (const a of m.at) if (a[2]) { const [x, y] = P(a); cloud(x, y, 46, 0.36 * L, 0.36 * L, AIR_INKS.lone, 0.38); }
+    g.globalAlpha = 1;
+    // where its middle is, and its letters, from the picture's middle
+    const ox = (minX + maxX) / 2, oy = (minY + maxY) / 2;
+    const letters = m.at.filter((a) => a[2]).map((a) => ({ x: (a[0] - ox) * L, y: -(a[1] - oy) * L, text: a[2],
+      // a hydrogen's side: away from the corner it hangs off
+      side: a[2].length > 1 ? (a[2][0] === "H" ? -1 : 1) : 0 }));
+    return { canvas: c, w, h, letters, pad: pad * L };
+  }
+  // its name, small, in the site's readings face
+  function airLabel(text, size) {
+    const c = document.createElement("canvas");
+    const g = c.getContext("2d");
+    const font = "500 " + size + "px 'IBM Plex Mono', ui-monospace, Menlo, monospace";
+    const word = text.toUpperCase();
+    // (spaced as the site's readings are, where the browser can)
+    const spaced = (gc) => { gc.font = font; if ("letterSpacing" in gc) gc.letterSpacing = (size * 0.1).toFixed(2) + "px"; };
+    spaced(g);
+    const w = Math.ceil(g.measureText(word).width) + 2, h = Math.ceil(size * 1.5);
+    c.width = Math.ceil(w * airRatio); c.height = Math.ceil(h * airRatio);
+    g.scale(airRatio, airRatio);
+    spaced(g);
+    g.textBaseline = "middle";
+    g.fillStyle = "rgb(214,208,200)";
+    g.fillText(word, 1, h / 2);
+    return { canvas: c, w, h };
+  }
+
+  // LAYING THEM IN THE GAPS: each, in turn, given AIR_TRIES places and
+  // turns at random, and put at the one furthest from everything already
+  // there that keeps clear of the window's edges, the Menu, the names (and
+  // their aldehyde groups), the formula and its cloud, and the others; one
+  // that finds nowhere is left out. The same places every time for one size
+  // of window.
+  function layAir(formHalf) {
+    airRatio = renderer.getPixelRatio();
+    airCam.right = W; airCam.bottom = H; airCam.updateProjectionMatrix();
+    // (what was laid before, taken away)
+    for (const m of airPlaced) for (const mesh of m.meshes) { airScene.remove(mesh); mesh.material.dispose(); if (mesh.userData.own) mesh.material.map.dispose(); }
+    airPlaced = [];
+    seed = 37;
+    const L0 = Math.max(AIR_BOND[1], Math.min(AIR_BOND[2], W * AIR_BOND[0])) * (phone() ? 0.86 : 1);
+    const labelSize = phone() ? 8 : 9;
+    const keep = AIR_KEEP;
+    const blocks = nameBoxes.map((b) => ({ l: b.l - keep.name, r: b.r + keep.name, t: b.t - keep.name, b: b.b + keep.name }));
+    const menu = document.querySelector(".menu-trigger");
+    if (menu) {
+      const r = menu.getBoundingClientRect(), box = wrap.getBoundingClientRect();
+      blocks.push({ l: r.left - box.left - 20, r: r.right - box.left + 30, t: r.top - box.top - 20, b: r.bottom - box.top + 24 });
+    }
+    const ex = { x: W / 2, y: H / 2, rx: formHalf * keep.formula, ry: formHalf * 1.06 * keep.formula };
+    const inFormula = (x, y) => ((x - ex.x) / ex.rx) ** 2 + ((y - ex.y) / ex.ry) ** 2 < 1;
+    const overlaps = (a, b) => a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b;
+    for (const [name, make] of AIR_LIST) {
+      const m = make();
+      const depth = AIR_DEPTH[0] + rand() * (AIR_DEPTH[1] - AIR_DEPTH[0]);
+      const sprite = airSprite(m, L0 * depth);
+      const label = airLabel(name, labelSize);
+      let best = null, bestScore = -1;
+      for (let t = 0; t < AIR_TRIES; t++) {
+        const turn = (rand() - 0.5) * 0.9;
+        const x = keep.edge + rand() * (W - 2 * keep.edge), y = keep.edge + rand() * (H - 2 * keep.edge);
+        const c = Math.abs(Math.cos(turn)), s = Math.abs(Math.sin(turn));
+        const bw = sprite.w * c + sprite.h * s, bh = sprite.w * s + sprite.h * c;
+        const half = Math.max(bw, label.w) / 2;
+        const box = { l: x - half, r: x + half, t: y - bh / 2, b: y + bh / 2 - 0.4 * sprite.pad + label.h };
+        if (box.l < keep.edge || box.t < keep.edge || box.r > W - keep.edge || box.b > H - keep.edge) continue;
+        if (blocks.some((b) => overlaps(box, b))) continue;
+        if (airPlaced.some((p) => overlaps(box, { l: p.box.l - keep.apart, r: p.box.r + keep.apart, t: p.box.t - keep.apart, b: p.box.b + keep.apart }))) continue;
+        // clear of the formula's cloud: round the box's edge, and its middle
+        let clear = !inFormula(x, y);
+        for (let k = 0; clear && k <= 12; k++) {
+          const f = k / 12;
+          clear = !inFormula(box.l + (box.r - box.l) * f, box.t) && !inFormula(box.l + (box.r - box.l) * f, box.b) &&
+            !inFormula(box.l, box.t + (box.b - box.t) * f) && !inFormula(box.r, box.t + (box.b - box.t) * f);
+        }
+        if (!clear) continue;
+        // as far as it can be from the others and the names
+        let score = 1e9;
+        for (const p of airPlaced) score = Math.min(score, Math.hypot(p.x - x, p.y - y));
+        for (const b of blocks) score = Math.min(score, Math.hypot((b.l + b.r) / 2 - x, (b.t + b.b) / 2 - y) * 1.3);
+        // (and from the window's edges, as if they were others: in the
+        // gaps, not lined up along the edges)
+        score = Math.min(score, 2.4 * Math.min(x, W - x, y, H - y));
+        if (score > bestScore) { bestScore = score; best = { x, y, turn, box, bh, under: bh / 2 - 0.4 * sprite.pad }; }
+      }
+      if (!best) continue;
+      // its plates: the molecule, its name, and its letters (shared)
+      const body = plate(texture(sprite.canvas), sprite.w, sprite.h);
+      const tag = plate(texture(label.canvas), label.w, label.h);
+      body.userData.own = tag.userData.own = true;
+      const size = Math.round(0.62 * L0 * depth * 2) / 2;
+      const letters = sprite.letters.map((l) => ({ l, o: glyph("O", size), h: l.side ? glyph("H", size) : null }));
+      const marks = letters.flatMap((x) => [x.o, x.h].filter(Boolean).map((gl) => plate(gl.map, gl.w, gl.h)));
+      airPlaced.push({
+        name, sprite, label, ...best, body, tag, letters, marks, size,
+        meshes: [body, tag, ...marks],
+        ink: 0.62 + 0.38 * depth,
+        // its own moment as the stage comes, and its own drift and turn
+        at: Math.min(0.6, airPlaced.length * 0.045 + rand() * 0.12),
+        phase: [rand() * 6.283, rand() * 6.283, rand() * 6.283],
+      });
+    }
+    // (for the tests: how many found a place, and where, on the drawing)
+    wrap.dataset.aldehydes = String(airPlaced.length);
+    wrap.aldehydes = airPlaced.map((p) => ({ name: p.name, x: p.x, y: p.y, box: p.box }));
+  }
+
+  // Every frame the last stage is there: each drifting a few pixels about
+  // its place and turning a little, coming up at its own moment and from a
+  // little further out, a little drawn to the hand and brightened by it; its
+  // letters upright; its name under it. Drawn over the aldehyde by the same
+  // renderer.
+  function drawAir(t, down, hx, hy, pull) {
+    if (!airPlaced.length) return;
+    for (const m of airPlaced) {
+      const show = down <= 0 ? 0 : REDUCE ? down : smooth((down - m.at) / 0.4);
+      for (const mesh of m.meshes) mesh.visible = show > 0;
+      if (show <= 0) continue;
+      const [p0, p1, p2] = m.phase;
+      let x = m.x + (REDUCE ? 0 : Math.sin(t * 0.11 + p0) * 5);
+      let y = m.y + (REDUCE ? 0 : Math.cos(t * 0.09 + p1) * 4);
+      // from a little further out, as it comes
+      x = W / 2 + (x - W / 2) * (1 + 0.06 * (1 - show));
+      y = H / 2 + (y - H / 2) * (1 + 0.06 * (1 - show));
+      const turn = m.turn + (REDUCE ? 0 : Math.sin(t * 0.07 + p2) * 0.06);
+      // the hand
+      let near = 0;
+      if (pull > 0) {
+        const dx = hx - x, dy = hy - y;
+        near = Math.exp(-(dx * dx + dy * dy) / (200 * 200)) * pull;
+        x += dx * 0.05 * near; y += dy * 0.05 * near;
+      }
+      const a = Math.min(1, AIR_INK * m.ink * show * (1 + 0.45 * near));
+      const cs = Math.cos(turn), sn = Math.sin(turn);
+      m.body.position.set(x, y, 0);
+      m.body.rotation.z = turn;
+      m.body.material.opacity = a;
+      // its letters, upright, where they stand once it is turned
+      let k = 0;
+      for (const { l, h } of m.letters) {
+        const lx = x + l.x * cs - l.y * sn, ly = y + l.x * sn + l.y * cs;
+        const o = m.marks[k++];
+        o.position.set(lx, ly, 0);
+        o.material.opacity = a;
+        // (an H beside its O)
+        if (h) { const hm = m.marks[k++]; hm.position.set(lx + l.side * m.size * 0.74, ly, 0); hm.material.opacity = a; }
+      }
+      // its name, under it
+      m.tag.position.set(x, y + m.under + m.label.h / 2, 0);
+      m.tag.material.opacity = a * 0.7;
+    }
+    if (down <= 0) return;
+    renderer.autoClear = false;
+    renderer.render(airScene, airCam);
+    renderer.autoClear = true;
+  }
 
   // ---- framing -------------------------------------------------------------
   // In the middle of the window, as large as the private page draws it; and,
@@ -753,7 +1077,7 @@
     const px = (H / 2) / (half * distCloud);
     denseCloud = density(px);
     pxForm = px;
-    const room = layDrift();
+    const room = layRoom();
     if (room) pxForm = Math.max(20, Math.min(px * 1.05, room.halfW / FORM_EXTENT, room.halfH / FORM_EXTENT));
     distForm = (H / 2) / (half * pxForm);
     denseForm = density(pxForm);
@@ -774,8 +1098,16 @@
       parts[name].geometry.setDrawRange(0, Math.min(D.parts[name].n, Math.round(SHARE[name] * EMPHASIS[name] * cut * thin)));
     }
     bonds.material.uniforms.uSize.value = (small ? 1.8 : 2.2) * scale;
-    driftMat.uniforms.uSize.value = (small ? 1.8 : 2.1) * scale;
-    driftMat.uniforms.uRes.value.set(W, H);
+    // the sillage leaves the edge of the formula's cloud and goes out past
+    // the window's corners; the aldehydes stand in the gaps it leaves
+    const formHalf = FORM_EXTENT * pxForm;
+    const su = sillMat.uniforms;
+    su.uSize.value = (small ? 1.7 : 1.9) * scale;
+    su.uRes.value.set(W, H);
+    su.uMid.value.set(W / 2, H / 2);
+    su.uFrom.value = formHalf * SILL_FROM;
+    su.uReach.value = (Math.hypot(W, H) / 2) * SILL_REACH;
+    if (formula && links.length === 8) layAir(formHalf);
     hazeMat.uniforms.uSize.value = (small ? 1.4 : 1.6) * scale;    // small (it was 2.2 and 2.6)
     hazeMat.uniforms.uRes.value.set(W, H);
     hazeMat.uniforms.uSwirl.value = small ? LINE_SWIRL * 0.8 : LINE_SWIRL;
@@ -784,16 +1116,17 @@
     if (REDUCE || !running) draw(performance.now());
   }
 
-  // LAYING THE DRIFT: in the room either side of the formula — from the
-  // window's edge to the edge of the grid's middle column (style.css) — the
-  // whole height of the window; on a narrow window (the BAND, the names above
-  // and below the formula) across the whole of it. And where each name
-  // stands, for its backdrop. Returns the room the formula has between the
-  // names.
+  // LAYING THE ROOM: where the formula's room is between the names — the
+  // grid's middle column (style.css), or, on a narrow window (the BAND, the
+  // names above and below the formula), between the rows — and where each
+  // name stands, for its backdrop and for the aldehydes in the gaps to keep
+  // clear of; and the sillage's specks, made again only when the window's
+  // size changes. Returns the room the formula has between the names.
   const PALE = [0.86, 0.84, 0.8];
   const gauss = () => Math.sqrt(-2 * Math.log(1 - rand() * 0.999)) * Math.cos(2 * Math.PI * rand());
   let laidFor = "";
-  function layDrift() {
+  let nameBoxes = [];
+  function layRoom() {
     if (!formula || links.length !== 8) return null;
     const menu = links[0].parentNode;
     const cs = getComputedStyle(menu);
@@ -803,7 +1136,6 @@
     const m = menu.getBoundingClientRect();
     const left = m.left - box.left + (parseFloat(cs.paddingLeft) || 0) + (cols[0] || 0);
     const right = left + (cols[1] || 0);
-    driftMat.uniforms.uRoom.value.set(left, 0, right, 0);
     const rects = links.map((a) => a.getBoundingClientRect());
     // each name's backdrop stands round the name's own lettering (the link
     // less its padding)
@@ -828,44 +1160,42 @@
       halfW = ((right - left) / 2) * 0.78;
       halfH = H / 2 - 64;
     }
-    // the specks themselves, made again only when the room changes
-    // (on a wide window each side's specks reach on past the names' inner
-    // edge, fewer as they go: as many as that much more room, evenly filled)
-    const sides = band ? [[0, W]] : [[-1, Math.max(0, left)], [1, Math.max(0, W - right)]];
-    const spread = band ? 1 : DRIFT_FULL + (DRIFT_REACH - DRIFT_FULL) / 2;
-    const counts = sides.map(([, w]) => Math.round(w * H * spread * DRIFT_DENSITY * (phone() ? 0.7 : 1) * (soft ? 0.3 : 1) * (band ? 0.6 : 1)));
-    const key = counts.join("|") + "|" + Math.round(H) + "|" + band;
+    // what the aldehydes in the gaps keep clear of: each name, and its
+    // aldehyde group (landing.js), on the drawing
+    nameBoxes = links.map((a, k) => {
+      const r = rects[k];
+      const b = { l: r.left - box.left, t: r.top - box.top, r: r.right - box.left, b: r.bottom - box.top };
+      const tail = a.querySelector(".formula-tail");
+      const tr = tail && getComputedStyle(tail).display !== "none" ? tail.getBoundingClientRect() : null;
+      if (tr && tr.width) {
+        b.l = Math.min(b.l, tr.left - box.left); b.r = Math.max(b.r, tr.right - box.left);
+        b.t = Math.min(b.t, tr.top - box.top); b.b = Math.max(b.b, tr.bottom - box.top);
+      }
+      return b;
+    });
+    // the sillage's specks, made again only when the window's size changes
+    const n = Math.round(W * H * SILL_DENSITY * (phone() ? 0.6 : 1) * (soft ? 0.15 : 1));
+    const key = String(n);
     if (key !== laidFor) {
       laidFor = key;
       seed = 11;
-      const n = counts.reduce((a, b) => a + b, 0);
-      const dr = new Float32Array(n * 4), tone = new Float32Array(n * 3);
-      let i = 0;
-      sides.forEach(([side], k) => {
-        for (let j = 0; j < counts[k]; j++, i++) {
-          dr[i * 4] = side;
-          // how far in: anywhere across a narrow window; on a wide one, as
-          // likely anywhere out to DRIFT_FULL of the room and less and less
-          // likely from there to DRIFT_REACH
-          let r = rand();
-          if (side) {
-            do { r = rand() * DRIFT_REACH; } while (rand() > 1 - smooth((r - DRIFT_FULL) / (DRIFT_REACH - DRIFT_FULL)));
-          }
-          dr[i * 4 + 1] = r;
-          dr[i * 4 + 2] = rand();
-          dr[i * 4 + 3] = DRIFT_FALL[0] + rand() * (DRIFT_FALL[1] - DRIFT_FALL[0]);
-          let x = rand(), c = PALE;
-          for (const [share, name] of DRIFT_TONES) { if (x < share) { c = COLOUR[name]; break; } x -= share; }
-          // ADAR's: most faint, a few a little stronger
-          const ink = 0.25 + 0.75 * rand();
-          tone[i * 3] = c[0] * ink; tone[i * 3 + 1] = c[1] * ink; tone[i * 3 + 2] = c[2] * ink;
-        }
-      });
-      driftGeo.dispose();
-      driftGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
-      driftGeo.setAttribute("aDrift", new THREE.BufferAttribute(dr, 4));
-      driftGeo.setAttribute("aTone", new THREE.BufferAttribute(tone, 3));
-      driftGeo.setDrawRange(0, n);
+      const sl = new Float32Array(n * 4), tone = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) {
+        sl[i * 4] = rand();                                                  // its direction
+        sl[i * 4 + 1] = rand();                                              // its moment in its life
+        sl[i * 4 + 2] = SILL_LIFE[0] + rand() * (SILL_LIFE[1] - SILL_LIFE[0]);   // how long that is
+        sl[i * 4 + 3] = rand();
+        let x = rand(), c = PALE;
+        for (const [share, name] of SILL_TONES) { if (x < share) { c = COLOUR[name]; break; } x -= share; }
+        // most faint, a few a little stronger
+        const ink = 0.3 + 0.7 * rand();
+        tone[i * 3] = c[0] * ink; tone[i * 3 + 1] = c[1] * ink; tone[i * 3 + 2] = c[2] * ink;
+      }
+      sillGeo.dispose();
+      sillGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+      sillGeo.setAttribute("aSill", new THREE.BufferAttribute(sl, 4));
+      sillGeo.setAttribute("aTone", new THREE.BufferAttribute(tone, 3));
+      sillGeo.setDrawRange(0, n);
     }
     return { halfW, halfH };
   }
@@ -970,7 +1300,7 @@
     wrap.turned = turned;   // (for the tests: how far it has turned, 0 to 1)
     const upright = smooth((turned - 0.72) / 0.28);                      // and the formula may come
     const formed = Math.min(smooth((S - FORM_FROM) / (3 - FORM_FROM)), upright);   // its formula
-    const down = smooth((S - 3) / DRIFT_OVER);                  // the drift comes up
+    const down = smooth((S - 3) / DRIFT_OVER);                  // the last stage comes up
     const react = REACT_TITLE + (1 - REACT_TITLE) * smooth((S - 0.15) / 1.1);
 
     // the hand (where the drawing stands, read when the page moves, not
@@ -1026,20 +1356,22 @@
       namesShown = named > 0;
     }
 
-    // the drift, and the names lit with their backdrops
+    // the sillage, and the names lit with their backdrops
     for (let k = 0; k < links.length && k < 8; k++) {
       hotTo[k] = litNow(links[k]) ? 1 : 0;
       // (the backdrop comes and goes slowly, as the name itself does)
       heat[k] += (hotTo[k] - heat[k]) * (REDUCE ? 1 : Math.min(1, dt / HAZE_EASE));
       if (Math.abs(heat[k] - hotTo[k]) < 0.002) heat[k] = hotTo[k];
     }
-    drift.visible = laidFor !== "" && down > 0;
-    if (drift.visible) {
-      const m = driftMat.uniforms;
+    sill.visible = laidFor !== "" && down > 0;
+    if (sill.visible) {
+      const m = sillMat.uniforms;
       m.uTime.value = t;
       m.uDraw.value = down;
       m.uPull.value = pull;
       m.uHandPx.value.set(eased.x - box.left, eased.y - box.top);
+      // the scent reaching out into the room as the last stage comes
+      m.uOut.value = m.uFrom.value + (m.uReach.value + 120 - m.uFrom.value) * (REDUCE ? down : smooth(down * 1.1));
     }
     haze.visible = hazeLaid && down > 0 && heat.some((h) => h > 0.002);
     if (haze.visible) {
@@ -1051,10 +1383,12 @@
     }
 
     renderer.render(scene, camera);
+    drawAir(t, down, eased.x - box.left, eased.y - box.top, pull);
 
     // Where it is, said on the drawing for anything that wants to know (the
     // tests): cloud (the first two stages), turning, turned, forming,
-    // formula, drifting (the drift coming up), drift (it there, and the names).
+    // formula, drifting (the last stage coming up — the words kept from the
+    // drift it was for a day), drift (it there, and the names).
     // (turning for as long as it is still turning, whatever the page says)
     const state = S <= 1.02 && turned < 0.01 ? "cloud" : S < 1.98 || turned < 0.995 ? "turning" : S <= 2.02 ? "turned"
       : S < 2.98 ? "forming" : S <= 3.02 ? "formula" : down < 0.999 ? "drifting" : "drift";

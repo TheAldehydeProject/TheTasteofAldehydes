@@ -27,8 +27,18 @@
 // being shown, i want them to be slightly haphazardly arranged. and have VERY
 // LIGHT AND FLOWY PARTICLES; very similar to the adar page" — and the page
 // PLAYS ITSELF through the five stages ("change the scrolling feature for it
-// to be automatic. it should be still as slow as it is now"). The tests that
-// hold a stage still open the page with `?auto=off`, which keeps it still.
+// to be automatic. it should be still as slow as it is now") — and, later the
+// same day, only once it is scrolled, ONE SCROLL PLAYING IT ALL THE WAY ("when
+// you scroll once, it will go all the way down, not it will scroll by itself
+// after a second or so"). The tests that hold a stage, or drive the page a
+// notch at a time, open it with `?auto=off`, the old hand-driven page.
+//
+// And the last of that day: "rework the words and the particles surrounding
+// the main aldehyde molecule. that stays 100% as it is, but the rest i need
+// changed. I want you to fill in the gaps and make it all thematic" — every
+// name the R of an aldehyde (R–CHO), the aldehydes of perfumery in the gaps,
+// and THE SILLAGE, the aldehyde's own scent spreading into the room, where
+// ADAR's drift was.
 //
 // The drawing says where it is on itself, `data-state` on #molecule — cloud,
 // turning, turned, forming, formula, drifting, drift — and landing.js which
@@ -84,6 +94,33 @@ async function light(page, box) {
     return { n, lit, sum };
   }, shot);
 }
+
+// The same over several boxes of one screenshot, leaving out what stands in
+// `avoid` (the aldehydes in the gaps): lit pixels to a pixel looked at.
+async function litPer(page, rects, avoid = []) {
+  const shot = (await page.screenshot()).toString("base64");
+  return page.evaluate(async ({ shot, rects, avoid }) => {
+    const img = new Image();
+    img.src = "data:image/png;base64," + shot;
+    await img.decode();
+    const c = document.createElement("canvas");
+    c.width = img.width; c.height = img.height;
+    const g = c.getContext("2d");
+    g.drawImage(img, 0, 0);
+    const d = g.getImageData(0, 0, c.width, c.height).data;
+    let lit = 0, area = 0;
+    for (const r of rects) for (let y = Math.max(0, r.y); y < Math.min(c.height, r.y + r.height); y++) for (let x = Math.max(0, r.x); x < Math.min(c.width, r.x + r.width); x++) {
+      if (avoid.some((b) => x >= b.l && x <= b.r && y >= b.t && y <= b.b)) continue;
+      area++;
+      const k = (y * c.width + x) * 4;
+      if ((d[k] + d[k + 1] + d[k + 2]) / 3 > 50) lit++;
+    }
+    return area ? lit / area : 0;
+  }, { shot, rects, avoid });
+}
+// Where the aldehydes in the gaps stand (molecule.js), each box a little larger.
+const aldehydes = (page, pad = 0) => page.evaluate((pad) => (document.getElementById("molecule").aldehydes || [])
+  .map((a) => ({ name: a.name, l: a.box.l - pad, r: a.box.r + pad, t: a.box.t - pad, b: a.box.b + pad })), pad);
 
 // Where the gold and the violet are, read off a screenshot.
 async function colours(page) {
@@ -226,7 +263,7 @@ test("five stages, smoothly: the title, the title gone, the aldehyde upright, it
   expect(Math.abs((C.x - H1.x) - (H2.x - C.x)), "either side, alike").toBeLessThan(10);
   expect(await names(), "no names yet").toBe(0);
 
-  // 5 — the names, in a light drift of specks either side of the formula
+  // 5 — the names, the aldehyde's sillage spreading round them and the aldehydes of perfumery in the gaps
   await toStage(page, 4);
   await settled(page, 4);
   await expect.poll(() => state(page), { timeout: 30000 }).toBe("drift");
@@ -237,8 +274,8 @@ test("five stages, smoothly: the title, the title gone, the aldehyde upright, it
   const [lx, rx] = await roomXs(page);
   // specks all down both rooms, top to foot, faint — none of the lines' glow
   // (read with the names and the cursor out of the picture, so what is
-  // counted is specks; few, as ADAR's dust is few, and fewer still here,
-  // where a browser without a graphics card draws three in ten of them)
+  // counted is specks; few, where a browser without a graphics card draws
+  // three in ten of them)
   const hidden = await page.addStyleTag({ content: ".formula-link, .cursor-ring, .cursor-dot { visibility: hidden !important; }" });
   for (const [x, w] of [[8, lx - 16], [rx + 8, 1440 - rx - 16]]) {
     for (const y of [40, 360, 700]) {
@@ -266,7 +303,8 @@ test("five stages, smoothly: the title, the title gone, the aldehyde upright, it
 test("the turn upright is prolonged and smooth: its leg the longest, and never quick", async ({ page }) => {
   test.setTimeout(90000);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/index.html");
+  // (the keys a stage at a time: the hand-driven page)
+  await page.goto("/index.html?auto=off");
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
   const legs = (await page.locator("#aldehyde-stage").getAttribute("data-legs")).split(" ").map(Number);
   expect(legs).toHaveLength(4);
@@ -301,12 +339,14 @@ test("the turn upright is prolonged and smooth: its leg the longest, and never q
 // "a smooth scrolling instead of incremental", and then "EVERYTHING should
 // be smooth and gradual; and not incremental": the wheel's notches glide
 // the page on a spring, the stage follows it, and a wheel stopped between
-// two stages stays where it stopped.
+// two stages stays where it stopped. (The hand-driven page, `?auto=off`,
+// since one scroll plays it all the way — and the stage's own wheel with the
+// map slides on.)
 test("the wheel scrolls it smoothly, as far as it is turned and back, and nothing snaps", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/index.html");
+  await page.goto("/index.html?auto=off");
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
   await page.mouse.move(720, 450);
   await page.waitForTimeout(600);
@@ -328,16 +368,30 @@ test("the wheel scrolls it smoothly, as far as it is turned and back, and nothin
   expect(Math.max(...steps), "never a jump").toBeLessThan(0.15);
   expect(Math.min(...steps), "never back").toBeGreaterThanOrEqual(-1e-6);
   expect(new Set(seen.filter((v) => v > 0.01 && v < end - 0.01).map((v) => v.toFixed(3))).size, "but a glide").toBeGreaterThan(6);
-  // stopped part of the way, it stays part of the way
+  // stopped part of the way, it stays part of the way: once it has come to
+  // rest — the glide's last pixel or two can land after the 160 frames above
+  // on a slow machine (2026-10-03: it failed so on the code before as after)
+  // — it does not go on to a whole stage
+  await expect.poll(async () => { const a = await stageAt(page); await page.waitForTimeout(250); return Math.abs((await stageAt(page)) - a); },
+    { timeout: 6000 }).toBeLessThan(1e-4);
+  const rest = await stageAt(page);
+  expect(rest, "where it was turned to").toBeCloseTo((300 * 0.5) / leg, 2);
   await page.waitForTimeout(1200);
-  expect(await stageAt(page), "nothing snaps").toBeCloseTo(end, 3);
+  expect(await stageAt(page), "nothing snaps").toBeCloseTo(rest, 3);
   // and back up
   for (let i = 0; i < 3; i++) { await page.mouse.wheel(0, -100); await page.waitForTimeout(60); }
   await settled(page, 0);
   expect(errors).toEqual([]);
 });
 
-test("the drift comes up in the rooms either side of the formula as the last stage comes, and nothing of the lines is left", async ({ page }) => {
+/* THE SILLAGE (2026-10-03, last: "rework the words and the particles
+   surrounding the main aldehyde molecule ... fill in the gaps and make it all
+   thematic"): where ADAR's dust fell either side, the aldehyde's own scent
+   leaves it — specks coming off the edge of its cloud and going out into the
+   room on every side, thinning as they spread, reaching out as the last
+   stage comes. Read still (motion off), with the names and the aldehydes in
+   the gaps out of the picture, so what is counted is the sillage. */
+test("the sillage comes up as the last stage comes: the aldehyde's own specks spreading into the room on every side, thinning as they go, and nothing of the drift or the lines left", async ({ page }) => {
   test.setTimeout(90000);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -345,37 +399,161 @@ test("the drift comes up in the rooms either side of the formula as the last sta
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
   await toStage(page, 3);
   await settled(page, 3);
-  const [lx, rx] = await roomXs(page);
-  // the left room, under the Menu, top to foot — the names (which come up
-  // with the stage too) and the cursor out of the picture
   await page.addStyleTag({ content: ".formula-link, .cursor-ring, .cursor-dot { visibility: hidden !important; }" });
-  const room = () => light(page, { x: 8, y: 70, width: lx - 16, height: 780 });
+  const room = () => light(page, { x: 8, y: 70, width: 300, height: 780 });
   const none = (await room()).lit;
-  expect(none, "no drift before the last stage").toBeLessThan(6);
+  expect(none, "no sillage before the last stage").toBeLessThan(6);
   await toStage(page, 3.4);
   await settled(page, 3.4);
   await expect.poll(() => state(page)).toBe("drifting");
   const some = (await room()).lit;
-  expect(some, "coming up").toBeGreaterThan(none);
+  expect(some, "reaching out").toBeGreaterThan(none);
   await toStage(page, 4);
   await settled(page, 4);
   await expect.poll(() => state(page)).toBe("drift");
   expect((await room()).lit, "and there once it is").toBeGreaterThan(Math.max(some, 15));
-  // NO EDGE where it stops (2026-10-03: "make the border between the start
-  // and end of the particles more subtle"): it thins out into the
-  // aldehyde's room — some way in from the names' edge there are still a
-  // few, fewer than in the room itself, and fewer again further in
-  const band = async (x0, x1) => (await light(page, { x: Math.round(x0), y: 70, width: Math.round(x1 - x0), height: 780 })).lit / (x1 - x0);
-  const outer = await band(8, lx * 0.4), fringe = await band(lx * 1.02, lx * 1.2);
-  expect(fringe, "a few past the names' edge").toBeGreaterThan(0);
-  expect(fringe, "fewer than in the room").toBeLessThan(outer);
-  // no line of specks on the edge of the formula's room, where they stood
-  const edge = await light(page, { x: lx - 6, y: 300, width: 12, height: 300 });
-  const beside = await light(page, { x: lx - 160, y: 300, width: 12, height: 300 });
-  expect(edge.lit, "no line on its edge").toBeLessThan(beside.lit + 25);
-  // nothing of them in the drawing's own code
+  // on every side: above the formula and below it, and in all four corners
+  // (the aldehydes in the gaps left out of what is counted)
+  const avoid = await aldehydes(page, 6);
+  for (const [x, y] of [[620, 16], [620, 790], [20, 20], [1220, 20], [20, 730], [1220, 730]]) {
+    expect(await litPer(page, [{ x, y, width: 200, height: 94 }], avoid), `specks at ${x},${y}`).toBeGreaterThan(0);
+  }
+  // thinning as it spreads: more to a pixel just outside the cloud than at the window's edges
+  const near = await litPer(page, [{ x: 240, y: 260, width: 110, height: 380 }, { x: 1090, y: 260, width: 110, height: 380 }], avoid);
+  const far = await litPer(page, [{ x: 8, y: 260, width: 110, height: 380 }, { x: 1322, y: 260, width: 110, height: 380 }], avoid);
+  expect(near, "thicker near the aldehyde").toBeGreaterThan(far);
+  expect(far, "and still some at the edge").toBeGreaterThan(0);
+  // nothing of the lines, or of ADAR's drift, in the drawing's own code
   const code = fs.readFileSync(path.join(__dirname, "..", "molecule.js"), "utf8");
-  for (const gone of ["LINE_VERTEX", "uLineX", "LINE_DENSITY", "lineGeo", "layLines"]) expect(code, gone).not.toContain(gone);
+  for (const gone of ["LINE_VERTEX", "uLineX", "LINE_DENSITY", "lineGeo", "layLines", "DRIFT_DENSITY", "DRIFT_PATCH", "DRIFT_FALL", "aDrift", "layDrift"]) expect(code, gone).not.toContain(gone);
+});
+
+/* THE ALDEHYDES OF PERFUMERY, in the gaps (the same round): skeletal
+   formulas of the aldehydes a perfumer reaches for, each named, standing in
+   whatever room the names and the formula leave. Read still (motion off). */
+test("the aldehydes of perfumery stand in the gaps as the last stage comes: named, clear of the names, the formula and each other", async ({ page }) => {
+  test.setTimeout(120000);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const KNOWN = ["C-12 MNA", "C-11 undecylenic", "Vanillin", "Cinnamal", "C-10 decanal", "Citral", "Benzaldehyde", "Hydroxycitronellal",
+    "C-12 lauric", "Anisaldehyde", "Melonal", "Safranal", "Phenylacetaldehyde", "Cuminaldehyde", "C-9 nonanal", "C-8 octanal"];
+  for (const [w, h, least] of [[1440, 900, 12], [1024, 768, 8], [390, 844, 3]]) {
+    await page.setViewportSize({ width: w, height: h });
+    await page.goto("/index.html?molecule=full");
+    await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
+    // (the names and the cursor out of the picture)
+    await page.addStyleTag({ content: ".formula-link, .cursor-ring, .cursor-dot { visibility: hidden !important; }" });
+    const placed = await aldehydes(page);
+    expect(placed.length, `${w}: as many as find room`).toBeGreaterThanOrEqual(least);
+    expect(+(await page.locator("#molecule").getAttribute("data-aldehydes")), "said on the drawing").toBe(placed.length);
+    for (const p of placed) expect(KNOWN, p.name).toContain(p.name);
+    expect(new Set(placed.map((p) => p.name)).size, "each once").toBe(placed.length);
+    const boxes = placed.map((p) => ({ x: Math.round(p.l), y: Math.round(p.t), width: Math.round(p.r - p.l), height: Math.round(p.b - p.t) }));
+    // none before the last stage, and drawn once it is
+    await toStage(page, 3);
+    await settled(page, 3, 2000);
+    await page.waitForTimeout(400);
+    const before = await litPer(page, boxes);
+    await toStage(page, 4);
+    await settled(page, 4, 2000);
+    await expect.poll(() => state(page), { timeout: 4000 }).toBe("drift");
+    await page.waitForTimeout(400);
+    expect(before, `${w}: none before the last stage`).toBeLessThan(0.002);
+    for (const [i, b] of boxes.entries()) expect(await litPer(page, [b]), `${w}: ${placed[i].name} drawn`).toBeGreaterThan(0.01);
+    // clear of every name and its aldehyde group, of the formula, and of each other
+    const names = await page.locator(".formula-link").evaluateAll((all) => all.map((a) => {
+      const r = a.getBoundingClientRect(), t = a.querySelector(".formula-tail");
+      const q = t && getComputedStyle(t).display !== "none" ? t.getBoundingClientRect() : r;
+      return { l: Math.min(r.left, q.left), r: Math.max(r.right, q.right), t: Math.min(r.top, q.top), b: Math.max(r.bottom, q.bottom) };
+    }));
+    const formula = await atoms(page);
+    const f = { l: Math.min(...formula.map((a) => a.x)) - 30, r: Math.max(...formula.map((a) => a.x)) + 30,
+      t: Math.min(...formula.map((a) => a.y)) - 30, b: Math.max(...formula.map((a) => a.y)) + 30 };
+    const meet = (a, b) => a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b;
+    placed.forEach((b, i) => {
+      expect(b.l, b.name).toBeGreaterThanOrEqual(0);
+      expect(b.t, b.name).toBeGreaterThanOrEqual(0);
+      expect(b.r, b.name).toBeLessThanOrEqual(w);
+      expect(b.b, b.name).toBeLessThanOrEqual(h);
+      for (const n of names) expect(meet(b, n), `${w}: ${b.name} clear of the names`).toBe(false);
+      expect(meet(b, f), `${w}: ${b.name} clear of the formula`).toBe(false);
+      placed.slice(i + 1).forEach((q) => expect(meet(b, q), `${b.name} clear of ${q.name}`).toBe(false));
+    });
+    // each one's double bond to its O in the aldehyde's gold
+    if (w === 1440) {
+      const shot = (await page.screenshot()).toString("base64");
+      const gold = await page.evaluate(async ({ shot, boxes }) => {
+        const img = new Image(); img.src = "data:image/png;base64," + shot; await img.decode();
+        const c = document.createElement("canvas"); c.width = img.width; c.height = img.height;
+        const g = c.getContext("2d"); g.drawImage(img, 0, 0);
+        return boxes.map((b) => {
+          const d = g.getImageData(b.x, b.y, b.width, b.height).data;
+          let n = 0;
+          for (let k = 0; k < d.length; k += 4) if (d[k] - d[k + 2] > 30 && d[k + 1] - d[k + 2] > 12) n++;
+          return n;
+        });
+      }, { shot, boxes });
+      gold.forEach((n, i) => expect(n, `${placed[i].name}: its C=O gold`).toBeGreaterThan(3));
+    }
+  }
+});
+
+/* EVERY PAGE AN ALDEHYDE (the same round): each of the eight names is the R
+   of an aldehyde, R–CHO — a short zig-zag and the C=O after it, towards the
+   formula, its double bond gold and its O's lone pair a violet haze, quiet
+   with the name and lit with it; the name's own words all the link says. */
+test("every name is the R of an aldehyde: a chain and its C=O after it, towards the formula, gold and violet, and lit with it", async ({ page }) => {
+  test.setTimeout(90000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/index.html?auto=off");
+  await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
+  await jumpToSlide(page, "slide-formula");
+  await settled(page, 4);
+  await expect.poll(() => state(page), { timeout: 30000 }).toBe("drift");
+  const tails = await page.locator(".formula-link").evaluateAll((all) => all.map((a) => {
+    const t = a.querySelector(".formula-tail");
+    const r = t.getBoundingClientRect(), ar = a.getBoundingClientRect();
+    return {
+      name: a.textContent.replace(/\s+/g, " ").trim(), want: +a.dataset.chain,
+      chain: t.querySelector(".ft-bond").getAttribute("d").split("L").length - 1,
+      hidden: t.getAttribute("aria-hidden"), words: t.textContent, o: t.querySelectorAll(".ft-o").length,
+      pi: getComputedStyle(t.querySelector(".ft-pi")).stroke,
+      l: r.left, r: r.right, mid: (r.top + r.bottom) / 2, al: ar.left, ar: ar.right, at: ar.top, ab: ar.bottom,
+    };
+  }));
+  expect(tails).toHaveLength(8);
+  expect(tails.map((x) => x.name)).toEqual(["Scent Descriptions", "Theories", "Explorations & Researches", "Favourites", "Note Library", "Photography", "Search", "Contact"]);
+  const formula = await atoms(page);
+  const formulaL = Math.min(...formula.map((a) => a.x)), formulaR = Math.max(...formula.map((a) => a.x));
+  tails.forEach((x, i) => {
+    expect([1, 2, 3], x.name).toContain(x.want);
+    expect(x.chain, `${x.name}: as long a chain as it says`).toBe(x.want);
+    expect(x.o, `${x.name}: its O`).toBe(1);
+    expect(x.hidden).toBe("true");
+    expect(x.words, "no words of its own").toBe("");
+    expect(x.pi, "its C=O gold").toBe("rgb(217, 173, 84)");
+    expect(x.mid, `${x.name}: level with it`).toBeGreaterThan(x.at);
+    expect(x.mid).toBeLessThan(x.ab);
+    if (i < 4) {
+      expect(x.l, `${x.name}: after it, towards the formula`).toBeGreaterThan(x.ar - 30);
+      expect(x.r, "and clear of the formula").toBeLessThan(formulaL - 40);
+    } else {
+      expect(x.r, `${x.name}: before it, towards the formula`).toBeLessThan(x.al + 30);
+      expect(x.l, "and clear of the formula").toBeGreaterThan(formulaR + 40);
+    }
+  });
+  expect(new Set(tails.map((x) => x.want)).size, "not all one length").toBeGreaterThan(1);
+  // lit with its name: the lone pair's haze comes up round the O
+  const lone = () => page.locator(".formula-link").nth(1).locator(".ft-lone").evaluate((e) => +getComputedStyle(e).opacity);
+  await page.mouse.move(1380, 60);
+  await page.waitForTimeout(1200);
+  expect(await lone(), "faint at rest").toBeLessThan(0.4);
+  const r = await page.locator(".formula-link").nth(1).boundingBox();
+  await page.mouse.move(r.x + r.width / 2, r.y + r.height / 2, { steps: 4 });
+  await expect.poll(lone, { timeout: 3000 }).toBeGreaterThan(0.95);
+  // on a phone, none: the names stand two by two across a narrow channel
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.waitForTimeout(400);
+  expect(await page.locator(".formula-tail").evaluateAll((all) => all.map((t) => getComputedStyle(t).display))).toEqual(Array(8).fill("none"));
 });
 
 test("a name is quiet until the hand comes to it: then it comes up gradually to the whole of itself", async ({ page }) => {
@@ -415,20 +593,25 @@ test("a name is quiet until the hand comes to it: then it comes up gradually to 
   await expect.poll(quiet, { timeout: 3000 }).toBeLessThan(0.45);
 });
 
-test("the electronegative hand draws the drift's specks to it", async ({ page }) => {
+test("the electronegative hand draws the sillage's specks to it", async ({ page }) => {
   test.setTimeout(120000);
   await page.setViewportSize({ width: 1440, height: 900 });
-  // (every speck drawn, as a browser with a graphics card draws them: the
-  // drift is sparse, and three in ten are too few round one hand to count)
+  // (every speck drawn, as a browser with a graphics card draws them: three
+  // in ten are too few round one hand to count)
   await page.goto("/index.html?auto=off&molecule=full");
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
   await jumpToSlide(page, "slide-formula");
   await settled(page, 4);
   await expect.poll(() => state(page), { timeout: 30000 }).toBe("drift");
-  // round the hand in the left room — the names, the site's cursor and the
-  // δ− kept out of the picture
+  // round the hand in the left room — the names, the aldehydes in the gaps,
+  // the site's cursor and the δ− kept out of the picture
   await page.addStyleTag({ content: ".formula-link, .cursor-ring, .cursor-dot, .molecule-charge { visibility: hidden !important; }" });
-  const hand = { x: 150, y: 450 };
+  // (a place in the left room with no aldehyde of the gaps near it)
+  const avoid = await aldehydes(page, 70);
+  const free = [];
+  for (let y = 160; y <= 760; y += 20) for (let x = 90; x <= 300; x += 15) if (!avoid.some((b) => x >= b.l && x <= b.r && y >= b.t && y <= b.b)) free.push({ x, y });
+  expect(free.length, "room for the hand").toBeGreaterThan(0);
+  const hand = free.reduce((best, p) => (Math.abs(p.y - 450) < Math.abs(best.y - 450) ? p : best));
   const box = { x: hand.x - 60, y: hand.y - 60, width: 120, height: 120 };
   const sumOver = async (n) => { let t = 0; for (let i = 0; i < n; i++) { t += (await light(page, box)).lit; await page.waitForTimeout(150); } return t / n; };
   await page.mouse.move(1380, 60);
@@ -505,12 +688,14 @@ test("a name pressed asks first, on the stage's own dark: Stay, Escape and the v
     corner: getComputedStyle(document.querySelector(".formula-ask-sheet"), "::before").borderTopColor,
     // (on its veil, faded in at one size since 2026-10-01, as About me's is)
     veil: getComputedStyle(document.getElementById("formula-ask"), "::before").backdropFilter,
-    veilOn: +getComputedStyle(document.getElementById("formula-ask"), "::before").opacity,
   }));
   expect(look.corner).toBe("rgba(224, 178, 82, 0.9)");
   expect(look.sheet).toMatch(/^rgba\(26, 26, 27/);
   expect(look.veil).toMatch(/blur/);
-  expect(look.veilOn, "and it is up").toBeGreaterThan(0);
+  // (and it is up — waited for: read straight after it was pressed, its
+  // fading in can be a frame from starting)
+  await expect.poll(() => page.evaluate(() => +getComputedStyle(document.getElementById("formula-ask"), "::before").opacity),
+    { message: "and it is up" }).toBeGreaterThan(0);
   // specks in it ("I want the popup window to have some particles too"),
   // in the aldehyde's colours
   await expect.poll(() => page.evaluate(() => {
@@ -521,7 +706,7 @@ test("a name pressed asks first, on the stage's own dark: Stay, Escape and the v
     return n;
   }), { timeout: 4000 }).toBeGreaterThan(60);
   // and the page behind it still moving ("I also want the page in the back
-  // to keep moving"): the drift, beside the sheet, one moment and the next
+  // to keep moving"): the sillage, beside the sheet, one moment and the next
   const [lx] = await roomXs(page);
   const strip = { x: 20, y: 120, width: Math.max(40, lx - 60), height: 520 };
   const one = await page.screenshot({ clip: strip });
@@ -677,7 +862,7 @@ test("without the 3D library the last stage is the eight names, plainly, and a n
   expect(errors).toEqual([]);
 });
 
-test("on a phone the names stand two above and two below the formula each side, scattered a little, in the drift, and nothing scrolls sideways", async ({ page }) => {
+test("on a phone the names stand two above and two below the formula each side, scattered a little, in the sillage, and nothing scrolls sideways", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/index.html");
@@ -693,7 +878,7 @@ test("on a phone the names stand two above and two below the formula each side, 
   for (const i of [0, 1, 2, 3]) expect(b[i].r, "on the left of the middle").toBeLessThanOrEqual(lx + 2);
   for (const i of [4, 5, 6, 7]) expect(b[i].l, "on the right of it").toBeGreaterThanOrEqual(rx - 2);
   for (const x of b) { expect(x.l).toBeGreaterThanOrEqual(0); expect(x.r).toBeLessThanOrEqual(390); }
-  // the drift across the whole window there, above the formula and below it
+  // the sillage across the whole window there, above the formula and below it
   expect((await light(page, { x: 10, y: 60, width: 370, height: 120 })).lit, "specks above").toBeGreaterThan(8);
   expect((await light(page, { x: 10, y: 844 - 120, width: 370, height: 100 })).lit, "and below").toBeGreaterThan(8);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
@@ -727,40 +912,128 @@ test("a reload opens at the title, the names never shown before the page has pla
   expect(await stageAt(page)).toBe(0);
 });
 
-/* THE PAGE PLAYS ITSELF (2026-10-03: "I actually want you to change the
-   scrolling feature for it to be automatic. it should be still as slow as it
-   is now"): once the title has been read, on through the five stages by
-   itself on the page's own glide — resting at each — to the names, where it
-   stays; and a wheel, or a key, takes over from it. */
-test("the page plays itself through the five stages, on its own glide, to the names; a wheel takes over", async ({ page }) => {
+/* ONE SCROLL, ALL THE WAY (2026-10-03, later: "make the scrolling automatic
+   as in when you scroll once, it will go all the way down, not it will scroll
+   by itself after a second or so"). It played itself once the title had been
+   read until then. Now it stands at the title until it is scrolled, and one
+   turn of the wheel plays it on through every stage — on its own glide,
+   resting at each — to the names; one turn up plays it all the way back. */
+test("the page waits at the title until it is scrolled, and one turn of the wheel plays it all the way to the names, resting at each stage; one turn up, all the way back", async ({ page }) => {
+  test.setTimeout(150000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/index.html");
+  const stage = page.locator("#aldehyde-stage");
+  await expect(stage).toHaveAttribute("data-auto", "ready");
+  await page.waitForTimeout(6500);
+  expect(await stageAt(page), "nothing by itself").toBe(0);
+  await page.mouse.move(720, 450);
+  // one turn: a run of notches, as a wheel sends them
+  for (let i = 0; i < 6; i++) { await page.mouse.wheel(0, 60); await page.waitForTimeout(40); }
+  await expect(stage).toHaveAttribute("data-auto", "down");
+  const play = async (dir) => {
+    const seen = new Set();
+    const t0 = Date.now();
+    while (Date.now() - t0 < 80000 && (await stage.getAttribute("data-auto")) === dir) {
+      seen.add((await stageAt(page)).toFixed(2));
+      await page.waitForTimeout(250);
+    }
+    return [...seen];
+  };
+  const down = await play("down");
+  await expect(stage).toHaveAttribute("data-auto", "ready");
+  await settled(page, 4, 10000);
+  await expect(stage).toHaveAttribute("data-stage", "5");
+  expect(down.filter((v) => +v > 0.05 && +v < 3.95 && Math.abs(+v - Math.round(+v)) > 0.05).length, "gliding between stages").toBeGreaterThan(4);
+  for (const k of ["1.00", "2.00", "3.00"]) expect(down, `resting at stage ${+k + 1}`).toContain(k);
+  // further turns there go nowhere
+  await page.mouse.wheel(0, 200);
+  await page.waitForTimeout(600);
+  await expect(stage).toHaveAttribute("data-auto", "ready");
+  expect(await stageAt(page)).toBeCloseTo(4, 2);
+  // one turn up: all the way back to the title
+  await page.mouse.wheel(0, -100);
+  await expect(stage).toHaveAttribute("data-auto", "up");
+  const up = await play("up");
+  await settled(page, 0, 10000);
+  await expect(stage).toHaveAttribute("data-stage", "1");
+  for (const k of ["3.00", "2.00", "1.00"]) expect(up, `resting at stage ${+k + 1} on the way back`).toContain(k);
+});
+
+test("the rest of a turn is the same scroll, and a turn the other way turns it round; the scrollbar lets go", async ({ page }) => {
   test.setTimeout(120000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html");
   const stage = page.locator("#aldehyde-stage");
-  await expect(stage).toHaveAttribute("data-auto", "on");
-  await page.waitForTimeout(2500);
-  expect(await stageAt(page), "the title read first").toBe(0);
-  // through every stage, gliding — never a jump
-  const seen = new Set();
-  const t0 = Date.now();
-  while (Date.now() - t0 < 80000 && (await stage.getAttribute("data-auto")) !== "done") {
-    seen.add((await stageAt(page)).toFixed(2));
-    await page.waitForTimeout(250);
-  }
-  expect(await stage.getAttribute("data-auto"), "it got to the names").toBe("done");
-  await settled(page, 4, 10000);
-  await expect(stage).toHaveAttribute("data-stage", "5");
-  expect([...seen].filter((v) => +v > 0.05 && +v < 3.95 && Math.abs(+v - Math.round(+v)) > 0.05).length, "gliding between stages").toBeGreaterThan(4);
-  for (const k of ["1.00", "2.00", "3.00"]) expect(seen.has(k), `resting at stage ${+k + 1}`).toBe(true);
-  // and a wheel, early on, takes over
-  await page.goto("/index.html");
-  await page.waitForTimeout(1200);
   await page.mouse.move(720, 450);
-  await page.mouse.wheel(0, 120);
-  await expect(stage).toHaveAttribute("data-auto", "off");
-  // the page's own: not on by itself any further than the wheel took it
-  await page.waitForTimeout(7000);
-  expect(await stageAt(page), "left where the hand left it").toBeLessThan(0.6);
+  await page.mouse.wheel(0, 100);
+  await expect(stage).toHaveAttribute("data-auto", "down");
+  await settled(page, 1, 10000);
+  // a trackpad's run-on, or more notches: the same scroll — nothing hurried, nothing turned
+  const frames = page.evaluate(() => new Promise((done) => {
+    const seen = []; const t0 = performance.now();
+    const at = (t) => { seen.push(+window.__formula); if (t - t0 < 1500) requestAnimationFrame(at); else done(seen); };
+    requestAnimationFrame(at);
+  }));
+  for (let i = 0; i < 10; i++) { await page.mouse.wheel(0, 50); await page.waitForTimeout(30); }
+  const seen = await frames;
+  expect(Math.max(...seen.slice(1).map((v, i) => Math.abs(v - seen[i]))), "never a jump").toBeLessThan(0.1);
+  await expect(stage).toHaveAttribute("data-auto", "down");
+  await expect.poll(() => stageAt(page), { timeout: 15000 }).toBeGreaterThan(1.5);
+  // a turn the other way: back, from where it is, to the title
+  const was = await stageAt(page);
+  await page.mouse.wheel(0, -120);
+  await expect(stage).toHaveAttribute("data-auto", "up");
+  await page.waitForTimeout(800);
+  expect(await stageAt(page), "turned round").toBeLessThan(was);
+  await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 60000 });
+  expect(await stageAt(page)).toBeCloseTo(0, 2);
+  // set going again, and the page moved by the scrollbar while it rests: it lets go there
+  await page.mouse.wheel(0, 100);
+  await settled(page, 1, 10000);
+  await page.evaluate(() => { document.getElementById("scroll-container").scrollTop += 140; });
+  await expect(stage).toHaveAttribute("data-auto", "ready");
+  await page.waitForTimeout(700);   // (the stage catching up with where the page was put)
+  const left = await stageAt(page);
+  await page.waitForTimeout(3500);
+  expect(await stageAt(page), "left where it was put").toBeCloseTo(left, 2);
+});
+
+/* A swipe of a finger is a scroll: on a phone, one swipe up the page plays it
+   all the way down, the page's own scrolling held off; one down, back. */
+test("on a phone one swipe plays it all the way, and the page's own scrolling is held off", async ({ browser }) => {
+  test.setTimeout(120000);
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  const page = await context.newPage();
+  await serveDependenciesLocally(page);
+  await page.goto("/index.html");
+  const stage = page.locator("#aldehyde-stage");
+  await expect(stage).toHaveAttribute("data-auto", "ready");
+  const cdp = await context.newCDPSession(page);
+  const swipe = async (from, to) => {
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: 195, y: from }] });
+    for (let k = 1; k <= 8; k++) {
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: 195, y: from + ((to - from) * k) / 8 }] });
+      await page.waitForTimeout(16);
+    }
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  };
+  // (whether the page's own scrolling was held off, as the finger moved)
+  await page.evaluate(() => {
+    window.__held = [];
+    document.getElementById("scroll-container").addEventListener("touchmove", (e) => window.__held.push(e.defaultPrevented), { passive: true });
+  });
+  await swipe(620, 380);
+  await expect(stage).toHaveAttribute("data-auto", "down");
+  const held = await page.evaluate(() => window.__held);
+  expect(held.length, "the finger moved").toBeGreaterThan(4);
+  expect(held.every(Boolean), "and the page's own scrolling was held off").toBe(true);
+  await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 60000 });
+  expect(await stageAt(page)).toBeCloseTo(4, 2);
+  await swipe(300, 600);
+  await expect(stage).toHaveAttribute("data-auto", "up");
+  await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 60000 });
+  expect(await stageAt(page)).toBeCloseTo(0, 2);
+  await context.close();
 });
 
 test("the aldehyde stops drawing once the stage is off the screen", async ({ page }) => {
