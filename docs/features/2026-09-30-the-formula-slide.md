@@ -4,6 +4,7 @@ Files touched: `index.html`, `molecule.js`, `landing.js`, `thread.js`, `paper.js
 (2026-10-01: `landing.js`, `molecule.js`, `style.css`, `tests/helpers.js`, `tests/formula.spec.js`, `tests/landing.spec.js`)
 (2026-10-03, last: `landing.js`, `molecule.js`, `index.html`, `style.css`, `tests/formula.spec.js`, `tests/landing.spec.js`)
 (2026-10-04: `landing.js`, `molecule.js`, `index.html`, `style.css`, `tests/formula.spec.js`, `tests/landing.spec.js`)
+(2026-10-04, later: `landing.js`, `molecule.js`, `style.css`, `tests/formula.spec.js`)
 `tests/formula.spec.js` (new), `tests/helpers.js`, `tests/landing.spec.js`, `tests/menu.spec.js`,
 `tests/leaving-the-map.spec.js`, `tests/node-map.spec.js`, `tests/background-and-cursor.spec.js`,
 `tests/pages.spec.js`
@@ -12,8 +13,9 @@ What changed: **The home page is one stage, scrolled smoothly through five stage
 else: (1) the aldehyde as it is first seen, with the title in front of it; (2) the same, the title
 gone; (3) the aldehyde **turned upright**, the O at the top; (4) the same, **its formula drawn in
 it** — the bonds in bright specks, the atoms named; (5) **the Menu's eight pages on an orbit round
-it** (since 2026-10-04) — a tilted ring of specks going slowly round the aldehyde, each page beside an
-electron of its own on it — in **the aldehyde's sillage**, its own specks spreading into the room (two
+it** (since 2026-10-04) — a tilted ring, one fine still hairline since later that day, as wide as the
+window lets it so the aldehyde has centre stage, each page (set smaller) beside an electron of its own
+on it, a small still point of light — in **the aldehyde's sillage**, its own specks spreading into the room (two
 lines of specks, then a drift, then for a day each name the R of an aldehyde with the aldehydes of
 perfumery in the gaps, stood there before), **quiet** — faint — until the hand comes to one, and then
 coming up gradually to the whole of themselves, its electron and the ring by it lit gold. **One scroll
@@ -682,6 +684,82 @@ electrons left out of what they count. `tests/landing.spec.js` — **`the Scroll
 the way to the names, in one movement`**, and an arrow key. By eye, screenshots at 1440, 1920, 1280 ×
 680, 1024, 960 and a phone, the last stage at rest and with a name under the hand.
 
+### 2026-10-04, later — the aldehyde at centre stage; the ring a line; the sillage's movements to choose from
+
+> I want the aldehyde molecule to have center stage more. also the spinning ring of particles look
+> sketchy. rewrork it keeping the aldehyde the same (again). additionally, i want to say the colour and
+> size are very good. idk about the movement. if you want give me suggestions what would be
+> stylistically possible
+
+Asked which "colour and size" meant, the owner answered: "the particles outside of the ring and
+outside of the aldehyde. I WANT TOE MPHASIZE, THE ALDEHYDE IN THE MIDDLE STYAS THE SAME!q!!!" — the
+sillage. So: the sillage's colours and sizes kept, and its movement given options; **the aldehyde
+untouched** — none of its drawing changed, and its four atoms measured on exactly the same pixels as
+before the day's work at seven window sizes (1440 × 900, 1920 × 1080, 1280 × 800, 1024 × 768,
+960 × 700, 820 × 1180 and a phone, 390 × 844).
+
+**Centre stage** (`landing.js`, THE ORBIT; `style.css`). The aldehyde is made the centre by what is
+round it giving way, not by changing it: **the ring stands as wide as the window lets it** —
+`ORBIT_WIDE`, 0.36 of the window's width either side, at most — with every name still inside the window
+by `ORBIT_MARGIN` (36px), the ring drawn in a few pixels at a time until they all are (`fits`), and never
+narrower than it stood before, just past the aldehyde's room (`ORBIT_PAST`, now its least); and **the
+names are smaller** on the orbit — `--orbit-size`, `clamp(15px, 1.2vw, 20px)`, about three quarters of
+what the grid sets them at (`--formula-size`, which is left alone, because the grid's rows are reckoned
+from it), their letters a hair more open (0.03em). At 1440 × 900 the ring's half-width went from about
+445px to 518. The names are
+laid on the orbit before they are measured (`orbit-laid` first), so the fit is worked out at the size
+they stand at. The room itself — the grid's middle column, which frames the aldehyde — is not changed;
+nor is anything on a narrow window, where the names still stand two by two.
+
+**The ring, a line** (`molecule.js`, `ORBIT_*`, `ORBIT_VERTEX`, `layOrbit`). What made it sketchy: its
+specks each went round at a speed of their own (`ORBIT_TURN`), one in eight the other way
+(`ORBIT_BACK`), a fifth of them off the line (`ORBIT_OFF`), every one trembling a pixel and twinkling —
+a broken pencil line that crawled. All of that is gone. The ring is **one even, still hairline**: its
+specks laid evenly round it, 2.4 to a pixel (`ORBIT_DENSITY`), each faint (`ORBIT_INK`), so together
+they read as a line, as the formula's bonds are drawn; in one warm grey (`ORBIT_TONE`); **the far half,
+the top, at 45% of the near half** (`ORBIT_FAR`), so it reads as an orbit seen at a slant. **An
+electron** is a small, still point of light — a warm white heart (8 specks within half a pixel) in a
+soft gold glow (30 within 3px, `ELECTRON`), breathing slowly, each on its own beat. A name lit lights
+its electron and the ring either side of it in the aldehyde's gold, as before (`ORBIT_LIT`). **The hand
+no longer draws the ring to it** — it only brightens it a little: tried, the pull bent the line off its
+own electrons (a name under the hand has the hand by its electron), and drew the electron into the
+name's first letter, where it was quietened and lost; an electron is not quietened under its name now
+either. With no graphics card the ring has half the specks, each twice as strong.
+
+**The sillage's movements, to choose from** (`molecule.js`, `SILL_MOVES`, `MOVE_GLSL`, `MOVE_TAIL`). Its
+colours, sizes and numbers are the same in every one; only how the specks go differs, and every one
+but the first is kept off the aldehyde's cloud (faded inside `uFrom`), shows only as far out as the
+scent has reached (`uOut`), and — where it fills the room evenly — is fainter the further from the
+aldehyde, so it still thins as it spreads. **The page draws `diffuse`, as it was** (the shader's text
+for it is the old one, word for word); the others are shown by the address alone:
+- `diffuse` — out from the aldehyde on every side, slowing as it spreads (the sillage as it is);
+- `?sillage=rise` — rising up the window like vapour off warm skin, swaying, passing behind the aldehyde;
+- `?sillage=swirl` — circling the aldehyde slowly, the near specks the quicker in their turning, a slow
+  vortex that keeps the eye on the middle;
+- `?sillage=still` — still air: each speck wandering a few pixels about its place (Brownian, as a
+  molecule in still air goes), coming and going slowly;
+- `?sillage=breeze` — carried across the room left to right on a slow, wavy air, passing behind the
+  aldehyde.
+Each was looked at as a clip made frame by frame (the page's clock driven by hand, a picture every
+thirtieth of a second) and as a long exposure of six seconds of it, which shows which way the specks
+go. Once the owner chooses, the others come out of the code.
+
+**How it was tested**: `tests/formula.spec.js` — **`the last stage carries the Menu's eight pages … on an
+orbit round the aldehyde, each beside its electron`** now also asks the ring be over a third of the
+window wide either side, every name smaller than the grid sets it, and every name well clear of the
+aldehyde's cloud (outside its oval by more than a third as far again; it was outside it at all);
+**`the orbit's ring is one even, still line, its far half fainter than its near half`** (new — read at
+up to seventy-two places round it, clear of the names and their electrons: lit all the way round, the same a
+second later, the near half over a quarter brighter than the far, and even along it; and none of
+`ORBIT_TURN`, `ORBIT_OFF`, `ORBIT_BACK` or `ORBIT_TONES` in the code); **`the sillage's movements to
+choose from: each, asked for by the address, draws in the room and moves`** (new — each of the four
+with no error, its specks between the ring and the aldehyde as thick as the sillage as it is near
+enough — measured between 0.6 and 1.05 of it — and the room a different picture a second and a half
+later); **`the orbit is drawn …`** reads each electron close round it (it is a point now); and **`the
+electronegative hand draws the sillage's specks to it`** holds the hand out in the room beyond the ring,
+which stands further out than it did. By eye, screenshots at 1440, 1920, 1280 × 800, 1280 × 680,
+1024 and 960 wide, at rest and under the hand, close in at twice the pixels.
+
 ### How it was tested (2026-10-03)
 
 `tests/formula.spec.js`: **`a reload opens at the title, the names never shown before the page has
@@ -709,6 +787,9 @@ read for the drift where they read for the lines.
 - **`the orbit is drawn round the aldehyde, and a name under the hand lights its electron and the ring
   round it, in gold`** and **`on a narrow window there is no orbit, and the names stand two by two as
   they did`** (2026-10-04).
+- **`the orbit's ring is one even, still line, its far half fainter than its near half`** and **`the
+  sillage's movements to choose from: each, asked for by the address, draws in the room and moves`**
+  (2026-10-04, later).
 - **`a reload opens at the title, the names never shown before the page has placed them`**.
 - **`five stages, smoothly: the title, the title gone, the aldehyde upright, its formula, and the
   names`** — each stage in turn (`data-stage`, `data-state`: cloud, turned, formula, drift): the
@@ -758,7 +839,8 @@ wheel, and a trackpad's flick, from the title (it glides to the names in about f
 stopping) and one back up; turn the other way part of the way down; point at the names (each electron
 and the ring by it light gold) and at the aldehyde, press a name; look at the orbit at a few window
 sizes, and narrow the window past 900px (the orbit goes, the names stand two by two); on a phone, swipe
-and tap.
+and tap. The sillage's movements: the home page with `?sillage=rise`, `swirl`, `still` or `breeze` on
+its address, scrolled to the names.
 
 ## Known issues / TODO
 
@@ -766,9 +848,10 @@ and tap.
   of them each leg is) in `landing.js`; how long one scroll takes the whole way (`AUTO_MS`, four
   seconds) and a short way at least (`AUTO_LEAST`), and how much of a turn sets it going or turns it
   round (`PLAY_FROM`, `PLAY_TURN`, `PLAY_GAP`, `SWIPE`) in `landing.js`; the orbit's shape and where
-  each electron stands (`ORBIT_TILT`, `ORBIT_TALL`, `ORBIT_PAST`, `ORBIT_AT`) in `landing.js`, and how
-  it is drawn (`ORBIT_DENSITY`, `ORBIT_OFF`, `ORBIT_TURN`, `ORBIT_BACK`, `ORBIT_INK`, `ELECTRON`,
-  `ORBIT_LIT`, `ORBIT_TONES`) in `molecule.js`; the sillage (`SILL_*`) in `molecule.js`; `TURN_W` (how quickly the turn upright follows) in
+  each electron stands (`ORBIT_TILT`, `ORBIT_TALL`, `ORBIT_PAST`, `ORBIT_WIDE`, `ORBIT_MARGIN`,
+  `ORBIT_GAP`, `ORBIT_AT`) in `landing.js`, the names' size on it (`--orbit-size` in `style.css`), and
+  how it is drawn (`ORBIT_DENSITY`, `ORBIT_INK`, `ORBIT_FAR`, `ELECTRON`, `ORBIT_LIT`, `ORBIT_TONE`) in
+  `molecule.js`; the sillage (`SILL_*`) in `molecule.js`; `TURN_W` (how quickly the turn upright follows) in
   `molecule.js`; `GLIDE_W`,
   `WHEEL_SCALE`, `FOLLOW_S`, `TITLE_GONE`, `CORNERS_GONE`, `NAMES_FROM`, `NAMES_OVER` in
   `landing.js`; `TURN_FROM`, `FORM_FROM`, `DRIFT_OVER`, `REACT_TITLE`, `TIGHT`, `FORM_PEAK`,
@@ -786,5 +869,11 @@ and tap.
 - On a narrow window (under 900px) there is no orbit — the names stand two by two as before, because
   the aldehyde is framed between their rows there. A ring there would mean moving the names, and so the
   aldehyde; it is open, if the owner wants one.
+- **The sillage's movement is the owner's to choose** (2026-10-04, later): `diffuse` is drawn; `rise`,
+  `swirl`, `still` and `breeze` are there to be looked at on the address (`?sillage=`). Once one is
+  chosen it becomes what is drawn and the rest come out of `MOVE_GLSL`, with `SILL_MOVES` and the
+  address switch, and the test of the four with them.
+- The ring is still; a slow light travelling round it, or the electrons stirring a little on it, are
+  possible and were left out, so that nothing at the edge of the window draws the eye from the middle.
 - The glide is laid on the clock, so a machine that draws slowly shows it in fewer, larger steps rather
   than taking longer; a stall of over a quarter of a second is not counted (it waits instead).

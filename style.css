@@ -1006,7 +1006,15 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
    is, `--ox`, `--oy`) — written away from the aldehyde, its letters 14px
    off the electron: the first four to its left, the next four to its right,
    level with it. Without the script the names stand in the grid as before;
-   on a narrow window, two by two as before. */
+   on a narrow window, two by two as before.
+   SMALLER, for the aldehyde's sake (2026-10-04, later: "I want the aldehyde
+   molecule to have center stage more"): on the orbit a name is set at
+   `--orbit-size`, about three quarters of what it was, with its letters a
+   hair more open, and the ring stands further out (landing.js) — the names
+   a quiet frame round a wide field, the aldehyde alone in the middle of it.
+   (Set on the names, not on `--formula-size`, which the grid's rows are
+   reckoned from.) */
+.formula-menu { --orbit-size: clamp(15px, 1.2vw, 20px); }
 .formula-menu.orbit-laid .formula-link {
   position: absolute;
   left: var(--ox);
@@ -1014,6 +1022,8 @@ body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
   grid-column: auto;
   grid-row: auto;
   margin: 0;
+  font-size: var(--orbit-size);
+  letter-spacing: 0.03em;
   transform: translate(calc(-100% + 8px), -50%);
 }
 .formula-menu.orbit-laid .formula-link:nth-child(n+5) { transform: translate(-8px, -50%); }

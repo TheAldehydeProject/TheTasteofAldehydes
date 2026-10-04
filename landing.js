@@ -271,17 +271,23 @@
   // THE ORBIT (2026-10-04 — the owner: "For the menu in the second page, i
   // dont like it. I want you to remove the chemicals and redesign it again.
   // KEEP THE MIDDLE ALDEHYDE AS IT IS"). On a wide window the Menu's eight
-  // pages stand on an orbit round the aldehyde — a tilted ring of specks
-  // going slowly round it, as electrons go round a nucleus (molecule.js
-  // draws it) — each page beside an electron of its own on the ring: the
-  // first four down the left, the next four down the right, each name
-  // written away from the aldehyde, never over it. Here: where the ring
-  // stands (`--orbit-*` on the names' nav) and where each electron is
-  // (`--ox`, `--oy`, and its place round the ring, `--oa`, on each name),
-  // which the stylesheet places the names by and the drawing reads. Its
-  // width reaches just past the edges of the aldehyde's room (the grid's
-  // middle column, which frames the aldehyde and is not changed), its
-  // height most of the window's.
+  // pages stand on an orbit round the aldehyde — a tilted ring, as electrons
+  // go round a nucleus (molecule.js draws it) — each page beside an electron
+  // of its own on the ring: the first four down the left, the next four
+  // down the right, each name written away from the aldehyde, never over
+  // it. Here: where the ring stands (`--orbit-*` on the names' nav) and
+  // where each electron is (`--ox`, `--oy`, and its place round the ring,
+  // `--oa`, on each name), which the stylesheet places the names by and the
+  // drawing reads.
+  //
+  // THE ALDEHYDE AT CENTRE STAGE (2026-10-04, later: "I want the aldehyde
+  // molecule to have center stage more"): the ring stands as wide as the
+  // window lets it (ORBIT_WIDE of the window's width at most) with every
+  // name still inside the window by ORBIT_MARGIN — further out than it did,
+  // when it reached just past the aldehyde's room (ORBIT_PAST, now its
+  // least) — and the names are smaller (style.css), so the aldehyde stands
+  // alone in the middle of a wide, quiet field. The room itself, the grid's
+  // middle column, which frames the aldehyde, is not changed.
   //
   // On a narrow window (the band, under 900px) the names stand as they did,
   // two above and two below the formula each side, and there is no ring:
@@ -292,7 +298,10 @@
   // ============================================================
   const ORBIT_TILT = -0.15;   // radians the ring is turned (it rises to the right)
   const ORBIT_TALL = 0.43;    // its half-height, of the window's height
-  const ORBIT_PAST = 1.08;    // its half-width, of the aldehyde's room's half-width (beyond its side electrons)
+  const ORBIT_PAST = 1.08;    // its half-width at least, of the aldehyde's room's half-width (beyond its side electrons)
+  const ORBIT_WIDE = 0.36;    // and at most, of the window's width
+  const ORBIT_MARGIN = 36;    // px every name keeps inside the window
+  const ORBIT_GAP = 14;       // px between an electron and its name's letters
   // where round the ring each name's electron stands, in degrees (0 the
   // right, 90 the foot): the left side from the top down, then the right
   // side from the top down — a little off a mirror, so the two sides differ
@@ -306,25 +315,44 @@
       orbitMenu.classList.remove("orbit-laid");
       return;
     }
+    // (laid first, so the names are measured at the size they stand at)
+    orbitMenu.classList.add("orbit-laid");
     const r = orbitMenu.getBoundingClientRect();
     const W = r.width, H = r.height;
     const cols = cs.gridTemplateColumns.split(/\s+/).map(parseFloat);
     const room = (cols[1] || W * 0.54) / 2;
-    const rx = (room * ORBIT_PAST) / Math.cos((19 * Math.PI) / 180), ry = H * ORBIT_TALL;
+    const ry = H * ORBIT_TALL;
     const cx = W / 2, cy = H / 2, c = Math.cos(ORBIT_TILT), s = Math.sin(ORBIT_TILT);
+    // each name's lettering, wide and tall (the link less its padding)
+    const sizes = names.map((a) => {
+      const b = a.getBoundingClientRect(), ls = getComputedStyle(a);
+      return [b.width - 2 * (parseFloat(ls.paddingLeft) || 0), b.height - 2 * (parseFloat(ls.paddingTop) || 0)];
+    });
+    const at = (k, rx) => {
+      const t = (ORBIT_AT[k] * Math.PI) / 180, ex = Math.cos(t) * rx, ey = Math.sin(t) * ry;
+      return [cx + ex * c - ey * s, cy + ex * s + ey * c, t];
+    };
+    const fits = (rx) => names.every((a, k) => {
+      const [x, y] = at(k, rx), [w, h] = sizes[k];
+      const l = k < 4 ? x - ORBIT_GAP - w : x + ORBIT_GAP, rr = l + w;
+      return l >= ORBIT_MARGIN && rr <= W - ORBIT_MARGIN && y - h / 2 >= ORBIT_MARGIN && y + h / 2 <= H - ORBIT_MARGIN;
+    });
+    // as wide as it may be and every name still fits; never narrower than
+    // just past the aldehyde's room
+    const least = (room * ORBIT_PAST) / Math.cos((19 * Math.PI) / 180);
+    let rx = Math.max(least, W * ORBIT_WIDE);
+    while (rx > least && !fits(rx)) rx = Math.max(least, rx - 4);
     orbitMenu.style.setProperty("--orbit-cx", cx.toFixed(1) + "px");
     orbitMenu.style.setProperty("--orbit-cy", cy.toFixed(1) + "px");
     orbitMenu.style.setProperty("--orbit-rx", rx.toFixed(1) + "px");
     orbitMenu.style.setProperty("--orbit-ry", ry.toFixed(1) + "px");
     orbitMenu.style.setProperty("--orbit-tilt", String(ORBIT_TILT));
     names.forEach((a, k) => {
-      const t = (ORBIT_AT[k] * Math.PI) / 180;
-      const ex = Math.cos(t) * rx, ey = Math.sin(t) * ry;
-      a.style.setProperty("--ox", (cx + ex * c - ey * s).toFixed(1) + "px");
-      a.style.setProperty("--oy", (cy + ex * s + ey * c).toFixed(1) + "px");
+      const [x, y, t] = at(k, rx);
+      a.style.setProperty("--ox", x.toFixed(1) + "px");
+      a.style.setProperty("--oy", y.toFixed(1) + "px");
       a.style.setProperty("--oa", t.toFixed(4));
     });
-    orbitMenu.classList.add("orbit-laid");
   }
   layOrbit();
   window.addEventListener("resize", layOrbit);

@@ -185,32 +185,56 @@
   const SILL_WANDER = [10, 0.07], SILL_STIR = 0.03;
   const SILL_INK = 0.85;
   const SILL_TONES = [[0.16, "pi"], [0.14, "lone"]];
+  // HOW IT MOVES, TO CHOOSE FROM (2026-10-04, later — the owner: "the
+  // colour and size are very good. idk about the movement. if you want give
+  // me suggestions what would be stylistically possible"). The sillage's
+  // colours, sizes and numbers are the same in every one; only how its
+  // specks go differs, and none of them ever crosses the aldehyde's cloud.
+  // What the page draws is DIFFUSE, as it was; the others are shown by the
+  // address alone, `?sillage=` and the name, for the owner to look at:
+  //   diffuse  out from the aldehyde on every side, slowing as it spreads
+  //   rise     rising up the window like vapour off warm skin, swaying
+  //   swirl    circling the aldehyde, slowly, the near ones the quicker
+  //   still    still air: each speck wandering a few pixels about its place
+  //   breeze   carried across the room, left to right, on a slow wavy air
+  // Once one is chosen, the rest come out of the code.
+  const SILL_MOVES = ["diffuse", "rise", "swirl", "still", "breeze"];
+  const SILL_MOVE = (location.search.match(/[?&]sillage=([a-z]+)/) || [])[1];
+  const MOVE = SILL_MOVES.includes(SILL_MOVE) ? SILL_MOVE : "diffuse";
   // THE ORBIT (2026-10-04, in place of the aldehydes of perfumery — the
   // owner: "For the menu in the second page, i dont like it. I want you to
   // remove the chemicals and redesign it again. KEEP THE MIDDLE ALDEHYDE AS
   // IT IS"): on a wide window the Menu's eight pages stand on an orbit round
-  // the aldehyde, drawn here — a tilted ring of specks going slowly round it,
-  // as electrons go round a nucleus, where landing.js says it stands
-  // (`--orbit-*` on the names' nav) — and an ELECTRON for each page, a small
-  // knot of brighter specks beside its name (its place round the ring,
-  // `--oa` on the name). Under the hand (or the keys, or while the page is
-  // asked for) a name's electron and the stretch of ring round it light up
-  // in the aldehyde's gold, as gradually as the name comes up. It is traced
-  // round from the top, both ways, as the last stage comes; quiet under the
-  // names' letters; drawn to the electronegative hand as the sillage is.
+  // the aldehyde, drawn here where landing.js says it stands (`--orbit-*` on
+  // the names' nav) — and an ELECTRON for each page beside its name (its
+  // place round the ring, `--oa` on the name). Under the hand (or the keys,
+  // or while the page is asked for) a name's electron and the stretch of ring
+  // round it light up in the aldehyde's gold, as gradually as the name comes
+  // up. It is traced round from the top, both ways, as the last stage comes;
+  // quiet under the names' letters; brightened a little by the
+  // electronegative hand (it was drawn to it, until the ring was a line).
   // Nothing of it touches the aldehyde: it stands well outside its cloud.
-  // How many specks to a pixel of the ring; how far off it they stand, most
-  // and a few (pixels); how fast they go round (turns a second), and how
-  // many go the other way; how strong at most; an electron's specks, how far
-  // they spread round the ring (radians) and off it (pixels); how far round
-  // a lit electron the ring lights (radians).
-  const ORBIT_DENSITY = 0.85;
-  const ORBIT_OFF = [2.2, 9];
-  const ORBIT_TURN = [0.0028, 0.006], ORBIT_BACK = 0.12;
-  const ORBIT_INK = 1;
-  const ELECTRON = [30, 0.006, 2.6];
+  //
+  // A LINE, NOT A CRAWL (2026-10-04, later: "the spinning ring of particles
+  // look sketchy"): the ring was a scatter of specks each going round at a
+  // speed of its own, some the other way, a few off the line, every one
+  // trembling — a pencil line, broken and crawling. It is one even, still
+  // hairline now, its specks laid closer than a pixel apart so they read as
+  // a line (as the formula's bonds are drawn), the half of it turned away
+  // from you fainter than the half turned towards you (ORBIT_FAR), so it
+  // reads as an orbit seen at a slant; and an electron is a small still
+  // point of light, a warm white heart in a soft gold glow, breathing slowly.
+  // How many specks to a pixel of the ring, and how strong each; the far
+  // half's strength, of the near half's; an electron's specks at its heart
+  // and in its glow, and how wide the glow is (pixels); how far round a lit
+  // electron the ring lights (radians); the ring's colour. The hand only
+  // brightens it a little: bent, the line would leave its electrons.
+  const ORBIT_DENSITY = 2.4;
+  const ORBIT_INK = 0.24;
+  const ORBIT_FAR = 0.45;
+  const ELECTRON = [8, 30, 3];
   const ORBIT_LIT = 0.32;
-  const ORBIT_TONES = [[0.18, "pi"], [0.12, "lone"]];
+  const ORBIT_TONE = [0.86, 0.8, 0.68];
   const LINE_SWIRL = 3.2;   // (a name's backdrop swirls by it)
   // A NAME'S BACKDROP (2026-09-30: "make them slightly particular when
   // hovered. give them a slight backdrop of particles, same colours as the
@@ -429,6 +453,79 @@
       vColour = vec3(${BOND_INK.map((v) => v.toFixed(3)).join(", ")}) * shown;
     }`;
 
+  // Each move works out where a speck is (`p`) and how much of it shows
+  // (`fade`); DIFFUSE is the sillage as it was, word for word.
+  const MOVE_GLSL = {
+    diffuse: `
+      float u = fract(aSill.y + uTime / aSill.z);
+      float r = uFrom + (uReach - uFrom) * pow(u, ${SILL_EASE.toFixed(3)});
+      float a = aSill.x * 6.2832 + ${SILL_CURL.toFixed(3)} * u * (seed < 0.5 ? 1.0 : -1.0);
+      // (a little taller than round, as the formula stands)
+      vec2 p = uMid + vec2(cos(a), sin(a) * 1.06) * r;
+      // the slow current under it, carrying it further the further out it is
+      // (one noise, turned into a way and how far: half the work of two)
+      float carry = ${SILL_WANDER[0].toFixed(1)} + ${SILL_WANDER[1].toFixed(3)} * (r - uFrom);
+      float n = snoise(vec3(p * 0.0035, uTime * ${SILL_STIR.toFixed(3)} + seed * 4.0));
+      float w = n * 3.6 + seed * 6.2832;
+      p += carry * (0.35 + 0.65 * abs(n)) * vec2(cos(w), sin(w));
+      // in as it leaves the cloud, out towards the edge, and only as far as
+      // the scent has reached
+      float fade = smoothstep(0.0, 0.06, u) * (1.0 - smoothstep(0.62, 1.0, u));
+      fade *= 1.0 - smoothstep(uOut - 90.0, uOut, r);
+`,
+    // RISE: each speck its own column (`aSill.x`), rising from below the
+    // window to above it over its life, swaying and carried a little sideways
+    rise: `
+      float u = fract(aSill.y + uTime * 1.2 / aSill.z);
+      float x0 = aSill.x * (uRes.x + 120.0) - 60.0;
+      vec2 p = vec2(x0, uRes.y + 40.0 - u * (uRes.y + 80.0));
+      float n = snoise(vec3(x0 * 0.004, p.y * 0.003, uTime * 0.04 + seed * 4.0));
+      p.x += 26.0 * n + 10.0 * sin(uTime * 0.3 + seed * 30.0);
+      float fade = smoothstep(0.0, 0.1, u) * (1.0 - smoothstep(0.8, 1.0, u));`,
+    // SWIRL: each speck at its own distance out (`aSill.y`), going round,
+    // the nearer the quicker in its turning, breathing in and out a little
+    swirl: `
+      float r0 = uFrom + (uReach - uFrom) * aSill.y;
+      float turn = 0.045 * pow(uFrom / r0, 0.5) * (0.85 + 0.3 * fract(seed * 5.3));
+      float a = aSill.x * 6.2832 + uTime * turn;
+      vec2 p = uMid + vec2(cos(a), sin(a) * 1.06) * r0;
+      float n = snoise(vec3(p * 0.003, uTime * 0.03 + seed * 4.0));
+      p += 7.0 * n * vec2(cos(a), sin(a));
+      float v = fract(seed * 7.13 + uTime / aSill.z);
+      float fade = smoothstep(0.0, 0.2, v) * (1.0 - smoothstep(0.8, 1.0, v));`,
+    // STILL: each speck at its own place round the aldehyde, wandering a
+    // few pixels about it, as a molecule in still air does
+    still: `
+      float r0 = uFrom + (uReach - uFrom) * aSill.y;
+      float a = aSill.x * 6.2832;
+      vec2 p = uMid + vec2(cos(a), sin(a) * 1.06) * r0;
+      float n = snoise(vec3(seed * 37.0, uTime * 0.11, seed * 11.0));
+      float w = n * 4.0 + seed * 6.2832;
+      p += (2.0 + 5.0 * abs(n)) * vec2(cos(w), sin(w));
+      float v = fract(seed * 7.13 + uTime * 0.6 / aSill.z);
+      float fade = smoothstep(0.0, 0.2, v) * (1.0 - smoothstep(0.8, 1.0, v));`,
+    // BREEZE: each speck at its own height (`aSill.y`), carried left to
+    // right across the room and round again, on a slow wavy air
+    breeze: `
+      float span = uRes.x + 240.0;
+      float x = mod(aSill.x * span + uTime * span / (aSill.z * 1.5), span) - 120.0;
+      float y0 = aSill.y * (uRes.y + 80.0) - 40.0;
+      float n = snoise(vec3(x * 0.0025, y0 * 0.004, uTime * 0.035 + seed * 4.0));
+      vec2 p = vec2(x, y0 + 30.0 * n + 14.0 * sin(x * 0.006 + seed * 6.2832));
+      float fade = smoothstep(-120.0, 40.0, x) * (1.0 - smoothstep(uRes.x - 40.0, uRes.x + 120.0, x));`,
+  };
+  // Every move but diffuse: kept off the aldehyde's cloud, shown only as far
+  // out as the scent has reached, and — where it fills the room evenly —
+  // fainter the further from the aldehyde, so it still thins as it spreads.
+  const MOVE_TAIL = MOVE === "diffuse" ? "" : `
+      vec2 q = p - uMid;
+      float rr = length(vec2(q.x, q.y / 1.06));
+      fade *= smoothstep(uFrom * 0.92, uFrom * 1.12, rr);
+      fade *= 1.0 - smoothstep(uOut - 90.0, uOut, rr);
+      ${MOVE === "rise" || MOVE === "breeze"
+        ? "fade *= clamp(pow(uFrom * 1.5 / max(rr, 1.0), 0.75), 0.25, 1.0);"
+        : "fade *= 1.0 - 0.85 * smoothstep(0.6, 1.0, (rr - uFrom) / (uReach - uFrom));"}`;
+
   // THE SILLAGE, drawn straight onto the window in its own pixels. Every
   // speck leaves the edge of the aldehyde's cloud (`uFrom`, pixels from the
   // formula's middle, `uMid`) in its own direction (`aSill.x`, of a turn),
@@ -449,21 +546,7 @@
     ${NOISE}
     void main() {
       float seed = aSill.w;
-      float u = fract(aSill.y + uTime / aSill.z);
-      float r = uFrom + (uReach - uFrom) * pow(u, ${SILL_EASE.toFixed(3)});
-      float a = aSill.x * 6.2832 + ${SILL_CURL.toFixed(3)} * u * (seed < 0.5 ? 1.0 : -1.0);
-      // (a little taller than round, as the formula stands)
-      vec2 p = uMid + vec2(cos(a), sin(a) * 1.06) * r;
-      // the slow current under it, carrying it further the further out it is
-      // (one noise, turned into a way and how far: half the work of two)
-      float carry = ${SILL_WANDER[0].toFixed(1)} + ${SILL_WANDER[1].toFixed(3)} * (r - uFrom);
-      float n = snoise(vec3(p * 0.0035, uTime * ${SILL_STIR.toFixed(3)} + seed * 4.0));
-      float w = n * 3.6 + seed * 6.2832;
-      p += carry * (0.35 + 0.65 * abs(n)) * vec2(cos(w), sin(w));
-      // in as it leaves the cloud, out towards the edge, and only as far as
-      // the scent has reached
-      float fade = smoothstep(0.0, 0.06, u) * (1.0 - smoothstep(0.62, 1.0, u));
-      fade *= 1.0 - smoothstep(uOut - 90.0, uOut, r);
+${MOVE_GLSL[MOVE]}${MOVE_TAIL}
       // the hand: the electrons drawn to it
       float near = 0.0;
       if (uPull > 0.0) {
@@ -542,17 +625,18 @@
     }`;
 
   // THE ORBIT, drawn straight onto the window in its pixels like the
-  // sillage: every speck either goes round the ring (`aOrb.x` -1: from its
-  // own place, `aOrb.y` of a turn, at `aOrb.z` turns a second) or is one of
-  // a name's electron (`aOrb.x` the name, 0 to 7: a hair round the ring from
-  // its place, `aOrb.y` radians), standing `aOff` pixels off the ring. The
-  // ring is an ellipse about `uMid`, `uRx` by `uRy`, turned `uTilt`.
+  // sillage: every speck either lies on the ring (`aOrb.x` -1, at its own
+  // place round it, `aOrb.y` of a turn, still) or is one of a name's
+  // electron (`aOrb.x` the name, 0 to 7; `aOrb.z` 0 its heart, 1 its glow),
+  // standing `aOff` pixels off the electron's point. The ring is an ellipse
+  // about `uMid`, `uRx` by `uRy`, turned `uTilt`; its lower half is the
+  // near one.
   const ORBIT_VERTEX = `
     uniform vec2 uRes, uHandPx, uMid;
     uniform float uTime, uDraw, uReveal, uSize, uPull, uRx, uRy, uTilt;
     uniform float uHeat[8], uAng[8], uWordX[8], uWordY[8], uHalfW[8], uHalfH[8];
     attribute vec4 aOrb;
-    attribute float aOff;
+    attribute vec2 aOff;
     attribute vec3 aTone;
     varying vec3 vColour;
     varying float vAlpha;
@@ -560,16 +644,17 @@
     void main() {
       float who = aOrb.x, seed = aOrb.w;
       bool electron = who > -0.5;
-      float a = 6.2831853 * (aOrb.y + uTime * aOrb.z);
-      float own = 0.0;
+      bool glow = aOrb.z > 0.5;
+      float a = 6.2831853 * aOrb.y;
+      float own = 0.0, phase = 0.0;
       if (electron) {
-        for (int i = 0; i < 8; i++) if (i == int(who + 0.5)) { a = uAng[i] + aOrb.y; own = uHeat[i]; }
+        for (int i = 0; i < 8; i++) if (i == int(who + 0.5)) { a = uAng[i]; own = uHeat[i]; phase = float(i) * 1.7; }
       }
-      vec2 e = vec2(cos(a) * uRx, sin(a) * uRy);
-      e += normalize(vec2(cos(a) / uRx, sin(a) / uRy)) * aOff;
       float c = cos(uTilt), s = sin(uTilt);
-      vec2 p = uMid + vec2(e.x * c - e.y * s, e.x * s + e.y * c);
-      p += 1.2 * vec2(sin(uTime * 0.7 + seed * 40.0), cos(uTime * 0.6 + seed * 31.0));
+      vec2 e = vec2(cos(a) * uRx, sin(a) * uRy);
+      vec2 p = uMid + vec2(e.x * c - e.y * s, e.x * s + e.y * c) + aOff;
+      // near and far: the lower half turned towards you
+      float depth = mix(${ORBIT_FAR.toFixed(3)}, 1.0, 0.5 + 0.5 * sin(a));
       // traced round from the top, both ways, as the last stage comes
       float fromTop = abs(round1(a + 1.5707963)) / 3.14159265;
       float shown = 1.0 - smoothstep(uReveal - 0.1, uReveal, fromTop);
@@ -581,26 +666,37 @@
           lit = max(lit, uHeat[i] * exp(-d * d / ${(ORBIT_LIT * ORBIT_LIT).toFixed(4)}));
         }
       }
-      // quiet under the names' letters
+      // quiet under the names' letters (the ring: an electron stands beside
+      // its name, and is never quietened)
       float under = 0.0;
-      for (int i = 0; i < 8; i++) {
-        float q = max(abs(p.x - uWordX[i]) / max(uHalfW[i], 1.0), abs(p.y - uWordY[i]) / max(uHalfH[i], 1.0));
-        under = max(under, 1.0 - smoothstep(0.95, 1.3, q));
+      if (!electron) {
+        for (int i = 0; i < 8; i++) {
+          float q = max(abs(p.x - uWordX[i]) / max(uHalfW[i], 1.0), abs(p.y - uWordY[i]) / max(uHalfH[i], 1.0));
+          under = max(under, 1.0 - smoothstep(0.95, 1.3, q));
+        }
       }
-      // the hand: the electrons drawn to it
+      // the hand: the ring a little brighter near it, and never bent — a
+      // line, with each electron on it, where its name is
       float near = 0.0;
       if (uPull > 0.0) {
         vec2 d = uHandPx - p;
         near = exp(-dot(d, d) / (${LINE_REACH.toFixed(1)} * ${LINE_REACH.toFixed(1)})) * uPull;
-        p += d * ${LINE_PULL.toFixed(3)} * near;
       }
       vec3 gold = vec3(${COLOUR.pi.map((v) => v.toFixed(3)).join(", ")});
-      float twinkle = 0.75 + 0.25 * sin(uTime * 1.3 + seed * 50.0);
-      vColour = mix(aTone, gold * 1.15, lit * (electron ? 0.85 : 0.7)) * (1.0 + 0.9 * lit + ${(HAND_LIGHT * LINE_LIGHT).toFixed(3)} * near);
-      vAlpha = uDraw * shown * (1.0 - 0.85 * under) * (electron ? 0.6 + 0.7 * lit : (0.55 + 0.45 * lit) * twinkle);
+      float alpha;
+      if (electron) {
+        // a still point of light, breathing slowly
+        float breath = 0.86 + 0.14 * sin(uTime * 0.8 + phase);
+        vColour = mix(aTone, gold * 1.15, lit * (glow ? 0.8 : 0.45)) * (1.0 + 0.5 * lit + ${(HAND_LIGHT * LINE_LIGHT).toFixed(3)} * near);
+        alpha = (glow ? 0.5 + 0.4 * lit : 1.0) * breath * mix(0.8, 1.0, depth);
+      } else {
+        vColour = mix(aTone, gold * 1.15, lit * 0.8) * (1.0 + 1.2 * lit + ${(HAND_LIGHT * LINE_LIGHT).toFixed(3)} * near);
+        alpha = depth * (1.0 + 1.5 * lit);
+      }
+      vAlpha = uDraw * shown * (1.0 - 0.85 * under) * alpha;
       if (vAlpha <= 0.002) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
       gl_Position = vec4(p.x / uRes.x * 2.0 - 1.0, 1.0 - p.y / uRes.y * 2.0, 0.0, 1.0);
-      gl_PointSize = uSize * (electron ? ${ELECTRON[2].toFixed(2)} * (0.6 + 0.4 * fract(seed * 7.3)) * (1.0 + 0.25 * lit) : 0.7 + 0.5 * fract(seed * 13.0));
+      gl_PointSize = uSize * (electron ? (glow ? 1.3 : 2.3) * (1.0 + 0.2 * lit) : 0.9);
     }`;
 
   // ---- the specks ----------------------------------------------------------
@@ -817,7 +913,7 @@
     haze.visible = true;
     orbitGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
     orbitGeo.setAttribute("aOrb", new THREE.BufferAttribute(new Float32Array(4), 4));
-    orbitGeo.setAttribute("aOff", new THREE.BufferAttribute(new Float32Array(1), 1));
+    orbitGeo.setAttribute("aOff", new THREE.BufferAttribute(new Float32Array(2), 2));
     orbitGeo.setAttribute("aTone", new THREE.BufferAttribute(new Float32Array(3), 3));
     orbit.visible = true;
     renderer.compile(scene, camera);
@@ -999,37 +1095,38 @@
     // (the ring's length, near enough)
     const rx = ou.uRx.value, ry = ou.uRy.value;
     const length = Math.PI * (3 * (rx + ry) - Math.sqrt((3 * rx + ry) * (rx + 3 * ry)));
-    const ring = Math.round(length * ORBIT_DENSITY * (soft ? 0.3 : 1));
-    const per = Math.round(ELECTRON[0] * (soft ? 0.5 : 1));
+    const ring = Math.round(length * ORBIT_DENSITY * (soft ? 0.5 : 1));
+    const per = ELECTRON[0] + ELECTRON[1];
     const key = ring + "|" + per;
     if (key === orbitLaid) return;
     orbitLaid = key;
     seed = 41;
     const n = ring + per * 8;
-    const ob = new Float32Array(n * 4), off = new Float32Array(n), tone = new Float32Array(n * 3);
+    const ob = new Float32Array(n * 4), off = new Float32Array(n * 2), tone = new Float32Array(n * 3);
+    // (a machine drawing without a graphics card has half the specks, each the stronger)
+    const ink = ORBIT_INK * (soft ? 2 : 1);
     for (let i = 0; i < n; i++) {
       const who = i < ring ? -1 : Math.floor((i - ring) / per);
       ob[i * 4] = who;
-      if (who < 0) {
-        ob[i * 4 + 1] = rand();
-        ob[i * 4 + 2] = (ORBIT_TURN[0] + rand() * (ORBIT_TURN[1] - ORBIT_TURN[0])) * (rand() < ORBIT_BACK ? -1 : 1);
-        // most on the ring, a few a little off it
-        off[i] = rand() < 0.8 ? gauss() * ORBIT_OFF[0] * 0.6 : gauss() * ORBIT_OFF[1] * 0.6;
-      } else {
-        ob[i * 4 + 1] = gauss() * ELECTRON[1] * 0.6;
-        off[i] = gauss() * 1.1;
-      }
       ob[i * 4 + 3] = rand();
-      let x = rand(), c = PALE;
-      if (who >= 0) c = x < 0.65 ? COLOUR.pi : x < 0.85 ? COLOUR.lone : PALE;
-      else for (const [share, name] of ORBIT_TONES) { if (x < share) { c = COLOUR[name]; break; } x -= share; }
-      const ink = who >= 0 ? 0.8 + 0.3 * rand() : 0.35 + 0.65 * rand();
-      tone[i * 3] = c[0] * ink; tone[i * 3 + 1] = c[1] * ink; tone[i * 3 + 2] = c[2] * ink;
+      if (who < 0) {
+        // evenly round it, a line
+        ob[i * 4 + 1] = i / ring;
+        tone[i * 3] = ORBIT_TONE[0] * ink; tone[i * 3 + 1] = ORBIT_TONE[1] * ink; tone[i * 3 + 2] = ORBIT_TONE[2] * ink;
+      } else {
+        const glow = (i - ring) % per >= ELECTRON[0];
+        ob[i * 4 + 2] = glow ? 1 : 0;
+        const spread = glow ? ELECTRON[2] : 0.45;
+        off[i * 2] = gauss() * spread; off[i * 2 + 1] = gauss() * spread;
+        // a warm white heart, a gold glow
+        const c = glow ? COLOUR.pi : PALE, k = glow ? 0.8 : 1;
+        tone[i * 3] = c[0] * k; tone[i * 3 + 1] = c[1] * k; tone[i * 3 + 2] = c[2] * k;
+      }
     }
     orbitGeo.dispose();
     orbitGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
     orbitGeo.setAttribute("aOrb", new THREE.BufferAttribute(ob, 4));
-    orbitGeo.setAttribute("aOff", new THREE.BufferAttribute(off, 1));
+    orbitGeo.setAttribute("aOff", new THREE.BufferAttribute(off, 2));
     orbitGeo.setAttribute("aTone", new THREE.BufferAttribute(tone, 3));
     orbitGeo.setDrawRange(0, n);
   }

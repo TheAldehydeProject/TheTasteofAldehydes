@@ -196,6 +196,21 @@ test("the last stage carries the Menu's eight pages, in its order, on an orbit r
   // the ring round the aldehyde, wider than its room and most of the window high
   expect(o.rx * Math.cos(o.tilt)).toBeGreaterThan((rx - lx) / 2);
   expect(o.ry).toBeGreaterThan(900 * 0.35);
+  // and, the aldehyde at centre stage (2026-10-04, later), as wide as the
+  // window lets it — a third of it either side — with the names smaller
+  // than the grid sets them
+  expect(o.rx, "the ring well out").toBeGreaterThan(1440 * 0.33);
+  const sizes = await page.locator(".formula-link").evaluateAll((all) => all.map((a) => parseFloat(getComputedStyle(a).fontSize)));
+  const grid = await page.locator(".formula-menu").evaluate((m) => {
+    const probe = document.createElement("span");
+    probe.style.fontSize = "var(--formula-size)";
+    m.appendChild(probe);
+    const z = parseFloat(getComputedStyle(probe).fontSize);
+    probe.remove();
+    return z;
+  });
+  expect(grid).toBeGreaterThan(10);
+  for (const z of sizes) expect(z, "a name smaller than it was").toBeLessThan(grid * 0.85);
   // every electron on the ring
   for (const e of o.electrons) {
     const dx = e.x - o.cx, dy = e.y - o.cy, c = Math.cos(-o.tilt), sn = Math.sin(-o.tilt);
@@ -231,13 +246,15 @@ test("the last stage carries the Menu's eight pages, in its order, on an orbit r
   }
   // not a mirror, nor a column: the ring is turned, and the two sides differ
   expect([0, 1, 2, 3].filter((i) => Math.abs(lettering[i].mid - lettering[i + 4].mid) < 20).length, "rows not level across").toBeLessThan(2);
-  // every name clear of the aldehyde's cloud: an oval half as wide again as its
-  // H stand apart, and two thirds as tall again as its O and H
+  // every name well clear of the aldehyde's cloud: outside an oval half as
+  // wide again as its H stand apart, and two thirds as tall again as its O
+  // and H, and — since the aldehyde was given centre stage — by more than a
+  // third as far again
   const [O, , H1, H2] = await atoms(page);
   const cx = (H1.x + H2.x) / 2, cy = (O.y + H1.y) / 2, ax = ((H2.x - H1.x) / 2) * 1.5, ay = ((H1.y - O.y) / 2) * 1.6;
   for (const [i, n] of lettering.entries()) {
     for (const [x, y] of [[n.l, n.t], [n.r, n.t], [n.l, n.b], [n.r, n.b], [(n.l + n.r) / 2, n.mid]]) {
-      expect(((x - cx) / ax) ** 2 + ((y - cy) / ay) ** 2, `name ${i + 1} clear of the cloud`).toBeGreaterThan(1);
+      expect(((x - cx) / ax) ** 2 + ((y - cy) / ay) ** 2, `name ${i + 1} well clear of the cloud`).toBeGreaterThan(1.9);
     }
   }
   // the long one on two lines, in its own words' order
@@ -262,7 +279,8 @@ test("the orbit is drawn round the aldehyde, and a name under the hand lights it
   await settled(page, 3);
   const o = await orbitOf(page);
   // round each electron: nothing before the last stage
-  const round = (e, r = 9) => ({ x: Math.round(e.x - r), y: Math.round(e.y - r), width: 2 * r, height: 2 * r });
+  // (an electron is a small point of light: read close round it)
+  const round = (e, r = 5) => ({ x: Math.round(e.x - r), y: Math.round(e.y - r), width: 2 * r, height: 2 * r });
   await page.addStyleTag({ content: ".cursor-ring, .cursor-dot { visibility: hidden !important; }" });
   await page.mouse.move(720, 880);
   await page.waitForTimeout(400);
@@ -346,6 +364,111 @@ test("on a narrow window there is no orbit, and the names stand two by two as th
   // and back on a wide one, it is laid again
   await page.setViewportSize({ width: 1440, height: 900 });
   await expect.poll(async () => (await orbitOf(page)).laid).toBe(true);
+});
+
+/* A LINE, NOT A CRAWL (2026-10-04, later: "the spinning ring of particles
+   look sketchy"): the ring is one even hairline, still, its far half (the
+   top) fainter than its near half — read along it, clear of the names, their
+   electrons and the hand, twice, a second apart. */
+test("the orbit's ring is one even, still line, its far half fainter than its near half", async ({ page }) => {
+  test.setTimeout(90000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/index.html?auto=off");
+  await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
+  await page.addStyleTag({ content: ".cursor-ring, .cursor-dot { visibility: hidden !important; }" });
+  await page.mouse.move(720, 450);
+  await toStage(page, 4);
+  await settled(page, 4);
+  await expect.poll(() => state(page), { timeout: 30000 }).toBe("drift");
+  await page.waitForTimeout(1500);
+  const o = await orbitOf(page);
+  const names = await page.locator(".formula-link").evaluateAll((all) => all.map((a) => { const r = a.getBoundingClientRect(); return { l: r.left - 20, r: r.right + 20, t: r.top - 20, b: r.bottom + 20 }; }));
+  const points = [];
+  for (let k = 0; k < 72; k++) {
+    const a = (k / 72) * Math.PI * 2;
+    if (o.electrons.some((e) => Math.abs(Math.atan2(Math.sin(a - e.a), Math.cos(a - e.a))) < 0.12)) continue;
+    const ex = Math.cos(a) * o.rx, ey = Math.sin(a) * o.ry, c = Math.cos(o.tilt), sn = Math.sin(o.tilt);
+    const x = o.cx + ex * c - ey * sn, y = o.cy + ex * sn + ey * c;
+    if (names.some((n) => x > n.l && x < n.r && y > n.t && y < n.b)) continue;
+    if (x < 4 || y < 4 || x > 1436 || y > 896) continue;
+    points.push({ a, x, y });
+  }
+  expect(points.length, "most of the ring to read").toBeGreaterThan(40);
+  // how much brighter than the ground each little stretch of it is
+  const along = async () => {
+    const shot = (await page.screenshot()).toString("base64");
+    return page.evaluate(async ({ shot, points }) => {
+      const img = new Image(); img.src = "data:image/png;base64," + shot; await img.decode();
+      const c = document.createElement("canvas"); c.width = img.width; c.height = img.height;
+      const g = c.getContext("2d"); g.drawImage(img, 0, 0);
+      const d = g.getImageData(0, 0, c.width, c.height).data;
+      return points.map(({ x, y }) => {
+        let most = 0;
+        for (let yy = Math.round(y) - 3; yy <= Math.round(y) + 3; yy++) for (let xx = Math.round(x) - 3; xx <= Math.round(x) + 3; xx++) {
+          const k = (yy * c.width + xx) * 4;
+          most = Math.max(most, (d[k] + d[k + 1] + d[k + 2]) / 3);
+        }
+        return most;
+      });
+    }, { shot, points });
+  };
+  const ground = (await light(page, { x: 640, y: 4, width: 4, height: 4 })).sum / 16 || 30;
+  const one = await along();
+  await page.waitForTimeout(1000);
+  const two = await along();
+  // (the dimmer of the two reads at each place: a speck of the sillage
+  // crossing the line at one moment is not the line)
+  const lift = one.map((v, i) => Math.min(v, two[i]) - ground);
+  // a line: lit the whole way round, nowhere a gap
+  expect(Math.min(...lift), "lit the whole way round").toBeGreaterThan(6);
+  // still: the same a second later
+  const moved = one.reduce((t, v, i) => t + Math.abs(v - two[i]), 0) / one.reduce((t, v) => t + Math.max(1, v - ground), 0);
+  expect(moved, "still").toBeLessThan(0.2);
+  // even, and turned towards you below: the near half brighter than the far
+  const half = (near) => { const v = lift.filter((_, i) => (Math.sin(points[i].a) > 0.4) === near); return v.reduce((t, x) => t + x, 0) / v.length; };
+  expect(half(true), "the near half the brighter").toBeGreaterThan(half(false) * 1.25);
+  const nearOnes = lift.filter((_, i) => Math.sin(points[i].a) > 0.4).sort((p, q) => p - q);
+  const tenth = (f) => nearOnes[Math.min(nearOnes.length - 1, Math.floor(f * nearOnes.length))];
+  expect(tenth(0.9), "and even along it").toBeLessThan(tenth(0.1) * 2.6);
+  // nothing of the crawl in the drawing's own code
+  const code = fs.readFileSync(path.join(__dirname, "..", "molecule.js"), "utf8");
+  for (const gone of ["ORBIT_TURN", "ORBIT_OFF", "ORBIT_BACK", "ORBIT_TONES"]) expect(code, gone).not.toContain(gone);
+});
+
+/* HOW THE SILLAGE MOVES, TO CHOOSE FROM (2026-10-04, later: "the colour and
+   size are very good. idk about the movement"): the page draws it as it was
+   (diffuse), and the address shows four others — rise, swirl, still, breeze —
+   each drawn in the room as thickly as it was, and moving. */
+test("the sillage's movements to choose from: each, asked for by the address, draws in the room and moves", async ({ page }) => {
+  test.setTimeout(240000);
+  const errors = collectPageErrors(page);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  let diffuse = 0;
+  for (const move of ["diffuse", "rise", "swirl", "still", "breeze"]) {
+    await page.goto(`/index.html?auto=off${move === "diffuse" ? "" : "&sillage=" + move}`);
+    await expect(page.locator(".molecule"), move).toHaveClass(/molecule-drawn/, { timeout: 4000 });
+    await page.addStyleTag({ content: ".formula-link, .cursor-ring, .cursor-dot, .molecule-charge { visibility: hidden !important; }" });
+    await page.mouse.move(1279, 799);
+    await toStage(page, 4);
+    await settled(page, 4);
+    await expect.poll(() => state(page), { timeout: 30000 }).toBe("drift");
+    await page.waitForTimeout(800);
+    // in the room, between the ring and the aldehyde, on both sides
+    const o = await orbitOf(page, 16);
+    const avoid = o.electrons.map((e) => ({ l: e.x - 14, r: e.x + 14, t: e.y - 14, b: e.y + 14 }));
+    const boxes = [{ x: 200, y: 200, width: 200, height: 400 }, { x: 880, y: 200, width: 200, height: 400 }];
+    const lit = await litPer(page, boxes, avoid, o);
+    // (measured, in a browser without a graphics card: each between 0.6 and
+    // 1.05 of what the sillage as it was draws there)
+    if (move === "diffuse") { diffuse = lit; expect(diffuse, "the sillage as it was").toBeGreaterThan(0); }
+    else expect(lit, `${move}: specks in the room, as many as it was drawn with near enough`).toBeGreaterThan(diffuse * 0.3);
+    // and moving: the room is not the same picture a second and a half later
+    const shot = async () => (await page.screenshot({ clip: { x: 4, y: 200, width: 300, height: 400 } })).toString("base64");
+    const a = await shot();
+    await page.waitForTimeout(1500);
+    expect(await shot(), `${move}: moving`).not.toBe(a);
+  }
+  expect(errors, "no errors").toEqual([]);
 });
 
 test("five stages, smoothly: the title, the title gone, the aldehyde upright, its formula, and the names", async ({ page }) => {
@@ -620,7 +743,9 @@ test("the electronegative hand draws the sillage's specks to it", async ({ page 
   // δ− kept out of the picture — well outside the orbit's ring and its
   // electrons, so what is counted is the sillage
   await page.addStyleTag({ content: ".formula-link, .cursor-ring, .cursor-dot, .molecule-charge { visibility: hidden !important; }" });
-  const hand = { x: 130, y: 450 };
+  // (out in the room beyond the ring, which stands further out since the
+  // aldehyde was given centre stage)
+  const hand = { x: 60, y: 470 };
   const o = await orbitOf(page);
   {
     const dx = hand.x - o.cx, dy = hand.y - o.cy, c = Math.cos(-o.tilt), sn = Math.sin(-o.tilt);
