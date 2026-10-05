@@ -86,11 +86,15 @@ async function light(page, box) {
     const g = c.getContext("2d");
     g.drawImage(img, 0, 0);
     const d = g.getImageData(0, 0, c.width, c.height).data;
+    // anything plainly lighter than the dark ground: 19 above it, as litPer
+    // reads it (50 on the grey until 2026-10-05, #1f1f20)
+    const ground = getComputedStyle(document.documentElement).getPropertyValue("--stage-ground-rgb").split(",").map(Number);
+    const over = (ground[0] + ground[1] + ground[2]) / 3 + 19;
     let n = 0, lit = 0, sum = 0;
     for (let k = 0; k < d.length; k += 4) {
       const v = (d[k] + d[k + 1] + d[k + 2]) / 3;
       if (v > 110) n++;
-      if (v > 50) lit++;   // anything plainly lighter than the dark ground (31)
+      if (v > over) lit++;
       sum += v;
     }
     return { n, lit, sum };
