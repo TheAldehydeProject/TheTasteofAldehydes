@@ -286,3 +286,26 @@ changed — the letters, the bonds and their weights are the chemistry book's as
 `apple-touch-icon.png`, a phone's copy, is made again from it at 180 × 180 on black (drawn by the
 tests' browser from the SVG itself). `tests/repository.spec.js` still finds both where every page
 points at them.
+
+## 2026-10-05 — the icon red, glowing, skeletal, on its side
+
+> also change the picture on the tab window. I want it to be a skeletal version of an aldehyde, maybe
+> make it red, glowy, and sideways, where the hydrogens are on the side and the oxyugen is on the right.
+
+`favicon.svg` is **formaldehyde, H₂C=O, as a skeletal formula, lying on its side**: lines only — the
+carbon is the corner where the bonds meet, the two hydrogens the two bonds going off to the left, up
+and down, 120° apart as a carbonyl carbon's bonds are, and the oxygen on the right at the end of the
+double bond, its O drawn as a ring (not a font's letter, so it is the same everywhere). **Red, glowing**:
+the site's red (`#ff3a44`, the Note Library's), a soft halo of it round every line (two blurs, in the
+SVG itself), and a paler line down the middle of each, as a lit filament is; on the black square it has
+stood on since 2026-10-03. It was first drawn finer, and at a tab's 16 pixels the double bond's two
+lines ran together and the O closed up; the lines are heavier now, the double bond's two lines further
+apart and the O rounder, so at 16 pixels the hydrogens' V, the double bond and the open O all still
+show. `apple-touch-icon.png`, a phone's copy, is made again from it at 180 × 180 on black, drawn by the
+tests' browser from the SVG itself. Until now it was R–C(=O)–H in Arial's own letters, as a chemistry
+book sets it, white on black — that drawing is in `favicon.svg`'s history. The picture a shared link
+shows (`images/social-card.png`) is its own and was not changed.
+
+How to test it: `tests/repository.spec.js` still finds both where every page points at them; by eye,
+the icon at 16, 32 and 64 pixels and the phone's copy.
+
