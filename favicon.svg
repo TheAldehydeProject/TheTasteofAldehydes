@@ -1,42 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-  <!-- The site's icon: an aldehyde, formaldehyde (H2C=O), SKELETAL, RED AND
-       GLOWING, ON ITS SIDE (2026-10-05 — the owner: "a skeletal version of an
-       aldehyde, maybe make it red, glowy, and sideways, where the hydrogens
-       are on the side and the oxyugen is on the right"). Lines only, as a
-       skeletal formula is drawn: the carbon is the corner where the bonds
-       meet, the two hydrogens the two bonds going off to the left, up and
-       down, 120 degrees apart as a carbonyl carbon's three bonds are, and the
-       oxygen on the right at the end of the double bond, its O drawn as a ring
-       so it is the same on every computer. Drawn as a chemistry book's
-       software draws one ("nicer and less compressed", the same day): every
-       bond the same length (13), 120 degrees apart; the double bond's two
-       lines either side of its axis, each running into its hydrogen's bond
-       so nothing crosses between them; the O a round letter a small, even
-       gap past the bond's end; the whole in the middle of the square with
-       room all round it (7 of its 48 either side). In a red that glows: a soft halo
-       of the same red round every line (the blur), and each line a little
-       paler down its middle, as a lit filament is. On the black square it has
-       stood on since 2026-10-03. (Until 2026-10-05 it was R–C(=O)–H set as a
-       chemistry book sets it, in Arial's own letters, white on black; that
-       drawing is in the history of this file.) -->
-  <defs>
-    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="2.4" result="wide"/>
-      <feGaussianBlur in="SourceGraphic" stdDeviation="0.9" result="near"/>
-      <feMerge>
-        <feMergeNode in="wide"/>
-        <feMergeNode in="near"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-  <rect width="48" height="48" rx="3" fill="#000"/>
-  <g filter="url(#glow)" fill="none" stroke="#ff3a44" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M8.05 12.74L12.76 20.9H27.55 M8.05 35.26L12.76 27.1H27.55"/>
-    <ellipse cx="34.55" cy="24" rx="5.4" ry="5.9"/>
-  </g>
-  <g fill="none" stroke="#ffc2c5" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.85">
-    <path d="M8.05 12.74L12.76 20.9H27.55 M8.05 35.26L12.76 27.1H27.55"/>
-    <ellipse cx="34.55" cy="24" rx="5.4" ry="5.9"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.85 -1.2 2.2 2.4">
+  <!-- The site's icon: formaldehyde, H2C=O — THE OWNER'S OWN DRAWING
+       (2026-10-05, last: "use these for the favicon; but if possible make
+       them red"), the H, C and O as letters, the two hydrogens up and down
+       on the left, the double bond to the O on the right. Their file, drawn
+       as their two pictures show it, and turned red: the same hue as the
+       site's red (#ff3a44) at the saturation and lightness of their two
+       blues — #eb252f where theirs was #2563eb, and in a dark browser
+       #ff9398 where theirs was #93b4ff. Their letters were Arial Bold,
+       outlined by the lines' own stroke (0.09) as a browser drew them, which
+       is what made them as heavy as their pictures; here they are that
+       letter's own outline (Liberation Sans Bold, Arial's shapes and widths),
+       placed where a browser set theirs — centred on each atom, as
+       `text-anchor: middle` and `dominant-baseline: central` do — and
+       stroked the same, so every computer draws the same icon without
+       needing the font, and it lands within a fraction of a pixel of their
+       picture. No square behind it, as theirs had none. (Until then it was
+       a skeletal formula in a red glow on a black square, and before that
+       R–C(=O)–H in letters; both are in the history of this file.) -->
+  <style>
+    .ink { stroke: #eb252f; fill: #eb252f; }
+    @media (prefers-color-scheme: dark) { .ink { stroke: #ff9398; fill: #ff9398; } }
+  </style>
+  <g class="ink" stroke-width="0.09" stroke-linecap="round">
+    <path fill="none" d="M0.3 -0.075H0.7M0.3 0.075H0.7M-0.15 -0.26L-0.35 -0.6M-0.15 0.26L-0.35 0.6"/>
+    <path d="M1.1735 -0.0002Q1.1735 0.0535 1.1522 0.0942Q1.131 0.135 1.0914 0.1566Q1.0519 0.1782 0.9991 0.1782Q0.9181 0.1782 0.8721 0.1305Q0.826 0.0828 0.826 -0.0002Q0.826 -0.083 0.8719 -0.1294Q0.9178 -0.1758 0.9996 -0.1758Q1.0814 -0.1758 1.1274 -0.1289Q1.1735 -0.082 1.1735 -0.0002ZM1.1 -0.0002Q1.1 -0.0559 1.0736 -0.0875Q1.0472 -0.1191 0.9996 -0.1191Q0.9513 -0.1191 0.9249 -0.0878Q0.8986 -0.0564 0.8986 -0.0002Q0.8986 0.0564 0.9255 0.089Q0.9525 0.1216 0.9991 0.1216Q1.0475 0.1216 1.0737 0.0898Q1.1 0.0581 1.1 -0.0002Z"/>
+    <path d="M0.0135 0.1216Q0.0787 0.1216 0.1041 0.0562L0.1669 0.0798Q0.1466 0.1296 0.1074 0.1539Q0.0682 0.1782 0.0135 0.1782Q-0.0695 0.1782 -0.1147 0.1312Q-0.16 0.0842 -0.16 -0.0002Q-0.16 -0.085 -0.1163 -0.1304Q-0.0726 -0.1758 0.0104 -0.1758Q0.0709 -0.1758 0.109 -0.1515Q0.1471 -0.1272 0.1625 -0.0801L0.099 -0.0627Q0.0909 -0.0886 0.0674 -0.1039Q0.0438 -0.1191 0.0118 -0.1191Q-0.037 -0.1191 -0.0623 -0.0889Q-0.0875 -0.0586 -0.0875 -0.0002Q-0.0875 0.0591 -0.0615 0.0903Q-0.0355 0.1216 0.0135 0.1216Z"/>
+    <path d="M-0.4252 -0.6967V-0.8441H-0.5751V-0.6967H-0.6471V-1.0407H-0.5751V-0.9037H-0.4252V-1.0407H-0.3531V-0.6967Z"/>
+    <path d="M-0.4252 1.0433V0.8959H-0.5751V1.0433H-0.6471V0.6993H-0.5751V0.8363H-0.4252V0.6993H-0.3531V1.0433Z"/>
   </g>
 </svg>

@@ -314,3 +314,41 @@ shows (`images/social-card.png`) is its own and was not changed.
 How to test it: `tests/repository.spec.js` still finds both where every page points at them; by eye,
 the icon at 16, 32 and 64 pixels and the phone's copy.
 
+
+## 2026-10-05, last — the owner's own icon, in red
+
+> [two pictures: H₂C=O in heavy blue letters, the hydrogens up and down on the left, the double bond
+> to the O on the right — one a deep blue, one a light blue — and their `favicon.svg`] use these for
+> the favicon; but if possible make them red.
+
+`favicon.svg` is **the owner's own drawing**: the H, C and O as letters, the two hydrogens up and down
+on the left, the C=O on the right, on nothing (no square behind it, as theirs had none) — their file,
+as their two pictures show it, with two things done to it:
+
+- **Red.** Their two blues were one for a light browser and one for a dark (`prefers-color-scheme`, in
+  the SVG itself, which Chrome and Firefox read for a tab's icon). Each is turned to **the site's own
+  red's hue** (`#ff3a44`, 357°) **at that blue's own saturation and lightness**: `#eb252f` where theirs
+  was `#2563eb`, and `#ff9398` where theirs was `#93b4ff` — so the two reds are as far apart, and as
+  strong, as their two blues.
+- **The letters as outlines.** Theirs were typed — Arial Bold at half a unit — and what made them as
+  heavy as in their pictures is that the lines' own stroke (0.09) reached them too: a stylesheet rule
+  (`g { stroke: … }`) outranks the `stroke="none"` written on the letters, so a browser drew every
+  letter with its outline thickened. That look is kept, on purpose, because it is what they sent; but
+  typed letters are drawn in whatever face a computer has for Arial, so they are **Liberation Sans
+  Bold's own outlines** here (Arial's shapes and widths, and what drew their pictures), set where a
+  browser set theirs — centred across on each atom (`text-anchor: middle`) and down by the font's
+  own middle (`dominant-baseline: central`: the baseline (ascent − descent) / 2 below the atom, 0.1733
+  of a unit) — and stroked the same 0.09. Drawn at 512 pixels, **it lands within a fraction of a pixel
+  of their picture** (210 of its 34,319 inked pixels differ by more than half, all along edges, where a
+  browser rounds typed letters to whole pixels and an outline does not). The script that worked it out
+  is kept out of the repository, like the last ones; the file is the whole of it.
+
+`apple-touch-icon.png`, a phone's copy, is the light red on a white square at 180 × 180, the drawing
+144 pixels of it, made by the tests' browser from the SVG itself. Until now the icon was a skeletal
+formula in a red glow on a black square (above) — that, and the letters before it, are in the file's
+history. The picture a shared link shows (`images/social-card.png`) is its own and was not changed.
+
+How to test it: `tests/repository.spec.js` — **`the tab's icon is the owner's drawing, in red, its
+letters outlines`**: the two reds, the dark one asked for by `prefers-color-scheme`, their viewBox, the
+four letters as paths and no `<text>`; and still finds both icons where every page points at them. By
+eye, the icon at 16, 32 and 64 pixels in a light and a dark tab, and the phone's copy.

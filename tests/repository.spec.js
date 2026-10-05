@@ -437,6 +437,21 @@ test("every page tells search engines what it is, on the site's own address", ()
   expect(fs.readFileSync(path.join(ROOT, "index.html"), "utf8")).toMatch(/"@type": "WebSite", "name": "The Taste of Aldehydes"/);
 });
 
+/* THE TAB'S ICON IS THE OWNER'S OWN DRAWING, IN RED (2026-10-05, last:
+   "use these for the favicon; but if possible make them red"): their
+   viewBox and their two colours turned red — the light browser's and,
+   asked for by prefers-color-scheme, the dark one's — and the four letters
+   as outlines, never typed, so no computer draws them in a face of its own. */
+test("the tab's icon is the owner's drawing, in red, its letters outlines", () => {
+  const svg = fs.readFileSync(path.join(ROOT, "favicon.svg"), "utf8");
+  expect(svg).toContain('viewBox="-0.85 -1.2 2.2 2.4"');
+  expect(svg).toMatch(/\.ink \{ stroke: #eb252f; fill: #eb252f; \}/);
+  expect(svg).toMatch(/@media \(prefers-color-scheme: dark\) \{ \.ink \{ stroke: #ff9398; fill: #ff9398; \} \}/);
+  expect(svg, "no typed letters").not.toMatch(/<text[\s>]/);
+  expect(svg.match(/<path d="M/g) || [], "the O, the C and the two H as outlines").toHaveLength(4);
+  expect(svg.replace(/<!--[\s\S]*?-->/g, ""), "nothing blue drawn").not.toMatch(/#2563eb|#93b4ff/);
+});
+
 /* EVERY PAGE IS BUILT TO BE READ BY MORE THAN EYES (2026-09-27: "make
    sure there's exactly one <h1> per page, heading levels are logical, all
    images have descriptive alt text, and semantic tags are used where
