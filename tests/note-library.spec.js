@@ -379,7 +379,7 @@ test("every house the notes come from has a page the windows can link to", () =>
    the accords, each lighting up alone under the hand, and chosen by a
    press. */
 test("the arrows on the left pull out the search bar and the menu, whose accords light up alone under the hand", async ({ page }) => {
-  test.setTimeout(180000);
+  test.setTimeout(300000); // three minutes and more on a slow machine drawing in software
   const errors = collectPageErrors(page);
   // What the library's rule finds for "cedar": every note with "cedar" (or
   // "cedars") as a word of its name or of another of its spellings.
@@ -1097,7 +1097,7 @@ test("collapsing brings every note back into the one red network", async ({ page
    combined with" is said only while the page is left alone ("make it an
    idle thing"). */
 test("combinations: the network turns gold and loosens, and notes taken as tags show what they are combined with", async ({ page }) => {
-  test.setTimeout(180000);
+  test.setTimeout(300000); // three minutes and more on a slow machine drawing in software
   const errors = collectPageErrors(page);
   await open(page);
   await settle(page);
@@ -1228,11 +1228,17 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
   await expect.poll(async () => (await state(page)).tagging, { timeout: 8000 }).toBe(false);
   expect((await state(page)).pairs).toEqual(two.together);
   await expect.poll(async () => (await state(page)).tagLines, { timeout: 5000 }).toBe(inBoth.length * 2 + 1);
-  const other = await page.evaluate((n) => window.NetScene.note(n), partner);
-  const yuzuNow = await page.evaluate(() => window.NetScene.note("Yuzu"));
+  // The tags, their lines and the bond read off ONE frame: the network
+  // turns, and read one after another a slow machine let it turn a few
+  // pixels between them (2026-10-05).
+  const frame = await page.evaluate((n) => ({
+    other: window.NetScene.note(n), yuzu: window.NetScene.note("Yuzu"),
+    lines: window.NetScene.tagLines(), rods: window.NetScene.bonds(),
+  }), partner);
+  const other = frame.other, yuzuNow = frame.yuzu;
   const tagsAt = [yuzuNow, other].sort((p, q) => p.x - q.x);
   const near = (e, t) => Math.hypot(e.x - t.x, e.y - t.y) < 3;
-  const all = await page.evaluate(() => window.NetScene.tagLines());
+  const all = frame.lines;
   const between = all.find((l) => (near(l.a, yuzuNow) && near(l.b, other)) || (near(l.a, other) && near(l.b, yuzuNow)));
   expect(between, "a line from one tag to the other").toBeTruthy();
   expect(between.colour[0] + between.colour[1], "and lit").toBeGreaterThan(0.6);
@@ -1242,7 +1248,7 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
   expect(feeble.filter((l) => near(l.a, other)).length, "and to the other").toBe(inBoth.length);
   // The bond: one rod along that line, brighter than it and wider than a
   // line, with a glow laid along it.
-  const rods = await page.evaluate(() => window.NetScene.bonds());
+  const rods = frame.rods;
   expect(rods, "one emphasized line").toHaveLength(1);
   const rodEnds = [rods[0].a, rods[0].b].sort((p, q) => p.x - q.x);
   rodEnds.forEach((e, k) => expect(Math.hypot(e.x - tagsAt[k].x, e.y - tagsAt[k].y), "along it, tag to tag").toBeLessThan(3));
@@ -1260,11 +1266,23 @@ test("combinations: the network turns gold and loosens, and notes taken as tags 
     expect(Math.min(...c.colour), tag + " emphasized, towards white").toBeGreaterThan(Math.min(...goldOf[tag]) + 0.2);
   }
   // Something available pointed at answers, and says it goes with them.
-  const onScreen = await page.evaluate((names) => names.map((n) => ({ n, ...window.NetScene.note(n) }))
-    .find((p) => p.x > 80 && p.x < 1360 && p.y > 120 && p.y < 620), inBoth);
-  if (onScreen) {
-    await page.mouse.move(onScreen.x, onScreen.y, { steps: 2 });
-    await expect(stage, "what is available answers the hand").toHaveAttribute("data-hover", /.+/, { timeout: 3000 });
+  // The network turns while the hand goes to it — on a slow machine 15 to
+  // 20 pixels between reading where a note is and the pointer arriving,
+  // and a note answers within 7 — so the hand is put on it in the same
+  // moment it is read: the pointer's move, as the page itself hears it, at
+  // where the note is now (2026-10-05).
+  const pointAt = () => page.evaluate((names) => {
+    const at = names.map((n) => ({ n, ...window.NetScene.note(n) })).find((p) => p.x > 80 && p.x < 1360 && p.y > 120 && p.y < 620);
+    if (!at) return null;
+    const canvas = document.querySelector(".net-canvas"), r = canvas.getBoundingClientRect();
+    canvas.dispatchEvent(new PointerEvent("pointermove", { clientX: r.left + at.x, clientY: r.top + at.y, pointerId: 1, pointerType: "mouse", bubbles: true }));
+    return at;
+  }, inBoth);
+  if (await pointAt()) {
+    await expect(async () => {
+      await pointAt();
+      await expect(stage, "what is available answers the hand").toHaveAttribute("data-hover", /.+/, { timeout: 1500 });
+    }).toPass({ timeout: 12000 });
     await page.mouse.move(1300, 200, { steps: 2 });
   }
   await expect.poll(async () => (await page.locator(".net-label").evaluateAll((els) => els.filter((e) => +getComputedStyle(e).opacity > 0.3)

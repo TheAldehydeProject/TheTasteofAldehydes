@@ -2014,3 +2014,21 @@ load) **`once apart, a note pressed opens its own window …; a filler never ans
 filler it had found 600ms before, and by then the network had turned enough to bring *Pistachio*
 onto that spot, which opened. On its own it passed twice. The test now asks `NetScene.filler` again
 just before the press, so the spot is the one the filler is standing on at that moment.
+
+## 2026-10-05 — the bond and a note pointed at, read off the moment
+
+Nothing on the page changed. On 2026-10-05 the machine the suite runs on drew the library slowly
+enough that **`combinations: …`** failed every time, alone and on the version then live, in the
+same way as the filler above — the network turning between two readings:
+
+- **The bond** was compared with the two tags it joins, read three calls apart, and the network had
+  turned 3 to 4 pixels between them (the test allows 3). The tags, their lines and the bond are now
+  read in **one** call, off one frame.
+- **A note pointed at**: read, then the pointer sent to it, and by its arrival the note had gone 15
+  to 20 pixels on — it answers within 7. Read again and pointed at again, it was always gone. The
+  pointer's move is now made **in the same moment** the note is read — the `pointermove` the page
+  itself listens for, at the note's place then — tried again for up to twelve seconds.
+- It and **`the arrows on the left pull out …`** took three minutes and more on that machine, their
+  limit; they have five now.
+
+Both passed twice, alone and together.
