@@ -10,7 +10,8 @@
 #   a DESCRIPTION   the line a search engine shows under the title;
 #   a CANONICAL     the one address the page is known by, on the site's
 #                   own domain (CNAME: thetasteofaldehydes.com);
-#   the ICONS       favicon.svg, and apple-touch-icon.png for a phone;
+#   the ICONS       favicon.svg, and apple-touch-icon.png for a phone,
+#                   their addresses carrying `ICON_V`;
 #   OPEN GRAPH      and a Twitter card: the title, the line and the
 #                   picture (images/social-card.png) a shared link shows —
 #                   the Twitter card says all of them itself as well
@@ -39,6 +40,13 @@ import re, json, html as H, os
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 BASE = "https://thetasteofaldehydes.com/"
 SITE = "The Taste of Aldehydes"
+# THE ICONS' VERSION, on the end of their addresses (favicon.svg?v=…): a
+# browser keeps a tab's icon in a store of its own that a reload does not
+# clear, and goes on showing the old one until the address it is asked for
+# changes. Change this to the day whenever favicon.svg or
+# apple-touch-icon.png changes, and run this again (2026-10-05: the owner
+# saw the black square of the icon before after it had gone).
+ICON_V = "2026-10-05"
 HOME = ("Home", "")
 SD = ("Scent Descriptions", "scent-descriptions/")
 TH = ("Theories", "theories/")
@@ -142,8 +150,8 @@ for path, meta in P.items():
         lines.append('<link rel="canonical" href="%s">' % canon)
     if meta.get("noindex"):
         lines.append('<meta name="robots" content="noindex, follow">')
-    lines += ['<link rel="icon" href="%sfavicon.svg" type="image/svg+xml">' % root,
-              '<link rel="apple-touch-icon" href="%sapple-touch-icon.png">' % root,
+    lines += ['<link rel="icon" href="%sfavicon.svg?v=%s" type="image/svg+xml">' % (root, ICON_V),
+              '<link rel="apple-touch-icon" href="%sapple-touch-icon.png?v=%s">' % (root, ICON_V),
               '<meta name="theme-color" content="%s">' % THEME.get(path, PAPER)]
     if not meta.get("noindex"):
         lines += ['<meta property="og:site_name" content="%s">' % SITE,

@@ -441,7 +441,8 @@ test("every page tells search engines what it is, on the site's own address", ()
    "use these for the favicon; but if possible make them red"): their
    viewBox and their two colours turned red — the light browser's and,
    asked for by prefers-color-scheme, the dark one's — and the four letters
-   as outlines, never typed, so no computer draws them in a face of its own. */
+   as outlines, never typed, so no computer draws them in a face of its own;
+   with nothing behind it, at a versioned address. */
 test("the tab's icon is the owner's drawing, in red, its letters outlines", () => {
   const svg = fs.readFileSync(path.join(ROOT, "favicon.svg"), "utf8");
   expect(svg).toContain('viewBox="-0.85 -1.2 2.2 2.4"');
@@ -450,6 +451,12 @@ test("the tab's icon is the owner's drawing, in red, its letters outlines", () =
   expect(svg, "no typed letters").not.toMatch(/<text[\s>]/);
   expect(svg.match(/<path d="M/g) || [], "the O, the C and the two H as outlines").toHaveLength(4);
   expect(svg.replace(/<!--[\s\S]*?-->/g, ""), "nothing blue drawn").not.toMatch(/#2563eb|#93b4ff/);
+  // NOTHING BEHIND IT (2026-10-05, last: "give it transparent background
+  // please; not black background"): no square, no rect, and the page asks
+  // for it at an address a browser has not kept the black one under.
+  expect(svg, "nothing behind it").not.toMatch(/<rect[\s>]/);
+  const v = fs.readFileSync(path.join(ROOT, "tools", "seo.py"), "utf8").match(/ICON_V = "([^"]+)"/)[1];
+  expect(fs.readFileSync(path.join(ROOT, "index.html"), "utf8"), "asked for by its version").toContain(`href="favicon.svg?v=${v}"`);
 });
 
 /* EVERY PAGE IS BUILT TO BE READ BY MORE THAN EYES (2026-09-27: "make

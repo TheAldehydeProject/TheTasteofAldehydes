@@ -352,3 +352,26 @@ How to test it: `tests/repository.spec.js` — **`the tab's icon is the owner's 
 letters outlines`**: the two reds, the dark one asked for by `prefers-color-scheme`, their viewBox, the
 four letters as paths and no `<text>`; and still finds both icons where every page points at them. By
 eye, the icon at 16, 32 and 64 pixels in a light and a dark tab, and the phone's copy.
+
+### The same day, last — no black behind it, at an address of its own
+
+> give it transparent background please; not black background
+
+`favicon.svg` already had nothing behind it — no square, no `<rect>`, only the molecule — so what
+the owner saw was the icon before it, red on a black square: **a browser keeps a tab's icon in a
+store of its own**, which a reload does not clear, and shows the old one until the address it is
+asked for changes (and GitHub Pages lets a copy be kept for ten minutes besides). So every page now
+asks for **`favicon.svg?v=2026-10-05`** and **`apple-touch-icon.png?v=2026-10-05`**: the same files,
+at addresses no browser has stored the black one under. The version is **`ICON_V`** in
+`tools/seo.py`, which writes both lines into every page — **change it to the day whenever either
+icon changes, and run the tool**. Running it re-dated `sitemap.xml`, which is right this time: every
+page's head changed. Drawn over a checkerboard (how a picture shows it has no background), both
+reds stand on nothing.
+
+**The phone's copy stays on white**, on purpose: an iPhone fills whatever is see-through in a
+home-screen icon with **black**, so a transparent `apple-touch-icon.png` would put back exactly the
+black the owner asked to have gone.
+
+How to test it: **`the tab's icon is the owner's drawing, in red, its letters outlines`** now also
+says there is nothing behind it (no `<rect>`) and that the home page asks for it at `ICON_V`; the
+link check reads a page's `favicon.svg?v=…` as `favicon.svg`, which is there.
