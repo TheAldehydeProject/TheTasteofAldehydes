@@ -298,10 +298,15 @@ and down, 120° apart as a carbonyl carbon's bonds are, and the oxygen on the ri
 double bond, its O drawn as a ring (not a font's letter, so it is the same everywhere). **Red, glowing**:
 the site's red (`#ff3a44`, the Note Library's), a soft halo of it round every line (two blurs, in the
 SVG itself), and a paler line down the middle of each, as a lit filament is; on the black square it has
-stood on since 2026-10-03. It was first drawn finer, and at a tab's 16 pixels the double bond's two
-lines ran together and the O closed up; the lines are heavier now, the double bond's two lines further
-apart and the O rounder, so at 16 pixels the hydrogens' V, the double bond and the open O all still
-show. `apple-touch-icon.png`, a phone's copy, is made again from it at 180 × 180 on black, drawn by the
+stood on since 2026-10-03. **Drawn as a chemistry book's software draws one** — the owner, of the
+first try: "No, i want it nicer and less compressed please": every bond the same length (13 of the
+square's 48), 120° apart; the double bond's two lines either side of its axis, **each running into its
+hydrogen's bond**, so each side is one clean bent line and nothing crosses between them (the first try
+let the hydrogens' bonds meet at a point between the double bond's lines); the O a round letter (5.4 by
+5.9), a small even gap past the bond's end; and the whole in the middle of the square with **room all
+round it**, about 7 of its 48 on every side (the first try filled the square, its O a narrow oval
+squeezed against the edge, its lines heavy). At a tab's 16 pixels it is soft; at 32, as most screens
+draw a tab's icon now, the bent lines, the double bond and the open O are all plain. `apple-touch-icon.png`, a phone's copy, is made again from it at 180 × 180 on black, drawn by the
 tests' browser from the SVG itself. Until now it was R–C(=O)–H in Arial's own letters, as a chemistry
 book sets it, white on black — that drawing is in `favicon.svg`'s history. The picture a shared link
 shows (`images/social-card.png`) is its own and was not changed.

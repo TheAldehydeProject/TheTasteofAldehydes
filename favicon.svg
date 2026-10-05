@@ -7,7 +7,13 @@
        meet, the two hydrogens the two bonds going off to the left, up and
        down, 120 degrees apart as a carbonyl carbon's three bonds are, and the
        oxygen on the right at the end of the double bond, its O drawn as a ring
-       so it is the same on every computer. In a red that glows: a soft halo
+       so it is the same on every computer. Drawn as a chemistry book's
+       software draws one ("nicer and less compressed", the same day): every
+       bond the same length (13), 120 degrees apart; the double bond's two
+       lines either side of its axis, each running into its hydrogen's bond
+       so nothing crosses between them; the O a round letter a small, even
+       gap past the bond's end; the whole in the middle of the square with
+       room all round it (7 of its 48 either side). In a red that glows: a soft halo
        of the same red round every line (the blur), and each line a little
        paler down its middle, as a lit filament is. On the black square it has
        stood on since 2026-10-03. (Until 2026-10-05 it was R–C(=O)–H set as a
@@ -16,7 +22,7 @@
   <defs>
     <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
       <feGaussianBlur in="SourceGraphic" stdDeviation="2.4" result="wide"/>
-      <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="near"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.9" result="near"/>
       <feMerge>
         <feMergeNode in="wide"/>
         <feMergeNode in="near"/>
@@ -25,12 +31,12 @@
     </filter>
   </defs>
   <rect width="48" height="48" rx="3" fill="#000"/>
-  <g filter="url(#glow)" fill="none" stroke="#ff3a44" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M6 10.2L14 24L6 37.8 M14.6 20.4H28 M14.6 27.6H28"/>
-    <ellipse cx="35.6" cy="24" rx="5.6" ry="7"/>
+  <g filter="url(#glow)" fill="none" stroke="#ff3a44" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8.05 12.74L12.76 20.9H27.55 M8.05 35.26L12.76 27.1H27.55"/>
+    <ellipse cx="34.55" cy="24" rx="5.4" ry="5.9"/>
   </g>
-  <g fill="none" stroke="#ffc2c5" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity="0.85">
-    <path d="M6 10.2L14 24L6 37.8 M14.6 20.4H28 M14.6 27.6H28"/>
-    <ellipse cx="35.6" cy="24" rx="5.6" ry="7"/>
+  <g fill="none" stroke="#ffc2c5" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.85">
+    <path d="M8.05 12.74L12.76 20.9H27.55 M8.05 35.26L12.76 27.1H27.55"/>
+    <ellipse cx="34.55" cy="24" rx="5.4" ry="5.9"/>
   </g>
 </svg>
