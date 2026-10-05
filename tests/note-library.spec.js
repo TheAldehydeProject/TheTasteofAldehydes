@@ -912,19 +912,25 @@ test("the centre joins every network, and going from one accord to another is ea
   expect((await state(page)).focus).toBe("centre");
   // A NOTE, seen from the centre, answers nothing: not named under the
   // hand, not chosen when pressed.
-  const loose = await page.evaluate((middles) => {
+  // (The middle nodes are read again with the note, in one moment: the
+  // whole turns, and read a second before, on a slow machine a middle node
+  // had come under the note by the press — 2026-10-05.)
+  const pickLoose = () => page.evaluate(() => {
+    const middles = window.NetScene.accords().map((A) => window.NetScene.network(A.code));
     for (const n of window.NetScene.notes()) {
       const p = window.NetScene.note(n.name);
       if (p.z < 1 && p.x > 250 && p.x < innerWidth - 250 && p.y > 120 && p.y < innerHeight - 160 &&
-          middles.every((m) => Math.hypot(m.x - p.x, m.y - p.y) > 45)) return { name: n.name, x: p.x, y: p.y };
+          middles.every((m) => Math.hypot(m.x - p.x, m.y - p.y) > 60)) return { name: n.name, x: p.x, y: p.y };
     }
     return null;
-  }, middles);
+  });
+  const loose = await pickLoose();
   expect(loose, "a note in view, clear of the middle nodes").not.toBeNull();
   await page.mouse.move(loose.x, loose.y);
   await page.waitForTimeout(300);
   await expect(page.locator(".net-hover"), "pointed at, it says nothing").not.toHaveClass(/is-on/);
-  await page.mouse.click(loose.x, loose.y);
+  const press = (await pickLoose()) || loose;
+  await page.mouse.click(press.x, press.y);
   await page.waitForTimeout(400);
   let s = await state(page);
   expect(s.selected, "pressed, nothing chosen").toBeNull();

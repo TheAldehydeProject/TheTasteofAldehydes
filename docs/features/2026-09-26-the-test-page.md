@@ -2032,3 +2032,9 @@ same way as the filler above — the network turning between two readings:
   limit; they have five now.
 
 Both passed twice, alone and together.
+
+The same day, later, **`the centre joins every network, and going from one accord to another is easy`**
+pressed a note seeing every accord — one that answers nothing — chosen clear of the middle nodes as
+they stood a second or two before; by the press a middle node had turned under it, and the view
+went there. The note and the middle nodes are read in one call now, again just before the press,
+and the note kept 60 pixels from every middle node (it was 45). It passed twice alone.
