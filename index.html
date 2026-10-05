@@ -9,7 +9,7 @@
 <link rel="canonical" href="https://thetasteofaldehydes.com/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="theme-color" content="#1f1f20">
+<meta name="theme-color" content="#171718">
 <meta property="og:site_name" content="The Taste of Aldehydes">
 <meta property="og:type" content="website">
 <meta property="og:title" content="The Taste of Aldehydes">
@@ -40,8 +40,10 @@
      how far up they are (`stage-coming`, 2026-10-03): until then the
      stylesheet showed them whole, and a reload flashed the last stage
      before the title. If landing.js never comes, the page's own load lets
-     them go, as the js-coming pages do. -->
-<script>document.documentElement.classList.add("stage-coming"); window.addEventListener("load", function () { document.documentElement.classList.remove("stage-coming"); }); if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("title-coming");</script>
+     them go, as the js-coming pages do. And `?ground=was` on the address
+     puts the stage's old grey back for the visit, to compare (2026-10-05:
+     its ground a little darker, "reversible just in case"; style.css). -->
+<script>if (/[?&]ground=was\b/.test(location.search)) { document.documentElement.classList.add("ground-was"); document.querySelector('meta[name="theme-color"]').content = "#1f1f20"; } document.documentElement.classList.add("stage-coming"); window.addEventListener("load", function () { document.documentElement.classList.remove("stage-coming"); }); if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("title-coming");</script>
 </head>
 <body class="snap-page">
 

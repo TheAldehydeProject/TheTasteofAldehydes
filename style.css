@@ -482,10 +482,20 @@ body.menu-open > *:not(.menu-trigger):not(.menu-overlay):not(.cursor-ring):not(.
    corner block all follow — and the molecule's cloud glows over the whole
    of it, the title in front of it in the middle. Nothing on the drawing
    takes the pointer; it leans to it from the window. */
+/* THE STAGE'S GROUND, A LITTLE DARKER (2026-10-05: "make the background
+   gray a little darker (make tha last change reversible just in case)"):
+   #171718, where it was #1f1f20 — the stage, the page under it and the
+   Menu's ground on a phone all take it from here. TO GO BACK: set
+   `--stage-ground` to #1f1f20 and `--stage-ground-rgb` to 31, 31, 32 here,
+   and the home page's colour in THEME in tools/seo.py, and run it. Only to
+   look, `?ground=was` on the address puts the old grey back for that visit
+   (index.html's head puts `ground-was` on the page). */
+:root { --stage-ground: #171718; --stage-ground-rgb: 23, 23, 24; }
+html.ground-was { --stage-ground: #1f1f20; --stage-ground-rgb: 31, 31, 32; }
 .aldehyde-stage,
 .title-slide,
 .formula-slide {
-  --bg: #1f1f20;
+  --bg: var(--stage-ground);
   --bg-2: #28282a;
   --line: #3a3a3b;
   --ink: #ece8e2;
@@ -501,7 +511,7 @@ body.menu-open > *:not(.menu-trigger):not(.menu-overlay):not(.cursor-ring):not(.
 /* With the map slides switched off the stage is the whole page, and the
    page under it is its dark ground (a bounce at either end shows no white)
    and its scrollbar dark (landing.js puts `stage-only` on the body). */
-body.stage-only { background: #1f1f20; }
+body.stage-only { background: var(--stage-ground); }
 body.stage-only #scroll-container { color-scheme: dark; scrollbar-color: #3a3a3b transparent; }
 /* THE TITLE IN WHITE, WITH A DARK EDGE (2026-09-30 — "not opposite colour,
    but rather white with an added layer that makes it more visible. play
@@ -597,7 +607,7 @@ body.stage-only #scroll-container { color-scheme: dark; scrollbar-color: #3a3a3b
 /* The Menu stands over the first slides' dark ground until the page leaves
    them (landing.js puts `first-slide-dark` on the body). */
 body.first-slide-dark:not(.menu-open) .menu-trigger { color: #ece8e2; }
-body.first-slide-dark { --chrome-ground: rgba(31, 31, 32, 0.78); }
+body.first-slide-dark { --chrome-ground: rgba(var(--stage-ground-rgb), 0.78); }
 /* (About me's veil and sheet are the stage's dark: see ABOUT ME.) */
 .title-content h1 {
   font-size: clamp(32px, 5.6vw, 68px);

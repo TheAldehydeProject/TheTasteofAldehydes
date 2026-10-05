@@ -101,7 +101,7 @@ P["works/test-page.html"] = dict(desc=P["note-library/index.html"]["desc"], noin
 # drawn. A page not named here is on the site's white paper.
 PAPER = "#fafaf9"
 THEME = {
- "index.html": "#1f1f20",   # the first slide's dark ground, since 2026-09-30
+ "index.html": "#171718",   # the stage's dark ground (#1f1f20 from 2026-09-30, a little darker since 2026-10-05)
  "scent-descriptions/index.html": "#ffffff",
  "note-library/index.html": "#1f1f20", "works/test-page.html": "#1f1f20",
  "theories/index.html": "#15171d",

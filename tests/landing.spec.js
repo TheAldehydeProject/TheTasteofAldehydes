@@ -9,6 +9,8 @@
 // working. The formula's own tests are in formula.spec.js.
 // ============================================================
 const { test, expect } = require("@playwright/test");
+const fs = require("fs");
+const path = require("path");
 const { serveDependenciesLocally, collectPageErrors, blockThreeJs, jumpToSlide, toStage, stageY, stageAt, HOME_WITH_MAP } = require("./helpers");
 
 const scrollTop = (page) =>
@@ -517,9 +519,12 @@ test("the aldehyde glows big in the middle of the dark first slide, the double b
   await page.goto("/index.html");
   await expect(page.locator(".molecule"), "drawn").toHaveClass(/molecule-drawn/, { timeout: 4000 });
   // the private page's dark ground (the stage's, the slides on it
-  // see-through), and the title in its light ink
+  // see-through), a little darker since 2026-10-05 ("make the background
+  // gray a little darker"), and the title in its light ink
   const ground = await page.locator("#aldehyde-stage").evaluate((e) => getComputedStyle(e).backgroundColor);
-  expect(ground).toBe("rgb(31, 31, 32)");
+  expect(ground).toBe("rgb(23, 23, 24)");
+  expect(await page.locator("body").evaluate((e) => getComputedStyle(e).backgroundColor), "the page under it too").toBe("rgb(23, 23, 24)");
+  expect(await page.locator('meta[name="theme-color"]').getAttribute("content"), "and a phone's bar").toBe("#171718");
   expect(await page.locator("#slide-1").evaluate((e) => getComputedStyle(e).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
   // the title in white (2026-09-30, later: "not opposite colour, but rather
   // white with an added layer that makes it more visible", and of the five
@@ -643,8 +648,28 @@ test("without the 3D library the first slide is the title alone on its dark grou
   await expect.poll(() => h1.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
   await page.waitForTimeout(2600);
   await expect(page.locator(".molecule")).not.toHaveClass(/molecule-drawn/);
-  expect(await page.locator("#aldehyde-stage").evaluate((e) => getComputedStyle(e).backgroundColor)).toBe("rgb(31, 31, 32)");
+  expect(await page.locator("#aldehyde-stage").evaluate((e) => getComputedStyle(e).backgroundColor)).toBe("rgb(23, 23, 24)");
   expect(errors).toEqual([]);
+});
+
+/* THE GROUND A LITTLE DARKER, REVERSIBLY (2026-10-05: "make the background
+   gray a little darker (make tha last change reversible just in case)"):
+   #171718, where it was #1f1f20; `?ground=was` on the address puts the old
+   grey back for the visit — the stage, the page under it, the Menu's ground
+   on a phone and a phone's bar — and the way back for good is written
+   beside it in the stylesheet. */
+test("the stage's ground is a little darker, and the address can put the old grey back", async ({ page }) => {
+  await page.goto("/index.html?ground=was");
+  expect(await page.locator("#aldehyde-stage").evaluate((e) => getComputedStyle(e).backgroundColor)).toBe("rgb(31, 31, 32)");
+  expect(await page.locator("body").evaluate((e) => getComputedStyle(e).backgroundColor)).toBe("rgb(31, 31, 32)");
+  expect(await page.locator('meta[name="theme-color"]').getAttribute("content")).toBe("#1f1f20");
+  expect(await page.locator("body").evaluate((e) => getComputedStyle(e).getPropertyValue("--chrome-ground").trim())).toBe("rgba(31, 31, 32, 0.78)");
+  await page.goto("/index.html");
+  expect(await page.locator("#aldehyde-stage").evaluate((e) => getComputedStyle(e).backgroundColor)).toBe("rgb(23, 23, 24)");
+  expect(await page.locator("body").evaluate((e) => getComputedStyle(e).getPropertyValue("--chrome-ground").trim())).toBe("rgba(23, 23, 24, 0.78)");
+  // the way back for good, written where the colour is
+  const css = fs.readFileSync(path.join(__dirname, "..", "style.css"), "utf8");
+  expect(css).toMatch(/TO GO BACK[\s\S]{0,200}#1f1f20/);
 });
 
 test("on a phone the aldehyde and the title stand in the middle together", async ({ page }) => {

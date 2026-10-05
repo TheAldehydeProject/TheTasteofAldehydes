@@ -5,6 +5,7 @@ Files touched: `index.html`, `molecule.js`, `landing.js`, `thread.js`, `paper.js
 (2026-10-03, last: `landing.js`, `molecule.js`, `index.html`, `style.css`, `tests/formula.spec.js`, `tests/landing.spec.js`)
 (2026-10-04: `landing.js`, `molecule.js`, `index.html`, `style.css`, `tests/formula.spec.js`, `tests/landing.spec.js`)
 (2026-10-04, later: `landing.js`, `molecule.js`, `style.css`, `tests/formula.spec.js`)
+(2026-10-05: `molecule.js`, `style.css`, `index.html`, `tools/seo.py`, `tests/formula.spec.js`, `tests/landing.spec.js`)
 `tests/formula.spec.js` (new), `tests/helpers.js`, `tests/landing.spec.js`, `tests/menu.spec.js`,
 `tests/leaving-the-map.spec.js`, `tests/node-map.spec.js`, `tests/background-and-cursor.spec.js`,
 `tests/pages.spec.js`
@@ -15,7 +16,8 @@ gone; (3) the aldehyde **turned upright**, the O at the top; (4) the same, **its
 it** — the bonds in bright specks, the atoms named; (5) **the Menu's eight pages on an orbit round
 it** (since 2026-10-04) — a tilted ring, one fine still hairline since later that day, as wide as the
 window lets it so the aldehyde has centre stage, each page (set smaller) beside an electron of its own
-on it, a small still point of light — in **the aldehyde's sillage**, its own specks spreading into the room (two
+on it, a small still point of light — in **the aldehyde's sillage**, its specks afloat in the room (since
+2026-10-05; they spread out of the aldehyde before that), on a stage a little darker since the same day (two
 lines of specks, then a drift, then for a day each name the R of an aldehyde with the aldehydes of
 perfumery in the gaps, stood there before), **quiet** — faint — until the hand comes to one, and then
 coming up gradually to the whole of themselves, its electron and the ring by it lit gold. **One scroll
@@ -684,6 +686,56 @@ electrons left out of what they count. `tests/landing.spec.js` — **`the Scroll
 the way to the names, in one movement`**, and an arrow key. By eye, screenshots at 1440, 1920, 1280 ×
 680, 1024, 960 and a phone, the last stage at rest and with a name under the hand.
 
+### 2026-10-05 — the sillage afloat, not out of the aldehyde; the ground a little darker
+
+> this is better. I want you to make the particles not come from the aldehyde itself. the current
+> glowing ring is good, i like it. Also maybe make the background gray a little darker (make tha last
+> change reversible just in case)
+
+The ring, the electrons and the aldehyde are as they were (its atoms measured again on the same pixels
+at the seven sizes).
+
+**Afloat** (`molecule.js`, `AFLOAT_*`, `MOVE_GLSL.afloat`). The sillage drawn until now (`diffuse`) left
+the edge of the aldehyde's cloud and went out on every side, thickest round the aldehyde — it read as the
+aldehyde giving the specks off. Now the specks are **in the room already**: each, over and over, comes up
+at a place of its own anywhere in the window (worked out from its seed and which of its lives it is in),
+drifts the way **the room's air** goes there for its life — a slow field of currents (`AFLOAT_CURRENT`,
+turning over slowly, `AFLOAT_TURN`), so neighbours drift together, 3.5 to 9 pixels a second
+(`AFLOAT_PACE`), with a pixel or three of sway — and goes, half of its old life long (`AFLOAT_LIFE`). It
+comes up **everywhere at once** as the last stage comes (no reaching out from the aldehyde), is never
+over the aldehyde's cloud, and is only a little fainter at the window's edge (`AFLOAT_EDGE`, 0.55), so
+the room is about as full at its edges as by the aldehyde. Colours, sizes and numbers are the sillage's
+own, unchanged. Two things were tried and were wrong on the way, seen in a long exposure of a clip made
+frame by frame: the air's way read **as it turned** swung each speck's whole journey round in an arc (a
+speck a few hundred pixels out sweeping across the room); it is read **where and when the speck came
+up**, and kept for its life. And the air turned too sharply from place to place (its way was the noise
+times 7.5), so the streaks went every way and read as a jitter; at 3.2, regions drift together, as air
+does. `diffuse`, what the page drew, is one of the options on the address now (`?sillage=diffuse`), with
+rise, swirl, still and breeze; the drawing says which it is drawing (`data-sillage` on `#molecule`).
+
+**The ground a little darker, reversibly** (`style.css`, `index.html`, `tools/seo.py`). The stage's ground
+is **#171718**, where it was #1f1f20 — a token of its own now, `--stage-ground` (and `--stage-ground-rgb`
+for the Menu's ground on a phone, which is the same colour at 0.78), which the stage's `--bg`, the page
+under it (`body.stage-only`) and the Menu's ground all take; a phone's bar (`theme-color`, from THEME in
+`tools/seo.py`) is the same. **To go back**: the two values beside it in `style.css`, and THEME's line for
+the home page in `tools/seo.py`, run (the comment over them says so). **Only to look**, `?ground=was` on
+the address puts the old grey back for the visit — `ground-was` on the page, set in its head before
+anything is drawn, and the bar's colour with it. Nothing else on the stage was changed (its raised
+surfaces and hairlines, `--bg-2` and `--line`, are as they were).
+
+**How it was tested**: `tests/formula.spec.js` — **`the sillage comes up as the last stage comes: specks
+afloat in the room on every side, nearly as many at its edges as by the aldehyde, nothing streaming out
+of it …`** (in place of *spreading into the room … thinning as they go*: the drawing says afloat; at the
+window's very edge as soon as anywhere as the stage comes; on every side; at its edges at least half as
+many to a pixel as just outside the cloud — measured, more; and `?sillage=diffuse` says diffuse);
+**`the sillage's movements to choose from: the page's own, and each asked for by the address, draws in
+the room and moves`** (afloat, then diffuse and the four, each saying which it is). `tests/landing.spec.js`
+— **`the stage's ground is a little darker, and the address can put the old grey back`** (new: the stage,
+the page under it, the bar and the Menu's ground the old grey with `?ground=was` and the new without; and
+the way back written in the stylesheet), and the two tests that read the ground read #171718. By eye: a
+clip of afloat and its long exposure; the last stage and the title on the new ground and the old, side by
+side.
+
 ### 2026-10-04, later — the aldehyde at centre stage; the ring a line; the sillage's movements to choose from
 
 > I want the aldehyde molecule to have center stage more. also the spinning ring of particles look
@@ -787,9 +839,9 @@ read for the drift where they read for the lines.
 - **`the orbit is drawn round the aldehyde, and a name under the hand lights its electron and the ring
   round it, in gold`** and **`on a narrow window there is no orbit, and the names stand two by two as
   they did`** (2026-10-04).
-- **`the orbit's ring is one even, still line, its far half fainter than its near half`** and **`the
-  sillage's movements to choose from: each, asked for by the address, draws in the room and moves`**
-  (2026-10-04, later).
+- **`the orbit's ring is one even, still line, its far half fainter than its near half`** (2026-10-04,
+  later) and **`the sillage's movements to choose from: the page's own, and each asked for by the
+  address, draws in the room and moves`** (2026-10-05).
 - **`a reload opens at the title, the names never shown before the page has placed them`**.
 - **`five stages, smoothly: the title, the title gone, the aldehyde upright, its formula, and the
   names`** — each stage in turn (`data-stage`, `data-state`: cloud, turned, formula, drift): the
@@ -802,11 +854,13 @@ read for the drift where they read for the lines.
 - **`the wheel scrolls it smoothly, as far as it is turned and back, and nothing snaps`** — on the
   hand-driven page (`?auto=off`): three notches, the stage followed frame by frame: never a jump, never
   back, a glide to exactly as far as they send it, and, once at rest, it stays where it stopped.
-- **`the sillage comes up as the last stage comes: the aldehyde's own specks spreading into the room on
-  every side, thinning as they go, and nothing of the drift or the lines left`** — read still, the names
-  hidden and the orbit's ring and electrons left out of what is counted: none before the last stage, some as
-  it comes, more once it is; specks above and below the formula and in all four corners; more to a
-  pixel just outside the cloud than at the window's edges (2026-10-03, last; it was the drift's).
+- **`the sillage comes up as the last stage comes: specks afloat in the room on every side, nearly as
+  many at its edges as by the aldehyde, nothing streaming out of it, and nothing of the drift or the lines
+  left`** — read still, the names hidden and the orbit's ring and electrons left out of what is counted:
+  none before the last stage, some as it comes, at the window's edge as soon as anywhere, more once it
+  is; specks above and below the formula and in all four corners; at the edges at least half as many to a
+  pixel as just outside the cloud (2026-10-05; until then it read more just outside the cloud than at the
+  edges, the sillage spreading out of the aldehyde).
 - **`a name is quiet until the hand comes to it: then it comes up gradually to the whole of
   itself`** — under 45% at rest, part way after a quarter of a second, whole after; no mask; the δ−.
 - **`the electronegative hand draws the sillage's specks to it`** — with `?molecule=full`, every
@@ -821,6 +875,8 @@ read for the drift where they read for the lines.
 - **`a name pointed at stands on a slight backdrop of specks, which goes when the hand does`**.
 - **`the names wait for the last stage, and a name tabbed to takes the page there`**.
 - **`with motion turned off the stages are simply there, still`**.
+- `tests/landing.spec.js`: **`the stage's ground is a little darker, and the address can put the old grey
+  back`** (2026-10-05).
 - **`without the 3D library the last stage is the eight names, plainly, and a name still asks
   first`**.
 - **`on a phone the names stand two above and two below the formula each side, scattered a little,
@@ -839,8 +895,8 @@ wheel, and a trackpad's flick, from the title (it glides to the names in about f
 stopping) and one back up; turn the other way part of the way down; point at the names (each electron
 and the ring by it light gold) and at the aldehyde, press a name; look at the orbit at a few window
 sizes, and narrow the window past 900px (the orbit goes, the names stand two by two); on a phone, swipe
-and tap. The sillage's movements: the home page with `?sillage=rise`, `swirl`, `still` or `breeze` on
-its address, scrolled to the names.
+and tap. The sillage's movements: the home page with `?sillage=diffuse`, `rise`, `swirl`, `still` or
+`breeze` on its address, scrolled to the names; the old grey with `?ground=was`.
 
 ## Known issues / TODO
 
@@ -869,10 +925,13 @@ its address, scrolled to the names.
 - On a narrow window (under 900px) there is no orbit — the names stand two by two as before, because
   the aldehyde is framed between their rows there. A ring there would mean moving the names, and so the
   aldehyde; it is open, if the owner wants one.
-- **The sillage's movement is the owner's to choose** (2026-10-04, later): `diffuse` is drawn; `rise`,
-  `swirl`, `still` and `breeze` are there to be looked at on the address (`?sillage=`). Once one is
-  chosen it becomes what is drawn and the rest come out of `MOVE_GLSL`, with `SILL_MOVES` and the
-  address switch, and the test of the four with them.
+- **The sillage's movement is the owner's to choose** (2026-10-04, later): `afloat` is drawn since
+  2026-10-05 (`AFLOAT_*` its numbers); `diffuse`, `rise`, `swirl`, `still` and `breeze` are there to be
+  looked at on the address (`?sillage=`). Once one is kept for good the rest come out of `MOVE_GLSL`,
+  with `SILL_MOVES` and the address switch, and the test of the others with them.
+- **The ground is the owner's to keep or take back** (2026-10-05): `--stage-ground` in `style.css`
+  (#171718; it was #1f1f20) and THEME in `tools/seo.py`; `?ground=was` shows the old. Once they are
+  sure, the address switch (`ground-was`, in `index.html`'s head and `style.css`) can come out.
 - The ring is still; a slow light travelling round it, or the electrons stirring a little on it, are
   possible and were left out, so that nothing at the edge of the window draws the eye from the middle.
 - The glide is laid on the clock, so a machine that draws slowly shows it in fewer, larger steps rather

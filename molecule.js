@@ -190,17 +190,33 @@
   // me suggestions what would be stylistically possible"). The sillage's
   // colours, sizes and numbers are the same in every one; only how its
   // specks go differs, and none of them ever crosses the aldehyde's cloud.
-  // What the page draws is DIFFUSE, as it was; the others are shown by the
-  // address alone, `?sillage=` and the name, for the owner to look at:
+  // What the page draws is AFLOAT since 2026-10-05 ("I want you to make the
+  // particles not come from the aldehyde itself"): the specks are in the
+  // room already, each coming up where it is, drifting slowly on the
+  // room's own air and going, to come up again somewhere else — nothing
+  // streams out of the aldehyde. The others are shown by the address
+  // alone, `?sillage=` and the name, for the owner to look at:
+  //   afloat   in the room, each where it is, drifting on a slow air
   //   diffuse  out from the aldehyde on every side, slowing as it spreads
+  //            (what the page drew until 2026-10-05)
   //   rise     rising up the window like vapour off warm skin, swaying
   //   swirl    circling the aldehyde, slowly, the near ones the quicker
   //   still    still air: each speck wandering a few pixels about its place
   //   breeze   carried across the room, left to right, on a slow wavy air
-  // Once one is chosen, the rest come out of the code.
-  const SILL_MOVES = ["diffuse", "rise", "swirl", "still", "breeze"];
+  // Once one is chosen for good, the rest come out of the code.
+  const SILL_MOVES = ["afloat", "diffuse", "rise", "swirl", "still", "breeze"];
   const SILL_MOVE = (location.search.match(/[?&]sillage=([a-z]+)/) || [])[1];
-  const MOVE = SILL_MOVES.includes(SILL_MOVE) ? SILL_MOVE : "diffuse";
+  const MOVE = SILL_MOVES.includes(SILL_MOVE) ? SILL_MOVE : "afloat";
+  // AFLOAT: how long a speck is there before it goes, of its life (seconds);
+  // how fast the air carries it (pixels a second, least and most); how
+  // large the air's currents are (of a pixel: smaller, larger currents); how
+  // slowly they turn over; how much fainter a speck at the window's edge is
+  // than one near the aldehyde (so the room is a little fuller near it, never
+  // a stream out of it).
+  const AFLOAT_LIFE = 0.5;
+  const AFLOAT_PACE = [3.5, 9];
+  const AFLOAT_CURRENT = 0.0014, AFLOAT_TURN = 0.004;
+  const AFLOAT_EDGE = 0.55;
   // THE ORBIT (2026-10-04, in place of the aldehydes of perfumery — the
   // owner: "For the menu in the second page, i dont like it. I want you to
   // remove the chemicals and redesign it again. KEEP THE MIDDLE ALDEHYDE AS
@@ -456,6 +472,26 @@
   // Each move works out where a speck is (`p`) and how much of it shows
   // (`fade`); DIFFUSE is the sillage as it was, word for word.
   const MOVE_GLSL = {
+    // AFLOAT: each speck its own life over and over (\`aSill.z\` of it,
+    // AFLOAT_LIFE), and in every one a new place in the room, anywhere
+    // (worked out from its seed and which life it is in), where it comes up,
+    // drifts the way the room's air goes there — a slow field of currents,
+    // so its neighbours drift with it — and goes
+    afloat: `
+      float life = aSill.z * ${AFLOAT_LIFE.toFixed(3)};
+      float t = uTime / life + aSill.y * 7.0;
+      float round0 = floor(t), u = fract(t);
+      vec2 born = fract(sin(vec2(seed * 91.7 + round0 * 13.1, seed * 47.3 + round0 * 7.7)) * 43758.5453);
+      vec2 p0 = born * (uRes + 160.0) - 80.0;
+      // (the air's way where and when it came up, kept for its life: turned
+      // as the air turns, a whole journey would swing round in an arc)
+      float bornAt = (round0 - aSill.y * 7.0) * life;
+      float n = snoise(vec3(p0 * ${AFLOAT_CURRENT.toFixed(4)}, bornAt * ${AFLOAT_TURN.toFixed(3)}));
+      float way = n * 3.2 + 1.3;
+      float pace = ${AFLOAT_PACE[0].toFixed(1)} + ${(AFLOAT_PACE[1] - AFLOAT_PACE[0]).toFixed(1)} * fract(seed * 17.3);
+      vec2 p = p0 + vec2(cos(way), sin(way)) * pace * u * life;
+      p += 3.0 * vec2(sin(uTime * 0.31 + seed * 40.0), cos(uTime * 0.27 + seed * 23.0));
+      float fade = smoothstep(0.0, 0.18, u) * (1.0 - smoothstep(0.72, 1.0, u));`,
     diffuse: `
       float u = fract(aSill.y + uTime / aSill.z);
       float r = uFrom + (uReach - uFrom) * pow(u, ${SILL_EASE.toFixed(3)});
@@ -517,12 +553,17 @@
   // Every move but diffuse: kept off the aldehyde's cloud, shown only as far
   // out as the scent has reached, and — where it fills the room evenly —
   // fainter the further from the aldehyde, so it still thins as it spreads.
+  // (Afloat comes up everywhere at once as the last stage comes — reaching
+  // out from the aldehyde would be coming from it — and is only a little
+  // fainter at the window's edge.)
   const MOVE_TAIL = MOVE === "diffuse" ? "" : `
       vec2 q = p - uMid;
       float rr = length(vec2(q.x, q.y / 1.06));
       fade *= smoothstep(uFrom * 0.92, uFrom * 1.12, rr);
-      fade *= 1.0 - smoothstep(uOut - 90.0, uOut, rr);
-      ${MOVE === "rise" || MOVE === "breeze"
+      ${MOVE === "afloat" ? "" : "fade *= 1.0 - smoothstep(uOut - 90.0, uOut, rr);"}
+      ${MOVE === "afloat"
+        ? `fade *= mix(${AFLOAT_EDGE.toFixed(3)}, 1.0, 1.0 - smoothstep(uFrom, uReach, rr));`
+        : MOVE === "rise" || MOVE === "breeze"
         ? "fade *= clamp(pow(uFrom * 1.5 / max(rr, 1.0), 0.75), 0.25, 1.0);"
         : "fade *= 1.0 - 0.85 * smoothstep(0.6, 1.0, (rr - uFrom) / (uReach - uFrom));"}`;
 
@@ -1382,6 +1423,7 @@ ${MOVE_GLSL[MOVE]}${MOVE_TAIL}
   size();
   // laid again once the page's own face has come (the names' places move)
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => size());
+  wrap.dataset.sillage = MOVE;   // (which way the sillage moves, said on the drawing for the tests)
   wrap.classList.add("molecule-drawn");
   wake();
 })();

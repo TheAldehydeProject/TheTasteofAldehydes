@@ -436,16 +436,18 @@ test("the orbit's ring is one even, still line, its far half fainter than its ne
 });
 
 /* HOW THE SILLAGE MOVES, TO CHOOSE FROM (2026-10-04, later: "the colour and
-   size are very good. idk about the movement"): the page draws it as it was
-   (diffuse), and the address shows four others — rise, swirl, still, breeze —
-   each drawn in the room as thickly as it was, and moving. */
-test("the sillage's movements to choose from: each, asked for by the address, draws in the room and moves", async ({ page }) => {
+   size are very good. idk about the movement"): the page draws it afloat
+   (since 2026-10-05; it drew it diffuse until then), and the address shows
+   the others — diffuse, rise, swirl, still, breeze — each drawn in the room
+   as thickly, near enough, and moving. */
+test("the sillage's movements to choose from: the page's own, and each asked for by the address, draws in the room and moves", async ({ page }) => {
   test.setTimeout(240000);
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1280, height: 800 });
-  let diffuse = 0;
-  for (const move of ["diffuse", "rise", "swirl", "still", "breeze"]) {
-    await page.goto(`/index.html?auto=off${move === "diffuse" ? "" : "&sillage=" + move}`);
+  let drawn = 0;
+  for (const move of ["afloat", "diffuse", "rise", "swirl", "still", "breeze"]) {
+    await page.goto(`/index.html?auto=off${move === "afloat" ? "" : "&sillage=" + move}`);
+    await expect(page.locator(".molecule"), move).toHaveAttribute("data-sillage", move);
     await expect(page.locator(".molecule"), move).toHaveClass(/molecule-drawn/, { timeout: 4000 });
     await page.addStyleTag({ content: ".formula-link, .cursor-ring, .cursor-dot, .molecule-charge { visibility: hidden !important; }" });
     await page.mouse.move(1279, 799);
@@ -458,10 +460,11 @@ test("the sillage's movements to choose from: each, asked for by the address, dr
     const avoid = o.electrons.map((e) => ({ l: e.x - 14, r: e.x + 14, t: e.y - 14, b: e.y + 14 }));
     const boxes = [{ x: 200, y: 200, width: 200, height: 400 }, { x: 880, y: 200, width: 200, height: 400 }];
     const lit = await litPer(page, boxes, avoid, o);
-    // (measured, in a browser without a graphics card: each between 0.6 and
-    // 1.05 of what the sillage as it was draws there)
-    if (move === "diffuse") { diffuse = lit; expect(diffuse, "the sillage as it was").toBeGreaterThan(0); }
-    else expect(lit, `${move}: specks in the room, as many as it was drawn with near enough`).toBeGreaterThan(diffuse * 0.3);
+    // (measured, in a browser without a graphics card: diffuse, rise, swirl
+    // and still a little thicker here than afloat, which fills the whole room
+    // as evenly; breeze the same)
+    if (move === "afloat") { drawn = lit; expect(drawn, "the sillage as the page draws it").toBeGreaterThan(0); }
+    else expect(lit, `${move}: specks in the room, as many as the page's near enough`).toBeGreaterThan(drawn * 0.3);
     // and moving: the room is not the same picture a second and a half later
     const shot = async () => (await page.screenshot({ clip: { x: 4, y: 200, width: 300, height: 400 } })).toString("base64");
     const a = await shot();
@@ -649,28 +652,37 @@ test("the wheel scrolls it smoothly, as far as it is turned and back, and nothin
 
 /* THE SILLAGE (2026-10-03, last: "rework the words and the particles
    surrounding the main aldehyde molecule ... fill in the gaps and make it all
-   thematic"): where ADAR's dust fell either side, the aldehyde's own scent
-   leaves it — specks coming off the edge of its cloud and going out into the
-   room on every side, thinning as they spread, reaching out as the last
-   stage comes. Read still (motion off), with the names and the aldehydes in
-   the gaps out of the picture, so what is counted is the sillage. */
-test("the sillage comes up as the last stage comes: the aldehyde's own specks spreading into the room on every side, thinning as they go, and nothing of the drift or the lines left", async ({ page }) => {
+   thematic"): where ADAR's dust fell either side, the aldehyde's scent in the
+   room — since 2026-10-05 ("make the particles not come from the aldehyde
+   itself") AFLOAT: specks in the room already, on every side, each coming up
+   where it is and drifting on the room's air; nothing streams out of the
+   aldehyde, so the room is nearly as full at its edges as near it, and it
+   comes up everywhere at once as the last stage comes (it spread out from the
+   aldehyde, reaching further as it came, until then — `?sillage=diffuse`).
+   Read still (motion off), with the names out of the picture, so what is
+   counted is the sillage. */
+test("the sillage comes up as the last stage comes: specks afloat in the room on every side, nearly as many at its edges as by the aldehyde, nothing streaming out of it, and nothing of the drift or the lines left", async ({ page }) => {
   test.setTimeout(90000);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html");
   await expect(page.locator(".molecule")).toHaveClass(/molecule-drawn/, { timeout: 4000 });
+  await expect(page.locator(".molecule")).toHaveAttribute("data-sillage", "afloat");
   await toStage(page, 3);
   await settled(page, 3);
   await page.addStyleTag({ content: ".formula-link, .cursor-ring, .cursor-dot { visibility: hidden !important; }" });
   const room = () => light(page, { x: 8, y: 70, width: 300, height: 780 });
+  const edge = () => light(page, { x: 4, y: 60, width: 110, height: 780 });
   const none = (await room()).lit;
   expect(none, "no sillage before the last stage").toBeLessThan(6);
+  const edgeNone = (await edge()).lit;
   await toStage(page, 3.4);
   await settled(page, 3.4);
   await expect.poll(() => state(page)).toBe("drifting");
   const some = (await room()).lit;
-  expect(some, "reaching out").toBeGreaterThan(none);
+  expect(some, "coming up").toBeGreaterThan(none);
+  // everywhere at once — at the window's very edge too, not reaching out to it
+  expect((await edge()).lit, "at the edge as soon as anywhere").toBeGreaterThan(edgeNone);
   await toStage(page, 4);
   await settled(page, 4);
   await expect.poll(() => state(page)).toBe("drift");
@@ -682,11 +694,15 @@ test("the sillage comes up as the last stage comes: the aldehyde's own specks sp
   for (const [x, y] of [[620, 16], [620, 790], [20, 20], [1220, 20], [20, 730], [1220, 730]]) {
     expect(await litPer(page, [{ x, y, width: 200, height: 94 }], avoid, ring), `specks at ${x},${y}`).toBeGreaterThan(0);
   }
-  // thinning as it spreads: more to a pixel just outside the cloud than at the window's edges
+  // nearly as many to a pixel at the window's edges as just outside the cloud
   const near = await litPer(page, [{ x: 240, y: 260, width: 110, height: 380 }, { x: 1090, y: 260, width: 110, height: 380 }], avoid, ring);
   const far = await litPer(page, [{ x: 8, y: 260, width: 110, height: 380 }, { x: 1322, y: 260, width: 110, height: 380 }], avoid, ring);
-  expect(near, "thicker near the aldehyde").toBeGreaterThan(far);
-  expect(far, "and still some at the edge").toBeGreaterThan(0);
+  // (measured, in a browser without a graphics card: as many at the edges,
+  // and more — 0.00031 to 0.00024 of a pixel looked at)
+  expect(far, "the room nearly as full at its edges").toBeGreaterThan(near * 0.5);
+  // and the way it was, out of the aldehyde, there to compare on the address
+  await page.goto("/index.html?sillage=diffuse");
+  await expect(page.locator(".molecule")).toHaveAttribute("data-sillage", "diffuse");
   // nothing of the lines, or of ADAR's drift, in the drawing's own code
   const code = fs.readFileSync(path.join(__dirname, "..", "molecule.js"), "utf8");
   for (const gone of ["LINE_VERTEX", "uLineX", "LINE_DENSITY", "lineGeo", "layLines", "DRIFT_DENSITY", "DRIFT_PATCH", "DRIFT_FALL", "aDrift", "layDrift"]) expect(code, gone).not.toContain(gone);
