@@ -100,9 +100,15 @@ async function light(page, box) {
 // The same over several boxes of one screenshot, leaving out what stands in
 // `avoid` (boxes) and within `ring.pad` pixels of the orbit's ring: lit
 // pixels to a pixel looked at.
+// A pixel is lit when it stands well above the stage's ground: 19 above it,
+// which was 50 on the grey the page stood on until 2026-10-05 (#1f1f20) and
+// is the same margin on the darker one (#171718) — the ring and the specks
+// are added to the ground, so a darker ground darkens them by as much.
 async function litPer(page, rects, avoid = [], ring = null) {
   const shot = (await page.screenshot()).toString("base64");
   return page.evaluate(async ({ shot, rects, avoid, ring }) => {
+    const ground = getComputedStyle(document.documentElement).getPropertyValue("--stage-ground-rgb").split(",").map(Number);
+    const over = (ground[0] + ground[1] + ground[2]) / 3 + 19;
     const img = new Image();
     img.src = "data:image/png;base64," + shot;
     await img.decode();
@@ -121,7 +127,7 @@ async function litPer(page, rects, avoid = [], ring = null) {
       }
       area++;
       const k = (y * c.width + x) * 4;
-      if ((d[k] + d[k + 1] + d[k + 2]) / 3 > 50) lit++;
+      if ((d[k] + d[k + 1] + d[k + 2]) / 3 > over) lit++;
     }
     return area ? lit / area : 0;
   }, { shot, rects, avoid, ring });

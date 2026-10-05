@@ -877,6 +877,11 @@ read for the drift where they read for the lines.
 - **`with motion turned off the stages are simply there, still`**.
 - `tests/landing.spec.js`: **`the stage's ground is a little darker, and the address can put the old grey
   back`** (2026-10-05).
+- **What the tests count as lit** (`litPer` in `tests/formula.spec.js`) is a pixel 19 above the
+  stage's ground, read off `--stage-ground-rgb` (2026-10-05). It was a fixed 50, which was 19 above
+  the old grey; the ring and the specks are added to the ground, so the darker ground darkened them
+  by as much, and the ring — a faint hairline — fell under 50 and its test failed with the ring
+  plainly drawn.
 - **`without the 3D library the last stage is the eight names, plainly, and a name still asks
   first`**.
 - **`on a phone the names stand two above and two below the formula each side, scattered a little,
