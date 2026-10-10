@@ -485,3 +485,13 @@ note in the Note Library and let it turn behind.
   pages on a phone (about 160–210 ms a second at a quarter of the speed, so a few milliseconds a
   frame on a real one) — each has thousands of specks to place every frame, and nothing of theirs
   stands still to be kept.
+
+## 2026-10-10 — Scent Descriptions' search on a row of its own
+
+"on the phone, when you open the search bar in the SD page, then you cannot quite see the search
+bar": the field opened leftwards from its mark in the corner, straight under the Houses and
+Fragrances buttons, which covered what was typed. **On a phone it drops to a row of its own under
+them**, the width of the window less its gutters, on the chrome's ground, at **16px** (an iPhone
+zooms the whole page into a field set smaller), and its answers stand under it. All of it inside
+`max-width: 700px`, so nothing above 700px moved. `mobile.spec.js` opens it at 390px and checks
+nothing stands over it. The three new houses are on its no-sideways-scroll list. (Same round: [the report on the three new houses](2026-10-10-om-outsider-and-lost-tribe.md).)

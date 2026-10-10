@@ -40,6 +40,9 @@ const PAGES = [
   "/houses/grande-parfums.html",
   "/houses/les-abstraits.html",
   "/houses/tale-parfums.html",
+  "/houses/om-parfums.html",
+  "/houses/outsider-parfums.html",
+  "/houses/lost-tribe.html",
   "/works/theory-03.html",
   "/works/skin.html",
   "/works/buying-a-perfume.html",
@@ -51,6 +54,39 @@ const PAGES = [
 
 test.describe("on a phone", () => {
   test.use({ viewport: PHONE, hasTouch: true });
+
+  /* THE SEARCH ON SCENT DESCRIPTIONS CAN BE SEEN WHEN IT IS OPENED — the
+     owner, 2026-10-10: "on the phone, when you open the search bar in the
+     SD page, then you cannot quite see the search bar". It opened under the
+     Houses and Fragrances buttons, which covered what was typed. It has a
+     row of its own under them now, the width of the window, at a size an
+     iPhone does not zoom into; the answers stand under it. */
+  test("Scent Descriptions' search, opened, stands clear of the buttons", async ({ page }) => {
+    await serveDependenciesLocally(page);
+    await page.goto("/scent-descriptions/");
+    await page.waitForFunction(() => document.querySelector(".sheet.settled"), null, { timeout: 20000 });
+    await page.locator(".sheet-search-trigger").tap();
+    const field = page.locator(".sheet-search-field");
+    await expect(field).toBeFocused();
+    await page.waitForTimeout(700);
+    const f = await field.boundingBox();
+    const buttons = await page.locator(".sheet-filter").evaluateAll((els) => els.map((el) => el.getBoundingClientRect().toJSON()));
+    buttons.forEach((b) => expect(f.y, "under the buttons").toBeGreaterThanOrEqual(b.bottom));
+    // From the left gutter to under the mark it was opened by — the width of
+    // the page, which a scrollbar can make less than the window's.
+    const mark = await page.locator(".sheet-search-trigger").boundingBox();
+    expect(f.x, "from the left gutter").toBeGreaterThanOrEqual(0);
+    expect(f.x, "from the left gutter").toBeLessThan(24);
+    expect(f.x + f.width, "to under the mark").toBeGreaterThanOrEqual(mark.x + mark.width - 2);
+    expect(f.x + f.width).toBeLessThanOrEqual(PHONE.width);
+    expect(await field.evaluate((el) => parseFloat(getComputedStyle(el).fontSize)), "large enough not to be zoomed into").toBeGreaterThanOrEqual(16);
+    // Nothing stands over it: the middle of the field is the field.
+    expect(await page.evaluate(([x, y]) => document.elementFromPoint(x, y).classList.contains("sheet-search-field"),
+      [f.x + f.width / 2, f.y + f.height / 2])).toBe(true);
+    await field.pressSequentially("pine", { delay: 30 });
+    const found = await page.locator(".sheet-found").boundingBox();
+    expect(found.y, "the answers under the field").toBeGreaterThanOrEqual(f.y + f.height - 1);
+  });
 
   test("no page can be dragged sideways", async ({ page }) => {
     // THIS ONE GROWS WITH THE SITE. It opens every page in turn and

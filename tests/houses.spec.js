@@ -33,7 +33,7 @@ test.beforeEach(async ({ page }) => {
    the category at all. The ORDER matters as much as the names: the
    contact sheet's report says the pictures run in order down the page,
    and every house's own kicker says which number it is. */
-test("all nine houses stand on the contact sheet, in their own order",
+test("all twelve houses stand on the contact sheet, in their own order",
   async ({ page }) => {
   await page.goto(SHEET);
 
@@ -41,7 +41,7 @@ test("all nine houses stand on the contact sheet, in their own order",
     all.map((n) => n.textContent.trim()));
   expect(names).toEqual([
     "Pineward", "ADAR", "Almost Human", "Ataraxia", "Grande Parfums", "Les Abstraits",
-    "Tale Parfums", "Tombstone", "Qimu & Musicians",
+    "Tale Parfums", "Tombstone", "Qimu & Musicians", "Om Parfums", "Outsider Parfums", "Lost Tribe",
   ]);
 
   // And every one of them is a link to a page that opens.
@@ -57,6 +57,9 @@ test("all nine houses stand on the contact sheet, in their own order",
     "../houses/tale-parfums.html",
     "../houses/tombstone.html",
     "../houses/qimu-and-musicians.html",
+    "../houses/om-parfums.html",
+    "../houses/outsider-parfums.html",
+    "../houses/lost-tribe.html",
   ]);
 });
 
@@ -70,7 +73,7 @@ test("all nine houses stand on the contact sheet, in their own order",
    subtitle — on the house's page and under its picture on the Houses
    view — capitalises every word but the short joining ones. */
 const HOUSE_PAGES = ["pineward", "adar", "almost-human", "ataraxia", "grande-parfums",
-  "les-abstraits", "tale-parfums", "tombstone", "qimu-and-musicians"];
+  "les-abstraits", "tale-parfums", "tombstone", "qimu-and-musicians", "om-parfums", "outsider-parfums", "lost-tribe"];
 const SMALL = new Set(["a", "an", "the", "and", "but", "or", "for", "nor", "at", "by", "in", "of", "on", "to", "as", "up"]);
 const notTitled = (line) => line.split(/\s+/).filter((word, i) => {
   const first = word.replace(/^[^\p{L}\d]+/u, "").charAt(0);
@@ -87,7 +90,7 @@ test("no house has a line under its subtitle, and every subtitle is in title cas
   }
   await page.goto(SHEET);
   const says = await page.locator(".sheet-say").allTextContents();
-  expect(says.length).toBe(9);
+  expect(says.length).toBe(12);
   says.forEach((line) => expect(notTitled(line), `"${line}"`).toEqual([]));
 });
 
@@ -181,6 +184,9 @@ for (const [name, url, parts] of [
   ["Tale Parfums", TALE, 4],
   ["Tombstone", TOMBSTONE, 5],
   ["Qimu & Musicians", QIMU, 4],
+  ["Om Parfums", "/houses/om-parfums.html?om=whole", 9],
+  ["Outsider Parfums", "/houses/outsider-parfums.html", 5],
+  ["Lost Tribe", "/houses/lost-tribe.html", 6],
 ]) {
   test(`${name} opens a fragrance and carries a rank of ${parts}`, async ({ page }) => {
     // NOT ONE OF THESE HOUSES HAS ITS PHOTOGRAPHS YET, and every part
@@ -1573,12 +1579,12 @@ test("Tombstone carries its five, in alphabetical order, with both pictures each
   await expect(page.locator(".human-kicker")).toHaveText("Scent Descriptions · 08");
 });
 
-/* QIMU & MUSICIANS: four, in the order the owner numbered them. Guitarist and
-   Vocal were written on 2026-09-24 in three stages each; Drummer still
-   says exactly what the owner asked it to, and Bassist is theirs to
-   write. The introduction says, in the owner's words, that it will be
-   written later. */
-test("Qimu & Musicians carries its four: two written, one coming soon, one waiting",
+/* QIMU & MUSICIANS: four, in the order the owner numbered them, all four
+   written in three stages each — Guitarist and Vocal on 2026-09-24,
+   Bassist and Drummer on 2026-10-10 (Drummer said "Description coming
+   soon." and Bassist waited until then). The introduction says, in the
+   owner's words, that it will be written later. */
+test("Qimu & Musicians carries its four, all written in three stages",
   async ({ page }) => {
   await page.goto(QIMU);
   await page.waitForTimeout(700);
@@ -1588,16 +1594,16 @@ test("Qimu & Musicians carries its four: two written, one coming soon, one waiti
     all.map((img) => ({ src: img.getAttribute("src"), ok: img.complete && img.naturalWidth > 0 })));
   expect(plates.length).toBe(4);
   plates.forEach((one) => expect(one.ok, `${one.src} should load`).toBe(true));
-  for (const n of [0, 1]) {
+  for (const n of [0, 1, 2, 3]) {
     const stages = await page.locator(".human-part").nth(n).locator(".human-stage").allTextContents();
     expect(stages, names[n]).toEqual(["Top", "Mid", "Dry Down"]);
   }
   await expect(page.locator(".human-part").nth(0).locator(".human-text")).toContainText("my top fig leaf fragrance");
   await expect(page.locator(".human-part").nth(1).locator(".human-text")).toContainText("the scene after a concert");
-  const bassist = (await page.locator(".human-part").nth(2).locator(".human-text p").first().textContent()).trim();
-  expect(bassist, "Bassist is the owner's to write").toMatch(/has not arrived yet/);
-  const drummer = (await page.locator(".human-part").nth(3).locator(".human-text p").first().textContent()).trim();
-  expect(drummer).toBe("Description coming soon.");
+  await expect(page.locator(".human-part").nth(2).locator(".human-text")).toContainText("patchouli as a note agrees with bass as an instrument");
+  await expect(page.locator(".human-part").nth(2).locator(".human-text")).toContainText("TL;DR: The dry down is an amber accord that is unique.");
+  await expect(page.locator(".human-part").nth(3).locator(".human-text")).toContainText("a 15th century merchant’s leather spice pouch");
+  await expect(page.locator(".human-waiting")).toHaveCount(0);
   await expect(page.locator("#introduction-name + .human-text")).toHaveText("I will write it later.");
   await expect(page.locator(".human-head h1 em")).toHaveText("A House of Music and Fragrance");
   await expect(page.locator(".human-kicker")).toHaveText("Scent Descriptions · 09");
@@ -1703,7 +1709,7 @@ test("Tombstone is written, with its bold, its link and a definition on hover",
    next one, and the ninth wraps round to the first. */
 test("the houses are chained one to the next, and the last wraps round", async ({ page }) => {
   const order = ["pineward", "adar", "almost-human", "ataraxia", "grande-parfums",
-    "les-abstraits", "tale-parfums", "tombstone", "qimu-and-musicians"];
+    "les-abstraits", "tale-parfums", "tombstone", "qimu-and-musicians", "om-parfums", "outsider-parfums", "lost-tribe"];
   for (let i = 0; i < order.length; i++) {
     await page.goto(`/houses/${order[i]}.html`);
     const on = page.locator(".human-on, .pine-on, .adar-on").last();
@@ -1814,7 +1820,7 @@ test("Guitarist's dry down ends on the fig leaf merging into the rest", async ({
    read either way. */
 test("every house leads back to the one before it, and the first wraps round to the last", async ({ page }) => {
   const order = ["pineward", "adar", "almost-human", "ataraxia", "grande-parfums",
-    "les-abstraits", "tale-parfums", "tombstone", "qimu-and-musicians"];
+    "les-abstraits", "tale-parfums", "tombstone", "qimu-and-musicians", "om-parfums", "outsider-parfums", "lost-tribe"];
   for (let i = 0; i < order.length; i++) {
     await page.goto(`/houses/${order[i]}.html`);
     const back = page.locator(".house-prev");
@@ -1862,6 +1868,7 @@ test("every house has a return button at the top, back to the houses at that hou
   const HOUSE_PAGES = [
     ["pineward", "01"], ["adar", "02"], ["almost-human", "03"], ["ataraxia", "04"], ["grande-parfums", "05"],
     ["les-abstraits", "06"], ["tale-parfums", "07"], ["tombstone", "08"], ["qimu-and-musicians", "09"],
+    ["om-parfums", "10"], ["outsider-parfums", "11"], ["lost-tribe", "12"],
   ];
   for (const [house, no] of HOUSE_PAGES) {
     await page.goto("/houses/" + house + ".html");

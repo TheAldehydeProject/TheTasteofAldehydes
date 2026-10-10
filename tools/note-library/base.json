@@ -86,7 +86,10 @@
      "id": "note-orange",
      "name": "Orange",
      "aka": [
-      "Brazilian Orange"
+      "Brazilian Orange",
+      "Orange Peel",
+      "Sweet Orange",
+      "Orange Juice"
      ],
      "old": "Sweet orange peel: juicy, round and cheerful rather than sharp."
     },
@@ -118,6 +121,12 @@
    "say": "Kitchen and hillside herbs: clean, camphorous, bitter-green.",
    "notes": [
     {
+     "id": "note-angelica-root",
+     "name": "Angelica Root",
+     "aka": [],
+     "old": "The root of a tall herb: musky, earthy, peppery and green."
+    },
+    {
      "id": "note-artemisia",
      "name": "Artemisia",
      "aka": [],
@@ -139,7 +148,8 @@
      "id": "note-clary-sage",
      "name": "Clary Sage",
      "aka": [
-      "Clary Sage Absolute (France)"
+      "Clary Sage Absolute (France)",
+      "Clary Sage Absolute"
      ],
      "old": "A sage that smells musky, tea-like and a little boozy, softer and warmer than kitchen sage."
     },
@@ -170,6 +180,12 @@
      "name": "Hops",
      "aka": [],
      "old": "The flowers that make beer bitter: green, resinous and a little cheesy."
+    },
+    {
+     "id": "note-huang-qi",
+     "name": "Huang Qi",
+     "aka": [],
+     "old": "Astragalus root of Chinese medicine: dry, sweet, earthy and rooty."
     },
     {
      "id": "note-juniper-berry",
@@ -210,6 +226,12 @@
      "old": "Cool and sharp. Peppermint is the cold, menthol one and spearmint the sweeter, softer one; both touch the nerve that feels cold, so mint is felt as much as smelled."
     },
     {
+     "id": "note-mint-sandalwood",
+     "name": "Mint-Sandalwood Co-Distillation",
+     "aka": [],
+     "old": "Mint and sandalwood distilled together, as attars are made."
+    },
+    {
      "id": "note-myrtle",
      "name": "Myrtle",
      "aka": [],
@@ -236,6 +258,14 @@
      "old": "Common sage (salvia): dry, herbal and a little camphorous."
     },
     {
+     "id": "note-shiso",
+     "name": "Shiso",
+     "aka": [
+      "Shiso Leaf"
+     ],
+     "old": "Perilla: a Japanese herb between mint, basil and cumin."
+    },
+    {
      "id": "note-thyme",
      "name": "Thyme",
      "aka": [],
@@ -260,6 +290,24 @@
    "name": "Green",
    "say": "Leaves, stems, grass and hay: the smell of plants rather than flowers.",
    "notes": [
+    {
+     "id": "note-cannabis",
+     "name": "Cannabis",
+     "aka": [],
+     "old": "The hemp plant's flower and leaf: green, resinous, herbal and skunky."
+    },
+    {
+     "id": "note-corn-silage",
+     "name": "Corn Silage",
+     "aka": [],
+     "old": "Corn fermented for feed: sour, sweet, hay-like and farmyard."
+    },
+    {
+     "id": "note-corn-silk",
+     "name": "Corn Silk",
+     "aka": [],
+     "old": "The fine threads under a husk of corn: sweet, green and milky."
+    },
     {
      "id": "note-crushed-leaves",
      "name": "Crushed Leaves",
@@ -318,6 +366,12 @@
      "old": "A dark, bitter green, earthier and less sappy than grass."
     },
     {
+     "id": "note-pea",
+     "name": "Pea",
+     "aka": [],
+     "old": "Green pea: sweet, green and vegetal."
+    },
+    {
      "id": "note-poplar-bud",
      "name": "Poplar Bud",
      "aka": [
@@ -361,7 +415,9 @@
     {
      "id": "note-tomato-leaf",
      "name": "Tomato Leaf",
-     "aka": [],
+     "aka": [
+      "Tomato Leaf Absolute"
+     ],
      "old": "The sharp, pungent green that tomato plants leave on your fingers."
     },
     {
@@ -477,9 +533,24 @@
      "id": "note-jasmine",
      "name": "Jasmine",
      "aka": [
-      "Jasmine Sambac"
+      "Jasmine Sambac",
+      "Jasmine Flower"
      ],
      "old": "Heady, sweet and a little animalic (from indole, which also occurs in bodies). Sambac is the Arabian jasmine, greener and fruitier: the jasmine of jasmine tea."
+    },
+    {
+     "id": "note-jonquil",
+     "name": "Jonquil",
+     "aka": [],
+     "old": "A small, sweet narcissus: heady, honeyed, green and a little hay-like."
+    },
+    {
+     "id": "note-lilac",
+     "name": "Lilac",
+     "aka": [
+      "White Lilac"
+     ],
+     "old": "A spring flower that gives no oil, rebuilt in perfume: green, powdery and sweet."
     },
     {
      "id": "note-lily",
@@ -491,9 +562,16 @@
      "id": "note-lily-of-the-valley",
      "name": "Lily of the Valley",
      "aka": [
-      "Lily-of-the-Valley"
+      "Lily-of-the-Valley",
+      "Muguet"
      ],
      "old": "Fresh, green, dewy bell-flowers. Nothing can be extracted from them, so the note is always built from molecules."
+    },
+    {
+     "id": "note-linden-blossom",
+     "name": "Linden Blossom",
+     "aka": [],
+     "old": "The flowers of the lime tree: honeyed, green and softly floral."
     },
     {
      "id": "note-magnolia",
@@ -538,7 +616,10 @@
     {
      "id": "note-orange-blossom",
      "name": "Orange Blossom",
-     "aka": [],
+     "aka": [
+      "Orange Flower",
+      "Orange Flower Absolute"
+     ],
      "old": "The flower of the bitter orange, extracted: honeyed, sweet and heady, richer than neroli."
     },
     {
@@ -556,7 +637,9 @@
      "id": "note-osmanthus",
      "name": "Osmanthus",
      "aka": [
-      "Leathery Osmanthus"
+      "Leathery Osmanthus",
+      "Osmanthus Flower",
+      "Osmanthus Absolute"
      ],
      "old": "A tiny Chinese flower that smells of apricot, leather and tea."
     },
@@ -592,7 +675,9 @@
       "Moroccan Rose",
       "Taif Rose",
       "Bulgarian Rose Absolute",
-      "Turkish Rose Absolute"
+      "Turkish Rose Absolute",
+      "Rose Otto",
+      "Rose Oil"
      ],
      "old": "The queen of florals: honeyed, fruity and a little spicy. Rose de Mai from Grasse is honeyed and fresh; Damask rose from Bulgaria or Turkey is rich and fruity; Taif rose from Saudi Arabia is spicy and intense. An absolute is extracted with solvents and is richer than the distilled oil."
     },
@@ -663,7 +748,8 @@
      "id": "note-apple",
      "name": "Apple",
      "aka": [
-      "Fresh Red Apple"
+      "Fresh Red Apple",
+      "Fresh Apple"
      ],
      "old": "Crisp, juicy apple: green apple is sharp and tart, red apple sweeter and rounder. Apples give no oil, so it is always rebuilt from other materials."
     },
@@ -678,7 +764,9 @@
     {
      "id": "note-banana",
      "name": "Banana",
-     "aka": [],
+     "aka": [
+      "Epic Banana"
+     ],
      "old": "Sweet and creamy, with a slightly green, pear-drop edge."
     },
     {
@@ -739,6 +827,12 @@
      "old": "The fruit: soft, milky and jammy-sweet."
     },
     {
+     "id": "note-fruity-notes",
+     "name": "Fruity Notes",
+     "aka": [],
+     "old": "No one fruit named: a general fruitiness."
+    },
+    {
      "id": "note-goldenberry",
      "name": "Goldenberry",
      "aka": [
@@ -789,7 +883,9 @@
     {
      "id": "note-passionfruit",
      "name": "Passionfruit",
-     "aka": [],
+     "aka": [
+      "Passion Fruit"
+     ],
      "old": "Maracuja: sharp, sweet-sour and tropical."
     },
     {
@@ -918,7 +1014,9 @@
     {
      "id": "note-coriander",
      "name": "Coriander",
-     "aka": [],
+     "aka": [
+      "Coriander Seed"
+     ],
      "old": "The seed: warm, spicy and a little citrusy and floral."
     },
     {
@@ -953,10 +1051,17 @@
      "old": "Warm, sweet and woody, with a slightly soapy edge."
     },
     {
+     "id": "note-paprika",
+     "name": "Paprika",
+     "aka": [],
+     "old": "Dried, ground sweet pepper: warm, sweet, a little smoky."
+    },
+    {
      "id": "note-pink-pepper",
      "name": "Pink Pepper",
      "aka": [
-      "Baie Rose"
+      "Baie Rose",
+      "Pink Peppercorn"
      ],
      "old": "Baie rose: not a true pepper but a berry. Rosy, fresh and lightly peppery."
     },
@@ -967,6 +1072,12 @@
       "Indian Saffron"
      ],
      "old": "The dried threads of a crocus: leathery, metallic, honeyed and warm."
+    },
+    {
+     "id": "note-sichuan-pepper",
+     "name": "Sichuan Pepper",
+     "aka": [],
+     "old": "The husk of a prickly-ash berry: citrusy, tingling and peppery."
     },
     {
      "id": "note-spices",
@@ -1005,7 +1116,8 @@
      "id": "note-almond",
      "name": "Almond",
      "aka": [
-      "Burnt Almond"
+      "Burnt Almond",
+      "Bitter Almond"
      ],
      "old": "Sweet and marzipan-like, from benzaldehyde. Burnt almond is toasted and nutty."
     },
@@ -1075,14 +1187,18 @@
      "aka": [
       "Cocoa",
       "Dark Cocoa",
-      "Hot Cocoa"
+      "Hot Cocoa",
+      "Cacao Absolute",
+      "Cacao Resinoid"
      ],
      "old": "The bean before it is chocolate: dry, bitter, earthy and powdery."
     },
     {
      "id": "note-caramel",
      "name": "Caramel",
-     "aka": [],
+     "aka": [
+      "Burnt Sugar"
+     ],
      "old": "Burnt sugar: sweet, rich and slightly bitter."
     },
     {
@@ -1098,13 +1214,20 @@
      "old": "Sweetened whipped cream, often with vanilla."
     },
     {
+     "id": "note-cheese",
+     "name": "Cheese",
+     "aka": [],
+     "old": "Ripened cheese: buttery, sour, a little animal."
+    },
+    {
      "id": "note-chocolate",
      "name": "Chocolate",
      "aka": [
       "Dark Chocolate",
       "Hazelnut Chocolate",
       "White Chocolate",
-      "Chocolate Bar"
+      "Chocolate Bar",
+      "Dirty Chocolate"
      ],
      "old": "Cocoa made into chocolate: bitter-sweet, creamy and rich. White chocolate is the cocoa butter with milk and sugar and no cocoa solids."
     },
@@ -1112,7 +1235,8 @@
      "id": "note-chocolate-cake",
      "name": "Chocolate Cake",
      "aka": [
-      "Chocolate Cake (Amandină)"
+      "Chocolate Cake (Amandină)",
+      "Lava Cake"
      ],
      "old": "Amandină is the Romanian one: a chocolate sponge soaked in chocolate syrup, layered with chocolate buttercream and glazed. Dark, sweet, moist and a little boozy."
     },
@@ -1131,6 +1255,12 @@
      "old": "The cocoa fruit itself, before its beans are fermented and roasted: a pale, tart-sweet, fruity pulp with the bitterness of cocoa underneath."
     },
     {
+     "id": "note-coconut-milk",
+     "name": "Coconut Milk",
+     "aka": [],
+     "old": "Milky, sweet and creamy coconut."
+    },
+    {
      "id": "note-condensed-milk",
      "name": "Condensed Milk",
      "aka": [],
@@ -1141,6 +1271,20 @@
      "name": "Coumarin",
      "aka": [],
      "old": "The molecule behind tonka and hay: sweet, almondy and warm. One of the first synthetics in modern perfumery."
+    },
+    {
+     "id": "note-cream",
+     "name": "Cream",
+     "aka": [
+      "Creamy Cream"
+     ],
+     "old": "Cream: soft, milky, fatty and smooth."
+    },
+    {
+     "id": "note-dulce-de-leche",
+     "name": "Dulce de Leche",
+     "aka": [],
+     "old": "Milk cooked with sugar until it browns: caramel and cream."
     },
     {
      "id": "note-edamame",
@@ -1204,7 +1348,8 @@
      "id": "note-milk",
      "name": "Milk",
      "aka": [
-      "Milk Accord"
+      "Milk Accord",
+      "Goat’s Milk"
      ],
      "old": "Soft, creamy and lactonic, sometimes a little sour."
     },
@@ -1238,10 +1383,25 @@
      "old": "Soft, green and nutty-sweet, a little milky."
     },
     {
+     "id": "note-popcorn",
+     "name": "Popcorn",
+     "aka": [],
+     "old": "Popped corn: buttery, toasted and salty-sweet."
+    },
+    {
      "id": "note-potato",
      "name": "Potato",
      "aka": [],
      "old": "Earthy, starchy and plain."
+    },
+    {
+     "id": "note-pumpkin",
+     "name": "Pumpkin",
+     "aka": [
+      "Pumpkin Flesh",
+      "Pumpkin Seed"
+     ],
+     "old": "Cooked pumpkin: sweet, earthy, a little vegetal."
     },
     {
      "id": "note-raisin-cookies",
@@ -1337,6 +1497,12 @@
      "old": "The almond liqueur: sweet, marzipan and boozy."
     },
     {
+     "id": "note-cocktail-accord",
+     "name": "Cocktail Accord",
+     "aka": [],
+     "old": "No one drink named: an accord of a mixed drink."
+    },
+    {
      "id": "note-coffee",
      "name": "Coffee",
      "aka": [
@@ -1402,7 +1568,9 @@
      "id": "note-mate",
      "name": "Maté",
      "aka": [
-      "Maté Tea"
+      "Maté Tea",
+      "Mate",
+      "Mate Absolute"
      ],
      "old": "The South American herbal brew: grassy, smoky and a little like hay."
     },
@@ -1450,9 +1618,16 @@
      "id": "note-tea",
      "name": "Tea",
      "aka": [
-      "Black Tea"
+      "Black Tea",
+      "Dry Tea Leaves"
      ],
      "old": "Dried tea leaves: dry, astringent and a little smoky-sweet. Black tea is the fully oxidised kind."
+    },
+    {
+     "id": "note-whiskey",
+     "name": "Whiskey",
+     "aka": [],
+     "old": "Malt spirit aged in oak: smoky, woody, caramel-sweet."
     }
    ]
   },
@@ -1492,6 +1667,18 @@
      "old": "Birch wood and bark: clean, green and lightly smoky."
     },
     {
+     "id": "note-buddhawood",
+     "name": "Buddhawood",
+     "aka": [],
+     "old": "An Australian desert wood oil: smoky, sweet and creamy."
+    },
+    {
+     "id": "note-cabreuva",
+     "name": "Cabreuva",
+     "aka": [],
+     "old": "A South American wood oil: soft, sweet, floral-woody."
+    },
+    {
      "id": "note-cashmeran",
      "name": "Cashmeran",
      "aka": [],
@@ -1506,7 +1693,12 @@
       "Himalayan Cedar",
       "Cedar Wood Tincture",
       "Cedar Planks",
-      "Blood Cedar"
+      "Blood Cedar",
+      "Cedar Wood",
+      "Virginia Cedar",
+      "Texas Cedar",
+      "Texas Cedarwood",
+      "Atlas Cedarwood Absolute"
      ],
      "old": "Dry, pencil-shaving wood. Atlas cedar is sweeter and more balsamic; Virginia cedar is the pencil. A tincture is wood steeped in alcohol."
     },
@@ -1534,6 +1726,12 @@
      "old": "A South American wood: smoky, sweet and a little like tar and roses."
     },
     {
+     "id": "note-iso-e-super",
+     "name": "Iso E Super",
+     "aka": [],
+     "old": "A synthetic woody-ambery molecule: velvety, cedar-like, more felt than smelled."
+    },
+    {
      "id": "note-mahogany",
      "name": "Mahogany",
      "aka": [],
@@ -1554,6 +1752,14 @@
      "old": "Dry, tannic wood, like the inside of a barrel."
     },
     {
+     "id": "note-oak-barrel",
+     "name": "Oak Barrel",
+     "aka": [
+      "Wood Barrel"
+     ],
+     "old": "The inside of the cask a spirit ages in: oak, vanilla and toasted wood."
+    },
+    {
      "id": "note-oud",
      "name": "Oud",
      "aka": [
@@ -1566,9 +1772,26 @@
       "Vietnamese Oud",
       "Clean Bright Oud",
       "Smoky Oud",
-      "Rotting Wood (Oud)"
+      "Rotting Wood (Oud)",
+      "Indian Oud",
+      "Thai Oud",
+      "Laos Oud",
+      "Brunei Oud",
+      "Oud Siliguri",
+      "Brachin Oud",
+      "Selani Safi Oud",
+      "Pontianak Oud",
+      "Malaysian Cola Oud",
+      "Thai Cola Oud",
+      "Oud Accord"
      ],
      "old": "Agarwood: the dark, resin-soaked heartwood of the aquilaria tree, formed when it is infected by a mould. Deep, woody, leathery and animalic, and each region's oud smells different: Cambodian sweet and fruity, Indian (Assam) barnyard-heavy, Malaysian and Thai in between."
+    },
+    {
+     "id": "note-papyrus",
+     "name": "Papyrus",
+     "aka": [],
+     "old": "The Nile reed, drawn in perfume as a dry, smoky, woody-green note."
     },
     {
      "id": "note-patchouli",
@@ -1576,7 +1799,9 @@
      "aka": [
       "Patchouli (Aceh)",
       "Patchouli Aceh",
-      "Dark Patchouli"
+      "Dark Patchouli",
+      "Patchouli Sumatra",
+      "Patchouli Coeur"
      ],
      "old": "The leaves of an Asian mint relative: earthy, damp, dark and a little chocolatey. Aceh, in Indonesia, gives a prized dark kind."
     },
@@ -1597,7 +1822,8 @@
      "name": "Sandalwood",
      "aka": [
       "Mysore Sandalwood",
-      "Australian Sandalwood"
+      "Australian Sandalwood",
+      "Sri Lankan Sandalwood"
      ],
      "old": "Creamy, milky and softly woody. Mysore sandalwood from India is the legendary, now very rare kind; Australian sandalwood is lighter and greener."
     },
@@ -1620,7 +1846,10 @@
       "Absolute Vetiver",
       "Bourbon Vetiver",
       "Haitian Vetiver",
-      "Vetiver (Haiti)"
+      "Vetiver (Haiti)",
+      "Java Vetiver",
+      "Java Vetiver Oil",
+      "Vetiver Indonesia"
      ],
      "old": "The root of a tropical grass: earthy, smoky, woody and a little nutty. Haitian vetiver is the cleaner kind; Bourbon vetiver, from Réunion, the smokier."
     },
@@ -1666,7 +1895,8 @@
      "name": "Cypress",
      "aka": [
       "Coastal Cypress",
-      "Emerald Cypress"
+      "Emerald Cypress",
+      "Intrepid Cypress"
      ],
      "old": "Dry, green and woody, with a smoky, resinous edge."
     },
@@ -1682,6 +1912,14 @@
       "Momi"
      ],
      "old": "Soft, sweet and balsamic: the Christmas-tree smell. Balsam fir is the sweetest; silver and noble firs are fresher. Momi is the Japanese fir."
+    },
+    {
+     "id": "note-hinoki",
+     "name": "Hinoki",
+     "aka": [
+      "Hinoki Incense"
+     ],
+     "old": "Japanese cypress: clean, lemony, resinous wood of temples and bathhouses."
     },
     {
      "id": "note-juniper",
@@ -1735,7 +1973,9 @@
     {
      "id": "note-spruce",
      "name": "Spruce",
-     "aka": [],
+     "aka": [
+      "Black Spruce"
+     ],
      "old": "Sharp, green and a little citrusy: the smell of spruce tips."
     },
     {
@@ -1756,9 +1996,19 @@
      "name": "Amber",
      "aka": [
       "White Amber",
-      "Mineral Ambers"
+      "Mineral Ambers",
+      "Amber Fossil"
      ],
      "old": "Not a material but an accord: labdanum, benzoin and vanilla, warm, sweet and resinous. It has nothing to do with the fossil. White amber is lighter and more musky; mineral ambers are drier."
+    },
+    {
+     "id": "note-bakhoor",
+     "name": "Bakhoor",
+     "aka": [
+      "Bakhoor Tincture",
+      "Sultan Qaboos Bakhoor Tincture"
+     ],
+     "old": "Wood chips soaked in oils and burned over coals in the Gulf: oud, amber and rose in smoke."
     },
     {
      "id": "note-balsam",
@@ -1771,9 +2021,18 @@
      "name": "Benzoin",
      "aka": [
       "Siam Benzoin",
-      "Siam"
+      "Siam",
+      "Benzoin Sumatra"
      ],
      "old": "A resin that smells of vanilla, caramel and cinnamon. Siam benzoin, from Laos and Thailand, is the sweetest."
+    },
+    {
+     "id": "note-copaiba-balsam",
+     "name": "Copaiba Balsam",
+     "aka": [
+      "Copaiba Balm"
+     ],
+     "old": "An oleoresin tapped from a South American tree: soft, woody and peppery-balsamic."
     },
     {
      "id": "note-dragon-s-blood",
@@ -1794,7 +2053,8 @@
      "name": "Frankincense",
      "aka": [
       "Olibanum",
-      "Olibanum Absolute"
+      "Olibanum Absolute",
+      "Olibanum Vulcain"
      ],
      "old": "Olibanum: the resin of a desert tree. Lemony, peppery and smoky, like a church."
     },
@@ -1881,7 +2141,10 @@
     {
      "id": "note-styrax",
      "name": "Styrax",
-     "aka": [],
+     "aka": [
+      "Styrax Resinoid",
+      "Storax Resin"
+     ],
      "old": "A balsam: leathery, smoky and a little like cinnamon and plastic."
     },
     {
@@ -1907,7 +2170,9 @@
      "id": "note-ambergris",
      "name": "Ambergris",
      "aka": [
-      "Pacific Ambergris"
+      "Pacific Ambergris",
+      "White Ambergris",
+      "Black Ambergris"
      ],
      "old": "A waxy substance from the sperm whale, aged by the sea for years: salty, sweet, marine and skin-like. Nearly always synthetic now."
     },
@@ -1940,13 +2205,18 @@
     {
      "id": "note-civet",
      "name": "Civet",
-     "aka": [],
+     "aka": [
+      "Civette",
+      "Civet Absolute"
+     ],
      "old": "Once from the civet cat, now synthetic: faecal on its own, warm and radiant in a trace."
     },
     {
      "id": "note-costus",
      "name": "Costus",
-     "aka": [],
+     "aka": [
+      "Costus Root"
+     ],
      "old": "A root whose oil smells like unwashed hair and animal fur: dirty, warm and waxy."
     },
     {
@@ -1983,7 +2253,11 @@
      "aka": [
       "White Musk",
       "Deer Musk",
-      "Tonkin Musk"
+      "Tonkin Musk",
+      "Natural Musk",
+      "Siberian Musk",
+      "Mongolian Musk",
+      "Clean Musk"
      ],
      "old": "Once taken from musk deer, now made from molecules: soft, clean, skin-like warmth. White musk is the laundered, cleanest kind; Tonkin musk names the old deer musk."
     },
@@ -2039,10 +2313,28 @@
      "old": "Dry, powdery and a little sweet, like a room nobody has opened."
     },
     {
+     "id": "note-evernyl",
+     "name": "Evernyl",
+     "aka": [],
+     "old": "A synthetic molecule standing in for oakmoss: mossy, earthy, woody."
+    },
+    {
+     "id": "note-lava",
+     "name": "Lava",
+     "aka": [],
+     "old": "An impression of volcanic rock: hot, mineral, smoky and sulphurous."
+    },
+    {
      "id": "note-lichen",
      "name": "Lichen",
      "aka": [],
      "old": "Crusty growths on rock and bark: dry, earthy and mineral."
+    },
+    {
+     "id": "note-metallic-notes",
+     "name": "Metallic Notes",
+     "aka": [],
+     "old": "The smell of metal: cold, sharp, a little like blood or coins."
     },
     {
      "id": "note-mineral-accord",
@@ -2073,7 +2365,8 @@
      "id": "note-oakmoss",
      "name": "Oakmoss",
      "aka": [
-      "Oakmoss Absolute"
+      "Oakmoss Absolute",
+      "French Oakmoss"
      ],
      "old": "A lichen that grows on oaks: damp, earthy, inky and green. The base of the chypre, now limited by safety rules."
     },
@@ -2103,7 +2396,8 @@
      "aka": [
       "Wet Soil",
       "Earthy Notes",
-      "Soil Tincture"
+      "Soil Tincture",
+      "Black Soil"
      ],
      "old": "Earth: damp, rooty and dark, from geosmin, the molecule of wet earth. A tincture is earth steeped in alcohol."
     },
@@ -2124,7 +2418,9 @@
     {
      "id": "note-treemoss",
      "name": "Treemoss",
-     "aka": [],
+     "aka": [
+      "Pine Tree Moss"
+     ],
      "old": "A lichen from pine and fir: darker, smokier and more resinous than oakmoss."
     },
     {
@@ -2143,13 +2439,23 @@
     {
      "id": "note-airy-note",
      "name": "Airy Note",
-     "aka": [],
+     "aka": [
+      "Clean Fresh Air"
+     ],
      "old": "A light, diffusive note that gives air and space rather than a smell."
+    },
+    {
+     "id": "note-aldehydes",
+     "name": "Aldehydes",
+     "aka": [],
+     "old": "The fatty aldehydes of perfumery — C-10, C-11, C-12 — fizzing, waxy and soapy, the sparkle of Chanel No. 5."
     },
     {
      "id": "note-aquatic-notes",
      "name": "Aquatic Notes",
-     "aka": [],
+     "aka": [
+      "Water Notes"
+     ],
      "old": "Clean water, built from molecules such as Calone: fresh, cool and faintly melon-like."
     },
     {
@@ -2247,6 +2553,12 @@
      "old": "Tar distilled from birch bark: smoky, leathery and medicinal; it tans Russian leather."
     },
     {
+     "id": "note-cade-oil",
+     "name": "Cade Oil",
+     "aka": [],
+     "old": "Tar distilled from a juniper's wood: smoky, leathery, burnt."
+    },
+    {
      "id": "note-fire",
      "name": "Fire",
      "aka": [],
@@ -2275,7 +2587,9 @@
     {
      "id": "note-smoke",
      "name": "Smoke",
-     "aka": [],
+     "aka": [
+      "Barbecue Smoke"
+     ],
      "old": "Burning wood and leaves: dry, bitter and warm."
     },
     {
@@ -2419,6 +2733,12 @@
      "old": "Smooth, cool and clean: a feeling more than a smell."
     },
     {
+     "id": "note-powder-accord",
+     "name": "Powder Accord",
+     "aka": [],
+     "old": "An accord of cosmetic powder: soft, dry, iris-like and sweet."
+    },
+    {
      "id": "note-rotten-flesh",
      "name": "Rotten Flesh",
      "aka": [],
@@ -2435,6 +2755,12 @@
      "name": "Spinal Fluid",
      "aka": [],
      "old": "Ataraxia's conceptual note: clear, cold, clinical, bodily."
+    },
+    {
+     "id": "note-underground-tunnel",
+     "name": "Underground Tunnel",
+     "aka": [],
+     "old": "An impression: the damp, mineral, dusty air of a tunnel under the ground."
     },
     {
      "id": "note-velvet",

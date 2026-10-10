@@ -1935,3 +1935,11 @@ earlier way-out test still holds: the black fades, never shows the chamber witho
 the writing goes first. **`the favourites and the Fragrances view read a picture with the same
 code`** compares the reading itself now — `readPictureNow`, which `readPicture` asks once per
 picture — against `fragrance-line.js`'s, name for name; the reading did not change.
+
+## 2026-10-10 — Aetherialism, the eleventh favourite
+
+**ADAR's Aetherialism** joins Chapter 1 as its **eleventh** favourite, after Belle Âme, with the
+owner's three paragraphs in its drawer (`gallery-writing data-favourite="Aetherialism"`), its
+picture ADAR's own, credited. The line under the chapter's last card names the two that are left
+of Aegis — **"Amber Zero and Incantu ... could have both made it here too"** — at the owner's word.
+`chamber.spec.js` reads it. (Same round: [the report on the three new houses](2026-10-10-om-outsider-and-lost-tribe.md).)

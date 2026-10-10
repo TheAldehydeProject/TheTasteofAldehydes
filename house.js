@@ -192,11 +192,19 @@
     parts.forEach((part) => part.classList.add("arrived"));
   }
 
-  parts.forEach((part) => {
-    const body = part.querySelector(".human-body");
-    const summary = part.querySelector("summary");
+  parts.forEach((part) => measured(part, part.querySelector(".human-body"), part.querySelector(".human-cue")));
+  // A FOLD — <details class="human-fold">, a dropdown in a house's writing
+  // (2026-10-10, Om Parfums: "make the following a collapse-able text that
+  // if you click it, then you reveal it", with "a sub-drop down window"
+  // inside it). It opens and shuts on a measured height exactly as a part
+  // does, a fold inside a fold too; without this script it is a plain
+  // dropdown.
+  document.querySelectorAll(".human-fold").forEach((fold) =>
+    measured(fold, fold.querySelector(":scope > .human-fold-text"), null));
+
+  function measured(part, body, cue) {
+    const summary = part.querySelector(":scope > summary");
     if (!body || !summary) return;
-    const cue = part.querySelector(".human-cue");
     let moving = false;
     let pending = false;
 
@@ -298,7 +306,7 @@
       if (moving) { pending = true; return; }
       act();
     });
-  });
+  }
 
   // ============================================================
   // A SPOILER — <details class="human-spoiler">, the owner's for Spinal

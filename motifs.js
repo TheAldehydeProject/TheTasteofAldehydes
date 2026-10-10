@@ -15,7 +15,10 @@
 // old armoire drawn in lines with irises at its feet and a drip
 // filling a beaker, Tale's doodles, Tombstone's roots and flowers, and
 // Qimu & Musicians' music — real music, silent — written out on short
-// staves and loose on the page.
+// staves and loose on the page; Om Parfums' shards of glass, its rings
+// throwing sparks and โอม tracing itself in; Outsider Parfums' mark with
+// its reflected twin sliding into register; and Lost Tribe's flock,
+// falling leaves and rising pollen.
 //
 // THEY GATHER RATHER THAN APPEAR. Nothing is there the moment a house
 // is rested on: things are born one at a time and each comes up over
@@ -2415,6 +2418,262 @@
     return one;
   }
 
+  // ---------- OM PARFUMS: shards of glass, a ring's sparks, โอม ----------
+  // (2026-10-10) The house's page opens shattered into floating shards of
+  // itself round โอม, a sling ring's sparks flying off a ring — so here:
+  // shards of glass drifting and turning, rings throwing sparks, and the
+  // word tracing itself in, in a gold dark enough for the white paper.
+  // OUTSIDER PARFUMS, its sister, is the same drawing "minus the
+  // fragmentation": its mark — the inverted triangle and the small one
+  // under it — with a reflected twin sliding into register, and rings
+  // doubled the same way, in charcoal and the house's green.
+  const OM_GOLD = "168, 124, 52";
+  const OUT_GREEN = "46, 112, 80";
+  const OUT_INK = "40, 42, 38";
+  function shard() {
+    const at = spot(80);
+    if (!at) return null;
+    const n = 4 + Math.floor(Math.random() * 3), R = rand(26, 72);
+    const pts = [];
+    for (let k = 0; k < n; k++) {
+      const a = (k / n) * Math.PI * 2 + rand(-0.35, 0.35), r = R * rand(0.55, 1);
+      pts.push([Math.cos(a) * r, Math.sin(a) * r]);
+    }
+    const spin = rand(-0.22, 0.22), tilt = rand(0, Math.PI * 2), dx = rand(-9, 9), dy = rand(-11, -3), glint = Math.random();
+    return {
+      life: rand(4200, 6800),
+      draw(c, age, alpha) {
+        const t = age / 1000;
+        c.save();
+        c.translate(at.x + dx * t, at.y + dy * t);
+        c.rotate(spin * t);
+        // Turning in depth: pressed flat along one axis and back.
+        c.scale(1, 0.32 + 0.68 * Math.abs(Math.cos(tilt + t * 0.55)));
+        c.beginPath();
+        pts.forEach((p, i) => (i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])));
+        c.closePath();
+        c.fillStyle = "rgba(" + OM_GOLD + "," + (0.07 * alpha) + ")";
+        c.fill();
+        c.lineWidth = 1;
+        c.strokeStyle = "rgba(" + OM_GOLD + "," + (0.72 * alpha) + ")";
+        c.stroke();
+        // A glint running round its edge.
+        const f = ((glint + t * 0.32) % 1) * n, k = Math.floor(f), q = f - k;
+        const a = pts[k], b = pts[(k + 1) % n];
+        c.fillStyle = "rgba(" + OM_GOLD + "," + alpha + ")";
+        c.fillRect(a[0] + (b[0] - a[0]) * q - 1.5, a[1] + (b[1] - a[1]) * q - 1.5, 3, 3);
+        c.restore();
+      },
+    };
+  }
+  /** A ring tilted in depth, ticked, throwing sparks off its rim — Om's;
+      with `twin`, Outsider's: drawn again reflected, coming into register. */
+  function ringOf(colour, spark, twin) {
+    const at = spot(130);
+    if (!at) return null;
+    const r = rand(52, 112), axis = rand(0, Math.PI), turn = rand(-0.5, 0.5) * 0.4, tilt = rand(0.5, 1.2);
+    const sparks = [];
+    let last = 0;
+    return {
+      life: rand(5200, 7200),
+      draw(c, age, alpha) {
+        const t = age / 1000, dt = Math.min(0.05, t - last);
+        last = t;
+        const one = (off, ph, a) => {
+          const ry = r * Math.abs(Math.cos(tilt + t * 0.3));
+          c.lineWidth = 1;
+          c.strokeStyle = "rgba(" + colour + "," + (0.6 * a) + ")";
+          c.setLineDash([10, 7]);
+          c.lineDashOffset = -t * 30;
+          c.beginPath(); c.ellipse(at.x + off, at.y - off * 0.3, r, Math.max(1, ry), axis + turn * t + ph, 0, Math.PI * 2); c.stroke();
+          c.setLineDash([]);
+          c.strokeStyle = "rgba(" + colour + "," + (0.45 * a) + ")";
+          c.beginPath();
+          for (let k = 0; k < 36; k++) {
+            const th = (k / 36) * Math.PI * 2, ca = Math.cos(axis + turn * t + ph), sa = Math.sin(axis + turn * t + ph);
+            const u = Math.cos(th), v = Math.sin(th) * (ry / r);
+            const x = at.x + off + (u * ca - v * sa) * r, y = at.y - off * 0.3 + (u * sa + v * ca) * r;
+            const len = k % 3 === 0 ? 1.08 : 1.04;
+            c.moveTo(x, y);
+            c.lineTo(at.x + off + (x - at.x - off) * len, at.y - off * 0.3 + (y - at.y + off * 0.3) * len);
+          }
+          c.stroke();
+        };
+        if (twin) {
+          const apart = 26 * (1 - ease(Math.min(1, t / 2.6))) + 4 * Math.sin(t * 0.9);
+          one(apart, Math.PI, alpha * 0.55);
+        }
+        one(0, 0, alpha);
+        if (!spark) return;
+        // THE SPARKS, off the rim, along it.
+        for (let k = 0; k < 3; k++) if (Math.random() < 0.6) sparks.push({ a: rand(0, Math.PI * 2), v: rand(50, 140), age: 0, life: rand(0.4, 1) });
+        c.lineWidth = 1.2;
+        for (let i = sparks.length - 1; i >= 0; i--) {
+          const sp = sparks[i];
+          sp.age += dt;
+          if (sp.age > sp.life) { sparks.splice(i, 1); continue; }
+          const x0 = at.x + Math.cos(sp.a) * r, y0 = at.y + Math.sin(sp.a) * r * 0.9;
+          const dir = sp.a + Math.PI / 2, go = sp.v * sp.age;
+          const x = x0 + Math.cos(dir) * go, y = y0 + Math.sin(dir) * go;
+          c.strokeStyle = "rgba(" + colour + "," + ((1 - sp.age / sp.life) * 0.85 * alpha) + ")";
+          c.beginPath(); c.moveTo(x - Math.cos(dir) * 6, y - Math.sin(dir) * 6); c.lineTo(x, y); c.stroke();
+        }
+      },
+    };
+  }
+  const omRing = () => ringOf(OM_GOLD, true, false);
+  const outsiderRing = () => ringOf(OUT_INK, false, true);
+  /** โอม, tracing itself in, in specks, its heads made circles (om-glyph.js). */
+  function omWord() {
+    const G = window.OM_GLYPH;
+    if (!G) return null;
+    const s = Math.min(W * 0.06, 74);
+    const at = spot(s * 2.2);
+    if (!at) return null;
+    // The whole word on the window, however near its edge it was put.
+    at.x = Math.max(s * 1.9, Math.min(W - s * 1.9, at.x));
+    const pts = [];
+    G.letters.forEach((L) => L.contours.forEach((cn) => { for (let i = 0; i < cn.length; i += 2) pts.push([cn[i], cn[i + 1]]); }));
+    const oy = ((G.box[1] + G.box[3]) / 2);
+    return {
+      life: 8200,
+      draw(c, age, alpha) {
+        const t = age / 1000, into = Math.min(1, t / 1.8);
+        c.fillStyle = "rgba(" + OM_GOLD + "," + (0.9 * alpha) + ")";
+        const upto = Math.floor(pts.length * into);
+        for (let i = 0; i < upto; i++) {
+          const x = at.x + pts[i][0] * s + Math.sin(t * 1.3 + i) * 0.5, y = at.y + (pts[i][1] - oy) * s + Math.cos(t * 1.1 + i * 0.7) * 0.5;
+          c.fillRect(x - 0.9, y - 0.9, 1.8, 1.8);
+        }
+        if (into < 0.5) return;
+        c.lineWidth = 1;
+        c.strokeStyle = "rgba(" + OM_GOLD + "," + (0.8 * alpha * (into - 0.5) * 2) + ")";
+        G.letters.forEach((L) => L.heads.forEach(([hx, hy, hr]) => {
+          const x = at.x + hx * s, y = at.y + (hy - oy) * s;
+          c.beginPath(); c.arc(x, y, hr * s, 0, Math.PI * 2); c.stroke();
+          c.beginPath(); c.moveTo(x - hr * s * 0.5, y); c.lineTo(x + hr * s * 0.5, y); c.moveTo(x, y - hr * s * 0.5); c.lineTo(x, y + hr * s * 0.5); c.stroke();
+        }));
+        c.setLineDash([2, 5]);
+        c.strokeStyle = "rgba(" + OM_GOLD + "," + (0.35 * alpha) + ")";
+        c.beginPath();
+        [0, 1].forEach((y) => { c.moveTo(at.x + (G.box[0] - 0.4) * s, at.y + (y - oy) * s); c.lineTo(at.x + (G.box[2] + 0.4) * s, at.y + (y - oy) * s); });
+        c.stroke();
+        c.setLineDash([]);
+      },
+    };
+  }
+  /** Outsider's mark, in specks along its edges, and its twin — the same
+      mark reflected — drifting into register with it. */
+  function outsiderMark() {
+    const s = rand(26, 46);
+    const at = spot(s * 2.2);
+    if (!at) return null;
+    const tri = (h, y0) => [[-h, y0], [h, y0], [0, y0 + h * Math.sqrt(3)]];
+    const big = tri(s, -s * 1.15), small = tri(s * 0.42, s * 0.72);
+    const side = Math.random() < 0.5 ? -1 : 1;
+    return {
+      life: rand(6000, 7600),
+      draw(c, age, alpha) {
+        const t = age / 1000;
+        const apart = (1 - ease(Math.min(1, t / 2.8))) * s * 1.6 + Math.sin(t * 0.8) * 3;
+        const mark = (ox, colour, a, flip) => {
+          [big, small].forEach((T) => {
+            for (let k = 0; k < 3; k++) {
+              const p = T[k], q = T[(k + 1) % 3];
+              const n = Math.round(Math.hypot(q[0] - p[0], q[1] - p[1]) / 4);
+              c.fillStyle = "rgba(" + colour + "," + a + ")";
+              for (let i = 0; i < n; i++) {
+                const f = i / n;
+                c.fillRect(at.x + ox + flip * (p[0] + (q[0] - p[0]) * f) - 0.8, at.y + p[1] + (q[1] - p[1]) * f - 0.8, 1.6, 1.6);
+              }
+            }
+          });
+          const ir = (s * 2) / (2 * Math.sqrt(3));
+          c.strokeStyle = "rgba(" + colour + "," + (a * 0.4) + ")";
+          c.lineWidth = 1;
+          c.beginPath(); c.arc(at.x + ox, at.y - s * 1.15 + ir, ir, 0, Math.PI * 2); c.stroke();
+        };
+        mark(side * apart, OUT_GREEN, 0.55 * alpha, -1);
+        mark(0, OUT_INK, 0.85 * alpha, 1);
+      },
+    };
+  }
+
+  // ---------- LOST TRIBE: a flock, leaves, pollen ----------
+  // (2026-10-10) The house's page is a naturalist's field notes on linen,
+  // with pollen drifting and a flock now and then crossing the window; so
+  // here a flock crosses, leaves fall turning, and pollen rises — in the
+  // copper and slate of the house's mark.
+  const TRIBE_COPPER = "176, 118, 72";
+  const TRIBE_SLATE = "86, 86, 132";
+  function flock() {
+    const fromLeft = Math.random() < 0.5;
+    const y0 = rand(CHROME + 40, H * 0.6), speed = rand(80, 120) * (fromLeft ? 1 : -1);
+    const birds = [];
+    const n = 7 + Math.floor(Math.random() * 5);
+    for (let i = 0; i < n; i++) birds.push({ dx: -Math.sign(speed) * ((i % 4) * 24 + rand(0, 14)), dy: ((i % 3) - 1) * 20 + Math.floor(i / 3) * 12 + rand(-6, 6), flap: rand(0, 6.3), rate: rand(7, 10) });
+    const x0 = fromLeft ? -80 : W + 80;
+    return {
+      life: ((W + 260) / Math.abs(speed)) * 1000,
+      fadeIn: 200,
+      draw(c, age, alpha) {
+        const t = age / 1000;
+        const lx = x0 + speed * t, ly = y0 + Math.sin(t * 0.7) * 34;
+        c.strokeStyle = "rgba(" + TRIBE_SLATE + "," + (0.7 * alpha) + ")";
+        c.lineWidth = 1.2;
+        c.lineCap = "round";
+        birds.forEach((b) => {
+          const x = lx + b.dx + Math.sin(t * 1.3 + b.flap) * 4, y = ly + b.dy + Math.cos(t * 1.1 + b.flap) * 4;
+          const up = Math.sin(t * b.rate + b.flap) * 0.7, w = 7;
+          c.beginPath();
+          c.moveTo(x - w, y - w * (0.35 + up));
+          c.quadraticCurveTo(x - w * 0.4, y - w * 0.1, x, y);
+          c.quadraticCurveTo(x + w * 0.4, y - w * 0.1, x + w, y - w * (0.35 + up));
+          c.stroke();
+        });
+      },
+    };
+  }
+  function leafFall() {
+    const at = spot(20, -40, 0);
+    if (!at) return null;
+    const len = rand(16, 30), fall = rand(36, 70), sway = rand(20, 50), spin = rand(-1.2, 1.2), ph = rand(0, 6.3);
+    return {
+      life: ((H + 80) / fall) * 1000,
+      draw(c, age, alpha) {
+        const t = age / 1000;
+        const x = at.x + Math.sin(t * 0.9 + ph) * sway, y = at.y + fall * t;
+        c.save();
+        c.translate(x, y);
+        c.rotate(spin * t + Math.sin(t * 1.4 + ph) * 0.6);
+        c.scale(1, 0.4 + 0.6 * Math.abs(Math.cos(t * 1.1 + ph)));
+        c.strokeStyle = "rgba(" + TRIBE_COPPER + "," + (0.75 * alpha) + ")";
+        c.lineWidth = 1;
+        c.beginPath();
+        c.moveTo(0, -len / 2);
+        c.quadraticCurveTo(len * 0.42, 0, 0, len / 2);
+        c.quadraticCurveTo(-len * 0.42, 0, 0, -len / 2);
+        c.moveTo(0, -len / 2); c.lineTo(0, len / 2 + 4);
+        for (let k = 1; k < 4; k++) { const yy = -len / 2 + (k / 4) * len; c.moveTo(0, yy); c.lineTo(len * 0.22, yy - len * 0.12); c.moveTo(0, yy); c.lineTo(-len * 0.22, yy - len * 0.12); }
+        c.stroke();
+        c.restore();
+      },
+    };
+  }
+  function pollenRise() {
+    const at = spot(4, H * 0.3, H);
+    if (!at) return null;
+    const rise = rand(10, 26), sway = rand(6, 16), ph = rand(0, 6.3), size = rand(1.2, 2.4), colour = Math.random() < 0.6 ? TRIBE_COPPER : TRIBE_SLATE;
+    return {
+      life: rand(5000, 8000),
+      draw(c, age, alpha) {
+        const t = age / 1000;
+        c.fillStyle = "rgba(" + colour + "," + (0.7 * alpha) + ")";
+        c.fillRect(at.x + Math.sin(t * 0.8 + ph) * sway, at.y - rise * t, size, size);
+      },
+    };
+  }
+
   // How often each is born (per second), and how many may stand at once.
   const HOUSES = {
     pineward: [{ make: tree, rate: 2, most: 16 }, { make: needle, rate: 5, most: 50 }],
@@ -2432,6 +2691,9 @@
       { make: petal, rate: 2.6, most: 360 }],
     // `first`: how many are there at once when the house is rested on.
     qimu: [{ make: stave, rate: 0.6, most: 4, first: 2 }, { make: passage, rate: 0.9, most: 4 }],
+    om: [{ make: shard, rate: 1.8, most: 10, first: 3 }, { make: omRing, rate: 0.35, most: 2, first: 1 }, { make: omWord, rate: 0.12, most: 1, first: 1 }],
+    outsider: [{ make: outsiderMark, rate: 0.5, most: 3, first: 1 }, { make: outsiderRing, rate: 0.35, most: 2, first: 1 }],
+    "lost-tribe": [{ make: flock, rate: 0.22, most: 2, first: 1 }, { make: leafFall, rate: 1.1, most: 10 }, { make: pollenRise, rate: 12, most: 70 }],
   };
 
   // ============================================================

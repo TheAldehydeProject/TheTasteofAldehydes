@@ -960,6 +960,62 @@
     "Spinal Fluid": () => join(many(7, () => join(turned([[0, -0.07], [0.22, -0.07], [0.24, 0.07], [0, 0.07]], { seg: 16, mer: 0, rings: true }), path([[0, 0, -0.2], [0, 0, -0.45]], 0.04), path([[-0.2, 0, -0.1], [-0.42, -0.05, -0.15]], 0.04), path([[0.2, 0, -0.1], [0.42, -0.05, -0.15]], 0.04)), (k) => ({ y: -0.9 + k * 0.3, x: Math.sin(k * 0.6) * 0.08 })), at(drop(0.1), { x: 0.6, y: -0.3 })),
     "Velvet": () => join(at(wave(1.6, 1.9, { amp: 0.16, k: 3.2, skew: 0.3, nx: 26, nz: 14 }), { rx: Math.PI / 2 }), path([[-0.85, 0.95, 0], [0.85, 0.95, 0]], 0.05)),
     "Westfarthing Leaf": () => join(at(turned([[0.05, 0], [0.2, 0.02], [0.22, 0.32], [0.17, 0.35]], { seg: 16, mer: 6, rings: true }), { x: 0.75, y: -0.1 }), path(bez([0.72, -0.05, 0], [0.2, -0.2, 0], [-0.4, -0.25, 0], [-1.05, -0.1, 0], 20), 0.04), at(smoke(2, 0.9), { x: 0.75, y: 0.3, s: 0.8 })),
+    // ---------------- ADDED 2026-10-10, with Om Parfums, Outsider Parfums,
+    // Lost Tribe, Pumpkivus and the three individual fragrances ----------
+    // THE ALDEHYDES as a chemist draws one: a chain zig-zagging to the C=O,
+    // its O a ball, and the fizz they are known for rising off it.
+    "Aldehydes": () => join(path([[-1, -0.35, 0], [-0.62, -0.05, 0], [-0.24, -0.35, 0], [0.14, -0.05, 0], [0.52, -0.35, 0]], 0.035), path([[0.49, -0.33, 0], [0.49, 0.25, 0]], 0.035), path([[0.57, -0.33, 0], [0.57, 0.25, 0]], 0.035), at(ball({ r: 0.14, n: 60, lines: false }), { x: 0.53, y: 0.42 }), path([[0.52, -0.35, 0], [0.86, -0.6, 0]], 0.035, 0.7), at(cloud(90, 0.55, { sy: 1.5, w: 0.5 }), { x: 0.1, y: 0.9 })),
+    "Papyrus": () => join(stem(1.5, 0.05), at(umbel(22, 0.62, 0.5, () => path([[0, 0, 0], [0, 0.1, 0]], 0.04, 0.6)), { x: 0.07, y: 1.5 })),
+    "Pumpkin": () => join(ball({ r: 0.8, sy: 0.7, n: 380, ribs: 10, ribDepth: 0.12, dent: 0.3 }), path(bez([0, 0.48, 0], [0.04, 0.7, 0], [0.12, 0.82, 0], [0.22, 0.9, 0], 12), 0.03), at(leaf({ len: 0.4, w: 0.3, shape: "broad", lobes: 3 }), { x: -0.2, y: 0.55, rz: 1.1 })),
+    "Corn Silk": () => join(at(pod({ len: 1.3, r: 0.24, bend: 0.06, blunt: true }), { rz: Math.PI / 2, y: -0.4 }), many(16, (k) => path(bez([0, 0, 0], [jit(0.2), 0.35, jit(0.2)], [jit(0.5), 0.7, jit(0.3)], [jit(0.75), 1.05, jit(0.4)], 18), 0.03, 0.6), (k) => ({ ry: k * 0.4, y: 0.25 }))),
+    "Corn Silage": () => join(heap(26, () => box(0.14, 0.06, 0.1, { step: 0.04 }), 0.75), at(cloud(90, 0.9, { sy: 0.5, w: 0.4 }), { y: 0.1 })),
+    "Whiskey": () => join(turned([[0, -0.7], [0.5, -0.7], [0.55, 0.5]], { seg: 22, mer: 6, rings: true }), at(cube(0.3), { y: -0.25, ry: 0.4 }), at(cube(0.26), { x: 0.12, y: 0.08, ry: -0.3 }), turned([[0, 0.1], [0.53, 0.1]], { seg: 20, mer: 0 })),
+    "Cabreuva": () => join(log({ r: 0.32, len: 1.6 }), at(sprig({ h: 0.9, pairs: 3, shape: "oval", size: 0.35, alt: true }), { x: 0.3, y: 0.3, rz: -0.4 })),
+    "Oak Barrel": () => join(barrel(), many(4, () => path(circle(0.645, 40), 0.04), (k) => ({ y: [-0.62, -0.32, 0.32, 0.62][k] }))),
+    "Copaiba Balsam": () => join(at(log({ r: 0.32, len: 1.6, rings: 3 }), { rz: Math.PI / 2, x: -0.35 }), at(drops(3, 1), { x: 0.35, y: 0.1 })),
+    // A TUNNEL going off underground: its arch ringed again and again into
+    // the dark, the rails running in under it.
+    "Underground Tunnel": () => { const arch = () => path([[-0.8, -0.8, 0], [-0.8, 0, 0]].concat(curve((t) => [-Math.cos(t * Math.PI) * 0.8, Math.sin(t * Math.PI) * 0.8, 0], 20)).concat([[0.8, -0.8, 0]]), 0.06); return join(many(6, arch, (k) => ({ z: -k * 0.45, s: 1 - k * 0.07, y: -k * 0.02 })), path([[-0.3, -0.8, 0.2], [-0.25, -0.8, -2.4]], 0.06, 0.7), path([[0.3, -0.8, 0.2], [0.25, -0.8, -2.4]], 0.06, 0.7)); },
+    "Fruity Notes": () => join(at(apple({ r: 0.45 }), { x: -0.5 }), at(pearShape(0.8), { x: 0.45, y: 0.1 }), at(heap(5, () => berry(0.12), 0.25), { y: -0.6, x: 0.05 })),
+    // HUANG QI as it is sold: the dried root cut long and thin, in slices.
+    "Huang Qi": () => many(5, () => flat(oval(0.14, 0.85, 40), { depth: 0.04, fill: 30 }), (k) => ({ x: (k - 2) * 0.28, rz: (k - 2) * 0.12, z: jit(0.1) })),
+    "Cade Oil": () => join(at(log({ r: 0.3, len: 1.4 }), { y: 0.3 }), at(drops(3, 1), { y: -0.55 }), at(smoke(2, 0.9), { y: 0.65 })),
+    "Paprika": () => join(at(pod({ len: 1.4, r: 0.2, bend: 0.35 }), { y: 0.35, rz: 0.2 }), at(cloud(160, 0.45, { sy: 0.35, w: 0.55 }), { y: -0.65 })),
+    "Hinoki": () => join(tree({ h: 1.9, tiers: 6, r: 0.65, droop: 0.1 }), at(join(path([[0, 0, 0], [0, 0.9, 0]], 0.03), at(wisp(0.9, { r: 0.12 }), { y: 0.9 })), { x: 0.85, y: -0.4, rz: -0.15 })),
+    "Sichuan Pepper": () => join(twig(1.4), at(heap(16, () => ball({ r: 0.1, n: 30, rough: 0.3, bumps: 5, lines: false }), 0.35), { y: -0.2 })),
+    // A WEDGE OF CHEESE, its holes in its face.
+    "Cheese": () => join(flat([[-0.9, -0.5], [0.9, -0.5], [-0.9, 0.45]], { depth: 0.5, corners: true }), many(5, (k) => path(hoop(0.07 + (k % 2) * 0.04, 16), 0.03), (k) => ({ x: -0.62 + k * 0.2, y: -0.32 + ((k * 37) % 5) * 0.07, z: 0.26 }))),
+    "Jonquil": () => join(stem(1.3, 0.05), at(facing(join(flower({ n: 6, len: 0.4, w: 0.18, cup: 0.2, heart: false }), at(trumpet({ n: 5 }), { s: 0.42 }))), { y: 1.3, x: 0.07 }), at(facing(join(flower({ n: 6, len: 0.3, w: 0.14, cup: 0.2, heart: false }), at(trumpet({ n: 5 }), { s: 0.32 }))), { y: 1.0, x: 0.42 })),
+    // LINDEN: the long pale bract the flowers hang from, the flowers, and a
+    // heart-shaped leaf.
+    "Linden Blossom": () => join(at(leaf({ len: 1.1, w: 0.18, shape: "lance", veins: 0 }), { rz: 0.3, y: 0.1 }), path(bez([0.1, 0.4, 0], [0.18, 0.1, 0], [0.24, -0.15, 0], [0.26, -0.3, 0], 10), 0.04, 0.7), many(5, () => facing(flower({ n: 5, len: 0.16, w: 0.09, stamens: 8, stamenLen: 0.12 })), (k) => ({ x: 0.25 + jit(0.22), y: -0.42 + jit(0.25), s: 0.9 })), at(leaf({ len: 0.9, w: 0.6, shape: "heart", veins: 3 }), { x: -0.55, y: -0.3, rz: 1.2 })),
+    "Coconut Milk": () => join(ball({ r: 0.7, n: 300, rough: 0.08, bumps: 9, cut: 0 }), at(path(circle(0.6, 44), 0.05, 0.7), { rx: Math.PI / 2 }), at(drop(0.1), { x: 0.25, y: 0.55 })),
+    // LILAC: a cone of four-petalled florets on its stem.
+    "Lilac": () => join(stem(1.0, 0.05), many(64, () => star(4, 0.06, 0.025), (k) => { const t = k / 64, a = k * 2.4, r = (1 - t) * 0.36 * Math.sqrt(0.3 + 0.7 * ((k * 0.618) % 1)); return { x: 0.07 + Math.cos(a) * r, y: 1.0 + t * 0.9, z: Math.sin(a) * r, rx: (k % 5) * 0.6, ry: (k % 7) * 0.9 }; }), at(leaf({ len: 0.6, w: 0.45, shape: "heart", veins: 2 }), { y: 0.45, rz: -1.0 })),
+    "Buddhawood": () => join(log({ r: 0.28, len: 1.7, taper: 0.8, rings: 5 }), many(5, (k) => path(curve((t) => [-0.8 + t * 1.6, Math.sin(t * 7 + k) * 0.04 + (k - 2) * 0.1, 0.27], 20), 0.05, 0.6), () => ({}))),
+    // ISO E SUPER as a chemist draws it: two rings of six fused, and the
+    // arm it carries — in a haze, being more felt than smelled.
+    "Iso E Super": () => { const hex = (cx) => Array.from({ length: 7 }, (_, k) => { const a = Math.PI / 6 + (k * Math.PI) / 3; return [cx + Math.cos(a) * 0.4, Math.sin(a) * 0.4, 0]; }); return join(path(hex(-0.35), 0.035), path(hex(0.35), 0.035), path([[0.7, 0.2, 0], [1.0, 0.42, 0], [1.0, 0.85, 0]], 0.035), path([[1.08, 0.42, 0], [1.08, 0.85, 0]], 0.035, 0.7), path([[1.0, 0.42, 0], [1.3, 0.2, 0]], 0.035, 0.7), cloud(120, 1.1, { w: 0.35 })); },
+    "Cannabis": () => join(path([[0, -1, 0], [0, -0.1, 0]], 0.05, 0.8), many(7, (k) => leaf({ len: 0.95 - Math.abs(k - 3) * 0.17, w: 0.15, shape: "lance", teeth: 9, veins: 0 }), (k) => ({ y: -0.1, rz: (k - 3) * 0.4 }))),
+    "Cocktail Accord": () => join(glass({ profile: [[0, -0.9], [0.35, -0.9], [0.05, -0.86], [0.05, -0.1], [0.6, 0.4], [0.62, 0.45]] }), at(slice(0.22, 8), { x: 0.6, y: 0.5, rz: 0.3 }), at(berry(0.09), { x: -0.1, y: 0.22 })),
+    // LAVA: a cone, its flow running down it, and the fire over its mouth.
+    "Lava": () => join(lathe([[1, -0.8], [0.25, 0.3], [0.18, 0.32]], { seg: 24, mer: 10 }), path(bez([0.05, 0.3, 0.15], [0.25, 0, 0.5], [0.45, -0.4, 0.6], [0.7, -0.8, 0.6], 16), 0.04, 1.2), at(cloud(70, 0.3, { sy: 1.6, w: 0.6 }), { y: 0.78 })),
+    "Shiso": () => sprig({ h: 1.6, pairs: 3, shape: "oval", size: 0.75, wide: 0.6, teeth: 14, veins: 3 }),
+    "Metallic Notes": () => join(many(4, () => join(path(circle(0.5, 40), 0.04), at(path(circle(0.5, 40), 0.04), { y: 0.08 }), path(circle(0.34, 30), 0.06, 0.6)), (k) => ({ y: -0.65 + k * 0.17, x: jit(0.08), z: jit(0.08) })), at(path(hoop(0.5, 40), 0.04), { x: 0.75, y: 0.15, ry: -0.5 })),
+    // A PEA POD, split, its peas in a row.
+    "Pea": () => join(pod({ len: 1.8, r: 0.18, bend: 0.3, flat: 0.5 }), many(6, () => ball({ r: 0.13, n: 40, lines: false }), (k) => ({ x: -0.65 + k * 0.26, y: Math.sin(((k + 0.5) / 6) * Math.PI) * 0.3, z: 0.14 }))),
+    "Evernyl": () => join(at(crystal(0.9, 0.18), { rz: 0.2 }), at(crystal(0.7, 0.14), { x: -0.35, y: -0.15, rz: 0.6 }), at(crystal(0.6, 0.13), { x: 0.3, y: -0.2, rz: -0.5 }), at(cloud(90, 0.5, { sy: 0.25, w: 0.5 }), { y: -0.65 })),
+    "Dulce de Leche": () => join(turned([[0, -0.8], [0.45, -0.8], [0.5, -0.6], [0.5, 0.35], [0.42, 0.45], [0.42, 0.55]], { seg: 20, mer: 6, rings: true }), path(bez([0.1, 0.3, 0], [0.2, 0.9, 0], [0.35, 1.3, 0], [0.55, 1.6, 0], 14), 0.03), at(ball({ r: 0.12, sy: 0.6, n: 40 }), { x: 0.06, y: 0.3 }), at(drop(0.1), { x: 0.46, y: 0.2 })),
+    // CREAM in a swirl, as piped.
+    "Cream": () => join(path(curve((t) => { const a = t * TAU * 3.2, r = 0.7 * (1 - t); return [Math.cos(a) * r, -0.6 + t * 1.2, Math.sin(a) * r]; }, 90), 0.035), path(circle(0.72, 40, -0.62), 0.05, 0.6)),
+    "Angelica Root": () => join(stem(1.5, 0.05), at(umbel(12, 0.5, 0.45, () => ball({ r: 0.08, n: 16, lines: false })), { x: 0.07, y: 1.5 }), at(roots({ len: 0.6 }), { y: -0.35 })),
+    "Popcorn": () => join(turned([[0, -0.9], [0.4, -0.9], [0.55, 0.4]], { seg: 20, mer: 10, rings: true }), at(heap(12, () => ball({ r: 0.14, n: 30, rough: 0.45, bumps: 4, lines: false }), 0.45), { y: 0.55 })),
+    // POWDER: an open compact, its puff, and the powder in the air.
+    "Powder Accord": () => join(path(circle(0.7, 48), 0.04), at(path(circle(0.7, 48), 0.04), { y: 0.12 }), at(cloud(140, 0.6, { sy: 0.12, w: 0.45 }), { y: 0.06 }), at(ball({ r: 0.4, sy: 0.3, n: 120, lines: false }), { y: 0.35, x: 0.15 }), at(cloud(60, 0.9, { w: 0.3 }), { y: 0.9 })),
+    // BAKHOOR on its burner, the mabkhara, the smoke rising off the chips.
+    "Bakhoor": () => join(turned([[0, -0.9], [0.45, -0.9], [0.3, -0.75], [0.2, -0.5], [0.4, -0.3], [0.55, 0], [0.55, 0.1]], { seg: 20, mer: 8, rings: true }), at(heap(5, () => box(0.12, 0.06, 0.08, { step: 0.03 }), 0.25), { y: 0.15 }), at(smoke(3, 1.2), { y: 0.2 })),
+    // A STILL, two things distilled together in it: a mint sprig and wood.
+    "Mint-Sandalwood Co-Distillation": () => join(turned([[0, -0.8], [0.5, -0.8], [0.6, -0.5], [0.55, -0.1], [0.2, 0.15], [0.12, 0.4], [0, 0.45]], { seg: 20, mer: 6, rings: true }), path(bez([0.12, 0.4, 0], [0.5, 0.55, 0], [0.9, 0.4, 0], [1.1, -0.2, 0], 16), 0.04), at(sprig({ h: 0.7, pairs: 2, shape: "oval", size: 0.25, wide: 0.5, teeth: 8 }), { x: -0.8, y: -0.8 }), at(heap(4, () => box(0.16, 0.07, 0.1, { step: 0.035 }), 0.2), { x: -0.55, y: -0.85 })),
   };
   // For a note the list does not name — one added to the library later —
   // a figure of its accord's.

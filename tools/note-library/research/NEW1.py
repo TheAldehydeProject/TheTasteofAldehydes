@@ -1,0 +1,155 @@
+from acc import out, SAME
+A = "10 Oct. 2026"
+S = {
+ "fr_aldehydes": ("https://www.fragrantica.com/notes/Aldehydes-165.html", "Aldehydes perfume ingredient, Aldehydes fragrance and essential oils", None, None, A),
+ "fr_aldnews": ("https://www.fragrantica.com/news/Aldehydes-2416.html", "Aldehydes ~ Raw Materials ~ Fragrantica", None, None, A),
+ "ps_1920s": ("https://perfumesociety.org/history/the-1920s-when-chanel-changed-everything/", "The 1920s: when Chanel changed everything - The Perfume Society", None, None, A),
+ "fw_c12mna": ("https://fraterworks.com/products/aldehyde-c-12-mna", "Aldehyde C-12 MNA", "Fraterworks", None, A),
+ "ps_papyrus": ("https://perfumesociety.org/ingredients-post/papyrus/", "Papyrus - The Perfume Society", None, None, A),
+ "oz_papyrus": ("https://www.osmoz.com/encyclopedia/raw-materials/various/1376/papyrus", "Papyrus Perfumes raw material - Papyrus Scent", "Osmoz", None, A),
+ "bn_papyrus": ("https://basenotes.com/community/threads/papyrus-flower-fragrance.418097/", "Papyrus Flower Fragrance", "Basenotes", None, A),
+ "pw_list": ("https://pinewardperfume.com/pages/master-scent-list", "Master Scent List", "Pineward", None, A),
+ "fr_pumpkin": ("https://www.fragrantica.com/notes/Pumpkin-509.html", "Pumpkin perfume ingredient, Pumpkin fragrance and essential oils Cucurbita pepo", None, None, A),
+ "bn_pumpkinaccord": ("https://basenotes.com/community/threads/help-with-pumpkin-accord.479620/", "Help With Pumpkin Accord", "Basenotes", None, A),
+ "bn_pumpkivus": ("https://basenotes.com/fragrances/pumpkivus-by-pineward-perfumes.26287104", "Pumpkivus by Pineward Perfumes– Basenotes", None, None, A),
+ "gk_pumpkin": ("https://gernot-katzers-spice-pages.com/engl/Cucu_pep.html", "Cucu pep", "Gernot Katzer's Spice Pages", None, A),
+ "os_pumpkinseed": ("https://www.oelmuehle-solling.de/en/pumpkin-seed-oil-roasted.html", "pumpkin seed oil roasted", "Ölmühle Solling", None, A),
+ "wp_cornsilk": ("https://en.wikipedia.org/wiki/Corn_silk", "Corn silk", "Wikipedia", None, A),
+ "sb_cornsilk": ("https://thescentbase.com/notes/corn-silk", "What does Corn Silk Smell like? Corn Silk Scent Profile, Guide and Fragrances. | thescentbase.com", None, None, A),
+ "pp_cornsilk": ("https://premierepeau.com/pages/glossary-terms/corn-silk", "corn silk", "Premiere Peau", None, A),
+ "fr_corn": ("https://www.fragrantica.com/notes/Corn-1132.html", "Corn perfume ingredient, Corn fragrance and essential oils Zea Mays", None, None, A),
+ "wp_silage": ("https://en.wikipedia.org/wiki/Silage", "Silage", "Wikipedia", None, A),
+ "hd_silage": ("https://hoards.com/article-26409-odor-and-color-can-tell-us-a-lot-about-silage.html", "Odor and color can tell us a lot about silage", "Hoard's Dairyman", None, A),
+ "on_silage": ("https://www.ontario.ca/page/silage-fermentation-problems", "Silage fermentation problems", "Government of Ontario", None, A),
+ "fr_whiskey": ("https://www.fragrantica.com/notes/Whiskey-210.html", "Whiskey perfume ingredient, Whiskey fragrance and essential oils", None, None, A),
+ "fr_whiskynews": ("https://www.fragrantica.com/news/Whisky-Whiskey-and-Bourbon-21190.html", "Whisky, Whiskey and Bourbon ~ Fragrance Reviews ~ Fragrantica", None, None, A),
+ "fr_whiskyboard": ("https://www.fragrantica.com/board/viewtopic.php?id=145877", "Fragrances which smell like brandy or whiskey (Page 1) — Perfume Selection Tips for Men — Fragrantica Club", "Fragrantica Club", None, A),
+ "om_lust": ("https://omparfumfragrances.com/products/lust-%E8%89%B2%E6%85%BE", "Lust", "OM Parfum", None, A),
+ "tg_cabreuva": ("https://www.thegoodscentscompany.com/data/es1014101.html", "cabreuva wood oil", "The Good Scents Company", None, A),
+ "hm_cabreuva": ("https://hermitageoils.com/product/cabreuva-wood-essential-oil/", "Cabreuva Essential Oil Online from Europes Specialist supplier", "Hermitage Oils", None, A),
+ "fr_cabreuva": ("https://www.fragrantica.com/notes/Cabreuva-611.html", "Cabreuva perfume ingredient, Cabreuva fragrance and essential oils Myrocarpus fastigiatus", None, None, A),
+ "fw_cabreuva": ("https://fraterworks.com/products/cabreuva-oil", "cabreuva oil", "Fraterworks", None, A),
+ "wset_oak": ("https://www.wsetglobal.com/knowledge-centre/blog/2024/the-alchemy-of-oak-barrel-ageing-in-spirits", "Mastering barrel ageing: Oak barrel ageing in spirits", "WSET", None, A),
+ "df_barrel": ("https://www.diffordsguide.com/encyclopedia/482/bws/barrel-ageing-cask-maturation-of-spirits", "Barrel Aging and Cask Maturation Of Spirits", "Difford's Guide", None, A),
+ "fr_okfine": ("https://www.fragrantica.com/news/Perfumes-Aged-in-American-Oak-Barrels-OK-Fine-Fragrances-13046.html", "Perfumes Aged in American Oak Barrels: OK Fine Fragrances ~ Niche Perfumery ~ Fragrantica", None, None, A),
+ "fr_copaiba": ("https://www.fragrantica.com/notes/Copaiba-Balm-714.html", "Copaiba Balm perfume ingredient, Copaiba Balm fragrance and essential oils Copaifera Officinalis", None, None, A),
+ "fr_copaibanews": ("https://fragrantica.com/news/Copa%C3%ADba-From-Medicine-to-the-Extremely-Fragrant-Balm-15278.html", "Copaíba - From Medicine to the Extremely Fragrant Balm ~ Raw Materials ~ Fragrantica", None, None, A),
+ "ed_copaiba": ("https://www.edenbotanicals.com/copaiba-balsam.html", "Copaiba Balsam", "Eden Botanicals", None, A),
+ "wp_copaiba": ("https://en.wikipedia.org/wiki/Copaiba", "Copaiba", "Wikipedia", None, A),
+ "tg_copaiba": ("https://www.thegoodscentscompany.com/data/rs1018771.html", "copaiba balsam copaifera reticulata", "The Good Scents Company", None, A),
+ "om_burnana": ("https://omparfumfragrances.com/products/burnana", "Burnana", "OM Parfum", None, A),
+ "fr_metroboard": ("https://www.fragrantica.com/board/viewtopic.php?id=332931", "Scents like metro/underground/subway (Page 1) — New to the World of Fragrance — Fragrantica Club", "Fragrantica Club", None, A),
+ "fr_undergroundvibes": ("https://www.fragrantica.com/news/Underground-Vibes-Laboratorio-Olfattivo-Antoine-Lee-and-the-Underground-Dwellers-22261.html", "Underground Vibes Laboratorio Olfattivo: Antoine Lie and the Underground Dwellers ~ Fragrance Reviews ~ Fragrantica", None, None, A),
+ "ps_petrichor": ("https://perfumesociety.org/petrichor-perfumes-capturing-the-scent-of-rain/", "Petrichor Perfumes - Capturing the Scent of Rain - The Perfume Society", None, None, A),
+ "fr_fruity": ("https://www.fragrantica.com/notes/Fruity-Notes-320.html", "Fruity Notes perfume ingredient, Fruity Notes fragrance and essential oils", None, None, A),
+ "fr_fruityboard": ("https://www.fragrantica.com/board/viewtopic.php?id=264240", "fruity notes mean!! (Page 1) — General Perfume Talk — Fragrantica Club", "Fragrantica Club", None, A),
+ "ps_plum": ("https://perfumesociety.org/perfect-plum-fruity-fragrances-for-autumn/", "Perfect plum", "The Perfume Society", None, A),
+ "ps_apple": ("https://perfumesociety.org/an-apple-fragrance-a-day/", "An apple (fragrance) a day... - The Perfume Society", None, None, A),
+ "pmc_huangqi": ("https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11363671/", "Astragali radix (Huangqi): a time-honored nourishing herbal medicine", "PubMed Central", None, A),
+ "msk_astragalus": ("https://www.mskcc.org/cancer-care/integrative-medicine/herbs/astragalus", "Astragalus", "Memorial Sloan Kettering Cancer Center", None, A),
+ "hk_astragali": ("https://www.cmro.gov.hk/hkcmms/vol1/pdf_e/Radix_Astragali_v1_e.pdf", "Radix Astragali", "Hong Kong Chinese Materia Medica Standards", None, A),
+ "fr_cade": ("https://www.fragrantica.com/notes/Cade-oil-810.html", "Cade oil perfume ingredient, Cade oil fragrance and essential oils juniperus oxycedrus l. tar oil", None, None, A),
+ "tg_cade": ("https://www.thegoodscentscompany.com/data/es1017551.html", "cade oil juniperus oxycedrus tar oil", "The Good Scents Company", None, A),
+ "fw_cade": ("https://fraterworks.com/products/cade-oil-rectified", "Cade Oil, Rectified", "Fraterworks", None, A),
+ "hm_cade": ("https://hermitageoils.com/product/cade-wood-essential-oil-juniper-tar/", "Cade Wood Essential Oil from hermitageoils.com", "Hermitage Oils", None, A),
+ "wp_oxycedrus": ("https://en.wikipedia.org/wiki/Juniperus_oxycedrus", "Juniperus oxycedrus", "Wikipedia", None, A),
+ "wp_paprika": ("https://en.wikipedia.org/wiki/Paprika", "Paprika", "Wikipedia", None, A),
+ "gk_paprika": ("https://gernot-katzers-spice-pages.com/engl/Caps_ann.html", "Spice Pages: Paprika (Capsicum annuum)", "Gernot Katzer's Spice Pages", None, A),
+ "tg_paprika": ("https://www.thegoodscentscompany.com/data/ol1033521.html", "paprika oleoresin, 68917-78-2", "The Good Scents Company", None, A),
+ "fr_paprikabrasil": ("https://www.fragrantica.com/perfume/Hermes/Hermessence-Paprika-Brasil-2675.html", "Hermessence Paprika Brasil Hermès perfume - a fragrance for women and men 2006", None, None, A),
+ "fr_hinoki": ("https://www.fragrantica.com/notes/Hinoki-Wood-32.html", "Hinoki Wood perfume ingredient, Hinoki Wood fragrance and essential oils Chamaecyparis obtusa", None, None, A),
+ "oz_hinoki": ("https://www.osmoz.com/encyclopedia/raw-materials/wood/100/hinoki-chamaecyparis-obtusa", "Hinoki (Chamaecyparis Obtusa) Perfumes raw material - Hinoki (Chamaecyparis Obtusa) Scent", "Osmoz", None, A),
+ "ed_hinoki": ("https://www.edenbotanicals.com/hinoki-wood.html", "Hinoki Wood EO", "Eden Botanicals", None, A),
+ "fw_hinoki": ("https://fraterworks.com/products/hinoki-wood-oil", "Hinoki Wood Oil", "Fraterworks", None, A),
+ "fr_cdghinoki": ("https://www.fragrantica.com/perfume/Comme-des-Garcons/Scent-One-Hinoki-2558.html", "Scent One: Hinoki Comme des Garcons cologne - a fragrance for men 2008", None, None, A),
+ "kg_hinoki": ("https://shop.kohgen.com/collections/woody/products/kogen-japanese-scent", "Kohgen Incense Sticks, Hinoki Japanese Cypress", "Kohgen", None, A),
+ "nk_hinoki": ("https://store.ayurveda.com/products/nippon-kodo-hinoki-japanese-incense", "Nippon Kodo Hinoki Japanese Incense", "The Ayurvedic Institute", None, A),
+ "sb_hinokiincense": ("https://thescentbase.com/id/notes/hinoki-incense", "What does Hinoki incense Smell like? Hinoki incense Scent Profile, Guide and Fragrances. | thescentbase.com", None, None, A),
+ "fr_sichuan": ("https://www.fragrantica.com/notes/Sichuan-Pepper-213.html", "Sichuan Pepper perfume ingredient, Sichuan Pepper fragrance and essential oils Zanthoxylum (Z. piperitum, Z. simulans, Z. sancho and Z. schinifolium)", None, None, A),
+ "fr_zanthox": ("https://www.fragrantica.com/news/Zanthoxylum-Yellowwood-Sichuan-Pepper-Timut-Andaliman-and-Others-22118.html", "Zanthoxylum/Yellowwood: Sichuan Pepper, Timut, Andaliman, and Others ~ Raw Materials ~ Fragrantica", None, None, A),
+ "st_sichuan": ("https://www.scentree.co/en/Sichuan_pepper_absolute.html", "ScenTree - Sichuan pepper absolute (CAS N° 97404-53-0)", None, None, A),
+ "fr_cheese": ("https://beta.fragrantica.com/notes/Cheese-579.html", "Cheese perfume ingredient, Cheese fragrance and essential oils", None, None, A),
+ "fw_butyric": ("https://fraterworks.com/products/butyric-acid", "butyric acid", "Fraterworks", None, A),
+ "fw_isovaleric": ("https://fraterworks.com/products/isovaleric-acid", "isovaleric acid", "Fraterworks", None, A),
+ "st_jonquil": ("https://www.scentree.co/en/Narcissus_jonquilla_absolute.html", "ScenTree - Narcissus jonquilla absolute (CAS N° 8023-75-4)", None, None, A),
+ "fw_jonquil": ("https://fraterworks.com/products/jonquil-absolute-france", "Jonquille Absolute, France", "Fraterworks", None, A),
+ "tg_jonquil": ("https://www.thegoodscentscompany.com/data/ab1029621.html", "jonquil absolute, 8023-75-4", "The Good Scents Company", None, A),
+ "fr_narcissus": ("https://www.fragrantica.com/notes/Narcissus-18.html", "Narcissus perfume ingredient, Narcissus fragrance and essential oils Amaryllidaceae", None, None, A),
+ "ps_linden": ("https://perfumesociety.org/ingredients-post/lime-blossom-linden/", "Lime blossom (linden) - The Perfume Society", None, None, A),
+ "fr_lindennews": ("https://www.fragrantica.com/news/Linden-Blossom-in-Perfumery-12412.html", "Linden Blossom in Perfumery ~ Columns ~ Fragrantica", None, None, A),
+ "fw_tilleul": ("https://fraterworks.com/products/tilleul", "Tilleul (Linden Blossom)", "Fraterworks", None, A),
+ "wp_tilia": ("https://en.wikipedia.org/wiki/Tilia", "Tilia", "Wikipedia", None, A),
+}
+N = {
+ "note-aldehydes": dict(
+  say="A family of molecules, mostly made in the laboratory though they also occur in citrus peel and flowers, that perfumers name by the number of carbon atoms in their chain: C-10, C-11, C-12. On their own they smell fatty, waxy and soapy, of clean laundry, snuffed candles and cold air, some leaning to orange peel, some metallic; in a perfume they fizz like champagne and lift everything around them. Ernest Beaux used them boldly in Chanel No. 5 in 1921, and its sparkle is theirs.",
+  src=["fr_aldehydes", "fr_aldnews", "ps_1920s", "fw_c12mna"]),
+ "note-papyrus": dict(
+  say="The tall reed of the Nile, whose pith the Egyptians pressed into paper. Perfumers draw it dry and woody, earthy and a little smoky, like snapped reeds and the pages of an old, dusty book, close to vetiver but drier. Most papyrus in perfume is not taken from the Nile plant at all but from its cousin cypriol, the root oil of Indian papyrus, or built as an accord.",
+  src=["ps_papyrus", "oz_papyrus", "bn_papyrus"]),
+ "note-pumpkin": dict(
+  say="The orange flesh of the pumpkin, a winter squash. There is almost no pumpkin oil to be had, so perfumers build it: usually the soft, starchy sweetness of pumpkin pie, warmed with vanilla, nutmeg and cinnamon, and more rarely, as Pineward does, raw pumpkin itself, fleshy, earthy, a little fruity and green, a vegetable rather than a dessert.",
+  src=["fr_pumpkin", "bn_pumpkinaccord", "bn_pumpkivus", "pw_list"],
+  vars={
+   "Pumpkin Flesh": dict(same="No change: the pumpkin note is the flesh's own."),
+   "Pumpkin Seed": dict(say="The seeds rather than the flesh, and they smell of something else: roasted, they are intensely nutty, a little spicy and savoury, dark like the green oil pressed from them in Styria. Where the flesh is soft and sweet, the seed adds a toasted, nutty depth.", src=["gk_pumpkin", "os_pumpkinseed", "bn_pumpkivus"]),
+  }),
+ "note-corn-silk": dict(
+  say="The fine, pale threads that spill out of the top of an ear of corn under its husk, one for every kernel. As a note it is green, dry and a little sweet, of raw husk and warm hay with a faint, milky, starchy sweetness, closer to dried grass than to popcorn. No oil is taken from it; it is an accord.",
+  src=["wp_cornsilk", "sb_cornsilk", "pp_cornsilk", "fr_corn"]),
+ "note-corn-silage": dict(
+  say="Green maize chopped and packed tight, then left to ferment until it sours, to feed cattle through the winter. It smells sour and sweet at once, of vinegar and a little alcohol, over a hay-like, grainy, farmyard mustiness: the smell of a barn in winter.",
+  src=["wp_silage", "hd_silage", "on_silage", "pw_list"]),
+ "note-whiskey": dict(
+  say="A spirit distilled from fermented grain, barley, corn or rye, and aged for years in oak casks; Scotland and Japan spell it whisky, Ireland and America whiskey. As a note it is warm and boozy, with the sweetness of malt and hay, the wood of the barrel, honey, dried fruit, a little chocolate and mild spice, and in a Scotch the peat smoke too. It is built as an accord, and sits with tobacco, leather, woods and amber.",
+  src=["fr_whiskey", "fr_whiskynews", "fr_whiskyboard", "om_lust"]),
+ "note-cabreuva": dict(
+  say="The oil of a South American tree, Myrocarpus, which grows wild in Brazil, Paraguay and Argentina and is prized as timber; it is distilled from the wood chips and sawdust the timber leaves. It smells softly and sweetly woody, faintly floral, a little like rose and orange blossom, and gently balsamic, much of it from nerolidol, a molecule also found in neroli. It is a quiet material that smooths woods and flowers and holds them on the skin.",
+  src=["tg_cabreuva", "hm_cabreuva", "fr_cabreuva", "fw_cabreuva"]),
+ "note-oak-barrel": dict(
+  say="The inside of the oak cask that whisky, cognac, rum and wine are aged in. Toasted and charred, the oak gives the spirit vanilla, coconut and cream, caramel and a little smoke, and the spirit soaks back into the wood. As a note it is all of that at once: dry, toasted oak, sweet with vanilla and caramel, smoky at its edges and boozy with what the barrel once held.",
+  src=["wset_oak", "df_barrel", "fr_okfine", "om_lust"],
+  vars={
+   "Wood Barrel": dict(same="No change: the barrel a spirit ages in, by another name."),
+  }),
+ "note-copaiba-balsam": dict(
+  say="An oleoresin, a thick, golden mix of resin and oil, drawn from holes bored into the trunks of copaiba trees in the Amazon, and used there as a medicine for centuries. It smells soft, woody and balsamic, mildly spicy and a little peppery, with a faint honeyed sweetness, something like a gentle labdanum. It is one of the cheapest natural fixatives, holding a perfume on the skin and giving woods a creamy depth.",
+  src=["fr_copaiba", "fr_copaibanews", "ed_copaiba", "wp_copaiba", "tg_copaiba"],
+  vars={
+   "Copaiba Balm": dict(same=SAME),
+  }),
+ "note-underground-tunnel": dict(
+  say="Not a material but an impression, OM Parfum's own: the air of a tunnel under the ground. Perfumers build places like this from mineral and dusty notes, wet stone and concrete, metal, soot and a little rubber, so that it smells damp, cool and mineral, of earth and old stone, the stale, slightly electric air of an underground railway.",
+  src=["om_burnana", "fr_metroboard", "fr_undergroundvibes", "ps_petrichor"]),
+ "note-fruity-notes": dict(
+  say="Not one fruit but fruit in general: a fresh, sweet, juicy note, of pear, plum, peach, berries, apple or whatever the perfumer reaches for, used to brighten the flowers or warm the woods around it. Fruit is mostly water and will not give up an oil, so nearly every fruit note in perfume is built, from fruity synthetic molecules with sometimes a touch of a natural extract.",
+  src=["fr_fruity", "fr_fruityboard", "ps_plum", "ps_apple"]),
+ "note-huang-qi": dict(
+  say="Astragalus root, one of the great tonics of Chinese medicine, taken for more than two thousand years: the dried root of a milk vetch, Astragalus membranaceus, a plant of the pea family from northern China, sold in long, pale, yellowish slices (huang qi means 'yellow leader'). Its smell is slight: dry, earthy and woody, as most dried roots are, with a faint sweetness, the same sweetness it has on the tongue.",
+  src=["pmc_huangqi", "msk_astragalus", "hk_astragali", "om_burnana"]),
+ "note-cade-oil": dict(
+  say="A dark tar oil made from the wood of the prickly juniper, a shrub of the Mediterranean, by heating the wood without air until it breaks down, much as charcoal is made, rather than by gently distilling it. It smells intensely smoky, tarry and burnt, of a campfire just put out, ash, creosote and leather, drier than birch tar. The crude tar is not safe on skin, so perfumers use a cleaned, rectified oil, in small amounts, for leather, smoke and incense.",
+  src=["fr_cade", "tg_cade", "fw_cade", "hm_cade", "wp_oxycedrus"]),
+ "note-paprika": dict(
+  say="The red spice made from sweet peppers, Capsicum annuum, dried and ground, chiefly in Hungary and Spain, where the pimentón of La Vera is dried over oak smoke. It smells warm and sweet, a little fruity and earthy, with hay and tobacco in its extract and smoke where it has been smoked; the mild kinds have almost no heat at all. In perfume it is a rare, warm spice, peppery without black pepper's bite.",
+  src=["wp_paprika", "gk_paprika", "tg_paprika", "fr_paprikabrasil"]),
+ "note-hinoki": dict(
+  say="The Japanese cypress, Chamaecyparis obtusa, whose pale, fragrant wood Japan has long used for its temples and its traditional baths. Its oil is dry and finely woody, close to cedar, with a fresh, lemony lift, a soft touch of camphor and a warm, slightly smoky, leathery depth: clean wood, and the smell of a wooden bathhouse.",
+  src=["fr_hinoki", "oz_hinoki", "ed_hinoki", "fw_hinoki"],
+  vars={
+   "Hinoki Incense": dict(say="Hinoki burned rather than worn: Japanese incense made from hinoki oil and wood powder, usually with sandalwood. The smoke keeps the wood's fresh, green, cypress-like start but turns drier, softer and dustier, a smoky, woody warmth like a temple or a newly built wooden house, where the oil on its own is brighter, lemonier and more camphorous.", src=["kg_hinoki", "nk_hinoki", "sb_hinokiincense", "fr_cdghinoki"]),
+  }),
+ "note-sichuan-pepper": dict(
+  say="Not a true pepper but the dried husks of the berries of a prickly ash, Zanthoxylum, of China and Japan: the spice that makes the mouth tingle and go numb. Its smell is fresh and citrusy, like lemon peel and petitgrain, green and herbal, with a peppery, almost metallic sparkle that perfumers say tingles even in the nose. It brightens the top of a perfume with a zesty spice.",
+  src=["fr_sichuan", "fr_zanthox", "st_sichuan"]),
+ "note-cheese": dict(
+  say="Ripened cheese, rebuilt: its smell comes from short-chain fatty acids such as butyric and isovaleric acid, the molecules that form as butter and cheese age, and that are in sweat too. Strong, they smell sour, rancid and sweaty; in a trace they are creamy, buttery and a little animal, and perfumers use them to make milk, honey, sandalwood and leather accords feel real.",
+  src=["fr_cheese", "fw_butyric", "fw_isovaleric"]),
+ "note-jonquil": dict(
+  say="A small, sweet-scented narcissus, Narcissus jonquilla, grown around Grasse and in Morocco, whose flowers are washed with solvents to make a rare and costly absolute. It is warm and honeyed, floral and a little fruity, with something of orange blossom and tuberose, a green, spicy freshness, and a hay- and tobacco-like warmth underneath; sweeter and softer than ordinary narcissus, which is greener and more leathery.",
+  src=["st_jonquil", "fw_jonquil", "tg_jonquil", "fr_narcissus"]),
+ "note-linden-blossom": dict(
+  say="The small, pale yellow flowers of the linden, the lime tree of European avenues (nothing to do with the citrus lime), tilleul in French and a soothing tea. They smell honeyed and sweet, softly floral and green, with a hint of citrus and hay, like a summer evening under the trees with the bees in them. An extract can be taken from the dried flowers, but the note is usually rebuilt from synthetics.",
+  src=["ps_linden", "fr_lindennews", "fw_tilleul", "wp_tilia"]),
+}
+out("NEW1", S, N)

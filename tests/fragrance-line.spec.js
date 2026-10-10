@@ -94,8 +94,11 @@ test("the Fragrances view is a table: number, name, house and date, each dated t
     ["006", "French Riviera", "Mancera", "24.09.2026"],
     ["007", "Velvet Fog", "Casa Goa", "24.09.2026"],
     ["008", "House of Ellixirz", "Matca", "25.09.2026"],
+    ["009", "Fir of the Light", "JMP Artisan Perfumes", "10.10.2026"],
+    ["010", "Fir of the Dark", "JMP Artisan Perfumes", "10.10.2026"],
+    ["011", "Quintessentially Amber", "Sultan Pasha Perfumes", "10.10.2026"],
   ]);
-  await expect(page.locator(".frag-list-count")).toHaveText("008");
+  await expect(page.locator(".frag-list-count")).toHaveText("011");
   await expect(page.locator(".view[data-view='fragrances'] .index-page")).toBeHidden();
   expect(errors).toEqual([]);
 });
@@ -146,8 +149,8 @@ test("the table is nearly the page, with the aside on its left and the options o
   expect(out.aside.right, "the aside to its left").toBeLessThanOrEqual(out.table.left);
   expect(out.options.left, "the options to its right").toBeGreaterThanOrEqual(out.table.right);
   expect(out.options.right).toBeLessThanOrEqual(out.W);
-  expect([out.big, out.houses, out.last]).toEqual(["008", "008", "25.09.2026"]);
-  expect(out.ticks, "a tick for every fragrance").toBe(8);
+  expect([out.big, out.houses, out.last]).toEqual(["011", "010", "10.10.2026"]);
+  expect(out.ticks, "a tick for every fragrance").toBe(11);
   expect(out.mark, "the mark").toBeGreaterThan(100);
   await expect(page.locator(".frag-mode")).toHaveText(["List", "Boxes", "Cards"]);
   // BOXES TO BEGIN WITH: "for fragrances in SD, make boxes the default
@@ -197,7 +200,7 @@ test("a screen holds a good many rows, and the table scrolls in its own box", as
     return { rows: items.length, row: items[0].offsetHeight, seen,
       scrolls: box.scrollHeight > box.clientHeight, page: document.documentElement.scrollHeight - innerHeight };
   });
-  expect(out.rows).toBe(68);
+  expect(out.rows).toBe(71);
   expect(out.row, "a compact row").toBeLessThanOrEqual(38);
   expect(out.seen, "rows on the screen at once, at 1280 by 720").toBeGreaterThanOrEqual(14);
   expect(out.scrolls, "the table scrolls in its own box").toBe(true);
@@ -371,7 +374,7 @@ test("the headings sort the table and the field searches it, in any of the three
   await toTheTable(page);
   await page.locator(".frag-sort[data-key='name']").click();
   expect((await rowsOf(page)).map((r) => r[1])).toEqual(
-    ["CV99", "De Profundis", "Flamenco EDP", "French Riviera", "Haxan", "House of Ellixirz", "Tobacolor", "Velvet Fog"]);
+    ["CV99", "De Profundis", "Fir of the Dark", "Fir of the Light", "Flamenco EDP", "French Riviera", "Haxan", "House of Ellixirz", "Quintessentially Amber", "Tobacolor", "Velvet Fog"]);
   await page.locator(".frag-sort[data-key='name']").click();
   expect((await rowsOf(page))[0][1], "pressed again, turned round").toBe("Velvet Fog");
   await expect(page.locator(".frag-read-sort")).toHaveText("Fragrance ↑");
@@ -412,7 +415,7 @@ test("the search takes the others off the page as it is typed, in every layout, 
     await field.fill("serge");
     expect(await shown(), mode + ": no house").toEqual([]);
     await field.fill("");
-    expect((await shown()).length, mode + ": all back").toBe(8);
+    expect((await shown()).length, mode + ": all back").toBe(11);
   }
   // Nothing typed here leaves the page.
   await page.locator(".frag-list-field").fill("something nowhere");

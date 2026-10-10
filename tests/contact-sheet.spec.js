@@ -103,7 +103,7 @@ test("the houses stand on a helix round a central axis, one at the front", async
   await page.goto(SHEET);
   await waitForSheet(page);
   const a = await axis(page);
-  expect(a.frames.length).toBe(9);
+  expect(a.frames.length).toBe(12);
   const fronts = a.frames.filter((f) => f.front);
   expect(fronts.length, "one house at the front").toBe(1);
   expect(a.frames[0].front, "and it is the first").toBe(true);
@@ -115,11 +115,11 @@ test("the houses stand on a helix round a central axis, one at the front", async
   expect(a.frames[1].y, "and below the front one").toBeGreaterThan(a.frames[0].y + 40);
   expect(a.frames[0].z, "the front one stands in front of it").toBeGreaterThan(a.frames[1].z);
   // The numbers, on the axis, in order down it.
-  expect(a.marks.map((m) => m.text)).toEqual(["01", "02", "03", "04", "05", "06", "07", "08", "09"]);
+  expect(a.marks.map((m) => m.text)).toEqual(["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]);
   a.marks.forEach((m) => expect(Math.abs(m.left - a.middle), `${m.text} stands on the axis`).toBeLessThan(40));
   for (let i = 1; i < a.marks.length; i++) expect(a.marks[i].y).toBeGreaterThan(a.marks[i - 1].y);
   expect(a.marks[0].on).toBe(true);
-  expect(a.at).toBe("01 / 09");
+  expect(a.at).toBe("01 / 12");
   // And the axis itself is drawn: a column of ink down the middle of the
   // particles' canvas.
   const drawn = await page.evaluate(() => {
@@ -157,7 +157,7 @@ test("the wheel, the keys, the numbers, the buttons and a drag all travel along 
   await page.mouse.wheel(0, 330);
   await settle();
   expect(await at(), "the wheel").toBe("2");
-  await expect(page.locator(".sheet-nav-at b")).toHaveText("02 / 09");
+  await expect(page.locator(".sheet-nav-at b")).toHaveText("02 / 12");
   await expect(page.locator(".sheet-nav-at span")).toHaveText("ADAR");
 
   await page.keyboard.press("ArrowDown");
@@ -172,7 +172,7 @@ test("the wheel, the keys, the numbers, the buttons and a drag all travel along 
   // up arrow and a double arrow going down underneath the bottom arrow"
   // (2026-09-29).
   await page.locator('.sheet-nav-end[data-to="last"]').click();
-  await expect.poll(at, { timeout: 5000 }).toBe("9");
+  await expect.poll(at, { timeout: 5000 }).toBe("12");
   await page.locator('.sheet-nav-end[data-to="first"]').click();
   await expect.poll(at, { timeout: 5000 }).toBe("1");
   const order = await page.$$eval(".sheet-nav > *", (els) => els.map((e) => e.dataset.to || e.dataset.step || "at"));
@@ -185,7 +185,7 @@ test("the wheel, the keys, the numbers, the buttons and a drag all travel along 
 
   await page.keyboard.press("End");
   await settle();
-  expect(await at(), "End").toBe("9");
+  expect(await at(), "End").toBe("12");
   await page.keyboard.press("Home");
   await settle();
   expect(await at(), "Home").toBe("1");
@@ -1937,7 +1937,7 @@ test("an address naming a house opens the view at that house", async ({ page }) 
   await page.goto(SHEET + "#house-08");
   await waitForSheet(page);
   await expect(page.locator("#sheet")).toHaveAttribute("data-front", "8");
-  await expect(page.locator(".sheet-nav-at b")).toHaveText("08 / 09");
+  await expect(page.locator(".sheet-nav-at b")).toHaveText("08 / 12");
   await expect(page.locator(".sheet-nav-at span")).toHaveText("Tombstone");
   // And without one, the first, as always.
   await page.goto(SHEET);

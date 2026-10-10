@@ -137,6 +137,9 @@ test("every key points at a part that is really on its page", () => {
     tale: ["houses/tale-parfums.html", "human"],
     tombstone: ["houses/tombstone.html", "human"],
     qimu: ["houses/qimu-and-musicians.html", "human"],
+    om: ["houses/om-parfums.html", "human"],
+    outsider: ["houses/outsider-parfums.html", "human"],
+    "lost-tribe": ["houses/lost-tribe.html", "human"],
     individual: ["individual-fragrances/individual-fragrances.html", "human"],
   };
   const missing = [];
@@ -169,7 +172,7 @@ test("the Fragrances view is its own page, not an index of the houses",
   // had removed on 2026-09-22; it went to six, Velvet Fog made it seven
   // again on 2026-09-24, and House of Ellixirz eight on 2026-09-25.
   const rows = page.locator('.view[data-view="fragrances"] .index-table tbody tr');
-  await expect(rows).toHaveCount(8);
+  await expect(rows).toHaveCount(11);
 
   const hrefs = await page.$$eval(
     '.view[data-view="fragrances"] .index-table tbody a',
@@ -205,7 +208,7 @@ test("every fragrance gets a View notes button, and it opens a panel",
   await page.goto("/individual-fragrances/individual-fragrances.html");
   await page.waitForTimeout(700);
 
-  await expect(page.locator(".note-open")).toHaveCount(8);
+  await expect(page.locator(".note-open")).toHaveCount(11);
   await expect(page.locator(".note-panel:not([hidden])")).toHaveCount(0);
 
   const first = page.locator(".human-part").first();
@@ -365,12 +368,12 @@ test("a fragrance with no notes yet says they have not been found",
    table and the keys here — and this is the check that they moved
    together. Getting it wrong is silent: every link still resolves, and
    every fragrance shows somebody else's notes. */
-test("the individual fragrances run 01 to 08 with nothing missing", () => {
+test("the individual fragrances run 01 to 11 with nothing missing", () => {
   const all = notes();
   const page = read("individual-fragrances/individual-fragrances.html");
   const ids = [...page.matchAll(/id="part-(\d+)"/g)].map((m) => m[1]);
   expect(ids, `the parts run: ${ids.join(", ")}`)
-    .toEqual(["01", "02", "03", "04", "05", "06", "07", "08"]);
+    .toEqual(["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"]);
 
   // No Untitled left, and every one of them has notes.
   expect(page).not.toContain("human-untitled");
@@ -379,7 +382,7 @@ test("the individual fragrances run 01 to 08 with nothing missing", () => {
   });
   // And no key points past the end.
   const keys = Object.keys(all).filter((k) => k.startsWith("individual:"));
-  expect(keys.length).toBe(8);
+  expect(keys.length).toBe(11);
 
   // THE TABLE AGREES, name for name and number for number.
   const sheet = read("scent-descriptions/index.html");
@@ -407,7 +410,7 @@ test("without the script there is no button and the writing is untouched",
 
   await expect(page.locator(".note-open")).toHaveCount(0);
   await expect(page.locator(".note-panel")).toHaveCount(0);
-  await expect(page.locator(".pine-part")).toHaveCount(47);
+  await expect(page.locator(".pine-part")).toHaveCount(48);
 });
 
 /* THE NOTES GO WITH THE FRAGRANCE, and have to be asked for again.
@@ -741,12 +744,13 @@ test("a reformulated fragrance says which version, at the top",
   await serveDependenciesLocally(page);
   await page.goto("/houses/pineward.html");
   await page.waitForTimeout(900);
-  await page.locator("#part-47 summary").click();
+  // Velvetine, 48 since Pumpkivus came in at 45 (2026-10-10).
+  await page.locator("#part-48 summary").click();
   await page.waitForTimeout(1200);
-  await page.locator("#part-47 .note-open").click();
+  await page.locator("#part-48 .note-open").click();
   await page.waitForTimeout(700);
 
-  const win = page.locator("#notes-pineward-47");
+  const win = page.locator("#notes-pineward-48");
   await expect(win.locator(".note-version")).toHaveCount(1);
   await expect(win.locator(".note-version strong")).toHaveText("2025 revision");
 
@@ -1086,13 +1090,16 @@ test("House of Ellixirz is the eighth, in the owner's words, with Matca's own no
 test("every individual fragrance's picture is credited under itself", () => {
   const page = read("individual-fragrances/individual-fragrances.html");
   const parts = page.split(/<details class="human-part" id=/).slice(1).map((p) => 'id=' + p);
-  expect(parts.length).toBe(8);
+  expect(parts.length).toBe(11);
   const seen = parts.map((p) => {
     const no = /id="part-(\d+)"/.exec(p)[1];
     const credit = /<span class="human-plate-credit">Picture: <a href="(https:\/\/[^"]+)"[^>]*>([^<]+)<\/a><\/span>/.exec(p);
+    // A source with no page to link to is named plainly (Fir of the Dark's, 2026-10-10).
+    const named = /<span class="human-plate-credit">Picture: ([^<]+)<\/span>/.exec(p);
     const own = /<span class="human-plate-credit">Pictures: my own<\/span>/.test(p);
-    return [no, credit ? credit[2] : own ? "my own" : null];
+    return [no, credit ? credit[2] : own ? "my own" : named ? named[1] : null];
   });
   expect(seen).toEqual([["01", "Fragrantica"], ["02", "Sillyage"], ["03", "my own"], ["04", "Dior"],
-    ["05", "Aromak"], ["06", "Vivantis"], ["07", "Fragrantica"], ["08", "Matca"]]);
+    ["05", "Aromak"], ["06", "Vivantis"], ["07", "Fragrantica"], ["08", "Matca"],
+    ["09", "Fragrantica"], ["10", "Profumix Luxury Perfumes"], ["11", "Sultan Pasha Perfumes"]]);
 });

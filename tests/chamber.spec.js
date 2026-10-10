@@ -1185,8 +1185,10 @@ test("the favourites and the Fragrances view read a picture with the same code",
    Aegis collection could have all made it here too ..." It is written in
    Chapter 1's own block (`.gallery-after`), set apart from the description
    above the cards, and stands UNDER the last card — the end of the list —
-   with each of the three linked to where it stands in ADAR. */
-test("Chapter 1 ends with the three that could have made it, under the last card",
+   with each linked to where it stands in ADAR. Since 2026-10-10 it names
+   two: Aetherialism is the eleventh favourite, and the line says "could
+   have both made it", at the owner's word. */
+test("Chapter 1 ends with the two that could have made it, under the last card",
   async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.goto(PAGE);
@@ -1210,14 +1212,12 @@ test("Chapter 1 ends with the three that could have made it, under the last card
     };
   });
   expect(end.shown, "it stands on the page").toBe(true);
-  // ADAR's own spelling of the first name, which the owner chose when
-  // asked (they wrote "Aetherealism"); the rest is theirs as written.
-  expect(end.say).toBe("Aetherialism, Amber Zero and Incantu from Adar's Aegis collection could have all " +
+  expect(end.say).toBe("Amber Zero and Incantu from Adar's Aegis collection could have both " +
     "made it here too, though I have smelled them only once, and so would feel it unjust to everything " +
     "else on the list.");
   expect(end.below, "at the end of the list").toBe(true);
   expect(end.twice, "and only there").toBe(1);
-  expect(end.links.map((l) => l.say)).toEqual(["Aetherialism", "Amber Zero", "Incantu"]);
+  expect(end.links.map((l) => l.say)).toEqual(["Amber Zero", "Incantu"]);
   end.links.forEach((l) => expect(l.href, `${l.say} goes to ADAR`).toMatch(/^\.\.\/houses\/adar\.html#part-\d{2}$/));
 
   // Each link lands on that fragrance, by name, in ADAR's own page.

@@ -137,6 +137,50 @@ window.FRAGRANCE_NOTES = {
     base: ["Nagarmotha", "Tobacco", "Leather", "Birch Tar", "Vanilla", "Caramel"],
     source: { name: "Matca", url: "https://www.matcanaturals.com/en-eu/products/house-of-ellixirz" },
   },
+  // 09 TO 11, 2026-10-10 — in two halves, as Ataraxia's are, at the
+  // owner's word ("the site of the websites first and foremost and then
+  // ... fragrantica as a secondary source, the same way you have in the
+  // case of ataraxia"). JMP's own shop (jmpperfumes.pl) shows no notes
+  // that a search could reach, so its upper halves say so and name it.
+  "individual:09": {
+    say: "The house\u2019s own notes",
+    missing: "Not found on the house\u2019s own pages.",
+    note: "JMP\u2019s own shop lists Fir of the Light without a note list that could be read from here; what is below is Fragrantica\u2019s, and it is the only account there is. An extrait, by Jakub Pietrynka.",
+    source: { name: "JMP Artisan Perfumes", url: "https://jmpperfumes.pl/en/product-category/perfumy/" },
+    also: {
+      say: "Interpreted notes",
+      top: ["Spruce", "Incense", "Orange Peel", "Lemon", "Black Pepper"],
+      mid: ["Virginia Cedar", "Papyrus", "Cashmeran", "Nutmeg", "Sage"],
+      base: ["Balsam Fir", "Incense", "Woody Notes", "Oakmoss", "Ambergris"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/JMP-Artisan-Perfumes/Fir-of-the-Light-90715.html" },
+    },
+  },
+  "individual:10": {
+    say: "The house\u2019s own notes",
+    missing: "Not found on the house\u2019s own pages.",
+    note: "As with Fir of the Light, the house\u2019s own shop shows no note list that could be read from here; below is Fragrantica\u2019s, which calls it a woody chypre. An extrait, by Jakub Pietrynka.",
+    source: { name: "JMP Artisan Perfumes", url: "https://jmpperfumes.pl/en/product-category/perfumy/" },
+    also: {
+      say: "Interpreted notes",
+      top: ["Incense", "Spruce", "Black Pepper", "Cypress", "Galbanum"],
+      mid: ["Incense", "Virginia Cedar", "Leather", "Sage"],
+      base: ["Fir", "Cade Oil", "Java Vetiver Oil", "Oakmoss"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/JMP-Artisan-Perfumes/Fir-of-the-dark-89622.html" },
+    },
+  },
+  "individual:11": {
+    say: "The house\u2019s own notes",
+    flat: ["Citrus", "Aldehydes", "Spices", "Rose", "Amber", "Labdanum", "Benzoin", "Styrax", "Musk", "Patchouli", "Vetiver", "Sandalwood", "Vanilla", "Ambergris"],
+    note: "The house gives one list under \u201cFragrance Pyramid\u201d, its key note amber, and does not divide it; the divided list below is the fallback\u2019s. Its extrait of 2025, the one wholly new composition of the four it launched together.",
+    source: { name: "Sultan Pasha Perfumes", url: "https://sultanpashaperfumes.com/products/quintessentially-amber-extrait-de-parfum" },
+    also: {
+      say: "Interpreted notes",
+      top: ["Aldehydes", "Spices", "Citrus"],
+      mid: ["Amber", "Rose", "Labdanum", "Benzoin", "Styrax"],
+      base: ["Ambergris", "Musk", "Vanilla", "Patchouli", "Sandalwood", "Vetiver"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Sultan-Pasha-Perfumes/Quintessentially-Amber-109199.html" },
+    },
+  },
 
   // ============================================================
   // ALMOST HUMAN — houses/almost-human.html
@@ -656,15 +700,20 @@ window.FRAGRANCE_NOTES = {
     source: { name: "Pineward, Master Scent List", url: "https://pinewardperfume.com/pages/master-scent-list" },
   },
   "pineward:45": {
+    flat: ["Pumpkin Flesh", "Pumpkin Seed", "Brown Sugar", "Vetiver", "Osmanthus", "Cedar", "Sandalwood", "Patchouli", "Hay", "Black Soil", "Corn Silk", "Corn Silage", "Oud"],
+    note: "October 2025, semi-limited. The house says it is built on two pumpkin extracts of its own making, flesh and seed, with brown sugar and a blackstrap molasses distillate \u2014 and \u201cNOT about pumpkin pie spices or vanilla chai sweetness\u201d. Fragrantica has no page for it yet.",
+    source: { name: "Pineward, Master Scent List", url: "https://pinewardperfume.com/pages/master-scent-list" },
+  },
+  "pineward:46": {
     flat: ["Parchment", "Paper", "Leather", "Tobacco", "Black Tea", "Sandalwood", "Cedar", "Orris Root", "Rice", "Ambrette", "Coffee", "Oakmoss", "Nagarmotha"],
     note: "Left on the fallback on purpose: a search of the house's own list came back with Cotswold's notes and Cotswold's description under this name, which is a conflation rather than a source.",
     source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Pineward-Perfumes/Tome-115784.html" },
   },
-  "pineward:46": {
+  "pineward:47": {
     flat: ["Tobacco", "Lapsang Souchong Tea", "Molasses", "Honey", "Raisin"],
     source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Pineward-Perfumes/Treacle-71217.html" },
   },
-  "pineward:47": {
+  "pineward:48": {
     version: "2025 revision",
     flat: ["Ambergris", "Cypress", "Vanilla", "Clove", "Labdanum", "Fir", "Dragon\u2019s Blood Resin", "Sandalwood", "Tonkin Musk", "Vintage Mousse de Saxe"],
     note: "The January 2025 revision, which the house calls a complete rework: a new cypress supplier, a custom vintage Mousse de Saxe base, Mysore sandalwood and dragon\u2019s blood resin. The 2021 has none of those last four.",
@@ -786,6 +835,183 @@ window.FRAGRANCE_NOTES = {
     missing: "No information as of yet.",
     note: "Nothing that could be checked names its materials.",
     source: { name: "Qimu & Musicians", url: "https://qimunmusicians.com/collections/all" },
+  },
+
+  // ============================================================
+  // OM PARFUMS (2026-10-10). The house's own page first, where one could
+  // be read; Fragrantica beneath it, as Ataraxia's are split. Nymphaea
+  // Caerulea, Cannabis Café and Smoke Oud have no key: the house lists
+  // the first two with no notes, its Smoke Oud page could not be found,
+  // and no fallback carries any of the three — so their windows say the
+  // notes have not been found yet. The house's site and Fragrantica could
+  // only be read through search summaries from here.
+  // ============================================================
+  "om:02": {
+    say: "The house’s own notes",
+    flat: ["Rum", "Black Cherry", "Whiskey", "Anise", "Tobacco", "Patchouli", "Cedar Wood", "Benzoin", "Tolu Balsam", "Oakmoss", "Cashmeran", "Cabreuva", "Labdanum", "Burnt Sugar", "Suede", "Animal Notes", "Oak Barrel"],
+    note: "Extrait de parfum at 25%. The house’s line for it: “Think of Hemingway and his women, think of Papa Doble” — the black cherry drink made for him — and its rum material, it says, runs “from Jamaican Rum Extract to its absolute form”.",
+    source: { name: "OM Parfum", url: "https://omparfumfragrances.com/products/lust-%E8%89%B2%E6%85%BE" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Black Cherry", "Tobacco", "Whiskey", "Tolu Balsam", "Burnt Sugar", "Rum", "Wood Barrel", "Labdanum", "Oak", "Animal Notes", "Anise", "Patchouli", "Cashmeran", "Cabreuva", "Benzoin", "Suede", "Oakmoss", "Cedar"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/OM-Parfum/Lust-109626.html" },
+    },
+  },
+  "om:03": {
+    say: "The house’s own notes",
+    flat: ["Epic Banana", "Fresh Apple", "Barbecue Smoke", "Olibanum Vulcain", "Styrax Resinoid", "Cade Oil", "Copaiba Balsam", "Underground Tunnel", "Tomato Leaf Absolute", "Fruity Notes", "Amber Fossil", "Guaiac Wood", "Storax Resin", "Vetiver Indonesia", "Woody Notes", "Benzoin Sumatra", "Osmanthus Absolute", "Huang Qi", "Laos Oud", "Selani Safi Oud", "Beeswax", "Oakmoss", "Civette", "Castoreum"],
+    note: "A collaboration with DeVulgares Parfums Berlin, 2024, in a limited run. The house marks its civet and castoreum as synthetic, and says its Amber Fossil is drawn from tree resin fossilised some 35 million years ago, in the Himalayas.",
+    source: { name: "OM Parfum", url: "https://omparfumfragrances.com/products/burnana" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Banana", "Smoke", "Guaiac Wood", "Beeswax", "Castoreum", "Styrax", "Cade Oil", "Copaiba Balm", "Oakmoss", "Oud", "Osmanthus", "Olibanum", "Apple", "Civet", "Laotian Oud", "Benzoin", "Amber", "Tomato Leaf", "Vetiver"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/OM-Parfum/Burnana-105510.html" },
+    },
+  },
+  "om:05": {
+    say: "The house’s own notes",
+    missing: "The house’s page names more than a hundred materials, and could not be read whole from here.",
+    note: "The house says it is highly concentrated, with 30 percent of raw materials, and that its name stands for a time of hardship — misfortune, separation, illness slow to heal.",
+    source: { name: "OM Parfum", url: "https://omparfumfragrances.com/products/x" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Cocoa", "Indian Oud", "Thailand Oud", "Cambodian Oud", "Castoreum", "Paprika", "Goat’s Milk", "Civet", "Hinoki Incense", "Amyris", "Plum", "Jasmine", "Butter", "Orris", "Guaiac Wood", "Oak", "Sichuan Pepper", "Sandalwood", "Patchouli", "Cheese", "Vanilla", "Oakmoss", "Jonquil", "Amber", "Lemon", "Cedarwood", "Cedar"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/OM-Parfum/Dark-Night-of-the-Soul-105508.html" },
+    },
+  },
+  "om:06": {
+    flat: ["Benzoin", "Apricot", "Peach", "Butterscotch", "Peppermint", "Cacao", "Indian Oud", "Vetiver", "Oud", "Linden Blossom", "Gardenia", "Champaca", "Coconut Milk", "Sandalwood", "Patchouli", "Tobacco"],
+    note: "The house’s own page for it could not be found from here, so these are Fragrantica’s. Fragrantica says it is drawn from the Tao Te Ching’s thoughts on how nothing in a life lasts.",
+    source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/OM-Parfum/This-Too-Shall-Pass-105509.html" },
+  },
+  "om:07": {
+    say: "The house’s own notes",
+    flat: ["Bergamot", "Linden Blossom", "Jasmine Flower", "Apricot", "White Lilac", "Green Tea", "Osmanthus Flower", "Buddhawood", "Sandalwood", "Clary Sage Absolute", "Mate Absolute", "Iso E Super", "Amberwood", "Cannabis", "Benzoin Sumatra", "Vanilla", "Thai Oud", "Clean Musk"],
+    note: "The first of the house’s Berlin Map series, after the linden trees of Unter den Linden; extrait at 25%. The house’s list names Amberwood as Symrise’s Amberwood F.",
+    source: { name: "OM Parfum", url: "https://omparfumfragrances.com/products/when-the-linden-blooms-%E6%A4%B4%E6%A8%B9%E8%8A%B1%E5%BD%B1" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Linden Blossom", "Osmanthus", "Apricot", "Sandalwood", "Green Tea", "Mate", "Clary Sage", "Musk", "Cannabis", "Iso E Super", "Vanilla", "Jasmine", "Bergamot", "Benzoin", "Lilac", "Oud", "Amberwood"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/OM-Parfum/When-The-Linden-Blooms-104172.html" },
+    },
+  },
+  "om:08": {
+    flat: ["Passion Fruit", "Gardenia", "Lava Cake", "Orange Flower", "Cocktail Accord", "Patchouli Sumatra", "Patchouli Coeur", "Sandalwood", "Civet Absolute", "Tobacco Absolute", "Cacao Absolute", "Vanilla Absolute", "Benzoin Sumatra", "Musk", "Brunei Oud", "Oud Siliguri", "Brachin Oud"],
+    note: "The materials the house’s page names, read through a search summary — its own order and wording may differ. Extrait at 45%, one batch only: “the first scent of a Religious Trilogy from our Oudtopia”. The house marks its civet as synthetic.",
+    source: { name: "OM Parfum", url: "https://omparfumfragrances.com/products/passion-oud" },
+  },
+
+  // ============================================================
+  // OUTSIDER PARFUM (2026-10-10), OM Parfum's sister house, on the same
+  // site. Every list is flat, the house's and Fragrantica's alike. Draco's
+  // own page could not be found, so its list is Fragrantica's alone.
+  // ============================================================
+  "outsider:01": {
+    say: "The house’s own notes",
+    flat: ["Lava", "Shiso Leaf", "Geranium", "Turmeric", "Birch Tar", "Cacao Resinoid", "Java Vetiver", "Styrax Resinoid", "Metallic Notes", "Dry Tea Leaves", "Mate Absolute", "Vanilla", "Oud Accord", "Oakmoss"],
+    note: "The second of the house’s Mythical Creatures, after the Fuzanglong. The house’s list writes its shiso as an essential oil, its turmeric as a CO₂ extract and its vetiver as Vetiver Java.",
+    source: { name: "Outsider Parfum", url: "https://omparfumfragrances.com/products/dragons-breath-%E9%BE%8D%E4%B9%8B%E6%81%AF" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Metallic Notes", "Birch Tar", "Geranium", "Turmeric", "Vanilla", "Oakmoss", "Styrax", "Cacao", "Shiso", "Mate", "Lava", "Tea", "Oud", "Java Vetiver Oil"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Outsider-Parfum/Dragon-s-Breath-138900.html" },
+    },
+  },
+  "outsider:02": {
+    flat: ["Frankincense", "Green Apple", "Water Notes", "Patchouli", "Castoreum", "Lavender", "Geranium", "Leather", "Tobacco", "Civet", "Musk", "Pea", "Oud", "Texas Cedar", "Cade Oil", "Evernyl", "Himalayan Cedar"],
+    note: "The first of the house’s Mythical Creatures, after Ladon. Its own page on the house’s site could not be found from here, so these are Fragrantica’s.",
+    source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Outsider-Parfum/Draco-138898.html" },
+  },
+  "outsider:03": {
+    flat: ["Clove", "Gardenia", "Orange Juice", "Dirty Chocolate", "Sandalwood", "Smoke", "Leather", "Dulce de Leche", "Civette", "Tobacco Leaf", "Creamy Cream", "Woody Notes", "Dark Patchouli", "Whiskey", "Cashmeran"],
+    note: "A holiday edition of 2024, since discontinued. The house marks its civet as synthetic and vegan.",
+    source: { name: "Outsider Parfum", url: "https://omparfumfragrances.com/products/chocolate-crotch-coming-12-7" },
+  },
+  "outsider:04": {
+    say: "The house’s own notes",
+    flat: ["Clean Fresh Air", "Bergamot", "Lime", "Sweet Orange", "Neroli", "Muguet", "Angelica Root", "Leather", "Orange Flower Absolute", "Atlas Cedarwood Absolute", "Patchouli", "Saffron", "Pine Tree", "Soil", "Vetiver", "Cashmeran", "Musk", "Oakmoss"],
+    note: "After the animal trials of the Middle Ages. The house says it has “upgraded most materials”, that its orange flower absolute is Egyptian, and that its Bourbon vetiver is highly dosed.",
+    source: { name: "Outsider Parfum", url: "https://omparfumfragrances.com/products/guilty-as-charged-%E9%9D%9E%E7%90%86%E6%80%A7%E9%82%8F%E8%BC%AF" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Lily of the Valley", "Orange Blossom", "Angelica Root", "Sweet Orange", "Atlas Cedar", "Patchouli", "Cashmeran", "Bergamot", "Saffron", "Oakmoss", "Leather", "Vetiver", "Neroli", "Musk", "Lime", "Pine", "Airy Note", "Soil Tincture"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Outsider-Parfum/Guilty-As-Charged-138901.html" },
+    },
+  },
+  "outsider:05": {
+    say: "The house’s own notes",
+    flat: ["Amaretto", "Vanilla", "Coffee", "Texas Cedarwood", "Sandalwood", "Jasmine", "Popcorn", "Musk", "White Chocolate"],
+    source: { name: "Outsider Parfum", url: "https://omparfumfragrances.com/products/amaretto-coffee" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["White Chocolate", "Sandalwood", "Amaretto", "Vanilla", "Jasmine", "Popcorn", "Coffee", "Musk", "Texas Cedar"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Outsider-Parfum/Amaretto-Coffee-138894.html" },
+    },
+  },
+
+  // ============================================================
+  // LOST TRIBE (2026-10-10). The house divides Pan's Labyrinth and Dirty
+  // Soda and gives the other three one list each. Kong has no key: no
+  // list could be found for it anywhere, only a retailer's prose, which
+  // is not a list of notes.
+  // ============================================================
+  "lost-tribe:02": {
+    say: "The house’s own notes",
+    flat: ["Oud Accord", "Incense", "Benzoin", "Vanilla", "Amber", "Leather", "Rose"],
+    note: "Part of the house’s Pure Parfum line, made with a New York watch collector known as “The Watch King”. The house’s description also names French vanilla, tonka, Peru balsam and allspice, which its list does not.",
+    source: { name: "Lost Tribe", url: "https://losttribeperfumes.com/products/watch-king" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Leather", "Incense", "Oud", "Allspice", "Benzoin", "Rose", "Peru Balsam", "Tonka Bean", "Vanilla", "Amber"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Lost-Tribe/Watch-King-138620.html" },
+    },
+  },
+  "lost-tribe:03": {
+    version: "The original, 2025",
+    say: "The house’s own notes",
+    top: ["Bergamot", "Rose Otto", "Powder Accord", "Bitter Almond", "White Ambergris"],
+    mid: ["Lavender", "Coumarin", "Rose Absolute", "Ylang Ylang", "Patchouli"],
+    base: ["Sri Lankan Sandalwood", "Siberian Musk", "Malaysian Oud", "French Oakmoss", "Pine Tree Moss", "Fir", "Labdanum", "Bakhoor Tincture"],
+    note: "Made with Rajesh Balkrishnan: a modern fougère round a powder accord of the house’s own. A second version, Pan’s Labyrinth v2, has followed, and is said to keep the same formula. The house writes its lavender as an essential oil and its sandalwood as Sri Lankan Santal.",
+    source: { name: "Lost Tribe", url: "https://losttribeperfumes.com/products/pan-s-labyrinth" },
+    also: {
+      say: "Interpreted notes",
+      top: ["Bitter Almond", "Rose Oil", "Ambergris", "Bergamot"],
+      mid: ["Lavender", "Rose", "Patchouli", "Coumarin", "Ylang-Ylang"],
+      base: ["Natural Musk", "Sandalwood", "Malaysian Oud", "Bakhoor", "Oakmoss", "Labdanum", "Fir"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Lost-Tribe/Pan-s-Labyrinth-119063.html" },
+    },
+  },
+  "lost-tribe:04": {
+    top: ["Lime", "Sweet Orange", "Bergamot", "Pink Pepper"],
+    mid: ["Cassia", "Coriander Seed", "Neroli", "Clove"],
+    base: ["Malaysian Cola Oud", "Thai Cola Oud", "Vanilla", "Tonka Bean", "Benzoin", "Patchouli", "Sandalwood", "Cedar"],
+    note: "Fragrantica carries no page for it.",
+    source: { name: "Lost Tribe", url: "https://losttribeperfumes.com/products/dirty-soda" },
+  },
+  "lost-tribe:05": {
+    say: "The house’s own notes",
+    flat: ["Frankincense", "Lavender", "Bergamot", "Petitgrain", "Pink Peppercorn", "Black Ambergris", "Fir", "Intrepid Cypress", "Patchouli", "Black Spruce", "Juniper", "Clary Sage", "Mint-Sandalwood Co-Distillation", "Mongolian Musk", "Pontianak Oud", "Oakmoss", "Atlas Cedar", "Vetiver", "Thyme", "Sultan Qaboos Bakhoor Tincture"],
+    note: "Made in 2024 in a run of 32 bottles, since discontinued.",
+    source: { name: "Lost Tribe", url: "https://losttribeperfumes.com/products/equatorial" },
+    also: {
+      say: "Interpreted notes",
+      top: ["Frankincense", "Lavender", "Pink Pepper", "Bergamot", "Petitgrain", "Ambergris"],
+      mid: ["Fir", "Cypress", "Black Spruce", "Juniper", "Clary Sage", "Patchouli"],
+      base: ["Mint", "Oakmoss", "Vetiver", "Sandalwood", "Natural Musk", "Agarwood (Oud)", "Atlas Cedar", "Thyme", "Incense"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Lost-Tribe/Equatorial-114769.html" },
+    },
+  },
+  "lost-tribe:06": {
+    say: "The house’s own notes",
+    flat: ["Sandalwood", "Costus Root", "Lavender", "Iris", "Rose", "Ylang Ylang", "Benzoin", "Vanilla"],
+    note: "Pure Parfum, with no oud, no animalic notes and no synthetics, the house says, and over 25 grams of sandalwood oil in every 50ml bottle; its powder is an accord of its own, with orris butter at 15% irones.",
+    source: { name: "Lost Tribe", url: "https://losttribeperfumes.com/products/santal-absolu" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Benzoin", "Sandalwood", "Vanilla", "Ylang Ylang", "Lavender", "Costus", "Rose", "Iris"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Lost-Tribe/Santal-Absolu-138024.html" },
+    },
   },
 
 };

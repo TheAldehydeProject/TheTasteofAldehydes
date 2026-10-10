@@ -8,7 +8,7 @@
 # description of a note." And: "the middle node ... to be called sources,
 # which should house all the sources ... the first source is me."
 #
-# categories/note-library.html carries the library as its own markup —
+# note-library/index.html carries the library as its own markup —
 # every accord, every note, what it is, its variations and its sources —
 # and network.js reads it from there. This writes that markup, between the
 # page's CATALOGUE markers, from:
@@ -34,7 +34,7 @@ import html, importlib.util, json, os, re, sys, unicodedata
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
-PAGE = os.path.join(REPO, "categories", "note-library.html")
+PAGE = os.path.join(REPO, "note-library", "index.html")   # its own address since 2026-10-01; categories/note-library.html is a signpost now
 ACCESSED = "29 Sept. 2026"      # the day a source was read, unless it says otherwise
 
 # ---------- the library, and what research says of it ----------

@@ -1,6 +1,6 @@
 # The Note Library's catalogue
 
-What `categories/note-library.html` says of every note — what it is, what each of its
+What `note-library/index.html` says of every note — what it is, what each of its
 variations means, and the sources each was written from — is written into that page by
 `catalogue.py`, from the files here. **Run by hand, never by the site**, like `tools/seo.py`.
 

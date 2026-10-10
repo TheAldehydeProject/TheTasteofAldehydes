@@ -246,6 +246,8 @@ body.menu-open .menu-trigger:hover { color: var(--brass); }
 body.theories-page,
 body.adar-page,
 body.ataraxia-page,
+body.om-page,
+body.outsider-page,
 body.essay-page,
 body.find-page,
 body.network-page,
@@ -1920,6 +1922,57 @@ body.view-fragrances .sheet-search { display: none; }
   body.sheet-page .menu-trigger,
   .sheet-filters,
   .sheet-search { z-index: 1100; }
+  /* THE FIELD, OPENED, ON A ROW OF ITS OWN (2026-10-10 — the owner: "on
+     the phone, when you open the search bar in the SD page, then you
+     cannot quite see the search bar"). It opened leftwards from the mark
+     in the corner, straight under the Houses and Fragrances buttons,
+     which covered what was typed. So on a phone it drops to a row just
+     under them, the width of the window less its gutters, on the chrome's
+     own ground — and at 16px, since an iPhone zooms the whole page into
+     a field set smaller than that. The mark stays where it was pressed;
+     the answers stand under the field. */
+  /* The box stretches to the left gutter, see-through and letting taps
+     through, so the field below can be its width — measured off the page's
+     own edges rather than the window's, which on a screen with a scrollbar
+     is wider than the page. The mark keeps its own ground, where it was. */
+  .sheet-search.open {
+    left: 13px;
+    justify-content: flex-end;
+    pointer-events: none;
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .sheet-search.open > * { pointer-events: auto; }
+  .sheet-search.open .sheet-search-trigger {
+    margin: -4px -9px -5px;
+    padding: 4px 9px 5px;
+    border-radius: 3px;
+    background: var(--chrome-ground);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  .sheet-search.open .sheet-search-field {
+    position: absolute;
+    top: calc(100% + 18px);
+    left: 0;
+    right: 0;
+    width: auto;
+    box-sizing: border-box;
+    padding: 9px 12px;
+    font-size: 16px;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--chrome-ground);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  .sheet-search.open .sheet-found {
+    top: calc(100% + 68px);
+    left: 0;
+    right: 0;
+    width: auto;
+  }
 }
 
 .sheet {
@@ -13128,3 +13181,207 @@ body.qimu-page {
   .ed-diet-what { font-size: 12px; }
   .ed-diet-smell { font-size: 14px; }
 }
+
+/* ==================================================================
+   A FOLD, A LIST, A RULE — three things in a house's writing, first
+   asked for on Om Parfums (2026-10-10) and open to any house.
+
+   A FOLD is the owner's "collapse-able text that if you click it, then
+   you reveal it": <details class="human-fold">, its summary the fold's
+   name, its writing in a .human-fold-text, which house.js opens on a
+   measured height. A fold inside a fold stands in from the left on a
+   hairline of its own. Its mark is a plus that turns to a cross.
+   A LIST is the owner's numbered points, <ol class="human-list"> (a
+   later one carries on with `start`), set as the writing is set.
+   A RULE is the line the owner asked to have drawn, <hr class="human-rule">,
+   fading in and out at its ends.
+   ================================================================== */
+.human-fold {
+  margin: 26px 0 24px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.human-fold > summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 0;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.human-fold > summary::-webkit-details-marker { display: none; }
+.human-fold > summary::before {
+  content: "";
+  flex: none;
+  width: 13px;
+  height: 13px;
+  background:
+    linear-gradient(currentColor, currentColor) center / 100% 1px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 1px 100% no-repeat;
+  transition: transform 0.45s cubic-bezier(0.42, 0.02, 0.24, 1);
+}
+.human-fold[open] > summary::before { transform: rotate(135deg); }
+.human-fold > summary:focus-visible { outline: 1px solid var(--muted); outline-offset: 4px; }
+.human-fold-text { padding: 4px 0 14px; }
+.human-fold .human-fold {
+  margin: 18px 0 22px;
+  padding-left: 20px;
+  border: 0;
+  border-left: 1px solid var(--line);
+}
+.human-fold .human-fold > summary { padding: 6px 0 10px; }
+.human-list {
+  margin: 0 0 18px;
+  padding-left: 1.6em;
+}
+.human-list li {
+  margin: 0 0 10px;
+  padding-left: 0.35em;
+  color: #45443c;
+}
+.human-list li::marker { font-family: var(--mono); font-size: 0.86em; color: var(--muted); }
+.human-rule {
+  height: 1px;
+  margin: 34px 0 30px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--muted) 18%, var(--muted) 82%, transparent);
+  opacity: 0.7;
+}
+
+/* ==================================================================
+   OM PARFUMS — the tenth house, 2026-10-10, on a near-black ground with
+   gold in it, the house's own colours (its mark is gold on black). Its
+   five tokens, as Ataraxia's are set; what the shared house rules name
+   outright — the reading's colour, the cue's border, the credit — is
+   set again after them. om.js draws its ground and its shatter; see its
+   head for why the page is in pieces at first.
+   ================================================================== */
+.om-page {
+  --bg: #0c0b0f;
+  --bg-2: #17151b;
+  --line: #2e2a34;
+  --ink: #f2ece0;
+  --muted: #a89f8d;
+  --ink-rgb: 242, 236, 224;
+  --om-gold: 216, 176, 106;
+}
+body.om-page { background-color: var(--bg); }
+.om-page .human-text p,
+.om-page .human-list li { color: #d6cebf; }
+.om-page .human-kicker,
+.om-page .human-section-mark,
+.om-page .human-list li::marker,
+.om-page .human-stage { color: rgb(var(--om-gold)); }
+.om-page .human-fold > summary { color: rgb(var(--om-gold)); }
+.om-page .human-fold .human-fold { border-left-color: rgba(var(--om-gold), 0.45); }
+.om-page .human-rule { background: linear-gradient(90deg, transparent, rgba(var(--om-gold), 0.9) 18%, rgba(var(--om-gold), 0.9) 82%, transparent); opacity: 0.8; }
+.om-page .human-part[open] > summary .human-cue,
+.om-page .human-part > summary:hover .human-cue { border-color: rgba(var(--om-gold), 0.7); }
+.om-page .house-credit,
+.outsider-page .house-credit { color: #b3ab9b; }
+.om-page .house-credit-say,
+.om-page .house-credit a,
+.outsider-page .house-credit-say,
+.outsider-page .house-credit a { color: var(--ink); }
+
+/* THE PAGE IN PIECES. While om.js holds it shattered, the page is there
+   underneath, laid out exactly as it will be — so the pieces over it are
+   cut from the same page — and only not shown; and it does not scroll,
+   its scrollbar's room kept so nothing moves when it can again. When the
+   pieces have come home it is shown at once, nothing of its own fading
+   in (`om-landing`), and the pieces are faded off it. The void behind the
+   pieces is darker than the page. */
+html:has(body.om-page) { scrollbar-gutter: stable; }
+html.om-shattered { overflow: hidden; }
+html.om-shattered body.om-page { background-color: #060509; }
+html.om-shattered .page-main > *,
+html.om-shattered .house-credit,
+html.om-shattered .human-foot,
+html.om-shattered .human-rank,
+html.om-shattered .human-readout { opacity: 0 !important; transition: none !important; }
+html.om-landing .page-main > *,
+html.om-landing .house-credit,
+html.om-landing .human-foot,
+html.om-landing .human-rank,
+html.om-landing .human-readout { transition: none !important; }
+.om-shards {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+}
+
+
+/* ==================================================================
+   OUTSIDER PARFUMS — the eleventh house, 2026-10-10, Om's sister: the
+   same near-black, in ivory, with the deep green of the light in the
+   house's own photographs where Om has gold. Its ground is om.js too,
+   in its own colours and without the shatter; THE ECHO is its arrival —
+   the name comes in with a copy of itself beside it that slides into
+   register, which is the twin the drawing behind it keeps.
+   ================================================================== */
+.outsider-page {
+  --bg: #0b0c0b;
+  --bg-2: #151815;
+  --line: #2b302c;
+  --ink: #ece8dc;
+  --muted: #a3a698;
+  --ink-rgb: 236, 232, 220;
+  --out-green: 104, 178, 138;
+}
+body.outsider-page { background-color: var(--bg); }
+.outsider-page .human-text p,
+.outsider-page .human-list li { color: #d3d0c4; }
+.outsider-page .human-kicker,
+.outsider-page .human-section-mark,
+.outsider-page .human-stage { color: rgb(var(--out-green)); }
+.outsider-page .human-part[open] > summary .human-cue,
+.outsider-page .human-part > summary:hover .human-cue { border-color: rgba(var(--out-green), 0.7); }
+@keyframes outsider-echo {
+  from { text-shadow: 0.55em -0.18em 0 rgba(var(--ink-rgb), 0.28); }
+  to { text-shadow: 0 0 0 rgba(var(--ink-rgb), 0); }
+}
+.outsider-page .human-head h1 { animation: outsider-echo 2.6s cubic-bezier(0.3, 0, 0.2, 1) 0.2s both; }
+@media (prefers-reduced-motion: reduce) {
+  .outsider-page .human-head h1 { animation: none; }
+}
+/* The owner's own paragraph in Arabic, on Dragon's Breath: set right to
+   left, and a little larger, the script reading small beside the Latin. */
+.human-text p[lang="ar"] { font-size: 1.12em; line-height: 1.85; }
+
+/* ==================================================================
+   LOST TRIBE — the twelfth house, 2026-10-10, on LINEN: a warm,
+   undyed paper, with the two colours of the house's mark spent on it —
+   its copper and its slate. lost-tribe.js draws the field notes in its
+   margins.
+   ================================================================== */
+body.tribe-page {
+  --bg: #f3efe6; --bg-2: #ebe5d8; --line: #d9d0be;
+  --chrome-ground: rgba(243, 239, 230, 0.82);
+  --tribe-copper: 176, 118, 72;
+  --tribe-slate: 86, 86, 132;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(56% 40% at 4% 10%, rgba(176, 118, 72, 0.07) 0%, transparent 72%),
+    radial-gradient(52% 44% at 96% 92%, rgba(86, 86, 132, 0.06) 0%, transparent 72%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+.tribe-page .human-kicker,
+.tribe-page .human-section-mark { color: rgb(var(--tribe-copper)); }
+.tribe-page .human-stage { color: rgb(var(--tribe-slate)); }
+/* The house's other fragrances, in one line as the owner asked, a little
+   quieter than the writing above them, and where they came from. */
+.human-text p.human-unsmelled { color: #6d6a60; font-size: 0.94em; line-height: 1.85; }
+.human-text p.human-unsmelled-from {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.human-text p.human-unsmelled-from a { color: inherit; text-underline-offset: 3px; }

@@ -1532,3 +1532,16 @@ and is drawn in hairlines`** (nothing where the scale stands at four windows; th
 of it not solid — the clothes are paper and tone, as the hover's), and **`Les Abstraits has its
 armoire with iris …`**, which still finds the iris's violet and the blazer, the dress and the trousers
 by their colours (the irises come a little sooner than the hover's, so they are there by 2.6s).
+
+## 2026-10-10 — Bassist and Drummer written, and a fold in house.js
+
+**Qimu & Musicians is written but for its introduction**: Bassist (top, mid, dry down — patchouli
+"agrees with bass as an instrument more than any other", an amber accord that is unique, and the
+owner's *TL;DR*) and Drummer (its three stages), in the owner's words; "peeks" and "ingredients'"
+put right. Neither says *Description coming soon.* any more. `houses.spec.js` reads all four,
+each in three stages.
+
+**`house.js` opens a FOLD as it opens a part**: `<details class="human-fold">`, a dropdown in a
+house's writing, on a measured height — the part's opening is one function now, `measured`, used
+by both. First used by Om Parfums' introduction; see [the report on the three new houses](2026-10-10-om-outsider-and-lost-tribe.md), which is also where the three new houses
+— **Om Parfums, Outsider Parfums and Lost Tribe**, the tenth to the twelfth — are written up.

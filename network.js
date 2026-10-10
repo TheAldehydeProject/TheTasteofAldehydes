@@ -2581,6 +2581,9 @@
       tale: { name: "Tale Parfums", href: "houses/tale-parfums.html" },
       tombstone: { name: "Tombstone", href: "houses/tombstone.html" },
       qimu: { name: "Qimu & Musicians", href: "houses/qimu-and-musicians.html" },
+      om: { name: "Om Parfums", href: "houses/om-parfums.html" },
+      outsider: { name: "Outsider Parfums", href: "houses/outsider-parfums.html" },
+      "lost-tribe": { name: "Lost Tribe", href: "houses/lost-tribe.html" },
       individual: { name: "Individual fragrances", href: "individual-fragrances/individual-fragrances.html" },
     };
     const TIER_SAY = { top: "Top", mid: "Middle", base: "Base", flat: "Non-pyramidal" };

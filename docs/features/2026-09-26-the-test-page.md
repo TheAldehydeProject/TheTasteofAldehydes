@@ -2038,3 +2038,31 @@ pressed a note seeing every accord — one that answers nothing — chosen clear
 they stood a second or two before; by the press a middle node had turned under it, and the view
 went there. The note and the middle nodes are read in one call now, again just before the press,
 and the note kept 60 pixels from every middle node (it was 45). It passed twice alone.
+
+## 2026-10-10 — thirty-seven new notes, and the catalogue's address
+
+The three new houses and four new fragrances named **116 notes the library did not have**. Most
+were another way of writing a note it has, or a real variation of one, and are written as
+variations (`Civette` is civet in French — no change; `Benzoin Sumatra`, `Texas Cedar`,
+eleven ouds by origin, white and black ambergris — each says how it differs, from two sources at
+least); **37 are new notes**, each in its accord with what it is, its sources, its spellings and a
+figure of its own in `note-figures.js` — Aldehydes (drawn as a chemist draws one, with its fizz),
+Papyrus, Pumpkin, Corn Silk, Corn Silage, Whiskey, Cabreuva, Oak Barrel, Copaiba Balsam,
+Underground Tunnel, Fruity Notes, Huang Qi, Cade Oil, Paprika, Hinoki, Sichuan Pepper, Cheese,
+Jonquil, Linden Blossom, Coconut Milk, Lilac, Buddhawood, Iso E Super, Cannabis, Cocktail Accord,
+Lava, Shiso, Metallic Notes, Pea, Evernyl, Dulce de Leche, Cream, Angelica Root, Popcorn, Powder
+Accord, Bakhoor and the Mint-Sandalwood Co-Distillation. **369 notes, all researched, 1,190
+sources** (`tools/note-library/research/NEW1.py` to `NEW3.py`; `base.json`).
+
+**`catalogue.py` writes to `note-library/index.html`** — it still pointed at
+`categories/note-library.html`, a signpost since 2026-10-01, and would have written the
+catalogue into the signpost. `network.js`'s `HOUSES` names the three new houses, so a note's
+window links to their fragrances. (Same round: [the report on the three new houses](2026-10-10-om-outsider-and-lost-tribe.md).)
+
+**Two tests aimed again, not changed in what they ask.** *A drag still turns it* (with animation
+turned off) started its drag at (700, 400), and at Floral — with Jonquil, Linden Blossom and Lilac
+in it now — Orris's name stands there, and a name is pressable (2026-10-01), so the drag never
+reached the drawing; it starts on open ground now, the first of a few points where the drawing is
+what is under the hand. *A fragrance pressed asks* opened every dropdown in Benzoin's window to
+reach its first fragrance — seventeen of them now — and on this machine that ran past the test's
+time; it opens only the dropdowns that fragrance stands in, outermost first.

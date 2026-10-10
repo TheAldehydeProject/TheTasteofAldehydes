@@ -1716,9 +1716,16 @@ test.describe("the library with animation turned off", () => {
     await expect(stage, "there at once").toHaveAttribute("data-focus", "FLO", { timeout: 1000 });
     expect((await state(page)).flying).toBe(false);
     const a = (await state(page)).yaw;
-    await page.mouse.move(700, 400);
+    // From open ground: a note's name is pressable (2026-10-01), and with
+    // more notes in an accord one can stand where a drag would start.
+    const [fx, fy] = await page.evaluate(() => {
+      const canvas = document.querySelector(".net-canvas");
+      const tries = [[700, 400], [640, 470], [760, 330], [600, 360], [800, 480], [700, 560], [560, 520]];
+      return tries.find(([x, y]) => document.elementFromPoint(x, y) === canvas) || tries[0];
+    });
+    await page.mouse.move(fx, fy);
     await page.mouse.down();
-    await page.mouse.move(860, 420, { steps: 8 });
+    await page.mouse.move(fx + 160, fy + 20, { steps: 8 });
     await page.mouse.up();
     await page.waitForTimeout(200);
     expect(Math.abs((await state(page)).yaw - a), "but a drag still turns it").toBeGreaterThan(0.15);
@@ -1779,8 +1786,14 @@ test("a fragrance pressed asks before the library is left", async ({ page }) => 
   await page.locator(".net-back").click();
   await page.evaluate(() => window.NetScene.open("Benzoin"));
   await expect(page.locator(".net-note")).toBeVisible({ timeout: 20000 });
-  for (const s of await page.locator(".net-note summary").all()) await s.click();
+  // Only the dropdowns the first of them stands in, outermost first — a note
+  // used as widely as Benzoin has seventeen, and pressing them all took
+  // this machine past the test's time.
   const inTier = page.locator(".net-note a[data-key]").first();
+  for (let i = 0; i < 6 && !(await inTier.isVisible()); i++) {
+    await page.locator(".net-note details:not([open]):has(a[data-key]) > summary").first().click();
+  }
+  await expect(inTier).toBeVisible();
   await inTier.scrollIntoViewIfNeeded();
   const tierHref = await inTier.getAttribute("href");
   await inTier.click();
