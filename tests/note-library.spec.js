@@ -69,6 +69,16 @@ const fs = require("fs");
 const path = require("path");
 const { serveDependenciesLocally, blockThreeJs, collectPageErrors } = require("./helpers");
 
+// WITHOUT THE TEST TOOL'S OWN RECORDING (its trace), 2026-10-10. The tool
+// copies the whole page at every step it records, and this page holds the
+// whole catalogue — 369 notes and 1,190 sources — so every copy held the
+// drawing up: one frame in two or three past 40ms in the sixty-a-second
+// test (the page as it stood before that day just the same, and never once
+// with the recording off), and a fade or a name that had not caught up in
+// time, run beside the rest of the suite. A failure still leaves its
+// screenshot.
+test.use({ trace: "off" });
+
 const LIBRARY = "/note-library/";
 const TEST_PAGE = LIBRARY;                 // the page these tests were written for, now the library
 
@@ -1417,8 +1427,17 @@ test("at an accord, a note's name pressed opens its window", async ({ page }) =>
   expect(await page.locator(".net-label.is-on").count(), "nor seeing every accord").toBe(0);
   await goTo(page, 3, "FLO");
   await expect.poll(() => page.locator(".net-label.is-on").count(), { timeout: 8000 }).toBeGreaterThan(3);
-  // (A name drifts as its network turns, so it is pressed where it is.)
-  const name = page.locator(".net-label.is-on").nth(1);
+  // (A name drifts as its network turns, so it is pressed where it is —
+  // and one with room round it: a name that comes to touch another is
+  // taken off until it is clear, so they are never printed one over the
+  // other, and one only 7px under its neighbour could go as it was pressed.)
+  const clear = await page.evaluate(() => {
+    const boxes = [...document.querySelectorAll(".net-label.is-on")].map((e) => e.getBoundingClientRect());
+    const room = (a, b) => Math.max(b.left - a.right, a.left - b.right, b.top - a.bottom, a.top - b.bottom);
+    const k = boxes.findIndex((a, i) => i > 0 && boxes.every((b, j) => j === i || room(a, b) > 24));
+    return k > 0 ? k : 1;
+  });
+  const name = page.locator(".net-label.is-on").nth(clear);
   const word = (await name.textContent()).trim();
   const at = await name.boundingBox();
   await page.mouse.click(at.x + at.width / 2, at.y + at.height / 2);
@@ -1454,9 +1473,34 @@ test("the Note Library is named beside the Menu", async ({ page }) => {
   expect(Math.abs(box.y + box.height / 2 - (menu.y + menu.height / 2)), "on its line").toBeLessThan(6);
 });
 
-/* SIXTY FRAMES A SECOND is tests/note-library-frames.spec.js since
-   2026-10-10: it is measured without the test tool's own recording, which
-   can only be turned off for a whole file. */
+/* SIXTY FRAMES A SECOND: every frame's own work — the drawing's and the
+   page's — through the expansion, a journey and the collapse, is a part of
+   the sixtieth of a second a frame has. (What this machine's software
+   drawing then takes is not the page's, and a graphics card does it in a
+   moment.) Measured without the test tool's own recording (its trace):
+   recording the page while it draws stalled one frame in two or three past
+   40ms on this machine (2026-10-10), the page before that day's changes
+   just the same, and never once with it off — the tool's, not the page's;
+   it is off for this whole file (test.use, at the top). */
+test("every frame of every transition is quick enough for sixty a second", async ({ page }) => {
+  test.setTimeout(150000);
+  await open(page);
+  await page.evaluate(() => window.NetScene.reset());
+  await expandIt(page);
+  await goTo(page, 8, "WOO");
+  await page.keyboard.press("ArrowLeft");
+  await expect(page.locator(".net-stage")).toHaveAttribute("data-focus", "BRW", { timeout: 20000 });
+  await page.locator(".net-expand").click();
+  await expect(page.locator(".net-stage")).toHaveAttribute("data-state", "one", { timeout: 30000 });
+  const s = await page.evaluate(() => window.NetScene.stats());
+  // A frame has 16.7ms at sixty a second. The page's own work — here on a
+  // machine drawing in software and running other tests beside it — is a
+  // part of that on average, and very nearly always inside it.
+  expect(s.frames, "frames drawn").toBeGreaterThan(60);
+  expect(s.mean, "a frame's own work, on average, in ms").toBeLessThan(7);
+  expect(s.p95, "nearly every frame's").toBeLessThan(16.7);
+  expect(s.max, "and no stall — a drawing made for the first time mid-way, say").toBeLessThan(40);
+});
 
 /* WITHOUT ITS 3D LIBRARY the page says so, and the catalogue is the page:
    every note, by accord, as a plain list. */
