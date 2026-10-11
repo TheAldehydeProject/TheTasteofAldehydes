@@ -614,8 +614,14 @@ test("Les Abstraits has its armoire with iris on one side and a drip down the wh
   // dripping slower, less filling") — a drop every two or three seconds
   // and thirty-two to the brim since it was halved again ("half the
   // filling speed") — so the minute and a half it takes to fill is run
-  // through rather than waited out.
-  await page.clock.install();
+  // through rather than waited out. THE CLOCK IS HELD while the page loads
+  // (2026-10-11): installed, it runs on its own, so a page slow to load —
+  // as under the whole suite — had its first drop already falling through
+  // the foot of the window by the first reading (43 specks there, where
+  // the reading wants under 20). Held, it moves only when the test moves
+  // it, and the drop is where it always is at that moment.
+  await page.clock.install({ time: new Date("2026-10-11T12:00:00") });
+  await page.clock.pauseAt(new Date("2026-10-11T12:00:01"));
   await page.goto(ABSTRAITS);
   const read = () => page.evaluate(() => {
     const el = document.querySelector(".human-field");

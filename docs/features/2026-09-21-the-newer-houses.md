@@ -739,7 +739,11 @@ narrow desktop window it stays small.
 Tested: the page's drip test now runs **on a clock of the test's own** (`page.clock`): the
 minute and more the slower beaker takes to fill is run through rather than waited out — two
 and a half seconds at the top, then eighty at the foot, after which the drops have landed, the
-beaker has filled and it has spilled.
+beaker has filled and it has spilled. **Since 2026-10-11 that clock is held while the page loads**
+(`pauseAt`): installed, it ran on its own, so under the whole suite a page slow to load had its
+first drop already falling through the foot of the window at the first reading (43 specks where
+the test wants under 20; measured: the drop crosses there about three tenths of a second after
+the reading). Held, it moves only when the test moves it.
 
 ### Clothes in the page's armoire too
 
