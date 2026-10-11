@@ -20,7 +20,10 @@
 //   THE DOOR      hinged on the left and standing SLIGHTLY AJAR, swung a
 //                 little way into the room behind, so it is seen narrowed
 //                 in perspective — its four panels with it — its knob near
-//                 the open edge.
+//                 the open edge. Since 2026-10-11, later, a little LESS
+//                 open at the head of the page, and swinging further open
+//                 as the page is read, to a little under half way at its
+//                 foot (`AJAR`, `AJAR_MOST`).
 //   THE LIGHT     coming through the gap between the door and the jamb: a
 //                 sliver of pale light the height of the opening, glowing
 //                 softly round itself, a thin line of it under the door,
@@ -63,8 +66,17 @@
   const LIGHT = "226, 246, 222";   // the light's heart, white with the green in it
 
   const TALL_OF = 2.25;            // the frame's height, of its width
-  const AJAR = 0.34;               // radians the door stands open
-  const AJAR_HAND = 0.12;          // and how much more under the hand
+  // LESS OPEN, AND OPENING AS THE PAGE IS READ (2026-10-11, later — "the
+  // door in outsider parfums is perfect; i just want you to make it so
+  // that it is less open and opens more when you scroll (but not
+  // entirely)"): it stands a little ajar at the head of the page (it stood
+  // at 0.34) and swings open as the page goes down, to AJAR_MOST at the
+  // foot — a little under half of the way a door goes, never all of it —
+  // following the scroll softly (AJAR_EASE), as a door swings.
+  const AJAR = 0.16;               // radians the door stands open, at the head of the page
+  const AJAR_MOST = 0.64;          // and at its foot
+  const AJAR_EASE = 3.2;           // how quickly it follows the page, a second
+  const AJAR_HAND = 0.1;           // and how much more under the hand
   const BUILD = 2.2;               // seconds, drawn up from the floor
   const LIGHT_IN = 1.3;            // seconds for the light to come up, once the door stands
   const MOTES = 70;                // dust in the light
@@ -230,7 +242,12 @@
   // ============================================================
   // DRAWING
   // ============================================================
-  let handX = -99999, handY = -99999, give = 0;
+  let handX = -99999, handY = -99999, give = 0, swing = 0;
+  /** How far down the page is read, 0 at its head and 1 at its foot. */
+  function readTo() {
+    const most = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    return clamp((window.scrollY || window.pageYOffset || 0) / most, 0, 1);
+  }
   function draw(clock, dt) {
     if (!frame) return;
     ink.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -244,7 +261,12 @@
     const [cx, cy] = P(d.W / 2, -d.T / 2);
     const near = handX > -9000 && Math.hypot(handX - cx, handY - cy) < d.T * 0.75 ? 1 : 0;
     give += (near - give) * (REDUCE ? 1 : Math.min(1, dt * 2.2));
-    const open = AJAR + AJAR_HAND * give;
+    // With reduced motion the door does not follow the page: it stands as
+    // it does at the head of it.
+    const read = REDUCE ? 0 : readTo();
+    swing += (read - swing) * (REDUCE ? 1 : Math.min(1, dt * AJAR_EASE));
+    const open = AJAR + (AJAR_MOST - AJAR) * ease(swing) + AJAR_HAND * give;
+    canvas.dataset.open = open.toFixed(3);
     const breathe = REDUCE ? 1 : 0.94 + 0.04 * Math.sin(clock * 1.3) + 0.02 * Math.sin(clock * 3.1 + 1.2);
     const lit = (REDUCE ? 1 : ease((clock - BUILD * 0.8) / LIGHT_IN)) * breathe * (1 + 0.25 * give);
 

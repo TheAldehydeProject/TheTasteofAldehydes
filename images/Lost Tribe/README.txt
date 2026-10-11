@@ -15,5 +15,7 @@ from losttribeperfumes.com, and credited at the foot of the page.
                           list, the second stands under it.
                           "Pans Labyrinth" is Pan's Labyrinth.
 
-  Equatorial came without a picture; its plate is the hatch until one
-  does.
+  Equatorial.webp         Equatorial's one picture, uploaded by the owner
+                          on 2026-10-11 after the others (the bottle on
+                          camouflage): its part's picture and its square
+                          in the list.

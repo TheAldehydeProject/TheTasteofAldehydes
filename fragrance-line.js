@@ -379,6 +379,11 @@
       const c = document.createElement("canvas");
       c.width = cw; c.height = ch;
       const g = c.getContext("2d", { willReadFrequently: true });
+      // A SEE-THROUGH PICTURE is read on white paper (2026-10-11): a bottle
+      // cut out of its ground has nothing round it, which a canvas reads as
+      // black, and Quintessentially Amber's frame was filled black for it.
+      g.fillStyle = "#fff";
+      g.fillRect(0, 0, cw, ch);
       g.drawImage(img, 0, 0, cw, ch);
       d = g.getImageData(0, 0, cw, ch).data;
     } catch (e) { return null; }

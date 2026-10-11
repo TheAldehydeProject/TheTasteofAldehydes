@@ -289,7 +289,7 @@ test("Outsider is a door standing ajar in the left margin, the light coming thro
 /* LOST TRIBE'S FIELD NOTES: the house's own stag and the creatures and
    ingredients of its six, down the margins, drawn in the house's colours;
    and its other fragrances "separated by a comma in a single line". */
-test("Lost Tribe draws its field notes in the margins, and lists the rest on one line", async ({ page }) => {
+test("Lost Tribe draws its field notes in the margins, and lists the rest on one line, in a dropdown", async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(TRIBE);
@@ -315,6 +315,20 @@ test("Lost Tribe draws its field notes in the margins, and lists the rest on one
   // The ten found on 2026-10-11, in their places.
   ["Blu", "Dubai", "Easter Egg", "Electric Bloom", "Lola’s Lemonana", "Parc Florale", "Prince of Persia", "Red YaYo (Rose Edition)", "Sunny Nights", "The Hamptons"]
     .forEach((n) => expect(names, n).toContain(n));
+  // IN A DROPDOWN (2026-10-11, later — "make image 1 a dropdown list"): the
+  // line stands in a fold, shut until it is opened, its count beside its
+  // name the number of names in it.
+  const fold = after.locator("details.human-fold.human-unsmelled-fold");
+  await expect(fold).toHaveCount(1);
+  expect(await fold.evaluate((d) => d.open), "shut at first").toBe(false);
+  await expect(fold.locator("p.human-unsmelled")).toBeHidden();
+  await expect(fold.locator(".human-fold-count")).toHaveText(String(names.length));
+  await fold.locator("summary").click();
+  await expect(fold.locator("p.human-unsmelled")).toBeVisible();
+  // Equatorial's picture, uploaded after the others, in its part and its square.
+  await expect(page.locator("#part-05 .human-plate img")).toHaveAttribute("src", /Equatorial\.webp$/);
+  await expect(page.locator("#part-05 .human-thumb img")).toHaveAttribute("src", /Equatorial\.webp$/);
+  expect(await page.locator("#part-05 .human-plate img").evaluate((i) => i.complete && i.naturalWidth > 0)).toBe(true);
   expect(errors).toEqual([]);
 });
 
@@ -392,9 +406,109 @@ test("Lost Tribe's picture on the Houses view is cropped to its frame", async ({
    twin (its merging motifs), are gone from the code. */
 test("the loose shards and Outsider's merging motifs are gone", () => {
   const src = read("motifs.js");
-  ["function shard(", "outsiderMark", "outsiderRing"].forEach((w) => expect(src, w).not.toContain(w));
+  ["function shard(", "outsiderMark", "outsiderRing", "function omMerge("].forEach((w) => expect(src, w).not.toContain(w));
 });
-for (const [no, kinds] of [["10", ["omMerge", "omRing"]], ["11", ["door"]], ["12", ["flock", "leafFall", "pollenRise"]]]) {
+
+/* OM'S RINGS, THE MOTIF (2026-10-11, later — "lets focus on the two circles
+   that converge together while rotating in 3D; i want you to make copies of
+   those and focus on that. make the circles unique every time thet
+   generate"): several standing at once, each of two or three circles, and
+   no two drawn alike. */
+test("Om's rings on the Houses view are several at once, and each drawn its own way", async ({ page }) => {
+  test.setTimeout(60000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/scent-descriptions/#house-10");
+  await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
+  await expect.poll(() => page.evaluate(() => window.HouseMotifs.rings().length), { timeout: 20000 }).toBeGreaterThanOrEqual(3);
+  const rings = await page.evaluate(() => window.HouseMotifs.rings());
+  rings.forEach((r) => expect(r.length, "two or three circles to each").toBeGreaterThanOrEqual(2));
+  const look = (st) => JSON.stringify([st.line, st.ticks, st.beads, st.double > 0, st.cardinals, st.gold, Math.round(st.width * 10)]);
+  const all = rings.flat().map(look);
+  expect(new Set(all).size, `no two circles drawn alike: ${all.join(" ")}`).toBe(all.length);
+});
+/* OUTSIDER'S DOOR ON THE HOUSES VIEW, in the dark (2026-10-11, later — "fix
+   the door; the door graphics are really weird. give it physics, make the
+   light actual light, and darken the screen accordingly please"): the view
+   goes dark behind the houses and the page's words turn light; the door
+   stands shut, is pushed and swings open past where it stands and back,
+   settling ajar; and its light is light on the dark — bright where the gap
+   is and on the floor before it, nothing like it across the room. Leaving
+   the house, the dark goes and the words are themselves again. */
+test("Outsider's door on the Houses view darkens the room, swings on its hinge, and lets its light through", async ({ page }) => {
+  test.setTimeout(90000);
+  const errors = collectPageErrors(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/scent-descriptions/#house-11");
+  await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
+  await expect(page.locator("body")).toHaveClass(/sheet-night/, { timeout: 20000 });
+  // The dark is the motifs' own ground; the words are light on it.
+  const ground = await page.locator(".sheet-motifs").evaluate((c) => getComputedStyle(c).backgroundColor);
+  const g = ground.match(/[\d.]+/g).map(Number);
+  expect(g[3], "the room dark behind the houses: " + ground).toBeGreaterThan(0.8);
+  const menu = await page.locator(".menu-trigger").evaluate((m) => getComputedStyle(m).color);
+  expect(menu.match(/\d+/g).slice(0, 3).map(Number).every((v) => v > 180), "the Menu light on it: " + menu).toBe(true);
+  // THE SWING: shut, then pushed open past where it settles, and back.
+  let most = 0, settled = 0;
+  for (let i = 0; i < 40; i++) {
+    const d = await page.evaluate(() => window.HouseMotifs.doors()[0]);
+    if (d && d.pushed) { most = Math.max(most, d.angle); settled = d.angle; }
+    await page.waitForTimeout(150);
+  }
+  expect(most, "it swung open").toBeGreaterThan(0.6);
+  expect(settled, "and settled ajar, back from the furthest it swung").toBeLessThan(most - 0.02);
+  expect(settled).toBeGreaterThan(0.3);
+  // THE LIGHT: bright where the gap and the floor before it are, on the left;
+  // across the room on the right, none.
+  const light = await page.locator(".sheet-motifs").evaluate((c) => {
+    const k = c.width / innerWidth, d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+    let near = 0, far = 0;
+    for (let y = 0; y < c.height; y += 2) for (let x = 0; x < c.width; x += 2) {
+      const i = (y * c.width + x) * 4;
+      if (d[i + 3] < 60 || d[i] + d[i + 1] + d[i + 2] < 360) continue;
+      if (x / k < innerWidth * 0.35) near++; else if (x / k > innerWidth * 0.7) far++;
+    }
+    return { near, far };
+  });
+  expect(light.near, "light through the gap and on the floor").toBeGreaterThan(400);
+  expect(light.far, "and none across the room").toBeLessThan(light.near / 20);
+  // On to the next house: the dark goes, the words are themselves again.
+  await page.keyboard.press("ArrowDown");
+  await expect(page.locator("body")).not.toHaveClass(/sheet-night/, { timeout: 8000 });
+  expect(errors).toEqual([]);
+});
+
+/* LOST TRIBE'S BIRDS ON THE HOUSES VIEW, flown as on the house's own page
+   (2026-10-11, later — "why when you click the birds they disappear and
+   restart? dont do that? animate them the same way as inside the page
+   please"). A press on the page, away from any house, lets nothing go — it
+   counted as a drag, which let the house at the front go and started its
+   motifs again — and the birds turn from the hand, flapping faster. */
+test("Lost Tribe's birds on the Houses view stay when the page is pressed, and scatter from the hand", async ({ page }) => {
+  test.setTimeout(90000);
+  const errors = collectPageErrors(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/scent-descriptions/#house-12");
+  await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
+  const inView = () => page.evaluate(() => window.HouseMotifs.flocks().flat().filter((b) => b.x > 160 && b.x < innerWidth - 160 && b.y > 80 && b.y < innerHeight - 80));
+  await expect.poll(async () => (await inView()).length, { timeout: 40000 }).toBeGreaterThan(2);
+  await page.mouse.move(40, 870);
+  await page.mouse.down();
+  await page.waitForTimeout(160);           // a press held as long as a hand holds one
+  await page.mouse.up();
+  await page.waitForTimeout(500);
+  expect(await page.evaluate(() => document.getElementById("sheet").classList.contains("musing")), "the house at the front is still rested on").toBe(true);
+  expect((await page.evaluate(() => window.HouseMotifs.census())).flock || 0, "and its birds are still flying").toBeGreaterThan(0);
+  // The hand among them: they turn from it, flapping faster.
+  const birds = await inView();
+  expect(birds.every((b) => b.rate <= 10.5), "flapping at their own pace").toBe(true);
+  const b = birds[0];
+  await page.mouse.move(b.x + Math.sign(b.vx) * 20, b.y, { steps: 3 });
+  await page.waitForTimeout(250);
+  const now = await page.evaluate(() => window.HouseMotifs.flocks().flat());
+  expect(now.some((o) => o.rate > 11), "the near ones flap faster, turning away").toBe(true);
+  expect(errors).toEqual([]);
+});
+for (const [no, kinds] of [["10", ["omRing"]], ["11", ["door"]], ["12", ["flock", "leafFall", "pollenRise"]]]) {
   test(`the Houses view's motifs come up for house ${no} at the front`, async ({ page }) => {
     test.setTimeout(60000);
     const errors = collectPageErrors(page);

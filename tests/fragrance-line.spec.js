@@ -355,6 +355,13 @@ test("boxes and cards fill each frame with the picture itself, placed on the bot
   const cv = await page.locator(".frag-item", { hasText: "CV99" }).locator(".frag-t-pic")
     .evaluate((pic) => getComputedStyle(pic).backgroundColor);
   expect(cv, "CV99's frame is its picture's own white").toBe("rgb(255, 255, 255)");
+  // A SEE-THROUGH PICTURE is read on white paper (2026-10-11 — "Quintessentially
+  // amber in the fragrances SD page should have a different colour"): its
+  // bottle is cut out of its ground, which a canvas reads as black, and its
+  // frame was filled black for it.
+  const qa = await page.locator(".frag-item", { hasText: "Quintessentially Amber" }).locator(".frag-t-pic")
+    .evaluate((pic) => getComputedStyle(pic).backgroundColor);
+  expect(qa, "Quintessentially Amber's frame is white, not black").toBe("rgb(255, 255, 255)");
 });
 
 /* THE CHOICE IS KEPT for the next visit, in this browser. */

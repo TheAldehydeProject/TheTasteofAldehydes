@@ -941,7 +941,13 @@
   }
   function autoRest(now) {
     if (!AUTO_REST) return;
-    const still = pos === target && Number.isInteger(target) && !dragging && !snapAt;
+    // A PRESS IS NOT A DRAG (2026-10-11, later — "why when you click the
+    // birds they disappear and restart?"): the pointer pressed and let go
+    // where it was moves nothing, and lets go of nothing — it counted as a
+    // drag from the moment it went down, so the house at the front was let
+    // go, its motifs faded, and they came up again from the start once the
+    // press was over. Only a drag that has moved the helix (`dragged`) does.
+    const still = pos === target && Number.isInteger(target) && !(dragging && dragged) && !snapAt;
     if (!still) { stillSince = 0; letGoAuto(); return; }
     if (byHand || !sheet.classList.contains("drawn") || sheet.classList.contains("searching") ||
         document.body.classList.contains("sheet-leaving")) return;

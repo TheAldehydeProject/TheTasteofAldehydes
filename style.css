@@ -2268,6 +2268,26 @@ body.sheet-leaving .sheet.scripted .sheet-frame:not(.chosen),
 body.sheet-leaving .sheet.scripted .sheet-field,
 body.sheet-leaving .sheet.scripted .sheet-axis-no,
 body.sheet-leaving .sheet.scripted .sheet-nav,
+/* THE ROOM GONE DARK (2026-10-11, later): while Outsider's door stands on
+   the Houses view the motifs darken the view behind the houses, and the
+   page's own words — the Menu, its name, the houses' labels, the reading
+   at the side, the search — are turned light, as on a dark page
+   (`sheet-night`, put on the body by motifs.js). */
+body.sheet-page .menu-trigger,
+.sheet-where,
+.sheet-search,
+.sheet.scripted .sheet-frame .sheet-caption,
+.sheet.scripted .sheet-frame > .sheet-number,
+.sheet-nav-at,
+.sheet-nav-at span { transition: color 0.9s var(--menu-ease); }
+body.sheet-night:not(.menu-open) .menu-trigger,
+body.sheet-night .sheet-where,
+body.sheet-night .sheet-search,
+body.sheet-night .sheet.scripted .sheet-frame .sheet-caption,
+body.sheet-night .sheet.scripted .sheet-frame > .sheet-number,
+body.sheet-night .sheet-nav-at { color: #e4e9e2; }
+body.sheet-night .sheet-nav-at span { color: #a8b2a6; }
+body.sheet-night .sheet.scripted .sheet-frame .sheet-name { border-top-color: rgba(228, 233, 226, 0.35); }
 body.sheet-leaving .sheet-motifs {
   opacity: 0 !important;
   filter: blur(6px);
@@ -13384,3 +13404,14 @@ body.tribe-page {
 .om-page .human-text p.human-unsmelled,
 .outsider-page .human-text p.human-unsmelled { color: #a39b8d; }
 .human-after + .human-unsmelled-block { padding-top: 0; }
+/* Lost Tribe's in a DROPDOWN (2026-10-11, later — "make image 1 a dropdown
+   list"): a fold, its count beside its name, the copper of the house's
+   mark on its mark. */
+.human-fold-count {
+  margin-left: auto;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+.human-unsmelled-fold { margin-bottom: 18px; }
+.human-unsmelled-fold .human-fold-text p.human-unsmelled { margin: 2px 0 6px; }
+.tribe-page .human-unsmelled-fold > summary::before { color: rgb(var(--tribe-copper)); }
