@@ -719,6 +719,72 @@ test("Les Abstraits' armoire stands clear of the scale down the side, and is dra
   }
 });
 
+/* LES ABSTRAITS IS QUICK TO DRAW (2026-10-11 — asked whether its page
+   should be smoothed "the same way" Om's was: "Yes"). The armoire is quieted
+   over the writing by taking it back with a gradient (destination-out), and
+   that was laid over the WHOLE WINDOW every frame — 36 frames a second on
+   the test machine against 58 without it. It is laid over the box the
+   armoire stands in now, past the margin, and only there. Read off the
+   page's own canvas: every taking back is a small box, never the window;
+   and at the moment it is laid, nothing at all is drawn in the rest of the
+   quiet zone — so the picture is exactly what the whole-window one made.
+   On a window wide enough that the armoire stands wholly in the margin it
+   is not laid at all. */
+test("Les Abstraits' armoire is quieted only where it stands, never over the whole window", async ({ page }) => {
+  test.setTimeout(120000);
+  await page.addInitScript(() => {
+    window.__hush = { boxes: [], left: 0, check: false };
+    const P = CanvasRenderingContext2D.prototype, fillRect = P.fillRect;
+    P.fillRect = function (x, y, w, h) {
+      if (this.canvas.classList.contains("human-field") && this.globalCompositeOperation === "destination-out") {
+        const H = window.__hush;
+        H.boxes.push([x, y, w, h]);
+        if (H.check) {
+          H.check = false;
+          const c = this.canvas, r = c.width / innerWidth;
+          const a = innerWidth > 940 ? (innerWidth - 940) / 2 : 0;
+          const d = P.getImageData.call(this, 0, 0, c.width, c.height).data;
+          for (let py = 0; py < c.height; py++) {
+            const Y = py / r;
+            for (let px = Math.floor(a * r); px < Math.ceil((innerWidth - a) * r); px++) {
+              const X = px / r;
+              if (X >= x && X < x + w && Y >= y && Y < y + h) continue;
+              if (d[(py * c.width + px) * 4 + 3]) H.left++;
+            }
+          }
+        }
+      }
+      return fillRect.apply(this, arguments);
+    };
+  });
+  await page.clock.install({ time: new Date("2026-10-11T12:00:00") });
+  await page.clock.pauseAt(new Date("2026-10-11T12:00:01"));
+  for (const [w, h] of [[1440, 900], [1100, 800], [1920, 1080]]) {
+    await page.setViewportSize({ width: w, height: h });
+    await page.goto(ABSTRAITS);
+    // Built, its clothes in and its irises growing — checked twice on the
+    // way, once whole.
+    for (const step of [1200, 1200, 3200]) {
+      await page.evaluate(() => { window.__hush.check = true; });
+      await page.clock.runFor(step);
+    }
+    const seen = await page.evaluate(() => {
+      const H = window.__hush, margin = innerWidth > 940 ? (innerWidth - 940) / 2 : 0;
+      const largest = H.boxes.reduce((m, b) => Math.max(m, b[2] * b[3]), 0);
+      return { n: H.boxes.length, left: H.left, share: largest / (innerWidth * innerHeight),
+        before: H.boxes.filter((b) => b[0] < margin - 0.5).length, margin };
+    });
+    if (w >= 1920) {
+      expect(seen.n, `${w}×${h}: wholly in the margin, so nothing to quiet`).toBe(0);
+    } else {
+      expect(seen.n, `${w}×${h}: quieted where it reaches the writing`).toBeGreaterThan(10);
+      expect(seen.share, `${w}×${h}: never over the whole window`).toBeLessThan(0.2);
+      expect(seen.before, `${w}×${h}: only past the margin`).toBe(0);
+    }
+    expect(seen.left, `${w}×${h}: nothing drawn in the rest of the quiet zone`).toBe(0);
+  }
+});
+
 /* QIMU & MUSICIANS: A SCORE IN THE MARGINS. "add some complex notes;
    and some 5 lines in which they will exist ... nicely animated ...
    dont make them always 4/4 ... make it random (as long as its an

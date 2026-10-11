@@ -1549,3 +1549,38 @@ each in three stages.
 house's writing, on a measured height — the part's opening is one function now, `measured`, used
 by both. First used by Om Parfums' introduction; see [the report on the three new houses](2026-10-10-om-outsider-and-lost-tribe.md), which is also where the three new houses
 — **Om Parfums, Outsider Parfums and Lost Tribe**, the tenth to the twelfth — are written up.
+
+## 2026-10-11 — Les Abstraits quieted only where the armoire stands
+
+Asked, at the end of Om's round, whether Les Abstraits' page should be smoothed "the same way" Om's
+was (its own page had slowed a laptop down), the owner said yes. Nothing to see: **the picture is
+the same, pixel for pixel; it is drawn about half as fast again.**
+
+**What was slow.** The armoire is quieted over the writing by being taken back with a gradient
+laid over it (`hush`, a `destination-out` fill: strong to the column's edge, at `QUIET` by the
+time the writing begins). That fill was laid over **the whole window every frame**, every pixel
+of it read and written again — when the only thing drawn before it is the armoire and its irises
+(the powder, the drip and the beaker come after it, each at its own quiet). Measured at 1440 ×
+900, two pixels to a point, on the test machine: **31–36 frames a second; 55–60 without it.**
+
+**What it does now.** It is laid over **the box the armoire stands in** — the drawing's own
+measured reach (`REACH`, `frame.from`, `frame.across`, `frame.rise`), with `HUSH_PAD` (28px) of
+room for the irises' sway and the specks at the joints — and only **the part of that box past the
+margin**, since to the left of it the gradient takes nothing back at all. Where the armoire stands
+wholly in the margin (1920 wide and more) it is not laid at all. The gradient is made once for a
+window, not every frame. **51–59 frames a second** now.
+
+**How it was known to be the same picture.** Two runs of the old page do not match each other
+exactly (the page's own layout settles a little differently each time), so the check was made
+inside one page instead: every time the taking back is laid, nothing at all is drawn in the rest
+of the zone it would have covered — at eleven window sizes from 390 to 2560 wide, through the
+armoire's building, its clothes coming in and its irises growing, with the hand moving over it.
+Nothing ever was, so laying it over the box is exactly laying it over the window.
+
+### How to test it
+
+`npm test -- tests/houses.spec.js -g "quieted only where it stands"`: at 1440 × 900, 1100 × 800
+and 1920 × 1080, on the page's own clock, every taking back is a box under a fifth of the window,
+none of it in the margin, and at three moments nothing drawn in the rest of the quiet zone; at
+1920, none laid. It fails on the old page (a box the whole window). By eye: `/houses/les-abstraits.html`,
+the armoire at the left foot, quiet where it reaches the writing, as before.

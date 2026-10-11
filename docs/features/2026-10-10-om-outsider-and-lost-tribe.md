@@ -349,8 +349,8 @@ moving the hand over a specimen; `/scent-descriptions/#house-10`, `#house-11`, `
 - **The lists of fragrances not smelled** (2026-10-11) were read through searches and may miss a
   name; the names left out as uncertain are listed above. **Smoke Oud** decides whether its attars
   belong in Om's sentence.
-- **Les Abstraits' page draws at about 35 frames a second** on the same machine — the same kind of
-  full-window mask Om's was (its own hush). Not asked for; noted here.
+- ~~Les Abstraits' page draws at about 35 frames a second~~ — the same kind of full-window mask
+  Om's was; smoothed the same day at the owner's word, 51–59 now (see [the newer houses](2026-09-21-the-newer-houses.md#2026-10-11--les-abstraits-quieted-only-where-the-armoire-stands)).
 - Lost Tribe's design is a first answer, as the owner said it would be ("we will adapt later").
 
 ## Same round, other reports

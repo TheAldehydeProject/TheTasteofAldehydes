@@ -805,7 +805,7 @@
     const left = from + REACH.left * W;
     shape = design(W);
     frame = { left, baseY, wide: W, tall: shape.T, hinge: shape.hinge, doorTop: shape.doorTop, doorBot: shape.doorBot,
-      reach: shape.openW };
+      reach: shape.openW, from, across: across * W, rise: REACH.rise * W };
     stillFor = "";
     // THE DRIP, in the other margin, and the beaker under it at the foot
     // of the page — on a window without margins, a small one at the edge.
@@ -847,24 +847,45 @@
   /** Over the writing the armoire is quiet: it is drawn whole, and then
    *  taken back by how far over the writing it stands — strong to the
    *  column's edge, quiet by the time the writing begins, 64px in; without
-   *  margins, quiet all the way across. */
+   *  margins, quiet all the way across.
+   *
+   *  ONLY WHERE THE ARMOIRE STANDS (2026-10-11 — "Les Abstraits' page has
+   *  the same kind of slowdown Om had. Should I smooth it out the same
+   *  way?" "Yes"): the taking back was laid over the WHOLE WINDOW every
+   *  frame, every pixel read and written again — 36 frames a second on the
+   *  test machine, against 58 without it — when all it ever touches is the
+   *  armoire, the one thing drawn before it. So it is laid over the box the
+   *  armoire stands in (`AT`, the drawing measured, with room for the
+   *  irises' sway), and only the part of that box past the margin, where
+   *  the quiet begins: to the left of it the taking back is nothing at
+   *  all. Pixel for pixel the same picture. */
+  const HUSH_PAD = 28;             // px round the measured armoire: the sway, the specks, the strokes
+  let hushGrad = null, hushFor = "";
   function hush(g) {
     let a = 0, b = 1;
     if (width > COLUMN) { a = margin(); b = a + 60; }
     b = Math.max(a + 1, Math.min(b, width / 2));
-    const k = (x) => Math.max(0, Math.min(1, x / width));
-    const grad = g.createLinearGradient(0, 0, width, 0);
-    const gone = "rgba(0, 0, 0, " + (1 - QUIET) + ")";
-    grad.addColorStop(0, "rgba(0, 0, 0, 0)");
-    grad.addColorStop(k(a), "rgba(0, 0, 0, 0)");
-    grad.addColorStop(k(b), gone);
-    grad.addColorStop(k(width - b), gone);
-    grad.addColorStop(k(width - a), "rgba(0, 0, 0, 0)");
-    grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+    const x0 = Math.max(a, frame.from - HUSH_PAD);
+    const x1 = Math.min(width - a, frame.from + frame.across + HUSH_PAD);
+    const y0 = Math.max(0, frame.baseY - frame.rise - HUSH_PAD);
+    if (x1 <= x0 || y0 >= height) return;
+    const key = width + "x" + a + "x" + b;
+    if (hushFor !== key) {
+      const k = (x) => Math.max(0, Math.min(1, x / width));
+      hushGrad = g.createLinearGradient(0, 0, width, 0);
+      const gone = "rgba(0, 0, 0, " + (1 - QUIET) + ")";
+      hushGrad.addColorStop(0, "rgba(0, 0, 0, 0)");
+      hushGrad.addColorStop(k(a), "rgba(0, 0, 0, 0)");
+      hushGrad.addColorStop(k(b), gone);
+      hushGrad.addColorStop(k(width - b), gone);
+      hushGrad.addColorStop(k(width - a), "rgba(0, 0, 0, 0)");
+      hushGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+      hushFor = key;
+    }
     g.save();
     g.globalCompositeOperation = "destination-out";
-    g.fillStyle = grad;
-    g.fillRect(0, 0, width, height);
+    g.fillStyle = hushGrad;
+    g.fillRect(x0, y0, x1 - x0, height - y0);
     g.restore();
   }
 
