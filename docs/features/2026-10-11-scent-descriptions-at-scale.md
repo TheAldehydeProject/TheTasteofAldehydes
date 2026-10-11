@@ -36,9 +36,14 @@ painted by the processor here: these are a floor.
   `placeOne()`, `putAway()`): each frame works out which houses are within a window's height of
   the front, places those, and puts every other one **out of the page's layout** (`.away`,
   `display: none` — in `style.css` next to `.sheet-frame.behind`). It placed all of them on every
-  frame, three hundred transforms and labels, and laid the page out again each time.
+  frame, three hundred transforms and labels, and laid the page out again each time. **A view of
+  a few dozen houses or fewer** (`ALL_UNDER`, 24) lays every one out as it always did — today's
+  twelve among them, so every number stands on the axis the whole way down it, as a test of the
+  axis asks — and only past that are those out of reach put away.
 - **A style is written only when it changes** (`put`, with what was last written kept for each
-  house, `was`, `markWas`).
+  house, `was`, `markWas`). Every number on the axis that is laid out is placed whether or not it can
+  be seen, as it always was (written only once it had been seen, those further down stood unplaced
+  in the window's corner, and a test of the axis said so).
 - **A house's spoke is made when it is first needed** (`spokeOf`), with its seed off its number so
   it is the same spoke whenever it is made; the **flow specks** down the axis wrap round where you
   are (`FLOW_REACH`) rather than running the length of three hundred houses; **the arrival** brings

@@ -344,6 +344,11 @@
   // reach is put away once, and a style is written only when it changes
   // (`put`). What is drawn is exactly what it was.
   const LIVE_MARGIN = 2;           // houses past the window's reach still placed
+  // A view of a few dozen houses or fewer lays every one of them out, as it
+  // always did — today's twelve among them — so their numbers stand on the
+  // axis the whole way down it; only past that are those out of reach put
+  // away.
+  const ALL_UNDER = 24;
   const live = new Set();
   const was = frames.map(() => ({}));   // what each house and its number were last given
   const markWas = frames.map(() => ({}));
@@ -379,7 +384,7 @@
     put(marks[i], k, "on", false, setOn);
   }
   /** How many houses either side of where you are can be on the window. */
-  const reach = () => Math.ceil((H + frontH) / Math.max(1, span)) + LIVE_MARGIN;
+  const reach = () => (N <= ALL_UNDER ? N : Math.ceil((H + frontH) / Math.max(1, span)) + LIVE_MARGIN);
   function place() {
     const far = reach();
     const lo = Math.max(0, Math.floor(pos - far)), hi = Math.min(N - 1, Math.ceil(pos + far));
@@ -449,9 +454,9 @@
         mx += w.x - (cx + 20); mY += w.y - my;
         markSeen *= w.a;
       }
-      if (markSeen > 0.001 || k.op !== "0") {
-        put(mark, k, "tf", "translate(" + mx.toFixed(1) + "px," + mY.toFixed(1) + "px)", setTransform);
-      }
+      // Placed whether or not it can be seen, as every number always was:
+      // one not yet seen stood in the corner of the window, unplaced.
+      put(mark, k, "tf", "translate(" + mx.toFixed(1) + "px," + mY.toFixed(1) + "px)", setTransform);
       put(mark, k, "op", markSeen > 0.001 ? markSeen.toFixed(3) : "0", setOpacity);
       put(mark, k, "on", atFront, setOn);
       put(mark, k, "tab", markSeen < 0.05 ? -1 : 0, setTab);

@@ -176,7 +176,12 @@ test("the Fragrances table at a thousand fragrances crosses, scrolls and searche
   expect(scrolling, "frames a second, scrolling the boxes").toBeGreaterThan(18);
   // As a list: nothing more fetched, however far it is scrolled.
   await page.click('.frag-mode[data-mode="list"]');
-  await page.waitForTimeout(800);
+  // (The pictures asked for before the list was chosen are still being
+  // made, a few at a time, and arrive after it: what is counted is from
+  // when they have all come.)
+  let still = -1;
+  await expect.poll(async () => { const n = asked.size; const same = n === still; still = n; return same; },
+    { timeout: 20000, intervals: [1200] }).toBe(true);
   const before = asked.size;
   await page.evaluate(() => { const box = document.querySelector(".frag-list-scroll"); box.scrollTop = box.scrollHeight / 2; });
   await page.waitForTimeout(400);
