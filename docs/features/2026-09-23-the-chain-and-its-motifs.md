@@ -994,3 +994,16 @@ with the one three before it now, where 5 to 11% stand still; what it proves is 
 
 **The house at the front now brings its motifs up by itself** once the helix stops there, not only
 on hover — see [the axis](2026-09-24-the-axis.md#2026-10-03--the-house-at-the-front-brings-its-motifs-up-by-itself).
+
+## 2026-10-11 — Om's rings, Outsider's door in the dark, Lost Tribe's birds
+
+The three newest houses' motifs are written up in [their own
+report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-11-last--om-read-through-cracked-glass-the-rings-the-door-in-the-dark-the-birds):
+**Om's rings** (`omRing`, several at once, each circle drawn its own way by `ringStyle`; the grand
+figure, `omMerge`, gone), **Outsider's door in the dark** (`door`: the room darkened through the
+canvas's own background, `sheet-night` on the body for the view's words, a door on a damped spring,
+a lamp's light through the gap), and **Lost Tribe's birds** flying as on its page (`flock`). Three
+new readings for the tests sit with the others on `window.HouseMotifs`: `rings()`, `doors()` and
+`flocks()`. One thing here is new to every motif: **a motif may darken the whole view** (`night`,
+set in a frame by whatever draws, written to the canvas's background and `sheet-night` once the
+frame is drawn, and back to nothing when it goes) — only Outsider's door does.

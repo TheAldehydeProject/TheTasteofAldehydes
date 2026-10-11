@@ -11,33 +11,51 @@
 // And a day later, 2026-10-11: "i want the fracturing to not be scroll
 // dependent, and i want it to be soemthing that is less severe. when
 // hovered, the fracturing returns to normal permanently. also please
-// smooth the om parfums page out, it slows down the laptop A LOT!"
+// smooth the om parfums page out, it slows down the laptop A LOT!" And
+// later the same day: "i like the hexagon cursor, but i want the breaking
+// apart of the page to be reversible when you hover away. I also want the
+// hexagon to be the thing that affects everything behind it; i want it to
+// be larger, and everything unbreaks in the hexagon. make the breaks
+// different and less huge. i want them to be like fractured glass
+// unfracturing when hovered within the hexagon" — and, asked how the page
+// is read while it is cracked, the owner chose "cracked while reading".
 //
-//   THE FRACTURE  the page opens CRACKED, as a pane is: the window broken
-//                 into a few large shards radiating from a point a little
-//                 above its middle, each shard — the page's own writing
-//                 in it — standing a few pixels off its place, a degree or
-//                 two out of true and a little back in depth, drifting
-//                 slightly, its edges gold; through the cracks, the void —
-//                 โอม in specks, a ring throwing off sparks. It was the
-//                 page thrown far apart for a day, a tunnel of shards some
-//                 turned over, and brought together by a click, a key or
-//                 the wheel; less severe now, and scrolling does nothing
-//                 to it (the page is held while it is in pieces).
-//   THE MENDING   the hand moving over the page mends it, FOR GOOD: the
-//                 shards come home in a wave from where the hand first
-//                 moved, the nearest first, their seams flashing gold as
-//                 they meet. A click, a tap or a key does the same. ON A
-//                 PHONE, where nothing hovers, they come together by
-//                 themselves a moment after the page opens.
-//   THE SHARDS    are the page itself: each holds a copy of the page —
-//                 only as much of it as the window shows — cut to its
-//                 shard with a clip-path, laid over the page (which is
-//                 there all along, held back underneath, so the search, a
-//                 screen reader and the tests read the page and never the
-//                 copies). The copies live in a CLOSED shadow root, inert,
-//                 with no ids, so nothing else on the page can find them —
-//                 and they go once it is whole.
+//   THE FRACTURE  the page opens behind CRACKED GLASS: a pane fixed to the
+//                 window, broken by two blows into fine pieces — small
+//                 round where each struck, larger farther out — each
+//                 holding the page's own writing a pixel or few off its
+//                 place and a fraction of a degree out of true, its crack
+//                 a gold hairline, a glint of light running round one in
+//                 four. The page SCROLLS under it as ever, and is read
+//                 through it: the writing slightly broken, the glass
+//                 staying where it is. (A few large shards stood here for
+//                 an afternoon, the page held still and mended for good by
+//                 the hand; fifty-one thrown far apart in 3D for a day
+//                 before that.)
+//   THE LENS      the hexagon of glass at the hand, larger than it was:
+//                 inside it, the page WHOLE — the writing unbroken, the
+//                 drawing behind it turned and brought nearer — and the
+//                 glass about it easing home as it comes, cracking again
+//                 as it goes. A gold rim round it.
+//   THE MENDING   for good, by OPENING a fragrance (or one of the owner's
+//                 dropdowns): the press is held, the pieces come home in a
+//                 quick wave from it, their seams flashing gold as they
+//                 meet, and then the fragrance opens on the page made
+//                 whole. Reaching into the page with the keyboard does the
+//                 same. ON A PHONE, where nothing hovers, the pieces come
+//                 together by themselves a moment after the page opens.
+//   THE PIECES    are the page itself: each holds a copy of the whole page,
+//                 moved as the page scrolls, cut to its piece with a
+//                 clip-path, laid over the page (which is there all along,
+//                 held back underneath, so the search, a screen reader and
+//                 the tests read the page and never the copies, and a
+//                 press goes through the glass to it). The copies live in a
+//                 CLOSED shadow root, inert, with no ids, so nothing else on
+//                 the page can find them — and they go once it is whole.
+//                 NOTHING IN THE GLASS IS A LAYER OF ITS OWN but the glints:
+//                 a piece cut to its shape on a layer of its own is a mask
+//                 the browser lays again every frame, and fifty held the
+//                 cracked page at a quarter of the whole page's frames.
 //   โอม           the Thai spelling of Om, which the owner asked for "in
 //                 the house shattering thing for the design": its letters
 //                 from a real Thai typeface (om-glyph.js, written by
@@ -55,10 +73,11 @@
 //                 far off in depth. Expansive: the outer rings reach past
 //                 the window. Gold hairlines on near-black. It turns a
 //                 little as the page is scrolled — "the passing of time".
-//   THE LENS      what answers the hand: a hexagonal shard of glass
-//                 follows the pointer a beat behind it, and inside it the
-//                 drawing is seen turned and brought closer, brighter, as
-//                 through a piece of the mirror. A tap puts it there.
+//   THE LENS      once the page is whole, still what answers the hand:
+//                 the hexagon follows the pointer a beat behind it, and
+//                 inside it the drawing is seen turned and brought closer,
+//                 brighter, as through a piece of the mirror. A tap puts it
+//                 there.
 //
 // READABILITY. Every line is a hairline at a low alpha, and over the column
 // of writing the whole drawing is kept at a third of itself, soft at the
@@ -85,8 +104,11 @@
 (function () {
   const canvas = document.querySelector(".human-field");
   if (!canvas) return;
-  const ink = canvas.getContext("2d");
-  if (!ink) return;
+  const mainInk = canvas.getContext("2d");
+  if (!mainInk) return;
+  // What is drawn on: the page's canvas, or — while the page is cracked —
+  // the lens's own, for the drawing seen through it.
+  let ink = mainInk;
 
   const root = document.documentElement;
   const page = document.body;
@@ -126,20 +148,36 @@
   const DUST = 300;                // the far dust
   const SCROLL_TURN = 0.00035;     // radians the drawing turns per px scrolled
 
-  // THE LENS — the shard of glass at the hand.
-  const LENS = 92;                 // its radius, px
+  // THE LENS — the hexagon of glass at the hand. Since 2026-10-11, later
+  // ("i like the hexagon cursor ... i want it to be larger, and everything
+  // unbreaks in the hexagon"), larger, and while the page is cracked, the
+  // page whole inside it.
+  const LENS = 168;                // its radius, px (it was 92)
   const LENS_LAG = 0.14;           // how far it closes on the hand each frame
   const LENS_TURN = 0.16;          // how far the drawing is turned inside it
   const LENS_NEAR = 1.14;          // and how much nearer
+  const LENS_FLAT = 0.92;          // how much less tall it is than wide
 
-  // THE FRACTURE — a few large shards, a little out of place. (Fifty-one,
-  // thrown far apart, for its first day.)
-  const SHARD_RINGS_WIDE = [[0.22, 4], [0.55, 6], [0.98, 7]];
-  const SHARD_RINGS_NARROW = [[0.26, 3], [0.72, 5]];
-  const MOVE_PX = 4;               // the hand must move this far to count as hovering
-  const MEND_MS = 1100;            // how long one shard takes to come home
-  const MEND_SPREAD = 760;         // and the most it waits, the farthest from the hand last
+  // THE FRACTURE — fine cracks, as a pane of glass cracks, from two blows:
+  // each a ring of pieces round where it struck, finer near it, and every
+  // piece only a few pixels off its place. (A few large shards stood here
+  // for an afternoon, and fifty-one thrown far apart for a day before that.)
+  const GLASS_BLOWS_WIDE = [
+    { x: 0.38, y: 0.32, rings: [[0.07, 5], [0.17, 7], [0.31, 8], [0.52, 9], [0.86, 10]] },
+    { x: 0.76, y: 0.8, rings: [[0.08, 4], [0.19, 5]] },
+  ];
+  const GLASS_BLOWS_NARROW = [{ x: 0.5, y: 0.38, rings: [[0.12, 4], [0.32, 6], [0.66, 7]] }];
+  const GLASS_SHIFT = 1.8;         // px a piece stands off its place — up to about three times that
+  const GLASS_TURN = 0.32;         // degrees out of true, at most
+  const GLASS_NEAR = 2.2;          // lens radii within which the glass eases home as the lens comes
+  const MEND_MS = 1100;            // how long one piece takes to come home, mending for good
+  const MEND_SPREAD = 760;         // and the most it waits, the farthest last
+  const MEND_QUICK_MS = 380;       // and when a fragrance is opened
+  const MEND_QUICK_SPREAD = 160;
   const SEAM_MS = 700;             // the seams' flash fading, once home
+  const GLINT_EVERY = 1422;        // px: a glint goes round its crack once in so far
+  const GLINT_SPEED = 203;         // px a second
+  const GLINT_LONG = 22;           // px, its length
   const AUTO_MS = 1500;            // on a phone, how long it stays cracked
   const HINT_MS = 2600;            // on a desktop, when the word comes up
   const SPARKS = 26;               // sparks thrown off the portal a second
@@ -536,51 +574,59 @@
   // THE LENS — a hexagon of glass at the hand.
   // ============================================================
   let handX = -99999, handY = -99999, handOn = 0, lensX = -99999, lensY = -99999;
-  function drawLens(cx, cy, turn, t, alpha) {
-    if (handOn < 0.01 || lensX < -9000) return;
-    const rot = t * 0.15;
-    const hex = (r) => {
-      ink.beginPath();
-      for (let k = 0; k < 6; k++) {
-        const a = rot + (k / 6) * Math.PI * 2;
-        const x = lensX + Math.cos(a) * r, y = lensY + Math.sin(a) * r * 0.92;
-        if (k === 0) ink.moveTo(x, y); else ink.lineTo(x, y);
-      }
-      ink.closePath();
-    };
+  /** The hexagon's outline at (x, y), `r` across, as points for the pen. */
+  function hexPoints(x, y, r) {
+    const p = [];
+    for (let k = 0; k <= 6; k++) {
+      const a = (k / 6) * Math.PI * 2;
+      p.push(x + Math.cos(a) * r, y + Math.sin(a) * r * LENS_FLAT);
+    }
+    return p;
+  }
+  /** What is seen through the lens: the drawing turned and brought nearer,
+      about the lens's own middle — on the page's canvas inside a clip of the
+      hexagon once the page is whole, and on the lens's own canvas, which the
+      lens cuts to its shape, while it is cracked. */
+  function drawThrough(cx, cy, turn, t, alpha) {
     ink.save();
-    hex(LENS);
-    ink.clip();
-    // Seen through the glass: the drawing turned and brought nearer,
-    // about the lens's own middle.
     ink.translate(lensX, lensY);
     ink.scale(LENS_NEAR, LENS_NEAR);
     ink.translate(-lensX, -lensY);
-    drawWorld(cx, cy, turn + LENS_TURN, t, alpha * handOn * 1.7, -99999, -99999);
+    drawWorld(cx, cy, turn + LENS_TURN, t, alpha * 1.7, -99999, -99999);
     ink.restore();
     ink.lineWidth = 1;
-    const rim = (r) => {
-      const p = [];
-      for (let k = 0; k <= 6; k++) {
-        const a = rot + (k / 6) * Math.PI * 2;
-        p.push(lensX + Math.cos(a) * r, lensY + Math.sin(a) * r * 0.92);
-      }
-      poly(p);
-    };
-    rim(LENS); stroke(LINE, 0.5 * handOn * alpha);
-    rim(LENS * 0.82); stroke(SECOND, 0.18 * handOn * alpha);
+    poly(hexPoints(lensX, lensY, LENS - 1)); stroke(LINE, 0.5 * alpha);
+    poly(hexPoints(lensX, lensY, LENS * 0.84)); stroke(SECOND, 0.16 * alpha);
+  }
+  function drawLens(cx, cy, turn, t, alpha) {
+    if (handOn < 0.01 || lensX < -9000) return;
+    ink.save();
+    ink.beginPath();
+    const p = hexPoints(lensX, lensY, LENS);
+    for (let k = 0; k < p.length; k += 2) (k ? ink.lineTo(p[k], p[k + 1]) : ink.moveTo(p[k], p[k + 1]));
+    ink.closePath();
+    ink.clip();
+    drawThrough(cx, cy, turn, t, alpha * handOn);
+    ink.restore();
   }
 
   // ============================================================
-  // THE FRACTURE — the page cracked, laid over it in a closed shadow
-  // root, and mended by the hand.
+  // THE FRACTURE — a pane of cracked glass laid over the page in a closed
+  // shadow root: every piece a copy of the page cut to its shape, a few
+  // pixels off its place; the page itself there underneath all along, held
+  // back, and scrolling as ever under the glass. THE LENS shows the page
+  // whole inside it; the glass about it eases home as it comes and cracks
+  // again as it goes. Opening a fragrance mends it for good.
   // ============================================================
   const shattered = root.classList.contains("om-shattered");
   let gather = shattered ? 0 : 1;          // 0 cracked, 1 whole (eased, per frame)
   let gatherAt = 0;                        // when the mending began (ms), or 0
+  let mendMs = MEND_MS, mendSpread = MEND_SPREAD;
   let shards = [];
-  let host = null, stage = null, hint = null;
+  let host = null, stage = null, hint = null, lens = null;
   let pieces = shattered ? "pieces" : "whole";
+  let heldPress = null;                    // a summary pressed under the glass
+  let copyWidth = 0;
   root.dataset.om = pieces;
 
   function polygonArea(p) {
@@ -613,48 +659,41 @@
     return poly;
   }
 
-  /** The copy, cut down to what the window shows: whatever stands wholly
-      below the window is taken out of it, as deep as it has to go — which
-      moves nothing above it — so no shard carries the whole page. */
-  function trim(original, copy, depth) {
-    const kids = Array.from(original.children), copies = Array.from(copy.children);
-    if (kids.length !== copies.length) return;
-    const foot = window.innerHeight + 40;
-    for (let i = kids.length - 1; i >= 0; i--) {
-      const r = kids[i].getBoundingClientRect();
-      if (r.top > foot) copies[i].remove();
-      else if (depth < 5 && r.bottom > foot && kids[i].children.length) trim(kids[i], copies[i], depth + 1);
-    }
-  }
-
-  function buildShards() {
-    const w = root.clientWidth, h = window.innerHeight;
-    const P = [w * 0.5, h * 0.44];
-    const D = Math.hypot(w, h) * 0.5;
-    const seeds = [P];
-    const rings = w < 700 ? SHARD_RINGS_NARROW : SHARD_RINGS_WIDE;
-    rings.forEach(([f, n], k) => {
-      for (let j = 0; j < n; j++) {
-        const a = ((j + 0.5 + (random() - 0.5) * 0.6) / n) * Math.PI * 2 + k * 0.53;
-        const r = f * D * between(0.88, 1.12);
-        seeds.push([P[0] + Math.cos(a) * r, P[1] + Math.sin(a) * r * 0.86]);
-      }
-    });
-
-    // THE PAGE'S FLOW, copied once — only what the window shows of it —
-    // without an id, a tab stop or anything else that could be found or
-    // reached.
+  /** The page's flow, copied whole, without an id, a tab stop or anything
+      else that could be found or reached. */
+  function copyFlow() {
     const flow = document.createElement("div");
     flow.className = "human-page om-page om-flow";
-    document.querySelectorAll("body > main, body > .house-credit, body > .human-foot").forEach((el) => {
-      if (el.getBoundingClientRect().top > h + 40) return;
-      const copy = el.cloneNode(true);
-      trim(el, copy, 0);
-      flow.appendChild(copy);
-    });
+    document.querySelectorAll("body > main, body > .house-credit, body > .human-foot").forEach((el) => flow.appendChild(el.cloneNode(true)));
     flow.querySelectorAll("[id]").forEach((el) => el.removeAttribute("id"));
     flow.querySelectorAll("[aria-labelledby]").forEach((el) => el.removeAttribute("aria-labelledby"));
     flow.querySelectorAll("a, button, summary, input, [tabindex]").forEach((el) => el.setAttribute("tabindex", "-1"));
+    return flow;
+  }
+
+  function buildShards() {
+    // The page's own width — the window's less its scrollbar, which the
+    // root does not say (its gutter is held open) — so the copies are laid
+    // out exactly as the page is.
+    const w = page.clientWidth || root.clientWidth, h = window.innerHeight;
+    copyWidth = w;
+    const D = Math.hypot(w, h) * 0.5;
+    const blows = w < 700 ? GLASS_BLOWS_NARROW : GLASS_BLOWS_WIDE;
+    const seeds = [];
+    const from = [];                     // which blow each seed is from
+    blows.forEach((b, bi) => {
+      const P = [w * b.x, h * b.y];
+      seeds.push(P); from.push(bi);
+      b.rings.forEach(([f, n], k) => {
+        for (let j = 0; j < n; j++) {
+          const a = ((j + 0.5 + (random() - 0.5) * 0.7) / n) * Math.PI * 2 + k * 0.61 + bi;
+          const r = f * D * between(0.85, 1.15);
+          seeds.push([P[0] + Math.cos(a) * r, P[1] + Math.sin(a) * r * 0.86]);
+          from.push(bi);
+        }
+      });
+    });
+    const flow = copyFlow();
 
     host = document.createElement("div");
     host.className = "om-shards dark-surface";
@@ -667,29 +706,45 @@
       ".stage{position:absolute;inset:0;overflow:hidden;pointer-events:none;transition:opacity 700ms cubic-bezier(0.3,0,0.2,1)}" +
       ".stage.gone{opacity:0}" +
       ".field{position:absolute;inset:0}" +
-      ".shard{position:absolute;will-change:transform;transform-origin:var(--ox) var(--oy)}" +
-      // A shard is glass with the page in it: the void behind it seen
+      // Nothing here asks to be a layer of its own (no will-change, no 3D
+      // transform): a piece cut to its shape on a layer of its own is a
+      // mask the browser lays again every frame, and fifty of them held
+      // the cracked page at a quarter of the whole page's frames.
+      ".shard{position:absolute;transform-origin:var(--ox) var(--oy)}" +
+      // A piece is glass with the page in it: the void behind it seen
       // through dimly, and clearly only through the cracks.
-      ".shard>.om-flow{position:absolute;margin:0;background:rgba(12,11,15,0.66)}" +
-      ".sheen{position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,240,214,0.01) 0%,rgba(255,240,214,0.04) 40%,rgba(255,240,214,0.1) 50%,rgba(255,240,214,0.02) 62%,rgba(255,240,214,0.01) 100%)}" +
+      ".om-flow{position:absolute;margin:0}" +
+      ".shard>.om-flow{background:rgba(12,11,15,0.7)}" +
+      ".sheen{position:absolute;inset:0;background:linear-gradient(var(--sa,115deg),rgba(255,240,214,0) 0%,rgba(255,240,214,0.025) 44%,rgba(255,240,214,0.07) 50%,rgba(255,240,214,0.015) 60%,rgba(255,240,214,0) 100%)}" +
       ".edge{position:absolute;left:0;top:0;overflow:visible}" +
-      ".edge polygon{fill:none;stroke:rgb(" + gold + ");stroke-width:1;vector-effect:non-scaling-stroke}" +
-      ".edge .glint{stroke:rgb(255 236 200);stroke-width:1.4;stroke-dasharray:26 1400;animation:glint 6.5s linear infinite;animation-delay:var(--delay,0s)}" +
-      "@keyframes glint{to{stroke-dashoffset:-1426}}" +
+      ".edge polygon{fill:none;stroke:rgb(" + gold + " / 0.55);stroke-width:1;vector-effect:non-scaling-stroke}" +
+      // A glint: a little run of light along a crack, a layer of its own
+      // so that its going round costs nothing but itself.
+      ".glint{position:absolute;left:0;top:0;width:" + GLINT_LONG + "px;height:1px;margin:-0.5px 0 0 -" + GLINT_LONG / 2 + "px;opacity:0;will-change:transform,opacity;" +
+        "background:linear-gradient(90deg,rgba(255,236,200,0),rgb(255 236 200) 45%,rgb(255 236 200) 55%,rgba(255,236,200,0))}" +
+      // The lens: the page whole, cut to the hexagon, over the glass.
+      ".lens{position:absolute;left:0;top:0;width:" + (LENS * 2) + "px;height:" + (LENS * 2 * LENS_FLAT) + "px;opacity:0;" +
+        "clip-path:polygon(" + hexPoints(LENS, LENS * LENS_FLAT, LENS).reduce((o, v, k, a) => (k % 2 ? o : o.concat([[v, a[k + 1]]])), []).slice(0, 6).map((q) => q[0].toFixed(1) + "px " + q[1].toFixed(1) + "px").join(",") + ")}" +
+      ".lens>.ground{position:absolute;inset:0;background:#0c0b0f}" +
+      // Its rim, outside the cut: a gold hairline round the hexagon and a
+      // fainter one a little outside it, the edge of a thick piece of glass.
+      ".rim{position:absolute;left:-6px;top:-6px;overflow:visible;opacity:0}" +
+      ".rim polygon{fill:none;vector-effect:non-scaling-stroke}" +
+      ".lens>canvas{position:absolute;left:0;top:0;width:100%;height:100%}" +
       ".hint{position:absolute;left:50%;bottom:7vh;transform:translateX(-50%);display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:rgb(" + gold + " / 0.85);opacity:0;transition:opacity 1.2s ease}" +
       ".hint.shown{opacity:1}" +
       ".hint i{display:block;width:9px;height:9px;border:1px solid currentColor;transform:rotate(45deg)}" +
       "</style>" +
-      '<div class="stage" inert><div class="field"></div><p class="hint"><i></i>Hover to bring it together<i></i></p></div>';
+      '<div class="stage" inert><div class="field"></div><p class="hint"><i></i>Hover: the hexagon mends the glass<i></i></p></div>';
     stage = shadow.querySelector(".stage");
     const field = shadow.querySelector(".field");
     hint = shadow.querySelector(".hint");
     if (TOUCH) hint.remove();
 
     shards = [];
-    seeds.forEach((s, i) => {
+    seeds.forEach((sd, i) => {
       const poly = cellOf(i, seeds, w, h);
-      if (poly.length < 3 || Math.abs(polygonArea(poly)) < 40) return;
+      if (poly.length < 3 || Math.abs(polygonArea(poly)) < 30) return;
       const xs = poly.map((p) => p[0]), ys = poly.map((p) => p[1]);
       const bx = Math.floor(Math.min(...xs)), by = Math.floor(Math.min(...ys));
       const bw = Math.ceil(Math.max(...xs)) - bx, bh = Math.ceil(Math.max(...ys)) - by;
@@ -705,6 +760,7 @@
       el.style.clipPath = "polygon(" + local.map((p) => p[0].toFixed(1) + "px " + p[1].toFixed(1) + "px").join(",") + ")";
       el.style.setProperty("--ox", (gx - bx).toFixed(1) + "px");
       el.style.setProperty("--oy", (gy - by).toFixed(1) + "px");
+      el.style.setProperty("--sa", Math.round(between(60, 170)) + "deg");
       const copy = flow.cloneNode(true);
       copy.style.left = -bx + "px";
       copy.style.top = -by + "px";
@@ -713,31 +769,62 @@
       el.appendChild(copy);
       const sheen = document.createElement("div");
       sheen.className = "sheen";
+      sheen.style.opacity = between(0.3, 1).toFixed(2);
       el.appendChild(sheen);
       const pts = local.map((p) => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
-      el.insertAdjacentHTML("beforeend",
-        '<svg class="edge" width="' + bw + '" height="' + bh + '" viewBox="0 0 ' + bw + " " + bh + '"><polygon points="' + pts + '"/>' +
-        (random() < 0.3 ? '<polygon class="glint" points="' + pts + '" style="--delay:-' + (random() * 6).toFixed(2) + 's"/>' : "") + "</svg>");
+      el.insertAdjacentHTML("beforeend", '<svg class="edge" width="' + bw + '" height="' + bh + '" viewBox="0 0 ' + bw + " " + bh + '"><polygon points="' + pts + '"/></svg>');
       field.appendChild(el);
+      let around = 0;
+      for (let k = 0; k < poly.length; k++) { const q = poly[(k + 1) % poly.length]; around += Math.hypot(q[0] - poly[k][0], q[1] - poly[k][1]); }
 
-      // WHERE IT STANDS: a few pixels out from the point it broke from, a
-      // degree or so out of true, and a hair smaller, as if a little
-      // further off — the middle ones a little more. Flat on the window:
-      // in depth it was no gentler to look at and half as quick to draw.
+      // WHERE IT STANDS: a few pixels out from the blow it broke from, a
+      // little out of true, and a hair smaller — the farther, the more.
+      // On a phone's narrow window, half as far again.
+      const b = blows[from[i]], P = [w * b.x, h * b.y];
       const dx = gx - P[0], dy = gy - P[1], dist = Math.hypot(dx, dy) || 1;
-      // On a phone's narrow window, half as far again: there the same few
-      // pixels are a larger part of a line of writing.
-      const ux = dx / dist, uy = dy / dist, near = 1 - clamp(dist / D, 0, 1), g = w < 700 ? 0.5 : 1;
+      const ux = dx / dist, uy = dy / dist, g = w < 700 ? 0.5 : 1;
+      const out = (GLASS_SHIFT * (0.5 + random()) + dist * 0.0032) * g;
       shards.push({
-        el, sheen, edge: el.querySelector(".edge polygon"), gx, gy,
-        tx: ux * (3 + dist * 0.018 + random() * 7) * g,
-        ty: uy * (3 + dist * 0.018 + random() * 7) * g,
-        k: 1 - (0.008 + near * 0.022 + random() * 0.006) * g,
-        rz: between(-1.3, 1.3) * g,
-        phase: random() * Math.PI * 2,
-        wait: 0, p: -1, sheenShown: -1, edgeShown: -1,
+        el, copy, sheen, gx, gy, poly, around, line: el.querySelector(".edge polygon"),
+        glint: random() < 0.25 ? { at: random() * GLINT_EVERY, el: null, shown: -1 } : null,
+        tx: ux * out + between(-0.6, 0.6) * g, ty: uy * out + between(-0.6, 0.6) * g,
+        k: 1 - (0.0015 + random() * 0.0035) * g,
+        rz: between(-GLASS_TURN, GLASS_TURN) * g,
+        wait: 0, p: -1, near: -1, edge: 0.85, edgeShown: -1, now: [0, 0, 0, 1],
       });
     });
+    // The glints, over every piece.
+    shards.forEach((s) => {
+      if (!s.glint) return;
+      s.glint.el = document.createElement("i");
+      s.glint.el.className = "glint";
+      field.appendChild(s.glint.el);
+    });
+
+    // THE LENS, over the glass: the page whole, the drawing seen through it
+    // on a canvas of its own, cut to the hexagon. Not on a phone.
+    if (!TOUCH) {
+      lens = { el: document.createElement("div"), sky: document.createElement("canvas"), copy: flow.cloneNode(true), shown: -1 };
+      lens.el.className = "lens";
+      const ground = document.createElement("div");
+      ground.className = "ground";
+      lens.el.appendChild(ground);
+      lens.el.appendChild(lens.sky);
+      lens.copy.style.width = w + "px";
+      lens.copy.style.minHeight = h + "px";
+      lens.el.appendChild(lens.copy);
+      lens.sky.width = Math.round(LENS * 2 * ratio);
+      lens.sky.height = Math.round(LENS * 2 * LENS_FLAT * ratio);
+      lens.ink = lens.sky.getContext("2d");
+      shadow.querySelector(".stage").appendChild(lens.el);
+      const hex = (r, pad) => hexPoints(LENS + pad, LENS * LENS_FLAT + pad, r).slice(0, 12).reduce((o, v, k) => o + (k % 2 ? "," : " ") + v.toFixed(1), "").trim();
+      const rw = LENS * 2 + 12, rh = Math.round(LENS * 2 * LENS_FLAT) + 12;
+      shadow.querySelector(".stage").insertAdjacentHTML("beforeend",
+        '<svg class="rim" width="' + rw + '" height="' + rh + '" viewBox="0 0 ' + rw + " " + rh + '">' +
+        '<polygon points="' + hex(LENS + 4, 6) + '" style="stroke:rgb(' + gold + ' / 0.2)"/>' +
+        '<polygon points="' + hex(LENS - 0.5, 6) + '" style="stroke:rgb(' + gold + ' / 0.75)"/></svg>');
+      lens.rim = shadow.querySelector(".rim");
+    }
     page.insertBefore(host, canvas.nextSibling);
     root.classList.add("om-held");
   }
@@ -749,41 +836,92 @@
     el.style.opacity = v.toFixed(3);
   }
 
-  /** One frame of the shards: each where it stands, or on its way home. */
-  function placeShards(now, t) {
+  /** One frame of the glass: under the page's scroll, each piece where it
+      stands — eased home near the lens — or on its way home for good. A
+      style is written only when it has changed. */
+  let scrolled = null;
+  function placeShards(now) {
+    const sy = window.scrollY || 0;
+    const moved = sy !== scrolled;
+    scrolled = sy;
+    const reach = LENS * GLASS_NEAR, on = TOUCH ? 0 : handOn;
     shards.forEach((s) => {
+      if (moved) s.copy.style.transform = "translate(0," + (-sy) + "px)";
       let p = 0;
-      if (gatherAt) p = ease(clamp((now - gatherAt - s.wait) / MEND_MS, 0, 1));
-      if (p >= 1 && s.p >= 1 && now - gatherAt - s.wait - MEND_MS > SEAM_MS) return;   // home, and still
-      s.p = p;
-      const q = 1 - p;
-      const bob = Math.sin(t * 0.6 + s.phase), sway = Math.cos(t * 0.45 + s.phase * 1.3);
-      const tx = s.tx * q + bob * 1.6 * q, ty = s.ty * q + sway * 1.2 * q;
-      const rz = (s.rz + sway * 0.25) * q, k = 1 - (1 - s.k + bob * 0.002) * q;
-      s.el.style.transform = "translate(" + tx.toFixed(2) + "px," + ty.toFixed(2) + "px) rotate(" + rz.toFixed(3) + "deg) scale(" + k.toFixed(4) + ")";
-      // The sheen catches as it turns; the seam flashes as it lands, and
-      // fades once it is home.
-      opacityTo(s, "sheenShown", s.sheen, clamp((0.45 + 0.35 * Math.sin(t * 0.5 + s.phase)) * q, 0, 1));
-      let edge = 0.5 * q;
+      if (gatherAt) p = ease(clamp((now - gatherAt - s.wait) / mendMs, 0, 1));
+      // Near the lens, home: the nearer, the more.
+      const d = lensX < -9000 ? 1e9 : Math.hypot(s.gx - lensX, (s.gy - lensY) / LENS_FLAT);
+      const near = on * (1 - ease(clamp((d - LENS * 0.6) / (reach - LENS * 0.6), 0, 1)));
+      const home = Math.max(p, near);
+      // The crack shows as long as the piece is out of place; the seam
+      // flashes as it lands for good, and fades once it is home.
+      let edge = 0.85 * (1 - home);
       if (gatherAt) {
-        const landed = now - gatherAt - s.wait - MEND_MS;
+        const landed = now - gatherAt - s.wait - mendMs;
         edge += p > 0.7 ? (landed < 0 ? (p - 0.7) / 0.3 : Math.max(0, 1 - landed / SEAM_MS)) : 0;
       }
-      opacityTo(s, "edgeShown", s.edge, clamp(edge, 0, 1));
+      s.edge = clamp(edge, 0, 1);
+      opacityTo(s, "edgeShown", s.line, s.edge);
+      if (Math.abs(home - s.p) < 0.002) return;
+      s.p = home;
+      const q = 1 - home;
+      const n = s.now;
+      n[0] = s.tx * q; n[1] = s.ty * q; n[2] = s.rz * q; n[3] = 1 - (1 - s.k) * q;
+      s.el.style.transform = "translate(" + n[0].toFixed(2) + "px," + n[1].toFixed(2) + "px) rotate(" + n[2].toFixed(3) + "deg) scale(" + n[3].toFixed(4) + ")";
+    });
+    if (lens) {
+      const o = gatherAt ? 0 : handOn;
+      opacityTo(lens, "shown", lens.el, o);
+      if (lens.rim) lens.rim.style.opacity = lens.shown.toFixed(3);
+      if (o > 0.004 && lensX > -9000) {
+        const lx = lensX - LENS, ly = lensY - LENS * LENS_FLAT;
+        lens.el.style.transform = "translate(" + lx.toFixed(1) + "px," + ly.toFixed(1) + "px)";
+        if (lens.rim) lens.rim.style.transform = lens.el.style.transform;
+        lens.copy.style.transform = "translate(" + (-lx).toFixed(1) + "px," + (-ly - sy).toFixed(1) + "px)";
+      }
+    }
+    placeGlints(now);
+  }
+
+  /** The glints, each so far round its crack — where its piece stands
+      now (its offset, turn and scale about its middle, as its style has
+      them) — and only as bright as the crack is. */
+  function placeGlints(now) {
+    const t = REDUCE ? 0 : now / 1000;
+    shards.forEach((s) => {
+      const gl = s.glint;
+      if (!gl) return;
+      let from = (t * GLINT_SPEED + gl.at) % GLINT_EVERY;
+      const lit = from <= s.around && s.edge > 0.01 ? 0.9 * s.edge : 0;
+      opacityTo(gl, "shown", gl.el, lit);
+      if (!lit) return;
+      const [tx, ty, rz, k] = s.now;
+      const a = (rz * Math.PI) / 180, ca = Math.cos(a) * k, sa = Math.sin(a) * k;
+      for (let i = 0; i < s.poly.length; i++) {
+        const p0 = s.poly[i], p1 = s.poly[(i + 1) % s.poly.length];
+        const L = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]);
+        if (from > L) { from -= L; continue; }
+        const x = p0[0] + ((p1[0] - p0[0]) * from) / L - s.gx, y = p0[1] + ((p1[1] - p0[1]) * from) / L - s.gy;
+        const X = s.gx + tx + ca * x - sa * y, Y = s.gy + ty + sa * x + ca * y;
+        const turn = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]) + a;
+        gl.el.style.transform = "translate(" + X.toFixed(1) + "px," + Y.toFixed(1) + "px) rotate(" + turn.toFixed(3) + "rad)";
+        break;
+      }
     });
   }
 
-  /** The mending, from a point (where the hand moved, or pressed): the
-      shards nearest it first, in a wave. */
-  function mend(x, y) {
+  /** The mending for good, from a point: the pieces nearest it first, in
+      a wave — quickly when a fragrance has been opened. */
+  function mend(x, y, quick) {
     if (gatherAt || !host) return;
+    mendMs = quick ? MEND_QUICK_MS : MEND_MS;
+    mendSpread = quick ? MEND_QUICK_SPREAD : MEND_SPREAD;
     gatherAt = performance.now();
     const far = Math.hypot(window.innerWidth, window.innerHeight);
-    shards.forEach((s) => { s.wait = clamp(Math.hypot(s.gx - x, s.gy - y) / far, 0, 1) * MEND_SPREAD; });
+    shards.forEach((s) => { s.wait = clamp(Math.hypot(s.gx - x, s.gy - y) / far, 0, 1) * mendSpread; });
     pieces = "gathering";
     root.dataset.om = pieces;
     if (hint) hint.classList.remove("shown");
-    // A last few sparks off the portal as it lets go.
     for (let k = 0; k < 40 && !REDUCE; k++) {
       sparks.push({ a: random() * Math.PI * 2, r: portalR(), v: between(80, 220), out: between(30, 120), life: between(0.5, 1.1), age: 0 });
     }
@@ -791,54 +929,81 @@
   function wholeNow() {
     pieces = "whole";
     root.dataset.om = pieces;
-    // The page under the pieces is the same page, laid out the same way,
-    // so it is shown at once — with nothing of its own fading in — and
-    // the pieces, now exactly over it, are faded off it.
+    // The page under the pieces is the same page, laid out the same way and
+    // scrolled the same way, so it is shown at once — with nothing of its
+    // own fading in — and the pieces, now exactly over it, are faded off it.
     root.classList.add("om-landing");
     root.classList.remove("om-shattered");
     requestAnimationFrame(() => requestAnimationFrame(() => {
       root.classList.remove("om-landing");
       if (stage) stage.classList.add("gone");
-      window.setTimeout(() => { if (host) host.remove(); host = stage = hint = null; shards = []; }, 760);
+      if (heldPress) { const sum = heldPress; heldPress = null; sum.click(); }
+      window.setTimeout(() => { if (host) host.remove(); host = stage = hint = lens = null; shards = []; }, 760);
     }));
   }
   const portalR = () => Math.min(W * (W < 700 ? 0.46 : 0.36), 560) * 0.62;
 
   if (shattered) {
+    size();
     buildShards();
-    // HOVERING MENDS IT — the hand moving over the page, a few pixels at
-    // least (a browser can send a move as the page appears under a hand
-    // that is still). Not a finger: a phone mends by itself.
-    let firstX = null, firstY = null;
-    window.addEventListener("pointermove", (e) => {
-      if (e.pointerType === "touch" || gatherAt) return;
-      if (firstX === null) { firstX = e.clientX; firstY = e.clientY; return; }
-      if (Math.hypot(e.clientX - firstX, e.clientY - firstY) >= MOVE_PX) mend(e.clientX, e.clientY);
-    }, { passive: true });
-    window.addEventListener("pointerdown", (e) => mend(e.clientX, e.clientY), { passive: true });
-    host.addEventListener("click", (e) => e.preventDefault());
-    window.addEventListener("keydown", (e) => {
-      if (["Shift", "Control", "Alt", "Meta"].includes(e.key)) return;
-      mend(window.innerWidth / 2, window.innerHeight * 0.44);
+    // OPENING A FRAGRANCE — or one of the owner's dropdowns — mends it for
+    // good, from where it was pressed, quickly: so what is opened is read
+    // whole. The press is HELD while the glass mends, and given back to
+    // the page once it is whole, so the fragrance opens after the glass has
+    // gone — the copies in the glass are of the page as it was, and a
+    // fragrance opening under them would come out from under a ghost of
+    // the shut list. (Its summary is the page's own, under the glass.)
+    let pressX = window.innerWidth / 2, pressY = window.innerHeight / 2;
+    window.addEventListener("pointerdown", (e) => { pressX = e.clientX; pressY = e.clientY; }, { passive: true });
+    window.addEventListener("click", (e) => {
+      if (pieces === "whole" || !e.target || !e.target.closest) return;
+      const sum = e.target.closest("details > summary");
+      if (!sum || sum.parentElement.open) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      heldPress = sum;
+      mend(e.clientX || pressX, e.clientY || pressY, true);
+    }, true);
+    // Anything else opened under the glass mends it too.
+    document.addEventListener("toggle", (e) => {
+      if (e.target && e.target.open) mend(pressX, pressY, true);
+    }, true);
+    // The keyboard cannot hover: reaching into the page with it mends it.
+    document.addEventListener("focusin", (e) => {
+      if (e.target && e.target.matches && e.target.matches(":focus-visible")) mend(window.innerWidth / 2, window.innerHeight * 0.44);
     });
-    document.addEventListener("focusin", () => mend(window.innerWidth / 2, window.innerHeight * 0.44));
     // A window changing size breaks the pieces' geometry: it is simply
     // whole at once.
     window.addEventListener("resize", () => {
       if (pieces !== "pieces") return;
       mend(window.innerWidth / 2, window.innerHeight * 0.44);
-      gatherAt -= MEND_MS + MEND_SPREAD;
+      gatherAt -= mendMs + mendSpread;
     });
     if (TOUCH) window.setTimeout(() => mend(window.innerWidth / 2, window.innerHeight * 0.44), AUTO_MS);
-    else window.setTimeout(() => { if (hint && !gatherAt) hint.classList.add("shown"); }, HINT_MS);
+    else window.setTimeout(() => { if (hint && !gatherAt && handX < -9000) hint.classList.add("shown"); }, HINT_MS);
+    // FOR THE TESTS, which cannot reach into the closed glass: how many
+    // pieces, how wide the page in them is laid out, how far home the
+    // pieces about a point are (0 cracked, 1 home), and how much the lens
+    // is shown.
+    window.OmGlass = {
+      pieces: () => shards.length,
+      width: () => copyWidth,
+      homeAt: (x, y) => {
+        const by = shards.filter((s) => Math.hypot(s.gx - x, s.gy - y) < LENS * 0.6);
+        return by.length ? by.reduce((n, s) => n + Math.max(0, s.p), 0) / by.length : -1;
+      },
+      lens: () => (lens ? Math.max(0, lens.shown) : 0),
+    };
   }
 
   // ============================================================
   // KEEPING UP
   // ============================================================
   const hand = (event) => {
+    if (event.pointerType === "touch") return;
     handX = event.clientX; handY = event.clientY;
     if (lensX < -9000) { lensX = handX; lensY = handY; }
+    if (hint && pieces === "pieces") hint.classList.remove("shown");
     if (REDUCE) frame(performance.now());
   };
   window.addEventListener("pointermove", hand, { passive: true });
@@ -854,14 +1019,21 @@
     last = now;
     if (!W) size();
 
+    const want = handX < -9000 ? 0 : 1;
+    handOn += (want - handOn) * (REDUCE ? 1 : 0.12);
+    if (handX > -9000) {
+      lensX += (handX - lensX) * (REDUCE ? 1 : LENS_LAG);
+      lensY += (handY - lensY) * (REDUCE ? 1 : LENS_LAG);
+    }
+
     // How whole the page is.
     if (shattered) {
       if (gatherAt) {
-        const all = clamp((now - gatherAt) / (MEND_MS + MEND_SPREAD), 0, 1);
+        const all = clamp((now - gatherAt) / (mendMs + mendSpread), 0, 1);
         gather = ease(all);
         if (all >= 1 && pieces === "gathering") wholeNow();
       }
-      if (shards.length) placeShards(now, t);
+      if (shards.length) placeShards(now);
     }
     // The quiet over the column, coming in as the page mends: worked out
     // again only when it has changed (or the window has).
@@ -872,13 +1044,7 @@
       keepNow = 1 - (1 - QUIET) * hush;
     }
 
-    const want = handX < -9000 ? 0 : 1;
-    handOn += (want - handOn) * (REDUCE ? 1 : 0.06);
-    if (handX > -9000) {
-      lensX += (handX - lensX) * (REDUCE ? 1 : LENS_LAG);
-      lensY += (handY - lensY) * (REDUCE ? 1 : LENS_LAG);
-    }
-
+    ink = mainInk;
     ink.setTransform(ratio, 0, 0, ratio, 0, 0);
     ink.clearRect(0, 0, W, H);
     const cx = W / 2, cy = H / 2;
@@ -892,7 +1058,21 @@
     const scale = small + (big - small) * voidness;
     drawWord(cx, cy - scale * 0.1, scale, t, 0.24 + 0.46 * voidness, handX, handY);
     if (voidness > 0.003 || sparks.length) drawSparks(cx, cy, portalR() * (0.6 + 0.4 * voidness), t, dt, voidness, gatherAt ? 0 : 1);
-    drawLens(cx, cy, turn, t, pageAlpha);
+    if (!lens || gatherAt) drawLens(cx, cy, turn, t, pageAlpha);
+    else if (lens.shown > 0.004 && lensX > -9000) {
+      // Seen through the lens while the page is cracked: the page whole —
+      // its quiet over the column, its word small — on the lens's canvas.
+      const keep = stops, keepHush = hush, keepK = keepNow;
+      hush = 1; stops = quietStops(); keepNow = QUIET;
+      ink = lens.ink;
+      ink.setTransform(ratio, 0, 0, ratio, -(lensX - LENS) * ratio, -(lensY - LENS * LENS_FLAT) * ratio);
+      ink.clearRect(lensX - LENS, lensY - LENS * LENS_FLAT, LENS * 2, LENS * 2 * LENS_FLAT);
+      drawWorld(cx, cy, turn, t, 0.75, -99999, -99999);
+      drawWord(cx, cy - small * 0.1, small, t, 0.24, -99999, -99999);
+      drawThrough(cx, cy, turn, t, 0.75);
+      ink = mainInk;
+      stops = keep; hush = keepHush; keepNow = keepK;
+    }
   }
 
   size();

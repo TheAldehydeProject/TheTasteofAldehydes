@@ -2,13 +2,13 @@
 // HOUSES TEN TO TWELVE — Om Parfums, Outsider Parfums and Lost Tribe
 // (2026-10-10), and the Houses view's motifs for them.
 //
-//   OM            opens CRACKED: the page in a few shards of glass round
-//                 โอม, the page itself held back underneath — and the hand
-//                 moving over it mends it, and it stays whole (a click or a
-//                 key too; the wheel does nothing to it); on a phone they
-//                 come together by themselves. Never with reduced motion,
-//                 an address at one fragrance, or ?om=whole. And it is
-//                 quick to draw (2026-10-11).
+//   OM            opens behind CRACKED GLASS, and is read through it: it
+//                 scrolls under the glass, the hexagon at the hand shows it
+//                 whole and the glass cracks again as it goes, and opening
+//                 a fragrance mends it for good (a key too); on a phone it
+//                 comes together by itself. Never with reduced motion, an
+//                 address at one fragrance, or ?om=whole. And it is quick
+//                 to draw, cracked and whole (2026-10-11).
 //   ITS WRITING   the owner's two dropdowns, one inside the other, and the
 //                 line they asked to have drawn.
 //   OUTSIDER      a door, ajar, in the left margin, the light coming
@@ -36,15 +36,15 @@ test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
 });
 
-/* CRACKED, AND THE HAND MENDS IT — the owner: "making the page fragmented,
-   and then when you interact with it, it kinda shifts together again and
-   starts being coherent", and then (2026-10-11) "i want the fracturing to
-   not be scroll dependent, and i want it to be soemthing that is less
-   severe. when hovered, the fracturing returns to normal permanently." The
-   pieces are laid over the page in a closed shadow root, so nothing else on
-   the page can find them: the page's own writing is there once, under them,
-   and only held back. */
-test("Om opens cracked, the wheel does nothing to it, and the hand moving over it mends it for good", async ({ page }) => {
+/* CRACKED WHILE READING — the owner (2026-10-11, later): "i want the
+   breaking apart of the page to be reversible when you hover away ...
+   like fractured glass unfracturing when hovered within the hexagon", and,
+   asked how the page is read, "cracked while reading": it scrolls under the
+   glass, and the glass stays. The pieces are laid over the page in a closed
+   shadow root, so nothing else on the page can find them: the page's own
+   writing is there once, under them, held back — and a press goes through
+   the glass to it. */
+test("Om opens behind cracked glass and is read through it: it scrolls, and the glass stays", async ({ page }) => {
   test.setTimeout(60000);
   const errors = collectPageErrors(page);
   await page.goto(OM);
@@ -52,90 +52,130 @@ test("Om opens cracked, the wheel does nothing to it, and the hand moving over i
   await expect(root).toHaveAttribute("data-om", "pieces");
   await expect(root).toHaveClass(/om-shattered/);
   await expect(page.locator(".om-shards")).toHaveCount(1);
+  expect(await page.evaluate(() => window.OmGlass.pieces()), "fine glass, not a few shards").toBeGreaterThan(30);
   // The writing is the page's own, once: the copies cannot be found.
   await expect(page.locator(".human-part")).toHaveCount(9);
   await expect(page.locator("h1")).toHaveCount(1);
-  // Held back while the pieces stand over it, and it does not scroll.
+  // Held back under the glass — and the glass lets a press through to it.
   expect(await page.locator(".human-head").evaluate((el) => getComputedStyle(el).opacity)).toBe("0");
-  expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).toBe("hidden");
-  // NOT SCROLL DEPENDENT: the wheel neither mends it nor moves it.
-  await page.mouse.wheel(0, 600);
+  const hit = await page.locator(".house-return").evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    return el.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2));
+  });
+  expect(hit, "a press goes through the glass").toBe(true);
+  // It scrolls, and the glass stays cracked.
+  await page.mouse.move(1300, 200);
+  await page.mouse.wheel(0, 900);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(300);
+  await page.mouse.move(1320, 600, { steps: 6 });
   await page.waitForTimeout(500);
   await expect(root).toHaveAttribute("data-om", "pieces");
-  expect(await page.evaluate(() => window.scrollY)).toBe(0);
-  // The hand moving over it.
-  await page.mouse.move(500, 400);
-  await page.mouse.move(540, 420, { steps: 4 });
+  expect(errors).toEqual([]);
+});
+
+/* THE HEXAGON SHOWS IT WHOLE — "the hexagon to be the thing that affects
+   everything behind it; i want it to be larger, and everything unbreaks in
+   the hexagon": the glass about the lens comes home as it comes, and cracks
+   again as it goes ("reversible when you hover away"). */
+test("Om's hexagon shows the page whole, and the glass cracks again when it leaves", async ({ page }) => {
+  test.setTimeout(60000);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto(OM);
+  await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
+  const homeAt = (x, y) => page.evaluate(([x, y]) => window.OmGlass.homeAt(x, y), [x, y]);
+  expect(await homeAt(520, 400), "cracked before the hand comes").toBeLessThan(0.05);
+  await page.mouse.move(480, 380);
+  await page.mouse.move(520, 400, { steps: 6 });
+  await expect.poll(() => page.evaluate(() => window.OmGlass.lens())).toBeGreaterThan(0.9);
+  await expect.poll(() => homeAt(520, 400), { message: "whole in the hexagon" }).toBeGreaterThan(0.9);
+  // Away to the far side: where it was is cracked again, and it is not mended.
+  await page.mouse.move(1150, 700, { steps: 8 });
+  await expect.poll(() => homeAt(520, 400), { message: "cracked again once it has gone" }).toBeLessThan(0.05);
+  expect(await homeAt(1150, 700)).toBeGreaterThan(0.5);
+  await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
+});
+
+/* OPENING A FRAGRANCE MENDS IT FOR GOOD — and the press is held while the
+   glass mends, so the fragrance opens on the page made whole rather than
+   coming out from under a ghost of the shut list in the glass. */
+test("opening a fragrance under Om's glass mends it, and the fragrance opens once the page is whole", async ({ page }) => {
+  test.setTimeout(60000);
+  const errors = collectPageErrors(page);
+  await page.goto(OM);
+  const root = page.locator("html");
+  await expect(root).toHaveAttribute("data-om", "pieces");
+  const part = page.locator(".human-part").first();
+  await part.locator("summary").evaluate((el) => window.scrollTo(0, window.scrollY + el.getBoundingClientRect().top - 300));
+  await page.waitForTimeout(300);
+  await part.locator("summary").click();
   await expect(root).toHaveAttribute("data-om", "gathering");
-  await expect(root).toHaveAttribute("data-om", "whole", { timeout: 8000 });
+  expect(await part.evaluate((el) => el.open), "held while the glass mends").toBe(false);
+  await expect(root).toHaveAttribute("data-om", "whole", { timeout: 6000 });
+  await expect.poll(() => part.evaluate((el) => el.open), { message: "and then it opens" }).toBe(true);
   await expect(page.locator(".om-shards")).toHaveCount(0, { timeout: 3000 });
   await expect(root).not.toHaveClass(/om-shattered/);
   expect(await page.locator(".human-head").evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
-  // And whole it stays: it scrolls, and the hand and a click do nothing to it.
-  await page.mouse.wheel(0, 600);
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(100);
+  // Whole it stays: the hand and a click on nothing do nothing to it.
   await page.mouse.move(900, 300, { steps: 4 });
-  await page.mouse.click(1300, 300);
+  await page.mouse.click(1300, 120);
   await page.waitForTimeout(400);
   await expect(root).toHaveAttribute("data-om", "whole");
   expect(errors).toEqual([]);
 });
 
-/* THE PIECES ARE CUT FROM THE PAGE: each copy of the page's flow is laid
-   exactly where the page is, so when they come home what was in pieces is
-   the page itself — the name stands where it will stand. */
-test("Om's pieces land exactly on the page they were cut from", async ({ page }) => {
+/* THE PIECES ARE CUT FROM THE PAGE, laid out at the page's own width (the
+   window's less its scrollbar — they stood 8px off it while they were laid
+   out at the window's), so when they come home what was in pieces is the
+   page itself, wherever it has been scrolled to. */
+test("Om's pieces are laid out as the page is, and land on it exactly", async ({ page }) => {
   await page.goto(OM);
   await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
-  // (The head rises a little as the page comes in, its first second.)
+  expect(await page.evaluate(() => window.OmGlass.width())).toBe(await page.evaluate(() => document.body.clientWidth));
+  const summary = page.locator(".human-part > summary").first();
+  await summary.evaluate((el) => window.scrollTo(0, window.scrollY + el.getBoundingClientRect().top - 300));
   await page.waitForTimeout(1300);
-  const before = await page.locator("h1").boundingBox();
-  await page.mouse.move(700, 450);
-  await page.mouse.move(720, 460, { steps: 3 });
+  const before = await summary.boundingBox();
+  await summary.click();
   await expect(page.locator("html")).toHaveAttribute("data-om", "whole", { timeout: 8000 });
-  const after = await page.locator("h1").boundingBox();
+  const after = await summary.boundingBox();
   expect(Math.abs(after.x - before.x)).toBeLessThan(1);
   expect(Math.abs(after.y - before.y)).toBeLessThan(1);
 });
 
-/* A CLICK OR A KEY MENDS IT TOO, so nobody is left looking at pieces whose
-   hand has not moved (a keyboard, say) — but a hand that has not moved does
-   not: a browser can send one move as the page appears under a still hand. */
-test("Om's pieces come together at a click or a key, and not at one still move", async ({ page }) => {
+/* A KEY MENDS IT, since a keyboard cannot hover — and a hand moving over it
+   does not, nor a click on nothing: the glass is read through. */
+test("Om's glass is mended by a key, and not by the hand or a click on nothing", async ({ page }) => {
   await page.goto(OM);
   await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
   await page.mouse.move(600, 400);
-  await page.waitForTimeout(400);
-  await expect(page.locator("html"), "one move is not hovering").toHaveAttribute("data-om", "pieces");
-  await page.keyboard.press("ArrowDown");
-  await expect(page.locator("html")).toHaveAttribute("data-om", "whole", { timeout: 8000 });
-  await page.goto(OM);
+  await page.mouse.move(700, 450, { steps: 8 });
+  await page.mouse.click(1300, 120);
+  await page.waitForTimeout(500);
   await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
-  await page.mouse.click(600, 400);
+  await page.keyboard.press("Tab");
   await expect(page.locator("html")).toHaveAttribute("data-om", "whole", { timeout: 8000 });
 });
 
 /* QUICK TO DRAW — "please smooth the om parfums page out, it slows down the
    laptop A LOT!" (2026-10-11): it was the drawing's quiet over the column,
-   painted over every finished frame (16 frames a second on this machine)
-   and the pieces, fifty copies of the whole page restyled every frame.
-   Now no shard carries more of the page than the window shows, and once
-   whole the page draws near sixty a second here. */
-test("Om is quick to draw: few shards, each carrying only what the window shows, and the whole page near sixty a second", async ({ page }) => {
+   painted over every finished frame (16 frames a second on this machine).
+   And since the page is read cracked: nothing in the glass is a layer of
+   its own but the glints — fifty pieces cut to their shapes on layers of
+   their own held it at a quarter of the whole page's frames. */
+test("Om is quick to draw, cracked and whole", async ({ page }) => {
   test.setTimeout(60000);
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(OM);
-  await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
   const src = read("om.js");
   expect(src, "no mask painted over the frame").not.toContain("destination-in");
-  expect(src, "each copy cut down to the window").toContain("trim(el, copy, 0)");
-  const rings = src.match(/SHARD_RINGS_WIDE = (\[[^;]+\]);/)[1];
-  const shards = 1 + JSON.parse(rings).reduce((n, [, k]) => n + k, 0);
-  expect(shards, "a few shards, where there were fifty-one").toBeLessThan(25);
+  expect(src, "no piece on a layer of its own").not.toMatch(/translate3d|\.shard\{[^}]*will-change|\.om-flow\{[^}]*will-change/);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const fps = () => page.evaluate(() => new Promise((res) => { let n = 0; const t0 = performance.now(); (function f() { n++; if (performance.now() - t0 < 2000) requestAnimationFrame(f); else res(n / 2); })(); }));
+  await page.goto(OM);
+  await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
+  await page.waitForTimeout(1500);
+  expect(await fps(), "frames a second, cracked").toBeGreaterThan(24);
   await page.goto(OM + "?om=whole");
   await page.waitForTimeout(1500);
-  const fps = await page.evaluate(() => new Promise((res) => { let n = 0; const t0 = performance.now(); (function f() { n++; if (performance.now() - t0 < 2000) requestAnimationFrame(f); else res(n / 2); })(); }));
-  expect(fps, "frames a second, whole").toBeGreaterThan(30);
+  expect(await fps(), "frames a second, whole").toBeGreaterThan(30);
 });
 
 /* ON A PHONE IT COMES TOGETHER BY ITSELF — "I dont want it to be on click
@@ -284,6 +324,25 @@ test("Outsider is a door standing ajar in the left margin, the light coming thro
   expect(seen.green, "its green light").toBeGreaterThan(200);
   expect(seen.right, "and nothing standing on the right").toBeLessThan(seen.left / 20);
   expect(errors).toEqual([]);
+});
+
+/* THE DOOR OPENS AS THE PAGE IS READ — "less open and opens more when you
+   scroll (but not entirely)" (2026-10-11, later): ajar a little at the top
+   of the page, wider as it is scrolled down, never all the way. */
+test("Outsider's door is a little open at the top, opens wider as the page is scrolled, and never all the way", async ({ page }) => {
+  test.setTimeout(60000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(OUTSIDER);
+  const field = page.locator(".human-field");
+  await expect.poll(() => field.getAttribute("data-open").then(Number)).toBeGreaterThan(0.1);
+  const top = Number(await field.getAttribute("data-open"));
+  expect(top, "a little open at the top").toBeLessThan(0.2);
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect.poll(() => field.getAttribute("data-open").then(Number), { timeout: 8000 }).toBeGreaterThan(0.55);
+  await page.waitForTimeout(1500);
+  expect(Number(await field.getAttribute("data-open")), "never all the way").toBeLessThan(0.66);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect.poll(() => field.getAttribute("data-open").then(Number), { timeout: 8000 }).toBeLessThan(0.2);
 });
 
 /* LOST TRIBE'S FIELD NOTES: the house's own stag and the creatures and
@@ -498,14 +557,19 @@ test("Lost Tribe's birds on the Houses view stay when the page is pressed, and s
   await page.waitForTimeout(500);
   expect(await page.evaluate(() => document.getElementById("sheet").classList.contains("musing")), "the house at the front is still rested on").toBe(true);
   expect((await page.evaluate(() => window.HouseMotifs.census())).flock || 0, "and its birds are still flying").toBeGreaterThan(0);
-  // The hand among them: they turn from it, flapping faster.
-  const birds = await inView();
+  // The hand among them: they turn from it, flapping faster. (Away from
+  // the hand, in the corner, they flap at their own pace.)
+  const birds = (await inView()).filter((b) => Math.hypot(b.x - 40, b.y - 870) > 220);
   expect(birds.every((b) => b.rate <= 10.5), "flapping at their own pace").toBe(true);
-  const b = birds[0];
-  await page.mouse.move(b.x + Math.sign(b.vx) * 20, b.y, { steps: 3 });
-  await page.waitForTimeout(250);
-  const now = await page.evaluate(() => window.HouseMotifs.flocks().flat());
-  expect(now.some((o) => o.rate > 11), "the near ones flap faster, turning away").toBe(true);
+  // A bird is quick, and a busy machine slow to move the hand: the hand is
+  // put where one is now, until one is near enough to turn.
+  await expect.poll(async () => {
+    const bs = await inView();
+    if (!bs.length) return false;
+    await page.mouse.move(bs[0].x + Math.sign(bs[0].vx) * 30, bs[0].y);
+    await page.waitForTimeout(120);
+    return (await page.evaluate(() => window.HouseMotifs.flocks().flat())).some((o) => o.rate > 11);
+  }, { timeout: 30000, message: "the near ones flap faster, turning away" }).toBe(true);
   expect(errors).toEqual([]);
 });
 for (const [no, kinds] of [["10", ["omRing"]], ["11", ["door"]], ["12", ["flock", "leafFall", "pollenRise"]]]) {

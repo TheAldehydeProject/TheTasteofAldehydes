@@ -2,7 +2,8 @@
 Date: 2026-10-10
 Files touched: `houses/om-parfums.html`, `houses/outsider-parfums.html`, `houses/lost-tribe.html`,
 `om.js`, `om-glyph.js`, `tools/om/glyph.py`, `outsider.js` (2026-10-11), `lost-tribe.js`,
-`house.js` (folds), `motifs.js`,
+`house.js` (folds), `motifs.js`, `contact-sheet.js` (a press is not a drag, 2026-10-11),
+`fragrance-line.js` and `chamber.js` (a see-through picture read on white, 2026-10-11),
 `scent-descriptions/index.html`, `style.css`, `notes-data.js`, `network.js` (`HOUSES`),
 `search-page.js`, `tools/seo.py`, `sitemap.xml`, `images/Om Parfums/`, `images/Outsider/`,
 `images/Lost Tribe/` (and their `house-web/` copies and READMEs), the footer chain on
@@ -19,23 +20,30 @@ Three houses, the tenth, eleventh and twelfth, each with the owner's writing, it
 its notes (the house's own page first, Fragrantica under it, as Ataraxia's are split), a frame
 on the Houses view with hover animations of its own, and a drawing of its own behind it:
 
-- **Om Parfums** opens **cracked** — since 2026-10-11 a few large shards of glass standing a
-  little off their places round **โอม**, the Thai spelling of Om (it was the page thrown far apart
-  for its first day) — and **the hand moving over it mends it for good**, the shards coming home
-  in a wave from where the hand is (a click or a key does too; scrolling does nothing). **On a
-  phone it comes together by itself**, a moment after the page opens. Behind the whole page a vast
+- **Om Parfums** opens **behind cracked glass** — since the last round of 2026-10-11 fine cracks,
+  as a pane cracks, the page's writing in each piece a pixel or few off its place, round **โอम**,
+  the Thai spelling of Om — and **is read through it**: it scrolls under the glass, and **the
+  hexagon at the hand shows it whole**, the glass about it mending as it comes and cracking again
+  as it goes. **Opening a fragrance mends it for good.** (It was the page thrown far apart for its
+  first day, and a few large shards mended for good by the hand that afternoon.) **On a phone it
+  comes together by itself**, a moment after the page opens. Behind the whole page a vast
   armillary of gold hairlines turns slowly as you read — **drawn about three and a half times as
-  quickly** as it was.
+  quickly** as it was, and the cracked page as quickly as the whole one.
 - **Outsider Parfums**, Om's sister house: since 2026-10-11 **a door standing slightly ajar** in
   the left margin, drawn in hairlines up from the floor as Les Abstraits' armoire is, **a small
   green light** coming through the gap and laid across the floor, dust drifting in it, the door
-  giving a little under the hand (`outsider.js`). For its first day it was Om's drawing in ivory
+  giving a little under the hand and **opening further as the page is read** (`outsider.js`). For its first day it was Om's drawing in ivory
   and green with a reflected **twin** and an **echo** on its name; both are gone.
 - **Lost Tribe**: a naturalist's **field notes** in the margins — the house's own stag and the
   creatures and ingredients of its six fragrances, in specks, each named as a field guide names
   it — pollen drawn to the hand, **leaves falling** (quiet behind the writing, since 2026-10-11),
   and **flocks crossing often**, scattering from the hand.
-- At the foot of all three, **the fragrances not smelled yet**, in one sentence (2026-10-11).
+- At the foot of all three, **the fragrances not smelled yet**, in one sentence (2026-10-11) —
+  Lost Tribe's long one **in a dropdown** since the last round of that day.
+- On the Houses view (the last round of 2026-10-11): Om's motif is **rings converging in three
+  dimensions**, several at once and each drawn its own way; Outsider's **door stands in a dark
+  room**, swinging on its hinge, its light coming through as light; and Lost Tribe's **birds fly
+  as they do on its page** and no longer vanish when the page is pressed.
 
 ## Why / key decisions
 
@@ -313,24 +321,144 @@ was (`.human-unsmelled`, its sources under it in `.human-unsmelled-from`):
 All of it was read through searches: the houses' sites and Fragrantica cannot be opened from this
 container (its network policy refuses them), so a list may be missing a name or two.
 
+## 2026-10-11, last — Om read through cracked glass, the rings, the door in the dark, the birds
+
+The owner: "lets focus on the two circles that converge together while rotating in 3D; i want you
+to make copies of those and focus on that. make the circles unique every time thet generate. fix
+the door; the door graphics are really weird. give it physics, make the light actual light, and
+darken the screen accordingly please. Make this minimalistically realistic (with particles and
+geometry again. why when you click the birds they disappear and restart? dont do that? animate
+them the same way as inside the page please. ... i like the hexagon cursor, but i want the breaking
+apart of the page to be reversible when you hover away. I also want the hexagon to be the thing
+that affects everything behind it; i want it to be larger, and everything unbreaks in the hexagon.
+make the breaks different and less huge. i want them to be like fractured glass unfracturing when
+hovered within the hexagon. the door in outsider parfums is perfect; i just want you to make it so
+that it is less open and opens more when you scroll (but not entirely). ... make image 1 a dropdown
+list ... i added the file for equatorial. Quintessentially amber in the fragrances SD page should
+have a different colour." Asked how Om's page is to be read while it is cracked — whether reading
+it mends it, or it is read cracked — they chose **cracked while reading**: the page scrolls with the
+cracks over it, readable but slightly broken outside the hexagon, whole inside it, and opening a
+fragrance mends it for good.
+
+### Om: read through cracked glass
+
+- **The glass** is fixed to the window, and the page scrolls under it. It is broken by **two blows**
+  (`GLASS_BLOWS_WIDE`: one up and left of the middle, a smaller one low on the right; one in the
+  middle on a phone), each a ring of pieces round where it struck, small near it and larger
+  farther out — about fifty pieces, Voronoi cells (`cellOf`), where there were seventeen large
+  shards. Each piece holds a copy of the **whole** page, moved as the page is scrolled, a pixel or
+  few off its place (`GLASS_SHIFT`) and a fraction of a degree out of true (`GLASS_TURN`); its crack
+  is a gold hairline, and **a glint** runs round one crack in four (`GLINT_*`). The page under it is
+  the real one, held back (`opacity: 0`) and **pressed through the glass** (`.om-shards` takes no
+  pointer); the scale down the side and its reading stand over the glass.
+- **The hexagon** (`LENS`, 168px across where it was 92) shows the page **whole**: inside it the page
+  itself, unbroken, on its own ground, with the drawing behind it as the whole page has it, and a
+  gold rim round it (`.rim`). The pieces within a little over two of its radii **come home as it
+  comes** (`GLASS_NEAR`), the nearer the more, and go back to their cracks as it goes — "reversible
+  when you hover away". Nothing is mended for good by the hand.
+- **Mended for good** by opening a fragrance or a dropdown: the press is **held** while the pieces
+  come home, quickly, in a wave from it (`MEND_QUICK_MS`, `MEND_QUICK_SPREAD`), and **given back to
+  the page once it is whole**, so the fragrance opens on the page made whole. (Let through at once,
+  the fragrance opened under copies of the page as it was, and a ghost of the shut list faded over
+  it.) A key reaching into the page mends it too (a keyboard cannot hover); a phone mends by itself
+  after `AUTO_MS`, as before. The hint says *Hover: the hexagon mends the glass*.
+- **The copies are laid out at the page's own width** — the window's less its scrollbar
+  (`page.clientWidth`); the root reported the whole window, since its scrollbar's room is held open,
+  and the copies stood 8px right of the page until they were.
+
+**As quick as the whole page.** Frames a second at 1440 × 900, two pixels to a point, on the test
+machine (no graphics card), the page still / the hand moving / scrolling:
+
+| | still | hand | scrolling |
+|---|---|---|---|
+| whole | 38–40 | 27–32 | 22 |
+| cracked, the first way it was built | 11 | 10 | 9 |
+| cracked, now | 39 | 26 | 13–15 |
+
+What held it at eleven was not the drawing or the copies but **layers**: a piece cut to its shape
+on a layer of its own is a mask the browser lays again every frame, and every piece was one — by
+`will-change` and by being moved in three dimensions (`translate3d`). Nothing in the glass is a
+layer of its own now but the glints, which are small; the cracks are drawn in each piece once, and
+the glints moved over them (`placeGlints`). Scrolling is the one thing still dearer cracked, since
+every piece is painted again as the page moves under it; on a laptop's graphics card that is far
+quicker than here.
+
+### Om on the Houses view: the rings, several and each its own
+
+`omMerge` (the grand figure) is gone; **`omRing`** is the motif, **up to four at once**
+(`most: 4`, two to begin with), and each is **two or three circles in three dimensions** — each on
+its own tilted plane, turning about its own axis — **closing in on one another and becoming one**
+(their planes turned together by `slerp`, their sizes and centres eased to one over
+`RING_MEET_MS`), seen in perspective (`RING_FOCAL`), the far half of each fainter. **Every circle is
+drawn its own way** (`ringStyle`): its line solid, dashed, dotted or none; ticked or not, and how
+finely; beads round it or not; a second line just inside it or not; marks at its quarters or
+thirds or not; a gold of its own (`OM_GOLDS`), its own thickness and its own turn — and each motif
+its own size, number of circles and speed; sparks as they meet. `HouseMotifs.rings()`
+says what each is, for the test.
+
+### Outsider on the Houses view: the door in the dark
+
+"give it physics, make the light actual light, and darken the screen accordingly": the room goes
+dark as the door comes (`NIGHT`, 0.93, over `NIGHT_MS`), done through the canvas's own background
+rather than a fill over the window; the view's words turn light while it is (`sheet-night` on the
+body, `dark-surface` on the stage, for the cursor). The door is drawn up from the floor
+(`DOOR_BUILD`), then **pushed open** and swings on its hinge on **a damped spring** (`DOOR_SPRING`,
+`DOOR_DAMP`) to rest a little open (`DOOR_REST`), stirred by drafts and opening to the hand at its
+edge (`DOOR_HAND`), in perspective (`DOOR_FOCAL`). **The light** is a lamp in the room behind: rays
+through the gap that widen and narrow with it, a pool thrown on the floor from the lamp's place, a
+line under the door, the wall beside the gap lit, and **dust lit only where it is inside the beam**
+(`BEAM_DUST`, `inBeam`). `HouseMotifs.doors()` for the test. It costs the view a little: about 31
+frames a second on the test machine with it, against 41–43 without.
+
+### Lost Tribe: the birds, and a press that let the house go
+
+"why when you click the birds they disappear and restart?": a press on the view, anywhere off a
+house, counted as **a drag** for the moment it was held, which let the house at the front go — and
+its motifs, the birds among them, faded and came again. A press is not a drag now
+(`contact-sheet.js`: `!(dragging && dragged)`). And the birds are **the page's**: a flock flying on
+its own, each bird turning from the hand within `FLEE` and flapping faster as it does, as on
+`houses/lost-tribe.html` (`flock` in `motifs.js`; `HouseMotifs.flocks()`).
+
+### Outsider's page, Lost Tribe's list, Equatorial, Quintessentially Amber
+
+- **Outsider's door** stands **less open** at the head of the page (`AJAR`, 0.16 radians) and swings
+  further as the page is read, following the scroll (`AJAR_EASE`), to `AJAR_MOST` (0.64) at the foot
+  — never all the way; the hand still opens it a little more. `data-open` on its canvas says how
+  far.
+- **Lost Tribe's fragrances not smelled** are a dropdown (`.human-unsmelled-fold`, a
+  `.human-fold` with the count beside its name, its mark in the house's copper).
+- **Equatorial** has its picture (`images/Lost Tribe/Equatorial.webp`), so every fragrance of the
+  twelve houses has one.
+- **Quintessentially Amber** was framed in black in the Fragrances view's boxes and cards: its
+  picture is see-through, and see-through reads as black to the reading that finds a clean ground.
+  A see-through picture is read **on white paper** now, in `fragrance-line.js` and `chamber.js`
+  alike, so its frame is white.
+
 ## How to test it
 
-`npm test -- tests/om-and-the-tribe.spec.js`: Om cracked, **the wheel doing nothing to it**, **the
-hand mending it for good** (and a single still pointer event not), a click or a key mending it, the
-pieces landing where the page is, **Om quick to draw** (no mask over the window, the copies cut to
-the window, fewer than 25 shards, over 30 frames a second whole), a phone's coming together by
-itself, never with reduced motion, at one fragrance, with `?om=whole` or without its script; โอม
+`npm test -- tests/om-and-the-tribe.spec.js`: Om **behind fine cracked glass and read through it**
+(more than thirty pieces, a press going through to the page, the page scrolling and the glass
+staying), **the hexagon showing it whole** and the glass cracking again when it leaves, **opening a
+fragrance mending it** with the fragrance opening only once it is whole, the copies laid out at the
+page's own width and landing on it exactly, a key mending it and the hand or a click on nothing
+not, **Om quick to draw** (no mask over the window, no piece on a layer of its own, over 24 frames a
+second cracked and 30 whole), a phone's coming together by itself, never with reduced motion, at one fragrance, with `?om=whole` or without its script; โอม
 from the three letters; the two dropdowns and the line; the owner's words with the agreed
 corrections and Xocolate Crotch's stages; **Outsider's door** (outsider.js and not om.js, no echo,
-light on the left and nothing on the right, some of it green); Lost Tribe's field notes, its one
-line of names and the ten new ones, **its leaves and flocks** (quiet over the column); **the
+light on the left and nothing on the right, some of it green) **and its opening with the scroll**
+(a little at the top, wider down the page, never past 0.66); Lost Tribe's field notes, its one
+line of names **in a dropdown** and the ten new ones, **Equatorial's picture**, **its leaves and flocks** (quiet over the column); **the
 fragrances not smelled** on Om and Outsider; the cropped picture; **the shards and Outsider's
-merging motifs gone**; and each new house's motifs at the front of the Houses view (Om's `omMerge`
-and `omRing`, Outsider's `door`). The spec turns Playwright's trace off: recording it stalls the
+merging motifs gone** (and `omMerge` with them); **Om's rings** on the Houses view (several at
+once, each drawn its own way), **Outsider's door in the dark** (the room darkened and its words
+light, the door swinging, its light through the gap), **Lost Tribe's birds** staying when the view
+is pressed and turning from the hand; and each new house's motifs at the front of the Houses view
+(Om's `omRing`, Outsider's `door`). Quintessentially Amber's white frame is in
+`fragrance-line.spec.js`. The spec turns Playwright's trace off: recording it stalls the
 heavier pages. The house lists (twelve frames, the chain both ways, the return buttons, the subtitles in
 title case, the rank on every newer house) are in `houses.spec.js` and `contact-sheet.spec.js`;
 the phone's no-sideways-scroll list in `mobile.spec.js` carries the three. By eye: open
-`/houses/om-parfums.html` and move the hand; `/houses/outsider-parfums.html`, the hand near the door; `/houses/lost-tribe.html`,
+`/houses/om-parfums.html`, move the hand, scroll, and open a fragrance; `/houses/outsider-parfums.html`, the hand near the door; `/houses/lost-tribe.html`,
 moving the hand over a specimen; `/scent-descriptions/#house-10`, `#house-11`, `#house-12`.
 
 ## Known issues / TODO
@@ -342,10 +470,11 @@ moving the hand over a specimen; `/scent-descriptions/#house-10`, `#house-11`, `
   let its notes be found.
 - **Lost Tribe's list of other fragrances** may be missing a few the house sells (see above).
 - **Outsider's door** is a first answer, after Les Abstraits' armoire.
-- **The Om shatter on a slow machine**: since 2026-10-11 seventeen shards (eight on a phone), each
-  carrying only what the window shows of the page. The cracked page drew at 26 frames a second on
-  the test machine, which has no graphics card; if it still stutters on a laptop, fewer rings
-  (`SHARD_RINGS_WIDE`) is the knob — and it lasts only until the hand moves.
+- **Om's glass while scrolling** draws at about two thirds of the whole page's frames on the test
+  machine (every piece is painted again as the page moves under it); still, it is as quick as the
+  whole page. If it stutters on a laptop, fewer rings in `GLASS_BLOWS_WIDE` is the knob.
+- **Outsider's door in the dark on the Houses view** costs the view about a quarter of its frames on
+  the test machine (31 against 41–43); `BEAM_DUST` and the rays are the knobs.
 - **The lists of fragrances not smelled** (2026-10-11) were read through searches and may miss a
   name; the names left out as uncertain are listed above. **Smoke Oud** decides whether its attars
   belong in Om's sentence.

@@ -13309,21 +13309,22 @@ body.om-page { background-color: var(--bg); }
 .outsider-page .house-credit-say,
 .outsider-page .house-credit a { color: var(--ink); }
 
-/* THE PAGE IN PIECES. While om.js holds it shattered, the page is there
-   underneath, laid out exactly as it will be — so the pieces over it are
-   cut from the same page — and only not shown; and it does not scroll,
-   its scrollbar's room kept so nothing moves when it can again. When the
-   pieces have come home it is shown at once, nothing of its own fading
-   in (`om-landing`), and the pieces are faded off it. The void behind the
-   pieces is darker than the page. */
+/* THE PAGE UNDER CRACKED GLASS. While om.js holds it cracked, the page is
+   there underneath, laid out exactly as it will be — so the pieces over it
+   are cut from the same page — and only not shown; it scrolls as ever
+   (since 2026-10-11, later: it was held still, and the first touch mended
+   it for good), the glass staying where it is over it. The scale down the
+   side and its reading stand over the glass. When the pieces have come
+   home it is shown at once, nothing of its own fading in (`om-landing`),
+   and the pieces are faded off it. The void behind the glass is darker
+   than the page. */
 html:has(body.om-page) { scrollbar-gutter: stable; }
-html.om-shattered { overflow: hidden; }
 html.om-shattered body.om-page { background-color: #060509; }
 html.om-shattered .page-main > *,
 html.om-shattered .house-credit,
-html.om-shattered .human-foot,
+html.om-shattered .human-foot { opacity: 0 !important; transition: none !important; }
 html.om-shattered .human-rank,
-html.om-shattered .human-readout { opacity: 0 !important; transition: none !important; }
+html.om-shattered .human-readout { z-index: 4; }
 html.om-landing .page-main > *,
 html.om-landing .house-credit,
 html.om-landing .human-foot,
@@ -13333,6 +13334,7 @@ html.om-landing .human-readout { transition: none !important; }
   position: fixed;
   inset: 0;
   z-index: 3;
+  pointer-events: none;            /* the page under the glass is read and pressed */
 }
 
 

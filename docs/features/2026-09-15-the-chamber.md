@@ -1943,3 +1943,11 @@ owner's three paragraphs in its drawer (`gallery-writing data-favourite="Aetheri
 picture ADAR's own, credited. The line under the chapter's last card names the two that are left
 of Aegis — **"Amber Zero and Incantu ... could have both made it here too"** — at the owner's word.
 `chamber.spec.js` reads it. (Same round: [the report on the three new houses](2026-10-10-om-outsider-and-lost-tribe.md).)
+
+## 2026-10-11 — a see-through picture is read on white
+
+The favourites' prints read a picture the same way the Fragrances view's boxes do, so the fix for
+Quintessentially Amber's black frame there is made here too: a see-through picture is read on
+white paper, the canvas filled white before it is drawn (`readPictureNow`). No favourite's picture
+is see-through today, so nothing on this page moves. See [the fragrance
+line](2026-09-25-the-fragrance-line.md#2026-10-11--a-see-through-picture-is-read-on-white).
