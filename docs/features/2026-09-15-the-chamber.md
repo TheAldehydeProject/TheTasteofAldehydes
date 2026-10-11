@@ -1951,3 +1951,10 @@ Quintessentially Amber's black frame there is made here too: a see-through pictu
 white paper, the canvas filled white before it is drawn (`readPictureNow`). No favourite's picture
 is see-through today, so nothing on this page moves. See [the fragrance
 line](2026-09-25-the-fragrance-line.md#2026-10-11--a-see-through-picture-is-read-on-white).
+
+The same day, **a test made steady**: **`stepping chapters answers the press at once, and nothing is
+drawn unseen under the veil`** failed about one run in ten — on the version already live too, with
+the same count each time (13,433 rects: one whole frame of the drawing). A busy machine sometimes
+draws the new drawing's first held frame a little late, after the test has begun counting at 200ms.
+It holds now that **at most one frame** under the veil is drawn; with the redrawing it guards against
+put back on purpose (the drawing redrawn every frame under its veil), it fails at 23.
