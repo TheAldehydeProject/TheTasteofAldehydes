@@ -1007,3 +1007,9 @@ new readings for the tests sit with the others on `window.HouseMotifs`: `rings()
 `flocks()`. One thing here is new to every motif: **a motif may darken the whole view** (`night`,
 set in a frame by whatever draws, written to the canvas's background and `sheet-night` once the
 frame is drawn, and back to nothing when it goes) — only Outsider's door does.
+
+**Since the very last round of the day that is gone** ("ignore the making the darkening of the page
+for outsider, make it white and agree with the theme in general"): no motif darkens the view — no
+`night`, `NIGHT`, `sheet-night` or `dark-surface` from `motifs.js` — and Outsider's door is drawn on
+the view's own white, in ink hairlines, its light the house's green laid on the paper; see [their
+report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-11-the-very-last--oms-broken-glass-a-trial-a-button-to-mend-it-and-outsiders-door-on-white).

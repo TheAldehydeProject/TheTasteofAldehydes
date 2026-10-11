@@ -2692,54 +2692,48 @@
     };
   }
 
-  // ---------- OUTSIDER PARFUMS: a door in the dark, its light through the gap ----------
+  // ---------- OUTSIDER PARFUMS: a door ajar, its light through the gap ----------
   // (2026-10-11) "for outsider, remove the merginig motifs and I want you to
   // add a door that is slightly ajar, with a small ught coming from that
   // door. that is to be the main motif; similarly to les abstraits closet."
   // It was drawn on the white paper for a day, flat, its light a pale shape;
-  // and since later that day — "fix the door; the door graphics are really
-  // weird. give it physics, make the light actual light, and darken the
-  // screen accordingly please. Make this minimalistically realistic (with
-  // particles and geometry again" — it is A DOOR IN A DARK ROOM:
-  //   THE DARK    the room goes dark round it as it comes (NIGHT): the view's
-  //               paper under a veil, and the page's words turned light
-  //               while it stands (`sheet-night` on the body, for the
-  //               stylesheet).
+  // then — "fix the door; the door graphics are really weird. give it
+  // physics, make the light actual light, and darken the screen accordingly
+  // please. Make this minimalistically realistic (with particles and
+  // geometry again" — a door in a dark room, the view going dark round it;
+  // and since the last round of that day — "ignore the making the darkening
+  // of the page for outsider, make it white and agree with the theme in
+  // general" — the same door ON THE VIEW'S OWN WHITE PAPER, nothing darkened:
   //   THE DOOR    a door in three dimensions, seen in perspective from the
-  //               middle of the room: its frame on the wall in pale hairlines
-  //               with a speck at every joint, the leaf hinged on the left
-  //               with its panels and its knob, as thick as a door is — and
-  //               SWINGING ON ITS HINGE (`swing`): it stands shut, is pushed,
-  //               swings open past where it will stand, comes back and
-  //               settles ajar, as a door on a spring settles; a draft moves
-  //               it now and then, and the hand near its edge pushes it
-  //               further open, and it swings back when the hand goes.
-  //   THE LIGHT   a lamp in the room beyond (LAMP), and its light coming
-  //               through the gap as light does: the gap bright; a beam
-  //               widening out of it into the dark; on the floor in front
-  //               the pool its rays make, thrown from the gap by the lamp,
-  //               bright at the threshold and fading as it comes; a line of
-  //               it under the door; the edge of the door and the jamb lit;
-  //               the frame's lines lit by how near they are to the gap — and
-  //               all of it as wide and as bright as the door is open, so it
-  //               swings with the door. Shut, only the line under the door.
+  //               middle of the room: its frame on the wall in ink hairlines
+  //               with a speck at every joint, as the armoire is drawn, the
+  //               leaf hinged on the left with its panels and its knob, as
+  //               thick as a door is — and SWINGING ON ITS HINGE (`swing`):
+  //               it stands shut, is pushed, swings open past where it will
+  //               stand, comes back and settles ajar, as a door on a spring
+  //               settles; a draft moves it now and then, and the hand near
+  //               its edge pushes it further open, and it swings back when
+  //               the hand goes.
+  //   THE LIGHT   a lamp in the room beyond (`lamp`), and its light coming
+  //               through the gap in the house's green, as light falls on
+  //               paper: the gap washed with it, palest at its middle; a few
+  //               fine rays out of it; on the floor in front the pool its
+  //               rays make, strongest at the threshold and fading as it
+  //               comes; a line of it under the door; the jamb and the frame's
+  //               lines tinged by how near they are to the gap — and all of
+  //               it as wide and as strong as the door is open, so it swings
+  //               with the door. Shut, only the line under the door.
   //   THE DUST    specks in the air, seen only where the beam lights them.
-  // In the house's green, as on its own page.
-  const OUT_DARK = "8, 9, 8";
-  const OUT_LINE = "214, 222, 210";
-  const OUT_GREEN = "104, 178, 138";
-  const OUT_LIGHT = "226, 246, 222";
-  const NIGHT = 0.93;                    // how dark the room goes
-  const NIGHT_MS = 1200;                 // and how long it takes
-  const DOOR_BUILD = 1500;               // ms, the frame drawn up from the floor, once dark
-  const DOOR_PUSH_MS = 2100;             // when the door is pushed open
+  const OUT_GREEN = "58, 132, 92";       // the house's green, deep enough to read on white
+  const OUT_PALE = "214, 236, 220";      // and paled, where the light is strongest
+  const DOOR_BUILD = 1500;               // ms, the frame drawn up from the floor
+  const DOOR_PUSH_MS = 1700;             // when the door is pushed open
   const DOOR_REST = 0.58;                // radians it settles at
   const DOOR_HAND = 0.95;                // and opens to with the hand at its edge
   const DOOR_SPRING = 7;                 // how hard it is drawn back to rest
   const DOOR_DAMP = 1.5;                 // and how quickly its swing dies
   const DOOR_FOCAL = 1500;               // px, the eye's distance
   const BEAM_DUST = 90;
-  let night = 0, nightShown = false, nightGround = 0; // how dark the motifs have made the room, whether the words are turned light, and the ground last laid
   function door() {
     const tall = Math.max(240, Math.min(H * 0.62, 460));
     const wide = tall / 2.25;
@@ -2823,19 +2817,12 @@
 
     return {
       fadeIn: 1,
-      night: true,
       swing: () => ({ angle: angle, spin: spin, pushed: pushed }),
       box: { left: left - 30, right: left + wide * 2.4, top: baseY - tall - 30, bottom: H },
       draw(c, age, a) {
         const dt = Math.min(0.05, Math.max(0, (age - lastAge) / 1000));
         lastAge = age;
-        const dark = NIGHT * ease(age / NIGHT_MS) * a;
-        // THE DARK, over the whole view, behind the houses: the motifs'
-        // canvas's own ground (set in `frame`), which the browser lays down
-        // itself — a fill of the whole window drawn every frame cost a
-        // quarter of the frames.
-        night = Math.max(night, dark);
-        const reach = ease((age - NIGHT_MS * 0.5) / DOOR_BUILD) * 1.1;
+        const reach = ease(age / DOOR_BUILD) * 1.1;
         if (reach <= 0) return;
 
         // THE SWING.
@@ -2872,22 +2859,21 @@
         c.lineJoin = "round";
         const built = Math.min(1, reach);
 
-        // THE LIGHT, added to the dark: the glow round the gap on the wall,
-        // the beam, the pool on the floor, the gap itself.
+        // THE LIGHT, laid on the paper: the wash round the gap on the wall,
+        // the pool on the floor, the rays, the gap itself.
         if (lit > 0.003 && built > 0.6) {
           const L = lit * a * Math.min(1, (built - 0.6) / 0.3);
-          c.globalCompositeOperation = "lighter";
-          // The glow on the wall.
-          const gr = tall * 0.5;
+          // The wash on the wall round the gap.
+          const gr = tall * 0.42;
           const glow = c.createRadialGradient(gx, gy, 0, gx, gy, gr);
-          glow.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.3 * L).toFixed(3) + ")");
-          glow.addColorStop(0.45, "rgba(" + OUT_GREEN + "," + (0.06 * L).toFixed(3) + ")");
+          glow.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.1 * L).toFixed(3) + ")");
+          glow.addColorStop(0.5, "rgba(" + OUT_GREEN + "," + (0.025 * L).toFixed(3) + ")");
           glow.addColorStop(1, "rgba(" + OUT_GREEN + ",0)");
           c.fillStyle = glow;
           c.fillRect(gx - gr, gy - gr, gr * 2, gr * 2);
           // The pool on the floor: the lamp's rays through the foot of the
           // gap, thrown out across the floor towards us.
-          const far = -DOOR_FOCAL * 0.7;
+          const far = -DOOR_FOCAL * 0.5;
           const throwFrom = (x, z) => {
             const dx = x - lamp.x, dz = z - lamp.z;
             const s = (far - z) / dz;
@@ -2896,83 +2882,85 @@
           const P0 = proj(e.x, baseY, e.z), P1 = proj(O2, baseY, 0);
           const P2 = throwFrom(O2, 0), P3 = throwFrom(e.x, e.z);
           const pool = c.createLinearGradient(P1[0], P1[1], (P2[0] + P3[0]) / 2, (P2[1] + P3[1]) / 2);
-          pool.addColorStop(0, "rgba(" + OUT_LIGHT + "," + (0.62 * L).toFixed(3) + ")");
-          pool.addColorStop(0.06, "rgba(" + OUT_GREEN + "," + (0.4 * L).toFixed(3) + ")");
-          pool.addColorStop(0.35, "rgba(" + OUT_GREEN + "," + (0.12 * L).toFixed(3) + ")");
+          pool.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.3 * L).toFixed(3) + ")");
+          pool.addColorStop(0.08, "rgba(" + OUT_GREEN + "," + (0.18 * L).toFixed(3) + ")");
+          pool.addColorStop(0.4, "rgba(" + OUT_GREEN + "," + (0.05 * L).toFixed(3) + ")");
           pool.addColorStop(1, "rgba(" + OUT_GREEN + ",0)");
           c.fillStyle = pool;
           poly([P0, P1, P2, P3]);
           c.fill();
-          // THE BEAM in the air: a few RAYS, thin, each from the lamp through
-          // a point of the gap and on down until it meets the floor, as
-          // light shows in dusty air — the glow on the wall round them, and
-          // the dust lit in them (below). (A beam drawn as one shape had
-          // hard edges, which light has not.)
+          // THE RAYS: a few, fine, each from the lamp through a point of the
+          // gap and on down until it meets the floor, fading as they go — the
+          // dust lit in them (below). (A beam drawn as one shape had hard
+          // edges, which light has not.)
           const out = (x, y, z, s) => proj(lamp.x + (x - lamp.x) * s, lamp.y + (y - lamp.y) * s, lamp.z + (z - lamp.z) * s);
+          c.strokeStyle = "rgb(" + OUT_GREEN + ")";
           rays.forEach((ry) => {
             const x = e.x + (O2 - e.x) * ry.u, z = e.z * (1 - ry.u), y = topO + (baseY - topO) * ry.v;
-            // Out from the lamp through it, to where it meets the floor.
             const sFloor = (baseY - lamp.y) / (y - lamp.y);
             const s1 = Math.min(sFloor, 1 + (wide * 2.4) / lamp.z);
             const p0 = proj(x, y, z), p1 = out(x, y, z, s1);
             const flick = 0.75 + 0.25 * Math.sin(age / ry.rate + ry.ph);
-            // Fading as it goes: in four lengths, each fainter than the last.
-            c.strokeStyle = "rgb(" + OUT_LIGHT + ")";
-            c.lineWidth = ry.thick;
+            c.lineWidth = Math.max(0.8, ry.thick * 0.5);
             for (let q = 0; q < 4; q++) {
-              c.globalAlpha = Math.min(1, 0.2 * L * flick * ry.w * (1 - q / 4) * (1 - q / 4));
+              c.globalAlpha = Math.min(1, 0.09 * L * flick * ry.w * (1 - q / 4) * (1 - q / 4));
               const a0 = q / 4, a1 = (q + 1) / 4;
               c.beginPath();
               c.moveTo(p0[0] + (p1[0] - p0[0]) * a0, p0[1] + (p1[1] - p0[1]) * a0);
               c.lineTo(p0[0] + (p1[0] - p0[0]) * a1, p0[1] + (p1[1] - p0[1]) * a1);
               c.stroke();
             }
-            c.globalAlpha = 1;
           });
-          // The gap: the room beyond, lit, brightest at its middle.
+          c.globalAlpha = 1;
+          // The gap: the room beyond, lit — the green at its edges, paling
+          // to its middle, where the light is strongest.
           const gap = c.createLinearGradient(E0[0], 0, J0[0], 0);
-          gap.addColorStop(0, "rgba(" + OUT_LIGHT + "," + (0.55 * L).toFixed(3) + ")");
-          gap.addColorStop(0.5, "rgba(" + OUT_LIGHT + "," + (0.9 * L).toFixed(3) + ")");
-          gap.addColorStop(1, "rgba(" + OUT_LIGHT + "," + (0.6 * L).toFixed(3) + ")");
+          gap.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.42 * L).toFixed(3) + ")");
+          gap.addColorStop(0.5, "rgba(" + OUT_PALE + "," + (0.95 * L).toFixed(3) + ")");
+          gap.addColorStop(1, "rgba(" + OUT_GREEN + "," + (0.36 * L).toFixed(3) + ")");
           c.fillStyle = gap;
           poly([E0, J0, J1, E1]);
           c.fill();
-          c.globalCompositeOperation = "source-over";
         }
 
-        // THE DOOR, dark against the light, its edge lit.
+        // THE DOOR: its face towards us, away from the lamp, in a faint
+        // shade; its edge catching the light.
         if (built > 0.5) {
           const up = Math.min(1, (built - 0.5) / 0.4) * a;
-          c.fillStyle = "rgba(" + OUT_DARK + "," + (0.96 * up).toFixed(3) + ")";
+          // The paper first, so nothing of the light behind it shows through.
+          c.fillStyle = "rgba(255, 255, 255," + up.toFixed(3) + ")";
           poly([H0, E0, E1, H1]); c.fill();
-          // Its edge, the thickness of it, catching the light.
-          c.fillStyle = "rgba(" + OUT_LIGHT + "," + ((0.2 + 0.55 * lit) * up).toFixed(3) + ")";
+          c.fillStyle = "rgba(" + INK + "," + (0.06 * up).toFixed(3) + ")";
+          poly([H0, E0, E1, H1]); c.fill();
+          // Its edge, the thickness of it, in the light.
+          c.fillStyle = "rgba(" + OUT_GREEN + "," + ((0.08 + 0.3 * lit) * up).toFixed(3) + ")";
           poly([E0, B0, B1, E1]); c.fill();
-          // Its outline, and its panels, in the frame's pale line.
+          // Its outline, and its panels, in the frame's ink.
           c.lineWidth = 1;
-          c.strokeStyle = "rgba(" + OUT_LINE + "," + ((0.35 + 0.4 * lit) * up).toFixed(3) + ")";
+          c.strokeStyle = "rgba(" + INK + "," + (0.62 * up).toFixed(3) + ")";
           poly([H0, E0, E1, H1]); c.stroke();
+          c.strokeStyle = "rgba(" + INK + "," + (0.36 * up).toFixed(3) + ")";
+          poly([E0, B0, B1, E1]); c.stroke();
           const on = (u, v) => {
             const x = O1 + (e.x - O1) * u, z = e.z * u, y = topO + 1 + (baseY - 3 - topO) * v;
             return proj(x, y, z);
           };
-          c.strokeStyle = "rgba(" + OUT_LINE + "," + ((0.16 + 0.22 * lit) * up).toFixed(3) + ")";
+          c.strokeStyle = "rgba(" + INK + "," + (0.3 * up).toFixed(3) + ")";
           [[0.1, 0.45, 0.07, 0.5], [0.55, 0.9, 0.07, 0.5], [0.1, 0.45, 0.57, 0.93], [0.55, 0.9, 0.57, 0.93]].forEach(([u0, u1, v0, v1]) => {
             poly([on(u0, v0), on(u1, v0), on(u1, v1), on(u0, v1)]); c.stroke();
           });
           const knob = on(0.88, 0.53);
-          c.strokeStyle = "rgba(" + OUT_LINE + "," + ((0.4 + 0.3 * lit) * up).toFixed(3) + ")";
+          c.strokeStyle = "rgba(" + INK + "," + (0.6 * up).toFixed(3) + ")";
           c.beginPath(); c.arc(knob[0], knob[1], Math.max(2, wide * 0.022), 0, Math.PI * 2); c.stroke();
           // The line of light under the door, even shut.
-          c.globalCompositeOperation = "lighter";
-          c.strokeStyle = "rgba(" + OUT_LIGHT + "," + ((0.25 + 0.5 * lit) * up).toFixed(3) + ")";
+          c.strokeStyle = "rgba(" + OUT_GREEN + "," + ((0.3 + 0.45 * lit) * up).toFixed(3) + ")";
           c.lineWidth = 1.3;
           c.beginPath(); c.moveTo(H1[0] + 1, H1[1] + 1.5); c.lineTo(E1[0], E1[1] + 1.5); c.stroke();
-          c.globalCompositeOperation = "source-over";
         }
 
-        // THE FRAME, drawn up from the floor, each line as bright as the
-        // light from the gap makes it, and a speck at every joint.
+        // THE FRAME, drawn up from the floor in ink, each line tinged green
+        // by how near it is to the light from the gap, and a speck at every
+        // joint.
         c.lineWidth = 1;
         lines.forEach((l) => {
           const k = Math.max(0, Math.min(1, (reach - l.from) / Math.max(0.06, l.to - l.from)));
@@ -2982,7 +2970,7 @@
           // The light on it, from its middle.
           const mx = (l.pts[0][0] + l.pts[l.pts.length - 1][0]) / 2, my = (l.pts[0][1] + l.pts[l.pts.length - 1][1]) / 2;
           const shine = wallLight(mx, my, gx, gy, lit);
-          c.strokeStyle = "rgba(" + OUT_LINE + "," + ((0.22 + 0.6 * shine) * l.weight * a).toFixed(3) + ")";
+          c.strokeStyle = "rgba(" + (shine > 0.25 ? OUT_GREEN : INK) + "," + ((0.5 + 0.2 * shine) * l.weight * a).toFixed(3) + ")";
           c.beginPath();
           c.moveTo(l.pts[0][0], l.pts[0][1]);
           for (let i = 1; i < l.pts.length; i++) {
@@ -2996,22 +2984,21 @@
         });
         // The jamb the light falls past, lit along its edge.
         if (lit > 0.01 && built >= 1) {
-          c.globalCompositeOperation = "lighter";
-          c.strokeStyle = "rgba(" + OUT_LIGHT + "," + (0.5 * lit * a).toFixed(3) + ")";
+          c.strokeStyle = "rgba(" + OUT_GREEN + "," + (0.55 * lit * a).toFixed(3) + ")";
+          c.lineWidth = 1.4;
           c.beginPath(); c.moveTo(J0[0], J0[1]); c.lineTo(J1[0], J1[1]); c.stroke();
-          c.globalCompositeOperation = "source-over";
+          c.lineWidth = 1;
         }
         joints.forEach((jn) => {
           if (!jn.l.k || jn.at > jn.l.len * jn.l.k + 0.01) return;
           const shine = wallLight(jn.x, jn.y, gx, gy, lit);
-          c.fillStyle = "rgba(" + OUT_LINE + "," + ((0.45 + 0.5 * shine) * a).toFixed(3) + ")";
-          c.fillRect(jn.x - 1, jn.y - 1, 2, 2);
+          c.fillStyle = "rgba(" + (shine > 0.25 ? OUT_GREEN : INK) + "," + ((0.7 + 0.25 * shine) * a).toFixed(3) + ")";
+          c.fillRect(jn.x - 1.2, jn.y - 1.2, 2.4, 2.4);
         });
 
         // THE DUST, drifting, seen only in the light.
         if (lit > 0.01) {
-          c.globalCompositeOperation = "lighter";
-          c.fillStyle = "rgb(" + OUT_LIGHT + ")";
+          c.fillStyle = "rgb(" + OUT_GREEN + ")";
           dust.forEach((m) => {
             m.vx += rand(-6, 6) * dt; m.vy += (rand(-6, 6) - 1.2) * dt; m.vz += rand(-6, 6) * dt;
             m.vx *= 0.98; m.vy *= 0.98; m.vz *= 0.98;
@@ -3022,11 +3009,10 @@
             const b = inBeam(m, e);
             if (b <= 0.01) return;
             const [x, y] = proj(m.x, m.y, m.z);
-            c.globalAlpha = Math.min(1, b * lit * a * (0.55 + 0.45 * Math.sin(age / 700 + m.ph)));
+            c.globalAlpha = Math.min(1, 0.85 * b * lit * a * (0.55 + 0.45 * Math.sin(age / 700 + m.ph)));
             c.fillRect(x, y, m.s, m.s);
           });
           c.globalAlpha = 1;
-          c.globalCompositeOperation = "source-over";
         }
         c.restore();
       },
@@ -3205,7 +3191,6 @@
     }
 
     ctx.clearRect(0, 0, W, H);
-    night = 0;
     // A well not drawn for a moment has gone.
     for (let i = wells.length - 1; i >= 0; i--) if (now - wells[i].seen > 150) wells.splice(i, 1);
     spacetime(ctx);
@@ -3227,23 +3212,6 @@
       if (alpha > 0.002) t.draw(ctx, age, alpha);
       return true;
     });
-
-    // THE DARK a motif has made of the room (Outsider's door): the page's
-    // own words are turned light while it is dark, by the stylesheet; written
-    // only when it changes.
-    const shade = Math.round(night * 200) / 200;
-    if (shade !== nightGround) {
-      nightGround = shade;
-      canvas.style.backgroundColor = shade > 0 ? "rgba(" + OUT_DARK + "," + shade + ")" : "";
-    }
-    const dim = night > 0.45;
-    // (And the stage is marked dark for the cursor, which reads the ground
-    // under it and would be drawn dark on the dark.)
-    if (dim !== nightShown) {
-      nightShown = dim;
-      document.body.classList.toggle("sheet-night", dim);
-      stage.classList.toggle("dark-surface", dim);
-    }
 
     if (things.length || house) requestAnimationFrame(frame);
     else { running = false; last = 0; }

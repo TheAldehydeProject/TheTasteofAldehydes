@@ -650,3 +650,18 @@ is drawn onto it, in `fragrance-line.js` and the same reading in `chamber.js` (t
 same) — so the bottle is found against white and its frame is white, as it is shown. No other
 picture of the eleven is see-through, so nothing else moves. `tests/fragrance-line.spec.js`, in
 **`boxes and cards fill each frame with the picture itself, placed on the bottle`**, says its frame is white.
+
+## 2026-10-11, the very last — a thousand fragrances
+
+The table is to hold about a thousand. **Only what can be seen is laid out** (`content-visibility: auto`
+on every item, each standing meanwhile at about its own size), **only the items in sight fade**
+(`in-sight`), the scale's ticks are watched rather than measured (`watch`), the search writes
+`hidden` only where it changes and its measuring waits a frame (`settleSoon`), and **a picture is
+asked for as its item comes near** (`near`) — **never while the table is a list** — and **made ready
+in a worker** (`MAKER`, `ready`): fetched, decoded and, where it is larger, made `SHOW_SHORT` (900)
+device pixels on its shorter side, which is what its box or card shows, with the small copy the
+reading reads made beside it; without a worker, as before (`shrink`). The reading itself
+(`readPicture`) is unchanged, and still the same as `chamber.js`'s. The pause on the way in from the
+houses went from about half a second to under a fifth, and changing to cards from a freeze of a
+second and a half to nothing to notice. Everything about it is in [Scent Descriptions at
+scale](2026-10-11-scent-descriptions-at-scale.md).

@@ -1707,13 +1707,20 @@ test("pressing a house steps the page back before opening it", async ({ page }) 
   await bringToFront(page, 7);
   const target = page.locator(".sheet-frame").nth(7);
   const b = await target.boundingBox();
+  const opacities = () => page.evaluate(() => [document.querySelectorAll(".sheet-frame")[6], ...[".sheet-where", ".menu-trigger", ".sheet-nav"].map((q) => document.querySelector(q))]
+    .map((el) => parseFloat(getComputedStyle(el).opacity)));
+  const before = await opacities();
   await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
   await expect(page.locator("body.sheet-leaving")).toHaveCount(1);
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(300);
   expect(page.url(), "still here a moment after the press").toMatch(/scent-descriptions/);
-  const leaving = await page.evaluate(() =>
-    parseFloat(getComputedStyle(document.querySelectorAll(".sheet-frame")[6]).opacity));
-  expect(leaving, "the rest of the page is on its way out").toBeLessThan(0.9);
+  // Every one of them on its way out — the house beside it, the page's name,
+  // the Menu and the way round. (A rule for Outsider's dark view was once
+  // written into the middle of this one, and for a round the page did not
+  // step back at all: the house beside was faint already, and that was all
+  // this test looked at.)
+  const leaving = await opacities();
+  leaving.forEach((o, i) => expect(o, `${["the house beside", "the page's name", "the Menu", "the way round"][i]} on its way out`).toBeLessThan(Math.min(0.9, before[i] * 0.85)));
   await page.waitForURL(/houses\/tombstone\.html/, { timeout: 4000 });
 });
 

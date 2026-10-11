@@ -1584,3 +1584,13 @@ and 1920 × 1080, on the page's own clock, every taking back is a box under a fi
 none of it in the margin, and at three moments nothing drawn in the rest of the quiet zone; at
 1920, none laid. It fails on the old page (a box the whole window). By eye: `/houses/les-abstraits.html`,
 the armoire at the left foot, quiet where it reaches the writing, as before.
+
+## 2026-10-11, the very last — `house.js` at a thousand parts
+
+For the individual fragrances page at a thousand fragrances: **the scale finds where the reader is
+by halving** (`firstWhere`) rather than measuring every part, and inks in only the ticks between
+where it was and where it is; a part's measurements for opening are taken when it is first opened
+(`pads()`); **the parts' arrival is worked out from the scroll** (`arriveInView`, `lookSoon`), the
+same 8% rule and stagger, rather than with an observer on each part; and the pictures it makes are
+decoded off the page's thread (`decoding="async"`). Nothing on the twelve houses looks or moves
+differently. See [Scent Descriptions at scale](2026-10-11-scent-descriptions-at-scale.md).

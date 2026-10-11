@@ -52,7 +52,7 @@ test("Om opens behind cracked glass and is read through it: it scrolls, and the 
   await expect(root).toHaveAttribute("data-om", "pieces");
   await expect(root).toHaveClass(/om-shattered/);
   await expect(page.locator(".om-shards")).toHaveCount(1);
-  expect(await page.evaluate(() => window.OmGlass.pieces()), "fine glass, not a few shards").toBeGreaterThan(30);
+  expect(await page.evaluate(() => window.OmGlass.pieces()), "many pieces, not a few shards").toBeGreaterThan(30);
   // The writing is the page's own, once: the copies cannot be found.
   await expect(page.locator(".human-part")).toHaveCount(9);
   await expect(page.locator("h1")).toHaveCount(1);
@@ -91,7 +91,9 @@ test("Om's hexagon shows the page whole, and the glass cracks again when it leav
   // Away to the far side: where it was is cracked again, and it is not mended.
   await page.mouse.move(1150, 700, { steps: 8 });
   await expect.poll(() => homeAt(520, 400), { message: "cracked again once it has gone" }).toBeLessThan(0.05);
-  expect(await homeAt(1150, 700)).toBeGreaterThan(0.5);
+  // (Where it has gone, whole — once it has got there: it follows the hand a
+  // beat behind it.)
+  await expect.poll(() => homeAt(1150, 700)).toBeGreaterThan(0.5);
   await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
 });
 
@@ -156,6 +158,81 @@ test("Om's glass is mended by a key, and not by the hand or a click on nothing",
   await expect(page.locator("html")).toHaveAttribute("data-om", "whole", { timeout: 8000 });
 });
 
+/* BROKEN AS GLASS BREAKS — a trial (2026-10-11, last — "just as a test (so
+   keep the code from the curernt version in case i wanna revert it) but make
+   the fractures differnet/ like broken glass more"): the pane is broken in a
+   web from where it was struck — long wedges pointing at the blow, many of
+   them meeting there — where the fine glass before it was cells of about one
+   size. The fine glass is kept, and `?glass=fine` shows it. */
+test("Om's glass is broken in a web from where it was struck, and the fine glass is kept", async ({ page }) => {
+  test.setTimeout(60000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const shape = async () => page.evaluate(() => {
+    const all = window.OmGlass.outlines();
+    // How drawn out each piece is: its longest reach, squared, over its area.
+    const long = all.map((p) => {
+      let a = 0, most = 0;
+      p.forEach((q, i) => { const r = p[(i + 1) % p.length]; a += q[0] * r[1] - r[0] * q[1]; p.forEach((t) => { most = Math.max(most, Math.hypot(t[0] - q[0], t[1] - q[1])); }); });
+      return (most * most) / Math.max(1, Math.abs(a / 2));
+    }).sort((x, y) => x - y);
+    // The most pieces meeting near any one corner.
+    let meet = 0;
+    all.forEach((p) => p.forEach((q) => {
+      const n = all.filter((o) => o.some((t) => Math.hypot(t[0] - q[0], t[1] - q[1]) < 40)).length;
+      meet = Math.max(meet, n);
+    }));
+    // (The longer pieces: a quarter of them are longer than this.)
+    return { style: window.OmGlass.style(), glass: document.documentElement.dataset.glass, n: all.length, long: long[Math.floor(long.length * 0.75)], meet };
+  });
+  await page.goto(OM);
+  await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
+  const broken = await shape();
+  expect(broken.style).toBe("broken");
+  expect(broken.glass).toBe("broken");
+  await page.goto(OM + "?glass=fine");
+  await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
+  const fine = await shape();
+  expect(fine.style).toBe("fine");
+  expect(fine.glass).toBe("fine");
+  expect(fine.n, "the fine glass as it was").toBeGreaterThan(30);
+  // (Measured: about 4.1 against 2.9, and 21 pieces against 5.)
+  expect(broken.long, `wedges, not cells (${broken.long.toFixed(1)} against ${fine.long.toFixed(1)})`).toBeGreaterThan(fine.long * 1.25);
+  expect(broken.meet, "many pieces meeting where it was struck").toBeGreaterThanOrEqual(12);
+  expect(fine.meet, "and the fine glass's cells nowhere so").toBeLessThan(10);
+});
+
+/* THE BUTTON IN THE TOP RIGHT (2026-10-11, last — "put a button on the top
+   right to fix the page"): over the glass, which takes no press, it mends the
+   page for good, and goes. Reached by the keyboard it does not mend the page
+   by itself — it says what it does — and pressed, it does it. */
+test("Om's button in the top right mends the glass for good", async ({ page }) => {
+  test.setTimeout(60000);
+  const errors = collectPageErrors(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(OM);
+  const root = page.locator("html");
+  await expect(root).toHaveAttribute("data-om", "pieces");
+  const button = page.locator(".om-mend");
+  await expect(button).toHaveCount(1);
+  await expect(button).toHaveText(/Mend the glass/i);
+  await expect(button).toHaveCSS("opacity", "1");
+  const box = await button.boundingBox();
+  expect(box.x + box.width, "at the right").toBeGreaterThan(1440 - 60);
+  expect(box.y, "at the top").toBeLessThan(40);
+  const onTop = await button.evaluate((el) => { const r = el.getBoundingClientRect(); return el.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)); });
+  expect(onTop, "pressable over the glass").toBe(true);
+  // Reached by the keyboard, it waits to be pressed.
+  await button.focus();
+  await page.waitForTimeout(400);
+  await expect(root).toHaveAttribute("data-om", "pieces");
+  await page.keyboard.press("Enter");
+  await expect(root).toHaveAttribute("data-om", "gathering");
+  await expect(root).toHaveAttribute("data-om", "whole", { timeout: 6000 });
+  await expect(page.locator(".om-shards")).toHaveCount(0, { timeout: 3000 });
+  await expect(button).toHaveCount(0, { timeout: 3000 });
+  expect(errors).toEqual([]);
+});
+
 /* QUICK TO DRAW — "please smooth the om parfums page out, it slows down the
    laptop A LOT!" (2026-10-11): it was the drawing's quiet over the column,
    painted over every finished frame (16 frames a second on this machine).
@@ -188,7 +265,13 @@ test.describe("on a phone", () => {
     await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
     await page.waitForTimeout(600);
     await expect(page.locator("html"), "still in pieces a moment in").toHaveAttribute("data-om", "pieces");
+    // The button in the top right, clear of the Menu.
+    const mend = await page.locator(".om-mend").boundingBox();
+    const menu = await page.locator(".menu-trigger").boundingBox();
+    expect(mend.x + mend.width).toBeLessThanOrEqual(390);
+    expect(mend.x, "clear of the Menu").toBeGreaterThan(menu.x + menu.width + 8);
     await expect(page.locator("html")).toHaveAttribute("data-om", "whole", { timeout: 9000 });
+    await expect(page.locator(".om-mend"), "and gone once it is whole").toHaveCount(0, { timeout: 3000 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   });
 });
@@ -212,6 +295,7 @@ test("Om is whole at once with reduced motion, at one fragrance, or without its 
   await expect(page.locator(".om-shards")).toHaveCount(0);
   await page.goto(OM + "?om=whole");
   await expect(page.locator(".om-shards")).toHaveCount(0);
+  await expect(page.locator(".om-mend"), "nothing to mend").toHaveCount(0);
   await page.route("**/om.js", (r) => r.abort());
   await page.goto(OM);
   await page.waitForLoadState("load");
@@ -485,27 +569,22 @@ test("Om's rings on the Houses view are several at once, and each drawn its own 
   const all = rings.flat().map(look);
   expect(new Set(all).size, `no two circles drawn alike: ${all.join(" ")}`).toBe(all.length);
 });
-/* OUTSIDER'S DOOR ON THE HOUSES VIEW, in the dark (2026-10-11, later — "fix
-   the door; the door graphics are really weird. give it physics, make the
-   light actual light, and darken the screen accordingly please"): the view
-   goes dark behind the houses and the page's words turn light; the door
-   stands shut, is pushed and swings open past where it stands and back,
-   settling ajar; and its light is light on the dark — bright where the gap
-   is and on the floor before it, nothing like it across the room. Leaving
-   the house, the dark goes and the words are themselves again. */
-test("Outsider's door on the Houses view darkens the room, swings on its hinge, and lets its light through", async ({ page }) => {
+/* OUTSIDER'S DOOR ON THE HOUSES VIEW, on the view's own white (2026-10-11,
+   last — "ignore the making the darkening of the page for outsider, make it
+   white and agree with the theme in general"; the round before — "give it
+   physics, make the light actual light" — it darkened the view): nothing is
+   darkened — the motifs' canvas has no ground of its own, the words stay
+   ink, the stage is not marked dark — and the door stands shut, is pushed and
+   swings open past where it stands and back, settling ajar; and its light is
+   the house's green on the paper, where the gap is and on the floor before
+   it, nothing like it across the room. */
+test("Outsider's door on the Houses view stands on white, swings on its hinge, and lets its light through", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/scent-descriptions/#house-11");
   await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
-  await expect(page.locator("body")).toHaveClass(/sheet-night/, { timeout: 20000 });
-  // The dark is the motifs' own ground; the words are light on it.
-  const ground = await page.locator(".sheet-motifs").evaluate((c) => getComputedStyle(c).backgroundColor);
-  const g = ground.match(/[\d.]+/g).map(Number);
-  expect(g[3], "the room dark behind the houses: " + ground).toBeGreaterThan(0.8);
-  const menu = await page.locator(".menu-trigger").evaluate((m) => getComputedStyle(m).color);
-  expect(menu.match(/\d+/g).slice(0, 3).map(Number).every((v) => v > 180), "the Menu light on it: " + menu).toBe(true);
+  await expect.poll(() => page.evaluate(() => window.HouseMotifs.doors().length), { timeout: 20000 }).toBe(1);
   // THE SWING: shut, then pushed open past where it settles, and back.
   let most = 0, settled = 0;
   for (let i = 0; i < 40; i++) {
@@ -516,23 +595,32 @@ test("Outsider's door on the Houses view darkens the room, swings on its hinge, 
   expect(most, "it swung open").toBeGreaterThan(0.6);
   expect(settled, "and settled ajar, back from the furthest it swung").toBeLessThan(most - 0.02);
   expect(settled).toBeGreaterThan(0.3);
-  // THE LIGHT: bright where the gap and the floor before it are, on the left;
-  // across the room on the right, none.
+  // NOTHING DARKENED: no ground on the motifs' canvas, the Menu in ink, the
+  // stage not dark for the cursor, and no class left for a dark view.
+  const ground = await page.locator(".sheet-motifs").evaluate((c) => getComputedStyle(c).backgroundColor);
+  expect(ground, "the motifs lay no ground of their own").toMatch(/rgba\(0, 0, 0, 0\)|transparent/);
+  const menu = await page.locator(".menu-trigger").evaluate((m) => getComputedStyle(m).color);
+  expect(menu.match(/\d+/g).slice(0, 3).map(Number).every((v) => v < 80), "the Menu in ink: " + menu).toBe(true);
+  expect(await page.locator(".sheet-stage.dark-surface, body.sheet-night").count()).toBe(0);
+  // THE LIGHT: green, where the gap and the floor before it are, on the left;
+  // across the room on the right, none. And the drawing in ink — nothing in
+  // it is a light colour laid on the white, which would not show.
   const light = await page.locator(".sheet-motifs").evaluate((c) => {
     const k = c.width / innerWidth, d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
-    let near = 0, far = 0;
+    let near = 0, far = 0, pale = 0, inked = 0;
     for (let y = 0; y < c.height; y += 2) for (let x = 0; x < c.width; x += 2) {
       const i = (y * c.width + x) * 4;
-      if (d[i + 3] < 60 || d[i] + d[i + 1] + d[i + 2] < 360) continue;
+      if (d[i + 3] < 40) continue;
+      if (d[i] < 90 && d[i + 1] < 90 && d[i + 2] < 90) inked++;
+      const green = d[i + 1] > d[i] + 25 && d[i + 1] > d[i + 2] + 12;
+      if (!green) continue;
       if (x / k < innerWidth * 0.35) near++; else if (x / k > innerWidth * 0.7) far++;
     }
-    return { near, far };
+    return { near, far, inked };
   });
-  expect(light.near, "light through the gap and on the floor").toBeGreaterThan(400);
+  expect(light.near, "green light through the gap and on the floor").toBeGreaterThan(300);
   expect(light.far, "and none across the room").toBeLessThan(light.near / 20);
-  // On to the next house: the dark goes, the words are themselves again.
-  await page.keyboard.press("ArrowDown");
-  await expect(page.locator("body")).not.toHaveClass(/sheet-night/, { timeout: 8000 });
+  expect(light.inked, "the door and its frame drawn in ink").toBeGreaterThan(200);
   expect(errors).toEqual([]);
 });
 

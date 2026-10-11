@@ -2041,7 +2041,7 @@
     if (key && read) readings.set(key, read);
     return read;
   }
-  function readPictureNow(img) {
+  function readPictureNow(img, small) {
     const w = img.naturalWidth, h = img.naturalHeight;
     if (!w || !h) return null;
     const S = 72;
@@ -2057,7 +2057,10 @@
       // black, and Quintessentially Amber's frame was filled black for it.
       g.fillStyle = "#fff";
       g.fillRect(0, 0, cw, ch);
-      g.drawImage(img, 0, 0, cw, ch);
+      // `small`, where it is given, is the picture already made this small
+      // off the page's own thread (createImageBitmap), so drawing it here
+      // decodes nothing (2026-10-11).
+      g.drawImage(small || img, 0, 0, cw, ch);
       d = g.getImageData(0, 0, cw, ch).data;
     } catch (e) { return null; }
     const at = (x, y) => (y * cw + x) * 4;

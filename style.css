@@ -2138,6 +2138,11 @@ body.view-fragrances .sheet-search { display: none; }
 }
 /* Turned away behind the axis: softer and greyer, as well as smaller. */
 .sheet.scripted .sheet-frame.behind { filter: blur(1.3px) grayscale(0.5); }
+/* OUT OF REACH of the window, a house and its number are not on the page
+   at all (2026-10-11 — for "approximately 300 houses"): contact-sheet.js
+   places only the houses that can be seen, and puts the rest away. */
+.sheet.scripted .sheet-frame.away,
+.sheet.scripted .sheet-axis-no.away { display: none; }
 .sheet.scripted .sheet-frame.front {
   box-shadow: 0 26px 48px -20px rgba(var(--ink-rgb), 0.6), 0 3px 6px rgba(var(--ink-rgb), 0.1);
 }
@@ -2268,26 +2273,6 @@ body.sheet-leaving .sheet.scripted .sheet-frame:not(.chosen),
 body.sheet-leaving .sheet.scripted .sheet-field,
 body.sheet-leaving .sheet.scripted .sheet-axis-no,
 body.sheet-leaving .sheet.scripted .sheet-nav,
-/* THE ROOM GONE DARK (2026-10-11, later): while Outsider's door stands on
-   the Houses view the motifs darken the view behind the houses, and the
-   page's own words — the Menu, its name, the houses' labels, the reading
-   at the side, the search — are turned light, as on a dark page
-   (`sheet-night`, put on the body by motifs.js). */
-body.sheet-page .menu-trigger,
-.sheet-where,
-.sheet-search,
-.sheet.scripted .sheet-frame .sheet-caption,
-.sheet.scripted .sheet-frame > .sheet-number,
-.sheet-nav-at,
-.sheet-nav-at span { transition: color 0.9s var(--menu-ease); }
-body.sheet-night:not(.menu-open) .menu-trigger,
-body.sheet-night .sheet-where,
-body.sheet-night .sheet-search,
-body.sheet-night .sheet.scripted .sheet-frame .sheet-caption,
-body.sheet-night .sheet.scripted .sheet-frame > .sheet-number,
-body.sheet-night .sheet-nav-at { color: #e4e9e2; }
-body.sheet-night .sheet-nav-at span { color: #a8b2a6; }
-body.sheet-night .sheet.scripted .sheet-frame .sheet-name { border-top-color: rgba(228, 233, 226, 0.35); }
 body.sheet-leaving .sheet-motifs {
   opacity: 0 !important;
   filter: blur(6px);
@@ -2399,6 +2384,14 @@ body.sheet-named .sheet-where {
    the browser painted before the script ran is the plain grid this
    page falls back to, and it is never meant to be seen on the way in.
    All of it comes back on `window.load` if the script never arrives. */
+/* With hundreds of houses (2026-10-11, last — "approximately 300 houses"),
+   the plain grid of every house was laid out under the hidden page while
+   the script was on its way, and the browser set about fetching every
+   picture near it — a hundred and twenty of them, before the script had
+   put all but the few near the front out of the page's layout. While it is
+   coming, only the first twelve are laid out. (Without the script the class
+   is taken off at `load`, and the grid is every house again.) */
+html.js-coming .sheet > .sheet-frame:nth-of-type(n + 13) { display: none; }
 html.js-coming .views,
 html.js-coming .sheet-stage,
 html.js-coming .sheet-search,
@@ -12559,6 +12552,23 @@ body.frag-open .frag-stage { opacity: 0; pointer-events: none; }
   opacity: 0 !important;
   transition: opacity 0.14s linear !important;
 }
+/* ONLY WHAT CAN BE SEEN FADES (2026-10-11 — for a thousand fragrances):
+   an item out of sight (fragrance-line.js says which are in it,
+   `in-sight`) comes and goes at once, so arriving or changing the layout
+   fades a screenful rather than a thousand items and five thousand
+   labels, each of them a layer of its own while it fades. */
+.frag-stage .frag-item:not(.in-sight),
+.frag-stage .frag-item:not(.in-sight) > span { transition: none !important; }
+/* AND ONLY WHAT CAN BE SEEN IS LAID OUT (2026-10-11, last): an item off
+   the screen is left out of the page's layout and painting by the browser
+   itself (`content-visibility: auto`), standing meanwhile at about its own
+   size — a row's 34px, a box's or a card's last size once it has been
+   seen — so showing the table, or changing the way it is shown, lays out a
+   screenful rather than a thousand items: the pause on the way in from the
+   houses was half a second at a thousand, and is less than half that. */
+.frag-stage .frag-item { content-visibility: auto; contain-intrinsic-size: auto 34px; }
+.frag-stage.is-boxes .frag-item { contain-intrinsic-size: auto 236px; }
+.frag-stage.is-cards .frag-item { contain-intrinsic-size: auto 380px; }
 .frag-t-no, .frag-t-date {
   font-family: var(--mono);
   font-size: 12.5px;
@@ -13335,6 +13345,43 @@ html.om-landing .human-readout { transition: none !important; }
   inset: 0;
   z-index: 3;
   pointer-events: none;            /* the page under the glass is read and pressed */
+}
+/* THE BUTTON IN THE TOP RIGHT (2026-10-11, last — "put a button on the top
+   right to fix the page"): Mend the glass, boxed as the way back to the
+   houses is, in the house's gold, over the glass — which takes no press —
+   and under the Menu's overlay. It comes up with the glass and goes as the
+   glass mends (om.js). */
+.om-mend {
+  position: fixed;
+  top: 19px;
+  right: 22px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 13px 8px 11px;
+  border: 1px solid rgba(var(--om-gold), 0.5);
+  background: rgba(12, 11, 15, 0.62);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(var(--om-gold));
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.5s var(--menu-ease), transform 0.5s var(--menu-ease), border-color 0.3s var(--menu-ease), background-color 0.3s var(--menu-ease);
+}
+.om-mend.shown { opacity: 1; transform: none; }
+.om-mend:hover,
+.om-mend:focus-visible { border-color: rgba(var(--om-gold), 0.9); background-color: rgba(var(--om-gold), 0.08); }
+.om-mend-mark { flex: none; overflow: visible; }
+.om-mend-mark polygon { fill: none; stroke: currentColor; stroke-width: 1.2; transition: fill 0.3s var(--menu-ease); }
+.om-mend:hover .om-mend-mark polygon { fill: rgba(var(--om-gold), 0.3); }
+@media (max-width: 700px) {
+  .om-mend { top: 19px; right: 14px; padding: 7px 10px 7px 9px; letter-spacing: 0.1em; }
 }
 
 

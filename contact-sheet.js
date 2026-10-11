@@ -105,6 +105,11 @@
   const HELIX_MS = 900;            // then the helix winding out along it
   const EMERGE_MS = 560;           // then a house coming out of the axis
   const EMERGE_STEP = 85;          // and the next, in order, 01 first
+  // AT SCALE (2026-10-11 — the owner expects "approximately 300 houses"):
+  // only the houses that can be seen come out one after another; the rest,
+  // off the window, are there with the last of them. One after another,
+  // three hundred took twenty-seven seconds to arrive.
+  const EMERGE_FAR = 6;            // houses from the first that come out in turn
 
   // THE PARTICLES
   const FALL = 46;                 // px a second down the axis
@@ -319,7 +324,7 @@
   // it. It is where every house's return button leads (2026-09-29: "a
   // return button in case they pressed the button by accident"), so the
   // way back lands where the reader was.
-  const asked = /^#house-(\d{1,2})$/.exec(window.location.hash);
+  const asked = /^#house-(\d{1,3})$/.exec(window.location.hash);
   const startAt = asked ? Math.max(0, Math.min(N - 1, Number(asked[1]) - 1)) : 0;
   let pos = startAt, target = startAt;
   // THE FIELD ADAR'S WELLS MAKE (motifs.js), read once a frame in draw():
@@ -330,8 +335,69 @@
   let helixShown = REDUCE_MOTION ? 1 : 0;
   let front = -1;
 
+  // ONLY THE HOUSES THAT CAN BE SEEN ARE PLACED (2026-10-11 — "Houses is
+  // going to house approximately 300 houses ... it needs to run smoothly"):
+  // every frame used to place every house and every number on the axis, a
+  // dozen styles each, whether it was on the window or a hundred houses
+  // away. Now only the houses within reach of the window (`live`, worked
+  // out from how far apart they stand) are placed, a house leaving that
+  // reach is put away once, and a style is written only when it changes
+  // (`put`). What is drawn is exactly what it was.
+  const LIVE_MARGIN = 2;           // houses past the window's reach still placed
+  const live = new Set();
+  const was = frames.map(() => ({}));   // what each house and its number were last given
+  const markWas = frames.map(() => ({}));
+  function put(el, memo, key, value, write) {
+    if (memo[key] === value) return;
+    memo[key] = value;
+    write(el, value);
+  }
+  const setTransform = (el, v) => { el.style.transform = v; };
+  const setShown = (el, v) => { el.style.setProperty("--shown", v); };
+  const setZ = (el, v) => { el.style.zIndex = v; };
+  const setVis = (el, v) => { el.style.visibility = v; };
+  const setTab = (el, v) => { el.tabIndex = v; };
+  const setOpacity = (el, v) => { el.style.opacity = v; };
+  const setBehind = (el, v) => { el.classList.toggle("behind", v); };
+  const setFront = (el, v) => { el.classList.toggle("front", v); };
+  const setOn = (el, v) => { el.classList.toggle("is-on", v); };
+  // Out of reach, a house is not on the page at all (`away`, display: none):
+  // no layer of its own, nothing laid out, and — its picture asked for
+  // lazily — nothing loaded until it comes within reach.
+  const setAway = (el, v) => { el.classList.toggle("away", v); };
+  /** A house, and its number, put out of the way: out of reach of the window. */
+  function putAway(i) {
+    const m = was[i], k = markWas[i];
+    m.seen = 0;
+    put(frames[i], m, "away", true, setAway);
+    put(marks[i], k, "away", true, setAway);
+    put(frames[i], m, "vis", "hidden", setVis);
+    put(frames[i], m, "tab", -1, setTab);
+    put(frames[i], m, "shown", "0", setShown);
+    put(marks[i], k, "op", "0", setOpacity);
+    put(marks[i], k, "tab", -1, setTab);
+    put(marks[i], k, "on", false, setOn);
+  }
+  /** How many houses either side of where you are can be on the window. */
+  const reach = () => Math.ceil((H + frontH) / Math.max(1, span)) + LIVE_MARGIN;
   function place() {
-    frames.forEach((frame, i) => {
+    const far = reach();
+    const lo = Math.max(0, Math.floor(pos - far)), hi = Math.min(N - 1, Math.ceil(pos + far));
+    live.forEach((i) => { if (i < lo || i > hi) { live.delete(i); putAway(i); } });
+    for (let i = lo; i <= hi; i++) { live.add(i); placeOne(i); }
+    const now = Math.min(N - 1, Math.max(0, Math.round(pos)));
+    if (now !== front) {
+      front = now;
+      navAt.textContent = String(now + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
+      navName.textContent = nameOf(frames[now]);
+      sheet.dataset.front = String(now + 1);
+    }
+  }
+  function placeOne(i) {
+    const frame = frames[i], m = was[i];
+    put(frame, m, "away", false, setAway);
+    put(marks[i], markWas[i], "away", false, setAway);
+    {
       const d = i - pos;
       const p = spot(d);
       const come = shown[i];
@@ -354,26 +420,27 @@
       // turned round it and shrunk — gently, a house being a house, and
       // never the one being rested on, which is under the pointer.
       let fx = x, fy = p.y, fs = s, fr = 0;
-      if (bend && !frame.classList.contains("hot")) {
+      if (bend && frame !== resting) {
         const w = bend(x, p.y);
         fx = x + (w.x - x) * 0.7; fy = p.y + (w.y - p.y) * 0.7;
         fs = s * Math.max(0.5, 1 - (1 - w.s) * 0.7);
         fr = w.turn * 0.5;
         seen *= 0.35 + 0.65 * w.a;
       }
-      frame.style.transform = "translate(" + (fx - frontW / 2).toFixed(1) + "px," +
-        (fy - frontH / 2).toFixed(1) + "px) scale(" + fs.toFixed(4) + ")" + (fr ? " rotate(" + (fr * 57.3).toFixed(2) + "deg)" : "");
-      frame.style.setProperty("--shown", seen.toFixed(3));
+      m.seen = seen;
+      put(frame, m, "tf", "translate(" + (fx - frontW / 2).toFixed(1) + "px," +
+        (fy - frontH / 2).toFixed(1) + "px) scale(" + fs.toFixed(4) + ")" + (fr ? " rotate(" + (fr * 57.3).toFixed(2) + "deg)" : ""), setTransform);
+      put(frame, m, "shown", seen.toFixed(3), setShown);
       // In front of the particles or behind them, and the front house
       // above the others in front.
       const atFront = Math.abs(d) < 0.5;
-      frame.style.zIndex = p.z < 0 ? "1" : atFront ? "4" : "3";
-      frame.classList.toggle("behind", p.z < -0.05);
-      frame.classList.toggle("front", atFront);
-      frame.style.visibility = seen < 0.02 ? "hidden" : "";
-      frame.tabIndex = seen < 0.02 ? -1 : 0;
+      put(frame, m, "z", p.z < 0 ? "1" : atFront ? "4" : "3", setZ);
+      put(frame, m, "behind", p.z < -0.05, setBehind);
+      put(frame, m, "front", atFront, setFront);
+      put(frame, m, "vis", seen < 0.02 ? "hidden" : "", setVis);
+      put(frame, m, "tab", seen < 0.02 ? -1 : 0, setTab);
 
-      const mark = marks[i];
+      const mark = marks[i], k = markWas[i];
       const my = p.y;
       let markSeen = Math.max(0, 1 - Math.abs(my - cy) / (room * 0.55)) * axisShown;
       let mx = cx + 12, mY = my - 9;
@@ -382,17 +449,12 @@
         mx += w.x - (cx + 20); mY += w.y - my;
         markSeen *= w.a;
       }
-      mark.style.transform = "translate(" + mx.toFixed(1) + "px," + mY.toFixed(1) + "px)";
-      mark.style.opacity = markSeen.toFixed(3);
-      mark.classList.toggle("is-on", atFront);
-      mark.tabIndex = markSeen < 0.05 ? -1 : 0;
-    });
-    const now = Math.min(N - 1, Math.max(0, Math.round(pos)));
-    if (now !== front) {
-      front = now;
-      navAt.textContent = String(now + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
-      navName.textContent = nameOf(frames[now]);
-      sheet.dataset.front = String(now + 1);
+      if (markSeen > 0.001 || k.op !== "0") {
+        put(mark, k, "tf", "translate(" + mx.toFixed(1) + "px," + mY.toFixed(1) + "px)", setTransform);
+      }
+      put(mark, k, "op", markSeen > 0.001 ? markSeen.toFixed(3) : "0", setOpacity);
+      put(mark, k, "on", atFront, setOn);
+      put(mark, k, "tab", markSeen < 0.05 ? -1 : 0, setTab);
     }
   }
 
@@ -412,12 +474,26 @@
     dust.push({ a: random() * Math.PI * 2, y: random() * 2 - 1, r: 0.12 + 0.98 * Math.pow(random(), 0.7),
       size: 0.6 + random() * 1.3, lit: 0.3 + random() * 0.7 });
   }
-  const spokes = frames.map(() => Array.from({ length: SPOKE_PARTS }, () => ({
-    q: random(), r: Math.pow(random(), 0.6) * SPOKE_WIDTH, phi: random() * Math.PI * 2,
-    v: 0.04 + random() * 0.09, size: 0.7 + random() * 0.9, lit: 0.45 + random() * 0.55,
-  })));
-  const flow = [];    // bright specks riding the strands
-  for (let n = 0; n < 60; n++) flow.push({ u: random() * (N + 4) - 2, v: 0.06 + random() * 0.12, strand: n % 2 });
+  // A house's spoke is made the first time it is drawn (its own seed, so it
+  // is the same spoke whenever it is made), not three hundred at the start.
+  const spokes = [];
+  function spokeOf(i) {
+    if (spokes[i]) return spokes[i];
+    let s2 = 2409 + i * 7919;
+    const rnd = () => { s2 = (s2 * 16807) % 2147483647; return (s2 - 1) / 2147483646; };
+    return (spokes[i] = Array.from({ length: SPOKE_PARTS }, () => ({
+      q: rnd(), r: Math.pow(rnd(), 0.6) * SPOKE_WIDTH, phi: rnd() * Math.PI * 2,
+      v: 0.04 + rnd() * 0.09, size: 0.7 + rnd() * 0.9, lit: 0.45 + rnd() * 0.55,
+    })));
+  }
+  // THE BRIGHT SPECKS RIDING THE STRANDS, in a stretch of the helix round
+  // where you are (FLOW_REACH houses either way, wrapping), so there are as
+  // many of them in view however many houses there are. They were spread
+  // along the whole helix, and three hundred houses would have thinned them
+  // to nothing.
+  const FLOW_REACH = 3.2;
+  const flow = [];
+  for (let n = 0; n < 24; n++) flow.push({ u: random() * FLOW_REACH * 2 - FLOW_REACH, v: 0.06 + random() * 0.12, strand: n % 2 });
   const bursts = [];  // specks thrown out as a house arrives
   let corners = null; // where the corners stand, eased
   let px = -9999, py = -9999;
@@ -456,7 +532,7 @@
       which half this pass draws. A house arriving comes out along its
       spoke, the spoke growing with it. */
   function spokesPass(t, behind) {
-    frames.forEach((frame, i) => {
+    live.forEach((i) => {
       const d = i - pos;
       if (Math.abs(d) > 2.6 || !shown[i]) return;
       const a = d * TURN, sa = Math.sin(a), ca = Math.cos(a);
@@ -465,7 +541,7 @@
       const fade = Math.pow(Math.max(0, 1 - Math.abs(d) / 2.6), 0.7) * shown[i] * helixShown;
       const pulse = REDUCE_MOTION ? -1 : (t * 0.8 + i * 0.17) % 1;
       const twist = REDUCE_MOTION ? 0 : t * SPOKE_TWIST;
-      spokes[i].forEach((s) => {
+      spokeOf(i).forEach((s) => {
         const q = REDUCE_MOTION ? s.q : (s.q + t * s.v) % 1;
         // Along the spoke in the helix's own space, then off it on a ring
         // round it — thin at the axis, fullest part way out.
@@ -601,7 +677,10 @@
     // Bright specks travelling along the strands.
     for (const f of flow) {
       if (!REDUCE_MOTION) f.u += f.v * 0.016;
-      if (f.u > N + 2) f.u = -2;
+      // Kept within reach of where you are, coming round from the far end.
+      const lap = FLOW_REACH * 2;
+      f.u = pos - FLOW_REACH + ((((f.u - (pos - FLOW_REACH)) % lap) + lap) % lap);
+      if (f.u < -2 || f.u > N + 1) continue;
       const d = f.u - pos;
       if (Math.abs(d) > 2.6 || Math.abs(d) > wound) continue;
       const a = d * TURN + f.strand * Math.PI;
@@ -672,9 +751,10 @@
   function attach(t) {
     const at = ink.canvas.getBoundingClientRect();
     const boxes = [];
-    frames.forEach((frame, i) => {
-      if (frame.style.visibility === "hidden") return;
-      const there = Math.min(1, (parseFloat(frame.style.getPropertyValue("--shown")) || 0) * 3);
+    live.forEach((i) => {
+      const frame = frames[i];
+      if (was[i].vis === "hidden") return;
+      const there = Math.min(1, (was[i].seen || 0) * 3);
       if (there < 0.02) return;
       const r = frame.getBoundingClientRect();
       if (!r.width || r.bottom < at.top || r.top > at.bottom) return;
@@ -845,7 +925,7 @@
     // First the axis, then the helix, and only then the houses — in
     // order, 01 first, which is also the one at the front (or, opened at
     // a house, that one first and then outwards from it).
-    const startOf = (i) => AXIS_MS + HELIX_MS + Math.abs(i - startAt) * EMERGE_STEP;
+    const startOf = (i) => AXIS_MS + HELIX_MS + Math.min(Math.abs(i - startAt), EMERGE_FAR) * EMERGE_STEP;
     const burst = (i) => {
       const p = spot(i - pos);
       for (let k = 0; k < 26; k++) {
@@ -862,7 +942,11 @@
       let all = true;
       frames.forEach((frame, i) => {
         const q = Math.max(0, Math.min(1, (t - startOf(i)) / EMERGE_MS));
-        if (q > 0 && !burstDone[i]) { burstDone[i] = true; burst(i); frame.classList.add("landed"); }
+        if (q > 0 && !burstDone[i]) {
+          burstDone[i] = true;
+          if (Math.abs(i - startAt) <= EMERGE_FAR) burst(i);
+          frame.classList.add("landed");
+        }
         shown[i] = 1 - Math.pow(1 - q, 3);
         if (q < 1) all = false;
       });
@@ -902,7 +986,7 @@
     // anything WRITTEN — Tombstone's names — is kept off them.
     // Each house with its label under it, which stands outside the
     // picture's own box.
-    const around = frames.filter((f) => f.style.visibility !== "hidden" && parseFloat(f.style.getPropertyValue("--shown") || "0") > 0.1)
+    const around = [...live].filter((i) => was[i].vis !== "hidden" && (was[i].seen || 0) > 0.1).map((i) => frames[i])
       .map((f) => [f, f.querySelector(".sheet-caption"), f.querySelector(".sheet-number")].filter(Boolean)
         .map((el) => el.getBoundingClientRect())
         .reduce((u, r) => ({ left: Math.min(u.left, r.left), right: Math.max(u.right, r.right),
@@ -1113,6 +1197,7 @@
   // arrival waits for the page's faces, for at most FONTS_MS, so the
   // labels do not change size under houses already on their way out.
   const FONTS_MS = 1200;
+  frames.forEach((frame, i) => putAway(i));
   layout();
   document.documentElement.classList.remove("js-coming");
   window.addEventListener("resize", layout);

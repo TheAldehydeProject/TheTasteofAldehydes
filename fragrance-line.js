@@ -182,6 +182,12 @@
   const mark = stage.querySelector(".frag-mark");
   const modeButtons = [...stage.querySelectorAll(".frag-mode")];
 
+  // AT SCALE (2026-10-11 — "approximately ... 1000 fragrances in the
+  // individual fragrances section. it needs to run smoothly"): each item
+  // knows its fragrance (`byItem`), its words are worked out once for the
+  // search (`text`), and nothing below writes a style it has not changed.
+  const byItem = new WeakMap();
+  const norm = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   fragrances.forEach((f) => {
     const li = document.createElement("li");
     li.className = "frag-item";
@@ -211,6 +217,8 @@
     li.addEventListener("pointerenter", () => { lit = f; wake(); });
     li.addEventListener("pointerleave", () => { if (lit === f) { lit = null; wake(); } });
     f.item = li;
+    byItem.set(li, f);
+    f.text = norm([three(f.no), f.name, f.shown].join(" "));
     f.pic = li.querySelector(".frag-t-pic");
     f.tick = document.createElement("span");
     f.tick.className = "frag-scale-tick";
@@ -258,7 +266,6 @@
     else { sortKey = b.dataset.key; sortWay = 1; }
     order();
   }));
-  const norm = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   // THE SEARCH LOOKS AT THE FRAGRANCES AND NOTHING ELSE, as you type:
   // their numbers, their names and their dates — "only work the inside of
   // the fragrances page, not the entire website. also do not included
@@ -269,9 +276,8 @@
     const words = norm(search.value).split(/\s+/).filter(Boolean);
     let n = 0;
     fragrances.forEach((f) => {
-      const text = norm([three(f.no), f.name, f.shown].join(" "));
-      const hit = words.every((w) => text.includes(w));
-      f.item.hidden = !hit;
+      const hit = words.every((w) => f.text.includes(w));
+      if (f.item.hidden !== !hit) f.item.hidden = !hit;
       if (hit) n++;
     });
     count.textContent = three(n);
@@ -282,17 +288,23 @@
   /** After anything that changes which items stand where: the order
       they come in, the scale's ticks, and the divider. */
   function settle() {
-    shown = [...list.children].map((li) => fragrances.find((f) => f.item === li)).filter((f) => f && !f.item.hidden);
-    shown.forEach((f, i) => f.item.style.setProperty("--i", String(Math.min(i, 16))));
+    shown = [...list.children].map((li) => byItem.get(li)).filter((f) => f && !f.item.hidden);
     const n = shown.length;
-    fragrances.forEach((f) => { f.tick.hidden = f.item.hidden; });
-    shown.forEach((f, i) => { f.tick.style.top = (n > 1 ? (i / (n - 1)) * 100 : 50) + "%"; });
+    shown.forEach((f, i) => {
+      const k = String(Math.min(i, 16));
+      if (f.iWas !== k) { f.iWas = k; f.item.style.setProperty("--i", k); }
+      const top = (n > 1 ? (i / (n - 1)) * 100 : 50).toFixed(3) + "%";
+      if (f.topWas !== top) { f.topWas = top; f.tick.style.top = top; }
+    });
+    fragrances.forEach((f) => { if (f.tick.hidden !== f.item.hidden) f.tick.hidden = f.item.hidden; });
     stage.querySelector(".frag-scale-first").textContent = n ? three(shown[0].no) : "";
     stage.querySelector(".frag-scale-last").textContent = n ? three(shown[n - 1].no) : "";
-    reading();
-    measure();
+    // Measured in the next frame, once the browser has laid the change out
+    // itself, rather than making it lay it out here and again for the frame.
+    if (!settleSoon) settleSoon = requestAnimationFrame(() => { settleSoon = 0; reading(); measure(); });
     wake();
   }
+  let settleSoon = 0;
 
   // ============================================================
   // THE THREE WAYS OF SHOWING THEM
@@ -314,7 +326,7 @@
       b.setAttribute("aria-pressed", String(on));
     });
     stage.querySelector(".frag-read-mode").textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
-    if (mode === "cards" || mode === "boxes") pictures();
+    if ((mode === "cards" || mode === "boxes") && !view.hidden) { pictures(); askNear(); }
   }
   function setMode(next) {
     if (!MODES.includes(next) || next === mode) return;
@@ -368,7 +380,7 @@
       for ON A PLAIN GROUND, where the picture's own edge is nearly all
       one colour (a bottle on white, on black): there it is what is not
       that colour. A scene has none, and is centred. */
-  function readPicture(img) {
+  function readPicture(img, small) {
     const w = img.naturalWidth, h = img.naturalHeight;
     if (!w || !h) return null;
     const S = 72;
@@ -384,7 +396,10 @@
       // black, and Quintessentially Amber's frame was filled black for it.
       g.fillStyle = "#fff";
       g.fillRect(0, 0, cw, ch);
-      g.drawImage(img, 0, 0, cw, ch);
+      // `small`, where it is given, is the picture already made this small
+      // off the page's own thread (createImageBitmap), so drawing it here
+      // decodes nothing (2026-10-11).
+      g.drawImage(small || img, 0, 0, cw, ch);
       d = g.getImageData(0, 0, cw, ch).data;
     } catch (e) { return null; }
     const at = (x, y) => (y * cw + x) * 4;
@@ -536,10 +551,11 @@
       change of layout needs nothing done: the stylesheet takes whichever
       it is showing (`--b-*`, `--c-*`). The bottle found is left on the
       frame (`data-subject`) for anyone who wants to check it. */
-  function seat(pic, shot) {
+  function seat(pic, shot, small) {
     const ratio = shot.naturalWidth / shot.naturalHeight;
     if (!ratio) return;
-    const read = readPicture(shot);
+    const read = readPicture(shot, small);
+    if (small && small.close) small.close();
     Object.keys(SHAPES).forEach((key) => {
       const p = placeIn(read, ratio, SHAPES[key], FILL, CLOSEST);
       pic.style.setProperty("--" + key + "-w", p.w);
@@ -553,7 +569,125 @@
     pic.classList.add("is-placed");
   }
 
-  let pictured = false;
+  /** A PICTURE MADE SMALL OFF THE PAGE'S OWN THREAD, the size the reading
+      reads it at — so that reading a thousand pictures does not decode a
+      thousand photographs on it. Where the browser cannot, the reading
+      draws the picture itself, as it always did. */
+  function shrink(img) {
+    const w = img.naturalWidth, h = img.naturalHeight;
+    if (!w || !h || !window.createImageBitmap) return Promise.resolve(null);
+    const S = 72;
+    const cw = w >= h ? S : Math.max(12, Math.round(S * w / h));
+    const ch = w >= h ? Math.max(12, Math.round(S * h / w)) : S;
+    // From the file itself, not from the picture on the page: made from a
+    // file the browser decodes it on a thread of its own; made from the
+    // picture, on this one.
+    return fetch(img.currentSrc || img.src)
+      .then((r) => (r.ok ? r.blob() : Promise.reject(r.status)))
+      .then((blob) => createImageBitmap(blob, { resizeWidth: cw, resizeHeight: ch, resizeQuality: "medium" }))
+      .catch(() => null);
+  }
+  /** A PICTURE MADE READY OFF THE PAGE ALTOGETHER (2026-10-11, last — for a
+      thousand fragrances): fetched, decoded and made as small as a box or
+      a card ever shows it (`SHOW_SHORT` device pixels on its shorter side),
+      and its small copy for the reading made, in a worker — a thread of
+      its own — so a box shows a picture a few hundred pixels across rather
+      than the photograph it was made from, two thousand across, decoded
+      and scaled down on every frame it is painted in. A picture already
+      that small is shown as it is. Where there is no worker, or it fails,
+      the picture is shown and read as it was (`shrink`). */
+  const SHOW_SHORT = 900;            // a card on a sharp screen is about 620 across, and a picture is brought closer up to half as much again
+  const READY_AT_ONCE = 3;           // pictures made ready together
+  const MAKER = [
+    "const S = 72, queue = []; let busy = 0;",
+    "self.onmessage = (e) => { queue.push(e.data); next(); };",
+    "function next() {",
+    "  while (busy < " + READY_AT_ONCE + " && queue.length) { busy++; make(queue.shift()).finally(() => { busy--; next(); }); }",
+    "}",
+    "async function make({ id, url, short }) {",
+    "  try {",
+    "    const r = await fetch(url);",
+    "    if (!r.ok) throw r.status;",
+    "    const blob = await r.blob();",
+    "    const full = await createImageBitmap(blob);",
+    "    const w = full.width, h = full.height;",
+    "    const cw = w >= h ? S : Math.max(12, Math.round(S * w / h)), ch = w >= h ? Math.max(12, Math.round(S * h / w)) : S;",
+    "    const small = await createImageBitmap(full, { resizeWidth: cw, resizeHeight: ch, resizeQuality: 'medium' });",
+    "    const k = Math.min(1, short / Math.min(w, h));",
+    "    let shown = null;",
+    "    if (k < 0.92) {",
+    "      const sw = Math.max(1, Math.round(w * k)), sh = Math.max(1, Math.round(h * k));",
+    "      const fit = await createImageBitmap(full, { resizeWidth: sw, resizeHeight: sh, resizeQuality: 'high' });",
+    "      const c = new OffscreenCanvas(sw, sh);",
+    "      c.getContext('2d').drawImage(fit, 0, 0);",
+    "      fit.close();",
+    "      shown = await c.convertToBlob({ type: 'image/webp', quality: 0.88 });",
+    "    }",
+    "    full.close();",
+    "    self.postMessage({ id, small, shown }, [small]);",
+    "  } catch (err) { self.postMessage({ id, failed: true }); }",
+    "}",
+  ].join("\n");
+  let maker = null;
+  const making = new Map();
+  let made = 0;
+  function makerOf() {
+    if (maker !== null) return maker;
+    maker = false;
+    if (!window.Worker || !window.OffscreenCanvas || !window.createImageBitmap || !window.Blob || !window.URL) return maker;
+    try {
+      maker = new Worker(URL.createObjectURL(new Blob([MAKER], { type: "text/javascript" })));
+      maker.onmessage = (e) => {
+        const job = making.get(e.data.id);
+        if (!job) return;
+        making.delete(e.data.id);
+        job(e.data);
+      };
+      // A worker that cannot start: every picture waiting for it is shown
+      // and read the old way.
+      maker.onerror = () => {
+        maker = false;
+        const waiting = [...making.values()];
+        making.clear();
+        waiting.forEach((job) => job({ failed: true }));
+      };
+    } catch (e) { maker = false; }
+    return maker;
+  }
+  /** Ask for a picture ready to show: `done({ small, shown })`, `shown` a
+      smaller copy of the file (or null, when the file itself is small
+      enough), or `done(null)` when it could not be made so. */
+  function ready(url, done) {
+    const m = makerOf();
+    if (!m) return done(null);
+    const id = ++made;
+    making.set(id, (out) => done(out && !out.failed ? out : null));
+    m.postMessage({ id, url, short: SHOW_SHORT });
+  }
+
+  // AND READ A FEW AT A TIME: the pictures that arrive together are placed
+  // a few a frame (`READ_EACH`), so a screenful arriving at once never
+  // holds a frame up.
+  const READ_EACH = 3;
+  const readQueue = [];
+  let reading_ = false;
+  function readSoon(job) {
+    readQueue.push(job);
+    if (reading_) return;
+    reading_ = true;
+    requestAnimationFrame(function work() {
+      for (let k = 0; k < READ_EACH && readQueue.length; k++) readQueue.shift()();
+      if (readQueue.length) requestAnimationFrame(work); else reading_ = false;
+    });
+  }
+
+  let pictured = false, near = null;
+  /** The items still waiting for their pictures looked at again, as when
+      the list turns into boxes or cards. */
+  function askNear() {
+    if (!near) return;
+    fragrances.forEach((f) => { if (f.ask) { near.unobserve(f.item); near.observe(f.item); } });
+  }
   function pictures() {
     if (pictured) return;
     pictured = true;
@@ -561,6 +695,20 @@
     if (!first || !window.fetch) return;
     const where = new URL(first.link.getAttribute("href"), location.href);
     where.hash = "";
+    // EACH PICTURE IS ASKED FOR AS ITS ITEM NEARS THE VIEW (2026-10-11):
+    // with a thousand fragrances, a thousand pictures fetched and read at
+    // once held the page up for seconds. An item a screen or so away from
+    // being seen asks for its picture; the rest wait.
+    // (Not while the view is a list, which shows no pictures: they wait,
+    // and are asked for when boxes or cards are chosen — `askNear`.)
+    near = "IntersectionObserver" in window ? new IntersectionObserver((seen) => {
+      seen.forEach((e) => {
+        if (!e.isIntersecting || mode === "list") return;
+        near.unobserve(e.target);
+        const f = byItem.get(e.target);
+        if (f && f.ask) f.ask();
+      });
+    }, { root: scroller, rootMargin: "900px 0px" }) : null;
     fetch(where.href).then((r) => (r.ok ? r.text() : Promise.reject(r.status))).then((html) => {
       const doc = new DOMParser().parseFromString(html, "text/html");
       fragrances.forEach((f) => {
@@ -571,14 +719,31 @@
         const shot = part.querySelector(".human-plate img") || part.querySelector("summary img");
         const src = shot && shot.getAttribute("src");
         if (!src) return;
-        const img = document.createElement("img");
-        img.className = "frag-t-shot";
-        img.alt = "";
-        img.decoding = "async";
-        img.addEventListener("load", () => { f.pic.classList.add("has-picture"); seat(f.pic, img); });
-        img.addEventListener("error", () => { img.remove(); });
-        img.src = new URL(src, where).href;
-        f.pic.appendChild(img);
+        f.ask = () => {
+          f.ask = null;
+          const url = new URL(src, where).href;
+          const show = (from, small) => {
+            const img = document.createElement("img");
+            img.className = "frag-t-shot";
+            img.alt = "";
+            img.decoding = "async";
+            img.addEventListener("load", () => {
+              f.pic.classList.add("has-picture");
+              if (small) readSoon(() => seat(f.pic, img, small));
+              else shrink(img).then((made) => readSoon(() => seat(f.pic, img, made)));
+            });
+            img.addEventListener("error", () => { img.remove(); if (small && small.close) small.close(); });
+            img.src = from;
+            f.pic.appendChild(img);
+          };
+          // Made ready off the page, and shown from its smaller copy; or,
+          // where it cannot be, as it was.
+          ready(url, (out) => {
+            if (!out) return show(url, null);
+            show(out.shown ? URL.createObjectURL(out.shown) : url, out.small);
+          });
+        };
+        if (near) near.observe(f.item); else f.ask();
       });
     }).catch(() => { /* the hatching stays */ });
   }
@@ -612,10 +777,28 @@
 
   /** THE SCALE: filled as far as the box has been seen through, and the
       ticks of the items in view inked. */
+  // Which items are in view is told by the browser as it changes
+  // (`watch`), rather than measured, item by item, on every scroll — which
+  // with a thousand of them was a thousand measurements a frame.
+  const watch = "IntersectionObserver" in window ? new IntersectionObserver((seen) => {
+    seen.forEach((e) => {
+      const f = byItem.get(e.target);
+      if (f) f.tick.classList.toggle("in-view", e.isIntersecting);
+    });
+  }, { root: scroller, rootMargin: "-8px 0px" }) : null;
+  // And which are in sight, or nearly — the only ones that fade.
+  const sight = "IntersectionObserver" in window ? new IntersectionObserver((seen) => {
+    seen.forEach((e) => e.target.classList.toggle("in-sight", e.isIntersecting));
+  }, { root: scroller, rootMargin: "200px 0px" }) : null;
+  fragrances.forEach((f) => { if (sight) sight.observe(f.item); else f.item.classList.add("in-sight"); });
+  fragrances.forEach((f) => { if (watch) watch.observe(f.item); });
+  let fillWas = "";
   function reading() {
     const most = scroller.scrollHeight - scroller.clientHeight;
     const seen = most > 1 ? (scroller.scrollTop + scroller.clientHeight) / scroller.scrollHeight : 1;
-    fill.style.transform = "scaleY(" + Math.max(0, Math.min(1, seen)).toFixed(4) + ")";
+    const v = "scaleY(" + Math.max(0, Math.min(1, seen)).toFixed(4) + ")";
+    if (v !== fillWas) { fillWas = v; fill.style.transform = v; }
+    if (watch) return;
     const box = scroller.getBoundingClientRect();
     shown.forEach((f) => {
       const r = f.item.getBoundingClientRect();
@@ -680,10 +863,12 @@
       }
     }
     ink.stroke();
+    ink.fillStyle = "rgb(" + INK + ")";
     seen.forEach((p) => {
-      ink.fillStyle = "rgba(" + INK + "," + p.a.toFixed(3) + ")";
+      ink.globalAlpha = p.a;
       ink.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size);
     });
+    ink.globalAlpha = 1;
     // ONE FOR EVERY FRAGRANCE, evenly round the ring and turning with it,
     // in the order they are shown; the one pointed at stands out, boxed.
     const n = shown.length;
@@ -693,8 +878,10 @@
       const front = 0.5 + 0.5 * Math.sin(at);
       const on = f === lit;
       const size = on ? 4 : 3;
-      ink.fillStyle = "rgba(" + INK + "," + (on ? 1 : 0.36 + 0.4 * front).toFixed(3) + ")";
+      ink.fillStyle = "rgb(" + INK + ")";
+      ink.globalAlpha = on ? 1 : 0.36 + 0.4 * front;
       ink.fillRect(Math.round(x - size / 2), Math.round(y - size / 2), size, size);
+      ink.globalAlpha = 1;
       if (on) {
         ink.strokeStyle = "rgba(" + INK + ",0.8)";
         ink.strokeRect(Math.round(x) - 5.5, Math.round(y) - 5.5, 11, 11);
@@ -757,7 +944,7 @@
   new MutationObserver(() => {
     if (view.dataset.arrive === "now") { delete view.dataset.arrive; if (!view.hidden) { arrive(true); wasHidden = false; } }
     else if (wasHidden && !view.hidden) arrive(false);
-    if (!view.hidden) { sizeMark(); measure(); }
+    if (!view.hidden) { sizeMark(); measure(); if (mode === "cards" || mode === "boxes") pictures(); }
     wasHidden = view.hidden;
     if (onPage()) wake();
   }).observe(view, { attributes: true, attributeFilter: ["hidden", "data-arrive"] });

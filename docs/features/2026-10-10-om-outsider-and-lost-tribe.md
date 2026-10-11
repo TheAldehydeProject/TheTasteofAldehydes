@@ -434,14 +434,86 @@ its own, each bird turning from the hand within `FLEE` and flapping faster as it
   A see-through picture is read **on white paper** now, in `fragrance-line.js` and `chamber.js`
   alike, so its frame is white.
 
+## 2026-10-11, the very last — Om's broken glass (a trial), a button to mend it, and Outsider's door on white
+
+The owner: "ignore the making the darkening of the page for outsider, make it white and agree with
+the theme in general. ... additionally, just as a test (so keep the code from the curernt version
+in case i wanna revert it) but make the fractures differnet/ like broken glass more. Additionally,
+put a button on the top right to fix the page." (And in the same message, Scent Descriptions at
+three hundred houses and a thousand fragrances — [its own report](2026-10-11-scent-descriptions-at-scale.md).)
+
+### Om: broken as glass breaks — a trial, the fine glass kept
+
+- **`GLASS_STYLE`** says which glass the page is cracked with: **`"broken"`**, the trial, and what
+  the page opens with; **`"fine"`** is the glass before it, kept whole. **`?glass=fine`** (or
+  `?glass=broken`) on the address shows the other without changing anything, and `data-glass` on
+  `<html>` says which is showing. To go back for good, `GLASS_STYLE = "fine"`; to keep the trial, the
+  fine glass's blows (`GLASS_BLOWS_*`) and its branch in `buildShards` are what come out.
+- **The broken pane** (`brokenPanes`, `BREAK_*`) is a web, as a struck pane breaks: from each blow,
+  **radial cracks** (`spokes`: fifteen from the main blow, eight from the one low on the right,
+  eleven on a phone), each wandering a little as it goes (`BREAK_WANDER`), and **concentric cracks**
+  across them, straight from one radial crack to the next, closer together near the blow (`rings`);
+  a stretch of a ring is not always cracked (`BREAK_RING_GAP`), which leaves the longest shards. So
+  the pieces are **long wedges pointing at the blow**, and at the blow itself the glass is
+  **crushed** into small pieces, two of them fallen out (`BREAK_HOLE`), the void showing through.
+  Each blow's pieces are kept to its own side of a line between the two (`toward`, clipped by
+  `clipBy`), and to the window. About sixty pieces at 1440 × 900 (the fine glass has about
+  forty-five).
+- **Each piece stands further out of true** (`BREAK_SHIFT`, `BREAK_TURN`; the crushed ones pushed in
+  most), **catches the light its own way** (its sheen dim on most, bright on about one in six), and
+  its crack is **a bright edge with a soft one beside it** — the glass's thickness — where the fine
+  glass's is one gold hairline. A glint runs round one crack in three.
+- **The blows stand clear of the title**: right of it on a wide window (`x: 0.63, y: 0.25`), in the
+  gap under the subtitle on a phone. Struck on the title, the crushed glass took a letter out.
+- **The hexagon eases a piece home by its nearest edge** (`distTo`, `BREAK_NEAR`), not by its middle
+  as the fine glass's small pieces are: a long wedge's middle can stand far from the hand while the
+  wedge runs right under it. `OmGlass.homeAt` reads the pieces a point is in (`inside`), and
+  `OmGlass.style()` and `OmGlass.outlines()` say which glass and what shape, for the tests.
+- **As quick to draw as the fine glass**: 40.7 frames a second still against the fine glass's 35.7
+  on the test machine, and the same while scrolling.
+
+### Om: a button to mend it
+
+**Mend the glass**, boxed as the way back to the houses is, in the house's gold, at the **top right**
+— where nothing else on the page stands — level with the Menu (`.om-mend`, made by `om.js` with the
+glass). The glass takes no press, so the button stands on the page over it (z-index 20, under the
+Menu's overlay). Pressed, the page mends **for good**, in a wave from the button across the window
+(`mend`, at the ordinary pace), and the button goes. Reached with the keyboard it **waits to be
+pressed** — the key that reaches anything else in the page mends it, but this one says what it does
+(the `focusin` rule skips it); the focus goes to the page's heading once it has gone. On a phone it
+is there for the moment before the glass comes together by itself. Never with `?om=whole`, reduced
+motion or at a `#`, where there is no glass.
+
+### Outsider on the Houses view: the door on white
+
+**Nothing is darkened**: `NIGHT`, `NIGHT_MS`, the canvas's ground, `sheet-night` on the body and
+`dark-surface` on the stage are gone from `motifs.js`, and the rules for `sheet-night` from
+`style.css`. The door is the same door — in perspective, on its spring, pushed open, stirred by
+drafts and opening to the hand, the lamp behind it — **drawn as the view draws everything**: the
+frame in ink hairlines with a speck at each joint, as the armoire is; the leaf on the paper, in a
+faint shade, its panels and knob in ink, its edge catching the light; and **the light in the house's
+green laid on the paper** (`OUT_GREEN`, `OUT_PALE`, no `lighter`): the gap washed with it, palest at
+its middle, a few fine rays, a pool across the floor towards you (a little shorter than it was), a
+line under the door, the jamb and the lines near the gap tinged green, and the dust lit green only
+in the beam. A motif darkening the whole view is no longer something a motif does.
+
+**Found on the way**: the stylesheet's rules for the dark view had been written **into the middle
+of** the rule that steps the Houses view back when a house is pressed, which stopped working for
+that round. With the dark view gone it is whole again; see [Scent Descriptions at
+scale](2026-10-11-scent-descriptions-at-scale.md#found-on-the-way-the-page-stopped-stepping-back).
+
 ## How to test it
 
-`npm test -- tests/om-and-the-tribe.spec.js`: Om **behind fine cracked glass and read through it**
+`npm test -- tests/om-and-the-tribe.spec.js`: Om **behind cracked glass and read through it**
 (more than thirty pieces, a press going through to the page, the page scrolling and the glass
 staying), **the hexagon showing it whole** and the glass cracking again when it leaves, **opening a
 fragrance mending it** with the fragrance opening only once it is whole, the copies laid out at the
 page's own width and landing on it exactly, a key mending it and the hand or a click on nothing
-not, **Om quick to draw** (no mask over the window, no piece on a layer of its own, over 24 frames a
+not, **the broken pane** (a web: its longer pieces more drawn out than the fine glass's, a dozen
+or more meeting where it was struck — and `?glass=fine` the fine glass, its cells meeting nowhere
+so), **the button in the top right** (there, pressable over the glass, waiting when the keyboard
+reaches it, mending the page for good when pressed, and gone; on a phone clear of the Menu and gone
+once the page comes together; none with `?om=whole`), **Om quick to draw** (no mask over the window, no piece on a layer of its own, over 24 frames a
 second cracked and 30 whole), a phone's coming together by itself, never with reduced motion, at one fragrance, with `?om=whole` or without its script; โอม
 from the three letters; the two dropdowns and the line; the owner's words with the agreed
 corrections and Xocolate Crotch's stages; **Outsider's door** (outsider.js and not om.js, no echo,
@@ -450,8 +522,9 @@ light on the left and nothing on the right, some of it green) **and its opening 
 line of names **in a dropdown** and the ten new ones, **Equatorial's picture**, **its leaves and flocks** (quiet over the column); **the
 fragrances not smelled** on Om and Outsider; the cropped picture; **the shards and Outsider's
 merging motifs gone** (and `omMerge` with them); **Om's rings** on the Houses view (several at
-once, each drawn its own way), **Outsider's door in the dark** (the room darkened and its words
-light, the door swinging, its light through the gap), **Lost Tribe's birds** staying when the view
+once, each drawn its own way), **Outsider's door on white** (no ground on the motifs, the Menu in
+ink, nothing marked dark; the door swinging and settling ajar; its light green through the gap and
+on the floor, nothing across the room, the frame in ink), **Lost Tribe's birds** staying when the view
 is pressed and turning from the hand; and each new house's motifs at the front of the Houses view
 (Om's `omRing`, Outsider's `door`). Quintessentially Amber's white frame is in
 `fragrance-line.spec.js`. The spec turns Playwright's trace off: recording it stalls the
@@ -473,8 +546,12 @@ moving the hand over a specimen; `/scent-descriptions/#house-10`, `#house-11`, `
 - **Om's glass while scrolling** draws at about two thirds of the whole page's frames on the test
   machine (every piece is painted again as the page moves under it); still, it is as quick as the
   whole page. If it stutters on a laptop, fewer rings in `GLASS_BLOWS_WIDE` is the knob.
-- **Outsider's door in the dark on the Houses view** costs the view about a quarter of its frames on
-  the test machine (31 against 41–43); `BEAM_DUST` and the rays are the knobs.
+- ~~Outsider's door in the dark on the Houses view costs the view about a quarter of its frames~~ —
+  the dark is gone (2026-10-11, the very last); the door on white draws without the lamp's light
+  added to a darkened window.
+- **Om's broken pane is a trial.** The owner chooses between it and the fine glass; whichever is
+  not chosen comes out of `om.js` (its constants, its branch in `buildShards`, its part of the
+  shard styles), and `?glass=` with it.
 - **The lists of fragrances not smelled** (2026-10-11) were read through searches and may miss a
   name; the names left out as uncertain are listed above. **Smoke Oud** decides whether its attars
   belong in Om's sentence.

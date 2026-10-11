@@ -31,7 +31,14 @@
 //                 staying where it is. (A few large shards stood here for
 //                 an afternoon, the page held still and mended for good by
 //                 the hand; fifty-one thrown far apart in 3D for a day
-//                 before that.)
+//                 before that.) Since the very last round of 2026-10-11 —
+//                 "just as a test (so keep the code from the curernt
+//                 version in case i wanna revert it) but make the fractures
+//                 differnet/ like broken glass more" — it is BROKEN AS
+//                 GLASS BREAKS, a trial: a web of radial and concentric
+//                 cracks from each blow, its pieces long wedges pointing at
+//                 it, crushed at the blow itself (THE BROKEN PANE, below).
+//                 The fine glass is kept, and `?glass=fine` shows it.
 //   THE LENS      the hexagon of glass at the hand, larger than it was:
 //                 inside it, the page WHOLE — the writing unbroken, the
 //                 drawing behind it turned and brought nearer — and the
@@ -42,7 +49,9 @@
 //                 quick wave from it, their seams flashing gold as they
 //                 meet, and then the fragrance opens on the page made
 //                 whole. Reaching into the page with the keyboard does the
-//                 same. ON A PHONE, where nothing hovers, the pieces come
+//                 same, and so does MEND THE GLASS, the button at the top
+//                 right ("put a button on the top right to fix the page").
+//                 ON A PHONE, where nothing hovers, the pieces come
 //                 together by themselves a moment after the page opens.
 //   THE PIECES    are the page itself: each holds a copy of the whole page,
 //                 moved as the page scrolls, cut to its piece with a
@@ -170,6 +179,37 @@
   const GLASS_SHIFT = 1.8;         // px a piece stands off its place — up to about three times that
   const GLASS_TURN = 0.32;         // degrees out of true, at most
   const GLASS_NEAR = 2.2;          // lens radii within which the glass eases home as the lens comes
+
+  // THE BROKEN PANE — a trial (2026-10-11, last — "just as a test (so keep
+  // the code from the curernt version in case i wanna revert it) but make
+  // the fractures differnet/ like broken glass more"): the pane struck and
+  // broken as glass breaks, a web — RADIAL CRACKS out from where it was
+  // struck, each wandering a little as it goes, and CONCENTRIC ones across
+  // them, straight from one radial crack to the next, closer together near
+  // the blow — so the pieces are long wedges pointing at it, fine and
+  // crushed at the blow itself, where a few have fallen out (`BREAK_HOLE`).
+  // A stretch of a ring is not always cracked (`BREAK_RING_GAP`), which
+  // leaves the longest shards. Each piece stands out of true as a broken
+  // piece in a frame is, catching the light its own way. `GLASS_STYLE`
+  // says which glass the page is cracked with — "broken", or "fine" for
+  // the glass before it — and `?glass=fine` (or `?glass=broken`) on the
+  // address shows the other without changing anything.
+  const GLASS_STYLE = "broken";
+  // Each blow: where (a share of the window), how many radial cracks, the
+  // rings (shares of half the window's diagonal; the last past every
+  // corner), and `toward`, the share of the way to the next blow that
+  // its pieces reach.
+  const BREAK_BLOWS_WIDE = [
+    { x: 0.63, y: 0.25, spokes: 15, rings: [0.03, 0.1, 0.24, 0.5, 1.5], toward: 0.66 },
+    { x: 0.83, y: 0.84, spokes: 8, rings: [0.025, 0.09, 0.26, 1.5] },
+  ];
+  const BREAK_BLOWS_NARROW = [{ x: 0.72, y: 0.39, spokes: 11, rings: [0.04, 0.13, 0.32, 0.7, 1.6] }];
+  const BREAK_RING_GAP = 0.34;     // the chance a stretch of a ring past the first is not cracked
+  const BREAK_WANDER = 0.07;       // radians a radial crack turns, at most, from one ring to the next
+  const BREAK_HOLE = 2;            // pieces at each blow fallen out
+  const BREAK_SHIFT = 3.4;         // px a piece stands off its place — up to about twice that
+  const BREAK_TURN = 0.62;         // degrees out of true, at most
+  const BREAK_NEAR = 1.1;          // lens radii from a piece's nearest edge within which it eases home as the lens comes
   const MEND_MS = 1100;            // how long one piece takes to come home, mending for good
   const MEND_SPREAD = 760;         // and the most it waits, the farthest last
   const MEND_QUICK_MS = 380;       // and when a fragrance is opened
@@ -619,11 +659,14 @@
   // again as it goes. Opening a fragrance mends it for good.
   // ============================================================
   const shattered = root.classList.contains("om-shattered");
+  const asked = (location.search.match(/[?&]glass=(fine|broken)\b/) || [])[1];
+  const glassStyle = asked || GLASS_STYLE;
+  if (shattered) root.dataset.glass = glassStyle;
   let gather = shattered ? 0 : 1;          // 0 cracked, 1 whole (eased, per frame)
   let gatherAt = 0;                        // when the mending began (ms), or 0
   let mendMs = MEND_MS, mendSpread = MEND_SPREAD;
   let shards = [];
-  let host = null, stage = null, hint = null, lens = null;
+  let host = null, stage = null, hint = null, lens = null, mendButton = null;
   let pieces = shattered ? "pieces" : "whole";
   let heldPress = null;                    // a summary pressed under the glass
   let copyWidth = 0;
@@ -659,6 +702,94 @@
     return poly;
   }
 
+  /** A polygon cut by a straight line: what is on the side of it where
+      side(p) <= 0 (Sutherland and Hodgman's clipping, by one edge). */
+  function clipBy(poly, side) {
+    const out = [];
+    for (let k = 0; k < poly.length; k++) {
+      const p = poly[k], q = poly[(k + 1) % poly.length];
+      const a = side(p), b = side(q);
+      if (a <= 0) out.push(p);
+      if ((a <= 0) !== (b <= 0)) {
+        const f = a / (a - b);
+        out.push([p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f]);
+      }
+    }
+    return out;
+  }
+  /** THE BROKEN PANE's pieces: for each blow, its radial cracks — points
+      out along each at every ring, wandering a little — and its pieces
+      between two of them and two rings (or, where a ring is not cracked
+      there, more than two); at the blow itself, the crushed pieces
+      between two radial cracks and the first ring, some fallen out. Each
+      blow's pieces are kept to its own side of the line between it and the
+      next, and to the window. */
+  function brokenPanes(w, h, blows) {
+    const D = Math.hypot(w, h) * 0.5;
+    const out = [];
+    blows.forEach((b, bi) => {
+      const P = [w * b.x, h * b.y];
+      const S = b.spokes, R = b.rings.length;
+      const turn = random() * Math.PI * 2;
+      // The radial cracks: angle j, and its point at ring k.
+      const at = [];
+      for (let j = 0; j < S; j++) {
+        let a = ((j + 0.5 + (random() - 0.5) * 0.62) / S) * Math.PI * 2 + turn;
+        const pts = [];
+        for (let k = 0; k < R; k++) {
+          a += (random() - 0.5) * 2 * BREAK_WANDER * (k ? 1 : 0.4);
+          const r = b.rings[k] * D * (k === R - 1 ? 1 : between(0.86, 1.14));
+          pts.push([P[0] + Math.cos(a) * r, P[1] + Math.sin(a) * r]);
+        }
+        at.push(pts);
+      }
+      // Which stretches of which rings are cracked: the first always (it is
+      // the edge of the crushed glass), the last always (it is past the
+      // window), the rest not always.
+      const keep = (j, k) => k === 0 || k === R - 1 || random() > BREAK_RING_GAP;
+      // Kept to this blow's side of the line between it and each other
+      // blow, `toward` of the way to it (or the other's share back).
+      const sides = blows.filter((o) => o !== b).map((o) => {
+        const Q = [w * o.x, h * o.y];
+        const t = b.toward != null ? b.toward : 1 - (o.toward != null ? o.toward : 0.5);
+        const M = [P[0] + (Q[0] - P[0]) * t, P[1] + (Q[1] - P[1]) * t];
+        const nx = Q[0] - P[0], ny = Q[1] - P[1];
+        return (p) => (p[0] - M[0]) * nx + (p[1] - M[1]) * ny;
+      });
+      const cut = (poly) => {
+        sides.forEach((side) => { if (poly.length) poly = clipBy(poly, side); });
+        [(p) => -p[0], (p) => -p[1], (p) => p[0] - w, (p) => p[1] - h].forEach((side) => { if (poly.length) poly = clipBy(poly, side); });
+        return poly;
+      };
+      // The crushed glass at the blow: two radial cracks' worth to a piece,
+      // and BREAK_HOLE of them gone.
+      const gone = new Set();
+      while (gone.size < Math.min(BREAK_HOLE, Math.floor(S / 2))) gone.add(Math.floor(random() * Math.floor(S / 2)));
+      for (let j = 0; j + 1 < S + 1; j += 2) {
+        const j1 = j, j2 = Math.min(j + 1, S - 1), j3 = (j + 2) % S;
+        const poly = j2 === j1 ? [P, at[j1][0], at[j3][0]] : [P, at[j1][0], at[j2][0], at[j3][0]];
+        if (gone.has(j / 2)) continue;
+        const c = cut(poly);
+        if (c.length >= 3) out.push({ poly: c, blow: bi, ring: 0 });
+      }
+      // The pieces out from it.
+      for (let j = 0; j < S; j++) {
+        const A = at[j], B = at[(j + 1) % S];
+        let from = 0;
+        for (let k = 1; k < R; k++) {
+          if (!keep(j, k)) continue;
+          const poly = [];
+          for (let q = from; q <= k; q++) poly.push(A[q]);
+          for (let q = k; q >= from; q--) poly.push(B[q]);
+          const c = cut(poly);
+          if (c.length >= 3) out.push({ poly: c, blow: bi, ring: from + 1 });
+          from = k;
+        }
+      }
+    });
+    return out;
+  }
+
   /** The page's flow, copied whole, without an id, a tab stop or anything
       else that could be found or reached. */
   function copyFlow() {
@@ -677,22 +808,30 @@
     // out exactly as the page is.
     const w = page.clientWidth || root.clientWidth, h = window.innerHeight;
     copyWidth = w;
-    const D = Math.hypot(w, h) * 0.5;
-    const blows = w < 700 ? GLASS_BLOWS_NARROW : GLASS_BLOWS_WIDE;
-    const seeds = [];
-    const from = [];                     // which blow each seed is from
-    blows.forEach((b, bi) => {
-      const P = [w * b.x, h * b.y];
-      seeds.push(P); from.push(bi);
-      b.rings.forEach(([f, n], k) => {
-        for (let j = 0; j < n; j++) {
-          const a = ((j + 0.5 + (random() - 0.5) * 0.7) / n) * Math.PI * 2 + k * 0.61 + bi;
-          const r = f * D * between(0.85, 1.15);
-          seeds.push([P[0] + Math.cos(a) * r, P[1] + Math.sin(a) * r * 0.86]);
-          from.push(bi);
-        }
+    const broken = glassStyle === "broken";
+    const blows = broken ? (w < 700 ? BREAK_BLOWS_NARROW : BREAK_BLOWS_WIDE) : (w < 700 ? GLASS_BLOWS_NARROW : GLASS_BLOWS_WIDE);
+    // THE PIECES: the fine glass's, a Voronoi cell round each of the seeds
+    // set in rings round its blows; or the broken pane's web.
+    let panes;
+    if (broken) panes = brokenPanes(w, h, blows);
+    else {
+      const D = Math.hypot(w, h) * 0.5;
+      const seeds = [];
+      const from = [];                   // which blow each seed is from
+      blows.forEach((b, bi) => {
+        const P = [w * b.x, h * b.y];
+        seeds.push(P); from.push(bi);
+        b.rings.forEach(([f, n], k) => {
+          for (let j = 0; j < n; j++) {
+            const a = ((j + 0.5 + (random() - 0.5) * 0.7) / n) * Math.PI * 2 + k * 0.61 + bi;
+            const r = f * D * between(0.85, 1.15);
+            seeds.push([P[0] + Math.cos(a) * r, P[1] + Math.sin(a) * r * 0.86]);
+            from.push(bi);
+          }
+        });
       });
-    });
+      panes = seeds.map((sd, i) => ({ poly: cellOf(i, seeds, w, h), blow: from[i], ring: 1 }));
+    }
     const flow = copyFlow();
 
     host = document.createElement("div");
@@ -718,6 +857,11 @@
       ".sheen{position:absolute;inset:0;background:linear-gradient(var(--sa,115deg),rgba(255,240,214,0) 0%,rgba(255,240,214,0.025) 44%,rgba(255,240,214,0.07) 50%,rgba(255,240,214,0.015) 60%,rgba(255,240,214,0) 100%)}" +
       ".edge{position:absolute;left:0;top:0;overflow:visible}" +
       ".edge polygon{fill:none;stroke:rgb(" + gold + " / 0.55);stroke-width:1;vector-effect:non-scaling-stroke}" +
+      // The broken pane's cracks: a bright edge, as a broken edge of glass
+      // catches the light, and a soft one beside it — the glass's thickness.
+      ".broken .edge polygon{stroke:rgb(255 240 214 / 0.62)}" +
+      ".broken .edge polygon.thick{stroke:rgb(" + gold + " / 0.16);stroke-width:3.2}" +
+      ".broken .shard>.om-flow{background:rgba(12,11,15,0.62)}" +
       // A glint: a little run of light along a crack, a layer of its own
       // so that its going round costs nothing but itself.
       ".glint{position:absolute;left:0;top:0;width:" + GLINT_LONG + "px;height:1px;margin:-0.5px 0 0 -" + GLINT_LONG / 2 + "px;opacity:0;will-change:transform,opacity;" +
@@ -735,15 +879,15 @@
       ".hint.shown{opacity:1}" +
       ".hint i{display:block;width:9px;height:9px;border:1px solid currentColor;transform:rotate(45deg)}" +
       "</style>" +
-      '<div class="stage" inert><div class="field"></div><p class="hint"><i></i>Hover: the hexagon mends the glass<i></i></p></div>';
+      '<div class="stage' + (broken ? " broken" : "") + '" inert><div class="field"></div><p class="hint"><i></i>Hover: the hexagon mends the glass<i></i></p></div>';
     stage = shadow.querySelector(".stage");
     const field = shadow.querySelector(".field");
     hint = shadow.querySelector(".hint");
     if (TOUCH) hint.remove();
 
     shards = [];
-    seeds.forEach((sd, i) => {
-      const poly = cellOf(i, seeds, w, h);
+    panes.forEach((pane) => {
+      const poly = pane.poly;
       if (poly.length < 3 || Math.abs(polygonArea(poly)) < 30) return;
       const xs = poly.map((p) => p[0]), ys = poly.map((p) => p[1]);
       const bx = Math.floor(Math.min(...xs)), by = Math.floor(Math.min(...ys));
@@ -769,10 +913,13 @@
       el.appendChild(copy);
       const sheen = document.createElement("div");
       sheen.className = "sheen";
-      sheen.style.opacity = between(0.3, 1).toFixed(2);
+      // A broken piece out of true catches the light its own way: most
+      // dimly, a few brightly.
+      sheen.style.opacity = (broken ? (random() < 0.18 ? between(1.6, 2.6) : between(0.2, 1.1)) : between(0.3, 1)).toFixed(2);
       el.appendChild(sheen);
       const pts = local.map((p) => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
-      el.insertAdjacentHTML("beforeend", '<svg class="edge" width="' + bw + '" height="' + bh + '" viewBox="0 0 ' + bw + " " + bh + '"><polygon points="' + pts + '"/></svg>');
+      el.insertAdjacentHTML("beforeend", '<svg class="edge" width="' + bw + '" height="' + bh + '" viewBox="0 0 ' + bw + " " + bh + '">' +
+        (broken ? '<polygon class="thick" points="' + pts + '"/>' : "") + '<polygon points="' + pts + '"/></svg>');
       field.appendChild(el);
       let around = 0;
       for (let k = 0; k < poly.length; k++) { const q = poly[(k + 1) % poly.length]; around += Math.hypot(q[0] - poly[k][0], q[1] - poly[k][1]); }
@@ -780,17 +927,23 @@
       // WHERE IT STANDS: a few pixels out from the blow it broke from, a
       // little out of true, and a hair smaller — the farther, the more.
       // On a phone's narrow window, half as far again.
-      const b = blows[from[i]], P = [w * b.x, h * b.y];
+      // The broken pane's pieces a little further, and more out of true:
+      // the ones at the blow pushed in the most, as glass is.
+      const b = blows[pane.blow], P = [w * b.x, h * b.y];
       const dx = gx - P[0], dy = gy - P[1], dist = Math.hypot(dx, dy) || 1;
       const ux = dx / dist, uy = dy / dist, g = w < 700 ? 0.5 : 1;
-      const out = (GLASS_SHIFT * (0.5 + random()) + dist * 0.0032) * g;
+      const out = broken
+        ? (BREAK_SHIFT * (0.6 + random()) + (pane.ring === 0 ? 2.5 : 0)) * g
+        : (GLASS_SHIFT * (0.5 + random()) + dist * 0.0032) * g;
+      const turnMost = broken ? BREAK_TURN : GLASS_TURN;
       shards.push({
-        el, copy, sheen, gx, gy, poly, around, line: el.querySelector(".edge polygon"),
-        glint: random() < 0.25 ? { at: random() * GLINT_EVERY, el: null, shown: -1 } : null,
+        // (The broken pane's two lines fade together, as one drawing.)
+        el, copy, sheen, gx, gy, poly, around, line: el.querySelector(broken ? ".edge" : ".edge polygon"),
+        glint: random() < (broken ? 0.35 : 0.25) ? { at: random() * GLINT_EVERY, el: null, shown: -1 } : null,
         tx: ux * out + between(-0.6, 0.6) * g, ty: uy * out + between(-0.6, 0.6) * g,
-        k: 1 - (0.0015 + random() * 0.0035) * g,
-        rz: between(-GLASS_TURN, GLASS_TURN) * g,
-        wait: 0, p: -1, near: -1, edge: 0.85, edgeShown: -1, now: [0, 0, 0, 1],
+        k: 1 - (0.0015 + random() * (broken ? 0.005 : 0.0035)) * g,
+        rz: between(-turnMost, turnMost) * g,
+        wait: 0, p: -1, near: -1, edge: 0.85, edgeShown: -1, now: [0, 0, 0, 1], long: broken,
       });
     });
     // The glints, over every piece.
@@ -827,6 +980,44 @@
     }
     page.insertBefore(host, canvas.nextSibling);
     root.classList.add("om-held");
+
+    // THE BUTTON IN THE TOP RIGHT (2026-10-11, last — "put a button on the
+    // top right to fix the page"): Mend the glass, for good, from where it
+    // is — a wave across the window from the top right corner. On the page
+    // itself, over the glass, since the glass takes no press; gone once the
+    // page is whole.
+    mendButton = document.createElement("button");
+    mendButton.type = "button";
+    mendButton.className = "om-mend";
+    mendButton.innerHTML = '<svg class="om-mend-mark" viewBox="0 0 16 14" width="16" height="14" aria-hidden="true"><polygon points="4.5,1 11.5,1 15,7 11.5,13 4.5,13 1,7"/></svg><span>Mend the glass</span>';
+    mendButton.addEventListener("click", () => {
+      const r = mendButton.getBoundingClientRect();
+      mend(r.left + r.width / 2, r.top + r.height / 2);
+    });
+    page.appendChild(mendButton);
+    requestAnimationFrame(() => { if (mendButton) mendButton.classList.add("shown"); });
+  }
+
+  /** Whether a point is inside a piece's outline, and how far it is from it
+      (0 inside). */
+  function inside(poly, x, y) {
+    let c = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [xi, yi] = poly[i], [xj, yj] = poly[j];
+      if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c;
+    }
+    return c;
+  }
+  function distTo(poly, x, y) {
+    if (inside(poly, x, y)) return 0;
+    let d = Infinity;
+    for (let i = 0; i < poly.length; i++) {
+      const [ax, ay] = poly[i], [bx, by] = poly[(i + 1) % poly.length];
+      const vx = bx - ax, vy = by - ay, L = vx * vx + vy * vy || 1;
+      const t = clamp(((x - ax) * vx + (y - ay) * vy) / L, 0, 1);
+      d = Math.min(d, Math.hypot(ax + vx * t - x, ay + vy * t - y));
+    }
+    return d;
   }
 
   /** Write a style only when it has changed enough to see. */
@@ -849,9 +1040,17 @@
       if (moved) s.copy.style.transform = "translate(0," + (-sy) + "px)";
       let p = 0;
       if (gatherAt) p = ease(clamp((now - gatherAt - s.wait) / mendMs, 0, 1));
-      // Near the lens, home: the nearer, the more.
-      const d = lensX < -9000 ? 1e9 : Math.hypot(s.gx - lensX, (s.gy - lensY) / LENS_FLAT);
-      const near = on * (1 - ease(clamp((d - LENS * 0.6) / (reach - LENS * 0.6), 0, 1)));
+      // Near the lens, home: the nearer, the more — by its middle for the
+      // fine glass's small pieces, and by its nearest edge for the broken
+      // pane's long ones, whose middles can stand far from the hand.
+      let near = 0;
+      if (lensX > -9000 && on > 0) {
+        if (s.long) near = on * (1 - ease(clamp(distTo(s.poly, lensX, lensY) / (LENS * BREAK_NEAR), 0, 1)));
+        else {
+          const d = Math.hypot(s.gx - lensX, (s.gy - lensY) / LENS_FLAT);
+          near = on * (1 - ease(clamp((d - LENS * 0.6) / (reach - LENS * 0.6), 0, 1)));
+        }
+      }
       const home = Math.max(p, near);
       // The crack shows as long as the piece is out of place; the seam
       // flashes as it lands for good, and fades once it is home.
@@ -922,6 +1121,16 @@
     pieces = "gathering";
     root.dataset.om = pieces;
     if (hint) hint.classList.remove("shown");
+    if (mendButton) {
+      const button = mendButton;
+      mendButton = null;
+      // The focus, if it was on the button, goes to the page's own heading
+      // rather than nowhere.
+      if (document.activeElement === button) { const h1 = document.querySelector("h1"); if (h1) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); } }
+      button.classList.remove("shown");
+      button.disabled = true;
+      window.setTimeout(() => button.remove(), 600);
+    }
     for (let k = 0; k < 40 && !REDUCE; k++) {
       sparks.push({ a: random() * Math.PI * 2, r: portalR(), v: between(80, 220), out: between(30, 120), life: between(0.5, 1.1), age: 0 });
     }
@@ -970,6 +1179,7 @@
     }, true);
     // The keyboard cannot hover: reaching into the page with it mends it.
     document.addEventListener("focusin", (e) => {
+      if (e.target && e.target === mendButton) return;   // it says what it does; pressed, it does it
       if (e.target && e.target.matches && e.target.matches(":focus-visible")) mend(window.innerWidth / 2, window.innerHeight * 0.44);
     });
     // A window changing size breaks the pieces' geometry: it is simply
@@ -989,10 +1199,14 @@
       pieces: () => shards.length,
       width: () => copyWidth,
       homeAt: (x, y) => {
-        const by = shards.filter((s) => Math.hypot(s.gx - x, s.gy - y) < LENS * 0.6);
+        const by = shards.filter((s) => inside(s.poly, x, y));
         return by.length ? by.reduce((n, s) => n + Math.max(0, s.p), 0) / by.length : -1;
       },
       lens: () => (lens ? Math.max(0, lens.shown) : 0),
+      style: () => glassStyle,
+      // Each piece's outline on the window, for the tests to read the shape
+      // of the glass by.
+      outlines: () => shards.map((s) => s.poly.map((q) => [Math.round(q[0]), Math.round(q[1])])),
     };
   }
 

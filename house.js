@@ -59,6 +59,9 @@
   // ============================================================
   document.querySelectorAll(".human-part img, .human-hero img").forEach((picture) => {
     picture.addEventListener("error", () => picture.remove());
+    // Decoded off the page's own thread, so a page of a thousand pictures
+    // arriving as it is scrolled does not stop to decode each (2026-10-11).
+    picture.decoding = "async";
     // AND THE ONES THAT HAVE ALREADY FAILED BY NOW. A picture whose
     // file is missing usually errors before this script has run at all,
     // and an `error` listener added afterwards never hears about it —
@@ -113,13 +116,20 @@
     return title ? title.textContent.trim() : "";
   }
 
-  let said = "";
+  // A THOUSAND FRAGRANCES (2026-10-11 — the owner expects about that many
+  // on the individual fragrances page): where you are is found by halving
+  // (`firstWhere`) rather than by measuring every fragrance from the first
+  // on every scroll, and only the ticks that change are touched.
+  /** The first part `test` is true of, the parts being in page order. */
+  function firstWhere(test) {
+    let lo = 0, hi = parts.length;
+    while (lo < hi) { const mid = (lo + hi) >> 1; if (test(parts[mid].getBoundingClientRect())) hi = mid; else lo = mid + 1; }
+    return lo;
+  }
+  let said = "", passedTo = -1;
   function reckon() {
     const line = window.innerHeight * 0.34;
-    let at = -1;
-    for (let n = 0; n < parts.length; n++) {
-      if (parts[n].getBoundingClientRect().top <= line) at = n; else break;
-    }
+    let at = firstWhere((r) => r.top > line) - 1;
     const down = window.scrollY || window.pageYOffset || 0;
     const room = Math.max(0,
       document.documentElement.scrollHeight - window.innerHeight);
@@ -128,18 +138,23 @@
     // because the page runs out before they can. All three older houses
     // had that fault and all three have this rule.
     if (room > 0 && down >= room - 2) at = parts.length - 1;
-    tickAt.forEach((tick, n) => tick.classList.toggle("passed", n <= at));
+    for (let n = Math.min(at, passedTo) + 1; n <= Math.max(at, passedTo); n++) {
+      if (tickAt[n]) tickAt[n].classList.toggle("passed", n <= at);
+    }
+    passedTo = at;
 
     if (rankFill) {
       const filled = room > 0 ? Math.max(0, Math.min(1, down / room)) : 0;
       rankFill.style.transform = "scaleY(" + filled.toFixed(4) + ")";
     }
 
+    // The one filling most of the window is among those on it.
     let most = 0, biggest = null;
-    parts.forEach((part) => {
-      const got = filling(part);
-      if (got > most) { most = got; biggest = part; }
-    });
+    for (let n = firstWhere((r) => r.bottom > 0); n < parts.length; n++) {
+      if (parts[n].getBoundingClientRect().top >= window.innerHeight) break;
+      const got = filling(parts[n]);
+      if (got > most) { most = got; biggest = parts[n]; }
+    }
     // WHAT YOU ARE LOOKING AT. An open fragrance filling enough of the
     // window names itself; otherwise the answer is the introduction
     // until you have passed the first fragrance, and the house after
@@ -183,7 +198,36 @@
       },
       { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
     );
-    parts.forEach((part) => watcher.observe(part));
+    // THE PARTS THEMSELVES are found in view by halving, a scroll at a time
+    // (2026-10-11): watched by the browser one by one, a thousand of them
+    // were a thousand intersections worked out every frame of a scroll.
+    // A part comes up once at least a twelfth of it is in the window, above
+    // its foot's last twelfth — as the watcher had it.
+    const up = new Set();
+    let looking = 0;
+    const arriveInView = () => {
+      looking = 0;
+      if (up.size === parts.length) return;
+      const h = window.innerHeight, now = performance.now();
+      if (now > due) due = now;
+      for (let n = firstWhere((r) => r.bottom > 0); n < parts.length; n++) {
+        const part = parts[n], r = part.getBoundingClientRect();
+        if (r.top >= h * 0.92) break;
+        if (up.has(part)) continue;
+        const need = r.height * 0.08;
+        if (r.bottom < need || r.top > h * 0.92 - need) continue;
+        up.add(part);
+        const wait = Math.max(0, due - now);
+        due += RISE_STEP;
+        setTimeout(() => part.classList.add("arrived"), wait);
+      }
+    };
+    const lookSoon = () => { if (!looking) looking = requestAnimationFrame(arriveInView); };
+    window.addEventListener("scroll", lookSoon, { passive: true });
+    window.addEventListener("resize", lookSoon);
+    window.addEventListener("load", lookSoon);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(lookSoon);
+    lookSoon();
     document.querySelectorAll(".human-intro").forEach((one) => {
       one.classList.add("human-rises");
       watcher.observe(one);
@@ -214,8 +258,17 @@
     // Read off the stylesheet rather than written here, so the two
     // cannot disagree: the padding has to travel with the height, or
     // the last frame of closing is an empty box that then disappears.
-    const padTop = getComputedStyle(body).paddingTop;
-    const padBottom = getComputedStyle(body).paddingBottom;
+    // Read the first time the part opens or shuts, not as the page opens:
+    // read of a thousand shut parts (2026-10-11), it held the page up for
+    // half a second — the browser has to work out the style of writing it
+    // is not showing, one part at a time.
+    let padTop = null, padBottom = null;
+    const pads = () => {
+      if (padTop !== null) return;
+      const cs = getComputedStyle(body);
+      padTop = cs.paddingTop;
+      padBottom = cs.paddingBottom;
+    };
 
     const settle = () => {
       body.style.transition = "";
@@ -242,6 +295,7 @@
         // to be measured, and then run from nothing to the height they
         // want.
         part.open = true;
+        pads();
         const to = body.scrollHeight;
         body.style.overflow = "hidden";
         body.style.height = "0px";
@@ -270,6 +324,7 @@
       // Closing, the writing goes first and the box follows it down —
       // shut the element first and the browser takes the contents off
       // the page in that frame, which is the cut this exists to avoid.
+      pads();
       const from = body.getBoundingClientRect().height;
       body.style.overflow = "hidden";
       body.style.height = from + "px";
