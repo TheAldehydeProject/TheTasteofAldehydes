@@ -28,13 +28,23 @@
 //                  the first time it is seen, along its own lines.
 //   THE POLLEN     specks drifting up the window, swaying, drawn to the
 //                  hand as moths are to a light.
-//   THE FLOCK      now and then a small flock crosses the window, birds
-//                  as two strokes and a flap, keeping together — and
+//   THE LEAVES     falling the height of the window, turning over as they
+//                  go and swaying, as the Houses view's do, pushed aside
+//                  by the hand — and over the writing drawn quiet, as
+//                  Ataraxia's bands are: they pass behind the words and do
+//                  not glow while they do (2026-10-11: "i want the falling
+//                  leaves to exist on the actual page too. when they fall
+//                  behind the text, let them be de-emphasized").
+//   THE FLOCK      a small flock crossing the window every few seconds —
+//                  "make the birds more frequent" (2026-10-11; it was one
+//                  every nine to eighteen) — sometimes two at once, birds
+//                  as two strokes and a flap, keeping together, and
 //                  scattering from the hand.
 //
 // READABILITY. The specimens stand only in the margins; where a window has
-// none (a phone), they stand at its edges, faint, half off it. The pollen
-// and the flock are drawn at QUIET over the column, eased in at its edges.
+// none (a phone), they stand at its edges, faint, half off it. The pollen,
+// the leaves and the flock are drawn at QUIET over the column, eased in at
+// its edges.
 //
 // WITHOUT THIS SCRIPT the page is its writing on linen. WITH REDUCED
 // MOTION the specimens are simply there, home and still, and nothing flies
@@ -68,7 +78,10 @@
   const DRAW_IN = 1700;            // ms a specimen takes to draw itself in
 
   const POLLEN = 110;
-  const FLOCK_EVERY = [9, 18];     // seconds between two flocks
+  const LEAVES = 14;               // falling at once (half on a phone)
+  const LEAF_QUIET = 0.26;         // what is left of a leaf over the writing
+  const FLOCK_EVERY = [3.5, 7];    // seconds between two flocks (it was 9 to 18)
+  const FLOCKS = 2;                // how many may be crossing at once
   const FLOCK = [7, 11];           // birds in one
   const FLEE = 170;                // px: how near the hand a bird turns from it
 
@@ -427,6 +440,8 @@
     const inside = Math.min(x - from, to - x) / soft;
     return QUIET + (1 - QUIET) * Math.max(0, 1 - Math.min(1, inside));
   }
+  /** The same, quieter: a leaf over the writing is nearly gone. */
+  const leafQuiet = (x) => LEAF_QUIET + (1 - LEAF_QUIET) * (quiet(x) - QUIET) / (1 - QUIET);
 
   // ============================================================
   // THE POLLEN, AND THE FLOCK — in window space.
@@ -436,23 +451,42 @@
     pollen.push({ x: random(), y: random(), vx: 0, vy: 0, rise: between(5, 13), sway: between(6, 18), phase: random() * Math.PI * 2,
       size: between(1, 2.2), base: between(0.25, 0.6), colour: random() < 0.6 ? COPPER : SLATE });
   }
-  let flock = [], nextFlock = between(2.5, 5);
+  // THE LEAVES, in window space: each falls, sways, turns over, and comes
+  // back in at the top once it has fallen past the foot.
+  const leaves = [];
+  function fallingLeaf(top) {
+    return { x: random(), y: top ? -between(20, 60) : random() * H, fall: between(24, 50), sway: between(16, 44),
+      phase: random() * Math.PI * 2, spin: between(-1.1, 1.1), tumble: between(0.7, 1.4), len: between(14, 28),
+      base: between(0.5, 0.85), colour: random() < 0.78 ? COPPER : SLATE, vx: 0, turn: 0 };
+  }
+  function makeLeaves() {
+    const want = Math.round(LEAVES * (window.innerWidth < 700 ? 0.5 : 1));
+    if (leaves.length >= want) return;
+    while (leaves.length < want) leaves.push(fallingLeaf(false));
+    canvas.dataset.leaves = String(leaves.length);       // for the tests
+  }
+
+  // THE FLOCKS — up to FLOCKS crossing at once, a new one every few seconds.
+  let flocks = [], nextFlock = between(1, 2.5), flocked = 0;
   function startFlock(t) {
     const n = Math.round(between(FLOCK[0], FLOCK[1]));
     const fromLeft = random() < 0.5;
-    const y0 = between(0.12, 0.55) * H;
+    const y0 = between(0.12, 0.6) * H;
     const lead = { x: fromLeft ? -60 : W + 60, y: y0, vx: (fromLeft ? 1 : -1) * between(70, 110), wave: between(0.4, 0.9), amp: between(20, 60), t0: t };
-    flock = [];
+    const flock = [];
     for (let i = 0; i < n; i++) {
       flock.push({ x: lead.x - lead.vx * 0.2 * i + gauss() * 30, y: y0 + gauss() * 30, vx: lead.vx, vy: 0, flap: random() * Math.PI * 2, rate: between(7, 10), lead });
     }
+    flocks.push(flock);
+    canvas.dataset.flocks = String(++flocked);              // how many have set off, for the tests
   }
-  function moveFlock(t, dt) {
-    if (!flock.length) {
-      nextFlock -= dt;
-      if (nextFlock <= 0) { startFlock(t); nextFlock = between(FLOCK_EVERY[0], FLOCK_EVERY[1]); }
-      return;
-    }
+  function moveFlocks(t, dt) {
+    nextFlock -= dt;
+    if (nextFlock <= 0 && flocks.length < FLOCKS) { startFlock(t); nextFlock = between(FLOCK_EVERY[0], FLOCK_EVERY[1]); }
+    flocks = flocks.filter((flock) => moveFlock(flock, t, dt));
+  }
+  /** One flock's frame; false once it has gone off the window. */
+  function moveFlock(flock, t, dt) {
     const lead = flock[0].lead;
     lead.x += lead.vx * dt;
     const ly = lead.y + Math.sin((t - lead.t0) * lead.wave) * lead.amp;
@@ -474,7 +508,7 @@
       b.flap += b.rate * dt;
       if (b.x > -80 && b.x < W + 80 && b.y > -80 && b.y < H + 80) gone = false;
     });
-    if (gone && (lead.x < -200 || lead.x > W + 200)) flock = [];
+    return !(gone && (lead.x < -200 || lead.x > W + 200));
   }
 
   // ============================================================
@@ -547,13 +581,57 @@
       ink.fillRect(x, y, s.size, s.size);
     });
 
-    // THE FLOCK
+    // THE LEAVES
+    makeLeaves();
+    ink.lineWidth = 1;
+    leaves.forEach((L, i) => {
+      if (!REDUCE) {
+        L.y += L.fall * dt;
+        // Pushed aside by the hand, as by a breath, and set turning.
+        let x = L.x * W;
+        if (handX > -9000) {
+          const dx = x - handX, dy = L.y - handY, d = Math.hypot(dx, dy);
+          if (d < 150 && d > 1) { L.vx += (dx / d) * 260 * (1 - d / 150) * dt; L.turn += (1 - d / 150) * 4 * dt * Math.sign(dx || 1); }
+        }
+        L.vx *= 0.96; L.turn *= 0.97;
+        L.x += (L.vx * dt) / W;
+        if (L.y > H + 40 || L.x < -0.06 || L.x > 1.06) leaves[i] = fallingLeaf(true);
+      }
+      const x = L.x * W + (REDUCE ? 0 : Math.sin(t * 0.8 + L.phase) * L.sway), y = L.y;
+      const q = leafQuiet(x);
+      ink.save();
+      ink.translate(x, y);
+      ink.rotate(L.spin * t + L.turn + Math.sin(t * 1.3 + L.phase) * 0.6);
+      ink.scale(1, 0.35 + 0.65 * Math.abs(Math.cos(t * L.tumble + L.phase)));
+      const len = L.len;
+      // A faint body, then the outline, the midrib and the veins.
+      ink.fillStyle = rgb(L.colour);
+      ink.strokeStyle = rgb(L.colour);
+      ink.beginPath();
+      ink.moveTo(0, -len / 2);
+      ink.quadraticCurveTo(len * 0.42, 0, 0, len / 2);
+      ink.quadraticCurveTo(-len * 0.42, 0, 0, -len / 2);
+      ink.globalAlpha = 0.1 * L.base * q;
+      ink.fill();
+      ink.globalAlpha = 0.75 * L.base * q;
+      ink.moveTo(0, -len / 2); ink.lineTo(0, len / 2 + 4);
+      for (let k = 1; k < 4; k++) {
+        const yy = -len / 2 + (k / 4) * len;
+        ink.moveTo(0, yy); ink.lineTo(len * 0.22, yy - len * 0.12);
+        ink.moveTo(0, yy); ink.lineTo(-len * 0.22, yy - len * 0.12);
+      }
+      ink.stroke();
+      ink.restore();
+    });
+    ink.globalAlpha = 1;
+
+    // THE FLOCKS
     if (!REDUCE) {
-      moveFlock(t, dt);
+      moveFlocks(t, dt);
       ink.strokeStyle = rgb(SLATE);
       ink.lineWidth = 1.2;
       ink.lineCap = "round";
-      flock.forEach((b) => {
+      flocks.flat().forEach((b) => {
         const dir = Math.atan2(b.vy, b.vx);
         const up = Math.sin(b.flap) * 0.7;
         const span = 7;

@@ -13319,10 +13319,12 @@ html.om-landing .human-readout { transition: none !important; }
 /* ==================================================================
    OUTSIDER PARFUMS — the eleventh house, 2026-10-10, Om's sister: the
    same near-black, in ivory, with the deep green of the light in the
-   house's own photographs where Om has gold. Its ground is om.js too,
-   in its own colours and without the shatter; THE ECHO is its arrival —
-   the name comes in with a copy of itself beside it that slides into
-   register, which is the twin the drawing behind it keeps.
+   house's own photographs where Om has gold. Its ground is outsider.js:
+   a door standing slightly ajar in the left margin, the green light
+   coming through it (2026-10-11). It was om.js in its own colours for a
+   day, with a twin of the drawing and an ECHO on its name — the name
+   coming in with a copy of itself sliding into register — and both went
+   with "remove the merginig motifs".
    ================================================================== */
 .outsider-page {
   --bg: #0b0c0b;
@@ -13341,14 +13343,6 @@ body.outsider-page { background-color: var(--bg); }
 .outsider-page .human-stage { color: rgb(var(--out-green)); }
 .outsider-page .human-part[open] > summary .human-cue,
 .outsider-page .human-part > summary:hover .human-cue { border-color: rgba(var(--out-green), 0.7); }
-@keyframes outsider-echo {
-  from { text-shadow: 0.55em -0.18em 0 rgba(var(--ink-rgb), 0.28); }
-  to { text-shadow: 0 0 0 rgba(var(--ink-rgb), 0); }
-}
-.outsider-page .human-head h1 { animation: outsider-echo 2.6s cubic-bezier(0.3, 0, 0.2, 1) 0.2s both; }
-@media (prefers-reduced-motion: reduce) {
-  .outsider-page .human-head h1 { animation: none; }
-}
 /* The owner's own paragraph in Arabic, on Dragon's Breath: set right to
    left, and a little larger, the script reading small beside the Latin. */
 .human-text p[lang="ar"] { font-size: 1.12em; line-height: 1.85; }
@@ -13385,3 +13379,8 @@ body.tribe-page {
   color: var(--muted);
 }
 .human-text p.human-unsmelled-from a { color: inherit; text-underline-offset: 3px; }
+/* On Om's and Outsider's dark ground (2026-10-11), the same, in their light;
+   and the sentence standing a little under the last word above it. */
+.om-page .human-text p.human-unsmelled,
+.outsider-page .human-text p.human-unsmelled { color: #a39b8d; }
+.human-after + .human-unsmelled-block { padding-top: 0; }

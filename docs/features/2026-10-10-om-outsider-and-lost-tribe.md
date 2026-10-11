@@ -1,7 +1,8 @@
 # Om Parfums, Outsider Parfums and Lost Tribe — houses ten to twelve
 Date: 2026-10-10
 Files touched: `houses/om-parfums.html`, `houses/outsider-parfums.html`, `houses/lost-tribe.html`,
-`om.js`, `om-glyph.js`, `tools/om/glyph.py`, `lost-tribe.js`, `house.js` (folds), `motifs.js`,
+`om.js`, `om-glyph.js`, `tools/om/glyph.py`, `outsider.js` (2026-10-11), `lost-tribe.js`,
+`house.js` (folds), `motifs.js`,
 `scent-descriptions/index.html`, `style.css`, `notes-data.js`, `network.js` (`HOUSES`),
 `search-page.js`, `tools/seo.py`, `sitemap.xml`, `images/Om Parfums/`, `images/Outsider/`,
 `images/Lost Tribe/` (and their `house-web/` copies and READMEs), the footer chain on
@@ -18,16 +19,23 @@ Three houses, the tenth, eleventh and twelfth, each with the owner's writing, it
 its notes (the house's own page first, Fragrantica under it, as Ataraxia's are split), a frame
 on the Houses view with hover animations of its own, and a drawing of its own behind it:
 
-- **Om Parfums** opens **in pieces** — the page broken into floating shards of glass round
-  **โอม**, the Thai spelling of Om — and **one click anywhere** (a key, the wheel) brings them
-  together; it stays whole. **On a phone they come together by themselves**, a moment after the
-  page opens. Behind the whole page a vast armillary of gold hairlines turns slowly as you read.
-- **Outsider Parfums**, Om's sister house: the same drawing in ivory and a deep green, **not in
-  pieces** — a **twin** of it, reflected, drifting out of register and back — and its name
-  arrives with an **echo** sliding into place.
+- **Om Parfums** opens **cracked** — since 2026-10-11 a few large shards of glass standing a
+  little off their places round **โอม**, the Thai spelling of Om (it was the page thrown far apart
+  for its first day) — and **the hand moving over it mends it for good**, the shards coming home
+  in a wave from where the hand is (a click or a key does too; scrolling does nothing). **On a
+  phone it comes together by itself**, a moment after the page opens. Behind the whole page a vast
+  armillary of gold hairlines turns slowly as you read — **drawn about three and a half times as
+  quickly** as it was.
+- **Outsider Parfums**, Om's sister house: since 2026-10-11 **a door standing slightly ajar** in
+  the left margin, drawn in hairlines up from the floor as Les Abstraits' armoire is, **a small
+  green light** coming through the gap and laid across the floor, dust drifting in it, the door
+  giving a little under the hand (`outsider.js`). For its first day it was Om's drawing in ivory
+  and green with a reflected **twin** and an **echo** on its name; both are gone.
 - **Lost Tribe**: a naturalist's **field notes** in the margins — the house's own stag and the
   creatures and ingredients of its six fragrances, in specks, each named as a field guide names
-  it — pollen drawn to the hand, and a small flock that scatters from it.
+  it — pollen drawn to the hand, **leaves falling** (quiet behind the writing, since 2026-10-11),
+  and **flocks crossing often**, scattering from the hand.
+- At the foot of all three, **the fragrances not smelled yet**, in one sentence (2026-10-11).
 
 ## Why / key decisions
 
@@ -52,6 +60,11 @@ are the owner's: **Om Parfums** and **Outsider Parfums** (the house writes both 
 Parfum*), **Lost Tribe**. The fragrances stand in the order the owner gave them.
 
 ### The shatter (Om)
+
+*(What follows is the shatter as it was first made, on 2026-10-10. It is gentler, mended by the
+hand and quicker since 2026-10-11 — see [that section](#2026-10-11--om-gentler-and-quicker-outsiders-door-lost-tribes-leaves-the-fragrances-not-smelled).
+What still holds: the pieces are copies of the page in a closed shadow root, the page is there
+underneath all along, and when it is never in pieces.)*
 
 **The pieces are the page itself.** A clone of the page's flow — its `<main>`, credit and foot —
 is laid in each shard at exactly the place the page is, cut to the shard with a `clip-path`, and
@@ -93,17 +106,19 @@ circle. The stylisation is `om.js`'s: the outlines as specks with a brightness t
 each stroke, the heads made perfect circles with their centres crossed, on the hairlines a type
 designer rules (baseline, x-height, the top of the tall letter).
 
-### The armillary (Om, and Outsider)
+### The armillary (Om — and Outsider, for its first day)
 
 What the void is made of and what stands behind the whole page: rings tilted in three dimensions,
 each turning on an axis of its own and ticked, specks travelling them; interlocking triangles after
 the Sri Yantra (drawn with Om at its middle), two rings of lotus petals, a twelve-pointed star, dust
 far off in depth. The outer rings reach past the window — "expansive". It turns a little as the page
 is scrolled. **The lens**: a hexagonal shard of glass follows the hand a beat behind it, the drawing
-inside it turned and brought nearer. It is drawn at **QUIET** over the column of writing by a soft
-mask laid over each finished frame (`hushColumn`), so the reading stays clear.
+inside it turned and brought nearer. It is drawn at **QUIET** over the column of writing — by a soft
+mask laid over each finished frame (`hushColumn`) on its first day, and since 2026-10-11 by
+**the pen** (below), so the reading stays clear.
 
-**Outsider** is the same file (`om.js` reads `.outsider-page` off the body) — "elements from Om
+**Outsider** was the same file for its first day (`om.js` read `.outsider-page` off the body;
+it has a door of its own since 2026-10-11, below) — "elements from Om
 parfums, but different and not as extreme ... not fragmented, but rather emphasizing the
 similarity ... the same on this page minus the fragmentation (and a little change)": fewer rings,
 its own mark (the inverted triangle and the smaller one under it, with their incircles) where Om
@@ -128,13 +143,15 @@ want so make something and we will adapt later". `lost-tribe.js`, on linen paper
 - **The stray**: at rest a specimen's specks stand a few pixels off their places; the hand
   brings them home and the drawing sharpens.
 - **The pollen** rises and sways, drawn to the hand; **the flock** crosses the window every nine to
-  eighteen seconds, and scatters from the hand.
+  eighteen seconds, and scatters from the hand (more often since 2026-10-11, and **leaves** fall —
+  below).
 - On a window with no margins the specimens stand at its edges, half off it and faint.
 
 The owner's list of the house's other fragrances is one paragraph, "separated by a comma in a
 single line", under their last word: the names as the house writes them on losttribeperfumes.com,
 each once (a v2 or v3 folded into its name), read through search summaries — the house's own
-pages could not be opened from here — so a few may be missing.
+pages could not be opened from here — so a few may be missing. (Ten more were found on
+2026-10-11; see below.)
 
 ### The pictures
 
@@ -161,7 +178,8 @@ keep the formula).
 
 ### The hover animations on the Houses view
 
-"related to the animations on the pages": **Om** — shards of glass drifting and turning, a glint
+*(Om's and Outsider's are new since 2026-10-11 — see below.)* "related to the animations on the
+pages": **Om** — shards of glass drifting and turning, a glint
 running round each edge, rings throwing sparks, and โอम tracing itself in (the Houses view loads
 `om-glyph.js` for it); **Outsider** — its mark with its reflected twin sliding into register, and
 rings doubled the same way; **Lost Tribe** — a flock crossing, leaves falling and turning, pollen
@@ -176,18 +194,143 @@ function, `measured`, for both); a fold inside a fold stands in on a hairline. I
 are `<ol class="human-list">` (the fifth carries on with `start="5"`), and the line they asked to
 have drawn is `<hr class="human-rule">`. Any house can use all three.
 
+## 2026-10-11 — Om gentler and quicker, Outsider's door, Lost Tribe's leaves, the fragrances not smelled
+
+The owner: "for the page of om parfums, i want the fracturing to not be scroll dependent, and i
+want it to be soemthing that is less severe. when hovered, the fracturing returns to normal
+permanently. also please smooth the om parfums page out, it slows down the laptop A LOT!
+additionally, i want less random polygons forming with it, and rather more of the idea of grand
+stuff and merging in the animation on SD houses. for outsider, remove the merginig motifs and I
+want you to add a door that is slightly ajar, with a small ught coming from that door. that is to
+be the main motif; similarly to les abstraits closet. follow the same theme when you enter the
+house part too pleas. lost tribe is quite good; but i want the falling leaves to exist on the
+actual page too. when they fall behind the text, let them be de-emphasized; similarly to
+ataraxia's beams of light. make the birds more frequent in lost tribes page too (not the SD
+animation) also, at the bottom of each of these three houses (in their respective pages), i want
+you to find the fragrances NOT smelled, and then add them in a sentence".
+
+### Om: cracked, not thrown apart — and mended by the hand
+
+- **Less severe.** The page opens **cracked** as a pane is: about seventeen large shards (eight on a
+  phone) radiating from a point a little above the window's middle (`SHARD_RINGS_WIDE`,
+  `SHARD_RINGS_NARROW`), each standing a few pixels off its place, a degree or two out of true and
+  a little smaller, drifting slightly, its edges gold. None is turned over and none falls back into
+  a tunnel; on a phone the offsets are half again. Through the cracks, the void — โอม in specks,
+  fainter than it was, and a ring throwing sparks.
+- **Not scroll dependent.** Nothing listens to the wheel or a finger's scroll any more: the page is
+  held while it is cracked (it was "one click, a key or **the wheel**"), and a test turns the wheel
+  and finds the page still cracked and unscrolled.
+- **Hovered, it mends for good.** The hand moving over the page (four pixels of real movement, not
+  the single event a browser sends when a page opens under a still pointer — `MOVE_PX`) brings the
+  shards home **in a wave from where the hand is**, the nearest first (`MEND_SPREAD`), each seam
+  flashing gold as it meets. A click, a tap or a key mends it too; a phone mends by itself after
+  `AUTO_MS`, as before. The hint says *Hover to bring it together*.
+
+### Om: quicker
+
+Measured at 1440 × 900, at a screen's two pixels to a point, frames a second on the test machine:
+
+| | before | now |
+|---|---|---|
+| whole, the armillary behind the writing | 16 | 55 |
+| cracked | 8 | 26 |
+
+- **The mask was the cost.** Every frame painted a soft mask over the whole window to quiet the
+  drawing over the column (`destination-in`), which reads and writes every pixel; without it the
+  same drawing ran at 58. A mask in the stylesheet was tried and cost about forty frames of the
+  sixty; a gradient on each stroke cost about thirty-six.
+- **THE PEN** is what does it now: every hairline is cut into pieces no wider than 36px, each piece
+  sorted by where it stands across the window into one of six levels of quiet (`LEVELS`, `PIECE`),
+  and each level stroked once, in a plain colour; every speck is drawn at the quiet of where it
+  stands (`quietAt`). The quiet is worked out again only when it changes (`quietStops`).
+- **The shards.** Each copy of the page is **cut down to what the window shows** (`trim`: whatever
+  of the page starts below the window is taken out of the copy) — it was the whole page, forty times
+  over; **fewer shards**; **flat** movement (`translate`, `rotate`, `scale`) in place of turning in
+  three dimensions, which a browser composites far more cheaply; and a shard's strength written only
+  when it changes. The cracked page's 26 is a machine with no graphics card drawing in software; a
+  laptop's own graphics card composites the shards far faster.
+
+### Om on the Houses view: grand things merging
+
+"less random polygons ... more of the idea of grand stuff and merging": the drifting shards are
+gone (`shard`). **A grand figure merging** (`omMerge`) — a mandala of circles, ticks, twelve lotus
+petals, interlocking triangles and a point at its middle, broken into six to eight wedges round a
+middle piece; each wedge slides home along its own middle line, turning into place, its broken
+edges flashing gold as it meets the next, and once whole a glint goes round it and specks orbit it,
+for ten seconds or so. **Two rings merging into one** (`omRing`), throwing sparks as they meet. And
+**โอม tracing itself in**, as before (`omWord`). `motifs.js`, `HOUSES.om`.
+
+### Outsider: the door ajar
+
+`outsider.js`, its own file now (`om.js` draws Om alone). **A door standing slightly ajar**, in the
+left margin on the floor of the window, as Les Abstraits' armoire stands: plain geometry in ivory
+hairlines with a speck at each joint — the architrave, its head moulding, a block at the foot of
+each jamb, the threshold, the floor line run out either side — **drawn up from the floor** as the
+page opens (`BUILD`, 2.2 s), every line growing from its lower end. The door is hinged on the left
+and swung a little way into the room behind (`AJAR`), so it is seen narrowed, its four panels
+with it, its knob near the open edge. **The light** comes up once it stands (`LIGHT_IN`): a sliver
+of pale light the height of the opening through the gap, glowing in the house's green — the light
+in its own photographs — a thin line of it under the door and a wedge of it across the floor in
+front, breathing a little as a lamp in another room does; **dust** drifts in it (`MOTES`). The hand
+near it opens it a few degrees more, and the light with it (`AJAR_HAND`).
+
+It stands **clear of the scale** down the side, beside it or under it, measured as the armoire's
+is; on a window with no margins it stands small and faint at the left edge. Over the writing what
+reaches into it is drawn quiet, piece by piece — never a mask over the window (`quiet`). With
+reduced motion it simply stands, ajar, the light steady.
+
+**Removed**, at the owner's word ("remove the merginig motifs"): the reflected **twin** drifting
+into register, the **echo** on the name (`outsider-echo` in `style.css`), and Outsider's motifs on
+the Houses view (`outsiderMark`, `outsiderRing`). On the Houses view its motif is **the same door**
+(`door`), drawn up on the left in darker inks, its light coming up after it, standing until the
+house is left.
+
+### Lost Tribe: leaves on the page, and more birds
+
+- **The leaves** (`LEAVES`, fourteen; `fallingLeaf`): falling the height of the window, turning
+  over and swaying as the Houses view's do, pushed aside and turned by the hand — and **quiet over
+  the writing, as Ataraxia's bands are** (`LEAF_QUIET`): they pass behind the words and do not
+  show strongly while they do, eased in at the column's edges.
+- **The flock** crosses every three and a half to seven seconds (`FLOCK_EVERY`; it was nine to
+  eighteen), and up to two at once (`FLOCKS`). The Houses view's flock is as it was, as asked.
+
+### The fragrances not smelled yet
+
+At the foot of each house, a sentence of the house's other fragrances, as Lost Tribe's list already
+was (`.human-unsmelled`, its sources under it in `.human-unsmelled-from`):
+
+- **Om Parfums** — twenty-six, from the house's own site and Parfumo: *Not smelled yet: Aftermath,
+  Babylon, … and Wrath.* **Smoke Oud's attars are left out**, because which Smoke Oud was smelled is
+  not known; and so are names that came up once in a search and could not be placed as Om's
+  (Golden Wings, Kingpin, Sauron, Taiwan Oud, Pink Moods, Patchouli).
+- **Outsider Parfums** — Parfumo counts seven, the five on the page and **Bananaccino and Sweet
+  Tooth**.
+- **Lost Tribe** — its list gained ten (Blu, Dubai, Easter Egg, Electric Bloom, Lola's Lemonana,
+  Parc Florale, Prince of Persia, Red YaYo (Rose Edition), Sunny Nights, The Hamptons), eighty-eight
+  in all, with Parfumo named beside the house. Left out as uncertain: Rose & Musk, Santal & Musk,
+  Presidential Papua Oud, Yuan Yang.
+
+All of it was read through searches: the houses' sites and Fragrantica cannot be opened from this
+container (its network policy refuses them), so a list may be missing a name or two.
+
 ## How to test it
 
-`npm test -- tests/om-and-the-tribe.spec.js`: Om in pieces, one click (a key, the wheel) bringing
-it together for good, the pieces landing where the page is, a phone's coming together by itself,
-never with reduced motion, at one fragrance, with `?om=whole` or without its script; โอम from the
-three letters; the two dropdowns and the line; the owner's words with the agreed corrections and
-Xocolate Crotch's stages; Outsider with no pieces and its echo; Lost Tribe's field notes and its
-one line of names; the cropped picture; and each new house's motifs at the front of the Houses
-view. The house lists (twelve frames, the chain both ways, the return buttons, the subtitles in
+`npm test -- tests/om-and-the-tribe.spec.js`: Om cracked, **the wheel doing nothing to it**, **the
+hand mending it for good** (and a single still pointer event not), a click or a key mending it, the
+pieces landing where the page is, **Om quick to draw** (no mask over the window, the copies cut to
+the window, fewer than 25 shards, over 30 frames a second whole), a phone's coming together by
+itself, never with reduced motion, at one fragrance, with `?om=whole` or without its script; โอม
+from the three letters; the two dropdowns and the line; the owner's words with the agreed
+corrections and Xocolate Crotch's stages; **Outsider's door** (outsider.js and not om.js, no echo,
+light on the left and nothing on the right, some of it green); Lost Tribe's field notes, its one
+line of names and the ten new ones, **its leaves and flocks** (quiet over the column); **the
+fragrances not smelled** on Om and Outsider; the cropped picture; **the shards and Outsider's
+merging motifs gone**; and each new house's motifs at the front of the Houses view (Om's `omMerge`
+and `omRing`, Outsider's `door`). The spec turns Playwright's trace off: recording it stalls the
+heavier pages. The house lists (twelve frames, the chain both ways, the return buttons, the subtitles in
 title case, the rank on every newer house) are in `houses.spec.js` and `contact-sheet.spec.js`;
 the phone's no-sideways-scroll list in `mobile.spec.js` carries the three. By eye: open
-`/houses/om-parfums.html` and click; `/houses/outsider-parfums.html`; `/houses/lost-tribe.html`,
+`/houses/om-parfums.html` and move the hand; `/houses/outsider-parfums.html`, the hand near the door; `/houses/lost-tribe.html`,
 moving the hand over a specimen; `/scent-descriptions/#house-10`, `#house-11`, `#house-12`.
 
 ## Known issues / TODO
@@ -198,8 +341,16 @@ moving the hand over a specimen; `/scent-descriptions/#house-10`, `#house-11`, `
 - **Smoke Oud**: which Smoke Oud the owner smelled (the extrait in the picture, or an attar) would
   let its notes be found.
 - **Lost Tribe's list of other fragrances** may be missing a few the house sells (see above).
-- **The Om shatter on a slow machine**: about forty shards each carry a copy of the page; on a phone
-  there are fewer (`SHARD_RINGS_NARROW`). If it stutters on an old phone, fewer rings is the knob.
+- **Outsider's door** is a first answer, after Les Abstraits' armoire.
+- **The Om shatter on a slow machine**: since 2026-10-11 seventeen shards (eight on a phone), each
+  carrying only what the window shows of the page. The cracked page drew at 26 frames a second on
+  the test machine, which has no graphics card; if it still stutters on a laptop, fewer rings
+  (`SHARD_RINGS_WIDE`) is the knob — and it lasts only until the hand moves.
+- **The lists of fragrances not smelled** (2026-10-11) were read through searches and may miss a
+  name; the names left out as uncertain are listed above. **Smoke Oud** decides whether its attars
+  belong in Om's sentence.
+- **Les Abstraits' page draws at about 35 frames a second** on the same machine — the same kind of
+  full-window mask Om's was (its own hush). Not asked for; noted here.
 - Lost Tribe's design is a first answer, as the owner said it would be ("we will adapt later").
 
 ## Same round, other reports

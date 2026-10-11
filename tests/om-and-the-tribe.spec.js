@@ -2,17 +2,23 @@
 // HOUSES TEN TO TWELVE — Om Parfums, Outsider Parfums and Lost Tribe
 // (2026-10-10), and the Houses view's motifs for them.
 //
-//   OM            opens SHATTERED: the page in floating pieces round โอม,
-//                 the page itself held back underneath — and one click
-//                 brings them together and it stays whole; on a phone they
+//   OM            opens CRACKED: the page in a few shards of glass round
+//                 โอม, the page itself held back underneath — and the hand
+//                 moving over it mends it, and it stays whole (a click or a
+//                 key too; the wheel does nothing to it); on a phone they
 //                 come together by themselves. Never with reduced motion,
-//                 an address at one fragrance, or ?om=whole.
+//                 an address at one fragrance, or ?om=whole. And it is
+//                 quick to draw (2026-10-11).
 //   ITS WRITING   the owner's two dropdowns, one inside the other, and the
 //                 line they asked to have drawn.
-//   OUTSIDER      Om's drawing without the shatter, its name arriving with
-//                 its echo.
-//   LOST TRIBE    field notes in the margins, and the house's other
+//   OUTSIDER      a door, ajar, in the left margin, the light coming
+//                 through it (2026-10-11; it was Om's drawing with a twin,
+//                 and its name had an echo).
+//   LOST TRIBE    field notes in the margins, leaves falling quiet over the
+//                 writing, flocks every few seconds, and the house's other
 //                 fragrances in one line.
+//   THE FEET      of all three: the fragrances not smelled yet, in one
+//                 sentence.
 //
 // What these pages look like is checked by eye; these check they work.
 // ============================================================
@@ -30,13 +36,15 @@ test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
 });
 
-/* IN PIECES, AND ONE CLICK BRINGS IT TOGETHER — the owner: "making the
-   page fragmented, and then when you interact with it, it kinda shifts
-   together again and starts being coherent", and their answer, "Whole page,
-   one click". The pieces are laid over the page in a closed shadow root, so
-   nothing else on the page can find them: the page's own writing is there
-   once, under them, and only held back. */
-test("Om opens in pieces and one click brings it together, for good", async ({ page }) => {
+/* CRACKED, AND THE HAND MENDS IT — the owner: "making the page fragmented,
+   and then when you interact with it, it kinda shifts together again and
+   starts being coherent", and then (2026-10-11) "i want the fracturing to
+   not be scroll dependent, and i want it to be soemthing that is less
+   severe. when hovered, the fracturing returns to normal permanently." The
+   pieces are laid over the page in a closed shadow root, so nothing else on
+   the page can find them: the page's own writing is there once, under them,
+   and only held back. */
+test("Om opens cracked, the wheel does nothing to it, and the hand moving over it mends it for good", async ({ page }) => {
   test.setTimeout(60000);
   const errors = collectPageErrors(page);
   await page.goto(OM);
@@ -50,17 +58,23 @@ test("Om opens in pieces and one click brings it together, for good", async ({ p
   // Held back while the pieces stand over it, and it does not scroll.
   expect(await page.locator(".human-head").evaluate((el) => getComputedStyle(el).opacity)).toBe("0");
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).toBe("hidden");
-
-  // One click anywhere.
-  await page.mouse.click(700, 450);
+  // NOT SCROLL DEPENDENT: the wheel neither mends it nor moves it.
+  await page.mouse.wheel(0, 600);
+  await page.waitForTimeout(500);
+  await expect(root).toHaveAttribute("data-om", "pieces");
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  // The hand moving over it.
+  await page.mouse.move(500, 400);
+  await page.mouse.move(540, 420, { steps: 4 });
   await expect(root).toHaveAttribute("data-om", "gathering");
   await expect(root).toHaveAttribute("data-om", "whole", { timeout: 8000 });
   await expect(page.locator(".om-shards")).toHaveCount(0, { timeout: 3000 });
   await expect(root).not.toHaveClass(/om-shattered/);
   expect(await page.locator(".human-head").evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
-  // And whole it stays: it scrolls, and another click does nothing to it.
+  // And whole it stays: it scrolls, and the hand and a click do nothing to it.
   await page.mouse.wheel(0, 600);
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(100);
+  await page.mouse.move(900, 300, { steps: 4 });
   await page.mouse.click(1300, 300);
   await page.waitForTimeout(400);
   await expect(root).toHaveAttribute("data-om", "whole");
@@ -73,26 +87,55 @@ test("Om opens in pieces and one click brings it together, for good", async ({ p
 test("Om's pieces land exactly on the page they were cut from", async ({ page }) => {
   await page.goto(OM);
   await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
+  // (The head rises a little as the page comes in, its first second.)
+  await page.waitForTimeout(1300);
   const before = await page.locator("h1").boundingBox();
-  await page.mouse.click(700, 450);
+  await page.mouse.move(700, 450);
+  await page.mouse.move(720, 460, { steps: 3 });
   await expect(page.locator("html")).toHaveAttribute("data-om", "whole", { timeout: 8000 });
   const after = await page.locator("h1").boundingBox();
   expect(Math.abs(after.x - before.x)).toBeLessThan(1);
   expect(Math.abs(after.y - before.y)).toBeLessThan(1);
 });
 
-/* A KEY OR THE WHEEL BRINGS IT TOGETHER TOO, so nobody is left looking at
-   pieces who did not think to click. */
-test("Om's pieces come together at a key, or the wheel", async ({ page }) => {
+/* A CLICK OR A KEY MENDS IT TOO, so nobody is left looking at pieces whose
+   hand has not moved (a keyboard, say) — but a hand that has not moved does
+   not: a browser can send one move as the page appears under a still hand. */
+test("Om's pieces come together at a click or a key, and not at one still move", async ({ page }) => {
   await page.goto(OM);
   await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
+  await page.mouse.move(600, 400);
+  await page.waitForTimeout(400);
+  await expect(page.locator("html"), "one move is not hovering").toHaveAttribute("data-om", "pieces");
   await page.keyboard.press("ArrowDown");
   await expect(page.locator("html")).toHaveAttribute("data-om", "whole", { timeout: 8000 });
   await page.goto(OM);
   await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
-  await page.mouse.move(600, 400);
-  await page.mouse.wheel(0, 200);
+  await page.mouse.click(600, 400);
   await expect(page.locator("html")).toHaveAttribute("data-om", "whole", { timeout: 8000 });
+});
+
+/* QUICK TO DRAW — "please smooth the om parfums page out, it slows down the
+   laptop A LOT!" (2026-10-11): it was the drawing's quiet over the column,
+   painted over every finished frame (16 frames a second on this machine)
+   and the pieces, fifty copies of the whole page restyled every frame.
+   Now no shard carries more of the page than the window shows, and once
+   whole the page draws near sixty a second here. */
+test("Om is quick to draw: few shards, each carrying only what the window shows, and the whole page near sixty a second", async ({ page }) => {
+  test.setTimeout(60000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(OM);
+  await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
+  const src = read("om.js");
+  expect(src, "no mask painted over the frame").not.toContain("destination-in");
+  expect(src, "each copy cut down to the window").toContain("trim(el, copy, 0)");
+  const rings = src.match(/SHARD_RINGS_WIDE = (\[[^;]+\]);/)[1];
+  const shards = 1 + JSON.parse(rings).reduce((n, [, k]) => n + k, 0);
+  expect(shards, "a few shards, where there were fifty-one").toBeLessThan(25);
+  await page.goto(OM + "?om=whole");
+  await page.waitForTimeout(1500);
+  const fps = await page.evaluate(() => new Promise((res) => { let n = 0; const t0 = performance.now(); (function f() { n++; if (performance.now() - t0 < 2000) requestAnimationFrame(f); else res(n / 2); })(); }));
+  expect(fps, "frames a second, whole").toBeGreaterThan(30);
 });
 
 /* ON A PHONE IT COMES TOGETHER BY ITSELF — "I dont want it to be on click
@@ -205,25 +248,41 @@ test("the three houses carry the owner's writing, its clear misspellings put rig
   expect((out.match(/In the late top notes; it started turning more realistic/g) || []).length).toBe(1);
 });
 
-/* OUTSIDER: "elements from Om parfums, but different and not as extreme. I
-   dont want it to be fragmented" — Om's drawing, never in pieces, its name
-   arriving with its echo. */
-test("Outsider is Om's drawing without the pieces, its name arriving with its echo", async ({ page }) => {
+/* OUTSIDER: A DOOR, AJAR, WITH A LIGHT — the owner, 2026-10-11: "remove the
+   merginig motifs and I want you to add a door that is slightly ajar, with a
+   small ught coming from that door. that is to be the main motif; similarly
+   to les abstraits closet. follow the same theme when you enter the house
+   part too". Its own script, never Om's; no pieces, no twin, no echo; the
+   door drawn in the left margin, and the house's green coming through it. */
+test("Outsider is a door standing ajar in the left margin, the light coming through it, and nothing merging", async ({ page }) => {
+  test.setTimeout(60000);
   const errors = collectPageErrors(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(OUTSIDER);
+  await expect(page.locator('script[src="../outsider.js"]')).toHaveCount(1);
+  await expect(page.locator('script[src="../om.js"]')).toHaveCount(0);
   await expect(page.locator(".om-shards")).toHaveCount(0);
   await expect(page.locator("html")).not.toHaveClass(/om-shattered/);
-  expect(await page.locator("h1").evaluate((el) => getComputedStyle(el).animationName)).toBe("outsider-echo");
-  await page.waitForTimeout(800);
-  // Its ground is drawn — hairlines and specks, so not many pixels, but some.
-  const lit = await page.evaluate(() => {
+  expect(await page.locator("h1").evaluate((el) => getComputedStyle(el).animationName), "no echo on the name").toBe("none");
+  expect(read("style.css")).not.toContain("outsider-echo");
+  // Built, and its light come up.
+  await page.waitForTimeout(4200);
+  const seen = await page.evaluate(() => {
     const c = document.querySelector(".human-field"), g = c.getContext("2d");
-    const d = g.getImageData(0, 0, c.width, c.height).data;
-    let n = 0;
-    for (let i = 3; i < d.length; i += 4) if (d[i] > 8) n++;
-    return n;
+    const k = c.width / innerWidth, d = g.getImageData(0, 0, c.width, c.height).data;
+    const margin = (innerWidth - 940) / 2;
+    let left = 0, right = 0, green = 0;
+    for (let y = 0; y < c.height; y += 2) for (let x = 0; x < c.width; x += 2) {
+      const i = (y * c.width + x) * 4;
+      if (d[i + 3] < 30) continue;
+      if (x / k < margin + 20) { left++; if (d[i + 1] > d[i] + 25 && d[i + 1] > d[i + 2] + 10) green++; }
+      else if (x / k > innerWidth - margin) right++;
+    }
+    return { left, right, green };
   });
-  expect(lit).toBeGreaterThan(800);
+  expect(seen.left, "the door, on the left").toBeGreaterThan(1500);
+  expect(seen.green, "its green light").toBeGreaterThan(200);
+  expect(seen.right, "and nothing standing on the right").toBeLessThan(seen.left / 20);
   expect(errors).toEqual([]);
 });
 
@@ -246,14 +305,69 @@ test("Lost Tribe draws its field notes in the margins, and lists the rest on one
     return { left, right };
   });
   expect(margins.right, "the stag, at the head on the right").toBeGreaterThan(80);
-  const after = page.locator(".human-after");
+  const after = page.locator(".human-after").first();
   await expect(after.locator("ul, ol, li")).toHaveCount(0);
   const line = await after.locator("p.human-unsmelled").textContent();
   const names = line.split(",").map((s) => s.trim());
   expect(names.length).toBeGreaterThan(40);
   ["Kong", "Watch King", "Pan’s Labyrinth", "Dirty Soda", "Equatorial", "Santal Absolu"].forEach((n) => expect(names, n + " has been smelled").not.toContain(n));
-  await expect(after.locator(".human-unsmelled-from a")).toHaveAttribute("href", "https://losttribeperfumes.com/");
+  await expect(after.locator(".human-unsmelled-from a").first()).toHaveAttribute("href", "https://losttribeperfumes.com/");
+  // The ten found on 2026-10-11, in their places.
+  ["Blu", "Dubai", "Easter Egg", "Electric Bloom", "Lola’s Lemonana", "Parc Florale", "Prince of Persia", "Red YaYo (Rose Edition)", "Sunny Nights", "The Hamptons"]
+    .forEach((n) => expect(names, n).toContain(n));
   expect(errors).toEqual([]);
+});
+
+/* THE LEAVES ON THE PAGE, QUIET OVER THE WRITING, AND MORE BIRDS — "i want
+   the falling leaves to exist on the actual page too. when they fall behind
+   the text, let them be de-emphasized; similarly to ataraxia's beams of
+   light. make the birds more frequent in lost tribes page too" (2026-10-11).
+   Over the writing nothing is drawn strongly; in the margins the leaves and
+   the specimens are; and flocks set off every few seconds. */
+test("Lost Tribe's leaves fall on the page, faint over the writing, and its flocks come every few seconds", async ({ page }) => {
+  test.setTimeout(60000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(TRIBE);
+  const field = page.locator(".human-field");
+  await expect.poll(async () => +(await field.getAttribute("data-leaves")), { timeout: 5000 }).toBeGreaterThanOrEqual(10);
+  await page.waitForTimeout(9000);
+  expect(+(await field.getAttribute("data-flocks")), "flocks in nine seconds").toBeGreaterThanOrEqual(2);
+  const most = await page.evaluate(() => {
+    const c = document.querySelector(".human-field"), g = c.getContext("2d");
+    const k = c.width / innerWidth, d = g.getImageData(0, 0, c.width, c.height).data;
+    const margin = (innerWidth - 940) / 2;
+    let column = 0, side = 0;
+    for (let y = 0; y < c.height; y += 2) for (let x = 0; x < c.width; x += 2) {
+      const a = d[(y * c.width + x) * 4 + 3], at = x / k;
+      if (at > margin + 70 && at < innerWidth - margin - 70) column = Math.max(column, a); else side = Math.max(side, a);
+    }
+    return { column, side };
+  });
+  expect(most.column, "over the writing, quiet").toBeLessThan(110);
+  expect(most.side, "in the margins, plain").toBeGreaterThan(150);
+});
+
+/* WHAT HAS NOT BEEN SMELLED YET, at the foot of each — "at the bottom of
+   each of these three houses ... find the fragrances NOT smelled, and then
+   add them in a sentence" (2026-10-11): Om's and Outsider's in one sentence
+   under the last word, each saying where it was read; Lost Tribe's line. */
+test("Om and Outsider say at their foot, in one sentence, what has not been smelled yet", async ({ page }) => {
+  for (const [url, smelled, some] of [
+    [OM + "?om=whole", ["Nymphaea Caerulea", "Lust", "Burnana", "Cannabis Café", "Dark Night of the Soul", "This Too Shall Pass", "When the Linden Blooms", "Oud de Pasión", "Smoke Oud"], ["Aftermath", "Memento Mori", "Wrath"]],
+    [OUTSIDER, ["Dragon’s Breath", "Draco", "Xocolate Crotch", "Guilty as Charged", "Amaretto Coffee"], ["Bananaccino", "Sweet Tooth"]],
+  ]) {
+    await page.goto(url);
+    const line = page.locator(".human-unsmelled-block p.human-unsmelled");
+    await expect(line).toHaveCount(1);
+    const text = (await line.textContent()).trim();
+    expect(text.startsWith("Not smelled yet: "), url).toBe(true);
+    expect(text.endsWith("."), "one sentence").toBe(true);
+    some.forEach((n) => expect(text, n).toContain(n));
+    smelled.forEach((n) => expect(text, n + " has been smelled").not.toContain(n));
+    await expect(page.locator(".human-unsmelled-block .human-unsmelled-from a").first()).toHaveAttribute("href", /^https:\/\//);
+    // It stands after the last word, inside the page's main.
+    expect(await page.evaluate(() => document.querySelector("main .human-after + .human-unsmelled-block") !== null)).toBe(true);
+  }
 });
 
 /* THE HOUSE'S PICTURE, CROPPED — "MAKE SURE THE IMAGE IS CROPPED
@@ -271,9 +385,16 @@ test("Lost Tribe's picture on the Houses view is cropped to its frame", async ({
 });
 
 /* THE HOVER ANIMATIONS, "related to the animations on the pages of the
-   fragrances themselves": Om's shards, rings and word; Outsider's mark and
-   its twin; Lost Tribe's flock, leaves and pollen. */
-for (const [no, kinds] of [["10", ["shard", "omRing", "omWord"]], ["11", ["outsiderMark", "outsiderRing"]], ["12", ["flock", "leafFall", "pollenRise"]]]) {
+   fragrances themselves": Om's grand figure merging out of its pieces and its
+   rings merging into one ("less random polygons ... more of the idea of
+   grand stuff and merging", 2026-10-11); Outsider's door; Lost Tribe's
+   flock, leaves and pollen. The loose shards, and Outsider's mark and its
+   twin (its merging motifs), are gone from the code. */
+test("the loose shards and Outsider's merging motifs are gone", () => {
+  const src = read("motifs.js");
+  ["function shard(", "outsiderMark", "outsiderRing"].forEach((w) => expect(src, w).not.toContain(w));
+});
+for (const [no, kinds] of [["10", ["omMerge", "omRing"]], ["11", ["door"]], ["12", ["flock", "leafFall", "pollenRise"]]]) {
   test(`the Houses view's motifs come up for house ${no} at the front`, async ({ page }) => {
     test.setTimeout(60000);
     const errors = collectPageErrors(page);

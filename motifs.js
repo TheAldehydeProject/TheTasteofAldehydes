@@ -15,10 +15,10 @@
 // old armoire drawn in lines with irises at its feet and a drip
 // filling a beaker, Tale's doodles, Tombstone's roots and flowers, and
 // Qimu & Musicians' music — real music, silent — written out on short
-// staves and loose on the page; Om Parfums' shards of glass, its rings
-// throwing sparks and โอม tracing itself in; Outsider Parfums' mark with
-// its reflected twin sliding into register; and Lost Tribe's flock,
-// falling leaves and rising pollen.
+// staves and loose on the page; Om Parfums' grand figure merging out of
+// its pieces, its rings merging into one and throwing sparks, and โอม
+// tracing itself in; Outsider Parfums' door, ajar, with its light coming
+// through; and Lost Tribe's flock, falling leaves and rising pollen.
 //
 // THEY GATHER RATHER THAN APPEAR. Nothing is there the moment a house
 // is rested on: things are born one at a time and each comes up over
@@ -2418,95 +2418,174 @@
     return one;
   }
 
-  // ---------- OM PARFUMS: shards of glass, a ring's sparks, โอม ----------
-  // (2026-10-10) The house's page opens shattered into floating shards of
-  // itself round โอม, a sling ring's sparks flying off a ring — so here:
-  // shards of glass drifting and turning, rings throwing sparks, and the
-  // word tracing itself in, in a gold dark enough for the white paper.
-  // OUTSIDER PARFUMS, its sister, is the same drawing "minus the
-  // fragmentation": its mark — the inverted triangle and the small one
-  // under it — with a reflected twin sliding into register, and rings
-  // doubled the same way, in charcoal and the house's green.
+  // ---------- OM PARFUMS: grand figures merging, rings merging, โอม ----------
+  // (2026-10-10) The house's page opens cracked into shards of itself round
+  // โอม, a sling ring's sparks flying off a ring. Here, since 2026-10-11 —
+  // "i want less random polygons forming with it, and rather more of the
+  // idea of grand stuff and merging" — nothing is a loose shard any more:
+  // A FIGURE, large — a yantra in a lotus in a ring, after the drawing on
+  // the house's own page — comes in broken into pieces and they MERGE into
+  // it, each sliding home along the line it broke along, its seams flashing
+  // as they meet; once whole it turns slowly and a glint runs round it.
+  // TWO RINGS, tilted differently, slide together into one, which then
+  // turns and throws its sparks. And the word traces itself in, larger.
+  // In a gold dark enough for the white paper.
   const OM_GOLD = "168, 124, 52";
-  const OUT_GREEN = "46, 112, 80";
-  const OUT_INK = "40, 42, 38";
-  function shard() {
-    const at = spot(80);
+  const MERGE_MS = 2600;                 // a piece sliding home
+  const MERGE_SPREAD = 900;              // and the most one waits for another
+  function omMerge() {
+    const S = Math.min(W, H);
+    const big = Math.max(110, Math.min(250, S * rand(0.2, 0.27)));
+    const at = spot(big * 0.6);
     if (!at) return null;
-    const n = 4 + Math.floor(Math.random() * 3), R = rand(26, 72);
-    const pts = [];
-    for (let k = 0; k < n; k++) {
-      const a = (k / n) * Math.PI * 2 + rand(-0.35, 0.35), r = R * rand(0.55, 1);
-      pts.push([Math.cos(a) * r, Math.sin(a) * r]);
+    at.x = Math.max(big * 0.75, Math.min(W - big * 0.75, at.x));
+    at.y = Math.max(CHROME + big * 0.65, Math.min(H - big * 0.65, at.y));
+    // THE FIGURE in its own units (a radius of 1), as segments.
+    const segs = [];
+    const circle = (r, n) => { for (let k = 0; k < n; k++) { const a0 = (k / n) * Math.PI * 2, a1 = ((k + 1) / n) * Math.PI * 2; segs.push([Math.cos(a0) * r, Math.sin(a0) * r, Math.cos(a1) * r, Math.sin(a1) * r]); } };
+    circle(1, 120);
+    circle(0.68, 84);
+    circle(0.3, 44);
+    for (let k = 0; k < 36; k++) {
+      const a = (k / 36) * Math.PI * 2, l = k % 3 === 0 ? 1.07 : 1.035;
+      segs.push([Math.cos(a), Math.sin(a), Math.cos(a) * l, Math.sin(a) * l]);
     }
-    const spin = rand(-0.22, 0.22), tilt = rand(0, Math.PI * 2), dx = rand(-9, 9), dy = rand(-11, -3), glint = Math.random();
+    // The lotus: twelve petals between the two rings.
+    for (let k = 0; k < 12; k++) {
+      const a = (k / 12) * Math.PI * 2, half = Math.PI / 12;
+      const p0 = [Math.cos(a - half) * 0.7, Math.sin(a - half) * 0.7], p1 = [Math.cos(a + half) * 0.7, Math.sin(a + half) * 0.7];
+      const tip = [Math.cos(a) * 0.95, Math.sin(a) * 0.95];
+      const q0 = [Math.cos(a - half * 0.4) * 0.9, Math.sin(a - half * 0.4) * 0.9], q1 = [Math.cos(a + half * 0.4) * 0.9, Math.sin(a + half * 0.4) * 0.9];
+      [[p0, q0, tip], [tip, q1, p1]].forEach(([u, v, w]) => {
+        let px = u[0], py = u[1];
+        for (let i = 1; i <= 6; i++) {
+          const f = i / 6, g = 1 - f;
+          const x = g * g * u[0] + 2 * g * f * v[0] + f * f * w[0], y = g * g * u[1] + 2 * g * f * v[1] + f * f * w[1];
+          segs.push([px, py, x, y]); px = x; py = y;
+        }
+      });
+    }
+    // The yantra: two triangles up and two down, interlocking.
+    [[0.62, false], [0.46, false], [0.64, true], [0.48, true]].forEach(([r, down], i) => {
+      const pts = [0, 1, 2, 3].map((k) => { const a = (down ? Math.PI / 2 : -Math.PI / 2) + (k * Math.PI * 2) / 3; return [Math.cos(a) * r, Math.sin(a) * r + (i % 2 ? 0.03 : -0.03)]; });
+      for (let k = 0; k < 3; k++) segs.push([pts[k][0], pts[k][1], pts[k + 1][0], pts[k + 1][1]]);
+    });
+    circle(0.035, 10);
+    // THE PIECES: the figure broken into wedges from its middle, each
+    // edge a little off true, and each wedge carrying what lies in it.
+    const n = 6 + Math.floor(Math.random() * 3);
+    const cuts = Array.from({ length: n }, (_, k) => ((k + rand(-0.25, 0.25)) / n) * Math.PI * 2 + rand(0, 0.5));
+    const pieces = cuts.map((a0, k) => {
+      const a1 = k + 1 < n ? cuts[k + 1] : cuts[0] + Math.PI * 2;
+      const mid = (a0 + a1) / 2;
+      return { a0, a1, ux: Math.cos(mid), uy: Math.sin(mid), d0: rand(0.35, 0.7), rot: rand(-0.5, 0.5), delay: rand(0, MERGE_SPREAD), segs: [] };
+    });
+    const centre = { a0: 0, a1: 0, ux: 0, uy: 0, d0: 0, rot: rand(-1.2, 1.2), delay: rand(200, MERGE_SPREAD), segs: [], middle: true };
+    const angleIn = (a, p) => { let x = a; while (x < p.a0) x += Math.PI * 2; return x < p.a1; };
+    segs.forEach((sg) => {
+      const mx = (sg[0] + sg[2]) / 2, my = (sg[1] + sg[3]) / 2;
+      if (Math.hypot(mx, my) < 0.31) { centre.segs.push(sg); return; }
+      const a = Math.atan2(my, mx);
+      (pieces.find((p) => angleIn(a, p)) || pieces[0]).segs.push(sg);
+    });
+    pieces.push(centre);
+    const spin = rand(-0.05, 0.05);
     return {
-      life: rand(4200, 6800),
+      life: rand(9500, 12000),
       draw(c, age, alpha) {
-        const t = age / 1000;
-        c.save();
-        c.translate(at.x + dx * t, at.y + dy * t);
-        c.rotate(spin * t);
-        // Turning in depth: pressed flat along one axis and back.
-        c.scale(1, 0.32 + 0.68 * Math.abs(Math.cos(tilt + t * 0.55)));
-        c.beginPath();
-        pts.forEach((p, i) => (i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])));
-        c.closePath();
-        c.fillStyle = "rgba(" + OM_GOLD + "," + (0.07 * alpha) + ")";
-        c.fill();
+        const t = age / 1000, turn = spin * t;
         c.lineWidth = 1;
-        c.strokeStyle = "rgba(" + OM_GOLD + "," + (0.72 * alpha) + ")";
-        c.stroke();
-        // A glint running round its edge.
-        const f = ((glint + t * 0.32) % 1) * n, k = Math.floor(f), q = f - k;
-        const a = pts[k], b = pts[(k + 1) % n];
-        c.fillStyle = "rgba(" + OM_GOLD + "," + alpha + ")";
-        c.fillRect(a[0] + (b[0] - a[0]) * q - 1.5, a[1] + (b[1] - a[1]) * q - 1.5, 3, 3);
-        c.restore();
+        let whole = 1;
+        pieces.forEach((p) => {
+          const k = ease((age - p.delay) / MERGE_MS);
+          whole = Math.min(whole, k);
+          const off = (1 - k) * p.d0 * big, rot = turn + (1 - k) * p.rot;
+          const ox = at.x + p.ux * off, oy = at.y + p.uy * off;
+          const ca = Math.cos(rot), sa = Math.sin(rot);
+          const X = (x, y) => ox + (x * ca - y * sa) * big, Y = (x, y) => oy + (x * sa + y * ca) * big;
+          c.strokeStyle = "rgba(" + OM_GOLD + "," + (0.55 * (0.45 + 0.55 * k) * alpha) + ")";
+          c.beginPath();
+          p.segs.forEach((sg) => { c.moveTo(X(sg[0], sg[1]), Y(sg[0], sg[1])); c.lineTo(X(sg[2], sg[3]), Y(sg[2], sg[3])); });
+          c.stroke();
+          // Its broken edges: plain while it is out of place, flashing as
+          // it meets the others, gone once it is home.
+          const landed = age - p.delay - MERGE_MS;
+          const edge = k < 1 ? 0.22 * (1 - k) + (k > 0.75 ? (k - 0.75) * 2.4 : 0) : Math.max(0, 0.6 * (1 - landed / 700));
+          if (edge > 0.01 && !p.middle) {
+            c.strokeStyle = "rgba(" + OM_GOLD + "," + (edge * alpha) + ")";
+            c.beginPath();
+            [p.a0, p.a1].forEach((a) => {
+              const x0 = Math.cos(a) * 0.3, y0 = Math.sin(a) * 0.3, x1 = Math.cos(a) * 1.07, y1 = Math.sin(a) * 1.07;
+              c.moveTo(X(x0, y0), Y(x0, y0)); c.lineTo(X(x1, y1), Y(x1, y1));
+            });
+            c.stroke();
+          }
+        });
+        // Whole: a glint running round it, and a few specks about it.
+        if (whole >= 1) {
+          const since = age - MERGE_SPREAD - MERGE_MS;
+          const g = Math.min(1, since / 600);
+          const a = turn + since / 1000 * 0.9;
+          c.fillStyle = "rgba(" + OM_GOLD + "," + (0.9 * g * alpha) + ")";
+          for (let i = 0; i < 3; i++) {
+            const b = a - i * 0.05;
+            c.fillRect(at.x + Math.cos(b) * big - 1.5, at.y + Math.sin(b) * big - 1.5, 3 - i * 0.6, 3 - i * 0.6);
+          }
+          for (let i = 0; i < 14; i++) {
+            const b = turn * 2 + (i / 14) * Math.PI * 2 + Math.sin(t * 0.4 + i) * 0.04;
+            c.fillStyle = "rgba(" + OM_GOLD + "," + (0.5 * g * alpha) + ")";
+            c.fillRect(at.x + Math.cos(b) * big * 1.15 - 0.9, at.y + Math.sin(b) * big * 1.15 - 0.9, 1.8, 1.8);
+          }
+        }
       },
     };
   }
-  /** A ring tilted in depth, ticked, throwing sparks off its rim — Om's;
-      with `twin`, Outsider's: drawn again reflected, coming into register. */
-  function ringOf(colour, spark, twin) {
-    const at = spot(130);
+  /** Two rings, tilted differently and apart, sliding together into one,
+      which then turns, ticked, and throws sparks off its rim. */
+  function omRing() {
+    const r = rand(90, 170);
+    const at = spot(r * 0.7);
     if (!at) return null;
-    const r = rand(52, 112), axis = rand(0, Math.PI), turn = rand(-0.5, 0.5) * 0.4, tilt = rand(0.5, 1.2);
+    at.x = Math.max(r, Math.min(W - r, at.x));
+    at.y = Math.max(CHROME + r * 0.7, Math.min(H - r * 0.7, at.y));
+    const axis = rand(0, Math.PI), turn = rand(-0.5, 0.5) * 0.3, tilt = rand(0.6, 1.1);
+    const apart = { dx: rand(-0.6, 0.6) * r, dy: rand(-0.4, 0.4) * r, axis: rand(0.6, 1.2), tilt: rand(-0.5, 0.5) };
     const sparks = [];
     let last = 0;
     return {
-      life: rand(5200, 7200),
+      life: rand(7600, 9600),
       draw(c, age, alpha) {
         const t = age / 1000, dt = Math.min(0.05, t - last);
         last = t;
-        const one = (off, ph, a) => {
-          const ry = r * Math.abs(Math.cos(tilt + t * 0.3));
+        const k = ease(age / MERGE_MS);
+        const one = (sx, ax, tl, a) => {
+          const ry = r * Math.abs(Math.cos(tl + t * 0.25));
+          const ph = axis + turn * t + ax;
           c.lineWidth = 1;
-          c.strokeStyle = "rgba(" + colour + "," + (0.6 * a) + ")";
+          c.strokeStyle = "rgba(" + OM_GOLD + "," + (0.6 * a) + ")";
           c.setLineDash([10, 7]);
           c.lineDashOffset = -t * 30;
-          c.beginPath(); c.ellipse(at.x + off, at.y - off * 0.3, r, Math.max(1, ry), axis + turn * t + ph, 0, Math.PI * 2); c.stroke();
+          c.beginPath(); c.ellipse(at.x + sx.x, at.y + sx.y, r, Math.max(1, ry), ph, 0, Math.PI * 2); c.stroke();
           c.setLineDash([]);
-          c.strokeStyle = "rgba(" + colour + "," + (0.45 * a) + ")";
+          c.strokeStyle = "rgba(" + OM_GOLD + "," + (0.45 * a) + ")";
           c.beginPath();
-          for (let k = 0; k < 36; k++) {
-            const th = (k / 36) * Math.PI * 2, ca = Math.cos(axis + turn * t + ph), sa = Math.sin(axis + turn * t + ph);
+          for (let i = 0; i < 48; i++) {
+            const th = (i / 48) * Math.PI * 2, ca = Math.cos(ph), sa = Math.sin(ph);
             const u = Math.cos(th), v = Math.sin(th) * (ry / r);
-            const x = at.x + off + (u * ca - v * sa) * r, y = at.y - off * 0.3 + (u * sa + v * ca) * r;
-            const len = k % 3 === 0 ? 1.08 : 1.04;
+            const x = at.x + sx.x + (u * ca - v * sa) * r, y = at.y + sx.y + (u * sa + v * ca) * r;
+            const len = i % 4 === 0 ? 1.08 : 1.04;
             c.moveTo(x, y);
-            c.lineTo(at.x + off + (x - at.x - off) * len, at.y - off * 0.3 + (y - at.y + off * 0.3) * len);
+            c.lineTo(at.x + sx.x + (x - at.x - sx.x) * len, at.y + sx.y + (y - at.y - sx.y) * len);
           }
           c.stroke();
         };
-        if (twin) {
-          const apart = 26 * (1 - ease(Math.min(1, t / 2.6))) + 4 * Math.sin(t * 0.9);
-          one(apart, Math.PI, alpha * 0.55);
-        }
-        one(0, 0, alpha);
-        if (!spark) return;
-        // THE SPARKS, off the rim, along it.
-        for (let k = 0; k < 3; k++) if (Math.random() < 0.6) sparks.push({ a: rand(0, Math.PI * 2), v: rand(50, 140), age: 0, life: rand(0.4, 1) });
+        // The two, meeting: each slides to the middle and turns to the
+        // other's tilt, the second fading into the first as they become one.
+        one({ x: apart.dx * (1 - k), y: apart.dy * (1 - k) }, 0, tilt, alpha);
+        if (k < 1) one({ x: -apart.dx * (1 - k), y: -apart.dy * (1 - k) }, apart.axis * (1 - k), tilt + apart.tilt * (1 - k), alpha * (1 - k * 0.85));
+        if (k < 1) return;
+        // THE SPARKS, off the rim, along it, once it is one.
+        for (let i = 0; i < 3; i++) if (Math.random() < 0.6) sparks.push({ a: rand(0, Math.PI * 2), v: rand(50, 140), age: 0, life: rand(0.4, 1) });
         c.lineWidth = 1.2;
         for (let i = sparks.length - 1; i >= 0; i--) {
           const sp = sparks[i];
@@ -2515,19 +2594,17 @@
           const x0 = at.x + Math.cos(sp.a) * r, y0 = at.y + Math.sin(sp.a) * r * 0.9;
           const dir = sp.a + Math.PI / 2, go = sp.v * sp.age;
           const x = x0 + Math.cos(dir) * go, y = y0 + Math.sin(dir) * go;
-          c.strokeStyle = "rgba(" + colour + "," + ((1 - sp.age / sp.life) * 0.85 * alpha) + ")";
+          c.strokeStyle = "rgba(" + OM_GOLD + "," + ((1 - sp.age / sp.life) * 0.85 * alpha) + ")";
           c.beginPath(); c.moveTo(x - Math.cos(dir) * 6, y - Math.sin(dir) * 6); c.lineTo(x, y); c.stroke();
         }
       },
     };
   }
-  const omRing = () => ringOf(OM_GOLD, true, false);
-  const outsiderRing = () => ringOf(OUT_INK, false, true);
   /** โอม, tracing itself in, in specks, its heads made circles (om-glyph.js). */
   function omWord() {
     const G = window.OM_GLYPH;
     if (!G) return null;
-    const s = Math.min(W * 0.06, 74);
+    const s = Math.min(W * 0.075, 92);
     const at = spot(s * 2.2);
     if (!at) return null;
     // The whole word on the window, however near its edge it was put.
@@ -2562,39 +2639,164 @@
       },
     };
   }
-  /** Outsider's mark, in specks along its edges, and its twin — the same
-      mark reflected — drifting into register with it. */
-  function outsiderMark() {
-    const s = rand(26, 46);
-    const at = spot(s * 2.2);
-    if (!at) return null;
-    const tri = (h, y0) => [[-h, y0], [h, y0], [0, y0 + h * Math.sqrt(3)]];
-    const big = tri(s, -s * 1.15), small = tri(s * 0.42, s * 0.72);
-    const side = Math.random() < 0.5 ? -1 : 1;
+
+  // ---------- OUTSIDER PARFUMS: a door, ajar, with a light ----------
+  // (2026-10-11) "for outsider, remove the merginig motifs and I want you to
+  // add a door that is slightly ajar, with a small ught coming from that
+  // door. that is to be the main motif; similarly to les abstraits closet."
+  // So, as the armoire stands for Les Abstraits: ONE DOOR on the left of the
+  // window, standing on the floor, drawn up from it in charcoal hairlines
+  // with a speck at every joint — its architrave and head, a block at the
+  // foot of each jamb, the threshold and the floor — the door itself hinged
+  // on the left and swung a little way into the room, seen narrowed with
+  // its four panels, its knob by the open edge. Once it stands, THE LIGHT
+  // comes through the gap: the gap pale with it, a glow round it, a line of
+  // it under the door and a wedge of it across the floor in front, in the
+  // house's green, breathing a little; and dust drifting in it. The door is
+  // shaded a little, so the gap reads as light on the white paper. The same
+  // door as the house's own page (outsider.js). It stands until the house
+  // is left. (Its mark with a reflected twin, and rings doubled the same
+  // way, stood here for a day; they were the merging motifs, and are gone.)
+  const OUT_INK = "40, 42, 38";
+  const OUT_GREEN = "46, 112, 80";
+  const OUT_LIGHT = "150, 214, 178";
+  const DOOR_BUILD = 1800;               // ms, drawn up from the floor
+  const DOOR_LIGHT = 1300;               // ms for the light to come up, once it stands
+  function door() {
+    const tall = Math.max(240, Math.min(H * 0.6, 440));
+    const wide = tall / 2.25;
+    const baseY = H - Math.max(36, H * 0.08);
+    const left = Math.max(18, W * 0.1 - wide / 2);
+    const f = wide * 0.085, head = tall * 0.07;
+    const ox1 = f, ox2 = wide - f, oyTop = -(tall - head);
+    const lines = [];
+    const put = (pts, weight) => {
+      let len = 0;
+      const at = [0];
+      for (let i = 1; i < pts.length; i++) { len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); at.push(len); }
+      const ys = pts.map((p) => -p[1] / tall);
+      lines.push({ pts, at, len: Math.max(0.01, len), from: Math.min(...ys), to: Math.max(...ys), weight: weight || 1 });
+    };
+    put([[0, 0], [0, -tall]]); put([[wide, 0], [wide, -tall]]);
+    put([[ox1, 0], [ox1, oyTop]]); put([[ox2, 0], [ox2, oyTop]]);
+    put([[0, -tall], [wide, -tall]]); put([[ox1, oyTop], [ox2, oyTop]]);
+    put([[-f * 0.35, -tall], [-f * 0.35, -tall - head * 0.32], [wide + f * 0.35, -tall - head * 0.32], [wide + f * 0.35, -tall]], 0.9);
+    put([[0, -f * 1.6], [ox1, -f * 1.6]], 0.7); put([[ox2, -f * 1.6], [wide, -f * 1.6]], 0.7);
+    put([[-wide * 0.35, 0], [wide * 1.45, 0]], 0.55);
+    // THE DOOR, ajar: hinged at the opening's left edge, its free edge
+    // drawn in by the perspective.
+    const open = 0.34, span = ox2 - ox1 - 1.5;
+    const x1 = ox1 + span * Math.cos(open), fall = span * Math.sin(open) * 0.16;
+    const top0 = oyTop + 1.5, bot0 = -3, top1 = top0 + fall, bot1 = bot0 - fall * 0.55;
+    const on = (u, v) => { const tp = top0 + (top1 - top0) * u, bt = bot0 + (bot1 - bot0) * u; return [ox1 + (x1 - ox1) * u, tp + (bt - tp) * v]; };
+    put([on(0, 1), on(0, 0)]); put([on(1, 1), on(1, 0)]); put([on(0, 0), on(1, 0)]); put([on(0, 1), on(1, 1)]);
+    [[0.09, 0.45, 0.07, 0.5], [0.55, 0.91, 0.07, 0.5], [0.09, 0.45, 0.57, 0.93], [0.55, 0.91, 0.57, 0.93]].forEach(([u0, u1, v0, v1]) => {
+      put([on(u0, v1), on(u0, v0)], 0.55); put([on(u1, v1), on(u1, v0)], 0.55); put([on(u0, v0), on(u1, v0)], 0.55); put([on(u0, v1), on(u1, v1)], 0.55);
+    });
+    const joints = [];
+    const seen = new Set();
+    lines.forEach((l) => l.pts.forEach((p, i) => {
+      const key = Math.round(p[0]) + "," + Math.round(p[1]);
+      if (seen.has(key) || l.weight < 0.6) return;
+      seen.add(key);
+      joints.push({ x: p[0], y: p[1], l, at: l.at[i] });
+    }));
+    const P = (x, y) => [left + x, baseY + y];
+    const motes = Array.from({ length: 34 }, () => ({ u: Math.random(), v: Math.random(), du: rand(-0.012, 0.018), dv: rand(-0.02, 0.006), s: rand(0.9, 1.7), ph: rand(0, 6.3) }));
+    let lastAge = 0;
     return {
-      life: rand(6000, 7600),
-      draw(c, age, alpha) {
-        const t = age / 1000;
-        const apart = (1 - ease(Math.min(1, t / 2.8))) * s * 1.6 + Math.sin(t * 0.8) * 3;
-        const mark = (ox, colour, a, flip) => {
-          [big, small].forEach((T) => {
-            for (let k = 0; k < 3; k++) {
-              const p = T[k], q = T[(k + 1) % 3];
-              const n = Math.round(Math.hypot(q[0] - p[0], q[1] - p[1]) / 4);
-              c.fillStyle = "rgba(" + colour + "," + a + ")";
-              for (let i = 0; i < n; i++) {
-                const f = i / n;
-                c.fillRect(at.x + ox + flip * (p[0] + (q[0] - p[0]) * f) - 0.8, at.y + p[1] + (q[1] - p[1]) * f - 0.8, 1.6, 1.6);
-              }
-            }
-          });
-          const ir = (s * 2) / (2 * Math.sqrt(3));
-          c.strokeStyle = "rgba(" + colour + "," + (a * 0.4) + ")";
+      box: { left: left - 30, right: left + wide * 2.2, top: baseY - tall - 30, bottom: baseY + 40 },
+      draw(c, age, a) {
+        const dt = Math.min(0.06, (age - lastAge) / 1000);
+        lastAge = age;
+        const reach = ease(age / DOOR_BUILD) * 1.12;
+        const lit = ease((age - DOOR_BUILD * 0.8) / DOOR_LIGHT) * (0.94 + 0.05 * Math.sin(age / 760) + 0.02 * Math.sin(age / 310 + 1.2));
+        c.save();
+        c.lineCap = "round";
+        // The door, shaded a little once it is up, so the gap reads as light.
+        const doorUp = Math.min(1, Math.max(0, (reach - 0.02) / 0.95));
+        if (doorUp >= 1) {
+          c.fillStyle = "rgba(" + OUT_INK + "," + (0.05 * a) + ")";
+          c.beginPath();
+          [on(0, 0), on(1, 0), on(1, 1), on(0, 1)].forEach((p, i) => { const [x, y] = P(...p); if (i) c.lineTo(x, y); else c.moveTo(x, y); });
+          c.closePath(); c.fill();
+        }
+        if (lit > 0.004) {
+          // The glow, the wedge on the floor, the line under the door, the gap.
+          const [gx, gy] = P((x1 + ox2) / 2, oyTop / 2);
+          const gr = tall * 0.5;
+          const glow = c.createRadialGradient(gx, gy, 0, gx, gy, gr);
+          glow.addColorStop(0, "rgba(" + OUT_LIGHT + "," + (0.32 * lit * a) + ")");
+          glow.addColorStop(0.4, "rgba(" + OUT_LIGHT + "," + (0.1 * lit * a) + ")");
+          glow.addColorStop(1, "rgba(" + OUT_LIGHT + ",0)");
+          c.fillStyle = glow;
+          c.fillRect(gx - gr, gy - gr, gr * 2, gr * 2);
+          const [a1x, a1y] = P(x1, 0), [a2x, a2y] = P(ox2, 0);
+          const out = Math.min(tall * 0.17, H - baseY - 6);
+          const [b1x, b1y] = P(x1 - wide * 0.18, out * 0.55), [b2x, b2y] = P(ox2 + wide * 1.1, out);
+          const wedge = c.createLinearGradient(a1x, a1y, (b1x + b2x) / 2, (b1y + b2y) / 2);
+          wedge.addColorStop(0, "rgba(" + OUT_LIGHT + "," + (0.6 * lit * a) + ")");
+          wedge.addColorStop(1, "rgba(" + OUT_LIGHT + ",0)");
+          c.fillStyle = wedge;
+          c.beginPath(); c.moveTo(a1x, a1y); c.lineTo(a2x, a2y); c.lineTo(b2x, b2y); c.lineTo(b1x, b1y); c.closePath(); c.fill();
+          const [u1x, u1y] = P(ox1 + 2, -1), [u2x] = P(x1, -1);
+          c.strokeStyle = "rgba(" + OUT_GREEN + "," + (0.5 * lit * a) + ")";
           c.lineWidth = 1;
-          c.beginPath(); c.arc(at.x + ox, at.y - s * 1.15 + ir, ir, 0, Math.PI * 2); c.stroke();
-        };
-        mark(side * apart, OUT_GREEN, 0.55 * alpha, -1);
-        mark(0, OUT_INK, 0.85 * alpha, 1);
+          c.beginPath(); c.moveTo(u1x, u1y); c.lineTo(u2x, u1y); c.stroke();
+          const [s1x, s1y] = P(x1, top1), [s2x, s2y] = P(ox2, top0), [s3x, s3y] = P(ox2, bot0), [s4x, s4y] = P(x1, bot1);
+          c.fillStyle = "rgba(" + OUT_LIGHT + "," + (0.75 * lit * a) + ")";
+          c.beginPath(); c.moveTo(s1x, s1y); c.lineTo(s2x, s2y); c.lineTo(s3x, s3y); c.lineTo(s4x, s4y); c.closePath(); c.fill();
+          c.strokeStyle = "rgba(" + OUT_GREEN + "," + (0.55 * lit * a) + ")";
+          c.beginPath(); c.moveTo(s1x, s1y); c.lineTo(s4x, s4y); c.stroke();
+        }
+        // THE LINES, each grown from its lower end as far as the build has
+        // reached, and a speck at every joint they have reached.
+        c.lineWidth = 1.1;
+        lines.forEach((l) => {
+          const k = Math.max(0, Math.min(1, (reach - l.from) / Math.max(0.06, l.to - l.from)));
+          l.k = k;
+          if (k <= 0) return;
+          const upTo = l.len * k;
+          c.strokeStyle = "rgba(" + OUT_INK + "," + (0.62 * l.weight * a) + ")";
+          c.beginPath();
+          let [x, y] = P(l.pts[0][0], l.pts[0][1]);
+          c.moveTo(x, y);
+          for (let i = 1; i < l.pts.length; i++) {
+            const seg = l.at[i] - l.at[i - 1];
+            if (l.at[i] <= upTo || seg <= 0) { [x, y] = P(l.pts[i][0], l.pts[i][1]); c.lineTo(x, y); continue; }
+            const q = (upTo - l.at[i - 1]) / seg;
+            [x, y] = P(l.pts[i - 1][0] + (l.pts[i][0] - l.pts[i - 1][0]) * q, l.pts[i - 1][1] + (l.pts[i][1] - l.pts[i - 1][1]) * q);
+            c.lineTo(x, y);
+            break;
+          }
+          c.stroke();
+        });
+        if (doorUp > 0.55) {
+          const [kx, ky] = P(...on(0.9, 0.53));
+          c.strokeStyle = "rgba(" + OUT_INK + "," + (0.7 * a * Math.min(1, (doorUp - 0.55) / 0.2)) + ")";
+          c.beginPath(); c.arc(kx, ky, Math.max(2, wide * 0.022), 0, Math.PI * 2); c.stroke();
+        }
+        c.fillStyle = "rgba(" + OUT_INK + "," + (0.85 * a) + ")";
+        joints.forEach((j) => {
+          if (!j.l.k || j.at > j.l.len * j.l.k + 0.01) return;
+          const [x, y] = P(j.x, j.y);
+          c.fillRect(x - 1, y - 1, 2, 2);
+        });
+        // THE DUST in the light.
+        if (lit > 0.004) {
+          c.fillStyle = "rgba(" + OUT_GREEN + "," + (0.7 * lit * a) + ")";
+          motes.forEach((m) => {
+            m.u += m.du * dt; m.v += m.dv * dt;
+            if (m.u > 1.05 || m.u < -0.05 || m.v < -0.05 || m.v > 1.05) { m.u = Math.random() * 0.3; m.v = Math.random(); }
+            const gx = x1 + (ox2 - x1) * 0.5 + m.u * wide * 0.9;
+            const gy = -m.v * (tall - head) * (1 - m.u * 0.55) + m.u * tall * 0.12;
+            const [x, y] = P(gx + Math.sin(age / 2000 + m.ph) * 3, gy + Math.cos(age / 2500 + m.ph) * 3);
+            c.globalAlpha = 0.25 + 0.75 * (1 - m.u) * (0.5 + 0.5 * Math.sin(age / 1250 + m.ph * 2));
+            c.fillRect(x, y, m.s, m.s);
+          });
+          c.globalAlpha = 1;
+        }
+        c.restore();
       },
     };
   }
@@ -2691,8 +2893,12 @@
       { make: petal, rate: 2.6, most: 360 }],
     // `first`: how many are there at once when the house is rested on.
     qimu: [{ make: stave, rate: 0.6, most: 4, first: 2 }, { make: passage, rate: 0.9, most: 4 }],
-    om: [{ make: shard, rate: 1.8, most: 10, first: 3 }, { make: omRing, rate: 0.35, most: 2, first: 1 }, { make: omWord, rate: 0.12, most: 1, first: 1 }],
-    outsider: [{ make: outsiderMark, rate: 0.5, most: 3, first: 1 }, { make: outsiderRing, rate: 0.35, most: 2, first: 1 }],
+    // Om: a grand figure merging out of its pieces, rings merging into one,
+    // and the word now and then (2026-10-11; loose shards, gone).
+    om: [{ make: omMerge, rate: 0.2, most: 2, first: 1 }, { make: omRing, rate: 0.25, most: 2, first: 1 }, { make: omWord, rate: 0.08, most: 1 }],
+    // Outsider: one door, standing until the house is left, as Les Abstraits'
+    // armoire does.
+    outsider: [{ make: door, rate: 5, most: 1, first: 1 }],
     "lost-tribe": [{ make: flock, rate: 0.22, most: 2, first: 1 }, { make: leafFall, rate: 1.1, most: 10 }, { make: pollenRise, rate: 12, most: 70 }],
   };
 
