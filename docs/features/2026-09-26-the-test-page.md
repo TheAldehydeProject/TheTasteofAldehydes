@@ -2066,3 +2066,12 @@ reached the drawing; it starts on open ground now, the first of a few points whe
 what is under the hand. *A fragrance pressed asks* opened every dropdown in Benzoin's window to
 reach its first fragrance — seventeen of them now — and on this machine that ran past the test's
 time; it opens only the dropdowns that fragrance stands in, outermost first.
+
+**The frame test has a file of its own**, `tests/note-library-frames.spec.js` (2026-10-10, later).
+*Every frame of every transition is quick enough for sixty a second* failed one run in two or
+three on this machine that day, always on its last check — one frame of the page's own work over
+40ms (42 to 49). Measured outside the test tool, the slowest frame through the same journeys was
+12 to 19ms, and the library as it stood before the day's thirty-seven notes measured the same as
+after it and failed the test as often. With the tool's own recording (its trace) turned off, it
+passed every time: the recording, taken while the page draws, was the stall. The recording can only
+be turned off for a whole file, so the test stands alone in one, unchanged in what it asks.

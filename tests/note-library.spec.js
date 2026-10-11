@@ -1454,30 +1454,9 @@ test("the Note Library is named beside the Menu", async ({ page }) => {
   expect(Math.abs(box.y + box.height / 2 - (menu.y + menu.height / 2)), "on its line").toBeLessThan(6);
 });
 
-/* SIXTY FRAMES A SECOND: every frame's own work — the drawing's and the
-   page's — through the expansion, a journey and the collapse, is a part of
-   the sixtieth of a second a frame has. (What this machine's software
-   drawing then takes is not the page's, and a graphics card does it in a
-   moment.) */
-test("every frame of every transition is quick enough for sixty a second", async ({ page }) => {
-  test.setTimeout(150000);
-  await open(page);
-  await page.evaluate(() => window.NetScene.reset());
-  await expandIt(page);
-  await goTo(page, 8, "WOO");
-  await page.keyboard.press("ArrowLeft");
-  await expect(page.locator(".net-stage")).toHaveAttribute("data-focus", "BRW", { timeout: 20000 });
-  await page.locator(".net-expand").click();
-  await expect(page.locator(".net-stage")).toHaveAttribute("data-state", "one", { timeout: 30000 });
-  const s = await page.evaluate(() => window.NetScene.stats());
-  // A frame has 16.7ms at sixty a second. The page's own work — here on a
-  // machine drawing in software and running other tests beside it — is a
-  // part of that on average, and very nearly always inside it.
-  expect(s.frames, "frames drawn").toBeGreaterThan(60);
-  expect(s.mean, "a frame's own work, on average, in ms").toBeLessThan(7);
-  expect(s.p95, "nearly every frame's").toBeLessThan(16.7);
-  expect(s.max, "and no stall — a drawing made for the first time mid-way, say").toBeLessThan(40);
-});
+/* SIXTY FRAMES A SECOND is tests/note-library-frames.spec.js since
+   2026-10-10: it is measured without the test tool's own recording, which
+   can only be turned off for a whole file. */
 
 /* WITHOUT ITS 3D LIBRARY the page says so, and the catalogue is the page:
    every note, by accord, as a plain list. */
