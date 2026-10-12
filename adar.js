@@ -183,6 +183,13 @@
     fade.addColorStop(1, "rgba(" + INK + ",0)");
     on.fillStyle = fade;
     on.fillRect(0, 0, size, size);
+    // The hole already taken out of it: it is laid UNDER the drawing at the
+    // end of the frame (see `draw`), after the hole has been cut.
+    on.globalCompositeOperation = "destination-out";
+    on.fillStyle = "#000";
+    on.beginPath();
+    on.arc(size / 2, size / 2, r, 0, Math.PI * 2);
+    on.fill();
   }
 
   // THE SIGIL. The house's own mark, which the void shows only while
@@ -380,9 +387,8 @@
     });
     ink.globalAlpha = 1;
 
-    // THE HAZE the void stands in, stamped rather than generated.
-    stampHalo(r);
-    if (halo) ink.drawImage(halo, cx - halo.width / 2, cy - halo.height / 2);
+    // THE HAZE the void stands in is laid under all of this at the end of
+    // the frame (below), so that it is not faded behind the writing.
 
     // THE RINGS, out from the void and fainter as they go.
     for (let n = 0; n < RINGS; n++) {
@@ -491,6 +497,37 @@
     ink.beginPath();
     ink.arc(cx, cy, r, 0, Math.PI * 2);
     ink.stroke();
+
+    // BEHIND THE WORDS IT GOES FAINT (2026-10-12 — the owner, asked what
+    // to do where the drawing crosses the writing: "Fade them under the
+    // words", on a phone and on a computer alike): the void, its rings,
+    // its haze and what falls round it, and the log and the dust down the
+    // left, are taken back to a third of themselves wherever they stand
+    // behind writing, and are as they were in the gaps between it — only
+    // in the room they stand in (nav.js, `Writing.hush`). On a phone the
+    // void stood behind a quarter of every line it passed; on a computer
+    // over the right end of the lines.
+    if (window.Writing) {
+      const out = small * Math.max(REACH, VOID_R + RING_STEP * RINGS) * 1.05 + STREAK;
+      window.Writing.hush(ink, { regions: [
+        { l: cx - out, t: cy - out, r: cx + out, b: cy + out },
+        { l: 0, t: 0, r: Math.max(logX + LOG_TICK * 2.6, width * DUST_TO) + 12, b: height },
+      ] });
+    }
+
+    // THE HAZE the void stands in, stamped rather than generated, and laid
+    // UNDER everything drawn above it (`destination-over`) — which is the
+    // same picture it made drawn first, but leaves it out of the fade: a
+    // wide soft glow taken back behind the writing showed the edge of the
+    // writing as a seam through it. It is a tenth of the ink, and reads as
+    // the room's light rather than as something drawn over the words.
+    stampHalo(r);
+    if (halo) {
+      ink.save();
+      ink.globalCompositeOperation = "destination-over";
+      ink.drawImage(halo, cx - halo.width / 2, cy - halo.height / 2);
+      ink.restore();
+    }
   }
 
   // ============================================================

@@ -1022,6 +1022,21 @@
       else beaker.settle(ms);
       if (canvas.dataset.spilled !== String(beaker.spilled)) canvas.dataset.spilled = String(beaker.spilled);
     }
+
+    // ON A PHONE, BEHIND THE WORDS IT GOES FAINT (2026-10-12 — "Fade them
+    // under the words"): with no margins the armoire stands at the foot of
+    // the window and the drip down its right edge, behind whatever writing
+    // is there, so both are taken back to a third of themselves behind the
+    // writing and are as they were in the gaps — only in the room each
+    // stands in, the armoire's (and its powder's) and the drip's strip
+    // (nav.js, `Writing.hush`). A wider window has margins, and nothing
+    // changes there.
+    if (width < 700 && window.Writing) {
+      window.Writing.hush(ink, { regions: [
+        { l: frame.from - HUSH_PAD, t: frame.baseY - frame.rise - HUSH_PAD, r: frame.from + frame.across + 160, b: height },
+        { l: dripX - 60, t: 0, r: dripX + 60, b: height },
+      ] });
+    }
   }
 
   // ============================================================

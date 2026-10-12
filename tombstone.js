@@ -213,6 +213,13 @@
     return QUIET + (1 - QUIET) * Math.max(0, 1 - Math.min(1, inside));
   }
 
+  /** ON A PHONE, BEHIND THE WORDS A SPECK GOES FAINTER STILL (2026-10-12 —
+      "Fade them under the words"): the whole drawing stands at PHONE_QUIET
+      there, and behind writing that was still plainly there, so a speck
+      behind the words keeps a third of it and one in the gaps keeps it all
+      (nav.js, `Writing.under`). A window 700px or wider is as it was. */
+  const under = (x, y) => (width < 700 && window.Writing ? window.Writing.under(x, y) : 1);
+
   let handX = -99999, handY = -99999, handOn = 0;
 
   // ONE COLOUR A SHADE, AND HOW MUCH OF IT AS A NUMBER (2026-10-01). Every
@@ -234,7 +241,7 @@
     const q = quiet(x);
     const shown = alpha * q;
     if (shown < 0.006) return;
-    tint(tone, shown);
+    tint(tone, shown * under(x, y));
     ink.fillRect(x, y, s, s);
     // THE REFLECTION: turned over the horizon, fainter the deeper it
     // lies, drawn in streaks (every third line of it missing), and
@@ -251,7 +258,7 @@
         dx += HAND_RING * into * into * handOn * Math.sin(d * 0.16 - clock * 7);
       }
     }
-    tint(tone, shown * REFLECT * (1 - deep * 0.6));
+    tint(tone, shown * REFLECT * (1 - deep * 0.6) * under(x + dx, ry));
     ink.fillRect(x + dx, ry, s * 1.6, Math.max(0.8, s * 0.7));
   }
 
@@ -265,7 +272,7 @@
 
     // THE FLOOR: a hairline at the horizon, faint.
     for (let x = 0; x < width; x += 3) {
-      tint(STONE, 0.16 * quiet(x));
+      tint(STONE, 0.16 * quiet(x) * under(x, horizon));
       ink.fillRect(x, horizon, 1.6, 0.8);
     }
 
@@ -312,7 +319,7 @@
       const y = t * horizon * 0.95;
       const x = f.x + Math.sin(clock * 0.4 + f.at * 20) * f.sway;
       const shade = Math.sin(Math.min(1, t / 0.9) * Math.PI);
-      const q = quiet(x);
+      const q = quiet(x) * under(x, y);
       if (shade * f.tone * q < 0.006) return;
       tint(MIST, shade * f.tone * q);
       ink.fillRect(x, y, f.size, f.size);

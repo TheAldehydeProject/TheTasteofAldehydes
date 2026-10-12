@@ -151,6 +151,203 @@ window.Sharpness = function (resize) {
   };
 };
 
+// ============================================================
+// WHERE THE WRITING IS (2026-10-12 — the house pages' drawings "fade
+// them under the words": "Keep every drawing, but let it go very faint
+// wherever it passes behind writing")
+//
+// A drawing that keeps quiet over the writing asked only how far across
+// the window a thing stood — over the column, or in the margins. On a
+// phone there are no margins: the writing runs from one edge nearly to
+// the other, so the whole drawing stood at its quiet, and that quiet,
+// behind every word, was still plainly there. This says where the
+// writing itself stands — every run of words on the page, measured off
+// the words themselves (a Range round each run of text), in the page's
+// own coordinates, and measured again when the page changes (it is
+// resized, a part opens, the fonts or the pictures arrive) — so a
+// drawing can go faint behind the words and stay as it is in the gaps
+// between them. Nothing fixed to the window is writing (the Menu, a
+// scale's reading, a button standing in a corner), nor anything hidden.
+//
+// Two ways to ask, both cheap:
+//   Writing.at(x, y)          how much writing is at that point of the
+//                             window, 0 to 1, soft at the edges
+//                             (`FEATHER`) — for a drawing of specks, each
+//                             asked as it is drawn.
+//   Writing.hush(ctx, opts)   for a drawing of lines: at the end of its
+//                             frame, what it has drawn behind the writing
+//                             is taken back to `keep` of itself (0.3), in
+//                             soft steps at the edges (`feather`) — and ONLY
+//                             inside `regions` (boxes on the window), the
+//                             room the drawing actually stands in, never
+//                             laid over the whole window.
+// Here because every page loads nav.js before anything that draws; it
+// measures nothing until a drawing first asks.
+// ============================================================
+window.Writing = (function () {
+  const FEATHER = 24;              // px over which the quiet comes on at the writing's edge
+  const CELL = 6;                  // px, the squares `at` is read off
+  const KEEP = 0.3;                // what is left of a drawing behind the words
+  let boxes = [];                  // in the page's own coordinates
+  let version = 0, watching = false, soon = 0;
+  const fixed = new WeakMap();
+  const SKIP = "script, style, noscript, template, canvas, [aria-hidden='true'], .visually-hidden";
+
+  function standsFixed(el) {
+    const chain = [];
+    let found = false;
+    for (let e = el; e && e !== document.body; e = e.parentElement) {
+      if (fixed.has(e)) { found = fixed.get(e); break; }
+      chain.push(e);
+      const cs = getComputedStyle(e);
+      if (cs.position === "fixed" || cs.position === "sticky" || cs.visibility === "hidden") { found = true; break; }
+    }
+    chain.forEach((e) => fixed.set(e, found));
+    return found;
+  }
+
+  function measure() {
+    if (!document.body) return;
+    const out = [];
+    const sx = window.scrollX, sy = window.scrollY;
+    const range = document.createRange();
+    const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode(n) {
+        if (!/\S/.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+        const p = n.parentElement;
+        if (!p || p.closest(SKIP) || standsFixed(p)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+    for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+      range.selectNodeContents(n);
+      const r = range.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) continue;
+      out.push({ l: r.left + sx, t: r.top + sy, r: r.right + sx, b: r.bottom + sy });
+    }
+    // The runs of one paragraph (broken by an <em> or a link) made one box.
+    out.sort((a, b) => a.t - b.t || a.l - b.l);
+    const merged = [];
+    out.forEach((b) => {
+      const m = merged[merged.length - 1];
+      if (m && b.t <= m.b + 2 && b.l <= m.r && b.r >= m.l) {
+        m.l = Math.min(m.l, b.l); m.r = Math.max(m.r, b.r); m.b = Math.max(m.b, b.b);
+      } else merged.push({ ...b });
+    });
+    boxes = merged;
+    version++;
+  }
+
+  function later(ms) {
+    clearTimeout(soon);
+    soon = setTimeout(measure, ms);
+  }
+  function watch() {
+    if (watching) return;
+    watching = true;
+    measure();
+    window.addEventListener("resize", () => later(120));
+    window.addEventListener("load", () => { measure(); setTimeout(measure, 1200); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    // A part or a fold opening grows on a measured height: measured as it
+    // goes and once it is open.
+    document.addEventListener("toggle", () => { later(60); setTimeout(measure, 450); setTimeout(measure, 1000); }, true);
+    if (window.ResizeObserver) new ResizeObserver(() => later(150)).observe(document.body);
+    // The parts rise into place as the page arrives.
+    setTimeout(measure, 1500);
+    setTimeout(measure, 3200);
+  }
+
+  // THE SQUARES `at` reads, made again whenever the page has moved under
+  // the window or been measured again.
+  let grid = null, cols = 0, rows = 0, gridFor = "";
+  function lay() {
+    const W = window.innerWidth, H = window.innerHeight, sx = window.scrollX, sy = window.scrollY;
+    const key = sx + "," + sy + "," + W + "x" + H + "," + version;
+    if (key === gridFor) return;
+    gridFor = key;
+    cols = Math.ceil(W / CELL); rows = Math.ceil(H / CELL);
+    if (!grid || grid.length !== cols * rows) grid = new Float32Array(cols * rows);
+    else grid.fill(0);
+    for (const b of boxes) {
+      const l = b.l - sx, t = b.t - sy, r = b.r - sx, bt = b.b - sy;
+      if (bt < -FEATHER || t > H + FEATHER || r < -FEATHER || l > W + FEATHER) continue;
+      const c0 = Math.max(0, Math.floor((l - FEATHER) / CELL)), c1 = Math.min(cols - 1, Math.floor((r + FEATHER) / CELL));
+      const r0 = Math.max(0, Math.floor((t - FEATHER) / CELL)), r1 = Math.min(rows - 1, Math.floor((bt + FEATHER) / CELL));
+      for (let j = r0; j <= r1; j++) {
+        const y = (j + 0.5) * CELL, dy = Math.max(t - y, 0, y - bt);
+        for (let i = c0; i <= c1; i++) {
+          const x = (i + 0.5) * CELL, dx = Math.max(l - x, 0, x - r);
+          const v = 1 - Math.hypot(dx, dy) / FEATHER;
+          const k = j * cols + i;
+          if (v > grid[k]) grid[k] = v;
+        }
+      }
+    }
+  }
+
+  return {
+    KEEP,
+    /** How much writing there is at (x, y) on the window: 0 to 1. */
+    at(x, y) {
+      watch();
+      lay();
+      const i = Math.floor(x / CELL), j = Math.floor(y / CELL);
+      if (i < 0 || j < 0 || i >= cols || j >= rows) return 0;
+      return grid[j * cols + i];
+    },
+    /** What is left of a speck at (x, y): 1 clear of the writing, `keep` behind it. */
+    under(x, y, keep = KEEP) {
+      return 1 - (1 - keep) * this.at(x, y);
+    },
+    /** Take back what `ctx` has drawn behind the writing, inside `regions`
+        (boxes on the window: {l, t, r, b}), to `keep` of itself. The
+        canvas is taken to stand at the window's top left, its transform
+        set to the window's own pixels. */
+    hush(ctx, opts = {}) {
+      watch();
+      const keep = opts.keep == null ? KEEP : opts.keep;
+      if (keep >= 1) return;
+      const W = window.innerWidth, H = window.innerHeight, sx = window.scrollX, sy = window.scrollY;
+      const regions = (opts.regions || [{ l: 0, t: 0, r: W, b: H }])
+        .map((g) => ({ l: Math.max(0, g.l), t: Math.max(0, g.t), r: Math.min(W, g.r), b: Math.min(H, g.b) }))
+        .filter((g) => g.r > g.l && g.b > g.t);
+      if (!regions.length) return;
+      // A soft light wants a wider edge than a line does (`feather`), or the
+      // edge of the writing shows through it as a seam.
+      const feather = opts.feather || FEATHER;
+      const STEPS = Math.max(4, Math.min(12, Math.round(feather / 4)));
+      const each = 1 - Math.pow(Math.max(0.001, keep), 1 / STEPS);
+      ctx.save();
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.fillStyle = "#000";
+      ctx.globalAlpha = each;
+      for (let s = 0; s < STEPS; s++) {
+        const pad = feather * (STEPS - 1 - s) / (STEPS - 1);
+        ctx.beginPath();
+        let any = false;
+        for (const b of boxes) {
+          const l0 = b.l - sx - pad, t0 = b.t - sy - pad, r0 = b.r - sx + pad, b0 = b.b - sy + pad;
+          if (b0 < 0 || t0 > H) continue;
+          for (const g of regions) {
+            const l = Math.max(l0, g.l), t = Math.max(t0, g.t), r = Math.min(r0, g.r), bt = Math.min(b0, g.b);
+            if (r > l && bt > t) { ctx.rect(l, t, r - l, bt - t); any = true; }
+          }
+        }
+        if (any) ctx.fill();
+      }
+      ctx.restore();
+    },
+    /** For the tests: the boxes of writing on the window now. */
+    boxes() {
+      watch();
+      const sx = window.scrollX, sy = window.scrollY;
+      return boxes.map((b) => ({ l: b.l - sx, t: b.t - sy, r: b.r - sx, b: b.b - sy }));
+    },
+    measure,
+  };
+})();
+
 const SITE_LINKS = [
   { label: "Home", href: "" },
   { label: "Scent Descriptions", href: "scent-descriptions/" },

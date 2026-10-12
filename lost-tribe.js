@@ -442,6 +442,13 @@
   }
   /** The same, quieter: a leaf over the writing is nearly gone. */
   const leafQuiet = (x) => LEAF_QUIET + (1 - LEAF_QUIET) * (quiet(x) - QUIET) / (1 - QUIET);
+  /** ON A PHONE, BEHIND THE WORDS, FAINTER STILL (2026-10-12 — "Fade them
+      under the words"): with no margins everything here stands at its
+      quiet, and behind writing that was still plainly there, so a speck, a
+      leaf or a bird behind the words keeps a third of it, and one in the
+      gaps between them keeps it all (nav.js, `Writing.under`). A window
+      700px or wider is as it was. */
+  const under = (x, y) => (W < 700 && window.Writing ? window.Writing.under(x, y) : 1);
 
   // ============================================================
   // THE POLLEN, AND THE FLOCK — in window space.
@@ -543,7 +550,7 @@
           x += (s.ox + Math.sin(t * 0.7 + s.phase) * 1.4) * away;
           y += (s.oy + Math.cos(t * 0.6 + s.phase) * 1.4) * away;
         }
-        ink.globalAlpha = clamp(s.base * (0.66 + 0.34 * home) * edge * faint, 0, 1);
+        ink.globalAlpha = clamp(s.base * (0.66 + 0.34 * home) * edge * faint * under(x, y), 0, 1);
         const z = s.size * (1 + 0.25 * home);
         ink.fillRect(x - z / 2, y - z / 2, z, z);
       });
@@ -577,7 +584,7 @@
       }
       const x = s.x * W + (REDUCE ? 0 : Math.sin(t * 0.4 + s.phase) * s.sway), y = s.y * H;
       ink.fillStyle = rgb(s.colour);
-      ink.globalAlpha = s.base * quiet(x);
+      ink.globalAlpha = s.base * quiet(x) * under(x, y);
       ink.fillRect(x, y, s.size, s.size);
     });
 
@@ -598,7 +605,7 @@
         if (L.y > H + 40 || L.x < -0.06 || L.x > 1.06) leaves[i] = fallingLeaf(true);
       }
       const x = L.x * W + (REDUCE ? 0 : Math.sin(t * 0.8 + L.phase) * L.sway), y = L.y;
-      const q = leafQuiet(x);
+      const q = leafQuiet(x) * under(x, y);
       ink.save();
       ink.translate(x, y);
       ink.rotate(L.spin * t + L.turn + Math.sin(t * 1.3 + L.phase) * 0.6);
@@ -635,7 +642,7 @@
         const dir = Math.atan2(b.vy, b.vx);
         const up = Math.sin(b.flap) * 0.7;
         const span = 7;
-        ink.globalAlpha = 0.62 * quiet(b.x);
+        ink.globalAlpha = 0.62 * quiet(b.x) * under(b.x, b.y);
         ink.save();
         ink.translate(b.x, b.y);
         ink.rotate(dir + (b.vx < 0 ? Math.PI : 0));

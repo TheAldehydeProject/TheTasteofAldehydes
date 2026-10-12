@@ -432,6 +432,23 @@
       ink.globalAlpha = 1;
       ink.globalCompositeOperation = "source-over";
     }
+
+    // BEHIND THE WORDS IT GOES FAINT (2026-10-12 — the owner, asked what to
+    // do where the drawing crosses the writing: "Fade them under the
+    // words", on a phone and on a computer alike): the door, its light and
+    // the motes in it are taken back to a third of themselves wherever they
+    // stand behind writing — on a phone, where the door stands at the foot
+    // of the window behind the last lines; on a computer, where the glow
+    // reaches the start of the introduction — and are as they were in the
+    // gaps between it, only in the room the door and its light stand in
+    // (nav.js, `Writing.hush`).
+    if (window.Writing) {
+      // A wide soft edge: the light is a glow, and a narrow one showed the
+      // writing's edge through it as a straight line.
+      window.Writing.hush(ink, { feather: 48, regions: [
+        { l: 0, t: baseY - d.T * 1.35, r: left + d.W * 2.1 + d.T * 0.62, b: height },
+      ] });
+    }
   }
 
   // ============================================================

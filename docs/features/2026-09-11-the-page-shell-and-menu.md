@@ -305,3 +305,12 @@ engines and a shared link read (`SD` in `tools/seo.py`, the tool run), every hou
 the search's trails (`PAGES` in `search-page.js`) and the page's own search (`contact-sheet.js`),
 the node map's label (switched off), the two templates and the signpost at the old address. The
 tests that read any of them read the capital.
+
+## 2026-10-12 — `window.Writing`: where the words are
+
+`nav.js` carries a second shared helper beside `window.Sharpness`: **`window.Writing`**, which
+measures where every run of words on the page stands (nothing fixed to the window, nothing hidden)
+and lets a drawing go faint behind them — `under(x, y)` for a speck, `hush(ctx, { regions })`
+for a frame of lines, only inside the boxes it names. Nothing is measured until a drawing first
+asks. Used by seven house pages since the owner chose "Fade them under the words"; see [the house
+drawings faint behind the words](2026-10-12-drawings-faint-behind-the-words.md).

@@ -283,6 +283,14 @@
     return QUIET + (1 - QUIET) * Math.max(0, 1 - Math.min(1, inside));
   }
 
+  /** ON A PHONE, BEHIND THE WORDS A SPECK GOES FAINTER STILL (2026-10-12 —
+      "Fade them under the words"): with no margin the whole band stands at
+      QUIET, and that quiet behind every line was still plainly there, so a
+      speck behind writing keeps only a third of it, and one in the gaps
+      between the writing keeps QUIET, as it was (nav.js, `Writing.under`).
+      A window 700px or wider is as it was. */
+  const under = (x, y) => (width < 700 && window.Writing ? window.Writing.under(x, y) : 1);
+
   let handX = -99999, handY = -99999, handOn = 0;
 
   function draw(down, clock) {
@@ -364,7 +372,7 @@
         else if (kept <= 0.001) sp.warm = 0;
         const hot = 1 + (HAND_LIFT - 1) * Math.max(live, kept);
 
-        const hush = quiet(x);
+        const hush = quiet(x) * under(x, y);
         const shown = sp.base * body * lift * flick * hot * hush;
         if (shown < 0.014) return;
 

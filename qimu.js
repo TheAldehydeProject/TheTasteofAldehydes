@@ -962,6 +962,7 @@
     // With the sound on, the staves behind the writing come up a little.
     heardUp = REDUCE_MOTION ? (sound ? 1 : 0) : heardUp + ((sound ? 1 : 0) - heardUp) * 0.08;
     if (Math.abs(heardUp - (sound ? 1 : 0)) < 0.004) heardUp = sound ? 1 : 0;
+    const drawn = [];                // the staves drawn this frame, as boxes on the window
     staves.forEach((s) => {
       const top = s.y - scroll;
       // Its name comes up while the hand is on it (or while a tap plays
@@ -1002,6 +1003,7 @@
       }
       const q = s.quiet < 1 ? s.quiet + (HEARD_QUIET - s.quiet) * heardUp : s.quiet;
       s.q = q;
+      if (s.quiet < 1 && width < 700) drawn.push({ l: s.x0 - 14, t: top - GAP * 3, r: s.x0 + Math.max(s.long, 150) + 14, b: top + s.deep + GAP * 3 + 60 });
       ink.strokeStyle = "rgba(" + BLUE + "," + (LINE * q).toFixed(3) + ")";
       s.tops.forEach((t) => {
         for (let k = 0; k < 5; k++) mLine(ink, s.x0, top + t + k * GAP, s.x0 + lines, top + t + k * GAP, 0.7);
@@ -1074,6 +1076,17 @@
         });
       }
     });
+    // ON A PHONE, BEHIND THE WORDS THE STAVES GO FAINT (2026-10-12 — "Fade
+    // them under the words"): with no margins they stand across the window
+    // behind the writing, so they are taken back to a third of themselves
+    // where the words are, and are as they were in the gaps between them —
+    // only over the staves themselves (nav.js, `Writing.hush`). With the
+    // sound on, when they are to be found and tapped, they keep more of
+    // themselves there. A stave in a margin is never touched, nor any on a
+    // window 700px or wider.
+    if (drawn.length && window.Writing) {
+      window.Writing.hush(ink, { regions: drawn, keep: window.Writing.KEEP + (1 - window.Writing.KEEP) * 0.5 * heardUp });
+    }
   }
 
   // ============================================================

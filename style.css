@@ -11621,6 +11621,11 @@ a.note-cite:hover { color: var(--ink); }
   line-height: 1.85;
   letter-spacing: 0.02em;
   color: var(--muted);
+  /* IN FRONT OF THE DRAWING, as all the rest of the writing stands
+     (2026-10-12 — "Put it in front like the rest?" "Yes"): it was the one
+     block on every house the drawing was painted over rather than under. */
+  position: relative;
+  z-index: 1;
 }
 .house-credit-say {
   display: inline-block;

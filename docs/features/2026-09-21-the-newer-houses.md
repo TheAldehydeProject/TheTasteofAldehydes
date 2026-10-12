@@ -1594,3 +1594,14 @@ where it was and where it is; a part's measurements for opening are taken when i
 same 8% rule and stagger, rather than with an observer on each part; and the pictures it makes are
 decoded off the page's thread (`decoding="async"`). Nothing on the twelve houses looks or moves
 differently. See [Scent Descriptions at scale](2026-10-11-scent-descriptions-at-scale.md).
+
+## 2026-10-12 — on a phone, faint behind the words; the credit in front
+
+On a phone, where there are no margins, **Les Abstraits' armoire, drip and beaker, Qimu's staves,
+Ataraxia's bands and Tombstone's stones go faint behind the words** — a third of what they were —
+and stay as they were in the gaps between them: the armoire and the staves through `Writing.hush`
+(nav.js) at the end of the frame, only in their own room; the bands and the stones speck by speck
+through `Writing.under`. Qimu's staves keep more of themselves while the sound is on. On a window
+700px or wider none of them asks. And **the picture credit** at the foot of every house stands in
+front of the drawing (`position: relative; z-index: 1`), as the rest of the writing does. Written up
+in [the house drawings faint behind the words](2026-10-12-drawings-faint-behind-the-words.md).

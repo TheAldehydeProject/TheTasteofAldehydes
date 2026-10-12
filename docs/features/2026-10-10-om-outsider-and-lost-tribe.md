@@ -597,6 +597,15 @@ moving the hand over a specimen; `/scent-descriptions/#house-10`, `#house-11`, `
   Om's was; smoothed the same day at the owner's word, 51–59 now (see [the newer houses](2026-09-21-the-newer-houses.md#2026-10-11--les-abstraits-quieted-only-where-the-armoire-stands)).
 - Lost Tribe's design is a first answer, as the owner said it would be ("we will adapt later").
 
+## 2026-10-12 — Outsider's door and Lost Tribe's field notes faint behind the words
+
+**Outsider's door and its light** go faint behind the words on a phone and on a computer alike
+(`Writing.hush` from nav.js, at the end of its frame, only round the door and its light, over a
+wide soft edge, `feather: 48`, so the glow shows no seam), and **Lost Tribe's specimens, pollen,
+leaves and birds** on a phone, speck by speck (`Writing.under`) — a third of what they were behind
+writing, as they were in the gaps. Written up in [the house drawings faint behind the
+words](2026-10-12-drawings-faint-behind-the-words.md).
+
 ## Same round, other reports
 
 - [The newer houses — Qimu's Bassist and Drummer written](2026-09-21-the-newer-houses.md#2026-10-10--bassist-and-drummer-written-and-a-fold-in-housejs)

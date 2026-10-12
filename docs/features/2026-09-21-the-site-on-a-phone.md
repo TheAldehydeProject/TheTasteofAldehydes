@@ -573,5 +573,7 @@ height, the next house over 0.28 of the width round, and the motifs at 1. By eye
   specimens** a little, and the other five houses not at all. On a computer only ADAR's void
   reaches the writing (its right end) and Outsider's light faintly. And on every house **the
   picture credit at the foot is the one block of writing not raised above the drawing** — where a
-  drawing reaches it, it is painted over the letters rather than behind them. Waiting on the
-  owner's choice.
+  drawing reaches it, it is painted over the letters rather than behind them. **The owner chose
+  "Fade them under the words"** (and the same for ADAR and Outsider on a computer) **and the credit
+  in front**, done the same day: see [the house drawings faint behind the
+  words](2026-10-12-drawings-faint-behind-the-words.md).
