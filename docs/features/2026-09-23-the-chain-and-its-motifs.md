@@ -1020,3 +1020,15 @@ On the Houses view Outsider's door is **let open slowly to rest and never swings
 **window** stands high on the right of the same wall, **one light from outside** coming through
 both at one slant, in one green — written up in [their
 report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-12--outsiders-door-calmer-a-window-beside-it-one-light-through-both).
+
+## 2026-10-12 — every motif three fifths of its size on a phone
+
+In a window under 700px wide **every motif is drawn at `MOTIF_SMALL` (0.6)**: they are laid out on
+a window that much larger than the phone's and drawn down to fit it (`W`, `H` and `CHROME` are that
+larger window's, the canvas's transform carries the scale), so no motif needed changing. The hand,
+the house rested on and the houses round it come in divided by `SMALL`; ADAR's field
+(`bend()`, through `bendOnWindow`) and the tests' readings (`wellsAt`, `flocks`, `doors`) go out
+multiplied by it; the page's squares a well bends are drawn where they stand on the window. Every
+kind of ten or more at once stands at three fifths of its number (`FEWER_PHONE`), and ADAR's wells
+reach three fifths as far. `HouseMotifs.drawnAt()` says the scale. Written up in [the phone
+report](2026-09-21-the-site-on-a-phone.md#2026-10-12--scent-descriptions-less-cluttered-on-a-phone).

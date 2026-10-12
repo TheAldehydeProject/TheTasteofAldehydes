@@ -2242,6 +2242,17 @@ body.view-fragrances .sheet-search { display: none; }
 .sheet-frame:hover .sheet-say,
 .sheet-frame:focus-within .sheet-say,
 .sheet-frame.hot .sheet-say { opacity: 1; }
+/* ON A PHONE the house is smaller (2026-10-12, "less cluttered ... the
+   images to be smaller"; contact-sheet.js, FRONT_NARROW), and its label
+   with it: the number a size down and nearer the name. Below 700px only. */
+@media (max-width: 699px) {
+  .sheet.scripted .sheet-frame > .sheet-number { top: calc(100% + 9px); font-size: 18px; }
+  .sheet.scripted .sheet-frame .sheet-caption { top: calc(100% + 12px); left: 26px; }
+  /* The line about it under the whole house, as wide as the picture, a
+     size down, so a long one takes fewer lines and clears the house
+     below. */
+  .sheet.scripted .sheet-frame .sheet-say { left: -26px; max-width: calc(100% + 24px); font-size: 10px; padding: 3px 6px; }
+}
 
 /* RESTING ON A HOUSE: its motifs come up across the whole page, BEHIND
    the houses, and nothing is blurred or dimmed — the owner asked for the

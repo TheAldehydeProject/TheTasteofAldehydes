@@ -73,6 +73,23 @@
   // to the width, as every phone fix on this site is.
   const SPAN_NARROW = 0.36;
   const NARROW = 700;
+  // AND SMALLER, NEARER THE AXIS, AND FINER (2026-10-12 — "change the phone
+  // version of SD; i want it to be less cluttered. I want the images to be
+  // smaller ... the distance between the central line and the houses to be
+  // less ... make all the pqrticles smaller on the page"): below NARROW the
+  // front house is FRONT_NARROW of the room (a little under three quarters
+  // of the height it had), the helix reaches RADIUS_NARROW of the width
+  // (about three fifths of its reach), and every speck is drawn FINE of its
+  // size. Keyed to the WINDOW's width (the sheet is 15px narrower than the
+  // window, so `W < NARROW` reaches windows of up to 714px): nothing in a
+  // window of NARROW or wider changes.
+  const SPAN_PHONE = 0.4;          // the houses a little further apart than SPAN_NARROW
+  const FRONT_NARROW = 0.29;       // of the room, the front house's height on a phone
+  const FRONT_NARROW_FEWEST = 120; // px
+  const RADIUS_NARROW = 0.2;       // of the width, the helix's reach on a phone
+  const FINE_NARROW = 0.6;         // every speck's size on a phone
+  const TRIM_NARROW = 0.7;         // and the corners, the spokes' width and the ties
+  const SIDE_FALL_NARROW = 4;      // the ones either side a little under three fifths of the front
   const TURN = 1.08;               // radians round the axis, house to house
   const RADIUS = 0.34;             // of the page's width, the helix's reach
   const RADIUS_MOST = 560;         // px
@@ -255,7 +272,8 @@
   // WHERE EVERYTHING STANDS
   // ============================================================
   let W = 0, H = 0, ratio = 1;
-  let cx = 0, cy = 0, R = 0, span = 0, frontH = 0, frontW = 0;
+  let cx = 0, cy = 0, R = 0, span = 0, frontH = 0, frontW = 0, fine = 1, trim = 1, sideFall = SIDE_FALL;
+  let narrow = false, phone = false;
   // THE ROOM the helix is laid out in: the window below the chrome, as it
   // always was, so the front house stands exactly where it did.
   let roomTop = 0, room = 0;
@@ -281,9 +299,16 @@
     W = sheet.clientWidth;
     cx = W / 2;
     cy = roomTop + room * 0.47;
-    span = room * (W < NARROW ? SPAN_NARROW : SPAN);
-    R = Math.min(W * RADIUS, RADIUS_MOST);
-    frontH = Math.max(FRONT_FEWEST, Math.min(FRONT_MOST, room * FRONT, (W - 40) / SHAPE * 0.72));
+    narrow = W < NARROW;
+    phone = window.innerWidth < NARROW;
+    span = room * (phone ? SPAN_PHONE : narrow ? SPAN_NARROW : SPAN);
+    R = Math.min(W * (phone ? RADIUS_NARROW : RADIUS), RADIUS_MOST);
+    frontH = phone
+      ? Math.max(FRONT_NARROW_FEWEST, Math.min(FRONT_MOST, room * FRONT_NARROW, (W - 40) / SHAPE * 0.52))
+      : Math.max(FRONT_FEWEST, Math.min(FRONT_MOST, room * FRONT, (W - 40) / SHAPE * 0.72));
+    fine = phone ? FINE_NARROW : 1;
+    trim = phone ? TRIM_NARROW : 1;
+    sideFall = phone ? SIDE_FALL_NARROW : SIDE_FALL;
     frontW = frontH * SHAPE;
     ratio = Math.min(window.devicePixelRatio || 1, 2);    // a phone too, since 2026-10-01: a 3D drawing as sharp as the screen, up to two
     field.width = Math.round(W * ratio);
@@ -312,7 +337,7 @@
       // smaller than a straight line through depth would draw them — the
       // owner asked for 06 and 08 "a little smaller" round 07 — and the
       // ones behind the axis smaller still.
-      s: SMALLEST + (1 - SMALLEST) * Math.pow((z + 1) / 2, SIDE_FALL),
+      s: SMALLEST + (1 - SMALLEST) * Math.pow((z + 1) / 2, sideFall),
     };
   }
 
@@ -528,7 +553,7 @@
       if (here > near) near = here;
     }
     ink.globalAlpha = Math.min(1, a * (1 + near * 1.4));
-    const s = size * (1 + near * 0.5);
+    const s = size * fine * (1 + near * 0.5);
     ink.fillRect(x - s / 2, y - s / 2, s, s);
   }
 
@@ -550,7 +575,7 @@
         const q = REDUCE_MOTION ? s.q : (s.q + t * s.v) % 1;
         // Along the spoke in the helix's own space, then off it on a ring
         // round it — thin at the axis, fullest part way out.
-        const rad = s.r * (0.3 + 0.7 * Math.sin(Math.PI * Math.min(1, q * 1.15)));
+        const rad = s.r * trim * (0.3 + 0.7 * Math.sin(Math.PI * Math.min(1, q * 1.15)));
         const phi = s.phi + twist;
         const z = q * reach * ca - rad * Math.sin(phi) * sa;
         if ((z < 0) !== behind) return;
@@ -648,7 +673,9 @@
     const wound = helixShown * 3;
 
     // THE DUST, behind and in front of the axis alike.
-    const many = W < 700 ? Math.round(DUST * 0.45) : DUST;
+    // Fewer on a narrow window, and fewer still on a phone (a third, since
+    // 2026-10-12; under half, 0.45, until then).
+    const many = phone ? Math.round(DUST * 0.33) : narrow ? Math.round(DUST * 0.45) : DUST;
     const column = H * 1.4;
     for (let n = 0; n < many; n++) {
       const d = dust[n];
@@ -713,7 +740,7 @@
       const want = { l: l - at.left, t: tp - at.top, r: r - at.left, b: b - at.top };
       if (!corners || corners.f !== f || REDUCE_MOTION) corners = { f, ...want };
       else for (const k of ["l", "t", "r", "b"]) corners[k] += (want[k] - corners[k]) * 0.18;
-      const out = CORNER_OUT + (REDUCE_MOTION ? 0 : Math.sin(t * 1.4) * 2);
+      const out = CORNER_OUT * trim + (REDUCE_MOTION ? 0 : Math.sin(t * 1.4) * 2 * trim);
       const grow = 1 - Math.pow(1 - settle, 3);
       [[corners.l - out, corners.t - out, 1, 1], [corners.r + out, corners.t - out, -1, 1],
         [corners.l - out, corners.b + out, 1, -1], [corners.r + out, corners.b + out, -1, -1]]
@@ -721,8 +748,8 @@
           // A light runs out along both arms, each corner on its own beat.
           const run = REDUCE_MOTION ? -1 : (t * 0.55 + k * 0.25) % 1;
           speck(x, y, 2.6, 0.85 * settle);
-          for (let d = CORNER_STEP; d <= CORNER_LEG * grow; d += CORNER_STEP) {
-            const q = d / CORNER_LEG;
+          for (let d = CORNER_STEP * trim; d <= CORNER_LEG * trim * grow; d += CORNER_STEP * trim) {
+            const q = d / (CORNER_LEG * trim);
             const hot = run >= 0 ? Math.max(0, 1 - Math.abs(q - run) * 6) : 0;
             const a = (0.78 - 0.34 * q + hot * 0.3) * settle;
             speck(x + sx * d, y, 1.4 + hot, a);
@@ -790,7 +817,7 @@
       if (Math.abs(reach) < Math.abs(edge - cx) || y < b.t || y > b.b) continue;
       const fade = Math.pow(Math.max(0, 1 - Math.abs(d) / 2.6), 0.7) * shown[b.i] * helixShown * b.there;
       const beat = REDUCE_MOTION ? 0 : Math.max(0, Math.sin(t * 2.2 + b.i));
-      const side = TIE_SIDE;
+      const side = TIE_SIDE * trim;
       for (let k = 0; k <= 4; k++) {
         const u = -side + (k / 4) * side * 2;
         speck(edge - side, y + u, 1.2, 0.8 * fade);

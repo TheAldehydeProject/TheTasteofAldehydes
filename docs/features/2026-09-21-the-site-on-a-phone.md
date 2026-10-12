@@ -495,3 +495,83 @@ them**, the width of the window less its gutters, on the chrome's ground, at **1
 zooms the whole page into a field set smaller), and its answers stand under it. All of it inside
 `max-width: 700px`, so nothing above 700px moved. `mobile.spec.js` opens it at 390px and checks
 nothing stands over it. The three new houses are on its no-sideways-scroll list. (Same round: [the report on the three new houses](2026-10-10-om-outsider-and-lost-tribe.md).)
+
+## 2026-10-12 — Scent Descriptions less cluttered on a phone
+
+"Now i want you to change the phone version of SD; i want it to be less cluttered. I want the
+images to be smaller; i want the effects to be smaller; and i want it to be cleaner. I want it to be
+where the distance between the central line and the houses to be less. Finally, make all the
+pqrticles smaller on the page."
+
+Files touched: `contact-sheet.js`, `motifs.js`, `style.css`, `tests/mobile.spec.js`.
+
+What changed, on the Houses view in a window under 700px wide, and nowhere else:
+
+- **The houses are smaller.** The front house is `FRONT_NARROW` (0.29) of the room's height — 172px
+  tall on an iPhone 13 where it was 237 — and the houses either side fall away faster
+  (`SIDE_FALL_NARROW`, 4: a little under three fifths of the front, where they were two thirds).
+  Its label comes down with it: the number 18px (24), nearer the name, and **the line about the
+  house** under the whole picture and no wider than it, a size down (10px), so a long one takes
+  fewer lines — Tale's was five lines in a box half the picture's width and stood over the house
+  below it; it is four, and clear.
+- **The houses stand nearer the axis.** The helix reaches `RADIUS_NARROW` (0.2) of the width round
+  it — 75px on a phone, where it reached 128 — so the houses either side, their spokes, the strands
+  and the dust all draw in towards the line. They stand a little further apart down it
+  (`SPAN_PHONE`, 0.4 of the room; 0.36), so the house below clears the front house's label.
+- **Every speck on the view is smaller**: drawn `FINE_NARROW` (0.6) of its size — the axis's, the
+  dust's, the strands', the spokes', the corners' and the ties' — and the corners, the spokes'
+  width and the ties are `TRIM_NARROW` (0.7) of their reach. The dust is a third of its number
+  (it was under half).
+- **Every motif is smaller, and the swarms fewer.** `motifs.js` lays every house's motifs out on a
+  window `1 / MOTIF_SMALL` as large as the phone's and draws them down to fit it (`MOTIF_SMALL`,
+  0.6), so a tree, a speck, a stave, a door, a ring and the room between them all come out three
+  fifths of their size, with more room round each — one change for all twelve houses rather than
+  twelve. What comes into it from the page (the hand, the house rested on, the houses round it, the
+  way round) is divided by that scale and what goes out (ADAR's field that bends the view, the
+  tests' readings) multiplied by it, so the wells still bend the axis where they stand and Lost
+  Tribe's birds still scatter from the finger. **ADAR's wells reach three fifths as far**, too
+  (their reach was of the window's shorter side, so it had not come down with the rest). Whatever
+  comes in swarms of ten or more — needles, dust, rain, the rising specks, petals, pollen — has
+  three fifths as many at once (`FEWER_PHONE`).
+
+**Keyed to the window, not the sheet.** The sheet is 15px narrower than the window, so the old
+phone rule in `contact-sheet.js` (`W < NARROW`, the houses a little further apart and the dust
+under half) reached windows of up to 714px. The new values are keyed to `window.innerWidth < 700`
+(`phone`), and the old rule is kept as it was for the windows between 700 and 714 (`narrow`);
+`motifs.js` keys its scale the same way, the stylesheet's label rules to `max-width: 699px`.
+Checked, as the rule asks: every element on the Houses view — its box, opacity, z-index, font
+size, display, visibility and transform — compared against the commit before at 700 × 800, 714 ×
+900, 768 × 1024, 1024 × 768, 1280 × 800, 1440 × 900 and 1920 × 1080: identical (443 elements at
+each). The first try keyed the new values to the sheet's width and moved 83 of them at 700px; that
+is why the window is the key.
+
+### How to test it
+
+`npm test -- tests/mobile.spec.js --grep "Scent Descriptions"`: at 390 × 844 the front house is
+under three tenths of the window's height, the houses either side within 0.22 of the width of the
+axis and under three fifths of the front, the line under a house no wider than its picture, and the
+motifs drawn at 0.6 (`HouseMotifs.drawnAt()`); at 700 × 800 the front house over a third of the
+height, the next house over 0.28 of the width round, and the motifs at 1. By eye:
+`/scent-descriptions/` in a phone-sized window, each house brought to the front.
+
+### Known issues / TODO
+
+- The house below the front one stands mostly behind the way round at the foot, as it did; only its
+  top shows.
+- Outsider's door and Les Abstraits' armoire are still the largest things on the view, at about
+  two thirds of the height they had — their size is capped in pixels, so the scale brings them down
+  less than the rest.
+- **The house pages' drawings over their writing**, asked for in the same note ("flag any overlap
+  with text for in-house page in SD, and return to me with options"), were measured the same day
+  and put to the owner, nothing changed yet: each page scrolled at 390 × 844 and 1440 × 900 with
+  every part opened, photographed with its drawing and without, and every line of writing the
+  drawing changes counted. On a phone the writing runs from 24 to 366px of 390, so there is no
+  margin to stand in: **ADAR's void** (a quarter of the lines it passes, behind the letters), **Les
+  Abstraits' armoire and beaker** (the foot of the window), **Qimu's staves** (faint, the full width),
+  **Outsider's door and its light** (the strongest ink, the foot of the window) and **Ataraxia's
+  bands** (quieted, by design) cross it clearly, **Tombstone's stones** and **Lost Tribe's
+  specimens** a little, and the other five houses not at all. On a computer only ADAR's void
+  reaches the writing (its right end) and Outsider's light faintly. And on every house **the
+  picture credit at the foot is the one block of writing not raised above the drawing** — where a
+  drawing reaches it, it is painted over the letters rather than behind them. Waiting on the
+  owner's choice.

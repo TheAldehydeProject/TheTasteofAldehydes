@@ -70,23 +70,46 @@
   const hand = { x: -99999, y: -99999 };
   const handAt = (e) => {
     const r = canvas.getBoundingClientRect();
-    hand.x = e.clientX - r.left;
-    hand.y = e.clientY - r.top;
+    hand.x = (e.clientX - r.left) / SMALL;
+    hand.y = (e.clientY - r.top) / SMALL;
   };
   window.addEventListener("pointermove", handAt, { passive: true });
   window.addEventListener("pointerdown", handAt, { passive: true });
   document.addEventListener("pointerleave", () => { hand.x = -99999; hand.y = -99999; });
 
+  // ON A PHONE EVERYTHING HERE IS DRAWN SMALLER (2026-10-12 — "less
+  // cluttered ... i want the effects to be smaller ... make all the
+  // pqrticles smaller on the page"): every motif is laid out on a window
+  // 1 / MOTIF_SMALL as large as the phone's and drawn down to fit it, so a
+  // tree, a speck, a stave, a door and the gap between them all come out
+  // MOTIF_SMALL of their size, and as many of each stand at once on a
+  // window with more room round them. `W` and `H` are that larger window;
+  // what comes in from the page (the hand, the house, the way round) is
+  // divided by SMALL, and what goes out (ADAR's field, the tests' readings)
+  // multiplied by it. Below 700px only: on a wider window SMALL is 1.
+  const MOTIF_SMALL = 0.6;
+  // AND FEWER of whatever comes in swarms (ten or more at once — needles,
+  // dust, rain, specks, petals, pollen): three fifths as many on a phone.
+  const FEWER_PHONE = 0.6;
+  let SMALL = 1, PHONE = false;
+  // Nothing is placed in the band across the top where the Menu, the
+  // two buttons and the search stand — only things that fall in from
+  // above the window (which say so with a fromY below nought) start there.
+  const CHROME_PX = 64;
+  let CHROME = CHROME_PX;
   let W = 0, H = 0;
   function size() {
+    PHONE = window.innerWidth < 700;
+    SMALL = PHONE ? MOTIF_SMALL : 1;
+    CHROME = CHROME_PX / SMALL;
     // A little over half the fill below 700px, as every canvas on the
     // site draws there.
-    const ratio = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 2);
-    W = window.innerWidth;
-    H = window.innerHeight;
-    canvas.width = Math.round(W * ratio);
-    canvas.height = Math.round(H * ratio);
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    const ratio = Math.min(window.devicePixelRatio || 1, PHONE ? 1.5 : 2);
+    W = window.innerWidth / SMALL;
+    H = window.innerHeight / SMALL;
+    canvas.width = Math.round(window.innerWidth * ratio);
+    canvas.height = Math.round(window.innerHeight * ratio);
+    ctx.setTransform(ratio * SMALL, 0, 0, ratio * SMALL, 0, 0);
   }
   size();
   window.addEventListener("resize", size);
@@ -102,10 +125,6 @@
     return x + r < avoid.left || x - r > avoid.right || y + r < avoid.top || y - r > avoid.bottom;
   }
   /** A point on the window that is not on the house, tried a few times. */
-  // Nothing is placed in the band across the top where the Menu, the
-  // two buttons and the search stand — only things that fall in from
-  // above the window (which say so with a fromY below nought) start there.
-  const CHROME = 64;
   function spot(r, fromY, toY) {
     for (let i = 0; i < 12; i++) {
       const low = fromY == null ? CHROME + r : fromY < 0 ? fromY : Math.max(fromY, CHROME + r);
@@ -263,6 +282,13 @@
     bent.x = x; bent.y = y; bent.s = sc; bent.a = al; bent.turn = turn; bent.cover = cover;
     return bent;
   }
+  /** The same, for a point given on the window itself — what the Houses
+      view hands in — where the motifs are drawn at SMALL (a phone). */
+  function bendOnWindow(x, y) {
+    const p = bendPoint(x / SMALL, y / SMALL);
+    p.x *= SMALL; p.y *= SMALL;
+    return p;
+  }
   /** THE PAGE'S SQUARES, bent. Inside a well's reach the page's own grid
       is covered over in the page's colour and drawn again through the
       field — exactly as faint as the page's where it is barely moved,
@@ -306,9 +332,12 @@
         px = p.x; py = p.y;
       }
     };
-    for (let x = Math.ceil(l / CELL) * CELL + 0.5; x < r; x += CELL) run(x, t, x, b);
-    for (let y = Math.ceil(t / CELL) * CELL + 0.5; y < b; y += CELL) run(l, y, r, y);
-    c.lineWidth = 1;
+    // The page's squares stand where they do on the window, whatever
+    // SMALL the motifs are drawn at.
+    const cell = CELL / SMALL, off = 0.5 / SMALL;
+    for (let x = Math.ceil(l / cell) * cell + off; x < r; x += cell) run(x, t, x, b);
+    for (let y = Math.ceil(t / cell) * cell + off; y < b; y += cell) run(l, y, r, y);
+    c.lineWidth = 1 / SMALL;
     paths.forEach((segs, lvl) => {
       if (!segs.length) return;
       c.strokeStyle = "rgba(" + INK + "," + (GRID_DARK * lvl) / (LEVELS - 1) + ")";
@@ -328,7 +357,7 @@
     const clear = (x, y) => wells.every((w) => Math.hypot(w.x - x, w.y - y) >= apart);
     for (let i = 0; i < 24; i++) {
       // Not under the way round, at the right of a wide window.
-      const x = rand(R * 0.3, W - (W > 700 ? Math.max(R * 0.3, 200) : R * 0.3)), y = rand(CHROME + 40, H - 40);
+      const x = rand(R * 0.3, W - (W * SMALL > 700 ? Math.max(R * 0.3, 200) : R * 0.3)), y = rand(CHROME + 40, H - 40);
       if (!clear(x, y)) continue;
       if (readAround.every((b) => x < b.left - 60 || x > b.right + 60 || y < b.top - 60 || y > b.bottom + 60)) return { x, y };
     }
@@ -339,7 +368,10 @@
     return null;
   }
   function sounding() {
-    const R = Math.min(WELL_REACH_MOST, Math.min(W, H) * WELL_REACH);
+    // Its reach is of the window's own shorter side — on a phone, where the
+    // motifs are laid out on a window larger than it, that much of it again
+    // smaller (SMALL), as everything else is.
+    const R = Math.min(WELL_REACH_MOST, Math.min(W, H) * SMALL * WELL_REACH);
     const at = wellSpot(R);
     if (!at) return null;
     const hole = rand(13, 19) * Math.max(0.7, R / WELL_REACH_MOST);
@@ -2789,9 +2821,9 @@
     // round down the side of the view (read off the page), and none where
     // the view is too narrow for one.
     let win = null;
-    if (W >= 700) {
+    if (!PHONE) {
       const nav = document.querySelector(".sheet-nav");
-      const navLeft = nav ? nav.getBoundingClientRect().left : W - 160;
+      const navLeft = nav ? nav.getBoundingClientRect().left / SMALL : W - 160;
       const ww = Math.min(200, W * 0.125), wh = Math.min(ww * 1.32, H * 0.27);
       const wr = Math.min(W - 40, navLeft - 28), wl = wr - ww;
       const wt = Math.max(84, H * 0.12), wb = wt + wh;
@@ -3302,7 +3334,8 @@
         let n = Math.floor(due);
         owed.set(kind, due - n);
         const standing = things.filter((t) => t.kind === kind && !t.ending).length;
-        n = Math.min(n, kind.most - standing);
+        const most = PHONE && kind.most >= 10 ? Math.round(kind.most * FEWER_PHONE) : kind.most;
+        n = Math.min(n, most - standing);
         for (let k = 0; k < n; k++) {
           const one = kind.make();
           if (one) { one.kind = kind; one.born = now; things.push(one); }
@@ -3353,13 +3386,14 @@
       if (key === "qimu") qimuSince = performance.now();
       // The pile starts again from the ground once the last one has gone.
       if (!things.some((t) => t.petal)) heap = [];
-      readAround = around || [];
+      readAround = (around || []).map((b) => (SMALL === 1 ? b
+        : { left: b.left / SMALL, right: b.right / SMALL, top: b.top / SMALL, bottom: b.bottom / SMALL }));
       // Handed the house, the motifs keep clear of it; handed nothing,
       // they have the whole page — which is how the Houses view asks for
       // them now that they stand BEHIND the houses rather than over them.
       if (el) {
         const r = el.getBoundingClientRect();
-        avoid = { left: r.left - CLEAR, right: r.right + CLEAR, top: r.top - CLEAR, bottom: r.bottom + CLEAR };
+        avoid = { left: r.left / SMALL - CLEAR, right: r.right / SMALL + CLEAR, top: r.top / SMALL - CLEAR, bottom: r.bottom / SMALL + CLEAR };
       } else {
         avoid = null;
       }
@@ -3371,7 +3405,11 @@
     // know (the tests), since the drawing itself cannot be asked.
     // How Outsider's door stands and swings, for the tests.
     doors() {
-      return things.filter((t) => t.swing && !t.ending).map((t) => t.swing());
+      return things.filter((t) => t.swing && !t.ending).map((t) => {
+        const d = t.swing();
+        if (SMALL !== 1 && d.window) d.window = { left: d.window.left * SMALL, right: d.window.right * SMALL, top: d.window.top * SMALL, bottom: d.window.bottom * SMALL };
+        return d;
+      });
     },
     // How each of Om's rings standing now is drawn, for the tests.
     rings() {
@@ -3379,7 +3417,11 @@
     },
     // Where Lost Tribe's birds are, flock by flock, for the tests.
     flocks() {
-      return things.filter((t) => t.flock && !t.ending).map((t) => t.flock.map((b) => ({ x: b.x, y: b.y, vx: b.vx, vy: b.vy, rate: b.rate })));
+      return things.filter((t) => t.flock && !t.ending).map((t) => t.flock.map((b) => ({ x: b.x * SMALL, y: b.y * SMALL, vx: b.vx * SMALL, vy: b.vy * SMALL, rate: b.rate })));
+    },
+    // The scale the motifs are drawn at: three fifths on a phone, else 1.
+    drawnAt() {
+      return SMALL;
     },
     census() {
       const out = {};
@@ -3397,12 +3439,12 @@
     // it is drawn (`x`, `y`), how big (`s`), how strongly (`a`) and how
     // far turned (`turn`, radians) — or null while there is no well.
     bend() {
-      return wells.length ? bendPoint : null;
+      return wells.length ? (SMALL === 1 ? bendPoint : bendOnWindow) : null;
     },
     // Where ADAR's wells stand now, how far each reaches and how strong it
     // has come up (0 to 1) — for the tests, like `census`.
     wellsAt() {
-      return wells.map((w) => ({ x: w.x, y: w.y, R: w.R, s: w.s }));
+      return wells.map((w) => ({ x: w.x * SMALL, y: w.y * SMALL, R: w.R * SMALL, s: w.s }));
     },
     stop(now) {
       house = null;

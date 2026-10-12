@@ -88,6 +88,39 @@ test.describe("on a phone", () => {
     expect(found.y, "the answers under the field").toBeGreaterThanOrEqual(f.y + f.height - 1);
   });
 
+  /* SCENT DESCRIPTIONS LESS CLUTTERED ON A PHONE — the owner, 2026-10-12:
+     "I want the images to be smaller; i want the effects to be smaller ...
+     the distance between the central line and the houses to be less ...
+     make all the pqrticles smaller on the page". Below 700px the front house
+     is under three tenths of the window's height (it was two fifths of the
+     room), the houses either side stand nearer the axis (a fifth of the
+     width round it, where they stood a third) and are under three fifths of
+     the front, the line under a house is no wider than its picture, and the
+     motifs are drawn at three fifths of their size. A wide window has none
+     of it (below). */
+  test("Scent Descriptions' houses are smaller and nearer the axis, and the motifs smaller", async ({ page }) => {
+    await page.goto("/scent-descriptions/?rest=hand#house-02");
+    await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
+    await page.waitForTimeout(600);
+    const g = await page.evaluate(() => {
+      const sheet = document.getElementById("sheet");
+      const f = [...sheet.querySelectorAll(".sheet-frame")];
+      const b = (el) => el.getBoundingClientRect();
+      const mid = (r) => r.left + r.width / 2;
+      const axis = sheet.getBoundingClientRect().left + sheet.clientWidth / 2;
+      return {
+        H: innerHeight, W: innerWidth, front: b(f[1]), next: b(f[2]), before: b(f[0]),
+        axisOff: [Math.abs(mid(b(f[0])) - axis), Math.abs(mid(b(f[2])) - axis)],
+        say: b(f[1].querySelector(".sheet-say")).width, small: window.HouseMotifs.drawnAt(),
+      };
+    });
+    expect(g.front.height, "the front house").toBeLessThan(g.H * 0.3);
+    for (const off of g.axisOff) expect(off, "a house either side, from the axis").toBeLessThan(g.W * 0.22);
+    expect(g.next.height / g.front.height, "the next house, against the front").toBeLessThan(0.6);
+    expect(g.say, "the line under the house").toBeLessThanOrEqual(g.front.width + 1);
+    expect(g.small, "the motifs' scale").toBe(0.6);
+  });
+
   test("no page can be dragged sideways", async ({ page }) => {
     // THIS ONE GROWS WITH THE SITE. It opens every page in turn and
     // waits out each one's arrival, so the default thirty seconds ran
@@ -254,6 +287,25 @@ test.describe("on a phone's sharp screen", () => {
     expect(r.slow).toBe(1.5);
     expect(r.quick).toBe(2);
   });
+});
+// ...AND NOT ON A WINDOW OF 700PX OR WIDER: the Houses view's front house its
+// old size there, the side houses as far round, the motifs at their own.
+test("Scent Descriptions at 700px wide is laid out as it was", async ({ page }) => {
+  await page.setViewportSize({ width: 700, height: 800 });
+  await page.goto("/scent-descriptions/?rest=hand#house-02");
+  await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
+  await page.waitForTimeout(600);
+  const g = await page.evaluate(() => {
+    const sheet = document.getElementById("sheet");
+    const f = [...sheet.querySelectorAll(".sheet-frame")];
+    const next = f[2].getBoundingClientRect();
+    return { H: innerHeight, W: innerWidth, front: f[1].getBoundingClientRect().height,
+      off: Math.abs(next.left + next.width / 2 - (sheet.getBoundingClientRect().left + sheet.clientWidth / 2)),
+      small: window.HouseMotifs.drawnAt() };
+  });
+  expect(g.front).toBeGreaterThan(g.H * 0.33);
+  expect(g.off).toBeGreaterThan(g.W * 0.28);
+  expect(g.small).toBe(1);
 });
 test("on a plain screen a slow machine is never drawn below its own pixel", async ({ page }) => {
   await page.goto("/contact/");
