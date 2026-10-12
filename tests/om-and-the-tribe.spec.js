@@ -569,32 +569,39 @@ test("Om's rings on the Houses view are several at once, and each drawn its own 
   const all = rings.flat().map(look);
   expect(new Set(all).size, `no two circles drawn alike: ${all.join(" ")}`).toBe(all.length);
 });
-/* OUTSIDER'S DOOR ON THE HOUSES VIEW, on the view's own white (2026-10-11,
-   last — "ignore the making the darkening of the page for outsider, make it
-   white and agree with the theme in general"; the round before — "give it
-   physics, make the light actual light" — it darkened the view): nothing is
-   darkened — the motifs' canvas has no ground of its own, the words stay
-   ink, the stage is not marked dark — and the door stands shut, is pushed and
-   swings open past where it stands and back, settling ajar; and its light is
-   the house's green on the paper, where the gap is and on the floor before
-   it, nothing like it across the room. */
-test("Outsider's door on the Houses view stands on white, swings on its hinge, and lets its light through", async ({ page }) => {
+/* OUTSIDER'S DOOR AND WINDOW ON THE HOUSES VIEW, under one light (2026-10-12
+   — "please make the door less animated, more sobtle and do something
+   similar maybe with a window on the right side of the page. make sure that
+   the light sources agree with one another"; the day before, "ignore the
+   making the darkening of the page for outsider, make it white"): nothing
+   is darkened — the motifs' canvas has no ground of its own, the words stay
+   ink; the door is let open slowly to rest a little ajar and never swings
+   past it; a window stands high on the right of the same wall, clear of the
+   way round; the house's green comes through the door's gap and the
+   window's panes alike, and falls through both at one slant, from one
+   light; and the frames are in ink. */
+test("Outsider's door and window on the Houses view stand on white, the door easing open, one light through both", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/scent-descriptions/#house-11");
   await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
   await expect.poll(() => page.evaluate(() => window.HouseMotifs.doors().length), { timeout: 20000 }).toBe(1);
-  // THE SWING: shut, then pushed open past where it settles, and back.
-  let most = 0, settled = 0;
-  for (let i = 0; i < 40; i++) {
+  // THE DOOR, let open slowly: rising to rest and never past it.
+  let most = 0, last = 0, rest = 0, fell = 0;
+  for (let i = 0; i < 50; i++) {
     const d = await page.evaluate(() => window.HouseMotifs.doors()[0]);
-    if (d && d.pushed) { most = Math.max(most, d.angle); settled = d.angle; }
+    if (d) {
+      rest = d.rest;
+      if (d.angle < last - 0.004) fell++;
+      most = Math.max(most, d.angle);
+      last = d.angle;
+    }
     await page.waitForTimeout(150);
   }
-  expect(most, "it swung open").toBeGreaterThan(0.6);
-  expect(settled, "and settled ajar, back from the furthest it swung").toBeLessThan(most - 0.02);
-  expect(settled).toBeGreaterThan(0.3);
+  expect(last, "it came to rest a little ajar").toBeGreaterThan(rest * 0.85);
+  expect(most, "and never swung past where it rests").toBeLessThan(rest + 0.02);
+  expect(fell, "nor back").toBe(0);
   // NOTHING DARKENED: no ground on the motifs' canvas, the Menu in ink, the
   // stage not dark for the cursor, and no class left for a dark view.
   const ground = await page.locator(".sheet-motifs").evaluate((c) => getComputedStyle(c).backgroundColor);
@@ -602,25 +609,38 @@ test("Outsider's door on the Houses view stands on white, swings on its hinge, a
   const menu = await page.locator(".menu-trigger").evaluate((m) => getComputedStyle(m).color);
   expect(menu.match(/\d+/g).slice(0, 3).map(Number).every((v) => v < 80), "the Menu in ink: " + menu).toBe(true);
   expect(await page.locator(".sheet-stage.dark-surface, body.sheet-night").count()).toBe(0);
-  // THE LIGHT: green, where the gap and the floor before it are, on the left;
-  // across the room on the right, none. And the drawing in ink — nothing in
-  // it is a light colour laid on the white, which would not show.
-  const light = await page.locator(".sheet-motifs").evaluate((c) => {
-    const k = c.width / innerWidth, d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
-    let near = 0, far = 0, pale = 0, inked = 0;
+  // THE WINDOW, high on the right, clear of the way round.
+  const d = await page.evaluate(() => window.HouseMotifs.doors()[0]);
+  const nav = await page.locator(".sheet-nav").boundingBox();
+  expect(d.window, "a window").not.toBeNull();
+  expect(d.window.left, "on the right").toBeGreaterThan(1440 * 0.6);
+  expect(d.window.right, "clear of the way round").toBeLessThan(nav.x);
+  expect(d.window.bottom, "high in the wall").toBeLessThan(900 * 0.5);
+  // ONE LIGHT: falling through the door and the window at one slant.
+  expect(Math.abs(d.slant.door - d.slant.window), `one slant (${d.slant.door.toFixed(1)}° and ${d.slant.window.toFixed(1)}°)`).toBeLessThan(4);
+  // The house's green through the door, on the left, and through the
+  // window, in its box; between them, across the middle of the room, none —
+  // and the frames in ink.
+  const light = await page.locator(".sheet-motifs").evaluate((c, w) => {
+    const k = c.width / innerWidth, px = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+    let door = 0, win = 0, middle = 0, inked = 0;
     for (let y = 0; y < c.height; y += 2) for (let x = 0; x < c.width; x += 2) {
       const i = (y * c.width + x) * 4;
-      if (d[i + 3] < 40) continue;
-      if (d[i] < 90 && d[i + 1] < 90 && d[i + 2] < 90) inked++;
-      const green = d[i + 1] > d[i] + 25 && d[i + 1] > d[i + 2] + 12;
+      if (px[i + 3] < 40) continue;
+      if (px[i] < 90 && px[i + 1] < 90 && px[i + 2] < 90) inked++;
+      const green = px[i + 1] > px[i] + 25 && px[i + 1] > px[i + 2] + 12;
       if (!green) continue;
-      if (x / k < innerWidth * 0.35) near++; else if (x / k > innerWidth * 0.7) far++;
+      const X = x / k, Y = y / k;
+      if (X < innerWidth * 0.3) door++;
+      else if (X > w.left && X < w.right && Y > w.top && Y < w.bottom) win++;
+      else if (X > innerWidth * 0.35 && X < innerWidth * 0.6) middle++;
     }
-    return { near, far, inked };
-  });
-  expect(light.near, "green light through the gap and on the floor").toBeGreaterThan(300);
-  expect(light.far, "and none across the room").toBeLessThan(light.near / 20);
-  expect(light.inked, "the door and its frame drawn in ink").toBeGreaterThan(200);
+    return { door, win, middle, inked };
+  }, d.window);
+  expect(light.door, "green through the door's gap and on the floor").toBeGreaterThan(300);
+  expect(light.win, "and through the window").toBeGreaterThan(300);
+  expect(light.middle, "and none across the middle of the room").toBeLessThan(light.door / 20);
+  expect(light.inked, "the door, the window and their frames drawn in ink").toBeGreaterThan(200);
   expect(errors).toEqual([]);
 });
 

@@ -502,6 +502,43 @@ of** the rule that steps the Houses view back when a house is pressed, which sto
 that round. With the dark view gone it is whole again; see [Scent Descriptions at
 scale](2026-10-11-scent-descriptions-at-scale.md#found-on-the-way-the-page-stopped-stepping-back).
 
+## 2026-10-12 — Outsider's door calmer, a window beside it, one light through both
+
+The owner, of the Houses view: "please make the door less animated, more sobtle and do something
+similar maybe with a window on the right side of the page. ake sure that the light sources agree
+with one another. (in the hover animation in SD)".
+
+- **One light** (`LIGHT` in `motifs.js`): a light outside, beyond the wall, high and to the
+  **right**, far enough off that its rays are parallel — so the light through the door and through
+  the window falls at one slant, in one green (`OUT_GREEN`, `OUT_PALE`), at one strength
+  (`LIGHT_A`). It was a lamp close behind the door, its rays fanning from it. From the right,
+  because a door hinged on the left and opened away leaves its gap on the right: from the left, the
+  leaf stood between the light and the gap and none came through (worked out, and seen, before it
+  was turned round). The gap the light finds runs from **the leaf's shadow** across the doorway
+  (`shadowAt`) to the jamb, so it widens and narrows with the door.
+- **The door, calmer**: shut, and then **let open slowly** — over `DOOR_OPEN_MS` (3.2 s) from
+  `DOOR_OPEN_AT` — to rest a little ajar (`DOOR_REST`, 0.46 radians; it was 0.58), on a spring
+  **damped just enough that it never swings past** (`DOOR_DAMP` = 2√`DOOR_SPRING`); it was pushed
+  open past where it settled and swung back. A breath of a draft every nine to fifteen seconds; the
+  hand near its edge gives it a touch more (`DOOR_HAND`, 0.08), and it settles back; its rays no
+  longer flicker, its dust is fewer and slower, and all of it a little fainter.
+- **A window on the right**, high in the same wall, clear of the way round (read off the page, its
+  right edge before `.sheet-nav`'s left): a sash window in the frame's ink — its casing, the
+  opening, the sill proud of it, two sashes meeting at the middle rail, two by two panes in each —
+  drawn up from its sill as the door's frame is from the floor; its panes washed with the light,
+  palest at the middle; **a shaft** of it thrown along the light into the room, fading as it comes,
+  with a few fine rays in it; and dust lit only in it. None on a window narrower than 700px, where
+  the door has the room to itself.
+- **Seen from one place each, the same way**: each opening is drawn in perspective from an eye of
+  its own, and the window's stands to it as the door's stands to the door's gap, so the two lights
+  are seen falling at the same slant on the window — 96.0° and 96.2° at 1100, 1440 and 1920 wide
+  (they were 74° and 65° while the window's eye stood in the middle of the room).
+- **Drawn in front of the door where it crosses it**: the pool on the floor and the rays, which
+  come out of the wall towards us, are drawn over the leaf, which stands beyond it.
+
+`HouseMotifs.doors()` says, for the tests, the door's angle, where it rests and the most it is let
+open to, the window's box, and the slant each opening's light falls at on the window (`slant`).
+
 ## How to test it
 
 `npm test -- tests/om-and-the-tribe.spec.js`: Om **behind cracked glass and read through it**
@@ -522,9 +559,10 @@ light on the left and nothing on the right, some of it green) **and its opening 
 line of names **in a dropdown** and the ten new ones, **Equatorial's picture**, **its leaves and flocks** (quiet over the column); **the
 fragrances not smelled** on Om and Outsider; the cropped picture; **the shards and Outsider's
 merging motifs gone** (and `omMerge` with them); **Om's rings** on the Houses view (several at
-once, each drawn its own way), **Outsider's door on white** (no ground on the motifs, the Menu in
-ink, nothing marked dark; the door swinging and settling ajar; its light green through the gap and
-on the floor, nothing across the room, the frame in ink), **Lost Tribe's birds** staying when the view
+once, each drawn its own way), **Outsider's door and window on white** (no ground on the motifs, the
+Menu in ink, nothing marked dark; the door let open to rest, never past it nor back; a window high on
+the right, clear of the way round; the two lights at one slant, within four degrees; green through the
+door and through the window, none across the middle of the room, the frames in ink), **Lost Tribe's birds** staying when the view
 is pressed and turning from the hand; and each new house's motifs at the front of the Houses view
 (Om's `omRing`, Outsider's `door`). Quintessentially Amber's white frame is in
 `fragrance-line.spec.js`. The spec turns Playwright's trace off: recording it stalls the

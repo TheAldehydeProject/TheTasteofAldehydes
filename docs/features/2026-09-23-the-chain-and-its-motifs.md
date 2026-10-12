@@ -1013,3 +1013,10 @@ for outsider, make it white and agree with the theme in general"): no motif dark
 `night`, `NIGHT`, `sheet-night` or `dark-surface` from `motifs.js` — and Outsider's door is drawn on
 the view's own white, in ink hairlines, its light the house's green laid on the paper; see [their
 report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-11-the-very-last--oms-broken-glass-a-trial-a-button-to-mend-it-and-outsiders-door-on-white).
+
+## 2026-10-12 — Outsider's door calmer, and a window beside it under one light
+
+On the Houses view Outsider's door is **let open slowly to rest and never swings past it**, and a
+**window** stands high on the right of the same wall, **one light from outside** coming through
+both at one slant, in one green — written up in [their
+report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-12--outsiders-door-calmer-a-window-beside-it-one-light-through-both).

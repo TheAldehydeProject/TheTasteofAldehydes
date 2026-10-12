@@ -2692,7 +2692,7 @@
     };
   }
 
-  // ---------- OUTSIDER PARFUMS: a door ajar, its light through the gap ----------
+  // ---------- OUTSIDER PARFUMS: a door ajar and a window, one light through both ----------
   // (2026-10-11) "for outsider, remove the merginig motifs and I want you to
   // add a door that is slightly ajar, with a small ught coming from that
   // door. that is to be the main motif; similarly to les abstraits closet."
@@ -2701,39 +2701,59 @@
   // physics, make the light actual light, and darken the screen accordingly
   // please. Make this minimalistically realistic (with particles and
   // geometry again" — a door in a dark room, the view going dark round it;
-  // and since the last round of that day — "ignore the making the darkening
-  // of the page for outsider, make it white and agree with the theme in
-  // general" — the same door ON THE VIEW'S OWN WHITE PAPER, nothing darkened:
-  //   THE DOOR    a door in three dimensions, seen in perspective from the
-  //               middle of the room: its frame on the wall in ink hairlines
-  //               with a speck at every joint, as the armoire is drawn, the
-  //               leaf hinged on the left with its panels and its knob, as
-  //               thick as a door is — and SWINGING ON ITS HINGE (`swing`):
-  //               it stands shut, is pushed, swings open past where it will
-  //               stand, comes back and settles ajar, as a door on a spring
-  //               settles; a draft moves it now and then, and the hand near
-  //               its edge pushes it further open, and it swings back when
-  //               the hand goes.
-  //   THE LIGHT   a lamp in the room beyond (`lamp`), and its light coming
-  //               through the gap in the house's green, as light falls on
-  //               paper: the gap washed with it, palest at its middle; a few
-  //               fine rays out of it; on the floor in front the pool its
-  //               rays make, strongest at the threshold and fading as it
-  //               comes; a line of it under the door; the jamb and the frame's
-  //               lines tinged by how near they are to the gap — and all of
-  //               it as wide and as strong as the door is open, so it swings
-  //               with the door. Shut, only the line under the door.
-  //   THE DUST    specks in the air, seen only where the beam lights them.
+  // then — "ignore the making the darkening of the page for outsider, make
+  // it white and agree with the theme in general" — the same door on the
+  // view's own white paper, nothing darkened; and since 2026-10-12 —
+  // "please make the door less animated, more sobtle and do something
+  // similar maybe with a window on the right side of the page. make sure
+  // that the light sources agree with one another" — A DOOR AND A WINDOW IN
+  // ONE WALL, ONE LIGHT THROUGH BOTH:
+  //   THE LIGHT   one light outside, beyond the wall, high and to the right
+  //               (`LIGHT`, the way its rays travel: down, a little to the
+  //               left, and out of the wall towards us) — from the right, so
+  //               that it finds the gap a door hinged on the left leaves when
+  //               it is opened away (from the left the leaf stood in its way). It is far off, so
+  //               its rays are parallel: the light through the door's gap and
+  //               through the window's panes fall at one slant, in one green
+  //               (`OUT_GREEN`, `OUT_PALE`), at one strength (`LIGHT_A`).
+  //   THE DOOR    a door in three dimensions, seen in perspective: its frame
+  //               on the wall in ink hairlines with a speck at every joint, as
+  //               the armoire is drawn, the leaf hinged on the left with its
+  //               panels and its knob, as thick as a door is — EASING OPEN
+  //               (`swing`): it stands shut, and is let open slowly to rest a
+  //               little ajar, nothing swinging past it (a damped spring held
+  //               short of swinging, `DOOR_SPRING`, `DOOR_DAMP`); now and
+  //               then a breath of a draft, and the hand near its edge opens
+  //               it a touch, and it settles back when the hand goes. Its
+  //               light: the gap washed with it, palest at its middle, a few
+  //               fine rays out of it, the pool they make on the floor before
+  //               it, a line of it under the door, the lines near the gap
+  //               tinged — as wide as the light finds the gap left by the
+  //               door, so it opens with the door.
+  //   THE WINDOW  on the right, high in the same wall, clear of the way round
+  //               (`window_`, none on a narrow window): a sash window in the
+  //               frame's ink — its casing, the sill, two sashes, the panes —
+  //               drawn up from its sill, its panes washed with the same
+  //               light, the same light coming through them in shafts at the
+  //               same slant, fading as they come.
+  //   THE DUST    specks in the air, seen only where a beam lights them, in
+  //               the door's and in the window's.
   const OUT_GREEN = "58, 132, 92";       // the house's green, deep enough to read on white
   const OUT_PALE = "214, 236, 220";      // and paled, where the light is strongest
+  const LIGHT = { x: -0.2, y: 1, z: -0.62 }; // the way the light outside travels (down, left, out of the wall)
+  const LIGHT_A = 0.8;                   // how strongly it is drawn, door and window alike
   const DOOR_BUILD = 1500;               // ms, the frame drawn up from the floor
-  const DOOR_PUSH_MS = 1700;             // when the door is pushed open
-  const DOOR_REST = 0.58;                // radians it settles at
-  const DOOR_HAND = 0.95;                // and opens to with the hand at its edge
-  const DOOR_SPRING = 7;                 // how hard it is drawn back to rest
-  const DOOR_DAMP = 1.5;                 // and how quickly its swing dies
+  const DOOR_OPEN_AT = 1400;             // when it is let open
+  const DOOR_OPEN_MS = 3200;             // and how long it takes, easing, to come to rest
+  const DOOR_REST = 0.46;                // radians it rests at
+  const DOOR_HAND = 0.08;                // radians more it gives with the hand at its edge
+  const DOOR_SPRING = 5;                 // how hard it is drawn to where it is going
+  const DOOR_DAMP = 2 * Math.sqrt(5);    // and damped just enough that it never swings past
   const DOOR_FOCAL = 1500;               // px, the eye's distance
-  const BEAM_DUST = 90;
+  const BEAM_DUST = 60;
+  const WINDOW_DUST = 46;
+  /** Where a ray along LIGHT from (x, y, z) has got to after s. */
+  const along = (x, y, z, s) => [x + LIGHT.x * s, y + LIGHT.y * s, z + LIGHT.z * s];
   function door() {
     const tall = Math.max(240, Math.min(H * 0.62, 460));
     const wide = tall / 2.25;
@@ -2746,20 +2766,17 @@
     // its middle: so the leaf, swung away into the room beyond, is seen
     // narrowed towards its hinge and the gap it leaves is seen open.
     const eye = { x: O1 - wide * 0.35, y: baseY - tall * 0.58 };
-    const proj = (x, y, z) => { const k = DOOR_FOCAL / (DOOR_FOCAL + z); return [eye.x + (x - eye.x) * k, eye.y + (y - eye.y) * k]; };
-    // The lamp, in the room beyond: above the door's head and over to the
-    // hinge's side, so its light leaves the gap going down and out into the
-    // room, onto the floor.
-    const lamp = { x: O1 - wide * 0.5, y: topO - tall * 0.12, z: wide * 1.3 };
+    const projOf = (e) => (x, y, z) => { const k = DOOR_FOCAL / (DOOR_FOCAL + z); return [e.x + (x - e.x) * k, e.y + (y - e.y) * k]; };
+    const proj = projOf(eye);
 
     // THE FRAME, on the wall: hairlines, each drawn up from its lower end.
     const lines = [];
-    const put = (pts, weight) => {
+    const put = (pts, weight, list, foot, high) => {
       let len = 0;
       const at = [0];
       for (let i = 1; i < pts.length; i++) { len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); at.push(len); }
-      const ys = pts.map((q) => (baseY - q[1]) / tall);
-      lines.push({ pts, at, len: Math.max(0.01, len), from: Math.min(...ys), to: Math.max(...ys), weight: weight || 1 });
+      const ys = pts.map((q) => ((foot || baseY) - q[1]) / (high || tall));
+      (list || lines).push({ pts, at, len: Math.max(0.01, len), from: Math.min(...ys), to: Math.max(...ys), weight: weight || 1 });
     };
     put([[left, baseY], [left, baseY - tall]]); put([[left + wide, baseY], [left + wide, baseY - tall]]);
     put([[O1, baseY], [O1, topO]]); put([[O2, baseY], [O2, topO]]);
@@ -2767,82 +2784,182 @@
     put([[left - f * 0.35, baseY - tall], [left - f * 0.35, baseY - tall - head * 0.32], [left + wide + f * 0.35, baseY - tall - head * 0.32], [left + wide + f * 0.35, baseY - tall]], 0.9);
     put([[left, baseY - f * 1.6], [O1, baseY - f * 1.6]], 0.7); put([[O2, baseY - f * 1.6], [left + wide, baseY - f * 1.6]], 0.7);
     put([[left - wide * 0.4, baseY], [left + wide * 1.6, baseY]], 0.6);
+
+    // THE WINDOW, on the right, high in the same wall, clear of the way
+    // round down the side of the view (read off the page), and none where
+    // the view is too narrow for one.
+    let win = null;
+    if (W >= 700) {
+      const nav = document.querySelector(".sheet-nav");
+      const navLeft = nav ? nav.getBoundingClientRect().left : W - 160;
+      const ww = Math.min(200, W * 0.125), wh = Math.min(ww * 1.32, H * 0.27);
+      const wr = Math.min(W - 40, navLeft - 28), wl = wr - ww;
+      const wt = Math.max(84, H * 0.12), wb = wt + wh;
+      if (wl > W * 0.6) {
+        const c = ww * 0.07;                       // the casing's width
+        const X1 = wl + c, X2 = wr - c, Y1 = wt + c, Y2 = wb - c * 0.6;
+        // Its eye stands to it as the door's stands to the door's gap, so
+        // the light through the two is seen falling at one slant.
+        win = { wl, wr, wt, wb, X1, X2, Y1, Y2, lines: [], eye: { x: (X1 + X2) / 2 - wide * 1.08, y: (Y1 + Y2) / 2 } };
+        win.proj = projOf(win.eye);
+        // Drawn up from its sill, as the door's frame is from the floor.
+        const wput = (pts, weight) => put(pts, weight, win.lines, wb + c, wh + c * 2);
+        // Casing, the opening, the sill proud of it, two sashes meeting at
+        // the middle rail, each of two by two panes.
+        wput([[wl, wb], [wl, wt], [wr, wt], [wr, wb]]);
+        wput([[X1, Y2], [X1, Y1], [X2, Y1], [X2, Y2]], 0.8);
+        wput([[wl - c * 0.8, wb], [wr + c * 0.8, wb]]);
+        wput([[wl - c * 0.8, wb + c * 0.55], [wr + c * 0.8, wb + c * 0.55]], 0.7);
+        const mid = (Y1 + Y2) / 2;
+        wput([[X1, mid - 1.5], [X2, mid - 1.5]], 0.9); wput([[X1, mid + 1.5], [X2, mid + 1.5]], 0.9);
+        const mx = (X1 + X2) / 2;
+        wput([[mx, Y2], [mx, mid + 1.5]], 0.7); wput([[mx, mid - 1.5], [mx, Y1]], 0.7);
+        wput([[X1, (mid + Y2) / 2], [X2, (mid + Y2) / 2]], 0.6); wput([[X1, (Y1 + mid) / 2], [X2, (Y1 + mid) / 2]], 0.6);
+        win.panes = [];
+        [[Y1, (Y1 + mid) / 2], [(Y1 + mid) / 2, mid - 1.5], [mid + 1.5, (mid + Y2) / 2], [(mid + Y2) / 2, Y2]].forEach(([y0, y1]) => {
+          win.panes.push([X1, y0, mx, y1], [mx, y0, X2, y1]);
+        });
+        // Its shafts: rays from points of the opening, each its own.
+        win.rays = Array.from({ length: 9 }, () => ({ u: rand(0.08, 0.92), v: rand(0.05, 0.95), thick: rand(1, 3.5), w: rand(0.5, 1) }));
+        win.dust = Array.from({ length: WINDOW_DUST }, () => ({
+          x: rand(X1 - ww * 0.6, X2 + ww * 0.2), y: rand(Y1, baseY), z: rand(-ww * 1.6, -4),
+          vx: rand(-2, 2), vy: rand(-2, 1), vz: rand(-2, 2), s: rand(0.9, 1.8), ph: rand(0, 6.3),
+        }));
+      }
+    }
     const joints = [];
     const seen = new Set();
-    lines.forEach((l) => l.pts.forEach((q, i) => {
+    lines.concat(win ? win.lines : []).forEach((l) => l.pts.forEach((q, i) => {
       const key = Math.round(q[0]) + "," + Math.round(q[1]);
       if (seen.has(key) || l.weight < 0.6) return;
       seen.add(key);
       joints.push({ x: q[0], y: q[1], l, at: l.at[i] });
     }));
 
-    // THE SWING: an angle on a damped spring, pushed open once and now and
-    // then by a draft, and by the hand.
-    let angle = 0, spin = 0, pushed = false, nextDraft = rand(4, 7), lastAge = 0, handGive = 0;
-    // The dust in the air before the door, in the room's own space.
+    // THE SWING: an angle on a damped spring, let open slowly, and now and
+    // then breathed on by a draft, and by the hand.
+    let angle = 0, spin = 0, lastAge = 0, handGive = 0, nextDraft = rand(9, 15);
     const dust = Array.from({ length: BEAM_DUST }, () => ({
-      x: O2 + rand(-wide * 0.6, wide * 2.4), y: rand(topO - tall * 0.1, baseY), z: rand(-wide * 2.2, -4),
-      vx: rand(-4, 4), vy: rand(-5, 2), vz: rand(-3, 3), s: rand(0.9, 2), ph: rand(0, 6.3),
+      x: O2 + rand(-wide * 1.2, wide * 0.4), y: rand(topO, baseY), z: rand(-wide * 1.8, -4),
+      vx: rand(-2, 2), vy: rand(-2, 1), vz: rand(-2, 2), s: rand(0.9, 1.8), ph: rand(0, 6.3),
     }));
-
-    // The rays through the gap, each its own: where across the gap and how
-    // high, how thick, how strong and how it flickers.
-    const rays = Array.from({ length: 13 }, () => ({ u: rand(0.12, 0.88), v: rand(0.03, 0.92), thick: rand(1, 5), w: rand(0.45, 1), rate: rand(500, 1400), ph: rand(0, 6.3) }));
+    const rays = Array.from({ length: 10 }, () => ({ u: rand(0.12, 0.88), v: rand(0.03, 0.92), thick: rand(1, 4), w: rand(0.45, 1) }));
     // Where the door's free edge is, for an angle: out from the hinge, into
     // the room beyond.
     const edgeAt = (a) => ({ x: O1 + span * Math.cos(a), z: span * Math.sin(a) });
-    // How much of the lamp's light comes through the gap the door leaves.
-    const openness = (a) => Math.max(0, Math.min(1, (O2 - edgeAt(a).x) / (span * 0.3)));
+    // Where the leaf's shadow falls across the doorway, in the light from
+    // outside: the line along the light from the free edge to the wall —
+    // the gap the light finds runs from there to the jamb.
+    const shadowAt = (e) => e.x + LIGHT.x * (e.z / -LIGHT.z);
+    const openness = (a) => Math.max(0, Math.min(1, (O2 - shadowAt(edgeAt(a))) / (span * 0.3)));
 
-    // Light from the gap at a point on the wall: falling off with distance.
     function wallLight(x, y, gx, gy, open) {
       const d = Math.hypot(x - gx, (y - gy) * 0.8) / tall;
       return open * Math.max(0, 1 - d * 1.5) ** 2;
     }
-    // Inside the beam: a point (x, y, z) in front of the wall is lit when the
-    // line from the lamp to it passes through the gap.
-    function inBeam(p, e) {
+    // A point in the room before the wall is lit when the line back along
+    // the light from it passes through the opening: the door's gap, from
+    // the leaf's shadow to the jamb; or the window's panes.
+    function backToWall(p) {
+      const s = p.z / LIGHT.z;                       // both below nothing, so s > 0
+      return [p.x - LIGHT.x * s, p.y - LIGHT.y * s];
+    }
+    function inDoorBeam(p, lo) {
       if (p.z >= 0) return 0;
-      const s = (0 - lamp.z) / (p.z - lamp.z);               // where the ray crosses the wall
-      const wx = lamp.x + (p.x - lamp.x) * s, wy = lamp.y + (p.y - lamp.y) * s;
-      if (wy < topO || wy > baseY) return 0;
-      // The gap is from the door's edge (seen from the lamp, on the wall) to the jamb.
-      const se = (e.z - lamp.z) === 0 ? 1 : (0 - lamp.z) / (e.z - lamp.z);
-      const ex = lamp.x + (e.x - lamp.x) * se;
-      const lo = Math.min(ex, O2), hi = Math.max(ex, O2);
-      if (wx < lo || wx > hi) return 0;
-      const edge = Math.min(wx - lo, hi - wx) / Math.max(1, hi - lo);
+      const [wx, wy] = backToWall(p);
+      if (wy < topO || wy > baseY || wx < lo || wx > O2) return 0;
+      const edge = Math.min(wx - lo, O2 - wx) / Math.max(1, O2 - lo);
       return Math.min(1, edge * 6) / (1 + (-p.z) / (wide * 1.6));
     }
+    function inWindowBeam(p) {
+      if (p.z >= 0) return 0;
+      const [wx, wy] = backToWall(p);
+      if (wx < win.X1 || wx > win.X2 || wy < win.Y1 || wy > win.Y2) return 0;
+      const edge = Math.min(wx - win.X1, win.X2 - wx, wy - win.Y1, win.Y2 - wy) / Math.max(1, win.X2 - win.X1);
+      return Math.min(1, edge * 5) / (1 + (-p.z) / (win.X2 - win.X1));
+    }
+    function stepDust(list, dt, keep) {
+      list.forEach((m) => {
+        m.vx += rand(-3, 3) * dt; m.vy += (rand(-3, 3) - 0.5) * dt; m.vz += rand(-3, 3) * dt;
+        m.vx *= 0.985; m.vy *= 0.985; m.vz *= 0.985;
+        m.x += m.vx * dt; m.y += m.vy * dt; m.z += m.vz * dt;
+        keep(m);
+      });
+    }
+    // A run of rays along the light from points of an opening, each fading
+    // as it goes, in four lengths.
+    function drawRays(c, list, at, sOf, pr, L) {
+      c.strokeStyle = "rgb(" + OUT_GREEN + ")";
+      list.forEach((ry) => {
+        const [x, y, z] = at(ry);
+        const s1 = sOf(y);
+        const p0 = pr(x, y, z), p1 = pr(...along(x, y, z, s1));
+        c.lineWidth = Math.max(0.8, ry.thick * 0.5);
+        for (let q = 0; q < 4; q++) {
+          c.globalAlpha = Math.min(1, 0.07 * L * ry.w * (1 - q / 4) * (1 - q / 4));
+          c.beginPath();
+          c.moveTo(p0[0] + (p1[0] - p0[0]) * (q / 4), p0[1] + (p1[1] - p0[1]) * (q / 4));
+          c.lineTo(p0[0] + (p1[0] - p0[0]) * ((q + 1) / 4), p0[1] + (p1[1] - p0[1]) * ((q + 1) / 4));
+          c.stroke();
+        }
+      });
+      c.globalAlpha = 1;
+    }
+    // Where a line drawn up from its foot has got to, for the build.
+    function strokeBuilt(c, l, reach, colour, alpha) {
+      const k = Math.max(0, Math.min(1, (reach - l.from) / Math.max(0.06, l.to - l.from)));
+      l.k = k;
+      if (k <= 0) return;
+      const upTo = l.len * k;
+      c.strokeStyle = "rgba(" + colour + "," + alpha.toFixed(3) + ")";
+      c.beginPath();
+      c.moveTo(l.pts[0][0], l.pts[0][1]);
+      for (let i = 1; i < l.pts.length; i++) {
+        const seg = l.at[i] - l.at[i - 1];
+        if (l.at[i] <= upTo || seg <= 0) { c.lineTo(l.pts[i][0], l.pts[i][1]); continue; }
+        const q = (upTo - l.at[i - 1]) / seg;
+        c.lineTo(l.pts[i - 1][0] + (l.pts[i][0] - l.pts[i - 1][0]) * q, l.pts[i - 1][1] + (l.pts[i][1] - l.pts[i - 1][1]) * q);
+        break;
+      }
+      c.stroke();
+    }
+    // What the tests read: the door's swing, and the slant each opening's
+    // light falls at on the window, in degrees.
+    const slant = (pr, x, y) => {
+      const a = pr(x, y, 0), b = pr(...along(x, y, 0, tall * 0.3));
+      return (Math.atan2(b[1] - a[1], b[0] - a[0]) * 180) / Math.PI;
+    };
 
     return {
       fadeIn: 1,
-      swing: () => ({ angle: angle, spin: spin, pushed: pushed }),
-      box: { left: left - 30, right: left + wide * 2.4, top: baseY - tall - 30, bottom: H },
+      swing: () => ({ angle: angle, spin: spin, rest: DOOR_REST, most: DOOR_REST + DOOR_HAND,
+        window: win ? { left: win.wl, right: win.wr, top: win.wt, bottom: win.wb } : null,
+        slant: { door: slant(proj, O2 - span * 0.1, (topO + baseY) / 2), window: win ? slant(win.proj, (win.X1 + win.X2) / 2, (win.Y1 + win.Y2) / 2) : null } }),
+      box: { left: left - 30, right: win ? win.wr + 40 : left + wide * 2.4, top: Math.min(baseY - tall - 30, win ? win.wt - 20 : H), bottom: H },
       draw(c, age, a) {
         const dt = Math.min(0.05, Math.max(0, (age - lastAge) / 1000));
         lastAge = age;
         const reach = ease(age / DOOR_BUILD) * 1.1;
         if (reach <= 0) return;
 
-        // THE SWING.
-        if (!pushed && age > DOOR_PUSH_MS) { pushed = true; spin = 2.4; }
-        if (pushed) {
-          nextDraft -= dt;
-          if (nextDraft <= 0) { spin += rand(-0.35, 0.45); nextDraft = rand(4, 8); }
-          const e = edgeAt(angle), [ex, ey] = proj(e.x, baseY - (tall - head) / 2, e.z);
+        // THE SWING: drawn towards where it is going — shut, then let open
+        // to rest over DOOR_OPEN_MS, a touch more with the hand at its edge —
+        // on a spring damped so it never swings past.
+        const opened = ease((age - DOOR_OPEN_AT) / DOOR_OPEN_MS);
+        nextDraft -= dt;
+        if (opened >= 1 && nextDraft <= 0) { spin += rand(-0.03, 0.04); nextDraft = rand(9, 15); }
+        {
+          const e = edgeAt(angle), [ex] = proj(e.x, baseY - (tall - head) / 2, e.z);
           const near = hand.x > -9000 && hand.x > left - 40 && hand.x < ex + wide * 0.6 && hand.y > topO - 40 && hand.y < baseY + 20 ? 1 : 0;
-          handGive += (near - handGive) * Math.min(1, dt * 3);
-          const rest = DOOR_REST + (DOOR_HAND - DOOR_REST) * handGive;
-          spin += (-DOOR_SPRING * (angle - rest) - DOOR_DAMP * spin) * dt;
-          angle += spin * dt;
-          // The door stops: against the frame shut, against the wall open.
-          if (angle < 0) { angle = 0; spin = -spin * 0.3; }
-          if (angle > 1.35) { angle = 1.35; spin = -spin * 0.3; }
+          handGive += (near - handGive) * Math.min(1, dt * 1.5);
         }
+        const target = DOOR_REST * opened + DOOR_HAND * handGive * opened;
+        spin += (-DOOR_SPRING * (angle - target) - DOOR_DAMP * spin) * dt;
+        angle = Math.max(0, Math.min(1.2, angle + spin * dt));
         const e = edgeAt(angle);
+        const lo = Math.max(shadowAt(e), O1);
         const open = openness(angle);
-        const lit = open * (0.92 + 0.05 * Math.sin(age / 900) + 0.03 * Math.sin(age / 270 + 1.3));
+        const lit = open * LIGHT_A;
 
         // The door's corners on the window: the hinge on the wall, the free
         // edge out in the room, its thickness behind it.
@@ -2859,161 +2976,164 @@
         c.lineJoin = "round";
         const built = Math.min(1, reach);
 
-        // THE LIGHT, laid on the paper: the wash round the gap on the wall,
-        // the pool on the floor, the rays, the gap itself.
+        // THE DOOR'S LIGHT beyond it, laid on the paper: the wash round the
+        // gap, and the gap itself (the pool and the rays, before it, are
+        // drawn over the leaf, below).
         if (lit > 0.003 && built > 0.6) {
           const L = lit * a * Math.min(1, (built - 0.6) / 0.3);
-          // The wash on the wall round the gap.
           const gr = tall * 0.42;
           const glow = c.createRadialGradient(gx, gy, 0, gx, gy, gr);
-          glow.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.1 * L).toFixed(3) + ")");
-          glow.addColorStop(0.5, "rgba(" + OUT_GREEN + "," + (0.025 * L).toFixed(3) + ")");
+          glow.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.07 * L).toFixed(3) + ")");
+          glow.addColorStop(0.5, "rgba(" + OUT_GREEN + "," + (0.018 * L).toFixed(3) + ")");
           glow.addColorStop(1, "rgba(" + OUT_GREEN + ",0)");
           c.fillStyle = glow;
           c.fillRect(gx - gr, gy - gr, gr * 2, gr * 2);
-          // The pool on the floor: the lamp's rays through the foot of the
-          // gap, thrown out across the floor towards us.
-          const far = -DOOR_FOCAL * 0.5;
-          const throwFrom = (x, z) => {
-            const dx = x - lamp.x, dz = z - lamp.z;
-            const s = (far - z) / dz;
-            return proj(x + dx * s, baseY, far);
-          };
-          const P0 = proj(e.x, baseY, e.z), P1 = proj(O2, baseY, 0);
-          const P2 = throwFrom(O2, 0), P3 = throwFrom(e.x, e.z);
-          const pool = c.createLinearGradient(P1[0], P1[1], (P2[0] + P3[0]) / 2, (P2[1] + P3[1]) / 2);
-          pool.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.3 * L).toFixed(3) + ")");
-          pool.addColorStop(0.08, "rgba(" + OUT_GREEN + "," + (0.18 * L).toFixed(3) + ")");
-          pool.addColorStop(0.4, "rgba(" + OUT_GREEN + "," + (0.05 * L).toFixed(3) + ")");
-          pool.addColorStop(1, "rgba(" + OUT_GREEN + ",0)");
-          c.fillStyle = pool;
-          poly([P0, P1, P2, P3]);
-          c.fill();
-          // THE RAYS: a few, fine, each from the lamp through a point of the
-          // gap and on down until it meets the floor, fading as they go — the
-          // dust lit in them (below). (A beam drawn as one shape had hard
-          // edges, which light has not.)
-          const out = (x, y, z, s) => proj(lamp.x + (x - lamp.x) * s, lamp.y + (y - lamp.y) * s, lamp.z + (z - lamp.z) * s);
-          c.strokeStyle = "rgb(" + OUT_GREEN + ")";
-          rays.forEach((ry) => {
-            const x = e.x + (O2 - e.x) * ry.u, z = e.z * (1 - ry.u), y = topO + (baseY - topO) * ry.v;
-            const sFloor = (baseY - lamp.y) / (y - lamp.y);
-            const s1 = Math.min(sFloor, 1 + (wide * 2.4) / lamp.z);
-            const p0 = proj(x, y, z), p1 = out(x, y, z, s1);
-            const flick = 0.75 + 0.25 * Math.sin(age / ry.rate + ry.ph);
-            c.lineWidth = Math.max(0.8, ry.thick * 0.5);
-            for (let q = 0; q < 4; q++) {
-              c.globalAlpha = Math.min(1, 0.09 * L * flick * ry.w * (1 - q / 4) * (1 - q / 4));
-              const a0 = q / 4, a1 = (q + 1) / 4;
-              c.beginPath();
-              c.moveTo(p0[0] + (p1[0] - p0[0]) * a0, p0[1] + (p1[1] - p0[1]) * a0);
-              c.lineTo(p0[0] + (p1[0] - p0[0]) * a1, p0[1] + (p1[1] - p0[1]) * a1);
-              c.stroke();
-            }
-          });
-          c.globalAlpha = 1;
-          // The gap: the room beyond, lit — the green at its edges, paling
-          // to its middle, where the light is strongest.
+          // The gap: the room beyond, lit — green at its edges, paling to
+          // its middle.
           const gap = c.createLinearGradient(E0[0], 0, J0[0], 0);
-          gap.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.42 * L).toFixed(3) + ")");
-          gap.addColorStop(0.5, "rgba(" + OUT_PALE + "," + (0.95 * L).toFixed(3) + ")");
-          gap.addColorStop(1, "rgba(" + OUT_GREEN + "," + (0.36 * L).toFixed(3) + ")");
+          gap.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.3 * L).toFixed(3) + ")");
+          gap.addColorStop(0.5, "rgba(" + OUT_PALE + "," + (0.85 * L).toFixed(3) + ")");
+          gap.addColorStop(1, "rgba(" + OUT_GREEN + "," + (0.26 * L).toFixed(3) + ")");
           c.fillStyle = gap;
           poly([E0, J0, J1, E1]);
           c.fill();
         }
 
-        // THE DOOR: its face towards us, away from the lamp, in a faint
+        // THE WINDOW'S LIGHT: its panes washed with the light outside, and
+        // shafts of it along the same light, fading as they come.
+        if (win && built > 0.6) {
+          const L = LIGHT_A * a * Math.min(1, (built - 0.6) / 0.3);
+          const sLong = (win.Y2 - win.Y1) * 1.5;
+          const wp = win.proj;
+          // The shaft: the opening thrown along the light, fading.
+          const C0 = wp(win.X1, win.Y1, 0), C1 = wp(win.X2, win.Y1, 0), C2 = wp(win.X2, win.Y2, 0), C3 = wp(win.X1, win.Y2, 0);
+          const F0 = wp(...along(win.X1, win.Y1, 0, sLong)), F1 = wp(...along(win.X2, win.Y1, 0, sLong));
+          const F2 = wp(...along(win.X2, win.Y2, 0, sLong)), F3 = wp(...along(win.X1, win.Y2, 0, sLong));
+          const mid0 = [(C0[0] + C2[0]) / 2, (C0[1] + C2[1]) / 2], mid1 = [(F0[0] + F2[0]) / 2, (F0[1] + F2[1]) / 2];
+          const shaft = c.createLinearGradient(mid0[0], mid0[1], mid1[0], mid1[1]);
+          shaft.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.045 * L).toFixed(3) + ")");
+          shaft.addColorStop(1, "rgba(" + OUT_GREEN + ",0)");
+          c.fillStyle = shaft;
+          // Its outline: the opening and its far end, whichever sides are
+          // outermost — the hull of the eight corners, which for a light
+          // falling down and to the left is these six.
+          poly([C0, C1, C2, F2, F3, F0]);
+          c.fill();
+          drawRays(c, win.rays, (ry) => [win.X1 + (win.X2 - win.X1) * ry.u, win.Y1 + (win.Y2 - win.Y1) * ry.v, 0],
+            () => sLong, wp, L);
+          // The panes, lit: green at the frame, paling to the middle.
+          const pg = c.createRadialGradient((win.X1 + win.X2) / 2, (win.Y1 + win.Y2) / 2, 0, (win.X1 + win.X2) / 2, (win.Y1 + win.Y2) / 2, (win.Y2 - win.Y1) * 0.6);
+          pg.addColorStop(0, "rgba(" + OUT_PALE + "," + (0.55 * L).toFixed(3) + ")");
+          pg.addColorStop(1, "rgba(" + OUT_GREEN + "," + (0.1 * L).toFixed(3) + ")");
+          c.fillStyle = pg;
+          win.panes.forEach(([x0, y0, x1, y1]) => c.fillRect(x0 + 1.5, y0 + 1.5, x1 - x0 - 3, y1 - y0 - 3));
+        }
+
+        // THE DOOR: its face towards us, away from the light, in a faint
         // shade; its edge catching the light.
         if (built > 0.5) {
           const up = Math.min(1, (built - 0.5) / 0.4) * a;
-          // The paper first, so nothing of the light behind it shows through.
           c.fillStyle = "rgba(255, 255, 255," + up.toFixed(3) + ")";
           poly([H0, E0, E1, H1]); c.fill();
-          c.fillStyle = "rgba(" + INK + "," + (0.06 * up).toFixed(3) + ")";
+          c.fillStyle = "rgba(" + INK + "," + (0.05 * up).toFixed(3) + ")";
           poly([H0, E0, E1, H1]); c.fill();
-          // Its edge, the thickness of it, in the light.
-          c.fillStyle = "rgba(" + OUT_GREEN + "," + ((0.08 + 0.3 * lit) * up).toFixed(3) + ")";
+          c.fillStyle = "rgba(" + OUT_GREEN + "," + ((0.06 + 0.24 * lit) * up).toFixed(3) + ")";
           poly([E0, B0, B1, E1]); c.fill();
-          // Its outline, and its panels, in the frame's ink.
           c.lineWidth = 1;
-          c.strokeStyle = "rgba(" + INK + "," + (0.62 * up).toFixed(3) + ")";
+          c.strokeStyle = "rgba(" + INK + "," + (0.56 * up).toFixed(3) + ")";
           poly([H0, E0, E1, H1]); c.stroke();
-          c.strokeStyle = "rgba(" + INK + "," + (0.36 * up).toFixed(3) + ")";
+          c.strokeStyle = "rgba(" + INK + "," + (0.32 * up).toFixed(3) + ")";
           poly([E0, B0, B1, E1]); c.stroke();
           const on = (u, v) => {
             const x = O1 + (e.x - O1) * u, z = e.z * u, y = topO + 1 + (baseY - 3 - topO) * v;
             return proj(x, y, z);
           };
-          c.strokeStyle = "rgba(" + INK + "," + (0.3 * up).toFixed(3) + ")";
+          c.strokeStyle = "rgba(" + INK + "," + (0.27 * up).toFixed(3) + ")";
           [[0.1, 0.45, 0.07, 0.5], [0.55, 0.9, 0.07, 0.5], [0.1, 0.45, 0.57, 0.93], [0.55, 0.9, 0.57, 0.93]].forEach(([u0, u1, v0, v1]) => {
             poly([on(u0, v0), on(u1, v0), on(u1, v1), on(u0, v1)]); c.stroke();
           });
           const knob = on(0.88, 0.53);
-          c.strokeStyle = "rgba(" + INK + "," + (0.6 * up).toFixed(3) + ")";
+          c.strokeStyle = "rgba(" + INK + "," + (0.55 * up).toFixed(3) + ")";
           c.beginPath(); c.arc(knob[0], knob[1], Math.max(2, wide * 0.022), 0, Math.PI * 2); c.stroke();
           // The line of light under the door, even shut.
-          c.strokeStyle = "rgba(" + OUT_GREEN + "," + ((0.3 + 0.45 * lit) * up).toFixed(3) + ")";
-          c.lineWidth = 1.3;
+          c.strokeStyle = "rgba(" + OUT_GREEN + "," + ((0.24 + 0.36 * lit) * up).toFixed(3) + ")";
+          c.lineWidth = 1.2;
           c.beginPath(); c.moveTo(H1[0] + 1, H1[1] + 1.5); c.lineTo(E1[0], E1[1] + 1.5); c.stroke();
         }
 
-        // THE FRAME, drawn up from the floor in ink, each line tinged green
-        // by how near it is to the light from the gap, and a speck at every
-        // joint.
+        // THE DOOR'S LIGHT BEFORE IT, in our room, so over the leaf where it
+        // crosses it: the pool on the floor and the rays.
+        if (lit > 0.003 && built > 0.6) {
+          const L = lit * a * Math.min(1, (built - 0.6) / 0.3);
+          // The pool: the lit part of the doorway thrown along the light onto
+          // the floor before it — the threshold where the gap meets the
+          // floor, and the head of the gap thrown furthest out.
+          const sTop = (baseY - topO) / LIGHT.y;
+          const P0 = proj(lo, baseY, 0), P1 = proj(O2, baseY, 0);
+          const P2 = proj(...along(O2, topO, 0, sTop)), P3 = proj(...along(lo, topO, 0, sTop));
+          const pool = c.createLinearGradient(P1[0], P1[1], (P2[0] + P3[0]) / 2, (P2[1] + P3[1]) / 2);
+          pool.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.22 * L).toFixed(3) + ")");
+          pool.addColorStop(0.15, "rgba(" + OUT_GREEN + "," + (0.12 * L).toFixed(3) + ")");
+          pool.addColorStop(1, "rgba(" + OUT_GREEN + ",0.01)");
+          c.fillStyle = pool;
+          poly([P0, P1, P2, P3]);
+          c.fill();
+          // The rays, along the light from points of the gap the light finds.
+          drawRays(c, rays, (ry) => [lo + (O2 - lo) * ry.u, topO + (baseY - topO) * ry.v, 0],
+            (y) => Math.min((baseY - y) / LIGHT.y, tall * 0.9), proj, L);
+        }
+
+        // THE FRAMES, drawn up from the floor and the sill in ink, the
+        // door's lines tinged green by how near they are to its gap, and a
+        // speck at every joint.
         c.lineWidth = 1;
         lines.forEach((l) => {
-          const k = Math.max(0, Math.min(1, (reach - l.from) / Math.max(0.06, l.to - l.from)));
-          l.k = k;
-          if (k <= 0) return;
-          const upTo = l.len * k;
-          // The light on it, from its middle.
           const mx = (l.pts[0][0] + l.pts[l.pts.length - 1][0]) / 2, my = (l.pts[0][1] + l.pts[l.pts.length - 1][1]) / 2;
           const shine = wallLight(mx, my, gx, gy, lit);
-          c.strokeStyle = "rgba(" + (shine > 0.25 ? OUT_GREEN : INK) + "," + ((0.5 + 0.2 * shine) * l.weight * a).toFixed(3) + ")";
-          c.beginPath();
-          c.moveTo(l.pts[0][0], l.pts[0][1]);
-          for (let i = 1; i < l.pts.length; i++) {
-            const seg = l.at[i] - l.at[i - 1];
-            if (l.at[i] <= upTo || seg <= 0) { c.lineTo(l.pts[i][0], l.pts[i][1]); continue; }
-            const q = (upTo - l.at[i - 1]) / seg;
-            c.lineTo(l.pts[i - 1][0] + (l.pts[i][0] - l.pts[i - 1][0]) * q, l.pts[i - 1][1] + (l.pts[i][1] - l.pts[i - 1][1]) * q);
-            break;
-          }
-          c.stroke();
+          strokeBuilt(c, l, reach, shine > 0.25 ? OUT_GREEN : INK, (0.46 + 0.2 * shine) * l.weight * a);
         });
-        // The jamb the light falls past, lit along its edge.
+        if (win) win.lines.forEach((l) => strokeBuilt(c, l, reach, INK, 0.46 * l.weight * a));
         if (lit > 0.01 && built >= 1) {
-          c.strokeStyle = "rgba(" + OUT_GREEN + "," + (0.55 * lit * a).toFixed(3) + ")";
-          c.lineWidth = 1.4;
+          c.strokeStyle = "rgba(" + OUT_GREEN + "," + (0.5 * lit * a).toFixed(3) + ")";
+          c.lineWidth = 1.3;
           c.beginPath(); c.moveTo(J0[0], J0[1]); c.lineTo(J1[0], J1[1]); c.stroke();
           c.lineWidth = 1;
         }
         joints.forEach((jn) => {
           if (!jn.l.k || jn.at > jn.l.len * jn.l.k + 0.01) return;
           const shine = wallLight(jn.x, jn.y, gx, gy, lit);
-          c.fillStyle = "rgba(" + (shine > 0.25 ? OUT_GREEN : INK) + "," + ((0.7 + 0.25 * shine) * a).toFixed(3) + ")";
-          c.fillRect(jn.x - 1.2, jn.y - 1.2, 2.4, 2.4);
+          c.fillStyle = "rgba(" + (shine > 0.25 ? OUT_GREEN : INK) + "," + ((0.62 + 0.25 * shine) * a).toFixed(3) + ")";
+          c.fillRect(jn.x - 1.1, jn.y - 1.1, 2.2, 2.2);
         });
 
-        // THE DUST, drifting, seen only in the light.
+        // THE DUST, drifting slowly, seen only in the light.
+        c.fillStyle = "rgb(" + OUT_GREEN + ")";
         if (lit > 0.01) {
-          c.fillStyle = "rgb(" + OUT_GREEN + ")";
-          dust.forEach((m) => {
-            m.vx += rand(-6, 6) * dt; m.vy += (rand(-6, 6) - 1.2) * dt; m.vz += rand(-6, 6) * dt;
-            m.vx *= 0.98; m.vy *= 0.98; m.vz *= 0.98;
-            m.x += m.vx * dt; m.y += m.vy * dt; m.z += m.vz * dt;
-            if (m.y < topO - tall * 0.2 || m.y > baseY || m.z > -2 || m.z < -wide * 2.6 || m.x < O1 - wide || m.x > O2 + wide * 3) {
-              m.x = O2 + rand(-wide * 0.4, wide * 2); m.y = rand(topO, baseY); m.z = rand(-wide * 2, -6);
+          stepDust(dust, dt, (m) => {
+            if (m.y < topO - tall * 0.2 || m.y > baseY || m.z > -2 || m.z < -wide * 2.2 || m.x < O1 - wide * 1.4 || m.x > O2 + wide) {
+              m.x = O2 + rand(-wide * 1.1, wide * 0.3); m.y = rand(topO, baseY); m.z = rand(-wide * 1.6, -6);
             }
-            const b = inBeam(m, e);
+            const b = inDoorBeam(m, lo);
             if (b <= 0.01) return;
             const [x, y] = proj(m.x, m.y, m.z);
-            c.globalAlpha = Math.min(1, 0.85 * b * lit * a * (0.55 + 0.45 * Math.sin(age / 700 + m.ph)));
+            c.globalAlpha = Math.min(1, 0.7 * b * lit * a * (0.6 + 0.4 * Math.sin(age / 1400 + m.ph)));
             c.fillRect(x, y, m.s, m.s);
           });
-          c.globalAlpha = 1;
         }
+        if (win && built > 0.6) {
+          const ww = win.X2 - win.X1;
+          stepDust(win.dust, dt, (m) => {
+            if (m.y < win.Y1 || m.y > baseY || m.z > -2 || m.z < -ww * 2 || m.x < win.X1 - ww * 1.2 || m.x > win.X2 + ww * 0.4) {
+              m.x = rand(win.X1 - ww * 0.5, win.X2 + ww * 0.1); m.y = rand(win.Y1, win.Y2 + ww * 0.8); m.z = rand(-ww * 1.4, -6);
+            }
+            const b = inWindowBeam(m);
+            if (b <= 0.01) return;
+            const [x, y] = win.proj(m.x, m.y, m.z);
+            c.globalAlpha = Math.min(1, 0.7 * b * LIGHT_A * a * (0.6 + 0.4 * Math.sin(age / 1400 + m.ph)));
+            c.fillRect(x, y, m.s, m.s);
+          });
+        }
+        c.globalAlpha = 1;
         c.restore();
       },
     };
