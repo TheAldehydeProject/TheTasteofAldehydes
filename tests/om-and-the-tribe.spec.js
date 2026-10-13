@@ -271,18 +271,35 @@ test("Om broken in rings round its middle, each band turned a little out of true
    sides of the page into one. the middle should be themed of breaks ...
    random polygons of broken stuff ... when you converge the two sides with
    the buttons, the breaks will kind of disappear behind it. as faded behind
-   text."), and the same night: "widen the gap by a lot; i want it to be the
-   majority ... make the shaking at the end of the transition ... make the
-   transition involve the background. I want it as smooth as possible." Two
-   halves pushed apart, the gap between them most of the window, the drawing
-   behind split with them; OM in the gap, broken pieces lying in it; a
-   fragrance pressed where its half shows it opens, a press in the gap does
-   nothing; OM brings the halves together — the drawing in step with the
-   writing, gliding, and shaking only as they meet — the pieces left faint
+   text."); the same night, the gap the most of the page, the drawing behind
+   split with it; and the last round of the day: "the space is not bad but
+   the earlier version was better. I want it to react to scrolling, and not
+   be so regular; where the lines on either side can be slightly corrugated.
+   I want the particles in the back of the split to move and react ... add an
+   animation to when you open the page ... make the closing animation
+   smoother; and make it flash (subtly, like the wave in the note library
+   combinations). the shaking should actually also start from the beggining
+   of the animation too." The page opens whole and breaks apart, shaking; the
+   halves stand a fourteenth of the page apart, cut along one corrugated line;
+   the drawing behind is split with them; the pieces in the gap drift and give
+   way to the hand; the gap opens as the page is scrolled; a fragrance pressed
+   where its half shows it opens, a press in the gap does nothing; OM brings
+   the halves together — the drawing in step with the writing, shaking from
+   the start — with a wave of light as they meet, the pieces left faint
    behind the writing. The rings and the glass are kept behind ?glass=. */
-test("Om opens split in two, the gap the most of it, OM in it; a fragrance opens where it is seen, and OM brings it together, shaking as it meets", async ({ page }) => {
-  test.setTimeout(60000);
+test("Om opens whole and breaks apart; the gap a fourteenth of the page, its edges corrugated, its pieces moving and giving way, opening as the page is scrolled; OM brings it together, shaking from the start, with a wave", async ({ page }) => {
+  test.setTimeout(90000);
   const errors = collectPageErrors(page);
+  // Every frame from the first: where the left half stands, and whether it
+  // has broken apart yet.
+  await page.addInitScript(() => {
+    window.__opening = [];
+    (function f() {
+      const s = window.OmGlass && window.OmGlass.split();
+      if (s && s.offsets.length) window.__opening.push([s.offsets[0], s.ys[0], s.opened]);
+      if (!s || !s.opened) requestAnimationFrame(f);
+    })();
+  });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(OM);
   const root = page.locator("html");
@@ -290,22 +307,36 @@ test("Om opens split in two, the gap the most of it, OM in it; a fragrance opens
   await expect(root).toHaveAttribute("data-glass", "split");
   expect(await page.evaluate(() => window.OmGlass.style())).toBe("split");
   const split = () => page.evaluate(() => window.OmGlass.split());
-  await expect.poll(async () => (await split()).offsets[0]).toBeLessThan(-50);
+  // THE OPENING: whole at first, and then apart, shaking as it breaks.
+  await expect.poll(async () => (await split()).opened, { timeout: 9000 }).toBe(true);
   const at = await split();
+  const opening = await page.evaluate(() => window.__opening);
+  expect(Math.abs(opening[0][0]), "whole when it opens").toBeLessThan(1);
+  expect(opening.some((r) => Math.abs(r[0]) > at.push * 0.4 && Math.abs(r[0]) < at.push * 0.9), "coming apart, not jumping").toBe(true);
+  expect(opening.some((r) => Math.abs(r[1]) > 0.2), "shaking as it breaks").toBe(true);
   const w = await page.evaluate(() => document.body.clientWidth), cx = w / 2;
   expect(at.offsets, "two halves").toHaveLength(2);
-  expect(at.push * 2, "the gap the most of the page").toBeGreaterThan(w / 2);
+  expect(at.push, "each pushed out a fourteenth of the page").toBe(Math.round(Math.min(120, Math.max(24, w * 0.07))));
   expect(at.offsets[0], "the left half further left").toBeCloseTo(-at.push, 0);
   expect(at.offsets[1], "the right half further right").toBeCloseTo(at.push, 0);
   expect(at.pieces, "broken pieces lying in the gap").toBeGreaterThan(40);
+  expect(at.motes, "and specks").toBeGreaterThan(100);
   expect(at.alpha).toBe(1);
   expect(await page.evaluate(() => document.documentElement.scrollWidth), "nothing widening the page").toBeLessThanOrEqual(1440);
+  // THE EDGES: one line, both halves cut along it, wandering and corrugated.
+  const edges = await page.evaluate(() => window.OmGlass.edges(0, 3, 900));
+  expect(edges.L, "both halves cut along the one line").toEqual(edges.R);
+  expect(Math.max(...edges.L) - Math.min(...edges.L), "not straight").toBeGreaterThan(6);
+  let turns = 0;
+  for (let i = 2; i < edges.L.length; i++) if (Math.sign(edges.L[i] - edges.L[i - 1]) !== Math.sign(edges.L[i - 1] - edges.L[i - 2])) turns++;
+  expect(turns, "corrugated: its teeth one way and then the other").toBeGreaterThan(80);
+  expect(Math.max(...edges.L.map(Math.abs)), "slightly").toBeLessThan(at.push * 0.4);
   // The drawing behind is split with the page: its halves pushed as far.
   const sky = () => page.evaluate(() => [...document.querySelectorAll(".om-sky-half")].map((el) => new DOMMatrix(getComputedStyle(el).transform).m41));
   const skyAt = await sky();
   expect(skyAt[0], "the drawing's left half with the page's").toBeCloseTo(at.offsets[0], 0);
   expect(skyAt[1], "the drawing's right half with the page's").toBeCloseTo(at.offsets[1], 0);
-  // OM in the middle of the gap, in place of the button in the top right.
+  // OM in the middle of the gap, come up once the page has broken apart.
   const om = page.locator(".om-mend");
   await expect(om).toHaveCount(1);
   await expect(om).toHaveText("OM");
@@ -313,15 +344,34 @@ test("Om opens split in two, the gap the most of it, OM in it; a fragrance opens
   const ob = await om.boundingBox();
   expect(Math.abs(ob.x + ob.width / 2 - cx), "in the middle").toBeLessThan(2);
   expect(ob.width, "inside the gap").toBeLessThan(at.push * 2);
+  // THE PIECES MOVE, and give way to the hand, and come back.
+  const g0 = await page.evaluate(() => window.OmGlass.gap());
+  await page.waitForTimeout(700);
+  const g1 = await page.evaluate(() => window.OmGlass.gap());
+  const drift = g0.at.map((p, i) => Math.hypot(p[0] - g1.at[i][0], p[1] - g1.at[i][1]));
+  expect(drift.filter((d) => d > 0.5).length, "drifting by themselves").toBeGreaterThan(g0.at.length / 2);
+  for (let i = 0; i < 24; i++) { await page.mouse.move(cx - 30 + (i % 4) * 20, 120 + i * 28); await page.waitForTimeout(16); }
+  const stirred = (await page.evaluate(() => window.OmGlass.gap())).stirred;
+  expect(stirred, "given way to the hand").toBeGreaterThan(50);
+  await page.mouse.move(40, 450);
+  await expect.poll(async () => (await page.evaluate(() => window.OmGlass.gap())).stirred, { message: "and come back", timeout: 6000 }).toBeLessThan(stirred / 4);
+  // THE SCROLL: the gap opens as the page is scrolled, and closes again.
+  let widest = 0;
+  for (let i = 0; i < 12; i++) {
+    await page.mouse.wheel(0, 110);
+    await page.waitForTimeout(30);
+    widest = Math.max(widest, -(await split()).offsets[0]);
+  }
+  expect(widest, "opened as it was scrolled").toBeGreaterThan(at.push + 8);
+  await expect.poll(async () => -(await split()).offsets[0], { message: "and closed again as it came to rest", timeout: 6000 }).toBeLessThan(at.push + 1);
   // A press in the gap does nothing; a fragrance pressed where its half
   // shows it — a push further left than it is on the page — opens.
   const part = page.locator(".human-part").first();
   await part.locator("summary").evaluate((el) => window.scrollTo(0, window.scrollY + el.getBoundingClientRect().top - 300));
-  await page.waitForTimeout(300);
+  await expect.poll(async () => -(await split()).offsets[0], { timeout: 6000 }).toBeLessThan(at.push + 1);
   const sb = await part.locator("summary").boundingBox();
-  // (The left half shows the page from a push in to its middle.)
-  const y = sb.y + sb.height / 2, real = cx - 30;
-  expect(real > at.push && real > sb.x && real < sb.x + sb.width, "(on the left half, on the fragrance)").toBe(true);
+  const y = sb.y + sb.height / 2, real = cx - 40;
+  expect(real > sb.x && real < sb.x + sb.width, "(on the fragrance)").toBe(true);
   await page.mouse.click(cx, y);
   await page.waitForTimeout(500);
   expect(await part.evaluate((el) => el.open), "nothing from the gap").toBe(false);
@@ -330,33 +380,33 @@ test("Om opens split in two, the gap the most of it, OM in it; a fragrance opens
   const copies = await page.evaluate(() => window.OmGlass.openIn(0));
   expect(copies.open, "and in both halves").toBe(copies.of);
   await expect(root).toHaveAttribute("data-om", "pieces");
-  // OM: the halves come together, the drawing's with the page's, gliding
-  // until the very end of the way, shaking as they meet, and are one.
+  // OM: the halves come together, the drawing's with the page's, shaking
+  // from the first moment, a wave as they meet, and are one.
+  await page.mouse.move(40, 450);
   const track = page.evaluate(() => new Promise((done) => {
     const out = [], t0 = performance.now(), skyL = document.querySelector(".om-sky-half.l");
+    let wave = false;
     (function f(now) {
       const s = window.OmGlass.split();
-      if (s && s.offsets.length) out.push([now, s.offsets[0], new DOMMatrix(getComputedStyle(skyL).transform).m41]);
-      if (performance.now() - t0 < 4000 && document.documentElement.dataset.om !== "whole") requestAnimationFrame(f); else done(out);
+      if (document.querySelector(".om-wave")) wave = true;
+      if (s && s.offsets.length && skyL.isConnected) out.push([now, s.offsets[0], new DOMMatrix(getComputedStyle(skyL).transform).m41, s.ys[0]]);
+      if (performance.now() - t0 < 6000 && document.documentElement.dataset.om !== "whole") requestAnimationFrame(f); else done({ out, wave });
     })(t0);
   }));
   await om.click();
-  const rows = await track;
-  const off = rows.findIndex((r) => r[1] > -at.push + 0.5);
+  const { out: rows, wave } = await track;
+  const off = rows.findIndex((r) => r[1] > -at.push + 0.3);
   expect(off, "it set off").toBeGreaterThanOrEqual(0);
   const from = rows[Math.max(0, off - 1)][0];
-  let turns = 0, firstTurn = -1, last = 0, apart = 0;
+  let apart = 0, shookEarly = false;
   for (let i = Math.max(1, off); i < rows.length; i++) {
     apart = Math.max(apart, Math.abs(rows[i][1] - rows[i][2]));
-    const d = rows[i][1] - rows[i - 1][1];
-    if (Math.abs(d) < 0.05) continue;
-    if (last && Math.sign(d) !== Math.sign(last)) { turns++; if (firstTurn < 0) firstTurn = rows[i][0] - from; }
-    last = d;
+    if (rows[i][0] - from < 900 && Math.abs(rows[i][3]) > 0.2) shookEarly = true;
   }
   expect(apart, "the drawing in step with the writing (px)").toBeLessThan(1.5);
-  expect(turns, `shaking (${rows.length} frames)`).toBeGreaterThanOrEqual(2);
-  expect(firstTurn, "only once they have nearly met: gliding until then (ms)").toBeGreaterThan(1200);
-  await expect(root).toHaveAttribute("data-om", "whole", { timeout: 6000 });
+  expect(shookEarly, "shaking from the start").toBe(true);
+  expect(wave, "a wave of light as they meet").toBe(true);
+  await expect(root).toHaveAttribute("data-om", "whole", { timeout: 8000 });
   await expect(om).toHaveCount(0, { timeout: 3000 });
   await expect(page.locator(".om-split-sky"), "the drawing the page's own again").toHaveCount(0);
   expect(await part.evaluate((el) => el.open), "the fragrance still open").toBe(true);
@@ -364,6 +414,20 @@ test("Om opens split in two, the gap the most of it, OM in it; a fragrance opens
   await expect.poll(async () => (await split()).alpha).toBeLessThan(0.3);
   expect((await split()).alpha).toBeGreaterThan(0);
   expect(errors).toEqual([]);
+});
+
+/* `?gap=read`: the gap opening as the page is read down instead of as it is
+   scrolled — narrowest at the head, widest at the foot. */
+test("Om's gap, at ?gap=read, opens as the page is read down", async ({ page }) => {
+  test.setTimeout(60000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(OM + "?gap=read");
+  await expect.poll(async () => (await page.evaluate(() => window.OmGlass.split())).opened, { timeout: 9000 }).toBe(true);
+  const at = await page.evaluate(() => window.OmGlass.split());
+  expect(at.mode).toBe("read");
+  expect(-at.offsets[0], "at the head, as it is").toBeLessThan(at.push + 2);
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect.poll(async () => -(await page.evaluate(() => window.OmGlass.split())).offsets[0], { timeout: 6000 }).toBeGreaterThan(at.push * 2);
 });
 
 /* ONLY OM BRINGS THE SPLIT TOGETHER — "pressing keyboard buttons stops the
@@ -378,6 +442,7 @@ test("Om's split is brought together by nothing but a press on OM: no key, no ch
   await page.goto(OM);
   const root = page.locator("html");
   await expect(root).toHaveAttribute("data-om", "pieces");
+  await expect.poll(async () => (await page.evaluate(() => window.OmGlass.split())).opened, { timeout: 9000 }).toBe(true);
   await page.keyboard.press("Tab");
   expect(await page.evaluate(() => document.activeElement.classList.contains("om-join")), "OM is not a stop of the keyboard's").toBe(false);
   for (const k of ["Space", "ArrowDown", "PageDown", "Home", "Escape", "a"]) await page.keyboard.press(k);
@@ -393,8 +458,8 @@ test("Om's split is brought together by nothing but a press on OM: no key, no ch
   await expect(root, "nor a change of size").toHaveAttribute("data-om", "pieces");
   const at = await page.evaluate(() => window.OmGlass.split());
   const w = await page.evaluate(() => document.body.clientWidth);
-  expect(at.push, "laid out again at the new width").toBe(Math.round(w * 0.3));
-  expect(at.offsets[0]).toBeCloseTo(-at.push, 0);
+  expect(at.push, "laid out again at the new width").toBe(Math.round(Math.min(120, Math.max(24, w * 0.07))));
+  await expect.poll(async () => Math.round((await page.evaluate(() => window.OmGlass.split())).offsets[0]), { timeout: 5000 }).toBe(-at.push);
   const ob = await page.locator(".om-join").boundingBox();
   expect(Math.abs(ob.x + ob.width / 2 - w / 2), "OM in the middle again").toBeLessThan(2);
 });
@@ -483,6 +548,7 @@ test.describe("on a phone", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.waitForTimeout(300);
     await expect(root, "still split as the bar comes and goes").toHaveAttribute("data-om", "pieces");
+    await expect.poll(async () => (await page.evaluate(() => window.OmGlass.split())).opened, { timeout: 9000 }).toBe(true);
     const om = await page.locator(".om-join").boundingBox();
     const menu = await page.locator(".menu-trigger").boundingBox();
     expect(om.y > menu.y + menu.height + 8 || om.x > menu.x + menu.width + 8, "clear of the Menu").toBe(true);

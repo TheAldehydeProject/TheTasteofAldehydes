@@ -825,6 +825,112 @@ Tested in `tests/om-and-the-tribe.spec.js`:
 glass the owner keeps, the others come out of the code. A keyboard alone cannot bring the split
 together now, at the owner's word; the page is read and its fragrances opened as it is.
 
+## 2026-10-13, the very last — the gap as it was, its edges broken, answering the scroll and the hand; an opening, and a smoother closing with a wave
+
+> okay, so the space is not bad but the earlier version was better. I want it to react to scrolling,
+> and not be so regular; where the lines on either side can be slightly corrugated. I want the
+> particles in the back of the split to move and react. ADDitionally!! please add an animation to
+> when you open the page for OM parfum! make the closing animation smoother; and make it flash
+> (subtly, like the wave in the note library combinations). the shaking should actually also start
+> from the beggining of the animation too.
+
+**The gap as it was the first time.** `SPLIT_PUSH` is 7% of the page's width again, each way, between
+`PUSH_LEAST` (24px) and `PUSH_MOST` (120px): 100px on a laptop, a gap of 200; 27px on a phone. The
+drawing behind stays split with the page, as the round before made it.
+
+**Its edges broken, not straight** (`THE EDGES`, `edgesFor`, `growEdges`): the page broke along one
+line, and **both halves are cut along it**, so they fit back together exactly, as broken things do —
+the left keeps what is left of the line, the right what is right of it. The line wanders a little
+either way (`EDGE_WANDER`, 6px, three slow waves and a random walk), and is **corrugated**: a tooth
+one way and then the other every 6 to 20px (`EDGE_PITCH`), up to 3px deep (`EDGE_TOOTH`), one in
+eight two or three times as deep (`EDGE_JOG`); all of it less on a phone's narrower gap. Its points
+are laid down the whole page and on as the page grows (a fragrance opened at its foot). A first try
+gave each half its own edge, the gap wider and narrower along its length — and where the halves met,
+the writing stood twice over in the strip between the two edges and read bolder there; one line for
+both put that right.
+- **The writing** is cut along the line by a `clip-path` on each half's copy of the page (`clipOf`,
+  `setClips`) — **on the copy, not on the half that moves**: on the moving half it was a mask laid
+  again every frame it moved, and held the closing at 27 to 38 frames a second on the test machine;
+  painted into the copy once, it moves with it for nothing (55 to 59). Each half's box is only as
+  wide as its side and its edge's reach (`sizeHalves`), so neither is drawn, or laid over the
+  other, where it is not seen — full width, they were twice the area to draw.
+- **The drawing's halves** carry the page's ground in a solid block (`.om-sky-ground`) but for the
+  strip the edge stands in, which their canvases carry, cut along the line where the page now stands
+  each frame (`cutEdge`); the cut and the gold along it are drawn once, a band of the page at a time
+  (`edgeBand`, `EDGE_BAND` 1024px), and laid down as copies. (Without the solid block, the window
+  behind was drawn for nothing under the drawing and the frames fell by a third while the page was
+  scrolled — on the test machine, which draws everything without a graphics card; drawn as a
+  graphics card draws, the new page is as quick as the round before's.)
+
+**The scroll** (`THE SCROLL`): scrolled, the gap opens — the faster, the wider, up to `BREATHE_MOST`
+(60%) of its push again, most of the way at `BREATHE_SPEED` (1,400px a second) — and closes as the
+page comes to rest, quickly out and slowly back; the halves stand on whole pixels at rest, so the
+writing stays sharp. **`?gap=read`** opens it as the page is read down instead — as it is at the head,
+`READ_MOST` (120%) wider at the foot — for the owner to compare; one of the two comes out once chosen.
+
+**The pieces in the gap move and react** (`gapOf`, `drifter`, `moveGap`, `drawGap`): the broken pieces
+(`GAP_SHARDS`, about 150 on a laptop) and, new, **specks** (`GAP_MOTES`, about 330) each lie at a depth
+of their own — how much of the scroll carries them — so the gap's contents slide past at different
+speeds as the page is scrolled, wrapping round a span a little taller than the screen; each drifts,
+sways and turns on a clock of its own, the pieces tumbling faster while the page is scrolled and the
+specks drawn out into short streaks along the way it is going. **The hand pushes them off it** within
+`GAP_REACH` (120px), lighting them as it passes, and they spring back after; a finger's touch does it
+for a moment on a phone. The three cracks are carried at a depth of their own too. They reach as far
+as the gap does and, once it has closed, a little either side of the seam, where they stay faint
+behind the writing.
+
+**The opening** (`THE OPENING`, `openPath`, `openSplit`, `finishOpen`): the page comes in whole — the
+halves together, the drawing whole and quiet — and `OPEN_HOLD` (650ms) after its copies are in, **a
+crack runs down it** along the line, bright, a light at its tip (`OPEN_CRACK`, 560ms); as it nears the
+foot the halves **break apart**, gently at both ends (`OPEN_PART`, 1.5s), shaking from the crack's
+first moment and settling as they come to rest (`OPEN_SHAKE`), each half on its own; the broken
+pieces spread out into the gap with them and the large โอม grows in the drawing; **OM comes up last**,
+and cannot be pressed until it has (`pointer-events` on `.om-mend` until `.shown`). Its way is handed
+to the browser whole, as the closing's is (`runPath`).
+
+**The closing, smoother** (`THE CLOSING`, `joinPath`): from wherever the scroll has left the halves,
+over `SPLIT_MS` (2.3s; it was 1.9), gently at both ends — over 100px rather than 432, so far slower
+and softer than the round before. **The shake from the first moment** (`SHAKE_ON_WAY`, a third of it
+on the way, growing): each half trembling on its own on the way and the two as one as they meet,
+hardest then (`SHAKE`, 8px), dying away (`SHAKE_TAU`) and still by `SHAKE_TAIL` (0.8s) — a rumble at
+`SHAKE_HZ` 6 rather than the buzz of 7.5. Measured frame by frame, the drawing's halves stood within a
+hundredth of a pixel of the writing's every frame.
+
+**The flash — the wave** (`THE WAVE`, `waveAt`, `waveLit`, `washOver`): as the halves meet, a band of
+light runs out from the seam to both edges of the window over `WAVE_MS` (1.15s), quick at first and
+slowing, as the Note Library's pulse runs out through the network when combinations begin: every
+speck of the drawing it passes is lit (`WAVE_LIT`), and the faintest gold (7.5%) washes over the
+writing with it — two bands on the window moved by the browser's own clock (`.om-wave`). The seam's
+gold flashes as they meet and goes, as before.
+
+**Then whole**, as before: the page shown under the copies exactly where they stand — measured, every
+bright pixel of the writing afterwards was lit just before — the drawing the page's own canvas's from
+that frame, and the copies faded off it.
+
+The split's code: `buildSplit`, `layoutSplit`, `sizeHalves`, `setClips`, `cutEdge`, `edgeBand`,
+`openSplit`, `finishOpen`, `runPath`, `joinSplit`, `splitState` (with `restAt`, `openPath`,
+`joinPath`, `tremble`), `placeSplit`, `splitOffsets`, `sideAt`; `splitAt` is gone into those.
+
+Tested in `tests/om-and-the-tribe.spec.js`:
+
+- **`Om opens whole and breaks apart; the gap a fourteenth of the page, its edges corrugated, its
+  pieces moving and giving way, opening as the page is scrolled; OM brings it together, shaking from
+  the start, with a wave`** (replacing the split's test): every frame from the first read — whole at
+  first, coming apart (seen part way) and shaking; then each half 7% of the page out; over forty
+  pieces and a hundred specks; both halves cut along one line, not straight, corrugated (its teeth
+  turning eighty times in 2,700px) and only slightly; the drawing's halves where the page's are; OM in
+  the middle of the gap; the specks and pieces drifting by themselves, given way to the hand and
+  coming back; the gap opened by a scroll and closed again; a press in the gap opening nothing and a
+  press where the first fragrance is seen opening it in both halves; OM pressed: the drawing in step,
+  shaking within the first 0.9s, the wave there, whole, the pieces faint.
+- **`Om's gap, at ?gap=read, opens as the page is read down`** (new).
+- *Om's split is brought together by nothing but a press on OM* waits for the page to break apart and
+  reads the 7%; the phone's split test waits for OM to come up.
+
+**Still open**: a trial, as before — whichever of the split, the rings, the broken pane and the fine
+glass the owner keeps, the others come out of the code; and whether the gap answers the scroll as it
+does or as the page is read (`?gap=read`).
+
 ## Same round, other reports
 
 - [The newer houses — Qimu's Bassist and Drummer written](2026-09-21-the-newer-houses.md#2026-10-10--bassist-and-drummer-written-and-a-fold-in-housejs)

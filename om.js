@@ -48,6 +48,14 @@
 //                 turned a little out of true about the middle and the next
 //                 the other way; gold seams, and nothing of glass (no sheen,
 //                 no glints). The broken pane is `?glass=broken`.
+//                 AND SINCE THE LAST ROUND OF 2026-10-13, A TRIAL, IT OPENS
+//                 SPLIT IN TWO (THE SPLIT, below): whole for a moment, then
+//                 a crack down one corrugated line and the halves breaking
+//                 apart, the gap between them full of broken pieces and
+//                 specks that drift, follow the scroll and give way to the
+//                 hand, the gap opening as the page is scrolled; OM in it
+//                 brings the halves together, shaking, with a wave of
+//                 light. The rings are `?glass=rings`.
 //   THE LENS      the hexagon of glass at the hand, larger than it was:
 //                 inside it, the page WHOLE — the writing unbroken, the
 //                 drawing behind it turned and brought nearer — and the
@@ -262,37 +270,84 @@
   // page into one. the middle should be themed of breaks. They should be
   // random polygons of broken stuff. and then when you converge the two
   // sides with the buttons, the breaks will kind of disappear behind it.
-  // as faded behind text"). And the same night: "widen the gap by a lot;
-  // i want it to be the majority ... make the shaking at the end of the
-  // transition ... make the transition involve the background. I want it
-  // as smooth as possible."
+  // as faded behind text"). The same night: "widen the gap by a lot ...
+  // make the transition involve the background. I want it as smooth as
+  // possible." And the last round of the day: "the space is not bad but
+  // the earlier version was better. I want it to react to scrolling, and
+  // not be so regular; where the lines on either side can be slightly
+  // corrugated. I want the particles in the back of the split to move and
+  // react ... add an animation to when you open the page ... make the
+  // closing animation smoother; and make it flash (subtly, like the wave
+  // in the note library combinations). the shaking should actually also
+  // start from the beggining of the animation too."
   // The page cut down its middle into two halves, each a copy of the page
   // laid IN the page (so it scrolls as the page does, with nothing moved
   // by hand), and the drawing behind it cut with it — so the halves of the
   // armillary and of โอม stand apart with the writing, and come together
-  // with it. Each half pushed out SPLIT_PUSH of the page's width, the gap
-  // between them three fifths of it; in the gap, BROKEN PIECES — random
-  // polygons, most small, a few large, turning very slowly — and cracks
-  // wandering down it, on the house's ground; and in its middle OM.
-  // Pressed — and only pressed, never by a key — the halves glide together
-  // over SPLIT_MS, gently at both ends, on the browser's own clock (an
-  // animation of a transform, so a busy frame does not stutter them), the
-  // ground warming to the page's own as they come; as they meet, the page
-  // SHAKES as one, the shake coming up over the last of the way
-  // (SHAKE_FROM) and dying away after (SHAKE_TAU), still by SHAKE_TAIL;
-  // their edges flash gold as they meet; the broken pieces are drawn in
-  // to the seam as the halves close over them, and stay there, faint
-  // behind the writing (GAP_FAINT).
-  const SPLIT_PUSH = 0.3;          // each half pushed out this share of the page's width
-  const SPLIT_MS = 1900;           // the halves coming together
-  const SHAKE = 9;                 // px, the shake at its hardest, as they meet (two thirds on a phone)
-  const SHAKE_HZ = 7.5;            // and how quickly
-  const SHAKE_FROM = 0.8;          // it comes up over the last fifth of the way
-  const SHAKE_TAU = 170;           // ms in which it falls to a third, once they have met
-  const SHAKE_TAIL = 700;          // ms of it after they meet, ending still
-  const GAP_SHARDS = 1 / 1700;     // broken pieces to a square px of the gap
+  // with it. Each half pushed out SPLIT_PUSH of the page's width, as the
+  // first trial was; their cut edges not straight but THE EDGES below; in
+  // the gap, BROKEN PIECES — random polygons, most small, a few large —
+  // and specks, drifting, carried by the scroll and giving way to the
+  // hand; and in its middle OM. The gap opens a little as the page is
+  // scrolled (THE SCROLL). The page OPENS whole and breaks apart (THE
+  // OPENING). OM pressed — and only pressed, never by a key — the halves
+  // glide together (THE CLOSING), on the browser's own clock (an animation
+  // of a transform, so a busy frame does not stutter them), the shake
+  // there from the first moment, and as they meet a wave of light runs
+  // out from the seam; the broken pieces are drawn in as the halves close
+  // over them, and stay, faint behind the writing (GAP_FAINT).
+  const SPLIT_PUSH = 0.07;         // each half pushed out this share of the page's width
+  const PUSH_LEAST = 24;           // px, at the least (a phone)
+  const PUSH_MOST = 120;           // and at the most
+  // THE EDGES: the page broke along one line, and both halves are cut
+  // along it — so they fit back together exactly, as broken things do. It
+  // wanders a little either way (EDGE_WANDER), and is corrugated: teeth of
+  // uneven pitch and depth, one way and then the other (EDGE_TOOTH,
+  // EDGE_PITCH), now and then a deeper jog (EDGE_JOG) — so the gap is
+  // never straight and never the same for long, its two sides each the
+  // other's shape. All of it a little less on a narrower gap (a phone's).
+  const EDGE_WANDER = 6;           // px, at most, either way
+  const EDGE_TOOTH = 3;            // px deep, at most
+  const EDGE_PITCH = [6, 20];      // px from one tooth to the next
+  const EDGE_JOG = 0.12;           // the chance a tooth is two or three times as deep
+  // THE SCROLL: scrolled, the gap opens — the faster, the wider, up to
+  // BREATHE_MOST of its push again — and closes as the page comes to rest,
+  // its pieces carried along, each at a depth of its own. `?gap=read`
+  // opens it as the page is read down instead, READ_MOST more at its foot.
+  const BREATHE_MOST = 0.6;
+  const BREATHE_SPEED = 1400;      // px a second of scroll that opens it most of the way
+  const READ_MOST = 1.2;
+  // THE OPENING: the page comes in whole; after OPEN_HOLD a crack runs down
+  // it (OPEN_CRACK), and as it reaches the foot the halves break apart
+  // (OPEN_PART), shaking from the crack's first moment and settling as
+  // they come to rest, the broken pieces spreading out into the gap with
+  // them; OM comes up last.
+  const OPEN_HOLD = 650;           // ms after the page is in
+  const OPEN_CRACK = 560;          // the crack running down it
+  const OPEN_PART = 1500;          // the halves coming apart (from 60% of the way down)
+  const OPEN_SHAKE = 0.6;          // of SHAKE, at its hardest
+  // THE CLOSING: over SPLIT_MS, gently at both ends; the shake there from
+  // the first moment — each half trembling on its own on the way
+  // (SHAKE_ON_WAY of it), the two as one as they meet, hardest then — and
+  // dying away (SHAKE_TAU), still by SHAKE_TAIL; and as they meet THE WAVE,
+  // a band of light running out from the seam to the window's edges,
+  // lighting every speck it passes and washing faintly over the writing —
+  // the Note Library's pulse as combinations begin.
+  const SPLIT_MS = 2300;           // the halves coming together
+  const SHAKE = 8;                 // px, the shake at its hardest, as they meet (two thirds on a phone)
+  const SHAKE_ON_WAY = 0.34;       // of it, on the way from the first moment
+  const SHAKE_HZ = 6;              // and how quickly: a rumble rather than a buzz
+  const SHAKE_TAU = 200;           // ms in which it falls to a third, once they have met
+  const SHAKE_TAIL = 800;          // ms of it after they meet, ending still
+  const SEAM_REST = 0.62;          // the cut edges' gold, at rest
+  const WAVE_MS = 1150;            // the wave crossing to the window's edges
+  const WAVE_WIDE = 70;            // px, its half width
+  const WAVE_LIT = 1.5;            // how much brighter a speck it passes is
+  const GAP_SHARDS = 1 / 1400;     // broken pieces to a square px of the gap
+  const GAP_MOTES = 1 / 650;       // and specks
+  const GAP_REACH = 120;           // px from the hand within which they give way to it
   const GAP_FAINT = 0.16;          // what is left of them behind the writing once it is whole
-  const SKY_BLEED = 40;            // px the drawing's halves reach past the window's edges
+  const SKY_BLEED = 24;            // px the drawing's halves reach past the window's edges
   const MEND_MS = 1100;            // how long one piece takes to come home, mending for good
   const MEND_SPREAD = 760;         // and the most it waits, the farthest last
   const MEND_QUICK_MS = 380;       // and when a fragrance is opened
@@ -572,6 +627,7 @@
         const d = Math.hypot(p.x - hx, p.y - hy);
         if (d < 160) lit += 1.6 * (1 - d / 160);
       }
+      if (waveNow) lit += WAVE_LIT * waveLit(p.x);
       const tw = REDUCE ? 1 : 0.8 + 0.2 * Math.sin((t * 0.5 + s.phase) * Math.PI * 2);
       ink.globalAlpha = clamp(s.base * depth * tw * lit * alpha * quietAt(p.x), 0, 1);
       const z = s.size * (0.7 + 0.5 * depth);
@@ -586,7 +642,7 @@
       const px = cx + x * R * k, py = cy + d.y * R * k;
       if (px < 0 || px > W || py < 0 || py > H) return;
       const tw = REDUCE ? 1 : 0.7 + 0.3 * Math.sin((t * 0.3 + d.phase) * Math.PI * 2);
-      ink.globalAlpha = clamp(d.base * k * 0.7 * tw * alpha * quietAt(px), 0, 1);
+      ink.globalAlpha = clamp(d.base * k * 0.7 * tw * alpha * quietAt(px) * (waveNow ? 1 + WAVE_LIT * waveLit(px) : 1), 0, 1);
       const sz = d.size * k;
       ink.fillRect(px, py, sz, sz);
     });
@@ -646,7 +702,7 @@
           if (d < 90 && d > 0.1) { const push = (1 - d / 90) * 10; x += (dx / d) * push; y += (dy / d) * push; }
         }
         const run = REDUCE ? 0.6 : 0.5 + 0.5 * Math.sin((i / n) * Math.PI * 4 - t * 1.6 + li * 1.3);
-        ink.globalAlpha = clamp((0.35 + 0.65 * run) * alpha * quietAt(x), 0, 1);
+        ink.globalAlpha = clamp((0.35 + 0.65 * run) * alpha * quietAt(x) * (waveNow ? 1 + WAVE_LIT * waveLit(x) : 1), 0, 1);
         ink.fillRect(x - size / 2, y - size / 2, size, size);
       }
     }));
@@ -914,11 +970,15 @@
 
   /** THE SPLIT'S GAP: its broken pieces — random polygons, most of them
       small, a few larger, each a few corners at uneven angles and uneven
-      reaches, turning very slowly — and two cracks wandering down it. */
+      reaches — and its specks, each at a depth of its own (how much of the
+      scroll it is carried by), drifting, swaying and turning on clocks of
+      their own; and three cracks wandering down it. Laid down a span a
+      little taller than the screen, and wrapped round it as they go. */
   function gapOf(w, h, push) {
-    const cx = w / 2, n = Math.round(push * 2 * h * GAP_SHARDS);
+    const cx = w / 2, span = h + 160;
+    const n = Math.round(push * 2 * span * GAP_SHARDS);
     // Most small, a few large — the largest larger the wider the gap.
-    const most = clamp(push * 0.16, 22, 64);
+    const most = clamp(push * 0.32, 14, 40);
     const shards = [];
     for (let i = 0; i < n; i++) {
       const r = 2.5 + Math.pow(random(), 2.6) * most;
@@ -926,58 +986,139 @@
       const angles = [];
       for (let k = 0; k < corners; k++) angles.push(random() * Math.PI * 2);
       angles.sort((a, b) => a - b);
-      shards.push({
-        x: cx + (random() * 2 - 1) * push * 0.92, y: random() * h,
+      shards.push(drifter({
+        u: random() * 2 - 1, d: between(0.3, 1), fall: between(-7, 7), sway: between(2, 7),
         pts: angles.map((a) => [Math.cos(a) * r * between(0.4, 1), Math.sin(a) * r * between(0.4, 1)]),
-        turn: random() * Math.PI * 2, spin: between(-0.08, 0.08),
+        turn: random() * Math.PI * 2, spin: between(-0.18, 0.18), tumbled: 0, way: random() < 0.5 ? -1 : 1,
         ink: between(0.3, 0.75), fill: random() < 0.45 ? between(0.04, 0.14) : 0, bright: random() < 0.1,
-      });
+      }, span));
+    }
+    const motes = [];
+    const m = Math.round(push * 2 * span * GAP_MOTES);
+    for (let i = 0; i < m; i++) {
+      motes.push(drifter({
+        u: random() * 2 - 1, d: between(0.15, 0.85), fall: between(-16, -3), sway: between(1.5, 9),
+        size: between(0.7, 1.7), base: between(0.25, 0.8),
+      }, span));
     }
     const cracks = [0, 1, 2].map(() => {
       const out = [];
-      let x = cx + (random() - 0.5) * push * 0.9;
-      for (let y = -10; y <= h + 30; y += between(16, 34)) {
-        x = clamp(x + (random() - 0.5) * Math.min(push * 0.3, 60), cx - push * 0.85, cx + push * 0.85);
-        out.push(x, y);
+      let u = (random() - 0.5) * 0.9;
+      for (let y = -10; y <= span + 30; y += between(16, 34)) {
+        u = clamp(u + (random() - 0.5) * 0.35, -0.85, 0.85);
+        out.push(u, y);
       }
       return out;
     });
-    return { cx, push, shards, cracks, alpha: 1 };
+    return { cx, push, span, shards, motes, cracks, alpha: 1 };
   }
-  /** The gap's broken pieces where they lie, at a strength `a`: whole in
-      the gap, on the void; and faint in the drawing behind the halves as
-      they close over them, and behind the writing once it is whole. */
+  /** What every drifting thing in the gap carries: where it is laid, how
+      it sways, and how far the hand has moved it. */
+  function drifter(o, span) {
+    return Object.assign(o, { y: random() * span, fq: between(0.15, 0.55), ph: random() * Math.PI * 2,
+      ox: 0, oy: 0, vx: 0, vy: 0, lit: 0, X: 0, Y: 0 });
+  }
+  /** The gap's things moved on a frame: carried by the scroll at their
+      depths, drifting and swaying, and given way to the hand — pushed off
+      it and coming back, lit as it passes — and turned, the faster the
+      page is scrolled the faster. `spread` is how far from the middle of
+      the page they reach either way. */
+  function moveGap(t, dt, spread, hx, hy) {
+    const g = gap, sy = window.scrollY, span = g.span, cx = g.cx;
+    const hand = hx > -9000 && !REDUCE, R2 = GAP_REACH * GAP_REACH;
+    const step = (s, reach) => {
+      if (!REDUCE) {
+        if (hand) {
+          const dx = s.X - hx, dy = s.Y - hy, d2 = dx * dx + dy * dy;
+          if (d2 < R2 && d2 > 0.01) {
+            const d = Math.sqrt(d2), f = 1 - d / GAP_REACH, push = f * f * 2600 * dt;
+            s.vx += (dx / d) * push; s.vy += (dy / d) * push;
+            if (f > s.lit) s.lit = f;
+          }
+        }
+        s.vx += (-s.ox * 16 - s.vx * 5.5) * dt;
+        s.vy += (-s.oy * 16 - s.vy * 5.5) * dt;
+        s.ox += s.vx * dt; s.oy += s.vy * dt;
+        s.lit *= Math.exp(-dt * 2.2);
+      }
+      let y = s.y + (REDUCE ? 0 : t * s.fall) - sy * s.d;
+      y = ((y % span) + span) % span - 80;
+      s.X = cx + s.u * reach + (REDUCE ? 0 : Math.sin(t * s.fq * Math.PI * 2 + s.ph) * s.sway) + s.ox;
+      s.Y = y + s.oy;
+    };
+    const tumble = REDUCE ? 0 : clamp(Math.abs(scrollV) / 1600, 0, 2);
+    g.shards.forEach((s) => {
+      step(s, spread * 0.92);
+      s.tumbled += dt * tumble * s.way * 1.8;
+      s.th = s.turn + (REDUCE ? 0 : t * s.spin) + s.tumbled;
+    });
+    g.motes.forEach((s) => step(s, spread));
+  }
+  /** The gap's broken pieces and specks where they are, at a strength
+      `a`: whole in the gap, on the void; faint in the drawing behind the
+      halves as they close over them, and behind the writing once whole. */
   function drawGap(t, a) {
     const g = gap;
-    const pull = 1, small = 1;
     ink.lineWidth = 1;
     ink.strokeStyle = rgba(LINE, 1);
     ink.fillStyle = rgba(LINE, 1);
     g.shards.forEach((s) => {
-      const th = s.turn + (REDUCE ? 0 : t * s.spin), c = Math.cos(th), sn = Math.sin(th);
-      const x = g.cx + (s.x - g.cx) * pull, y = s.y;
+      if (s.Y < -60 || s.Y > H + 60) return;
+      const c = Math.cos(s.th), sn = Math.sin(s.th);
       ink.beginPath();
       s.pts.forEach(([px, py], k) => {
-        const X = x + (px * c - py * sn) * small, Y = y + (px * sn + py * c) * small;
+        const X = s.X + px * c - py * sn, Y = s.Y + px * sn + py * c;
         if (k) ink.lineTo(X, Y); else ink.moveTo(X, Y);
       });
       ink.closePath();
-      if (s.fill) { ink.globalAlpha = s.fill * a; ink.fill(); }
-      ink.globalAlpha = Math.min(1, s.ink * (s.bright ? 1.4 : 1) * a);
+      const lit = 1 + 1.1 * s.lit;
+      if (s.fill) { ink.globalAlpha = Math.min(1, s.fill * a * lit); ink.fill(); }
+      ink.globalAlpha = Math.min(1, s.ink * (s.bright ? 1.4 : 1) * a * lit);
       ink.stroke();
     });
+    // The specks: drawn out into short streaks along the way the page is
+    // being scrolled, the faster the longer.
+    ink.globalCompositeOperation = "lighter";
+    ink.fillStyle = rgba(SPECK, 1);
+    ink.strokeStyle = rgba(SPECK, 1);
+    // (Streaks in four strengths, each one stroke, rather than a stroke
+    // each.)
+    const streak = REDUCE ? 0 : scrollV * 0.012, streaking = Math.abs(streak) > 1.6;
+    const strengths = streaking ? [[], [], [], []] : null;
+    g.motes.forEach((s) => {
+      if (s.Y < -20 || s.Y > H + 20) return;
+      const tw = REDUCE ? 1 : 0.75 + 0.25 * Math.sin(t * 1.7 + s.ph * 3);
+      const k = Math.min(1, s.base * tw * a * (1 + 1.6 * s.lit));
+      if (streaking) { strengths[Math.min(3, Math.floor(k * 4))].push(s); return; }
+      ink.globalAlpha = k;
+      ink.fillRect(s.X - s.size / 2, s.Y - s.size / 2, s.size, s.size);
+    });
+    if (streaking) {
+      ink.lineWidth = 1.2;
+      strengths.forEach((list, k) => {
+        if (!list.length) return;
+        ink.globalAlpha = (k + 0.5) / 4;
+        ink.beginPath();
+        list.forEach((s) => { ink.moveTo(s.X, s.Y); ink.lineTo(s.X, s.Y + streak * s.d); });
+        ink.stroke();
+      });
+    }
+    ink.globalCompositeOperation = "source-over";
+    ink.lineWidth = 1;
+    ink.strokeStyle = rgba(LINE, 1);
     ink.globalAlpha = 0.45 * a;
-    g.cracks.forEach((p) => {
+    // The cracks carried at a depth of their own, wrapped round the span.
+    const reach = g.reach || g.push, off = (((window.scrollY * 0.55) % g.span) + g.span) % g.span;
+    [-off, g.span - off].forEach((k) => g.cracks.forEach((p) => {
       ink.beginPath();
       for (let i = 0; i < p.length; i += 2) {
-        const X = g.cx + (p[i] - g.cx) * pull;
-        if (i) ink.lineTo(X, p[i + 1]); else ink.moveTo(X, p[i + 1]);
+        const X = g.cx + p[i] * reach, Y = p[i + 1] + k;
+        if (i) ink.lineTo(X, Y); else ink.moveTo(X, Y);
       }
       ink.stroke();
-    });
+    }));
     ink.globalAlpha = 1;
   }
-
   /** The page's flow, copied whole, without an id, a tab stop or anything
       else that could be found or reached. */
   function copyFlow() {
@@ -1074,56 +1215,173 @@
 
   // ============================================================
   // THE SPLIT (see SPLIT_PUSH): the page's two halves, each a copy of the
-  // whole page laid in the page itself and cut to its half, pushed apart;
-  // the drawing behind cut the same way, on two canvases fixed to the
-  // window — the left drawn whole, the right laid from it; and the gap's
-  // broken pieces on the page's own canvas, under both. The halves and
-  // the drawing's halves are moved by one transform each, and once OM is
-  // pressed by the browser's own clock, all four on the same one.
+  // whole page laid in the page itself and cut along its own edge (THE
+  // EDGES), pushed apart; the drawing behind cut the same way, on two
+  // canvases fixed to the window — the left drawn whole, the right laid
+  // from it, each cut along its edge where the page now stands; and the
+  // gap's broken pieces on the page's own canvas, under both. The halves
+  // and the drawing's halves are moved by one transform each — opening and
+  // closing by the browser's own clock, all four on one start time.
   // ============================================================
   let halves = null;
-  /** Where the halves stand t ms after OM was pressed (t < 0: apart): each
-      half's offset across, the shake up and down, how far they have come
-      (0 apart, 1 met), and how strongly the seams are drawn. */
-  function splitAt(t) {
-    const push = halves.push;
-    if (t < 0) return { l: -push, r: push, y: 0, met: 0, seam: 0.62 };
-    const u = clamp(t / SPLIT_MS, 0, 1);
-    const met = u * u * u * (u * (u * 6 - 15) + 10);        // gently at both ends
-    const apart = push * (1 - met);
-    // The shake: coming up over the last of the way, hardest as they meet,
-    // dying away after, and still at the end.
-    const from = SPLIT_MS * SHAKE_FROM;
-    let env = 0;
-    if (t > from) {
-      if (t <= SPLIT_MS) {
-        const up = (t - from) / (SPLIT_MS - from);
-        env = up * up * (3 - 2 * up);
-      } else {
-        const after = t - SPLIT_MS, end = clamp(after / SHAKE_TAIL, 0, 1);
-        env = Math.exp(-after / SHAKE_TAU) * (1 - end * end * (3 - 2 * end));
-      }
+  const gapMode = (location.search.match(/[?&]gap=(read|breathe)\b/) || [])[1] || "breathe";
+  let scrollV = 0, lastScroll = null;      // the page's scrolling, px a second (eased)
+  let breath = 0;                          // px the scroll has opened the gap by, each way
+  let waveFrom = 0;                        // when the halves met (ms): THE WAVE from then
+  let waveNow = null;                      // where it is this frame, for the specks
+  const smoother = (u) => u * u * u * (u * (u * 6 - 15) + 10);    // at rest at both ends
+  const smooth01 = (u) => { u = clamp(u, 0, 1); return u * u * (3 - 2 * u); };
+
+  /** THE EDGES (see EDGE_WANDER) for a gap of `push` either way: the line
+      the page broke along, as points down the page, [y] and [x] from the
+      middle of the page — each half cut along it, the left keeping what is
+      to its left and the right what is to its right (so `L` and `R` are
+      the one line). */
+  function edgesFor(push) {
+    const k = clamp(push / 100, 0.3, 1.2);
+    const line = { ys: [], xs: [], deep: random() < 0.5, walk: 0 };
+    const e = { A: EDGE_WANDER * k, T: EDGE_TOOTH * k,
+      ph: [random(), random(), random()].map((v) => v * Math.PI * 2), L: line, R: line, to: -300 };
+    e.reach = Math.ceil(e.A * 2.3 + e.T * 2.6) + 3;
+    return e;
+  }
+  /** Laid on down the page to `to`. */
+  function growEdges(e, to) {
+    const s = e.L;
+    let y = s.ys.length ? s.ys[s.ys.length - 1] : -300;
+    while (y < to) {
+      y += between(EDGE_PITCH[0], EDGE_PITCH[1]);
+      s.deep = !s.deep;
+      s.walk = clamp(s.walk * 0.86 + (random() * 2 - 1) * e.A * 0.35, -e.A * 1.2, e.A * 1.2);
+      const wander = e.A * (0.55 * Math.sin(y / 297 + e.ph[0]) + 0.3 * Math.sin(y / 131 + e.ph[1]) + 0.15 * Math.sin(y / 61 + e.ph[2]));
+      const tooth = e.T * (random() < EDGE_JOG ? between(1.6, 2.6) : between(0.25, 1));
+      s.ys.push(y);
+      s.xs.push(wander + s.walk + (s.deep ? tooth : -tooth));
     }
-    const k = REDUCE ? 0 : halves.shake * env, w2 = ((t - from) / 1000) * SHAKE_HZ * Math.PI * 2;
-    const x = k * (0.78 * Math.sin(w2) + 0.22 * Math.sin(w2 * 1.9 + 0.7));
-    const y = k * 0.32 * Math.sin(w2 * 1.37 + 1.1);
-    // The seams flash gold as the halves meet, and go.
-    let seam = 0.62;
-    if (t > SPLIT_MS * 0.85) seam = t <= SPLIT_MS ? 0.62 + 0.38 * (t - SPLIT_MS * 0.85) / (SPLIT_MS * 0.15) : Math.max(0, 1 - (t - SPLIT_MS) / 420);
-    return { l: -apart + x, r: apart + x, y, met, seam };
+    e.to = to;
+  }
+  function lowerBound(a, v) {
+    let lo = 0, hi = a.length;
+    while (lo < hi) { const mid = (lo + hi) >> 1; if (a[mid] < v) lo = mid + 1; else hi = mid; }
+    return lo;
+  }
+  /** A half's edge at a height down its page, from the middle of the page. */
+  function edgeAt(s, y) {
+    const i = lowerBound(s.ys, y);
+    if (i <= 0) return s.xs[0];
+    if (i >= s.ys.length) return s.xs[s.xs.length - 1];
+    const f = (y - s.ys[i - 1]) / (s.ys[i] - s.ys[i - 1]);
+    return s.xs[i - 1] + (s.xs[i] - s.xs[i - 1]) * f;
+  }
+  /** A half's cut, for the stylesheet: everything on its side of its edge,
+      down the whole of the page and well past it. */
+  function clipOf(s, left, w) {
+    // (On the copy of the page in the half, which is laid out as the page
+    // is — not on the half that moves, where a cut would be a mask laid
+    // again every frame it moves: painted into the copy once, it moves
+    // with it for nothing.)
+    const m = w / 2, P = 800, FAR = 400000, out = [], n = s.ys.length;
+    const at = m, outer = (left ? -P : w + P) + "px";
+    out.push(outer + " " + -P + "px", (at + s.xs[0]).toFixed(1) + "px " + -P + "px");
+    for (let i = 0; i < n; i++) out.push((at + s.xs[i]).toFixed(1) + "px " + s.ys[i].toFixed(1) + "px");
+    out.push((at + s.xs[n - 1]).toFixed(1) + "px " + FAR + "px", outer + " " + FAR + "px");
+    return "polygon(" + out.join(",") + ")";
+  }
+  function setClips() {
+    const e = halves.edges, w = copyWidth;
+    [[halves.copies[0], e.L, true], [halves.copies[1], e.R, false]].forEach(([el, s, left]) => {
+      const c = clipOf(s, left, w);
+      el.style.clipPath = c;
+      el.style.webkitClipPath = c;
+    });
+  }
+  /** Each half's box only as wide as its side of the page and the reach
+      of its edge — so neither is drawn, or laid over the other, where it
+      is not seen. */
+  function sizeHalves() {
+    const w = copyWidth, m = w / 2, reach = halves.edges.reach, [l, r] = halves.text;
+    l.style.width = (m + reach) + "px";
+    r.style.left = (m - reach) + "px";
+    r.style.width = (w - m + reach) + "px";
+    halves.copies.forEach((c) => { c.style.width = w + "px"; });
+    halves.copies[1].style.marginLeft = -(m - reach) + "px";
+  }
+  /** How far down the edges must be laid: the page's length, and more. */
+  const edgeLength = () => Math.max(halves.text[0].offsetHeight, root.scrollHeight) + 2500;
+
+  /** THE SHAKE, k px at its hardest, tt seconds in: a rumble, each half
+      trembling on its own — and, as far as `one` says, the two as one. */
+  function tremble(k, tt, one) {
+    if (!k) return { xl: 0, xr: 0, yl: 0, yr: 0 };
+    const w = tt * SHAKE_HZ * Math.PI * 2, o = 1 - one;
+    const cx = 0.7 * Math.sin(w) + 0.3 * Math.sin(w * 1.63 + 0.7), cy = 0.3 * Math.sin(w * 1.37 + 1.1);
+    const lx = 0.7 * Math.sin(w * 1.13 + 1.9) + 0.3 * Math.sin(w * 1.71 + 0.2), ly = 0.3 * Math.sin(w * 1.21 + 2.4);
+    const rx = 0.7 * Math.sin(w * 0.91 + 4.1) + 0.3 * Math.sin(w * 1.47 + 2.6), ry = 0.3 * Math.sin(w * 1.53 + 0.4);
+    return { xl: k * (cx * one + lx * o), xr: k * (cx * one + rx * o), yl: k * (cy * one + ly * o), yr: k * (cy * one + ry * o) };
+  }
+  /** Where the halves stand: each half's offset across and up or down, how
+      far they have come together (`met`, 0 apart, 1 met), how strongly
+      their cut edges are drawn, and how far down the crack has run. */
+  function restAt() {
+    const p = halves.push + Math.round(breath);      // (whole pixels at rest: the writing stays sharp)
+    return { l: -p, r: p, yl: 0, yr: 0, met: 0, seam: SEAM_REST, crack: 1 };
+  }
+  /** THE OPENING, t ms after the crack sets off (before it, whole). */
+  const OPEN_ALL = OPEN_CRACK * 0.6 + OPEN_PART;
+  function openPath(t) {
+    if (t <= 0) return { l: 0, r: 0, yl: 0, yr: 0, met: 1, seam: 0, crack: 0 };
+    const push = halves.push, crack = smoother(clamp(t / OPEN_CRACK, 0, 1));
+    const u = clamp((t - OPEN_CRACK * 0.6) / OPEN_PART, 0, 1), apart = smoother(u);
+    // The shake from the crack's first moment, hardest as the halves break
+    // apart, settling as they come to rest; each half on its own.
+    const env = OPEN_SHAKE * smooth01(t / (OPEN_CRACK * 0.6)) * (1 - u) * (1 - u);
+    const q = tremble(REDUCE ? 0 : halves.shake * env, t / 1000, 0);
+    // The cut edges bright as the crack runs, settling to their gold.
+    const seam = SEAM_REST + (1 - SEAM_REST) * (1 - apart);
+    return { l: -push * apart + q.xl, r: push * apart + q.xr, yl: q.yl, yr: q.yr, met: 1 - apart, seam, crack };
+  }
+  /** THE CLOSING, t ms after OM was pressed. */
+  function joinPath(t) {
+    const u = clamp(t / SPLIT_MS, 0, 1), met = smoother(u), apart = halves.from * (1 - met);
+    // The shake from the first moment, growing as they come, hardest as
+    // they meet, dying away after, and still at the end.
+    let env;
+    if (t <= SPLIT_MS) env = smooth01(t / 280) * (SHAKE_ON_WAY + (1 - SHAKE_ON_WAY) * u * u * u);
+    else {
+      const after = t - SPLIT_MS, end = clamp(after / SHAKE_TAIL, 0, 1);
+      env = Math.exp(-after / SHAKE_TAU) * (1 - end * end * (3 - 2 * end));
+    }
+    const q = tremble(REDUCE ? 0 : halves.shake * env, t / 1000, met * met * met);
+    // The cut edges flash gold as the halves meet, and go.
+    let seam = SEAM_REST;
+    if (t > SPLIT_MS * 0.85) seam = t <= SPLIT_MS ? SEAM_REST + (1 - SEAM_REST) * (t - SPLIT_MS * 0.85) / (SPLIT_MS * 0.15) : Math.max(0, 1 - (t - SPLIT_MS) / 500);
+    return { l: -apart + q.xl, r: apart + q.xr, yl: q.yl, yr: q.yr, met, seam, crack: 1 };
+  }
+  function splitState(now) {
+    if (gatherAt) return joinPath(now - gatherAt);
+    if (!halves.opened) return openPath(halves.openAt ? now - halves.openAt : 0);
+    return restAt();
   }
   function placeSplit(at) {
-    const tl = "translate(" + at.l.toFixed(2) + "px," + at.y.toFixed(2) + "px)";
-    const tr = "translate(" + at.r.toFixed(2) + "px," + at.y.toFixed(2) + "px)";
+    const tl = "translate(" + at.l.toFixed(2) + "px," + at.yl.toFixed(2) + "px)";
+    const tr = "translate(" + at.r.toFixed(2) + "px," + at.yr.toFixed(2) + "px)";
     halves.text[0].style.transform = halves.skies[0].style.transform = tl;
     halves.text[1].style.transform = halves.skies[1].style.transform = tr;
-    halves.seams.forEach((el) => { el.style.opacity = at.seam.toFixed(3); });
   }
-  /** Where each half stands now, as drawn: across, and up or down. */
+  /** Where each half stands now, as drawn: across, and up or down — and
+      where the top of the page is on the window. */
   function splitOffsets() {
     const box = halves.host.getBoundingClientRect();
     const a = halves.text[0].getBoundingClientRect(), b = halves.text[1].getBoundingClientRect();
-    return { l: a.left - box.left, r: b.left - box.left - halves.m, y: a.top - box.top };
+    return { l: a.left - box.left, r: b.left - box.left - (halves.m - halves.edges.reach), yl: a.top - box.top, yr: b.top - box.top, top: box.top };
+  }
+  /** Which half shows the point (x, y) on the window — "l", "r", or
+      neither (the gap) — the halves standing as `at` says. */
+  function sideAt(x, y, at) {
+    const e = halves.edges, m = halves.m;
+    if (x - at.l < m + edgeAt(e.L, y - at.top - at.yl)) return "l";
+    if (x - at.r > m + edgeAt(e.R, y - at.top - at.yr)) return "r";
+    return null;
   }
   /** The halves laid out at the page's width, and the drawing's canvases
       at the window's. Only the width moves them: a phone's bar coming and
@@ -1135,31 +1393,139 @@
     copyWidth = w;
     halves.m = m;
     halves.host.style.width = w + "px";
-    // (The drawing's halves reach a little past the window's edges, so the
-    // shake never shows the void at an edge.)
-    const [sl, sr] = halves.skies, [cl, cr] = halves.cans, B = SKY_BLEED;
+    if (widthMoved) {
+      halves.push = Math.round(clamp(w * SPLIT_PUSH, PUSH_LEAST, PUSH_MOST));
+      halves.shake = SHAKE * (w < 700 ? 0.66 : 1);
+      halves.edges = edgesFor(halves.push);
+      halves.bands = new Map();
+      sizeHalves();
+      growEdges(halves.edges, edgeLength());
+      setClips();
+    }
+    // The drawing's halves, each reaching a little past the window's edges
+    // (so the shake never shows the void at one) and a little past the
+    // middle (so its edge can stand out into the gap).
+    const reach = halves.edges.reach, B = SKY_BLEED;
+    const [sl, sr] = halves.skies, [cl, cr] = halves.cans;
     halves.skies.forEach((el) => { el.style.top = -B + "px"; el.style.height = (h + 2 * B) + "px"; });
     sl.style.left = -B + "px";
-    sl.style.width = (m + B) + "px";
-    sr.style.left = m + "px";
-    sr.style.width = (Wv - m + B) + "px";
-    const cw = Math.round(Wv * ratio), ch = Math.round(h * ratio), rw = Math.max(1, Math.round((Wv - m) * ratio));
-    if (cl.width !== cw || cl.height !== ch) { cl.width = cw; cl.height = ch; }
-    cl.style.cssText = "left:" + B + "px;top:" + B + "px;width:" + Wv + "px;height:" + h + "px";
-    if (cr.width !== rw || cr.height !== ch) { cr.width = rw; cr.height = ch; }
-    cr.style.cssText = "left:0;top:" + B + "px;width:" + (Wv - m) + "px;height:" + h + "px";
+    sl.style.width = (m + reach + B) + "px";
+    sr.style.left = (m - reach) + "px";
+    sr.style.width = (Wv - m + reach + B) + "px";
+    const lw = Wv + 2 * B, rw = Wv - m + reach + B, hh = h + 2 * B;
+    const size2 = (c, cw) => {
+      const pw = Math.round(cw * ratio), ph = Math.round(hh * ratio);
+      if (c.width !== pw || c.height !== ph) { c.width = pw; c.height = ph; }
+      c.style.cssText = "width:" + cw + "px;height:" + hh + "px";
+    };
+    size2(cl, lw);
+    size2(cr, rw);
+    // Each half's ground a solid block but for the strip its edge stands
+    // in, which its canvas carries — so the window behind it is not drawn
+    // for nothing under it (as a canvas alone over it, it was, and the
+    // frames fell by a third while the page was scrolled).
+    const [gl, gr] = halves.skies.map((el) => el.querySelector(".om-sky-ground")), strip = 2 * reach + 8;
+    gl.style.cssText = "left:0;width:" + Math.max(0, m + B - reach - 8) + "px";
+    gr.style.cssText = "left:" + strip + "px;right:0";
+    if (halves.ratio !== ratio) { halves.ratio = ratio; halves.bands = new Map(); }
+    halves.docTop = halves.host.getBoundingClientRect().top + window.scrollY;
     if (gatherAt) return;
     if (mendButton) mendButton.style.left = m + "px";
     if (!widthMoved) return;
-    halves.push = Math.round(w * SPLIT_PUSH);
-    halves.shake = SHAKE * (w < 700 ? 0.66 : 1);
     gap = gapOf(w, Math.max(h, (window.screen && window.screen.height) || 0), halves.push);
-    placeSplit(splitAt(-1));
+    // A new width under the opening: straight to apart.
+    if (halves.opened || halves.anims.length) { halves.opened = false; finishOpen(); }
+  }
+  /** THE EDGE IN STRIPS: the line drawn once, a band of the page at a time
+      (EDGE_BAND px tall, its reach wide either side of the middle), as two
+      masks — what the left half loses to the right of it, and what the
+      right loses to the left — and its gold; and laid on the drawing's
+      halves every frame as a copy rather than drawn again. (Drawn again as
+      the page scrolled under it, a long line held the frames back by a
+      third.) The most recently used few are kept. */
+  const EDGE_BAND = 1024;
+  function edgeBand(k) {
+    const e = halves.edges, cache = halves.bands;
+    if (cache.has(k)) { const b = cache.get(k); cache.delete(k); cache.set(k, b); return b; }
+    const reach = e.reach, S = 2 * reach + 8, y0 = k * EDGE_BAND, y1 = y0 + EDGE_BAND, s = e.L;
+    const i = Math.max(0, lowerBound(s.ys, y0) - 1), j = Math.min(s.ys.length - 1, lowerBound(s.ys, y1));
+    const X = (x) => reach + 4 + x, Y = (y) => y - y0;
+    const make = () => {
+      const c = document.createElement("canvas");
+      c.width = Math.ceil(S * ratio);
+      c.height = Math.ceil(EDGE_BAND * ratio);
+      const g = c.getContext("2d");
+      g.setTransform(ratio, 0, 0, ratio, 0, 0);
+      return [c, g];
+    };
+    const along = (g) => { for (let q = i; q <= j; q++) g.lineTo(X(s.xs[q]), Y(s.ys[q])); };
+    const [l, lg] = make(), [r, rg] = make(), [gold, gg] = make();
+    [[lg, S + 2], [rg, -2]].forEach(([g, outer]) => {
+      g.fillStyle = "#000";
+      g.beginPath();
+      g.moveTo(outer, Y(s.ys[i]));
+      along(g);
+      g.lineTo(outer, Y(s.ys[j]));
+      g.closePath();
+      g.fill();
+    });
+    gg.beginPath();
+    gg.moveTo(X(s.xs[i]), Y(s.ys[i]));
+    along(gg);
+    gg.strokeStyle = rgba(LINE, 1);
+    gg.lineWidth = 3.4;
+    gg.globalAlpha = 0.16;
+    gg.stroke();
+    gg.lineWidth = 1;
+    gg.globalAlpha = 0.9;
+    gg.stroke();
+    const band = { l, r, gold };
+    // (Made ready for the drawing as pictures as soon as the browser can,
+    // which it lays down quickest.)
+    if (window.createImageBitmap) ["l", "r", "gold"].forEach((key) => {
+      createImageBitmap(band[key]).then((bm) => { band[key] = bm; }, () => {});
+    });
+    cache.set(k, band);
+    while (cache.size > 8) cache.delete(cache.keys().next().value);
+    return band;
+  }
+  /** A drawing's half (`side`, "l" or "r") cut along its edge where the
+      page now stands (`dy`: where the top of the page is on the window),
+      and its gold laid along it at `seam` — down to `upTo` while the crack
+      is running, a light at its tip. In window coordinates. */
+  function cutEdge(c, side, m, dy, seam, upTo) {
+    const reach = halves.edges.reach, S = 2 * reach + 8, x0 = m - reach - 4;
+    const top = -SKY_BLEED - 2, bottom = H + SKY_BLEED + 2;
+    const k0 = Math.floor((top - dy) / EDGE_BAND), k1 = Math.floor((bottom - dy) / EDGE_BAND);
+    c.globalAlpha = 1;
+    c.globalCompositeOperation = "destination-out";
+    for (let k = k0; k <= k1; k++) c.drawImage(edgeBand(k)[side], x0, k * EDGE_BAND + dy, S, EDGE_BAND);
+    c.globalCompositeOperation = "source-over";
+    if (seam < 0.004 || upTo <= top) return;
+    c.globalAlpha = seam;
+    for (let k = k0; k <= k1; k++) {
+      const yb = k * EDGE_BAND + dy;
+      if (yb >= upTo) break;
+      const tall = Math.min(EDGE_BAND, upTo - yb), img = edgeBand(k).gold;
+      c.drawImage(img, 0, 0, img.width, Math.max(1, Math.min(img.height, tall * ratio)), x0, yb, S, tall);
+    }
+    c.globalAlpha = 1;
+    if (upTo < bottom) {
+      const tx = m + edgeAt(halves.edges.L, upTo - dy);
+      c.globalCompositeOperation = "lighter";
+      const g = c.createRadialGradient(tx, upTo, 0, tx, upTo, 22);
+      g.addColorStop(0, rgba(SECOND, 0.85));
+      g.addColorStop(1, rgba(SECOND, 0));
+      c.fillStyle = g;
+      c.fillRect(tx - 22, upTo - 22, 44, 44);
+      c.globalCompositeOperation = "source-over";
+    }
   }
   function buildSplit() {
     const flow = copyFlow();
-    // The halves of the page, in the page: each the whole page, cut to its
-    // half (twice the half's width, the right one drawn back by a half).
+    // The halves of the page, in the page: each the whole page, cut along
+    // its edge (the left's, everything to the left of it; the right's,
+    // everything to the right), the right laid over the left.
     const text = document.createElement("div");
     text.className = "om-split dark-surface";
     text.setAttribute("aria-hidden", "true");
@@ -1168,44 +1534,68 @@
     shadow.innerHTML =
       '<link rel="stylesheet" href="' + sheetHref() + '">' +
       "<style>" +
-      ".halves{position:relative;display:flex;width:100%}" +
-      ".half{position:relative;flex:0 0 50%;min-width:0;overflow:hidden;overflow:clip;will-change:transform}" +
-      ".half>.om-flow{position:relative;margin:0;width:200%;background:none}" +
-      ".half.r>.om-flow{margin-left:-100%}" +
+      ".halves{position:relative;width:100%}" +
+      ".half{position:relative;overflow:hidden;overflow:clip;will-change:transform}" +
+      ".half.r{position:absolute;left:0;top:0}" +
+      ".half>.om-flow{position:relative;margin:0;background:none}" +
       "</style>" +
       '<div class="halves" inert><div class="half l"></div><div class="half r"></div></div>';
     const [l, r] = shadow.querySelectorAll(".half");
     const copies = [flow.cloneNode(true), flow.cloneNode(true)];
     l.appendChild(copies[0]);
     r.appendChild(copies[1]);
-    const link = shadow.querySelector("link");
-    const show = () => { text.style.visibility = ""; };
-    link.addEventListener("load", show);
-    link.addEventListener("error", show);
-    window.setTimeout(show, 900);
-    // The drawing behind, cut the same way.
+    // The drawing behind, cut the same way, on the page's own ground: the
+    // halves are the page, and the gap between them the void.
     const sky = document.createElement("div");
     sky.className = "om-split-sky";
     sky.setAttribute("aria-hidden", "true");
-    sky.innerHTML = '<div class="om-sky-half l"><canvas></canvas><i class="om-sky-seam"></i></div>' +
-      '<div class="om-sky-half r"><canvas></canvas><i class="om-sky-seam"></i></div>';
+    sky.innerHTML = '<div class="om-sky-half l"><i class="om-sky-ground"></i><canvas></canvas></div>' +
+      '<div class="om-sky-half r"><i class="om-sky-ground"></i><canvas></canvas></div>';
     const skies = [...sky.querySelectorAll(".om-sky-half")];
     const cans = skies.map((el) => el.querySelector("canvas"));
     host = text;
     halves = {
-      host: text, sky, text: [l, r], skies, cans, inks: cans.map((c) => c.getContext("2d")),
-      seams: skies.map((el) => el.querySelector(".om-sky-seam")), copies, push: 0, m: 0, shake: 0, anims: [],
+      host: text, sky, text: [l, r], skies, cans, inks: cans.map((c) => c.getContext("2d")), copies,
+      ground: getComputedStyle(page).getPropertyValue("--bg").trim() || "#0d0c10",
+      push: 0, m: 0, shake: 0, anims: [], edges: null, bands: new Map(), ratio: 0, docTop: 0, opened: false, openAt: 0, from: 0, at: null, ro: null,
     };
     page.insertBefore(sky, canvas.nextSibling);
     page.insertBefore(text, sky.nextSibling);
     layoutSplit();
+    placeSplit(openPath(0));                 // whole, to begin with
     root.classList.add("om-held");
     followPage(() => (halves ? halves.copies : []));
+    // The edges laid on as the page grows (a fragrance opened at its foot).
+    if (window.ResizeObserver) {
+      halves.ro = new ResizeObserver(() => {
+        if (!halves) return;
+        const need = edgeLength();
+        if (need > halves.edges.to) {
+          const was = halves.edges.to;
+          growEdges(halves.edges, need + 2000);
+          setClips();
+          [...halves.bands.keys()].forEach((k) => { if ((k + 1) * EDGE_BAND > was) halves.bands.delete(k); });
+        }
+      });
+      halves.ro.observe(l);
+    }
+    // In, and then it breaks.
+    let shown = false;
+    const show = () => {
+      if (shown) return;
+      shown = true;
+      text.style.visibility = "";
+      openSplit();
+    };
+    const link = shadow.querySelector("link");
+    link.addEventListener("load", show);
+    link.addEventListener("error", show);
+    window.setTimeout(show, 900);
 
     // OM, in the middle of the gap — pressed, and never by a key
     // ("pressing keyboard buttons stops the split; so remove that"): it is
     // not a stop of the keyboard's, and a press with no point to it (a key
-    // on it) is let go.
+    // on it) is let go. It comes up once the page has broken apart.
     mendButton = document.createElement("button");
     mendButton.type = "button";
     mendButton.className = "om-mend om-join";
@@ -1215,30 +1605,39 @@
     mendButton.style.left = halves.m + "px";
     mendButton.addEventListener("click", (e) => { if (e.detail) joinSplit(); });
     page.insertBefore(mendButton, page.firstChild);
-    requestAnimationFrame(() => { if (mendButton) mendButton.classList.add("shown"); });
   }
-  /** OM pressed: the halves together, on the browser's clock — the way
-      worked out at sixty steps a second and handed to it whole — the
-      drawing's halves on the same clock as the page's. */
-  function joinSplit() {
-    if (gatherAt || !halves) return;
-    const t0 = (document.timeline && document.timeline.currentTime) || performance.now();
-    gatherAt = t0;
-    mendMs = SPLIT_MS + SHAKE_TAIL;
-    mendSpread = 0;
-    pieces = "gathering";
-    root.dataset.om = pieces;
-    retireButton();
-    const total = mendMs, step = 1000 / 60;
-    const kl = [], kr = [], ks = [];
+  /** THE OPENING, set going once the copies are in: whole for a moment,
+      and then the crack. */
+  function openSplit() {
+    if (!halves || halves.openAt || halves.opened || gatherAt) return;
+    const now = (document.timeline && document.timeline.currentTime) || performance.now();
+    halves.openAt = Math.max(now + OPEN_HOLD, 1000);
+    runPath(openPath, OPEN_ALL, halves.openAt);
+  }
+  /** Apart and at rest: the halves' own transforms from here, OM up. */
+  function finishOpen() {
+    if (!halves || halves.opened) return;
+    halves.opened = true;
+    halves.openAt = halves.openAt || 1;
+    placeSplit(restAt());
+    halves.anims.forEach((a) => a.cancel());
+    halves.anims = [];
+    if (mendButton) requestAnimationFrame(() => { if (mendButton) mendButton.classList.add("shown"); });
+  }
+  /** A way for the halves, worked out at sixty steps a second and handed to
+      the browser whole, from t0 — the drawing's halves on the same clock as
+      the page's. */
+  function runPath(path, total, t0) {
+    halves.anims.forEach((a) => a.cancel());
+    halves.anims = [];
+    if (!halves.text[0].animate) return;     // (placed by hand each frame instead)
+    const step = 1000 / 60, kl = [], kr = [];
     for (let t = 0; ; t += step) {
-      const tt = Math.min(t, total), at = splitAt(tt), offset = tt / total;
-      kl.push({ offset, transform: "translate(" + at.l.toFixed(2) + "px," + at.y.toFixed(2) + "px)" });
-      kr.push({ offset, transform: "translate(" + at.r.toFixed(2) + "px," + at.y.toFixed(2) + "px)" });
-      ks.push({ offset, opacity: at.seam.toFixed(3) });
+      const tt = Math.min(t, total), at = path(tt), offset = tt / total;
+      kl.push({ offset, transform: "translate(" + at.l.toFixed(2) + "px," + at.yl.toFixed(2) + "px)" });
+      kr.push({ offset, transform: "translate(" + at.r.toFixed(2) + "px," + at.yr.toFixed(2) + "px)" });
       if (tt >= total) break;
     }
-    if (!halves.text[0].animate) return;     // (placed by hand each frame instead)
     const run = (el, frames) => {
       const a = el.animate(frames, { duration: total, fill: "both", easing: "linear" });
       a.startTime = t0;
@@ -1246,7 +1645,56 @@
     };
     run(halves.text[0], kl); run(halves.skies[0], kl);
     run(halves.text[1], kr); run(halves.skies[1], kr);
-    halves.seams.forEach((el) => run(el, ks));
+  }
+  /** OM pressed: the halves together, from wherever the scroll has left
+      them, and the wave as they meet. */
+  function joinSplit() {
+    if (gatherAt || !halves || !halves.opened) return;
+    const t0 = (document.timeline && document.timeline.currentTime) || performance.now();
+    halves.from = halves.push + Math.round(breath);
+    gatherAt = t0;
+    mendMs = SPLIT_MS + SHAKE_TAIL;
+    mendSpread = 0;
+    pieces = "gathering";
+    root.dataset.om = pieces;
+    retireButton();
+    runPath(joinPath, mendMs, t0);
+    if (!REDUCE) { waveFrom = t0 + SPLIT_MS; washOver(waveFrom); }
+  }
+  /** THE WAVE (see WAVE_MS) τ ms after the halves met: how far out from
+      the seam its two fronts are, and how strong. */
+  function waveAt(tau) {
+    const u = clamp(tau / WAVE_MS, 0, 1);
+    return { f: (1 - Math.pow(1 - u, 2.2)) * (window.innerWidth / 2 + WAVE_WIDE * 3), a: smooth01(u / 0.08) * Math.pow(1 - u, 1.2) };
+  }
+  /** How lit a speck at x is by the wave this frame (0 to 1). */
+  function waveLit(x) {
+    if (!waveNow) return 0;
+    const d = (Math.abs(x - waveNow.m) - waveNow.f) / WAVE_WIDE;
+    return d > 3 || d < -3 ? 0 : waveNow.a * Math.exp(-d * d);
+  }
+  /** And over the writing, the faintest gold, the same two fronts — two
+      bands on the window moved by the browser's own clock. */
+  function washOver(t0) {
+    const wash = document.createElement("div");
+    wash.className = "om-wave";
+    wash.setAttribute("aria-hidden", "true");
+    wash.innerHTML = "<i></i><i></i>";
+    page.appendChild(wash);
+    const bands = [...wash.children];
+    if (!bands[0].animate) { wash.remove(); return; }
+    const m = halves.m, step = 1000 / 40;
+    bands.forEach((el, k) => {
+      const way = k ? 1 : -1, frames = [];
+      for (let t = 0; ; t += step) {
+        const tt = Math.min(t, WAVE_MS), w = waveAt(tt);
+        frames.push({ offset: tt / WAVE_MS, transform: "translateX(" + (m + way * w.f).toFixed(1) + "px)", opacity: w.a.toFixed(3) });
+        if (tt >= WAVE_MS) break;
+      }
+      const a = el.animate(frames, { duration: WAVE_MS, fill: "both", easing: "linear" });
+      a.startTime = t0;
+    });
+    window.setTimeout(() => wash.remove(), Math.max(0, t0 - performance.now()) + WAVE_MS + 300);
   }
   /** The button goes as the page comes together; the focus, if it was on
       it, to the page's own heading rather than nowhere. */
@@ -1624,6 +2072,7 @@
       // this frame, and the halves' copies are faded off the page.
       const done = halves;
       halves = null;
+      if (done.ro) done.ro.disconnect();
       root.classList.add("om-landing");
       root.classList.remove("om-shattered");
       done.sky.remove();
@@ -1674,7 +2123,7 @@
     // new width (a phone's bar coming and going, a page zoomed with a key,
     // once brought it together at once), and only OM brings it together.
     window.addEventListener("resize", () => {
-      if (halves) { size(); layoutSplit(); return; }
+      if (halves) { size(); layoutSplit(); lastScroll = null; return; }   // (a page laid out again moves under the window: not a scroll)
       if (pieces !== "pieces") return;
       mend(window.innerWidth / 2, window.innerHeight * 0.44);
       gatherAt -= mendMs + mendSpread;
@@ -1695,10 +2144,9 @@
         if (!(t === document.body || t === root || flow.some((el) => el.contains(t)))) return;
         e.preventDefault();
         e.stopImmediatePropagation();
-        const x = e.clientX, y = e.clientY, at = splitOffsets(), m = halves.m;
-        const off = x < m + at.l ? at.l : x > m + at.r ? at.r : null;
-        if (off == null) return;
-        const under = document.elementFromPoint(x - off, y - at.y);
+        const x = e.clientX, y = e.clientY, at = splitOffsets(), side = sideAt(x, y, at);
+        if (!side) return;
+        const under = side === "l" ? document.elementFromPoint(x - at.l, y - at.yl) : document.elementFromPoint(x - at.r, y - at.yr);
         if (!under || !flow.some((el) => el.contains(under))) return;
         passing = true;
         try { under.click(); } finally { passing = false; }
@@ -1743,7 +2191,24 @@
       split: () => {
         if (!gap) return null;
         const at = halves ? splitOffsets() : null;
-        return { push: gap.push, offsets: at ? [at.l, at.r] : [], y: at ? at.y : 0, pieces: gap.shards.length, alpha: gap.alpha };
+        return { push: gap.push, offsets: at ? [at.l, at.r] : [], ys: at ? [at.yl, at.yr] : [], y: at ? at.yl : 0,
+          pieces: gap.shards.length, motes: gap.motes.length, alpha: gap.alpha,
+          opened: halves ? halves.opened : true, breath, mode: gapMode };
+      },
+      // Each half's edge (px from the middle of the page, before it is
+      // pushed) every `step` px down the page from `from`, `n` of them.
+      edges: (from, step, n) => {
+        if (!halves) return null;
+        const L = [], R = [];
+        for (let i = 0; i < n; i++) { const y = from + i * step; L.push(edgeAt(halves.edges.L, y)); R.push(edgeAt(halves.edges.R, y)); }
+        return { L, R };
+      },
+      // The gap's things: where the first few are on the window, and how
+      // far the hand has moved them all, together.
+      gap: () => gap && {
+        at: gap.motes.slice(0, 12).map((s) => [s.X, s.Y]).concat(gap.shards.slice(0, 12).map((s) => [s.X, s.Y])),
+        stirred: gap.shards.concat(gap.motes).reduce((n, s) => n + Math.hypot(s.ox, s.oy), 0),
+        turn: gap.shards.slice(0, 12).map((s) => s.th),
       },
       openIn: (n) => {
         const copies = halves ? halves.copies : shards.map((s) => s.copy).concat(lens ? [lens.copy] : []);
@@ -1755,8 +2220,10 @@
   // ============================================================
   // KEEPING UP
   // ============================================================
+  // (A finger stirs the gap's pieces where it touches, and nothing else.)
+  let touchX = -99999, touchY = -99999, touchAt = -1e9;
   const hand = (event) => {
-    if (event.pointerType === "touch") return;
+    if (event.pointerType === "touch") { touchX = event.clientX; touchY = event.clientY; touchAt = performance.now(); return; }
     handX = event.clientX; handY = event.clientY;
     if (lensX < -9000) { lensX = handX; lensY = handY; }
     if (hint && pieces === "pieces") hint.classList.remove("shown");
@@ -1782,17 +2249,48 @@
       lensY += (handY - lensY) * (REDUCE ? 1 : LENS_LAG);
     }
 
+    // The page's scrolling: how fast (px a second, eased).
+    const sy = window.scrollY;
+    if (lastScroll == null) lastScroll = sy;
+    if (dt > 0.0005) scrollV += ((sy - lastScroll) / dt - scrollV) * (REDUCE ? 1 : 0.22);
+    if (Math.abs(scrollV) < 0.5) scrollV = 0;
+    lastScroll = sy;
+    // THE WAVE, where it is.
+    waveNow = null;
+    if (waveFrom) {
+      const tau = now - waveFrom;
+      if (tau >= WAVE_MS) waveFrom = 0;
+      else if (tau >= 0) { const w = waveAt(tau); waveNow = { m: (copyWidth || W) / 2, f: w.f, a: w.a }; }
+    }
+
     // How whole the page is.
     if (shattered) {
-      if (gatherAt) {
-        const all = clamp((now - gatherAt) / (mendMs + mendSpread), 0, 1);
-        gather = halves ? splitAt(now - gatherAt).met : ease(all);
+      if (halves) {
+        if (!halves.opened && halves.openAt && now - halves.openAt >= OPEN_ALL) finishOpen();
+        if (halves.opened && !gatherAt) {
+          // THE SCROLL: the gap opens as the page is scrolled, and closes
+          // as it comes to rest — or, `?gap=read`, as it is read down.
+          let want;
+          if (gapMode === "read") want = halves.push * READ_MOST * clamp(sy / Math.max(1, root.scrollHeight - H), 0, 1);
+          else want = REDUCE ? 0 : halves.push * BREATHE_MOST * (1 - Math.exp(-Math.abs(scrollV) / BREATHE_SPEED));
+          breath += (want - breath) * (REDUCE ? 1 : want > breath ? 0.16 : 0.05);
+          if (Math.round(breath) !== (halves.placed || 0)) { halves.placed = Math.round(breath); placeSplit(restAt()); }
+        }
+        halves.at = splitState(now);
+        gather = halves.at.met;
         // (Without the browser's own animations, the halves by hand.)
-        if (halves && !halves.anims.length) placeSplit(splitAt(now - gatherAt));
+        if (!halves.anims.length && (gatherAt || !halves.opened)) placeSplit(halves.at);
+        if (gatherAt && now - gatherAt >= mendMs && pieces === "gathering") wholeNow();
+      } else if (gatherAt) {
+        const all = clamp((now - gatherAt) / (mendMs + mendSpread), 0, 1);
+        gather = ease(all);
         if (all >= 1 && pieces === "gathering") wholeNow();
       }
       if (shards.length) placeShards(now);
     }
+    // The hand on the gap's pieces: the pointer, or a finger a moment.
+    const gx = handX > -9000 ? handX : now - touchAt < 700 ? touchX : -99999;
+    const gy = handX > -9000 ? handY : touchY;
     // The quiet over the column, coming in as the page mends: worked out
     // again only when it has changed (or the window has).
     if (!stops || hush !== gather || stops.w !== W) {
@@ -1814,38 +2312,61 @@
     const small = Math.min(W * 0.24, 330) / 3.26 * 2;
     const scale = small + (big - small) * voidness;
     if (halves) {
-      // SPLIT: the drawing behind is drawn whole on the left half's canvas
-      // — the hand where it stands in the drawing, on whichever half it is
-      // over — and the right half's laid from it; the page's own canvas
-      // carries the gap's broken pieces, shaken with the page.
-      const at = splitAt(gatherAt ? now - gatherAt : -1);
-      let hx = -99999;
+      // SPLIT: the drawing behind is drawn whole on the left half's canvas,
+      // on the page's ground — the hand where it stands in the drawing, on
+      // whichever half it is over — and the right half's laid from it; each
+      // then cut along its edge where the page now stands, and its gold
+      // drawn on it. The page's own canvas carries the gap's pieces.
+      const at = halves.at, m = halves.m, B = SKY_BLEED, reach = halves.edges.reach;
+      const top = halves.docTop - sy;
+      let hx = -99999, hy = -99999;
       if (handX > -9000) {
-        if (handX < halves.m + at.l) hx = handX - at.l;
-        else if (handX > halves.m + at.r) hx = handX - at.r;
+        const side = sideAt(handX, handY, { l: at.l, r: at.r, yl: at.yl, yr: at.yr, top });
+        if (side === "l") { hx = handX - at.l; hy = handY - at.yl; }
+        else if (side === "r") { hx = handX - at.r; hy = handY - at.yr; }
       }
-      ink = halves.inks[0];
-      ink.setTransform(ratio, 0, 0, ratio, 0, 0);
-      ink.clearRect(0, 0, W, H);
-      drawWorld(cx, cy, turn, t, pageAlpha + voidness * 0.4, hx, handY - at.y);
-      drawWord(cx, cy - scale * 0.1, scale, t, 0.24 + 0.46 * voidness, hx, handY - at.y);
+      const [cl, cr] = halves.cans, left = halves.inks[0], right = halves.inks[1];
+      ink = left;
+      ink.setTransform(ratio, 0, 0, ratio, B * ratio, B * ratio);
+      ink.globalAlpha = 1;
+      ink.globalCompositeOperation = "source-over";
+      ink.fillStyle = halves.ground;
+      ink.fillRect(-B, -B, W + 2 * B, H + 2 * B);
+      drawWorld(cx, cy, turn, t, pageAlpha + voidness * 0.4, hx, hy);
+      drawWord(cx, cy - scale * 0.1, scale, t, 0.24 + 0.46 * voidness, hx, hy);
+      // The gap's pieces reach as far as the gap does, and no less than a
+      // little either side of the seam once it has closed.
+      const spread = Math.max((at.r - at.l) / 2, gap.push * 0.45);
+      gap.reach = spread;
+      moveGap(t, dt, spread, gx, gy);
       // The broken pieces faint behind the writing, coming in as the halves
       // close over them.
       const faint = clamp((at.met - 0.62) / 0.38, 0, 1);
-      if (gap && faint > 0) drawGap(t, GAP_FAINT * faint * faint * (3 - 2 * faint));
-      const from = halves.cans[0], to = halves.cans[1], right = halves.inks[1];
+      if (gatherAt && faint > 0) drawGap(t, GAP_FAINT * faint * faint * (3 - 2 * faint));
       right.setTransform(1, 0, 0, 1, 0, 0);
-      right.clearRect(0, 0, to.width, to.height);
-      right.drawImage(from, Math.round(halves.m * ratio), 0, to.width, to.height, 0, 0, to.width, to.height);
+      right.globalAlpha = 1;
+      right.globalCompositeOperation = "source-over";
+      right.clearRect(0, 0, cr.width, cr.height);
+      right.drawImage(cl, Math.round((m - reach + B) * ratio), 0, cr.width, cr.height, 0, 0, cr.width, cr.height);
+      const upTo = -B + (H + 2 * B) * at.crack;
+      cutEdge(left, "l", m, top, at.seam, upTo);
+      right.setTransform(ratio, 0, 0, ratio, -(m - reach) * ratio, B * ratio);
+      cutEdge(right, "r", m, top, at.seam, upTo);
       ink = mainInk;
       // In the gap, on the void, the broken pieces whole: the halves close
       // over them.
-      if (gap) { drawGap(t, 1); gap.alpha = 1; }
+      drawGap(t, 1);
+      gap.alpha = 1;
     } else {
       drawWorld(cx, cy, turn, t, pageAlpha + voidness * 0.4, handX, handY);
       drawWord(cx, cy - scale * 0.1, scale, t, 0.24 + 0.46 * voidness, handX, handY);
       if (voidness > 0.003 || sparks.length) drawSparks(cx, cy, portalR() * (0.6 + 0.4 * voidness), t, dt, voidness, gatherAt ? 0 : 1);
-      if (gap) { drawGap(t, GAP_FAINT); gap.alpha = GAP_FAINT; }
+      if (gap) {
+        gap.reach = gap.push * 0.45;
+        moveGap(t, dt, gap.reach, gx, gy);
+        drawGap(t, GAP_FAINT);
+        gap.alpha = GAP_FAINT;
+      }
     }
     // (No hexagon at the hand while the page is split: it showed the drawing
     // whole in the middle of the gap.)

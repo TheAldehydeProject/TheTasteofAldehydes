@@ -13394,11 +13394,13 @@ html.om-landing .human-readout { transition: none !important; }
    the page — so they scroll as it does, under the finger on a phone,
    nothing moved by hand — over the drawing's two halves, fixed to the
    window; the gap's broken pieces are on the page's own canvas, under
-   both. Pushed apart, nothing of either half may widen the page. The
-   drawing's halves carry the page's own ground, so the halves are the page
-   and the gap between them the void. And no grey box flashing where a tap
-   really lands on a phone:
-   what is seen there is a half of the page, not the page under it. */
+   both. Pushed apart, nothing of either half may widen the page. Each
+   half of the page is cut along its own uneven edge by om.js (a clip
+   path), and the drawing's halves along the same edges where the page
+   stands, on their own canvases with the page's own ground drawn in them,
+   so the halves are the page and the gap between them the void. And no
+   grey box flashing where a tap really lands on a phone: what is seen
+   there is a half of the page, not the page under it. */
 .om-split {
   position: absolute;
   top: 0;
@@ -13421,21 +13423,30 @@ html.om-landing .human-readout { transition: none !important; }
   left: 0;
   height: 100%;
   overflow: hidden;
-  background: var(--bg);           /* the page's own ground: the halves are the page, the gap the void */
   will-change: transform;
 }
 .om-sky-half > canvas { position: absolute; left: 0; top: 0; }
-.om-sky-seam {
+.om-sky-ground { position: absolute; top: 0; bottom: 0; background: var(--bg); }
+/* THE WAVE (om.js): as the halves meet, the faintest gold running out
+   from the seam to the window's edges, over the writing — two bands moved
+   by the browser's own clock. */
+.om-wave {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  overflow: hidden;
+  pointer-events: none;
+}
+.om-wave i {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 1px;
-  background: rgba(var(--om-gold), 0.9);
-  box-shadow: 0 0 9px rgba(var(--om-gold), 0.45);
-  opacity: 0.62;
+  left: -130px;
+  width: 260px;
+  background: linear-gradient(to right, rgba(var(--om-gold), 0), rgba(var(--om-gold), 0.075) 50%, rgba(var(--om-gold), 0));
+  opacity: 0;
+  will-change: transform, opacity;
 }
-.om-sky-half.l .om-sky-seam { right: 0; }
-.om-sky-half.r .om-sky-seam { left: 0; }
 html.om-shattered body.om-page { -webkit-tap-highlight-color: transparent; }
 /* THE BUTTON IN THE TOP RIGHT (2026-10-11, last — "put a button on the top
    right to fix the page"): Mend the glass, boxed as the way back to the
@@ -13462,10 +13473,11 @@ html.om-shattered body.om-page { -webkit-tap-highlight-color: transparent; }
   color: rgb(var(--om-gold));
   cursor: pointer;
   opacity: 0;
+  pointer-events: none;            /* not pressable until it is there to be seen */
   transform: translateY(-4px);
   transition: opacity 0.5s var(--menu-ease), transform 0.5s var(--menu-ease), border-color 0.3s var(--menu-ease), background-color 0.3s var(--menu-ease);
 }
-.om-mend.shown { opacity: 1; transform: none; }
+.om-mend.shown { opacity: 1; transform: none; pointer-events: auto; }
 .om-mend:hover,
 .om-mend:focus-visible { border-color: rgba(var(--om-gold), 0.9); background-color: rgba(var(--om-gold), 0.08); }
 .om-mend-mark { flex: none; overflow: visible; }
