@@ -739,6 +739,92 @@ Tested in `tests/om-and-the-tribe.spec.js`:
 **Still open**: a trial. Whichever of the split, the rings, the broken pane and the fine glass the
 owner keeps, the others come out of the code.
 
+## 2026-10-13, last — the split widened, the drawing split with it, gliding together and shaking as it meets
+
+> okay, good but i wnt you to widen the gap by a lot; i want it to be the majority. also pressing
+> keyboard buttons stops the split; so remove that. on the phone it acts weird so fix that. make the
+> shaking at the end of the transition rather at the end; and make the transition involve the
+> background. I want it as smooth as possible.
+
+**The gap the most of the page.** Each half is pushed out `SPLIT_PUSH` = 30% of the page's width
+(it was 7%, at most 120px), so the gap is three fifths of it — 864px on a laptop, 234 on a phone —
+and each half shows a fifth of the window at its edge, the page's own writing cut by the line down
+its middle. The broken pieces are as dense as before for the wider gap (`GAP_SHARDS`, about 450 on a
+laptop, 160 on a phone), the largest larger the wider it is, with three cracks.
+
+**What brought it together that was not OM.** Tried key by key: the keyboard's first stop was OM, so
+Tab and then Enter or Space pressed it; and **a window changing size brought it together at once** —
+a page zoomed with Ctrl or ⌘ and + or −, and on a phone the address bar sliding away as the page is
+scrolled, which changes the window's height. Now OM is no stop of the keyboard's (`tabIndex = -1`),
+a press on it with no point to it — a key — is let go (`e.detail`), and a change of size lays the
+halves out again at the new width (`layoutSplit`); a change of height alone moves nothing, the broken
+pieces scattered down the whole of the screen's height to begin with. Only a press on OM brings it
+together. (Tab still goes through the page's own links, as it should; Enter on one follows it.)
+
+**On a phone.** Besides its bar bringing it together, the halves were laid over the window and moved
+by the script every frame, a frame behind the finger, so the writing trembled as it was scrolled. The
+halves are now **in the page** — `.om-split`, laid at the top of the document, each half a copy of
+the whole page cut to its half (twice the half's width, the right one drawn back by a half) — so they
+scroll as the page does, at once, nothing moved by hand. A tap is taken to what is seen there, as a
+click is, and no grey box flashes where a tap really lands (`-webkit-tap-highlight-color`). The
+copies ask for the page's stylesheet by its version (`sheetHref`; they asked for it plain, which a
+browser could answer with an older one it kept), and are hidden until it is in.
+
+**The background in the transition.** The drawing behind — the armillary, the yantra, the large
+**โอม** — is **split with the page**: drawn whole on the left half's canvas and the right half's laid
+from it every frame (one copy of half the window), the two canvases fixed to the window in
+`.om-split-sky` and pushed apart exactly as the writing is, so the โอม stands in two halves either side
+of the gap and comes together with the page, shrinking to its quiet size as it comes. The drawing's
+halves carry **the page's own ground**, so the halves read as the page and the gap between them as
+the void; they reach `SKY_BLEED` past the window's edges, so the shake never shows the void at one.
+The broken pieces lie whole in the gap, on the void; the halves close over them, and they come in
+faint in the drawing behind the writing as the halves meet (`GAP_FAINT`), where they stay.
+
+**As smooth as possible.** OM pressed, the way is worked out at sixty steps a second and handed to
+the browser whole (`joinSplit`, an animation of each half's transform, all four on one start time),
+so a busy frame cannot stutter it, and the drawing's halves and the writing's move together —
+measured within a hundredth of a pixel of each other every frame, at sixty frames a second. They
+glide together over `SPLIT_MS` (1.9s), gently at both ends (a quintic, at rest where it sets off and
+where it arrives).
+
+**The shake at the end.** It comes up only over the last fifth of the way (`SHAKE_FROM`), is hardest
+as the halves meet, and dies away after (`SHAKE_TAU`), still by `SHAKE_TAIL` (0.7s): the whole page
+shaking as one — the halves and the drawing alike — a little across and less up and down, a damped
+tremor rather than noise (`SHAKE` 9px, two thirds on a phone; `SHAKE_HZ` 7.5). The seams flash gold
+as they meet and go. It shook hardest just after the halves set off until now. Then the page is
+shown, the drawing is the page's own canvas's again from that frame, and the halves' copies fade off
+it.
+
+**No hexagon at the hand while split**: it drew the drawing whole in the middle of the gap. It is
+there once the page is whole, as before.
+
+The split's own code is apart from the glass and the rings' now (`buildSplit`, `layoutSplit`,
+`splitAt`, `placeSplit`, `joinSplit`); `buildShards` is the rings' and the glass's alone.
+
+Tested in `tests/om-and-the-tribe.spec.js`:
+
+- **`Om opens split in two, the gap the most of it, OM in it; a fragrance opens where it is seen, and
+  OM brings it together, shaking as it meets`** (replacing the split's test): the gap more than half
+  the page; nothing widening it; the drawing's halves pushed exactly as the page's; OM in the middle
+  of the gap; a press in the gap opens nothing and a press where the first fragrance is seen opens it,
+  in both halves; OM pressed, the drawing in step with the writing within a pixel and a half every
+  frame, the left half turning back and forth at least twice — and not before 1.2s, so it glides
+  until then — whole, the drawing's canvases gone, the fragrance still open, the pieces faint.
+- **`Om's split is brought together by nothing but a press on OM: no key, no change of size`** (new):
+  Tab does not come to OM; Space, the arrows, Page Down, Home, Escape, a letter, and Enter and Space
+  on OM itself leave it split; two changes of size leave it split, laid out again at 30% of the new
+  width, OM in the middle again.
+- **`Om's split on a phone: it scrolls with the page, waits for OM through the bar coming and going,
+  and nothing scrolls sideways`** (replacing the phone's split test): the halves move with the page at
+  once when it is scrolled; the window's height changed twice and it is still split.
+- *Om's break is mended only by its button* reads the rings now (`?glass=rings`), the split's own keys
+  being the test above; the tests that the page is whole at once (reduced motion, an address at one
+  fragrance, `?om=whole`) look for the split's halves too.
+
+**Still open**: a trial, as before — whichever of the split, the rings, the broken pane and the fine
+glass the owner keeps, the others come out of the code. A keyboard alone cannot bring the split
+together now, at the owner's word; the page is read and its fragrances opened as it is.
+
 ## Same round, other reports
 
 - [The newer houses — Qimu's Bassist and Drummer written](2026-09-21-the-newer-houses.md#2026-10-10--bassist-and-drummer-written-and-a-fold-in-housejs)

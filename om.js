@@ -262,25 +262,37 @@
   // page into one. the middle should be themed of breaks. They should be
   // random polygons of broken stuff. and then when you converge the two
   // sides with the buttons, the breaks will kind of disappear behind it.
-  // as faded behind text"). The page cut down its middle into two pieces,
-  // each holding the page as the rings' and the glass's pieces do, pushed
-  // out SPLIT_PUSH of the page's width; in the gap, BROKEN PIECES — random
-  // polygons, most small, a few larger, turning very slowly — and two
-  // cracks wandering down it, drawn on the house's own ground; and in its
-  // middle the OM button. Pressed, the halves come together over SPLIT_MS,
-  // SHAKING as they come (SHAKE, hardest half way), their edges flashing
-  // gold as they meet; the broken pieces are drawn in towards the seam as
-  // the halves close over them, and stay there, faint behind the writing
-  // (GAP_FAINT). No hexagon showing the page whole while it is split — the
-  // hexagon is the cursor's drawing still.
-  const SPLIT_PUSH = 0.07;         // each half pushed out this share of the page's width
-  const SPLIT_PUSH_LEAST = 24;     // px, at least (a phone)
-  const SPLIT_PUSH_MOST = 120;     // px, at most
-  const SPLIT_MS = 1700;           // the halves coming together
-  const SHAKE = 9;                 // px, the shake at its hardest
-  const SHAKE_HZ = 21;             // and how quickly
-  const GAP_SHARDS = 1 / 1300;     // broken pieces to a square px of the gap
+  // as faded behind text"). And the same night: "widen the gap by a lot;
+  // i want it to be the majority ... make the shaking at the end of the
+  // transition ... make the transition involve the background. I want it
+  // as smooth as possible."
+  // The page cut down its middle into two halves, each a copy of the page
+  // laid IN the page (so it scrolls as the page does, with nothing moved
+  // by hand), and the drawing behind it cut with it — so the halves of the
+  // armillary and of โอม stand apart with the writing, and come together
+  // with it. Each half pushed out SPLIT_PUSH of the page's width, the gap
+  // between them three fifths of it; in the gap, BROKEN PIECES — random
+  // polygons, most small, a few large, turning very slowly — and cracks
+  // wandering down it, on the house's ground; and in its middle OM.
+  // Pressed — and only pressed, never by a key — the halves glide together
+  // over SPLIT_MS, gently at both ends, on the browser's own clock (an
+  // animation of a transform, so a busy frame does not stutter them), the
+  // ground warming to the page's own as they come; as they meet, the page
+  // SHAKES as one, the shake coming up over the last of the way
+  // (SHAKE_FROM) and dying away after (SHAKE_TAU), still by SHAKE_TAIL;
+  // their edges flash gold as they meet; the broken pieces are drawn in
+  // to the seam as the halves close over them, and stay there, faint
+  // behind the writing (GAP_FAINT).
+  const SPLIT_PUSH = 0.3;          // each half pushed out this share of the page's width
+  const SPLIT_MS = 1900;           // the halves coming together
+  const SHAKE = 9;                 // px, the shake at its hardest, as they meet (two thirds on a phone)
+  const SHAKE_HZ = 7.5;            // and how quickly
+  const SHAKE_FROM = 0.8;          // it comes up over the last fifth of the way
+  const SHAKE_TAU = 170;           // ms in which it falls to a third, once they have met
+  const SHAKE_TAIL = 700;          // ms of it after they meet, ending still
+  const GAP_SHARDS = 1 / 1700;     // broken pieces to a square px of the gap
   const GAP_FAINT = 0.16;          // what is left of them behind the writing once it is whole
+  const SKY_BLEED = 40;            // px the drawing's halves reach past the window's edges
   const MEND_MS = 1100;            // how long one piece takes to come home, mending for good
   const MEND_SPREAD = 760;         // and the most it waits, the farthest last
   const MEND_QUICK_MS = 380;       // and when a fragrance is opened
@@ -905,39 +917,39 @@
       reaches, turning very slowly — and two cracks wandering down it. */
   function gapOf(w, h, push) {
     const cx = w / 2, n = Math.round(push * 2 * h * GAP_SHARDS);
+    // Most small, a few large — the largest larger the wider the gap.
+    const most = clamp(push * 0.16, 22, 64);
     const shards = [];
     for (let i = 0; i < n; i++) {
-      const r = 2.5 + Math.pow(random(), 2.4) * 30;
+      const r = 2.5 + Math.pow(random(), 2.6) * most;
       const corners = 3 + Math.floor(random() * 4);
       const angles = [];
       for (let k = 0; k < corners; k++) angles.push(random() * Math.PI * 2);
       angles.sort((a, b) => a - b);
       shards.push({
-        x: cx + (random() * 2 - 1) * push * 0.9, y: random() * h,
+        x: cx + (random() * 2 - 1) * push * 0.92, y: random() * h,
         pts: angles.map((a) => [Math.cos(a) * r * between(0.4, 1), Math.sin(a) * r * between(0.4, 1)]),
         turn: random() * Math.PI * 2, spin: between(-0.08, 0.08),
         ink: between(0.3, 0.75), fill: random() < 0.45 ? between(0.04, 0.14) : 0, bright: random() < 0.1,
       });
     }
-    const cracks = [0, 1].map(() => {
+    const cracks = [0, 1, 2].map(() => {
       const out = [];
-      let x = cx + (random() - 0.5) * push * 0.6;
+      let x = cx + (random() - 0.5) * push * 0.9;
       for (let y = -10; y <= h + 30; y += between(16, 34)) {
-        x = clamp(x + (random() - 0.5) * push * 0.42, cx - push * 0.8, cx + push * 0.8);
+        x = clamp(x + (random() - 0.5) * Math.min(push * 0.3, 60), cx - push * 0.85, cx + push * 0.85);
         out.push(x, y);
       }
       return out;
     });
     return { cx, push, shards, cracks, alpha: 1 };
   }
-  /** The gap drawn on the house's own ground: the broken pieces where they
-      lie, and as the halves close, drawn in towards the seam and fading,
-      until they are faint behind the writing. */
-  function drawGap(t, whole) {
+  /** The gap's broken pieces where they lie, at a strength `a`: whole in
+      the gap, on the void; and faint in the drawing behind the halves as
+      they close over them, and behind the writing once it is whole. */
+  function drawGap(t, a) {
     const g = gap;
-    const a = 1 - (1 - GAP_FAINT) * whole;
-    const pull = 1 - 0.55 * whole, small = 1 - 0.35 * whole;
-    g.alpha = a;
+    const pull = 1, small = 1;
     ink.lineWidth = 1;
     ink.strokeStyle = rgba(LINE, 1);
     ink.fillStyle = rgba(LINE, 1);
@@ -1052,24 +1064,215 @@
     tops.forEach((el) => mirror.observe(el, { attributes: true, childList: true, characterData: true, subtree: true }));
   }
 
+  /** The page's own stylesheet, as the page asks for it — by its version —
+      for the copies' shadow roots, so they are styled as the page is and
+      never by an older copy a browser has kept. */
+  function sheetHref() {
+    const own = document.querySelector('link[rel="stylesheet"][href*="style.css"]');
+    return own ? own.href : (window.SITE_ROOT || "") + "style.css";
+  }
+
+  // ============================================================
+  // THE SPLIT (see SPLIT_PUSH): the page's two halves, each a copy of the
+  // whole page laid in the page itself and cut to its half, pushed apart;
+  // the drawing behind cut the same way, on two canvases fixed to the
+  // window — the left drawn whole, the right laid from it; and the gap's
+  // broken pieces on the page's own canvas, under both. The halves and
+  // the drawing's halves are moved by one transform each, and once OM is
+  // pressed by the browser's own clock, all four on the same one.
+  // ============================================================
+  let halves = null;
+  /** Where the halves stand t ms after OM was pressed (t < 0: apart): each
+      half's offset across, the shake up and down, how far they have come
+      (0 apart, 1 met), and how strongly the seams are drawn. */
+  function splitAt(t) {
+    const push = halves.push;
+    if (t < 0) return { l: -push, r: push, y: 0, met: 0, seam: 0.62 };
+    const u = clamp(t / SPLIT_MS, 0, 1);
+    const met = u * u * u * (u * (u * 6 - 15) + 10);        // gently at both ends
+    const apart = push * (1 - met);
+    // The shake: coming up over the last of the way, hardest as they meet,
+    // dying away after, and still at the end.
+    const from = SPLIT_MS * SHAKE_FROM;
+    let env = 0;
+    if (t > from) {
+      if (t <= SPLIT_MS) {
+        const up = (t - from) / (SPLIT_MS - from);
+        env = up * up * (3 - 2 * up);
+      } else {
+        const after = t - SPLIT_MS, end = clamp(after / SHAKE_TAIL, 0, 1);
+        env = Math.exp(-after / SHAKE_TAU) * (1 - end * end * (3 - 2 * end));
+      }
+    }
+    const k = REDUCE ? 0 : halves.shake * env, w2 = ((t - from) / 1000) * SHAKE_HZ * Math.PI * 2;
+    const x = k * (0.78 * Math.sin(w2) + 0.22 * Math.sin(w2 * 1.9 + 0.7));
+    const y = k * 0.32 * Math.sin(w2 * 1.37 + 1.1);
+    // The seams flash gold as the halves meet, and go.
+    let seam = 0.62;
+    if (t > SPLIT_MS * 0.85) seam = t <= SPLIT_MS ? 0.62 + 0.38 * (t - SPLIT_MS * 0.85) / (SPLIT_MS * 0.15) : Math.max(0, 1 - (t - SPLIT_MS) / 420);
+    return { l: -apart + x, r: apart + x, y, met, seam };
+  }
+  function placeSplit(at) {
+    const tl = "translate(" + at.l.toFixed(2) + "px," + at.y.toFixed(2) + "px)";
+    const tr = "translate(" + at.r.toFixed(2) + "px," + at.y.toFixed(2) + "px)";
+    halves.text[0].style.transform = halves.skies[0].style.transform = tl;
+    halves.text[1].style.transform = halves.skies[1].style.transform = tr;
+    halves.seams.forEach((el) => { el.style.opacity = at.seam.toFixed(3); });
+  }
+  /** Where each half stands now, as drawn: across, and up or down. */
+  function splitOffsets() {
+    const box = halves.host.getBoundingClientRect();
+    const a = halves.text[0].getBoundingClientRect(), b = halves.text[1].getBoundingClientRect();
+    return { l: a.left - box.left, r: b.left - box.left - halves.m, y: a.top - box.top };
+  }
+  /** The halves laid out at the page's width, and the drawing's canvases
+      at the window's. Only the width moves them: a phone's bar coming and
+      going changes the height, and the broken pieces are scattered down
+      the whole of its screen to begin with. */
+  function layoutSplit() {
+    const w = page.clientWidth || root.clientWidth, h = window.innerHeight, Wv = window.innerWidth;
+    const m = w / 2, widthMoved = w !== copyWidth || !gap;
+    copyWidth = w;
+    halves.m = m;
+    halves.host.style.width = w + "px";
+    // (The drawing's halves reach a little past the window's edges, so the
+    // shake never shows the void at an edge.)
+    const [sl, sr] = halves.skies, [cl, cr] = halves.cans, B = SKY_BLEED;
+    halves.skies.forEach((el) => { el.style.top = -B + "px"; el.style.height = (h + 2 * B) + "px"; });
+    sl.style.left = -B + "px";
+    sl.style.width = (m + B) + "px";
+    sr.style.left = m + "px";
+    sr.style.width = (Wv - m + B) + "px";
+    const cw = Math.round(Wv * ratio), ch = Math.round(h * ratio), rw = Math.max(1, Math.round((Wv - m) * ratio));
+    if (cl.width !== cw || cl.height !== ch) { cl.width = cw; cl.height = ch; }
+    cl.style.cssText = "left:" + B + "px;top:" + B + "px;width:" + Wv + "px;height:" + h + "px";
+    if (cr.width !== rw || cr.height !== ch) { cr.width = rw; cr.height = ch; }
+    cr.style.cssText = "left:0;top:" + B + "px;width:" + (Wv - m) + "px;height:" + h + "px";
+    if (gatherAt) return;
+    if (mendButton) mendButton.style.left = m + "px";
+    if (!widthMoved) return;
+    halves.push = Math.round(w * SPLIT_PUSH);
+    halves.shake = SHAKE * (w < 700 ? 0.66 : 1);
+    gap = gapOf(w, Math.max(h, (window.screen && window.screen.height) || 0), halves.push);
+    placeSplit(splitAt(-1));
+  }
+  function buildSplit() {
+    const flow = copyFlow();
+    // The halves of the page, in the page: each the whole page, cut to its
+    // half (twice the half's width, the right one drawn back by a half).
+    const text = document.createElement("div");
+    text.className = "om-split dark-surface";
+    text.setAttribute("aria-hidden", "true");
+    text.style.visibility = "hidden";        // until the copies' stylesheet is in
+    const shadow = text.attachShadow({ mode: "closed" });
+    shadow.innerHTML =
+      '<link rel="stylesheet" href="' + sheetHref() + '">' +
+      "<style>" +
+      ".halves{position:relative;display:flex;width:100%}" +
+      ".half{position:relative;flex:0 0 50%;min-width:0;overflow:hidden;overflow:clip;will-change:transform}" +
+      ".half>.om-flow{position:relative;margin:0;width:200%;background:none}" +
+      ".half.r>.om-flow{margin-left:-100%}" +
+      "</style>" +
+      '<div class="halves" inert><div class="half l"></div><div class="half r"></div></div>';
+    const [l, r] = shadow.querySelectorAll(".half");
+    const copies = [flow.cloneNode(true), flow.cloneNode(true)];
+    l.appendChild(copies[0]);
+    r.appendChild(copies[1]);
+    const link = shadow.querySelector("link");
+    const show = () => { text.style.visibility = ""; };
+    link.addEventListener("load", show);
+    link.addEventListener("error", show);
+    window.setTimeout(show, 900);
+    // The drawing behind, cut the same way.
+    const sky = document.createElement("div");
+    sky.className = "om-split-sky";
+    sky.setAttribute("aria-hidden", "true");
+    sky.innerHTML = '<div class="om-sky-half l"><canvas></canvas><i class="om-sky-seam"></i></div>' +
+      '<div class="om-sky-half r"><canvas></canvas><i class="om-sky-seam"></i></div>';
+    const skies = [...sky.querySelectorAll(".om-sky-half")];
+    const cans = skies.map((el) => el.querySelector("canvas"));
+    host = text;
+    halves = {
+      host: text, sky, text: [l, r], skies, cans, inks: cans.map((c) => c.getContext("2d")),
+      seams: skies.map((el) => el.querySelector(".om-sky-seam")), copies, push: 0, m: 0, shake: 0, anims: [],
+    };
+    page.insertBefore(sky, canvas.nextSibling);
+    page.insertBefore(text, sky.nextSibling);
+    layoutSplit();
+    root.classList.add("om-held");
+    followPage(() => (halves ? halves.copies : []));
+
+    // OM, in the middle of the gap — pressed, and never by a key
+    // ("pressing keyboard buttons stops the split; so remove that"): it is
+    // not a stop of the keyboard's, and a press with no point to it (a key
+    // on it) is let go.
+    mendButton = document.createElement("button");
+    mendButton.type = "button";
+    mendButton.className = "om-mend om-join";
+    mendButton.tabIndex = -1;
+    mendButton.setAttribute("aria-label", "Om: bring the page together");
+    mendButton.innerHTML = '<svg class="om-join-mark" viewBox="0 0 64 56" aria-hidden="true"><polygon points="17,1 47,1 63,28 47,55 17,55 1,28"/></svg><span>OM</span>';
+    mendButton.style.left = halves.m + "px";
+    mendButton.addEventListener("click", (e) => { if (e.detail) joinSplit(); });
+    page.insertBefore(mendButton, page.firstChild);
+    requestAnimationFrame(() => { if (mendButton) mendButton.classList.add("shown"); });
+  }
+  /** OM pressed: the halves together, on the browser's clock — the way
+      worked out at sixty steps a second and handed to it whole — the
+      drawing's halves on the same clock as the page's. */
+  function joinSplit() {
+    if (gatherAt || !halves) return;
+    const t0 = (document.timeline && document.timeline.currentTime) || performance.now();
+    gatherAt = t0;
+    mendMs = SPLIT_MS + SHAKE_TAIL;
+    mendSpread = 0;
+    pieces = "gathering";
+    root.dataset.om = pieces;
+    retireButton();
+    const total = mendMs, step = 1000 / 60;
+    const kl = [], kr = [], ks = [];
+    for (let t = 0; ; t += step) {
+      const tt = Math.min(t, total), at = splitAt(tt), offset = tt / total;
+      kl.push({ offset, transform: "translate(" + at.l.toFixed(2) + "px," + at.y.toFixed(2) + "px)" });
+      kr.push({ offset, transform: "translate(" + at.r.toFixed(2) + "px," + at.y.toFixed(2) + "px)" });
+      ks.push({ offset, opacity: at.seam.toFixed(3) });
+      if (tt >= total) break;
+    }
+    if (!halves.text[0].animate) return;     // (placed by hand each frame instead)
+    const run = (el, frames) => {
+      const a = el.animate(frames, { duration: total, fill: "both", easing: "linear" });
+      a.startTime = t0;
+      halves.anims.push(a);
+    };
+    run(halves.text[0], kl); run(halves.skies[0], kl);
+    run(halves.text[1], kr); run(halves.skies[1], kr);
+    halves.seams.forEach((el) => run(el, ks));
+  }
+  /** The button goes as the page comes together; the focus, if it was on
+      it, to the page's own heading rather than nowhere. */
+  function retireButton() {
+    if (!mendButton) return;
+    const button = mendButton;
+    mendButton = null;
+    if (document.activeElement === button) { const h1 = document.querySelector("h1"); if (h1) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); } }
+    button.classList.remove("shown");
+    button.disabled = true;
+    window.setTimeout(() => button.remove(), 600);
+  }
+
   function buildShards() {
     // The page's own width — the window's less its scrollbar, which the
     // root does not say (its gutter is held open) — so the copies are laid
     // out exactly as the page is.
     const w = page.clientWidth || root.clientWidth, h = window.innerHeight;
     copyWidth = w;
-    const broken = glassStyle === "broken", rings = glassStyle === "rings", split = glassStyle === "split";
-    const push = clamp(w * SPLIT_PUSH, SPLIT_PUSH_LEAST, SPLIT_PUSH_MOST);
+    const broken = glassStyle === "broken", rings = glassStyle === "rings";
     const blows = broken ? (w < 700 ? BREAK_BLOWS_NARROW : BREAK_BLOWS_WIDE) : (w < 700 ? GLASS_BLOWS_NARROW : GLASS_BLOWS_WIDE);
     // THE PIECES: the rings', bands round the middle cut into petals; the
     // fine glass's, a Voronoi cell round each of the seeds set in rings
     // round its blows; or the broken pane's web.
     let panes;
-    if (split) {
-      const m = w / 2;
-      panes = [{ poly: [[0, 0], [m, 0], [m, h], [0, h]], side: -1 }, { poly: [[m, 0], [w, 0], [w, h], [m, h]], side: 1 }];
-      gap = gapOf(w, h, push);
-    } else if (rings) panes = ringPanes(w, h);
+    if (rings) panes = ringPanes(w, h);
     else if (broken) panes = brokenPanes(w, h, blows);
     else {
       const D = Math.hypot(w, h) * 0.5;
@@ -1097,7 +1300,7 @@
     const shadow = host.attachShadow({ mode: "closed" });
     const gold = LINE.join(" ");
     shadow.innerHTML =
-      '<link rel="stylesheet" href="' + (window.SITE_ROOT || "") + 'style.css">' +
+      '<link rel="stylesheet" href="' + sheetHref() + '">' +
       "<style>" +
       ".stage{position:absolute;inset:0;overflow:hidden;pointer-events:none;transition:opacity 700ms cubic-bezier(0.3,0,0.2,1)}" +
       ".stage.gone{opacity:0}" +
@@ -1139,14 +1342,12 @@
       ".hint{position:absolute;left:50%;bottom:7vh;transform:translateX(-50%);display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:rgb(" + gold + " / 0.85);opacity:0;transition:opacity 1.2s ease}" +
       ".hint.shown{opacity:1}" +
       ".hint i{display:block;width:9px;height:9px;border:1px solid currentColor;transform:rotate(45deg)}" +
-      // The split: its halves' inner edges a gold hairline.
-      ".split .edge polyline{fill:none;stroke:rgb(" + gold + " / 0.7);stroke-width:1;vector-effect:non-scaling-stroke}" +
       "</style>" +
-      '<div class="stage' + (broken ? " broken" : rings ? " rings" : split ? " split" : "") + '" inert><div class="field"></div><p class="hint"><i></i>Hover: the hexagon makes it whole<i></i></p></div>';
+      '<div class="stage' + (broken ? " broken" : rings ? " rings" : "") + '" inert><div class="field"></div><p class="hint"><i></i>Hover: the hexagon makes it whole<i></i></p></div>';
     stage = shadow.querySelector(".stage");
     const field = shadow.querySelector(".field");
     hint = shadow.querySelector(".hint");
-    if (TOUCH || split) hint.remove();
+    if (TOUCH) hint.remove();
 
     shards = [];
     const bandTurn = [];
@@ -1180,13 +1381,10 @@
       // A broken piece out of true catches the light its own way: most
       // dimly, a few brightly.
       sheen.style.opacity = (rings ? (pane.band % 2 ? 1 : 0) : broken ? (random() < 0.18 ? between(1.6, 2.6) : between(0.2, 1.1)) : between(0.3, 1)).toFixed(2);
-      if (!split && (!rings || pane.band % 2)) el.appendChild(sheen);
+      if (!rings || pane.band % 2) el.appendChild(sheen);
       const pts = local.map((p) => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
-      // (A half of the split is edged only where it was cut.)
-      const inner = pane.side < 0 ? bw - 0.5 : 0.5;
       el.insertAdjacentHTML("beforeend", '<svg class="edge" width="' + bw + '" height="' + bh + '" viewBox="0 0 ' + bw + " " + bh + '">' +
-        (split ? '<polyline points="' + inner + ",0 " + inner + "," + bh + '"/>' :
-          (broken ? '<polygon class="thick" points="' + pts + '"/>' : "") + '<polygon points="' + pts + '"/>') + "</svg>");
+        (broken ? '<polygon class="thick" points="' + pts + '"/>' : "") + '<polygon points="' + pts + '"/></svg>');
       field.appendChild(el);
       let around = 0;
       for (let k = 0; k < poly.length; k++) { const q = poly[(k + 1) % poly.length]; around += Math.hypot(q[0] - poly[k][0], q[1] - poly[k][1]); }
@@ -1198,9 +1396,7 @@
       // the ones at the blow pushed in the most, as glass is.
       const g = w < 700 ? 0.5 : 1;
       let tx, ty, rz, k;
-      if (split) {
-        tx = pane.side * push; ty = 0; rz = 0; k = 1;
-      } else if (rings) {
+      if (rings) {
         // Its band turned about the middle — every piece of a band by the
         // same angle, the next band the other way — and the petal a pixel
         // in or out: a turn about its own middle and the move of that
@@ -1228,10 +1424,9 @@
       }
       shards.push({
         // (The broken pane's two lines fade together, as one drawing.)
-        el, copy, sheen, gx, gy, poly, around, line: el.querySelector(broken || split ? ".edge" : ".edge polygon"),
-        glint: !rings && !split && random() < (broken ? 0.35 : 0.25) ? { at: random() * GLINT_EVERY, el: null, shown: -1 } : null,
-        tx, ty, k, rz, band: pane.band, mid: pane.mid, split: split ? pane.side : 0,
-        shake: [random() * 6.283, random() * 6.283, random() * 6.283],
+        el, copy, sheen, gx, gy, poly, around, line: el.querySelector(broken ? ".edge" : ".edge polygon"),
+        glint: !rings && random() < (broken ? 0.35 : 0.25) ? { at: random() * GLINT_EVERY, el: null, shown: -1 } : null,
+        tx, ty, k, rz, band: pane.band, mid: pane.mid,
         wait: 0, p: -1, near: -1, edge: 0.85, edgeShown: -1, now: [0, 0, 0, 1], long: broken || rings,
       });
     });
@@ -1245,7 +1440,7 @@
 
     // THE LENS, over the glass: the page whole, the drawing seen through it
     // on a canvas of its own, cut to the hexagon. Not on a phone.
-    if (!TOUCH && !split) {
+    if (!TOUCH) {
       lens = { el: document.createElement("div"), sky: document.createElement("canvas"), copy: flow.cloneNode(true), shown: -1 };
       lens.el.className = "lens";
       const ground = document.createElement("div");
@@ -1281,13 +1476,6 @@
     mendButton.type = "button";
     mendButton.className = "om-mend";
     mendButton.innerHTML = '<svg class="om-mend-mark" viewBox="0 0 16 14" width="16" height="14" aria-hidden="true"><polygon points="4.5,1 11.5,1 15,7 11.5,13 4.5,13 1,7"/></svg><span>Mend the break</span>';
-    // THE SPLIT'S BUTTON is OM, in the middle of the gap, in its place.
-    if (split) {
-      mendButton.className = "om-mend om-join";
-      mendButton.setAttribute("aria-label", "Om: bring the page together");
-      mendButton.innerHTML = '<svg class="om-join-mark" viewBox="0 0 64 56" aria-hidden="true"><polygon points="17,1 47,1 63,28 47,55 17,55 1,28"/></svg><span>OM</span>';
-      mendButton.style.left = (w / 2) + "px";
-    }
     mendButton.addEventListener("click", () => {
       const r = mendButton.getBoundingClientRect();
       mend(r.left + r.width / 2, r.top + r.height / 2);
@@ -1344,7 +1532,7 @@
       // fine glass's small pieces, and by its nearest edge for the broken
       // pane's long ones, whose middles can stand far from the hand.
       let near = 0;
-      if (!s.split && lensX > -9000 && on > 0) {
+      if (lensX > -9000 && on > 0) {
         if (s.long) near = on * (1 - ease(clamp(distTo(s.poly, lensX, lensY) / (LENS * BREAK_NEAR), 0, 1)));
         else {
           const d = Math.hypot(s.gx - lensX, (s.gy - lensY) / LENS_FLAT);
@@ -1361,21 +1549,6 @@
       }
       s.edge = clamp(edge, 0, 1);
       opacityTo(s, "edgeShown", s.line, s.edge);
-      // THE SPLIT'S HALVES SHAKE as they come together: hardest a little
-      // after they set off, and still by the time they meet.
-      if (s.split && gatherAt && home < 1) {
-        const life = clamp((now - gatherAt) / mendMs, 0, 1);
-        const amp = REDUCE ? 0 : SHAKE * Math.min(1, life * 5) * Math.pow(1 - life, 1.4);
-        const w2 = (now / 1000) * SHAKE_HZ * Math.PI * 2, [f0, f1, f2] = s.shake;
-        const n = s.now;
-        n[0] = s.tx * (1 - home) + amp * (0.7 * Math.sin(w2 + f0) + 0.3 * Math.sin(w2 * 1.73 + f1));
-        n[1] = amp * 0.35 * Math.sin(w2 * 1.31 + f2);
-        n[2] = (amp / SHAKE) * 0.18 * Math.sin(w2 * 0.87 + f1) * s.split;
-        n[3] = 1;
-        s.p = home;
-        s.el.style.transform = "translate(" + n[0].toFixed(2) + "px," + n[1].toFixed(2) + "px) rotate(" + n[2].toFixed(3) + "deg)";
-        return;
-      }
       if (Math.abs(home - s.p) < 0.002) return;
       s.p = home;
       const q = 1 - home;
@@ -1427,25 +1600,17 @@
   /** The mending for good, from a point: the pieces nearest it first, in
       a wave — quickly when a fragrance has been opened. */
   function mend(x, y, quick) {
+    if (halves) { joinSplit(); return; }
     if (gatherAt || !host) return;
-    mendMs = glassStyle === "split" ? SPLIT_MS : quick ? MEND_QUICK_MS : MEND_MS;
-    mendSpread = glassStyle === "split" ? 0 : quick ? MEND_QUICK_SPREAD : MEND_SPREAD;
+    mendMs = quick ? MEND_QUICK_MS : MEND_MS;
+    mendSpread = quick ? MEND_QUICK_SPREAD : MEND_SPREAD;
     gatherAt = performance.now();
     const far = Math.hypot(window.innerWidth, window.innerHeight);
     shards.forEach((s) => { s.wait = clamp(Math.hypot(s.gx - x, s.gy - y) / far, 0, 1) * mendSpread; });
     pieces = "gathering";
     root.dataset.om = pieces;
     if (hint) hint.classList.remove("shown");
-    if (mendButton) {
-      const button = mendButton;
-      mendButton = null;
-      // The focus, if it was on the button, goes to the page's own heading
-      // rather than nowhere.
-      if (document.activeElement === button) { const h1 = document.querySelector("h1"); if (h1) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); } }
-      button.classList.remove("shown");
-      button.disabled = true;
-      window.setTimeout(() => button.remove(), 600);
-    }
+    retireButton();
     for (let k = 0; k < 40 && !REDUCE; k++) {
       sparks.push({ a: random() * Math.PI * 2, r: portalR(), v: between(80, 220), out: between(30, 120), life: between(0.5, 1.1), age: 0 });
     }
@@ -1453,6 +1618,28 @@
   function wholeNow() {
     pieces = "whole";
     root.dataset.om = pieces;
+    if (halves) {
+      // The halves have met and are still, exactly over the page: the page
+      // is shown, the drawing behind is the page's own canvas's again from
+      // this frame, and the halves' copies are faded off the page.
+      const done = halves;
+      halves = null;
+      root.classList.add("om-landing");
+      root.classList.remove("om-shattered");
+      done.sky.remove();
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        root.classList.remove("om-landing");
+        done.host.style.transition = "opacity 420ms cubic-bezier(0.3,0,0.2,1)";
+        done.host.style.opacity = "0";
+        window.setTimeout(() => {
+          if (mirror) { mirror.disconnect(); mirror = null; }
+          done.anims.forEach((a) => a.cancel());
+          done.host.remove();
+          if (host === done.host) host = null;
+        }, 480);
+      }));
+      return;
+    }
     // The page under the pieces is the same page, laid out the same way and
     // scrolled the same way, so it is shown at once — with nothing of its
     // own fading in — and the pieces, now exactly over it, are faded off it.
@@ -1472,7 +1659,7 @@
 
   if (shattered) {
     size();
-    buildShards();
+    if (glassStyle === "split") buildSplit(); else buildShards();
     // NOTHING PRESSED MENDS IT (2026-10-13 — "whenever you click on
     // anything, the glass gets fixed and it is buggy. fix that ... When you
     // click on the perfumes, the break should not be fixed"): a fragrance
@@ -1483,8 +1670,11 @@
     // What mends it is the button in the top right — and the hexagon, while
     // it is there.
     // A window changing size breaks the pieces' geometry: it is simply
-    // whole at once.
+    // whole at once. Not the split: its halves are laid out again at the
+    // new width (a phone's bar coming and going, a page zoomed with a key,
+    // once brought it together at once), and only OM brings it together.
     window.addEventListener("resize", () => {
+      if (halves) { size(); layoutSplit(); return; }
       if (pieces !== "pieces") return;
       mend(window.innerWidth / 2, window.innerHeight * 0.44);
       gatherAt -= mendMs + mendSpread;
@@ -1500,17 +1690,15 @@
     if (glassStyle === "split") {
       let passing = false;
       window.addEventListener("click", (e) => {
-        if (passing || pieces === "whole" || !gap || !e.detail) return;
+        if (passing || !halves || !e.detail) return;
         const flow = flowParts(), t = e.target;
         if (!(t === document.body || t === root || flow.some((el) => el.contains(t)))) return;
         e.preventDefault();
         e.stopImmediatePropagation();
-        const x = e.clientX, y = e.clientY;
-        const left = shards.find((s) => s.split < 0), right = shards.find((s) => s.split > 0);
-        const off = left && x < gap.cx + left.now[0] ? left.now[0]
-          : right && x > gap.cx + right.now[0] ? right.now[0] : null;
+        const x = e.clientX, y = e.clientY, at = splitOffsets(), m = halves.m;
+        const off = x < m + at.l ? at.l : x > m + at.r ? at.r : null;
         if (off == null) return;
-        const under = document.elementFromPoint(x - off, y);
+        const under = document.elementFromPoint(x - off, y - at.y);
         if (!under || !flow.some((el) => el.contains(under))) return;
         passing = true;
         try { under.click(); } finally { passing = false; }
@@ -1525,7 +1713,7 @@
     // pieces about a point are (0 cracked, 1 home), and how much the lens
     // is shown.
     window.OmGlass = {
-      pieces: () => shards.length,
+      pieces: () => (halves ? 2 : shards.length),
       width: () => copyWidth,
       homeAt: (x, y) => {
         const by = shards.filter((s) => inside(s.poly, x, y));
@@ -1552,9 +1740,13 @@
       },
       // The split: how far each half is pushed, where each half stands now
       // (its offset across), its broken pieces and how strongly they are drawn.
-      split: () => (gap ? { push: gap.push, offsets: shards.map((s) => s.now[0]), pieces: gap.shards.length, alpha: gap.alpha } : null),
+      split: () => {
+        if (!gap) return null;
+        const at = halves ? splitOffsets() : null;
+        return { push: gap.push, offsets: at ? [at.l, at.r] : [], y: at ? at.y : 0, pieces: gap.shards.length, alpha: gap.alpha };
+      },
       openIn: (n) => {
-        const copies = shards.map((s) => s.copy).concat(lens ? [lens.copy] : []);
+        const copies = halves ? halves.copies : shards.map((s) => s.copy).concat(lens ? [lens.copy] : []);
         return { open: copies.filter((c) => { const part = c.querySelectorAll(".human-part")[n]; return part && part.open; }).length, of: copies.length };
       },
     };
@@ -1594,7 +1786,9 @@
     if (shattered) {
       if (gatherAt) {
         const all = clamp((now - gatherAt) / (mendMs + mendSpread), 0, 1);
-        gather = ease(all);
+        gather = halves ? splitAt(now - gatherAt).met : ease(all);
+        // (Without the browser's own animations, the halves by hand.)
+        if (halves && !halves.anims.length) placeSplit(splitAt(now - gatherAt));
         if (all >= 1 && pieces === "gathering") wholeNow();
       }
       if (shards.length) placeShards(now);
@@ -1616,13 +1810,46 @@
     const voidness = 1 - gather;                 // while cracked
     const pageAlpha = 0.75 + 0.25 * voidness;
 
-    drawWorld(cx, cy, turn, t, pageAlpha + voidness * 0.4, handX, handY);
     const big = Math.min(W * (W < 700 ? 0.46 : 0.36), 560) / 3.26 * 2;
     const small = Math.min(W * 0.24, 330) / 3.26 * 2;
     const scale = small + (big - small) * voidness;
-    drawWord(cx, cy - scale * 0.1, scale, t, 0.24 + 0.46 * voidness, handX, handY);
-    if (voidness > 0.003 || sparks.length) drawSparks(cx, cy, portalR() * (0.6 + 0.4 * voidness), t, dt, voidness, gatherAt ? 0 : 1);
-    if (gap) drawGap(t, gather);
+    if (halves) {
+      // SPLIT: the drawing behind is drawn whole on the left half's canvas
+      // — the hand where it stands in the drawing, on whichever half it is
+      // over — and the right half's laid from it; the page's own canvas
+      // carries the gap's broken pieces, shaken with the page.
+      const at = splitAt(gatherAt ? now - gatherAt : -1);
+      let hx = -99999;
+      if (handX > -9000) {
+        if (handX < halves.m + at.l) hx = handX - at.l;
+        else if (handX > halves.m + at.r) hx = handX - at.r;
+      }
+      ink = halves.inks[0];
+      ink.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ink.clearRect(0, 0, W, H);
+      drawWorld(cx, cy, turn, t, pageAlpha + voidness * 0.4, hx, handY - at.y);
+      drawWord(cx, cy - scale * 0.1, scale, t, 0.24 + 0.46 * voidness, hx, handY - at.y);
+      // The broken pieces faint behind the writing, coming in as the halves
+      // close over them.
+      const faint = clamp((at.met - 0.62) / 0.38, 0, 1);
+      if (gap && faint > 0) drawGap(t, GAP_FAINT * faint * faint * (3 - 2 * faint));
+      const from = halves.cans[0], to = halves.cans[1], right = halves.inks[1];
+      right.setTransform(1, 0, 0, 1, 0, 0);
+      right.clearRect(0, 0, to.width, to.height);
+      right.drawImage(from, Math.round(halves.m * ratio), 0, to.width, to.height, 0, 0, to.width, to.height);
+      ink = mainInk;
+      // In the gap, on the void, the broken pieces whole: the halves close
+      // over them.
+      if (gap) { drawGap(t, 1); gap.alpha = 1; }
+    } else {
+      drawWorld(cx, cy, turn, t, pageAlpha + voidness * 0.4, handX, handY);
+      drawWord(cx, cy - scale * 0.1, scale, t, 0.24 + 0.46 * voidness, handX, handY);
+      if (voidness > 0.003 || sparks.length) drawSparks(cx, cy, portalR() * (0.6 + 0.4 * voidness), t, dt, voidness, gatherAt ? 0 : 1);
+      if (gap) { drawGap(t, GAP_FAINT); gap.alpha = GAP_FAINT; }
+    }
+    // (No hexagon at the hand while the page is split: it showed the drawing
+    // whole in the middle of the gap.)
+    if (halves) return;
     if (!lens || gatherAt) drawLens(cx, cy, turn, t, pageAlpha);
     else if (lens.shown > 0.004 && lensX > -9000) {
       // Seen through the lens while the page is cracked: the page whole —

@@ -51,7 +51,7 @@ test("Om opens broken and is read through it: it scrolls, and the break stays", 
   const root = page.locator("html");
   await expect(root).toHaveAttribute("data-om", "pieces");
   await expect(root).toHaveClass(/om-shattered/);
-  await expect(page.locator(".om-shards")).toHaveCount(1);
+  await expect(page.locator(".om-shards, .om-split")).toHaveCount(1);
   // (Two halves since 2026-10-13, the split; many pieces in rings and glass.)
   expect(await page.evaluate(() => window.OmGlass.pieces()), "in pieces").toBeGreaterThanOrEqual(2);
   // The writing is the page's own, once: the copies cannot be found.
@@ -167,8 +167,8 @@ test("Om's pieces are laid out as the page is, and land on it exactly", async ({
    a click on nothing, not a key — a key reaching into the page mended it
    until then, since a keyboard cannot hover; the button is first in the
    page's order now, so the keyboard comes to it first. */
-test("Om's break is mended only by its button: not by a key, the hand or a click", async ({ page }) => {
-  await page.goto(OM);
+test("Om's break is mended only by its button: not by a key, the hand or a click (in rings and glass)", async ({ page }) => {
+  await page.goto(OM + "?glass=rings");
   await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
   await page.mouse.move(600, 400);
   await page.mouse.move(700, 450, { steps: 8 });
@@ -271,11 +271,16 @@ test("Om broken in rings round its middle, each band turned a little out of true
    sides of the page into one. the middle should be themed of breaks ...
    random polygons of broken stuff ... when you converge the two sides with
    the buttons, the breaks will kind of disappear behind it. as faded behind
-   text."): two halves pushed apart, OM in the gap, broken pieces lying in
-   it; a fragrance pressed where its half shows it opens, a press in the gap
-   does nothing, and OM brings the halves together, shaking, the pieces left
-   faint behind the writing. The rings and the glass are kept behind ?glass=. */
-test("Om opens split in two, OM in the gap; a fragrance opens where it is seen, and OM brings it together, shaking", async ({ page }) => {
+   text."), and the same night: "widen the gap by a lot; i want it to be the
+   majority ... make the shaking at the end of the transition ... make the
+   transition involve the background. I want it as smooth as possible." Two
+   halves pushed apart, the gap between them most of the window, the drawing
+   behind split with them; OM in the gap, broken pieces lying in it; a
+   fragrance pressed where its half shows it opens, a press in the gap does
+   nothing; OM brings the halves together — the drawing in step with the
+   writing, gliding, and shaking only as they meet — the pieces left faint
+   behind the writing. The rings and the glass are kept behind ?glass=. */
+test("Om opens split in two, the gap the most of it, OM in it; a fragrance opens where it is seen, and OM brings it together, shaking as it meets", async ({ page }) => {
   test.setTimeout(60000);
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -287,13 +292,19 @@ test("Om opens split in two, OM in the gap; a fragrance opens where it is seen, 
   const split = () => page.evaluate(() => window.OmGlass.split());
   await expect.poll(async () => (await split()).offsets[0]).toBeLessThan(-50);
   const at = await split();
-  const cx = await page.evaluate(() => document.body.clientWidth / 2);
+  const w = await page.evaluate(() => document.body.clientWidth), cx = w / 2;
   expect(at.offsets, "two halves").toHaveLength(2);
-  expect(at.push, "pushed apart").toBeGreaterThan(60);
+  expect(at.push * 2, "the gap the most of the page").toBeGreaterThan(w / 2);
   expect(at.offsets[0], "the left half further left").toBeCloseTo(-at.push, 0);
   expect(at.offsets[1], "the right half further right").toBeCloseTo(at.push, 0);
   expect(at.pieces, "broken pieces lying in the gap").toBeGreaterThan(40);
   expect(at.alpha).toBe(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth), "nothing widening the page").toBeLessThanOrEqual(1440);
+  // The drawing behind is split with the page: its halves pushed as far.
+  const sky = () => page.evaluate(() => [...document.querySelectorAll(".om-sky-half")].map((el) => new DOMMatrix(getComputedStyle(el).transform).m41));
+  const skyAt = await sky();
+  expect(skyAt[0], "the drawing's left half with the page's").toBeCloseTo(at.offsets[0], 0);
+  expect(skyAt[1], "the drawing's right half with the page's").toBeCloseTo(at.offsets[1], 0);
   // OM in the middle of the gap, in place of the button in the top right.
   const om = page.locator(".om-mend");
   await expect(om).toHaveCount(1);
@@ -308,8 +319,9 @@ test("Om opens split in two, OM in the gap; a fragrance opens where it is seen, 
   await part.locator("summary").evaluate((el) => window.scrollTo(0, window.scrollY + el.getBoundingClientRect().top - 300));
   await page.waitForTimeout(300);
   const sb = await part.locator("summary").boundingBox();
-  const y = sb.y + sb.height / 2, real = sb.x + 40;
-  expect(real, "(on the left half)").toBeLessThan(cx);
+  // (The left half shows the page from a push in to its middle.)
+  const y = sb.y + sb.height / 2, real = cx - 30;
+  expect(real > at.push && real > sb.x && real < sb.x + sb.width, "(on the left half, on the fragrance)").toBe(true);
   await page.mouse.click(cx, y);
   await page.waitForTimeout(500);
   expect(await part.evaluate((el) => el.open), "nothing from the gap").toBe(false);
@@ -318,32 +330,73 @@ test("Om opens split in two, OM in the gap; a fragrance opens where it is seen, 
   const copies = await page.evaluate(() => window.OmGlass.openIn(0));
   expect(copies.open, "and in both halves").toBe(copies.of);
   await expect(root).toHaveAttribute("data-om", "pieces");
-  // OM: the halves come together, shaking on the way, and are one.
+  // OM: the halves come together, the drawing's with the page's, gliding
+  // until the very end of the way, shaking as they meet, and are one.
   const track = page.evaluate(() => new Promise((done) => {
-    const out = [], t0 = performance.now();
-    (function f() {
+    const out = [], t0 = performance.now(), skyL = document.querySelector(".om-sky-half.l");
+    (function f(now) {
       const s = window.OmGlass.split();
-      if (s && s.offsets.length) out.push(s.offsets[0]);
-      if (performance.now() - t0 < 3000 && document.documentElement.dataset.om !== "whole") requestAnimationFrame(f); else done(out);
-    })();
+      if (s && s.offsets.length) out.push([now, s.offsets[0], new DOMMatrix(getComputedStyle(skyL).transform).m41]);
+      if (performance.now() - t0 < 4000 && document.documentElement.dataset.om !== "whole") requestAnimationFrame(f); else done(out);
+    })(t0);
   }));
   await om.click();
-  const lefts = await track;
-  let turns = 0, last = 0;
-  for (let i = 1; i < lefts.length; i++) {
-    const d = lefts[i] - lefts[i - 1];
+  const rows = await track;
+  const off = rows.findIndex((r) => r[1] > -at.push + 0.5);
+  expect(off, "it set off").toBeGreaterThanOrEqual(0);
+  const from = rows[Math.max(0, off - 1)][0];
+  let turns = 0, firstTurn = -1, last = 0, apart = 0;
+  for (let i = Math.max(1, off); i < rows.length; i++) {
+    apart = Math.max(apart, Math.abs(rows[i][1] - rows[i][2]));
+    const d = rows[i][1] - rows[i - 1][1];
     if (Math.abs(d) < 0.05) continue;
-    if (last && Math.sign(d) !== Math.sign(last)) turns++;
+    if (last && Math.sign(d) !== Math.sign(last)) { turns++; if (firstTurn < 0) firstTurn = rows[i][0] - from; }
     last = d;
   }
-  expect(turns, `shaking on the way (${lefts.length} frames)`).toBeGreaterThanOrEqual(2);
+  expect(apart, "the drawing in step with the writing (px)").toBeLessThan(1.5);
+  expect(turns, `shaking (${rows.length} frames)`).toBeGreaterThanOrEqual(2);
+  expect(firstTurn, "only once they have nearly met: gliding until then (ms)").toBeGreaterThan(1200);
   await expect(root).toHaveAttribute("data-om", "whole", { timeout: 6000 });
   await expect(om).toHaveCount(0, { timeout: 3000 });
+  await expect(page.locator(".om-split-sky"), "the drawing the page's own again").toHaveCount(0);
   expect(await part.evaluate((el) => el.open), "the fragrance still open").toBe(true);
   // The broken pieces left faint, behind the writing.
   await expect.poll(async () => (await split()).alpha).toBeLessThan(0.3);
   expect((await split()).alpha).toBeGreaterThan(0);
   expect(errors).toEqual([]);
+});
+
+/* ONLY OM BRINGS THE SPLIT TOGETHER — "pressing keyboard buttons stops the
+   split; so remove that": the keyboard came to OM first, and Enter or Space
+   pressed it; and a window changing size (a page zoomed with a key, a
+   phone's bar coming and going) brought it together at once. Now OM is no
+   stop of the keyboard's, a key on it does nothing, and a change of size
+   lays the halves out again. */
+test("Om's split is brought together by nothing but a press on OM: no key, no change of size", async ({ page }) => {
+  test.setTimeout(60000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(OM);
+  const root = page.locator("html");
+  await expect(root).toHaveAttribute("data-om", "pieces");
+  await page.keyboard.press("Tab");
+  expect(await page.evaluate(() => document.activeElement.classList.contains("om-join")), "OM is not a stop of the keyboard's").toBe(false);
+  for (const k of ["Space", "ArrowDown", "PageDown", "Home", "Escape", "a"]) await page.keyboard.press(k);
+  await page.locator(".om-join").focus();
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Space");
+  await page.waitForTimeout(500);
+  await expect(root, "no key brings it together").toHaveAttribute("data-om", "pieces");
+  await page.setViewportSize({ width: 1200, height: 800 });
+  await page.waitForTimeout(400);
+  await page.setViewportSize({ width: 1200, height: 700 });
+  await page.waitForTimeout(400);
+  await expect(root, "nor a change of size").toHaveAttribute("data-om", "pieces");
+  const at = await page.evaluate(() => window.OmGlass.split());
+  const w = await page.evaluate(() => document.body.clientWidth);
+  expect(at.push, "laid out again at the new width").toBe(Math.round(w * 0.3));
+  expect(at.offsets[0]).toBeCloseTo(-at.push, 0);
+  const ob = await page.locator(".om-join").boundingBox();
+  expect(Math.abs(ob.x + ob.width / 2 - w / 2), "OM in the middle again").toBeLessThan(2);
 });
 
 /* THE BUTTON IN THE TOP RIGHT (2026-10-11, last — "put a button on the top
@@ -405,13 +458,31 @@ test("Om is quick to draw, cracked and whole", async ({ page }) => {
    slight delay on the page itself." */
 test.describe("on a phone", () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
-  test("Om's split waits for OM on a phone, OM clear of the Menu, nothing scrolling sideways", async ({ page }) => {
+  /* "on the phone it acts weird so fix that": the halves were laid over the
+     window and moved under the finger a frame behind it, and the bar coming
+     and going as the page was scrolled changed the window's size, which
+     brought it together at once. The halves are in the page now. */
+  test("Om's split on a phone: it scrolls with the page, waits for OM through the bar coming and going, and nothing scrolls sideways", async ({ page }) => {
     await page.goto(OM);
     const root = page.locator("html");
     await expect(root).toHaveAttribute("data-glass", "split");
     await expect(root).toHaveAttribute("data-om", "pieces");
     await page.waitForTimeout(2400);
     await expect(root, "still split well after a moment").toHaveAttribute("data-om", "pieces");
+    // The halves are in the page: scrolled, a half is where the page is at once.
+    const step = await page.evaluate(() => {
+      const box = () => document.querySelector(".om-split").getBoundingClientRect().top;
+      const before = box();
+      window.scrollBy(0, 600);
+      return { moved: before - box(), by: window.scrollY };
+    });
+    expect(step.moved, "the halves moved with the page, at once").toBeCloseTo(step.by, 0);
+    // The bar coming and going.
+    await page.setViewportSize({ width: 390, height: 760 });
+    await page.waitForTimeout(300);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.waitForTimeout(300);
+    await expect(root, "still split as the bar comes and goes").toHaveAttribute("data-om", "pieces");
     const om = await page.locator(".om-join").boundingBox();
     const menu = await page.locator(".menu-trigger").boundingBox();
     expect(om.y > menu.y + menu.height + 8 || om.x > menu.x + menu.width + 8, "clear of the Menu").toBe(true);
@@ -442,7 +513,7 @@ test("Om is whole at once with reduced motion, at one fragrance, or without its 
   let page = await still.newPage();
   await serveDependenciesLocally(page);
   await page.goto(OM);
-  await expect(page.locator(".om-shards")).toHaveCount(0);
+  await expect(page.locator(".om-shards, .om-split")).toHaveCount(0);
   await expect(page.locator("html")).not.toHaveClass(/om-shattered/);
   await still.close();
 
@@ -451,9 +522,9 @@ test("Om is whole at once with reduced motion, at one fragrance, or without its 
   await serveDependenciesLocally(page);
   await page.goto(OM + "#part-03");
   await expect(page.locator("html")).toHaveAttribute("data-om", "whole");
-  await expect(page.locator(".om-shards")).toHaveCount(0);
+  await expect(page.locator(".om-shards, .om-split")).toHaveCount(0);
   await page.goto(OM + "?om=whole");
-  await expect(page.locator(".om-shards")).toHaveCount(0);
+  await expect(page.locator(".om-shards, .om-split")).toHaveCount(0);
   await expect(page.locator(".om-mend"), "nothing to mend").toHaveCount(0);
   await page.route("**/om.js*", (r) => r.abort());
   await page.goto(OM);
@@ -544,7 +615,7 @@ test("Outsider is a door standing ajar in the left margin, the light coming thro
   await page.goto(OUTSIDER);
   await expect(page.locator('script[src^="../outsider.js"]')).toHaveCount(1);
   await expect(page.locator('script[src^="../om.js"]')).toHaveCount(0);
-  await expect(page.locator(".om-shards")).toHaveCount(0);
+  await expect(page.locator(".om-shards, .om-split")).toHaveCount(0);
   await expect(page.locator("html")).not.toHaveClass(/om-shattered/);
   expect(await page.locator("h1").evaluate((el) => getComputedStyle(el).animationName), "no echo on the name").toBe("none");
   expect(read("style.css")).not.toContain("outsider-echo");
