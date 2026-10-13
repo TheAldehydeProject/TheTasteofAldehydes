@@ -13427,6 +13427,42 @@ html.om-landing .human-readout { transition: none !important; }
 @media (max-width: 700px) {
   .om-mend { top: 19px; right: 14px; padding: 7px 10px 7px 9px; letter-spacing: 0.1em; }
 }
+/* OM — the split's button (2026-10-13, later, a trial: "in this middle
+   awkward line, there is a button (instead of top left), saying "OM""): in
+   the middle of the gap between the page's two halves, half way down the
+   window, a hexagon in the house's gold with OM in it. Its left is set by
+   om.js, at the middle of the page (the window's less its scrollbar). */
+.om-mend.om-join {
+  top: 50%;
+  right: auto;
+  width: 64px;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  background: none;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-indent: 0.16em;
+  transform: translate(-50%, -50%) scale(0.92);
+}
+.om-mend.om-join.shown { transform: translate(-50%, -50%); }
+.om-join-mark { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.om-join-mark polygon {
+  fill: rgba(12, 11, 15, 0.82);
+  stroke: rgba(var(--om-gold), 0.75);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+  transition: fill 0.3s var(--menu-ease), stroke 0.3s var(--menu-ease);
+}
+.om-join span { position: relative; }
+.om-join:hover .om-join-mark polygon,
+.om-join:focus-visible .om-join-mark polygon { fill: rgba(var(--om-gold), 0.16); stroke: rgb(var(--om-gold)); }
+.om-mend.om-join:focus-visible { outline: none; }
+@media (max-width: 700px) {
+  .om-mend.om-join { width: 52px; height: 46px; font-size: 12px; }
+}
 
 
 /* ==================================================================

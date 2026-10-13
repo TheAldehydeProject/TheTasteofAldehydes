@@ -665,6 +665,80 @@ Tested in `tests/om-and-the-tribe.spec.js`:
 **Still open**: the rings are a first answer to "find a way to be on theme"; the broken pane and the
 fine glass stay behind `?glass=` until the owner says which (if any) to keep.
 
+## 2026-10-13, later — Om split in two, and OM brings it together (a trial)
+
+> yk what actually; i want you to change the breaking thing entirely (at least as a test). i want us
+> to make it so that when you load the page, the page itself is split into two (i mean that not in a
+> template way, rather if you take the page as it is now (minus the fracturing) and run a line down
+> the center, then take everything on the left and push it further left, and everything on the right
+> of the line and push it further right, creating an empty space in the middle, then that is waht I
+> want). I then want you to make it so that in this middle awkward ine, there is a button (instead of
+> top left), saying "OM", which if clicked, will with a shaky animation converge the two sides of the
+> page into one. the middle should be themed of breaks. They should be random polygons of broken
+> stuff. and then when you converge the two sides with the buttons, the breaks will kind of disappear
+> behind it. as faded behind text.
+
+**The split** (`GLASS_STYLE = "split"`, `SPLIT_*`, `gapOf`, `drawGap` in `om.js`) is the page opening
+now, as a trial; **the rings, the broken pane and the fine glass are kept whole** behind
+`?glass=rings`, `?glass=broken` and `?glass=fine`, and `data-glass` on `<html>` says which is showing.
+It is built the way the rings and the glass are: **two pieces, each holding a copy of the whole page**,
+cut down the middle of the window — the left half pushed further left and the right half further
+right, each by `SPLIT_PUSH` of the page's width (7%: about 100px on a laptop, a gap of 200; 24px at
+the least and 120 at the most, so 27px on a phone), so nothing is cut out of the page: what stood
+either side of the middle line stands either side of the gap, and only the outer margins go off the
+window's edges. The page scrolls under it as before, and the copies follow every change to the page
+(`followPage`), so a fragrance or a fold opens in both halves.
+
+**The gap is themed of breaks**: **random polygons of broken stuff** (`GAP_SHARDS`, about one to every
+1,300 square pixels — 138 on a laptop, 35 on a phone), three- to six-cornered, most small and a few
+large, some filled faintly, a few brighter, each turning very slowly, and **two cracks** wandering
+down the gap — in the house's gold on its own ground, drawn on the page's canvas behind the writing.
+Each half's cut edge is a gold hairline.
+
+**OM** (`.om-join`, in place of *Mend the break* at the top right) is a hexagon in the house's gold
+with OM in it, fixed **in the middle of the gap**, half way down the window, first in the page's order
+so the keyboard comes to it first. Pressed, **the halves come together over `SPLIT_MS` (1.7s),
+shaking** as they come — a quick tremor across and a little up and down and round (`SHAKE`, 9px at its
+hardest, `SHAKE_HZ`), hardest a little after they set off and dying away as they meet — their cut
+edges flashing gold as they land, and then the page is whole. **The broken pieces do not go**: as the
+halves close they are drawn in towards the seam, a little smaller, and **stay faint behind the
+writing** (`GAP_FAINT`, 16% of themselves) — "the breaks will kind of disappear behind it. as faded
+behind text".
+
+**A press lands on what is seen.** Each half shows the page up to 100px off where the page really is,
+and a press goes through the pieces to the page underneath — so a press on a fragrance would have
+reached whatever stands under that point on the real page: the wrong line, or nothing. While the page
+is split, a press on the page is taken to what is seen there (a `click` listener on the window, before
+anything else): on a half, the page that half shows at that point (`elementFromPoint` a push the other
+way, and that pressed); in the gap, nothing. The chrome over it — OM, the Menu, the scale, a notes
+window and its veil — is pressed as it is, and a press from the keyboard, which has no point, is left
+be. Once whole, nothing is changed.
+
+**No hexagon while it is split**, and no word about one: the hexagon showed the page whole through the
+pieces, and the split is brought together by OM alone. **On a phone it waits for OM** too — the rings
+and the glass mend by themselves after a moment there, and the split does not, since OM is the whole
+of it; it fits the phone's 55px gap, and nothing scrolls sideways. A window changing size, reduced
+motion, an address at one fragrance and `?om=whole` are as before: whole at once.
+
+Tested in `tests/om-and-the-tribe.spec.js`:
+
+- **`Om opens split in two, OM in the gap; a fragrance opens where it is seen, and OM brings it
+  together, shaking`** (new): the style is `split`; two halves at minus and plus the push, over 60px;
+  over forty broken pieces in the gap, drawn whole; OM there, its text *OM*, in the middle and inside
+  the gap; a press in the gap opens nothing; a press on the first fragrance where its half shows it
+  opens it, in both halves, and the page stays split; OM pressed, the left half turns back and forth on
+  its way (two turns at least, read frame by frame), the page whole, OM gone, the fragrance still open,
+  and the broken pieces drawn at under 30% and over nothing.
+- **`Om's split waits for OM on a phone, OM clear of the Menu, nothing scrolling sideways`** (new):
+  still split well past the moment the rings mend by themselves; OM clear of the Menu; the page 390px
+  wide; a tap on OM, and whole.
+- The rings' and the glass's own tests read them at `?glass=rings` (the hexagon, a fragrance opened
+  under the break, the rings themselves, *Mend the break*, a phone mending by itself); *Om opens
+  broken and is read through it* asks for two pieces at least rather than thirty.
+
+**Still open**: a trial. Whichever of the split, the rings, the broken pane and the fine glass the
+owner keeps, the others come out of the code.
+
 ## Same round, other reports
 
 - [The newer houses — Qimu's Bassist and Drummer written](2026-09-21-the-newer-houses.md#2026-10-10--bassist-and-drummer-written-and-a-fold-in-housejs)
