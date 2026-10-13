@@ -56,7 +56,10 @@ change.
 - **The opening's clock is the wall's** (`LOAD_STEP`, 250ms): a slow frame counts for what it took,
   up to a quarter of a second, so the opening is done in about `LOAD_MS` on any machine; a longer
   gap (a tab put away) is still not a jump. The opening looks the same at any frame rate it was
-  already drawn at.
+  already drawn at. **Coming apart and back together, and going into combinations and out, are on
+  the same clock** (`step`): counted at 50ms a frame they took several times as long as they should
+  on a slow machine — coming apart, 3.8 seconds, took 28 at three frames a second, and takes 7 now.
+  The journeys between accords were on the clock already.
 - **It is begun once the page has been shown** (`begin`, after the first frame): the dark ground and
   the Menu are on the screen at once and the network comes up a moment later.
 - **The links are worked out on plain numbers** (`linkUp`): every node's place read once into
@@ -102,6 +105,7 @@ as a phone four times slower (390 × 844):
 | Note Library: the page first shown, phone | 3.0 s | 0.8 s |
 | Note Library: its own setting up, computer | 0.48 s | 0.33 s |
 | Note Library: its arrows and foot in, at three frames a second | about 13 s | 5.6 s |
+| Note Library: coming apart, at three frames a second | 28 s | 7 s |
 
 On a phone that draws the library with its own graphics chip, the last is about two seconds.
 

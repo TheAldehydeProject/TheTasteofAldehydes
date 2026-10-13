@@ -247,7 +247,13 @@
   const SWEEP = 0.62;
   const FLOAT = 0.018;                  // every node's own slow drift, at rest
   const LOAD_MS = 1900;                 // the page wiring itself as it opens, by the clock
-  const LOAD_STEP = 250;                // ... a frame counting for no more than this of it
+  // A FRAME COUNTS FOR WHAT IT TOOK, up to this, in the opening, in coming
+  // apart and back together, and in going into combinations and out
+  // (2026-10-13): they were counted at no more than 50ms a frame, so on a
+  // machine drawing a few frames a second each took several times as long
+  // as it should — the opening's ten seconds, coming apart half a minute.
+  // The journeys were on the clock already.
+  const LOAD_STEP = 250;
   const COACH_MS = 4200;                // "Search" and "Open menu", after it has opened
   const IDLE_MS = 7000;                 // left alone this long, the arrows glow
   const COMBINE_MS = 2200;              // into combinations, and back
@@ -3354,18 +3360,20 @@
 
     function frame(t) {
       const began = performance.now();
-      // Everything moves at most 50ms a frame — but THE TURNING is measured
+      // Everything moves at most 50ms a frame — but the opening, coming
+      // apart and combining at most LOAD_STEP (see it), and THE TURNING is measured
       // by the clock (`wall`), so a page given few frames or none, clicked
       // off, has still turned as far as it would have (2026-09-28: "animate
       // even when you click off of the page"). A pure turn is safe to take
       // in one step however long.
       const wall = Math.min(3600000, Math.max(0, t - (lastT || t)));
       const dt = Math.min(50, wall);
+      const step = Math.min(LOAD_STEP, wall);   // the opening, coming apart, combining: on the clock
       lastT = t;
       air(t);
       if (!born) born = t;
       if (!still) clock += dt;
-      if (!loaded) loadT += Math.min(LOAD_STEP, wall);
+      if (!loaded) loadT += step;
       if (u !== uTo) {
         if (still) { u = uTo; uVel = 0; }
         else {
@@ -3375,8 +3383,8 @@
           const left = uTo - u, dir = Math.sign(left);
           const cruise = 1 / EXPAND_MS;
           const want = dir * cruise * Math.min(1, Math.sqrt(Math.abs(left) / BRAKE));
-          uVel += (want - uVel) * (1 - Math.exp(-dt / ACCEL_MS * 3));
-          u += uVel * dt;
+          uVel += (want - uVel) * (1 - Math.exp(-step / ACCEL_MS * 3));
+          u += uVel * step;
           if ((dir > 0 && u >= uTo - 0.0004) || (dir < 0 && u <= uTo + 0.0004)) { u = uTo; uVel = 0; }
           u = clamp(u, 0, 1);
         }
@@ -3393,7 +3401,7 @@
         }
       }
       if (cmb !== cmbTo) {
-        cmb = still ? cmbTo : clamp(cmb + Math.sign(cmbTo - cmb) * (dt / COMBINE_MS), 0, 1);
+        cmb = still ? cmbTo : clamp(cmb + Math.sign(cmbTo - cmb) * (step / COMBINE_MS), 0, 1);
         if (cmb === cmbTo) { say(); tagsFor(); }
       }
       ph = phase();
