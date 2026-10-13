@@ -418,9 +418,9 @@
   // The catalogue is this page's own: read at once, and the drawing begun
   // once the rest of this script has been set up (it waited on a fetch of
   // the library's page until 2026-09-29, and still starts a beat later).
-  // And begun only once the page has been shown (2026-10-13): begun at
-  // once, everything it sets up held the page blank — not even the Menu —
-  // for a second or more on a phone before its first frame.
+  // And begun after the page's first frame (2026-10-13), so the page's
+  // own loading is over before the drawing sets itself up — a second or
+  // more of it on a slow phone.
   const library = read(document);
   const begin = () => {
     if (library.accords.length) start(library.accords, library.sources);

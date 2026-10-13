@@ -2099,7 +2099,6 @@ a second of `LOAD_MS`), so the arrows, the foot and the hint come in about two s
 opens on any machine — counted in frames of at most 50ms, a phone drawing a few a second as it opened
 waited ten and more — and **coming apart and combining are on the same clock** (`step`), so coming
 apart takes its 3.8 seconds however slowly the frames come (it took 28 at three a second); **the
-drawing is begun once the page has been shown** (`begin`), so its ground
-and the Menu are there at once; **the links are worked out on plain numbers** (`linkUp`, the same
+drawing is begun after the page's first frame** (`begin`); **the links are worked out on plain numbers** (`linkUp`, the same
 links); and **the sources' sheet is written when it is first opened** (`writeSources`). Nothing on the
 page looks or behaves differently once it is open.

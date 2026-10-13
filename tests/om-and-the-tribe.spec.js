@@ -109,11 +109,23 @@ test("opening a fragrance under Om's glass mends it, and the fragrance opens onc
   const part = page.locator(".human-part").first();
   await part.locator("summary").evaluate((el) => window.scrollTo(0, window.scrollY + el.getBoundingClientRect().top - 300));
   await page.waitForTimeout(300);
+  // What happens to the page and the part is written down as it happens
+  // (2026-10-13): read after the press, the quick mend was sometimes over
+  // and the part open before the test looked, and it failed half the time.
+  await part.evaluate((el) => {
+    const seen = (window.__omSeen = []);
+    const html = document.documentElement;
+    new MutationObserver(() => seen.push("om:" + html.dataset.om)).observe(html, { attributes: true, attributeFilter: ["data-om"] });
+    new MutationObserver(() => seen.push((el.open ? "open" : "shut") + "@" + html.dataset.om)).observe(el, { attributes: true, attributeFilter: ["open"] });
+  });
   await part.locator("summary").click();
-  await expect(root).toHaveAttribute("data-om", "gathering");
-  expect(await part.evaluate((el) => el.open), "held while the glass mends").toBe(false);
+  await expect(root).toHaveAttribute("data-om", /gathering|whole/);
   await expect(root).toHaveAttribute("data-om", "whole", { timeout: 6000 });
   await expect.poll(() => part.evaluate((el) => el.open), { message: "and then it opens" }).toBe(true);
+  const seen = await page.evaluate(() => window.__omSeen);
+  expect(seen, "it gathers first").toContain("om:gathering");
+  expect(seen.filter((s) => s.startsWith("open@")), "held while the glass mends, and opened once it is whole").toEqual(["open@whole"]);
+  expect(seen.indexOf("om:gathering"), "gathering before whole").toBeLessThan(seen.indexOf("om:whole"));
   await expect(page.locator(".om-shards")).toHaveCount(0, { timeout: 3000 });
   await expect(root).not.toHaveClass(/om-shattered/);
   expect(await page.locator(".human-head").evaluate((el) => getComputedStyle(el).opacity)).toBe("1");

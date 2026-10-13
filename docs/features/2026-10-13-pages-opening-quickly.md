@@ -4,11 +4,11 @@ Files touched: `network.js`, `contact-sheet.js`, `style.css`, `tools/versions.py
 (its scripts and stylesheet asked for by version), `tests/repository.spec.js`,
 `tests/om-and-the-tribe.spec.js`, `CLAUDE.md`
 
-What changed: The Note Library and Scent Descriptions open far sooner. The Note Library shows its
-ground and Menu at once and draws itself after, and its arrows and buttons come in about two
-seconds after it opens on any machine — on a slow phone they waited ten seconds or more.
-Scent Descriptions draws its first house in about a second and hands over its Menu and buttons
-with it — they waited four to five seconds. And every page now asks for its scripts and its
+What changed: The Note Library and Scent Descriptions are ready to use far sooner. The Note
+Library's arrows and buttons come in about two seconds after it opens on any machine, and coming
+apart takes its four seconds however slow the machine — on a slow phone the arrows waited ten seconds
+and more, and coming apart half a minute. Scent Descriptions draws its first house in about a second
+and hands over its Menu and buttons with it — they waited four to five seconds. And every page now asks for its scripts and its
 stylesheet by their version, so a browser can never put a new page together with old scripts in
 the minutes after the site changes.
 
@@ -21,7 +21,7 @@ the minutes after the site changes.
 
 Every page was opened, as a computer and as a phone four times slower, and timed: when its Menu
 could be read, how long its script held the page, what it reported as an error. **No page reported
-an error.** Three things stood out, all in the two pages named:
+an error.** What stood out was all in the two pages named:
 
 - **Scent Descriptions** gave nothing to press for four seconds (nearly five on a slow phone). It
   waited for the page's fonts — up to 1.2 s — before drawing anything; then the axis (0.7 s), the
@@ -36,11 +36,14 @@ an error.** Three things stood out, all in the two pages named:
   uploading the drawing, took ten seconds or more to finish it, and all that while there was
   nothing to press. On the test machine, drawing in software at three frames a second, it took
   thirteen.
-- **The Note Library held the page blank** — no ground, no Menu — while it set itself up, which
-  it did before the page was first shown: half a second on a computer, a second and a half and
-  more on a slow phone. The largest parts were linking every node to its nearest (a million pairs,
-  each a call and a lookup), and writing out the twelve hundred sources of the sheet that only
-  opens when the centre is pressed.
+- **Coming apart** (`EXPAND_MS`, 3.8 s) and **going into combinations** were counted the same way,
+  and coming apart took 28 seconds at three frames a second.
+- **The Note Library's setting itself up** took half a second on a computer (a second and a half and
+  more on a slow phone) before the network could be drawn. The page and the Menu were already
+  painted by then — the browser shows them before the script runs — so it was not a blank page; the
+  largest parts were linking every node to its nearest (a million pairs, each a call and a lookup),
+  and writing out the twelve hundred sources of the sheet that only opens when the centre is
+  pressed.
 
 And one that would make any page fail to open for a while after the site changed: **GitHub Pages
 lets a browser keep every file for ten minutes.** In those minutes a browser can take a new page
@@ -60,8 +63,8 @@ change.
   the same clock** (`step`): counted at 50ms a frame they took several times as long as they should
   on a slow machine — coming apart, 3.8 seconds, took 28 at three frames a second, and takes 7 now.
   The journeys between accords were on the clock already.
-- **It is begun once the page has been shown** (`begin`, after the first frame): the dark ground and
-  the Menu are on the screen at once and the network comes up a moment later.
+- **It is begun after the page's first frame** (`begin`), so the page's own loading is over first
+  (its `DOMContentLoaded` a second or two sooner on a slow phone); what is seen first is the same.
 - **The links are worked out on plain numbers** (`linkUp`): every node's place read once into
   arrays, the same sums in the same order — checked to give exactly the same links — at about half
   the cost.
@@ -93,21 +96,21 @@ they were.
 
 ## Measured
 
-On the test machine (a 2.8GHz server core, drawing 3D in software), as a computer (1440 × 900) and
-as a phone four times slower (390 × 844):
+On the test machine (a 2.8GHz server core, drawing 3D in software at about three frames a
+second), the version before against this one, as a computer (1440 × 900) and as a phone four times
+slower (390 × 844), from the moment the page is asked for:
 
-| | before | after |
-|---|---|---|
-| Scent Descriptions: the Menu readable, computer | 3.9 s | 1.6 s |
-| Scent Descriptions: the Menu readable, phone | 4.9 s | 2.0 s |
-| Scent Descriptions: the first house out, phone | 3.5 s | 1.0 s |
-| Note Library: the page first shown, computer | 2.9 s | 1.0 s |
-| Note Library: the page first shown, phone | 3.0 s | 0.8 s |
-| Note Library: its own setting up, computer | 0.48 s | 0.33 s |
-| Note Library: its arrows and foot in, at three frames a second | about 13 s | 5.6 s |
-| Note Library: coming apart, at three frames a second | 28 s | 7 s |
+| | computer, before | after | phone, before | after |
+|---|---|---|---|---|
+| Scent Descriptions: the first house out | 1.9 s | 1.2 s | 2.5 s | 1.9 s |
+| Scent Descriptions: the Menu and buttons readable | 3.9 s | 1.8 s | 4.5 s | 2.5 s |
+| Note Library: the network first drawn | 0.53 s | 0.48 s | 2.3 s | 2.0 s |
+| Note Library: its arrows and foot in | 13.0 s | 3.5 s | 15.5 s | 5.8 s |
+| Note Library: coming apart, after the press | 28 s | 7 s | | |
 
-On a phone that draws the library with its own graphics chip, the last is about two seconds.
+The page's first paint and its Menu were the same before and after (0.1 s on a computer, 0.6 s on
+the phone). The Note Library's own setting up is 0.33 s where it was 0.48. On a machine that draws
+the library with a graphics chip, its arrows come in at about two seconds.
 
 ## How to test it
 
@@ -120,6 +123,10 @@ On a phone that draws the library with its own graphics chip, the last is about 
   arrives and shown once it has.
 - `npm test -- tests/note-library.spec.js` — the opening still wires itself in before the arrows
   come, the sources' sheet still lists every source with *Me.* first.
+- `tests/om-and-the-tribe.spec.js`, **`opening a fragrance under Om's glass mends it, and the
+  fragrance opens once the page is whole`**, failed about half the time before any of this (the quick
+  mend could be over before the test looked); it now writes down the page's state and the part's as
+  they change and checks their order — the same promise, read without the race.
 - By hand: open Scent Descriptions and the Note Library on a phone. Something to press within about
   two seconds.
 
