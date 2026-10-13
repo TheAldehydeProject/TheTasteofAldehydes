@@ -606,6 +606,65 @@ leaves and birds** on a phone, speck by speck (`Writing.under`) — a third of w
 writing, as they were in the gaps. Written up in [the house drawings faint behind the
 words](2026-10-12-drawings-faint-behind-the-words.md).
 
+## 2026-10-13 — Om broken in rings, nothing pressed mending it, a bigger hexagon
+
+> okay then listen, for om parfums, whenever you click on anything, the glass gets fixed and it is
+> buggy. fix that. Then i want you to actually make it less like glass and more so like just a very
+> abstract break. Find a way to be on theme. When you click on the perfumes, the break should not be
+> fixed. also make the hexagon a little bigger.
+
+**Nothing pressed mends it.** Opening a fragrance mended the page for good until now — the press was
+held while the pieces came home and given back once the page was whole — and a fold, any `toggle`,
+and a key reaching into the page mended it too. That was needed because **each piece holds a copy of
+the page**, and a fragrance opening on the page would have gone on showing shut in the pieces. Now
+**the copies follow the page** (`followPage` in `om.js`): a `MutationObserver` on the page's own
+`main`, credit and foot, and every change made to the page made to each copy as it happens — an
+attribute (a fragrance's `open`, the measured height, fade and move `house.js` opens it with, a class)
+set on the same element of each copy, found by where it stands (the same child of the same child,
+`pathOf`, `inCopy`), so the opening runs in the pieces in step with the page; anything added or taken
+away, or a text changed, copied over whole (`scrub`, no ids or tab stops). So a fragrance, a fold, the
+notes' window, a link or a key does what it does at once, and **the page stays broken**. What mends it
+is the button, **Mend the break** (it said *Mend the glass*), first in the page's order now so the
+keyboard comes to it first; and the hexagon, while it is there. A phone still mends by itself after a
+moment, and a window changing size still mends it at once.
+
+**Not glass: the rings** (`GLASS_STYLE = "rings"`, `ringPanes`, `RING_*`). On theme: Om is the sound
+the house is named for, the first vibration, and the page is broken as a mandala is drawn round
+**โอม** at the middle of the window, as that sound would ring out — a disc round the word and bands
+out to past the corners (`RING_RADII`, shares of half the window's diagonal), each band cut into
+petals (`RING_PARTS`: 6, 8, 12, 12, 16 — the lotus's and the star's numbers; fewer on a phone), every
+other band's cuts a half step round from the band inside it. **Each band is turned a little out of
+true about the middle**, every piece of it by the same angle and the next band the other way, as the
+armillary's rings turn — the page out of tune with itself, `RING_SHIFT` (1.5px, up to a third more) at
+the band's middle — and each petal stands a pixel in or out of its band (`RING_LIFT`). The seams are
+the house's gold hairlines and nothing else: **no sheen, no glints, no thick edge**, only every other
+band a faint warmth of gold (`.rings .sheen`), so they read as rings. It was tried at 3.4px first, and
+a word across two bands jumped nine pixels; at 1.5 the writing reads across every seam. The hint says
+*Hover: the hexagon makes it whole*. The broken pane is kept behind `?glass=broken` and the fine glass
+behind `?glass=fine`.
+
+**The hexagon a little bigger**: `LENS` 196px from its middle to a corner (168).
+
+Tested in `tests/om-and-the-tribe.spec.js`:
+
+- **`a fragrance opened under Om's break opens at once, in the pieces too, and the page stays
+  broken`** replaces *opening a fragrance under Om's glass mends it*: shut in every copy to begin with
+  (`OmGlass.openIn`), opened at once on the page and in every copy, shut again in every copy, and
+  `data-om` never changing from `pieces` — no gathering, no mending.
+- **`Om's break is mended only by its button: not by a key, the hand or a click`** replaces *mended by
+  a key*: the keyboard's first stop is the button, and Tab after Tab mends nothing.
+- **`Om opens broken in rings round its middle, each band turned a little out of true`** (new): the
+  style is `rings`; every corner not on the window's edge stands on one of a few circles round the
+  middle; every piece of a band turned by the same angle (`OmGlass.turns`), each band the other way
+  from the last, by under three and a half pixels at its middle; no glints.
+- **`the broken pane is a web from where it was struck, and the fine glass is kept, behind the
+  address`** reads the broken pane at `?glass=broken`. **`Om's pieces are laid out as the page is, and
+  land on it exactly`** mends by the button. **`Om's button in the top right mends the break for
+  good`** reads *Mend the break*.
+
+**Still open**: the rings are a first answer to "find a way to be on theme"; the broken pane and the
+fine glass stay behind `?glass=` until the owner says which (if any) to keep.
+
 ## Same round, other reports
 
 - [The newer houses — Qimu's Bassist and Drummer written](2026-09-21-the-newer-houses.md#2026-10-10--bassist-and-drummer-written-and-a-fold-in-housejs)

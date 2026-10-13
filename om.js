@@ -39,20 +39,34 @@
 //                 cracks from each blow, its pieces long wedges pointing at
 //                 it, crushed at the blow itself (THE BROKEN PANE, below).
 //                 The fine glass is kept, and `?glass=fine` shows it.
+//                 SINCE 2026-10-13 IT IS NOT GLASS AT ALL — "make it less
+//                 like glass and more so like just a very abstract break.
+//                 Find a way to be on theme": THE RINGS, the page broken as
+//                 a mandala is drawn round โอม, as the sound the house is
+//                 named for rings out — a disc round the word and bands out
+//                 to past the corners, each band cut into petals, each band
+//                 turned a little out of true about the middle and the next
+//                 the other way; gold seams, and nothing of glass (no sheen,
+//                 no glints). The broken pane is `?glass=broken`.
 //   THE LENS      the hexagon of glass at the hand, larger than it was:
 //                 inside it, the page WHOLE — the writing unbroken, the
 //                 drawing behind it turned and brought nearer — and the
 //                 glass about it easing home as it comes, cracking again
 //                 as it goes. A gold rim round it.
-//   THE MENDING   for good, by OPENING a fragrance (or one of the owner's
-//                 dropdowns): the press is held, the pieces come home in a
-//                 quick wave from it, their seams flashing gold as they
-//                 meet, and then the fragrance opens on the page made
-//                 whole. Reaching into the page with the keyboard does the
-//                 same, and so does MEND THE GLASS, the button at the top
-//                 right ("put a button on the top right to fix the page").
-//                 ON A PHONE, where nothing hovers, the pieces come
-//                 together by themselves a moment after the page opens.
+//   THE MENDING   for good, only by MEND THE BREAK, the button at the top
+//                 right ("put a button on the top right to fix the page";
+//                 it said Mend the glass), the pieces coming home in a wave
+//                 from it, their seams flashing gold as they meet. NOTHING
+//                 PRESSED ON THE PAGE MENDS IT since 2026-10-13 ("whenever
+//                 you click on anything, the glass gets fixed and it is
+//                 buggy ... When you click on the perfumes, the break
+//                 should not be fixed"): a fragrance opens at once, under
+//                 the break, and opens in the pieces too, since the copies
+//                 FOLLOW THE PAGE (followPage). (Until then opening a
+//                 fragrance mended it, the press held while it did, and a
+//                 key reaching into the page mended it too.) ON A PHONE,
+//                 where nothing hovers, the pieces come together by
+//                 themselves a moment after the page opens.
 //   THE PIECES    are the page itself: each holds a copy of the whole page,
 //                 moved as the page scrolls, cut to its piece with a
 //                 clip-path, laid over the page (which is there all along,
@@ -161,7 +175,9 @@
   // ("i like the hexagon cursor ... i want it to be larger, and everything
   // unbreaks in the hexagon"), larger, and while the page is cracked, the
   // page whole inside it.
-  const LENS = 168;                // its radius, px (it was 92)
+  // A little bigger again since 2026-10-13 ("also make the hexagon a little
+  // bigger"): 196, where it was 168 (and 92 before that).
+  const LENS = 196;                // its radius, px
   const LENS_LAG = 0.14;           // how far it closes on the hand each frame
   const LENS_TURN = 0.16;          // how far the drawing is turned inside it
   const LENS_NEAR = 1.14;          // and how much nearer
@@ -194,7 +210,11 @@
   // says which glass the page is cracked with — "broken", or "fine" for
   // the glass before it — and `?glass=fine` (or `?glass=broken`) on the
   // address shows the other without changing anything.
-  const GLASS_STYLE = "broken";
+  // Since 2026-10-13 — "make it less like glass and more so like just a
+  // very abstract break. Find a way to be on theme" — the page is not
+  // broken as glass at all but in RINGS (below), and the two glasses are
+  // kept behind `?glass=broken` and `?glass=fine`.
+  const GLASS_STYLE = "rings";
   // Each blow: where (a share of the window), how many radial cracks, the
   // rings (shares of half the window's diagonal; the last past every
   // corner), and `toward`, the share of the way to the next blow that
@@ -210,6 +230,25 @@
   const BREAK_SHIFT = 3.4;         // px a piece stands off its place — up to about twice that
   const BREAK_TURN = 0.62;         // degrees out of true, at most
   const BREAK_NEAR = 1.1;          // lens radii from a piece's nearest edge within which it eases home as the lens comes
+  // THE RINGS — the break since 2026-10-13: not glass but the sound the
+  // house is named for. Om is the first vibration, and the page is broken
+  // as a mandala is drawn, in rings round โอม at the middle of the window:
+  // a disc round the word, and bands out from it to past the corners, each
+  // band cut into its petals (6, 8, 12, 12, 16 — the lotus's and the
+  // star's numbers), every other band's cuts a half step round from the
+  // band inside it. EACH BAND IS TURNED a little out of true about the
+  // middle, the next the other way, as the armillary's rings turn — the
+  // page out of tune with itself, a few pixels at the band's middle — and
+  // each petal stands a pixel in or out of its band. The seams are the
+  // house's gold hairlines and nothing else: no sheen, no glints, nothing
+  // of glass; every other band a faint warmth of gold, so they read as
+  // rings.
+  const RING_RADII = [0.15, 0.28, 0.43, 0.6, 0.8, 1.06];   // shares of half the window's diagonal
+  const RING_PARTS = [1, 6, 8, 12, 12, 16];                 // pieces in each band (the first the disc)
+  const RING_PARTS_NARROW = [1, 4, 6, 8, 8, 10];
+  const RING_SHIFT = 1.5;          // px a band is turned out of true at its middle — up to a third more
+  const RING_LIFT = 0.6;           // px a petal stands in or out of its band, at most
+  const RING_ARC = 3;              // degrees between the points of an arc
   const MEND_MS = 1100;            // how long one piece takes to come home, mending for good
   const MEND_SPREAD = 760;         // and the most it waits, the farthest last
   const MEND_QUICK_MS = 380;       // and when a fragrance is opened
@@ -659,7 +698,7 @@
   // again as it goes. Opening a fragrance mends it for good.
   // ============================================================
   const shattered = root.classList.contains("om-shattered");
-  const asked = (location.search.match(/[?&]glass=(fine|broken)\b/) || [])[1];
+  const asked = (location.search.match(/[?&]glass=(fine|broken|rings)\b/) || [])[1];
   const glassStyle = asked || GLASS_STYLE;
   if (shattered) root.dataset.glass = glassStyle;
   let gather = shattered ? 0 : 1;          // 0 cracked, 1 whole (eased, per frame)
@@ -668,7 +707,6 @@
   let shards = [];
   let host = null, stage = null, hint = null, lens = null, mendButton = null;
   let pieces = shattered ? "pieces" : "whole";
-  let heldPress = null;                    // a summary pressed under the glass
   let copyWidth = 0;
   root.dataset.om = pieces;
 
@@ -790,16 +828,129 @@
     return out;
   }
 
+  /** THE RINGS' pieces: the disc round the middle, and each band out from
+      it cut into its petals — an arc out and an arc back, a point every
+      RING_ARC degrees — each kept to the window. */
+  function ringPanes(w, h) {
+    const D = Math.hypot(w, h) * 0.5, cx = w / 2, cy = h / 2;
+    const parts = w < 700 ? RING_PARTS_NARROW : RING_PARTS;
+    const arc = (r, a0, a1) => {
+      const n = Math.max(2, Math.ceil(Math.abs(a1 - a0) / (RING_ARC * Math.PI / 180)));
+      const out = [];
+      for (let i = 0; i <= n; i++) { const a = a0 + (a1 - a0) * (i / n); out.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); }
+      return out;
+    };
+    const toWindow = (poly) => {
+      [(p) => -p[0], (p) => -p[1], (p) => p[0] - w, (p) => p[1] - h].forEach((side) => { if (poly.length) poly = clipBy(poly, side); });
+      return poly;
+    };
+    const out = [];
+    let offset = random() * Math.PI * 2;
+    RING_RADII.forEach((share, k) => {
+      const r1 = share * D, r0 = k ? RING_RADII[k - 1] * D : 0;
+      const n = parts[k];
+      if (n <= 1) {
+        const poly = toWindow(arc(r1, 0, Math.PI * 2).slice(0, -1));
+        if (poly.length >= 3) out.push({ poly, band: k, mid: r1 * 0.6 });
+        return;
+      }
+      const step = (Math.PI * 2) / n;
+      offset += step / 2;                                   // a half step round from the band inside
+      const cuts = [];
+      for (let j = 0; j < n; j++) cuts.push(offset + j * step + (random() - 0.5) * step * 0.24);
+      for (let j = 0; j < n; j++) {
+        const a0 = cuts[j], a1 = j + 1 < n ? cuts[j + 1] : cuts[0] + Math.PI * 2;
+        const poly = toWindow(arc(r1, a0, a1).concat(arc(r0, a1, a0)));
+        if (poly.length >= 3) out.push({ poly, band: k, mid: (r0 + r1) / 2 });
+      }
+    });
+    return out;
+  }
+
   /** The page's flow, copied whole, without an id, a tab stop or anything
       else that could be found or reached. */
   function copyFlow() {
     const flow = document.createElement("div");
     flow.className = "human-page om-page om-flow";
-    document.querySelectorAll("body > main, body > .house-credit, body > .human-foot").forEach((el) => flow.appendChild(el.cloneNode(true)));
-    flow.querySelectorAll("[id]").forEach((el) => el.removeAttribute("id"));
-    flow.querySelectorAll("[aria-labelledby]").forEach((el) => el.removeAttribute("aria-labelledby"));
-    flow.querySelectorAll("a, button, summary, input, [tabindex]").forEach((el) => el.setAttribute("tabindex", "-1"));
-    return flow;
+    flowParts().forEach((el) => flow.appendChild(el.cloneNode(true)));
+    return scrub(flow);
+  }
+  const flowParts = () => [...document.querySelectorAll("body > main, body > .house-credit, body > .human-foot")];
+  /** A copy made unfindable and unreachable: no ids, no labels by id, no tab stops. */
+  function scrub(el) {
+    const all = [el].concat([...el.querySelectorAll("*")]);
+    all.forEach((e) => {
+      if (e.hasAttribute("id")) e.removeAttribute("id");
+      if (e.hasAttribute("aria-labelledby")) e.removeAttribute("aria-labelledby");
+      if (e.matches("a, button, summary, input, [tabindex]")) e.setAttribute("tabindex", "-1");
+    });
+    return el;
+  }
+
+  /** THE PIECES FOLLOW THE PAGE (2026-10-13 — "whenever you click on
+      anything, the glass gets fixed and it is buggy ... When you click on
+      the perfumes, the break should not be fixed"). Each piece holds a copy
+      of the page, so a fragrance opened under the break used to have to
+      mend it first — the copies would have gone on showing it shut — and
+      the press was held while it mended and given back after, which was
+      the bug. Now every change to the page is made to every copy too, as
+      it happens: an attribute (a fragrance's `open`, the measured height
+      and fade house.js opens it with, a class) set on the same element of
+      each copy, so its opening runs in the pieces in step with the page;
+      anything added or taken away (the notes' buttons, a window's text)
+      copied over whole. An element is found in a copy by where it stands —
+      the same child of the same child — since the copies are the page's
+      own shape. */
+  const MIRRORED_NOT = new Set(["id", "tabindex", "aria-labelledby"]);
+  let mirror = null;
+  function pathOf(node, tops) {
+    const path = [];
+    for (let n = node; n; n = n.parentElement) {
+      const top = tops.indexOf(n);
+      if (top >= 0) { path.unshift(top); return path; }
+      if (!n.parentElement) return null;
+      path.unshift(Array.prototype.indexOf.call(n.parentElement.children, n));
+    }
+    return null;
+  }
+  function inCopy(copy, path) {
+    let n = copy.children[path[0]];
+    for (let i = 1; n && i < path.length; i++) n = n.children[path[i]];
+    return n || null;
+  }
+  function followPage(copies) {
+    const tops = flowParts();
+    mirror = new MutationObserver((records) => {
+      const whole = [];
+      records.forEach((r) => {
+        const el = r.type === "characterData" ? r.target.parentElement : r.target;
+        if (!el || !el.isConnected) return;
+        if (r.type === "attributes") {
+          if (MIRRORED_NOT.has(r.attributeName)) return;
+          const path = pathOf(el, tops);
+          if (!path) return;
+          const v = el.getAttribute(r.attributeName);
+          copies().forEach((copy) => {
+            const twin = inCopy(copy, path);
+            if (!twin) return;
+            if (v === null) twin.removeAttribute(r.attributeName);
+            else if (twin.getAttribute(r.attributeName) !== v) twin.setAttribute(r.attributeName, v);
+          });
+        } else if (!whole.some((w) => w.contains(el))) {
+          for (let i = whole.length - 1; i >= 0; i--) if (el.contains(whole[i])) whole.splice(i, 1);
+          whole.push(el);
+        }
+      });
+      whole.forEach((el) => {
+        const path = pathOf(el, tops);
+        if (!path) return;
+        copies().forEach((copy) => {
+          const twin = inCopy(copy, path);
+          if (twin) twin.replaceWith(scrub(el.cloneNode(true)));
+        });
+      });
+    });
+    tops.forEach((el) => mirror.observe(el, { attributes: true, childList: true, characterData: true, subtree: true }));
   }
 
   function buildShards() {
@@ -808,12 +959,14 @@
     // out exactly as the page is.
     const w = page.clientWidth || root.clientWidth, h = window.innerHeight;
     copyWidth = w;
-    const broken = glassStyle === "broken";
+    const broken = glassStyle === "broken", rings = glassStyle === "rings";
     const blows = broken ? (w < 700 ? BREAK_BLOWS_NARROW : BREAK_BLOWS_WIDE) : (w < 700 ? GLASS_BLOWS_NARROW : GLASS_BLOWS_WIDE);
-    // THE PIECES: the fine glass's, a Voronoi cell round each of the seeds
-    // set in rings round its blows; or the broken pane's web.
+    // THE PIECES: the rings', bands round the middle cut into petals; the
+    // fine glass's, a Voronoi cell round each of the seeds set in rings
+    // round its blows; or the broken pane's web.
     let panes;
-    if (broken) panes = brokenPanes(w, h, blows);
+    if (rings) panes = ringPanes(w, h);
+    else if (broken) panes = brokenPanes(w, h, blows);
     else {
       const D = Math.hypot(w, h) * 0.5;
       const seeds = [];
@@ -862,6 +1015,10 @@
       ".broken .edge polygon{stroke:rgb(255 240 214 / 0.62)}" +
       ".broken .edge polygon.thick{stroke:rgb(" + gold + " / 0.16);stroke-width:3.2}" +
       ".broken .shard>.om-flow{background:rgba(12,11,15,0.62)}" +
+      // The rings: nothing of glass — the seams the house's gold, and every
+      // other band a faint warmth of it.
+      ".rings .sheen{background:rgba(" + LINE.join(",") + ",0.035)}" +
+      ".rings .edge polygon{stroke:rgb(" + gold + " / 0.5)}" +
       // A glint: a little run of light along a crack, a layer of its own
       // so that its going round costs nothing but itself.
       ".glint{position:absolute;left:0;top:0;width:" + GLINT_LONG + "px;height:1px;margin:-0.5px 0 0 -" + GLINT_LONG / 2 + "px;opacity:0;will-change:transform,opacity;" +
@@ -879,13 +1036,14 @@
       ".hint.shown{opacity:1}" +
       ".hint i{display:block;width:9px;height:9px;border:1px solid currentColor;transform:rotate(45deg)}" +
       "</style>" +
-      '<div class="stage' + (broken ? " broken" : "") + '" inert><div class="field"></div><p class="hint"><i></i>Hover: the hexagon mends the glass<i></i></p></div>';
+      '<div class="stage' + (broken ? " broken" : rings ? " rings" : "") + '" inert><div class="field"></div><p class="hint"><i></i>Hover: the hexagon makes it whole<i></i></p></div>';
     stage = shadow.querySelector(".stage");
     const field = shadow.querySelector(".field");
     hint = shadow.querySelector(".hint");
     if (TOUCH) hint.remove();
 
     shards = [];
+    const bandTurn = [];
     panes.forEach((pane) => {
       const poly = pane.poly;
       if (poly.length < 3 || Math.abs(polygonArea(poly)) < 30) return;
@@ -915,8 +1073,8 @@
       sheen.className = "sheen";
       // A broken piece out of true catches the light its own way: most
       // dimly, a few brightly.
-      sheen.style.opacity = (broken ? (random() < 0.18 ? between(1.6, 2.6) : between(0.2, 1.1)) : between(0.3, 1)).toFixed(2);
-      el.appendChild(sheen);
+      sheen.style.opacity = (rings ? (pane.band % 2 ? 1 : 0) : broken ? (random() < 0.18 ? between(1.6, 2.6) : between(0.2, 1.1)) : between(0.3, 1)).toFixed(2);
+      if (!rings || pane.band % 2) el.appendChild(sheen);
       const pts = local.map((p) => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
       el.insertAdjacentHTML("beforeend", '<svg class="edge" width="' + bw + '" height="' + bh + '" viewBox="0 0 ' + bw + " " + bh + '">' +
         (broken ? '<polygon class="thick" points="' + pts + '"/>' : "") + '<polygon points="' + pts + '"/></svg>');
@@ -929,21 +1087,40 @@
       // On a phone's narrow window, half as far again.
       // The broken pane's pieces a little further, and more out of true:
       // the ones at the blow pushed in the most, as glass is.
-      const b = blows[pane.blow], P = [w * b.x, h * b.y];
-      const dx = gx - P[0], dy = gy - P[1], dist = Math.hypot(dx, dy) || 1;
-      const ux = dx / dist, uy = dy / dist, g = w < 700 ? 0.5 : 1;
-      const out = broken
-        ? (BREAK_SHIFT * (0.6 + random()) + (pane.ring === 0 ? 2.5 : 0)) * g
-        : (GLASS_SHIFT * (0.5 + random()) + dist * 0.0032) * g;
-      const turnMost = broken ? BREAK_TURN : GLASS_TURN;
+      const g = w < 700 ? 0.5 : 1;
+      let tx, ty, rz, k;
+      if (rings) {
+        // Its band turned about the middle — every piece of a band by the
+        // same angle, the next band the other way — and the petal a pixel
+        // in or out: a turn about its own middle and the move of that
+        // middle round the window's.
+        const cx = w / 2, cy = h / 2;
+        if (!bandTurn[pane.band]) bandTurn[pane.band] = pane.band === 0 ? 0 : (pane.band % 2 ? 1 : -1) * between(1, 1.33) * RING_SHIFT * g / pane.mid;
+        const th = bandTurn[pane.band];
+        const ox = gx - cx, oy = gy - cy, od = Math.hypot(ox, oy) || 1;
+        const lift = pane.band === 0 ? 0 : between(-1, 1) * RING_LIFT * g;
+        tx = cx + ox * Math.cos(th) - oy * Math.sin(th) - gx + (ox / od) * lift;
+        ty = cy + ox * Math.sin(th) + oy * Math.cos(th) - gy + (oy / od) * lift;
+        rz = (th * 180) / Math.PI;
+        k = 1;
+      } else {
+        const b = blows[pane.blow], P = [w * b.x, h * b.y];
+        const dx = gx - P[0], dy = gy - P[1], dist = Math.hypot(dx, dy) || 1;
+        const ux = dx / dist, uy = dy / dist;
+        const out = broken
+          ? (BREAK_SHIFT * (0.6 + random()) + (pane.ring === 0 ? 2.5 : 0)) * g
+          : (GLASS_SHIFT * (0.5 + random()) + dist * 0.0032) * g;
+        const turnMost = broken ? BREAK_TURN : GLASS_TURN;
+        tx = ux * out + between(-0.6, 0.6) * g; ty = uy * out + between(-0.6, 0.6) * g;
+        k = 1 - (0.0015 + random() * (broken ? 0.005 : 0.0035)) * g;
+        rz = between(-turnMost, turnMost) * g;
+      }
       shards.push({
         // (The broken pane's two lines fade together, as one drawing.)
         el, copy, sheen, gx, gy, poly, around, line: el.querySelector(broken ? ".edge" : ".edge polygon"),
-        glint: random() < (broken ? 0.35 : 0.25) ? { at: random() * GLINT_EVERY, el: null, shown: -1 } : null,
-        tx: ux * out + between(-0.6, 0.6) * g, ty: uy * out + between(-0.6, 0.6) * g,
-        k: 1 - (0.0015 + random() * (broken ? 0.005 : 0.0035)) * g,
-        rz: between(-turnMost, turnMost) * g,
-        wait: 0, p: -1, near: -1, edge: 0.85, edgeShown: -1, now: [0, 0, 0, 1], long: broken,
+        glint: !rings && random() < (broken ? 0.35 : 0.25) ? { at: random() * GLINT_EVERY, el: null, shown: -1 } : null,
+        tx, ty, k, rz, band: pane.band, mid: pane.mid,
+        wait: 0, p: -1, near: -1, edge: 0.85, edgeShown: -1, now: [0, 0, 0, 1], long: broken || rings,
       });
     });
     // The glints, over every piece.
@@ -980,21 +1157,25 @@
     }
     page.insertBefore(host, canvas.nextSibling);
     root.classList.add("om-held");
+    followPage(() => shards.map((s) => s.copy).concat(lens ? [lens.copy] : []));
 
     // THE BUTTON IN THE TOP RIGHT (2026-10-11, last — "put a button on the
-    // top right to fix the page"): Mend the glass, for good, from where it
+    // top right to fix the page"): Mend the break (it said "Mend the glass"
+    // until 2026-10-13), for good, from where it
     // is — a wave across the window from the top right corner. On the page
     // itself, over the glass, since the glass takes no press; gone once the
     // page is whole.
     mendButton = document.createElement("button");
     mendButton.type = "button";
     mendButton.className = "om-mend";
-    mendButton.innerHTML = '<svg class="om-mend-mark" viewBox="0 0 16 14" width="16" height="14" aria-hidden="true"><polygon points="4.5,1 11.5,1 15,7 11.5,13 4.5,13 1,7"/></svg><span>Mend the glass</span>';
+    mendButton.innerHTML = '<svg class="om-mend-mark" viewBox="0 0 16 14" width="16" height="14" aria-hidden="true"><polygon points="4.5,1 11.5,1 15,7 11.5,13 4.5,13 1,7"/></svg><span>Mend the break</span>';
     mendButton.addEventListener("click", () => {
       const r = mendButton.getBoundingClientRect();
       mend(r.left + r.width / 2, r.top + r.height / 2);
     });
-    page.appendChild(mendButton);
+    // First in the page's order, so the keyboard comes to it first: since
+    // 2026-10-13 nothing else mends the page (a key reaching into it did).
+    page.insertBefore(mendButton, page.firstChild);
     requestAnimationFrame(() => { if (mendButton) mendButton.classList.add("shown"); });
   }
 
@@ -1146,8 +1327,11 @@
     requestAnimationFrame(() => requestAnimationFrame(() => {
       root.classList.remove("om-landing");
       if (stage) stage.classList.add("gone");
-      if (heldPress) { const sum = heldPress; heldPress = null; sum.click(); }
-      window.setTimeout(() => { if (host) host.remove(); host = stage = hint = lens = null; shards = []; }, 760);
+      window.setTimeout(() => {
+        if (mirror) { mirror.disconnect(); mirror = null; }
+        if (host) host.remove();
+        host = stage = hint = lens = null; shards = [];
+      }, 760);
     }));
   }
   const portalR = () => Math.min(W * (W < 700 ? 0.46 : 0.36), 560) * 0.62;
@@ -1155,33 +1339,15 @@
   if (shattered) {
     size();
     buildShards();
-    // OPENING A FRAGRANCE — or one of the owner's dropdowns — mends it for
-    // good, from where it was pressed, quickly: so what is opened is read
-    // whole. The press is HELD while the glass mends, and given back to
-    // the page once it is whole, so the fragrance opens after the glass has
-    // gone — the copies in the glass are of the page as it was, and a
-    // fragrance opening under them would come out from under a ghost of
-    // the shut list. (Its summary is the page's own, under the glass.)
-    let pressX = window.innerWidth / 2, pressY = window.innerHeight / 2;
-    window.addEventListener("pointerdown", (e) => { pressX = e.clientX; pressY = e.clientY; }, { passive: true });
-    window.addEventListener("click", (e) => {
-      if (pieces === "whole" || !e.target || !e.target.closest) return;
-      const sum = e.target.closest("details > summary");
-      if (!sum || sum.parentElement.open) return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      heldPress = sum;
-      mend(e.clientX || pressX, e.clientY || pressY, true);
-    }, true);
-    // Anything else opened under the glass mends it too.
-    document.addEventListener("toggle", (e) => {
-      if (e.target && e.target.open) mend(pressX, pressY, true);
-    }, true);
-    // The keyboard cannot hover: reaching into the page with it mends it.
-    document.addEventListener("focusin", (e) => {
-      if (e.target && e.target === mendButton) return;   // it says what it does; pressed, it does it
-      if (e.target && e.target.matches && e.target.matches(":focus-visible")) mend(window.innerWidth / 2, window.innerHeight * 0.44);
-    });
+    // NOTHING PRESSED MENDS IT (2026-10-13 — "whenever you click on
+    // anything, the glass gets fixed and it is buggy. fix that ... When you
+    // click on the perfumes, the break should not be fixed"): a fragrance
+    // opened, a dropdown, a link, a key — each does what it does on the page
+    // at once, the pieces following it (followPage), and the page stays
+    // broken. Opening a fragrance mended it for good until then, the press
+    // held while it did, and a key reaching into the page mended it too.
+    // What mends it is the button in the top right — and the hexagon, while
+    // it is there.
     // A window changing size breaks the pieces' geometry: it is simply
     // whole at once.
     window.addEventListener("resize", () => {
@@ -1207,6 +1373,24 @@
       // Each piece's outline on the window, for the tests to read the shape
       // of the glass by.
       outlines: () => shards.map((s) => s.poly.map((q) => [Math.round(q[0]), Math.round(q[1])])),
+      // How many of the copies (the pieces' and the hexagon's) have the
+      // page's n-th fragrance open, and how many copies there are — for the
+      // pieces following the page.
+      // Each band of the rings: how far it is turned (degrees), how much its
+      // pieces differ in that, and how far that moves its middle (px).
+      turns: () => {
+        const by = new Map();
+        shards.forEach((s) => { if (s.band == null) return; if (!by.has(s.band)) by.set(s.band, []); by.get(s.band).push(s); });
+        return [...by.entries()].sort((a, b) => a[0] - b[0]).map(([band, list]) => {
+          const degs = list.map((s) => s.rz);
+          const deg = degs[0];
+          return { band, deg, spread: Math.max(...degs) - Math.min(...degs), px: (deg * Math.PI / 180) * list[0].mid };
+        });
+      },
+      openIn: (n) => {
+        const copies = shards.map((s) => s.copy).concat(lens ? [lens.copy] : []);
+        return { open: copies.filter((c) => { const part = c.querySelectorAll(".human-part")[n]; return part && part.open; }).length, of: copies.length };
+      },
     };
   }
 
