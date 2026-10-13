@@ -296,7 +296,7 @@ test("Om is whole at once with reduced motion, at one fragrance, or without its 
   await page.goto(OM + "?om=whole");
   await expect(page.locator(".om-shards")).toHaveCount(0);
   await expect(page.locator(".om-mend"), "nothing to mend").toHaveCount(0);
-  await page.route("**/om.js", (r) => r.abort());
+  await page.route("**/om.js*", (r) => r.abort());
   await page.goto(OM);
   await page.waitForLoadState("load");
   await expect(page.locator("html")).not.toHaveClass(/om-shattered/);
@@ -383,8 +383,8 @@ test("Outsider is a door standing ajar in the left margin, the light coming thro
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(OUTSIDER);
-  await expect(page.locator('script[src="../outsider.js"]')).toHaveCount(1);
-  await expect(page.locator('script[src="../om.js"]')).toHaveCount(0);
+  await expect(page.locator('script[src^="../outsider.js"]')).toHaveCount(1);
+  await expect(page.locator('script[src^="../om.js"]')).toHaveCount(0);
   await expect(page.locator(".om-shards")).toHaveCount(0);
   await expect(page.locator("html")).not.toHaveClass(/om-shattered/);
   expect(await page.locator("h1").evaluate((el) => getComputedStyle(el).animationName), "no echo on the name").toBe("none");

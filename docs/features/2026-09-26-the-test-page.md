@@ -2088,3 +2088,16 @@ here; `research/NEW4.py`. The catalogue's sources are **one entry a page** now �
 article was in it twice — and `catalogue.py --check` fails on a source left twice or a page not
 written since its research changed. All of it is **the rulebook**, `tools/note-library/RULEBOOK.md`:
 see [its report](2026-10-13-the-rulebook-for-a-new-perfume.md).
+
+## 2026-10-13 — opening on time
+
+> I feel that there are several pages that are having issues opening; mainly, the note library
+
+Written up in [the pages opening quickly](2026-10-13-pages-opening-quickly.md). In short, in
+`network.js`: **the opening runs on the clock** (`LOAD_STEP`: a frame counts for up to a quarter of
+a second of `LOAD_MS`), so the arrows, the foot and the hint come in about two seconds after the page
+opens on any machine — counted in frames of at most 50ms, a phone drawing a few a second as it opened
+waited ten and more; **the drawing is begun once the page has been shown** (`begin`), so its ground
+and the Menu are there at once; **the links are worked out on plain numbers** (`linkUp`, the same
+links); and **the sources' sheet is written when it is first opened** (`writeSources`). Nothing on the
+page looks or behaves differently once it is open.

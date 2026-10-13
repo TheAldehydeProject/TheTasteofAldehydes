@@ -51,7 +51,7 @@ async function toFragrances(page) {
    old view again — the table, its sorting and search, and the fade and
    the swipe between the views — so that is what these run against. */
 test.beforeEach(async ({ page }) => {
-  await page.route("**/fragrance-line.js", (route) => route.abort());
+  await page.route("**/fragrance-line.js*", (route) => route.abort());
   await serveDependenciesLocally(page);
 });
 
@@ -326,7 +326,7 @@ test("without the script the table is still the table", async ({ page }) => {
   // index-page.js only sorts and searches. Everything it works on is
   // written in the page, so a blocked script costs the sorting and
   // nothing else.
-  await page.route("**/index-page.js", (route) => route.abort());
+  await page.route("**/index-page.js*", (route) => route.abort());
   const errors = collectPageErrors(page, ["ERR_FAILED", "Failed to load resource"]);
   await page.goto(RESEARCHES);
 

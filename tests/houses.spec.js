@@ -929,7 +929,7 @@ test("Qimu & Musicians' pieces come from all over the world, for piano, guitar a
 test("Qimu & Musicians engraves and plays a guitar and a drum kit", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
-  await page.route("**/qimu-pieces.js", async (route) => {
+  await page.route("**/qimu-pieces.js*", async (route) => {
     const answer = await route.fetch();
     const body = (await answer.text()) + "\nwindow.QIMU_PIECES = window.QIMU_PIECES.filter((p) => p.inst);\n";
     await route.fulfill({ response: answer, body });
@@ -1290,11 +1290,11 @@ test("with motion turned off the four new grounds are drawn and stand still", as
    says the drawing is decoration rather than the page. */
 test("without the scripts the new houses are all of their writing",
   async ({ page }) => {
-  await page.route("**/house.js", (route) => route.abort());
-  await page.route("**/ataraxia.js", (route) => route.abort());
-  await page.route("**/tale.js", (route) => route.abort());
+  await page.route("**/house.js*", (route) => route.abort());
+  await page.route("**/ataraxia.js*", (route) => route.abort());
+  await page.route("**/tale.js*", (route) => route.abort());
   for (const ground of ["grande", "abstraits", "tombstone", "qimu"]) {
-    await page.route(`**/${ground}.js`, (route) => route.abort());
+    await page.route(`**/${ground}.js*`, (route) => route.abort());
   }
 
   for (const [url, parts] of [[ATARAXIA, 5], [GRANDE, 15], [ABSTRAITS, 4], [TALE, 4], [TOMBSTONE, 5], [QIMU, 4]]) {

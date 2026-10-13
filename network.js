@@ -246,7 +246,8 @@
   // the depth it comes apart in is seen.
   const SWEEP = 0.62;
   const FLOAT = 0.018;                  // every node's own slow drift, at rest
-  const LOAD_MS = 1900;                 // the page wiring itself as it opens
+  const LOAD_MS = 1900;                 // the page wiring itself as it opens, by the clock
+  const LOAD_STEP = 250;                // ... a frame counting for no more than this of it
   const COACH_MS = 4200;                // "Search" and "Open menu", after it has opened
   const IDLE_MS = 7000;                 // left alone this long, the arrows glow
   const COMBINE_MS = 2200;              // into combinations, and back
@@ -411,11 +412,15 @@
   // The catalogue is this page's own: read at once, and the drawing begun
   // once the rest of this script has been set up (it waited on a fetch of
   // the library's page until 2026-09-29, and still starts a beat later).
+  // And begun only once the page has been shown (2026-10-13): begun at
+  // once, everything it sets up held the page blank — not even the Menu —
+  // for a second or more on a phone before its first frame.
   const library = read(document);
-  Promise.resolve().then(() => {
+  const begin = () => {
     if (library.accords.length) start(library.accords, library.sources);
     else bare();
-  });
+  };
+  requestAnimationFrame(() => window.setTimeout(begin, 0));
 
   // ============================================================
   // EVERYTHING ELSE, once the library has been read
@@ -696,21 +701,28 @@
         out.push([a, b]);
       };
       // Each to its nearest few: the few kept as it goes, nothing sorted.
+      // Where every node stands is read once into plain numbers first
+      // (2026-10-13): the same sums in the same order as before, so the
+      // same links, without a call and a lookup for each of the million
+      // pairs — it was the largest part of the page's start.
       const best = new Float64Array(8), who = new Int32Array(8);
-      list.forEach((a) => {
+      const L = list.length, xs = new Float64Array(L), ys = new Float64Array(L), zs = new Float64Array(L), ids = new Int32Array(L);
+      list.forEach((n, q) => { const p = at(n); xs[q] = p.x; ys[q] = p.y; zs[q] = p.z; ids[q] = n.i; });
+      for (let qa = 0; qa < L; qa++) {
         const k = few[0] + Math.floor(rnd() * (few[1] - few[0] + 1));
         let have = 0;
-        const pa = at(a);
-        list.forEach((b) => {
-          if (b === a) return;
-          const d = pa.distanceToSquared(at(b));
-          if (have === k && d >= best[k - 1]) return;
+        const ax = xs[qa], ay = ys[qa], az = zs[qa];
+        for (let qb = 0; qb < L; qb++) {
+          if (qb === qa) continue;
+          const dx = ax - xs[qb], dy = ay - ys[qb], dz = az - zs[qb];
+          const d = dx * dx + dy * dy + dz * dz;
+          if (have === k && d >= best[k - 1]) continue;
           let j = have < k ? have++ : k - 1;
           while (j > 0 && best[j - 1] > d) { best[j] = best[j - 1]; who[j] = who[j - 1]; j--; }
-          best[j] = d; who[j] = b.i;
-        });
-        for (let j = 0; j < have; j++) join(a.i, who[j]);
-      });
+          best[j] = d; who[j] = ids[qb];
+        }
+        for (let j = 0; j < have; j++) join(ids[qa], who[j]);
+      }
       hubs.forEach((h) => {
         const n = hubLinks[0] + Math.floor(rnd() * (hubLinks[1] - hubLinks[0] + 1));
         for (let j = 0, tries = 0; j < n && tries < n * 30; tries++) {
@@ -1473,9 +1485,16 @@
     // numbers, unfolding out of wherever it was opened from — the centre,
     // or a source's number under a description. Every source is the
     // catalogue's own, in MLA 8, numbered as the descriptions name them.
+    // A source's plain words are read off it when they are first wanted
+    // (a number's title in a note's window), and the sheet's list is
+    // written when the sheet is first opened (2026-10-13): twelve hundred
+    // of each, written as the page opened, were a fifth of its start.
     const sourceByNo = new Map();
     const textOf = (h) => { const d = document.createElement("div"); d.innerHTML = h; return d.textContent.replace(/\s+/g, " ").trim(); };
-    sources.forEach((src) => sourceByNo.set(src.no, Object.assign({ text: textOf(src.html) }, src)));
+    sources.forEach((src) => {
+      let text = null;
+      sourceByNo.set(src.no, Object.assign({ get text() { return text === null ? (text = textOf(src.html)) : text; } }, src));
+    });
     const sheet = el("section", "net-sources");
     sheet.hidden = true;
     sheet.setAttribute("role", "dialog");
@@ -1492,21 +1511,29 @@
     sheet.querySelector(".net-sources-say").textContent =
       sources.length + (sources.length === 1 ? " source" : " sources") + " for what this library says of its notes — the numbers under a note's description.";
     const sourceList = sheet.querySelector(".net-sources-list");
-    sources.forEach((src) => {
-      const li = sourceList.appendChild(el("li", "net-source" + (src.me ? " is-me" : "")));
-      li.id = "net-source-" + src.no;
-      li.dataset.no = String(src.no);
-      li.appendChild(el("span", "net-source-no")).textContent = String(src.no);
-      const body = li.appendChild(el("span", "net-source-text"));
-      body.innerHTML = src.html;          // the page's own catalogue
-      if (src.me) body.appendChild(el("span", "net-source-me")).textContent = "The author of this site";
-      body.querySelectorAll("a").forEach((a) => { a.target = "_blank"; a.rel = "noopener"; });
-    });
+    let sourcesWritten = false;
+    function writeSources() {
+      if (sourcesWritten) return;
+      sourcesWritten = true;
+      const all = document.createDocumentFragment();
+      sources.forEach((src) => {
+        const li = all.appendChild(el("li", "net-source" + (src.me ? " is-me" : "")));
+        li.id = "net-source-" + src.no;
+        li.dataset.no = String(src.no);
+        li.appendChild(el("span", "net-source-no")).textContent = String(src.no);
+        const body = li.appendChild(el("span", "net-source-text"));
+        body.innerHTML = src.html;          // the page's own catalogue
+        if (src.me) body.appendChild(el("span", "net-source-me")).textContent = "The author of this site";
+        body.querySelectorAll("a").forEach((a) => { a.target = "_blank"; a.rel = "noopener"; });
+      });
+      sourceList.appendChild(all);
+    }
     stage.appendChild(sheet);
     let sourcesOpen = false, sourcesBack = null, sourcesTimer = 0;
     /** The sources opened, at one of them if asked (`no`), unfolding from
         the point on the window it was opened from (`from`). */
     function openSources(no, from) {
+      writeSources();
       if (!sourcesOpen) sourcesBack = document.activeElement;
       const r = stage.getBoundingClientRect();
       const at = from || (sourcesBack && sourcesBack.getBoundingClientRect ? (() => { const b = sourcesBack.getBoundingClientRect(); return { x: b.left + b.width / 2 - r.left, y: b.top + b.height / 2 - r.top }; })() : { x: r.width / 2, y: r.height / 2 });
@@ -3175,7 +3202,16 @@
         eases in. Where the front stands, 0 to 1.18; 9 once it is done.
         Nothing else is drawn while it does: the ring it turns in comes in
         once it has formed. */
-    let loadT = 0;                        // the opening's own clock: frames' time, never more than 50ms a frame
+    // ITS CLOCK IS THE WALL'S (2026-10-13 — "there are several pages that
+    // are having issues opening; mainly, the note library"): it was the
+    // frames' time, never more than 50ms a frame, so a machine drawing a
+    // few frames a second — a phone as the page opens, compiling and
+    // uploading — took ten seconds or more to finish it, and the arrows,
+    // the foot and the hint, which come in once it has, were not there for
+    // all that time. Now a slow frame counts for what it took, up to
+    // LOAD_STEP, so it is done in about LOAD_MS whatever the machine; a
+    // longer gap (a tab put away) is still not a jump.
+    let loadT = 0;
     function loadFront() {
       if (loaded) { introZoom = 1; return 9; }
       const p = clamp((loadT - 60) / LOAD_MS, 0, 1);
@@ -3329,7 +3365,7 @@
       air(t);
       if (!born) born = t;
       if (!still) clock += dt;
-      if (!loaded) loadT += dt;
+      if (!loaded) loadT += Math.min(LOAD_STEP, wall);
       if (u !== uTo) {
         if (still) { u = uTo; uVel = 0; }
         else {

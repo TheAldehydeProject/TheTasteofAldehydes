@@ -11,9 +11,10 @@
    And then: "keep this: Get in touch, send a carrier pigeon. Below it add
    :or just send an email: and there add the stuff that i told you to" —
    the owner's line under the sentence, as the head of the check, and the
-   one detail it shows the (filler) email. Since 2026-09-29 that line is
+   one detail it shows the email. Since 2026-09-29 that line is
    "... or an email:" ('rewrite "or just send an email:" to "... or an
-   email:"').
+   email:"'). Since 2026-10-13 the email is the site's own address, not a
+   filler, and it is written nowhere in the repository but sealed.
    ============================================================ */
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
@@ -51,12 +52,31 @@ test("the details are not in the page's source to be harvested", () => {
   expect(source, "no address in the clear").not.toMatch(AN_EMAIL);
   expect(source).not.toContain("@your");
   expect(source).not.toMatch(/mailto:/);
-  // and none in what it looks like sealed either
+  // and none in what it looks like sealed either. Since 2026-10-13 the
+  // address is at the site's own domain, which the page's head names for
+  // search engines, so it is the address and its name with the @ that
+  // must not be there.
   const [[, email]] = sealedDetails();
   expect(email, "an address is sealed in it").toMatch(AN_EMAIL);
-  expect(source).not.toContain(email.split("@")[1]);
+  expect(source).not.toContain(email);
+  expect(source).not.toContain(email.split("@")[0] + "@");
   // And the owner's sentence is still the head of the page.
   expect(source).toContain("<h1>Get in touch, send a carrier pigeon.</h1>");
+});
+
+test("the real address is written nowhere in the repository but sealed", () => {
+  // 2026-10-13: the repository is public, so an address written out in
+  // any file of it — a page, a script, a report — is an address in the
+  // clear, however well the page hides it.
+  const { execFileSync } = require("child_process");
+  const root = path.join(__dirname, "..");
+  const [[, email]] = sealedDetails();
+  const files = execFileSync("git", ["ls-files", "-z"], { cwd: root, encoding: "utf8" }).split("\0").filter(Boolean)
+    .filter((f) => /\.(html|js|css|md|txt|json|py|xml|ly|mjs|yml|yaml)$/i.test(f) && !f.startsWith("node_modules/"));
+  const found = files.filter((f) => {
+    try { return fs.readFileSync(path.join(root, f), "utf8").toLowerCase().includes(email.toLowerCase()); } catch (e) { return false; }
+  });
+  expect(found, "files with the address in the clear").toEqual([]);
 });
 
 test("under the sentence, the owner's '... or an email:', and the check under that", async ({ page }) => {

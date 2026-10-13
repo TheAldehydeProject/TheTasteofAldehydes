@@ -195,7 +195,7 @@ test("pointing at a term in the equation says what it is", async ({ page }) => {
 });
 
 test("without the script the theory is unharmed", async ({ page, context }) => {
-  await context.route("**/calculator.js", (route) => route.abort());
+  await context.route("**/calculator.js*", (route) => route.abort());
   await page.goto(THEORY);
   await expect(page.locator(".essay-body")).toBeVisible();
   await expect(page.locator(".essay-section")).toHaveCount(10);
@@ -602,7 +602,7 @@ test("the piece's graph is one graph, turned logarithmic by a button on its righ
 });
 
 test("without its script the piece's graph is the linear one, and no button", async ({ page }) => {
-  await page.route("**/calculator.js", (route) => route.abort());
+  await page.route("**/calculator.js*", (route) => route.abort());
   await page.goto(THEORY);
   await expect(page.locator('.zone-switch svg[data-scale="linear"]')).toBeVisible();
   await expect(page.locator('.zone-switch svg[data-scale="log"]')).toBeHidden();

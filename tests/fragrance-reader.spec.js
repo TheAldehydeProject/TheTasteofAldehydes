@@ -20,7 +20,7 @@ const SHEET = "/scent-descriptions/";
     and is still what a file on the line presses (tests/fragrance-line
     .spec.js opens the reader from the line itself). */
 async function toTheList(page) {
-  await page.route("**/fragrance-line.js", (route) => route.abort());
+  await page.route("**/fragrance-line.js*", (route) => route.abort());
   await serveDependenciesLocally(page);
   await page.goto(SHEET);
   await page.waitForTimeout(1600);
@@ -350,7 +350,7 @@ test("Haxan carries all three of its pictures, here and on its own page",
    changes what a PRESS does, not what the page is. */
 test("without the reader the rows are still links to the other page",
   async ({ page }) => {
-  await page.route("**/fragrance-reader.js", (route) => route.abort());
+  await page.route("**/fragrance-reader.js*", (route) => route.abort());
   await serveDependenciesLocally(page);
   await page.goto(SHEET);
   await page.waitForTimeout(1600);

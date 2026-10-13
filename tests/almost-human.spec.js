@@ -295,7 +295,7 @@ test("with animation turned off the crowd stands still", async ({ page }) => {
 });
 
 test("without the script the page is all of its writing", async ({ page, context }) => {
-  await context.route("**/almost-human.js", (route) => route.abort());
+  await context.route("**/almost-human.js*", (route) => route.abort());
   await page.goto(HOUSE);
 
   await expect(page.locator(".human-part")).toHaveCount(5);

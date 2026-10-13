@@ -2052,7 +2052,7 @@ test("with animation turned off it stands still", async ({ page }) => {
 });
 
 test("without the script the page is the plain list of favourites", async ({ page }) => {
-  await page.route("**/chamber.js", (route) => route.abort());
+  await page.route("**/chamber.js*", (route) => route.abort());
   await page.goto(PAGE);
 
   const entries = page.locator(".gallery-entry");

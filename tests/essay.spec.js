@@ -125,7 +125,7 @@ test("with animation turned off the field stands still", async ({ page }) => {
 });
 
 test("without its script the page is still all of its writing", async ({ page }) => {
-  await page.route("**/essay.js", (route) => route.abort());
+  await page.route("**/essay.js*", (route) => route.abort());
   const errors = collectPageErrors(page, ["ERR_FAILED", "Failed to load resource"]);
   await page.goto(RESINS);
 

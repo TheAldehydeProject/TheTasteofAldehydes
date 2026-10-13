@@ -1061,7 +1061,7 @@ test("on a phone the names stand two above and two below the formula each side, 
 test("a reload opens at the title, the names never shown before the page has placed them", async ({ page }) => {
   // the page's own scripts held back, to see it as it stands before they run
   let hold = true;
-  await page.route(/landing\.js$/, async (route) => { while (hold) await new Promise((r) => setTimeout(r, 50)); route.continue(); });
+  await page.route(/landing\.js(\?v=\w+)?$/, async (route) => { while (hold) await new Promise((r) => setTimeout(r, 50)); route.continue(); });
   page.goto("/index.html?auto=off").catch(() => {});
   await page.waitForSelector(".formula-link", { state: "attached" });
   await page.waitForTimeout(600);

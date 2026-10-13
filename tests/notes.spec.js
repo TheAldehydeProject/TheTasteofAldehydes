@@ -337,7 +337,7 @@ test("a fragrance with no notes yet says they have not been found",
   // added before its notes are, so rather than delete the test the
   // notes are taken away from the page: with none at all, every
   // fragrance should fall back to saying so.
-  await page.route("**/notes-data.js", (route) =>
+  await page.route("**/notes-data.js*", (route) =>
     route.fulfill({ contentType: "application/javascript",
                     body: "window.FRAGRANCE_NOTES = {};" }));
 
@@ -405,7 +405,7 @@ test("the individual fragrances run 01 to 13 with nothing missing", () => {
 test("without the script there is no button and the writing is untouched",
   async ({ page }) => {
   await serveDependenciesLocally(page);
-  await page.route("**/notes.js", (route) => route.abort());
+  await page.route("**/notes.js*", (route) => route.abort());
   await page.goto("/houses/pineward.html");
   await page.waitForTimeout(600);
 

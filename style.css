@@ -1801,7 +1801,7 @@ body.view-fragrances .sheet-filter::before { opacity: 0; }
 /* They are not there while the sheet is drawing itself, and must not
    be seen leaving either. */
 body.sheet-scripted .sheet-filters { opacity: 0; transition: none; }
-body.sheet-named .sheet-filters { opacity: 1; transition: opacity 1.1s var(--menu-ease) 0.3s; }
+body.sheet-named .sheet-filters { opacity: 1; transition: opacity 0.8s var(--menu-ease) 0.15s; }
 
 /* THE VIEWS. Only ever one of them is on the page: the one being left
    fades away FIRST and the other arrives after it, so the page never
@@ -2388,7 +2388,7 @@ body.sheet-named .sheet-head .category-lede {
 }
 body.sheet-named .sheet-where {
   opacity: 1;
-  transition: opacity 1.1s var(--menu-ease) 0.15s;
+  transition: opacity 0.8s var(--menu-ease) 0.1s;
 }
 
 /* ==================================================================
@@ -2438,8 +2438,9 @@ html.js-coming .sheet-where,
 html.js-coming body.sheet-page .menu-trigger { visibility: hidden; }
 
 /* And with the script running, the chrome waits for the sheet to
-   finish drawing itself: the page puts itself together, and then hands
-   you the controls. They are faded rather than hidden so that anything
+   draw itself — since 2026-10-13 only until its houses begin to come out
+   of the axis, about a second (it waited for every house, four seconds
+   and more): the page puts itself together, and hands you the controls. They are faded rather than hidden so that anything
    reaching for them — a keyboard, a test — still finds them where they
    are. */
 body.sheet-scripted .sheet-search,
@@ -2447,7 +2448,7 @@ body.sheet-scripted .menu-trigger { opacity: 0; transition: none; }
 body.sheet-named .sheet-search,
 body.sheet-named .menu-trigger {
   opacity: 1;
-  transition: opacity 1.1s var(--menu-ease) 0.25s;
+  transition: opacity 0.8s var(--menu-ease) 0.1s;
 }
 
 .sheet-stage { position: relative; padding-top: clamp(64px, 9vh, 96px); }

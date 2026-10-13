@@ -135,8 +135,38 @@ test("the site needs no build step to publish", async () => {
 
   expect(localScripts.length).toBeGreaterThan(0);
   for (const src of localScripts) {
-    expect(fs.existsSync(path.join(ROOT, src)), `${src} should exist in the repo`).toBe(true);
+    // (asked for by its version since 2026-10-13: `nav.js?v=…` is nav.js)
+    expect(fs.existsSync(path.join(ROOT, src.split("?")[0])), `${src} should exist in the repo`).toBe(true);
   }
+});
+
+/* EVERY SCRIPT AND STYLESHEET IS ASKED FOR BY ITS VERSION (2026-10-13 —
+   "there are several pages that are having issues opening"): GitHub Pages
+   lets a browser keep every file ten minutes, and for those ten minutes
+   after the site changed a browser could put a new page together with the
+   scripts it had kept from before, and the page stood half drawn. So a page
+   asks for `../network.js?v=…`, the first ten characters of the file's own
+   fingerprint, and a file changed is an address no browser has kept. Fails
+   until `python3 tools/versions.py` has been run after a script or the
+   stylesheet changed. */
+test("every page asks for each of its scripts and its stylesheet by the version it is now", async () => {
+  const crypto = require("crypto");
+  const { execFileSync } = require("child_process");
+  const pages = execFileSync("git", ["ls-files", "*.html"], { cwd: ROOT, encoding: "utf8" }).split("\n").filter((p) => p && !p.startsWith("archive/"));
+  const stale = [], seen = new Set();
+  for (const page of pages) {
+    const html = withoutComments(fs.readFileSync(path.join(ROOT, page), "utf8"));
+    for (const [, addr, v] of html.matchAll(/<(?:script\b[^>]*?\bsrc|link\b[^>]*?\bhref)="([^"#?]+\.(?:js|css))(?:\?v=([0-9a-f]+))?"/g)) {
+      if (/^([a-z]+:)?\/\//.test(addr)) continue;
+      const file = path.join(ROOT, path.dirname(page), addr);
+      if (!fs.existsSync(file)) continue;   // the test above says so
+      seen.add(path.relative(ROOT, file));
+      const now = crypto.createHash("sha1").update(fs.readFileSync(file)).digest("hex").slice(0, 10);
+      if (v !== now) stale.push(`${page} -> ${addr}${v ? "?v=" + v : ""} (it is ${now} now)`);
+    }
+  }
+  expect(seen.size, "the pages' own scripts were found").toBeGreaterThan(40);
+  expect(stale, "asked for by an old version, or by none: run python3 tools/versions.py").toEqual([]);
 });
 
 test("every link into a fragrance lands on that fragrance", async () => {

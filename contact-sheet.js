@@ -118,10 +118,17 @@
   // the spiral of particles and only then the images ... chronologically
   // yet relatively quickly". It used to bring the houses out while the
   // axis was still being drawn, and the helix with the axis.
-  const AXIS_MS = 700;             // the axis drawn out from the middle to both ends
-  const HELIX_MS = 900;            // then the helix winding out along it
-  const EMERGE_MS = 560;           // then a house coming out of the axis
-  const EMERGE_STEP = 85;          // and the next, in order, 01 first
+  // QUICKER since 2026-10-13 ("there are several pages that are having
+  // issues opening; mainly ... the SD"): the first house was not there for
+  // two seconds, and the Menu, the buttons and the search — which waited
+  // for every house — for four; the whole is in the same order in a
+  // little over half the time (700, 900, 560, 85 until then), the Menu
+  // and the rest come in with the houses, and the axis no longer waits
+  // for the page's faces (see the foot).
+  const AXIS_MS = 450;             // the axis drawn out from the middle to both ends
+  const HELIX_MS = 550;            // then the helix winding out along it
+  const EMERGE_MS = 460;           // then a house coming out of the axis
+  const EMERGE_STEP = 60;          // and the next, in order, 01 first
   // AT SCALE (2026-10-11 — the owner expects "approximately 300 houses"):
   // only the houses that can be seen come out one after another; the rest,
   // off the window, are there with the last of them. One after another,
@@ -957,7 +964,11 @@
     // First the axis, then the helix, and only then the houses — in
     // order, 01 first, which is also the one at the front (or, opened at
     // a house, that one first and then outwards from it).
-    const startOf = (i) => AXIS_MS + HELIX_MS + Math.min(Math.abs(i - startAt), EMERGE_FAR) * EMERGE_STEP;
+    // The houses wait for the page's faces — so their labels do not change
+    // size under houses already on their way out — but only as long as
+    // FONTS_MS from the start, and the axis and the helix never do.
+    let housesFrom = AXIS_MS + HELIX_MS;
+    const startOf = (i) => housesFrom + Math.min(Math.abs(i - startAt), EMERGE_FAR) * EMERGE_STEP;
     const burst = (i) => {
       const p = spot(i - pos);
       for (let k = 0; k < 26; k++) {
@@ -969,6 +980,9 @@
     const burstDone = frames.map(() => false);
     const step = (now) => {
       const t = now - t0;
+      if (!facesIn && t >= housesFrom && t < FONTS_MS) housesFrom = t;
+      // ... and the controls come in with them.
+      if (t >= housesFrom) document.body.classList.add("sheet-named");
       axisShown = 1 - Math.pow(1 - Math.min(1, t / AXIS_MS), 3);
       helixShown = 1 - Math.pow(1 - Math.max(0, Math.min(1, (t - AXIS_MS) / HELIX_MS)), 2);
       let all = true;
@@ -1228,18 +1242,18 @@
   // and laid out again, never re-run, when the window changes. The
   // arrival waits for the page's faces, for at most FONTS_MS, so the
   // labels do not change size under houses already on their way out.
+  // Since 2026-10-13 the arrival begins at once, and only the houses wait
+  // for the faces (arrive()): it waited for them before drawing anything,
+  // which was up to FONTS_MS of an empty page.
   const FONTS_MS = 1200;
+  let facesIn = !(document.fonts && document.fonts.ready);
   frames.forEach((frame, i) => putAway(i));
   layout();
   document.documentElement.classList.remove("js-coming");
   window.addEventListener("resize", layout);
-  let started = false;
-  const start = () => {
-    if (started) return;
-    started = true;
-    layout();
-    arrive();
-  };
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(start, start);
-  setTimeout(start, FONTS_MS);
+  if (!facesIn) {
+    const faces = () => { if (facesIn) return; facesIn = true; layout(); };
+    document.fonts.ready.then(faces, faces);
+  }
+  arrive();
 })();

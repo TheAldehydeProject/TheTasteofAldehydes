@@ -480,7 +480,7 @@ test("the old Fragrances view is kept, in the archive and in the page", async ({
   expect(section(kept).length).toBeGreaterThan(1000);
   expect(undated(section(live)), "the page still carries the old view, unchanged but for its dates").toBe(undated(section(kept)));
 
-  await page.route("**/fragrance-line.js", (route) => route.abort());
+  await page.route("**/fragrance-line.js*", (route) => route.abort());
   await serveDependenciesLocally(page);
   await page.goto(SHEET);
   await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });

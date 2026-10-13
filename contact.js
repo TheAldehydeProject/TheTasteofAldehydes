@@ -6,7 +6,7 @@
 // then "keep this: Get in touch, send a carrier pigeon. Below it add :or
 // just send an email: and there add the stuff". So the check stands
 // under the owner's "... or an email:", and what it shows is the
-// (filler) email.
+// email — the site's own address since 2026-10-13 (a filler until then).
 //
 // WHAT IT IS: six characters drawn in specks — the site's own way of
 // drawing — each turned a little and set a little off its line, over a

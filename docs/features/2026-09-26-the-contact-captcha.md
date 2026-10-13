@@ -129,3 +129,21 @@ To seal the real details: the same JSON, `[["Email","name@domain","mailto:name@d
 character XORed with the next letter of *aldehydes* in turn, then base64 — `unseal` in `contact.js`
 run backwards. `tests/contact.spec.js`, **`the details are not in the page's source to be harvested`**
 and **`typed right, the details are shown, in either case`**, read whatever is sealed.
+
+## 2026-10-13 — the site's own address
+
+> then for the email, add [an address at the site's own domain]
+
+The filler is gone: what the check shows, typed right, is **the site's own address** — at
+thetasteofaldehydes.com — sealed in `data-sealed` as before and **written nowhere else in the
+repository**, which is public: not in a page, a script, a test, this report or `CLAUDE.md`. The page's
+comments and `contact.js` say it is the site's own now.
+
+- **`the details are not in the page's source to be harvested`** looked for the address's domain
+  anywhere in the page; the domain is the site's own now, and the page's head names it for search
+  engines, so it looks for the whole address, and for its name with the `@`, instead.
+- **`the real address is written nowhere in the repository but sealed`** (new): every file in the
+  repository is read for the address as the page unseals it, and none may have it.
+
+Whether mail sent to it arrives is set where the domain is managed, not here: GitHub Pages serves
+the site and carries no mail. (It could not be checked from here.)

@@ -299,7 +299,7 @@ test("with animation turned off the piece is simply there", async ({ page }) => 
 });
 
 test("without its script the page is still all of its writing", async ({ page }) => {
-  await page.route("**/pineward.js", (route) => route.abort());
+  await page.route("**/pineward.js*", (route) => route.abort());
   await page.goto(PAGE);
   await page.waitForTimeout(500);
 

@@ -1927,7 +1927,7 @@ test("without its script the page is still the plain grid of pictures",
   // The holding-back above must not be able to hide the page for good:
   // with the script blocked, what is written in the page IS the page,
   // and it comes back as soon as everything else has loaded.
-  await page.route("**/contact-sheet.js", (route) => route.abort());
+  await page.route("**/contact-sheet.js*", (route) => route.abort());
   await page.goto(SHEET);
   const frames = page.locator(".sheet-frame");
   await expect(frames.first()).toBeVisible({ timeout: 6000 });

@@ -264,7 +264,7 @@ test("with animation turned off the void stands still", async ({ page }) => {
 });
 
 test("without its script the page is still all of its writing", async ({ page }) => {
-  await page.route("**/adar.js", (route) => route.abort());
+  await page.route("**/adar.js*", (route) => route.abort());
   const errors = collectPageErrors(page, ["ERR_FAILED", "Failed to load resource"]);
   await page.goto(ADAR);
 

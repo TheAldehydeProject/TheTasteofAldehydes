@@ -501,7 +501,7 @@ test("it is drawn white on near-black, not blue on a night sky", async ({ page }
 });
 
 test("without the script the page is the plain list of theories", async ({ page }) => {
-  await page.route("**/structure.js", (route) => route.abort());
+  await page.route("**/structure.js*", (route) => route.abort());
   await page.goto(PAGE);
   await page.waitForTimeout(500);
 
