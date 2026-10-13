@@ -2079,3 +2079,12 @@ held the drawing up; run beside the rest of the suite, the idle hint in combinat
 fading in, the same way. A failure still leaves its screenshot. And *a note's name pressed opens its
 window* presses a name with room round it: Jasmine's stood 7px under Rose's at Floral, and a name
 that comes to touch another is taken off until it is clear, so it could go as it was pressed.
+
+## 2026-10-13 — five new notes, six variations, one source fewer
+
+Forbidden Flower and Ore brought **Skunk Oil, Night Blooming Jasmine, Dittany of Crete, Muhuhu and
+Bushman Candle Resin** (374 notes), each with a figure of its own, and six variations of notes already
+here; `research/NEW4.py`. The catalogue's sources are **one entry a page** now — Wikipedia's benzoin
+article was in it twice — and `catalogue.py --check` fails on a source left twice or a page not
+written since its research changed. All of it is **the rulebook**, `tools/note-library/RULEBOOK.md`:
+see [its report](2026-10-13-the-rulebook-for-a-new-perfume.md).

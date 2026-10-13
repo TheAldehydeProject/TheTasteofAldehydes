@@ -168,11 +168,12 @@ test("the Fragrances view is its own page, not an index of the houses",
   await page.click('.sheet-filter[data-view="fragrances"]');
   await page.waitForTimeout(900);
 
-  // EIGHT. It was seven once before, with an empty fifth slot the owner
+  // THIRTEEN. It was seven once before, with an empty fifth slot the owner
   // had removed on 2026-09-22; it went to six, Velvet Fog made it seven
-  // again on 2026-09-24, and House of Ellixirz eight on 2026-09-25.
+  // again on 2026-09-24, House of Ellixirz eight on 2026-09-25, three more
+  // eleven on 2026-10-10, and Forbidden Flower and Ore thirteen on 2026-10-13.
   const rows = page.locator('.view[data-view="fragrances"] .index-table tbody tr');
-  await expect(rows).toHaveCount(11);
+  await expect(rows).toHaveCount(13);
 
   const hrefs = await page.$$eval(
     '.view[data-view="fragrances"] .index-table tbody a',
@@ -208,7 +209,7 @@ test("every fragrance gets a View notes button, and it opens a panel",
   await page.goto("/individual-fragrances/individual-fragrances.html");
   await page.waitForTimeout(700);
 
-  await expect(page.locator(".note-open")).toHaveCount(11);
+  await expect(page.locator(".note-open")).toHaveCount(13);
   await expect(page.locator(".note-panel:not([hidden])")).toHaveCount(0);
 
   const first = page.locator(".human-part").first();
@@ -368,12 +369,12 @@ test("a fragrance with no notes yet says they have not been found",
    table and the keys here — and this is the check that they moved
    together. Getting it wrong is silent: every link still resolves, and
    every fragrance shows somebody else's notes. */
-test("the individual fragrances run 01 to 11 with nothing missing", () => {
+test("the individual fragrances run 01 to 13 with nothing missing", () => {
   const all = notes();
   const page = read("individual-fragrances/individual-fragrances.html");
   const ids = [...page.matchAll(/id="part-(\d+)"/g)].map((m) => m[1]);
   expect(ids, `the parts run: ${ids.join(", ")}`)
-    .toEqual(["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"]);
+    .toEqual(["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"]);
 
   // No Untitled left, and every one of them has notes.
   expect(page).not.toContain("human-untitled");
@@ -382,7 +383,7 @@ test("the individual fragrances run 01 to 11 with nothing missing", () => {
   });
   // And no key points past the end.
   const keys = Object.keys(all).filter((k) => k.startsWith("individual:"));
-  expect(keys.length).toBe(11);
+  expect(keys.length).toBe(13);
 
   // THE TABLE AGREES, name for name and number for number.
   const sheet = read("scent-descriptions/index.html");
@@ -1090,10 +1091,11 @@ test("House of Ellixirz is the eighth, in the owner's words, with Matca's own no
 test("every individual fragrance's picture is credited under itself", () => {
   const page = read("individual-fragrances/individual-fragrances.html");
   const parts = page.split(/<details class="human-part" id=/).slice(1).map((p) => 'id=' + p);
-  expect(parts.length).toBe(11);
+  expect(parts.length).toBe(13);
   const seen = parts.map((p) => {
     const no = /id="part-(\d+)"/.exec(p)[1];
-    const credit = /<span class="human-plate-credit">Picture: <a href="(https:\/\/[^"]+)"[^>]*>([^<]+)<\/a><\/span>/.exec(p);
+    // (Pictures, where there is more than one: Forbidden Flower's three, 2026-10-13)
+    const credit = /<span class="human-plate-credit">Pictures?: <a href="(https:\/\/[^"]+)"[^>]*>([^<]+)<\/a><\/span>/.exec(p);
     // A source with no page to link to is named plainly (Fir of the Dark's, 2026-10-10).
     const named = /<span class="human-plate-credit">Picture: ([^<]+)<\/span>/.exec(p);
     const own = /<span class="human-plate-credit">Pictures: my own<\/span>/.test(p);
@@ -1101,5 +1103,6 @@ test("every individual fragrance's picture is credited under itself", () => {
   });
   expect(seen).toEqual([["01", "Fragrantica"], ["02", "Sillyage"], ["03", "my own"], ["04", "Dior"],
     ["05", "Aromak"], ["06", "Vivantis"], ["07", "Fragrantica"], ["08", "Matca"],
-    ["09", "Fragrantica"], ["10", "Profumix Luxury Perfumes"], ["11", "Sultan Pasha Perfumes"]]);
+    ["09", "Fragrantica"], ["10", "Profumix Luxury Perfumes"], ["11", "Sultan Pasha Perfumes"],
+    ["12", "Areej Le Doré"], ["13", "Fumerie"]]);
 });

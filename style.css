@@ -723,9 +723,36 @@ body.first-slide-dark { --chrome-ground: rgba(var(--stage-ground-rgb), 0.78); }
   .about-open-mark { animation: about-breathe 2.8s ease-in-out infinite; }
 }
 @keyframes about-breathe { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.7); } }
+/* ON A PHONE (2026-10-13 — "move the main title page to the center, and
+   the about me should be somewhere else. above it is fine"): the title
+   itself in the very middle of the window, where the aldehyde is — About
+   me ABOVE it and its line below it both stood off it, so that neither
+   moves it — and About me said smaller. (It stood under the title in the
+   flow, the line under that, so the three were centred together and the
+   title itself stood high of the middle.) */
 @media (max-width: 700px) {
-  .about-open { position: static; display: inline-flex; align-items: center; gap: 10px; margin: 18px 0 0; }
-  .about-open-word { position: static; opacity: 1; transform: none; }
+  .title-slide .title-content { position: relative; }
+  .about-open {
+    position: absolute;
+    top: auto;
+    bottom: calc(100% + 26px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .about-open-box { width: 14px; height: 14px; }
+  .about-open-mark { width: 4px; height: 4px; margin: -2px 0 0 -2px; }
+  .about-open-word { position: static; opacity: 1; transform: none; font-size: 8.5px; letter-spacing: 0.18em; }
+  .title-slide .title-sub {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 14px);
+    margin: 0;
+  }
 }
 
 /* ABOUT ME — the page out of focus behind a sheet of the owner's two

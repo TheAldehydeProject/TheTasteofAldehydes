@@ -28,7 +28,9 @@
 #   python3 tools/note-library/catalogue.py --check  # only report
 #
 # It reports every note with fewer than two sources, every variation not
-# written, and every note not researched yet.
+# written, every note not researched yet, any source cited twice (SAME_PAGE,
+# below), and — with --check — a page not written since the research
+# changed. tools/note-library/RULEBOOK.md is what it is one part of.
 # ============================================================
 import html, importlib.util, json, os, re, sys, unicodedata
 
@@ -47,16 +49,48 @@ for f in sorted(os.listdir(os.path.join(HERE, "research"))):
         spec = importlib.util.spec_from_file_location(f[:-3], os.path.join(HERE, "research", f))
         spec.loader.exec_module(importlib.util.module_from_spec(spec))
 
+# ---------- ONE SOURCE, ONE ENTRY (the rulebook's rule 11, 2026-10-13) ----------
+# "check existing citations, and make sure there are no duplicates. if
+# something was used twice, remove the second entry and apply the number of
+# the first instead of the second everywhere the second was used." A page
+# is the same page however its address is written — http or https, with
+# www. or without, a slash at its end or not, an #anchor — and SAME_PAGE
+# names the addresses that only lead to another (a redirect, a second
+# spelling of the same article): each is folded into the one it leads to,
+# so it has one entry and one number wherever it is cited. Two entries left
+# with the same title at the same site are reported (`--check`), to be
+# folded here or named in NOT_SAME as two different pages.
+SAME_PAGE = {
+    # Wikipedia's "Benzoin resin" is its "Benzoin (resin)" (sources 119 and
+    # 120 until 2026-10-13; 120 folded into 119)
+    "https://en.wikipedia.org/wiki/Benzoin_(resin)": "https://en.wikipedia.org/wiki/Benzoin_resin",
+}
+NOT_SAME = set()   # pairs of addresses checked and found to be two pages: frozenset({a, b})
+def canonical(url):
+    u = url.strip()
+    u = re.sub(r"^http://", "https://", u)
+    u = re.sub(r"^https://www\.", "https://", u)
+    u = u.split("#")[0]
+    if u.count("/") > 2: u = u.rstrip("/")
+    return u
+SAME = {canonical(a): canonical(b) for a, b in SAME_PAGE.items()}
+
 sources, problems = {}, []
 def take(S, keys):
     urls = []
     for k in keys:
         s = S[k]
-        e = sources.setdefault(s[0], {"title": s[1]})
-        if len(s) > 2 and s[2]: e["site"] = s[2]
-        if len(s) > 3 and s[3]: e["author"] = s[3]
-        if len(s) > 4 and s[4]: e["accessed"] = s[4]
-        urls.append(s[0])
+        own = canonical(s[0])
+        url = SAME.get(own, own)
+        e = sources.setdefault(url, {"title": s[1], "href": s[0], "folded": own != url})
+        if own == url and e["folded"]:
+            # (the page it was folded into, cited in its own right: its own words)
+            e.update(title=s[1], href=s[0], folded=False)
+        if own == url:
+            if len(s) > 2 and s[2]: e["site"] = s[2]
+            if len(s) > 3 and s[3]: e["author"] = s[3]
+            if len(s) > 4 and s[4]: e["accessed"] = s[4]
+        urls.append(url)
     return urls
 for code, S, N in acc.REGISTRY:
     for nid, e in N.items():
@@ -119,7 +153,18 @@ def sort_key(mla):
     text = html.unescape(re.sub(r"<[^>]+>", "", mla)).lstrip("“\"'‘ ")
     return re.sub(r"[^a-z0-9 ]", "", unicodedata.normalize("NFD", text).lower())
 for url, v in sources.items():
-    v["mla"] = mla_of(url, v["title"], v.get("site"), v.get("author"), v.get("accessed"))
+    v["mla"] = mla_of(v["href"], v["title"], v.get("site"), v.get("author"), v.get("accessed"))
+# the same source twice, not yet folded: the same title at the same site
+twice = {}
+for url, v in sources.items():
+    m = re.search(r"“(.*?)” <cite>(.*?)</cite>", v["mla"])
+    said = (sort_key(m.group(1)).replace(" ", ""), m.group(2)) if m else (url, "")
+    twice.setdefault(said, []).append(url)
+for title, urls in twice.items():
+    for i, a in enumerate(urls):
+        for b in urls[i + 1:]:
+            if frozenset((a, b)) not in NOT_SAME:
+                problems.append("the same source twice? %s and %s — fold one into the other in SAME_PAGE, or name the pair in NOT_SAME" % (a, b))
 order = sorted(sources, key=lambda u: sort_key(sources[u]["mla"]))
 number = {u: i + 2 for i, u in enumerate(order)}
 def cite(urls):
@@ -156,10 +201,15 @@ out += ['    </ol>', '  </section>', '</section>']
 print("notes %d, researched %d, sources %d (and the owner)" % (len(byid), len(byid) - len(waiting), len(order)))
 if waiting: print("not researched yet (%d): %s" % (len(waiting), ", ".join(w[5:] for w in waiting)))
 for p in problems: print("  ! " + p)
-if "--check" in sys.argv: sys.exit(1 if problems else 0)
 page = open(PAGE, encoding="utf-8").read()
 new, count = re.subn(r"(<!-- CATALOGUE: begin -->).*?(\s*<!-- CATALOGUE: end -->)",
                      lambda m: m.group(1) + "\n  " + "\n  ".join(out) + m.group(2), page, flags=re.S)
 if count != 1: sys.exit("the page's CATALOGUE markers were not found")
+if "--check" in sys.argv:
+    # (and the page as this would write it: a research file changed and the
+    # tool not run since is a page saying what the research does not)
+    if new != page: problems.append("the page is not what the research says: run python3 tools/note-library/catalogue.py")
+    for p in problems[len(problems) - (new != page):]: print("  ! " + p)
+    sys.exit(1 if problems else 0)
 open(PAGE, "w", encoding="utf-8").write(new)
 print("written: " + os.path.relpath(PAGE, REPO))

@@ -344,3 +344,17 @@ Checked by `an opened favourite reads the start of its own entry, beside its pic
 frame, credited` (`tests/chamber.spec.js`), which also waits for every one of the ten pictures
 to have loaded — `repository.spec.js` lets a picture missing from `images/` through on purpose,
 so a favourite naming a file that is not there is caught here instead.
+
+## 2026-10-13 — Pineward's and Almost Human's covers, Pineward's gallery, and two individual fragrances
+
+- **Pineward**: the house's picture on the Houses view is the owner's *Pineward Houses Page
+  Watermarked/Pineward house page.webp*; the gallery is *Pineward Gallery Compressed and Watermarked*
+  (see [the gallery's report](2026-09-18-the-pineward-gallery.md)); the old originals and copies are
+  taken out.
+- **Almost Human**: the house's picture on the Houses view is the owner's *Almost Human House
+  Cover-compressed-watermarked.webp* (5152 × 5152, 144KB), loaded as a 1200px copy,
+  `house-web/almost-human-house-cover.webp` (15KB) — a picture that size opened whole would hold
+  about a hundred megabytes on a phone. `This one` and its web copy are taken out, at the owner's word.
+- **Individual fragrances 12 and 13**: *012 Areej Le Dore - Forbidden Flower/* (three pictures, from
+  the house's own shop) and *013 Slumberhouse - Ore.webp* (from Fumerie), credited under themselves;
+  see [the rulebook's report](2026-10-13-the-rulebook-for-a-new-perfume.md).

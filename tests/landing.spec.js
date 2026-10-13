@@ -258,10 +258,19 @@ test("the page still works with animations turned off in the operating system", 
   const errors = collectPageErrors(page);
   await page.goto("/index.html");
 
+  // (and since 2026-10-13 one press plays it all the way there too — the
+  // owner: "Auto-scroll on those too" — the stages keeping up with the page
+  // at once rather than a little behind it)
   await page.locator("#scroll-cue").click();
-  const leg = await legOf(page);
-  await expect.poll(async () => Math.abs((await scrollTop(page)) - leg), { timeout: 8000 }).toBeLessThan(2);
-  expect(await stageAt(page), "and the stage is there at once").toBeCloseTo(1, 2);
+  await expect(page.locator("#aldehyde-stage")).toHaveAttribute("data-auto", "down");
+  await page.waitForTimeout(1500);
+  const part = await page.evaluate(() => {
+    const c = document.getElementById("scroll-container");
+    return { top: c.scrollTop, shown: +window.__formula };
+  });
+  expect(part.top, "on its way").toBeGreaterThan(0);
+  await expect(page.locator("#aldehyde-stage")).toHaveAttribute("data-auto", "ready", { timeout: 15000 });
+  expect(await stageAt(page), "all the way, and the stage there at once").toBeCloseTo(4, 2);
 
   expect(errors).toEqual([]);
 });
@@ -458,20 +467,35 @@ test("the square at the title opens About me over the page, out of focus", async
   expect(errors).toEqual([]);
 });
 
-test("on a phone the square stands under the title, named, and About me fits the screen", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/index.html");
+/* ON A PHONE (2026-10-13 — "move the main title page to the center, and the
+   about me should be somewhere else. above it is fine i think, and the text
+   about me should NOT be as big"): the title itself in the very middle of the
+   window, the square above it, named, smaller than it was. (It stood under the
+   title until then.) */
+test("on a phone the title stands in the middle, the square above it, named and small, and About me fits the screen", async ({ page }) => {
+  for (const [w, h] of [[390, 844], [360, 640]]) {
+    await page.setViewportSize({ width: w, height: h });
+    await page.goto("/index.html");
+    const square = page.locator(".about-open");
+    await expect.poll(() => square.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
+    await page.waitForTimeout(400);
+    const t = await page.locator(".title-content h1").boundingBox();
+    const b = await square.boundingBox();
+    const sub = await page.locator(".title-sub").boundingBox();
+    expect(Math.abs(t.y + t.height / 2 - h / 2), `${w}: the title in the middle of the window`).toBeLessThan(4);
+    expect(Math.abs(t.x + t.width / 2 - w / 2), `${w}: across, too`).toBeLessThan(4);
+    expect(b.y + b.height, `${w}: the square above the title`).toBeLessThan(t.y);
+    expect(sub.y, `${w}: its line under it`).toBeGreaterThan(t.y + t.height - 1);
+    expect(Math.abs(b.x + b.width / 2 - w / 2), `${w}: in the middle`).toBeLessThan(8);
+    await expect(page.locator(".about-open-word")).toBeVisible();
+    const size = await page.locator(".about-open-word").evaluate((e) => parseFloat(getComputedStyle(e).fontSize));
+    expect(size, "said smaller than the 10.5px it was").toBeLessThan(10);
+  }
   const square = page.locator(".about-open");
-  await expect.poll(() => square.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
-  const t = await page.locator(".title-content h1").boundingBox();
-  const b = await square.boundingBox();
-  expect(b.y, "under the title").toBeGreaterThan(t.y + t.height - 1);
-  expect(Math.abs(b.x + b.width / 2 - 195), "in the middle").toBeLessThan(8);
-  await expect(page.locator(".about-open-word")).toBeVisible();
   await square.tap().catch(() => square.click());
   const sheet = await page.locator(".about-sheet").boundingBox();
   expect(sheet.x).toBeGreaterThanOrEqual(0);
-  expect(sheet.x + sheet.width).toBeLessThanOrEqual(390);
+  expect(sheet.x + sheet.width).toBeLessThanOrEqual(360);
 });
 
 /* THE ALDEHYDE — the owner, 2026-09-30: "redesign the front page of home.

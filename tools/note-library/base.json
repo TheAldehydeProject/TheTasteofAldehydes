@@ -78,7 +78,8 @@
      "name": "Lime",
      "aka": [
       "Cold-Pressed Lime",
-      "Lime Rind"
+      "Lime Rind",
+      "Indonesian Lime"
      ],
      "old": "Greener and more bitter than lemon, with a sherbet fizz. Pressed, it is fresh; distilled, it turns candied."
     },
@@ -160,6 +161,12 @@
       "Davana Attar"
      ],
      "old": "An Indian artemisia that smells fruity, boozy and apricot-like. As an attar it is distilled into a base oil, often sandalwood."
+    },
+    {
+     "id": "note-dittany-of-crete",
+     "name": "Dittany of Crete",
+     "aka": [],
+     "old": "A woolly oregano of Crete's mountains, warm and herbal."
     },
     {
      "id": "note-eucalyptus",
@@ -293,7 +300,9 @@
     {
      "id": "note-cannabis",
      "name": "Cannabis",
-     "aka": [],
+     "aka": [
+      "Hemp Flower Oil"
+     ],
      "old": "The hemp plant's flower and leaf: green, resinous, herbal and skunky."
     },
     {
@@ -612,6 +621,14 @@
       "Neroli Blossom"
      ],
      "old": "Distilled from the same flowers as orange blossom: fresher, greener and more citrusy."
+    },
+    {
+     "id": "note-night-blooming-jasmine",
+     "name": "Night Blooming Jasmine",
+     "aka": [
+      "Raani Flower"
+     ],
+     "old": "Not a jasmine but a shrub of the nightshade family whose small flowers scent the air at night."
     },
     {
      "id": "note-orange-blossom",
@@ -1626,7 +1643,9 @@
     {
      "id": "note-whiskey",
      "name": "Whiskey",
-     "aka": [],
+     "aka": [
+      "Whiskey Lactone"
+     ],
      "old": "Malt spirit aged in oak: smoky, woody, caramel-sweet."
     }
    ]
@@ -1742,6 +1761,12 @@
      "name": "Moldy Cedarwood",
      "aka": [],
      "old": "Cedar gone damp and mouldy: Tombstone's Sweet Coffin, the wood of a coffin in wet ground."
+    },
+    {
+     "id": "note-muhuhu",
+     "name": "Muhuhu",
+     "aka": [],
+     "old": "An East African wood, sold as African sandalwood: dry, smoky and woody."
     },
     {
      "id": "note-oak",
@@ -1997,7 +2022,8 @@
      "aka": [
       "White Amber",
       "Mineral Ambers",
-      "Amber Fossil"
+      "Amber Fossil",
+      "Fossil Amber"
      ],
      "old": "Not a material but an accord: labdanum, benzoin and vanilla, warm, sweet and resinous. It has nothing to do with the fossil. White amber is lighter and more musky; mineral ambers are drier."
     },
@@ -2025,6 +2051,12 @@
       "Benzoin Sumatra"
      ],
      "old": "A resin that smells of vanilla, caramel and cinnamon. Siam benzoin, from Laos and Thailand, is the sweetest."
+    },
+    {
+     "id": "note-bushman-candle-resin",
+     "name": "Bushman Candle Resin",
+     "aka": [],
+     "old": "The resin of a southern African succulent whose stems burn like candles."
     },
     {
      "id": "note-copaiba-balsam",
@@ -2093,7 +2125,8 @@
      "id": "note-peru-balsam",
      "name": "Peru Balsam",
      "aka": [
-      "Balsam of Peru"
+      "Balsam of Peru",
+      "Peru Resin"
      ],
      "old": "A balsam that smells of vanilla, cinnamon and warm resin."
     },
@@ -2272,6 +2305,12 @@
      "name": "Skin",
      "aka": [],
      "old": "The warm, slightly salty smell of skin, built from musks."
+    },
+    {
+     "id": "note-skunk-oil",
+     "name": "Skunk Oil",
+     "aka": [],
+     "old": "The skunk's own defensive spray, a sulphurous animal material, used in a trace."
     },
     {
      "id": "note-suede",

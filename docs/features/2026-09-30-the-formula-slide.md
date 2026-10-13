@@ -6,6 +6,7 @@ Files touched: `index.html`, `molecule.js`, `landing.js`, `thread.js`, `paper.js
 (2026-10-04: `landing.js`, `molecule.js`, `index.html`, `style.css`, `tests/formula.spec.js`, `tests/landing.spec.js`)
 (2026-10-04, later: `landing.js`, `molecule.js`, `style.css`, `tests/formula.spec.js`)
 (2026-10-05: `molecule.js`, `style.css`, `index.html`, `tools/seo.py`, `tests/formula.spec.js`, `tests/landing.spec.js`)
+(2026-10-13: `landing.js`, `tests/formula.spec.js`, `tests/landing.spec.js`)
 `tests/formula.spec.js` (new), `tests/helpers.js`, `tests/landing.spec.js`, `tests/menu.spec.js`,
 `tests/leaving-the-map.spec.js`, `tests/node-map.spec.js`, `tests/background-and-cursor.spec.js`,
 `tests/pages.spec.js`
@@ -812,6 +813,44 @@ electronegative hand draws the sillage's specks to it`** holds the hand out in t
 which stands further out than it did. By eye, screenshots at 1440, 1920, 1280 × 800, 1280 × 680,
 1024 and 960 wide, at rest and under the hand, close in at twice the pixels.
 
+### 2026-10-13 — a swipe on any phone plays it all the way
+
+> Sometimes, on some phones, it doesnt auto scroll. can you try and recreate the problem and then fix it?
+
+**Recreated.** The swipe held the page's own scrolling off in its `touchmove` — and so it had to ask
+the page, every time, whether a finger may move it. Chrome on Android waits for the answer (a swipe
+through Chrome's own input, with the page made busy for 800ms, played all the way). **Safari on an
+iPhone and Firefox do not always wait**: when the page is slow to answer — and on a phone it is, drawing
+the aldehyde — they move the page under the finger themselves. The page took that for the scrollbar
+("the page moved by anything else, and it lets go, where it was put") and stopped its own glide. Done
+in the test browser exactly as such a phone does it — the browser's own pan under the finger, with the
+page's `touchmove` seen or not, and its fling after the finger lifts — the page was left standing
+**108px down of 3173**, every time. That is the fault: a swipe that moves the page a finger's length and
+no further.
+
+**Fixed, twice over** (`landing.js`):
+
+- **The page says beforehand that a finger does not move it**: `touch-action` on the scroll container,
+  `pinch-zoom` where the browser can be told that (a pinch is still the browser's), `none` where it
+  cannot — so no browser starts moving it under a finger whatever the page is doing, and nothing waits on
+  the page's answer.
+- **Whatever the browser moves under a finger anyway is the swipe, never the scrollbar**: while a finger
+  is down, and for `FINGER_AFTER` (1.2s) after it lifts — a fling — the page moving does not stop the
+  glide; and if the glide has not started (the finger's moving never reached the page), the page having
+  moved `SWIPE` (12px) under the finger starts it, the way it went. Moved against a glide already going,
+  it turns it round.
+
+The same three cases now play all the way to the names. A mouse on the scrollbar still lets go where it
+puts the page (its test is unchanged).
+
+**And with motion turned off, it plays too.** The other phones that never auto-scrolled were the ones
+with *Reduce motion* on (and the battery savers that turn it on): by design, since 2026-10-04, the page
+was the browser's own there. Asked, the owner chose "Auto-scroll on those too": one scroll — the wheel,
+a swipe, a key, the Scroll button — plays it all the way in the same four seconds, the stages keeping
+up with the page at once rather than a little behind (as motion off has them) and the aldehyde still.
+`?auto=off` keeps the hand-driven page, as before. (`tests/landing.spec.js`, *the page still works
+with animations turned off*, now reads the Scroll button playing it all the way.)
+
 ### How it was tested (2026-10-03)
 
 `tests/formula.spec.js`: **`a reload opens at the title, the names never shown before the page has
@@ -827,7 +866,7 @@ read for the drift where they read for the lines.
 
 ## How to test it
 
-`tests/formula.spec.js`:
+`tests/formula.spec.js`: **`on a phone the browser moving the page under the finger itself still plays it all the way`** (2026-10-13 — the browser's own pan under a finger, with its `touchmove` seen and not, and a fling after it lifts: each plays to the names, and the container says a finger does not move it);
 - **`the page waits at the title until it is scrolled, and one turn of the wheel glides it to the names
   in one gradual movement of about four seconds; one turn up, all the way back`**, **`the rest of a turn
   is the same scroll, and a turn the other way turns it round without a jolt; the scrollbar lets go`**

@@ -71,7 +71,7 @@ const { serveDependenciesLocally, blockThreeJs, collectPageErrors } = require(".
 
 // WITHOUT THE TEST TOOL'S OWN RECORDING (its trace), 2026-10-10. The tool
 // copies the whole page at every step it records, and this page holds the
-// whole catalogue — 369 notes and 1,190 sources — so every copy held the
+// whole catalogue — 369 notes and 1,190 sources then, 374 and 1,214 since 2026-10-13 — so every copy held the
 // drawing up: one frame in two or three past 40ms in the sixty-a-second
 // test (the page as it stood before that day just the same, and never once
 // with the recording off), and a fade or a name that had not caught up in

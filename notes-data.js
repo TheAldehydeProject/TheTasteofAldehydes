@@ -181,6 +181,42 @@ window.FRAGRANCE_NOTES = {
       source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Sultan-Pasha-Perfumes/Quintessentially-Amber-109199.html" },
     },
   },
+  // FORBIDDEN FLOWER and ORE (2026-10-13), filed by the rulebook
+  // (tools/note-library/RULEBOOK.md) with the owner's word on every
+  // choice: the house's list first and Fragrantica's under it for the
+  // first; for the second, the 2022 edition the owner smelled, from the
+  // stockist Slumberhouse names, and the house's own page (an older list)
+  // under it. Both read through search summaries: neither house's pages,
+  // nor Fragrantica, would open from here.
+  "individual:12": {
+    say: "The house\u2019s own notes",
+    top: ["Skunk Oil", "Grapefruit", "Hemp Flower Oil"],
+    mid: ["Jasmine Sambac", "Raani Flower", "Sandalwood"],
+    base: ["Patchouli", "Cedar", "Benzoin", "Vetiver", "Turmeric", "Vanilla", "Ginger", "Coriander", "Indonesian Lime"],
+    note: "The house divides its own list, in these words, as its stockists and Fragrantica copy it out; the house\u2019s own shop could not be read from here. An extrait de parfum of 2024, the fifth of its Musk Collection, by Russian Adam.",
+    source: { name: "Areej Le Dor\u00e9", url: "https://areejledore.com/classics/#!/Forbidden-Flower-250$/p/640872091" },
+    also: {
+      say: "Interpreted notes",
+      top: ["Grapefruit", "Cannabis"],
+      mid: ["Jasmine Sambac", "Night Blooming Jasmine", "Sandalwood"],
+      base: ["Turmeric", "Vetiver", "Patchouli", "Benzoin", "Lime", "Coriander", "Vanilla", "Ginger", "Cedar"],
+      note: "The same notes in Fragrantica\u2019s own names, without the skunk; the order within each tier could not be confirmed.",
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Areej-Le-Dore/Forbidden-Flower-91207.html" },
+    },
+  },
+  "individual:13": {
+    version: "2022 edition",
+    say: "The 2022 edition\u2019s notes",
+    flat: ["Oak", "Vanilla", "Guaiac", "Peru Balsam", "Tolu Balsam", "Fossil Amber", "Muhuhu", "Benzoin", "Cocoa", "Patchouli", "Milk", "Bushman Candle Resin"],
+    note: "The revised edition of 2022, in the 30ml bottle with its cap, as Fumerie, the stockist Slumberhouse names, gives the house\u2019s text \u2014 \u201cbalsams of Peru and Tolu\u201d as the two balsams; its exact wording could not be read from here. An extrait, by Josh Lobb.",
+    source: { name: "Fumerie", url: "https://fumerie.com/products/ore" },
+    also: {
+      say: "The house\u2019s own notes",
+      flat: ["Oakwood", "Cocoa", "Mahogany", "Guaiac", "Dittany of Crete", "Vanilla", "Whiskey Lactone", "Peru Resin"],
+      note: "What Slumberhouse\u2019s own page still lists: the extrait of 2013\u2019s notes, before the 2022 edition.",
+      source: { name: "Slumberhouse", url: "https://www.slumberhouse.com/shop/ore50ml" },
+    },
+  },
 
   // ============================================================
   // ALMOST HUMAN — houses/almost-human.html

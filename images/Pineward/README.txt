@@ -1,13 +1,23 @@
 PINEWARD's photographs.
 
-works/pineward.html is waiting for 54 of them, one per fragrance, and
-already names the file it wants for each: pineward-01.jpg through
-pineward-54.jpg. Drop a file in here with the matching name and that
-part of the page shows it — nothing else to change.
+  Pineward Houses Page Watermarked/Pineward house page.webp
+      the house's picture on the Houses view of Scent Descriptions
+      (scent-descriptions/index.html), the owner's own, watermarked.
 
-The <img> tags on that page are commented out until then, which is why
-a part with no photograph looks like a hatched placeholder rather than
-a broken picture.
+  Pineward Gallery Compressed and Watermarked/
+      the 26 photographs of the gallery at the foot of
+      houses/pineward.html, the owner's own, watermarked and already
+      small; the viewer shows them as they are.
 
-This note is only here so the folder itself survives; delete it once
-there are real pictures in here.
+  gallery-web/pineward-NN-thumb.webp
+      the small square each of those stands as in the gallery's strip
+      (320px, its middle), NN the photograph's own number.
+
+  fragrances-web/ and "the fragrances main pictures"/
+      one picture per fragrance, the web copies and the originals.
+
+The old gallery (28 originals of up to 19MB, in "The Pinewards Gallery
+Page", with a 1600px copy of each) and the old cover (Batch 1
+Photograph (40)) were taken out on 2026-10-13 at the owner's word,
+when their watermarked copies replaced them. The folder names are the
+owner's own; keep them as they are.

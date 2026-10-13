@@ -401,6 +401,8 @@
   }
   // the page moved by something else while it glides: let go
   container.addEventListener("scroll", () => {
+    // (not the browser's own moving of it under a finger: ONE SCROLL, below)
+    if (playable && byFinger()) return;
     if (gliding && Math.abs(container.scrollTop - glideWrote) > 2) { stopGlide(); stopPlay(); }
   }, { passive: true });
   // The wheel, on the stage. (With the map slides on, they have their say
@@ -408,7 +410,7 @@
   let slideWheel = null;
   container.addEventListener("wheel", (e) => {
     if (e.ctrlKey) return;                          // a pinch: the browser's own zoom
-    if (REDUCE_MOTION && !slideWheel) return;       // the page's own scrolling
+    if (REDUCE_MOTION && !slideWheel && !playable) return;   // the page's own scrolling (with ?auto=off)
     e.preventDefault();
     if (overlayOpen()) return;
     const d = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaMode === 2 ? e.deltaY * window.innerHeight : e.deltaY;
@@ -454,8 +456,9 @@
   // Menu, About me or the way out is open over it, it waits; the page moved
   // by anything else (the scrollbar) and it lets go, where it was put.
   //
-  // Not with motion turned off (the page's own scrolling there, the stages
-  // following it at once), nor with the map slides on (their own wheel);
+  // With motion turned off too (since 2026-10-13; it was the page's own
+  // scrolling there until then), the stages following it at once; not with
+  // the map slides on (their own wheel);
   // and `?auto=off` on the address keeps the old hand-driven page — a
   // wheel's notches gliding as far as they are turned, the keys a stage at
   // a time — for the tests that hold a stage. `data-auto` on the stage
@@ -467,7 +470,12 @@
   const PLAY_TURN = 40;    // and of a turn the other way, while it plays, that turns it round
   const PLAY_GAP = 420;    // ms without a turn, and the next one is a new scroll
   const SWIPE = 12;        // px a finger moves along the page before it is a swipe
-  const playable = !REDUCE_MOTION && !mapOn && !/[?&]auto=off\b/.test(location.search);
+  // (WITH MOTION TURNED OFF TOO, since 2026-10-13 — the owner, asked
+  // whether a phone with "Reduce motion" on should scroll by hand as it did:
+  // "Auto-scroll on those too". The glide is the same four seconds; the
+  // stages follow it at once rather than a little behind, and the aldehyde
+  // stands still, as motion off has them.)
+  const playable = !mapOn && !/[?&]auto=off\b/.test(location.search);
   let playDir = 0, playFrom = 0, playTo = 0, playV = 0, playMs = 1, playU = 0, playLast = 0, playWrote = -1;
   stage.dataset.auto = playable ? "ready" : "off";
   function stopPlay() {
@@ -535,10 +543,29 @@
   // A finger: a swipe up the page is a scroll down it. The page's own
   // scrolling is held off, so a swipe is a scroll and nothing else (two
   // fingers are a pinch, and are the browser's).
-  let touchY = null, swiped = false;
+  //
+  // HELD OFF BEFORE THE FINGER COMES (2026-10-13 — the owner's "Sometimes,
+  // on some phones, it doesnt auto scroll"). Holding it off in `touchmove`
+  // alone asks the page, and a phone does not always wait for the answer:
+  // Safari on an iPhone and Firefox move the page under the finger
+  // themselves when the page is slow to say no — which it is, on a phone
+  // drawing the aldehyde — and the page took that for the scrollbar and let
+  // go, a hundred pixels down (reproduced: the browser's own pan under a
+  // finger, the page left at 108px of 3173, standing). So the page is told
+  // beforehand that a finger does not move it (`touch-action`, a pinch
+  // still the browser's where it can say so), and whatever the browser
+  // moves under a finger anyway — or in the moment after it lifts, its
+  // fling (FINGER_AFTER) — is the swipe, never the scrollbar: it plays, in
+  // the way the page went.
+  const FINGER_AFTER = 1200;  // ms after a finger lifts that the browser's moving the page is still its doing
+  if (playable) container.style.touchAction = window.CSS && CSS.supports("touch-action", "pinch-zoom") ? "pinch-zoom" : "none";
+  let touchY = null, swiped = false, fingerFrom = 0, fingerDown = false, fingerUp = -Infinity;
+  const byFinger = () => fingerDown || performance.now() - fingerUp < FINGER_AFTER;
   container.addEventListener("touchstart", (e) => {
     touchY = e.touches.length === 1 ? e.touches[0].clientY : null;
     swiped = false;
+    fingerDown = true;
+    fingerFrom = container.scrollTop;
   }, { passive: true });
   container.addEventListener("touchmove", (e) => {
     if (!playable || touchY === null || e.touches.length !== 1) return;
@@ -546,10 +573,29 @@
     const dy = touchY - e.touches[0].clientY;
     if (!swiped && !overlayOpen() && Math.abs(dy) >= SWIPE) { swiped = true; play(Math.sign(dy)); }
   }, { passive: false });
-  container.addEventListener("touchend", () => { touchY = null; }, { passive: true });
+  const lifted = (e) => {
+    if (e.touches && e.touches.length) return;
+    touchY = null;
+    fingerDown = false;
+    fingerUp = performance.now();
+  };
+  container.addEventListener("touchend", lifted, { passive: true });
+  container.addEventListener("touchcancel", lifted, { passive: true });
   // the page moved by anything but the glide — the scrollbar — while it
-  // goes: let go, where it was put
+  // goes: let go, where it was put. Moved by the browser under a finger, it
+  // is the swipe: it plays, the way the page went (or goes on playing).
   container.addEventListener("scroll", () => {
+    if (playable && byFinger()) {
+      if (!swiped && !overlayOpen()) {
+        // (playing, only a move against it, past what it wrote, turns it round)
+        const went = playDir ? container.scrollTop - playWrote : container.scrollTop - fingerFrom;
+        if (playDir ? Math.sign(went) === -playDir && Math.abs(went) >= SWIPE : Math.abs(went) >= SWIPE) {
+          swiped = true;
+          play(Math.sign(went));
+        }
+      }
+      return;
+    }
     if (playDir && Math.abs(container.scrollTop - playWrote) > 2) stopPlay();
   }, { passive: true });
 

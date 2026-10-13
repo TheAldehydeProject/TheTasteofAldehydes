@@ -54,7 +54,7 @@ RE_ = ("Explorations & Researches", "explorations-and-researches/")
 
 P = {
  "index.html": dict(type="website", desc="A personal project of perfume exploration. “The Taste of Aldehydes” will act as a library for information, interpretations, theories and ideas.", crumbs=None),
- "scent-descriptions/index.html": dict(desc="Scent Descriptions: nine perfume houses, from Pineward and ADAR to Tombstone and Qimu & Musicians, and individual fragrances, each described.", crumbs=[HOME]),
+ "scent-descriptions/index.html": dict(desc="Scent Descriptions: twelve perfume houses, from Pineward and ADAR to Om Parfums and Lost Tribe, and individual fragrances, each described.", crumbs=[HOME]),
  "theories/index.html": dict(desc="Theories — some frameworks that I came up with myself: The Architecture of Sunscreen, The Architecture of Sweat and The Note Dissemination Framework.", crumbs=[HOME]),
  "favourites/index.html": dict(desc="Favourites — things I like, no other criteria than that: fragrances in chapters, among them Des Cendres, Haxan and De Profundis.", crumbs=[HOME]),
  "explorations-and-researches/index.html": dict(desc="Explorations & Researches. Here you will find my researches and my explorations: a guide to perfume, dupes, designers and niches, resins in perfumery, and more.", crumbs=[HOME]),
@@ -72,7 +72,7 @@ P = {
  "houses/om-parfums.html": dict(type="article", desc="Om Parfums, the olfaction of Om: nine fragrances — Nymphaea Caerulea, Lust, Burnana, Dark Night of the Soul, Oud de Pasión and more — described with their notes.", crumbs=[HOME, SD]),
  "houses/outsider-parfums.html": dict(type="article", desc="Outsider Parfums, the sister house of Om: Dragon’s Breath, Draco, Xocolate Crotch, Guilty as Charged and Amaretto Coffee, described with their notes.", crumbs=[HOME, SD]),
  "houses/lost-tribe.html": dict(type="article", desc="Lost Tribe, a house of notable quality: Kong, Watch King, Pan’s Labyrinth, Dirty Soda, Equatorial and Santal Absolu, described with their notes.", crumbs=[HOME, SD]),
- "individual-fragrances/individual-fragrances.html": dict(type="article", desc="Individual fragrances: CV99, De Profundis, Haxan, Tobacolor, Flamenco, French Riviera, Velvet Fog and House of Ellixirz, each described with its notes.", crumbs=[HOME, SD]),
+ "individual-fragrances/individual-fragrances.html": dict(type="article", desc="Individual fragrances: CV99, De Profundis, Haxan, Velvet Fog, Quintessentially Amber, Forbidden Flower, Ore and more, each described with its notes.", crumbs=[HOME, SD]),
  "works/theory-01.html": dict(type="article", desc="While smelling perfumes, I realized that there are many fragrances that attempt to achieve the olfactory profile equivalent to sunscreen with their formulation.", crumbs=[HOME, TH]),
  "works/theory-02.html": dict(type="article", desc="Sweat is a facet in fragrances that I feel does not receive much thought. A way of telling the fragrances that use it apart.", crumbs=[HOME, TH]),
  "works/theory-03.html": dict(type="article", desc="This is a theory that tries to explain the evolution of fragrance in terms of how distinguishable notes are — with a calculator for it.", crumbs=[HOME, TH]),

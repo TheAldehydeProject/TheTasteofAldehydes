@@ -1245,6 +1245,41 @@ test("on a phone one swipe plays it all the way, and the page's own scrolling is
   await context.close();
 });
 
+/* REGRESSION (2026-10-13 — "Sometimes, on some phones, it doesnt auto
+   scroll"): a phone that does not wait for the page (Safari on an iPhone,
+   Firefox, any phone busy drawing the aldehyde) moves the page under the
+   finger itself. The page took that for the scrollbar and let go, left
+   standing a hundred pixels down. Now a finger does not move the page at all
+   (`touch-action`), and whatever the browser moves under a finger, or in its
+   fling just after, is the swipe: it plays all the way, the way it went. */
+test("on a phone the browser moving the page under the finger itself still plays it all the way", async ({ browser }) => {
+  test.setTimeout(120000);
+  for (const kind of ["no touchmove seen", "touchmove seen", "a fling after the finger lifts"]) {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+    const page = await context.newPage();
+    await serveDependenciesLocally(page);
+    await page.goto("/index.html");
+    const stage = page.locator("#aldehyde-stage");
+    await expect(stage).toHaveAttribute("data-auto", "ready");
+    const ta = await page.evaluate(() => getComputedStyle(document.getElementById("scroll-container")).touchAction);
+    expect(["pinch-zoom", "none"], "a finger does not move the page").toContain(ta);
+    const cdp = await context.newCDPSession(page);
+    // the browser's own moving of the page, as a phone that does not wait does it
+    const pan = (by) => page.evaluate((by) => { document.getElementById("scroll-container").scrollTop += by; }, by);
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: 195, y: 650 }] });
+    if (kind === "touchmove seen") {
+      for (let i = 1; i <= 3; i++) await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: 195, y: 650 - i * 10 }] });
+    }
+    if (kind !== "a fling after the finger lifts") for (let i = 0; i < 6; i++) { await pan(18); await page.waitForTimeout(16); }
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    if (kind === "a fling after the finger lifts") for (let i = 0; i < 10; i++) { await pan(12 - i); await page.waitForTimeout(16); }
+    await expect(stage, kind).toHaveAttribute("data-auto", "down");
+    await expect(stage).toHaveAttribute("data-auto", "ready", { timeout: 60000 });
+    expect(await stageAt(page), kind + ": all the way").toBeCloseTo(4, 2);
+    await context.close();
+  }
+});
+
 test("the aldehyde stops drawing once the stage is off the screen", async ({ page }) => {
   await page.addInitScript(() => {
     const raf = window.requestAnimationFrame.bind(window);

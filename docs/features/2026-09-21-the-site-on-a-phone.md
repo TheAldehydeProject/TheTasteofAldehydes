@@ -577,3 +577,13 @@ height, the next house over 0.28 of the width round, and the motifs at 1. By eye
   "Fade them under the words"** (and the same for ADAR and Outsider on a computer) **and the credit
   in front**, done the same day: see [the house drawings faint behind the
   words](2026-10-12-drawings-faint-behind-the-words.md).
+
+## 2026-10-13 — the home page's title in the middle, and a swipe on any phone
+
+On a phone **the home page's title stands in the middle of the window**, About me above it, smaller
+([the title's report](2026-09-29-the-title-and-about-me.md#2026-10-13--on-a-phone-the-title-in-the-middle-and-about-me-above-it-smaller));
+and **one swipe plays the home page all the way on any phone** — an iPhone, or any phone too busy to
+answer at once, moved the page under the finger itself and the page let go 108px down; and phones
+with motion turned off auto-scroll too, at the owner's word
+([the home page's report](2026-09-30-the-formula-slide.md#2026-10-13--a-swipe-on-any-phone-plays-it-all-the-way)).
+Nothing above 700px moved.

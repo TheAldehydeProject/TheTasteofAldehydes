@@ -179,3 +179,29 @@ The strip no longer counts a tab behind another as being looked at: it goes on c
 in `pineward-gallery.js` without `document.hidden`), at the owner's "do that with all animations".
 Hovering it, the keyboard in it and the viewer open over it still hold it, and coming back still
 gives the picture in front a full stand. See [the page shell](2026-09-11-the-page-shell-and-menu.md#2026-09-28--the-page-keeps-its-own-time).
+
+## 2026-10-13 — the owner's watermarked pictures, and the old ones taken out
+
+> change the pictures for the gallery in pineward, as well as the cover page. I have added two folders
+> in pineward … After you run it, and make sure the photos are replaced, I would like you to remove
+> the old ones from the repository. I dont want it to take up too much space.
+
+The gallery is the **26 photographs in *Pineward Gallery Compressed and Watermarked***, the owner's
+own copies, already small (about 140KB each) and the right way up, in the order of their numbers
+(3, 7, 8, 10 … 47) — nine of them new to it (10, 12, 16, 17, 18, 20, 21, 23, 25) and twelve of the
+old ones not in it. **The viewer shows the owner's file as it is**; the strip shows a 320px square of
+each, `gallery-web/pineward-NN-thumb.webp` (460KB for all 26), NN the photograph's number. Every
+picture is described anew where it is new. **The house's picture on the Houses view is
+*Pineward Houses Page Watermarked/Pineward house page.webp*.**
+
+**Taken out**: the 28 originals in *The Pinewards Gallery Page* (95MB), their 1600px copies and
+squares in `gallery-web/` (8.5MB), and the old cover, `Batch 1 Photograph (40).JPG` (19MB) and its
+web copy — `images/Pineward/` is 18MB where it was over 140MB. **Git keeps every file it was ever
+given in its history**, so a fresh copy of the repository is that much smaller, but the history is
+not; making the history itself smaller would mean rewriting it on the live branch, which is the
+owner's to decide. The three pictures that had to be turned by hand (15, 39, 42) are gone with the
+old copies; the owner's are upright.
+
+How to test it: `npm test -- tests/pineward.spec.js` (the gallery's tests read whatever pictures are
+in it), and `tests/repository.spec.js` (no link points at a missing file). By eye: the foot of
+Pineward, a picture opened.

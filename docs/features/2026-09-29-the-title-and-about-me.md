@@ -225,3 +225,22 @@ How to test it: **`the square at the title opens About me over the page, out of 
 `tests/landing.spec.js` reads the blur off `.about::before`, sees it fade up to the whole of
 itself, and that the sheet has no blur of its own. By eye: open and close it while the aldehyde
 moves.
+
+## 2026-10-13 — on a phone, the title in the middle and About me above it, smaller
+
+> On the phone, I want you to move the main title page to the center, and the about me should be
+> somewhere else. above it is fine i think, and the text about me should NOT be as big.
+
+On a phone the square and its words stood **under** the title in the flow, and *A Perfume Portfolio*
+under that, so the three were centred together and the title itself stood some way above the middle
+of the window — and of the aldehyde. Now (`style.css`, under 700px only) the square stands **above**
+the title and the line **below** it, both taken out of the flow (`position: absolute` off the
+title), so the title itself is the thing centred: in the very middle of the window, both ways, on a
+two-line title too (360 × 640). Asked which text should be smaller, the owner said **the words
+*About me***: 8.5px from 10.5, the square 14px from 20 and its dot 4px from 6. The window About me
+opens is as it was. Nothing above 700px changed.
+
+How to test it: `npm test -- tests/landing.spec.js --grep "title stands in the middle"` — at 390 ×
+844 and 360 × 640 the title's middle within 4px of the window's, the square above it, the line under
+it, the words under 10px, and About me still fitting the screen. (It replaced "the square stands
+under the title".)
