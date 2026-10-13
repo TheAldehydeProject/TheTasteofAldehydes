@@ -138,3 +138,11 @@ the library with a graphics chip, its arrows come in at about two seconds.
   copies of the page); it was left as the owner's trial stands.
 - A page itself may still be kept ten minutes after a change; the versions only make sure that what
   it is shown with matches it.
+- **Two tests fail now and then on this machine, before these changes as after** (each run five or
+  more times on both versions): `fragrance-line.spec.js`, *going to the Fragrances is a quick
+  crossing* — it counts the frames in which the two views are both half faded, and the test machine,
+  drawing in software, gives the crossing about twelve frames a second (no step of the page's own is
+  slow: no task over 50ms) — and `chamber.spec.js`, *let go after the morph, the sun and the moon pick
+  up speed*, which reads the sun's speed a moment after the morph and finds it a little short. Several
+  timing tests of the home page also fail when the whole suite and other work share the machine, and
+  pass run on their own.
