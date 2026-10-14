@@ -936,6 +936,140 @@ Tested in `tests/om-and-the-tribe.spec.js`:
 **Still open**: a trial, as before — whichever of the split, the rings, the broken pane and the fine
 glass the owner keeps, the others come out of the code.
 
+## 2026-10-14 — Om's gap wider and deep, the drawing behind waiting for OM, โอม a thing of its own, the closing smoother
+
+> In SD, OM parfums, I want you to smooth out the animation as much as possible when it comes to the
+> closing of the two sides. It should also be a little wider; especially on the phone. The background
+> was a little buggy; so fix that too and smooth it over. I want you to make it so that the thing in
+> the middle has dimension; and so when you scroll, some parts of it react slowly while the "farther"
+> parts of it will move slower. Make the background icon of "Om" written in sanskrit separate from the
+> background and the page too, i want it to be involved with both but as a separate entity; so that it
+> exists in the background, but is overwritten by another iteration of the logo when the thing closes.
+>
+> Also look at the picture: there is SOOO MUCH going on in the background on the right and left. I
+> want that all to not exist there, ONLY UNTIL YOU CLOSE THE THING IN THE MIDDLE, so that youll only
+> see a feint calligraphy of om, and then when you press the center om, the stuff in the background
+> fades into existence
+
+(With a picture of the split page on a phone. "Om written in sanskrit" is the large **โอม** — Om in
+Thai script, drawn from the Loma typeface since 2026-10-10; the page has no other.)
+
+**A little wider, most on a phone.** Each half is pushed out 8.5% of the page's width, at least 42px
+and at most 140 (`SPLIT_PUSH`, `PUSH_LEAST`, `PUSH_MOST`; it was 7%, 24 and 120): a gap of 244px on a
+laptop where it was 200, and **84 on a phone where it was 55** — OM's hexagon (52px there) now stands
+inside it rather than over its edges. The edges' wander and teeth grow with it as before.
+
+**The background, fixed: the halves' ground is in the page.** Until now the drawing behind was cut
+with the page on two canvases fixed to the window, the page's own ground painted in them, and their
+edges cut along the line *where the page stood* every frame. A phone scrolls the page a little ahead
+of what a script can draw (and a computer now and then), so the ground's edge trailed the writing's —
+the void showing through a cut edge of writing, the gold seam a few pixels off it, which is most
+likely what looked buggy; the canvases were also laid out again, the drawing jumping, each time a
+phone's bar came or went — and the
+drawing's halves were drawn twice and cut again every frame, which is what made the closing heavy on
+a phone. Now each half of the page lies over **a ground of its own**, laid in the page as the writing
+is: the page's colour, cut along the same line by a clip painted once (`.om-ground-fill`, a hair past
+the line so two grounds together leave no hairline of the void between them), and **the gold seam**
+along it in a picture of its own (`.om-ground-seam`, two strokes as before, its gold the only thing
+that changes — by its opacity). Each ground is moved by the same transform as its writing, on the same
+clock, so **the two cannot stand apart** wherever the page is scrolled: measured every frame of the
+closing, 0px apart (the old canvases stood within a hundredth of a pixel of the writing only in the
+test browser, which scrolls nothing ahead). The ground reaches 40px above the page (`GROUND_TOP`) so a
+shake never shows the void at its top, and never past its foot, or the page would scroll on past its
+end. The canvases fixed to the window are now sized to **the tallest the window gets** (`100lvh`), so
+a phone's bar coming and going no longer lays them out again and moves the drawing up and down.
+
+**Nothing behind but a faint calligraphy of โอม — until OM.** While the page is split nothing of the
+armillary, the yantra, the lotus, the star or the dust is drawn (`worldIn`, 0). Only **โอม**, as a
+calligraphy (`drawCalli`, `calliFor`): the three letters filled faintly in the house's gold, fuller high
+on the left as a brush's load is, **dragged through with the hairs of a dry brush** (streaks of every
+width taken out of the ink along the way the brush went — a plain fill read as a font, not a hand), a
+soft light round them and a fine outline; **a sheen** crossing it left to right every nine seconds
+(`SHEEN_*`); and lit a little about the hand (`CALLI_HAND`). It comes up over a second and a half as
+the page comes in (`CALLI_IN_MS`). It is drawn once into a picture at the size it stands at, at no more
+than 1.25 device pixels a point, and laid down each frame. **OM pressed, the drawing fades in** over
+2.7s from the press (`WORLD_IN_*`) — over the halves, and **never into the gap**: the gap's shape is
+taken out of it once a frame (`eraseGap`) until the halves meet.
+
+**โอม, a thing of its own.** The word is no longer part of the drawing behind, nor split with the page:
+it stands **whole across both halves and the gap**, centred on the gap, on the page's own canvas, which
+lies over the halves' grounds and under their writing while the page is split (`z-index: 2` there, back
+to 0 once whole) — in the background, and involved with the page and the gap both. **OM pressed, it is
+overwritten**: the calligraphy draws in to the size the page keeps the word at once whole and goes
+(`CALLI_OUT`, `SHRINK_TO`), and **the โอม of specks** the page has always kept once whole is written
+over it — its construction lines run out, each head's circle drawn round from the top, each letter's
+outline traced by **a pen of light**, the specks it has just set down brighter and larger (`WRITE`,
+`drawWord`'s `drawn`). By the time the page is whole it is the โอม it was before, small and quiet
+behind the column, and it goes on being drawn exactly as it was.
+
+**The gap with dimension** (`THE DEPTH`): everything in it lies at a depth of its own under the page,
+from just under it to far down — the broken pieces, the specks and three cracks. **The farther, the
+smaller** (`DEPTH`: the farthest a third of its size), **the fainter** (`FOG`), the nearer the gap's
+middle (`WIDE_*`: the nearest reach a little under the page's edges, the farthest stay in the middle),
+**the less of the scroll it is carried by** (`RATE_*`, 0.9 to 0.1) **and the more lazily it catches the
+scroll up** (`FOLLOW_*`, 0.06 to 0.9 seconds, through two stages so it sets off smoothly). Measured on a
+laptop, scrolled 400px: the nearest moved 233px within 0.15s and 341 once settled; the middle 35 and
+208; the farthest 6 and 75. The broken pieces are **flakes turning in three dimensions** — each turned
+about three axes on clocks of its own, drawn foreshortened as it faces the window, brighter the more it
+faces the light (`LIGHT`) and **glinting** as it comes round to face it squarely (`GLINT`); drawn
+farthest first. The cracks are far down and **broken into runs** (whole, they read as two rails down a
+phone's gap). **The walls throw a shade** down into the gap (`WALL_*`), so what lies near an edge seems
+to go in under the page, and **far down there is a faint light** (`DEEP_GLOW`) — both drawn as
+pictures a pixel at a time, each pixel a little off at random (`backdropFor`): as gradients, so faint a
+light on so dark a ground came out in steps, stripes down the gap. The gap is on **a canvas of its own**
+under the grounds (`.om-gap`), so nothing needs keeping to it. What the scroll stirred before still
+stirs (tumbling, spreading, brightening, the cracks bowing, the specks streaking) — the nearer, the
+more; the hand pushes the nearer ones further. The gap keeps its width as ever.
+
+**The closing, smoother.** Nothing drawn by a script moves with the halves any more: the writing and
+its ground are moved by the browser alone, on its own clock, and the drawing behind is not split, so
+it has nothing to keep up with. The glide is longer (`SPLIT_MS` 2.7s; it was 2.3), gently at both ends
+as before; **the shake is gentler and smoother** — 5px at its hardest as the halves meet (it was 8), a
+tremor at 4.4 a second (it was 6), **coming up out of nothing over the first 0.65s** (`SHAKE_RISE`; it
+was there at a third of its strength in 0.28s), dying away a little more slowly (`SHAKE_TAU` 300ms,
+still by `SHAKE_TAIL` 0.95s). The seams flash gold as the halves meet and fade over 0.6s; the wave runs
+out as before; the broken pieces come in faint as before. On the test machine, which draws without a
+graphics card, the closing ran at about 50 frames a second, as the round before's did; **keeping the
+drawing out of the gap with a clip instead held it at 29** — a clip makes every line and speck drawn
+under it a mask — which is why the gap is taken out of it once instead.
+
+**The opening** is the round before's: the page whole (its grounds together, their seams hidden, the
+calligraphy coming up), a crack running down the line on the page's canvas with a light at its tip,
+the halves breaking apart, shaking; as the crack reaches the foot **the seams' own gold takes over from
+it** (`crackA`, and the seams' opacity in the same path), and OM comes up last.
+
+The split's code now: `buildSplit` (the halves, their grounds and seams, the gap's canvas),
+`layoutSplit`, `sizeHalves`, `fitGround`, `setClips` (the writing's cuts, the grounds' cuts, the seams'
+line), `clipOf`, `seamLine`, `openPath`/`joinPath`/`restAt` (each with `seam` and `crackA`), `runPath`
+(six animations on one start time), `placeSplit`, `edgeOnWindow`, `eraseGap`, `drawCrack`; the gap's
+`gapOf`, `drifter`, `moveGap`, `drawGap`, `backdropFor`, `laidDown`; the word's `calliFor`, `drawCalli`,
+`blit`, `drawOm`. **Gone**: `.om-split-sky` and its halves, `edgeBand`, `cutEdge`, `EDGE_BAND`,
+`SKY_BLEED`, `SCROLL_LAG` and `SCROLL_LAG_MOST` (every piece trailed the scroll by the same few
+hundredths of a second; the depth does it now).
+
+Tested in `tests/om-and-the-tribe.spec.js`:
+
+- **`Om opens whole and breaks apart; the gap a little wider, its edges corrugated, its grounds moving
+  with it, only the calligraphy of โอม behind it, its pieces deep, moving and giving way, its geometry
+  answering the scroll; OM brings it together, shaking from the start, with a wave, the drawing fading
+  in and the โอม written over`** (replacing the split's test): each half 8.5% of the page out; each
+  ground exactly where its writing is, its seam gold; nothing split from the drawing; the drawing not
+  there at all while split, and the word a calligraphy, come up, at the middle of the gap; **scrolled
+  400px, the near pieces drawn larger than the far (by 1.8 times at least), going with the page at once
+  (over 150px in 0.15s) while the far ones barely move (under 40), and once settled carried by most of
+  it (over 280) and the far ones by a little (20 to 140)**; OM pressed, the ground within half a pixel of
+  the writing every frame, shaking within the first 0.9s, the wave, the drawing seen part way in, the
+  word seen being written; whole, the grounds and the gap's canvas gone, the drawing all there and the
+  word of specks.
+- *Om's split is brought together by nothing but a press on OM* reads the new width.
+- *Om's split on a phone* — 42px each way, **OM inside the gap**.
+- *Om is quick to draw*: and **coming together**, over 24 frames a second, with no clip on the drawing.
+
+**Still open**: a trial, as before — whichever of the split, the rings, the broken pane and the fine
+glass the owner keeps, the others come out of the code. The canvases are as tall as the window gets,
+so on a phone with its bar showing the drawing's middle (and โอม's) stands about 40px below the middle
+of what is seen — steady, where it moved every time the bar came or went.
+
 ## Same round, other reports
 
 - [The newer houses — Qimu's Bassist and Drummer written](2026-09-21-the-newer-houses.md#2026-10-10--bassist-and-drummer-written-and-a-fold-in-housejs)

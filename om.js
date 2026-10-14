@@ -56,6 +56,17 @@
 //                 hand, the gap opening as the page is scrolled; OM in it
 //                 brings the halves together, shaking, with a wave of
 //                 light. The rings are `?glass=rings`.
+//                 SINCE 2026-10-14: the gap a little wider (most on a
+//                 phone), and DEEP — everything in it at a depth of its
+//                 own under the page, the nearer larger, brighter and
+//                 carried by more of the scroll, the farther smaller,
+//                 fainter, slower and lazier; NOTHING OF THE DRAWING
+//                 BEHIND while it is split but a faint calligraphy of
+//                 โอม, a thing of its own, whole across both halves and
+//                 the gap — and OM pressed, the drawing fades in and the
+//                 โอม of specks is written over the calligraphy. The
+//                 halves' ground is in the page with the writing now, so
+//                 the two can never stand apart as a phone scrolls.
 //   THE LENS      the hexagon of glass at the hand, larger than it was:
 //                 inside it, the page WHOLE — the writing unbroken, the
 //                 drawing behind it turned and brought nearer — and the
@@ -281,12 +292,24 @@
   // in the note library combinations). the shaking should actually also
   // start from the beggining of the animation too." And, asked how the gap
   // should answer the scroll (2026-10-14): "the width should remain the
-  // same, rather the geometry inside should react".
+  // same, rather the geometry inside should react". And the same day: "smooth
+  // out the animation as much as possible when it comes to the closing of
+  // the two sides. It should also be a little wider; especially on the
+  // phone. The background was a little buggy; so fix that too and smooth it
+  // over" — and THE DEPTH, THE WORD and THE BACKGROUND WAITING, below.
   // The page cut down its middle into two halves, each a copy of the page
   // laid IN the page (so it scrolls as the page does, with nothing moved
-  // by hand), and the drawing behind it cut with it — so the halves of the
-  // armillary and of โอม stand apart with the writing, and come together
-  // with it. Each half pushed out SPLIT_PUSH of the page's width, as the
+  // by hand), each over a GROUND of its own — the page's own colour, cut
+  // along the same line, its gold seam on it — laid in the page too and
+  // moved with it, so the ground and the writing can never stand apart.
+  // (Until 2026-10-14 the drawing behind was cut with the page, on two
+  // canvases fixed to the window, the page's ground drawn in them and their
+  // edges cut where the page stood each frame: a phone scrolls the page a
+  // little ahead of what a script can draw, and the ground's edge trailed
+  // the writing's.) Between the grounds and the writing, the page's own
+  // canvas: THE WORD while it is split, and the drawing once OM is pressed
+  // (THE BACKGROUND WAITING); under the grounds, the gap's own canvas.
+  // Each half pushed out SPLIT_PUSH of the page's width, as the
   // first trial was; their cut edges not straight but THE EDGES below; in
   // the gap, BROKEN PIECES — random polygons, most small, a few large —
   // and specks, drifting, carried by the scroll and giving way to the
@@ -299,9 +322,69 @@
   // there from the first moment, and as they meet a wave of light runs
   // out from the seam; the broken pieces are drawn in as the halves close
   // over them, and stay, faint behind the writing (GAP_FAINT).
-  const SPLIT_PUSH = 0.07;         // each half pushed out this share of the page's width
-  const PUSH_LEAST = 24;           // px, at the least (a phone)
-  const PUSH_MOST = 120;           // and at the most
+  // A little wider since 2026-10-14 ("especially on the phone"): 8.5% and
+  // at least 42px, where it was 7% and 24 — a gap of 244px on a laptop
+  // (200 before) and 84 on a phone (55).
+  const SPLIT_PUSH = 0.085;        // each half pushed out this share of the page's width
+  const PUSH_LEAST = 42;           // px, at the least (a phone)
+  const PUSH_MOST = 140;           // and at the most
+  // THE DEPTH (2026-10-14 — "make it so that the thing in the middle has
+  // dimension; and so when you scroll, some parts of it react slowly while
+  // the "farther" parts of it will move slower"): everything in the gap
+  // lies at a depth of its own under the page, from just under it (0) to
+  // far down (1). The farther, the smaller (DEPTH), the fainter (FOG), the
+  // nearer the middle of the gap (WIDE_*), the less of the scroll it is
+  // carried by (RATE_*) and the more lazily it catches the scroll up
+  // (FOLLOW_*) — so the near pieces go with the page and the far ones drift
+  // after it. The broken pieces are flakes turning in three dimensions,
+  // catching the light as they come to face it (LIGHT, GLINT); the nearest
+  // slide under the page's edges, the walls throw a shade down into the gap
+  // (WALL_SHADE), and far down there is a faint light (DEEP_GLOW).
+  const DEPTH = 1.8;               // the farthest drawn 1 / (1 + DEPTH) of its size
+  const FOG = 0.74;                // and this much fainter
+  const WIDE_NEAR = 1.14;          // of the gap's half width the nearest reach — under the edges
+  const WIDE_FAR = 0.7;            // and the farthest
+  const RATE_NEAR = 0.9;           // of the scroll the nearest are carried by
+  const RATE_FAR = 0.1;            // and the farthest
+  const FOLLOW_NEAR = 0.06;        // seconds in which the nearest catch the scroll up
+  const FOLLOW_FAR = 0.9;          // and the farthest
+  const WALL_SHADE = 0.82;         // how dark the shade under each wall is, at the wall
+  const WALL_REACH = 0.6;          // and how far into the gap it reaches (of its half width)
+  const DEEP_GLOW = 0.055;         // the light far down, at the gap's middle
+  const LIGHT = [-0.36, -0.52, 0.77];   // where the flakes are lit from
+  const GLINT = 14;                // how sharply a flake glints as it faces the light
+  // THE BACKGROUND WAITING (2026-10-14 — "there is SOOO MUCH going on in
+  // the background on the right and left. I want that all to not exist
+  // there, ONLY UNTIL YOU CLOSE THE THING IN THE MIDDLE, so that youll only
+  // see a feint calligraphy of om, and then when you press the center om,
+  // the stuff in the background fades into existence"): while the page is
+  // split, nothing of the armillary, the yantra, the lotus, the star or the
+  // dust; OM pressed, they fade in — over the halves, never into the gap.
+  const WORLD_IN_FROM = 120;       // ms after OM is pressed
+  const WORLD_IN_MS = 2700;        // and over how long
+  // THE WORD, A THING OF ITS OWN (2026-10-14 — "Make the background icon of
+  // "Om" written in sanskrit separate from the background and the page too,
+  // i want it to be involved with both but as a separate entity; so that it
+  // exists in the background, but is overwritten by another iteration of
+  // the logo when the thing closes"): โอม drawn by itself, over the halves'
+  // ground and behind their writing, WHOLE across both halves and the gap —
+  // neither split with the page nor part of the drawing. While split it is
+  // a faint CALLIGRAPHY: the letters filled, a soft light round them, a
+  // sheen crossing them now and then, lit a little about the hand. OM
+  // pressed, it draws in to the size the page keeps it at and goes, and the
+  // โอม of specks the page keeps once whole is WRITTEN OVER IT, a pen of
+  // light tracing each letter round.
+  const CALLI_FILL = 0.075;        // the letters' ink
+  const CALLI_EDGE = 0.07;         // their outline
+  const CALLI_GLOW = 0.03;         // the light round them
+  const CALLI_IN_MS = 1500;        // coming up as the page comes in
+  const SHEEN_EVERY = 9000;        // ms: a sheen crosses it once in so long
+  const SHEEN_MS = 3200;           // taking so long
+  const SHEEN_A = 0.075;           // and so bright
+  const CALLI_HAND = 0.045;        // how much the hand lights it
+  const CALLI_OUT = [0.28, 0.9];   // shares of the closing over which the calligraphy goes
+  const WRITE = [0.1, 0.86];       // and over which the โอม of specks is written over it
+  const SHRINK_TO = 0.85;          // and by when it has drawn in to its size
   // THE EDGES: the page broke along one line, and both halves are cut
   // along it — so they fit back together exactly, as broken things do. It
   // wanders a little either way (EDGE_WANDER), and is corrugated: teeth of
@@ -314,16 +397,16 @@
   const EDGE_PITCH = [6, 20];      // px from one tooth to the next
   const EDGE_JOG = 0.12;           // the chance a tooth is two or three times as deep
   // THE SCROLL: the gap keeps its width; the geometry in it answers the
-  // page being scrolled — carried at depths of their own, the broken
-  // pieces and specks trail behind the scroll and catch it up (SCROLL_LAG,
-  // the nearer the further), and the faster it goes the more they tumble
+  // page being scrolled — carried at depths of their own (THE DEPTH), the
+  // broken pieces and specks trail behind the scroll and catch it up, the
+  // farther the more lazily, and the faster it goes the more they tumble
   // (SCROLL_TUMBLE), spread apart (SCROLL_SPREAD) and brighten
-  // (SCROLL_LIT), the cracks bow (SCROLL_FLEX) and the specks streak; all
-  // of it settling as the page comes to rest. (For a round the gap itself
-  // opened as the page was scrolled, and `?gap=read` as it was read down.)
+  // (SCROLL_LIT), the cracks bow (SCROLL_FLEX) and the specks streak — the
+  // nearer the more; all of it settling as the page comes to rest. (For a
+  // round the gap itself opened as the page was scrolled, and `?gap=read`
+  // as it was read down; and until 2026-10-14 every piece trailed by the
+  // same few hundredths of a second, SCROLL_LAG.)
   const SCROLL_FULL = 900;         // px a second at which it answers most of the way
-  const SCROLL_LAG = 0.035;        // seconds of the scroll a piece trails by, at the nearest
-  const SCROLL_LAG_MOST = 46;      // px, at the most
   const SCROLL_TUMBLE = 3.4;       // radians a second more a piece turns, at full
   const SCROLL_SPREAD = 12;        // px the pieces spread apart, at full
   const SCROLL_LIT = 0.7;          // how much brighter, at full
@@ -344,21 +427,29 @@
   // a band of light running out from the seam to the window's edges,
   // lighting every speck it passes and washing faintly over the writing —
   // the Note Library's pulse as combinations begin.
-  const SPLIT_MS = 2300;           // the halves coming together
-  const SHAKE = 8;                 // px, the shake at its hardest, as they meet (two thirds on a phone)
-  const SHAKE_ON_WAY = 0.34;       // of it, on the way from the first moment
-  const SHAKE_HZ = 6;              // and how quickly: a rumble rather than a buzz
-  const SHAKE_TAU = 200;           // ms in which it falls to a third, once they have met
-  const SHAKE_TAIL = 800;          // ms of it after they meet, ending still
+  // Smoother since 2026-10-14 ("smooth out the animation as much as
+  // possible when it comes to the closing of the two sides"): longer (it
+  // was 2.3s), the shake gentler, slower and coming up out of nothing over
+  // the first SHAKE_RISE rather than at once (it was 8px at 6 a second, up
+  // in 0.28s), dying away more slowly; nothing drawn by hand moves with the
+  // halves any more — the writing and its ground are moved by the browser
+  // alone, and the drawing behind is not split.
+  const SPLIT_MS = 2700;           // the halves coming together
+  const SHAKE = 5;                 // px, the shake at its hardest, as they meet (two thirds on a phone)
+  const SHAKE_ON_WAY = 0.3;        // of it, on the way
+  const SHAKE_RISE = 650;          // ms over which it comes up from nothing, at the start
+  const SHAKE_HZ = 4.4;            // and how quickly: a tremor rather than a buzz
+  const SHAKE_TAU = 300;           // ms in which it falls to a third, once they have met
+  const SHAKE_TAIL = 950;          // ms of it after they meet, ending still
   const SEAM_REST = 0.62;          // the cut edges' gold, at rest
   const WAVE_MS = 1150;            // the wave crossing to the window's edges
   const WAVE_WIDE = 70;            // px, its half width
   const WAVE_LIT = 1.5;            // how much brighter a speck it passes is
-  const GAP_SHARDS = 1 / 1400;     // broken pieces to a square px of the gap
-  const GAP_MOTES = 1 / 650;       // and specks
+  const GAP_SHARDS = 1 / 1150;     // broken pieces to a square px of the gap
+  const GAP_MOTES = 1 / 560;       // and specks
   const GAP_REACH = 120;           // px from the hand within which they give way to it
   const GAP_FAINT = 0.16;          // what is left of them behind the writing once it is whole
-  const SKY_BLEED = 24;            // px the drawing's halves reach past the window's edges
+  const GROUND_TOP = 40;           // px the halves' ground reaches above the page (so a shake never shows the void)
   const MEND_MS = 1100;            // how long one piece takes to come home, mending for good
   const MEND_SPREAD = 760;         // and the most it waits, the farthest last
   const MEND_QUICK_MS = 380;       // and when a fragrance is opened
@@ -509,15 +600,35 @@
   // ============================================================
   // SIZING
   // ============================================================
+  // The window's height at the TALLEST it gets (2026-10-14 — "the
+  // background was a little buggy"): on a phone the bar at the foot comes
+  // and goes as the page is scrolled, and the window's height with it, and
+  // a canvas sized to it was laid out again — its drawing moving up or
+  // down — every time. Sized to the tallest the window gets (100lvh), and
+  // drawn again only when that changes, it stands still.
+  let probe = null;
+  function tallest() {
+    if (!probe && document.body) {
+      probe = document.createElement("i");
+      probe.setAttribute("aria-hidden", "true");
+      probe.style.cssText = "position:fixed;left:0;top:0;width:0;height:100vh;height:100lvh;visibility:hidden;pointer-events:none";
+      document.body.appendChild(probe);
+    }
+    return Math.max(window.innerHeight, probe ? probe.offsetHeight : 0);
+  }
   let W = 0, H = 0, R = 0, ratio = 1;
+  let gapCanvas = null, gapInk = null;     // the split's gap, under the halves' ground
   function size() {
-    W = window.innerWidth; H = window.innerHeight;
+    W = window.innerWidth; H = tallest();
     R = Math.min(W, H) * 0.5;
     ratio = Math.min(W < 700 ? 1.5 : 2, window.devicePixelRatio || 1);
-    canvas.width = Math.round(W * ratio);
-    canvas.height = Math.round(H * ratio);
-    canvas.style.width = W + "px";
-    canvas.style.height = H + "px";
+    const pw = Math.round(W * ratio), ph = Math.round(H * ratio);
+    [canvas, gapCanvas].forEach((c) => {
+      if (!c) return;
+      if (c.width !== pw || c.height !== ph) { c.width = pw; c.height = ph; }
+      c.style.width = W + "px";
+      c.style.height = H + "px";
+    });
   }
 
   // ============================================================
@@ -674,9 +785,14 @@
   // ============================================================
   // THE WORD — โอม
   // ============================================================
-  /** The word's specks, at a centre and a size (px per x-height). */
-  function drawWord(cx, cy, scale, t, alpha, hx, hy) {
+  /** The word's specks, at a centre and a size (px per x-height) — and, as
+      it is written over the calligraphy, only `drawn` of it (0 to 1): each
+      line of its construction run out so far, each head's circle drawn so
+      far round, each letter's outline traced so far, a light at the pen. */
+  function drawWord(cx, cy, scale, t, alpha, hx, hy, drawn) {
     if (alpha < 0.004 || !GLYPH) return;
+    if (drawn == null) drawn = 1;
+    if (drawn <= 0) return;
     const box = GLYPH.box;
     const oy = cy - ((box[1] + box[3]) / 2) * scale;
     const X = (x) => cx + x * scale, Y = (y) => oy + y * scale;
@@ -684,17 +800,19 @@
     // letter, run out past the word.
     ink.lineWidth = 1;
     const left = X(box[0]) - scale * 0.5, right = X(box[2]) + scale * 0.5;
-    [0, 1, box[1]].forEach((y) => poly([left, Y(y), right, Y(y)], [2, 5]));
+    const runTo = left + (right - left) * drawn;
+    [0, 1, box[1]].forEach((y) => poly([left, Y(y), runTo, Y(y)], [2, 5]));
     stroke(LINE, 0.22 * alpha);
     // THE HEADS: perfect circles, their centres crossed.
+    const round = Math.PI * 2 * drawn;
     GLYPH.letters.forEach((L) => L.heads.forEach(([x, y, r]) => {
-      poly(arcPts(X(x), Y(y), r * scale, r * scale, 0, 0, Math.PI * 2));
-      const c = r * scale * 0.45;
+      poly(arcPts(X(x), Y(y), r * scale, r * scale, 0, -Math.PI / 2, -Math.PI / 2 + round));
+      const c = r * scale * 0.45 * drawn;
       line(X(x) - c, Y(y), X(x) + c, Y(y));
       line(X(x), Y(y) - c, X(x), Y(y) + c);
     }));
     stroke(LINE, 0.75 * alpha);
-    GLYPH.letters.forEach((L) => L.heads.forEach(([x, y, r]) => poly(arcPts(X(x), Y(y), r * scale * 1.9, r * scale * 1.9, 0, 0, Math.PI * 2))));
+    GLYPH.letters.forEach((L) => L.heads.forEach(([x, y, r]) => poly(arcPts(X(x), Y(y), r * scale * 1.9, r * scale * 1.9, 0, -Math.PI / 2, -Math.PI / 2 + round))));
     stroke(LINE, 0.16 * alpha);
     // THE OUTLINE, in specks — a brightness travelling along each stroke.
     ink.globalCompositeOperation = "lighter";
@@ -702,7 +820,11 @@
     const size = Math.max(1, scale * 0.016);
     GLYPH.letters.forEach((L, li) => L.contours.forEach((c, ci) => {
       const n = c.length / 2;
+      const upTo = n * drawn, pen = Math.max(4, n * 0.07);
       for (let i = 0; i < n; i++) {
+        if (i >= upTo) break;
+        // (The pen: the specks it has just set down, brighter.)
+        const fresh = drawn < 1 ? clamp(1 - (upTo - i) / pen, 0, 1) : 0;
         let x = X(c[2 * i]), y = Y(c[2 * i + 1]);
         if (!REDUCE) {
           x += Math.sin(t * 1.3 + i * 0.7 + ci) * 0.6;
@@ -713,12 +835,140 @@
           if (d < 90 && d > 0.1) { const push = (1 - d / 90) * 10; x += (dx / d) * push; y += (dy / d) * push; }
         }
         const run = REDUCE ? 0.6 : 0.5 + 0.5 * Math.sin((i / n) * Math.PI * 4 - t * 1.6 + li * 1.3);
-        ink.globalAlpha = clamp((0.35 + 0.65 * run) * alpha * quietAt(x) * (waveNow ? 1 + WAVE_LIT * waveLit(x) : 1), 0, 1);
-        ink.fillRect(x - size / 2, y - size / 2, size, size);
+        ink.globalAlpha = clamp((0.35 + 0.65 * run + 2.4 * fresh * fresh) * alpha * quietAt(x) * (waveNow ? 1 + WAVE_LIT * waveLit(x) : 1), 0, 1);
+        const z = size * (1 + fresh * 0.8);
+        ink.fillRect(x - z / 2, y - z / 2, z, z);
       }
     }));
     ink.globalAlpha = 1;
     ink.globalCompositeOperation = "source-over";
+  }
+
+  // ============================================================
+  // THE CALLIGRAPHY — โอม while the page is split (see CALLI_FILL): the
+  // letters filled, the ink fuller high on the left as a brush's load is,
+  // a soft light round them and a finer outline, drawn once into a picture
+  // at the size it stands at (and a second, the letters in pale fire, for
+  // the sheen and the hand), and laid down each frame at its strength —
+  // smaller as it draws in. Drawn at no more than 1.25 device pixels a
+  // point: it is soft and faint, and twice as fine would be four times the
+  // memory for nothing seen.
+  // ============================================================
+  let calli = null;
+  function calliFor(scale) {
+    const r = Math.min(ratio, 1.25);
+    if (calli && calli.scale === scale && calli.r === r) return calli;
+    const box = GLYPH.box, pad = scale * 0.4;
+    const w = (box[2] - box[0]) * scale + pad * 2, h = (box[3] - box[1]) * scale + pad * 2;
+    const X = (x) => pad + (x - box[0]) * scale, Y = (y) => pad + (y - box[1]) * scale;
+    const make = () => {
+      const c = document.createElement("canvas");
+      c.width = Math.ceil(w * r);
+      c.height = Math.ceil(h * r);
+      const g = c.getContext("2d");
+      g.setTransform(r, 0, 0, r, 0, 0);
+      return [c, g];
+    };
+    const letters = (g, dx) => {
+      g.beginPath();
+      GLYPH.letters.forEach((L) => L.contours.forEach((p) => {
+        for (let i = 0; i < p.length; i += 2) (i ? g.lineTo(X(p[i]) + dx, Y(p[i + 1])) : g.moveTo(X(p[i]) + dx, Y(p[i + 1])));
+        g.closePath();
+      }));
+    };
+    const [base, b] = make(), [bright, l] = make();
+    // The light round the letters: their shadow alone, the letters
+    // themselves drawn far off the picture.
+    const away = w * 4;
+    letters(b, -away);
+    b.shadowColor = rgba(LINE, CALLI_GLOW / 0.6);
+    b.shadowBlur = scale * 0.11 * r;
+    b.shadowOffsetX = away * r;
+    b.fillStyle = "#000";
+    b.fill("evenodd");
+    b.shadowColor = "transparent";
+    // The letters, fuller high on the left, and dragged through with the
+    // hairs of a dry brush: streaks of every width taken out of the ink
+    // along the way the brush went (on a picture of their own, so neither
+    // the light round them nor their outline is touched).
+    const [wash, f] = make();
+    letters(f, 0);
+    const load = f.createLinearGradient(X(box[0]), Y(box[1]), X(box[2]), Y(box[3]));
+    load.addColorStop(0, rgba(SECOND, CALLI_FILL * 1.35));
+    load.addColorStop(0.55, rgba(LINE, CALLI_FILL));
+    load.addColorStop(1, rgba(LINE, CALLI_FILL * 0.62));
+    f.fillStyle = load;
+    f.fill("evenodd");
+    f.globalCompositeOperation = "destination-out";
+    f.strokeStyle = "#000";
+    const turn = -0.32, ux = Math.cos(turn), uy = Math.sin(turn), long = w + h;
+    for (let i = 0, n = Math.round(h * 1.1); i < n; i++) {
+      const o = (i / n) * (h + w * 0.5) - w * 0.25 + between(-2, 2), x0 = -uy * o, y0 = ux * o;
+      f.globalAlpha = Math.pow(random(), 1.6) * 0.75;
+      f.lineWidth = between(0.4, 2.4) * Math.max(1, scale / 180);
+      f.beginPath();
+      f.moveTo(x0 - ux * long * 0.2, y0 - uy * long * 0.2);
+      f.lineTo(x0 + ux * long, y0 + uy * long);
+      f.stroke();
+    }
+    b.drawImage(wash, 0, 0, w, h);
+    letters(b, 0);
+    b.lineWidth = Math.max(0.8, scale * 0.005);
+    b.strokeStyle = rgba(LINE, CALLI_EDGE);
+    b.stroke();
+    letters(l, 0);
+    l.fillStyle = rgba(SECOND, 1);
+    l.fill("evenodd");
+    // Where (cx, cy) falls in the picture.
+    calli = { scale, r, base, bright, w, h, ax: X(0), ay: Y((box[1] + box[3]) / 2) };
+    return calli;
+  }
+  /** Part of a picture laid on the window: the picture standing at (x, y)
+      at (w, h), only the part of it inside the window rectangle (rx, ry,
+      rw, rh). */
+  function blit(img, x, y, w, h, rx, ry, rw, rh) {
+    const x0 = Math.max(x, rx), y0 = Math.max(y, ry), x1 = Math.min(x + w, rx + rw), y1 = Math.min(y + h, ry + rh);
+    if (x1 <= x0 || y1 <= y0) return;
+    const sx = img.width / w, sy = img.height / h;
+    ink.drawImage(img, (x0 - x) * sx, (y0 - y) * sy, (x1 - x0) * sx, (y1 - y0) * sy, x0, y0, x1 - x0, y1 - y0);
+  }
+  /** โอม as calligraphy, its centre at (cx, cy), `scale` px to an x-height
+      (drawn from the picture made at `at`), at a strength `a`. */
+  function drawCalli(cx, cy, scale, at, a, now, hx, hy) {
+    if (a < 0.004 || !GLYPH) return;
+    const C = calliFor(at), k = scale / C.scale;
+    const x = cx - C.ax * k, y = cy - C.ay * k, w = C.w * k, h = C.h * k;
+    ink.globalCompositeOperation = "source-over";
+    ink.globalAlpha = clamp(a, 0, 1);
+    ink.drawImage(C.base, x, y, w, h);
+    if (!REDUCE) {
+      ink.globalCompositeOperation = "lighter";
+      // THE SHEEN: a band of light crossing it, left to right, now and
+      // then — the picture in pale fire laid down a slice at a time, the
+      // middle slices the strongest.
+      const ph = (now % SHEEN_EVERY) / SHEEN_MS;
+      if (ph < 1) {
+        const mid = x - w * 0.15 + w * 1.3 * smooth01(ph), half = w * 0.07, lit = Math.sin(ph * Math.PI);
+        for (let i = -6; i <= 6; i++) {
+          ink.globalAlpha = clamp(a * SHEEN_A * lit * Math.exp(-(i * i) / 10), 0, 1);
+          blit(C.bright, x, y, w, h, mid + (i / 6) * half - half / 12, y, half / 6, h);
+        }
+      }
+      // THE HAND: the letters lit a little about it.
+      if (hx > -9000) {
+        [150, 100, 55].forEach((r) => {
+          ink.save();
+          ink.beginPath();
+          ink.arc(hx, hy, r, 0, Math.PI * 2);
+          ink.clip();
+          ink.globalAlpha = clamp(a * CALLI_HAND / 3, 0, 1);
+          blit(C.bright, x, y, w, h, hx - r, hy - r, r * 2, r * 2);
+          ink.restore();
+        });
+      }
+      ink.globalCompositeOperation = "source-over";
+    }
+    ink.globalAlpha = 1;
   }
 
   // ============================================================
@@ -981,131 +1231,191 @@
 
   /** THE SPLIT'S GAP: its broken pieces — random polygons, most of them
       small, a few larger, each a few corners at uneven angles and uneven
-      reaches — and its specks, each at a depth of its own (how much of the
-      scroll it is carried by), drifting, swaying and turning on clocks of
-      their own; and three cracks wandering down it. Laid down a span a
-      little taller than the screen, and wrapped round it as they go. */
+      reaches, a flake turning in three dimensions — and its specks, and
+      three cracks far down; each AT A DEPTH OF ITS OWN (THE DEPTH), drifting
+      and swaying on clocks of their own. Laid down a span a little taller
+      than the screen, and wrapped round it as they go; the pieces kept
+      farthest first, the order they are drawn in. */
   function gapOf(w, h, push) {
-    const cx = w / 2, span = h + 160;
+    const cx = w / 2, span = h + 200;
     const n = Math.round(push * 2 * span * GAP_SHARDS);
     // Most small, a few large — the largest larger the wider the gap.
-    const most = clamp(push * 0.32, 14, 40);
+    const most = clamp(push * 0.3, 17, 40);
     const shards = [];
     for (let i = 0; i < n; i++) {
-      const r = 2.5 + Math.pow(random(), 2.6) * most;
+      const r = 3.5 + Math.pow(random(), 2.2) * most;
       const corners = 3 + Math.floor(random() * 4);
       const angles = [];
       for (let k = 0; k < corners; k++) angles.push(random() * Math.PI * 2);
       angles.sort((a, b) => a - b);
       shards.push(drifter({
-        u: random() * 2 - 1, d: between(0.3, 1), fall: between(-7, 7), sway: between(2, 7),
+        u: random() * 2 - 1, z: Math.pow(random(), 0.85), fall: between(-7, 7), sway: between(2, 7),
         pts: angles.map((a) => [Math.cos(a) * r * between(0.4, 1), Math.sin(a) * r * between(0.4, 1)]),
-        turn: random() * Math.PI * 2, spin: between(-0.18, 0.18), tumbled: 0, way: random() < 0.5 ? -1 : 1,
-        ink: between(0.3, 0.75), fill: random() < 0.45 ? between(0.04, 0.14) : 0, bright: random() < 0.1,
+        // Its turn in three dimensions, and how quickly each way.
+        ax: random() * Math.PI * 2, ay: random() * Math.PI * 2, az: random() * Math.PI * 2,
+        wx: between(-0.32, 0.32), wy: between(-0.32, 0.32), wz: between(-0.16, 0.16), way: random() < 0.5 ? -1 : 1,
+        ink: between(0.35, 0.8), fill: random() < 0.55 ? between(0.05, 0.16) : 0, bright: random() < 0.1,
       }, span));
     }
+    shards.sort((a, b) => b.z - a.z);
     const motes = [];
     const m = Math.round(push * 2 * span * GAP_MOTES);
     for (let i = 0; i < m; i++) {
       motes.push(drifter({
-        u: random() * 2 - 1, d: between(0.15, 0.85), fall: between(-16, -3), sway: between(1.5, 9),
-        size: between(0.7, 1.7), base: between(0.25, 0.8),
+        u: random() * 2 - 1, z: random(), fall: between(-16, -3), sway: between(1.5, 9),
+        size: between(0.8, 1.9), base: between(0.3, 0.85),
       }, span));
     }
-    const cracks = [0, 1, 2].map(() => {
-      const out = [];
-      let u = (random() - 0.5) * 0.9;
+    // The cracks, far down, each at its depth — broken into runs, a fissure
+    // seen here and there (whole, they read as rails down the gap).
+    const cracks = [0.6, 0.8, 0.95].map((z) => {
+      const pts = [], on = [];
+      let u = (random() - 0.5) * 0.9, run = 0;
       for (let y = -10; y <= span + 30; y += between(16, 34)) {
         u = clamp(u + (random() - 0.5) * 0.35, -0.85, 0.85);
-        out.push(u, y);
+        if (--run < 0) run = Math.floor(between(2, 9)) * (random() < 0.42 ? -1 : 1);
+        pts.push(u, y);
+        on.push(run >= 0);
       }
-      return out;
+      return drifter({ u: 0, z, fall: 0, sway: 0, pts, on }, span);
     });
     return { cx, push, span, shards, motes, cracks, alpha: 1 };
   }
   /** What every drifting thing in the gap carries: where it is laid, how
-      it sways, and how far the hand has moved it. */
+      it sways, how far the hand has moved it — and, from its depth, how
+      small and faint it is drawn, how much of the scroll carries it and how
+      quickly it catches the scroll up (`f`, the scroll as it has felt it,
+      through two stages, so it sets off smoothly). */
   function drifter(o, span) {
+    const z = o.z, sy = window.scrollY || 0;
     return Object.assign(o, { y: random() * span, fq: between(0.15, 0.55), ph: random() * Math.PI * 2,
-      ox: 0, oy: 0, vx: 0, vy: 0, lit: 0, X: 0, Y: 0 });
+      ox: 0, oy: 0, vx: 0, vy: 0, lit: 0, X: 0, Y: 0, f: sy, f1: sy,
+      p: 1 / (1 + z * DEPTH), fog: 1 - FOG * z, near: 1 - z,
+      rate: RATE_NEAR + (RATE_FAR - RATE_NEAR) * z,
+      tau: (FOLLOW_NEAR + (FOLLOW_FAR - FOLLOW_NEAR) * z) / 2,
+      wide: WIDE_NEAR + (WIDE_FAR - WIDE_NEAR) * z });
   }
-  /** The gap's things moved on a frame: carried by the scroll at their
-      depths, drifting and swaying, and given way to the hand — pushed off
-      it and coming back, lit as it passes — and turned, the faster the
-      page is scrolled the faster. `spread` is how far from the middle of
-      the page they reach either way. */
+  /** The gap's things moved on a frame: each catching the scroll up as
+      its depth says and carried by its share of it, drifting and swaying,
+      and given way to the hand — pushed off it and coming back, lit as it
+      passes, the nearer the more — and turned, the faster the page is
+      scrolled the faster. `spread` is how far from the middle of the page
+      the gap reaches either way. */
   function moveGap(t, dt, spread, hx, hy) {
     const g = gap, sy = window.scrollY, span = g.span, cx = g.cx;
     const hand = hx > -9000 && !REDUCE, R2 = GAP_REACH * GAP_REACH;
-    const step = (s, reach) => {
-      if (!REDUCE) {
-        if (hand) {
+    const step = (s, still) => {
+      if (REDUCE) { s.f = s.f1 = sy; }
+      else {
+        const k = 1 - Math.exp(-dt / s.tau);
+        s.f1 += (sy - s.f1) * k;
+        s.f += (s.f1 - s.f) * k;
+        if (hand && !still) {
           const dx = s.X - hx, dy = s.Y - hy, d2 = dx * dx + dy * dy;
           if (d2 < R2 && d2 > 0.01) {
-            const d = Math.sqrt(d2), f = 1 - d / GAP_REACH, push = f * f * 2600 * dt;
+            const d = Math.sqrt(d2), f = 1 - d / GAP_REACH, push = f * f * 2600 * dt * (0.35 + 0.65 * s.near);
             s.vx += (dx / d) * push; s.vy += (dy / d) * push;
             if (f > s.lit) s.lit = f;
           }
         }
-        // (Sprung back to its place — and, while the page is scrolled, to
-        // a little behind it: the nearer, the further it trails.)
-        const lag = clamp(scrollV * SCROLL_LAG * (1.15 - s.d), -SCROLL_LAG_MOST, SCROLL_LAG_MOST);
         s.vx += (-s.ox * 16 - s.vx * 5.5) * dt;
-        s.vy += (-(s.oy - lag) * 16 - s.vy * 5.5) * dt;
+        s.vy += (-s.oy * 16 - s.vy * 5.5) * dt;
         s.ox += s.vx * dt; s.oy += s.vy * dt;
         s.lit *= Math.exp(-dt * 2.2);
       }
-      let y = s.y + (REDUCE ? 0 : t * s.fall) - sy * s.d;
-      y = ((y % span) + span) % span - 80;
-      s.X = cx + s.u * (reach + stir * SCROLL_SPREAD) + (REDUCE ? 0 : Math.sin(t * s.fq * Math.PI * 2 + s.ph) * s.sway) + s.ox;
+      let y = s.y + (REDUCE ? 0 : t * s.fall * s.p) - s.f * s.rate;
+      y = ((y % span) + span) % span - 100;
+      s.X = cx + s.u * (spread * s.wide + stir * SCROLL_SPREAD * s.p) + (REDUCE ? 0 : Math.sin(t * s.fq * Math.PI * 2 + s.ph) * s.sway * s.p) + s.ox;
       s.Y = y + s.oy;
     };
     const tumble = stir * SCROLL_TUMBLE;
     g.shards.forEach((s) => {
-      step(s, spread * 0.92);
-      s.tumbled += dt * tumble * s.way;
-      s.th = s.turn + (REDUCE ? 0 : t * s.spin) + s.tumbled;
+      step(s);
+      if (REDUCE) return;
+      const more = tumble * s.way * (0.4 + 0.6 * s.near);
+      s.ax += (s.wx + more * 0.7) * dt;
+      s.ay += (s.wy + more * 0.5) * dt;
+      s.az += (s.wz + more * 0.3) * dt;
     });
-    g.motes.forEach((s) => step(s, spread));
+    g.motes.forEach((s) => step(s));
+    g.cracks.forEach((s) => step(s, true));
   }
-  /** The gap's broken pieces and specks where they are, at a strength
-      `a`: whole in the gap, on the void; faint in the drawing behind the
-      halves as they close over them, and behind the writing once whole. */
-  function drawGap(t, a) {
-    const g = gap;
+  /** The gap's things where they are, at a strength `a`. With `walls` —
+      while the gap is open, on its own canvas under the halves' ground —
+      the light far down first and the walls' shade over all of it last:
+      the walls standing at `walls.l` and `walls.r` across the window. */
+  function drawGap(t, a, walls) {
+    const g = gap, L = LIGHT, Ln = Math.hypot(L[0], L[1], L[2]);
+    const lx = L[0] / Ln, ly = L[1] / Ln, lz = L[2] / Ln;
+    // THE LIGHT FAR DOWN: the faintest gold up the middle of the gap.
+    if (walls) laidDown(backdropFor().glow, walls, a);
+    // THE CRACKS, far down: narrowed by their depth, faint, carried by
+    // little of the scroll.
     ink.lineWidth = 1;
     ink.strokeStyle = rgba(LINE, 1);
+    const reach = g.reach || g.push;
+    const flex = REDUCE ? 0 : stir * SCROLL_FLEX;
+    g.cracks.forEach((c, ci) => {
+      ink.globalAlpha = 0.34 * c.fog * a;
+      const off = c.Y + 100;                    // (how far it has been carried, wrapped)
+      [off - g.span, off].forEach((k) => {
+        ink.beginPath();
+        for (let i = 0; i < c.pts.length; i += 2) {
+          const Y = c.pts[i + 1] + k - 100;
+          const X = g.cx + c.pts[i] * reach * c.wide + (flex ? Math.sin(Y / 90 + t * 2.2 + ci * 2.1) * flex * c.p : 0);
+          if (i && c.on[i / 2]) ink.lineTo(X, Y); else ink.moveTo(X, Y);
+        }
+        ink.stroke();
+      });
+    });
+    // THE PIECES, farthest first: each a flake turned in three dimensions
+    // (turned about x, then y, then z), drawn as it faces the window — the
+    // more it faces the light, the brighter, and a glint as it comes round
+    // to face it squarely.
     ink.fillStyle = rgba(LINE, 1);
     g.shards.forEach((s) => {
       if (s.Y < -60 || s.Y > H + 60) return;
-      const c = Math.cos(s.th), sn = Math.sin(s.th);
+      const ca = Math.cos(s.ax), sa = Math.sin(s.ax), cb = Math.cos(s.ay), sb = Math.sin(s.ay), cc = Math.cos(s.az), sc = Math.sin(s.az);
+      const k = s.p;
+      const m00 = cc * cb * k, m01 = (cc * sb * sa - sc * ca) * k;
+      const m10 = sc * cb * k, m11 = (sc * sb * sa + cc * ca) * k;
+      const nx = cc * sb * ca + sc * sa, ny = sc * sb * ca - cc * sa, nz = cb * ca;
+      const lit = Math.abs(nx * lx + ny * ly + nz * lz);
       ink.beginPath();
-      s.pts.forEach(([px, py], k) => {
-        const X = s.X + px * c - py * sn, Y = s.Y + px * sn + py * c;
-        if (k) ink.lineTo(X, Y); else ink.moveTo(X, Y);
+      s.pts.forEach(([px, py], j) => {
+        const X = s.X + m00 * px + m01 * py, Y = s.Y + m10 * px + m11 * py;
+        if (j) ink.lineTo(X, Y); else ink.moveTo(X, Y);
       });
       ink.closePath();
-      const lit = 1 + 1.1 * Math.max(s.lit, stir * SCROLL_LIT);
-      if (s.fill) { ink.globalAlpha = Math.min(1, s.fill * a * lit); ink.fill(); }
-      ink.globalAlpha = Math.min(1, s.ink * (s.bright ? 1.4 : 1) * a * lit);
+      const hot = 1 + 1.1 * Math.max(s.lit, stir * SCROLL_LIT * s.near);
+      const k2 = a * s.fog * hot;
+      if (s.fill) { ink.globalAlpha = Math.min(1, s.fill * (0.25 + 0.95 * lit) * k2); ink.fill(); }
+      ink.globalAlpha = Math.min(1, s.ink * (s.bright ? 1.35 : 1) * (0.45 + 0.55 * lit) * k2);
+      ink.strokeStyle = rgba(LINE, 1);
       ink.stroke();
+      const glint = Math.pow(lit, GLINT);
+      if (glint > 0.04) {
+        ink.globalAlpha = Math.min(1, glint * 0.9 * k2);
+        ink.strokeStyle = rgba(SECOND, 1);
+        ink.stroke();
+      }
     });
-    // The specks: drawn out into short streaks along the way the page is
-    // being scrolled, the faster the longer.
+    // The specks: smaller and fainter the farther, drawn out into short
+    // streaks along the way the page is being scrolled — the nearer the
+    // longer — in four strengths, each one stroke.
     ink.globalCompositeOperation = "lighter";
     ink.fillStyle = rgba(SPECK, 1);
     ink.strokeStyle = rgba(SPECK, 1);
-    // (Streaks in four strengths, each one stroke, rather than a stroke
-    // each.)
     const streak = REDUCE ? 0 : scrollV * 0.012, streaking = Math.abs(streak) > 1.6;
     const strengths = streaking ? [[], [], [], []] : null;
     g.motes.forEach((s) => {
       if (s.Y < -20 || s.Y > H + 20) return;
       const tw = REDUCE ? 1 : 0.75 + 0.25 * Math.sin(t * 1.7 + s.ph * 3);
-      const k = Math.min(1, s.base * tw * a * (1 + 1.6 * Math.max(s.lit, stir * SCROLL_LIT)));
+      const k = Math.min(1, s.base * tw * a * s.fog * (1 + 1.6 * Math.max(s.lit, stir * SCROLL_LIT * s.near)));
       if (streaking) { strengths[Math.min(3, Math.floor(k * 4))].push(s); return; }
       ink.globalAlpha = k;
-      ink.fillRect(s.X - s.size / 2, s.Y - s.size / 2, s.size, s.size);
+      const z = Math.max(0.6, s.size * (0.4 + 0.6 * s.p));
+      ink.fillRect(s.X - z / 2, s.Y - z / 2, z, z);
     });
     if (streaking) {
       ink.lineWidth = 1.2;
@@ -1113,26 +1423,59 @@
         if (!list.length) return;
         ink.globalAlpha = (k + 0.5) / 4;
         ink.beginPath();
-        list.forEach((s) => { ink.moveTo(s.X, s.Y); ink.lineTo(s.X, s.Y + streak * s.d); });
+        list.forEach((s) => { ink.moveTo(s.X, s.Y); ink.lineTo(s.X, s.Y + streak * s.rate); });
         ink.stroke();
       });
     }
     ink.globalCompositeOperation = "source-over";
+    ink.globalAlpha = 1;
     ink.lineWidth = 1;
-    ink.strokeStyle = rgba(LINE, 1);
-    ink.globalAlpha = 0.45 * a;
-    // The cracks carried at a depth of their own, wrapped round the span.
-    const reach = g.reach || g.push, off = (((window.scrollY * 0.55) % g.span) + g.span) % g.span;
-    // (Bowing as the page is scrolled.)
-    const flex = REDUCE ? 0 : stir * SCROLL_FLEX;
-    [-off, g.span - off].forEach((k) => g.cracks.forEach((p, ci) => {
-      ink.beginPath();
-      for (let i = 0; i < p.length; i += 2) {
-        const Y = p[i + 1] + k, X = g.cx + p[i] * reach + (flex ? Math.sin(Y / 90 + t * 2.2 + ci * 2.1) * flex : 0);
-        if (i) ink.lineTo(X, Y); else ink.moveTo(X, Y);
+    // THE WALLS' SHADE: the void drawn over the gap from each edge inward,
+    // so what lies near a wall seems to go in under the page.
+    if (walls) laidDown(backdropFor().shade, walls, a);
+  }
+  /** THE GAP'S LIGHT AND SHADE, as two pictures a band of the gap tall —
+      the light far down and the walls' shade — worked out a pixel at a
+      time, each pixel's strength a little off at random (dithered): as a
+      gradient, so faint a light on so dark a ground came out in visible
+      steps, stripes down the gap. Laid down the gap one band under the
+      next, as wide as the gap is. */
+  const BAND = 256, BAND_SIDE = 30;
+  let backdrop = null;
+  function backdropFor() {
+    const r = Math.min(ratio, 2), wide = 240;
+    if (backdrop && backdrop.r === r) return backdrop;
+    const pw = Math.ceil((wide + BAND_SIDE * 2) * r), ph = Math.ceil(BAND * r);
+    const make = (at) => {
+      const c = document.createElement("canvas");
+      c.width = pw; c.height = ph;
+      const g = c.getContext("2d"), img = g.createImageData(pw, ph), d = img.data;
+      for (let x = 0; x < pw; x++) {
+        const u = (x / r - BAND_SIDE) / wide;               // 0 at the left wall, 1 at the right
+        const [rgb, a] = at(u);
+        for (let y = 0; y < ph; y++) {
+          const k = (y * pw + x) * 4;
+          d[k] = rgb[0]; d[k + 1] = rgb[1]; d[k + 2] = rgb[2];
+          d[k + 3] = clamp(Math.round(a * 255 + Math.random() - 0.5), 0, 255);
+        }
       }
-      ink.stroke();
-    }));
+      g.putImageData(img, 0, 0);
+      return c;
+    };
+    const glow = make((u) => [LINE, u < 0 || u > 1 ? 0 : DEEP_GLOW * Math.exp(-Math.pow((u - 0.5) / 0.26, 2))]);
+    const shade = make((u) => {
+      const d = Math.min(u, 1 - u) / (WALL_REACH / 2);       // 0 at a wall, 1 WALL_REACH of the half width in
+      const k = d <= 0 ? 1 : d >= 1 ? 0 : d < 0.45 ? 1 - (1 - 0.32) * (d / 0.45) : 0.32 * Math.pow(1 - (d - 0.45) / 0.55, 2);
+      return [[6, 5, 9], WALL_SHADE * k];
+    });
+    backdrop = { r, glow, shade, wide };
+    return backdrop;
+  }
+  function laidDown(img, walls, a) {
+    const k = Math.max(1, walls.r - walls.l) / backdrop.wide;
+    const x = walls.l - BAND_SIDE * k, w = img.width / backdrop.r * k;
+    ink.globalAlpha = clamp(a, 0, 1);
+    for (let y = -20; y < H + 20; y += BAND) ink.drawImage(img, x, y, w, BAND);
     ink.globalAlpha = 1;
   }
   /** The page's flow, copied whole, without an id, a tab stop or anything
@@ -1231,19 +1574,27 @@
 
   // ============================================================
   // THE SPLIT (see SPLIT_PUSH): the page's two halves, each a copy of the
-  // whole page laid in the page itself and cut along its own edge (THE
-  // EDGES), pushed apart; the drawing behind cut the same way, on two
-  // canvases fixed to the window — the left drawn whole, the right laid
-  // from it, each cut along its edge where the page now stands; and the
-  // gap's broken pieces on the page's own canvas, under both. The halves
-  // and the drawing's halves are moved by one transform each — opening and
-  // closing by the browser's own clock, all four on one start time.
+  // whole page laid in the page itself and cut along the one edge (THE
+  // EDGES), pushed apart — and under each, laid in the page too and moved
+  // with it, its GROUND: the page's own colour cut along the same edge,
+  // with the gold seam along it. Between the grounds and the writing, the
+  // page's own canvas (THE WORD, and the drawing once OM is pressed); under
+  // the grounds, the gap's own canvas. The halves and their grounds are
+  // moved by one transform each and the seams' gold by its opacity —
+  // opening and closing by the browser's own clock, all six on one start
+  // time. (Until 2026-10-14 the drawing behind was cut with the page on two
+  // canvases fixed to the window, the page's ground drawn in them and cut
+  // where the page stood each frame: on a phone, which scrolls the page a
+  // little ahead of what a script can draw, the ground's edge trailed the
+  // writing's.)
   // ============================================================
   let halves = null;
   let scrollV = 0, lastScroll = null;      // the page's scrolling, px a second (eased)
   let stir = 0;                            // how stirred the gap's geometry is by it, 0 to 1
   let waveFrom = 0;                        // when the halves met (ms): THE WAVE from then
   let waveNow = null;                      // where it is this frame, for the specks
+  let worldIn = 1;                         // how much of the drawing behind is there (THE BACKGROUND WAITING)
+  let word = null;                         // what the word is this frame, for the tests
   const smoother = (u) => u * u * u * (u * (u * 6 - 15) + 10);    // at rest at both ends
   const smooth01 = (u) => { u = clamp(u, 0, 1); return u * u * (3 - 2 * u); };
 
@@ -1288,43 +1639,76 @@
     const f = (y - s.ys[i - 1]) / (s.ys[i] - s.ys[i - 1]);
     return s.xs[i - 1] + (s.xs[i] - s.xs[i - 1]) * f;
   }
-  /** A half's cut, for the stylesheet: everything on its side of its edge,
-      down the whole of the page and well past it. */
-  function clipOf(s, left, w) {
+  /** A half's cut, for the stylesheet: everything on its side of the edge,
+      down the whole of the page and well past it — and, for a ground,
+      `grow` px past the edge (so two grounds together leave no hairline of
+      the void between them) and `dy` px lower (a ground reaches above the
+      page). */
+  function clipOf(s, left, w, grow, dy) {
     // (On the copy of the page in the half, which is laid out as the page
     // is — not on the half that moves, where a cut would be a mask laid
     // again every frame it moves: painted into the copy once, it moves
-    // with it for nothing.)
-    const m = w / 2, P = 800, FAR = 400000, out = [], n = s.ys.length;
-    const at = m, outer = (left ? -P : w + P) + "px";
+    // with it for nothing. And so on a ground.)
+    grow = grow || 0; dy = dy || 0;
+    const at = w / 2 + (left ? grow : -grow), P = 800, FAR = 400000, out = [], n = s.ys.length;
+    const outer = (left ? -P : w + P) + "px";
     out.push(outer + " " + -P + "px", (at + s.xs[0]).toFixed(1) + "px " + -P + "px");
-    for (let i = 0; i < n; i++) out.push((at + s.xs[i]).toFixed(1) + "px " + s.ys[i].toFixed(1) + "px");
+    for (let i = 0; i < n; i++) out.push((at + s.xs[i]).toFixed(1) + "px " + (s.ys[i] + dy).toFixed(1) + "px");
     out.push((at + s.xs[n - 1]).toFixed(1) + "px " + FAR + "px", outer + " " + FAR + "px");
     return "polygon(" + out.join(",") + ")";
   }
+  /** The seam's line, for its picture: the edge `x0` px from the picture's
+      left, `dy` px lower than the page. */
+  function seamLine(s, x0, dy) {
+    const out = [];
+    for (let i = 0; i < s.ys.length; i++) out.push((i ? "L" : "M") + (x0 + s.xs[i]).toFixed(1) + " " + (s.ys[i] + dy).toFixed(1));
+    return out.join("");
+  }
   function setClips() {
     const e = halves.edges, w = copyWidth;
-    [[halves.copies[0], e.L, true], [halves.copies[1], e.R, false]].forEach(([el, s, left]) => {
-      const c = clipOf(s, left, w);
+    [[halves.copies[0], e.L, true, 0, 0], [halves.copies[1], e.R, false, 0, 0],
+      [halves.fills[0], e.L, true, 0.6, GROUND_TOP], [halves.fills[1], e.R, false, 0.6, GROUND_TOP]].forEach(([el, s, left, grow, dy]) => {
+      const c = clipOf(s, left, w, grow, dy);
       el.style.clipPath = c;
       el.style.webkitClipPath = c;
     });
+    const d = seamLine(e.L, e.reach + 4, GROUND_TOP);
+    halves.seams.forEach((svg) => svg.querySelectorAll("path").forEach((p) => p.setAttribute("d", d)));
   }
   /** Each half's box only as wide as its side of the page and the reach
       of its edge — so neither is drawn, or laid over the other, where it
-      is not seen. */
+      is not seen — and its ground's the same; each seam's picture just
+      wide enough for the edge. */
   function sizeHalves() {
-    const w = copyWidth, m = w / 2, reach = halves.edges.reach, [l, r] = halves.text;
-    l.style.width = (m + reach) + "px";
-    r.style.left = (m - reach) + "px";
-    r.style.width = (w - m + reach) + "px";
+    const w = copyWidth, m = w / 2, reach = halves.edges.reach, [l, r] = halves.text, [gl, gr] = halves.grounds;
+    l.style.width = gl.style.width = (m + reach) + "px";
+    r.style.left = gr.style.left = (m - reach) + "px";
+    r.style.width = gr.style.width = (w - m + reach) + "px";
     halves.copies.forEach((c) => { c.style.width = w + "px"; });
     halves.copies[1].style.marginLeft = -(m - reach) + "px";
+    halves.fills.forEach((f) => { f.style.width = w + "px"; });
+    halves.fills[0].style.left = "0px";
+    halves.fills[1].style.left = -(m - reach) + "px";
+    halves.seams.forEach((svg, k) => {
+      svg.style.left = (k ? -4 : m - reach - 4) + "px";
+      svg.setAttribute("width", 2 * reach + 8);
+    });
+  }
+  /** The grounds as tall as the page (and GROUND_TOP above it) — never
+      taller, or the page would scroll on past its end. */
+  function fitGround() {
+    const tall = Math.ceil(halves.text[0].offsetHeight + GROUND_TOP);
+    if (tall === halves.tall) return;
+    halves.tall = tall;
+    halves.groundHost.style.height = tall + "px";
+    halves.grounds.forEach((g) => { g.style.height = tall + "px"; });
+    halves.fills.forEach((f) => { f.style.height = tall + "px"; });
+    halves.seams.forEach((svg) => svg.setAttribute("height", tall));
   }
   /** How far down the edges must be laid: the page's length, and more. */
   const edgeLength = () => Math.max(halves.text[0].offsetHeight, root.scrollHeight) + 2500;
 
-  /** THE SHAKE, k px at its hardest, tt seconds in: a rumble, each half
+  /** THE SHAKE, k px at its hardest, tt seconds in: a tremor, each half
       trembling on its own — and, as far as `one` says, the two as one. */
   function tremble(k, tt, one) {
     if (!k) return { xl: 0, xr: 0, yl: 0, yr: 0 };
@@ -1336,41 +1720,46 @@
   }
   /** Where the halves stand: each half's offset across and up or down, how
       far they have come together (`met`, 0 apart, 1 met), how strongly
-      their cut edges are drawn, and how far down the crack has run. */
+      their seams' gold is drawn, how far down the crack has run and how
+      strongly it is drawn (`crackA`, on the page's canvas, until the seams
+      take over from it). */
   function restAt() {
     const p = halves.push;
-    return { l: -p, r: p, yl: 0, yr: 0, met: 0, seam: SEAM_REST, crack: 1 };
+    return { l: -p, r: p, yl: 0, yr: 0, met: 0, seam: SEAM_REST, crack: 1, crackA: 0 };
   }
   /** THE OPENING, t ms after the crack sets off (before it, whole). */
   const OPEN_ALL = OPEN_CRACK * 0.6 + OPEN_PART;
   function openPath(t) {
-    if (t <= 0) return { l: 0, r: 0, yl: 0, yr: 0, met: 1, seam: 0, crack: 0 };
+    if (t <= 0) return { l: 0, r: 0, yl: 0, yr: 0, met: 1, seam: 0, crack: 0, crackA: 0 };
     const push = halves.push, crack = smoother(clamp(t / OPEN_CRACK, 0, 1));
     const u = clamp((t - OPEN_CRACK * 0.6) / OPEN_PART, 0, 1), apart = smoother(u);
     // The shake from the crack's first moment, hardest as the halves break
     // apart, settling as they come to rest; each half on its own.
     const env = OPEN_SHAKE * smooth01(t / (OPEN_CRACK * 0.6)) * (1 - u) * (1 - u);
     const q = tremble(REDUCE ? 0 : halves.shake * env, t / 1000, 0);
-    // The cut edges bright as the crack runs, settling to their gold.
-    const seam = SEAM_REST + (1 - SEAM_REST) * (1 - apart);
-    return { l: -push * apart + q.xl, r: push * apart + q.xr, yl: q.yl, yr: q.yr, met: 1 - apart, seam, crack };
+    // The crack runs down on the page's canvas; as it reaches the foot the
+    // seams' own gold takes over from it, bright, settling to its rest.
+    const over = smooth01((t - OPEN_CRACK * 0.92) / 260);
+    const seam = over * (SEAM_REST + (1 - SEAM_REST) * (1 - apart));
+    return { l: -push * apart + q.xl, r: push * apart + q.xr, yl: q.yl, yr: q.yr, met: 1 - apart, seam, crack, crackA: 1 - over };
   }
   /** THE CLOSING, t ms after OM was pressed. */
   function joinPath(t) {
     const u = clamp(t / SPLIT_MS, 0, 1), met = smoother(u), apart = halves.from * (1 - met);
-    // The shake from the first moment, growing as they come, hardest as
-    // they meet, dying away after, and still at the end.
+    // The shake from the first moment — coming up out of nothing over
+    // SHAKE_RISE, growing as they come, hardest as they meet — dying away
+    // after, and still at the end.
     let env;
-    if (t <= SPLIT_MS) env = smooth01(t / 280) * (SHAKE_ON_WAY + (1 - SHAKE_ON_WAY) * u * u * u);
+    if (t <= SPLIT_MS) env = smooth01(t / SHAKE_RISE) * (SHAKE_ON_WAY + (1 - SHAKE_ON_WAY) * u * u * u);
     else {
       const after = t - SPLIT_MS, end = clamp(after / SHAKE_TAIL, 0, 1);
       env = Math.exp(-after / SHAKE_TAU) * (1 - end * end * (3 - 2 * end));
     }
     const q = tremble(REDUCE ? 0 : halves.shake * env, t / 1000, met * met * met);
-    // The cut edges flash gold as the halves meet, and go.
+    // The seams flash gold as the halves meet, and go.
     let seam = SEAM_REST;
-    if (t > SPLIT_MS * 0.85) seam = t <= SPLIT_MS ? SEAM_REST + (1 - SEAM_REST) * (t - SPLIT_MS * 0.85) / (SPLIT_MS * 0.15) : Math.max(0, 1 - (t - SPLIT_MS) / 500);
-    return { l: -apart + q.xl, r: apart + q.xr, yl: q.yl, yr: q.yr, met, seam, crack: 1 };
+    if (t > SPLIT_MS * 0.85) seam = t <= SPLIT_MS ? SEAM_REST + (1 - SEAM_REST) * smooth01((t - SPLIT_MS * 0.85) / (SPLIT_MS * 0.15)) : 1 - smooth01((t - SPLIT_MS) / 600);
+    return { l: -apart + q.xl, r: apart + q.xr, yl: q.yl, yr: q.yr, met, seam, crack: 1, crackA: 0 };
   }
   function splitState(now) {
     if (gatherAt) return joinPath(now - gatherAt);
@@ -1380,8 +1769,9 @@
   function placeSplit(at) {
     const tl = "translate(" + at.l.toFixed(2) + "px," + at.yl.toFixed(2) + "px)";
     const tr = "translate(" + at.r.toFixed(2) + "px," + at.yr.toFixed(2) + "px)";
-    halves.text[0].style.transform = halves.skies[0].style.transform = tl;
-    halves.text[1].style.transform = halves.skies[1].style.transform = tr;
+    halves.text[0].style.transform = halves.grounds[0].style.transform = tl;
+    halves.text[1].style.transform = halves.grounds[1].style.transform = tr;
+    halves.seams.forEach((s) => { s.style.opacity = at.seam.toFixed(3); });
   }
   /** Where each half stands now, as drawn: across, and up or down — and
       where the top of the page is on the window. */
@@ -1398,143 +1788,89 @@
     if (x - at.r > m + edgeAt(e.R, y - at.top - at.yr)) return "r";
     return null;
   }
-  /** The halves laid out at the page's width, and the drawing's canvases
-      at the window's. Only the width moves them: a phone's bar coming and
-      going changes the height, and the broken pieces are scattered down
-      the whole of its screen to begin with. */
+  /** The edge on the window, as a path for the page's canvas: the line
+      where the page now stands (`top`, the top of the page on the window),
+      `dx` across and `dy` down, from `y0` to `y1` on the window. */
+  function edgeOnWindow(dx, dy, top, y0, y1, first) {
+    const s = halves.edges.L, m = halves.m;
+    const i0 = Math.max(0, lowerBound(s.ys, y0 - top - dy) - 1), i1 = Math.min(s.ys.length - 1, lowerBound(s.ys, y1 - top - dy));
+    for (let i = i0; i <= i1; i++) {
+      const x = m + dx + s.xs[i], y = s.ys[i] + top + dy;
+      if (first && i === i0) ink.moveTo(x, y); else ink.lineTo(x, y);
+    }
+  }
+  /** The page's canvas kept to the halves, out of the gap: the gap's shape
+      — between the left half's edge and the right half's, where each now
+      stands — taken out of what has been drawn. (Once, after the drawing:
+      the drawing kept to the halves by a clip instead cost every line and
+      speck of it a mask, and held the closing at half its frames.) */
+  function eraseGap(at, top) {
+    const B = 40, s = halves.edges.L, m = halves.m;
+    ink.beginPath();
+    edgeOnWindow(at.l, at.yl, top, -B, H + B, true);
+    const i0 = Math.max(0, lowerBound(s.ys, -B - top - at.yr) - 1), i1 = Math.min(s.ys.length - 1, lowerBound(s.ys, H + B - top - at.yr));
+    for (let i = i1; i >= i0; i--) ink.lineTo(m + at.r + s.xs[i], s.ys[i] + top + at.yr);
+    ink.closePath();
+    ink.globalCompositeOperation = "destination-out";
+    ink.globalAlpha = 1;
+    ink.fillStyle = "#000";
+    ink.fill();
+    ink.globalCompositeOperation = "source-over";
+  }
+  /** THE CRACK running down the page as it opens, on the page's canvas —
+      along each half's edge, where each now stands — to `upTo`, a light at
+      its tip, until the seams' own gold takes over. */
+  function drawCrack(at, top) {
+    if (at.crackA < 0.004 || at.crack <= 0) return;
+    const upTo = -40 + (H + 80) * at.crack;
+    [[at.l, at.yl], [at.r, at.yr]].forEach(([dx, dy]) => {
+      ink.beginPath();
+      edgeOnWindow(dx, dy, top, -40, upTo, true);
+      ink.strokeStyle = rgba(LINE, 1);
+      ink.lineWidth = 3.4;
+      ink.globalAlpha = 0.16 * at.crackA;
+      ink.stroke();
+      ink.lineWidth = 1;
+      ink.globalAlpha = 0.9 * at.crackA;
+      ink.stroke();
+    });
+    ink.globalAlpha = 1;
+    if (at.crack < 1) {
+      const tx = halves.m + at.l + edgeAt(halves.edges.L, upTo - top - at.yl);
+      ink.globalCompositeOperation = "lighter";
+      const g = ink.createRadialGradient(tx, upTo, 0, tx, upTo, 22);
+      g.addColorStop(0, rgba(SECOND, 0.85 * at.crackA));
+      g.addColorStop(1, rgba(SECOND, 0));
+      ink.fillStyle = g;
+      ink.fillRect(tx - 22, upTo - 22, 44, 44);
+      ink.globalCompositeOperation = "source-over";
+    }
+  }
+  /** The halves laid out at the page's width. Only the width moves them: a
+      phone's bar coming and going changes the height, and the broken
+      pieces are scattered down the whole of its screen to begin with. */
   function layoutSplit() {
-    const w = page.clientWidth || root.clientWidth, h = window.innerHeight, Wv = window.innerWidth;
+    const w = page.clientWidth || root.clientWidth;
     const m = w / 2, widthMoved = w !== copyWidth || !gap;
     copyWidth = w;
     halves.m = m;
-    halves.host.style.width = w + "px";
+    halves.host.style.width = halves.groundHost.style.width = w + "px";
     if (widthMoved) {
       halves.push = Math.round(clamp(w * SPLIT_PUSH, PUSH_LEAST, PUSH_MOST));
       halves.shake = SHAKE * (w < 700 ? 0.66 : 1);
       halves.edges = edgesFor(halves.push);
-      halves.bands = new Map();
       sizeHalves();
       growEdges(halves.edges, edgeLength());
       setClips();
     }
-    // The drawing's halves, each reaching a little past the window's edges
-    // (so the shake never shows the void at one) and a little past the
-    // middle (so its edge can stand out into the gap).
-    const reach = halves.edges.reach, B = SKY_BLEED;
-    const [sl, sr] = halves.skies, [cl, cr] = halves.cans;
-    halves.skies.forEach((el) => { el.style.top = -B + "px"; el.style.height = (h + 2 * B) + "px"; });
-    sl.style.left = -B + "px";
-    sl.style.width = (m + reach + B) + "px";
-    sr.style.left = (m - reach) + "px";
-    sr.style.width = (Wv - m + reach + B) + "px";
-    const lw = Wv + 2 * B, rw = Wv - m + reach + B, hh = h + 2 * B;
-    const size2 = (c, cw) => {
-      const pw = Math.round(cw * ratio), ph = Math.round(hh * ratio);
-      if (c.width !== pw || c.height !== ph) { c.width = pw; c.height = ph; }
-      c.style.cssText = "width:" + cw + "px;height:" + hh + "px";
-    };
-    size2(cl, lw);
-    size2(cr, rw);
-    // Each half's ground a solid block but for the strip its edge stands
-    // in, which its canvas carries — so the window behind it is not drawn
-    // for nothing under it (as a canvas alone over it, it was, and the
-    // frames fell by a third while the page was scrolled).
-    const [gl, gr] = halves.skies.map((el) => el.querySelector(".om-sky-ground")), strip = 2 * reach + 8;
-    gl.style.cssText = "left:0;width:" + Math.max(0, m + B - reach - 8) + "px";
-    gr.style.cssText = "left:" + strip + "px;right:0";
-    if (halves.ratio !== ratio) { halves.ratio = ratio; halves.bands = new Map(); }
+    fitGround();
     halves.docTop = halves.host.getBoundingClientRect().top + window.scrollY;
     if (gatherAt) return;
     if (mendButton) mendButton.style.left = m + "px";
     if (!widthMoved) return;
-    gap = gapOf(w, Math.max(h, (window.screen && window.screen.height) || 0), halves.push);
+    gap = gapOf(w, Math.max(H, (window.screen && window.screen.height) || 0), halves.push);
     // A new width under the opening: straight to apart.
     if (halves.opened || halves.anims.length) { halves.opened = false; finishOpen(); }
-  }
-  /** THE EDGE IN STRIPS: the line drawn once, a band of the page at a time
-      (EDGE_BAND px tall, its reach wide either side of the middle), as two
-      masks — what the left half loses to the right of it, and what the
-      right loses to the left — and its gold; and laid on the drawing's
-      halves every frame as a copy rather than drawn again. (Drawn again as
-      the page scrolled under it, a long line held the frames back by a
-      third.) The most recently used few are kept. */
-  const EDGE_BAND = 1024;
-  function edgeBand(k) {
-    const e = halves.edges, cache = halves.bands;
-    if (cache.has(k)) { const b = cache.get(k); cache.delete(k); cache.set(k, b); return b; }
-    const reach = e.reach, S = 2 * reach + 8, y0 = k * EDGE_BAND, y1 = y0 + EDGE_BAND, s = e.L;
-    const i = Math.max(0, lowerBound(s.ys, y0) - 1), j = Math.min(s.ys.length - 1, lowerBound(s.ys, y1));
-    const X = (x) => reach + 4 + x, Y = (y) => y - y0;
-    const make = () => {
-      const c = document.createElement("canvas");
-      c.width = Math.ceil(S * ratio);
-      c.height = Math.ceil(EDGE_BAND * ratio);
-      const g = c.getContext("2d");
-      g.setTransform(ratio, 0, 0, ratio, 0, 0);
-      return [c, g];
-    };
-    const along = (g) => { for (let q = i; q <= j; q++) g.lineTo(X(s.xs[q]), Y(s.ys[q])); };
-    const [l, lg] = make(), [r, rg] = make(), [gold, gg] = make();
-    [[lg, S + 2], [rg, -2]].forEach(([g, outer]) => {
-      g.fillStyle = "#000";
-      g.beginPath();
-      g.moveTo(outer, Y(s.ys[i]));
-      along(g);
-      g.lineTo(outer, Y(s.ys[j]));
-      g.closePath();
-      g.fill();
-    });
-    gg.beginPath();
-    gg.moveTo(X(s.xs[i]), Y(s.ys[i]));
-    along(gg);
-    gg.strokeStyle = rgba(LINE, 1);
-    gg.lineWidth = 3.4;
-    gg.globalAlpha = 0.16;
-    gg.stroke();
-    gg.lineWidth = 1;
-    gg.globalAlpha = 0.9;
-    gg.stroke();
-    const band = { l, r, gold };
-    // (Made ready for the drawing as pictures as soon as the browser can,
-    // which it lays down quickest.)
-    if (window.createImageBitmap) ["l", "r", "gold"].forEach((key) => {
-      createImageBitmap(band[key]).then((bm) => { band[key] = bm; }, () => {});
-    });
-    cache.set(k, band);
-    while (cache.size > 8) cache.delete(cache.keys().next().value);
-    return band;
-  }
-  /** A drawing's half (`side`, "l" or "r") cut along its edge where the
-      page now stands (`dy`: where the top of the page is on the window),
-      and its gold laid along it at `seam` — down to `upTo` while the crack
-      is running, a light at its tip. In window coordinates. */
-  function cutEdge(c, side, m, dy, seam, upTo) {
-    const reach = halves.edges.reach, S = 2 * reach + 8, x0 = m - reach - 4;
-    const top = -SKY_BLEED - 2, bottom = H + SKY_BLEED + 2;
-    const k0 = Math.floor((top - dy) / EDGE_BAND), k1 = Math.floor((bottom - dy) / EDGE_BAND);
-    c.globalAlpha = 1;
-    c.globalCompositeOperation = "destination-out";
-    for (let k = k0; k <= k1; k++) c.drawImage(edgeBand(k)[side], x0, k * EDGE_BAND + dy, S, EDGE_BAND);
-    c.globalCompositeOperation = "source-over";
-    if (seam < 0.004 || upTo <= top) return;
-    c.globalAlpha = seam;
-    for (let k = k0; k <= k1; k++) {
-      const yb = k * EDGE_BAND + dy;
-      if (yb >= upTo) break;
-      const tall = Math.min(EDGE_BAND, upTo - yb), img = edgeBand(k).gold;
-      c.drawImage(img, 0, 0, img.width, Math.max(1, Math.min(img.height, tall * ratio)), x0, yb, S, tall);
-    }
-    c.globalAlpha = 1;
-    if (upTo < bottom) {
-      const tx = m + edgeAt(halves.edges.L, upTo - dy);
-      c.globalCompositeOperation = "lighter";
-      const g = c.createRadialGradient(tx, upTo, 0, tx, upTo, 22);
-      g.addColorStop(0, rgba(SECOND, 0.85));
-      g.addColorStop(1, rgba(SECOND, 0));
-      c.fillStyle = g;
-      c.fillRect(tx - 22, upTo - 22, 44, 44);
-      c.globalCompositeOperation = "source-over";
-    }
   }
   function buildSplit() {
     const flow = copyFlow();
@@ -1559,38 +1895,46 @@
     const copies = [flow.cloneNode(true), flow.cloneNode(true)];
     l.appendChild(copies[0]);
     r.appendChild(copies[1]);
-    // The drawing behind, cut the same way, on the page's own ground: the
-    // halves are the page, and the gap between them the void.
-    const sky = document.createElement("div");
-    sky.className = "om-split-sky";
-    sky.setAttribute("aria-hidden", "true");
-    sky.innerHTML = '<div class="om-sky-half l"><i class="om-sky-ground"></i><canvas></canvas></div>' +
-      '<div class="om-sky-half r"><i class="om-sky-ground"></i><canvas></canvas></div>';
-    const skies = [...sky.querySelectorAll(".om-sky-half")];
-    const cans = skies.map((el) => el.querySelector("canvas"));
+    // THE GROUNDS, under the halves and moved with them: the page's own
+    // colour cut along the same edge, and the gold seam along it — so the
+    // halves are the page and the gap between them the void, and the edge
+    // of the one is the edge of the other wherever the page is.
+    const ground = document.createElement("div");
+    ground.className = "om-split-ground";
+    ground.setAttribute("aria-hidden", "true");
+    ground.innerHTML = ["l", "r"].map((k) => '<div class="om-ground-half ' + k + '"><i class="om-ground-fill"></i>' +
+      '<svg class="om-ground-seam" xmlns="http://www.w3.org/2000/svg"><path class="soft"/><path class="fine"/></svg></div>').join("");
+    const grounds = [...ground.querySelectorAll(".om-ground-half")];
+    // The gap's own canvas, fixed to the window under the grounds.
+    gapCanvas = document.createElement("canvas");
+    gapCanvas.className = "om-gap";
+    gapCanvas.setAttribute("aria-hidden", "true");
+    gapInk = gapCanvas.getContext("2d");
     host = text;
     halves = {
-      host: text, sky, text: [l, r], skies, cans, inks: cans.map((c) => c.getContext("2d")), copies,
-      ground: getComputedStyle(page).getPropertyValue("--bg").trim() || "#0d0c10",
-      push: 0, m: 0, shake: 0, anims: [], edges: null, bands: new Map(), ratio: 0, docTop: 0, opened: false, openAt: 0, from: 0, at: null, ro: null,
+      host: text, groundHost: ground, text: [l, r], grounds, copies,
+      fills: grounds.map((g) => g.querySelector(".om-ground-fill")), seams: grounds.map((g) => g.querySelector(".om-ground-seam")),
+      push: 0, m: 0, shake: 0, anims: [], edges: null, tall: 0, docTop: 0, opened: false, openAt: 0, bornAt: 0, from: 0, at: null, ro: null,
     };
-    page.insertBefore(sky, canvas.nextSibling);
-    page.insertBefore(text, sky.nextSibling);
+    page.insertBefore(gapCanvas, canvas);
+    page.insertBefore(ground, canvas.nextSibling);
+    page.insertBefore(text, ground.nextSibling);
+    size();
     layoutSplit();
     placeSplit(openPath(0));                 // whole, to begin with
     root.classList.add("om-held");
     followPage(() => (halves ? halves.copies : []));
-    // The edges laid on as the page grows (a fragrance opened at its foot).
+    // The edges laid on, and the grounds made as tall, as the page grows
+    // (a fragrance opened at its foot) or shrinks.
     if (window.ResizeObserver) {
       halves.ro = new ResizeObserver(() => {
         if (!halves) return;
         const need = edgeLength();
         if (need > halves.edges.to) {
-          const was = halves.edges.to;
           growEdges(halves.edges, need + 2000);
           setClips();
-          [...halves.bands.keys()].forEach((k) => { if ((k + 1) * EDGE_BAND > was) halves.bands.delete(k); });
         }
+        fitGround();
       });
       halves.ro.observe(l);
     }
@@ -1600,6 +1944,7 @@
       if (shown) return;
       shown = true;
       text.style.visibility = "";
+      halves.bornAt = performance.now();
       openSplit();
     };
     const link = shadow.querySelector("link");
@@ -1640,17 +1985,18 @@
     if (mendButton) requestAnimationFrame(() => { if (mendButton) mendButton.classList.add("shown"); });
   }
   /** A way for the halves, worked out at sixty steps a second and handed to
-      the browser whole, from t0 — the drawing's halves on the same clock as
-      the page's. */
+      the browser whole, from t0 — the writing, its ground and the seams'
+      gold on the one clock. */
   function runPath(path, total, t0) {
     halves.anims.forEach((a) => a.cancel());
     halves.anims = [];
     if (!halves.text[0].animate) return;     // (placed by hand each frame instead)
-    const step = 1000 / 60, kl = [], kr = [];
+    const step = 1000 / 60, kl = [], kr = [], ks = [];
     for (let t = 0; ; t += step) {
       const tt = Math.min(t, total), at = path(tt), offset = tt / total;
       kl.push({ offset, transform: "translate(" + at.l.toFixed(2) + "px," + at.yl.toFixed(2) + "px)" });
       kr.push({ offset, transform: "translate(" + at.r.toFixed(2) + "px," + at.yr.toFixed(2) + "px)" });
+      ks.push({ offset, opacity: at.seam.toFixed(3) });
       if (tt >= total) break;
     }
     const run = (el, frames) => {
@@ -1658,8 +2004,9 @@
       a.startTime = t0;
       halves.anims.push(a);
     };
-    run(halves.text[0], kl); run(halves.skies[0], kl);
-    run(halves.text[1], kr); run(halves.skies[1], kr);
+    run(halves.text[0], kl); run(halves.grounds[0], kl);
+    run(halves.text[1], kr); run(halves.grounds[1], kr);
+    halves.seams.forEach((s) => run(s, ks));
   }
   /** OM pressed: the halves together, from wherever the scroll has left
       them, and the wave as they meet. */
@@ -2083,14 +2430,17 @@
     root.dataset.om = pieces;
     if (halves) {
       // The halves have met and are still, exactly over the page: the page
-      // is shown, the drawing behind is the page's own canvas's again from
-      // this frame, and the halves' copies are faded off the page.
+      // is shown, its grounds and the gap's canvas go (the gap long closed,
+      // the grounds the page's own colour), the page's canvas goes back
+      // under the writing — what it draws unchanged — and the halves'
+      // copies are faded off the page.
       const done = halves;
       halves = null;
       if (done.ro) done.ro.disconnect();
       root.classList.add("om-landing");
       root.classList.remove("om-shattered");
-      done.sky.remove();
+      done.groundHost.remove();
+      if (gapCanvas) { gapCanvas.remove(); gapCanvas = gapInk = null; }
       requestAnimationFrame(() => requestAnimationFrame(() => {
         root.classList.remove("om-landing");
         done.host.style.transition = "opacity 420ms cubic-bezier(0.3,0,0.2,1)";
@@ -2223,14 +2573,44 @@
       gap: () => gap && {
         at: gap.motes.slice(0, 12).map((s) => [s.X, s.Y]).concat(gap.shards.slice(0, 12).map((s) => [s.X, s.Y])),
         stirred: gap.shards.concat(gap.motes).reduce((n, s) => n + Math.hypot(s.ox, s.oy), 0),
+        // (How far behind the scroll they all are, together, in px on the window.)
+        trailing: gap.shards.concat(gap.motes).reduce((n, s) => n + Math.abs(window.scrollY - s.f) * s.rate, 0),
         stir,
-        turn: gap.shards.slice(0, 12).map((s) => s.th),
+        turn: gap.shards.slice(0, 12).map((s) => [s.ax, s.ay, s.az]),
       },
+      // THE DEPTH: every piece and speck in the gap — its depth (0 near, 1
+      // far), where it stands down the window, how large it is drawn and
+      // how much of the scroll carries it.
+      depths: () => gap && gap.shards.concat(gap.motes).map((s) => ({ z: s.z, y: s.Y, size: s.p, rate: s.rate, f: s.f })),
+      // How much of the drawing behind is there (0 to 1), and what the word
+      // is: "calligraphy", "writing" (the specks written over it) or
+      // "specks", and where it stands.
+      world: () => worldIn,
+      word: () => word,
+      // The halves' grounds: where each stands across, and its seam's gold.
+      grounds: () => halves && halves.grounds.map((g, k) => ({ x: new DOMMatrix(getComputedStyle(g).transform).m41, seam: +getComputedStyle(halves.seams[k]).opacity })),
       openIn: (n) => {
         const copies = halves ? halves.copies : shards.map((s) => s.copy).concat(lens ? [lens.copy] : []);
         return { open: copies.filter((c) => { const part = c.querySelectorAll(".human-part")[n]; return part && part.open; }).length, of: copies.length };
       },
     };
+  }
+
+  /** THE WORD while the page is split (see CALLI_FILL): the calligraphy,
+      coming up as the page comes in; and once OM is pressed, drawing in to
+      the size the page keeps it at and going, as the โอม of specks is
+      written over it. `big` and `small` are its sizes split and whole. */
+  function drawOm(x, cy, t, now, big, small, voidness) {
+    let callA = halves.bornAt ? smooth01((now - halves.bornAt) / CALLI_IN_MS) : 0, scale = big, drawn = 0;
+    if (gatherAt) {
+      const c = (now - gatherAt) / SPLIT_MS;
+      callA *= 1 - smoother(clamp((c - CALLI_OUT[0]) / (CALLI_OUT[1] - CALLI_OUT[0]), 0, 1));
+      scale = big + (small - big) * smoother(clamp(c / SHRINK_TO, 0, 1));
+      drawn = smooth01((c - WRITE[0]) / (WRITE[1] - WRITE[0]));
+    }
+    drawCalli(x, cy - scale * 0.1, scale, big, callA, now, handX, handY);
+    if (drawn > 0) drawWord(x, cy - scale * 0.1, scale, t, 0.24 + 0.46 * voidness, handX, handY, drawn);
+    word = { mode: drawn <= 0 ? "calligraphy" : drawn < 1 || callA > 0.004 ? "writing" : "specks", calligraphy: callA, drawn, scale, x };
   }
 
   // ============================================================
@@ -2248,7 +2628,11 @@
   window.addEventListener("pointermove", hand, { passive: true });
   window.addEventListener("pointerdown", hand, { passive: true });
   document.addEventListener("pointerleave", () => { handX = -99999; handY = -99999; });
-  window.addEventListener("resize", () => { size(); if (REDUCE) frame(performance.now()); });
+  window.addEventListener("resize", () => {
+    size();
+    if (glassStyle === "split" && !halves && copyWidth) copyWidth = page.clientWidth || copyWidth;
+    if (REDUCE) frame(performance.now());
+  });
 
   const began = performance.now();
   let last = began;
@@ -2321,55 +2705,42 @@
     const big = Math.min(W * (W < 700 ? 0.46 : 0.36), 560) / 3.26 * 2;
     const small = Math.min(W * 0.24, 330) / 3.26 * 2;
     const scale = small + (big - small) * voidness;
+    // The word, in the split's page, stands at the middle of the page (the
+    // window's less its scrollbar), where the gap is.
+    const wx = glassStyle === "split" && copyWidth ? copyWidth / 2 : cx;
     if (halves) {
-      // SPLIT: the drawing behind is drawn whole on the left half's canvas,
-      // on the page's ground — the hand where it stands in the drawing, on
-      // whichever half it is over — and the right half's laid from it; each
-      // then cut along its edge where the page now stands, and its gold
-      // drawn on it. The page's own canvas carries the gap's pieces.
-      const at = halves.at, m = halves.m, B = SKY_BLEED, reach = halves.edges.reach;
-      const top = halves.docTop - sy;
-      let hx = -99999, hy = -99999;
-      if (handX > -9000) {
-        const side = sideAt(handX, handY, { l: at.l, r: at.r, yl: at.yl, yr: at.yr, top });
-        if (side === "l") { hx = handX - at.l; hy = handY - at.yl; }
-        else if (side === "r") { hx = handX - at.r; hy = handY - at.yr; }
-      }
-      const [cl, cr] = halves.cans, left = halves.inks[0], right = halves.inks[1];
-      ink = left;
-      ink.setTransform(ratio, 0, 0, ratio, B * ratio, B * ratio);
-      ink.globalAlpha = 1;
-      ink.globalCompositeOperation = "source-over";
-      ink.fillStyle = halves.ground;
-      ink.fillRect(-B, -B, W + 2 * B, H + 2 * B);
-      drawWorld(cx, cy, turn, t, pageAlpha + voidness * 0.4, hx, hy);
-      drawWord(cx, cy - scale * 0.1, scale, t, 0.24 + 0.46 * voidness, hx, hy);
-      // The gap's pieces reach as far as the gap does, and no less than a
-      // little either side of the seam once it has closed.
+      // SPLIT. Under the grounds, on the gap's own canvas: the gap's depths,
+      // reaching as far as the gap does (and no less than a little either
+      // side of the seam once it has closed), the light far down and the
+      // walls' shade. Over the grounds and under the writing, on the page's
+      // canvas: the drawing behind once OM is pressed, and the broken pieces
+      // faint as the halves close over them — both kept to the halves, out
+      // of the gap — and THE WORD, whole across all of it; and as it opens,
+      // the crack.
+      const at = halves.at, top = halves.docTop - sy;
       const spread = Math.max((at.r - at.l) / 2, gap.push * 0.45);
       gap.reach = spread;
       moveGap(t, dt, spread, gx, gy);
-      // The broken pieces faint behind the writing, coming in as the halves
-      // close over them.
-      const faint = clamp((at.met - 0.62) / 0.38, 0, 1);
-      if (gatherAt && faint > 0) drawGap(t, GAP_FAINT * faint * faint * (3 - 2 * faint));
-      right.setTransform(1, 0, 0, 1, 0, 0);
-      right.globalAlpha = 1;
-      right.globalCompositeOperation = "source-over";
-      right.clearRect(0, 0, cr.width, cr.height);
-      right.drawImage(cl, Math.round((m - reach + B) * ratio), 0, cr.width, cr.height, 0, 0, cr.width, cr.height);
-      const upTo = -B + (H + 2 * B) * at.crack;
-      cutEdge(left, "l", m, top, at.seam, upTo);
-      right.setTransform(ratio, 0, 0, ratio, -(m - reach) * ratio, B * ratio);
-      cutEdge(right, "r", m, top, at.seam, upTo);
-      ink = mainInk;
-      // In the gap, on the void, the broken pieces whole: the halves close
-      // over them.
-      drawGap(t, 1);
+      ink = gapInk;
+      ink.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ink.clearRect(0, 0, W, H);
+      drawGap(t, 1, { l: halves.m + at.l, r: halves.m + at.r });
       gap.alpha = 1;
+      ink = mainInk;
+      worldIn = gatherAt ? smoother(clamp((now - gatherAt - WORLD_IN_FROM) / WORLD_IN_MS, 0, 1)) : 0;
+      const faint = gatherAt ? clamp((at.met - 0.62) / 0.38, 0, 1) : 0;
+      if (worldIn > 0.004 || faint > 0) {
+        if (worldIn > 0.004) drawWorld(cx, cy, turn, t, (pageAlpha + voidness * 0.4) * worldIn, handX, handY);
+        if (faint > 0) drawGap(t, GAP_FAINT * smooth01(faint));
+        if (at.r - at.l > 0.5) eraseGap(at, top);
+      }
+      drawOm(wx, cy, t, now, big, small, voidness);
+      drawCrack(at, top);
     } else {
+      worldIn = 1;
       drawWorld(cx, cy, turn, t, pageAlpha + voidness * 0.4, handX, handY);
-      drawWord(cx, cy - scale * 0.1, scale, t, 0.24 + 0.46 * voidness, handX, handY);
+      drawWord(wx, cy - scale * 0.1, scale, t, 0.24 + 0.46 * voidness, handX, handY);
+      if (glassStyle === "split") word = { mode: "specks", calligraphy: 0, drawn: 1, scale, x: wx };
       if (voidness > 0.003 || sparks.length) drawSparks(cx, cy, portalR() * (0.6 + 0.4 * voidness), t, dt, voidness, gatherAt ? 0 : 1);
       if (gap) {
         gap.reach = gap.push * 0.45;

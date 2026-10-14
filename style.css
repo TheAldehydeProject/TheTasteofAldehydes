@@ -13390,15 +13390,19 @@ html.om-landing .human-readout { transition: none !important; }
   z-index: 3;
   pointer-events: none;            /* the page under the glass is read and pressed */
 }
-/* THE SPLIT (om.js, 2026-10-13, last): the page's two halves are laid in
-   the page — so they scroll as it does, under the finger on a phone,
-   nothing moved by hand — over the drawing's two halves, fixed to the
-   window; the gap's broken pieces are on the page's own canvas, under
-   both. Pushed apart, nothing of either half may widen the page. Each
-   half of the page is cut along its own uneven edge by om.js (a clip
-   path), and the drawing's halves along the same edges where the page
-   stands, on their own canvases with the page's own ground drawn in them,
-   so the halves are the page and the gap between them the void. And no
+/* THE SPLIT (om.js, 2026-10-13, last; its grounds 2026-10-14): the page's
+   two halves are laid in the page — so they scroll as it does, under the
+   finger on a phone, nothing moved by hand — and under each, laid in the
+   page as well and moved with it, its GROUND: the page's own colour, cut
+   along the same uneven edge, with the gold seam along it. So the halves
+   are the page and the gap between them the void, and the ground's edge is
+   the writing's wherever the page is scrolled to. (The ground was drawn on
+   two canvases fixed to the window until 2026-10-14, cut where the page
+   stood each frame — and on a phone it trailed the writing.) Between the
+   grounds and the writing, the page's own canvas — the word, and the
+   drawing once OM is pressed — and under the grounds the gap's own. Pushed
+   apart, nothing of either may widen the page, and the grounds reach a
+   little above the page so a shake never shows the void at its top. And no
    grey box flashing where a tap really lands on a phone: what is seen
    there is a half of the page, not the page under it. */
 .om-split {
@@ -13410,23 +13414,44 @@ html.om-landing .human-readout { transition: none !important; }
   overflow: hidden;
   overflow: clip;
 }
-.om-split-sky {
-  position: fixed;
-  inset: 0;
-  z-index: 2;
-  overflow: hidden;
+.om-split-ground {
+  position: absolute;
+  top: -40px;                      /* GROUND_TOP in om.js */
+  left: 0;
+  z-index: 1;
   pointer-events: none;
+  overflow: hidden;
+  overflow: clip;
 }
-.om-sky-half {
+.om-ground-half {
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
-  overflow: hidden;
   will-change: transform;
 }
-.om-sky-half > canvas { position: absolute; left: 0; top: 0; }
-.om-sky-ground { position: absolute; top: 0; bottom: 0; background: var(--bg); }
+.om-ground-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: var(--bg);
+}
+.om-ground-seam {
+  position: absolute;
+  top: 0;
+  overflow: visible;
+  opacity: 0;
+}
+.om-ground-seam path { fill: none; stroke: rgb(var(--om-gold)); }
+.om-ground-seam .soft { stroke-width: 3.4; stroke-opacity: 0.16; }
+.om-ground-seam .fine { stroke-width: 1; stroke-opacity: 0.9; }
+.om-gap {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+html.om-shattered[data-glass="split"] .human-field { z-index: 2; }
 /* THE WAVE (om.js): as the halves meet, the faintest gold running out
    from the seam to the window's edges, over the writing — two bands moved
    by the browser's own clock. */
