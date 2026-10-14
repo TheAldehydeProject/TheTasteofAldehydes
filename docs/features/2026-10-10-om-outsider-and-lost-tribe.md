@@ -1084,6 +1084,11 @@ and, having seen the gap at 11%:
 
 > it should still be wider than your screenshots. it should be a little more than 2/5ths
 
+and then:
+
+> I would also like you to fade the contents of the page slightly too, when the curtains are not
+> connected.
+
 **The curtains** are the owner's word for the two halves of the page (not the landing page's
 **curtain**, which is the paper's wipe; see the glossary).
 
@@ -1105,6 +1110,12 @@ the wave runs, so it is all there again a third of a second before the page is w
 writing's opacity in the same closing path as its place (`write`, in `joinPath`), handed to the browser
 on the same clock (`runPath`); the grounds and their seams do not fade. Read as the writing dipping out
 and back, because the page has to be read once whole; the OM button went as it always has.
+
+**And a little faded while the curtains are apart.** As the halves break apart the writing goes down to
+72% of itself (`SPLIT_WRITING`, in `openPath`, eased with them), stays so while they are apart
+(`restAt`), goes out from there as OM is pressed and comes back to the whole of itself as they meet —
+the page, its pictures and its gold all a little quieter, the calligraphy and the gap's pieces as they
+were.
 
 **The hexagon half the size**: the lens at the hand once the page is whole is 98px from its middle to a
 corner (`LENS`; it was 196). It is the same lens the rings and the glasses show their page whole in,
@@ -1146,7 +1157,8 @@ whole; **once whole and calm**, under half the pieces drawn, spread across over 
 over a third of them more than a quarter of the page from its middle, none carried by more than 0.31 of
 the scroll, and scrolled 400px the nearest moving under 0.45 of what they did with the curtains open
 (and more than 20px). The near pieces "go with the page soon" now (over 110px in 0.15s, where it was 150
-— they are lazier on purpose). *Om's split on a phone*: 82px each way. *Om's hexagon shows the page
+— they are lazier on purpose). *Om's split on a phone*: 82px each way. And in the opening, the writing whole on the first frame and
+between 0.6 and 0.85 of itself once the curtains are apart. *Om's hexagon shows the page
 whole* passes at the smaller size.
 
 **Still open**: a trial, as before — whichever of the split, the rings, the broken pane and the fine

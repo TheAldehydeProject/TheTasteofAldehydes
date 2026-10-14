@@ -309,7 +309,9 @@ test("Om broken in rings round its middle, each band turned a little out of true
    to the scrolling to be wider and not just in a bright band in the center.
    I want them spread out, and less dense, and also less reactive"; and "it
    should still be wider ... a little more than 2/5ths": each half pushed out
-   21%, the gap 42% of the page; the writing going as OM is pressed and back as they meet;
+   21%, the gap 42% of the page; and "fade the contents of the page slightly
+   too, when the curtains are not connected": the writing a little faded
+   while they are apart; the writing going as OM is pressed and back as they meet;
    once whole, the pieces spread across the page, fewer, and carried by far
    less of the scroll than with the curtains open.
    The rings and the glass are kept behind ?glass=. */
@@ -322,7 +324,7 @@ test("Om opens whole and breaks apart; the gap wider, its edges corrugated, its 
     window.__opening = [];
     (function f() {
       const s = window.OmGlass && window.OmGlass.split();
-      if (s && s.offsets.length) window.__opening.push([s.offsets[0], s.ys[0], s.opened]);
+      if (s && s.offsets.length) window.__opening.push([s.offsets[0], s.ys[0], s.opened, s.writing]);
       if (!s || !s.opened) requestAnimationFrame(f);
     })();
   });
@@ -340,6 +342,12 @@ test("Om opens whole and breaks apart; the gap wider, its edges corrugated, its 
   expect(Math.abs(opening[0][0]), "whole when it opens").toBeLessThan(1);
   expect(opening.some((r) => Math.abs(r[0]) > at.push * 0.4 && Math.abs(r[0]) < at.push * 0.9), "coming apart, not jumping").toBe(true);
   expect(opening.some((r) => Math.abs(r[1]) > 0.2), "shaking as it breaks").toBe(true);
+  // The writing whole as it opens, and a little faded once the curtains are
+  // apart ("fade the contents of the page slightly too, when the curtains
+  // are not connected").
+  expect(opening[0][3], "the writing whole as it opens").toBeGreaterThan(0.95);
+  expect(at.writing, "and a little faded while they are apart").toBeGreaterThan(0.6);
+  expect(at.writing, "(a little)").toBeLessThan(0.85);
   const w = await page.evaluate(() => document.body.clientWidth), cx = w / 2;
   expect(at.offsets, "two halves").toHaveLength(2);
   expect(at.push, "each pushed out 21% of the page, the gap a little more than two fifths of it").toBe(Math.round(Math.min(520, Math.max(60, w * 0.21))));

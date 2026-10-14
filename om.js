@@ -465,6 +465,12 @@
   // to read is seen sliding and shaking on the way — only the page's
   // ground closing, the drawing fading in and the โอม written over the
   // calligraphy — and the page is there again, whole, as the wave runs.
+  // And while the curtains are apart, the writing a little faded (later
+  // still — "fade the contents of the page slightly too, when the curtains
+  // are not connected"): going down to SPLIT_WRITING as the halves break
+  // apart, and from there out as OM is pressed, back to the whole of
+  // itself as they meet.
+  const SPLIT_WRITING = 0.72;      // how much of the writing there is while they are apart
   const WRITING_OUT = 700;         // ms over which the writing goes
   const WRITING_BACK = [0.88, 1.24];   // shares of SPLIT_MS over which it comes back
   const WAVE_MS = 1150;            // the wave crossing to the window's edges
@@ -1778,7 +1784,7 @@
       take over from it). */
   function restAt() {
     const p = halves.push;
-    return { l: -p, r: p, yl: 0, yr: 0, met: 0, seam: SEAM_REST, crack: 1, crackA: 0, write: 1 };
+    return { l: -p, r: p, yl: 0, yr: 0, met: 0, seam: SEAM_REST, crack: 1, crackA: 0, write: SPLIT_WRITING };
   }
   /** THE OPENING, t ms after the crack sets off (before it, whole). */
   const OPEN_ALL = OPEN_CRACK * 0.6 + OPEN_PART;
@@ -1794,7 +1800,7 @@
     // seams' own gold takes over from it, bright, settling to its rest.
     const over = smooth01((t - OPEN_CRACK * 0.92) / 260);
     const seam = over * (SEAM_REST + (1 - SEAM_REST) * (1 - apart));
-    return { l: -push * apart + q.xl, r: push * apart + q.xr, yl: q.yl, yr: q.yr, met: 1 - apart, seam, crack, crackA: 1 - over, write: 1 };
+    return { l: -push * apart + q.xl, r: push * apart + q.xr, yl: q.yl, yr: q.yr, met: 1 - apart, seam, crack, crackA: 1 - over, write: 1 - (1 - SPLIT_WRITING) * apart };
   }
   /** THE CLOSING, t ms after OM was pressed. */
   function joinPath(t) {
@@ -1812,10 +1818,11 @@
     // The seams flash gold as the halves meet, and go.
     let seam = SEAM_REST;
     if (t > SPLIT_MS * 0.85) seam = t <= SPLIT_MS ? SEAM_REST + (1 - SEAM_REST) * smooth01((t - SPLIT_MS * 0.85) / (SPLIT_MS * 0.15)) : 1 - smooth01((t - SPLIT_MS) / 600);
-    // The writing going as they set off, and back as they meet.
+    // The writing going as they set off (from the little of it faded while
+    // they were apart), and back, whole, as they meet.
     const out = smoother(clamp(t / WRITING_OUT, 0, 1));
     const back = smoother(clamp((t / SPLIT_MS - WRITING_BACK[0]) / (WRITING_BACK[1] - WRITING_BACK[0]), 0, 1));
-    return { l: -apart + q.xl, r: apart + q.xr, yl: q.yl, yr: q.yr, met, seam, crack: 1, crackA: 0, write: 1 - out * (1 - back) };
+    return { l: -apart + q.xl, r: apart + q.xr, yl: q.yl, yr: q.yr, met, seam, crack: 1, crackA: 0, write: SPLIT_WRITING * (1 - out) * (1 - back) + back };
   }
   function splitState(now) {
     if (gatherAt) return joinPath(now - gatherAt);
