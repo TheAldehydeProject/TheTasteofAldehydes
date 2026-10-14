@@ -195,8 +195,10 @@
   // unbreaks in the hexagon"), larger, and while the page is cracked, the
   // page whole inside it.
   // A little bigger again since 2026-10-13 ("also make the hexagon a little
-  // bigger"): 196, where it was 168 (and 92 before that).
-  const LENS = 196;                // its radius, px
+  // bigger"): 196, where it was 168 (and 92 before that). About half that
+  // since 2026-10-14, later ("make the hexagon smaller (around half the
+  // size)"): 98.
+  const LENS = 98;                 // its radius, px
   const LENS_LAG = 0.14;           // how far it closes on the hand each frame
   const LENS_TURN = 0.16;          // how far the drawing is turned inside it
   const LENS_NEAR = 1.14;          // and how much nearer
@@ -324,10 +326,12 @@
   // over them, and stay, faint behind the writing (GAP_FAINT).
   // A little wider since 2026-10-14 ("especially on the phone"): 8.5% and
   // at least 42px, where it was 7% and 24 — a gap of 244px on a laptop
-  // (200 before) and 84 on a phone (55).
-  const SPLIT_PUSH = 0.085;        // each half pushed out this share of the page's width
-  const PUSH_LEAST = 42;           // px, at the least (a phone)
-  const PUSH_MOST = 140;           // and at the most
+  // (200 before) and 84 on a phone (55). Wider again later that day ("I
+  // want to just widen the gap"): 11%, 54px at the least and 190 at the
+  // most — 316px on a laptop and 108 on a phone.
+  const SPLIT_PUSH = 0.11;         // each half pushed out this share of the page's width
+  const PUSH_LEAST = 54;           // px, at the least (a phone)
+  const PUSH_MOST = 190;           // and at the most
   // THE DEPTH (2026-10-14 — "make it so that the thing in the middle has
   // dimension; and so when you scroll, some parts of it react slowly while
   // the "farther" parts of it will move slower"): everything in the gap
@@ -346,8 +350,8 @@
   const WIDE_FAR = 0.7;            // and the farthest
   const RATE_NEAR = 0.9;           // of the scroll the nearest are carried by
   const RATE_FAR = 0.1;            // and the farthest
-  const FOLLOW_NEAR = 0.06;        // seconds in which the nearest catch the scroll up
-  const FOLLOW_FAR = 0.9;          // and the farthest
+  const FOLLOW_NEAR = 0.1;         // seconds in which the nearest catch the scroll up (0.06 until 2026-10-14, later)
+  const FOLLOW_FAR = 1.1;          // and the farthest (0.9)
   const WALL_SHADE = 0.82;         // how dark the shade under each wall is, at the wall
   const WALL_REACH = 0.6;          // and how far into the gap it reaches (of its half width)
   const DEEP_GLOW = 0.055;         // the light far down, at the gap's middle
@@ -406,6 +410,17 @@
   // round the gap itself opened as the page was scrolled, and `?gap=read`
   // as it was read down; and until 2026-10-14 every piece trailed by the
   // same few hundredths of a second, SCROLL_LAG.)
+  // Smoother since 2026-10-14, later ("slightly smooth out the animation
+  // of the background of the gap"): the scroll's speed and the stir it
+  // raises eased over time rather than by a share of every frame (they
+  // were 0.22 and 0.25 a frame — jerky on an uneven frame, and quicker on
+  // a quicker screen), the specks drawn out into streaks by degrees rather
+  // than all at once past a speed (they jumped from dots to lines, in four
+  // strengths), and every piece a little lazier to catch the scroll up
+  // (FOLLOW_*).
+  const SCROLL_EASE = 0.1;         // s in which the scroll's speed is felt
+  const STIR_UP = 0.16;            // s in which the stir comes up
+  const STIR_DOWN = 0.5;           // and settles
   const SCROLL_FULL = 900;         // px a second at which it answers most of the way
   const SCROLL_TUMBLE = 3.4;       // radians a second more a piece turns, at full
   const SCROLL_SPREAD = 12;        // px the pieces spread apart, at full
@@ -442,6 +457,14 @@
   const SHAKE_TAU = 300;           // ms in which it falls to a third, once they have met
   const SHAKE_TAIL = 950;          // ms of it after they meet, ending still
   const SEAM_REST = 0.62;          // the cut edges' gold, at rest
+  // THE WRITING, FADED AS THEY CLOSE (2026-10-14, later — "fade the text
+  // after you press the OM button during the transition"): the halves'
+  // writing goes as they set off and comes back as they meet, so nothing
+  // to read is seen sliding and shaking on the way — only the page's
+  // ground closing, the drawing fading in and the โอม written over the
+  // calligraphy — and the page is there again, whole, as the wave runs.
+  const WRITING_OUT = 700;         // ms over which the writing goes
+  const WRITING_BACK = [0.88, 1.24];   // shares of SPLIT_MS over which it comes back
   const WAVE_MS = 1150;            // the wave crossing to the window's edges
   const WAVE_WIDE = 70;            // px, its half width
   const WAVE_LIT = 1.5;            // how much brighter a speck it passes is
@@ -449,6 +472,24 @@
   const GAP_MOTES = 1 / 560;       // and specks
   const GAP_REACH = 120;           // px from the hand within which they give way to it
   const GAP_FAINT = 0.16;          // what is left of them behind the writing once it is whole
+  // THE PIECES ONCE IT IS WHOLE (2026-10-14, later — "When the curtains
+  // collapse, I want the particles in the background that react to the
+  // scrolling to be wider and not just in a bright band in the center. I
+  // want them spread out, and less dense, and also less reactive
+  // (especially when compared to the particles with the curtains open)"):
+  // as the halves close, the pieces spread out from the gap — under the
+  // halves, and faint over them — across the whole page (CALM_WIDE), fewer
+  // of them drawn (CALM_KEEP), each carried by far less of the scroll
+  // (CALM_RATE), stirred by it and pushed by the hand much less (CALM_STIR,
+  // CALM_HAND); the cracks far down go. (Until then they were left where
+  // the gap had been, a band down the middle of the page.)
+  const CALM_FROM = 0.3;           // of the closing, when they set off spreading
+  const CALM_MS = 3600;            // ms over which they spread out and calm
+  const CALM_WIDE = 0.97;          // of half the page they reach either way
+  const CALM_KEEP = 0.42;          // of the pieces still drawn
+  const CALM_RATE = [0.3, 0.04];   // of the scroll the nearest and the farthest are carried by
+  const CALM_STIR = 0.22;          // of the scroll's stir they feel
+  const CALM_HAND = 0.5;           // and of the hand's push
   const GROUND_TOP = 40;           // px the halves' ground reaches above the page (so a shake never shows the void)
   const MEND_MS = 1100;            // how long one piece takes to come home, mending for good
   const MEND_SPREAD = 760;         // and the most it waits, the farthest last
@@ -1242,6 +1283,7 @@
     // Most small, a few large — the largest larger the wider the gap.
     const most = clamp(push * 0.3, 17, 40);
     const shards = [];
+    const kept = (i) => ((i + 1) * 0.6180339887) % 1 < CALM_KEEP;   // (an even share, by order)
     for (let i = 0; i < n; i++) {
       const r = 3.5 + Math.pow(random(), 2.2) * most;
       const corners = 3 + Math.floor(random() * 4);
@@ -1254,7 +1296,7 @@
         // Its turn in three dimensions, and how quickly each way.
         ax: random() * Math.PI * 2, ay: random() * Math.PI * 2, az: random() * Math.PI * 2,
         wx: between(-0.32, 0.32), wy: between(-0.32, 0.32), wz: between(-0.16, 0.16), way: random() < 0.5 ? -1 : 1,
-        ink: between(0.35, 0.8), fill: random() < 0.55 ? between(0.05, 0.16) : 0, bright: random() < 0.1,
+        ink: between(0.35, 0.8), fill: random() < 0.55 ? between(0.05, 0.16) : 0, bright: random() < 0.1, keep: kept(i),
       }, span));
     }
     shards.sort((a, b) => b.z - a.z);
@@ -1263,7 +1305,7 @@
     for (let i = 0; i < m; i++) {
       motes.push(drifter({
         u: random() * 2 - 1, z: random(), fall: between(-16, -3), sway: between(1.5, 9),
-        size: between(0.8, 1.9), base: between(0.3, 0.85),
+        size: between(0.8, 1.9), base: between(0.3, 0.85), keep: kept(i),
       }, span));
     }
     // The cracks, far down, each at its depth — broken into runs, a fissure
@@ -1277,21 +1319,23 @@
         pts.push(u, y);
         on.push(run >= 0);
       }
-      return drifter({ u: 0, z, fall: 0, sway: 0, pts, on }, span);
+      return drifter({ u: 0, z, fall: 0, sway: 0, pts, on, keep: true }, span);
     });
-    return { cx, push, span, shards, motes, cracks, alpha: 1 };
+    return { cx, push, span, shards, motes, cracks, alpha: 1, calm: 0, calmK: 1, stirK: 0 };
   }
   /** What every drifting thing in the gap carries: where it is laid, how
       it sways, how far the hand has moved it — and, from its depth, how
-      small and faint it is drawn, how much of the scroll carries it and how
-      quickly it catches the scroll up (`f`, the scroll as it has felt it,
-      through two stages, so it sets off smoothly). */
+      small and faint it is drawn, how much of the scroll carries it (open,
+      and once whole) and how quickly it catches the scroll up (`f`, the
+      scroll as it has felt it, through two stages, so it sets off
+      smoothly; `c`, how far that has carried it, gathered as it goes, so
+      its share can change without it jumping). */
   function drifter(o, span) {
-    const z = o.z, sy = window.scrollY || 0;
+    const z = o.z, sy = window.scrollY || 0, rate = RATE_NEAR + (RATE_FAR - RATE_NEAR) * z;
     return Object.assign(o, { y: random() * span, fq: between(0.15, 0.55), ph: random() * Math.PI * 2,
       ox: 0, oy: 0, vx: 0, vy: 0, lit: 0, X: 0, Y: 0, f: sy, f1: sy,
       p: 1 / (1 + z * DEPTH), fog: 1 - FOG * z, near: 1 - z,
-      rate: RATE_NEAR + (RATE_FAR - RATE_NEAR) * z,
+      rate, calmRate: CALM_RATE[0] + (CALM_RATE[1] - CALM_RATE[0]) * z, rn: rate, c: sy * rate,
       tau: (FOLLOW_NEAR + (FOLLOW_FAR - FOLLOW_NEAR) * z) / 2,
       wide: WIDE_NEAR + (WIDE_FAR - WIDE_NEAR) * z });
   }
@@ -1300,11 +1344,17 @@
       and given way to the hand — pushed off it and coming back, lit as it
       passes, the nearer the more — and turned, the faster the page is
       scrolled the faster. `spread` is how far from the middle of the page
-      the gap reaches either way. */
-  function moveGap(t, dt, spread, hx, hy) {
+      the gap reaches either way; `calm`, how far the page has come together
+      (THE PIECES ONCE IT IS WHOLE). */
+  function moveGap(t, dt, spread, hx, hy, calm) {
     const g = gap, sy = window.scrollY, span = g.span, cx = g.cx;
     const hand = hx > -9000 && !REDUCE, R2 = GAP_REACH * GAP_REACH;
+    g.calm = calm;
+    g.calmK = 1 - (1 - CALM_STIR) * calm;
+    g.stirK = stir * g.calmK;
+    const stirK = g.stirK, shove = 2600 * (1 - (1 - CALM_HAND) * calm), all = cx * CALM_WIDE;
     const step = (s, still) => {
+      const was = s.f;
       if (REDUCE) { s.f = s.f1 = sy; }
       else {
         const k = 1 - Math.exp(-dt / s.tau);
@@ -1313,7 +1363,7 @@
         if (hand && !still) {
           const dx = s.X - hx, dy = s.Y - hy, d2 = dx * dx + dy * dy;
           if (d2 < R2 && d2 > 0.01) {
-            const d = Math.sqrt(d2), f = 1 - d / GAP_REACH, push = f * f * 2600 * dt * (0.35 + 0.65 * s.near);
+            const d = Math.sqrt(d2), f = 1 - d / GAP_REACH, push = f * f * shove * dt * (0.35 + 0.65 * s.near);
             s.vx += (dx / d) * push; s.vy += (dy / d) * push;
             if (f > s.lit) s.lit = f;
           }
@@ -1323,12 +1373,15 @@
         s.ox += s.vx * dt; s.oy += s.vy * dt;
         s.lit *= Math.exp(-dt * 2.2);
       }
-      let y = s.y + (REDUCE ? 0 : t * s.fall * s.p) - s.f * s.rate;
+      s.rn = s.rate + (s.calmRate - s.rate) * calm;
+      s.c += (s.f - was) * s.rn;
+      let y = s.y + (REDUCE ? 0 : t * s.fall * s.p) - s.c;
       y = ((y % span) + span) % span - 100;
-      s.X = cx + s.u * (spread * s.wide + stir * SCROLL_SPREAD * s.p) + (REDUCE ? 0 : Math.sin(t * s.fq * Math.PI * 2 + s.ph) * s.sway * s.p) + s.ox;
+      const reach = spread * s.wide + (all - spread * s.wide) * calm;
+      s.X = cx + s.u * (reach + stirK * SCROLL_SPREAD * s.p) + (REDUCE ? 0 : Math.sin(t * s.fq * Math.PI * 2 + s.ph) * s.sway * s.p) + s.ox;
       s.Y = y + s.oy;
     };
-    const tumble = stir * SCROLL_TUMBLE;
+    const tumble = stirK * SCROLL_TUMBLE;
     g.shards.forEach((s) => {
       step(s);
       if (REDUCE) return;
@@ -1353,10 +1406,11 @@
     // little of the scroll.
     ink.lineWidth = 1;
     ink.strokeStyle = rgba(LINE, 1);
-    const reach = g.reach || g.push;
-    const flex = REDUCE ? 0 : stir * SCROLL_FLEX;
+    const reach = g.reach || g.push, calm = g.calm, stirK = g.stirK;
+    const flex = REDUCE ? 0 : stirK * SCROLL_FLEX;
     g.cracks.forEach((c, ci) => {
-      ink.globalAlpha = 0.34 * c.fog * a;
+      if (calm > 0.997) return;
+      ink.globalAlpha = 0.34 * c.fog * a * (1 - calm);
       const off = c.Y + 100;                    // (how far it has been carried, wrapped)
       [off - g.span, off].forEach((k) => {
         ink.beginPath();
@@ -1375,6 +1429,8 @@
     ink.fillStyle = rgba(LINE, 1);
     g.shards.forEach((s) => {
       if (s.Y < -60 || s.Y > H + 60) return;
+      const kept = s.keep ? 1 : 1 - calm;
+      if (kept < 0.003) return;
       const ca = Math.cos(s.ax), sa = Math.sin(s.ax), cb = Math.cos(s.ay), sb = Math.sin(s.ay), cc = Math.cos(s.az), sc = Math.sin(s.az);
       const k = s.p;
       const m00 = cc * cb * k, m01 = (cc * sb * sa - sc * ca) * k;
@@ -1387,8 +1443,8 @@
         if (j) ink.lineTo(X, Y); else ink.moveTo(X, Y);
       });
       ink.closePath();
-      const hot = 1 + 1.1 * Math.max(s.lit, stir * SCROLL_LIT * s.near);
-      const k2 = a * s.fog * hot;
+      const hot = 1 + 1.1 * Math.max(s.lit, stirK * SCROLL_LIT * s.near);
+      const k2 = a * s.fog * hot * kept;
       if (s.fill) { ink.globalAlpha = Math.min(1, s.fill * (0.25 + 0.95 * lit) * k2); ink.fill(); }
       ink.globalAlpha = Math.min(1, s.ink * (s.bright ? 1.35 : 1) * (0.45 + 0.55 * lit) * k2);
       ink.strokeStyle = rgba(LINE, 1);
@@ -1400,33 +1456,21 @@
         ink.stroke();
       }
     });
-    // The specks: smaller and fainter the farther, drawn out into short
-    // streaks along the way the page is being scrolled — the nearer the
-    // longer — in four strengths, each one stroke.
+    // The specks: smaller and fainter the farther, each drawn out into a
+    // short streak along the way the page is being scrolled — the faster
+    // and the nearer the longer, by degrees, a dot at rest.
     ink.globalCompositeOperation = "lighter";
     ink.fillStyle = rgba(SPECK, 1);
-    ink.strokeStyle = rgba(SPECK, 1);
-    const streak = REDUCE ? 0 : scrollV * 0.012, streaking = Math.abs(streak) > 1.6;
-    const strengths = streaking ? [[], [], [], []] : null;
+    const streak = REDUCE ? 0 : scrollV * 0.012 * g.calmK;
     g.motes.forEach((s) => {
       if (s.Y < -20 || s.Y > H + 20) return;
+      const kept = s.keep ? 1 : 1 - calm;
+      if (kept < 0.003) return;
       const tw = REDUCE ? 1 : 0.75 + 0.25 * Math.sin(t * 1.7 + s.ph * 3);
-      const k = Math.min(1, s.base * tw * a * s.fog * (1 + 1.6 * Math.max(s.lit, stir * SCROLL_LIT * s.near)));
-      if (streaking) { strengths[Math.min(3, Math.floor(k * 4))].push(s); return; }
-      ink.globalAlpha = k;
-      const z = Math.max(0.6, s.size * (0.4 + 0.6 * s.p));
-      ink.fillRect(s.X - z / 2, s.Y - z / 2, z, z);
+      ink.globalAlpha = Math.min(1, s.base * tw * a * s.fog * kept * (1 + 1.6 * Math.max(s.lit, stirK * SCROLL_LIT * s.near)));
+      const z = Math.max(0.6, s.size * (0.4 + 0.6 * s.p)), L = streak * s.rn;
+      ink.fillRect(s.X - z / 2, (L < 0 ? s.Y + L : s.Y) - z / 2, z, Math.abs(L) + z);
     });
-    if (streaking) {
-      ink.lineWidth = 1.2;
-      strengths.forEach((list, k) => {
-        if (!list.length) return;
-        ink.globalAlpha = (k + 0.5) / 4;
-        ink.beginPath();
-        list.forEach((s) => { ink.moveTo(s.X, s.Y); ink.lineTo(s.X, s.Y + streak * s.rate); });
-        ink.stroke();
-      });
-    }
     ink.globalCompositeOperation = "source-over";
     ink.globalAlpha = 1;
     ink.lineWidth = 1;
@@ -1725,12 +1769,12 @@
       take over from it). */
   function restAt() {
     const p = halves.push;
-    return { l: -p, r: p, yl: 0, yr: 0, met: 0, seam: SEAM_REST, crack: 1, crackA: 0 };
+    return { l: -p, r: p, yl: 0, yr: 0, met: 0, seam: SEAM_REST, crack: 1, crackA: 0, write: 1 };
   }
   /** THE OPENING, t ms after the crack sets off (before it, whole). */
   const OPEN_ALL = OPEN_CRACK * 0.6 + OPEN_PART;
   function openPath(t) {
-    if (t <= 0) return { l: 0, r: 0, yl: 0, yr: 0, met: 1, seam: 0, crack: 0, crackA: 0 };
+    if (t <= 0) return { l: 0, r: 0, yl: 0, yr: 0, met: 1, seam: 0, crack: 0, crackA: 0, write: 1 };
     const push = halves.push, crack = smoother(clamp(t / OPEN_CRACK, 0, 1));
     const u = clamp((t - OPEN_CRACK * 0.6) / OPEN_PART, 0, 1), apart = smoother(u);
     // The shake from the crack's first moment, hardest as the halves break
@@ -1741,7 +1785,7 @@
     // seams' own gold takes over from it, bright, settling to its rest.
     const over = smooth01((t - OPEN_CRACK * 0.92) / 260);
     const seam = over * (SEAM_REST + (1 - SEAM_REST) * (1 - apart));
-    return { l: -push * apart + q.xl, r: push * apart + q.xr, yl: q.yl, yr: q.yr, met: 1 - apart, seam, crack, crackA: 1 - over };
+    return { l: -push * apart + q.xl, r: push * apart + q.xr, yl: q.yl, yr: q.yr, met: 1 - apart, seam, crack, crackA: 1 - over, write: 1 };
   }
   /** THE CLOSING, t ms after OM was pressed. */
   function joinPath(t) {
@@ -1759,7 +1803,10 @@
     // The seams flash gold as the halves meet, and go.
     let seam = SEAM_REST;
     if (t > SPLIT_MS * 0.85) seam = t <= SPLIT_MS ? SEAM_REST + (1 - SEAM_REST) * smooth01((t - SPLIT_MS * 0.85) / (SPLIT_MS * 0.15)) : 1 - smooth01((t - SPLIT_MS) / 600);
-    return { l: -apart + q.xl, r: apart + q.xr, yl: q.yl, yr: q.yr, met, seam, crack: 1, crackA: 0 };
+    // The writing going as they set off, and back as they meet.
+    const out = smoother(clamp(t / WRITING_OUT, 0, 1));
+    const back = smoother(clamp((t / SPLIT_MS - WRITING_BACK[0]) / (WRITING_BACK[1] - WRITING_BACK[0]), 0, 1));
+    return { l: -apart + q.xl, r: apart + q.xr, yl: q.yl, yr: q.yr, met, seam, crack: 1, crackA: 0, write: 1 - out * (1 - back) };
   }
   function splitState(now) {
     if (gatherAt) return joinPath(now - gatherAt);
@@ -1772,6 +1819,7 @@
     halves.text[0].style.transform = halves.grounds[0].style.transform = tl;
     halves.text[1].style.transform = halves.grounds[1].style.transform = tr;
     halves.seams.forEach((s) => { s.style.opacity = at.seam.toFixed(3); });
+    halves.text.forEach((el) => { el.style.opacity = at.write < 1 ? at.write.toFixed(3) : ""; });
   }
   /** Where each half stands now, as drawn: across, and up or down — and
       where the top of the page is on the window. */
@@ -1985,18 +2033,19 @@
     if (mendButton) requestAnimationFrame(() => { if (mendButton) mendButton.classList.add("shown"); });
   }
   /** A way for the halves, worked out at sixty steps a second and handed to
-      the browser whole, from t0 — the writing, its ground and the seams'
-      gold on the one clock. */
+      the browser whole, from t0 — the writing (and how much of it is
+      there), its ground and the seams' gold on the one clock. */
   function runPath(path, total, t0) {
     halves.anims.forEach((a) => a.cancel());
     halves.anims = [];
     if (!halves.text[0].animate) return;     // (placed by hand each frame instead)
-    const step = 1000 / 60, kl = [], kr = [], ks = [];
+    const step = 1000 / 60, kl = [], kr = [], ks = [], kw = [];
     for (let t = 0; ; t += step) {
       const tt = Math.min(t, total), at = path(tt), offset = tt / total;
       kl.push({ offset, transform: "translate(" + at.l.toFixed(2) + "px," + at.yl.toFixed(2) + "px)" });
       kr.push({ offset, transform: "translate(" + at.r.toFixed(2) + "px," + at.yr.toFixed(2) + "px)" });
       ks.push({ offset, opacity: at.seam.toFixed(3) });
+      kw.push({ offset, opacity: at.write.toFixed(3) });
       if (tt >= total) break;
     }
     const run = (el, frames) => {
@@ -2007,6 +2056,7 @@
     run(halves.text[0], kl); run(halves.grounds[0], kl);
     run(halves.text[1], kr); run(halves.grounds[1], kr);
     halves.seams.forEach((s) => run(s, ks));
+    if (kw.some((k) => k.opacity !== "1.000")) halves.text.forEach((el) => run(el, kw));
   }
   /** OM pressed: the halves together, from wherever the scroll has left
       them, and the wave as they meet. */
@@ -2558,7 +2608,8 @@
         const at = halves ? splitOffsets() : null;
         return { push: gap.push, offsets: at ? [at.l, at.r] : [], ys: at ? [at.yl, at.yr] : [], y: at ? at.yl : 0,
           pieces: gap.shards.length, motes: gap.motes.length, alpha: gap.alpha,
-          opened: halves ? halves.opened : true, stir };
+          opened: halves ? halves.opened : true, stir,
+          writing: halves ? +getComputedStyle(halves.text[0]).opacity : 1, calm: gap.calm };
       },
       // Each half's edge (px from the middle of the page, before it is
       // pushed) every `step` px down the page from `from`, `n` of them.
@@ -2579,9 +2630,10 @@
         turn: gap.shards.slice(0, 12).map((s) => [s.ax, s.ay, s.az]),
       },
       // THE DEPTH: every piece and speck in the gap — its depth (0 near, 1
-      // far), where it stands down the window, how large it is drawn and
-      // how much of the scroll carries it.
-      depths: () => gap && gap.shards.concat(gap.motes).map((s) => ({ z: s.z, y: s.Y, size: s.p, rate: s.rate, f: s.f })),
+      // far), where it stands on the window, how large it is drawn, how
+      // much of the scroll carries it now, and whether it is still drawn
+      // once the page is whole.
+      depths: () => gap && gap.shards.concat(gap.motes).map((s) => ({ z: s.z, x: s.X, y: s.Y, size: s.p, rate: s.rn, f: s.f, keep: s.keep })),
       // How much of the drawing behind is there (0 to 1), and what the word
       // is: "calligraphy", "writing" (the specks written over it) or
       // "specks", and where it stands.
@@ -2652,12 +2704,15 @@
     // The page's scrolling: how fast (px a second, eased).
     const sy = window.scrollY;
     if (lastScroll == null) lastScroll = sy;
-    if (dt > 0.0005) scrollV += ((sy - lastScroll) / dt - scrollV) * (REDUCE ? 1 : 0.22);
+    if (dt > 0.0005) scrollV += ((sy - lastScroll) / dt - scrollV) * (REDUCE ? 1 : 1 - Math.exp(-dt / SCROLL_EASE));
     if (Math.abs(scrollV) < 0.5) scrollV = 0;
     lastScroll = sy;
     // THE SCROLL, felt by the gap's geometry: up quickly, settling slowly.
     const stirTo = REDUCE ? 0 : 1 - Math.exp(-Math.abs(scrollV) / SCROLL_FULL);
-    stir += (stirTo - stir) * (stirTo > stir ? 0.25 : 0.06);
+    stir += (stirTo - stir) * (1 - Math.exp(-dt / (stirTo > stir ? STIR_UP : STIR_DOWN)));
+    // THE PIECES CALMING as the page comes together (CALM_FROM): 0 while it
+    // is split, 1 once they have spread out across the page.
+    const calm = gatherAt ? smoother(clamp((now - gatherAt - CALM_FROM * SPLIT_MS) / CALM_MS, 0, 1)) : 0;
     // THE WAVE, where it is.
     waveNow = null;
     if (waveFrom) {
@@ -2720,7 +2775,7 @@
       const at = halves.at, top = halves.docTop - sy;
       const spread = Math.max((at.r - at.l) / 2, gap.push * 0.45);
       gap.reach = spread;
-      moveGap(t, dt, spread, gx, gy);
+      moveGap(t, dt, spread, gx, gy, calm);
       ink = gapInk;
       ink.setTransform(ratio, 0, 0, ratio, 0, 0);
       ink.clearRect(0, 0, W, H);
@@ -2728,7 +2783,9 @@
       gap.alpha = 1;
       ink = mainInk;
       worldIn = gatherAt ? smoother(clamp((now - gatherAt - WORLD_IN_FROM) / WORLD_IN_MS, 0, 1)) : 0;
-      const faint = gatherAt ? clamp((at.met - 0.62) / 0.38, 0, 1) : 0;
+      // (Faint over the halves as they close over them, and as they spread
+      // out under them.)
+      const faint = gatherAt ? clamp(Math.max((at.met - 0.62) / 0.38, calm * 3), 0, 1) : 0;
       if (worldIn > 0.004 || faint > 0) {
         if (worldIn > 0.004) drawWorld(cx, cy, turn, t, (pageAlpha + voidness * 0.4) * worldIn, handX, handY);
         if (faint > 0) drawGap(t, GAP_FAINT * smooth01(faint));
@@ -2744,7 +2801,7 @@
       if (voidness > 0.003 || sparks.length) drawSparks(cx, cy, portalR() * (0.6 + 0.4 * voidness), t, dt, voidness, gatherAt ? 0 : 1);
       if (gap) {
         gap.reach = gap.push * 0.45;
-        moveGap(t, dt, gap.reach, gx, gy);
+        moveGap(t, dt, gap.reach, gx, gy, calm);
         drawGap(t, GAP_FAINT);
         gap.alpha = GAP_FAINT;
       }
