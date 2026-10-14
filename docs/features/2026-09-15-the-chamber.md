@@ -1958,3 +1958,15 @@ the same count each time (13,433 rects: one whole frame of the drawing). A busy 
 draws the new drawing's first held frame a little late, after the test has begun counting at 200ms.
 It holds now that **at most one frame** under the veil is drawn; with the redrawing it guards against
 put back on purpose (the drawing redrawn every frame under its veil), it fails at 23.
+
+## 2026-10-14 — a sentence of Aetherialism's, in the owner's new words
+
+> Please, in the favorites, correct the statement to "It is the raw smell of a simple life,
+> inseparable from (if not synonymous with) the backyard and all else in it; though especially the
+> rabbits."
+
+Aetherialism's first paragraph (`gallery-writing data-favourite="Aetherialism"`) carries the
+sentence as the owner gave it; it read *It is raw smell of a simple life, inseparable from (if not
+synonymous with) the backyard with its everything in it; but especially the rabbits.* Nothing else
+in the paragraph, or on the page, changed. `chamber.spec.js` run.
+
