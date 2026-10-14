@@ -2102,3 +2102,26 @@ apart takes its 3.8 seconds however slowly the frames come (it took 28 at three 
 drawing is begun after the page's first frame** (`begin`); **the links are worked out on plain numbers** (`linkUp`, the same
 links); and **the sources' sheet is written when it is first opened** (`writeSources`). Nothing on the
 page looks or behaves differently once it is open.
+
+## 2026-10-14 — a name under the hand slows the turning, and the tests press it where it is
+
+> Figure out what the two failing tests are, recreate the failure and fix it
+
+A third test failed when the whole suite was run again after the first two were fixed: *at an
+accord, a note's name pressed opens its window* — Geranium's name pressed, Ylang Ylang's window
+opened. **Recreated** four at a time, eight times, with a record of each press: three in eight
+failed, Geranium's name measured at x 551, pressed at its middle (581), and by then standing at 733
+— the press on the empty canvas. At an accord each network turns about 8° a second (`NET_SPIN`), a
+name with it; **a node under the hand slows the turning to a third, "so it can be pressed", and a
+name under the hand did not** — it has been pressable since 2026-10-01 and kept the whole pace — and
+on a busy machine a second and more passes between the test measuring a name and pressing it.
+
+- **A name under the hand slows the turning as its node does** (`overName` in `network.js`, the same
+  0.35 as `hovered`; never while a window is open, which is the owner's 2026-10-01 rule). Measured:
+  0.158 radians a second with the hand away, 0.054 with it on a name.
+- **The tests press a name where it is** (`pressName` in `note-library.spec.js`): the hand put on
+  it first, measured again and pressed, and pressed again where it is now if it had still drifted
+  from under the press, any other note's window shut first — in this test and in *every note's
+  window says what its pyramidal distribution is*, which pressed the first name the same way. Run
+  four at a time eight times, and six at a time twelve times with both, every one passed.
+

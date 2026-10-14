@@ -1696,6 +1696,11 @@
       // also clickable ... in each of the accord views"): at an accord, the
       // names beside the nodes open each note's window, as the node does.
       li.addEventListener("click", () => { if (g.on && g.node >= 0) select(g.node); });
+      // (And under the hand it slows the turning as its node does, so that
+      // it can be pressed — 2026-10-14: it went on at its whole pace, and
+      // drifted out from under a press on a busy machine.)
+      li.addEventListener("pointerenter", () => { overName = g; });
+      li.addEventListener("pointerleave", () => { if (overName === g) overName = null; });
     }
 
     // ============================================================
@@ -1708,6 +1713,7 @@
     let filter = "", previewing = "";     // an accord chosen by hand; one under the hand
     let hits = [];
     let selected = -1, hovered = -1, overMiddle = -1, overHub = false;
+    let overName = null;                  // a note's name under the hand, at an accord
     let panelOpen = false, searchOpen = false, noteOpen = false;   // the menu and the search start put away
     let viewOff = 0, viewLift = 0, fitted = false;
     const cam = { T: new THREE.Vector3(), d: 20, yaw: 0.35, pitch: ONE_PITCH, zoom: 1 };
@@ -3406,13 +3412,14 @@
       }
       ph = phase();
       cp = combo();
-      // (A node under the hand slows it, so it can be pressed — but never a
-      // window: whatever is opened over it, it goes on turning behind at its
-      // own pace, 2026-10-01: "when you open anything any popup, i want the
-      // thing in the back to keep moving. regardless of what you open". A
-      // note chosen used to slow it to a quarter.)
+      // (A node under the hand slows it, so it can be pressed — or its name,
+      // pressable since 2026-10-01 — but never a window: whatever is opened
+      // over it, it goes on turning behind at its own pace, 2026-10-01:
+      // "when you open anything any popup, i want the thing in the back to
+      // keep moving. regardless of what you open". A note chosen used to
+      // slow it to a quarter.)
       const windowOpen = noteOpen || sourcesOpen || leaveOpen;
-      const slow = !windowOpen && selected < 0 && hovered >= 0 ? 0.35 : 1;
+      const slow = !windowOpen && selected < 0 && (hovered >= 0 || (overName && overName.on)) ? 0.35 : 1;
       if (!still) {
         psi += wall * SPIN * (1 - ph.move) * slow * (tagging ? 0.35 : 1);
         accords.forEach((A) => { A.spin += wall * A.rate * ph.move * slow; });

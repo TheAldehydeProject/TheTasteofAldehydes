@@ -148,6 +148,34 @@ async function goTo(page, k, code) {
   await expect(page.locator(".net-stage")).toHaveAttribute("data-focus", code, { timeout: 20000 });
   await expect.poll(async () => (await state(page)).flying, { timeout: 20000 }).toBe(false);
 }
+/** At an accord, a note's name pressed where it is — the hand put on it
+ *  first (a name under the hand slows the turning, as its node does),
+ *  measured again and pressed; and if it had drifted from under the press
+ *  all the same by the time the press landed, pressed again where it is
+ *  now, any other note's window shut first. On a busy machine a second and
+ *  more can pass between the measuring and the press, and a name was
+ *  pressed where it had been (2026-10-14, recreated four at a time:
+ *  Geranium measured at x 551, pressed at 581, and by then at 733; in a full
+ *  run Ylang Ylang's node stood where it had been). The note whose window
+ *  opened, or null. */
+async function pressName(page, word) {
+  const named = page.locator(".net-label.is-on").filter({ hasText: new RegExp("^\\s*" + word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*$") }).first();
+  let opened = null;
+  for (let tries = 0; tries < 4 && opened !== word; tries++) {
+    if (opened) {
+      await page.keyboard.press("Escape");
+      await expect.poll(async () => (await state(page)).note, { timeout: 3000 }).toBe(null);
+    }
+    const near = await named.boundingBox();
+    if (!near) { await page.waitForTimeout(400); continue; }
+    await page.mouse.move(near.x + near.width / 2, near.y + near.height / 2);
+    const at = (await named.boundingBox()) || near;
+    await page.mouse.click(at.x + at.width / 2, at.y + at.height / 2);
+    await expect.poll(async () => (await state(page)).note, { timeout: 2500 }).not.toBe(null).catch(() => {});
+    opened = (await state(page)).note;
+  }
+  return opened;
+}
 /** Rouge, not white: a note's colour once the signal has passed it — a
  *  deep red, the red far above the green and the blue (2026-09-28: "more
  *  red ike rouge ... A darker red", and then "A little glowier and darker
@@ -1437,11 +1465,9 @@ test("at an accord, a note's name pressed opens its window", async ({ page }) =>
     const k = boxes.findIndex((a, i) => i > 0 && boxes.every((b, j) => j === i || room(a, b) > 24));
     return k > 0 ? k : 1;
   });
-  const name = page.locator(".net-label.is-on").nth(clear);
-  const word = (await name.textContent()).trim();
-  const at = await name.boundingBox();
-  await page.mouse.click(at.x + at.width / 2, at.y + at.height / 2);
-  await expect.poll(async () => (await state(page)).note, { timeout: 5000 }).toBe(word);
+  const word = (await page.locator(".net-label.is-on").nth(clear).textContent()).trim();
+  const opened = await pressName(page, word);
+  expect(opened, "the name pressed opens its note's window").toBe(word);
   await expect(page.locator(".net-note-name")).toHaveText(word);
   expect(errors).toEqual([]);
 });
@@ -1455,8 +1481,8 @@ test("every note's window says what its pyramidal distribution is", async ({ pag
   await expandIt(page);
   await goTo(page, 3, "FLO");
   await expect.poll(() => page.locator(".net-label.is-on").count(), { timeout: 8000 }).toBeGreaterThan(0);
-  const at = await page.locator(".net-label.is-on").first().boundingBox();
-  await page.mouse.click(at.x + at.width / 2, at.y + at.height / 2);
+  const word = (await page.locator(".net-label.is-on").first().textContent()).trim();
+  expect(await pressName(page, word), "a note's window open").toBe(word);
   await expect(page.locator(".net-note-tiers .net-note-explain")).toHaveText(
     "This refers to the perfume distribution in which you can find this note on either the top, mid or base (or none of the above).");
 });
