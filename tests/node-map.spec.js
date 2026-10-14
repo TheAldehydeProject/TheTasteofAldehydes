@@ -27,17 +27,33 @@ const EXPECTED_LABELS = [
   "Contact",
 ];
 
-/* PRESSING A NODE: on its mark, the small square at the node itself — never
-   the middle of its name. A name stands to the right of its mark until the
-   node drifts past 68% of the window's width, and then to its left, a whole
-   name's width away; with a press forced through, Playwright measures the
-   name and presses its middle a moment later, and a node drifting over that
-   line in between left the press on the empty map — no window. That is what
-   failed "every node's window shows a picture" when the machine was busy
-   (2026-10-14, recreated: Explorations & Researches measured at x 611 to
-   884, its name at 856 to 1129 when the press landed at 747). The mark
-   stays where the node is. */
-const pressNode = (label, how = "click") => label.locator(".node3d-mark")[how]({ force: true });
+/* PRESSING A NODE as a person does: the hand put on it first — the map
+   comes to rest under the hand, and a name the hand is on keeps its side —
+   and, once it stands still, pressed on its mark, the small square at the
+   node itself. A name stands to the right of its mark until its node drifts
+   past 68% of the window's width, and to its left after, a whole name's
+   width across; the tests measured a name and pressed its middle a moment
+   later with the press forced through (no waiting for it to be still), and
+   a node drifting over that line in between left the press on the empty
+   map: no window. That failed "every node's window shows a picture" when
+   the machine was busy (2026-10-14, recreated: Explorations & Researches
+   measured at x 611 to 884, its name at 856 to 1129 when the press landed
+   at 747). Two faults, and both are mended: the test's, pressing a moving
+   thing where it had been — fixed here — and the map's, a name thrown out
+   from under the hand as the map came to rest under it — fixed in
+   node-scene.js. (The press is forced only because a map that drifts by
+   itself is never "stable" to Playwright, which would wait for ever.) */
+async function pressNode(label, how = "click") {
+  const page = label.page(), mark = label.locator(".node3d-mark");
+  await mark.hover({ force: true });
+  await expect.poll(async () => {
+    const a = await mark.boundingBox();
+    await page.waitForTimeout(150);
+    const b = await mark.boundingBox();
+    return !!(a && b) && Math.hypot(a.x - b.x, a.y - b.y) < 0.5;
+  }, { timeout: 15000, message: "the map at rest under the hand" }).toBe(true);
+  await mark[how]({ force: true });
+}
 
 test.describe("the map itself", () => {
   test.beforeEach(async ({ page }) => {

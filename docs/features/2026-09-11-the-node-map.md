@@ -329,12 +329,18 @@ pressing it moved the name out from under the press. On a busy machine the time 
 longer, and the map is at a different turn when each press comes. Run the same way, eight of eight
 and then twelve of twelve (six at a time) passed with the fix.
 
-- **The tests press a node on its mark** (`pressNode` in `node-map.spec.js`), the small square at
-  the node itself, which stays where the node is whichever side its name stands — every press and
-  tap of a node in that file, and the hover. The window is measured against its Close **once it has
+Two faults, one in the test and one in the map, and both are mended at their root:
+
+- **The test's: it pressed a moving thing where it had been.** The tests now press a node **as a
+  person does** (`pressNode` in `node-map.spec.js`): the hand put on its mark first — the small square
+  at the node itself, which stays where the node is whichever side its name stands — then waiting
+  until the map has come to rest under the hand, and only then pressing; every press and tap of a node
+  in that file, and the hover. (The press is still forced through, only because a map that drifts by
+  itself is never "stable" to Playwright, which would wait for ever; it is made once the mark is
+  still.) The window is measured against its Close **once it has
   come to rest** (it glides out of the node over 0.6s, and on a busy machine *the picture under the
   Close* was read half way), and the test has 150s rather than 90 for its eight windows.
-- **The map: a name the hand is on keeps the side it stands on** (`n._flip` while it is
+- **The map's: a name the hand is on keeps the side it stands on** (`n._flip` while it is
   `activeBranch`, in `node-scene.js`). The map comes to rest under the hand gently, over about a
   second; a node still drifting over the line as it did threw its name across, out from under the
   hand — what the test met, and what a person reaching for a name there would have met too.
