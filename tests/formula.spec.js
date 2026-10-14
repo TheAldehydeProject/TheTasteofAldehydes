@@ -737,16 +737,32 @@ test("a name is quiet until the hand comes to it: then it comes up gradually to 
   expect(rest, "low at rest").toBeLessThan(0.45);
   expect(rest, "but there").toBeGreaterThan(0.2);
   expect(await name.evaluate((e) => getComputedStyle(e).maskImage || getComputedStyle(e).webkitMaskImage), "no veil").toBe("none");
+  // the hand on it: it comes up, gradually, to the whole of itself —
+  // watched from the page itself, from the moment the hand comes onto it,
+  // every frame for a second and a half. (It was read a quarter of a second
+  // after the hand's last step; a busy machine delivers those steps late —
+  // one to three and a half seconds after the hand had come, measured with
+  // four browsers at once — and the reading was taken when the name had
+  // long since come up, 0.98 of itself, though it rises over 0.9s as ever.)
+  await name.evaluate((e) => {
+    window.__rise = null;
+    const read = () => { const m = /opacity\(([\d.]+)\)/.exec(getComputedStyle(e).filter); return (m ? +m[1] : 1) * +getComputedStyle(e).opacity; };
+    e.addEventListener("pointerenter", () => {
+      const t = e.getAnimations().find((a) => a.transitionProperty === "filter");
+      const rise = window.__rise = { ms: t ? t.effect.getComputedTiming().duration : 0, seen: [] };
+      const t0 = performance.now();
+      (function f() { const at = performance.now() - t0; rise.seen.push([at, read()]); if (at < 1500) requestAnimationFrame(f); })();
+    }, { once: true });
+  });
   const r = await name.boundingBox();
   await page.mouse.move(1380, 60);
   await page.waitForTimeout(1500);
-  // the hand on it: it comes up, gradually, to the whole of itself
   await page.mouse.move(r.x + r.width / 2, r.y + r.height / 2, { steps: 4 });
-  await page.waitForTimeout(250);
-  const partway = await quiet();
-  expect(partway, "on its way up").toBeGreaterThan(rest + 0.02);
-  expect(partway, "gradually, not at once").toBeLessThan(0.97);
-  await expect.poll(quiet, { timeout: 3000 }).toBeGreaterThan(0.99);
+  await expect.poll(() => page.evaluate(() => { const s = window.__rise && window.__rise.seen; return !!s && s.length > 0 && s[s.length - 1][0] >= 1500; }), { timeout: 20000 }).toBe(true);
+  const rise = await page.evaluate(() => window.__rise);
+  expect(rise.ms, "over most of a second").toBeGreaterThanOrEqual(800);
+  expect(rise.seen.some(([, v]) => v > rest + 0.02 && v < 0.99), "gradually, not at once: seen on its way up").toBe(true);
+  expect(rise.seen[rise.seen.length - 1][1], "to the whole of itself").toBeGreaterThan(0.99);
   await page.waitForTimeout(1200);
   await expect(page.locator(".molecule-charge"), "δ− by the hand").toHaveClass(/is-on/);
   expect(await page.locator(".molecule-charge").textContent()).toBe("\u03b4\u2212");

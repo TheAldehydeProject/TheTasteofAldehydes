@@ -901,7 +901,14 @@ read for the drift where they read for the lines.
   pixel as just outside the cloud (2026-10-05; until then it read more just outside the cloud than at the
   edges, the sillage spreading out of the aldehyde).
 - **`a name is quiet until the hand comes to it: then it comes up gradually to the whole of
-  itself`** — under 45% at rest, part way after a quarter of a second, whole after; no mask; the δ−.
+  itself`** — under 45% at rest; then, **watched from the page itself from the moment the hand comes
+  onto it** (2026-10-14), a transition over most of a second (0.8s at least), seen on its way up and
+  whole by a second and a half; no mask; the δ−. (It was read a quarter of a second after the hand's
+  last step, and failed once on a full run with the reading at 0.98: recreated with four browsers at
+  once, a busy machine delivered the hand's steps one to three and a half seconds late, so the reading
+  came after the name had long since come up — the name itself rising over 0.9s every time. Watched
+  from the page, it passed twelve times out of twelve under the same load, and fails at once if the
+  name is made to come up at once.)
 - **`the electronegative hand draws the sillage's specks to it`** — with `?molecule=full`, every
   speck drawn, the names hidden, the hand well off the orbit's ring.
 - **`the electronegative hand draws the aldehyde's own specks to it`** — and at the title, far less
