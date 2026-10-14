@@ -541,6 +541,34 @@ const SITE_LINKS = [
     '<p class="ma-caption"><span>The smell of aldehydes</span><span>R–CHO</span></p>';
   overlay.appendChild(aside);
 
+  // UNDER THE LIST ON A PHONE (2026-10-14): in the corner at the foot of the
+  // window, never higher than the last name — made smaller until it fits
+  // (`--ma-k`, a scale about its bottom right corner), and not there at all
+  // if it would be under 60% of itself. It was pinned to the corner at one
+  // size whatever the list did, and on a smaller phone (360 × 780, 375 ×
+  // 812), or where a long name runs onto two lines, it rose beside the last
+  // two names. On a 390 × 844 phone it fits as it always stood.
+  const FIT_GAP = 12;              // px its top stands below the last name's top, at the least
+  function fitUnderList() {
+    aside.classList.remove("ma-no-room");
+    aside.style.removeProperty("--ma-k");
+    if (window.innerWidth > 700) return;
+    const last = overlay.querySelector(".menu-list li:last-child");
+    if (!last || !aside.offsetHeight) return;
+    // Where the last name stands, as laid out (its rise as the menu opens
+    // left out of it).
+    let top = 0;
+    for (let el = last; el && el !== overlay; el = el.offsetParent) top += el.offsetTop;
+    const foot = overlay.clientHeight - 16;           // `bottom: 16px`
+    const k = Math.min(1, (foot - (top + FIT_GAP)) / aside.offsetHeight);
+    if (k < 0.6) aside.classList.add("ma-no-room");
+    else if (k < 1) aside.style.setProperty("--ma-k", k.toFixed(3));
+  }
+  new MutationObserver(() => { if (overlay.classList.contains("open")) fitUnderList(); })
+    .observe(overlay, { attributes: true, attributeFilter: ["class"] });
+  window.addEventListener("resize", fitUnderList);
+  if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", fitUnderList);
+
   // THE CLOUD, on its canvas under the drawing, in the drawing's own 400 ×
   // 400: where each speck belongs, in which colour, and its own clock.
   const canvas = aside.querySelector(".ma-cloud");

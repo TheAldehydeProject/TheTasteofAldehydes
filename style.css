@@ -358,6 +358,10 @@ body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
     transform: translateY(14px);
   }
   .menu-overlay.open .menu-aldehydes { transform: none; }
+  /* never higher than the last name: nav.js makes it smaller to fit
+     (`--ma-k`), and takes it away where it would be too small */
+  .menu-aldehydes { scale: var(--ma-k, 1); transform-origin: 100% 100%; }
+  .menu-aldehydes.ma-no-room { display: none; }
   .menu-aldehydes .ma-mol { width: 190px; }
   .menu-aldehydes .ma-cloud { width: 190px; }
   .menu-aldehydes .ma-caption { display: none; }

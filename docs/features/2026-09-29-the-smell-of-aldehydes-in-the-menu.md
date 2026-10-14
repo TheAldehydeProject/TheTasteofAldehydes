@@ -137,3 +137,28 @@ smell of aldehydes' on the left under the aldehyde molecule in the menu page".
   the same frames (16.7ms in the middle of them).
 - **The caption**: *The smell of aldehydes* on the left, *R–CHO* on the right (`.ma-caption`).
 
+
+## 2026-10-14 — under the list on any phone
+
+> Figure out what the two failing tests are, recreate the failure and fix it
+
+*The menu carries the smell of aldehydes on its right* failed on the test machine at its last
+check, a phone 390 × 844: the molecule's top stood at 615px and the last name's at 625. It failed
+the same way at every commit back to the one that wrote the check (2026-10-03), with the same
+numbers: nothing had broken it. The tests answer Google Fonts with an empty stylesheet, so the
+Menu's names are set in the machine's stand-in for Jost, which is wider, and *Explorations &
+Researches* runs onto two lines and pushes the list down.
+
+It found a real fault all the same. On a phone the molecule was **pinned to the corner at one size**
+(`bottom: 16px`, 190px across) whatever the list did, and measured with the real Jost it rose
+beside the last two names on smaller phones: its top at 511px where the last name's was at 551 on a
+390 × 740, 551 against 571 on a 360 × 780, 583 against 587 on a 375 × 812. Only the 390 × 844 the
+check used had room.
+
+**Now it is made smaller until it stands under the list** (`fitUnderList` in `nav.js`): when the
+Menu opens, when the window changes size and when a font arrives, its top is kept at least 12px
+below the last name's top (`FIT_GAP`), scaled about its bottom right corner (`--ma-k`, the CSS
+`scale`), and taken away (`ma-no-room`) where it would be under 60% of itself. On a 390 × 844 phone
+with the real font it stands exactly where it stood, at its full size; on a 360 × 780 it is 162px
+across, on a 390 × 740, 144. The test now checks a 360 × 780 phone as well as a 390 × 844 — and
+that it is still there, at 60% of itself at the least — and fails with the fit taken out.

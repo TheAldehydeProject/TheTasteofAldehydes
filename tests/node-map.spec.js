@@ -27,6 +27,18 @@ const EXPECTED_LABELS = [
   "Contact",
 ];
 
+/* PRESSING A NODE: on its mark, the small square at the node itself — never
+   the middle of its name. A name stands to the right of its mark until the
+   node drifts past 68% of the window's width, and then to its left, a whole
+   name's width away; with a press forced through, Playwright measures the
+   name and presses its middle a moment later, and a node drifting over that
+   line in between left the press on the empty map — no window. That is what
+   failed "every node's window shows a picture" when the machine was busy
+   (2026-10-14, recreated: Explorations & Researches measured at x 611 to
+   884, its name at 856 to 1129 when the press landed at 747). The mark
+   stays where the node is. */
+const pressNode = (label, how = "click") => label.locator(".node3d-mark")[how]({ force: true });
+
 test.describe("the map itself", () => {
   test.beforeEach(async ({ page }) => {
     await serveDependenciesLocally(page);
@@ -61,7 +73,7 @@ test.describe("the map itself", () => {
 
     expect(await page.evaluate(() => window.__mapReadout.activeIndex)).toBe(-1);
 
-    await page.locator(".node3d-label", { hasText: "Favourites" }).hover({ force: true });
+    await page.locator(".node3d-label", { hasText: "Favourites" }).locator(".node3d-mark").hover({ force: true });
     await expect
       .poll(() => page.evaluate(() => window.__mapReadout.activeIndex))
       .toBe(EXPECTED_LABELS.indexOf("Favourites"));
@@ -156,7 +168,7 @@ test.describe("the preview window", () => {
   });
 
   test("opens from the node that has one, instead of navigating away", async ({ page }) => {
-    await page.locator(".node3d-label", { hasText: "Scent Descriptions" }).click({ force: true });
+    await pressNode(page.locator(".node3d-label", { hasText: "Scent Descriptions" }));
 
     await expect(page.locator(".node-preview-modal")).toBeVisible();
     await expect(page).toHaveURL(/index\.html(\?map=on)?$/); // did not navigate
@@ -179,7 +191,7 @@ test.describe("the preview window", () => {
 
     expect(await inTheMap(), "the map has the name to begin with").toBeGreaterThan(0.9);
 
-    await label.click({ force: true });
+    await pressNode(label);
     await expect(page.locator(".node-preview-title")).toHaveText("Scent Descriptions");
 
     // Gone from the map straight away — not eased out, and not waiting
@@ -199,7 +211,7 @@ test.describe("the preview window", () => {
   // on had collapsed to a 300x150 box in the corner, so all of it was
   // cut off. It has to cover the whole window.
   test("the line connecting the branch to the window covers the whole screen", async ({ page }) => {
-    await page.locator(".node3d-label", { hasText: "Scent Descriptions" }).click({ force: true });
+    await pressNode(page.locator(".node3d-label", { hasText: "Scent Descriptions" }));
     const arm = page.locator(".node-preview-arm-svg");
     await expect(arm).toBeAttached();
 
@@ -216,12 +228,12 @@ test.describe("the preview window", () => {
   test("closes with the Close button and with Escape", async ({ page }) => {
     const label = page.locator(".node3d-label", { hasText: "Scent Descriptions" });
 
-    await label.click({ force: true });
+    await pressNode(label);
     await expect(page.locator(".node-preview-modal")).toBeVisible();
     await page.locator(".node-preview-close").click();
     await expect(page.locator(".node-preview-modal")).toHaveCount(0, { timeout: 5000 });
 
-    await label.click({ force: true });
+    await pressNode(label);
     await expect(page.locator(".node-preview-modal")).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(page.locator(".node-preview-modal")).toHaveCount(0, { timeout: 5000 });
@@ -391,7 +403,7 @@ test("the Photography node says it is a work in progress", async ({ page }) => {
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
 
-  await page.locator(".node3d-label", { hasText: "Photography" }).click({ force: true });
+  await pressNode(page.locator(".node3d-label", { hasText: "Photography" }));
   await expect(page.locator(".node-preview-modal")).toBeVisible();
   await expect(page.locator(".node-preview-note")).toBeVisible();
   await expect(page.locator(".node-preview-note")).toContainText(/work in progress/i);
@@ -401,7 +413,7 @@ test("the Photography node says it is a work in progress", async ({ page }) => {
   // Only the page that has something to say gets one.
   await page.locator(".node-preview-close").click();
   await page.waitForTimeout(700);
-  await page.locator(".node3d-label", { hasText: "Theories" }).click({ force: true });
+  await pressNode(page.locator(".node3d-label", { hasText: "Theories" }));
   await expect(page.locator(".node-preview-modal")).toBeVisible();
   await expect(page.locator(".node-preview-note")).toHaveCount(0);
 });
@@ -482,14 +494,15 @@ test.describe("the map's spheres and its ground", () => {
    images/Previews/ — Contact's too, which went straight to its page until
    it had a picture to show. */
 test("every node's window shows a picture of the page it goes to", async ({ page }) => {
-  test.setTimeout(90000);
+  // (Eight windows opened and shut: on a busy machine, more than a minute and a half.)
+  test.setTimeout(150000);
   const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
   for (let i = 0; i < EXPECTED_LABELS.length; i++) {
-    await page.locator(".node3d-label").nth(i).click({ force: true });
+    await pressNode(page.locator(".node3d-label").nth(i));
     const modal = page.locator(".node-preview-modal");
     await expect(modal, EXPECTED_LABELS[i] + " opens a window").toBeVisible();
     await expect(page.locator(".node-preview-title")).toHaveText(EXPECTED_LABELS[i]);
@@ -497,6 +510,9 @@ test("every node's window shows a picture of the page it goes to", async ({ page
     await expect(img).toHaveAttribute("src", /^images\/Previews\/[a-z-]+\.jpg$/);
     await expect.poll(() => img.evaluate((e) => e.naturalWidth), { timeout: 5000, message: EXPECTED_LABELS[i] + "'s picture arrives" }).toBeGreaterThan(400);
     await expect(img).toHaveAttribute("alt", "A picture of the " + EXPECTED_LABELS[i] + " page");
+    // (Measured once the window has come to rest: it glides out of the node
+    // to its place over 0.6s, and on a busy machine it was read half way.)
+    await expect.poll(() => modal.evaluate((m) => m.getAnimations().length === 0 && getComputedStyle(m).opacity === "1"), { timeout: 5000 }).toBe(true);
     // Clear of the window's Close, which stood over its corner.
     const shut = await page.locator(".node-preview-close").boundingBox();
     const pic = await page.locator(".node-preview-media").boundingBox();
@@ -531,7 +547,7 @@ test("on a phone every node opens its own window, on the screen", async ({ brows
     expect(r.right, EXPECTED_LABELS[i] + " inside the screen").toBeLessThanOrEqual(391);
   });
   for (let i = 0; i < EXPECTED_LABELS.length; i++) {
-    await page.locator(".node3d-label").nth(i).tap({ force: true });
+    await pressNode(page.locator(".node3d-label").nth(i), "tap");
     await expect(page.locator(".node-preview-title"), "the tap on " + EXPECTED_LABELS[i] + " opens its own").toHaveText(EXPECTED_LABELS[i]);
     await page.waitForTimeout(800);
     const m = await page.locator(".node-preview-modal").boundingBox();

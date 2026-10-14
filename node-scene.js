@@ -1554,6 +1554,12 @@ const REAL_NODES = [
         const need = n._wide || (n._wide = n._el.querySelector(".node3d-text").offsetWidth + 26);
         flip = x + need > w - 4 && x > w - x;
       }
+      // A name the hand is on keeps the side it stands on (2026-10-14): the
+      // map comes to rest under the hand gently, and a node still drifting
+      // over the line as it did threw its name a whole name's width across,
+      // out from under the hand.
+      if (i === activeBranch && n._flip != null) flip = n._flip;
+      n._flip = flip;
       n._el.classList.toggle("flip", flip);
       n._el.style.transform =
         "translate(" + x + "px," + y + "px)" +

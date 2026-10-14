@@ -313,3 +313,29 @@ its name on the formula slide as `data-say` (and `data-note`) in `index.html`, *
 `tests/formula.spec.js` reads `REAL_NODES` and fails if the two copies part. Change a description
 here and change it there.
 
+## 2026-10-14 — a node pressed on its mark, and a name that stays under the hand
+
+> Figure out what the two failing tests are, recreate the failure and fix it
+
+*Every node's window shows a picture of the page it goes to* failed once in a full run of the suite
+(*Explorations & Researches opens a window*: no window), and passed on its own. **Recreated** by
+running it four at a time, eight times, with a record of each press: once in eight, Explorations &
+Researches was measured at x 611 to 884, and when the press landed — at 747, its middle as measured
+— its name stood at 856 to 1129, and the press fell on the empty map. A name stands to the right of
+its mark until its node drifts past 68% of the window's width (`flip`), and then to its left, a whole
+name's width across; the tests pressed a name's middle with the press forced through (no waiting for
+it to stand still), and a node drifting over that line between Playwright measuring the name and
+pressing it moved the name out from under the press. On a busy machine the time between the two is
+longer, and the map is at a different turn when each press comes. Run the same way, eight of eight
+and then twelve of twelve (six at a time) passed with the fix.
+
+- **The tests press a node on its mark** (`pressNode` in `node-map.spec.js`), the small square at
+  the node itself, which stays where the node is whichever side its name stands — every press and
+  tap of a node in that file, and the hover. The window is measured against its Close **once it has
+  come to rest** (it glides out of the node over 0.6s, and on a busy machine *the picture under the
+  Close* was read half way), and the test has 150s rather than 90 for its eight windows.
+- **The map: a name the hand is on keeps the side it stands on** (`n._flip` while it is
+  `activeBranch`, in `node-scene.js`). The map comes to rest under the hand gently, over about a
+  second; a node still drifting over the line as it did threw its name across, out from under the
+  hand — what the test met, and what a person reaching for a name there would have met too.
+

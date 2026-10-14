@@ -236,16 +236,25 @@ test("the menu carries the smell of aldehydes on its right: the molecule, and on
   // No room beside the list on a narrow desktop window: not there.
   await page.setViewportSize({ width: 1024, height: 768 });
   await expect(aside).toBeHidden();
-  // On a tall phone, small in the corner under the list, on the screen.
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/theories/");
-  await page.locator(".menu-trigger").click();
-  await expect.poll(() => aside.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
-  const small = await aside.boundingBox();
-  expect(small.x).toBeGreaterThanOrEqual(0);
-  expect(small.x + small.width).toBeLessThanOrEqual(390);
-  expect(small.y + small.height).toBeLessThanOrEqual(844);
-  const last = await page.locator(".menu-list li").last().boundingBox();
-  expect(small.y, "under the list").toBeGreaterThan(last.y);
+  // On a tall phone, small in the corner under the list, on the screen —
+  // and on a smaller one, or wherever a long name runs onto two lines, made
+  // smaller to stand under the list still (2026-10-14: it was pinned to the
+  // corner at one size, and rose beside the last two names on a 360 × 780
+  // phone; on this machine, whose stand-in for the Menu's font is wider,
+  // on a 390 × 844 one too).
+  for (const [w, h] of [[390, 844], [360, 780]]) {
+    await page.setViewportSize({ width: w, height: h });
+    await page.goto("/theories/");
+    await page.locator(".menu-trigger").click();
+    await expect.poll(() => aside.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 4000 }).toBeGreaterThan(0.95);
+    await page.waitForTimeout(700);                 // (the names risen into place)
+    const small = await aside.boundingBox();
+    expect(small.x).toBeGreaterThanOrEqual(0);
+    expect(small.x + small.width).toBeLessThanOrEqual(w);
+    expect(small.y + small.height).toBeLessThanOrEqual(h);
+    expect(small.width, "still there, at 60% of itself at the least").toBeGreaterThan(190 * 0.6 - 1);
+    const last = await page.locator(".menu-list li").last().boundingBox();
+    expect(small.y, "under the list, " + w + " × " + h).toBeGreaterThan(last.y);
+  }
   expect(errors).toEqual([]);
 });
