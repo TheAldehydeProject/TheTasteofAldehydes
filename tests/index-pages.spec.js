@@ -491,6 +491,66 @@ const FORM_NAMES = {
    gentler perspective than the other forms. Read off the form's own code:
    its sixteen corners come out as eight at the outer cube's and eight at
    0.55 of them, and its perspective is its own. */
+/* WHAT DOES NOT FIT ROLLS (2026-10-14 — "In explorations and researches, any
+   text that doesnt fit should have a scrolling feature, where it will
+   automatically go through the text slowly as to allow it to be read fully.
+   And it should repeat after a few second pause at the first few words"): on
+   a phone the names are cut off; each rests on its first words, sets off by
+   itself, goes through to its last, holds there, and comes back to its first
+   words to rest again — round and round. A name that fits stands still; on
+   a wide window every name fits and nothing moves; with motion turned off,
+   nothing does. */
+test.describe("on a phone", () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  test("Explorations & Researches: a name that does not fit rolls through to its end and back, over and over", async ({ page }) => {
+    const errors = collectPageErrors(page);
+    await page.goto(RESEARCHES);
+    const first = page.locator(".index-table tbody tr[data-no='0'] .index-what a");
+    await expect(first).toHaveClass(/rolling/);
+    const roll = () => first.evaluate((a) => {
+      const r = a.querySelector(".index-roll"), anim = r.getAnimations()[0];
+      return { x: new DOMMatrix(getComputedStyle(r).transform).m41, o: +getComputedStyle(r).opacity, travel: r.travel, over: r.scrollWidth - a.clientWidth,
+        iterations: anim ? anim.effect.getComputedTiming().iterations : 0, round: anim ? anim.effect.getComputedTiming().duration : 0 };
+    });
+    const r0 = await roll();
+    expect(r0.over, "it does not fit").toBeGreaterThan(10);
+    expect(Math.abs(r0.x), "resting on its first words").toBeLessThan(1);
+    expect(r0.iterations, "round and round").toBe(Infinity);
+    // By itself it sets off, slowly, and goes through to its last word.
+    await expect.poll(async () => (await roll()).x, { timeout: 8000, message: "setting off by itself" }).toBeLessThan(-20);
+    await expect.poll(async () => (await roll()).x, { timeout: 12000, message: "through to its end" }).toBeLessThan(-r0.travel + 1);
+    // ...and back to its first words, to rest there and go again.
+    await expect.poll(async () => { const r = await roll(); return Math.abs(r.x) < 1 && r.o > 0.99; }, { timeout: 6000, message: "back to its first words" }).toBe(true);
+    // Slowly enough to be read: no more than 40px a second, and resting a
+    // couple of seconds at each round's start.
+    const at = (t) => first.evaluate((a, t) => {
+      const r = a.querySelector(".index-roll"), anim = r.getAnimations()[0];
+      anim.pause(); anim.currentTime = t;
+      return new DOMMatrix(getComputedStyle(r).transform).m41;
+    }, t);
+    expect(Math.abs(await at(2000)), "still on its first words two seconds into a round").toBeLessThan(1);
+    expect((r0.round - 2000) / 1000, "a round long enough to read it").toBeGreaterThan(r0.travel / 40);
+    // A name that fits stands still.
+    await expect(page.locator(".index-table tbody tr[data-no='3'] .index-what a"), "Skin fits").not.toHaveClass(/rolling/);
+    expect(errors).toEqual([]);
+  });
+  test("with motion turned off nothing on Explorations & Researches rolls", async ({ browser }) => {
+    const still = await browser.newContext({ reducedMotion: "reduce", viewport: { width: 390, height: 844 } });
+    const page = await still.newPage();
+    await serveDependenciesLocally(page);
+    await page.goto(RESEARCHES);
+    await page.waitForTimeout(1500);
+    expect(await page.locator(".index-table .rolling").count()).toBe(0);
+    await still.close();
+  });
+});
+test("on a wide window every name on Explorations & Researches fits, and nothing rolls", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(RESEARCHES);
+  await page.waitForTimeout(1500);
+  expect(await page.locator(".index-table .rolling").count()).toBe(0);
+});
+
 test("the tesseract is the classic one: a cube square inside a cube, corners joined", () => {
   const fs = require("fs");
   const path = require("path");

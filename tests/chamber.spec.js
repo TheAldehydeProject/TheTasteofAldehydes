@@ -1156,6 +1156,43 @@ test("Bad Lily's bottle stands in the middle of its frame, its shadow not counte
   expect(errors).toEqual([]);
 });
 
+/* THE MENU RISES TO WHERE IT RESTS, AND NO FURTHER (2026-10-14 — "In
+   favorites, on the phone, the menu jumps up and then down somwtimes when
+   you click it. Try ti recreate the problem and then fix it"). The word's box
+   was centred and lifted by one transform, `translate(-50%, calc(-50% -
+   lift))`, and the box's own height changes the whole way up (74px shut and
+   56 open, on a phone). A browser that runs the rise on the graphics card —
+   Safari, which every browser on an iPhone is — works out where it ends as
+   it sets off, against the height the box has then, so the word went 9px
+   past where it comes to rest and dropped back as the step ended. The
+   tests' browser works it out every frame, so it never showed here; what is
+   checked is the cause: the rise is pixels alone, and where it is headed as
+   it sets off is where the word comes to rest. */
+test.describe("on a phone", () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  test("the menu rises to where it rests and no further: its rise depends on nothing that changes on the way", async ({ page }) => {
+    await page.goto(PAGE);
+    await waitForChamber(page);
+    const plate = page.locator(".chamber-plate");
+    const shut = await plate.evaluate((el) => el.offsetHeight);
+    const w = await page.locator(".chamber-word").boundingBox();
+    await page.touchscreen.tap(w.x + w.width / 2, w.y + w.height / 2);
+    await page.waitForTimeout(120);
+    const setOff = await plate.evaluate((el) => {
+      const a = el.getAnimations().find((x) => x.transitionProperty === "transform");
+      const k = a ? a.effect.getKeyframes().map((f) => f.transform) : [];
+      return { k, to: k.length && !/%/.test(k[1]) ? new DOMMatrix(k[1]).m42 : null };
+    });
+    expect(setOff.k.length, "it rises on a transition").toBe(2);
+    setOff.k.forEach((k) => expect(k, "pixels alone: nothing in it measured off the box itself").not.toMatch(/%/));
+    await expect(plate).toHaveCSS("translate", "-50% -50%");
+    await page.waitForTimeout(2600);
+    const rest = await plate.evaluate((el) => ({ ty: new DOMMatrix(getComputedStyle(el).transform).m42, h: el.offsetHeight }));
+    expect(rest.h, "(the box is smaller open than shut)").toBeLessThan(shut);
+    expect(Math.abs(setOff.to - rest.ty), "headed where it comes to rest").toBeLessThan(0.5);
+  });
+});
+
 /* AND THE FRAGRANCES VIEW READS A PICTURE THE SAME WAY. The two pages
    share no script, so the reading is written twice — in chamber.js and in
    fragrance-line.js — and a fix to one (the shadow, above) has to be a

@@ -1943,6 +1943,28 @@ body.view-fragrances .sheet-search { display: none; }
   .sheet-filter::after { width: 6px; height: 6px; }
   .sheet-search-word { display: none; }
   .sheet-search { right: 13px; }
+  /* THE MARK IN THE MIDDLE OF ITS BOX (2026-10-14 — "center the search bar
+     square in scent description, its slightly offset"): the field, shut,
+     stood in the row beside the mark — no width, but the row's gap still
+     beside it, and its own height — so the mark sat 4px right of the middle
+     of its ground, in a box 37px tall. Out of the row now, the box is the
+     mark's alone: square, the mark in its very middle, and as tall as the
+     Menu's — which is a line of the same lettering and 9px, so the box is
+     measured off that line (`lh`) and stays the Menu's height whatever face
+     arrives (28px in the site's own, 26 before it has come). The box is
+     the button's own size, so the line is the button's, and the answers
+     under it keep their own face. */
+  .sheet-search { padding: 0; gap: 0; }
+  .sheet-search-trigger {
+    box-sizing: content-box;
+    justify-content: center;
+    line-height: normal;
+    height: 19px;
+    height: 1lh;
+    padding: 4.5px 8.5px;
+    padding: 4.5px calc((1lh - 2px) / 2);
+  }
+  .sheet-search-field { position: absolute; }
   /* AND THE CHROME HAS TO BE ON TOP OF THE SHEET, which it was not: a
      picture carries a z-index worked out from how far back it stands
      (1000 at the front of the volume), and the chrome stands at 30 —
@@ -1976,8 +1998,6 @@ body.view-fragrances .sheet-search { display: none; }
   }
   .sheet-search.open > * { pointer-events: auto; }
   .sheet-search.open .sheet-search-trigger {
-    margin: -4px -9px -5px;
-    padding: 4px 9px 5px;
     border-radius: 3px;
     background: var(--chrome-ground);
     -webkit-backdrop-filter: blur(10px);
@@ -1985,7 +2005,7 @@ body.view-fragrances .sheet-search { display: none; }
   }
   .sheet-search.open .sheet-search-field {
     position: absolute;
-    top: calc(100% + 18px);
+    top: calc(100% + 29px);
     left: 0;
     right: 0;
     width: auto;
@@ -1999,7 +2019,7 @@ body.view-fragrances .sheet-search { display: none; }
     backdrop-filter: blur(10px);
   }
   .sheet-search.open .sheet-found {
-    top: calc(100% + 68px);
+    top: calc(100% + 79px);
     left: 0;
     right: 0;
     width: auto;
@@ -2568,8 +2588,22 @@ html.js-coming body.favorites-page .page-content { visibility: hidden; }
      The owner reported it: the word blinks to a position above itself
      and only then is the animation played. Nothing that arrives may
      change the size of this box; that is what `position: absolute` on
-     the panel below is for. */
-  transform: translate(-50%, calc(-50% - var(--menu-lift, 0px)));
+     the panel below is for.
+
+     AND THE RISE IS PIXELS ONLY (2026-10-14 — "In favorites, on the
+     phone, the menu jumps up and then down somwtimes when you click it"):
+     the box is centred by `translate`, which never moves on the step, and
+     lifted by `transform`, which does — and carries no percentage. Both
+     were one transform, `translate(-50%, calc(-50% - lift))`, and the
+     box's own height changes the whole way up (74px shut, 56 open, on a
+     phone: the word coming down to a heading). A browser that runs the
+     rise on the graphics card works out where it ends once, as it sets
+     off, against the height the box has THEN — Safari, which every
+     browser on an iPhone is — and so carried the word 9px past where it
+     comes to rest and dropped it back as the step ended: up, then down.
+     A rise of pixels alone ends where it says. */
+  translate: -50% -50%;
+  transform: translateY(calc(-1 * var(--menu-lift, 0px)));
   transition: transform var(--chamber-step-ms) var(--chamber-step);
   z-index: 2;
   display: flex;
@@ -3200,9 +3234,13 @@ body.structured .page-where { color: rgba(226, 232, 242, 0.55); border-left-colo
    it writes the page's own scroll position, so it and the scrollbar
    can never disagree about where you are.
 
-   `touch-action: none` is what stops a finger dragging it from also
-   scrolling the page underneath — which would travel twice as far as
-   the hand asked for. */
+   A finger does not drag it (2026-10-14 — "the meter thing or the ruler
+   thing in the middle bottom should not interfere with normal scrolling
+   on the phone"): on a phone it is most of the lower half of the screen,
+   and `touch-action: none` held the page's own scrolling off all of it
+   while structure.js travelled the road at 2.4 times the finger. A finger
+   scrolls the page there as anywhere (`pan-y`); a mouse or a pen still
+   drags it, and a tap or a click still goes on. */
 .structure-spine {
   position: fixed;
   left: 50%;
@@ -3214,7 +3252,7 @@ body.structured .page-where { color: rgba(226, 232, 242, 0.55); border-left-colo
   background: linear-gradient(to top, rgba(205, 218, 235, 0.05), rgba(205, 218, 235, 0));
   opacity: 0;
   transition: opacity 0.4s var(--menu-ease);
-  touch-action: none;
+  touch-action: pan-y;
   pointer-events: auto;
   z-index: 1;
 }
@@ -5219,6 +5257,19 @@ html.pine-viewing, html.pine-viewing body { overflow: hidden; }
   white-space: nowrap;
 }
 .index-table tr:hover .index-what { color: var(--ink); }
+/* WHAT DOES NOT FIT ROLLS (index-page.js, 2026-10-14 — "any text that doesnt
+   fit should have a scrolling feature, where it will automatically go
+   through the text slowly ... And it should repeat after a few second pause
+   at the first few words"): the writing of a cell too narrow for it moves
+   in a span of its own, and the cell, while it rolls, clips rather than
+   ellipsises — an ellipsis would take the whole moving span for one word —
+   and fades its right edge, which the last word stops short of. */
+.index-roll { display: inline-block; }
+.index-table .rolling {
+  text-overflow: clip;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 16px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 16px), transparent);
+}
 /* A row with nothing to open is not a link, and says so by being
    quieter than one that is. */
 .index-table tr[data-open="no"] td { color: var(--line); }

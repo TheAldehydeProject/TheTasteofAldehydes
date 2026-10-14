@@ -88,6 +88,30 @@ test.describe("on a phone", () => {
     expect(found.y, "the answers under the field").toBeGreaterThanOrEqual(f.y + f.height - 1);
   });
 
+  /* THE SEARCH'S SQUARE IN THE MIDDLE OF ITS BOX — the owner, 2026-10-14:
+     "on the phone, i want you to center the search bar square in scent
+     description, its slightly offset. Look for this problem elsewhere too".
+     The field, shut, stood in the row beside the mark — no width, but the
+     row's gap and its own height — so the mark stood 4px right of the middle
+     of its ground, in a box 37px tall. The box is the mark's alone now,
+     square and as tall as the Menu's beside it. (Theories' and Favourites'
+     marks carry the same 4px inside a box that is never drawn: nothing to be
+     seen off-centre there.) */
+  test("Scent Descriptions' search square stands in the middle of its box, as tall as the Menu's", async ({ page }) => {
+    await serveDependenciesLocally(page);
+    await page.goto("/scent-descriptions/");
+    await page.waitForFunction(() => document.querySelector(".sheet.settled"), null, { timeout: 20000 });
+    const box = await page.locator(".sheet-search").boundingBox();
+    const mark = await page.locator(".sheet-search-mark").boundingBox();
+    const menu = await page.locator(".menu-trigger").boundingBox();
+    expect(Math.abs(mark.x + mark.width / 2 - (box.x + box.width / 2)), "in the middle across").toBeLessThan(0.6);
+    expect(Math.abs(mark.y + mark.height / 2 - (box.y + box.height / 2)), "and up and down").toBeLessThan(0.6);
+    expect(Math.abs(box.width - box.height), "square").toBeLessThan(1);
+    expect(Math.abs(box.height - menu.height), "as tall as the Menu's").toBeLessThan(1);
+    expect(Math.abs(box.y - menu.y), "and level with it").toBeLessThan(1);
+    expect(await page.locator(".sheet-search").evaluate((el) => getComputedStyle(el).backgroundColor), "on a ground of its own").not.toBe("rgba(0, 0, 0, 0)");
+  });
+
   /* SCENT DESCRIPTIONS LESS CLUTTERED ON A PHONE — the owner, 2026-10-12:
      "I want the images to be smaller; i want the effects to be smaller ...
      the distance between the central line and the houses to be less ...

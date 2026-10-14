@@ -392,6 +392,51 @@ test("the spine is the wheel: it can be dragged, and pressed", async ({ page }) 
     "pressing it should go on").toBeGreaterThan(dragged);
 });
 
+/* A FINGER IS NOT THE WHEEL (2026-10-14 — "remove scrolling feature on
+   theories, with the lower half of the screen. Scrolling should be normal,
+   but the meter thing or the ruler thing in the middle bottom should not
+   interfere with normal scrolling on the phone"): on a phone the wheel is
+   most of the lower half of the screen, and a swipe there was taken from the
+   page and turned into travel at 2.4 times the finger — 240px swiped went
+   612 down the road. A swipe over it scrolls the page now as one beside it
+   does; a tap on it still goes on to the next theory; the line at the foot
+   says to tap it. A mouse still drags it (above). */
+test.describe("on a phone", () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  test("a finger on the ruler scrolls the page as it does anywhere else, and a tap on it still goes on", async ({ page, context }) => {
+    await page.goto(PAGE);
+    await waitForStructure(page);
+    await page.waitForTimeout(500);
+    const cdp = await context.newCDPSession(page);
+    const box = await page.locator(".structure-spine").boundingBox();
+    // A swipe of 240px up the screen, a touch at a time, as a finger sends it.
+    const swipe = async (x, y) => {
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.waitForTimeout(300);
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y }] });
+      for (let i = 1; i <= 12; i++) {
+        await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x, y: y - i * 20 }] });
+        await page.waitForTimeout(16);
+      }
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+      await page.waitForTimeout(800);
+      return page.evaluate(() => window.scrollY);
+    };
+    const x = Math.round(box.x + box.width / 2), y = Math.round(box.y + box.height * 0.6);
+    const beside = await swipe(24, 300);
+    const over = await swipe(x, y);
+    expect(beside, "(a swipe scrolls the page)").toBeGreaterThan(150);
+    expect(over, "a swipe over the ruler scrolls the page as one beside it does").toBeLessThan(beside * 1.15);
+    expect(over).toBeGreaterThan(beside * 0.85);
+    expect(await page.locator(".structure-spine").evaluate((el) => getComputedStyle(el).touchAction)).toBe("pan-y");
+    await expect(page.locator(".structure-cue").first(), "and the line at the foot says to tap it").toContainText("tap the rule");
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(500);
+    await page.touchscreen.tap(x, y);
+    await expect.poll(() => page.evaluate(() => window.scrollY), { message: "a tap on it still goes on" }).toBeGreaterThan(20);
+  });
+});
+
 /* AND ITS TWIN GOES BACK (2026-10-01): "add an option at the bottom to go
    back a theory (exactly as there is an option to go forward)". Beside the
    wheel at the foot, saying so; pressed, it goes back to the theory before

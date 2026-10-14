@@ -349,6 +349,18 @@ test("boxes and cards fill each frame with the picture itself, placed on the bot
     expect(bottle.foot, `${mode}: and so is its base`).toBeLessThanOrEqual(1.01);
     expect(bottle.left).toBeGreaterThanOrEqual(0);
     expect(bottle.right).toBeLessThanOrEqual(1);
+    // FORBIDDEN FLOWER IN THE MIDDLE (2026-10-14 — "center the "forbidden
+    // flower" picture please"): its soft shadow, lit orange through its amber
+    // and thrown up the wall from half way up the bottle, was read as bottle,
+    // and stood the bottle 11px left of the middle of a box on a phone. Its
+    // bottle — measured off the picture by eye — is in the middle of its
+    // frame now, in the boxes and the cards.
+    const flower = await page.locator(".frag-item", { hasText: "Forbidden Flower" }).locator(".frag-t-pic").evaluate((pic) => {
+      const f = pic.getBoundingClientRect(), r = pic.querySelector("img").getBoundingClientRect();
+      const B = [0.33, 0.665];
+      return ((r.left + (B[0] + B[1]) / 2 * r.width) - f.left) / f.width;
+    });
+    expect(Math.abs(flower - 0.5), `${mode}: Forbidden Flower's bottle in the middle of its frame`).toBeLessThan(0.03);
   }
   // A clean white ground is carried on past the picture where its bottle
   // is drawn back to fit: CV99's bottle fills its picture top to bottom,

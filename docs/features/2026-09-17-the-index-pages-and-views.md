@@ -384,3 +384,34 @@ see [search engines](2026-09-26-search-engines-and-the-address.md). The field's 
 On Scent descriptions the old Fragrances index stands in the Fragrances view, and its ring (the
 mark) went on turning every frame while the Houses were the page. It draws only while it is on the
 window (an `IntersectionObserver` in `index-page.js`), measured again when it comes back. See [the site on a phone](2026-09-21-the-site-on-a-phone.md#2026-10-01--every-page-measured-on-a-phone-and-made-smoother) for how it was measured.
+
+## 2026-10-14 — what does not fit rolls
+
+> In explorations and researches, any text that doesnt fit should have a scrolling feature, where it
+> will automatically go through the text slowly as to allow it to be read fully. And it should repeat
+> after a few second pause at the first few words.
+
+(With a picture of the table on a phone: *My Pers…*, *Dupes, …*, *Buying a …*.)
+
+**A cell whose writing is cut off rolls** (`THE ROLL` in `index-page.js`): it **rests on its first
+words** for 2.6 seconds (`ROLL_REST`), **goes through to its last at 32px a second** (`ROLL_SPEED`) —
+reading pace — **holds there** 1.4 seconds (`ROLL_END`), **fades back to its first words** (0.8
+seconds, `ROLL_BACK`) and rests again, round and round. **Each row sets off 0.42 seconds after the one
+above it** (`ROLL_STAGGER`), so the column is never all moving at once. The writing moves in a span
+of its own (`.index-roll`), on the browser's own clock; the cell, while it rolls, **clips rather than
+ellipsises** — an ellipsis would take the whole moving span for one word — and **fades its right
+edge** over 16px, which the last word stops short of (`.rolling`, `ROLL_FADE`). Worked out again
+whenever the table changes size, is sorted or searched, or its face arrives. **A cell that fits is
+left alone**, ellipsis and all; with **motion turned off** nothing rolls. On a phone seven of the ten
+names roll (the four written and three to come); at 1024px two; at 1440 none — everything fits there.
+Rows are as tall as they were (30px).
+
+The same script draws the old Fragrances index kept under Scent Descriptions' table, so it would
+roll there too, where it is never shown.
+
+`tests/index-pages.spec.js`: **`Explorations & Researches: a name that does not fit rolls through to
+its end and back, over and over`** (on a phone) — resting on its first words, setting off by itself,
+reaching its end, back to its first words, round and round, still two seconds into a round, no faster
+than 40px a second, and *Skin*, which fits, standing still; **`with motion turned off nothing on
+Explorations & Researches rolls`**; and **`on a wide window every name on Explorations & Researches
+fits, and nothing rolls`**.

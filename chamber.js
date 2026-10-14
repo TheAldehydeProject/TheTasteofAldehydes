@@ -1954,6 +1954,7 @@
   const PRINT_FILL = 0.8;   // the bottle's larger side, as a share of the frame's
   const PRINT_CLOSEST = 2.4;
   const SHADOW_LOW = 0.2;   // a column beginning this low in the bottle is its shadow
+  const SHADOW_FAINT = 0.5; // and one beginning in its lower half, under this much of the bottle's strength
   function seat(face, shot) {
     if (!shot) return;
     const done = () => {
@@ -2123,10 +2124,12 @@
     const cols = new Float64Array(cw), rows = new Float64Array(ch);
     const colW = new Float64Array(cw), rowW = new Float64Array(ch);
     const top = new Float64Array(cw).fill(ch);   // where each column's first speck is
+    const most = new Float64Array(cw);           // and its strongest
     for (let y = T; y < ch - B; y++) for (let x = L; x < cw - R; x++) {
       const o = off(at(x, y));
       if (o > faint) { cols[x]++; rows[y]++; if (y < top[x]) top[x] = y; }
       if (o > 34) { colW[x] += o * o; rowW[y] += o * o; }
+      if (o > most[x]) most[x] = o;
     }
     const span = (arr, weight) => {
       const total = arr.reduce((a, b) => a + b, 0);
@@ -2148,10 +2151,25 @@
     // it. So a column that begins in the bottom fifth of the bottle's
     // height is left out of its width. (A plinth wider than its bottle
     // goes the same way, which centres the bottle on it.)
+    // AND A SHADOW IS FAINT (2026-10-14 — "center the "forbidden flower"
+    // picture please"): Forbidden Flower's, soft and lit orange through its
+    // amber, is thrown up the grey wall behind it from half way up the
+    // bottle, too high for the rule above, and it stood the bottle well left
+    // of the middle of its box (its extent read as a third to nine tenths of
+    // the picture, the bottle itself a third to two thirds). Its strongest
+    // speck is under a third as strong as the bottle's — a cap, a label, the
+    // liquid — where glass, however faint, starts well up the bottle. So a
+    // column beginning in the bottle's lower half whose strongest speck is
+    // under half the bottle's strongest is left out too.
     const sy = span(rows, rowW);
     if (sy) {
       const low = (sy[1] - (sy[1] - sy[0]) * SHADOW_LOW) * ch;
-      for (let x = L; x < cw - R; x++) if (top[x] > low) { cols[x] = 0; colW[x] = 0; }
+      const half = (sy[0] + sy[1]) / 2 * ch;
+      let peak = 0;
+      for (let x = L; x < cw - R; x++) if (most[x] > peak) peak = most[x];
+      for (let x = L; x < cw - R; x++) {
+        if (top[x] > low || (top[x] > half && most[x] < peak * SHADOW_FAINT)) { cols[x] = 0; colW[x] = 0; }
+      }
     }
     const sx = span(cols, colW);
     return {

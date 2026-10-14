@@ -32,6 +32,10 @@
 //   table scrolls inside its own box and its headings do not go with
 //   it.
 //
+//   WHAT DOES NOT FIT ROLLS (2026-10-14). A name too long for its cell
+//   rests on its first words, goes slowly through to its last, and
+//   comes back to its first words to rest again (`THE ROLL`, below).
+//
 // A ROW'S NUMBER IS ITS OWN, not its place in the list — sorting by
 // date does not renumber anything. The number is what the piece is
 // called; where it stands is what you just changed.
@@ -84,6 +88,7 @@
         return readings.no(a) - readings.no(b);
       });
       sorted.forEach((row) => body.appendChild(row));
+      reroll();
     }
 
     function sift() {
@@ -107,6 +112,7 @@
             ? String(rows.length).padStart(3, "0")
             : String(showing).padStart(3, "0") + " / " + String(rows.length).padStart(3, "0");
       }
+      reroll();
     }
 
     table.querySelectorAll(".index-sort").forEach((button) => {
@@ -155,6 +161,88 @@
         }
       });
     }
+
+    // THE ROLL (2026-10-14 — "In explorations and researches, any text that
+    // doesnt fit should have a scrolling feature, where it will
+    // automatically go through the text slowly as to allow it to be read
+    // fully. And it should repeat after a few second pause at the first few
+    // words"): a cell whose writing is cut off — most of the names on a
+    // phone, "My Pers…", "Dupes, …" — rests on its first words, goes
+    // through to its last at reading pace, rests there a moment, and fades
+    // back to its first words to rest again, over and over; each row a
+    // little after the one above it, so the column is never all moving at
+    // once. A cell that fits is left alone, ellipsis and all, and so is
+    // every cell with motion turned off. Worked out again whenever the
+    // table changes size, is sorted or searched, or its face arrives. The
+    // writing is moved in a span of its own (`.index-roll`) by the
+    // browser's own clock; the cell, while it rolls, clips rather than
+    // ellipsises and fades its right edge (`.rolling`, in the stylesheet).
+    const ROLL_SPEED = 32;       // px a second it is read through at
+    const ROLL_REST = 2600;      // ms it rests on its first words
+    const ROLL_END = 1400;       // and on its last
+    const ROLL_BACK = 800;       // ms it fades back to its first words in
+    const ROLL_FADE = 16;        // px the right edge fades over (and how far short of it the last word stops)
+    const ROLL_STAGGER = 420;    // ms a row sets off after the one above it
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function rollOf(cell) {
+      const box = cell.querySelector("a") || cell;
+      let roll = box.querySelector(":scope > .index-roll");
+      if (!roll) {
+        roll = document.createElement("span");
+        roll.className = "index-roll";
+        while (box.firstChild) roll.appendChild(box.firstChild);
+        box.appendChild(roll);
+      }
+      return { box, roll };
+    }
+    function rollAll() {
+      if (still) return;
+      let n = 0;
+      rows.forEach((row) => {
+        if (row.hidden) return;
+        const at = n++;
+        row.querySelectorAll("td").forEach((cell) => {
+          if (!cell.textContent.trim()) return;
+          const { box, roll } = rollOf(cell);
+          const cs = getComputedStyle(box);
+          const room = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+          const over = room > 0 ? Math.ceil(roll.scrollWidth - room) : 0;
+          if (over <= 1) {
+            if (roll.rolled) { roll.rolled.cancel(); roll.rolled = null; }
+            box.classList.remove("rolling");
+            return;
+          }
+          const travel = over + ROLL_FADE;
+          if (roll.rolled && roll.travel === travel && roll.at === at) return;
+          if (roll.rolled) roll.rolled.cancel();
+          box.classList.add("rolling");
+          const move = (travel / ROLL_SPEED) * 1000;
+          const total = ROLL_REST + move + ROLL_END + ROLL_BACK;
+          const k = (ms) => ms / total;
+          const x = (px) => "translateX(" + px + "px)";
+          roll.travel = travel;
+          roll.at = at;
+          roll.rolled = roll.animate([
+            { offset: 0, transform: x(0), opacity: 1 },
+            { offset: k(ROLL_REST), transform: x(0), opacity: 1, easing: "cubic-bezier(0.45, 0, 0.55, 1)" },
+            { offset: k(ROLL_REST + move), transform: x(-travel), opacity: 1 },
+            { offset: k(ROLL_REST + move + ROLL_END), transform: x(-travel), opacity: 1, easing: "ease-in" },
+            { offset: k(ROLL_REST + move + ROLL_END + ROLL_BACK / 2), transform: x(-travel), opacity: 0 },
+            { offset: k(ROLL_REST + move + ROLL_END + ROLL_BACK / 2) + 0.0001, transform: x(0), opacity: 0, easing: "ease-out" },
+            { offset: 1, transform: x(0), opacity: 1 },
+          ], { duration: total, iterations: Infinity, delay: at * ROLL_STAGGER });
+        });
+      });
+    }
+    let rollSoon = 0;
+    const reroll = () => { cancelAnimationFrame(rollSoon); rollSoon = requestAnimationFrame(rollAll); };
+    if (!still) {
+      if (window.ResizeObserver) new ResizeObserver(reroll).observe(table);
+      else window.addEventListener("resize", reroll);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(reroll);
+    }
+    // (Sorted or searched, it is rolled again — `order` and `sift` ask for
+    // it — the rows' order being their stagger.)
 
     order();
     sift();

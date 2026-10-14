@@ -31,7 +31,9 @@
 //
 //   The spine is a second way to drive that same scroll. Dragging it
 //   writes the page's scroll position, so it is a jog wheel for the
-//   travel and not a separate idea of where you are.
+//   travel and not a separate idea of where you are. Dragged by a mouse
+//   or a pen, that is — never by a finger (2026-10-14): a finger on it
+//   scrolls the page as it does anywhere else, and a tap still goes on.
 //
 //   The swarm wraps in BOTH directions. Its depth is taken modulo
 //   DEEP each frame rather than a speck being moved along when it
@@ -403,9 +405,11 @@
 
   const cue = document.createElement("p");
   cue.className = "structure-cue";
+  // (On a phone the rule is pressed, not dragged: see A FINGER IS NOT THE
+  // WHEEL, below.)
   cue.innerHTML =
     '<span class="structure-cue-mark" aria-hidden="true"></span>' +
-    "scroll to travel — or drag the rule";
+    (window.matchMedia("(hover: none)").matches ? "scroll to travel — or tap the rule" : "scroll to travel — or drag the rule");
   shell.appendChild(cue);
 
   // Said only while a station is open, in the same place and the same
@@ -424,6 +428,7 @@
   spine.type = "button";
   spine.className = "structure-spine";
   spine.setAttribute("aria-label", "Drag to travel along the road, or press to go to the next theory");
+  // (On a phone, only press it: there it is the page a finger scrolls.)
   shell.appendChild(spine);
 
   // AND ITS TWIN, beside it at the foot, going the other way: pressed,
@@ -1493,8 +1498,19 @@
   spine.addEventListener("pointerenter", () => { spineWant = 0.5; });
   spine.addEventListener("pointerleave", () => { if (!holding) spineWant = 0; });
   spine.addEventListener("pointerdown", (e) => {
-    holding = true;
+    // A FINGER IS NOT THE WHEEL (2026-10-14 — "remove scrolling feature on
+    // theories, with the lower half of the screen. Scrolling should be
+    // normal, but the meter thing or the ruler thing in the middle bottom
+    // should not interfere with normal scrolling on the phone"): on a phone
+    // the wheel is most of the lower half of the screen, and a swipe there
+    // was taken from the page and turned into travel at GEAR times the
+    // finger — 240px swiped went 612 down the road, and the page's own
+    // scrolling went nowhere. A finger scrolls the page now, the page's own
+    // way (`touch-action: pan-y`, in the stylesheet); a tap still goes on to
+    // the next theory.
     dragged = 0;
+    if (e.pointerType === "touch") return;
+    holding = true;
     heldAt = e.clientY;
     heldFrom = window.scrollY;
     spineWant = 1;

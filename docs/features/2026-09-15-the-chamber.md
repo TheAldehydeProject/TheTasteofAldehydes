@@ -1970,3 +1970,39 @@ sentence as the owner gave it; it read *It is raw smell of a simple life, insepa
 synonymous with) the backyard with its everything in it; but especially the rabbits.* Nothing else
 in the paragraph, or on the page, changed. `chamber.spec.js` run.
 
+
+## 2026-10-14, later — the menu rising past its place on an iPhone; the reading's faint shadow
+
+> In favorites, on the phone, the menu jumps up and then down somwtimes when you click it. Try ti
+> recreate the problem and then fix it.
+
+**Looked for**: the word pressed and every frame of it read — the word's place, the plate's lift,
+the page's scroll — on five phones' sizes, at once after the page came in and long after, on a
+machine slowed six times, through a chapter and back out, closed and opened again, and the site's own
+Menu on this page against another page. In the tests' browser (Chrome's) the word rose to its place
+and stopped, every time, and nothing moved twice.
+
+**What would make it rise past its place and drop back**: the plate was centred and lifted by **one
+transform**, `translate(-50%, calc(-50% - lift))`, and **its own height changes the whole way up** —
+74px shut and 56 open, on a phone, the word coming down to a heading. Chrome works the half-height out
+again every frame. A browser that runs the rise on the graphics card works out **where it ends as it
+sets off**, against the height the box has then — **Safari does, and every browser on an iPhone is
+Safari underneath** — so the rise was headed for 37 + 185 = 222px up where the word comes to rest at
+28 + 185 = 213: **9px past its place, dropped back as the step ended**. Up, then down; and only when
+the rise runs on the graphics card, which is why sometimes. This browser has no Safari to watch it in,
+so it is the cause that was found and measured, not the jump seen.
+
+**Now the box is centred by `translate: -50% -50%`**, which is never animated, **and lifted by a
+`transform` of pixels alone** (`translateY(calc(-1 * var(--menu-lift)))`), which is — so the rise is
+headed exactly where it rests in any browser. Where everything stands, shut and open, is what it
+was, to the pixel.
+
+`tests/chamber.spec.js`, **`the menu rises to where it rests and no further: its rise depends on
+nothing that changes on the way`** (on a phone): the rise's own keyframes, read as it sets off, carry
+no percentage; the box is centred by `translate`; and where the rise is headed is where the word
+comes to rest, within half a pixel.
+
+**The reading of a picture**, shared with the Fragrances view and kept the same as it by a test,
+leaves a faint shadow out of a bottle now — see [the fragrance
+line](2026-09-25-the-fragrance-line.md#2026-10-14--forbidden-flower-in-the-middle-a-shadow-is-faint).
+None of the favourites' pictures reads differently for it.

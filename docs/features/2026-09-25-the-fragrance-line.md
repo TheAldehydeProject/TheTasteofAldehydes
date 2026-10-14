@@ -665,3 +665,29 @@ reading reads made beside it; without a worker, as before (`shrink`). The readin
 houses went from about half a second to under a fifth, and changing to cards from a freeze of a
 second and a half to nothing to notice. Everything about it is in [Scent Descriptions at
 scale](2026-10-11-scent-descriptions-at-scale.md).
+
+## 2026-10-14 — Forbidden Flower in the middle; a shadow is faint
+
+> Additionally, center the "forbidden flower" picture please.
+
+In the boxes and the cards Forbidden Flower's bottle stood **11px left of the middle** of its box on
+a phone. The reading had found its bottle from a third of the way across the picture to **nine
+tenths** of it, where the bottle itself ends at two thirds: its shadow — soft, lit orange through
+its amber, thrown up the grey wall behind it — was read as bottle, and the picture was moved to put
+the middle of bottle-and-shadow in the middle of the box. The rule that leaves a shadow out (a
+column beginning in **the bottom fifth** of the bottle, `SHADOW_LOW`) did not catch it: this one
+begins half way up.
+
+**A shadow is also faint**: its strongest speck was under a third as strong as the bottle's — a cap,
+a label, the liquid — where a column of glass, however faint, begins well up the bottle. So **a
+column beginning in the bottle's lower half whose strongest speck is under half the bottle's
+strongest** is left out too (`SHADOW_FAINT`, `most` in `readPicture`). Forbidden Flower's bottle
+reads 0.333 to 0.667 now, its middle the picture's own. Over all thirteen pictures only two readings
+changed: Forbidden Flower's, and **House of Ellixirz**', a little of the shadow on its left left out
+(its middle 0.46 to 0.48, nearer its bottle's); **none of the eleven favourites' pictures changed**
+(`chamber.js` carries the same reading, kept the same by a test). Before and after compared picture
+by picture.
+
+`tests/fragrance-line.spec.js`, in **`boxes and cards fill each frame with the picture itself,
+placed on the bottle`**: Forbidden Flower's bottle — measured off the picture by eye, not by the
+reading under test — within 3% of the middle of its box and its card.

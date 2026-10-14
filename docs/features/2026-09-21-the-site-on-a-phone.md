@@ -587,3 +587,30 @@ answer at once, moved the page under the finger itself and the page let go 108px
 with motion turned off auto-scroll too, at the owner's word
 ([the home page's report](2026-09-30-the-formula-slide.md#2026-10-13--a-swipe-on-any-phone-plays-it-all-the-way)).
 Nothing above 700px moved.
+
+## 2026-10-14 — Scent Descriptions' search square in the middle of its box
+
+> So on the phone, i want you to center the search bar square in scent description, its slightly
+> offset. Look for this problem elsewhere too and fix if present.
+
+**Measured**: the square in the top right of Scent Descriptions stood **4px right of the middle** of
+its ground, in a box 37px tall beside the Menu's 26. The field it opens into stood in the same row
+while shut — no width, but the row's 8px gap beside the mark, and its own height — so the box was
+wider and taller than the mark needed and the mark sat at one side of it. **Now the box is the mark's
+alone**: the shut field is out of the row (`position: absolute`, as it already was opened), the box is
+the button's own size, square, **as tall as the Menu's** and level with it, and the mark in its very
+middle — measured, 0px off either way. The box is sized off **a line of the same lettering as the
+Menu** (`1lh` of the mono at 13px, and 9px of padding, as the Menu's is), so it keeps the Menu's
+height whatever face has arrived (28px in the site's own, 26 before it comes); `box-sizing:
+content-box` on the button, which a button does not have of itself. Opened, its ground is the same
+box, and the field drops to the same row under the buttons as before (`top` 11px further from the
+box's top, which is that much shorter). All of it is below 700px.
+
+**Elsewhere**: the same 4px stands in **Theories'** and **Favourites'** search (`.page-find`), but
+there the box is never drawn — no ground behind the mark on either page — so nothing is seen off its
+middle, and nothing was changed. The Menu, the Houses and Fragrances buttons, the Fragrances view's
+search, Explorations & Researches' search and every other top of a page on a phone were looked at:
+nothing else off.
+
+`tests/mobile.spec.js`, **`Scent Descriptions' search square stands in the middle of its box, as tall
+as the Menu's`**; and *Scent Descriptions' search, opened, stands clear of the buttons* still passes.

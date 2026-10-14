@@ -386,3 +386,23 @@ it says only **back**, above the line said at the top of the road.
 at the foot, saying so; three presses of the wheel and one of the twin go back exactly one; back to
 the first, and once more round to the last.
 
+
+## 2026-10-14 — a finger is not the wheel
+
+> I wajt you to remove scrolling feature on theories, with the lower half of the screen. Scrolling
+> should be normal, but the meter thing or the ruler thing in the middle bottom should not interfere
+> with normal scrolling on the phone
+
+On a phone the wheel (`.structure-spine`) is **234 by 354px in the middle of the lower half** of the
+screen, and it held the page's own scrolling off all of it (`touch-action: none`) while it drove the
+road itself at 2.4 times the finger (`GEAR`): **a 240px swipe there went 612px down the road**, where
+the same swipe beside it went 225. **A finger does not drag it now**: a swipe over it scrolls the page
+the page's own way (`touch-action: pan-y`; `pointerdown` lets a finger go at once), **the same 225**,
+measured; **a tap on it still goes on** to the next theory; and the line at the foot says *scroll to
+travel — or tap the rule* where there is no hovering (it says *drag* to a mouse). A mouse or a pen
+still drags it, as before, on any screen.
+
+`tests/structure.spec.js`, **`a finger on the ruler scrolls the page as it does anywhere else, and a
+tap on it still goes on`** (on a phone, touches sent as a finger sends them): a swipe over it within
+15% of one beside it, `pan-y`, the line saying to tap it, and a tap going on. *The spine is the
+wheel: it can be dragged, and pressed* (a mouse) still passes.
