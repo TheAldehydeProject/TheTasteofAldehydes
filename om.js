@@ -326,12 +326,14 @@
   // over them, and stay, faint behind the writing (GAP_FAINT).
   // A little wider since 2026-10-14 ("especially on the phone"): 8.5% and
   // at least 42px, where it was 7% and 24 — a gap of 244px on a laptop
-  // (200 before) and 84 on a phone (55). Wider again later that day ("I
-  // want to just widen the gap"): 11%, 54px at the least and 190 at the
-  // most — 316px on a laptop and 108 on a phone.
-  const SPLIT_PUSH = 0.11;         // each half pushed out this share of the page's width
-  const PUSH_LEAST = 54;           // px, at the least (a phone)
-  const PUSH_MOST = 190;           // and at the most
+  // (200 before) and 84 on a phone (55). Much wider later that day ("I
+  // want to just widen the gap ... it should still be wider than your
+  // screenshots. it should be a little more than 2/5ths"): 21% each way,
+  // the gap 42% of the page — about 600px on a laptop and 164 on a phone
+  // (for a moment 11%, 316 and 108).
+  const SPLIT_PUSH = 0.21;         // each half pushed out this share of the page's width
+  const PUSH_LEAST = 60;           // px, at the least (a narrow phone)
+  const PUSH_MOST = 520;           // and at the most (a very wide window)
   // THE DEPTH (2026-10-14 — "make it so that the thing in the middle has
   // dimension; and so when you scroll, some parts of it react slowly while
   // the "farther" parts of it will move slower"): everything in the gap
@@ -479,14 +481,16 @@
   // (especially when compared to the particles with the curtains open)"):
   // as the halves close, the pieces spread out from the gap — under the
   // halves, and faint over them — across the whole page (CALM_WIDE), fewer
-  // of them drawn (CALM_KEEP), each carried by far less of the scroll
+  // of them drawn — as many to the page as CALM_SHARDS and CALM_MOTES say,
+  // however wide the gap was — each carried by far less of the scroll
   // (CALM_RATE), stirred by it and pushed by the hand much less (CALM_STIR,
   // CALM_HAND); the cracks far down go. (Until then they were left where
   // the gap had been, a band down the middle of the page.)
   const CALM_FROM = 0.3;           // of the closing, when they set off spreading
   const CALM_MS = 3600;            // ms over which they spread out and calm
   const CALM_WIDE = 0.97;          // of half the page they reach either way
-  const CALM_KEEP = 0.42;          // of the pieces still drawn
+  const CALM_SHARDS = 1 / 12500;   // broken pieces still drawn, to a square px of the page
+  const CALM_MOTES = 1 / 6000;     // and specks
   const CALM_RATE = [0.3, 0.04];   // of the scroll the nearest and the farthest are carried by
   const CALM_STIR = 0.22;          // of the scroll's stir they feel
   const CALM_HAND = 0.5;           // and of the hand's push
@@ -1283,7 +1287,10 @@
     // Most small, a few large — the largest larger the wider the gap.
     const most = clamp(push * 0.3, 17, 40);
     const shards = [];
-    const kept = (i) => ((i + 1) * 0.6180339887) % 1 < CALM_KEEP;   // (an even share, by order)
+    // Which stay once the page is whole: an even share, by order, as many
+    // as the page holds at CALM_SHARDS and CALM_MOTES.
+    const kept = (i, share) => ((i + 1) * 0.6180339887) % 1 < share;
+    const keepShards = Math.min(1, (w * span * CALM_SHARDS) / Math.max(1, n));
     for (let i = 0; i < n; i++) {
       const r = 3.5 + Math.pow(random(), 2.2) * most;
       const corners = 3 + Math.floor(random() * 4);
@@ -1296,16 +1303,17 @@
         // Its turn in three dimensions, and how quickly each way.
         ax: random() * Math.PI * 2, ay: random() * Math.PI * 2, az: random() * Math.PI * 2,
         wx: between(-0.32, 0.32), wy: between(-0.32, 0.32), wz: between(-0.16, 0.16), way: random() < 0.5 ? -1 : 1,
-        ink: between(0.35, 0.8), fill: random() < 0.55 ? between(0.05, 0.16) : 0, bright: random() < 0.1, keep: kept(i),
+        ink: between(0.35, 0.8), fill: random() < 0.55 ? between(0.05, 0.16) : 0, bright: random() < 0.1, keep: kept(i, keepShards),
       }, span));
     }
     shards.sort((a, b) => b.z - a.z);
     const motes = [];
     const m = Math.round(push * 2 * span * GAP_MOTES);
+    const keepMotes = Math.min(1, (w * span * CALM_MOTES) / Math.max(1, m));
     for (let i = 0; i < m; i++) {
       motes.push(drifter({
         u: random() * 2 - 1, z: random(), fall: between(-16, -3), sway: between(1.5, 9),
-        size: between(0.8, 1.9), base: between(0.3, 0.85), keep: kept(i),
+        size: between(0.8, 1.9), base: between(0.3, 0.85), keep: kept(i, keepMotes),
       }, span));
     }
     // The cracks, far down, each at its depth — broken into runs, a fissure
@@ -1483,12 +1491,13 @@
       time, each pixel's strength a little off at random (dithered): as a
       gradient, so faint a light on so dark a ground came out in visible
       steps, stripes down the gap. Laid down the gap one band under the
-      next, as wide as the gap is. */
+      next, as wide as the gap is — made as wide as the gap opens, so it is
+      never stretched far. */
   const BAND = 256, BAND_SIDE = 30;
   let backdrop = null;
   function backdropFor() {
-    const r = Math.min(ratio, 2), wide = 240;
-    if (backdrop && backdrop.r === r) return backdrop;
+    const r = Math.min(ratio, 2), wide = Math.max(240, Math.round(gap ? gap.push * 2 : 240));
+    if (backdrop && backdrop.r === r && backdrop.wide === wide) return backdrop;
     const pw = Math.ceil((wide + BAND_SIDE * 2) * r), ph = Math.ceil(BAND * r);
     const make = (at) => {
       const c = document.createElement("canvas");

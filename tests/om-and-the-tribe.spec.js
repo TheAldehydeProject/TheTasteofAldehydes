@@ -307,8 +307,9 @@ test("Om broken in rings round its middle, each band turned a little out of true
    smooth out the animation of the background of the gap ... When the
    curtains ... collapse, I want the particles in the background that react
    to the scrolling to be wider and not just in a bright band in the center.
-   I want them spread out, and less dense, and also less reactive": each half
-   pushed out 11%; the writing going as OM is pressed and back as they meet;
+   I want them spread out, and less dense, and also less reactive"; and "it
+   should still be wider ... a little more than 2/5ths": each half pushed out
+   21%, the gap 42% of the page; the writing going as OM is pressed and back as they meet;
    once whole, the pieces spread across the page, fewer, and carried by far
    less of the scroll than with the curtains open.
    The rings and the glass are kept behind ?glass=. */
@@ -341,7 +342,7 @@ test("Om opens whole and breaks apart; the gap wider, its edges corrugated, its 
   expect(opening.some((r) => Math.abs(r[1]) > 0.2), "shaking as it breaks").toBe(true);
   const w = await page.evaluate(() => document.body.clientWidth), cx = w / 2;
   expect(at.offsets, "two halves").toHaveLength(2);
-  expect(at.push, "each pushed out 11% of the page").toBe(Math.round(Math.min(190, Math.max(54, w * 0.11))));
+  expect(at.push, "each pushed out 21% of the page, the gap a little more than two fifths of it").toBe(Math.round(Math.min(520, Math.max(60, w * 0.21))));
   expect(at.offsets[0], "the left half further left").toBeCloseTo(-at.push, 0);
   expect(at.offsets[1], "the right half further right").toBeCloseTo(at.push, 0);
   expect(at.pieces, "broken pieces lying in the gap").toBeGreaterThan(40);
@@ -536,7 +537,7 @@ test("Om's split is brought together by nothing but a press on OM: no key, no ch
   await expect(root, "nor a change of size").toHaveAttribute("data-om", "pieces");
   const at = await page.evaluate(() => window.OmGlass.split());
   const w = await page.evaluate(() => document.body.clientWidth);
-  expect(at.push, "laid out again at the new width").toBe(Math.round(Math.min(190, Math.max(54, w * 0.11))));
+  expect(at.push, "laid out again at the new width").toBe(Math.round(Math.min(520, Math.max(60, w * 0.21))));
   await expect.poll(async () => Math.round((await page.evaluate(() => window.OmGlass.split())).offsets[0]), { timeout: 5000 }).toBe(-at.push);
   const ob = await page.locator(".om-join").boundingBox();
   expect(Math.abs(ob.x + ob.width / 2 - w / 2), "OM in the middle again").toBeLessThan(2);
@@ -637,9 +638,9 @@ test.describe("on a phone", () => {
     await expect(root, "still split as the bar comes and goes").toHaveAttribute("data-om", "pieces");
     await expect.poll(async () => (await page.evaluate(() => window.OmGlass.split())).opened, { timeout: 9000 }).toBe(true);
     // Wider on a phone (2026-10-14): 42px each way, where it was 27, and
-    // later that day 54.
+    // later that day 82 — the gap a little more than two fifths of it.
     const push = (await page.evaluate(() => window.OmGlass.split())).push;
-    expect(push, "the gap wider on a phone").toBe(54);
+    expect(push, "the gap wider on a phone").toBe(82);
     const om = await page.locator(".om-join").boundingBox();
     expect(om.width, "OM inside the gap").toBeLessThan(push * 2);
     const menu = await page.locator(".menu-trigger").boundingBox();

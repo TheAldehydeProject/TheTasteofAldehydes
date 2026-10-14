@@ -1080,13 +1080,22 @@ of what is seen — steady, where it moved every time the bar came or went.
 > want them spread out, and less dense, and also less reactive (especially when compared to the
 > particles with the curtains open)
 
+and, having seen the gap at 11%:
+
+> it should still be wider than your screenshots. it should be a little more than 2/5ths
+
 **The curtains** are the owner's word for the two halves of the page (not the landing page's
 **curtain**, which is the paper's wipe; see the glossary).
 
-**The gap wider.** Each half is pushed out 11% of the page's width, at least 54px and at most 190
-(`SPLIT_PUSH`, `PUSH_LEAST`, `PUSH_MOST`; it was 8.5%, 42 and 140): **316px on a laptop** where it was
-244, and **108 on a phone** where it was 84. The gap holds as many pieces for its width as before, so
-there are more of them (300 pieces and 617 specks on a laptop).
+**The gap a little more than two fifths of the page.** Each half is pushed out 21% of the page's
+width, at least 60px and at most 520 (`SPLIT_PUSH`, `PUSH_LEAST`, `PUSH_MOST`; it was 8.5%, 42 and
+140), so the gap is 42% of it: **about 600px on a laptop** where it was 244, and **164 on a phone**
+where it was 84. (It was 11% for a first look — 316 and 108 — and "it should still be wider than your
+screenshots".) The writing either side is pushed that much further off the window, on a phone most of
+a line. The gap holds as many pieces for its width as before, so there are more of them (572 pieces
+and 1,175 specks on a laptop) — still 60 frames a second split on the test machine and about 50 as it
+closes. The gap's light and shade are made as wide as the gap opens (`backdropFor`), rather than
+240px wide and stretched.
 
 **The writing fades as the curtains close.** OM pressed, the halves' writing goes over 0.7s
 (`WRITING_OUT`) — so nothing to read is seen sliding and shaking on the way, only the page's ground
@@ -1110,33 +1119,34 @@ screen, and threw the pieces across the gap as the stir jumped. The specks are d
 lines at once past a speed, in four strengths. And every piece is a little lazier to catch the scroll
 up (`FOLLOW_NEAR` 0.1s, `FOLLOW_FAR` 1.1; they were 0.06 and 0.9), so a wheel's step is a glide rather
 than a jump. Measured on a laptop through a scroll down and back with the wheel, frame by frame: the
-pieces' mean jolt down the window went from 0.48–0.63px to 0.34, its worst from about 10px to 6.5, and
-the worst across from 2.3px to 0.5.
+pieces' mean jolt down the window went from 0.48–0.63px to 0.34–0.40, its worst from about 10px to
+4–6.5, and the worst across from 2.3px to 0.5.
 
 **Once the curtains have closed, the pieces spread out, fewer and calmer** (`CALM_*`). Until now they
 were left faint where the gap had been — a band about 125px wide down the middle of the page, lit
 further as the page was scrolled. Now, from 0.3 of the closing (`CALM_FROM`) and over 3.6s
 (`CALM_MS`), they **spread out from the gap across the whole page** (`CALM_WIDE`, 97% of half the page
 either way) — under the halves and faint over them as they close, so a piece going under a curtain is
-seen going under it; **fewer of them are drawn** (`CALM_KEEP`, 42%, an even share by order, the rest
-fading as they go); the cracks far down go; and **they react far less**: each is carried by far less
+seen going under it; **fewer of them are drawn** — as many to the page however wide the gap was, one
+piece to every 12,500 square px of it and one speck to every 6,000 (`CALM_SHARDS`, `CALM_MOTES`), an
+even share by order, the rest fading as they go; the cracks far down go; and **they react far less**: each is carried by far less
 of the scroll (`CALM_RATE`, 0.3 for the nearest down to 0.04 for the farthest, where it was 0.9 to
 0.1), the stir — the tumbling, spreading, brightening and streaking — is a fifth of what it is with the
 curtains open (`CALM_STIR`), and the hand pushes them half as hard (`CALM_HAND`). Measured on a laptop,
-scrolled 400px: with the curtains open the nearest move 170px within 0.15s and 345 once settled, the
-middle 21 and 207, the farthest 3 and 73; closed, 56 and 125, 7 and 74, 2 and 30 — 385 of the 917 drawn,
-from 21px to 1400 across a 1440 window. How far each has been carried is gathered as it goes now
+scrolled 400px: with the curtains open the nearest move 188px within 0.15s and 345 once settled, the
+middle 25 and 207, the farthest 4 and 75; closed, 60 and 125, 8 and 76, 2 and 30 — 386 of the 1,747
+drawn, from 20px to 1402 across a 1440 window. How far each has been carried is gathered as it goes now
 (`c`, in `drifter`), so its share of the scroll can change without it jumping. They are as faint as
 they were (`GAP_FAINT`).
 
 Tested in `tests/om-and-the-tribe.spec.js`, the split's test (renamed *…; OM brings it together, the
-writing fading as it does, … the pieces then spread across the page, fewer and calmer*): each half 11%
+writing fading as it does, … the pieces then spread across the page, fewer and calmer*): each half 21%
 out; **the writing** under 0.05 on the way, seen part way between, and back over 0.95 before the page is
 whole; **once whole and calm**, under half the pieces drawn, spread across over 85% of the page's width,
 over a third of them more than a quarter of the page from its middle, none carried by more than 0.31 of
 the scroll, and scrolled 400px the nearest moving under 0.45 of what they did with the curtains open
 (and more than 20px). The near pieces "go with the page soon" now (over 110px in 0.15s, where it was 150
-— they are lazier on purpose). *Om's split on a phone*: 54px each way. *Om's hexagon shows the page
+— they are lazier on purpose). *Om's split on a phone*: 82px each way. *Om's hexagon shows the page
 whole* passes at the smaller size.
 
 **Still open**: a trial, as before — whichever of the split, the rings, the broken pane and the fine
