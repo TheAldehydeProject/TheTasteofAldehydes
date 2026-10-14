@@ -279,7 +279,9 @@
   // react ... add an animation to when you open the page ... make the
   // closing animation smoother; and make it flash (subtly, like the wave
   // in the note library combinations). the shaking should actually also
-  // start from the beggining of the animation too."
+  // start from the beggining of the animation too." And, asked how the gap
+  // should answer the scroll (2026-10-14): "the width should remain the
+  // same, rather the geometry inside should react".
   // The page cut down its middle into two halves, each a copy of the page
   // laid IN the page (so it scrolls as the page does, with nothing moved
   // by hand), and the drawing behind it cut with it — so the halves of the
@@ -288,8 +290,9 @@
   // first trial was; their cut edges not straight but THE EDGES below; in
   // the gap, BROKEN PIECES — random polygons, most small, a few large —
   // and specks, drifting, carried by the scroll and giving way to the
-  // hand; and in its middle OM. The gap opens a little as the page is
-  // scrolled (THE SCROLL). The page OPENS whole and breaks apart (THE
+  // hand; and in its middle OM. The gap keeps its width as the page is
+  // scrolled, and what is in it answers the scroll (THE SCROLL). The page
+  // OPENS whole and breaks apart (THE
   // OPENING). OM pressed — and only pressed, never by a key — the halves
   // glide together (THE CLOSING), on the browser's own clock (an animation
   // of a transform, so a busy frame does not stutter them), the shake
@@ -310,13 +313,21 @@
   const EDGE_TOOTH = 3;            // px deep, at most
   const EDGE_PITCH = [6, 20];      // px from one tooth to the next
   const EDGE_JOG = 0.12;           // the chance a tooth is two or three times as deep
-  // THE SCROLL: scrolled, the gap opens — the faster, the wider, up to
-  // BREATHE_MOST of its push again — and closes as the page comes to rest,
-  // its pieces carried along, each at a depth of its own. `?gap=read`
-  // opens it as the page is read down instead, READ_MOST more at its foot.
-  const BREATHE_MOST = 0.6;
-  const BREATHE_SPEED = 1400;      // px a second of scroll that opens it most of the way
-  const READ_MOST = 1.2;
+  // THE SCROLL: the gap keeps its width; the geometry in it answers the
+  // page being scrolled — carried at depths of their own, the broken
+  // pieces and specks trail behind the scroll and catch it up (SCROLL_LAG,
+  // the nearer the further), and the faster it goes the more they tumble
+  // (SCROLL_TUMBLE), spread apart (SCROLL_SPREAD) and brighten
+  // (SCROLL_LIT), the cracks bow (SCROLL_FLEX) and the specks streak; all
+  // of it settling as the page comes to rest. (For a round the gap itself
+  // opened as the page was scrolled, and `?gap=read` as it was read down.)
+  const SCROLL_FULL = 900;         // px a second at which it answers most of the way
+  const SCROLL_LAG = 0.035;        // seconds of the scroll a piece trails by, at the nearest
+  const SCROLL_LAG_MOST = 46;      // px, at the most
+  const SCROLL_TUMBLE = 3.4;       // radians a second more a piece turns, at full
+  const SCROLL_SPREAD = 12;        // px the pieces spread apart, at full
+  const SCROLL_LIT = 0.7;          // how much brighter, at full
+  const SCROLL_FLEX = 7;           // px the cracks bow, at full
   // THE OPENING: the page comes in whole; after OPEN_HOLD a crack runs down
   // it (OPEN_CRACK), and as it reaches the foot the halves break apart
   // (OPEN_PART), shaking from the crack's first moment and settling as
@@ -1036,20 +1047,23 @@
             if (f > s.lit) s.lit = f;
           }
         }
+        // (Sprung back to its place — and, while the page is scrolled, to
+        // a little behind it: the nearer, the further it trails.)
+        const lag = clamp(scrollV * SCROLL_LAG * (1.15 - s.d), -SCROLL_LAG_MOST, SCROLL_LAG_MOST);
         s.vx += (-s.ox * 16 - s.vx * 5.5) * dt;
-        s.vy += (-s.oy * 16 - s.vy * 5.5) * dt;
+        s.vy += (-(s.oy - lag) * 16 - s.vy * 5.5) * dt;
         s.ox += s.vx * dt; s.oy += s.vy * dt;
         s.lit *= Math.exp(-dt * 2.2);
       }
       let y = s.y + (REDUCE ? 0 : t * s.fall) - sy * s.d;
       y = ((y % span) + span) % span - 80;
-      s.X = cx + s.u * reach + (REDUCE ? 0 : Math.sin(t * s.fq * Math.PI * 2 + s.ph) * s.sway) + s.ox;
+      s.X = cx + s.u * (reach + stir * SCROLL_SPREAD) + (REDUCE ? 0 : Math.sin(t * s.fq * Math.PI * 2 + s.ph) * s.sway) + s.ox;
       s.Y = y + s.oy;
     };
-    const tumble = REDUCE ? 0 : clamp(Math.abs(scrollV) / 1600, 0, 2);
+    const tumble = stir * SCROLL_TUMBLE;
     g.shards.forEach((s) => {
       step(s, spread * 0.92);
-      s.tumbled += dt * tumble * s.way * 1.8;
+      s.tumbled += dt * tumble * s.way;
       s.th = s.turn + (REDUCE ? 0 : t * s.spin) + s.tumbled;
     });
     g.motes.forEach((s) => step(s, spread));
@@ -1071,7 +1085,7 @@
         if (k) ink.lineTo(X, Y); else ink.moveTo(X, Y);
       });
       ink.closePath();
-      const lit = 1 + 1.1 * s.lit;
+      const lit = 1 + 1.1 * Math.max(s.lit, stir * SCROLL_LIT);
       if (s.fill) { ink.globalAlpha = Math.min(1, s.fill * a * lit); ink.fill(); }
       ink.globalAlpha = Math.min(1, s.ink * (s.bright ? 1.4 : 1) * a * lit);
       ink.stroke();
@@ -1088,7 +1102,7 @@
     g.motes.forEach((s) => {
       if (s.Y < -20 || s.Y > H + 20) return;
       const tw = REDUCE ? 1 : 0.75 + 0.25 * Math.sin(t * 1.7 + s.ph * 3);
-      const k = Math.min(1, s.base * tw * a * (1 + 1.6 * s.lit));
+      const k = Math.min(1, s.base * tw * a * (1 + 1.6 * Math.max(s.lit, stir * SCROLL_LIT)));
       if (streaking) { strengths[Math.min(3, Math.floor(k * 4))].push(s); return; }
       ink.globalAlpha = k;
       ink.fillRect(s.X - s.size / 2, s.Y - s.size / 2, s.size, s.size);
@@ -1109,10 +1123,12 @@
     ink.globalAlpha = 0.45 * a;
     // The cracks carried at a depth of their own, wrapped round the span.
     const reach = g.reach || g.push, off = (((window.scrollY * 0.55) % g.span) + g.span) % g.span;
-    [-off, g.span - off].forEach((k) => g.cracks.forEach((p) => {
+    // (Bowing as the page is scrolled.)
+    const flex = REDUCE ? 0 : stir * SCROLL_FLEX;
+    [-off, g.span - off].forEach((k) => g.cracks.forEach((p, ci) => {
       ink.beginPath();
       for (let i = 0; i < p.length; i += 2) {
-        const X = g.cx + p[i] * reach, Y = p[i + 1] + k;
+        const Y = p[i + 1] + k, X = g.cx + p[i] * reach + (flex ? Math.sin(Y / 90 + t * 2.2 + ci * 2.1) * flex : 0);
         if (i) ink.lineTo(X, Y); else ink.moveTo(X, Y);
       }
       ink.stroke();
@@ -1224,9 +1240,8 @@
   // closing by the browser's own clock, all four on one start time.
   // ============================================================
   let halves = null;
-  const gapMode = (location.search.match(/[?&]gap=(read|breathe)\b/) || [])[1] || "breathe";
   let scrollV = 0, lastScroll = null;      // the page's scrolling, px a second (eased)
-  let breath = 0;                          // px the scroll has opened the gap by, each way
+  let stir = 0;                            // how stirred the gap's geometry is by it, 0 to 1
   let waveFrom = 0;                        // when the halves met (ms): THE WAVE from then
   let waveNow = null;                      // where it is this frame, for the specks
   const smoother = (u) => u * u * u * (u * (u * 6 - 15) + 10);    // at rest at both ends
@@ -1323,7 +1338,7 @@
       far they have come together (`met`, 0 apart, 1 met), how strongly
       their cut edges are drawn, and how far down the crack has run. */
   function restAt() {
-    const p = halves.push + Math.round(breath);      // (whole pixels at rest: the writing stays sharp)
+    const p = halves.push;
     return { l: -p, r: p, yl: 0, yr: 0, met: 0, seam: SEAM_REST, crack: 1 };
   }
   /** THE OPENING, t ms after the crack sets off (before it, whole). */
@@ -1651,7 +1666,7 @@
   function joinSplit() {
     if (gatherAt || !halves || !halves.opened) return;
     const t0 = (document.timeline && document.timeline.currentTime) || performance.now();
-    halves.from = halves.push + Math.round(breath);
+    halves.from = halves.push;
     gatherAt = t0;
     mendMs = SPLIT_MS + SHAKE_TAIL;
     mendSpread = 0;
@@ -2193,7 +2208,7 @@
         const at = halves ? splitOffsets() : null;
         return { push: gap.push, offsets: at ? [at.l, at.r] : [], ys: at ? [at.yl, at.yr] : [], y: at ? at.yl : 0,
           pieces: gap.shards.length, motes: gap.motes.length, alpha: gap.alpha,
-          opened: halves ? halves.opened : true, breath, mode: gapMode };
+          opened: halves ? halves.opened : true, stir };
       },
       // Each half's edge (px from the middle of the page, before it is
       // pushed) every `step` px down the page from `from`, `n` of them.
@@ -2208,6 +2223,7 @@
       gap: () => gap && {
         at: gap.motes.slice(0, 12).map((s) => [s.X, s.Y]).concat(gap.shards.slice(0, 12).map((s) => [s.X, s.Y])),
         stirred: gap.shards.concat(gap.motes).reduce((n, s) => n + Math.hypot(s.ox, s.oy), 0),
+        stir,
         turn: gap.shards.slice(0, 12).map((s) => s.th),
       },
       openIn: (n) => {
@@ -2255,6 +2271,9 @@
     if (dt > 0.0005) scrollV += ((sy - lastScroll) / dt - scrollV) * (REDUCE ? 1 : 0.22);
     if (Math.abs(scrollV) < 0.5) scrollV = 0;
     lastScroll = sy;
+    // THE SCROLL, felt by the gap's geometry: up quickly, settling slowly.
+    const stirTo = REDUCE ? 0 : 1 - Math.exp(-Math.abs(scrollV) / SCROLL_FULL);
+    stir += (stirTo - stir) * (stirTo > stir ? 0.25 : 0.06);
     // THE WAVE, where it is.
     waveNow = null;
     if (waveFrom) {
@@ -2267,15 +2286,6 @@
     if (shattered) {
       if (halves) {
         if (!halves.opened && halves.openAt && now - halves.openAt >= OPEN_ALL) finishOpen();
-        if (halves.opened && !gatherAt) {
-          // THE SCROLL: the gap opens as the page is scrolled, and closes
-          // as it comes to rest — or, `?gap=read`, as it is read down.
-          let want;
-          if (gapMode === "read") want = halves.push * READ_MOST * clamp(sy / Math.max(1, root.scrollHeight - H), 0, 1);
-          else want = REDUCE ? 0 : halves.push * BREATHE_MOST * (1 - Math.exp(-Math.abs(scrollV) / BREATHE_SPEED));
-          breath += (want - breath) * (REDUCE ? 1 : want > breath ? 0.16 : 0.05);
-          if (Math.round(breath) !== (halves.placed || 0)) { halves.placed = Math.round(breath); placeSplit(restAt()); }
-        }
         halves.at = splitState(now);
         gather = halves.at.met;
         // (Without the browser's own animations, the halves by hand.)

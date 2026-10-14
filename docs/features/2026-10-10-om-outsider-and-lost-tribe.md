@@ -862,18 +862,24 @@ both put that right.
   scrolled — on the test machine, which draws everything without a graphics card; drawn as a
   graphics card draws, the new page is as quick as the round before's.)
 
-**The scroll** (`THE SCROLL`): scrolled, the gap opens — the faster, the wider, up to `BREATHE_MOST`
-(60%) of its push again, most of the way at `BREATHE_SPEED` (1,400px a second) — and closes as the
-page comes to rest, quickly out and slowly back; the halves stand on whole pixels at rest, so the
-writing stays sharp. **`?gap=read`** opens it as the page is read down instead — as it is at the head,
-`READ_MOST` (120%) wider at the foot — for the owner to compare; one of the two comes out once chosen.
+**The scroll** (`THE SCROLL`) — the owner, asked whether the gap should open as the page is scrolled
+or as it is read down: "Neither; the width should remain the same, rather the geometry inside should
+react" (2026-10-14). **The gap keeps its width**; what is in it answers the scroll, through one
+reading of how fast the page is going (`stir`, 0 to 1, most of the way at `SCROLL_FULL`, 900px a
+second; up quickly and settling slowly): the pieces and specks **trail behind the scroll and catch it
+up**, the nearer ones the further (`SCROLL_LAG`, up to `SCROLL_LAG_MOST` 46px), and the faster it goes
+the more they **tumble** (`SCROLL_TUMBLE`), **spread apart** (`SCROLL_SPREAD`) and **brighten**
+(`SCROLL_LIT`), the cracks **bow** (`SCROLL_FLEX`) and the specks streak — all of it settling as the
+page comes to rest. (For the first try of this round the gap itself opened as the page was scrolled,
+up to 60% wider, with `?gap=read` opening it as the page was read down instead; both came out at the
+owner's word.)
 
 **The pieces in the gap move and react** (`gapOf`, `drifter`, `moveGap`, `drawGap`): the broken pieces
 (`GAP_SHARDS`, about 150 on a laptop) and, new, **specks** (`GAP_MOTES`, about 330) each lie at a depth
 of their own — how much of the scroll carries them — so the gap's contents slide past at different
 speeds as the page is scrolled, wrapping round a span a little taller than the screen; each drifts,
 sways and turns on a clock of its own, the pieces tumbling faster while the page is scrolled and the
-specks drawn out into short streaks along the way it is going. **The hand pushes them off it** within
+specks drawn out into short streaks along the way it is going (and see **the scroll**, above). **The hand pushes them off it** within
 `GAP_REACH` (120px), lighting them as it passes, and they spring back after; a finger's touch does it
 for a moment on a phone. The three cracks are carried at a depth of their own too. They reach as far
 as the gap does and, once it has closed, a little either side of the seam, where they stay faint
@@ -914,22 +920,21 @@ The split's code: `buildSplit`, `layoutSplit`, `sizeHalves`, `setClips`, `cutEdg
 Tested in `tests/om-and-the-tribe.spec.js`:
 
 - **`Om opens whole and breaks apart; the gap a fourteenth of the page, its edges corrugated, its
-  pieces moving and giving way, opening as the page is scrolled; OM brings it together, shaking from
+  pieces moving and giving way, its geometry answering the scroll; OM brings it together, shaking from
   the start, with a wave`** (replacing the split's test): every frame from the first read — whole at
   first, coming apart (seen part way) and shaking; then each half 7% of the page out; over forty
   pieces and a hundred specks; both halves cut along one line, not straight, corrugated (its teeth
   turning eighty times in 2,700px) and only slightly; the drawing's halves where the page's are; OM in
   the middle of the gap; the specks and pieces drifting by themselves, given way to the hand and
-  coming back; the gap opened by a scroll and closed again; a press in the gap opening nothing and a
+  coming back; scrolled, the gap the same width to half a pixel and its geometry stirred, the
+  pieces trailing, settling again after; a press in the gap opening nothing and a
   press where the first fragrance is seen opening it in both halves; OM pressed: the drawing in step,
   shaking within the first 0.9s, the wave there, whole, the pieces faint.
-- **`Om's gap, at ?gap=read, opens as the page is read down`** (new).
 - *Om's split is brought together by nothing but a press on OM* waits for the page to break apart and
   reads the 7%; the phone's split test waits for OM to come up.
 
 **Still open**: a trial, as before — whichever of the split, the rings, the broken pane and the fine
-glass the owner keeps, the others come out of the code; and whether the gap answers the scroll as it
-does or as the page is read (`?gap=read`).
+glass the owner keeps, the others come out of the code.
 
 ## Same round, other reports
 

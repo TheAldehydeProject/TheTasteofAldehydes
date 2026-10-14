@@ -282,12 +282,14 @@ test("Om broken in rings round its middle, each band turned a little out of true
    of the animation too." The page opens whole and breaks apart, shaking; the
    halves stand a fourteenth of the page apart, cut along one corrugated line;
    the drawing behind is split with them; the pieces in the gap drift and give
-   way to the hand; the gap opens as the page is scrolled; a fragrance pressed
+   way to the hand; the gap keeps its width as the page is scrolled and the
+   geometry in it answers ("the width should remain the same, rather the
+   geometry inside should react", 2026-10-14); a fragrance pressed
    where its half shows it opens, a press in the gap does nothing; OM brings
    the halves together — the drawing in step with the writing, shaking from
    the start — with a wave of light as they meet, the pieces left faint
    behind the writing. The rings and the glass are kept behind ?glass=. */
-test("Om opens whole and breaks apart; the gap a fourteenth of the page, its edges corrugated, its pieces moving and giving way, opening as the page is scrolled; OM brings it together, shaking from the start, with a wave", async ({ page }) => {
+test("Om opens whole and breaks apart; the gap a fourteenth of the page, its edges corrugated, its pieces moving and giving way, its geometry answering the scroll; OM brings it together, shaking from the start, with a wave", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
   // Every frame from the first: where the left half stands, and whether it
@@ -351,24 +353,30 @@ test("Om opens whole and breaks apart; the gap a fourteenth of the page, its edg
   const drift = g0.at.map((p, i) => Math.hypot(p[0] - g1.at[i][0], p[1] - g1.at[i][1]));
   expect(drift.filter((d) => d > 0.5).length, "drifting by themselves").toBeGreaterThan(g0.at.length / 2);
   for (let i = 0; i < 24; i++) { await page.mouse.move(cx - 30 + (i % 4) * 20, 120 + i * 28); await page.waitForTimeout(16); }
-  const stirred = (await page.evaluate(() => window.OmGlass.gap())).stirred;
-  expect(stirred, "given way to the hand").toBeGreaterThan(50);
+  const handled = (await page.evaluate(() => window.OmGlass.gap())).stirred;
+  expect(handled, "given way to the hand").toBeGreaterThan(50);
   await page.mouse.move(40, 450);
-  await expect.poll(async () => (await page.evaluate(() => window.OmGlass.gap())).stirred, { message: "and come back", timeout: 6000 }).toBeLessThan(stirred / 4);
-  // THE SCROLL: the gap opens as the page is scrolled, and closes again.
-  let widest = 0;
+  await expect.poll(async () => (await page.evaluate(() => window.OmGlass.gap())).stirred, { message: "and come back", timeout: 6000 }).toBeLessThan(handled / 4);
+  // THE SCROLL: the gap keeps its width; the geometry in it answers —
+  // trailing the scroll, stirred — and settles as the page comes to rest.
+  let widest = 0, stirred = 0, stirMost = 0;
   for (let i = 0; i < 12; i++) {
     await page.mouse.wheel(0, 110);
     await page.waitForTimeout(30);
-    widest = Math.max(widest, -(await split()).offsets[0]);
+    widest = Math.max(widest, Math.abs((await split()).offsets[0] + at.push));
+    const g = await page.evaluate(() => window.OmGlass.gap());
+    stirred = Math.max(stirred, g.stirred);
+    stirMost = Math.max(stirMost, g.stir);
   }
-  expect(widest, "opened as it was scrolled").toBeGreaterThan(at.push + 8);
-  await expect.poll(async () => -(await split()).offsets[0], { message: "and closed again as it came to rest", timeout: 6000 }).toBeLessThan(at.push + 1);
+  expect(widest, "the gap the same width as it was scrolled").toBeLessThan(0.5);
+  expect(stirMost, "its geometry stirred by the scroll").toBeGreaterThan(0.3);
+  expect(stirred, "the pieces trailing the scroll").toBeGreaterThan(200);
+  await expect.poll(async () => (await page.evaluate(() => window.OmGlass.gap())).stir, { message: "and settling as it came to rest", timeout: 6000 }).toBeLessThan(0.05);
   // A press in the gap does nothing; a fragrance pressed where its half
   // shows it — a push further left than it is on the page — opens.
   const part = page.locator(".human-part").first();
   await part.locator("summary").evaluate((el) => window.scrollTo(0, window.scrollY + el.getBoundingClientRect().top - 300));
-  await expect.poll(async () => -(await split()).offsets[0], { timeout: 6000 }).toBeLessThan(at.push + 1);
+  await page.waitForTimeout(400);
   const sb = await part.locator("summary").boundingBox();
   const y = sb.y + sb.height / 2, real = cx - 40;
   expect(real > sb.x && real < sb.x + sb.width, "(on the fragrance)").toBe(true);
@@ -414,20 +422,6 @@ test("Om opens whole and breaks apart; the gap a fourteenth of the page, its edg
   await expect.poll(async () => (await split()).alpha).toBeLessThan(0.3);
   expect((await split()).alpha).toBeGreaterThan(0);
   expect(errors).toEqual([]);
-});
-
-/* `?gap=read`: the gap opening as the page is read down instead of as it is
-   scrolled — narrowest at the head, widest at the foot. */
-test("Om's gap, at ?gap=read, opens as the page is read down", async ({ page }) => {
-  test.setTimeout(60000);
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(OM + "?gap=read");
-  await expect.poll(async () => (await page.evaluate(() => window.OmGlass.split())).opened, { timeout: 9000 }).toBe(true);
-  const at = await page.evaluate(() => window.OmGlass.split());
-  expect(at.mode).toBe("read");
-  expect(-at.offsets[0], "at the head, as it is").toBeLessThan(at.push + 2);
-  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-  await expect.poll(async () => -(await page.evaluate(() => window.OmGlass.split())).offsets[0], { timeout: 6000 }).toBeGreaterThan(at.push * 2);
 });
 
 /* ONLY OM BRINGS THE SPLIT TOGETHER — "pressing keyboard buttons stops the
