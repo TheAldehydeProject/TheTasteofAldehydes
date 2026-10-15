@@ -2217,7 +2217,7 @@
     button.type = "button";
     button.className = "om-mend om-revert";
     button.tabIndex = -1;
-    button.setAttribute("aria-label", "Revert the page: split it in two again");
+    button.setAttribute("aria-label", "Revert page: split it in two again");
     // Its mark: OM's hexagon, broken down its middle and its halves parted.
     button.innerHTML = '<svg class="om-mend-mark" width="17" height="14" viewBox="0 0 17 14" aria-hidden="true"><polygon points="3.6,1 6.6,1 6.6,13 3.6,13 1,7"/><polygon points="10.4,1 13.4,1 16,7 13.4,13 10.4,13"/></svg><span>Revert page</span>';
     button.addEventListener("click", (e) => { if (e.detail) revertSplit(); });
