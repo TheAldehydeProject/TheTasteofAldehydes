@@ -67,6 +67,14 @@
 //                 โอม of specks is written over the calligraphy. The
 //                 halves' ground is in the page with the writing now, so
 //                 the two can never stand apart as a phone scrolls.
+//                 SINCE 2026-10-15 THE PAGE OPENS ALREADY SPLIT, fading in
+//                 (no crack, nothing breaking apart), its writing more
+//                 faded while the curtains are open, OM breathing faintly;
+//                 the gap's depths lie where they lie, uncovered by the
+//                 halves parting and covered as they close, never
+//                 stretched; and once whole, REVERT PAGE in the top right
+//                 splits it again — whole a moment, the crack, the
+//                 curtains opening, as the page used to open.
 //   THE LENS      the hexagon of glass at the hand, larger than it was:
 //                 inside it, the page WHOLE — the writing unbroken, the
 //                 drawing behind it turned and brought nearer — and the
@@ -115,11 +123,14 @@
 //                 far off in depth. Expansive: the outer rings reach past
 //                 the window. Gold hairlines on near-black. It turns a
 //                 little as the page is scrolled — "the passing of time".
-//   THE LENS      once the page is whole, still what answers the hand:
-//                 the hexagon follows the pointer a beat behind it, and
-//                 inside it the drawing is seen turned and brought closer,
-//                 brighter, as through a piece of the mirror. A tap puts it
-//                 there.
+//   THE LENS      once the page is whole, still what answers the hand in
+//                 the kept trials (the rings, the broken pane, the fine
+//                 glass): the hexagon follows the pointer a beat behind it,
+//                 and inside it the drawing is seen turned and brought
+//                 closer, brighter, as through a piece of the mirror. A tap
+//                 puts it there. NOT ON THE SPLIT'S PAGE, split or whole,
+//                 since 2026-10-15 ("remove the hexagon please from the
+//                 part of the page when the curtains have been closed").
 //
 // READABILITY. Every line is a hairline at a low alpha, and over the column
 // of writing the whole drawing is kept at a third of itself, soft at the
@@ -428,15 +439,45 @@
   const SCROLL_SPREAD = 12;        // px the pieces spread apart, at full
   const SCROLL_LIT = 0.7;          // how much brighter, at full
   const SCROLL_FLEX = 7;           // px the cracks bow, at full
-  // THE OPENING: the page comes in whole; after OPEN_HOLD a crack runs down
-  // it (OPEN_CRACK), and as it reaches the foot the halves break apart
-  // (OPEN_PART), shaking from the crack's first moment and settling as
-  // they come to rest, the broken pieces spreading out into the gap with
-  // them; OM comes up last.
-  const OPEN_HOLD = 650;           // ms after the page is in
+  // THE OPENING — what REVERT PAGE plays since 2026-10-15 (it was how the
+  // page opened until then): the page stands whole for REVERT_HOLD; a crack
+  // runs down it (OPEN_CRACK), and as it reaches the foot the halves break
+  // apart (OPEN_PART), shaking from the crack's first moment and settling
+  // as they come to rest; OM comes up last. The gap's pieces are where they
+  // lie all along, under the halves, and the halves parting only uncover
+  // them (until 2026-10-15 they spread out into the gap with the halves —
+  // "I also dont want that when the page splits in two the contents of the
+  // stuff behind the main page will stretch to the sides; it should already
+  // be there, and when you open the curtains, it should only be revealed").
   const OPEN_CRACK = 560;          // the crack running down it
   const OPEN_PART = 1500;          // the halves coming apart (from 60% of the way down)
   const OPEN_SHAKE = 0.6;          // of SHAKE, at its hardest
+  // THE PAGE OPENS ALREADY SPLIT (2026-10-15 — "I want the opening animation
+  // not to be the page splitting in half, but rather the page already being
+  // split in half. I would just want it to be introduced smoothly. So there
+  // is no drawing the curtains open when you open the page, only closing
+  // them when you press the button OM"): the halves apart from the first
+  // frame, and all of it — the writing, its ground, the gap's depths, the
+  // calligraphy — fading in together (INTRO_MS); OM a beat later.
+  const INTRO_MS = 1400;           // the split page fading in
+  const INTRO_OM = 650;            // ms in, OM coming up
+  // REVERT PAGE (2026-10-15 — "on the top right, add a button to say
+  // "revert page" which will do exactly that; revert it to the split part.
+  // Here, i want you to animate it the same way it is animated right now
+  // when you open the page: here the curtains will actually open"): the
+  // boxed button in the top right of the page once it is whole, where Mend
+  // the break stood. Pressed, the page stands whole a moment, the drawing
+  // behind beginning to go (REVERT_WORLD_MS) and the faint pieces over the
+  // page with it (REVERT_PIECES_MS), the โอม of specks unwritten as the
+  // calligraphy comes back at its size (REVERT_WORD_MS) — and THE OPENING
+  // runs: the crack, and the curtains open on the gap, its depths already
+  // lying there under them. Only a press: not a stop of the keyboard's,
+  // as OM is not.
+  const REVERT_HOLD = 320;         // ms the page stands whole once it is pressed
+  const REVERT_WORLD_MS = 1300;    // the drawing behind going
+  const REVERT_PIECES_MS = 900;    // the faint pieces over the page going
+  const REVERT_WORD_MS = 2100;     // the specks unwritten, the calligraphy back
+  const REVERT_OFFER = 700;        // ms after the page is whole before it is offered
   // THE CLOSING: over SPLIT_MS, gently at both ends; the shake there from
   // the first moment — each half trembling on its own on the way
   // (SHAKE_ON_WAY of it), the two as one as they meet, hardest then — and
@@ -467,12 +508,17 @@
   // calligraphy — and the page is there again, whole, as the wave runs.
   // And while the curtains are apart, the writing a little faded (later
   // still — "fade the contents of the page slightly too, when the curtains
-  // are not connected"): going down to SPLIT_WRITING as the halves break
-  // apart, and from there out as OM is pressed, back to the whole of
-  // itself as they meet.
-  const SPLIT_WRITING = 0.72;      // how much of the writing there is while they are apart
+  // are not connected"; and more, 2026-10-15 — "Maybe also fade the text a
+  // little too; i want it to be faded when the curtains are open": it was
+  // 0.72): SPLIT_WRITING while they are apart, and from there out as OM is
+  // pressed, back to the whole of itself once they have met — a beat after
+  // they meet since 2026-10-15 ("delay the lighting up of the letters a
+  // LITTLE bit, so that you emphasize the closure of the curtains after you
+  // do press the OM button": it came back from 0.88 of the way, before they
+  // had met, to 1.24).
+  const SPLIT_WRITING = 0.56;      // how much of the writing there is while they are apart
   const WRITING_OUT = 700;         // ms over which the writing goes
-  const WRITING_BACK = [0.88, 1.24];   // shares of SPLIT_MS over which it comes back
+  const WRITING_BACK = [0.99, 1.33];   // shares of SPLIT_MS over which it comes back
   const WAVE_MS = 1150;            // the wave crossing to the window's edges
   const WAVE_WIDE = 70;            // px, its half width
   const WAVE_LIT = 1.5;            // how much brighter a speck it passes is
@@ -1089,8 +1135,10 @@
     poly(hexPoints(lensX, lensY, LENS - 1)); stroke(LINE, 0.5 * alpha);
     poly(hexPoints(lensX, lensY, LENS * 0.84)); stroke(SECOND, 0.16 * alpha);
   }
+  let hexDrawn = false;                    // (whether it was drawn this frame, for the tests)
   function drawLens(cx, cy, turn, t, alpha) {
     if (handOn < 0.01 || lensX < -9000) return;
+    hexDrawn = true;
     ink.save();
     ink.beginPath();
     const p = hexPoints(lensX, lensY, LENS);
@@ -1112,15 +1160,21 @@
   const shattered = root.classList.contains("om-shattered");
   const asked = (location.search.match(/[?&]glass=(fine|broken|rings|split)\b/) || [])[1];
   const glassStyle = asked || GLASS_STYLE;
-  if (shattered) root.dataset.glass = glassStyle;
+  // Whether the page can be split again once whole (REVERT PAGE): the split's
+  // page, but never with reduced motion or ?om=whole — and on a page opened
+  // whole at one fragrance, it can.
+  const splittable = glassStyle === "split" && !REDUCE && !/[?&]om=whole\b/.test(location.search);
+  if (shattered || splittable) root.dataset.glass = glassStyle;
   let gather = shattered ? 0 : 1;          // 0 cracked, 1 whole (eased, per frame)
   let gatherAt = 0;                        // when the mending began (ms), or 0
   let mendMs = MEND_MS, mendSpread = MEND_SPREAD;
   let shards = [];
-  let host = null, stage = null, hint = null, lens = null, mendButton = null;
+  let host = null, stage = null, hint = null, lens = null, mendButton = null, revertButton = null;
   let pieces = shattered ? "pieces" : "whole";
   let copyWidth = 0;
   let gap = null;                          // the split's broken pieces, and its cracks
+  let oldGap = null;                       // the last split's, faint over the page, going as it is reverted
+  let tearing = false;                     // the last split being taken off the page
   root.dataset.om = pieces;
 
   function polygonArea(p) {
@@ -1335,7 +1389,7 @@
       }
       return drifter({ u: 0, z, fall: 0, sway: 0, pts, on, keep: true }, span);
     });
-    return { cx, push, span, shards, motes, cracks, alpha: 1, calm: 0, calmK: 1, stirK: 0 };
+    return { cx, push, span, shards, motes, cracks, alpha: 1, calm: 0, calmK: 1, stirK: 0, calmAt: 0, goneAt: 0 };
   }
   /** What every drifting thing in the gap carries: where it is laid, how
       it sways, how far the hand has moved it — and, from its depth, how
@@ -1360,8 +1414,8 @@
       scrolled the faster. `spread` is how far from the middle of the page
       the gap reaches either way; `calm`, how far the page has come together
       (THE PIECES ONCE IT IS WHOLE). */
-  function moveGap(t, dt, spread, hx, hy, calm) {
-    const g = gap, sy = window.scrollY, span = g.span, cx = g.cx;
+  function moveGap(g, t, dt, spread, hx, hy, calm) {
+    const sy = window.scrollY, span = g.span, cx = g.cx;
     const hand = hx > -9000 && !REDUCE, R2 = GAP_REACH * GAP_REACH;
     g.calm = calm;
     g.calmK = 1 - (1 - CALM_STIR) * calm;
@@ -1410,17 +1464,22 @@
   /** The gap's things where they are, at a strength `a`. With `walls` —
       while the gap is open, on its own canvas under the halves' ground —
       the light far down first and the walls' shade over all of it last:
-      the walls standing at `walls.l` and `walls.r` across the window. */
-  function drawGap(t, a, walls) {
-    const g = gap, L = LIGHT, Ln = Math.hypot(L[0], L[1], L[2]);
+      the walls standing at `walls.l` and `walls.r` across the window. The
+      light lies across the whole of the gap wherever the walls stand, and
+      each wall's shade goes with that wall: the halves parting only
+      uncover what lies there (2026-10-15; the two were drawn between the
+      walls wherever they stood, so as the halves parted the gap's light
+      was stretched out with them). */
+  function drawGap(g, t, a, walls) {
+    const L = LIGHT, Ln = Math.hypot(L[0], L[1], L[2]);
     const lx = L[0] / Ln, ly = L[1] / Ln, lz = L[2] / Ln;
     // THE LIGHT FAR DOWN: the faintest gold up the middle of the gap.
-    if (walls) laidDown(backdropFor().glow, walls, a);
+    if (walls) laidDown(backdropFor().glow, { l: g.cx - g.push, r: g.cx + g.push }, a);
     // THE CRACKS, far down: narrowed by their depth, faint, carried by
     // little of the scroll.
     ink.lineWidth = 1;
     ink.strokeStyle = rgba(LINE, 1);
-    const reach = g.reach || g.push, calm = g.calm, stirK = g.stirK;
+    const reach = g.push, calm = g.calm, stirK = g.stirK;
     const flex = REDUCE ? 0 : stirK * SCROLL_FLEX;
     g.cracks.forEach((c, ci) => {
       if (calm > 0.997) return;
@@ -1490,7 +1549,7 @@
     ink.lineWidth = 1;
     // THE WALLS' SHADE: the void drawn over the gap from each edge inward,
     // so what lies near a wall seems to go in under the page.
-    if (walls) laidDown(backdropFor().shade, walls, a);
+    if (walls) shadeWalls(g, walls, a);
   }
   /** THE GAP'S LIGHT AND SHADE, as two pictures a band of the gap tall —
       the light far down and the walls' shade — worked out a pixel at a
@@ -1535,6 +1594,20 @@
     const x = walls.l - BAND_SIDE * k, w = img.width / backdrop.r * k;
     ink.globalAlpha = clamp(a, 0, 1);
     for (let y = -20; y < H + 20; y += BAND) ink.drawImage(img, x, y, w, BAND);
+    ink.globalAlpha = 1;
+  }
+  /** The walls' shade, made for the whole width of the gap and cut down its
+      middle, the left half laid at the left wall and the right at the
+      right — each moving with its wall, never stretched. */
+  function shadeWalls(g, walls, a) {
+    const img = backdropFor().shade, r = backdrop.r, k = (g.push * 2) / backdrop.wide;
+    const cut = Math.round((BAND_SIDE + backdrop.wide / 2) * r);
+    const lw = (cut / r) * k, rw = ((img.width - cut) / r) * k;
+    ink.globalAlpha = clamp(a, 0, 1);
+    for (let y = -20; y < H + 20; y += BAND) {
+      ink.drawImage(img, 0, 0, cut, img.height, walls.l - BAND_SIDE * k, y, lw, BAND);
+      ink.drawImage(img, cut, 0, img.width - cut, img.height, walls.r - rw + BAND_SIDE * k, y, rw, BAND);
+    }
     ink.globalAlpha = 1;
   }
   /** The page's flow, copied whole, without an id, a tab stop or anything
@@ -1826,7 +1899,7 @@
   }
   function splitState(now) {
     if (gatherAt) return joinPath(now - gatherAt);
-    if (!halves.opened) return openPath(halves.openAt ? now - halves.openAt : 0);
+    if (!halves.opened && halves.reverting) return openPath(halves.openAt ? now - halves.openAt : 0);
     return restAt();
   }
   function placeSplit(at) {
@@ -1915,7 +1988,7 @@
       pieces are scattered down the whole of its screen to begin with. */
   function layoutSplit() {
     const w = page.clientWidth || root.clientWidth;
-    const m = w / 2, widthMoved = w !== copyWidth || !gap;
+    const m = w / 2, widthMoved = w !== copyWidth || !(halves.live ? gap : halves.gap);
     copyWidth = w;
     halves.m = m;
     halves.host.style.width = halves.groundHost.style.width = w + "px";
@@ -1932,11 +2005,15 @@
     if (gatherAt) return;
     if (mendButton) mendButton.style.left = m + "px";
     if (!widthMoved) return;
-    gap = gapOf(w, Math.max(H, (window.screen && window.screen.height) || 0), halves.push);
+    const laid = gapOf(w, Math.max(H, (window.screen && window.screen.height) || 0), halves.push);
+    if (halves.live) gap = laid; else halves.gap = laid;    // (reverted and not yet live: the whole page's kept)
     // A new width under the opening: straight to apart.
     if (halves.opened || halves.anims.length) { halves.opened = false; finishOpen(); }
   }
-  function buildSplit() {
+  /** The split laid over the page: as it opens, already apart and fading
+      in (THE PAGE OPENS ALREADY SPLIT); or, `reverting`, over the page
+      exactly as it is and whole, and then THE OPENING (REVERT PAGE). */
+  function buildSplit(reverting) {
     const flow = copyFlow();
     // The halves of the page, in the page: each the whole page, cut along
     // its edge (the left's, everything to the left of it; the right's,
@@ -1974,18 +2051,25 @@
     gapCanvas.className = "om-gap";
     gapCanvas.setAttribute("aria-hidden", "true");
     gapInk = gapCanvas.getContext("2d");
+    // (The grounds and the gap held back with the writing until the copies
+    // are styled — over a page that is still being read, when it is
+    // reverted.)
+    ground.style.visibility = gapCanvas.style.visibility = "hidden";
     host = text;
     halves = {
       host: text, groundHost: ground, text: [l, r], grounds, copies,
       fills: grounds.map((g) => g.querySelector(".om-ground-fill")), seams: grounds.map((g) => g.querySelector(".om-ground-seam")),
-      push: 0, m: 0, shake: 0, anims: [], edges: null, tall: 0, docTop: 0, opened: false, openAt: 0, bornAt: 0, from: 0, at: null, ro: null,
+      push: 0, m: 0, shake: 0, anims: [], intro: [], edges: null, tall: 0, docTop: 0, opened: false, openAt: 0, bornAt: 0, revertAt: 0, from: 0, at: null, ro: null,
+      // Reverted, the page goes on being drawn whole — its drawing, its word,
+      // its faint pieces — until the copies are in and laid over it (`live`).
+      reverting: !!reverting, live: !reverting, gap: null,
     };
     page.insertBefore(gapCanvas, canvas);
     page.insertBefore(ground, canvas.nextSibling);
     page.insertBefore(text, ground.nextSibling);
     size();
-    layoutSplit();
-    placeSplit(openPath(0));                 // whole, to begin with
+    layoutSplit();                           // (reverted: its gap laid in halves.gap, the whole page's kept until it is live)
+    placeSplit(reverting ? openPath(0) : restAt());     // whole, to be reverted; or already apart
     root.classList.add("om-held");
     followPage(() => (halves ? halves.copies : []));
     // The edges laid on, and the grounds made as tall, as the page grows
@@ -2002,14 +2086,24 @@
       });
       halves.ro.observe(l);
     }
-    // In, and then it breaks.
+    // In: fading in, apart — or, reverted, over the page exactly as it is,
+    // which goes under it in the same frame, and then the crack.
     let shown = false;
+    const made = halves;
     const show = () => {
-      if (shown) return;
+      if (shown || halves !== made) return;
       shown = true;
-      text.style.visibility = "";
-      halves.bornAt = performance.now();
-      openSplit();
+      text.style.visibility = ground.style.visibility = gapCanvas.style.visibility = "";
+      if (reverting) {
+        if (gap) { oldGap = gap; oldGap.goneAt = performance.now(); }
+        gap = halves.gap;
+        halves.gap = null;
+        halves.live = true;
+        root.classList.add("om-shattered");
+        pieces = "pieces";
+        root.dataset.om = pieces;
+        openSplit();
+      } else introSplit();
     };
     const link = shadow.querySelector("link");
     link.addEventListener("load", show);
@@ -2019,7 +2113,9 @@
     // OM, in the middle of the gap — pressed, and never by a key
     // ("pressing keyboard buttons stops the split; so remove that"): it is
     // not a stop of the keyboard's, and a press with no point to it (a key
-    // on it) is let go. It comes up once the page has broken apart.
+    // on it) is let go. It comes up a beat after the page is in, or once
+    // the page has broken apart, reverted; and it breathes, faintly (the
+    // stylesheet).
     mendButton = document.createElement("button");
     mendButton.type = "button";
     mendButton.className = "om-mend om-join";
@@ -2030,12 +2126,35 @@
     mendButton.addEventListener("click", (e) => { if (e.detail) joinSplit(); });
     page.insertBefore(mendButton, page.firstChild);
   }
+  /** THE PAGE OPENS ALREADY SPLIT: the halves apart and at rest from the
+      first frame, the whole of it fading in — the writing, its ground and
+      the gap, each on the browser's own clock — the calligraphy with them,
+      and OM a beat later. */
+  function introSplit() {
+    const now = (document.timeline && document.timeline.currentTime) || performance.now();
+    halves.bornAt = performance.now();
+    halves.opened = true;
+    halves.openAt = 1;
+    placeSplit(restAt());
+    if (halves.host.animate) {
+      halves.intro = [halves.host, halves.groundHost, gapCanvas].map((el) => {
+        const a = el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: INTRO_MS, easing: "cubic-bezier(0.33, 0, 0.2, 1)", fill: "backwards" });
+        a.startTime = now;
+        return a;
+      });
+    }
+    const button = mendButton;
+    window.setTimeout(() => { if (button && button === mendButton) button.classList.add("shown"); }, INTRO_OM);
+  }
   /** THE OPENING, set going once the copies are in: whole for a moment,
-      and then the crack. */
+      and then the crack — and the drawing behind going, and the word
+      turning back to its calligraphy (REVERT PAGE). */
   function openSplit() {
     if (!halves || halves.openAt || halves.opened || gatherAt) return;
     const now = (document.timeline && document.timeline.currentTime) || performance.now();
-    halves.openAt = Math.max(now + OPEN_HOLD, 1000);
+    halves.revertAt = performance.now();
+    halves.bornAt = halves.revertAt + REVERT_WORD_MS * 0.3;
+    halves.openAt = now + REVERT_HOLD;
     runPath(openPath, OPEN_ALL, halves.openAt);
   }
   /** Apart and at rest: the halves' own transforms from here, OM up. */
@@ -2086,8 +2205,42 @@
     pieces = "gathering";
     root.dataset.om = pieces;
     retireButton();
+    if (gap) gap.calmAt = performance.now() + CALM_FROM * SPLIT_MS;
     runPath(joinPath, mendMs, t0);
     if (!REDUCE) { waveFrom = t0 + SPLIT_MS; washOver(waveFrom); }
+  }
+  /** REVERT PAGE, in the top right once the page is whole: made, and shown
+      after a moment. */
+  function offerRevert(wait) {
+    if (!splittable || revertButton || halves) return;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "om-mend om-revert";
+    button.tabIndex = -1;
+    button.setAttribute("aria-label", "Revert the page: split it in two again");
+    // Its mark: OM's hexagon, broken down its middle and its halves parted.
+    button.innerHTML = '<svg class="om-mend-mark" width="17" height="14" viewBox="0 0 17 14" aria-hidden="true"><polygon points="3.6,1 6.6,1 6.6,13 3.6,13 1,7"/><polygon points="10.4,1 13.4,1 16,7 13.4,13 10.4,13"/></svg><span>Revert page</span>';
+    button.addEventListener("click", (e) => { if (e.detail) revertSplit(); });
+    page.insertBefore(button, page.firstChild);
+    revertButton = button;
+    window.setTimeout(() => { if (revertButton === button) button.classList.add("shown"); }, wait || 0);
+  }
+  /** Pressed: the button goes, the faint pieces over the page with it, a
+      new gap is laid under new halves over the page as it is, and THE
+      OPENING runs. */
+  function revertSplit() {
+    if (!splittable || halves || tearing) return;
+    const button = revertButton;
+    revertButton = null;
+    if (button) {
+      if (document.activeElement === button) button.blur();
+      button.classList.remove("shown");
+      button.disabled = true;
+      window.setTimeout(() => button.remove(), 600);
+    }
+    gatherAt = 0;
+    waveFrom = 0;
+    buildSplit(true);
   }
   /** THE WAVE (see WAVE_MS) τ ms after the halves met: how far out from
       the seam its two fronts are, and how strong. */
@@ -2500,8 +2653,9 @@
       // the grounds the page's own colour), the page's canvas goes back
       // under the writing — what it draws unchanged — and the halves'
       // copies are faded off the page.
-      const done = halves;
+      const done = halves, follow = mirror;
       halves = null;
+      tearing = true;
       if (done.ro) done.ro.disconnect();
       root.classList.add("om-landing");
       root.classList.remove("om-shattered");
@@ -2512,10 +2666,13 @@
         done.host.style.transition = "opacity 420ms cubic-bezier(0.3,0,0.2,1)";
         done.host.style.opacity = "0";
         window.setTimeout(() => {
-          if (mirror) { mirror.disconnect(); mirror = null; }
+          if (follow) follow.disconnect();
+          if (mirror === follow) mirror = null;
           done.anims.forEach((a) => a.cancel());
           done.host.remove();
           if (host === done.host) host = null;
+          tearing = false;
+          offerRevert(REVERT_OFFER);
         }, 480);
       }));
       return;
@@ -2537,9 +2694,13 @@
   }
   const portalR = () => Math.min(W * (W < 700 ? 0.46 : 0.36), 560) * 0.62;
 
-  if (shattered) {
+  if (shattered || splittable) {
     size();
-    if (glassStyle === "split") buildSplit(); else buildShards();
+    if (!shattered) {                        // (opened whole, at one fragrance: it can be split)
+      copyWidth = page.clientWidth || root.clientWidth;
+      offerRevert(1200);
+    }
+    else if (glassStyle === "split") buildSplit(); else buildShards();
     // NOTHING PRESSED MENDS IT (2026-10-13 — "whenever you click on
     // anything, the glass gets fixed and it is buggy. fix that ... When you
     // click on the perfumes, the break should not be fixed"): a fragrance
@@ -2585,7 +2746,7 @@
     }
     // On a phone the break mends by itself after a moment — but not the
     // split, whose whole point is the OM that brings it together.
-    if (TOUCH && glassStyle !== "split") window.setTimeout(() => mend(window.innerWidth / 2, window.innerHeight * 0.44), AUTO_MS);
+    if (TOUCH && shattered && glassStyle !== "split") window.setTimeout(() => mend(window.innerWidth / 2, window.innerHeight * 0.44), AUTO_MS);
     else window.setTimeout(() => { if (hint && !gatherAt && handX < -9000) hint.classList.add("shown"); }, HINT_MS);
     // FOR THE TESTS, which cannot reach into the closed glass: how many
     // pieces, how wide the page in them is laid out, how far home the
@@ -2599,6 +2760,8 @@
         return by.length ? by.reduce((n, s) => n + Math.max(0, s.p), 0) / by.length : -1;
       },
       lens: () => (lens ? Math.max(0, lens.shown) : 0),
+      // Whether the hexagon was drawn at the hand on the page's canvas.
+      hexagon: () => hexDrawn,
       style: () => glassStyle,
       // Each piece's outline on the window, for the tests to read the shape
       // of the glass by.
@@ -2625,7 +2788,12 @@
         return { push: gap.push, offsets: at ? [at.l, at.r] : [], ys: at ? [at.yl, at.yr] : [], y: at ? at.yl : 0,
           pieces: gap.shards.length, motes: gap.motes.length, alpha: gap.alpha,
           opened: halves ? halves.opened : true, stir,
-          writing: halves ? +getComputedStyle(halves.text[0]).opacity : 1, calm: gap.calm };
+          writing: halves ? +getComputedStyle(halves.text[0]).opacity : 1, calm: gap.calm,
+          // How far in the split page has faded, as it opens already split
+          // (its writing, its ground and the gap, each); whether it is being
+          // reverted; and whether the last split's pieces are still going.
+          shown: halves ? [halves.host, halves.groundHost, gapCanvas].map((el) => (el.style.visibility === "hidden" ? 0 : +getComputedStyle(el).opacity)) : [],
+          reverting: !!(halves && halves.revertAt), old: !!oldGap };
       },
       // Each half's edge (px from the middle of the page, before it is
       // pushed) every `step` px down the page from `from`, `n` of them.
@@ -2675,9 +2843,16 @@
       callA *= 1 - smoother(clamp((c - CALLI_OUT[0]) / (CALLI_OUT[1] - CALLI_OUT[0]), 0, 1));
       scale = big + (small - big) * smoother(clamp(c / SHRINK_TO, 0, 1));
       drawn = smooth01((c - WRITE[0]) / (WRITE[1] - WRITE[0]));
+    } else if (halves.revertAt) {
+      // REVERT PAGE: the โอม of specks unwritten — the pen going back round
+      // each letter — drawing out to the calligraphy's size as the
+      // calligraphy comes back.
+      const c = clamp((now - halves.revertAt) / REVERT_WORD_MS, 0, 1);
+      scale = small + (big - small) * smoother(c);
+      drawn = 1 - smooth01(c / 0.75);
     }
     drawCalli(x, cy - scale * 0.1, scale, big, callA, now, handX, handY);
-    if (drawn > 0) drawWord(x, cy - scale * 0.1, scale, t, 0.24 + 0.46 * voidness, handX, handY, drawn);
+    if (drawn > 0) drawWord(x, cy - scale * 0.1, scale, t, gatherAt ? 0.24 + 0.46 * voidness : 0.24, handX, handY, drawn);
     word = { mode: drawn <= 0 ? "calligraphy" : drawn < 1 || callA > 0.004 ? "writing" : "specks", calligraphy: callA, drawn, scale, x };
   }
 
@@ -2727,8 +2902,10 @@
     const stirTo = REDUCE ? 0 : 1 - Math.exp(-Math.abs(scrollV) / SCROLL_FULL);
     stir += (stirTo - stir) * (1 - Math.exp(-dt / (stirTo > stir ? STIR_UP : STIR_DOWN)));
     // THE PIECES CALMING as the page comes together (CALM_FROM): 0 while it
-    // is split, 1 once they have spread out across the page.
-    const calm = gatherAt ? smoother(clamp((now - gatherAt - CALM_FROM * SPLIT_MS) / CALM_MS, 0, 1)) : 0;
+    // is split, 1 once they have spread out across the page — each gap's
+    // own (the last split's go on calming as they go, reverted).
+    const calmOf = (g) => (g && g.calmAt ? smoother(clamp((now - g.calmAt) / CALM_MS, 0, 1)) : 0);
+    const calm = calmOf(gap);
     // THE WAVE, where it is.
     waveNow = null;
     if (waveFrom) {
@@ -2738,21 +2915,20 @@
     }
 
     // How whole the page is.
-    if (shattered) {
-      if (halves) {
-        if (!halves.opened && halves.openAt && now - halves.openAt >= OPEN_ALL) finishOpen();
-        halves.at = splitState(now);
-        gather = halves.at.met;
-        // (Without the browser's own animations, the halves by hand.)
-        if (!halves.anims.length && (gatherAt || !halves.opened)) placeSplit(halves.at);
-        if (gatherAt && now - gatherAt >= mendMs && pieces === "gathering") wholeNow();
-      } else if (gatherAt) {
-        const all = clamp((now - gatherAt) / (mendMs + mendSpread), 0, 1);
-        gather = ease(all);
-        if (all >= 1 && pieces === "gathering") wholeNow();
-      }
-      if (shards.length) placeShards(now);
+    const split = halves && halves.live;
+    if (split) {
+      if (!halves.opened && halves.openAt && now - halves.openAt >= OPEN_ALL) finishOpen();
+      halves.at = splitState(now);
+      gather = halves.at.met;
+      // (Without the browser's own animations, the halves by hand.)
+      if (!halves.anims.length && (gatherAt || !halves.opened)) placeSplit(halves.at);
+      if (gatherAt && now - gatherAt >= mendMs && pieces === "gathering") wholeNow();
+    } else if (shattered && gatherAt) {
+      const all = clamp((now - gatherAt) / (mendMs + mendSpread), 0, 1);
+      gather = ease(all);
+      if (all >= 1 && pieces === "gathering") wholeNow();
     }
+    if (shards.length) placeShards(now);
     // The hand on the gap's pieces: the pointer, or a finger a moment.
     const gx = handX > -9000 ? handX : now - touchAt < 700 ? touchX : -99999;
     const gy = handX > -9000 ? handY : touchY;
@@ -2768,6 +2944,7 @@
     ink = mainInk;
     ink.setTransform(ratio, 0, 0, ratio, 0, 0);
     ink.clearRect(0, 0, W, H);
+    hexDrawn = false;
     const cx = W / 2, cy = H / 2;
     const turn = window.scrollY * SCROLL_TURN;
     const voidness = 1 - gather;                 // while cracked
@@ -2779,32 +2956,37 @@
     // The word, in the split's page, stands at the middle of the page (the
     // window's less its scrollbar), where the gap is.
     const wx = glassStyle === "split" && copyWidth ? copyWidth / 2 : cx;
-    if (halves) {
+    if (halves && halves.live) {                 // (asked again: the page may have come whole this frame)
       // SPLIT. Under the grounds, on the gap's own canvas: the gap's depths,
-      // reaching as far as the gap does (and no less than a little either
-      // side of the seam once it has closed), the light far down and the
-      // walls' shade. Over the grounds and under the writing, on the page's
-      // canvas: the drawing behind once OM is pressed, and the broken pieces
-      // faint as the halves close over them — both kept to the halves, out
-      // of the gap — and THE WORD, whole across all of it; and as it opens,
-      // the crack.
+      // lying across the whole width of the gap however far apart the halves
+      // stand — uncovered as they part, covered as they close — the light far
+      // down and the walls' shade. Over the grounds and under the writing, on
+      // the page's canvas: the drawing behind once OM is pressed (and going,
+      // reverted), and the broken pieces faint as the halves close over them
+      // (and the last split's going) — kept to the halves, out of the gap —
+      // and THE WORD, whole across all of it; and as it opens, the crack.
       const at = halves.at, top = halves.docTop - sy;
-      const spread = Math.max((at.r - at.l) / 2, gap.push * 0.45);
-      gap.reach = spread;
-      moveGap(t, dt, spread, gx, gy, calm);
+      moveGap(gap, t, dt, gap.push, gx, gy, calm);
       ink = gapInk;
       ink.setTransform(ratio, 0, 0, ratio, 0, 0);
       ink.clearRect(0, 0, W, H);
-      drawGap(t, 1, { l: halves.m + at.l, r: halves.m + at.r });
+      drawGap(gap, t, 1, { l: halves.m + at.l, r: halves.m + at.r });
       gap.alpha = 1;
       ink = mainInk;
-      worldIn = gatherAt ? smoother(clamp((now - gatherAt - WORLD_IN_FROM) / WORLD_IN_MS, 0, 1)) : 0;
+      worldIn = gatherAt ? smoother(clamp((now - gatherAt - WORLD_IN_FROM) / WORLD_IN_MS, 0, 1))
+        : halves.revertAt ? 1 - smoother(clamp((now - halves.revertAt) / REVERT_WORLD_MS, 0, 1)) : 0;
       // (Faint over the halves as they close over them, and as they spread
       // out under them.)
       const faint = gatherAt ? clamp(Math.max((at.met - 0.62) / 0.38, calm * 3), 0, 1) : 0;
-      if (worldIn > 0.004 || faint > 0) {
+      let old = 0;
+      if (oldGap) {
+        old = GAP_FAINT * (1 - smoother(clamp((now - oldGap.goneAt) / REVERT_PIECES_MS, 0, 1)));
+        if (old < 0.002) { oldGap = null; old = 0; }
+      }
+      if (worldIn > 0.004 || faint > 0 || old > 0) {
         if (worldIn > 0.004) drawWorld(cx, cy, turn, t, (pageAlpha + voidness * 0.4) * worldIn, handX, handY);
-        if (faint > 0) drawGap(t, GAP_FAINT * smooth01(faint));
+        if (old > 0) { moveGap(oldGap, t, dt, oldGap.push, gx, gy, calmOf(oldGap)); drawGap(oldGap, t, old); }
+        if (faint > 0) drawGap(gap, t, GAP_FAINT * smooth01(faint));
         if (at.r - at.l > 0.5) eraseGap(at, top);
       }
       drawOm(wx, cy, t, now, big, small, voidness);
@@ -2816,15 +2998,18 @@
       if (glassStyle === "split") word = { mode: "specks", calligraphy: 0, drawn: 1, scale, x: wx };
       if (voidness > 0.003 || sparks.length) drawSparks(cx, cy, portalR() * (0.6 + 0.4 * voidness), t, dt, voidness, gatherAt ? 0 : 1);
       if (gap) {
-        gap.reach = gap.push * 0.45;
-        moveGap(t, dt, gap.reach, gx, gy, calm);
-        drawGap(t, GAP_FAINT);
+        moveGap(gap, t, dt, gap.push, gx, gy, calm);
+        drawGap(gap, t, GAP_FAINT);
         gap.alpha = GAP_FAINT;
       }
     }
-    // (No hexagon at the hand while the page is split: it showed the drawing
-    // whole in the middle of the gap.)
-    if (halves) return;
+    // (No hexagon at the hand on the split's page: while it is split it
+    // showed the drawing whole in the middle of the gap, and since
+    // 2026-10-15 — "remove the hexagon please from the part of the page when
+    // the curtains have been closed" — not once it is whole either. It is
+    // the kept trials' still, ?glass=rings, broken and fine, where it is
+    // what shows the page whole.)
+    if (halves || glassStyle === "split") return;
     if (!lens || gatherAt) drawLens(cx, cy, turn, t, pageAlpha);
     else if (lens.shown > 0.004 && lensX > -9000) {
       // Seen through the lens while the page is cracked: the page whole —

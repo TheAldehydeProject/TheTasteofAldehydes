@@ -1164,6 +1164,108 @@ whole* passes at the smaller size.
 **Still open**: a trial, as before — whichever of the split, the rings, the broken pane and the fine
 glass the owner keeps, the others come out of the code.
 
+## 2026-10-15 — Om opens already split; Revert page; OM breathing; the gap uncovered, not stretched; no hexagon
+
+> okay, better than ever before. some final tweaks:
+>
+> I want the opening animation not to be the page splitting in half, but rather the page already being
+> split in half. I would just want it to be introduced smoothly. So there is no drawing the curtains
+> open when you open the page, only closing them when you press the button OM. Maybe also fade the text
+> a little too; i want it to be faded when the curtains are open. I also want the button to slightly have
+> an animation emphasizing it on the page. it should be REALLY subtle, but present. also remove the
+> hexagon please from the part of the page when the curtains have been closed.
+>
+> on the top right, add a button to say "revert page" which will do exactly that; revert it to the split
+> part. Here, i want you to animate it the same way it is animated right now when you open the page: here
+> the curtains will actually open. I also dont want that when the page splits in two the contents of the
+> stuff behind the main page will stretch to the sides; it should already be there, and when you open the
+> curtains, it should only be revealed.
+>
+> also just delay the lighting up of the letters a LITTLE bit, so that you emphasize the closure of the
+> curtains after you do press the OM button.
+
+**The page opens already split** (`introSplit`, `INTRO_MS`, `INTRO_OM`). The halves stand apart from the
+first frame they are drawn, nothing cracking, breaking or shaking; the whole of the split — the halves'
+writing, their grounds and seams, and the gap's canvas — fades in together over 1.4s on the browser's own
+clock (one opacity animation on each of the three, eased), the calligraphy of โอม with them (as before,
+`CALLI_IN_MS`), and **OM comes up 0.65s in**. Until the copies' stylesheet is in, the grounds and the gap
+are held back with the writing, so nothing is seen before the fade. The crack and the parting are kept,
+whole, for **Revert page** (below).
+
+**The writing more faded while the curtains are open**: 56% of itself (`SPLIT_WRITING`; it was 72%, and
+whole before 2026-10-14). The page, its pictures and its gold are quieter in both halves; the calligraphy,
+the gap and OM are as they were.
+
+**OM breathes**, faintly: a soft gold light behind the hexagon (a `::before`, a radial gradient at most
+15% gold) swelling and settling on a 4.6s breath — by opacity and a scale of 0.9 to 1.06, nothing the
+browser has to paint again — and the hexagon's outline a little brighter at the top of it (stroke
+opacity 0.66 to 0.94; it was 0.75, still). The hand on it holds it bright. In the stylesheet
+(`om-breath`, `om-breath-line`), off with reduced motion (which never splits the page anyway).
+
+**The letters lit a beat after the curtains meet.** Read as the page's writing coming back as OM brings
+the halves together — on a dark page, light letters coming up, and the one thing that came up before the
+curtains had met. It comes back from 0.99 of the glide to 1.33 (`WRITING_BACK`; it was 0.88 to 1.24): it
+is half back about 3.1s after the press where it was 2.9s, the halves meeting at 2.7s, so the curtains
+are seen closing on an empty page and the writing comes up as the wave runs out from the seam. (The โอม
+of specks written over the calligraphy, the other thing that lights up, is unchanged — if that is what
+was meant, it is `WRITE`.)
+
+**No hexagon on the page once the curtains have closed.** The lens at the hand is not drawn on the split's
+page at all now, split or whole — nor on a page opened whole (at a fragrance, with `?om=whole`, with
+reduced motion). It is kept in the trials behind the address (`?glass=rings`, `broken`, `fine`), where it
+is what shows their page whole; `OmGlass.hexagon()` says whether it was drawn this frame.
+
+**Revert page** (`offerRevert`, `revertSplit`, `REVERT_*`): once the page is whole, a boxed button in the
+top right where Mend the break stood for the rings — *Revert page* in the house's mono capitals, its mark
+OM's hexagon broken down its middle and its halves parted — coming up 0.7s after the closing has finished
+(`REVERT_OFFER`), and 1.2s in on a page opened whole at one fragrance (an address with a `#`), which can
+be split too. Like OM it is only a press — not a stop of the keyboard's, and a key on it does nothing.
+Pressed:
+
+- the halves are made again over the page **exactly as it stands** — its scroll, its open fragrances —
+  and laid over it whole once their stylesheet is in, the page going under them in the same frame
+  (`live`): until then the page goes on being drawn whole, its drawing, its word and its faint pieces;
+- **THE OPENING runs, as the page used to open**: whole a moment (`REVERT_HOLD`, 0.32s), then the crack
+  running down it and the halves breaking apart, shaking, the writing fading to 56% as they part, and OM
+  up last;
+- **the drawing behind goes** over 1.3s (`REVERT_WORLD_MS`) — kept out of the gap as it opens, as it is
+  kept out as it closes; **the โอม of specks is unwritten**, the pen going back round each letter, drawing
+  out to the calligraphy's size as the calligraphy comes back (`REVERT_WORD_MS`); **the last split's
+  pieces, faint over the page, go** over 0.9s (`oldGap`, `REVERT_PIECES_MS`);
+- a **new gap** is laid under the halves, its depths at rest, ready to be uncovered;
+- and the button goes. OM brings it together again, and Revert page comes back — as many times as you
+  like.
+
+**The gap uncovered, never stretched.** Until now the gap's pieces, specks and cracks reached as far as
+the halves stood apart (`spread`, never less than 45% of the gap's half width), and its light and the
+walls' shade were laid between the walls wherever they stood — so as the halves parted everything in it
+spread out with them, and as they closed it was squeezed towards the seam. Now **everything in the gap
+lies across its whole width** however far apart the halves are (`moveGap` with the gap's own width),
+**the light far down is laid at the gap's whole width** where it lies, and **each wall's shade is half of
+one picture moving with its wall** (`shadeWalls`) — so the halves parting only uncover what is there, and
+closing only cover it. The pieces still spread out across the page once the curtains have closed (THE
+PIECES ONCE IT IS WHOLE), from the gap's whole width rather than from a squeeze. `moveGap` and `drawGap`
+take the gap they move and draw, and each gap carries when it began to calm (`calmAt`), so the last
+split's can go on calming as it goes.
+
+Tested in `tests/om-and-the-tribe.spec.js`, the split's test (renamed *Om opens already split, fading
+in; … ; no hexagon; and Revert page splits it again as the page used to open, the gap's depths
+uncovered, never stretched*): watched every frame from the first, **the left half a push out on every
+one**, nothing shaking, the split fading in from under 0.15 through a frame part way to all of it, the
+writing under 0.6 throughout (and between 0.45 and 0.6 at rest); **OM breathing** — its light and its
+outline running `om-breath` and `om-breath-line`; **the writing half back between 2.95s and 3.4s after
+OM is pressed**; **no hexagon** with the hand over the whole page; **Revert page** at the top right, no
+key reverting it, and pressed — whole and its writing whole on its first frame, then a frame part way
+apart, a frame shaking, apart, the writing under 0.6, the drawing behind there, part gone and gone, the
+word unwritten into the calligraphy, the last split's pieces going, **the gap's pieces as far out on its
+first frame as on its last** (the 90th of every hundred within 0.85 of the most), OM up, the button gone,
+an open fragrance still open in both halves — and OM bringing it together again, Revert page back. *Om is
+whole at once …*: no Revert page with reduced motion or `?om=whole`; at `#part-03`, Revert page there,
+splitting the page where it stood, the fragrance open in both halves.
+
+**Still open**: a trial, as before — whichever of the split, the rings, the broken pane and the fine
+glass the owner keeps, the others come out of the code.
+
 ## Same round, other reports
 
 - [The newer houses — Qimu's Bassist and Drummer written](2026-09-21-the-newer-houses.md#2026-10-10--bassist-and-drummer-written-and-a-fold-in-housejs)

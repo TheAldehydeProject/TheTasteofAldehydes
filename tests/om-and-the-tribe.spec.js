@@ -2,13 +2,17 @@
 // HOUSES TEN TO TWELVE — Om Parfums, Outsider Parfums and Lost Tribe
 // (2026-10-10), and the Houses view's motifs for them.
 //
-//   OM            opens behind CRACKED GLASS, and is read through it: it
-//                 scrolls under the glass, the hexagon at the hand shows it
-//                 whole and the glass cracks again as it goes, and opening
-//                 a fragrance mends it for good (a key too); on a phone it
-//                 comes together by itself. Never with reduced motion, an
-//                 address at one fragrance, or ?om=whole. And it is quick
-//                 to draw, cracked and whole (2026-10-11).
+//   OM            opens SPLIT IN TWO (since 2026-10-15 already apart,
+//                 fading in), and is read through it; OM brings it
+//                 together, and once whole REVERT PAGE splits it again as
+//                 it used to open — the crack, the curtains opening. Behind
+//                 the address, the trials: CRACKED GLASS, the broken pane
+//                 and the rings, read through, the hexagon at the hand
+//                 showing the page whole, mended by the button in the top
+//                 right; on a phone they come together by themselves. Never
+//                 with reduced motion or ?om=whole (an address at one
+//                 fragrance opens whole). And it is quick to draw, cracked
+//                 and whole (2026-10-11).
 //   ITS WRITING   the owner's two dropdowns, one inside the other, and the
 //                 line they asked to have drawn.
 //   OUTSIDER      a door, ajar, in the left margin, the light coming
@@ -315,18 +319,19 @@ test("Om broken in rings round its middle, each band turned a little out of true
    once whole, the pieces spread across the page, fewer, and carried by far
    less of the scroll than with the curtains open.
    The rings and the glass are kept behind ?glass=. */
-test("Om opens whole and breaks apart; the gap wider, its edges corrugated, its grounds moving with it, only the calligraphy of โอม behind it, its pieces deep, moving and giving way, its geometry answering the scroll; OM brings it together, the writing fading as it does, shaking from the start, with a wave, the drawing fading in and the โอม written over; the pieces then spread across the page, fewer and calmer", async ({ page }) => {
-  test.setTimeout(90000);
+test("Om opens already split, fading in; the gap wider, its edges corrugated, its grounds moving with it, only the calligraphy of โอม behind it, its pieces deep, moving and giving way, its geometry answering the scroll; OM brings it together, the writing fading as it does and back a beat after they meet, shaking from the start, with a wave, the drawing fading in and the โอม written over; the pieces then spread across the page, fewer and calmer; no hexagon; and Revert page splits it again as the page used to open, the gap's depths uncovered, never stretched", async ({ page }) => {
+  test.setTimeout(120000);
   const errors = collectPageErrors(page);
-  // Every frame from the first: where the left half stands, and whether it
-  // has broken apart yet.
+  // Every frame from the first, for two seconds: where the left half stands,
+  // how far it is shaken, the writing, and how far the split has faded in.
   await page.addInitScript(() => {
     window.__opening = [];
-    (function f() {
+    const t0 = performance.now();
+    (function f(now) {
       const s = window.OmGlass && window.OmGlass.split();
-      if (s && s.offsets.length) window.__opening.push([s.offsets[0], s.ys[0], s.opened, s.writing]);
-      if (!s || !s.opened) requestAnimationFrame(f);
-    })();
+      if (s && s.offsets.length && s.shown.length) window.__opening.push([s.offsets[0], s.ys[0], s.opened, s.writing, Math.min(...s.shown)]);
+      if (now - t0 < 4000) requestAnimationFrame(f);
+    })(t0);
   });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(OM);
@@ -335,19 +340,25 @@ test("Om opens whole and breaks apart; the gap wider, its edges corrugated, its 
   await expect(root).toHaveAttribute("data-glass", "split");
   expect(await page.evaluate(() => window.OmGlass.style())).toBe("split");
   const split = () => page.evaluate(() => window.OmGlass.split());
-  // THE OPENING: whole at first, and then apart, shaking as it breaks.
+  // THE PAGE OPENS ALREADY SPLIT (2026-10-15 — "not the page splitting in
+  // half, but rather the page already being split in half ... introduced
+  // smoothly"): apart from its first frame, nothing shaking, fading in.
   await expect.poll(async () => (await split()).opened, { timeout: 9000 }).toBe(true);
   const at = await split();
+  await expect.poll(async () => Math.min(...(await split()).shown), { message: "faded in", timeout: 5000 }).toBe(1);
+  await page.waitForTimeout(1500);
   const opening = await page.evaluate(() => window.__opening);
-  expect(Math.abs(opening[0][0]), "whole when it opens").toBeLessThan(1);
-  expect(opening.some((r) => Math.abs(r[0]) > at.push * 0.4 && Math.abs(r[0]) < at.push * 0.9), "coming apart, not jumping").toBe(true);
-  expect(opening.some((r) => Math.abs(r[1]) > 0.2), "shaking as it breaks").toBe(true);
-  // The writing whole as it opens, and a little faded once the curtains are
-  // apart ("fade the contents of the page slightly too, when the curtains
-  // are not connected").
-  expect(opening[0][3], "the writing whole as it opens").toBeGreaterThan(0.95);
-  expect(at.writing, "and a little faded while they are apart").toBeGreaterThan(0.6);
-  expect(at.writing, "(a little)").toBeLessThan(0.85);
+  expect(opening.length, "(seen from its first frame)").toBeGreaterThan(20);
+  expect(opening.every((r) => Math.abs(r[0] + at.push) < 0.5), "apart from the first frame: no curtains drawn open").toBe(true);
+  expect(opening.every((r) => Math.abs(r[1]) < 0.01), "nothing shaking: nothing breaking").toBe(true);
+  expect(opening[0][4], "fading in from nothing").toBeLessThan(0.15);
+  expect(opening.some((r) => r[4] > 0.25 && r[4] < 0.75), "smoothly, not cut").toBe(true);
+  // The writing faded while the curtains are apart ("fade the contents of
+  // the page slightly too, when the curtains are not connected"; more,
+  // 2026-10-15 — "i want it to be faded when the curtains are open").
+  expect(opening.every((r) => r[3] < 0.6), "the writing faded from the first").toBe(true);
+  expect(at.writing, "faded while they are apart").toBeGreaterThan(0.45);
+  expect(at.writing, "(more than a little)").toBeLessThan(0.6);
   const w = await page.evaluate(() => document.body.clientWidth), cx = w / 2;
   expect(at.offsets, "two halves").toHaveLength(2);
   expect(at.push, "each pushed out 21% of the page, the gap a little more than two fifths of it").toBe(Math.round(Math.min(520, Math.max(60, w * 0.21))));
@@ -379,7 +390,9 @@ test("Om opens whole and breaks apart; the gap wider, its edges corrugated, its 
   expect(word.mode, "the word a calligraphy").toBe("calligraphy");
   expect(word.calligraphy, "and come up").toBeGreaterThan(0.9);
   expect(Math.abs(word.x - cx), "whole, at the middle of the gap").toBeLessThan(1);
-  // OM in the middle of the gap, come up once the page has broken apart.
+  // OM in the middle of the gap, come up a beat after the page is in —
+  // breathing, faintly ("an animation emphasizing it on the page. it should
+  // be REALLY subtle, but present").
   const om = page.locator(".om-mend");
   await expect(om).toHaveCount(1);
   await expect(om).toHaveText("OM");
@@ -387,6 +400,13 @@ test("Om opens whole and breaks apart; the gap wider, its edges corrugated, its 
   const ob = await om.boundingBox();
   expect(Math.abs(ob.x + ob.width / 2 - cx), "in the middle").toBeLessThan(2);
   expect(ob.width, "inside the gap").toBeLessThan(at.push * 2);
+  const breath = await om.evaluate((el) => {
+    const glow = getComputedStyle(el, "::before"), line = getComputedStyle(el.querySelector("polygon"));
+    return { glow: glow.animationName, line: line.animationName, runs: el.getAnimations({ subtree: true }).filter((a) => a.playState === "running").length };
+  });
+  expect(breath.glow, "a light behind it breathing").toBe("om-breath");
+  expect(breath.line, "and its outline").toBe("om-breath-line");
+  expect(breath.runs, "running").toBeGreaterThanOrEqual(2);
   // THE PIECES MOVE, and give way to the hand, and come back.
   const g0 = await page.evaluate(() => window.OmGlass.gap());
   await page.waitForTimeout(700);
@@ -458,18 +478,20 @@ test("Om opens whole and breaks apart; the gap wider, its edges corrugated, its 
   await page.mouse.move(40, 450);
   const track = page.evaluate(() => new Promise((done) => {
     const out = [], t0 = performance.now(), worlds = [], words = new Set(), writing = [];
-    let wave = false;
+    let wave = false, pressed = 0, halfBack = 0;
     (function f(now) {
       const s = window.OmGlass.split(), g = window.OmGlass.grounds();
       if (document.querySelector(".om-wave")) wave = true;
+      if (!pressed && document.documentElement.dataset.om === "gathering") pressed = now;
       if (s && s.offsets.length && g) { out.push([now, s.offsets[0], g[0].x, s.ys[0]]); writing.push(s.writing); }
+      if (pressed && !halfBack && writing.length > 1 && s && s.writing >= 0.5 && Math.min(...writing) < 0.05) halfBack = now - pressed;
       worlds.push(window.OmGlass.world());
       words.add(window.OmGlass.word().mode);
-      if (performance.now() - t0 < 7000 && document.documentElement.dataset.om !== "whole") requestAnimationFrame(f); else done({ out, wave, worlds, words: [...words], writing });
+      if (performance.now() - t0 < 7000 && document.documentElement.dataset.om !== "whole") requestAnimationFrame(f); else done({ out, wave, worlds, words: [...words], writing, halfBack });
     })(t0);
   }));
   await om.click();
-  const { out: rows, wave, worlds, words, writing } = await track;
+  const { out: rows, wave, worlds, words, writing, halfBack } = await track;
   const off = rows.findIndex((r) => r[1] > -at.push + 0.3);
   expect(off, "it set off").toBeGreaterThanOrEqual(0);
   const from = rows[Math.max(0, off - 1)][0];
@@ -488,6 +510,13 @@ test("Om opens whole and breaks apart; the gap wider, its edges corrugated, its 
   expect(writing[least], "the writing gone on the way").toBeLessThan(0.05);
   expect(writing.slice(0, least).some((v) => v > 0.2 && v < 0.8), "fading, not cut").toBe(true);
   expect(writing[writing.length - 1], "and back before the page is whole").toBeGreaterThan(0.95);
+  // — a beat after they meet (2026-10-15 — "delay the lighting up of the
+  // letters a LITTLE bit, so that you emphasize the closure of the curtains"):
+  // they meet 2.7s after OM is pressed, and the writing is half back no
+  // sooner than a quarter of a second after that (it was 2.86s), and not
+  // long after.
+  expect(halfBack, "the writing half back a beat after the curtains meet (ms)").toBeGreaterThan(2950);
+  expect(halfBack, "(a little)").toBeLessThan(3400);
   await expect(root).toHaveAttribute("data-om", "whole", { timeout: 8000 });
   await expect(om).toHaveCount(0, { timeout: 3000 });
   await expect(page.locator(".om-split-ground, .om-gap"), "the grounds and the gap's canvas gone").toHaveCount(0);
@@ -514,6 +543,79 @@ test("Om opens whole and breaks apart; the gap wider, its edges corrugated, its 
   const calmBy = nearKept.reduce((n, k) => n + went(e0[k], e1[k]), 0) / nearKept.length;
   expect(calmBy, "less reactive than with the curtains open").toBeLessThan(near.by * 0.45);
   expect(calmBy, "but carried").toBeGreaterThan(20);
+  // NO HEXAGON once the curtains have closed (2026-10-15 — "remove the
+  // hexagon please from the part of the page when the curtains have been
+  // closed"): the hand over the page, and nothing drawn at it.
+  await page.evaluate(() => window.scrollTo(0, 0));
+  for (let i = 0; i < 8; i++) { await page.mouse.move(500 + i * 40, 300 + i * 20); await page.waitForTimeout(40); }
+  await page.waitForTimeout(300);
+  expect(await page.evaluate(() => window.OmGlass.hexagon()), "no hexagon at the hand").toBe(false);
+  // REVERT PAGE, in the top right once it is whole ("on the top right, add a
+  // button to say "revert page" which will do exactly that; revert it to the
+  // split part"): not a stop of the keyboard's, and a key on it does nothing.
+  const revert = page.locator(".om-revert");
+  await expect(revert).toHaveCount(1);
+  await expect(revert).toHaveText(/revert page/i);
+  await expect(revert).toHaveCSS("opacity", "1");
+  const rb = await revert.boundingBox();
+  expect(rb.x + rb.width, "at the right").toBeGreaterThan(1440 - 60);
+  expect(rb.y, "at the top").toBeLessThan(40);
+  await revert.focus();
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(500);
+  await expect(root, "no key reverts it").toHaveAttribute("data-om", "whole");
+  // Pressed, the curtains open as the page used to open ("animate it the
+  // same way it is animated right now when you open the page: here the
+  // curtains will actually open"): whole a moment, then the crack, the
+  // halves parting, shaking as they break; the drawing behind going, the
+  // โอม of specks unwritten into the calligraphy, the faint pieces over the
+  // page going — and the gap's depths lying where they lie, uncovered as the
+  // halves part, never stretched out with them ("it should already be
+  // there, and when you open the curtains, it should only be revealed").
+  await page.mouse.move(40, 450);
+  const reverting = page.evaluate(() => new Promise((done) => {
+    const out = [], worlds = [], words = [], t0 = performance.now();
+    let old = false;
+    (function f() {
+      const s = window.OmGlass.split();
+      if (s && s.offsets.length && document.documentElement.dataset.om === "pieces") {
+        const mid = document.body.clientWidth / 2;
+        const far = window.OmGlass.depths().map((d) => Math.abs(d.x - mid)).sort((a, b) => a - b);
+        out.push([s.offsets[0], s.ys[0], s.writing, far[Math.floor(far.length * 0.9)], s.opened]);
+        worlds.push(window.OmGlass.world());
+        words.push(window.OmGlass.word().mode);
+        if (s.old) old = true;
+      }
+      if (performance.now() - t0 < 6000 && !(s && s.opened && document.documentElement.dataset.om === "pieces")) requestAnimationFrame(f);
+      else done({ out, worlds, words, old });
+    })();
+  }));
+  await revert.click();
+  const back = await reverting;
+  const r0 = back.out[0], last = back.out[back.out.length - 1];
+  expect(Math.abs(r0[0]), "whole when it is pressed").toBeLessThan(1);
+  expect(r0[2], "and its writing whole").toBeGreaterThan(0.95);
+  expect(back.out.some((r) => Math.abs(r[0]) > at.push * 0.4 && Math.abs(r[0]) < at.push * 0.9), "the curtains opening, not jumping").toBe(true);
+  expect(back.out.some((r) => Math.abs(r[1]) > 0.2), "shaking as it breaks").toBe(true);
+  expect(last[0], "apart").toBeCloseTo(-at.push, 0);
+  expect(last[2], "and the writing faded again").toBeLessThan(0.6);
+  expect(back.worlds[0], "the drawing there as it is pressed").toBeGreaterThan(0.9);
+  expect(back.worlds.some((v) => v > 0.1 && v < 0.9), "and going").toBe(true);
+  expect(back.worlds[back.worlds.length - 1], "gone").toBe(0);
+  expect(back.words, "the specks unwritten").toContain("writing");
+  expect(back.words[back.words.length - 1], "into the calligraphy").toBe("calligraphy");
+  expect(back.old, "the faint pieces over the page going").toBe(true);
+  const reach = back.out.map((r) => r[3]);
+  expect(Math.min(...reach) / Math.max(...reach), "the gap's depths where they lie, never stretched as the curtains open").toBeGreaterThan(0.85);
+  await expect(page.locator(".om-join"), "OM up again").toHaveCSS("opacity", "1");
+  await expect(revert, "and Revert page gone").toHaveCount(0, { timeout: 3000 });
+  await expect.poll(async () => (await split()).old, { message: "the last split's pieces gone", timeout: 3000 }).toBe(false);
+  expect(await part.evaluate((el) => el.open), "the fragrance still open").toBe(true);
+  expect((await page.evaluate(() => window.OmGlass.openIn(0))).open, "and in both halves").toBe(2);
+  // And OM brings it together again.
+  await page.locator(".om-join").click();
+  await expect(root).toHaveAttribute("data-om", "whole", { timeout: 8000 });
+  await expect(page.locator(".om-revert"), "Revert page offered again").toHaveCount(1, { timeout: 4000 });
   expect(errors).toEqual([]);
 });
 
@@ -675,13 +777,15 @@ test.describe("on a phone", () => {
 
 /* NEVER IN PIECES with reduced motion, at an address that points at one
    fragrance, or with ?om=whole — and without its script the page is whole. */
-test("Om is whole at once with reduced motion, at one fragrance, or without its script", async ({ browser }) => {
+test("Om is whole at once with reduced motion, at one fragrance (where Revert page splits it), or without its script", async ({ browser }) => {
   const still = await browser.newContext({ reducedMotion: "reduce" });
   let page = await still.newPage();
   await serveDependenciesLocally(page);
   await page.goto(OM);
   await expect(page.locator(".om-shards, .om-split")).toHaveCount(0);
   await expect(page.locator("html")).not.toHaveClass(/om-shattered/);
+  await page.waitForTimeout(1600);
+  await expect(page.locator(".om-revert"), "nothing to revert to").toHaveCount(0);
   await still.close();
 
   const ctx = await browser.newContext();
@@ -690,9 +794,19 @@ test("Om is whole at once with reduced motion, at one fragrance, or without its 
   await page.goto(OM + "#part-03");
   await expect(page.locator("html")).toHaveAttribute("data-om", "whole");
   await expect(page.locator(".om-shards, .om-split")).toHaveCount(0);
+  // Opened whole at one fragrance, it can be split: Revert page is there,
+  // and splits it where it stands, the fragrance open in both halves.
+  await expect(page.locator(".om-revert")).toHaveCSS("opacity", "1", { timeout: 4000 });
+  const y = await page.evaluate(() => window.scrollY);
+  await page.locator(".om-revert").click();
+  await expect(page.locator("html")).toHaveAttribute("data-om", "pieces");
+  await expect.poll(() => page.evaluate(() => window.OmGlass.split().opened), { timeout: 6000 }).toBe(true);
+  expect(await page.evaluate(() => window.scrollY), "where it stood").toBe(y);
+  expect((await page.evaluate(() => window.OmGlass.openIn(2))).open, "the fragrance open in both halves").toBe(2);
   await page.goto(OM + "?om=whole");
   await expect(page.locator(".om-shards, .om-split")).toHaveCount(0);
-  await expect(page.locator(".om-mend"), "nothing to mend").toHaveCount(0);
+  await page.waitForTimeout(1600);
+  await expect(page.locator(".om-mend"), "nothing to mend, nor to revert").toHaveCount(0);
   await page.route("**/om.js*", (r) => r.abort());
   await page.goto(OM);
   await page.waitForLoadState("load");

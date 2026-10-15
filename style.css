@@ -13603,6 +13603,46 @@ html.om-shattered body.om-page { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 700px) {
   .om-mend.om-join { width: 52px; height: 46px; font-size: 12px; }
 }
+/* OM BREATHING (2026-10-15 — "I also want the button to slightly have an
+   animation emphasizing it on the page. it should be REALLY subtle, but
+   present"): a faint gold light behind the hexagon swelling and settling
+   on a slow breath, and its outline a little brighter at the top of it —
+   both on the browser's own clock, the light by opacity and transform
+   alone. The hand on it holds it bright. */
+.om-mend.om-join::before {
+  content: "";
+  position: absolute;
+  inset: -34% -30%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(var(--om-gold), 0.15), rgba(var(--om-gold), 0.05) 58%, rgba(var(--om-gold), 0));
+  opacity: 0.2;
+  transform: scale(0.9);
+  animation: om-breath 4.6s ease-in-out infinite;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.om-join-mark polygon { stroke: rgb(var(--om-gold)); stroke-opacity: 0.75; animation: om-breath-line 4.6s ease-in-out infinite; }
+.om-join:hover .om-join-mark polygon,
+.om-join:focus-visible .om-join-mark polygon { stroke-opacity: 1; animation: none; }
+@keyframes om-breath {
+  0%, 100% { opacity: 0.2; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+@keyframes om-breath-line {
+  0%, 100% { stroke-opacity: 0.66; }
+  50% { stroke-opacity: 0.94; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .om-mend.om-join::before,
+  .om-join-mark polygon { animation: none; }
+}
+/* REVERT PAGE (2026-10-15 — "on the top right, add a button to say "revert
+   page" which will do exactly that; revert it to the split part"): once the
+   page is whole, boxed in the top right where Mend the break stood (the
+   rings'), its mark OM's hexagon broken down its middle and parted. Pressed,
+   the page splits again (om.js). Only a press, as OM. */
+.om-revert .om-mend-mark polygon { stroke-linejoin: round; }
+.om-revert:hover .om-mend-mark polygon { fill: rgba(var(--om-gold), 0.24); }
 
 
 /* ==================================================================
