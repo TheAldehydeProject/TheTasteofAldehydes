@@ -410,7 +410,10 @@
         (typing && j === asked.length - 1 && mine.some((m) => m.startsWith(w)) && (partly = true)));
       if (!ok) return;
       const whole = mine.length === asked.length ? 3 : same(mine[0], asked[0]) || mine[0].startsWith(asked[0]) ? 2 : 1;
-      best = Math.max(best, whole - (partly ? 1.5 : 0) - (i ? 0.1 : 0));
+      // (Every name that answers answers, however low it ranks: a word half
+      // typed that begins a later word of a name — "ceda", Hiba Cedar —
+      // came out below nothing and was left out until 2026-10-20.)
+      best = Math.max(best, Math.max(0.01, whole - (partly ? 1.5 : 0) - (i ? 0.1 : 0)));
     });
     return best;
   }

@@ -188,6 +188,37 @@ dashes going along it, its number in a ring at its foot, and **a walker** (a sma
 length over the fragment's life of eight to ten seconds. Each one keeps off the chrome, the
 window's edges and the others.
 
+### Finer specks, one side on a phone, the trails stronger (the same day, later)
+
+> from the images you have sent me, i would like you to make the particles way smaller on the phone, so
+> that there will be less overlap, and the density is not going to come from relatively larger
+> particles, but rather more particles. do the same for the non phone version, but to a lesser extent.
+>
+> Additionally, for the phone version, I do not want you to actually make the whole mountain appearl,
+> its okay if you do just a single side of it while keeping it as organized as possible.
+>
+> emphasize the red pathing please. just a little more
+
+- **Smaller and more of them.** On a phone each speck is **0.42 of its size** (`SPECK_NARROW`; it was
+  1.15 — a speck there is one or two of the screen's own pixels now, where it was three or four) and
+  there are **40,000** where there were 14,000 (`SPECKS_NARROW`), each a little stronger
+  (`STRONGER_NARROW`, 1.3) so the tone comes from how many there are. On a laptop, less so: **0.8 of
+  their size** and **34,000** where there were 28,000 (`SPECK_WIDE`, `SPECKS_WIDE`). The soft wash
+  under them is fainter where there are more specks to each of its pixels (`WASH_WIDE`,
+  `WASH_NARROW`) — with as many specks as a phone has now it came up as blotches.
+- **One side of it on a phone.** The mountain is drawn nearly twice as large there, its summit
+  towards the right edge (`frameOf`: the window's width, centred at 78% across), so one flank runs
+  across the window and the rest stands off it — whichever side it has turned to. **Three of the six
+  trails** on a phone (`TRAILS_NARROW`), every other one, so the summit, where they all arrive, stays
+  clear, and no spot heights; the summit's name written to its left where there is no room to its
+  right.
+- **The trails a little stronger**: at 0.8 where they were 0.62, their lines 1.45px wide (1.3 on a
+  phone; they were 1.2 and 1.1), a touch redder (`[128, 60, 42]`), the rings at their feet and the
+  blazes a little firmer too. Behind the words they are as quiet as ever, in proportion.
+
+Measured on the test machine: a redraw of the specks 6–7 ms on a laptop and 6 on a phone; scrolling
+45–55 frames a second on a laptop (it varies run to run there) and 54–61 on a phone.
+
 ### Om's opening, in two beats
 
 The same round, on Om Parfums. It is written in [Om's

@@ -2097,6 +2097,17 @@ already here (Water Lily is Waterlily with a space); `research/NEW5.py`, filed b
 house has its line in `HOUSES` in `network.js`. See [Apoteker Tepe's
 report](2026-10-20-apoteker-tepe.md#the-note-library).
 
+## 2026-10-20 — a half-typed word that begins a later word of a name
+
+Found by the search's own test once *Hiba* came in with its spelling *Hiba Cedar*: typing **ceda**
+answered Cedarwood and the others but not Hiba, which only came once the word was finished. A note
+answers a half-typed word when it begins any word of its name or spellings, but the score that ranks
+the answers took off more for a half word (1.5) than a match that is not the name's first word is
+worth (1), so a half word beginning a *later* word scored below nothing and was left out. Every name
+that answers now answers, at least just above nothing (`answer` in `network.js`), still ranked under
+a whole word and under a first word. *the arrows on the left pull out the search bar …* in
+`note-library.spec.js` is the test that found it.
+
 ## 2026-10-13 — opening on time
 
 > I feel that there are several pages that are having issues opening; mainly, the note library

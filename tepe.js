@@ -62,8 +62,17 @@
 
   // ---------- TUNING ----------
   const NARROW_AT = 700;
-  const SPECKS_WIDE = 28000;       // the mountain's specks on a wide window
-  const SPECKS_NARROW = 14000;     // and on a phone: fewer, a little stronger
+  // THE SPECKS SMALL AND MANY (2026-10-20, later — "make the particles way
+  // smaller on the phone, so that there will be less overlap, and the
+  // density is not going to come from relatively larger particles, but
+  // rather more particles. do the same for the non phone version, but to a
+  // lesser extent"): the tone comes from how many there are, not how big.
+  const SPECKS_WIDE = 34000;       // the mountain's specks on a wide window (28,000 until then)
+  const SPECKS_NARROW = 40000;     // and on a phone (14,000), where only one side of it is seen
+  const SPECK_WIDE = 0.8;          // of a speck's size on a wide window (it was the whole)
+  const SPECK_NARROW = 0.42;       // and on a phone (it was 1.15)
+  const STRONGER_NARROW = 1.3;     // and a little stronger each there, so the many small make the tone
+  const TRAILS_NARROW = [0, 2, 4]; // which trails a phone draws: every other, so the summit stays clear
   const SEA = 0.05;                // of the specks' weight, on the water
   const REACH = 0.47;              // of the square, round the summit: how far the mountain is drawn before it fades out
   const LIFT = 0.42;               // the summit's height, in half-widths of the square (the real one is 0.25: raised a little)
@@ -79,11 +88,17 @@
   const FAR_FADE = 0.55;           // how much fainter the far side of the mountain is
   const WASH_EVERY = 3;            // one speck in so many also laid in the wash under the grain, so the print reads as tone, not only as dots
   const WASH_A = 0.05;             // and how faint
+  // (Fainter where there are more specks to a pixel of it: as many as there
+  // were on a wide window, nearly three times as many on a phone's one side.)
+  const WASH_WIDE = 0.7, WASH_NARROW = 0.28;
   const HAND_REACH = 110;          // px
   const HAND_LIFT = 9;             // px a speck lifts under the hand, at most
   const HAND_LIGHT = 0.55;         // and how much lighter
-  const TRAIL = [124, 66, 46];     // the pencil's red-brown
-  const TRAIL_A = 0.62;
+  const TRAIL = [128, 60, 42];     // the pencil's red-brown
+  // A little stronger since 2026-10-20, later ("emphasize the red pathing
+  // please. just a little more"): it was 0.62, its lines 1.2 and 1.1 wide.
+  const TRAIL_A = 0.8;
+  const TRAIL_WIDE = 1.45, TRAIL_NARROW = 1.3;   // px, the lines' width
   const DASH = [5, 4];
   const DASH_SPEED = 7;            // px a second the dashes go along a trail
   const BLAZE_EVERY = 22;          // trail points between one blaze and the next
@@ -236,10 +251,16 @@
   let dirty = true;
   window.addEventListener("resize", size);
 
-  // Where the mountain stands on the window.
+  // Where the mountain stands on the window. ON A PHONE, ONE SIDE OF IT
+  // (2026-10-20, later — "I do not want you to actually make the whole
+  // mountain appear, its okay if you do just a single side of it while
+  // keeping it as organized as possible"): drawn nearly twice as large, its
+  // summit towards the right edge, so one flank runs across the window and
+  // the rest stands off it — whichever side it has turned to.
   const frameOf = () => {
-    const S = Math.min(W * (narrow ? 0.56 : 0.47), H * (narrow ? 0.52 : 0.68));
-    return { S, cx: W / 2, cy: H * (narrow ? 0.6 : 0.62) };
+    if (narrow) { const S = Math.min(W * 1.02, H * 0.92); return { S, cx: W * 0.78, cy: H * 0.58 }; }
+    const S = Math.min(W * 0.47, H * 0.68);
+    return { S, cx: W / 2, cy: H * 0.62 };
   };
 
   // ---------- THE SPECKS, DRAWN ----------
@@ -289,7 +310,8 @@
     if (!zb || zb.length !== zbCols * zbRows) zb = new Float32Array(zbCols * zbRows);
     zb.fill(1e9);
     pix32.fill(0); wpix32.fill(0);
-    const R2 = HAND_REACH * HAND_REACH, handing = hand > 0.01 && !REDUCE, r = ratio, grow = narrow ? 1.15 : 1;
+    const R2 = HAND_REACH * HAND_REACH, handing = hand > 0.01 && !REDUCE, r = ratio, grow = narrow ? SPECK_NARROW : SPECK_WIDE;
+    const washA = WASH_A * 6 * (narrow ? WASH_NARROW : WASH_WIDE), strong = narrow ? STRONGER_NARROW : 1;
     let l = 1e9, t = 1e9, rr = -1e9, b = -1e9;
     for (let k = 0; k < count; k++) {
       const xr = X[k] * c - Z[k] * s, zr = X[k] * s + Z[k] * c;
@@ -300,7 +322,7 @@
       // How it faces the eye (its ground's way), and how far back it is.
       const nzr = NX[k] * s + NZ[k] * c, nz2 = -NY[k] * sp + nzr * cp;
       const facing = Math.max(0.12, Math.min(1, 0.3 - nz2 * 1.5));
-      let a = BASE[k] * facing * (1 - FAR_FADE * Math.max(0, Math.min(1, (z2 + 0.6) / 1.8)));
+      let a = BASE[k] * facing * (1 - FAR_FADE * Math.max(0, Math.min(1, (z2 + 0.6) / 1.8))) * strong;
       let tone = TONE[k];
       if (handing) {
         const dx = sx - handX, dy = sy - handY, d2 = dx * dx + dy * dy;
@@ -333,7 +355,7 @@
           }
         }
       } else lay32(pix32, PW, PH, px, py, side, rgb, aa);
-      if (k % WASH_EVERY === 0) lay32(wpix32, WW, WH, (sx / WASH_STEP) | 0, (sy / WASH_STEP) | 0, 1, RGB[tone], Math.min(1, a * WASH_A * 6));
+      if (k % WASH_EVERY === 0) lay32(wpix32, WW, WH, (sx / WASH_STEP) | 0, (sy / WASH_STEP) | 0, 1, RGB[tone], Math.min(1, a * washA));
     }
     box = rr > l ? { l: l - 8, t: t - 8, r: rr + 8, b: b + 8 } : null;
     // The specks put straight onto the canvas (it is replaced, nothing to
@@ -376,7 +398,7 @@
     pen.setTransform(ratio, 0, 0, ratio, 0, 0);
     pen.clearRect(0, 0, W, H);
     const Wr = window.Writing, color = "rgb(" + TRAIL.join(",") + ")";
-    pen.lineWidth = narrow ? 1.1 : 1.2;
+    pen.lineWidth = narrow ? TRAIL_NARROW : TRAIL_WIDE;
     pen.lineCap = "round";
     pen.setLineDash(DASH);
     pen.lineDashOffset = REDUCE ? 0 : -t * DASH_SPEED;
@@ -384,6 +406,7 @@
     let best = 1e9, bestK = -1;
     const marks = [];
     trails.forEach((trail, ti) => {
+      if (narrow && !TRAILS_NARROW.includes(ti)) return;
       const pts = trail.map((p) => project(p, frame, c, s, cp, sp));
       // In three strengths: clear, behind the words, and the nearest the hand.
       const runs = [[], [], []];
@@ -407,7 +430,7 @@
       if (!hidden(foot)) marks.push({ kind: "no", x: foot.x, y: foot.y, say: ROMAN[ti] || String(ti + 1) });
       for (let k = BLAZE_EVERY; k < pts.length - 4; k += BLAZE_EVERY) {
         if (!hidden(pts[k])) marks.push({ kind: "blaze", x: pts[k].x, y: pts[k].y, z: pts[k].z });
-        if (k === BLAZE_EVERY * 2 && !hidden(pts[k])) marks.push({ kind: "spot", x: pts[k].x, y: pts[k].y, say: trail[k].m.toLocaleString("en-GB") + " m" });
+        if (k === BLAZE_EVERY * 2 && !narrow && !hidden(pts[k])) marks.push({ kind: "spot", x: pts[k].x, y: pts[k].y, say: trail[k].m.toLocaleString("en-GB") + " m" });
       }
     });
     nearest = best < 80 ? bestK : -1;
@@ -421,12 +444,12 @@
       if (m.kind === "blaze") {
         if (!blaze) continue;
         const h = BLAZE_TALL * (0.75 + 0.3 * (EYE / (EYE + m.z))), w = (blaze.width / blaze.height) * h;
-        pen.globalAlpha = 0.72 * q;
+        pen.globalAlpha = 0.8 * q;
         pen.drawImage(blaze, m.x - w / 2, m.y - h - 2, w, h);
       } else if (m.kind === "no") {
-        pen.globalAlpha = 0.8 * q;
+        pen.globalAlpha = 0.9 * q;
         pen.strokeStyle = color;
-        pen.lineWidth = 1;
+        pen.lineWidth = 1.1;
         pen.beginPath(); pen.arc(m.x, m.y, 7.5, 0, Math.PI * 2); pen.stroke();
         pen.fillStyle = color;
         pen.textAlign = "center";
@@ -441,16 +464,19 @@
     // The summit: its height, as surveyed, and where it stands.
     const top = project(summit, frame, c, s, cp, sp);
     if (!hidden(top)) {
-      const q = Math.min(along(top.x, top.y - 10, 130), along(top.x, top.y + 2, 130));
+      const left = top.x + 150 > W, lx = left ? top.x - 140 : top.x;
+      const q = Math.min(along(lx, top.y - 10, 140), along(lx, top.y + 2, 140));
       pen.globalAlpha = 0.85 * q;
       pen.fillStyle = color;
       pen.beginPath(); pen.moveTo(top.x, top.y - 9); pen.lineTo(top.x - 5, top.y - 1); pen.lineTo(top.x + 5, top.y - 1); pen.closePath(); pen.fill();
       pen.fillStyle = "rgb(" + MARK_INK.join(",") + ")";
-      pen.textAlign = "left";
+      // (Written to its left where there is no room to its right.)
+      const tx = left ? top.x - 10 : top.x + 10;
+      pen.textAlign = left ? "right" : "left";
       pen.globalAlpha = 0.72 * q;
-      pen.fillText("ATHOS  2,033 m", top.x + 10, top.y - 10);
+      pen.fillText("ATHOS  2,033 m", tx, top.y - 10);
       pen.globalAlpha = 0.5 * q;
-      pen.fillText("40°09′ N  24°19′ E", top.x + 10, top.y + 2);
+      pen.fillText("40°09′ N  24°19′ E", tx, top.y + 2);
     }
     pen.globalAlpha = 1;
   }
