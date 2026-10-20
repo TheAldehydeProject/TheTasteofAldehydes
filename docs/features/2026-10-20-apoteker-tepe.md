@@ -1,6 +1,6 @@
 # Apoteker Tepe, the thirteenth house, and its mountain
 Date: 2026-10-20
-Files touched: `houses/apoteker-tepe.html` (new), `tepe.js` (new), `tepe-gl.js` (new, the mountain drawn, for the page and the Houses view), `tepe-data.js` (new, written by the tool), `tools/apoteker/mountain.mjs` (new), `images/Apoteker Tepe/` (the owner's uploads, with `web/`, `house-web/`, `mountain/athos.jpg` (written by the tool) and a README), `style.css`, `notes-data.js`, `tools/note-library/base.json`, `tools/note-library/research/NEW5.py` (new), `note-library/index.html` (its catalogue, written by `catalogue.py`), `note-figures.js`, `network.js` (`HOUSES`), `motifs.js` (`ridge`), `scent-descriptions/index.html` (the thirteenth frame, and `tepe-data.js` and `tepe-gl.js`), `houses/lost-tribe.html` and `houses/pineward.html` (the chain), `search-page.js`, `tools/seo.py`, `nav.js` (`Writing`, a closed part's writing), `package.json` (image-js and geotiff, for the tool), `tests/apoteker-tepe.spec.js` (new), and the house lists in `tests/houses.spec.js`, `mobile.spec.js`, `notes.spec.js`, `writing.spec.js`
+Files touched: `houses/apoteker-tepe.html` (new), `tepe.js` (new), `tepe-gl.js` (new, the mountain drawn, for the page and the Houses view), `tepe-data.js` (new, written by the tool), `tools/apoteker/mountain.mjs` (new), `images/Apoteker Tepe/` (the owner's uploads, with `web/`, `house-web/`, `mountain/athos.jpg` and `mountain/heights.png` (written by the tool) and a README), `style.css`, `notes-data.js`, `tools/note-library/base.json`, `tools/note-library/research/NEW5.py` (new), `note-library/index.html` (its catalogue, written by `catalogue.py`), `note-figures.js`, `network.js` (`HOUSES`), `motifs.js` (`ridge`), `scent-descriptions/index.html` (the thirteenth frame, and `tepe-data.js` and `tepe-gl.js`), `houses/lost-tribe.html` and `houses/pineward.html` (the chain), `search-page.js`, `tools/seo.py`, `nav.js` (`Writing`, a closed part's writing), `package.json` (image-js and geotiff, for the tool), `tests/apoteker-tepe.spec.js` (new), and the house lists in `tests/houses.spec.js`, `mobile.spec.js`, `notes.spec.js`, `writing.spec.js`
 
 ## What changed
 
@@ -372,6 +372,139 @@ the house's page: the Houses view keeps its own white, as the owner asked of Out
   and 53. A machine with a graphics card draws the surface and its third of a million specks in a
   millisecond or two.
 
+### Denser and digital, the sign cut in, a land round it, mist, the quiet in the drawing, and the free view held (the last round of the day)
+
+> for SD Apoteker Tepe: okay, so this is way better; but i would like you to make the graphics way
+> denser and make it a little nicer. After you do that, i want you to actually make it a little
+> digitalized by driving it. IDK if that is the true word to describe it, but give it noise. most
+> importantly, make it look good and graphically dense. i also want you to remove the logo being
+> plastered on the mountain; rather it should be a part of it. The paths are good, but there is
+> unneccessary coordinates on it which i think should be removed. I also want you to make it seem
+> less like an island; i want there to be an abstract biome/environment/background all around this
+> one mountain, as not to make it feel so isolate. I also want you to fix the text, so that it feels
+> less so that the mountain loses opacity instead of putting a whole object in front of it on medium
+> opacity. the rotation should be slower in the main page too please (as in less sensitive)
+>
+> NOW ABOUT THE FREE VIEW: most importantly, i do not want the environment to feel so bland; so
+> expand on what i said above. Then, I want the text not to be registered on the page unless you
+> hover on something, that way you wont highlight something by accident by trying to move the
+> mountain around. I will also ask that here (and in the page in general), you cannot turn the
+> mountain all the way, but rather to a certain point: i want you to set degree thresholds on eithers
+> side of it (left right up down), so that you can only turn it a little. I want you to accordingly
+> redistribute the waypoints indicating the perfumes. I want the mountain to have some motion even
+> when not interacted with; and I want the same to be true for the environment it is in. this motion
+> should also include temporary popups of the fragrances within the house itself. you should not be
+> able to zoom in or out by the way. AT THE TOP OF THE MOUNTAIN, I WANT THE POPUP TO BE THE LOGO
+>
+> something you could do in general is simulate mist that moves in and around this mountain; but I
+> would ask that this be really high quality. you can look for various sources on github if you need
+> to for a way to do that. please change the SD apoteker tepe hovering mechanism accordingly.
+
+`tepe-gl.js` and `tepe.js` were written again; the tool runs again.
+
+- **Denser.** The heights are **384 by 384, 40 m apart** (they were 200, 78 m), read off a picture of
+  them the tool writes (`images/Apoteker Tepe/mountain/heights.png`, sixteen bits, red the high byte
+  and green the low, as the terrain tiles themselves are — `TEPE.heights` names it; the base64 of the
+  heights in `tepe-data.js` went, and the file is 13 kB). **460,000 specks on the mountain and 80,000
+  on the land round it** on a laptop, 320,000 and 50,000 on a phone, each 0.52 and 0.4 of a css
+  pixel near; **the ground a grid of 520 by 520** (420 on a phone), finest over the mountain and
+  coarser out to the haze (a warped grid: linear across the square, its cells growing beyond it, its
+  slope kept where they meet). The satellite's picture is softened a little less (σ 0.7).
+- **Digital — "driving it" read as *dithering* it, with the noise the owner named.** Every colour
+  drawn — the sky, the ground, the specks, the mist — is put in **steps of an ordered (Bayer 8×8)
+  dither, a css pixel to a step**, 34 steps of light (`DITHER`), with **a fine grain** from a noise
+  picture — so the light comes in steps as a screen of few colours shows it, plainest in the sky and
+  the mist. `TepeMountain.dither()` reads it off the sky.
+- **The sign cut in, not laid on.** It is no longer pale stone painted over the photograph. The sign
+  is **cut into the ground**: in its shape the ground is lowered a little (its edges catching the
+  light on one side and in shade on the other, the mask's own slope tilting the light), **bared to the
+  red earth** a limestone mountain has under its scrub (*terra rossa*, `EARTH`, 72% of the ground's
+  own colour, its grain kept), and **most of its specks taken out** (`SIGN_KEPT`, 30% left) — on a
+  broad slope the tool now chooses **turned squarely to the page's view** (`facing`), 2,200 m tall.
+  *Tried first and wrong:* a pale cut, as a chalk figure is made — lost on Athos's own pale limestone
+  (measured: 8 points of light against the ground round it); then **a dark wood** in its shape —
+  lost on its own dark woods. A red debug colour showed the shape was there all along, whole and
+  legible; it was the contrast.
+- **No coordinates.** The summit's *ATHOS 2,033 m* and *40°09′ N 24°19′ E* and the spot heights on the
+  trails are gone; the trails, their numbers at their feet and their blazes stay. The trails to the
+  summit stop just short of it, under the house's node, where three came together in a knot of
+  dashes, and no blaze stands in the last eighth of a trail.
+- **A land all round it, not an island** (`proc` in `tepe-gl.js`, made up — the credit says so):
+  **the peninsula's ridge runs on out of the square** (its edge carried outwards, falling away,
+  `CARRY`), **water lies in the gulfs either side** as the sea does there (the mountain's own sea
+  goes under the water), and **beyond the water the land rises on every side** to rolling hills cut by
+  valleys — meadow, scrub, a patchwork of fields in the lowland, woods (more on the slopes turned from
+  the sun), rock where it is steep — and to **far ranges going into the haze**, out to 9½ half-widths;
+  **faint contours on it** now and then, as on a map; the water's edge worked out between its corners
+  (its depth is signed, less than nothing on land), so it does not follow the grid in steps.
+- **The sun moved** to the south-south-east (165°, 32° up; it was from the south-west, 225°): from the
+  south-west it stood behind the eye, and the land lay flat under it. The places of Pale Fire and
+  Brother Night follow it (the tool's `SUN`).
+- **Mist, moving in and around the mountain** — two kinds, worked out in the programs:
+  - **lying low in the air**, an exponential mist thickest in the valleys and over the water, its
+    whole way from the eye integrated in closed form (no stepping through it — the textbook height
+    fog, as Íñigo Quílez sets it out), lying in **wisps that drift** (two layers of noise moving
+    different ways), lit brighter towards the sun;
+  - **banks of it** (`mist`, `MIST`: 34 along the mountain's foot over the water and the shore, 26
+    wisps hanging just off its slopes and **going round it**, 9 in a **cap streaming off the summit**
+    on the wind, 10 over the far valleys) — each a soft volume, its body eroded by three layers of
+    drifting noise, **lit as a ball is** from the sun's side, hazed with distance, and **sinking into
+    the ground where it meets it** (a soft edge read off a picture of the world's heights), hidden by
+    the mountain where it stands in front.
+  No library was taken from GitHub: the two are short enough to write here and keep in WebGL 1.
+- **The shadows of clouds** pass over the land, slowly, and **high cloud** drifts in the sky.
+- **Behind the writing the mountain loses its opacity.** The veil of paper laid over the column
+  (`.tepe-veil`, `.tepe-veil-band`) is gone. The page works out **where the words are**
+  (`Writing.boxes()`, on every width now) as a small picture of how much of the drawing is left at
+  each place of the window — Ataraxia's QUIET behind the words, coming on over Ataraxia's SOFT round
+  them, the whole of itself clear of them; on a phone QUIET everywhere and the words' own KEEP of that
+  behind them — and hands it to the drawing, which draws the ground, its specks and its mist **that
+  much of the way to the sky behind them** (`mix(sky, col, quietHere())`). So the mountain fades into
+  its own sky and haze behind a paragraph, and the sky itself is never veiled: no edge of a pane on
+  it. (Blending the ground at that opacity over the sky was the first way, and needed the ground laid
+  down twice, once for its depth; drawing it solid at the sky's colour is the same picture, once.)
+  *A fault found on the way:* `Writing.boxes()` already gives the boxes on the window; the phone's
+  veil had taken the scroll off them a second time, which put the quiet off the words once the page
+  was scrolled.
+- **Slower and only so far.** The view is the data's (`TEPE.view`, from the west-south-west, the
+  sun's side). The page turns **PAGE either way of it, 0.3 radians (17°)**, from one end at the head
+  of the page to the other at its foot — **34° in all** (it was 99°, and 279° before that). The free
+  view turns **FREE either way, 0.45 (26°)**, and looks down between **0.17 and 0.42**: a drag past
+  either gives a little (`GIVE`, a third as far) and **springs back** once let go. **Nothing brings
+  it nearer or moves it**: the wheel, a pinch and a right-drag do nothing (`zoom` and the pan are out
+  of the code).
+- **The places redistributed.** The tool chooses every place, and the sign, **where the view sees it**
+  — from the view and from both ends of the page's turn, nothing of the mountain in front of it, the
+  slope turned to the eye — so all of them face the window wherever it is turned (a test turns it to
+  both ends of the free view and finds all of them, or all but one). The summit is **the house's
+  own**; *The Holy Mountain* stands just under it on the face seen.
+- **The house's sign at the summit.** A ninth node, the house's, stands at the top: its card is **the
+  house's sign itself**, large, with its name and line under it, and pressed it goes to the head of
+  the page.
+- **Never quite still.** Left alone the mountain **breathes** — the view swaying 1.6° and a half a
+  degree, on breaths of 41 and 29 seconds (`SWAY`) — while the mist drifts, the wisps go round, the
+  cap streams off the summit, the clouds' shadows cross and high cloud moves; and in the free view,
+  left alone for four seconds, **the nodes say what they are of their own accord**, one after another,
+  each for three seconds, the house's first (`POP_*`). The hand on a node, or a drag, stops them; they
+  start again once it has gone.
+- **Nothing written until it is pointed at.** A node's number shows only while it is pointed at or
+  saying what it is; the hint goes after six seconds; and **nothing in the free view can be
+  selected** (`user-select: none` on the whole page while it is open), so a drag never highlights
+  anything.
+- **Drawn every frame** while anything moves, **every other** while only the mist does. Without a
+  graphics card the programs are their LITE versions (no grain, fields, contours, ripples, wisps or
+  high cloud; a simpler sky; a tenth of the specks and a coarser ground), at most a picture every 300
+  ms — every 750 while the page is being scrolled, and one a second while nothing but the mist moves.
+- **On the Houses view** the fragments follow: **16,000 specks**, smaller, **dithered**, the sign cut
+  in on the one that carries it, **dissolving at their edge in the dither's own steps** rather than
+  torn off, turning half as fast again (`RIDGE_SPIN` 0.009 to 0.018), white haze and no mist — and,
+  like every house there since that day, **only while Apoteker Tepe is the house at the front**
+  ([the axis](2026-09-24-the-axis.md#2026-10-20--only-the-house-at-the-front-the-hand-sets-nothing-off)).
+- Measured here, without a graphics card (as every test runs): a picture of the whole in 70 ms on a
+  laptop's window and 106 on a phone's sharp screen alone, and the page keeping its frames, scrolling
+  and read, under the suite. With `?tepe=full` (the whole of it, drawn on the processor) a picture
+  takes two seconds here, which a graphics card does in a few milliseconds.
+
 ### Om's opening, in two beats
 
 The same round, on Om Parfums. It is written in [Om's
@@ -384,25 +517,32 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
   - **the pictures stand a little further off**: a cut-out padded in its frame, a scene at its own
     shape, the house's picture at the Houses view's frame's;
   - the credit names the mountain, Scentorium and the Sentinel-2 data;
-  - **the mountain is solid** (its body the same drawn over black and over white), **coloured as a
-    mountain is** (under two thirds of it green; greys and warm colours), in many specks, out of
-    16-bit heights, **the house's sign** laid in pale stone where the tool put it;
-  - **it turns slowly** (more than 1.6 and less than ⅔π radians head to foot) and **nothing answers
-    the hand** (the camera unmoved by the pointer, no `HAND_*` left);
-  - **it is quiet behind the writing as Ataraxia's is**, with Ataraxia's numbers: over the column
-    and between its paragraphs on a laptop, the whole of itself in the margin; on a phone at QUIET
-    everywhere and quieter behind the words; the veil laid over it;
-  - **it is quick to draw and to scroll** on a laptop and a phone (a redraw under 110 ms without a
-    graphics card, 24 with one; scrolling over 24 and 30 frames a second, read over 30 and 40, under
-    a loaded suite);
-  - **Free view**: at the top right; the writing goes; eight nodes in the house's order; a drag
-    turns it, the wheel brings it nearer; the summit's node pointed at says *The Holy Mountain* and
-    *2015, before 2018*, and pressed goes to part 02, opened; Escape comes back. On a phone a tap
-    says which and a second, on the card, goes;
-  - still with reduced motion, and the page is its writing (and no Free view) without the scripts;
+  - **the mountain is solid** (the same drawn over black and over white), **coloured as a mountain
+    is** (under two thirds of it green; greys and warm colours), in **very many specks** on a fine
+    grid, out of 384 by 384 heights read whole out of their picture; **a land all round it** (land
+    beyond the water nearly everywhere from 1.8 to 5 half-widths out, and far ranges); **the house's
+    sign cut into it** where the tool chose, nothing of it beside it, no pale stone laid on;
+  - **dithered**: neighbours a step of light apart all through the sky;
+  - **it turns a little** (the page's whole turn under 40°, from one end at its head to the other at
+    its foot), **breathes** left alone, and **nothing answers the hand**;
+  - **it loses its opacity behind the writing**, with Ataraxia's numbers, nothing laid over it: QUIET
+    behind the words on a laptop and the whole of itself clear of them; on a phone QUIET everywhere
+    and less again behind the words;
+  - **it is quick to draw and to scroll** on a laptop and a phone (a picture under 140 and 200 ms
+    without a graphics card, 24 with one; scrolling over 24 and 30 frames a second, read over 30 and
+    40, under a loaded suite);
+  - **Free view**: at the top right; the writing goes; nine nodes, the house's first; nothing can be
+    selected and a node's number is hidden until it is pointed at; every node seen from both ends of
+    its turn; a drag past its limit gives a little and springs back; the wheel brings it no nearer;
+    left alone a card comes up of its own accord; the summit's card is the house's sign; *The Holy
+    Mountain*'s says *2015, before 2018* and, pressed, goes to part 02, opened; Escape comes back. On
+    a phone a tap says which and a second, on the card, goes;
+  - still with reduced motion (and no card of its own accord), and the page is its writing (and no
+    Free view) without the scripts;
   - the Houses view's fragments are whole on the window and apart, one and only one with the sign,
     drawn by `TepeGL`;
-  - the data is the tool's, with image-js and geotiff, and the colour it wrote is there.
+  - the data is the tool's, with image-js and geotiff, and the colour and the heights it wrote are
+    there.
 - `tests/writing.spec.js`: *the writing inside a shut part is not counted until it is opened*.
 - `tests/mobile.spec.js`: the mountain's canvas is drawn at twice the css pixels on a phone.
 - The house is in every house list: `houses.spec.js` (the chain both ways, the return button at
@@ -412,8 +552,10 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
   --check` are clean; `tests/rulebook.spec.js` finds every note After the Flood names (the page's
   newest) in the library, counted for it at its tier, and opens the first one's window.
 - By eye: `houses/apoteker-tepe.html?tepe=full` at a laptop's and a phone's size, scrolled slowly
-  from head to foot; Free view, turned, brought near the sign, a node pointed at;
-  `scent-descriptions/?tepe=full#house-13`.
+  from head to foot; Free view, turned to both ends, left alone for its cards, a node pointed at;
+  `scent-descriptions/?tepe=full#house-13`. (Here, without a graphics card, the whole of it is drawn
+  once in two seconds; with motion turned off it is drawn only when something changes, which is the
+  way to take a still picture of it.)
 
 ## Known issues / TODO
 
@@ -428,6 +570,12 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
 - **Without WebGL there is no mountain** (and no Free view): the page is its writing on the aged
   paper. Without a graphics card it is drawn lighter, as above.
 - The satellite's picture is of one summer morning (14 July 2023): its light is in it, a little,
-  under the page's own low south-western sun.
-- The summit's label says the surveyed 2,033 m. The ground drawn reaches 1,956 m at the page's
-  grid, because a 29-metre pixel averages the peak away.
+  under the page's own low sun from the south-south-east.
+- **The land round the mountain is made up** (`proc`): no map of what lies round Athos — the credit
+  says so. Its water is where the mountain's own sea was, near it; the real Aegean beyond it is land
+  here.
+- **A phone's smoothness was measured without a graphics card**, where everything is drawn on the
+  processor; on a real phone the programs run on its graphics chip at full sharpness, which could not
+  be measured here. If a phone ever struggles, `window.Sharpness` lets the drawing down a step at a
+  time, and the mist's banks are the first thing to make fewer (`MIST_NARROW`).
+- The summit's height is no longer written anywhere on the page (the owner asked the coordinates off).

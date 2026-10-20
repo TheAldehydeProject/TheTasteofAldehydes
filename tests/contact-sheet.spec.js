@@ -25,7 +25,8 @@ const SHEET = "/scent-descriptions/";
 // The sheet with the motifs left to the hand alone, as they were until
 // 2026-10-03 — for the tests that read what the hand alone sets off (the
 // house at the front brings its own up by itself now).
-const SHEET_HAND = "/scent-descriptions/?rest=hand";
+// (`?rest=off`: no house's motifs come up at all)
+const SHEET_OFF = "/scent-descriptions/?rest=off";
 
 /** Wait for the wall to have been hung and every swing to have died. */
 async function waitForSheet(page) {
@@ -454,40 +455,45 @@ test("the old startup flick is gone", async ({ page }) => {
   await expect(page.locator(".sheet-rail, .sheet-wire, .sheet-lines")).toHaveCount(0);
 });
 
-/* RESTING ON A HOUSE, AND ONLY RESTING — and sooner than it was. The
-   owner found the wait "too long"; it is a fifth of a second now. Nothing
-   in the first moment; then, within half a second, the house's own
-   motifs coming up. AND NOTHING IS BLURRED, and the motifs stand BEHIND
-   the houses: the owner asked for the effects not to blur anything, to
-   read as the page itself answering, and to happen behind the boxes.
-   For two rounds the rest of the page went out of focus. */
-test("resting on a house brings its motifs after a moment, behind the houses, blurring nothing",
+/* THE HOUSE AT THE FRONT, AND ONLY IT (2026-10-20 — "remove a hover
+   animation, and only keep the SD animations where if you have a house
+   selected in the middle of the spiral, then that house's animation
+   plays"). Nothing in the first moment after the helix stops; then, a
+   little over half a second later, the front house's own motifs coming up.
+   AND NOTHING IS BLURRED, and the motifs stand BEHIND the houses: the owner
+   asked for the effects not to blur anything, to read as the page itself
+   answering, and to happen behind the boxes. And the hand sets nothing
+   off: pointing at the house beside it, for as long as you like, brings
+   up its line and none of its motifs. */
+test("the house at the front brings its motifs after a moment, behind the houses, blurring nothing, and the hand none",
   async ({ page }) => {
   const errors = collectPageErrors(page);
-  await page.goto(SHEET_HAND);
+  await page.goto(SHEET);
   await waitForSheet(page);
-  // Timed in the page itself, from the pointer arriving on the house to
-  // the wall going out of focus round it.
+  await page.mouse.move(4, 4);
+  await expect(page.locator("#sheet.musing")).toHaveCount(1, { timeout: 5000 });
+  // Timed in the page itself, from the helix stopping at the next house
+  // to its motifs coming up.
   await page.evaluate(() => {
     const sheet = document.getElementById("sheet");
-    const frame = document.querySelector(".sheet-frame");
-    window.__entered = null;
+    window.__stopped = null;
     window.__mused = null;
-    frame.addEventListener("pointerenter", () => { if (window.__entered === null) window.__entered = performance.now(); });
+    const frame = document.querySelectorAll(".sheet-frame")[1];
     new MutationObserver(() => {
-      if (window.__mused === null && sheet.classList.contains("musing")) window.__mused = performance.now();
-    }).observe(sheet, { attributes: true });
+      if (window.__mused === null && frame.classList.contains("hot")) window.__mused = performance.now();
+    }).observe(frame, { attributes: true });
+    const watch = () => {
+      if (window.__stopped === null && Math.abs(frame.getBoundingClientRect().left + frame.getBoundingClientRect().width / 2 - (sheet.getBoundingClientRect().left + sheet.clientWidth / 2)) < 0.5) window.__stopped = performance.now();
+      if (window.__mused === null) requestAnimationFrame(watch);
+    };
+    requestAnimationFrame(watch);
   });
-  await pointAt(page, 0);
-
-  await page.waitForTimeout(40);
-  expect(await motifInk(page), "nothing drawn at once").toBe(0);
-  await expect(page.locator("#sheet.musing")).toHaveCount(1, { timeout: 2000 });
-  const waited = await page.evaluate(() => window.__mused - window.__entered);
-  expect(waited, "it waits a moment").toBeGreaterThan(120);
-  expect(waited, "but not long — it was 420ms and the owner found that too long").toBeLessThan(320);
+  await page.keyboard.press("ArrowDown");
+  await expect(page.locator(".sheet-frame").nth(1)).toHaveClass(/hot/, { timeout: 6000 });
+  const waited = await page.evaluate(() => window.__mused - window.__stopped);
+  expect(waited, "it waits a moment once the helix has stopped").toBeGreaterThan(300);
+  expect(waited, "but not long").toBeLessThan(1400);
   await page.waitForTimeout(1400);
-  await expect(page.locator(".sheet-frame").first()).toHaveClass(/hot/);
   expect(await motifInk(page), "the house's motifs are drawn").toBeGreaterThan(40);
   const looks = await page.evaluate(() => {
     const frames = [...document.querySelectorAll(".sheet-frame")];
@@ -495,8 +501,8 @@ test("resting on a house brings its motifs after a moment, behind the houses, bl
     return {
       // The house beside it on the helix, which is not turned away behind
       // the axis: sharp, and as bright as it was.
-      rested: getComputedStyle(frames[0]).filter, other: getComputedStyle(frames[1]).filter,
-      otherShown: parseFloat(getComputedStyle(frames[1]).opacity),
+      rested: getComputedStyle(frames[1]).filter, other: getComputedStyle(frames[2]).filter,
+      otherShown: parseFloat(getComputedStyle(frames[2]).opacity),
       field: getComputedStyle(document.querySelector(".sheet-field")).filter,
       motifs: z(document.querySelector(".sheet-motifs")),
       lowestHouse: Math.min(...frames.map(z)),
@@ -507,6 +513,16 @@ test("resting on a house brings its motifs after a moment, behind the houses, bl
   expect(looks.field, "the particles too").toBe("none");
   expect(looks.otherShown, "nothing is dimmed").toBeGreaterThan(0.6);
   expect(looks.motifs, "the motifs stand behind every house").toBeLessThan(looks.lowestHouse);
+  // The hand on the house after it: its line, and nothing else.
+  await page.evaluate(() => { window.__other = 0; const f = document.querySelectorAll(".sheet-frame")[2];
+    new MutationObserver(() => { if (f.classList.contains("hot")) window.__other++; }).observe(f, { attributes: true }); });
+  const b = await page.locator(".sheet-frame").nth(2).boundingBox();
+  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 2 });
+  await page.waitForTimeout(1600);
+  expect(await page.evaluate(() => window.__other), "pointing at a house sets nothing off").toBe(0);
+  await expect(page.locator(".sheet-frame").nth(1)).toHaveClass(/hot/);
+  expect(await page.locator(".sheet-frame").nth(2).locator(".sheet-say").evaluate((el) => parseFloat(getComputedStyle(el).opacity)),
+    "its line is shown while it is pointed at").toBeGreaterThan(0.95);
   expect(errors).toEqual([]);
 });
 
@@ -686,9 +702,9 @@ test("Ataraxia's bands are plain particles on a wave, with no shadows", async ({
    root from the top starts at the window's very edge, not under the
    chrome's band. Read off the motifs' canvas: the red petals drawn along
    its foot, the same ones still there later, all of them gone once the
-   house is left; and where the roots begin. With the hand alone resting
-   (`?rest=hand`): Tombstone is brought to the front to be pointed at, and
-   since 2026-10-03 the house at the front brings its motifs back by itself. */
+   house is left; and where the roots begin. Tombstone is brought to the
+   front, and rests there by itself (only the house at the front does, since
+   2026-10-20); it is left by travelling on to the next house. */
 test("Tombstone's petals fall and gather on the ground until the house is left, and roots grow from the very top", async ({ page }) => {
   test.setTimeout(90000);
   await page.addInitScript(() => {
@@ -725,7 +741,7 @@ test("Tombstone's petals fall and gather on the ground until the house is left, 
       return lineTo.apply(this, arguments);
     };
   });
-  await page.goto(SHEET_HAND);
+  await page.goto(SHEET);
   await waitForSheet(page);
   await pointAt(page, 7);
   // What lies along the foot of the window in the latest frame drawn.
@@ -742,8 +758,8 @@ test("Tombstone's petals fall and gather on the ground until the house is left, 
   expect(first, "petals lying on the ground").toBeGreaterThan(12);
   expect(later, "and still there, with more come").toBeGreaterThanOrEqual(first + 5);
   expect(top, "a root grows down from the very top of the window").toBeLessThan(1);
-  // Left, and they go with everything else.
-  await page.mouse.move(4, 4);
+  // Left — travelled on from — and they go with everything else.
+  await page.keyboard.press("ArrowDown");
   await page.waitForTimeout(2600);
   const after = await page.evaluate(() => {
     const now = window.__frame;
@@ -1087,12 +1103,12 @@ test("Les Abstraits' armoire has clothes on hangers and folded on its shelf", as
    through: somewhere on the window a point is drawn well in towards a
    hole, and the field reaches much further than the soundings' 150px
    rings did. A house a well comes near is turned in it; the one under
-   the pointer is left exactly where it is. And leaving ADAR puts the
-   page back as it was. */
+   ADAR itself, resting at the front, is left exactly where it is. And
+   travelling on from ADAR puts the page back as it was. */
 test("ADAR's wells bend the page towards them, and let it go again", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
-  await page.goto(SHEET_HAND);
+  await page.goto(SHEET);
   await waitForSheet(page);
   await pointAt(page, 1);
   await page.waitForTimeout(3200);
@@ -1116,7 +1132,7 @@ test("ADAR's wells bend the page towards them, and let it go again", async ({ pa
   // THE HOUSES. A well lands where it will, and one far from every house
   // touches none — so this watches for a while, until one has come near
   // a house: every house the field reaches is turned in it, and the one
-  // under the pointer never is.
+  // resting at the front never is.
   let turned = 0, hotTurned = false;
   for (let i = 0; i < 30 && !turned; i++) {
     const r = await page.evaluate(() => {
@@ -1133,8 +1149,8 @@ test("ADAR's wells bend the page towards them, and let it go again", async ({ pa
     if (!turned) await page.waitForTimeout(400);
   }
   expect(turned, "the houses round a well turned in it").toBeGreaterThan(0);
-  expect(hotTurned, "and never the one under the pointer").toBe(false);
-  await page.mouse.move(5, 300, { steps: 3 });
+  expect(hotTurned, "and never the one resting at the front").toBe(false);
+  await page.keyboard.press("ArrowDown");
   await page.waitForTimeout(3000);
   const after = await page.evaluate(() => ({ bend: !!window.HouseMotifs.bend(),
     turned: [...document.querySelectorAll(".sheet-frame")].filter((f) => /rotate/.test(f.style.transform)).length }));
@@ -1323,9 +1339,9 @@ test("Grande Parfums' particles rise and burst into smaller ones, twice as many 
       return fillRect.apply(this, arguments);
     };
   });
-  await page.goto(SHEET_HAND);
+  // Opened at Grande, so nothing of the house before it is ever drawn.
+  await page.goto(SHEET + "#house-05");
   await waitForSheet(page);
-  await pointAt(page, 4);
   await page.waitForTimeout(8500);
   const out = await page.evaluate(() => ({ standing: (window.HouseMotifs.census().rise || 0),
     strokes: window.__strokes, small: window.__small, whole: window.__whole }));
@@ -1551,86 +1567,69 @@ test("the house at the front brings its motifs up by itself, and the next one it
   await page.keyboard.press("ArrowDown");
   await expect.poll(hot, { timeout: 6000 }).toMatch(/^ADAR/);
   await expect(sheet).toHaveClass(/musing/);
-  // left to the hand alone (?rest=hand), nothing comes up by itself
-  await page.goto(SHEET_HAND);
+  // with `?rest=off`, nothing comes up at all
+  await page.goto(SHEET_OFF);
   await waitForSheet(page);
   await page.mouse.move(1420, 880);
   await page.waitForTimeout(2500);
   await expect(sheet).not.toHaveClass(/musing/);
 });
 
-/* CROSSING THE WALL SETS NOTHING OFF. The pointer passing over house
-   after house on its way somewhere else must not start any of them.
-
-   HOW LONG THE POINTER WAS ACTUALLY ON EACH HOUSE IS MEASURED IN THE
-   PAGE, not assumed. This test used to sweep and then ask only whether
-   anything had been set off at all — and on a busy machine the sweep
-   itself sometimes stayed on a house for more than the 200ms wait, so
-   the page did exactly what it should and the test failed. It could
-   not tell a slow sweep from a page that sets houses off too soon. Now
-   every visit is timed from its pointerenter to its pointerleave, and
-   the rule is: a visit shorter than the wait never sets anything off.
-   A visit longer than it may, because that is a rest. The sweep has to
-   produce enough short visits for that to mean something. */
-test("passing over the houses does not set their motifs off", async ({ page }) => {
-  await page.goto(SHEET_HAND);
+/* THE HAND SETS NOTHING OFF (2026-10-20 — "remove a hover animation ... The
+   same way with the phone please"). Until then a house the pointer rested
+   on for a fifth of a second took the motifs while it was there, and a
+   sweep across the wall had to cross each house quickly not to set it off.
+   Now the pointer passed over every house that can be seen, and then held
+   on each for most of a second: the house resting at the front is the only
+   one the motifs ever come for. */
+test("pointing at the houses, however long, sets none of their motifs off", async ({ page }) => {
+  // Opened at the third house, so there are houses either side of it.
+  await page.goto(SHEET + "#house-03");
   await waitForSheet(page);
+  await page.mouse.move(8, 880);
+  await expect(page.locator(".sheet-frame").nth(2)).toHaveClass(/hot/, { timeout: 5000 });
   await page.evaluate(() => {
-    const sheet = document.getElementById("sheet");
-    window.__visits = [];
-    let open = null;
+    window.__others = [];
     document.querySelectorAll(".sheet-frame").forEach((frame, i) => {
-      frame.addEventListener("pointerenter", () => {
-        open = { i: i, from: performance.now(), to: null, mused: false };
-        window.__visits.push(open);
-      });
-      frame.addEventListener("pointerleave", () => { if (open && open.i === i) { open.to = performance.now(); open = null; } });
+      if (i === 2) return;
+      new MutationObserver(() => { if (frame.classList.contains("hot")) window.__others.push(i + 1); }).observe(frame, { attributes: true });
     });
-    new MutationObserver(() => {
-      if (sheet.classList.contains("musing") && open) open.mused = true;
-    }).observe(sheet, { attributes: true });
   });
-  // Only the houses that can be seen — on the helix most of them are
-  // turned away or off the window — crossed back and forth three times.
-  const boxes = await page.$$eval(".sheet-frame", (all) => all.filter((f) =>
+  const boxes = await page.$$eval(".sheet-frame", (all) => all.filter((f, i) => i !== 2 &&
     getComputedStyle(f).visibility !== "hidden" && parseFloat(getComputedStyle(f).opacity) > 0.3).map((f) => {
     const r = f.getBoundingClientRect();
     return { x: r.left + r.width / 2, y: Math.min(innerHeight - 20, Math.max(80, r.top + r.height / 2)) };
   }));
+  expect(boxes.length, "houses beside the front one to point at").toBeGreaterThan(1);
+  for (const b of boxes) await page.mouse.move(b.x, b.y);
+  for (const b of boxes) { await page.mouse.move(b.x, b.y, { steps: 2 }); await page.waitForTimeout(700); }
   await page.mouse.move(8, 880);
-  for (let pass = 0; pass < 3; pass++) {
-    for (const b of (pass % 2 ? [...boxes].reverse() : boxes)) await page.mouse.move(b.x, b.y);
-    await page.mouse.move(8, 880);
-  }
-  await page.waitForTimeout(700);
-  const visits = await page.evaluate(() => window.__visits.map((v) => ({
-    house: v.i + 1, long: v.to === null ? Infinity : Math.round(v.to - v.from), mused: v.mused,
-  })));
-  const short = visits.filter((v) => v.long < 180);
-  expect(short.length, `the sweep should cross most houses quickly: ${JSON.stringify(visits)}`)
-    .toBeGreaterThanOrEqual(5);
-  expect(short.filter((v) => v.mused), "no house passed over quickly should have been set off").toEqual([]);
-  expect(await page.locator("#sheet.musing").count(), "and nothing is left set off").toBe(0);
+  await page.waitForTimeout(500);
+  expect(await page.evaluate(() => window.__others), "no house but the front one was set off").toEqual([]);
+  await expect(page.locator(".sheet-frame").nth(2)).toHaveClass(/hot/);
 });
 
 /* THEY FADE, THEY DO NOT VANISH. "when you unhover, the motifs fade
-   gradually, they dont disappear." A moment after leaving there is
-   still some of them; a little later there is none. */
+   gradually, they dont disappear." A moment after travelling on from a
+   house there is still some of its motifs; a little later there is none
+   of them (Grande's rising specks, read off the motifs' own count, the
+   next house's having come up by then). */
 test("leaving a house lets its motifs fade rather than vanish", async ({ page }) => {
-  await page.goto(SHEET_HAND);
+  await page.goto(SHEET);
   await waitForSheet(page);
   await pointAt(page, 4);
+  await page.mouse.move(8, 880);
   await page.waitForTimeout(2600);
   const full = await motifInk(page);
   expect(full, "something to fade").toBeGreaterThan(40);
 
-  await page.mouse.move(8, 880, { steps: 2 });
+  await page.keyboard.press("ArrowDown");
   await page.waitForTimeout(350);
   expect(await page.locator("#sheet.musing").count(), "the page comes back into focus").toBe(0);
   const fading = await motifInk(page);
   expect(fading, "a moment after leaving, the motifs are still there").toBeGreaterThan(10);
   await page.waitForTimeout(2600);
-  expect(await motifInk(page), "and a little later they have gone").toBe(0);
+  expect(await page.evaluate(() => window.HouseMotifs.census(true).rise || 0), "and a little later they have gone").toBe(0);
 });
 
 /* EVERY HOUSE HAS MOTIFS OF ITS OWN, and each of them draws. */

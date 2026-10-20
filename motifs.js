@@ -3302,20 +3302,29 @@
       dashed in the pencil's red-brown, the dashes going along it, and a
       walker, a small ring, going the length of it while the fragment
       stands. Several at once, apart from each other — and while none of
-      them carries it, the next is the piece the HOUSE'S SIGN is laid on
-      (2026-10-20, last — "Please also apply the above changes to be true
+      them carries it, the next is the piece the HOUSE'S SIGN is cut into
+      (2026-10-20, later — "Please also apply the above changes to be true
       for the house in SD": smaller specks and far more, the textures
       smooth, the green quieted, solid, coloured as a mountain is, the sign
-      on it, turning slower, nothing answering the hand). */
+      on it, turning slower, nothing answering the hand; and last — "change
+      the SD apoteker tepe hovering mechanism accordingly": denser again and
+      DITHERED as the page is, the sign cut in rather than laid on, the
+      piece dissolving at its edge in the dither's own steps rather than torn
+      off like an island, turning slower again — and, as every house on the
+      Houses view since that day, only while it is the house at the front). */
   const TEPE_PENCIL = "138, 58, 38";
-  const RIDGE_SPECKS = 9000;         // a fragment's specks (three fifths on a phone; 1,300 until 2026-10-20, last)
-  const RIDGE_SPECK = 0.55;          // px a speck is, near
+  const RIDGE_SPECKS = 16000;        // a fragment's specks (three fifths on a phone; 9,000, and 1,300, before)
+  const RIDGE_SPECK = 0.45;          // px a speck is, near
   const RIDGE_CELLS = [15, 21];      // its reach round its trail, in cells of the heights (of 160: more on a finer grid)
   const RIDGE_SIGN_CELLS = 19;       // the reach of the piece the sign is on
   const RIDGE_PX = [100, 165];       // and on the window
   const RIDGE_RELIEF = 1.3;          // its heights drawn this much taller than the page's (2.4 for its specks: solid, a slope that tall stood as a wall)
   const RIDGE_LIFE = [7600, 10400];  // ms it stands
-  const RIDGE_SPIN = [0.018, 0.036]; // radians a second it turns (0.06 to 0.12 until 2026-10-20, last)
+  const RIDGE_SPIN = [0.009, 0.018]; // radians a second it turns (twice that, and 0.06 to 0.12, before)
+  // Drawn as the page draws its mountain, on the Houses view's white: the
+  // air white, a little haze and no mist, dithered a css px to a step.
+  const RIDGE_LOOK = { surface: 0.96, speck: RIDGE_SPECK, dissolve: true, air: [0.12, 0, 30, 0], hazeFrom: 3.2, levels: 34, grain: 0.75,
+    sky: { zen: [255, 255, 255], hor: [255, 255, 255], haze: [255, 255, 255], mistLit: [255, 255, 255], mistShade: [240, 240, 238], glow: [255, 250, 240] } };
   const RIDGE_EVERY = 70;            // ms between one picture of it and the next: it turns too slowly to want more
   let tepeGround = null, tepeDraw = null, tepeCanvas = null, tepeAsked = false;
   function tepeReady() {
@@ -3377,13 +3386,13 @@
       if (s && !things.some((t) => t.ridge && Math.hypot(t.ridge.x - s.x, t.ridge.y - s.y) < (t.ridge.px + px) * 1.15)) at = s;
     }
     if (!at) return null;
-    // A torn edge: the reach wanders with the angle.
+    // Its edge, dissolving: the reach wanders a little with the angle.
     const tear = Array.from({ length: 3 }, () => rand(0, 6.28));
-    const edge = (a) => 0.82 + 0.1 * Math.sin(a * 3 + tear[0]) + 0.06 * Math.sin(a * 5 + tear[1]) + 0.04 * Math.sin(a * 9 + tear[2]);
+    const edge = (a) => 0.9 + 0.06 * Math.sin(a * 3 + tear[0]) + 0.03 * Math.sin(a * 5 + tear[1]) + 0.02 * Math.sin(a * 9 + tear[2]);
     // The page's own lift at this fragment's scale, about the trail's (or the sign's) own height.
     const lift = RIDGE_RELIEF * 0.5 * (n / (2 * R)) * 0.42;
     const h0 = run ? run.reduce((s, q) => s + hAt(q[0], q[1]), 0) / run.length : hAt(cu, cv);
-    const piece = tepeDraw.piece(G, { centre: [cu, cv], scale: R, reach: R, edge, fade: 0.7, lift, base: h0, sea: false, specks: Math.round(RIDGE_SPECKS * (PHONE ? FEWER_PHONE : 1)), seed: Math.floor(rand(1, 1e6)), fine: true });
+    const piece = tepeDraw.piece(G, { centre: [cu, cv], scale: R, reach: R, edge, fade: 0.5, lift, base: h0, specks: Math.round(RIDGE_SPECKS * (PHONE ? FEWER_PHONE : 1)), seed: Math.floor(rand(1, 1e6)), fine: true });
     const path = run ? run.map(([u, v]) => piece.point(u, v, 0.02)) : null;
     const yaw0 = rand(0, 6.283), spin = rand(RIDGE_SPIN[0], RIDGE_SPIN[1]) * (Math.random() < 0.5 ? -1 : 1), pitch = rand(0.55, 0.75);
     const life = rand(RIDGE_LIFE[0], RIDGE_LIFE[1]), number = trail ? ["I", "II", "III", "IV", "V", "VI"][G.trails.indexOf(trail)] || "" : "";
@@ -3403,7 +3412,7 @@
         if (now - shotAt > RIDGE_EVERY || yaw !== shotYaw && shotAt < 0) {
           tepeDraw.size(box, box, k);
           tepeDraw.clear();
-          tepeDraw.draw(piece, camAt(yaw), { surface: 0.96, speck: RIDGE_SPECK, fog: [1, 1, 1, 0.1], fogZ: [-0.6, 1.2], sea: 0 });
+          tepeDraw.draw(piece, camAt(yaw), { ...RIDGE_LOOK, time: (now / 1000) % 3000 });
           pic.clearRect(0, 0, picture.width, picture.height);
           pic.drawImage(tepeCanvas, 0, 0, picture.width, picture.height);
           shotAt = now; shotYaw = yaw;
@@ -3596,9 +3605,10 @@
     drawnAt() {
       return SMALL;
     },
-    census() {
+    // (`census(true)` counts those fading out as well)
+    census(fading) {
       const out = {};
-      things.forEach((t) => { if (!t.ending && t.kind) out[t.kind.make.name] = (out[t.kind.make.name] || 0) + 1; });
+      things.forEach((t) => { if ((fading || !t.ending) && t.kind) out[t.kind.make.name] = (out[t.kind.make.name] || 0) + 1; });
       return out;
     },
     // What Qimu & Musicians' music standing on the page is — its key, the

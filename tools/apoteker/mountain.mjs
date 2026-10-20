@@ -40,11 +40,11 @@
 //      the mountain's shoulder. The page draws them on the ground, marked
 //      with the house's own sign.
 //   5. THE PLACES: where each of the house's eight fragrances stands in
-//      the page's free view, chosen off the ground by what its name is —
-//      see PLACES below.
-//   6. THE SIGN: where the house's own sign is laid on the mountain, as a
-//      figure is cut into a hillside — a broad slope facing the sea and
-//      the afternoon, its head uphill.
+//      the page's free view, chosen off the ground by what its name is,
+//      on the faces the page's view sees — see THE PLACES below.
+//   6. THE SIGN: where the house's own sign is cut into the mountain, bared
+//      to its red earth — a broad, even slope turned to the page's view,
+//      its head uphill.
 //
 // Run it again only to change the mountain:
 //
@@ -74,6 +74,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "..", "..");
 const OUT = path.join(ROOT, "tepe-data.js");
 const COLOUR_AT = "images/Apoteker Tepe/mountain/athos.jpg";
+const HEIGHTS_AT = "images/Apoteker Tepe/mountain/heights.png";
 const CACHE = path.join(os.tmpdir(), "tepe-terrain-tiles");
 const PREVIEW = process.argv.includes("--preview");
 
@@ -81,9 +82,18 @@ const NAME = "Mount Athos";
 const SUMMIT = { lat: 40.1572, lon: 24.3264, m: 2033 };   // the peak, and its height as surveyed
 const ZOOM = 12;                 // ~29 m to a pixel at this latitude
 const SPAN = 15.5;               // km across the square, the summit at its middle
-const N = 200;                   // the heights, N by N (160 until 2026-10-20, later, and 8 bits)
+const N = 384;                   // the heights, N by N, 40 m apart (200 until 2026-10-20, last — "make the graphics way denser"; 160 and 8 bits before that)
 const C = 1024;                  // the colour, C by C (15 m to a pixel)
 const SEED = 1925;               // the walks' own randomness
+// THE VIEW the page and its free view look from (2026-10-20, last — "you
+// cannot turn the mountain all the way, but rather to a certain point ... set
+// degree thresholds on either side of it (left right up down), so that you
+// can only turn it a little. I want you to accordingly redistribute the
+// waypoints"): from the west-south-west, the sun's side, so the faces it
+// sees are lit; the page turns PAGE either way of it as it is scrolled, the
+// free view FREE, and looks down between PITCH_FREE. tepe.js reads it from
+// the data, and the places and the sign are chosen where it sees them.
+const VIEW = { yaw: 2.0, pitch: 0.24, eye: 3.0, lift: 0.42, page: 0.3, free: 0.45, pitchFree: [0.17, 0.42] };
 
 const TILE = (z, x, y) => `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`;
 // The satellite: Sentinel-2's true-colour picture of grid square 35TKE on
@@ -228,7 +238,7 @@ for (let b = 0; b < C; b++) {
   }
 }
 // SOFTENED, so the forest's own grain does not stand as a texture.
-const printed = colour.gaussianBlur({ sigma: 0.9 });
+const printed = colour.gaussianBlur({ sigma: 0.7 });
 fs.mkdirSync(path.join(ROOT, path.dirname(COLOUR_AT)), { recursive: true });
 await write(path.join(ROOT, COLOUR_AT), printed, { format: "jpeg", encoderOptions: { quality: 82 } });
 
@@ -326,77 +336,138 @@ for (const a of heads) {
 }
 
 // 5. THE PLACES -------------------------------------------------------
-// One for each of the eight, by its name (the part it is on the page):
-//   02 THE HOLY MOUNTAIN  the summit itself.
+// The summit is the house's own (the page puts its sign there, "AT THE TOP
+// OF THE MOUNTAIN, I WANT THE POPUP TO BE THE LOGO"); then one place for each
+// of the eight, by its name (the part it is on the page), and every one on a
+// face the page SEES — from the view and from either end of the page's turn
+// (VIEW), nothing of the mountain in front of it, the slope turned to the eye:
+//   02 THE HOLY MOUNTAIN  just under the summit, on the face seen.
 //   05 THE PERADAM        high on the summit's own slopes, where Daumal's
 //                         climbers find the stone in Mount Analogue.
-//   07 ANABASIS           half way up the first trail: the going up.
+//   07 ANABASIS           half way up a trail to the summit: the going up.
 //   08 AFTER THE FLOOD    at the water's edge, at the foot of a trail.
 //   01 KOGEN              (高原, "highland") the flattest high ground.
 //   04 KARASU             (烏, "crow") the steepest crag, where crows sit.
 //   03 BROTHER NIGHT      the darkest slope, turned from the light.
 //   06 PALE FIRE          the slope most lit by the low western sun.
-// The light is the page's own (from the south-west, as `SUN` is there).
-const SUN = { az: (225 * Math.PI) / 180, alt: (34 * Math.PI) / 180 };
+// The light is the page's own (from the south-south-east, as `SUN` is there).
+const SUN = { az: (165 * Math.PI) / 180, alt: (32 * Math.PI) / 180 };   // the page's own light (tepe-gl.js SUN)
 const litAt = (i, j) => {
   const [dx, dy] = grad(i, j), slope = Math.atan(Math.hypot(dx, dy)), aspect = Math.atan2(dy, -dx);
   return Math.cos(Math.PI / 2 - SUN.alt) * Math.cos(slope) + Math.sin(Math.PI / 2 - SUN.alt) * Math.sin(slope) * Math.cos(SUN.az - aspect);
 };
 const slopeAt = (i, j) => Math.hypot(...grad(i, j));
+// The ground as the page raises it: half-widths of the square about the
+// summit, east +x, south +z, up +y.
+const hBi = (i, j) => {
+  const a = clamp(i, 0, N - 1.001), b = clamp(j, 0, N - 1.001), i0 = a | 0, j0 = b | 0, fx = a - i0, fy = b - j0;
+  return (hAt(i0, j0) * (1 - fx) + hAt(i0 + 1, j0) * fx) * (1 - fy) + (hAt(i0, j0 + 1) * (1 - fx) + hAt(i0 + 1, j0 + 1) * fx) * fy;
+};
+const worldOf = (i, j) => ({ x: (i - peak.i) / (N / 2), y: (hBi(i, j) / top8) * VIEW.lift, z: (j - peak.j) / (N / 2) });
+const groundY = (x, z) => (hBi(peak.i + x * (N / 2), peak.j + z * (N / 2)) / top8) * VIEW.lift;
+const eyeAt = (yaw, pitch) => ({ x: -VIEW.eye * Math.cos(pitch) * Math.sin(yaw), y: VIEW.eye * Math.sin(pitch), z: -VIEW.eye * Math.cos(pitch) * Math.cos(yaw) });
+/** Whether nothing of the mountain stands between (i, j) and the eye. */
+function seenFrom(i, j, yaw, pitch) {
+  const p = worldOf(i, j), e = eyeAt(yaw, pitch);
+  for (let k = 1; k <= 48; k++) {
+    const t = (k / 48) * (k / 48) * 0.9 + 0.006;
+    const x = p.x + (e.x - p.x) * t, y = p.y + 0.004 + (e.y - p.y) * t, z = p.z + (e.z - p.z) * t;
+    if (y > VIEW.lift * 1.02) return true;
+    if (y < groundY(x, z) - 0.002) return false;
+  }
+  return true;
+}
+/** How squarely the slope at (i, j) is turned to the eye of the view (1 facing it). */
+function facing(i, j) {
+  const [gx, gz] = grad(i, j), k = (VIEW.lift * (N / 2) * cell) / top8;    // the slope as the page raises it
+  const nx = -gx * k, ny = 1, nz = -gz * k, nl = Math.hypot(nx, ny, nz);
+  const p = worldOf(i, j), e = eyeAt(VIEW.yaw, VIEW.pitch), dx = e.x - p.x, dy = e.y - p.y, dz = e.z - p.z, dl = Math.hypot(dx, dy, dz);
+  return (nx * dx + ny * dy + nz * dz) / (nl * dl);
+}
+const seen = (i, j) => facing(i, j) > 0.12 && [-VIEW.page, 0, VIEW.page].every((d) => seenFrom(i, j, VIEW.yaw + d, VIEW.pitch));
 // Within REACH of the summit (of the square's side), where the page draws
 // the mountain whole.
 const REACH = 0.3;
 const places = {};
-const taken = [];
+const taken = [[peak.i, peak.j]];
 const apart = (i, j, far) => taken.every(([p, q]) => Math.hypot(p - i, q - j) >= far);
 function best(score, far = 14 * STEP) {
   let b = null, bs = -Infinity;
   for (let j = 6; j < N - 6; j++) for (let i = 6; i < N - 6; i++) {
-    if (Math.hypot(i - peak.i, j - peak.j) > N * REACH || !apart(i, j, far)) continue;
+    if (Math.hypot(i - peak.i, j - peak.j) > N * REACH || !apart(i, j, far) || !signApart(i, j)) continue;
     const s = score(i, j);
-    if (s > bs) { bs = s; b = [i, j]; }
+    if (s > bs && seen(i, j)) { bs = s; b = [i, j]; }
   }
   taken.push(b);
   return b;
 }
-const along = (t, f) => { const k = Math.round((t.length - 1) * f); return t[k]; };
-places["02"] = [peak.i, peak.j]; taken.push(places["02"]);
-places["05"] = best((i, j) => { const h = hAt(i, j) / top8; return h > 0.8 && h < 0.9 ? -Math.abs(Math.hypot(i - peak.i, j - peak.j) - 9 * STEP) - slopeAt(i, j) : -Infinity; }, 6 * STEP);
-places["07"] = along(trails[0], 0.5); taken.push(places["07"]);
-places["08"] = trails[2][0]; taken.push(places["08"]);
-places["01"] = best((i, j) => { const h = hAt(i, j) / top8; return h > 0.45 && h < 0.75 ? -slopeAt(i, j) * 4 - Math.abs(h - 0.6) : -Infinity; });
-places["04"] = best((i, j) => { const h = hAt(i, j) / top8; return h > 0.35 && h < 0.8 ? slopeAt(i, j) : -Infinity; });
-places["03"] = best((i, j) => { const h = hAt(i, j) / top8; return h > 0.3 && h < 0.7 ? -litAt(i, j) : -Infinity; });
-places["06"] = best((i, j) => { const h = hAt(i, j) / top8; return h > 0.3 && h < 0.7 ? litAt(i, j) : -Infinity; });
-
-// 6. THE SIGN ---------------------------------------------------------
-// A broad, even slope between a third and two thirds of the way up, lit
-// by the afternoon and facing the sea, clear of the trails and the places:
-// the house's sign laid on it FIGURE_M metres tall, its head towards the
-// summit, as a figure is cut into a hillside.
-const FIGURE_M = 1900;
+// The trail to the summit the page sees most of, and the seen trail whose
+// foot is at the water.
+const seenShare = (t) => t.filter(([i, j], k) => k % 4 === 0 && seen(i, j)).length / Math.ceil(t.length / 4);
+const toSummit = trails.filter((t) => { const [i, j] = t[t.length - 1]; return Math.hypot(i - peak.i, j - peak.j) < 4 * STEP; });
+const upTrail = toSummit.slice().sort((a, b) => seenShare(b) - seenShare(a))[0] || trails[0];
+const footTrail = trails.filter((t) => t !== upTrail && seen(...t[0].map(Math.round))).sort((a, b) => seenShare(b) - seenShare(a))[0] || trails[2];
+const along = (t, f) => {
+  // The seen place nearest that share of the way along it.
+  const k0 = Math.round((t.length - 1) * f);
+  for (let d = 0; d < t.length; d++) for (const k of [k0 + d, k0 - d]) if (t[k] && seen(Math.round(t[k][0]), Math.round(t[k][1]))) return t[k];
+  return t[k0];
+};
+// 6. THE SIGN (chosen before the places, which keep off it) ------------
+// A broad, even slope between a third and two thirds of the way up, on the
+// face the page sees and turned squarely to it, lit, clear of the places: the house's sign CUT into it FIGURE_M metres tall,
+// its head towards the summit — a part of the ground, shown by its light
+// and shade ("remove the logo being plastered on the mountain; rather it
+// should be a part of it").
+const FIGURE_M = 2200;
 const tall = FIGURE_M / cell;
 const nearTrail = (i, j, far) => trails.some((t) => t.some(([p, q]) => Math.hypot(p - i, q - j) < far));
 const figureAt = (() => {
   let b = null, bs = -Infinity;
   for (let j = 8; j < N - 8; j += 1) for (let i = 8; i < N - 8; i += 1) {
     const h = hAt(i, j) / top8;
-    if (h < 0.3 || h > 0.66 || Math.hypot(i - peak.i, j - peak.j) > N * REACH || !apart(i, j, tall * 0.9)) continue;
+    if (h < 0.3 || h > 0.66 || Math.hypot(i - peak.i, j - peak.j) > N * REACH || !apart(i, j, tall * 0.7)) continue;
     // Even: the slope much the same over the whole figure.
     let s0 = 0, s1 = 0, n = 0;
     for (let q = -3; q <= 3; q++) for (let p = -3; p <= 3; p++) { const s = slopeAt(i + p * tall / 7, j + q * tall / 7); s0 += s; s1 += s * s; n++; }
     const mean = s0 / n, spread = Math.sqrt(Math.max(0, s1 / n - mean * mean));
-    if (mean < 0.18 || mean > 0.55) continue;
-    const s = litAt(i, j) * 2 - spread * 6 - (nearTrail(i, j, tall * 0.55) ? 3 : 0);
-    if (s > bs) { bs = s; b = [i, j]; }
+    // (a steep face turned to the eye is seen most squarely by a view from low down)
+    if (mean < 0.3 || mean > 1.2) continue;
+    const s = litAt(i, j) * 0.5 + facing(i, j) * 4 - (spread / mean) * 3 - (nearTrail(i, j, tall * 0.4) ? 1 : 0);
+    if (s <= bs) continue;
+    // Seen whole: its middle, and its four ends but one at most.
+    const r = tall * 0.4;
+    if (!seen(i, j) || [[r, 0], [-r, 0], [0, r], [0, -r]].filter(([p, q]) => seen(Math.round(i + p), Math.round(j + q))).length < 3) continue;
+    bs = s; b = [i, j];
   }
   return b;
 })();
 const figure = { at: [Math.round(figureAt[0] * 10) / 10, Math.round(figureAt[1] * 10) / 10], tall: Math.round(tall * 10) / 10, up: Math.round(Math.atan2(peak.j - figureAt[1], peak.i - figureAt[0]) * 1000) / 1000 };
 
+// THE PLACES, now the sign has its slope: kept off it, and off each other.
+const signApart = (i, j) => Math.hypot(i - figureAt[0], j - figureAt[1]) >= tall * 0.5;
+places["02"] = best((i, j) => { const h = hAt(i, j) / top8, d = Math.hypot(i - peak.i, j - peak.j); return h > 0.86 && d > 5 * STEP ? h - slopeAt(i, j) * 0.2 : -Infinity; }, 5 * STEP);
+places["05"] = best((i, j) => { const h = hAt(i, j) / top8; return h > 0.72 && h < 0.86 ? -Math.abs(Math.hypot(i - peak.i, j - peak.j) - 12 * STEP) - slopeAt(i, j) : -Infinity; }, 9 * STEP);
+places["07"] = along(upTrail, 0.5); taken.push(places["07"]);
+places["08"] = footTrail[0]; taken.push(places["08"]);
+places["01"] = best((i, j) => { const h = hAt(i, j) / top8; return h > 0.45 && h < 0.75 ? -slopeAt(i, j) * 4 - Math.abs(h - 0.6) : -Infinity; });
+places["04"] = best((i, j) => { const h = hAt(i, j) / top8; return h > 0.35 && h < 0.8 ? slopeAt(i, j) : -Infinity; });
+places["03"] = best((i, j) => { const h = hAt(i, j) / top8; return h > 0.3 && h < 0.7 ? -litAt(i, j) : -Infinity; });
+places["06"] = best((i, j) => { const h = hAt(i, j) / top8; return h > 0.3 && h < 0.7 ? litAt(i, j) : -Infinity; });
+
+
 // WRITE ---------------------------------------------------------------
-const h16 = Buffer.alloc(N * N * 2);
-for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) h16.writeUInt16BE(Math.round((hAt(i, j) / top8) * 65535), (j * N + i) * 2);
+// The heights as a picture, each place's height a share of `top` in sixteen
+// bits — its red the high byte, its green the low (as the terrain tiles
+// themselves are written) — read back by the page off a canvas.
+const hPic = new Image(N, N, { colorModel: "RGB" });
+for (let j = 0; j < N; j++) {
+  for (let i = 0; i < N; i++) {
+    const v = Math.round(clamp(hAt(i, j) / top8, 0, 1) * 65535);
+    hPic.setValue(i, j, 0, v >> 8); hPic.setValue(i, j, 1, v & 255); hPic.setValue(i, j, 2, 0);
+  }
+}
+await write(path.join(ROOT, HEIGHTS_AT), hPic, { format: "png" });
 const round = (v) => Math.round(v * 10) / 10;
 const data = {
   name: NAME,
@@ -405,8 +476,9 @@ const data = {
   km: SPAN,
   top: Math.round(top8),
   summit: [peak.i, peak.j],
-  heights: h16.toString("base64"),
+  heights: HEIGHTS_AT,
   colour: COLOUR_AT,
+  view: VIEW,
   scene: "Copernicus Sentinel-2, " + SCENE,
   trails: trails.map((t) => t.map(([i, j]) => [round(i), round(j)])),
   places: Object.fromEntries(Object.entries(places).sort().map(([k, [i, j]]) => [k, [round(i), round(j)]])),
@@ -414,13 +486,15 @@ const data = {
 };
 fs.writeFileSync(OUT, `// THE MOUNTAIN Apoteker Tepe's page and its motif on the Houses view draw:\n` +
   `// ${NAME} (2,033 m), out of the real ground's heights — written by\n` +
-  `// tools/apoteker/mountain.mjs with image-js, never by hand. \`heights\` is N by\n` +
-  `// N heights in base64, row by row, two bytes each (big-endian), as a share of\n` +
-  `// \`top\` metres; \`colour\` the picture of it from above that is laid over them\n` +
-  `// (the satellite's, printed); \`trails\` are walks on that grid, \`places\` where\n` +
-  `// each fragrance stands in the free view, \`figure\` where the house's sign is.\n` +
+  `// tools/apoteker/mountain.mjs with image-js, never by hand. \`heights\` is a\n` +
+  `// picture of N by N heights, each a share of \`top\` metres in sixteen bits\n` +
+  `// (red the high byte, green the low); \`colour\` the picture of it from above\n` +
+  `// that is laid over them (the satellite's, printed); \`view\` where the page\n` +
+  `// looks from and how far it may turn; \`trails\` are walks on that grid,\n` +
+  `// \`places\` where each fragrance stands in the free view, \`figure\` where the\n` +
+  `// house's sign is cut.\n` +
   `window.TEPE = ${JSON.stringify(data)};\n`);
-console.log(`${NAME}: ${side}px of ground at ${mPerPx.toFixed(1)} m, highest ${Math.round(tallest)} m (${Math.round(top8)} m at ${N}x${N}); ${trails.length} trails (${trails.map((t) => t.length).join(", ")} points); the colour stretched ${lo.toFixed(0)}–${hi.toFixed(0)}; the sign at ${figure.at} (${figure.tall} cells); wrote ${path.relative(ROOT, OUT)} (${fs.statSync(OUT).size} bytes) and ${COLOUR_AT} (${fs.statSync(path.join(ROOT, COLOUR_AT)).size} bytes)`);
+console.log(`${NAME}: ${side}px of ground at ${mPerPx.toFixed(1)} m, highest ${Math.round(tallest)} m (${Math.round(top8)} m at ${N}x${N}); ${trails.length} trails (${trails.map((t) => t.length).join(", ")} points); the colour stretched ${lo.toFixed(0)}–${hi.toFixed(0)}; the sign at ${figure.at} (${figure.tall} cells); wrote ${path.relative(ROOT, OUT)} (${fs.statSync(OUT).size} bytes), ${HEIGHTS_AT} (${fs.statSync(path.join(ROOT, HEIGHTS_AT)).size} bytes) and ${COLOUR_AT} (${fs.statSync(path.join(ROOT, COLOUR_AT)).size} bytes)`);
 
 if (PREVIEW) {
   const h8 = new Image(N, N, { colorModel: "GREY" });

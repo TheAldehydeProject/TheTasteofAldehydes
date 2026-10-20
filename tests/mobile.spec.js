@@ -124,7 +124,7 @@ test.describe("on a phone", () => {
      motifs are drawn at three fifths of their size. A wide window has none
      of it (below). */
   test("Scent Descriptions' houses are smaller and nearer the axis, and the motifs smaller", async ({ page }) => {
-    await page.goto("/scent-descriptions/?rest=hand#house-02");
+    await page.goto("/scent-descriptions/?rest=off#house-02");
     await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
     await page.waitForTimeout(600);
     const g = await page.evaluate(() => {
@@ -318,7 +318,7 @@ test.describe("on a phone's sharp screen", () => {
 // old size there, the side houses as far round, the motifs at their own.
 test("Scent Descriptions at 700px wide is laid out as it was", async ({ page }) => {
   await page.setViewportSize({ width: 700, height: 800 });
-  await page.goto("/scent-descriptions/?rest=hand#house-02");
+  await page.goto("/scent-descriptions/?rest=off#house-02");
   await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
   await page.waitForTimeout(600);
   const g = await page.evaluate(() => {

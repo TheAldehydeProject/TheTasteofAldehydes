@@ -406,3 +406,28 @@ still drags it, as before, on any screen.
 tap on it still goes on`** (on a phone, touches sent as a finger sends them): a swipe over it within
 15% of one beside it, `pan-y`, the line saying to tap it, and a tap going on. *The spine is the
 wheel: it can be dragged, and pressed* (a mouse) still passes.
+
+## 2026-10-20 — three theories, and what is to come
+
+> and for theories; i notice that some theories have a wrong page (after theory 3), so please remove
+> that and explain that the theories will be added later
+
+The six placeholder rows after The Note Dissemination Framework (*Fourth theory* to *Ninth theory*)
+all opened the template (`works/example-article-work.html`); they are out of `theories/index.html`, and
+the road has **three stations**. Under the list stands **the page's own line, *More theories will be
+added later.*** (`.theories-later`) — the plain page's last line without the script, and, with it,
+**said at the end of the road** (`.structure-later`, made by `structure.js` from the page's line):
+in the middle of the window, in the cue's voice, coming up once the last theory has gone past
+(`LATER_FROM`, `LATER_OVER`) and staying to the end; gone while a station is opened out.
+
+**The road keeps its pace.** It was a screen and a quarter of scrolling to a station (`SCREENS`),
+which was the travel's pace only with nine stations on it: the road's run in and run on are the same
+length whatever the count, so with three the page was so short that a scroll rushed past them. It is
+made as tall as the road at the pace nine had (`PACE`, 27.5 of the road to a screen of scrolling).
+
+### How to test it
+
+`tests/structure.spec.js`: **`the three theories, and at the end of the road the line saying more will
+come`** (the three stations' addresses; the line not there before the last has gone past, there at the
+end, and the page's own copy under the list); the road and the readout tests scroll to a share of the
+road rather than to so many screens, and read *nn / 03*.

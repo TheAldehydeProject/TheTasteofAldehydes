@@ -112,11 +112,34 @@ test("the travel is the page's own scroll, so the page is a road", async ({ page
   // And the scroll drives it: the readout says which station you are
   // among and how far along you have come. Both are kept.
   const before = await page.locator(".structure-readout").textContent();
-  await page.evaluate(() => window.scrollTo(0, window.innerHeight * 3));
+  await page.evaluate(() => window.scrollTo(0, (document.documentElement.scrollHeight - innerHeight) * 0.45));
   await page.waitForTimeout(1200);
   const after = await page.locator(".structure-readout").textContent();
   expect(after, "the readout should follow the scroll").not.toBe(before);
-  expect(after, "the n of nine and the percentage").toMatch(/\d\d \/ \d\d.+\d\d\d%/);
+  expect(after, "the n of three and the percentage").toMatch(/\d\d \/ 03.+\d\d\d%/);
+});
+
+/* THREE THEORIES, AND WHAT IS TO COME (2026-10-20 — "some theories have a
+   wrong page (after theory 3), so please remove that and explain that the
+   theories will be added later"): six placeholder rows opened the
+   template; they are gone, no station opens it, and the page's own line —
+   that more will be added later — comes up at the end of the road, and
+   not before the last theory has gone past. */
+test("the three theories, and at the end of the road the line saying more will come", async ({ page }) => {
+  await page.goto(PAGE);
+  await waitForStructure(page);
+  const hrefs = await page.$$eval(".structure-stop", (all) => all.map((a) => a.getAttribute("href")));
+  expect(hrefs).toEqual(["../works/theory-01.html", "../works/theory-02.html", "../works/theory-03.html"]);
+  const later = page.locator(".structure-later");
+  await expect(later).toHaveText(/More theories will be added later\./);
+  const lit = () => later.evaluate((el) => parseFloat(getComputedStyle(el).opacity));
+  await page.evaluate(() => window.scrollTo(0, (document.documentElement.scrollHeight - innerHeight) * 0.6));
+  await page.waitForTimeout(1500);
+  expect(await lit(), "not while the theories are still to come").toBeLessThan(0.05);
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect.poll(lit, { timeout: 6000 }).toBeGreaterThan(0.9);
+  // and without the script it is the line under the list
+  expect(await page.locator(".theories-later").textContent()).toBe("More theories will be added later.");
 });
 
 test("going further in brings new stations up and leaves the old behind",
@@ -129,7 +152,9 @@ test("going further in brings new stations up and leaves the old behind",
   expect(Object.keys(near).length, "something should be in the frame").toBeGreaterThan(0);
   const first = Object.keys(near)[0];
 
-  await page.evaluate(() => window.scrollTo(0, window.innerHeight * 5));
+  // Most of the way down the road (since 2026-10-20 it has three
+  // theories on it, so five screens was past the end of it).
+  await page.evaluate(() => window.scrollTo(0, (document.documentElement.scrollHeight - innerHeight) * 0.62));
   await page.waitForTimeout(1500);
   const far = await drawnNow(page);
 
@@ -578,7 +603,7 @@ test("with animation turned off it does not creep on its own", async ({ page }) 
   });
 
   // Still fully readable, though: it is held still, not switched off.
-  await page.evaluate(() => window.scrollTo(0, window.innerHeight * 3));
+  await page.evaluate(() => window.scrollTo(0, (document.documentElement.scrollHeight - innerHeight) * 0.45));
   await page.waitForTimeout(900);
   expect(await page.locator(".structure-readout").textContent()).toMatch(/\d\d \/ \d\d/);
 });

@@ -2290,9 +2290,11 @@ body.view-fragrances .sheet-search { display: none; }
     white-space: normal;
   }
 }
+/* Its line only while it is pointed at (or tabbed to) — the house resting
+   at the front, its motifs up by themselves, shows it no more than the
+   rest (2026-10-20, when the hand stopped setting the motifs off). */
 .sheet-frame:hover .sheet-say,
-.sheet-frame:focus-within .sheet-say,
-.sheet-frame.hot .sheet-say { opacity: 1; }
+.sheet-frame:focus-within .sheet-say { opacity: 1; }
 /* ON A PHONE the house is smaller (2026-10-12, "less cluttered ... the
    images to be smaller"; contact-sheet.js, FRONT_NARROW), and its label
    with it: the number a size down and nearer the name. Below 700px only. */
@@ -2305,7 +2307,8 @@ body.view-fragrances .sheet-search { display: none; }
   .sheet.scripted .sheet-frame .sheet-say { left: -26px; max-width: calc(100% + 24px); font-size: 10px; padding: 3px 6px; }
 }
 
-/* RESTING ON A HOUSE: its motifs come up across the whole page, BEHIND
+/* THE HOUSE AT THE FRONT, RESTING (only it, since 2026-10-20 — the hand
+   sets nothing off): its motifs come up across the whole page, BEHIND
    the houses, and nothing is blurred or dimmed — the owner asked for the
    effects not to blur anything and to read as part of the page rather
    than as something hovering. The house itself only takes a deeper
@@ -3149,7 +3152,8 @@ body.structured .page-content { padding: 0; margin: 0; max-width: none; }
    laid out it adds to the height of a page whose height is the road. */
 body.structured .work-list,
 body.structured .page-content > h1,
-body.structured .page-content > .category-lede {
+body.structured .page-content > .category-lede,
+body.structured .page-content > .theories-later {
   position: absolute;
   top: 0;
   left: 0;
@@ -3222,6 +3226,39 @@ body.structured .page-where { color: rgba(226, 232, 242, 0.55); border-left-colo
   z-index: 2;
 }
 .structure-cue.gone { opacity: 0; }
+
+/* WHAT IS STILL TO COME (2026-10-20): the page's own line, said at the end
+   of the road once the last theory has gone past — in the cue's voice, a
+   little larger, in the middle of the window. structure.js sets how far it
+   has come up. Without the script it is the line under the list
+   (.theories-later). */
+.structure-later {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: calc(100vw - 48px);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+  color: rgba(226, 232, 242, 0.62);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.structure-later-mark {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border: 1px solid rgba(226, 232, 242, 0.5);
+}
+.theories-later { margin: 40px 0 0; color: var(--muted); }
 .structure-cue-mark {
   width: 9px;
   height: 9px;
@@ -3516,6 +3553,7 @@ body.structured .page-where { color: rgba(226, 232, 242, 0.55); border-left-colo
 @media (max-width: 860px) {
   /* The two numbers stay: they are how you know where you are. */
   .structure-readout { top: 16px; right: 16px; font-size: 10px; letter-spacing: 0.08em; }
+  .structure-later { font-size: 11px; letter-spacing: 0.12em; }
   .structure-spine { width: min(260px, 60vw); }
   .structure-back { right: calc(50% + min(260px, 60vw) / 2); width: min(190px, 20vw); }
 }
@@ -13729,13 +13767,13 @@ body.tribe-page {
    APOTEKER TEPE — the thirteenth house, 2026-10-20: "themed like a
    mountain". Its paper aged — a warm, faded cream, darker towards its
    corners as an old print is — and, once tepe.js has drawn it, an
-   ENVIRONMENT over that paper: the sky and the Aegean and Mount Athos in
-   them (tepe-gl.js, on `.human-field`), its trails and clouds
-   (`.tepe-trails`), and over all of them THE QUIET — Ataraxia's,
-   a veil of the page's own paper over the column of writing
-   (`.tepe-veil`). Its accent the mountain's green, the trails' pencil
-   red-brown. FREE VIEW (2026-10-20, last), the button at the top right,
-   takes the writing away and leaves the mountain to be looked round.
+   ENVIRONMENT over that paper: the sky and the land round Mount Athos and
+   the mountain in it, its mist (tepe-gl.js, on `.human-field`) and its
+   trails (`.tepe-trails`) — all of them losing their opacity behind the
+   writing, Ataraxia's quiet worked out in the drawing itself, nothing laid
+   over it. Its accent the mountain's green, the trails' pencil red-brown.
+   FREE VIEW (2026-10-20, later), the button at the top right, takes the
+   writing away and leaves the mountain to be looked round, a little.
    ================================================================== */
 body.tepe-page {
   --bg: #ece5d2; --bg-2: #e3dbc5; --line: #cfc5aa;
@@ -13754,24 +13792,25 @@ body.tepe-page {
 .tepe-page .human-section-mark { color: rgb(var(--tepe-green)); }
 .tepe-page .human-stage { color: rgb(var(--tepe-pencil)); }
 .tepe-page .human-text p { color: #2a3326; }
-.tepe-trails,
-.tepe-veil {
+.tepe-trails {
   position: fixed;
   left: 0;
   top: 0;
   pointer-events: none;
   z-index: 0;
 }
-.tepe-veil-band { right: 0; bottom: 0; }
-.tepe-veil[hidden] { display: none; }
 /* Its drawing is opaque (it carries its own sky): nothing of it until its
    first picture is drawn, and then it comes up over the paper. */
 .tepe-page .human-field,
 .tepe-page .tepe-trails { opacity: 0; transition: opacity 0.9s var(--menu-ease); }
 html.tepe-ground .tepe-page .human-field,
 html.tepe-ground .tepe-page .tepe-trails { opacity: 1; }
-.tepe-veil { transition: opacity 0.7s var(--menu-ease); }
-html.tepe-free-on .tepe-veil { opacity: 0; }
+/* Nothing in the free view is written until it is pointed at, and nothing
+   is caught up as the mountain is dragged round ("I want the text not to be
+   registered on the page unless you hover on something, that way you wont
+   highlight something by accident by trying to move the mountain around"). */
+html.tepe-free-on,
+html.tepe-free-on * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 
 /* FREE VIEW — the button, level with the Menu at the top right, boxed as
    Om's are, in the house's ink on its paper. */
@@ -13908,7 +13947,16 @@ html.tepe-free-on .tepe-page .human-readout {
   line-height: 13px;
   color: var(--ink);
   pointer-events: none;
+  opacity: 0;                      /* its number only while it is pointed at, or saying what it is */
+  transition: opacity 0.25s var(--menu-ease);
 }
+.tepe-node:hover .tepe-node-no,
+.tepe-node:focus-visible .tepe-node-no,
+.tepe-node.lit .tepe-node-no { opacity: 1; }
+/* THE HOUSE'S OWN, at the summit: a ring a size up, which shows the house's
+   sign ("AT THE TOP OF THE MOUNTAIN, I WANT THE POPUP TO BE THE LOGO"). */
+.tepe-node-house .tepe-node-ring { inset: 4px; border-width: 1.5px; }
+.tepe-node-house .tepe-node-ring::after { width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 0; transform: rotate(45deg); }
 .tepe-node:hover .tepe-node-ring,
 .tepe-node:focus-visible .tepe-node-ring,
 .tepe-node.lit .tepe-node-ring { transform: scale(1.35); background: rgb(var(--tepe-pencil)); }
@@ -13933,6 +13981,11 @@ html.tepe-free-on .tepe-page .human-readout {
   transition: opacity 0.25s var(--menu-ease);
 }
 .tepe-card.shown { opacity: 1; }
+/* At the summit, the house's sign itself, large, its name and line under it. */
+.tepe-card.tepe-card-house { flex-direction: column; width: 210px; padding: 12px 14px 11px; gap: 6px; text-align: center; }
+.tepe-card-house .tepe-card-pic { width: 50px; height: 84px; background: none; border: 0; }
+.tepe-card-house .tepe-card-text { align-items: center; }
+.tepe-card-house .tepe-card-no { display: none; }
 .tepe-card[hidden] { display: none; }
 .tepe-card-pic { flex: none; width: 54px; height: 54px; background: var(--bg-2); border: 1px solid var(--line); }
 .tepe-card-pic img { display: block; width: 100%; height: 100%; object-fit: contain; }

@@ -21,8 +21,8 @@ is Scentorium's. Both are credited at the foot of the page.
   Brother+Night+2.webp    Brother Night's one picture (the bottle beside
                           its box, on marble).
   Apoteker Tepe Logo.webp the house's sign, which tepe.js blazes along the
-                          mountain's trails, and tepe-gl.js lays on its
-                          slope.
+                          mountain's trails and shows at its summit in the
+                          free view, and tepe-gl.js cuts into its slope.
 
   web/                    the copies the page shows: each cut picture 640
                           wide, each scene 900, Kogen and Brother Night as
@@ -32,3 +32,7 @@ is Scentorium's. Both are credited at the foot of the page.
                           printed: what the page's mountain is coloured by.
                           Written by tools/apoteker/mountain.mjs, never by
                           hand; credited at the foot of the page.
+  mountain/heights.png    its heights, 384 by 384, 40 m apart, each a share
+                          of the highest in sixteen bits (red the high byte,
+                          green the low): what the page raises. Written by
+                          the same tool, never by hand.

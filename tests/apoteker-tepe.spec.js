@@ -8,19 +8,21 @@
 //                 images a little; they are out of frame").
 //   THE MOUNTAIN  Mount Athos, out of its own heights and coloured by the
 //                 Sentinel-2 satellite's picture of it (tepe-data.js and
-//                 images/Apoteker Tepe/mountain/athos.jpg, written by
+//                 images/Apoteker Tepe/mountain/, written by
 //                 tools/apoteker/mountain.mjs with image-js), drawn by
-//                 tepe-gl.js: SOLID, in more colours than green, in small
-//                 specks, many; the house's sign laid on it; turning SLOWLY
-//                 as the page is scrolled, and nothing answering the hand;
-//                 the sky, the sea and the horizon round it; QUIET behind
-//                 the writing as Ataraxia's bands are; quick to draw, on a
-//                 laptop and on a phone; still with reduced motion; and the
-//                 page is its writing without the script. Credited by name.
+//                 tepe-gl.js: SOLID, in more colours than green, in very
+//                 many small specks, dithered; the house's sign cut into it;
+//                 a land all round it; turning a little as the page is
+//                 scrolled, breathing, and nothing answering the hand;
+//                 losing its opacity behind the writing, Ataraxia's numbers;
+//                 quick to draw, on a laptop and on a phone; still with
+//                 reduced motion; and the page is its writing without the
+//                 script. Credited by name.
 //   FREE VIEW     the button at the top right: the writing goes, the
-//                 mountain is turned by a drag and brought nearer by the
-//                 wheel, and a node for each of the eight says which it is
-//                 and goes to it.
+//                 mountain is turned by a drag only so far and brought no
+//                 nearer, a node for each of the eight says which it is and
+//                 goes to it, the house's own at the summit is its sign, and
+//                 left alone they say what they are of their own accord.
 //   THE MOTIF     fragments of the same mountain on the Houses view, a
 //                 stretch of trail across each, its dashes going along it,
 //                 one of them carrying the house's sign; the house's
@@ -117,77 +119,130 @@ test("Apoteker Tepe credits its pictures and names its mountain", async ({ page 
 /* THE MOUNTAIN ("I do not want the mountain to be translucent, i want it to
    be visible exactly the same as any other mountain; and i want there to be
    colours, not just green ... make the particles smaller and way more
-   dense"): drawn over black and over white it is the same — solid — and in
-   greys and warm colours as well as greens; its specks many; out of its
-   own heights; the house's sign laid on it ("I want the actual logo of the
-   house to appear somewhere on this mountain"). */
-test("Apoteker Tepe's mountain is solid, coloured as a mountain is, in many specks, with the house's sign on it", async ({ page }) => {
+   dense"; and last, "make the graphics way denser ... graphically dense"):
+   drawn over black and over white it is the same — solid — and in greys
+   and warm colours as well as greens; its specks very many; out of its own
+   heights, a picture of them 40 m apart; the house's sign CUT INTO it
+   ("remove the logo being plastered on the mountain; rather it should be a
+   part of it"): the ground bared in its shape, few specks left in it, no
+   pale stone laid over it. And round it, A LAND ("make it seem less like an
+   island ... an abstract biome ... all around this one mountain"): ground
+   rising beyond the water on every side, and far ranges. */
+test("Apoteker Tepe's mountain is solid, coloured, very dense, in a land all round it, with the house's sign cut into it", async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.setViewportSize(LAPTOP);
   await page.goto(TEPE);
   await ready(page);
-  const at = await page.evaluate(() => ({ specks: TepeMountain.specks(), soft: TepeMountain.soft(), trails: TepeMountain.trails(), n: TEPE.n, heights: atob(TEPE.heights).length }));
-  // (A tenth of them on a machine without a graphics card, as this one is.)
-  expect(at.specks, "specks, many").toBeGreaterThan(at.soft ? 25000 : 250000);
+  const at = await page.evaluate(() => ({ specks: TepeMountain.specks(), vertices: TepeMountain.vertices(), soft: TepeMountain.soft(), trails: TepeMountain.trails(), n: TEPE.n, heights: TEPE.heights }));
+  // (A tenth of them, and a coarser ground, on a machine without a graphics card, as this one is.)
+  expect(at.specks, "specks, very many").toBeGreaterThan(at.soft ? 45000 : 450000);
+  expect(at.vertices, "the ground's own grid, fine").toBeGreaterThan(at.soft ? 40000 : 250000);
+  expect(at.n, "its heights 40 m apart").toBe(384);
+  expect(at.heights, "in a picture of their own").toMatch(/heights\.png$/);
   expect(at.trails).toBeGreaterThanOrEqual(5);
-  expect(at.heights, "its heights, n by n, two bytes each").toBe(at.n * at.n * 2);
+  const ground = await page.evaluate(async () => {
+    const g = await TepeGL.ground();
+    let top = 0;
+    for (let k = 0; k < g.H.length; k++) top = Math.max(top, g.H[k]);
+    // Round the summit, out to five half-widths: how much of it is land
+    // above the water — and at the far ranges, how high.
+    let land = 0, all = 0, far = 0;
+    for (let a = 0; a < Math.PI * 2; a += 0.2) for (let d = 1.8; d < 5; d += 0.4) {
+      const h = g.h(g.cu + Math.cos(a) * d * g.SQ, g.cv + Math.sin(a) * d * g.SQ);
+      all++; if (h > 0) land++;
+      if (d > 4) far = Math.max(far, h);
+    }
+    return { top, land: land / all, far };
+  });
+  expect(ground.top, "the heights read whole out of their picture").toBeCloseTo(1, 2);
+  expect(ground.land, "land all round it, beyond the water").toBeGreaterThan(0.85);
+  expect(ground.far, "and far ranges").toBeGreaterThan(0.2);
   const look = await page.evaluate(() => TepeMountain.sample());
-  expect(look.covers, "the mountain is drawn").toBeGreaterThan(0.1);
-  // Its body solid — the same over black and over white, every pixel of it
-  // — and most of it all told: only its foot fades into the mist.
+  expect(look.covers, "the ground is drawn").toBeGreaterThan(0.3);
   expect(look.body, "its body solid").toBeGreaterThan(0.99);
-  expect(look.solid, "and most of it").toBeGreaterThan(0.6);
+  expect(look.solid, "and all of it").toBeGreaterThan(0.95);
   expect(look.green, "not all green: under two thirds of it").toBeLessThan(0.66);
   expect(look.grey + look.warm, "greys and warm colours too").toBeGreaterThan(0.25);
-  // The sign: where the tool laid it, a good part of the ground is its pale
-  // stone, and none of it a stone's throw away.
+  // The sign: cut into the ground where the tool chose, its shape and not
+  // beside it; and nothing of the pale stone that was laid over it.
   const sign = await page.evaluate(async () => {
-    const g = await TepeGL.ground(), f = TEPE.figure, pale = (u, v) => Math.min(...g.colourAt(u, v)) > 180;
+    const g = await TepeGL.ground(), f = TEPE.figure;
     let on = 0, off = 0, all = 0;
     for (let a = -1; a <= 1; a += 0.05) for (let b = -1; b <= 1; b += 0.05) {
       all++;
-      if (pale(f.at[0] + a * f.tall * 0.5, f.at[1] + b * f.tall * 0.5)) on++;
-      if (pale(f.at[0] + a * f.tall * 0.5 + f.tall * 1.6, f.at[1] + b * f.tall * 0.5)) off++;
+      if (g.sign.cut(f.at[0] + a * f.tall * 0.5, f.at[1] + b * f.tall * 0.5) > 0.5) on++;
+      if (g.sign.cut(f.at[0] + a * f.tall * 0.5 + f.tall * 1.6, f.at[1] + b * f.tall * 0.5) > 0.5) off++;
     }
-    return { tall: f.tall, on: on / all, off: off / all };
+    return { tall: f.tall, on: on / all, off: off / all, drawn: TepeMountain.sign() };
   });
-  expect(sign.tall, "the sign is as tall as a hillside").toBeGreaterThan(15);
-  expect(sign.on, "its shape, in pale stone, where it was laid").toBeGreaterThan(0.08);
-  expect(sign.off, "and not beside it").toBeLessThan(sign.on / 3);
+  expect(sign.drawn, "drawn in").toBe(true);
+  expect(sign.tall, "the sign is as tall as a hillside").toBeGreaterThan(30);
+  expect(sign.on, "its shape, where it was cut").toBeGreaterThan(0.1);
+  expect(sign.off, "and nothing of it beside it").toBe(0);
+  const gl = read("tepe-gl.js");
+  expect(gl, "not laid on in pale stone").not.toMatch(/const SIGN = \[|SIGN_A\b/);
+  expect(gl, "cut in, its specks taken out").toMatch(/SIGN_KEPT/);
   expect(errors).toEqual([]);
 });
 
-/* SLOWER, AND NOTHING ANSWERING THE HAND ("The rotation is too fast, and I
-   would prefer it it was slower. The reactivity too, I would actually
-   suggest removeing that entirely"): scrolled from the head of the page to
-   its foot it turns a little over a quarter of a turn (it was most of
-   one); the hand moving over it moves nothing. */
-test("Apoteker Tepe's mountain turns slowly as the page is scrolled, and does not answer the hand", async ({ page }) => {
+/* DIGITAL ("make it a little digitalized ... give it noise"): every colour
+   in steps of an ordered dither, a css pixel to a step — read off the sky at
+   the top of the window, where a smooth gradient would otherwise be. */
+test("Apoteker Tepe's mountain and its sky are dithered", async ({ page }) => {
+  await page.setViewportSize(LAPTOP);
+  await page.goto(TEPE);
+  await ready(page);
+  const d = await page.evaluate(() => TepeMountain.dither());
+  expect(d.levels, "a few dozen steps of light").toBeLessThan(64);
+  expect(d.steps, "neighbours a step apart, all through the sky").toBeGreaterThan(0.08);
+  expect(read("tepe-gl.js")).toMatch(/bayer8/);
+});
+
+/* SLOWER, ONLY SO FAR, AND NOTHING ANSWERING THE HAND (2026-10-20, last —
+   "the rotation should be slower in the main page too please (as in less
+   sensitive)", and "you cannot turn the mountain all the way, but rather to
+   a certain point"): scrolled from the head of the page to its foot it turns
+   from one end of the page's turn to the other, a few tens of degrees (it was
+   a quarter of a turn, and most of one before); the hand moving over it moves
+   nothing; and left alone it is never quite still — it breathes ("I want the
+   mountain to have some motion even when not interacted with"). */
+test("Apoteker Tepe's mountain turns a little as the page is scrolled, breathes, and does not answer the hand", async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.setViewportSize(LAPTOP);
   await page.goto(TEPE);
   await ready(page);
-  await page.waitForTimeout(1200);
-  const before = await page.evaluate(() => TepeMountain.camera());
+  await page.waitForTimeout(1500);
+  const limits = await page.evaluate(() => TepeMountain.limits());
+  expect(limits.page[1] - limits.page[0], "the page's whole turn, under forty degrees").toBeLessThan((40 * Math.PI) / 180);
+  const before = await page.evaluate(() => TepeMountain.want());
   for (let k = 0; k < 12; k++) await page.mouse.move(300 + k * 70, 300 + (k % 3) * 120);
   await page.waitForTimeout(400);
-  const after = await page.evaluate(() => TepeMountain.camera());
-  expect(after, "the hand moved nothing").toEqual(before);
+  expect(await page.evaluate(() => TepeMountain.want()), "the hand moved nothing").toEqual(before);
   expect(read("tepe.js"), "nothing of the hand left in it").not.toMatch(/HAND_(REACH|LIFT|LIGHT)/);
-  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-  await expect.poll(() => page.evaluate(() => TepeMountain.turn()), { timeout: 8000 }).toBeGreaterThan(before.yaw + 1.6);
+  // Breathing, though nothing has moved it.
+  const c0 = await page.evaluate(() => TepeMountain.camera());
   await page.waitForTimeout(2500);
-  expect(await page.evaluate(() => TepeMountain.turn()), "and no more than a third of a turn").toBeLessThan(before.yaw + Math.PI * 0.67);
+  const c1 = await page.evaluate(() => TepeMountain.camera());
+  expect(Math.abs(c1.yaw - c0.yaw) + Math.abs(c1.pitch - c0.pitch), "it breathes").toBeGreaterThan(0.0005);
+  expect(Math.abs(c1.yaw - before.yaw), "a little").toBeLessThan(0.06);
+  expect(before.yaw, "at the head of the page, one end of its turn").toBeCloseTo(limits.page[0], 2);
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect.poll(() => page.evaluate(() => TepeMountain.want().yaw), { timeout: 8000 }).toBeCloseTo(limits.page[1], 2);
+  await page.waitForTimeout(3000);
+  expect(Math.abs(await page.evaluate(() => TepeMountain.turn()) - limits.page[1]), "and there, at the other").toBeLessThan(0.06);
   expect(errors).toEqual([]);
 });
 
-/* QUIET BEHIND THE WRITING AS ATARAXIA'S BANDS ARE ("deminish everything
-   that is in front of the writing in a similar way to ataraxia's page"):
-   on a laptop the whole of the drawing over the column of writing is at
-   Ataraxia's QUIET, easing back to the whole of itself in the margins; on
-   a phone, where the writing is the whole width, at QUIET everywhere and
-   quieter again behind the words. Ataraxia's own numbers. */
-test("Apoteker Tepe's drawing is quiet behind the writing as Ataraxia's is", async ({ browser }) => {
+/* THE MOUNTAIN LOSES ITS OPACITY BEHIND THE WRITING (2026-10-20, last —
+   "fix the text, so that it feels less so that the mountain loses opacity
+   instead of putting a whole object in front of it on medium opacity"):
+   nothing is laid over the drawing any more; the drawing itself is drawn at
+   Ataraxia's QUIET where the words are, the whole of itself well clear of
+   them — easing in over Ataraxia's SOFT on a wide window; and on a phone,
+   where the writing is the whole width, at QUIET everywhere and less again
+   behind the words. Read off what the page hands the drawing, and off the
+   drawing itself: behind the words it is near the sky's own colour. */
+test("Apoteker Tepe's mountain loses its opacity behind the writing, Ataraxia's numbers, nothing laid over it", async ({ browser }) => {
   const ataraxia = read("ataraxia.js"), tepe = read("tepe.js");
   const num = (src, name) => Number(new RegExp("const " + name + " = ([0-9.]+)").exec(src)[1]);
   expect(num(tepe, "QUIET"), "Ataraxia's QUIET").toBe(num(ataraxia, "QUIET"));
@@ -198,40 +253,35 @@ test("Apoteker Tepe's drawing is quiet behind the writing as Ataraxia's is", asy
     await serveDependenciesLocally(page);
     await page.goto(TEPE);
     await ready(page);
-    await page.waitForTimeout(800);
+    await page.waitForTimeout(1200);
     const r = await page.evaluate(() => {
       const p = document.querySelector(".human-intro .human-text p").getBoundingClientRect();
       const mid = [(p.left + p.right) / 2, p.top + 8];
-      const out = { words: TepeMountain.quiet(...mid), margin: TepeMountain.quiet(8, innerHeight / 2), gap: TepeMountain.quiet(innerWidth / 2, p.top - 30) };
-      // What is laid over it: on a wide window a band the stylesheet draws,
-      // its stops in the paper's colour; on a phone a picture of the words.
-      const band = document.querySelector(".tepe-veil-band"), pic = document.querySelector("canvas.tepe-veil");
-      out.band = !band.hidden && getComputedStyle(band).backgroundImage;
-      if (!pic.hidden) { const d = pic.getContext("2d"), k = pic.width / innerWidth; out.veil = d.getImageData(Math.floor(mid[0] * k), Math.floor(mid[1] * k), 1, 1).data[3] / 255; }
-      return out;
+      return {
+        words: TepeMountain.quiet(...mid), margin: TepeMountain.quiet(8, innerHeight / 2),
+        laid: document.querySelectorAll(".tepe-veil, .tepe-veil-band").length,
+      };
     });
+    expect(r.laid, "nothing laid over the drawing").toBe(0);
     if (where === "laptop") {
-      expect(r.words, "over the column").toBeCloseTo(QUIET, 2);
-      expect(r.gap, "between its paragraphs too, as Ataraxia's").toBeCloseTo(QUIET, 2);
-      expect(r.margin, "and the whole of itself in the margin").toBe(1);
-      expect(r.band, "the band of paper laid over the column").toContain("rgba(236, 229, 210, " + (1 - QUIET).toFixed(2));
-      expect(r.band, "clear at its edges").toContain("rgba(236, 229, 210, 0)");
+      expect(r.words, "behind the words").toBeCloseTo(QUIET, 2);
+      expect(r.margin, "and the whole of itself well clear of them").toBe(1);
     } else {
-      expect(r.margin, "a phone: at QUIET everywhere").toBeLessThanOrEqual(QUIET + 1e-6);
-      expect(r.words, "and quieter behind the words").toBeLessThan(QUIET * 0.5);
-      expect(r.veil, "the veil laid over it").toBeCloseTo(1 - r.words, 1);
+      expect(r.margin, "a phone: at QUIET everywhere").toBeLessThanOrEqual(QUIET + 0.01);
+      expect(r.words, "and less again behind the words").toBeLessThan(QUIET * 0.5);
     }
     await page.close();
   }
+  expect(read("tepe-gl.js"), "the drawing itself drawn that much of the way to the sky behind it").toMatch(/mix\(sky, col, quietHere\(\)\)/);
 });
 
-/* SMOOTH ("Make sure that the page runs smoothly ... including the ones that
-   ensure that it runs smoothly on the phone"): the mountain is drawn again
-   only when the camera has moved, the trails' dashes and the clouds every
-   other frame — so the page scrolls at full frames on a phone. On a
-   machine without a graphics card (as this one is) a picture of the
-   mountain takes a few tens of milliseconds, and is made at most five
-   times a second there. */
+/* SMOOTH ("make sure everything works on the phone, and is not buggy and
+   runs smoothly"): on a machine without a graphics card (as this one is) a
+   picture of the mountain, its land, sky and mist takes a tenth of a second
+   or so (more on a phone's sharp screen) and is made at most a few times a
+   second; with one, every
+   frame while anything moves and every other frame while only the mist does.
+   The page keeps its frames, scrolling and read. */
 for (const [where, size, phone] of [["a laptop", LAPTOP, false], ["a phone", PHONE, true]]) {
   test(`Apoteker Tepe is quick to draw and scroll on ${where}`, async ({ browser }) => {
     test.setTimeout(60000);
@@ -243,7 +293,8 @@ for (const [where, size, phone] of [["a laptop", LAPTOP, false], ["a phone", PHO
     await page.waitForTimeout(1500);
     const src = read("tepe.js");
     expect(src, "no mask over the window").not.toContain("destination-in");
-    expect(await page.evaluate(() => TepeMountain.time(5)), "ms to draw the mountain again").toBeLessThan(await page.evaluate(() => (TepeMountain.soft() ? 110 : 24)));
+    // (Without a graphics card a phone's sharp screen is four times the pixels of a laptop's there.)
+    expect(await page.evaluate(() => TepeMountain.time(4)), "ms to draw the mountain again").toBeLessThan(await page.evaluate((p) => (TepeMountain.soft() ? (p ? 200 : 140) : 24), phone));
     const scrolling = await page.evaluate(() => new Promise((res) => { let n = 0; const t0 = performance.now(); (function f() { n++; window.scrollBy(0, 5); if (performance.now() - t0 < 2000) requestAnimationFrame(f); else res(n / 2); })(); }));
     expect(scrolling, "frames a second, scrolling").toBeGreaterThan(phone ? 30 : 24);
     const still = await page.evaluate(() => new Promise((res) => { let n = 0; const t0 = performance.now(); (function f() { n++; if (performance.now() - t0 < 1500) requestAnimationFrame(f); else res(n / 1.5); })(); }));
@@ -253,14 +304,18 @@ for (const [where, size, phone] of [["a laptop", LAPTOP, false], ["a phone", PHO
   });
 }
 
-/* FREE VIEW ("On the top right, add a button saying "free view" where you
-   can look at the mountain in a free view, sort of a sandbox way. In this
-   mode, i want there to be nodes on the mountain, which when hovered, will
-   correspodn to different perfumes from the house"): the writing goes, a
-   drag turns the mountain and the wheel brings it nearer, a node for each
-   of the eight says which it is when pointed at and, pressed, goes back to
-   the page at that fragrance, opened; Escape comes back too. */
-test("Apoteker Tepe's free view: the mountain to look round, and a node for each fragrance", async ({ page }) => {
+/* FREE VIEW (2026-10-20, later, and last): the writing goes; a drag turns the
+   mountain ONLY SO FAR — past its limit it gives a little and springs back
+   — and nothing brings it nearer ("you should not be able to zoom in or
+   out"); a node for each of the eight and the house's own at the summit,
+   whose card is the house's sign ("AT THE TOP OF THE MOUNTAIN, I WANT THE
+   POPUP TO BE THE LOGO"); a node's number shown only while it is pointed
+   at, and nothing on the page caught up by the drag ("I want the text not
+   to be registered on the page unless you hover on something"); left alone,
+   the nodes say what they are of their own accord, one after another;
+   pressed, back to the page at that fragrance, opened; Escape comes back. */
+test("Apoteker Tepe's free view: turned only so far, never nearer, a node for each fragrance and the house's sign at the summit", async ({ page }) => {
+  test.setTimeout(60000);
   const errors = collectPageErrors(page);
   await page.setViewportSize(LAPTOP);
   await page.goto(TEPE);
@@ -274,33 +329,55 @@ test("Apoteker Tepe's free view: the mountain to look round, and a node for each
   await expect(page.locator("html")).toHaveClass(/tepe-free-on/);
   await expect(button).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator(".page-main")).toHaveCSS("opacity", "0", { timeout: 3000 });
-  await expect(page.locator(".tepe-node")).toHaveCount(8);
+  await expect(page.locator(".tepe-node")).toHaveCount(9);
   const names = await page.evaluate(() => TepeMountain.nodes().map((d) => d.name));
-  expect(names).toEqual(["Kogen", "The Holy Mountain", "Brother Night", "Karasu", "The Peradam", "Pale Fire", "Anabasis", "After the Flood"]);
-  // Turned by a drag, brought nearer by the wheel.
+  expect(names).toEqual(["Apoteker Tepe", "Kogen", "The Holy Mountain", "Brother Night", "Karasu", "The Peradam", "Pale Fire", "Anabasis", "After the Flood"]);
+  expect(await page.evaluate(() => getComputedStyle(document.body).userSelect), "nothing to catch up as it is dragged").toBe("none");
+  expect(await page.locator(".tepe-node-no").first().evaluate((el) => getComputedStyle(el).opacity), "a node's number only while pointed at").toBe("0");
+  // Every node where the view sees it, from end to end of its turn.
   await page.waitForTimeout(1500);
-  const c0 = await page.evaluate(() => TepeMountain.camera());
-  await page.mouse.move(400, 700);
-  await page.mouse.down();
-  await page.mouse.move(600, 690, { steps: 6 });
-  await page.mouse.up();
-  await expect.poll(() => page.evaluate(() => TepeMountain.camera().yaw), { timeout: 3000 }).toBeGreaterThan(c0.yaw + 0.5);
-  await page.mouse.move(720, 450);
-  await page.mouse.wheel(0, -400);
-  await expect.poll(() => page.evaluate(() => TepeMountain.camera().S), { timeout: 3000 }).toBeGreaterThan(c0.S * 1.3);
-  // Back to where it was fitted, and the summit's node pointed at.
+  const limits = await page.evaluate(() => TepeMountain.limits());
+  for (const yaw of [limits.yaw[0], (limits.yaw[0] + limits.yaw[1]) / 2, limits.yaw[1]]) {
+    await page.evaluate((y) => TepeMountain.look({ yaw: y, now: true }), yaw);
+    await page.waitForTimeout(500);
+    const unseen = await page.evaluate(() => TepeMountain.nodes().filter((d) => !d.seen).map((d) => d.name));
+    expect(unseen.length, "nodes out of sight at " + yaw.toFixed(2) + ": " + unseen.join(", ")).toBeLessThanOrEqual(1);
+  }
+  // A drag turns it, only so far, and lets it spring back within its limit.
   await page.keyboard.press("0");
-  await page.waitForTimeout(1500);
-  const seen = await page.evaluate(() => TepeMountain.nodes().filter((d) => d.seen));
-  expect(seen.length, "most of the nodes can be seen").toBeGreaterThanOrEqual(5);
-  const holy = seen.find((d) => d.name === "The Holy Mountain");
-  expect(holy, "the summit's node").toBeTruthy();
-  await page.mouse.move(holy.x, holy.y);
+  await page.waitForTimeout(1200);
+  await page.mouse.move(300, 760);
+  await page.mouse.down();
+  for (let k = 1; k <= 30; k++) await page.mouse.move(300 + k * 40, 760);
+  const dragged = await page.evaluate(() => TepeMountain.want().yaw);
+  expect(dragged, "past its limit, a little").toBeGreaterThan(limits.yaw[1]);
+  expect(dragged, "only a little").toBeLessThan(limits.yaw[1] + (limits.yaw[1] - limits.yaw[0]) * 0.2);
+  await page.mouse.up();
+  expect(await page.evaluate(() => TepeMountain.want().yaw), "and back within it").toBeCloseTo(limits.yaw[1], 4);
+  expect(await page.evaluate(() => String(getSelection())), "nothing caught up by the drag").toBe("");
+  // Nothing brings it nearer.
+  const S0 = await page.evaluate(() => TepeMountain.camera().S);
+  await page.mouse.move(720, 450);
+  await page.mouse.wheel(0, -600);
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(() => TepeMountain.camera().S), "the wheel does nothing").toBeCloseTo(S0, 0);
+  // Left alone, they say what they are of their own accord.
+  await page.keyboard.press("0");
+  await page.mouse.move(1430, 890);
+  await expect.poll(() => page.evaluate(() => TepeMountain.card()), { timeout: 15000 }).toMatchObject({ by: "auto" });
+  // The summit's: the house's own sign.
+  const house = (await page.evaluate(() => TepeMountain.nodes())).find((d) => d.no === "house");
+  expect(house.seen, "the house's node at the summit").toBe(true);
+  await page.mouse.move(house.x, house.y);
   const card = page.locator(".tepe-card");
-  await expect(card).toBeVisible();
+  await expect(card).toHaveClass(/tepe-card-house/);
+  await expect(card.locator("img")).toHaveAttribute("src", /Apoteker%20Tepe%20Logo|Apoteker Tepe Logo/);
+  // A fragrance's: its name, when it was made; pressed, back to the page at it, opened.
+  const holy = (await page.evaluate(() => TepeMountain.nodes())).find((d) => d.name === "The Holy Mountain");
+  await page.mouse.move(holy.x, holy.y);
   await expect(card).toContainText("The Holy Mountain");
   await expect(card).toContainText("2015, before 2018");
-  // Pressed, back to the page at it, opened.
+  await expect(page.locator('.tepe-node[data-part="02"] .tepe-node-no')).toHaveCSS("opacity", "1");
   await page.mouse.click(holy.x, holy.y);
   await expect(page.locator("html")).not.toHaveClass(/tepe-free-on/);
   await expect(page.locator("#part-02")).toHaveAttribute("open", "");
@@ -325,9 +402,9 @@ test("Apoteker Tepe's free view on a phone: a tap says which, a second goes", as
   await ready(page);
   await page.locator(".tepe-free").tap();
   await expect(page.locator("html")).toHaveClass(/tepe-free-on/);
-  await page.waitForTimeout(2000);
-  const seen = await page.evaluate(() => TepeMountain.nodes().filter((d) => d.seen && d.x > 20 && d.x < innerWidth - 20));
-  expect(seen.length).toBeGreaterThanOrEqual(4);
+  await page.waitForTimeout(1500);
+  const seen = await page.evaluate(() => TepeMountain.nodes().filter((d) => d.seen && d.no !== "house" && d.x > 20 && d.x < innerWidth - 20));
+  expect(seen.length).toBeGreaterThanOrEqual(5);
   const one = seen[0];
   await page.touchscreen.tap(one.x, one.y);
   const card = page.locator(".tepe-card");
@@ -361,6 +438,11 @@ test("Apoteker Tepe's mountain is still with reduced motion, and the page is its
   const turned = await page.evaluate(() => TepeMountain.turn());
   await page.waitForTimeout(400);
   expect(await page.evaluate(() => TepeMountain.turn()), "turned at once, as the scroll puts it").toBeCloseTo(turned, 6);
+  // In the free view, nothing says what it is of its own accord.
+  await page.locator(".tepe-free").click();
+  await page.mouse.move(1430, 890);
+  await page.waitForTimeout(8000);
+  expect(await page.evaluate(() => TepeMountain.card()), "no card of its own accord").toBeNull();
   await context.close();
 
   const bare = await browser.newPage();
@@ -418,8 +500,9 @@ test("Apoteker Tepe's mountain is written by its tool, with image-js", () => {
   expect(tool).toContain("Sentinel-2");
   const data = read("tepe-data.js");
   expect(data).toMatch(/tools\/apoteker\/mountain\.mjs/);
-  const colour = JSON.parse(data.slice(data.indexOf("{"), data.lastIndexOf("}") + 1)).colour;
+  const { colour, heights } = JSON.parse(data.slice(data.indexOf("{"), data.lastIndexOf("}") + 1));
   expect(fs.existsSync(path.join(__dirname, "..", colour)), "the colour it wrote is there").toBe(true);
+  expect(fs.existsSync(path.join(__dirname, "..", heights)), "and the heights").toBe(true);
   const pkg = JSON.parse(read("package.json"));
   expect(pkg.devDependencies["image-js"], "image-js for the tool only").toBeTruthy();
   expect(pkg.devDependencies.geotiff, "and geotiff").toBeTruthy();

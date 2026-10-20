@@ -143,7 +143,12 @@
   const CREEP = 0.5;           // how far the travel breathes, in units of the road
   const CREEP_EVERY = 24;      // and how many seconds one breath takes
   const EASE = 0.12;           // how quickly it catches up with the scroll
-  const SCREENS = 1.25;        // how many screens of scrolling a station is worth
+  // How much of the road a screen of scrolling travels: the pace it had with
+  // nine theories on it (282 of road over ten and a quarter screens). The
+  // page used to be a screen and a quarter a station, which was that pace
+  // only for nine; with the three there are (2026-10-20) it would have
+  // rushed past them, the road's run in and run on being the same length.
+  const PACE = 27.5;
 
   // --- the opening
   //
@@ -442,6 +447,23 @@
   back.innerHTML = '<span class="structure-back-say" aria-hidden="true"><span class="structure-back-mark"></span>back<span class="structure-back-more">&nbsp;a theory</span></span>';
   shell.appendChild(back);
 
+  // WHAT IS STILL TO COME (2026-10-20 — "explain that the theories will be
+  // added later"): the page's own line under the list, stood at the end of
+  // the road, coming up once the last station has gone past and staying to
+  // the end. Not a station and not a link; the page's copy stays for anything
+  // reading rather than looking.
+  const laterOf = page.querySelector(".theories-later");
+  const later = laterOf ? document.createElement("p") : null;
+  if (later) {
+    later.className = "structure-later";
+    later.setAttribute("aria-hidden", "true");
+    later.innerHTML = '<span class="structure-later-mark" aria-hidden="true"></span>';
+    later.appendChild(document.createTextNode(laterOf.textContent.trim()));
+    shell.appendChild(later);
+  }
+  const LATER_FROM = 4;        // how far past the last station it starts coming up
+  const LATER_OVER = 10;       // and over how much more road
+
   // The names are real links standing over the drawing rather than
   // lettering inside it, so they can be tabbed to, read out and
   // followed like anything else on the site. Each is sized to the
@@ -547,7 +569,7 @@
   const road = document.createElement("div");
   road.className = "structure-road";
   road.setAttribute("aria-hidden", "true");
-  road.style.height = (stops.length * SCREENS * 100).toFixed(0) + "vh";
+  road.style.height = ((1 + ROAD / PACE) * 100).toFixed(0) + "vh";
 
   page.insertBefore(road, page.firstChild);
   page.insertBefore(shell, page.firstChild);
@@ -1436,6 +1458,12 @@
       " / " + String(stops.length).padStart(2, "0") +
       "   ·   " + String(Math.round(along * 100)).padStart(3, "0") + "%";
     if (said !== readoutSaid) { readout.textContent = said; readoutSaid = said; }
+    if (later) {
+      const last = stops[stops.length - 1].at.z - SHOW_BEST;
+      const k = Math.min(1, Math.max(0, (eye - last - LATER_FROM) / LATER_OVER));
+      const lit = (k * k * (3 - 2 * k) * (1 - opened)).toFixed(2);
+      if (lit !== later.dataset.lit) { later.dataset.lit = lit; later.style.opacity = lit; }
+    }
     cue.classList.toggle("gone", along > 0.02 || opened > 0.02);
     hint.classList.toggle("gone", opened < 0.6);
   }

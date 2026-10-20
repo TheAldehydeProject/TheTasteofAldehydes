@@ -1061,3 +1061,15 @@ the view arrives, so the first fragments are there the moment the house is reste
 what it drew with when it goes (`end`). Without WebGL there are none. See [Apoteker Tepe's
 report](2026-10-20-apoteker-tepe.md#solid-coloured-slower-an-environment-ataraxias-quiet-and-the-free-view-the-same-day-last).
 
+
+**The last round of 2026-10-20** — "change the SD apoteker tepe hovering mechanism accordingly", with
+the page's own mountain made denser, dithered, its sign cut into it and a land round it: a fragment is
+**16,000 specks** of 0.45 px (`RIDGE_SPECKS`, `RIDGE_SPECK`), **dithered** as the page is, in a css
+pixel's steps, on the Houses view's white (`RIDGE_LOOK`: white haze from 3.2 half-widths off and no
+mist); the sign **cut into** the one that carries it, its earth bared; the piece **dissolving at its edge
+in the dither's own steps** (`dissolve`, the reach wandering a little, `fade` 0.5) rather than torn off
+like an island; turning at 0.009–0.018 radians a second (`RIDGE_SPIN`, half as fast again). And, as every
+house on the view since that day, **only while Apoteker Tepe is the house at the front** — the hand
+sets nothing off ([the axis](2026-09-24-the-axis.md#2026-10-20--only-the-house-at-the-front-the-hand-sets-nothing-off)).
+`HouseMotifs.census(true)` counts the motifs still fading too, for a test. See [Apoteker Tepe's
+report](2026-10-20-apoteker-tepe.md#denser-and-digital-the-sign-cut-in-a-land-round-it-mist-the-quiet-in-the-drawing-and-the-free-view-held-the-last-round-of-the-day).
