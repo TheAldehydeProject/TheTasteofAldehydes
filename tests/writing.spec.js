@@ -125,12 +125,12 @@ test("the writing inside a shut part is not counted until it is opened", async (
   expect(shut.summary, "its summary is writing").toBe(1);
   if (shut.measured) expect(shut.words, "what it holds, shut, is not").toBe(0);
   await page.locator(".human-part > summary").nth(1).click();
-  await page.waitForTimeout(1300);
-  const open = await page.evaluate(() => {
+  // (Measured again as it opens and once it is open — on a busy machine a
+  // little later.)
+  await expect.poll(() => page.evaluate(() => {
     const p = document.querySelectorAll(".human-part")[1].querySelector(".human-text p"), r = p.getBoundingClientRect();
     return window.Writing.at((r.left + r.right) / 2, r.top + Math.min(20, r.height / 2));
-  });
-  expect(open, "opened, it is").toBe(1);
+  }), { timeout: 8000, message: "opened, it is" }).toBe(1);
 });
 
 for (const [size, view] of [["a phone", PHONE], ["a computer", WIDE]]) {

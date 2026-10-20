@@ -2108,6 +2108,13 @@ that answers now answers, at least just above nothing (`answer` in `network.js`)
 a whole word and under a first word. *the arrows on the left pull out the search bar …* in
 `note-library.spec.js` is the test that found it.
 
+The same day, *the centre joins every network …* stopped finding a note to press that answers
+nothing, seen from the centre: it took the first note 60px clear of every middle node, and with 379
+notes every one stands within 58px of one. It takes the clearest note now, at least 40px clear (a
+middle node answers within about 15px seen from there), and **one with nothing over it** — the
+clearest note tends to stand under an accord's name, which is a way to that network, and pressing it
+went there.
+
 ## 2026-10-13 — opening on time
 
 > I feel that there are several pages that are having issues opening; mainly, the note library

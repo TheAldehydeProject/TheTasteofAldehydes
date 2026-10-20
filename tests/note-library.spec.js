@@ -953,17 +953,27 @@ test("the centre joins every network, and going from one accord to another is ea
   // (The middle nodes are read again with the note, in one moment: the
   // whole turns, and read a second before, on a slow machine a middle node
   // had come under the note by the press — 2026-10-05.)
+  // The note in view furthest from every middle node, if it is well clear
+  // of where one answers (15px or so from it, seen from the centre). (Any
+  // note 60px clear, until 2026-10-20: with 379 notes every one stands
+  // within 58px of a middle node, and the first clear one is not the
+  // clearest.)
   const pickLoose = () => page.evaluate(() => {
     const middles = window.NetScene.accords().map((A) => window.NetScene.network(A.code));
+    let best = null, most = 40;
     for (const n of window.NetScene.notes()) {
       const p = window.NetScene.note(n.name);
-      if (p.z < 1 && p.x > 250 && p.x < innerWidth - 250 && p.y > 120 && p.y < innerHeight - 160 &&
-          middles.every((m) => Math.hypot(m.x - p.x, m.y - p.y) > 60)) return { name: n.name, x: p.x, y: p.y };
+      if (!(p.z < 1 && p.x > 250 && p.x < innerWidth - 250 && p.y > 120 && p.y < innerHeight - 160)) continue;
+      // (Nothing over it: an accord's name beside its network is a way there.)
+      const over = document.elementFromPoint(p.x, p.y);
+      if (!over || !over.closest(".net-canvas, canvas")) continue;
+      const clear = Math.min(...middles.map((m) => Math.hypot(m.x - p.x, m.y - p.y)));
+      if (clear > most) { most = clear; best = { name: n.name, x: p.x, y: p.y }; }
     }
-    return null;
+    return best;
   });
-  const loose = await pickLoose();
-  expect(loose, "a note in view, clear of the middle nodes").not.toBeNull();
+  let loose = null;
+  await expect.poll(async () => (loose = await pickLoose()), { timeout: 20000, message: "a note in view, clear of the middle nodes" }).not.toBeNull();
   await page.mouse.move(loose.x, loose.y);
   await page.waitForTimeout(300);
   await expect(page.locator(".net-hover"), "pointed at, it says nothing").not.toHaveClass(/is-on/);
