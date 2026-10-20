@@ -43,6 +43,7 @@ const PAGES = [
   "/houses/om-parfums.html",
   "/houses/outsider-parfums.html",
   "/houses/lost-tribe.html",
+  "/houses/apoteker-tepe.html",
   "/works/theory-03.html",
   "/works/skin.html",
   "/works/buying-a-perfume.html",
@@ -289,6 +290,7 @@ test.describe("on a phone's sharp screen", () => {
       ["/explorations-and-researches/", "canvas.re-canvas", "the field"],
       ["/scent-descriptions/", "canvas.sheet-field", "the houses' helix"],
       ["/favourites/", "canvas.chamber-field", "the chamber"],
+      ["/houses/apoteker-tepe.html", "canvas.human-field", "Apoteker Tepe's mountain"],
     ];
     for (const [url, pick, what] of DRAWINGS) {
       await page.goto(url);

@@ -37,6 +37,7 @@
     { url: "houses/om-parfums.html", trail: ["Scent Descriptions", "Houses", "Om Parfums"] },
     { url: "houses/outsider-parfums.html", trail: ["Scent Descriptions", "Houses", "Outsider Parfums"] },
     { url: "houses/lost-tribe.html", trail: ["Scent Descriptions", "Houses", "Lost Tribe"] },
+    { url: "houses/apoteker-tepe.html", trail: ["Scent Descriptions", "Houses", "Apoteker Tepe"] },
     { url: "individual-fragrances/individual-fragrances.html", trail: ["Scent Descriptions", "Fragrances"] },
     { url: "theories/", trail: ["Theories"] },
     { url: "works/theory-01.html", trail: ["Theories", "The Architecture of Sunscreen"] },

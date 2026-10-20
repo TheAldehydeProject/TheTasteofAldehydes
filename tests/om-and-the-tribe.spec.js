@@ -625,6 +625,60 @@ test("Om opens already split, fading in; the gap wider, its edges corrugated, it
    phone's bar coming and going) brought it together at once. Now OM is no
    stop of the keyboard's, a key on it does nothing, and a change of size
    lays the halves out again. */
+/* THE OPENING IN TWO BEATS (2026-10-20 — "i want there first to be the
+   movement of the particles inthe middle, and then after you do do that, I
+   want the text to fade in on either side of thebreak in the middle ... up
+   to 1.5 seconds ... smooth too. and make sure it also applies on the
+   phone"): the gap in first, its pieces stirred and off their places,
+   springing home; the writing either side after it; OM last; all of it in
+   by a second and a half — on a laptop and on a phone. */
+for (const [where, size, phone] of [["a laptop", { width: 1440, height: 900 }, false], ["a phone", { width: 390, height: 844 }, true]]) {
+  test(`Om opens in two beats on ${where}: the gap's pieces moving first, then the writing either side of it, all in by a second and a half`, async ({ browser }) => {
+    test.setTimeout(60000);
+    const context = await browser.newContext({ viewport: size, isMobile: phone, hasTouch: phone });
+    const page = await context.newPage();
+    await serveDependenciesLocally(page);
+    const errors = collectPageErrors(page);
+    // Every frame from the split's first: the writing's, the gap's and OM's
+    // strength, and how stirred and how far off their places its pieces are.
+    await page.addInitScript(() => {
+      window.__beats = [];
+      let from = 0;
+      (function f(now) {
+        const s = window.OmGlass && window.OmGlass.split();
+        if (s && s.shown.length) {
+          if (!from) from = now;
+          const om = document.querySelector(".om-join");
+          window.__beats.push({ t: now - from, writing: s.shown[0], ground: s.shown[1], gap: s.shown[2], stir: s.stir, off: window.OmGlass.gap().stirred, om: om ? +getComputedStyle(om).opacity : 0 });
+        }
+        if (!from || now - from < 2600) requestAnimationFrame(f);
+      })(performance.now());
+    });
+    await page.goto(OM);
+    await expect.poll(() => page.evaluate(() => window.__beats.length && window.__beats[window.__beats.length - 1].t), { timeout: 12000 }).toBeGreaterThan(2200);
+    const beats = await page.evaluate(() => window.__beats.filter((b) => b.gap > 0 || b.writing > 0));
+    expect(beats.length, "(seen from its first frames)").toBeGreaterThan(20);
+    const first = beats[0].t;
+    const at = (ms) => beats.reduce((best, b) => (Math.abs(b.t - first - ms) < Math.abs(best.t - first - ms) ? b : best));
+    // First the gap, its pieces moving.
+    const early = at(300);
+    expect(early.gap, "the gap in first").toBeGreaterThan(0.75);
+    expect(early.writing, "before the writing").toBeLessThan(0.1);
+    expect(beats[0].stir, "its pieces stirred as it comes").toBeGreaterThan(0.5);
+    expect(beats[0].off, "and off their places").toBeGreaterThan(at(1400).off * 3);
+    // Then the writing, smoothly, either side of it.
+    expect(beats.some((b) => b.writing > 0.25 && b.writing < 0.75), "the writing fading in, not cut").toBe(true);
+    expect(beats.find((b) => b.writing > 0.5).t, "after the gap").toBeGreaterThan(beats.find((b) => b.gap > 0.5).t + 300);
+    // And all of it in by a second and a half (a frame or two's grace).
+    const done = at(1560);
+    expect(done.writing, "the writing in by 1.5s").toBeGreaterThan(0.97);
+    expect(done.om, "OM up by 1.5s").toBeGreaterThan(0.9);
+    expect(at(800).om, "OM last").toBeLessThan(0.05);
+    expect(errors).toEqual([]);
+    await context.close();
+  });
+}
+
 test("Om's split is brought together by nothing but a press on OM: no key, no change of size", async ({ page }) => {
   test.setTimeout(60000);
   await page.setViewportSize({ width: 1440, height: 900 });

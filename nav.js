@@ -216,6 +216,11 @@ window.Writing = (function () {
         if (!/\S/.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
         const p = n.parentElement;
         if (!p || p.closest(SKIP) || standsFixed(p)) return NodeFilter.FILTER_REJECT;
+        // Inside a part or a fold that is shut, nothing but its summary is
+        // read — though the browser still measures the rest where it would
+        // stand, and every house's drawing went quiet over that (2026-10-20).
+        const shut = p.closest("details:not([open])");
+        if (shut && !(p.closest("summary") && p.closest("summary").parentElement === shut)) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       },
     });

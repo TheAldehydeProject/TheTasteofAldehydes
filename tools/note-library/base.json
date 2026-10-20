@@ -203,6 +203,14 @@
      "old": "The berry-like cones that flavour gin: resinous, peppery and piney."
     },
     {
+     "id": "note-kuromoji",
+     "name": "Kuromoji",
+     "aka": [
+      "Kuromoji (Spicebush)"
+     ],
+     "old": "A Japanese spicebush, its twigs fresh, woody and lightly sweet."
+    },
+    {
      "id": "note-lavender",
      "name": "Lavender",
      "aka": [
@@ -543,7 +551,8 @@
      "name": "Jasmine",
      "aka": [
       "Jasmine Sambac",
-      "Jasmine Flower"
+      "Jasmine Flower",
+      "Jasmine Grandiflorum"
      ],
      "old": "Heady, sweet and a little animalic (from indole, which also occurs in bodies). Sambac is the Arabian jasmine, greener and fruitier: the jasmine of jasmine tea."
     },
@@ -564,7 +573,9 @@
     {
      "id": "note-lily",
      "name": "Lily",
-     "aka": [],
+     "aka": [
+      "Madonna Lily"
+     ],
      "old": "Big lilies: spicy-sweet, with a green stem."
     },
     {
@@ -646,7 +657,8 @@
       "Orris Root",
       "Iris",
       "Iris Butter",
-      "Iris Pallida"
+      "Iris Pallida",
+      "Orris Butter"
      ],
      "old": "What perfume calls iris comes from the root, aged for years before it is extracted: powdery, cool, earthy and buttery, with a violet edge. Orris butter is among the costliest materials in perfumery."
     },
@@ -731,7 +743,9 @@
     {
      "id": "note-waterlily",
      "name": "Waterlily",
-     "aka": [],
+     "aka": [
+      "Water Lily"
+     ],
      "old": "A watery, lightly fresh floral."
     },
     {
@@ -1682,7 +1696,9 @@
     {
      "id": "note-birch",
      "name": "Birch",
-     "aka": [],
+     "aka": [
+      "Sweet Birch"
+     ],
      "old": "Birch wood and bark: clean, green and lightly smoky."
     },
     {
@@ -1740,7 +1756,8 @@
      "id": "note-guaiac-wood",
      "name": "Guaiac Wood",
      "aka": [
-      "Guaiac"
+      "Guaiac",
+      "Guaiacwood"
      ],
      "old": "A South American wood: smoky, sweet and a little like tar and roses."
     },
@@ -1848,7 +1865,8 @@
      "aka": [
       "Mysore Sandalwood",
       "Australian Sandalwood",
-      "Sri Lankan Sandalwood"
+      "Sri Lankan Sandalwood",
+      "Sandalwood Mysore"
      ],
      "old": "Creamy, milky and softly woody. Mysore sandalwood from India is the legendary, now very rare kind; Australian sandalwood is lighter and greener."
     },
@@ -1857,6 +1875,12 @@
      "name": "Sawdust",
      "aka": [],
      "old": "Freshly cut wood: dry, sweet and dusty."
+    },
+    {
+     "id": "note-siam-wood",
+     "name": "Siam Wood",
+     "aka": [],
+     "old": "A cypress of Vietnam and Laos, its wood warm, creamy and balsamic."
     },
     {
      "id": "note-teak-wood",
@@ -1937,6 +1961,14 @@
       "Momi"
      ],
      "old": "Soft, sweet and balsamic: the Christmas-tree smell. Balsam fir is the sweetest; silver and noble firs are fresher. Momi is the Japanese fir."
+    },
+    {
+     "id": "note-hiba",
+     "name": "Hiba",
+     "aka": [
+      "Hiba Cedar"
+     ],
+     "old": "A Japanese conifer kin to hinoki, its wood dry, smoky and camphorous."
     },
     {
      "id": "note-hinoki",
@@ -2065,6 +2097,14 @@
       "Copaiba Balm"
      ],
      "old": "An oleoresin tapped from a South American tree: soft, woody and peppery-balsamic."
+    },
+    {
+     "id": "note-copal",
+     "name": "Copal",
+     "aka": [
+      "Copal Incense"
+     ],
+     "old": "The resin of the Americas burned as incense since the Maya: bright, piney and lemony."
     },
     {
      "id": "note-dragon-s-blood",
@@ -2396,7 +2436,8 @@
      "name": "Mushroom",
      "aka": [
       "Morel Mushroom",
-      "Oyster Mushroom"
+      "Oyster Mushroom",
+      "Boletus Edulis"
      ],
      "old": "Damp, earthy and umami. Morel is nutty and smoky; oyster mushroom is softer."
     },
@@ -2405,7 +2446,8 @@
      "name": "Oakmoss",
      "aka": [
       "Oakmoss Absolute",
-      "French Oakmoss"
+      "French Oakmoss",
+      "Green Oakmoss"
      ],
      "old": "A lichen that grows on oaks: damp, earthy, inky and green. The base of the chypre, now limited by safety rules."
     },
@@ -2436,7 +2478,8 @@
       "Wet Soil",
       "Earthy Notes",
       "Soil Tincture",
-      "Black Soil"
+      "Black Soil",
+      "Wet Earth"
      ],
      "old": "Earth: damp, rooty and dark, from geosmin, the molecule of wet earth. A tincture is earth steeped in alcohol."
     },
@@ -2618,6 +2661,12 @@
      "old": "A South American wood burned like incense: citrusy, minty and resinous. Smoked, it becomes sweet smoke."
     },
     {
+     "id": "note-pine-smoke",
+     "name": "Pine Smoke",
+     "aka": [],
+     "old": "The smoke of burning pine wood: resinous, sweet and phenolic."
+    },
+    {
      "id": "note-pine-tar",
      "name": "Pine Tar",
      "aka": [],
@@ -2627,7 +2676,8 @@
      "id": "note-smoke",
      "name": "Smoke",
      "aka": [
-      "Barbecue Smoke"
+      "Barbecue Smoke",
+      "Wood Smoke"
      ],
      "old": "Burning wood and leaves: dry, bitter and warm."
     },
@@ -2762,7 +2812,9 @@
     {
      "id": "note-paper",
      "name": "Paper",
-     "aka": [],
+     "aka": [
+      "Smoldering Paper"
+     ],
      "old": "Clean paper: dry, woody and faintly sweet."
     },
     {

@@ -26,14 +26,15 @@ test.beforeEach(async ({ page }) => {
   await serveDependenciesLocally(page);
 });
 
-/* NINE HOUSES, IN THE ORDER THEY ARE NUMBERED. Tale Parfums is the
+/* THE HOUSES, IN THE ORDER THEY ARE NUMBERED. Tale Parfums is the
    seventh, Tombstone the eighth and Qimu & Musicians the ninth — and the
-   chain stops at nine for now, at the owner's word. The sheet is the way in
+   chain stopped at nine at the owner's word (2026-09-23) until they asked
+   for three more (2026-10-10) and a thirteenth, Apoteker Tepe (2026-10-20). The sheet is the way in
    to all of them, and a house that is not on it cannot be reached from
    the category at all. The ORDER matters as much as the names: the
    contact sheet's report says the pictures run in order down the page,
    and every house's own kicker says which number it is. */
-test("all twelve houses stand on the contact sheet, in their own order",
+test("all thirteen houses stand on the contact sheet, in their own order",
   async ({ page }) => {
   await page.goto(SHEET);
 
@@ -42,6 +43,7 @@ test("all twelve houses stand on the contact sheet, in their own order",
   expect(names).toEqual([
     "Pineward", "ADAR", "Almost Human", "Ataraxia", "Grande Parfums", "Les Abstraits",
     "Tale Parfums", "Tombstone", "Qimu & Musicians", "Om Parfums", "Outsider Parfums", "Lost Tribe",
+    "Apoteker Tepe",
   ]);
 
   // And every one of them is a link to a page that opens.
@@ -60,6 +62,7 @@ test("all twelve houses stand on the contact sheet, in their own order",
     "../houses/om-parfums.html",
     "../houses/outsider-parfums.html",
     "../houses/lost-tribe.html",
+    "../houses/apoteker-tepe.html",
   ]);
 });
 
@@ -73,7 +76,7 @@ test("all twelve houses stand on the contact sheet, in their own order",
    subtitle — on the house's page and under its picture on the Houses
    view — capitalises every word but the short joining ones. */
 const HOUSE_PAGES = ["pineward", "adar", "almost-human", "ataraxia", "grande-parfums",
-  "les-abstraits", "tale-parfums", "tombstone", "qimu-and-musicians", "om-parfums", "outsider-parfums", "lost-tribe"];
+  "les-abstraits", "tale-parfums", "tombstone", "qimu-and-musicians", "om-parfums", "outsider-parfums", "lost-tribe", "apoteker-tepe"];
 const SMALL = new Set(["a", "an", "the", "and", "but", "or", "for", "nor", "at", "by", "in", "of", "on", "to", "as", "up"]);
 const notTitled = (line) => line.split(/\s+/).filter((word, i) => {
   const first = word.replace(/^[^\p{L}\d]+/u, "").charAt(0);
@@ -90,7 +93,7 @@ test("no house has a line under its subtitle, and every subtitle is in title cas
   }
   await page.goto(SHEET);
   const says = await page.locator(".sheet-say").allTextContents();
-  expect(says.length).toBe(12);
+  expect(says.length).toBe(13);
   says.forEach((line) => expect(notTitled(line), `"${line}"`).toEqual([]));
 });
 
@@ -187,6 +190,7 @@ for (const [name, url, parts] of [
   ["Om Parfums", "/houses/om-parfums.html?om=whole", 9],
   ["Outsider Parfums", "/houses/outsider-parfums.html", 5],
   ["Lost Tribe", "/houses/lost-tribe.html", 6],
+  ["Apoteker Tepe", "/houses/apoteker-tepe.html", 8],
 ]) {
   test(`${name} opens a fragrance and carries a rank of ${parts}`, async ({ page }) => {
     // NOT ONE OF THESE HOUSES HAS ITS PHOTOGRAPHS YET, and every part
@@ -1781,7 +1785,7 @@ test("Tombstone is written, with its bold, its link and a definition on hover",
    next one, and the ninth wraps round to the first. */
 test("the houses are chained one to the next, and the last wraps round", async ({ page }) => {
   const order = ["pineward", "adar", "almost-human", "ataraxia", "grande-parfums",
-    "les-abstraits", "tale-parfums", "tombstone", "qimu-and-musicians", "om-parfums", "outsider-parfums", "lost-tribe"];
+    "les-abstraits", "tale-parfums", "tombstone", "qimu-and-musicians", "om-parfums", "outsider-parfums", "lost-tribe", "apoteker-tepe"];
   for (let i = 0; i < order.length; i++) {
     await page.goto(`/houses/${order[i]}.html`);
     const on = page.locator(".human-on, .pine-on, .adar-on").last();
@@ -1892,7 +1896,7 @@ test("Guitarist's dry down ends on the fig leaf merging into the rest", async ({
    read either way. */
 test("every house leads back to the one before it, and the first wraps round to the last", async ({ page }) => {
   const order = ["pineward", "adar", "almost-human", "ataraxia", "grande-parfums",
-    "les-abstraits", "tale-parfums", "tombstone", "qimu-and-musicians", "om-parfums", "outsider-parfums", "lost-tribe"];
+    "les-abstraits", "tale-parfums", "tombstone", "qimu-and-musicians", "om-parfums", "outsider-parfums", "lost-tribe", "apoteker-tepe"];
   for (let i = 0; i < order.length; i++) {
     await page.goto(`/houses/${order[i]}.html`);
     const back = page.locator(".house-prev");
@@ -1940,7 +1944,7 @@ test("every house has a return button at the top, back to the houses at that hou
   const HOUSE_PAGES = [
     ["pineward", "01"], ["adar", "02"], ["almost-human", "03"], ["ataraxia", "04"], ["grande-parfums", "05"],
     ["les-abstraits", "06"], ["tale-parfums", "07"], ["tombstone", "08"], ["qimu-and-musicians", "09"],
-    ["om-parfums", "10"], ["outsider-parfums", "11"], ["lost-tribe", "12"],
+    ["om-parfums", "10"], ["outsider-parfums", "11"], ["lost-tribe", "12"], ["apoteker-tepe", "13"],
   ];
   for (const [house, no] of HOUSE_PAGES) {
     await page.goto("/houses/" + house + ".html");

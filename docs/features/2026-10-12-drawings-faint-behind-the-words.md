@@ -125,3 +125,22 @@ paragraphs, whole in the gaps; ADAR and Outsider at 1440.
 - **The writing is measured, not watched every frame**: a part rising into place is measured as it
   arrives and again after, so for a moment while it moves the drawing's quiet can sit a few pixels
   off it.
+
+## 2026-10-20 — a shut part's writing is not writing
+
+Found while making Apoteker Tepe's mountain legible: a straight, hard edge ran down the mountain on
+every turn, dark on its left and pale on its right. `Writing.measure` reads every run of words with
+a Range, and **the browser still measures the paragraphs inside a closed `<details>` where they would
+stand** — on a house, a column to the right of each fragrance's picture, as tall as its writing, under
+a summary one line high. So since 2026-10-12 every drawing that asks `Writing` had gone quiet over
+those columns, where nothing could be read: on a phone mostly, on a computer ADAR's void and Outsider's
+light.
+
+`nav.js` now leaves out any text inside a closed `<details>` but its own summary (a fold shut inside an
+open part too; a closed part with an open fold inside it is still closed). Opening a part was already
+measured, on the `toggle` event, as it opens and once it is open. Nothing is quieter than it was where
+words stand; only the empty columns come back.
+
+`tests/writing.spec.js`, *the writing inside a shut part is not counted until it is opened*, on Lost
+Tribe: a shut part's summary is writing, its first paragraph — measured where it would stand — is not,
+and once opened it is. The other tests open every part first, so they are as they were.

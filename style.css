@@ -13724,3 +13724,80 @@ body.tribe-page {
 .human-unsmelled-fold { margin-bottom: 18px; }
 .human-unsmelled-fold .human-fold-text p.human-unsmelled { margin: 2px 0 6px; }
 .tribe-page .human-unsmelled-fold > summary::before { color: rgb(var(--tribe-copper)); }
+
+/* ==================================================================
+   APOTEKER TEPE — the thirteenth house, 2026-10-20: "themed like a
+   mountain ... green, and granular, and make it feel like a really
+   vintage photograph". Its paper aged — a warm, faded cream, darker
+   towards its corners as an old print is — its accent the mountain's
+   green, and tepe.js's mountain behind the writing (Mount Athos, in
+   green specks), with the trails' pencil red-brown on it. The grain of
+   the print is one picture laid once over the window (`.tepe-grain`,
+   made by tepe.js), under the writing, never drawn again.
+   ================================================================== */
+body.tepe-page {
+  --bg: #ece5d2; --bg-2: #e3dbc5; --line: #cfc5aa;
+  --ink: #1f2a20; --muted: #5f6652; --ink-rgb: 31, 42, 32;
+  --chrome-ground: rgba(236, 229, 210, 0.84);
+  --tepe-green: 46, 76, 46;
+  --tepe-pencil: 124, 66, 46;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(120% 95% at 50% 46%, transparent 58%, rgba(70, 58, 32, 0.12) 100%),
+    radial-gradient(48% 36% at 88% 8%, rgba(214, 182, 120, 0.12) 0%, transparent 72%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+.tepe-page .human-kicker,
+.tepe-page .human-section-mark { color: rgb(var(--tepe-green)); }
+.tepe-page .human-stage { color: rgb(var(--tepe-pencil)); }
+.tepe-page .human-text p { color: #2a3326; }
+.tepe-wash {
+  position: fixed;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.tepe-trails {
+  position: fixed;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.tepe-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-size: 180px 180px;
+  opacity: 0.075;
+}
+/* WHEN IT WAS MADE (2026-10-20 — "a note to every fragrance that was made
+   before and after the period of 2014-2018 ... in the format of 0000,
+   before/after 0000"): after the title in its row, before the cue — and
+   on a phone, under the title. */
+.human-made {
+  order: 4;
+  flex: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: rgb(var(--tepe-green));
+}
+.tepe-page .human-cue { order: 5; }
+/* The cue is only a picture of the press (aria-hidden), so it is not
+   writing the mountain goes quiet behind: on the paper's own colour, so the
+   specks never stand over its word. */
+.tepe-page .human-cue { background-color: rgba(236, 229, 210, 0.92); }
+@media (max-width: 700px) {
+  .tepe-page .human-part > summary { flex-wrap: wrap; row-gap: 2px; }
+  .tepe-page .human-part > summary::after { display: none; }
+  .tepe-page .human-cue { margin-left: auto; }
+  /* A long name wraps in its own room, never pushing the cue off its line. */
+  .tepe-page .human-part > summary .human-title { flex: 1 1 0; min-width: 0; }
+  .human-made { order: 6; flex-basis: 100%; padding-left: calc(26px + 56px + 40px); font-size: 10.5px; }
+}
+/* The mountain's own credit, under the pictures'. */
+.house-credit + .house-credit { margin-top: 0; border-top: 0; padding-top: 4px; }

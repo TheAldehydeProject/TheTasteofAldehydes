@@ -358,3 +358,13 @@ so a favourite naming a file that is not there is caught here instead.
 - **Individual fragrances 12 and 13**: *012 Areej Le Dore - Forbidden Flower/* (three pictures, from
   the house's own shop) and *013 Slumberhouse - Ore.webp* (from Fumerie), credited under themselves;
   see [the rulebook's report](2026-10-13-the-rulebook-for-a-new-perfume.md).
+
+## 2026-10-20 — Apoteker Tepe
+
+`images/Apoteker Tepe/`, the owner's uploads under the names they came with (its README lists them):
+the house's picture from Scentorium, each bottle cut out of its ground and in a scene, Kogen's and
+Brother Night's one picture each, and the house's sign. The page shows the copies in `web/` (each cut
+picture 640 wide, about 28KB; each scene 900; Kogen and Brother Night made small), the Houses view
+`house-web/apoteker-tepe-house.webp` (640 by 640). The bottles are credited to apotekertepe.net and the
+house's picture to Scentorium at the page's foot; see [Apoteker Tepe's
+report](2026-10-20-apoteker-tepe.md).

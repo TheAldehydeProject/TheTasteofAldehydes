@@ -1049,5 +1049,81 @@ window.FRAGRANCE_NOTES = {
       source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Lost-Tribe/Santal-Absolu-138024.html" },
     },
   },
+  "apoteker-tepe:01": {
+    say: "The house’s own notes",
+    flat: ["Yuzu", "Pear", "Ginger Root", "Sweet Birch", "Hinoki", "Peat", "Vetiver", "Incense", "Smoke", "Hiba Cedar", "Pine Needle", "Green Oakmoss", "Kuromoji (Spicebush)"],
+    source: { name: "Apoteker Tepe", url: "https://www.apotekertepe.net/product/kogen" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Hinoki", "Oakmoss", "Incense", "Pine", "Vetiver", "Ginger", "Cedar", "Peat", "Hiba", "Birch", "Smoke", "Pear", "Yuzu"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Apoteker-Tepe/Kogen-138023.html" },
+    },
+  },
+  "apoteker-tepe:02": {
+    say: "The house’s own notes",
+    flat: ["Pine Smoke", "Incense", "Balsam Fir", "Labdanum", "Guaiacwood"],
+    source: { name: "Apoteker Tepe", url: "https://www.apotekertepe.net/product/the-holy-mountain" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Incense", "Pine", "Balsam Fir", "Guaiac Wood", "Labdanum"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Apoteker-Tepe/The-Holy-Mountain-33606.html" },
+    },
+  },
+  "apoteker-tepe:03": {
+    say: "The house’s own notes",
+    flat: ["Copal Incense", "Marigold", "Olibanum", "Wood Smoke"],
+    note: "Fragrantica carries no page for it.",
+    source: { name: "Apoteker Tepe", url: "https://www.apotekertepe.net/product/brother-night" },
+  },
+  "apoteker-tepe:04": {
+    say: "The house’s own notes",
+    flat: ["Costus Root", "Siam Wood", "Hinoki", "Smoldering Paper", "Cardamom"],
+    source: { name: "Apoteker Tepe", url: "https://www.apotekertepe.net/product/karasu" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Paper", "Costus", "Hinoki", "Woody Notes", "Cardamom"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Apoteker-Tepe/Karasu-38581.html" },
+    },
+  },
+  "apoteker-tepe:05": {
+    say: "The house’s own notes",
+    flat: ["Madonna Lily", "Jasmine Grandiflorum", "Orris Butter", "Sandalwood Mysore"],
+    source: { name: "Apoteker Tepe", url: "https://www.apotekertepe.net/product/the-peradam" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Orris", "Jasmine", "Sandalwood", "Lily"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Apoteker-Tepe/The-Peradam-33605.html" },
+    },
+  },
+  "apoteker-tepe:06": {
+    say: "The house’s own notes",
+    flat: ["Amber", "Olibanum", "Oakmoss", "Whiskey", "Cocoa"],
+    source: { name: "Apoteker Tepe", url: "https://www.apotekertepe.net/product/pale-fire" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Cacao", "Whiskey", "Amber", "Olibanum", "Oakmoss"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Apoteker-Tepe/Pale-Fire-38580.html" },
+    },
+  },
+  "apoteker-tepe:07": {
+    say: "The house’s own notes",
+    flat: ["Citrus", "Shiso", "Birch", "Mint", "Pine", "Cedar", "Musk"],
+    source: { name: "Apoteker Tepe", url: "https://www.apotekertepe.net/product/anabasis" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Shiso", "Mint", "Pine", "Citrus", "Musk", "Cedar", "Birch"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Apoteker-Tepe/Anabasis-33608.html" },
+    },
+  },
+  "apoteker-tepe:08": {
+    say: "The house’s own notes",
+    flat: ["Violet Leaf", "Water Lily", "Mushroom", "Patchouli", "Wet Earth"],
+    source: { name: "Apoteker Tepe", url: "https://www.apotekertepe.net/product/after-the-flood" },
+    also: {
+      say: "Interpreted notes",
+      flat: ["Soil Tincture", "Water Lily", "Boletus Edulis", "Violet Leaf", "Patchouli"],
+      source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Apoteker-Tepe/After-the-Flood-33603.html" },
+    },
+  },
 
 };

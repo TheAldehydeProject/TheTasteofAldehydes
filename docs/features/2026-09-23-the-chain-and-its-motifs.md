@@ -1032,3 +1032,20 @@ multiplied by it; the page's squares a well bends are drawn where they stand on 
 kind of ten or more at once stands at three fifths of its number (`FEWER_PHONE`), and ADAR's wells
 reach three fifths as far. `HouseMotifs.drawnAt()` says the scale. Written up in [the phone
 report](2026-09-21-the-site-on-a-phone.md#2026-10-12--scent-descriptions-less-cluttered-on-a-phone).
+
+## 2026-10-20 — Apoteker Tepe: fragments of its mountain
+
+> The animation for hovering the house in the houses page in SD should be where fragments of the
+> mountains and the lines in the actual page will appear, and the lines will move as if along the path.
+> Make it not too flashy, but make it pretty.
+
+`ridge()` in `motifs.js`, up to four at once (`"apoteker-tepe"` in `HOUSES`). Each is a torn-edged
+piece of the house page's Mount Athos (`tepe-data.js`, loaded on Scent Descriptions too) round the
+steepest of six stretches of trail tried. It is raised in green specks 2.4 times taller than the page
+draws it (`RIDGE_RELIEF`) and turns a little. The trail across it is dashed in the house's pencil, the
+dashes going along it, its number in a ring at its foot, and a walker goes its length while the
+fragment stands (8–10 seconds). Each is whole on the window, off the chrome and apart from the others;
+three fifths of its size and fewer specks on a phone, as every motif is. `HouseMotifs.ridges()` says
+where they stand, for `tests/apoteker-tepe.spec.js`. See [Apoteker Tepe's
+report](2026-10-20-apoteker-tepe.md#the-fragments-on-the-houses-view).
+

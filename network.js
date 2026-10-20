@@ -2623,6 +2623,7 @@
       om: { name: "Om Parfums", href: "houses/om-parfums.html" },
       outsider: { name: "Outsider Parfums", href: "houses/outsider-parfums.html" },
       "lost-tribe": { name: "Lost Tribe", href: "houses/lost-tribe.html" },
+      "apoteker-tepe": { name: "Apoteker Tepe", href: "houses/apoteker-tepe.html" },
       individual: { name: "Individual fragrances", href: "individual-fragrances/individual-fragrances.html" },
     };
     const TIER_SAY = { top: "Top", mid: "Middle", base: "Base", flat: "Non-pyramidal" };

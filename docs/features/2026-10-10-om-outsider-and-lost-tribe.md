@@ -1266,6 +1266,41 @@ splitting the page where it stood, the fragrance open in both halves.
 **Still open**: a trial, as before — whichever of the split, the rings, the broken pane and the fine
 glass the owner keeps, the others come out of the code.
 
+## 2026-10-20 — the opening in two beats
+
+> Also please, i want you to put a litle animation at the start of opening up OM parfums, i want there
+> first to be the movement of the particles inthe middle, and then after you do do that, I want the text
+> to fade in on either side of thebreak in the middle. When you do this, make sure it isnt too lengthy
+> (lets say up to 1.5 seconds) and smooth too. and make sure it also applies on the phone.
+
+**The split page comes in in two beats** (`introSplit`). It used to fade in all at once over 1.4s, OM at
+0.65s. Now:
+
+1. **The gap first** — its canvas and the halves' grounds come up over 0.38s (`INTRO_GAP_MS`). Every
+   piece and speck in it starts a little off its place, the nearer the further (up to `INTRO_DRIFT`,
+   48px), and springs home on the spring the hand already pushes them with. All of them are stirred
+   as a fast scroll stirs them (`INTRO_STIR`, 0.85), tumbling, spreading and brightening, then settling
+   (`STIR_DOWN`). So the first thing seen is the middle moving.
+2. **Then the writing, either side of it** — the halves' writing and the calligraphy of โอม fading in
+   from 0.42s over 1.08s (`INTRO_TEXT_FROM`, `INTRO_TEXT_MS`; the calligraphy's own time is
+   `halves.calliMs` for the opening, `CALLI_IN_MS` still when reverted). It is in by 1.5s.
+3. **OM last**, from 0.9s (`INTRO_OM`) on its own half second, so it too is up by 1.5s. At 1.0s it was
+   measured at 84% at 1.56s on the test machine, a timer firing late.
+
+All of it runs on the browser's own clock (opacity animations, as before), the same on a phone. Reduced
+motion still never splits the page. Revert page is as it was.
+
+Tested in `tests/om-and-the-tribe.spec.js`, *Om opens in two beats on a laptop / on a phone*. Watched
+every frame from the split's first:
+
+- the gap in (over 75%) at 0.3s while the writing is under 10%;
+- its pieces stirred (over 0.5) and three times as far off their places at first as at 1.4s;
+- the writing passing between a quarter and three quarters, and half in at least 0.3s after the gap is;
+- the writing and OM in by 1.56s, and OM not up at 0.8s.
+
+The big split test still sees the split from its first frame, apart and not shaking, fading in from
+nothing.
+
 ## Same round, other reports
 
 - [The newer houses — Qimu's Bassist and Drummer written](2026-09-21-the-newer-houses.md#2026-10-10--bassist-and-drummer-written-and-a-fold-in-housejs)

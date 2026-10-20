@@ -140,3 +140,13 @@ found the eleven names before they were filed, and asked the same questions the 
   perfumer's own word on Basenotes; no reference describes "skunk oil" as a perfumery material.
 - The checker's near matches (rule 12's questions) are by shared words, so they can suggest an
   unlikely record; they are questions, not answers.
+
+## 2026-10-20 — the thirteenth house filed by it
+
+Apoteker Tepe's eight fragrances went through the rulebook: every spelling, every new note and
+variation, its accord, the founder's name, the house's sentence about 2018 and Kogen's year were put to
+the owner (rule 12), and the house's own lists come first and Fragrantica's second (rules 1–2). The
+library is **379 notes**. The checker is clean, and `rulebook.spec.js` finds the newest on the page
+(After the Flood) in the library. One thing the checker could not see: *Water Lily* was asked about as a
+new note, and turned out to be the library's *Waterlily* written with a space — filed as a spelling. See
+[Apoteker Tepe's report](2026-10-20-apoteker-tepe.md#the-note-library).

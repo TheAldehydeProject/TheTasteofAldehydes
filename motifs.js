@@ -3290,6 +3290,130 @@
     };
   }
 
+  // ---------- APOTEKER TEPE: fragments of the mountain, and its trails ----------
+  /** A FRAGMENT OF THE MOUNTAIN (2026-10-20 — "fragments of the mountains
+      and the lines in the actual page will appear, and the lines will move
+      as if along the path. Make it not too flashy, but make it pretty"):
+      a torn-edged piece of the house's own page's ground — Mount Athos, out
+      of the same heights and the same aged photograph (tepe-data.js) —
+      round a stretch of one of its trails, raised in three dimensions in
+      green specks and turning a little as it stands; the trail across it
+      dashed in the pencil's red-brown, the dashes going along it, and a
+      walker, a small ring, going the length of it while the fragment
+      stands. Several at once, apart from each other. */
+  const TEPE_TONES = ["24, 46, 30", "36, 62, 38", "52, 80, 48", "74, 98, 60", "104, 120, 82", "140, 150, 112"];
+  const TEPE_PENCIL = "124, 66, 46";
+  const RIDGE_SPECKS = 1300;         // a fragment's specks (three fifths on a phone)
+  const RIDGE_CELLS = [15, 21];      // its reach round its trail, in cells of the heights
+  const RIDGE_PX = [100, 165];       // and on the window
+  const RIDGE_RELIEF = 2.4;          // its heights drawn this much taller than the page's, so a piece of slope reads as one
+  const RIDGE_LIFE = [7600, 10400];  // ms it stands
+  let tepeGrid = null;
+  function tepeData() {
+    if (tepeGrid || !window.TEPE) return tepeGrid;
+    const T = window.TEPE, unpack = (b) => { const s = atob(b), o = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) o[i] = s.charCodeAt(i); return o; };
+    tepeGrid = { n: T.n, h: unpack(T.heights), p: unpack(T.photo), trails: T.trails };
+    return tepeGrid;
+  }
+  function ridge() {
+    const G = tepeData();
+    if (!G) return null;
+    const n = G.n, cell = (grid, u, v) => grid[Math.max(0, Math.min(n - 1, Math.round(v))) * n + Math.max(0, Math.min(n - 1, Math.round(u)))];
+    // A stretch of a trail, and the ground round it: of a few tried, the
+    // one climbing the most, so the piece is of the mountain's slopes.
+    let trail = null, run = null, best = -1;
+    for (let k = 0; k < 6; k++) {
+      const t = pick(G.trails.filter((tt) => tt.length > 40));
+      const len = Math.round(rand(26, 38)), i0 = Math.floor(rand(0, t.length - len)), r = t.slice(i0, i0 + len);
+      const hs = r.map((q) => cell(G.h, q[0], q[1])), climb = Math.max(...hs) - Math.min(...hs);
+      if (climb > best) { best = climb; trail = t; run = r; }
+    }
+    const cu = run.reduce((s, q) => s + q[0], 0) / run.length, cv = run.reduce((s, q) => s + q[1], 0) / run.length;
+    const R = Math.max(rand(RIDGE_CELLS[0], RIDGE_CELLS[1]), ...run.map((q) => Math.hypot(q[0] - cu, q[1] - cv) + 3));
+    const px = rand(RIDGE_PX[0], RIDGE_PX[1]);
+    // Kept off the house, the chrome and the other fragments.
+    let at = null;
+    for (let k = 0; k < 10 && !at; k++) {
+      const s = spot(px * 1.1);
+      if (s && (s.x < px * 1.05 || s.x > W - px * 1.05)) continue;   // whole on the window
+      if (s && !things.some((t) => t.ridge && Math.hypot(t.ridge.x - s.x, t.ridge.y - s.y) < (t.ridge.px + px) * 1.15)) at = s;
+    }
+    if (!at) return null;
+    // A torn edge: the reach wanders with the angle.
+    const tear = Array.from({ length: 7 }, () => rand(0, 6.28));
+    const edge = (a) => 0.82 + 0.1 * Math.sin(a * 3 + tear[0]) + 0.06 * Math.sin(a * 5 + tear[1]) + 0.04 * Math.sin(a * 9 + tear[2]);
+    // The page's own lift at this fragment's scale, about the trail's own height.
+    const top = 255, lift = RIDGE_RELIEF * 0.5 * (n / (2 * R)) * 0.42, h0 = run.reduce((s, q) => s + cell(G.h, q[0], q[1]), 0) / run.length / top;
+    const count = Math.round(RIDGE_SPECKS * (PHONE ? FEWER_PHONE : 1));
+    const specks = [];
+    for (let k = 0; specks.length < count && k < count * 6; k++) {
+      const a = rand(0, 6.283), d = Math.sqrt(Math.random()) * R;
+      const r = d / (R * edge(a));
+      if (r > 1) continue;
+      const u = cu + Math.cos(a) * d, v = cv + Math.sin(a) * d;
+      if (u < 0 || v < 0 || u > n - 1 || v > n - 1) continue;
+      const h = cell(G.h, u, v) / top, p = cell(G.p, u, v) / 255;
+      if (h < 0.004) continue;
+      if (Math.random() > 0.4 + (1 - p) * 0.8) continue;      // closer together where the photograph is darker
+      const tone = Math.min(5, Math.max(0, Math.round(p * 5 * 1.15 - 0.3 + rand(-0.45, 0.45))));
+      specks.push({ x: (u - cu) / R, z: (v - cv) / R, y: (h - h0) * lift, tone, a: (0.55 + 0.45 * (1 - p)) * (1 - ease((r - 0.7) / 0.3)), s: rand(1.2, 2) });
+    }
+    specks.sort((a, b) => a.tone - b.tone);
+    const path = run.map(([u, v]) => ({ x: (u - cu) / R, z: (v - cv) / R, y: (cell(G.h, u, v) / top - h0) * lift + 0.02 }));
+    const yaw0 = rand(0, 6.283), spin = rand(0.06, 0.12) * (Math.random() < 0.5 ? -1 : 1), pitch = rand(0.34, 0.48);
+    const life = rand(RIDGE_LIFE[0], RIDGE_LIFE[1]), number = ["I", "II", "III", "IV", "V", "VI"][G.trails.indexOf(trail)] || "";
+    const project = (q, c, s, cp, sp) => {
+      const xr = q.x * c - q.z * s, zr = q.x * s + q.z * c;
+      const y2 = q.y * cp + zr * sp, z2 = -q.y * sp + zr * cp, f = 3.2 / (3.2 + z2);
+      return [at.x + xr * px * f, at.y - y2 * px * f, z2];
+    };
+    return {
+      life,
+      fadeIn: 1400,
+      ridge: { x: at.x, y: at.y, px },
+      draw(c, age, alpha) {
+        const t = age / 1000, yaw = yaw0 + spin * t, cy_ = Math.cos(yaw), sy_ = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+        // The ground, a tone at a time.
+        let tone = -1;
+        for (const q of specks) {
+          if (q.tone !== tone) { tone = q.tone; c.fillStyle = "rgb(" + TEPE_TONES[tone] + ")"; }
+          const [x, y, z] = project(q, cy_, sy_, cp, sp);
+          c.globalAlpha = q.a * alpha * (1 - 0.35 * Math.max(0, Math.min(1, (z + 0.5) / 1.4)));
+          c.fillRect(x - q.s / 2, y - q.s / 2, q.s, q.s);
+        }
+        // The trail: its dashes going along it, its foot numbered, and the
+        // walker going its length while the fragment stands.
+        const pts = path.map((q) => project(q, cy_, sy_, cp, sp));
+        c.globalAlpha = 0.66 * alpha;
+        c.strokeStyle = "rgb(" + TEPE_PENCIL + ")";
+        c.lineWidth = 1.15;
+        c.lineCap = "round";
+        c.setLineDash([5, 4]);
+        c.lineDashOffset = -t * 9;
+        c.beginPath();
+        pts.forEach(([x, y], k) => (k ? c.lineTo(x, y) : c.moveTo(x, y)));
+        c.stroke();
+        c.setLineDash([]);
+        const [fx, fy] = pts[0];
+        c.lineWidth = 0.9;
+        c.beginPath(); c.arc(fx, fy, 6.5, 0, 6.283); c.stroke();
+        c.fillStyle = "rgb(" + TEPE_PENCIL + ")";
+        c.font = "500 8px 'IBM Plex Mono', ui-monospace, monospace";
+        c.textAlign = "center"; c.textBaseline = "middle";
+        c.fillText(number, fx, fy + 0.5);
+        const go = Math.min(1, age / (life * 0.92)), along = go * (pts.length - 1), k0 = Math.floor(along), f = along - k0;
+        const a = pts[k0], b = pts[Math.min(pts.length - 1, k0 + 1)];
+        const wx = a[0] + (b[0] - a[0]) * f, wy = a[1] + (b[1] - a[1]) * f;
+        c.globalAlpha = 0.85 * alpha;
+        c.lineWidth = 1.2;
+        c.beginPath(); c.arc(wx, wy, 2.6, 0, 6.283); c.stroke();
+        c.globalAlpha = 0.18 * alpha;
+        c.beginPath(); c.arc(wx, wy, 5.5, 0, 6.283); c.fill();
+        c.globalAlpha = 1;
+      },
+    };
+  }
+
   // How often each is born (per second), and how many may stand at once.
   const HOUSES = {
     pineward: [{ make: tree, rate: 2, most: 16 }, { make: needle, rate: 5, most: 50 }],
@@ -3314,6 +3438,8 @@
     // armoire does.
     outsider: [{ make: door, rate: 5, most: 1, first: 1 }],
     "lost-tribe": [{ make: flock, rate: 0.22, most: 2, first: 1 }, { make: leafFall, rate: 1.1, most: 10 }, { make: pollenRise, rate: 12, most: 70 }],
+    // Apoteker Tepe: fragments of its mountain, each round a stretch of trail.
+    "apoteker-tepe": [{ make: ridge, rate: 0.5, most: 4, first: 2 }],
   };
 
   // ============================================================
@@ -3414,6 +3540,10 @@
     // How each of Om's rings standing now is drawn, for the tests.
     rings() {
       return things.filter((t) => t.rings && !t.ending).map((t) => t.rings);
+    },
+    // Where Apoteker Tepe's fragments stand and how large, for the tests.
+    ridges() {
+      return things.filter((t) => t.ridge && !t.ending).map((t) => ({ x: t.ridge.x * SMALL, y: t.ridge.y * SMALL, px: t.ridge.px * SMALL }));
     },
     // Where Lost Tribe's birds are, flock by flock, for the tests.
     flocks() {

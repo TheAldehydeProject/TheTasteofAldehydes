@@ -630,6 +630,7 @@
     "Hops": () => { const scales = []; for (let k = 0; k < 34; k++) { const t = k / 33, y = 0.5 - t * 1.25, r = 0.36 * Math.pow(Math.sin(Math.PI * (0.12 + t * 0.8)), 0.8) * (1 - t * 0.25), a = k * 2.39996; scales.push(at(at(petal({ len: 0.28 - t * 0.06, w: 0.22 - t * 0.04, shape: "round", curl: -0.3 }), { rx: 0.45 }), { rz: Math.PI, ry: a, x: Math.sin(a) * r, y: y + 0.12, z: Math.cos(a) * r })); } return join(path(bez([0.55, 1.05, 0], [0.3, 1.0, 0], [0.05, 0.85, 0], [0, 0.6, 0], 12), 0.04, 0.9), ...scales, at(leaf({ len: 0.6, w: 0.5, shape: "heart", lobes: 1.5, teeth: 10, veins: 3 }), { x: 0.5, y: 1.0, rz: -1.9, rx: 0.3 })); },
     "Juniper Berry": () => join(at(twig(1.7), { rz: 0.35 }), many(4, () => berry(0.2, { crown: true }), (k) => ({ x: -0.5 + k * 0.33, y: -0.18 + k * 0.12 + (k % 2 ? 0.2 : -0.2), z: 0.1 })), many(10, () => leaf({ len: 0.34, w: 0.03, shape: "needle", veins: 0 }), (k) => ({ x: -0.7 + k * 0.15, y: -0.25 + k * 0.055, rx: k % 2 ? 0.7 : -0.7, ry: k * 0.9 }))),
     "Lavender": () => many(3, () => join(stem(1.6, 0.05), many(9, () => ball({ r: 0.05, n: 14, lines: false }), (k) => ({ y: 1.1 + k * 0.07, x: Math.cos(k * 2) * 0.05, z: Math.sin(k * 2) * 0.05 }))), (k) => ({ x: (k - 1) * 0.35, rz: (1 - k) * 0.25, ry: k })),
+    "Kuromoji": () => join(at(twig(1.7), { rz: 0.18, y: 0.3 }), many(5, () => leaf({ len: 0.45, w: 0.22, shape: "oval" }), (k) => ({ x: -0.6 + k * 0.3, y: 0.24 + k * 0.06, rz: k % 2 ? -0.8 : 0.8 + Math.PI })), path([[-0.55, -0.55, 0], [0.55, -0.42, 0]], 0.03, 1.1), path([[-0.5, -0.72, 0.1], [0.6, -0.6, 0.1]], 0.03, 1.1)),
     "Lemon Verbena": () => sprig({ h: 1.8, pairs: 4, shape: "lance", size: 0.6, wide: 0.22, whorl: 3 }),
     "Marjoram": () => sprig({ h: 1.4, pairs: 4, shape: "oval", size: 0.35, wide: 0.5, top: heap(6, () => ball({ r: 0.06, n: 12, lines: false }), 0.12) }),
     "Mint": () => sprig({ h: 1.6, pairs: 4, shape: "oval", size: 0.6, wide: 0.5, teeth: 8, whorl: 1 }),
@@ -831,6 +832,7 @@
     // MUHUHU (2026-10-13): a log of the dry African wood, smoke rising
     // off its cut end.
     "Muhuhu": () => join(at(log({ r: 0.32, len: 1.5, rings: 4 }), { rz: 0.12, y: -0.3 }), at(smoke(3, 1.0), { x: 0.72, y: -0.15 })),
+    "Siam Wood": () => join(at(log({ r: 0.3, len: 1.5, rings: 6 }), { rz: -0.1, y: -0.4 }), at(log({ r: 0.22, len: 1.15, rings: 4 }), { ry: 0.9, y: 0.22, x: 0.1 })),
     "Mahogany": () => join(box(1.8, 0.2, 0.6, { step: 0.06 }), many(6, (k) => path(curve((t) => [-0.9 + t * 1.8, 0.101, -0.25 + k * 0.1 + Math.sin(t * 6 + k) * 0.03], 20), 0.07, 0.6), () => ({}))),
     "Moldy Cedarwood": () => join(log({ r: 0.35, len: 1.6, rings: 4 }), many(14, () => join(path([[0, 0, 0], [0, 0.18, 0]], 0.04, 0.5), at(ball({ r: 0.03, n: 6, lines: false }), { y: 0.2 })), (k) => ({ x: -0.7 + k * 0.1, y: 0.33, z: jit(0.15) }))),
     "Oak": () => join(at(join(ball({ r: 0.3, sy: 1.3, n: 90, tip: 0.3 }), at(ball({ r: 0.33, sy: 0.55, n: 60, rough: 0.2, bumps: 12, cut: 5 }), { y: 0.25 }), path([[0, 0.4, 0], [0.02, 0.55, 0]], 0.03)), { x: -0.55, y: -0.3 }), at(leaf({ len: 1.2, w: 0.38, shape: "oval", lobes: 3.5, veins: 4 }), { x: 0.35, y: -0.6, rz: -0.2 })),
@@ -866,6 +868,7 @@
     // tears at their foot.
     "Bushman Candle Resin": () => join(many(3, () => join(lathe([[0.1, -0.7], [0.085, 0.25]], { seg: 12, mer: 5 }), path([[0, 0.25, 0], [0, 0.32, 0]], 0.03), at(flame(0.38), { y: 0.45 })), (k) => ({ x: (k - 1) * 0.38, y: -Math.abs(k - 1) * 0.15, rz: (1 - k) * 0.22, s: 1 - Math.abs(k - 1) * 0.15 })), at(heap(4, () => tear(0.5), 0.25), { y: -0.82 })),
     "Benzoin": () => { const almonds = []; [[-0.35, 0.18, 0.5], [0.15, 0.25, -0.4], [0.42, -0.12, 0.8], [-0.18, -0.22, -0.2], [0.05, 0.02, 1.1]].forEach(([x, y, a]) => almonds.push(path(moved(oval(0.12, 0.07, 22), x, y, a).map(([px, py]) => [px, py, 0.23]).concat([[x + Math.cos(a) * 0.12, y + Math.sin(a) * 0.12, 0.23]]), 0.03, 1.2))); return join(box(1.3, 0.8, 0.44, { step: 0.05, fill: 160 }), ...almonds); },
+    "Copal": () => join(turned([[0, -0.9], [0.55, -0.9], [0.62, -0.62], [0.5, -0.62], [0.45, -0.8], [0, -0.8]], { seg: 20, mer: 0, rings: true }), at(heap(4, () => tear(0.6), 0.28, { flat: true }), { y: -0.62 }), at(smoke(3, 1.3), { y: -0.5 })),
     "Dragon's Blood": () => join(at(pod({ len: 1.6, r: 0.13, bend: 0.05, blunt: true }), { y: 0.3 }), drops(3, 1)),
     "Elemi": () => join(heap(4, () => tear(0.9), 0.4), at(leaf({ len: 0.6, w: 0.2, shape: "oval" }), { x: 0.6, y: 0.3, rz: -1.4 })),
     "Frankincense": () => join(heap(5, () => tear(0.9), 0.45), at(smoke(3, 1.2), { y: 0.1 })),
@@ -946,6 +949,7 @@
     "Gasoline": () => join(box(1, 1.3, 0.45, { step: 0.07 }), path([[0.2, 0.65, 0], [0.45, 0.95, 0], [0.5, 1.05, 0]], 0.04), at(drop(0.14), { x: 0.7, y: -0.2 })),
     "Palo Santo": () => join(many(3, () => lathe([[0.1, -0.8], [0.1, 0.8]], { seg: 10, mer: 4 }), (k) => ({ x: (k - 1) * 0.25, rz: 0.3 + (k - 1) * 0.1 })), at(smoke(2, 0.9), { x: 0.28, y: 0.75 })),
     "Pine Tar": () => join(at(conePine(0.8), { x: -0.45, y: -0.2 }), at(drop(0.22), { x: 0.5, y: 0.1 })),
+    "Pine Smoke": () => join(at(conePine(0.75), { x: -0.42, y: -0.45, rz: 0.4 }), at(smoke(3, 1.5), { x: 0.2, y: -0.35 }), at(needles(5, 0.5), { x: 0.5, y: -0.78, rz: 0.3 })),
     "Smoke": () => smoke(4, 1.8),
     "Smouldering Logs": () => join(at(log({ r: 0.2, len: 1.6, rings: 3 }), { ry: 0.6, y: -0.6 }), at(log({ r: 0.2, len: 1.6, rings: 3 }), { ry: -0.6, y: -0.35 }), at(smoke(3, 1.2), { y: -0.3 }), many(8, () => part([[0, 0, 0, 1.3]]), (k) => ({ x: jit(0.4), y: -0.5 + rnd() * 0.3, z: jit(0.4) }))),
     // ---------------- IMPRESSIONS ----------------
@@ -998,6 +1002,7 @@
     "Cade Oil": () => join(at(log({ r: 0.3, len: 1.4 }), { y: 0.3 }), at(drops(3, 1), { y: -0.55 }), at(smoke(2, 0.9), { y: 0.65 })),
     "Paprika": () => join(at(pod({ len: 1.4, r: 0.2, bend: 0.35 }), { y: 0.35, rz: 0.2 }), at(cloud(160, 0.45, { sy: 0.35, w: 0.55 }), { y: -0.65 })),
     "Hinoki": () => join(tree({ h: 1.9, tiers: 6, r: 0.65, droop: 0.1 }), at(join(path([[0, 0, 0], [0, 0.9, 0]], 0.03), at(wisp(0.9, { r: 0.12 }), { y: 0.9 })), { x: 0.85, y: -0.4, rz: -0.15 })),
+    "Hiba": () => join(tree({ h: 2.1, tiers: 7, r: 0.55, narrow: 0.65, droop: 0.15 }), at(log({ r: 0.2, len: 0.9, rings: 3 }), { x: 0.8, y: -0.25 })),
     "Sichuan Pepper": () => join(twig(1.4), at(heap(16, () => ball({ r: 0.1, n: 30, rough: 0.3, bumps: 5, lines: false }), 0.35), { y: -0.2 })),
     // A WEDGE OF CHEESE, its holes in its face.
     "Cheese": () => join(flat([[-0.9, -0.5], [0.9, -0.5], [-0.9, 0.45]], { depth: 0.5, corners: true }), many(5, (k) => path(hoop(0.07 + (k % 2) * 0.04, 16), 0.03), (k) => ({ x: -0.62 + k * 0.2, y: -0.32 + ((k * 37) % 5) * 0.07, z: 0.26 }))),

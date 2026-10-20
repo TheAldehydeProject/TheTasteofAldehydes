@@ -457,10 +457,22 @@
   // split in half. I would just want it to be introduced smoothly. So there
   // is no drawing the curtains open when you open the page, only closing
   // them when you press the button OM"): the halves apart from the first
-  // frame, and all of it — the writing, its ground, the gap's depths, the
-  // calligraphy — fading in together (INTRO_MS); OM a beat later.
-  const INTRO_MS = 1400;           // the split page fading in
-  const INTRO_OM = 650;            // ms in, OM coming up
+  // frame. AND IN TWO BEATS since 2026-10-20 ("i want there first to be the
+  // movement of the particles in the middle, and then after you do do that,
+  // I want the text to fade in on either side of the break in the middle
+  // ... up to 1.5 seconds ... smooth ... also applies on the phone"): first
+  // the gap — its depths and the halves' ground coming up quickly
+  // (INTRO_GAP_MS), its pieces and specks set going, each a little off its
+  // place and springing home as they tumble (INTRO_DRIFT, INTRO_STIR) — and
+  // then the writing and the calligraphy fading in either side of it
+  // (INTRO_TEXT_FROM, INTRO_TEXT_MS), OM last; all of it in by 1.5 seconds.
+  // (Until then all of it faded in together over 1.4 seconds, OM at 0.65.)
+  const INTRO_GAP_MS = 380;        // the gap and the halves' ground coming up
+  const INTRO_DRIFT = 48;          // px a piece starts off its place, the nearer the further
+  const INTRO_STIR = 0.85;         // how stirred the gap's geometry is as it comes, settling
+  const INTRO_TEXT_FROM = 420;     // ms in, the writing and the calligraphy starting
+  const INTRO_TEXT_MS = 1080;      // and fading in over this, in by 1.5 seconds
+  const INTRO_OM = 900;            // ms in, OM coming up (its own half second: in by 1.5 seconds)
   // REVERT PAGE (2026-10-15 — "on the top right, add a button to say
   // "revert page" which will do exactly that; revert it to the split part.
   // Here, i want you to animate it the same way it is animated right now
@@ -2127,21 +2139,33 @@
     page.insertBefore(mendButton, page.firstChild);
   }
   /** THE PAGE OPENS ALREADY SPLIT: the halves apart and at rest from the
-      first frame, the whole of it fading in — the writing, its ground and
-      the gap, each on the browser's own clock — the calligraphy with them,
-      and OM a beat later. */
+      first frame — the gap first, its pieces moving, and then the writing
+      and the calligraphy either side of it, each on the browser's own
+      clock, and OM last. */
   function introSplit() {
     const now = (document.timeline && document.timeline.currentTime) || performance.now();
-    halves.bornAt = performance.now();
+    halves.bornAt = performance.now() + INTRO_TEXT_FROM;
+    halves.calliMs = INTRO_TEXT_MS;
     halves.opened = true;
     halves.openAt = 1;
     placeSplit(restAt());
+    // The gap's things set going: each a little off its place, springing
+    // home, and all of them stirred, settling as the scroll's stir does.
+    if (gap && !REDUCE) {
+      gap.shards.concat(gap.motes).forEach((s) => {
+        const reach = INTRO_DRIFT * (0.35 + 0.65 * s.near), a = random() * Math.PI * 2;
+        s.ox = Math.cos(a) * reach; s.oy = Math.sin(a) * reach * 1.4;
+        s.vx = s.vy = 0;
+      });
+      stir = Math.max(stir, INTRO_STIR);
+    }
     if (halves.host.animate) {
-      halves.intro = [halves.host, halves.groundHost, gapCanvas].map((el) => {
-        const a = el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: INTRO_MS, easing: "cubic-bezier(0.33, 0, 0.2, 1)", fill: "backwards" });
+      const fade = (el, delay, duration) => {
+        const a = el.animate([{ opacity: 0 }, { opacity: 1 }], { duration, delay, easing: "cubic-bezier(0.33, 0, 0.2, 1)", fill: "backwards" });
         a.startTime = now;
         return a;
-      });
+      };
+      halves.intro = [fade(gapCanvas, 0, INTRO_GAP_MS), fade(halves.groundHost, 0, INTRO_GAP_MS), fade(halves.host, INTRO_TEXT_FROM, INTRO_TEXT_MS)];
     }
     const button = mendButton;
     window.setTimeout(() => { if (button && button === mendButton) button.classList.add("shown"); }, INTRO_OM);
@@ -2837,7 +2861,7 @@
       the size the page keeps it at and going, as the โอม of specks is
       written over it. `big` and `small` are its sizes split and whole. */
   function drawOm(x, cy, t, now, big, small, voidness) {
-    let callA = halves.bornAt ? smooth01((now - halves.bornAt) / CALLI_IN_MS) : 0, scale = big, drawn = 0;
+    let callA = halves.bornAt ? smooth01((now - halves.bornAt) / (halves.calliMs || CALLI_IN_MS)) : 0, scale = big, drawn = 0;
     if (gatherAt) {
       const c = (now - gatherAt) / SPLIT_MS;
       callA *= 1 - smoother(clamp((c - CALLI_OUT[0]) / (CALLI_OUT[1] - CALLI_OUT[0]), 0, 1));

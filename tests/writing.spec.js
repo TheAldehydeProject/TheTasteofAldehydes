@@ -27,7 +27,7 @@ const { serveDependenciesLocally, collectPageErrors } = require("./helpers");
 const PHONE = { width: 390, height: 844 };
 const WIDE = { width: 1440, height: 900 };
 const HOUSES = ["pineward", "adar", "almost-human", "ataraxia", "grande-parfums", "les-abstraits",
-  "tale-parfums", "tombstone", "qimu-and-musicians", "om-parfums", "outsider-parfums", "lost-tribe"];
+  "tale-parfums", "tombstone", "qimu-and-musicians", "om-parfums", "outsider-parfums", "lost-tribe", "apoteker-tepe"];
 
 /** Open every fragrance, scroll to `at` of the page, and let it settle. */
 async function openAt(page, path, at) {
@@ -97,6 +97,40 @@ test("the writing is found where the words are", async ({ page }) => {
   expect(r.inside, "every box within the window's width").toBe(true);
   expect(r.covers, "the introduction's first paragraph is writing").toBe(true);
   expect(r.at).toBe(1);
+});
+
+/* WHAT A SHUT PART HOLDS IS NOT WRITING (2026-10-20): the browser still
+   measures a closed fragrance's paragraphs where they would stand, and every
+   house's drawing went quiet over a column of nothing on the right. Only its
+   summary is writing until it is opened. */
+test("the writing inside a shut part is not counted until it is opened", async ({ page }) => {
+  await serveDependenciesLocally(page);
+  await page.setViewportSize(WIDE);
+  await page.goto("/houses/lost-tribe.html");
+  await page.waitForTimeout(800);
+  const probe = () => page.evaluate(() => {
+    const part = document.querySelectorAll(".human-part")[1];
+    part.scrollIntoView({ block: "center" });
+    const p = part.querySelector(".human-text p"), r = p.getBoundingClientRect();
+    const s = part.querySelector("summary .human-title").getBoundingClientRect();
+    return new Promise((done) => requestAnimationFrame(() => done({
+      shut: !part.open,
+      measured: r.height > 2,
+      words: window.Writing.at((r.left + r.right) / 2, r.top + Math.min(20, r.height / 2)),
+      summary: window.Writing.at((s.left + s.right) / 2, (s.top + s.bottom) / 2),
+    })));
+  });
+  const shut = await probe();
+  expect(shut.shut).toBe(true);
+  expect(shut.summary, "its summary is writing").toBe(1);
+  if (shut.measured) expect(shut.words, "what it holds, shut, is not").toBe(0);
+  await page.locator(".human-part > summary").nth(1).click();
+  await page.waitForTimeout(1300);
+  const open = await page.evaluate(() => {
+    const p = document.querySelectorAll(".human-part")[1].querySelector(".human-text p"), r = p.getBoundingClientRect();
+    return window.Writing.at((r.left + r.right) / 2, r.top + Math.min(20, r.height / 2));
+  });
+  expect(open, "opened, it is").toBe(1);
 });
 
 for (const [size, view] of [["a phone", PHONE], ["a computer", WIDE]]) {

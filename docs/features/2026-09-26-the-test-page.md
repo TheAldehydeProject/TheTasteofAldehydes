@@ -2089,6 +2089,14 @@ article was in it twice — and `catalogue.py --check` fails on a source left tw
 written since its research changed. All of it is **the rulebook**, `tools/note-library/RULEBOOK.md`:
 see [its report](2026-10-13-the-rulebook-for-a-new-perfume.md).
 
+## 2026-10-20 — five new notes from Apoteker Tepe, nine variations, three spellings
+
+The thirteenth house brought **Pine Smoke, Copal, Hiba, Siam Wood and Kuromoji** (379 notes), each
+with a figure of its own in `note-figures.js`, and nine variations and three spellings of notes
+already here (Water Lily is Waterlily with a space); `research/NEW5.py`, filed by the rulebook. The
+house has its line in `HOUSES` in `network.js`. See [Apoteker Tepe's
+report](2026-10-20-apoteker-tepe.md#the-note-library).
+
 ## 2026-10-13 — opening on time
 
 > I feel that there are several pages that are having issues opening; mainly, the note library
