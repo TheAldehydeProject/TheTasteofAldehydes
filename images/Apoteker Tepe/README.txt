@@ -8,8 +8,9 @@ is Scentorium's. Both are credited at the foot of the page.
                           the house's picture: the eight bottles in a ring
                           on a cut log, from Scentorium (scentorium.eu).
   house-web/apoteker-tepe-house.webp
-                          the same at 640 by 640, what the Houses view
-                          shows.
+                          the same, whole, at 640 by 744 (the Houses
+                          view's frame's shape) on a soft copy of itself:
+                          what the Houses view shows.
   <name>+cut.webp         a bottle cut out of its ground: the fragrance's
                           main picture, in its part and as the small
                           square in the list.
@@ -20,8 +21,14 @@ is Scentorium's. Both are credited at the foot of the page.
   Brother+Night+2.webp    Brother Night's one picture (the bottle beside
                           its box, on marble).
   Apoteker Tepe Logo.webp the house's sign, which tepe.js blazes along the
-                          mountain's trails.
+                          mountain's trails, and tepe-gl.js lays on its
+                          slope.
 
   web/                    the copies the page shows: each cut picture 640
                           wide, each scene 900, Kogen and Brother Night as
                           they are, made small for the page.
+  mountain/athos.jpg      Mount Athos from above, as the Copernicus
+                          Sentinel-2 satellite saw it on 14 July 2023,
+                          printed: what the page's mountain is coloured by.
+                          Written by tools/apoteker/mountain.mjs, never by
+                          hand; credited at the foot of the page.

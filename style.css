@@ -13727,13 +13727,15 @@ body.tribe-page {
 
 /* ==================================================================
    APOTEKER TEPE — the thirteenth house, 2026-10-20: "themed like a
-   mountain ... green, and granular, and make it feel like a really
-   vintage photograph". Its paper aged — a warm, faded cream, darker
-   towards its corners as an old print is — its accent the mountain's
-   green, and tepe.js's mountain behind the writing (Mount Athos, in
-   green specks), with the trails' pencil red-brown on it. The grain of
-   the print is one picture laid once over the window (`.tepe-grain`,
-   made by tepe.js), under the writing, never drawn again.
+   mountain". Its paper aged — a warm, faded cream, darker towards its
+   corners as an old print is — and, once tepe.js has drawn it, an
+   ENVIRONMENT over that paper: the sky and the Aegean and Mount Athos in
+   them (tepe-gl.js, on `.human-field`), its trails and clouds
+   (`.tepe-trails`), and over all of them THE QUIET — Ataraxia's,
+   a veil of the page's own paper over the column of writing
+   (`.tepe-veil`). Its accent the mountain's green, the trails' pencil
+   red-brown. FREE VIEW (2026-10-20, last), the button at the top right,
+   takes the writing away and leaves the mountain to be looked round.
    ================================================================== */
 body.tepe-page {
   --bg: #ece5d2; --bg-2: #e3dbc5; --line: #cfc5aa;
@@ -13752,28 +13754,202 @@ body.tepe-page {
 .tepe-page .human-section-mark { color: rgb(var(--tepe-green)); }
 .tepe-page .human-stage { color: rgb(var(--tepe-pencil)); }
 .tepe-page .human-text p { color: #2a3326; }
-.tepe-wash {
+.tepe-trails,
+.tepe-veil {
   position: fixed;
   left: 0;
   top: 0;
   pointer-events: none;
   z-index: 0;
 }
-.tepe-trails {
+.tepe-veil-band { right: 0; bottom: 0; }
+.tepe-veil[hidden] { display: none; }
+/* Its drawing is opaque (it carries its own sky): nothing of it until its
+   first picture is drawn, and then it comes up over the paper. */
+.tepe-page .human-field,
+.tepe-page .tepe-trails { opacity: 0; transition: opacity 0.9s var(--menu-ease); }
+html.tepe-ground .tepe-page .human-field,
+html.tepe-ground .tepe-page .tepe-trails { opacity: 1; }
+.tepe-veil { transition: opacity 0.7s var(--menu-ease); }
+html.tepe-free-on .tepe-veil { opacity: 0; }
+
+/* FREE VIEW — the button, level with the Menu at the top right, boxed as
+   Om's are, in the house's ink on its paper. */
+.tepe-free {
   position: fixed;
-  left: 0;
-  top: 0;
-  pointer-events: none;
-  z-index: 0;
+  top: 19px;
+  right: 22px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 13px 8px 11px;
+  border: 1px solid rgba(var(--ink-rgb), 0.42);
+  background: rgba(236, 229, 210, 0.78);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.3s var(--menu-ease), background-color 0.3s var(--menu-ease);
 }
-.tepe-grain {
+.tepe-free:hover,
+.tepe-free:focus-visible { border-color: rgba(var(--ink-rgb), 0.85); background-color: rgba(236, 229, 210, 0.95); }
+.tepe-free-mark { flex: none; overflow: visible; }
+.tepe-free-mark path { fill: none; stroke: currentColor; stroke-width: 1.1; stroke-linejoin: round; transition: fill 0.3s var(--menu-ease); }
+.tepe-free-mark circle { fill: none; stroke: rgb(var(--tepe-pencil)); stroke-width: 1.1; }
+.tepe-free:hover .tepe-free-mark path,
+.tepe-free[aria-pressed="true"] .tepe-free-mark path { fill: rgba(var(--tepe-green), 0.28); }
+html:not(.tepe-drawn) .tepe-free { display: none; }
+@media (max-width: 700px) {
+  /* Fixed chrome on a phone stands on a ground of its own (the page goes
+     under it). */
+  .tepe-free { top: 17px; right: 14px; padding: 7px 10px 7px 9px; letter-spacing: 0.1em; background: var(--chrome-ground); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+}
+/* The page goes while the mountain is looked round, and comes back. */
+.tepe-page .page-main,
+.tepe-page .house-credit,
+.tepe-page .human-foot,
+.tepe-page .human-rank,
+.tepe-page .human-readout { transition: opacity 0.6s var(--menu-ease), visibility 0s linear 0s; }
+html.tepe-free-on .tepe-page .page-main,
+html.tepe-free-on .tepe-page .house-credit,
+html.tepe-free-on .tepe-page .human-foot,
+html.tepe-free-on .tepe-page .human-rank,
+html.tepe-free-on .tepe-page .human-readout {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.6s var(--menu-ease), visibility 0s linear 0.6s;
+}
+/* THE STAGE the free view is looked round on, over the window, under the
+   Menu and the button; its hint along its foot. */
+.tepe-stage {
   position: fixed;
   inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-size: 180px 180px;
-  opacity: 0.075;
+  z-index: 15;
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+  overflow: hidden;
 }
+.tepe-stage[hidden] { display: none; }
+.tepe-stage.held { cursor: grabbing; }
+.tepe-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 6px 12px;
+  background: rgba(236, 229, 210, 0.78);
+  border: 1px solid rgba(var(--ink-rgb), 0.18);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 1.2s var(--menu-ease) 1.5s;
+}
+.tepe-hint.gone { opacity: 0; }
+@media (max-width: 700px) {
+  .tepe-hint { white-space: normal; text-align: center; width: calc(100vw - 48px); bottom: 18px; }
+}
+/* A NODE: one of the eight, where its name says it stands — a ring with a
+   point in it, its number beside it; pointed at, the ring fills. */
+.tepe-node {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--ink);
+  z-index: 1;
+  transition: opacity 0.3s var(--menu-ease);
+}
+.tepe-node-ring {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  border: 1.5px solid rgb(var(--tepe-pencil));
+  background: rgba(244, 239, 226, 0.82);
+  box-shadow: 0 0 0 2px rgba(244, 239, 226, 0.4), 0 1px 4px rgba(20, 24, 18, 0.35);
+  transition: transform 0.25s var(--menu-ease), background-color 0.25s var(--menu-ease);
+}
+.tepe-node-ring::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  border-radius: 50%;
+  background: rgb(var(--tepe-pencil));
+}
+.tepe-node-no {
+  position: absolute;
+  left: 23px;
+  top: 5px;
+  padding: 1px 4px;
+  background: rgba(244, 239, 226, 0.78);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  line-height: 13px;
+  color: var(--ink);
+  pointer-events: none;
+}
+.tepe-node:hover .tepe-node-ring,
+.tepe-node:focus-visible .tepe-node-ring,
+.tepe-node.lit .tepe-node-ring { transform: scale(1.35); background: rgb(var(--tepe-pencil)); }
+.tepe-node:focus-visible { outline: none; }
+.tepe-node.behind { opacity: 0.18; pointer-events: none; }
+/* THE CARD the node pointed at says it is. */
+.tepe-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 250px;
+  padding: 10px 12px 10px 10px;
+  background: rgba(244, 239, 226, 0.94);
+  border: 1px solid rgba(var(--ink-rgb), 0.3);
+  box-shadow: 0 10px 26px -12px rgba(20, 24, 18, 0.5);
+  cursor: pointer;
+  z-index: 2;                      /* over every node, so what it says is never under one */
+  opacity: 0;
+  transition: opacity 0.25s var(--menu-ease);
+}
+.tepe-card.shown { opacity: 1; }
+.tepe-card[hidden] { display: none; }
+.tepe-card-pic { flex: none; width: 54px; height: 54px; background: var(--bg-2); border: 1px solid var(--line); }
+.tepe-card-pic img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.tepe-card-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tepe-card-no { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
+.tepe-card-name { font-size: 16px; color: var(--ink); line-height: 1.2; }
+.tepe-card-made { font-family: var(--mono); font-size: 10.5px; color: rgb(var(--tepe-green)); letter-spacing: 0.05em; }
+.tepe-card-go { margin-top: 4px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: rgb(var(--tepe-pencil)); }
+/* THE PICTURES A LITTLE FURTHER OFF (2026-10-20, last — "zoom out the
+   images a little; they are out of frame"): a bottle cut out of its ground
+   fills its picture to the edges, so it stands in its frame with room
+   round it; a scene is shown whole, at its own shape, rather than cut to
+   the row's. */
+.tepe-page .human-plate > img[src*="-cut."] { box-sizing: border-box; padding: 9% 12%; object-fit: contain; }
+.tepe-page .human-thumb:has(img[src*="-cut."]) { background-image: none; }
+.tepe-page .human-thumb img[src*="-cut."] { box-sizing: border-box; padding: 4px; object-fit: contain; }
+.tepe-page .human-plate .human-plate-more img { aspect-ratio: auto; height: auto; object-fit: contain; }
 /* WHEN IT WAS MADE (2026-10-20 — "a note to every fragrance that was made
    before and after the period of 2014-2018 ... in the format of 0000,
    before/after 0000"): after the title in its row, before the cue — and
@@ -13789,7 +13965,7 @@ body.tepe-page {
 .tepe-page .human-cue { order: 5; }
 /* The cue is only a picture of the press (aria-hidden), so it is not
    writing the mountain goes quiet behind: on the paper's own colour, so the
-   specks never stand over its word. */
+   mountain never stands over its word. */
 .tepe-page .human-cue { background-color: rgba(236, 229, 210, 0.92); }
 @media (max-width: 700px) {
   .tepe-page .human-part > summary { flex-wrap: wrap; row-gap: 2px; }

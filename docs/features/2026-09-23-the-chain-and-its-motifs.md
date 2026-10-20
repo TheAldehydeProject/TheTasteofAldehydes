@@ -1047,5 +1047,17 @@ dashes going along it, its number in a ring at its foot, and a walker goes its l
 fragment stands (8–10 seconds). Each is whole on the window, off the chrome and apart from the others;
 three fifths of its size and fewer specks on a phone, as every motif is. `HouseMotifs.ridges()` says
 where they stand, for `tests/apoteker-tepe.spec.js`. See [Apoteker Tepe's
-report](2026-10-20-apoteker-tepe.md#the-fragments-on-the-houses-view).
+report](2026-10-20-apoteker-tepe.md#the-fragments-on-the-houses-view-as-first-made--solid-and-coloured-since).
+
+**Solid and coloured, the same day, later** ("Please also apply the above changes to be true for the
+house in SD"): a fragment is drawn now as the house's page draws its mountain, by `tepe-gl.js` — a
+solid surface coloured by the satellite's picture of Athos, 9,000 small specks over it
+(`RIDGE_SPECKS`, 1,300 before), raised **1.3 times** (`RIDGE_RELIEF`; solid, 2.4 stood a slope up as a
+wall) and seen from a little higher, turning at 0.018–0.036 radians a second (`RIDGE_SPIN`, 0.06–0.12
+before). Drawn in WebGL into a picture of its own every 70 ms (`RIDGE_EVERY`), laid down every frame,
+its trail drawn over it each frame on a pale line. While no fragment carries the house's sign, the next
+is the piece the sign is on (`ridge.sign`). The shared drawing is made ready a couple of seconds after
+the view arrives, so the first fragments are there the moment the house is rested on; a fragment frees
+what it drew with when it goes (`end`). Without WebGL there are none. See [Apoteker Tepe's
+report](2026-10-20-apoteker-tepe.md#solid-coloured-slower-an-environment-ataraxias-quiet-and-the-free-view-the-same-day-last).
 

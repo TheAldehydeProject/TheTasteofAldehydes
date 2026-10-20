@@ -144,3 +144,13 @@ words stand; only the empty columns come back.
 `tests/writing.spec.js`, *the writing inside a shut part is not counted until it is opened*, on Lost
 Tribe: a shut part's summary is writing, its first paragraph — measured where it would stand — is not,
 and once opened it is. The other tests open every part first, so they are as they were.
+
+## 2026-10-20, last — Apoteker Tepe quiet as Ataraxia is
+
+Apoteker Tepe's mountain asked `Writing` on every width (`KEEP`, a fifth, behind the words). The
+owner then asked for it diminished "in a similar way to ataraxia's page", and a solid, coloured
+mountain went quiet in paragraph-shaped patches: it is now Ataraxia's own rule, with Ataraxia's own
+numbers — the whole column at `QUIET` on a wide window, and on a phone `QUIET` everywhere and
+`Writing.under` behind the words — by a veil of the page's paper laid over the whole drawing. On a
+phone the veil is made from `Writing.boxes()` once a frame (asking `Writing.under` cell by cell took
+28 ms a frame). See [Apoteker Tepe's report](2026-10-20-apoteker-tepe.md).

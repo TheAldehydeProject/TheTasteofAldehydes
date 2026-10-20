@@ -368,3 +368,10 @@ picture 640 wide, about 28KB; each scene 900; Kogen and Brother Night made small
 `house-web/apoteker-tepe-house.webp` (640 by 640). The bottles are credited to apotekertepe.net and the
 house's picture to Scentorium at the page's foot; see [Apoteker Tepe's
 report](2026-10-20-apoteker-tepe.md).
+
+The same day, later ("zoom out the images a little; they are out of frame. this is also true for the
+house image"): `house-web/apoteker-tepe-house.webp` is made again at **640 by 744**, the Houses view
+frame's own shape (0.86 : 1) — the whole square picture, a little smaller than the frame is wide, on a
+soft, darkened copy of itself, its edges eased in — where the square was cut at its sides. And
+`mountain/athos.jpg`, the satellite's picture of Mount Athos the page's mountain is coloured by, is
+written there by `tools/apoteker/mountain.mjs`.
