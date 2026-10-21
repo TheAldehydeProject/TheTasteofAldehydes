@@ -29,3 +29,8 @@ look-tmp.js
 
 # Python's own caches, left by running a tool in tools/.
 __pycache__/
+
+# The resolution trials' plain 10 m picture (4.7 MB), which only
+# tools/apoteker/upscale.py reads: made again by
+# `node tools/apoteker/trials.mjs --only=native`, never asked for by a page.
+images/Apoteker Tepe/mountain/trials/athos-10m-native.png

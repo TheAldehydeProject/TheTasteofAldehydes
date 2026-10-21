@@ -139,6 +139,19 @@
   const POP_FIRST = 2600, POP_EVERY = 4600, POP_SHOWN = 3200, POP_AFTER = 4000;
   const SOFT_WIDE = 0.5;            // the mountain's pixels to a css px without a graphics card, on a wide window
   const SOFT_EVERY = 300;          // ms: without a graphics card, at most one new picture of it so often
+  // THE TRIALS OF ITS RESOLUTION (`?res=` on the address; see tepe-gl.js):
+  // those that are the page's to do — the screen's every pixel, never let
+  // down (`native`); the mountain larger in the window (`closer`); the
+  // dither's steps a device pixel each (`ditherfine`), finer (`levels`) or
+  // none (`nodither`); the specks gone (`nospecks`) or finer and more
+  // (`finespecks`); and the trails drawn into the ground (`trailsgl`), not
+  // over it.
+  const res = GL.res || (() => false);
+  const CLOSER = 1.32;
+  // (`clear`: the air between the eye and the mountain clearer — a third of
+  // the haze and the mist, the banks fainter — for contrast is half of what
+  // reads as sharp)
+  const CLEAR_AIR = [0.13 * 0.4, 5.5 * 0.35, 30, 0.85];
 
   // ---------- THE GROUND ----------
   const n = DATA.n;
@@ -170,9 +183,10 @@
   // ONE SIDE OF IT: drawn nearly twice as large, its summit towards the
   // right edge, so one flank runs across the window.
   const frameOf = () => {
-    if (narrow) { const S = Math.min(W * 1.02, H * 0.92); return { S, cx: W * 0.78, cy: H * 0.58 }; }
-    const S = Math.min(W * 0.56, H * 0.8);
-    return { S, cx: W / 2, cy: H * 0.6 };
+    const k = res("closer") ? CLOSER : 1;
+    if (narrow) { const S = Math.min(W * 1.02, H * 0.92) * k; return { S, cx: W * 0.78, cy: H * (res("closer") ? 0.62 : 0.58) }; }
+    const S = Math.min(W * 0.56, H * 0.8) * k;
+    return { S, cx: W / 2, cy: H * (res("closer") ? 0.66 : 0.6) };
   };
   // And in the free view, the whole of it, a little above the middle.
   const fitFree = () => {
@@ -183,14 +197,15 @@
   let want = { yaw: cam.yaw, pitch: PITCH, S: 1, cx: 0, cy: 0 };
   let free = false, freeAt = 0;
   let drawnCam = null, lookKey = 0;
+  let bare = false;                // (for a picture of the mountain alone: no quiet behind the writing — TepeMountain.bare)
 
   function size() {
     W = window.innerWidth; H = window.innerHeight;
     narrow = W < NARROW_AT;
-    ratio = sharp ? sharp.ratio : Math.min(window.devicePixelRatio || 1, 2);
+    ratio = res("native") ? Math.min(window.devicePixelRatio || 1, 3) : sharp ? sharp.ratio : Math.min(window.devicePixelRatio || 1, 2);
     // (Without a graphics card on a wide window, at SOFT_WIDE of the
     // screen's pixels: that much less for the processor to draw.)
-    draw3d.size(W, H, draw3d.soft && !narrow ? Math.min(ratio, SOFT_WIDE) : ratio);
+    draw3d.size(W, H, draw3d.soft && !narrow && !res("native") ? Math.min(ratio, SOFT_WIDE) : ratio);
     field.style.width = W + "px"; field.style.height = H + "px";
     trailCanvas.width = Math.round(W * ratio); trailCanvas.height = Math.round(H * ratio);
     trailCanvas.style.width = W + "px"; trailCanvas.style.height = H + "px";
@@ -206,8 +221,10 @@
     if (world) world.dispose();
     if (mist) mist.dispose();
     specksFor = narrow ? "narrow" : "wide";
-    world = draw3d.piece(ground, { world: true, lift: LIFT, specks: narrow ? SPECKS_NARROW : SPECKS_WIDE, landSpecks: narrow ? LAND_NARROW : LAND_WIDE, grid: narrow && !draw3d.soft ? 420 : undefined, seed: 1925 });
-    const m = draw3d.soft ? MIST_SOFT : narrow ? MIST_NARROW : MIST;
+    const more = res("nospecks") ? 0 : res("finespecks") ? 1.5 : 1;
+    world = draw3d.piece(ground, { world: true, lift: LIFT, specks: Math.round((narrow ? SPECKS_NARROW : SPECKS_WIDE) * more), landSpecks: Math.round((narrow ? LAND_NARROW : LAND_WIDE) * more), grid: narrow && !draw3d.soft ? 420 : undefined, seed: 1925 });
+    const m0 = draw3d.soft ? MIST_SOFT : narrow ? MIST_NARROW : MIST;
+    const m = res("clear") ? { banks: Math.round(m0.banks * 0.5), wisps: Math.round(m0.wisps * 0.5), cap: m0.cap, far: m0.far } : m0;
     mist = draw3d.mist(ground, { lift: LIFT, ...m, seed: 31 });
     drawnCam = null;
   }
@@ -218,18 +235,20 @@
     time: t, still: REDUCE, quiet,
     surface: SURFACE,
     speck: narrow ? SPECK_NARROW : SPECK_WIDE,
-    air: AIR, hazeFrom: HAZE_FROM, sky: SKY, wind: WIND, cap: top3, mist: MIST.alpha,
-    levels: DITHER.levels, grain: DITHER.grain, ditherPx: DITHER.px,
+    air: res("clear") ? CLEAR_AIR : AIR, hazeFrom: res("clear") ? HAZE_FROM * 1.4 : HAZE_FROM, sky: SKY, wind: WIND, cap: top3, mist: res("clear") ? MIST.alpha * 0.55 : MIST.alpha,
+    levels: res("nodither") ? 0 : res("levels") ? 128 : DITHER.levels, grain: res("nodither") ? 0 : DITHER.grain, ditherPx: res("ditherfine") ? 1 / ratio : DITHER.px,
   });
   const clock = () => (REDUCE ? 0 : (performance.now() / 1000) % 3000);
   function drawAll(t) {
     if (!world) return;
-    const quiet = !free;
+    const quiet = !free && !bare;
     if (quiet) quietAgain();
+    if (draw3d.begin) draw3d.begin(cam);
     draw3d.clear();
     draw3d.sky(cam, LOOK(t, false));
     draw3d.draw(world, cam, LOOK(t, quiet));
     draw3d.drawMist(mist, cam, LOOK(t, quiet));
+    if (draw3d.end) draw3d.end(LOOK(t, quiet));
   }
 
   // ---------- WHAT CAN BE SEEN ----------
@@ -303,7 +322,7 @@
       const runs = Array.from({ length: LEVELS }, () => []);
       for (let k = 1; k < pts.length; k++) if (pts[k - 1].seen && pts[k].seen && away(pts[k])) runs[level((pts[k - 1].x + pts[k].x) / 2, (pts[k - 1].y + pts[k].y) / 2)].push(pts[k - 1], pts[k]);
       runs.forEach((run, lv) => {
-        if (!run.length || !lv) return;
+        if (!run.length || !lv || res("trailsgl")) return;   // (`trailsgl`: drawn into the ground itself)
         const strength = lv / (LEVELS - 1);
         const path = () => { pen.beginPath(); for (let q = 0; q < run.length; q += 2) { pen.moveTo(run[q].x, run[q].y); pen.lineTo(run[q + 1].x, run[q + 1].y); } };
         pen.setLineDash([]);
@@ -753,6 +772,13 @@
       return { steps: steps / Math.max(1, pairs), shades: shades.size, levels: DITHER.levels };
     },
     specks: () => (world ? world.specks : 0),
+    // THE TRIALS: which are on and what the machine let them do; and, for
+    // a still picture of `accum`, so many more pictures laid over it.
+    trials: () => ({ ...(window.__tepeTrials || {}), ratio, canvas: [field.width, field.height] }),
+    bare: (on = true) => { bare = on; drawnCam = null; },
+    // where a place on the grid stands on the window (css px), as drawn now
+    at: (u, v, up = 0) => (world ? GL.project(worldOf(u, v, up), cam) : null),
+    settle: (times = 16) => { for (let i = 0; i < times; i++) drawAll(clock()); drawTrails(clock()); return draw3d.settled ? draw3d.settled() : 0; },
     vertices: () => (world ? world.vertices : 0),
     mist: () => (mist ? mist.count : 0),
     soft: () => draw3d.soft,

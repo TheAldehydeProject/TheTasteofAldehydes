@@ -36,3 +36,26 @@ is Scentorium's. Both are credited at the foot of the page.
                           of the highest in sixteen bits (red the high byte,
                           green the low): what the page raises. Written by
                           the same tool, never by hand.
+  mountain/trials/        the resolution trials' own pictures (2026-10-21),
+                          asked for only by ?res= on the page's address
+                          (see docs/features/2026-10-20-apoteker-tepe.md):
+                          written by tools/apoteker/trials.mjs and
+                          tools/apoteker/upscale.py, never by hand. Those
+                          the owner does not keep come out with their trial.
+    heights-dem.png       the heights from Copernicus GLO-30, 1536 by 1536,
+                          10 m apart (?res=dem).
+    heights-eroded.png    the same, raindrops run over them (?res=erosion).
+    athos-10m.jpg         the satellite's picture at its own 10 m, 2048 px,
+                          a little sharpened (?res=photo).
+    athos-10m-native.png  the same unsharpened and unprinted, 1536 px,
+                          which the upscaler reads — not kept in the
+                          repository (.gitignore); trials.mjs --only=native
+                          makes it again.
+    athos-median.jpg      the middle of seven summer passes (?res=median).
+    athos-sr.jpg          the 10 m picture enlarged four times by
+                          Real-ESRGAN, 4096 px — invented detail
+                          (?res=superres).
+    light-*.png           the light baked for the page's sun: red how much
+                          of the sun, green how much of the sky each place
+                          sees, for the old heights, GLO-30's, and the
+                          eroded (?res=shadows, ?res=ao).

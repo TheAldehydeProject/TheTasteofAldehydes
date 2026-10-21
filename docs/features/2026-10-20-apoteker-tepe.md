@@ -1,6 +1,6 @@
 # Apoteker Tepe, the thirteenth house, and its mountain
 Date: 2026-10-20
-Files touched: `houses/apoteker-tepe.html` (new), `tepe.js` (new), `tepe-gl.js` (new, the mountain drawn, for the page and the Houses view), `tepe-data.js` (new, written by the tool), `tools/apoteker/mountain.mjs` (new), `images/Apoteker Tepe/` (the owner's uploads, with `web/`, `house-web/`, `mountain/athos.jpg` and `mountain/heights.png` (written by the tool) and a README), `style.css`, `notes-data.js`, `tools/note-library/base.json`, `tools/note-library/research/NEW5.py` (new), `note-library/index.html` (its catalogue, written by `catalogue.py`), `note-figures.js`, `network.js` (`HOUSES`), `motifs.js` (`ridge`), `scent-descriptions/index.html` (the thirteenth frame, and `tepe-data.js` and `tepe-gl.js`), `houses/lost-tribe.html` and `houses/pineward.html` (the chain), `search-page.js`, `tools/seo.py`, `nav.js` (`Writing`, a closed part's writing), `package.json` (image-js and geotiff, for the tool), `tests/apoteker-tepe.spec.js` (new), and the house lists in `tests/houses.spec.js`, `mobile.spec.js`, `notes.spec.js`, `writing.spec.js`
+Files touched: `houses/apoteker-tepe.html` (new), `tepe.js` (new), `tepe-gl.js` (new, the mountain drawn, for the page and the Houses view), `tepe-data.js` (new, written by the tool), `tools/apoteker/mountain.mjs` (new), `images/Apoteker Tepe/` (the owner's uploads, with `web/`, `house-web/`, `mountain/athos.jpg` and `mountain/heights.png` (written by the tool) and a README), `style.css`, `notes-data.js`, `tools/note-library/base.json`, `tools/note-library/research/NEW5.py` (new), `note-library/index.html` (its catalogue, written by `catalogue.py`), `note-figures.js`, `network.js` (`HOUSES`), `motifs.js` (`ridge`), `scent-descriptions/index.html` (the thirteenth frame, and `tepe-data.js` and `tepe-gl.js`), `houses/lost-tribe.html` and `houses/pineward.html` (the chain), `search-page.js`, `tools/seo.py`, `nav.js` (`Writing`, a closed part's writing), `package.json` (image-js and geotiff, for the tool), `tests/apoteker-tepe.spec.js` (new), and the house lists in `tests/houses.spec.js`, `mobile.spec.js`, `notes.spec.js`, `writing.spec.js`; and, for **the resolution trials** (2026-10-21), `tepe-gl.js` and `tepe.js` again (`?res=`), `tools/apoteker/trials.mjs` (new), `tools/apoteker/upscale.py` (new), `images/Apoteker Tepe/mountain/trials/` (new, written by those two) and `tests/tepe-resolution.spec.js` (new)
 
 ## What changed
 
@@ -505,6 +505,109 @@ the house's page: the Houses view keeps its own white, as the owner asked of Out
   and read, under the suite. With `?tepe=full` (the whole of it, drawn on the processor) a picture
   takes two seconds here, which a graphics card does in a few milliseconds.
 
+### The resolution trials (2026-10-21)
+
+The owner, the next day: *"listen; its ugly, and the main reason is the resolution. I want you to
+now look for as many possible ways for you to up the resolution. I want you to give me a list of
+ways to make the resolution better, including demonstrations of each way separately (a trial
+render). the list should include new ways to render it, as well as alterations to the existing model
+to improve quality. I want you to do this systemiatically, searching for ways to do it first, as many
+as possible, and then executing it ... The theme in general should be the mountain, with the paths
+and the points."*
+
+**Every way is a switch on the page's address**: `?res=` and a word, several with commas
+(`houses/apoteker-tepe.html?res=photo,dem`), `?res=best` the best of them together and
+`?res=ceiling` the same with the two dearest on top. Without it the page draws exactly as it did —
+nothing of any trial runs unless it is asked for (`RES` and `res()` in `tepe-gl.js`, read by
+`tepe.js` too). **Whichever the owner does not keep comes out of the code**, with its pictures.
+
+**Without a trial, none of the trials' code is in the programs** (`TRIALS` in `tepe-gl.js`: `#ifdef
+TRIALS` round every line of it in the shaders, and the specks lit on the processor once, as they
+always were, rather than in the program). The first build of the trials kept their code in the
+programs behind switches that were off, and **the page with every trial off drew half as slowly
+again** without a graphics card (about 100 ms a picture on a laptop where it had been 70, 175 on a
+phone where it had been 110) — a graphics card runs a switched-off branch too. Behind `TRIALS` the
+page draws **the very same picture as before, pixel for pixel**, laptop and phone, at its old speed;
+`TepeMountain.trials().code` says whether the trials' code is in, and a test keeps it out.
+
+**What made it look low-resolution**, found by photographing the page as it was at a laptop's 2×
+screen and looking at it a device pixel at a time:
+
+- **The colour**: the satellite picture was 1024 px for 15.5 km, 15 m a pixel, and blurred on
+  purpose (`printed`, σ 0.7) — while at this view one screen pixel covers about 5 m of the ground.
+  Every colour was smeared over three pixels or more, and on the steep slopes, which the page raises
+  1.6 times, stretched further down them. This is most of it.
+- **The heights**: 40 m apart and softened (σ 0.6), out of Mapzen's tiles, which in Greece are
+  EU-DEM (about 30 m, itself SRTM and ASTER blended); the triangles over the mountain were every 60
+  m. Ridges came out rounded and **the coast a saw-tooth**, the water's edge running along the
+  triangles.
+- **The dither**: its steps were a css pixel each — a 2 × 2 block of device pixels on a laptop, 3 × 3
+  on a phone — in Bayer's fixed cross-hatch, which reads as a coarse screen laid over everything.
+- **The air**: the haze and the mist lower the contrast, and low contrast reads as soft.
+- **On a phone**, the drawing was capped at two device pixels a point when the screen has three,
+  and on a slow machine `window.Sharpness` lets it down further.
+
+**The search** (the web, and a second agent sent to check every open source for this exact square):
+nothing open is finer than **Sentinel-2's 10 m** for the colour — the Greek Cadastre's half-metre
+orthophotos and Copernicus's 2 m mosaic are not licensed to be baked into a public page, and Esri,
+Google, Bing and Mapbox forbid it outright — and nothing open is finer than **Copernicus's GLO-30**
+for the heights (1 arc-second, about 24 × 31 m here; measured, it carries about twice the fine relief
+of the old tiles; the 10 m EEA-10 and the Cadastre's 5 m are not open). Both are on AWS and read with
+geotiff. Past those, detail can only be **invented**: by rain (erosion), by noise, or by an AI
+upscaler — and the trials say which is which.
+
+**The trials**, each built to stand on its own (`?res=` and the word):
+
+| word | what it does | file |
+|---|---|---|
+| `photo` | the satellite picture at its own 10 m, 2048 px, sharpened a little (unsharp mask 0.55) instead of blurred | `trials/athos-10m.jpg` (trials.mjs) |
+| `median` | each pixel the middle of seven cloud-free summer passes (2023-07-14 to 2025-07-08, each checked for cloud over this very square) | `trials/athos-median.jpg` |
+| `superres` | the 10 m picture enlarged four times by Real-ESRGAN (x4plus, run on the processor with ncnn) to 4096 px — invented detail, and says so | `trials/athos-sr.jpg` (upscale.py) |
+| `dem` | the heights from Copernicus GLO-30, laid on the square at 1536 (10 m, Catmull-Rom), the triangles every 20 m over the mountain (`fineMesh`) | `trials/heights-dem.png` |
+| `erosion` | the same, with 1.3 million raindrops run over it (Beyer's droplets, as Sebastian Lague wrote them) carving gullies finer than the survey, never more than 14 m | `trials/heights-eroded.png` |
+| `mesh` | the old heights, the triangles every 20 m and smooth between the heights (Catmull-Rom, not straight facets) | — |
+| `normals` | the light worked out at every pixel off a 2048 px map of the ground's slope, made in the browser | — |
+| `shore` | land or sea decided at every pixel off the heights near the sea (the slope map's fourth channel), not at the triangles' corners | — |
+| `raymarch` | the ground found by a ray marched from the eye through a 2048 px map of the heights, for every pixel over the mountain's square — exact at any size, its edge against the sky as fine as the window (`RAY_FS`, a box drawn round the square, `EXT_frag_depth`) | — |
+| `detail` | fine relief invented from two scales of noise, rougher on rock, faded out before it would flicker | — |
+| `shadows`, `ao` | the light baked by the tool for the page's own sun and exaggeration: how much of the sun each place sees (soft shadows), and how much of the sky (hollows darker) | `trials/light-*.png` |
+| `relief` | a second, softer light from the window's upper left, as a relief map is shaded | — |
+| `aniso` | anisotropic filtering of the colour, the slope map and the light: a slope seen at a slant sampled along it | — |
+| `native` | the screen's every pixel, three a point on a phone, never let down | — |
+| `accum` | while the view barely moves, every frame shifted a part of a pixel (Halton's sequence) and laid over the ones before, up to 16 deep (`begin`, `end`, half floats) | — |
+| `ss2` | drawn at twice the pixels each way and brought down by a tent | — |
+| `fxaa`, `cas` | a pass that smooths jagged edges (FXAA), and one that sharpens by contrast (AMD's CAS) | — |
+| `ditherfine`, `bluenoise`, `levels`, `nodither` | the dither a device pixel to a step; a blue noise instead of Bayer's (void and cluster, made in the browser); 128 steps, not 34; none | — |
+| `finespecks`, `nospecks` | the specks round, soft-edged and half as many again; none | — |
+| `trailsgl` | the trails drawn into the ground itself, off a 2048 px map of how far each place is from a trail and where along it — on the slopes exactly, a pixel and a half wide however far off, hidden by the ground in front pixel by pixel, dashed and walking | — |
+| `contours` | lines of equal height on the mountain every 50 m, every 250 m firmer, a pixel wide at any distance | — |
+| `lines` | a new way to draw it: the ground as an engraved map — the paper, the photograph washed in, contours every 20 m and every 100 m firmer | — |
+| `clear` | clearer air: a third of the haze and the mist, half the banks | — |
+| `closer` | the mountain a third larger in the window | — |
+
+**The specks are lit in the program now**, as the ground is (`speckLight`): each carries its ground's
+own colour, hollow and slope, so every trial that changes the light changes theirs too — lit on the
+processor, they stood as pepper over the shadows and the relief. For the page as it was this is the
+same light, the same arithmetic in another place.
+
+**What they showed** (the gallery published for the owner has every one beside the page as it was,
+a slider between them, at the summit, the sign, a trail and the shore): the gains are in **the colour
+at 10 m** (most of all), **the Copernicus heights with the finer triangles**, **the dither a device
+pixel**, **the coast a pixel at a time**, **the trails drawn into the ground**, and **the pictures laid
+over each other**; on a phone, **the screen's every pixel**. The light and shade trials (`normals`,
+`shadows`, `ao`, `relief`, `detail`) are slight on their own — the satellite's picture carries most of
+what is seen — and add up in the combination. `ss2` is `accum` at four times the cost; `fxaa` softens
+as much as it smooths; `cas` sharpens but rings white along the crest. `best` is `native`, `accum`,
+`ditherfine`, `dem`, `normals`, `shore`, `aniso`, `photo`, `shadows`, `ao`, `trailsgl` and
+`finespecks`.
+
+**What each would cost, kept**: `photo` is 1.4 MB to download where the colour was 0.2; `dem` 2.4 MB of
+heights where they were 0.16 (at 20 m, all the survey holds, it would be about 0.6) and four times the
+triangles; the light 2 MB (1024 px would do, at half a megabyte); `accum` almost nothing but a slight
+smear while it turns fast; `raymarch` heavy for a phone's graphics chip; `native` 2.25 times the pixels
+on a phone. Here, without a graphics card, `?tepe=full` draws a picture in two to four seconds and
+`raymarch` in eleven.
+
 ### Om's opening, in two beats
 
 The same round, on Om Parfums. It is written in [Om's
@@ -530,7 +633,9 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
     and less again behind the words;
   - **it is quick to draw and to scroll** on a laptop and a phone (a picture under 140 and 200 ms
     without a graphics card, 24 with one; scrolling over 24 and 30 frames a second, read over 30 and
-    40, under a loaded suite);
+    40, under a loaded suite) — **each measured three times and the best kept, the laptop's and the
+    phone's one after the other** (2026-10-21: side by side, each measuring the other, they failed one
+    run in two on the page as it was before the trials, and as often after);
   - **Free view**: at the top right; the writing goes; nine nodes, the house's first; nothing can be
     selected and a node's number is hidden until it is pointed at; every node seen from both ends of
     its turn; a drag past its limit gives a little and springs back; the wheel brings it no nearer;
@@ -543,6 +648,18 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
     drawn by `TepeGL`;
   - the data is the tool's, with image-js and geotiff, and the colour and the heights it wrote are
     there.
+- `npm test -- tests/tepe-resolution.spec.js` (the resolution trials): without `?res=` no trial is
+  on — **none of the trials' code in the programs**, no picture laid down again, no ray, no
+  anisotropic filtering; every trial, a few to a page and
+  `best` on its own, drawn whole in a small window — its programs compiled, the ray's where the
+  machine can write a pixel's depth, the pictures laid over each other where asked, the land filling
+  the window and the mountain solid, no fault; and every trial's own picture there, written by its
+  tool from Copernicus's heights and Sentinel-2's archive.
+- The trials' pictures: `NODE_USE_ENV_PROXY=1 node tools/apoteker/trials.mjs` (all of them, or
+  `--only=dem,erosion,photo,native,median,light`), then `python3 tools/apoteker/upscale.py <folder
+  holding realesrgan-x4plus.param and .bin>` for `superres` (half an hour on the processor here).
+- By eye, the trials: `houses/apoteker-tepe.html?tepe=full&res=best` beside the page without it, and
+  each word alone; with a graphics card `?tepe=full` is not needed.
 - `tests/writing.spec.js`: *the writing inside a shut part is not counted until it is opened*.
 - `tests/mobile.spec.js`: the mountain's canvas is drawn at twice the css pixels on a phone.
 - The house is in every house list: `houses.spec.js` (the chain both ways, the return button at
@@ -579,3 +696,10 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
   be measured here. If a phone ever struggles, `window.Sharpness` lets the drawing down a step at a
   time, and the mist's banks are the first thing to make fewer (`MIST_NARROW`).
 - The summit's height is no longer written anywhere on the page (the owner asked the coordinates off).
+- **The resolution trials are trials**: until the owner says which to keep, every one stands behind
+  `?res=` and the page draws as it did. Kept, `photo` and `dem` want smaller files than the trials
+  carry (the heights at 20 m and the light at 1024 px would do) and the credit naming Copernicus's
+  GLO-30 beside Sentinel-2; `superres` and `erosion` are invented detail and would have to say so in
+  the credit; `raymarch` was only measured without a graphics card (eleven seconds a picture), never
+  on a phone's chip. Whatever is not kept comes out of the code, with its pictures and its lines in
+  `trials.mjs`.
