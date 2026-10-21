@@ -59,3 +59,21 @@ is Scentorium's. Both are credited at the foot of the page.
                           of the sun, green how much of the sky each place
                           sees, for the old heights, GLO-30's, and the
                           eroded (?res=shadows, ?res=ao).
+    ndvi.png              how much is growing at every place, off the
+                          satellite's red and near infrared (the realism
+                          trials, the same day, later), for the two below.
+    athos-delit.jpg       the 10 m picture with the morning's light on its
+                          slopes evened out (ESA's terrain correction had
+                          taken it a little too far), so the page's sun
+                          alone lights it (?res=delit).
+    canopy.jpg            the trees' own crowns, 4096 px (3.8 m), out of Meta
+                          and the World Resources Institute's Canopy Height
+                          Map v2 (CC BY 4.0), lit by the page's sun: each
+                          place's share of the light within the satellite's
+                          pixel, 128 as the satellite saw it (?res=canopy).
+    athos-osm.json        OpenStreetMap's footpaths to the summit from four
+                          places, and the 95 largest of its buildings — its
+                          monasteries, sketes and chapels — on the page's
+                          grid, written by tools/apoteker/osm.py (ODbL 1.0,
+                          © OpenStreetMap contributors, via the Overture Maps
+                          Foundation; ?res=osmtrails, ?res=buildings).

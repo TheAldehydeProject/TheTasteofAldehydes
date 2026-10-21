@@ -8,7 +8,10 @@
 // did. These check that every trial draws — its programs compile, its
 // pictures load, the mountain stands solid in the window — and that none of
 // them is on without being asked for. How each LOOKS is the trials' own
-// pictures, judged by eye.
+// pictures, judged by eye. And the same for THE TRIALS OF ITS REALISM, the
+// same day, later ("I want it to feel as realistic as possible"): the
+// camera's (`tonemap` … `sensor`), the light and the air, the sea, the trees,
+// the marble, the real paths and buildings, and `real`, all of them.
 // ============================================================
 const fs = require("fs");
 const path = require("path");
@@ -52,6 +55,12 @@ const GROUPS = [
   "ss2,fxaa,cas",
   "accum",
   "best",
+  "tonemap,bloom,halation,vignette,aberration,clarity,grade,grain",
+  "agx,sensor",
+  "light,haze,sky,sea,rock,delit",
+  "canopy",
+  "osmtrails,buildings",
+  "real",
 ];
 for (const keys of GROUPS) {
   test(`the resolution trial ?res=${keys} draws the mountain solid, without a fault`, async ({ page }) => {
@@ -63,7 +72,8 @@ for (const keys of GROUPS) {
     const t = await page.evaluate(() => TepeMountain.trials());
     expect(t.error, "every program compiled").toBe("");
     expect(t.code, "the trials' code in the programs").toBe(true);
-    for (const k of keys.split(",")) if (k !== "best") expect(t.res).toContain(k);
+    for (const k of keys.split(",")) if (k !== "best" && k !== "real") expect(t.res).toContain(k);
+    if (/tonemap|agx|grain|sensor|bloom/.test(keys)) expect(t.post, "the picture laid down through the camera").toBe(true);
     if (/raymarch/.test(keys)) expect(t.ray, "the ray's program, where the machine can write a pixel's depth").toBe(t.fragDepth);
     if (/ss2|accum|fxaa|cas/.test(keys)) expect(t.post, "the picture laid down again").toBe(true);
     if (/accum/.test(keys)) expect(await page.evaluate(() => TepeMountain.settle(3)), "pictures laid over each other").toBeGreaterThan(0);
@@ -75,10 +85,24 @@ for (const keys of GROUPS) {
 }
 
 test("every trial's own picture is there, written by its tool", () => {
-  for (const f of ["heights-dem.png", "heights-eroded.png", "athos-10m.jpg", "athos-median.jpg", "athos-sr.jpg", "light-base.png", "light-dem.png", "light-eroded.png"]) {
+  for (const f of ["heights-dem.png", "heights-eroded.png", "athos-10m.jpg", "athos-median.jpg", "athos-sr.jpg", "light-base.png", "light-dem.png", "light-eroded.png", "athos-delit.jpg", "ndvi.png", "canopy.jpg", "athos-osm.json"]) {
     expect(fs.existsSync(path.join(TRIAL, f)), f).toBe(true);
   }
   const tool = fs.readFileSync(path.join(__dirname, "..", "tools", "apoteker", "trials.mjs"), "utf8");
   expect(tool).toContain("copernicus-dem-30m");
   expect(tool).toContain("sentinel-cogs");
+  expect(tool, "the trees' crowns, Meta and WRI's canopy heights").toContain("dataforgood-fb-data");
+  // (fewer than a hundred of OpenStreetMap's features: an insubstantial extract, its credit with it)
+  const osm = JSON.parse(fs.readFileSync(path.join(TRIAL, "athos-osm.json"), "utf8"));
+  expect(osm.trails.length + osm.buildings.length).toBeLessThan(100);
+  expect(osm.credit).toContain("OpenStreetMap contributors");
+});
+
+test("the trials that draw on more of the world's data say whose, in the mountain's credit", async ({ page }) => {
+  await page.goto(`${TEPE}?res=canopy,osmtrails,buildings`);
+  const credit = page.locator(".house-credit-ground .house-credit-text");
+  await expect(credit).toContainText("Canopy Height Map");
+  await expect(credit).toContainText("© OpenStreetMap contributors");
+  await page.goto(TEPE);
+  await expect(credit).not.toContainText("OpenStreetMap");
 });

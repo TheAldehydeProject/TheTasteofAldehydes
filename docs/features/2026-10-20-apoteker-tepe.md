@@ -1,6 +1,6 @@
 # Apoteker Tepe, the thirteenth house, and its mountain
 Date: 2026-10-20
-Files touched: `houses/apoteker-tepe.html` (new), `tepe.js` (new), `tepe-gl.js` (new, the mountain drawn, for the page and the Houses view), `tepe-data.js` (new, written by the tool), `tools/apoteker/mountain.mjs` (new), `images/Apoteker Tepe/` (the owner's uploads, with `web/`, `house-web/`, `mountain/athos.jpg` and `mountain/heights.png` (written by the tool) and a README), `style.css`, `notes-data.js`, `tools/note-library/base.json`, `tools/note-library/research/NEW5.py` (new), `note-library/index.html` (its catalogue, written by `catalogue.py`), `note-figures.js`, `network.js` (`HOUSES`), `motifs.js` (`ridge`), `scent-descriptions/index.html` (the thirteenth frame, and `tepe-data.js` and `tepe-gl.js`), `houses/lost-tribe.html` and `houses/pineward.html` (the chain), `search-page.js`, `tools/seo.py`, `nav.js` (`Writing`, a closed part's writing), `package.json` (image-js and geotiff, for the tool), `tests/apoteker-tepe.spec.js` (new), and the house lists in `tests/houses.spec.js`, `mobile.spec.js`, `notes.spec.js`, `writing.spec.js`; and, for **the resolution trials** (2026-10-21), `tepe-gl.js` and `tepe.js` again (`?res=`), `tools/apoteker/trials.mjs` (new), `tools/apoteker/upscale.py` (new), `images/Apoteker Tepe/mountain/trials/` (new, written by those two) and `tests/tepe-resolution.spec.js` (new)
+Files touched: `houses/apoteker-tepe.html` (new), `tepe.js` (new), `tepe-gl.js` (new, the mountain drawn, for the page and the Houses view), `tepe-data.js` (new, written by the tool), `tools/apoteker/mountain.mjs` (new), `images/Apoteker Tepe/` (the owner's uploads, with `web/`, `house-web/`, `mountain/athos.jpg` and `mountain/heights.png` (written by the tool) and a README), `style.css`, `notes-data.js`, `tools/note-library/base.json`, `tools/note-library/research/NEW5.py` (new), `note-library/index.html` (its catalogue, written by `catalogue.py`), `note-figures.js`, `network.js` (`HOUSES`), `motifs.js` (`ridge`), `scent-descriptions/index.html` (the thirteenth frame, and `tepe-data.js` and `tepe-gl.js`), `houses/lost-tribe.html` and `houses/pineward.html` (the chain), `search-page.js`, `tools/seo.py`, `nav.js` (`Writing`, a closed part's writing), `package.json` (image-js and geotiff, for the tool), `tests/apoteker-tepe.spec.js` (new), and the house lists in `tests/houses.spec.js`, `mobile.spec.js`, `notes.spec.js`, `writing.spec.js`; and, for **the resolution trials** (2026-10-21), `tepe-gl.js` and `tepe.js` again (`?res=`), `tools/apoteker/trials.mjs` (new), `tools/apoteker/upscale.py` (new), `images/Apoteker Tepe/mountain/trials/` (new, written by those two) and `tests/tepe-resolution.spec.js` (new); and, for **the realism trials** (the same day, later), `tepe-gl.js`, `tepe.js`, `trials.mjs` and its test again, `tools/apoteker/osm.py` (new), and in the trials' folder `ndvi.png`, `athos-delit.jpg`, `canopy.jpg` and `athos-osm.json`
 
 ## What changed
 
@@ -608,6 +608,107 @@ smear while it turns fast; `raymarch` heavy for a phone's graphics chip; `native
 on a phone. Here, without a graphics card, `?tepe=full` draws a picture in two to four seconds and
 `raymarch` in eleven.
 
+### The realism trials (2026-10-21, later)
+
+The owner, on the resolution trials: *"okay, so those were pretty fine, but i still want it better;
+I want it to feel as realistic as possible. I then want you to research ways to add effects that
+hide it being lower quality. Can you do that? Be as comprehensive as you can, and search as much as
+you can"* — and *"Don't push yet"*.
+
+**Four searches**, each by an agent of its own, the web and the open archives: **the camera and its
+film** (tone curves, grain, bloom, lens effects: what hides a lack of detail and what gives it away),
+**the light and the air** (sun and sky in light's own units, aerial perspective, haze measured over
+Athos, the sea), **detail that is not in the data** (crowns, rock, detail textures, super-resolution),
+and **every open source of real data for this square** (paths, buildings, land cover, canopy heights,
+the sea's depth, the sun). What they found that matters most:
+
+- **The colours are the screen's, not light's.** The page lit its ground by multiplying the screen's
+  own values; a real slope's light is warm from the sun and blue from the sky in its shade, and only
+  adds up to white on level ground.
+- **The haze was one colour at one thickness**, taken from 2.3 half-widths off the eye. Real air takes
+  the blue first (the far land goes blue and pale), lies thickest low down (the foot in haze, the
+  summit clear), and is brighter towards the sun. Over Athos it is measured: at Ouranoupolis, the
+  peninsula's neck, the aerosols' optical depth is 0.3 to 0.5 in summer (Formenti and Balis, ACP 2003).
+- **ESA's own picture is already corrected for the slopes' light — a little too far.** Sentinel-2's
+  L2A colour has the terrain's shading taken out by Sen2Cor, and over Athos it overshoots: fitted over
+  the dense forest, the slopes turned to the satellite's sun come out *darker* (brightness 54.6 − 14.0 ×
+  how much a slope faced its sun). Sen2Cor's over-correction is reported on ESA's own forum.
+- **Real tree crowns exist, open, at a metre**: Meta and the World Resources Institute's **Canopy
+  Height Map v2** (CC BY 4.0, on AWS), the height of the trees everywhere, made by a model from very fine
+  satellite pictures. From this view, forest is mostly its crowns: each lit on its sunny side, shaded
+  on the other, and throwing its shadow on the next.
+- **Real paths and buildings**: OpenStreetMap's, through the Overture Maps Foundation's open release
+  (GeoParquet on AWS, no account); OpenStreetMap's own servers are not reachable from here.
+- **A picture taken from straight above has few pixels for a cliff**, and smears it down the slope: the
+  summit's steep faces were streaked. Athos's top is white marble, which breaks in joints and gullies,
+  never in layers (Springer 2011).
+- **The 1-css-pixel Bayer dither** shows most in the smooth sky and haze, where realism lives; a film's
+  grain hides banding without a pattern. The digital look was the owner's ask (2026-10-20), so the
+  grain is a trial and the choice theirs.
+- **What would give it away and was left out**: depth of field (a mountain this far off blurred reads
+  as a model — the tilt-shift look), a lens flare and god rays (the sun is out of the frame), motion
+  blur, a lens's distortion, a strong vignette.
+
+**The trials**, the same switches on the address as the resolution's (`?res=` and the word):
+
+| word | what it does | file |
+|---|---|---|
+| `tonemap` | the finished picture through a film's curve, Khronos's PBR Neutral (it keeps the colours' hues), drawn first with light to spare in half floats where the machine has them; 12% more exposure, the curve taking 4% off the dark as a lens's flare would add | — |
+| `agx` | the same through AgX (Troy Sobotka's, Blender's) with its "punchy" look, 60% more exposure | — |
+| `bloom` | a few per cent of all the light spread by the lens, no threshold (Jimenez's down-and-up blur, Karis's weighting on the first step), and its widest laid over all as the lens's veil of glare | — |
+| `halation` | a film's red-orange round its brightest edges | — |
+| `vignette` | the lens darkening its corners, the cosine to the fourth, 15% at most | — |
+| `aberration` | the lens parting its colours towards the corners, a third of a css pixel | — |
+| `clarity` | the broad shapes' contrast lifted against the glow's blur, never the pixels' | — |
+| `grade` | the blacks lifted a little, the shadows cooler and the light warmer, the greens a little quieter | — |
+| `grain` | a film's grain — soft-edged, a cell a little under a css pixel, strongest in the middle tones — **in place of the dither's steps**, with one invisible step of the screen's own at random under it | — |
+| `sensor` | a digital camera's noise in place of the dither: as much as its light, and a little always | — |
+| `light` | the sun and the sky in light's own units (the photograph's colours undone from the screen's curve): a warm sun, a blue sky in the shade, a little light thrown up off the ground, adding up to the page's own white on level ground; a cloud's shadow takes 40% of the sun, not 12%; with `shadows` and `ao`, their maps each on its own light (`SUN_LIGHT`, `sunLit`) | — |
+| `haze` | the air worked out in kilometres, from the eye, per colour (Rayleigh's and the aerosols', the blue lost 1.3 times as fast), thinning upward (the sea's haze under 750 m, the rest to 2.4 km), lit by the horizon and brighter towards the sun (`AIR_KM` 0.035 per km, `airOf`); the low mist 40% thinner and the banks 30% fainter, since the air does part of their work | — |
+| `sky` | a summer sky a little over a right angle from the sun: blue overhead, paling to near white at the horizon, the haze taking its colours, in place of the page's paper-coloured one (`SKY_REAL`) | — |
+| `delit` | the 10 m picture with Sen2Cor's over-correction undone: the fit above inverted over the land, so only the page's sun lights the slopes | `trials/athos-delit.jpg` (trials.mjs, with `ndvi.png`) |
+| `sea` | the sea as sea is: mostly the sky in it this low (2% given back straight down, Schlick's form of Fresnel's), over deep water's dark; rougher in lanes of wind and glassy in slicks between them, the glassy giving back the sky the more sharply. No shallows wider than a few metres — the sea floor drops to 500 m within 4 km (GEBCO) | — |
+| `canopy` | **the trees' own crowns**, out of Canopy Height Map v2 at 1.83 m, lit by the page's sun: each crown's sunny side, shaded side and the shadow it throws (marched towards the sun, the ground's own slope counted: a shadow falls longer down a slope turned from the sun; only the sky lights the crowns of a slope turned from it), and how deep a gap lies in the canopy — written as **a share of the light round it within the satellite's own 10 m pixel**, so the colour is kept exactly as it is on average (0.988) and only what lies inside its pixels is added. 4096 px, 3.8 m; stored as itself, not its logarithm, so a picture made smaller for the distance averages to the satellite's colour | `trials/canopy.jpg` (trials.mjs) |
+| `rock` | **the marble**: on the steep, bare faces (pale, not green), fine gullies cut down the fall line — a few metres apart across the slope, long down it — lighter on their ribs and darker in their grooves, their slopes lit, gone where they would be finer than a pixel | — |
+| `osmtrails` | OpenStreetMap's real footpaths to the summit in place of the page's invented trails: the shortest way by its paths and tracks (a footpath preferred) from the sketes of Agia Anna (6.8 km), Kafsokalyvia (9.0) and Prodromou (12.6), and the Great Lavra (15.1), with the page's numbers and blazes | `trials/athos-osm.json` (`tools/apoteker/osm.py`) |
+| `buildings` | its monasteries, sketes and chapels: the 95 largest of OpenStreetMap's buildings in the square, raised from their footprints — pale stone walls, roofs half the colour the satellite saw them and half lead and slate — lit and hazed as the ground is | `trials/athos-osm.json` |
+| `real` | as realistic as it can be made: `best`, and `delit`, `light`, `haze`, `sky`, `sea`, `canopy`, `rock`, `osmtrails`, `buildings`, `tonemap`, `bloom`, `vignette` and `grain` | — |
+| `realdither` | the same keeping the page's digital dither, not the film's grain | — |
+
+**Fewer than a hundred of OpenStreetMap's features** — four paths and 95 buildings — which the
+OpenStreetMap Foundation's guideline counts as an insubstantial extract, so the file in this public
+repository needs no licence of its own; the page credits them (**© OpenStreetMap contributors**, ODbL)
+in the mountain's credit while either trial is on, and the trees' crowns (Meta and WRI, CC BY 4.0)
+while `canopy` is (`tepe.js`). A test says so.
+
+**A fault found on the way, in the resolution trials**: `shore` counted the whole of the sea inside
+the mountain's square as its shore (its depth there was held at a hair, `0.0008`), so the foam line's
+pale was laid over all of it, and the square's edge showed as a straight line across the sea once the
+sea was darker. The sea's depth now grows away from the land, read off the land's heights near it
+blurred (`nearL`).
+
+**What they showed** (a second gallery, *The Athos Realism Trials*, every one beside the page as it
+was): **`real` reads as a photograph** — a long lens's view of a mountain in summer air, the foot in
+haze and the summit clear, the far land blue and pale, the sea dark and giving back the sky, the ridges
+and the marble crisp — where the page as it was reads as a drawing. Most of that is **`haze`**,
+**`light`**, **`sea`** and the resolution's `best` under them; **`grain`** in place of the dither takes
+away the last of the pattern laid over it. `canopy` and `rock` are fine detail, seen close (a crown's
+texture inside the forest's colour, gullies on the summit's faces) more than from the whole window.
+`tonemap` deepens and enriches; `agx` brightens and greys the sky; `bloom`, `vignette` and `clarity` are
+slight, as they should be; `halation` and `aberration` all but invisible. `sky` and `delit` change the
+look more than the detail. `buildings` are a few pixels across from here — the monasteries are there,
+small; `osmtrails` puts the real paths on, the zig-zags near the top the real switchbacks up the south
+face, which at this size read as short red smudges. Without a graphics card, and with other work
+running beside it, `real` took 30 to 60 seconds here from the page opening to its first settled
+picture, as `best` did; apart from the canopy's 4096 px picture, what it adds to `best` is arithmetic
+in the programs, but none of it was timed on a graphics card.
+
+**A fault in the photographs, not the page**: the first pictures of `real` carried pale vertical
+veils. They were the frames laid over each other (`accum`) still holding the ones drawn before the
+photograph hid the writing — the writing's columns quiet — because the photographing script waited
+one frame for `real` (it waited twenty-four only for words with *best* or *accum* in them). Settled,
+they are gone.
+
 ### Om's opening, in two beats
 
 The same round, on Om Parfums. It is written in [Om's
@@ -654,12 +755,22 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
   `best` on its own, drawn whole in a small window — its programs compiled, the ray's where the
   machine can write a pixel's depth, the pictures laid over each other where asked, the land filling
   the window and the mountain solid, no fault; and every trial's own picture there, written by its
-  tool from Copernicus's heights and Sentinel-2's archive.
+  tool from Copernicus's heights and Sentinel-2's archive. **The realism trials** the same way, a few
+  to a page and `real` on its own (the camera's laid down through the film, `post` on); the canopy
+  tool's source named in it; **fewer than a hundred of OpenStreetMap's features** in `athos-osm.json`,
+  its credit in it; and *the trials that draw on more of the world's data say whose, in the mountain's
+  credit* — and not without them.
 - The trials' pictures: `NODE_USE_ENV_PROXY=1 node tools/apoteker/trials.mjs` (all of them, or
   `--only=dem,erosion,photo,native,median,light`), then `python3 tools/apoteker/upscale.py <folder
-  holding realesrgan-x4plus.param and .bin>` for `superres` (half an hour on the processor here).
+  holding realesrgan-x4plus.param and .bin>` for `superres` (half an hour on the processor here);
+  `--only=ndvi,delit,canopy` for the realism trials' (the canopy three minutes, out of four tiles of
+  CHMv2, 167 MB, kept in the temporary folder), and `python3 tools/apoteker/osm.py` (with pyarrow,
+  shapely and networkx) for the real paths and buildings.
 - By eye, the trials: `houses/apoteker-tepe.html?tepe=full&res=best` beside the page without it, and
-  each word alone; with a graphics card `?tepe=full` is not needed.
+  each word alone; `?res=real` and `?res=realdither` for the realism trials together; with a graphics
+  card `?tepe=full` is not needed. A photograph of a trial that lays pictures over each other
+  (`accum`, `best`, `real`) wants twenty-odd frames settled first (`TepeMountain.settle(24)`): taken
+  after one, it still holds the frames drawn while the writing's columns were quiet, as pale veils.
 - `tests/writing.spec.js`: *the writing inside a shut part is not counted until it is opened*.
 - `tests/mobile.spec.js`: the mountain's canvas is drawn at twice the css pixels on a phone.
 - The house is in every house list: `houses.spec.js` (the chain both ways, the return button at
@@ -703,3 +814,13 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
   the credit; `raymarch` was only measured without a graphics card (eleven seconds a picture), never
   on a phone's chip. Whatever is not kept comes out of the code, with its pictures and its lines in
   `trials.mjs`.
+- **So are the realism trials.** Kept, `canopy` would want its credit (Meta and WRI, CC BY 4.0) in the
+  page itself, not only while asked for, and a 1.5 MB picture (2048 px, a phone's, would be under
+  half); `osmtrails` and `buildings` the same with OpenStreetMap's, and the page's own invented trails
+  and the free view's nodes along them would have to be thought again (the nodes stand where the
+  invented trails ran); `grain` takes the place of the digital dither the owner asked for on 2026-10-20,
+  so `realdither` keeps it. The `light`, `haze` and `sky` numbers are measured or physical (the sun's
+  share of the light on level ground, Rayleigh's air, Ouranoupolis's haze), the page's own palette
+  bent towards them; the far land, the page's own imagined one, goes a little mauve under the blue
+  haze, its browns being warmer than a real land's. None of them was seen on a phone's graphics chip
+  here, nor measured for its speed on one.

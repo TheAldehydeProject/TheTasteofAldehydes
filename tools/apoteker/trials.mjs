@@ -29,6 +29,15 @@
 //   athos-median.jpg     the same, out of MEDIAN cloudless summer scenes,
 //                        each pixel the middle of them: less of one
 //                        morning's haze and noise.
+//   ndvi.png             WHAT GROWS, for the realism trials (the same day,
+//                        later): NDVI off the satellite's red and infrared.
+//   athos-delit.jpg      THE COLOUR WITHOUT ITS MORNING: the 10 m picture,
+//                        the light the satellite's sun left on each slope
+//                        evened out, so the page's sun alone lights it.
+//   canopy.jpg           THE TREES THEMSELVES: Meta and WRI's Canopy Height
+//                        Map v2, each crown lit by the page's sun — each
+//                        place's share of the light within the satellite's
+//                        pixel.
 //   light-*.png          THE LIGHT, BAKED: red how much of the sun each
 //                        place sees (soft shadows cast by the mountain on
 //                        itself, from the page's own sun), green how much of
@@ -37,10 +46,13 @@
 //
 //   node tools/apoteker/trials.mjs             (NODE_USE_ENV_PROXY=1 behind a proxy)
 //
-// Credits they ask for: Copernicus DEM GLO-30 © DLR e.V. 2010–2014 and ©
-// Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the
-// European Union and ESA; contains modified Copernicus Sentinel data
-// 2023–2025.
+// (The real paths and buildings, athos-osm.json, are tools/apoteker/osm.py's.)
+//
+// Credits they ask for: the canopy heights, Meta and World Resources
+// Institute (2026), Canopy Height Map v2, CC BY 4.0; Copernicus DEM GLO-30
+// © DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018,
+// provided under COPERNICUS by the European Union and ESA; contains
+// modified Copernicus Sentinel data 2023–2025.
 // ============================================================
 import fs from "node:fs";
 import os from "node:os";
@@ -244,32 +256,34 @@ if (want("erosion") || want("light")) {
 
 // 3. THE COLOUR AT ITS OWN 10 M ----------------------------------------
 const FIRST = "S2A_35TKE_20230714_0_L2A";
-const tciOf = (id) => {
+const tciOf = (id, file = "TCI.tif") => {
   const [, tile, date] = id.match(/_(\d\d[A-Z]{3})_(\d{8})_/);
-  return `https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/${tile.slice(0, 2)}/${tile[2]}/${tile.slice(3)}/${date.slice(0, 4)}/${+date.slice(4, 6)}/${id}/TCI.tif`;
+  return `https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/${tile.slice(0, 2)}/${tile[2]}/${tile.slice(3)}/${date.slice(0, 4)}/${+date.slice(4, 6)}/${id}/${file}`;
 };
 const UTM_ZONE = 35;
-async function sceneSquare(id, C) {
-  const tiff = await fromUrl(tciOf(id));
+async function sceneSquare(id, C, file = "TCI.tif", chans = 3) {
+  const tiff = await fromUrl(tciOf(id, file));
   const scene = await tiff.getImage();
   const [ox, oy] = [scene.getOrigin()[0], scene.getOrigin()[1]];
   const corners = [[0, 0], [1, 0], [0, 1], [1, 1]].map(([s, t]) => { const p = placeOf(s, t); return utm(p.lat, p.lon, UTM_ZONE); });
   const wx0 = Math.floor((Math.min(...corners.map((c) => c.x)) - ox) / 10) - 8, wx1 = Math.ceil((Math.max(...corners.map((c) => c.x)) - ox) / 10) + 8;
   const wy0 = Math.floor((oy - Math.max(...corners.map((c) => c.y))) / 10) - 8, wy1 = Math.ceil((oy - Math.min(...corners.map((c) => c.y))) / 10) + 8;
   const ww = wx1 - wx0, wh = wy1 - wy0;
-  const kept = path.join(CACHE, `${id}-${wx0}-${wy0}-${ww}x${wh}.rgb`);
+  const kept = path.join(CACHE, `${id}-${file === "TCI.tif" ? "" : file + "-"}${wx0}-${wy0}-${ww}x${wh}.${chans === 3 ? "rgb" : "u16"}`);
   let sat;
-  if (fs.existsSync(kept)) sat = new Uint8Array(fs.readFileSync(kept));
+  if (fs.existsSync(kept)) { const b = fs.readFileSync(kept); sat = chans === 3 ? new Uint8Array(b) : new Uint16Array(b.buffer, b.byteOffset, b.byteLength / 2); }
   else {
     sat = await scene.readRasters({ window: [wx0, wy0, wx1, wy1], interleave: true });
     fs.writeFileSync(kept, Buffer.from(sat.buffer, sat.byteOffset, sat.byteLength));
   }
-  const ch = [0, 1, 2].map((c) => Float32Array.from({ length: ww * wh }, (_, k) => sat[k * 3 + c]));
-  const out = new Float32Array(C * C * 3);
+  // (a band's own numbers — reflectance, to 65535 — or the true colour's, to 255)
+  const most = chans === 3 ? 255 : 65535;
+  const ch = Array.from({ length: chans }, (_, c) => Float32Array.from({ length: ww * wh }, (_, k) => sat[k * chans + c]));
+  const out = new Float32Array(C * C * chans);
   for (let b = 0; b < C; b++) for (let a = 0; a < C; a++) {
     const p = placeOf((a + 0.5) / C, (b + 0.5) / C), u = utm(p.lat, p.lon, UTM_ZONE);
     const px = (u.x - ox) / 10 - wx0 - 0.5, py = (oy - u.y) / 10 - wy0 - 0.5;
-    for (let c = 0; c < 3; c++) out[(b * C + a) * 3 + c] = clamp(cubic(ch[c], ww, wh, px, py), 0, 255);
+    for (let c = 0; c < chans; c++) out[(b * C + a) * chans + c] = clamp(cubic(ch[c], ww, wh, px, py), 0, most);
   }
   return out;
 }
@@ -321,6 +335,181 @@ if (want("median")) {
   const med = new Float32Array(PHOTO * PHOTO * 3), v = new Float32Array(all.length);
   for (let k = 0; k < med.length; k++) { for (let q = 0; q < all.length; q++) v[q] = all[q][k]; v.sort(); med[k] = all.length % 2 ? v[(all.length - 1) / 2] : (v[all.length / 2 - 1] + v[all.length / 2]) / 2; }
   await printColour(med, PHOTO, "athos-median.jpg", 0.55);
+}
+
+// 3b. WHAT GROWS, AND THE COLOUR WITHOUT ITS MORNING (the realism trials) --
+// NDVI off the satellite's own red and near-infrared at 10 m (B04, B08; L2A
+// reflectance = DN / 10000 - 0.1): green leaves reflect the infrared and take
+// in the red, so the more of the one over the other, the more is growing —
+// where the trials put trees and the forest's grain (`trees`, `canopy`).
+let ndvi = null;
+async function ndviOf() {
+  if (ndvi) return ndvi;
+  const red = await sceneSquare(FIRST, PHOTO, "B04.tif", 1), nir = await sceneSquare(FIRST, PHOTO, "B08.tif", 1);
+  ndvi = new Float32Array(PHOTO * PHOTO);
+  for (let k = 0; k < PHOTO * PHOTO; k++) {
+    const r = Math.max(0, red[k] * 1e-4 - 0.1), n = Math.max(0, nir[k] * 1e-4 - 0.1);
+    ndvi[k] = n + r < 0.02 ? -0.2 : (n - r) / (n + r);   // (the sea, nearly black in both: nothing growing)
+  }
+  return ndvi;
+}
+if (want("ndvi")) {
+  const v = await ndviOf(), pic = new Image(PHOTO, PHOTO, { colorModel: "GREY" });
+  let sum = 0;
+  for (let k = 0; k < PHOTO * PHOTO; k++) { sum += v[k]; pic.setValue(k % PHOTO, Math.floor(k / PHOTO), 0, Math.round(clamp((v[k] + 0.2) / 1.1, 0, 1) * 255)); }
+  await write(path.join(OUT, "ndvi.png"), pic, { format: "png" });
+  console.log(`ndvi.png (${PHOTO} px, NDVI -0.2 to 0.9 as 0 to 255), the square's mean ${(sum / PHOTO / PHOTO).toFixed(3)}`);
+}
+// DE-LIT: the satellite saw Athos at 09:19 UTC on 14 July 2023, the sun 66°
+// up from 136° (its scene's own metadata), and every slope's light from that
+// sun is in its colour. The page lights it again from its own sun, so each
+// slope was lit twice. Here the morning's light is taken back out: the
+// heights' slopes (GLO-30) give how much of that sun each place faced, the
+// colour's brightness is fitted against it over the land (a little light from
+// the sky and the rest from the sun), and each place divided by its share.
+const SUN_SEEN = { az: (135.95 * Math.PI) / 180, alt: (66.33 * Math.PI) / 180 };
+if (want("delit")) {
+  const d = await demHeights(), raw = await sceneSquare(FIRST, PHOTO), C = PHOTO, cell = (SPAN * 1000) / FINE;
+  const L = [Math.sin(SUN_SEEN.az) * Math.cos(SUN_SEEN.alt), Math.cos(SUN_SEEN.az) * Math.cos(SUN_SEEN.alt), Math.sin(SUN_SEEN.alt)];   // east, north, up
+  const hAt = (x, y) => cubic(d, FINE, FINE, x, y);
+  const facing = new Float32Array(C * C), lum = new Float32Array(C * C), land = new Uint8Array(C * C);
+  for (let b = 0; b < C; b++) for (let a = 0; a < C; a++) {
+    const x = ((a + 0.5) / C) * FINE - 0.5, y = ((b + 0.5) / C) * FINE - 0.5, k = b * C + a;
+    const gx = (hAt(x + 1, y) - hAt(x - 1, y)) / (2 * cell), gy = -(hAt(x, y + 1) - hAt(x, y - 1)) / (2 * cell);   // (rows run south)
+    const l = Math.hypot(gx, gy, 1);
+    facing[k] = Math.max(0, (-gx * L[0] - gy * L[1] + L[2]) / l);
+    lum[k] = (raw[k * 3] + raw[k * 3 + 1] + raw[k * 3 + 2]) / 3;
+    land[k] = hAt(x, y) > 3 ? 1 : 0;
+  }
+  // brightness = ambient + sun × facing, fitted (least squares) over the
+  // dense forest only, whose own colour is even — over all the land, the
+  // bare rock and the scrub, brighter in themselves, stood on the slopes
+  // turned from the sun and turned the fit round
+  const v = await ndviOf();
+  let n = 0, sx = 0, sy = 0, sxx = 0, sxy = 0;
+  for (let k = 0; k < C * C; k += 3) if (land[k] && v[k] > 0.62) { n++; sx += facing[k]; sy += lum[k]; sxx += facing[k] * facing[k]; sxy += facing[k] * lum[k]; }
+  const slope = (n * sxy - sx * sy) / (n * sxx - sx * sx), icept = (sy - slope * sx) / n;
+  const flat = icept + slope * L[2];   // as bright as level ground was
+  console.log(`delit: brightness ${icept.toFixed(1)} + ${slope.toFixed(1)} × facing over ${n} samples (level ground ${flat.toFixed(1)})`);
+  const out = new Float32Array(C * C * 3);
+  for (let k = 0; k < C * C; k++) {
+    const shade = land[k] ? clamp((icept + slope * facing[k]) / flat, 0.35, 1.6) : 1;
+    for (let c = 0; c < 3; c++) out[k * 3 + c] = clamp(raw[k * 3 + c] / shade, 0, 255);
+  }
+  await printColour(out, C, "athos-delit.jpg", 0.55);
+}
+
+// 3c. THE TREES THEMSELVES (`canopy`) ----------------------------------
+// Meta and the World Resources Institute's Canopy Height Map (CHMv2, 2026,
+// CC BY 4.0): the height of the trees everywhere, about a metre to a pixel,
+// read off very fine satellite pictures by a model (DINOv3). Real, and
+// finer than anything else open over Athos: from here, forest is mostly its
+// crowns — each lit on its sunny side, shaded on the other, and throwing its
+// shadow on the next. So the crowns are lit here by the page's own sun at a
+// little over two metres (the map's second level), and what that does to
+// each place is written as a share of the light round it within the
+// satellite's own pixel — so the 10 m colour is kept exactly as it is on
+// average, and only what lies inside its pixels is added.
+const CANOPY = 4096;             // canopy.jpg, CANOPY px over the square (3.8 m to a pixel)
+const CHM = ["1221000120", "1221000121", "1221000122", "1221000123"];   // the four tiles (zoom 10, Web Mercator) Athos is on
+const CHM_URL = (q) => `https://dataforgood-fb-data.s3.amazonaws.com/forests/v2/global/dinov3_global_chm_v2_ml3/chm/${q}.tif`;
+const CANOPY_SKY = 0.22;         // the sky's share of the light on level ground (trials' `light`, SUN_LIGHT)
+const CANOPY_MOST = 2;           // canopy.jpg: the share, 0 to CANOPY_MOST over 0 to 255 (128 is as the satellite saw it) — as itself, not its logarithm, so that the picture made smaller for the distance averages to the satellite's own colour
+if (want("canopy")) {
+  const { fromFile } = await import("geotiff");
+  const C = 40075016.686, Z = 2 ** ZOOM * 256;
+  // the square in Web Mercator metres
+  const mx = (px) => (px / Z) * C - C / 2, my = (py) => C / 2 - (py / Z) * C;
+  const X0 = mx(x0 * 256 + left), X1 = mx(x0 * 256 + left + side), Y0 = my(y0 * 256 + top), Y1 = my(y0 * 256 + top + side);
+  // the mosaic, on the map's own global grid at its second level
+  let res2 = 0, imgs = [];
+  for (const q of CHM) {
+    const file = path.join(CACHE, "chm", q + ".tif");
+    if (!fs.existsSync(file)) {
+      fs.mkdirSync(path.dirname(file), { recursive: true });
+      const r = await fetch(CHM_URL(q));
+      fs.writeFileSync(file, Buffer.from(await r.arrayBuffer()));
+    }
+    const tiff = await fromFile(file), full = await tiff.getImage(0), count = await tiff.getImageCount();
+    let lvl = null;
+    for (let i = 1; i < count; i++) { const im = await tiff.getImage(i); if (im.getWidth() === full.getWidth() / 2) { lvl = im; break; } }
+    const [bx0, , , by1] = full.getBoundingBox();
+    res2 = (full.getResolution()[0] * full.getWidth()) / lvl.getWidth();
+    imgs.push({ q, lvl, bx0, by1 });
+  }
+  const g0 = Math.floor((X0 + C / 2) / res2), g1 = Math.ceil((X1 + C / 2) / res2), h0 = Math.floor((C / 2 - Y0) / res2), h1 = Math.ceil((C / 2 - Y1) / res2);
+  const W = g1 - g0, H = h1 - h0, chm = new Float32Array(W * H);
+  for (const { q, lvl, bx0, by1 } of imgs) {
+    const ox = Math.round((bx0 + C / 2) / res2), oy = Math.round((C / 2 - by1) / res2), w = lvl.getWidth(), h = lvl.getHeight();
+    const a0 = Math.max(g0, ox), a1 = Math.min(g1, ox + w), b0 = Math.max(h0, oy), b1 = Math.min(h1, oy + h);
+    if (a0 >= a1 || b0 >= b1) continue;
+    const ras = (await lvl.readRasters({ window: [a0 - ox, b0 - oy, a1 - ox, b1 - oy] }))[0], rw = a1 - a0;
+    for (let j = b0; j < b1; j++) for (let i = a0; i < a1; i++) { const v = ras[(j - b0) * rw + (i - a0)]; chm[(j - h0) * W + (i - g0)] = v === 255 ? 0 : v; }
+    console.log(`canopy: tile ${q}, ${rw} x ${b1 - b0} px`);
+  }
+  const ground = (res2 * Math.cos((SUMMIT.lat * Math.PI) / 180));   // m on the ground to a pixel
+  // (blurred: a box, twice, r pixels either side)
+  const blur = (A, r) => {
+    const B = new Float32Array(A.length), O = new Float32Array(A.length), n = 2 * r + 1;
+    for (let j = 0; j < H; j++) { let s = 0; for (let i = -r; i <= r; i++) s += A[j * W + clamp(i, 0, W - 1)]; for (let i = 0; i < W; i++) { B[j * W + i] = s / n; s += A[j * W + Math.min(W - 1, i + r + 1)] - A[j * W + Math.max(0, i - r)]; } }
+    for (let i = 0; i < W; i++) { let s = 0; for (let j = -r; j <= r; j++) s += B[clamp(j, 0, H - 1) * W + i]; for (let j = 0; j < H; j++) { O[j * W + i] = s / n; s += B[Math.min(H - 1, j + r + 1) * W + i] - B[Math.max(0, j - r) * W + i]; } }
+    return O;
+  };
+  const crown = blur(chm, 1);   // (a crown's own shape, its pixel noise gone)
+  // the terrain under it (GLO-30), for its slope: a crown's shadow falls longer down a slope turned from the sun
+  const d = await demHeights();
+  const hAt = (i, j) => cubic(d, FINE, FINE, (((g0 + i + 0.5) * res2 - C / 2 - X0) / (X1 - X0)) * FINE - 0.5, ((C / 2 - (h0 + j + 0.5) * res2 - Y0) / (Y1 - Y0)) * FINE - 0.5);
+  const L = [Math.sin(SUN.az) * Math.cos(SUN.alt), Math.cos(SUN.az) * Math.cos(SUN.alt), Math.sin(SUN.alt)];   // east, north, up
+  const dir = [L[0], -L[1]], rise = Math.tan(SUN.alt);   // (towards the sun across the picture: rows run south)
+  const light = new Float32Array(W * H), tree = new Float32Array(W * H);
+  const under = blur(crown, 3);   // (the canopy round about, for how deep a gap lies in it)
+  const t0 = Date.now();
+  for (let j = 1; j < H - 1; j++) for (let i = 1; i < W - 1; i++) {
+    const k = j * W + i, c = crown[k];
+    // the terrain's slope here (every 8 px, it barely changes)
+    const tx = ((hAt(i + 4, j) - hAt(i - 4, j)) / (8 * ground)), ty = -((hAt(i, j + 4) - hAt(i, j - 4)) / (8 * ground));
+    const nt = Math.hypot(tx, ty, 1), lt = Math.max(0.05, (-tx * L[0] - ty * L[1] + L[2]) / nt);
+    // the crown's own slope on top of it
+    const cx = tx + (crown[k + 1] - crown[k - 1]) / (2 * ground), cy = ty - (crown[k + W] - crown[k - W]) / (2 * ground);
+    const nc = Math.hypot(cx, cy, 1), lc = Math.max(0, (-cx * L[0] - cy * L[1] + L[2]) / nc);
+    // a shadow: anything taller along the way to the sun (the ground's own slope counted)
+    const climb = rise - (tx * L[0] + ty * L[1]) / Math.hypot(L[0], L[1]);
+    let vis = 1;
+    if (climb <= 0.02) vis = 0;   // (the ground itself turned from the sun: only the sky lights its crowns, through their gaps)
+    else for (let s = 1; s <= 24; s++) {
+      const x = i + dir[0] / Math.hypot(dir[0], dir[1]) * s, y = j + dir[1] / Math.hypot(dir[0], dir[1]) * s;
+      const xi = x | 0, yi = y | 0;
+      if (xi < 0 || yi < 0 || xi >= W - 1 || yi >= H - 1) break;
+      const over = crown[yi * W + xi] - (c + s * ground * climb);
+      if (over > 0) { vis = Math.min(vis, Math.max(0, 1 - over / 2.5)); if (vis <= 0) break; }
+    }
+    const gap = Math.max(0, under[k] - c), sky = Math.exp(-gap / 7);
+    light[k] = (1 - CANOPY_SKY) * (lc / lt) * vis * (climb > 0.02 ? 1 : 0) + CANOPY_SKY * sky;
+    tree[k] = c;
+  }
+  console.log(`canopy: ${W} x ${H} px at ${ground.toFixed(2)} m, lit in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  // as a share of the light round it within the satellite's own pixel (10 m);
+  // none where there are no trees, nor where the ground is turned from the sun
+  const mean = blur(blur(light, 2), 2), cover = blur(tree, 4);
+  const share = new Float32Array(W * H);
+  for (let k = 0; k < share.length; k++) {
+    const m = light[k] / Math.max(0.05, mean[k]), t = clamp((cover[k] - 1.5) / 3, 0, 1);
+    share[k] = 1 + (m - 1) * t;
+  }
+  // down to CANOPY px (each the mean of the share over its area)
+  const pic = new Image(CANOPY, CANOPY, { colorModel: "RGB" }), f = W / CANOPY;
+  let lo = 1, hi = 1, sum = 0;
+  for (let b = 0; b < CANOPY; b++) for (let a = 0; a < CANOPY; a++) {
+    const i0 = Math.floor(a * f), i1 = Math.max(i0 + 1, Math.floor((a + 1) * f)), j0 = Math.floor(b * (H / CANOPY)), j1 = Math.max(j0 + 1, Math.floor((b + 1) * (H / CANOPY)));
+    let s = 0, n = 0;
+    for (let j = j0; j < j1; j++) for (let i = i0; i < i1; i++) { s += share[j * W + i]; n++; }
+    const v = s / n;
+    lo = Math.min(lo, v); hi = Math.max(hi, v); sum += v;
+    const g = Math.round(clamp((v / CANOPY_MOST) * 255, 0, 255));
+    pic.setValue(a, b, 0, g); pic.setValue(a, b, 1, g); pic.setValue(a, b, 2, g);
+  }
+  await write(path.join(OUT, "canopy.jpg"), pic, { format: "jpeg", quality: 88 });
+  console.log(`canopy.jpg (${CANOPY} px), the light's share ${lo.toFixed(2)} to ${hi.toFixed(2)}, ${(sum / CANOPY / CANOPY).toFixed(3)} on average`);
 }
 
 // 4. THE LIGHT, BAKED --------------------------------------------------

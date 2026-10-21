@@ -129,6 +129,13 @@
   // two that cost most on top — what a picture made once, slowly, would be)
   const BEST = ["native", "accum", "ditherfine", "dem", "normals", "shore", "aniso", "photo", "shadows", "ao", "trailsgl", "finespecks"];
   const CEILING = [...BEST, "raymarch", "ss2"];
+  // (`real`: as realistic as it can be made — the best of the resolution's,
+  // with the light, the air, the sea, the trees, the marble, the real paths
+  // and buildings, and the camera's film; `realdither` the same keeping the
+  // page's digital dither, not the film's grain)
+  const REAL = [...BEST, "delit", "light", "haze", "sky", "sea", "canopy", "rock", "osmtrails", "buildings", "tonemap", "bloom", "vignette", "grain"];
+  if (RES.has("real")) REAL.forEach((k) => RES.add(k));
+  if (RES.has("realdither")) REAL.filter((k) => k !== "grain").forEach((k) => RES.add(k));
   if (RES.has("best")) BEST.forEach((k) => RES.add(k));
   if (RES.has("ceiling")) CEILING.forEach((k) => RES.add(k));
   const res = (k) => RES.has(k);
@@ -136,6 +143,61 @@
   // at all — `#ifdef TRIALS` — nor their arithmetic on the processor: the
   // page draws exactly as it did, at its own speed.)
   const TRIALS = RES.size > 0;
+  // THE TRIALS OF ITS REALISM (2026-10-21, later — "I want it to feel as
+  // realistic as possible. I then want you to research ways to add effects
+  // that hide it being lower quality"): the same words in `?res=`. Those
+  // done to the finished picture, as a camera and its film would, are LOOKS:
+  // the mountain drawn first into a picture of its own with light to spare
+  // (half floats, where the machine has them), then laid down through the
+  // camera — a film's curve (`tonemap`: Khronos's neutral one; `agx`), a
+  // little of all its light spread by the lens (`bloom`, with the lens's veil
+  // of glare), the film's red-orange round the brightest (`halation`), the
+  // lens darkening its corners (`vignette`) and parting its colours at the
+  // edge (`aberration`), the broad shapes' contrast (`clarity`), a gentle
+  // grade (`grade`), and the film's grain (`grain`) or a digital camera's
+  // noise (`sensor`) in place of the dither's steps, with one invisible step
+  // of the screen's own at random under it.
+  const LOOK_FX = ["tonemap", "agx", "grain", "sensor", "bloom", "halation", "vignette", "aberration", "clarity", "grade"];
+  const LOOKS = LOOK_FX.some(res);
+  const LOOK = { exposure: 1, neutral: 1.12, agx: 1.6, vignette: 0.08, grain: 0.03, cell: 0.8, aberration: 0.35, halation: 0.08, clarity: 0.2, sensor: 0.05 };
+  // (the page's colours are the screen's, not light to spare: each film's
+  // curve is given a little more of it — the neutral one takes 4% off the
+  // dark, as a lens's flare would add, and AgX keeps middle grey low;
+  // the vignette: the corners 15% darker at most; the grain: its strength in
+  // the screen's light and its cell, css px; the colours parted, css px at a
+  // corner; halation's strength; clarity's, in stops a stop off; the sensor's)
+  const BLOOM_STEPS = 6;           // the glow taken down to a sixty-fourth of the window
+  const BLOOM = { mix: 0.04, glare: 0.015 };   // (Jimenez: a few per cent of the light spread, no threshold; and the widest of it laid over all, the lens's veil)
+  // Those done to the light and the air, in the drawing itself:
+  //   light  THE SUN AND THE SKY, as they light a real slope: worked out in
+  //          light's own units (the photograph's colours undone from the
+  //          screen's curve), a warm sun, a blue sky in the shade and a
+  //          little light thrown up off the ground, the two adding up to
+  //          white on level ground — so a slope turned to the sun is warm
+  //          and one turned from it cool, as in a photograph, and a cloud's
+  //          shadow takes most of the sun, not an eighth of it. With
+  //          `shadows` and `ao`, their maps fall each on its own light.
+  //   haze   THE AIR AS AIR IS: the haze worked out in kilometres, per
+  //          colour — the blue lost first, so the far land goes blue and
+  //          pale — thickest low down and thinning upward (the sea's haze
+  //          under 750 m, the rest to 2.4 km), so the foot stands in haze and
+  //          the summit clear; its own light the sky's blue and the
+  //          horizon's white, a little brighter towards the sun. Its numbers
+  //          are the haze measured at Ouranoupolis, at the peninsula's neck.
+  const SUN_LIGHT = { sun: [1.12, 1.03, 0.9], sky: [0.118, 0.152, 0.196], bounce: 0.06, cloud: 0.4 };   // (the sun at 32° through the haze and the sky's light, in light's units; on level ground they add up to white, 0.70 — the page's own level ground)
+  const CANOPY_MOST = 2;           // `canopy`: canopy.jpg's 0 to 255 is a share of the light from 0 to this (trials.mjs CANOPY_MOST)
+  // `sky`: a summer sky as it is a little over a right angle from the sun —
+  // blue overhead, paling to near white at the horizon with the haze — in
+  // place of the page's paper-coloured one; the haze takes its colours.
+  const SKY_REAL = { zen: [122, 160, 205], hor: [220, 225, 228], haze: [206, 212, 215], glow: [255, 247, 230] };
+  const DATA_KM_HALF = (DATA.km * 1000) / 2, DATA_TOP = DATA.top || 1973;   // (`rock`: metres to a half-width, and to the whole of top)
+  // `buildings` and `osmtrails`: OpenStreetMap's own (tools/apoteker/osm.py) —
+  // the monasteries, sketes and chapels on the mountain, raised from their
+  // footprints, their walls the pale stone they are built of and their roofs
+  // the colour the satellite saw them, half to the lead and slate they are;
+  // and the real footpaths up it in place of the page's.
+  const BUILD_STONE = [0.83, 0.8, 0.73], BUILD_SLATE = [0.42, 0.41, 0.4];
+  const AIR_KM = 0.035;            // `haze`: the aerosols' extinction at sea level, per km (a visibility of 110 km, a clear autumn day's: the page's sun is November's; at Ouranoupolis, the peninsula's neck, the summer haze is an optical depth of 0.3 to 0.5)
   const TRIAL = "images/Apoteker Tepe/mountain/trials/";
   const TRIAL_HEIGHT_SCALE = 1.25;  // (trials.mjs HEIGHT_SCALE: its heights are a share of top / this)
   const MAP_PX = 2048;             // the baked normals and the trails' picture, MAP_PX square over the mountain's square
@@ -229,9 +291,18 @@
     if (groundPromise) return groundPromise;
     // (the trials' own pictures, where they ask for them)
     const fineSrc = res("erosion") ? "heights-eroded.png" : res("dem") ? "heights-dem.png" : null;
-    const photoSrc = res("superres") ? TRIAL + "athos-sr.jpg" : res("median") ? TRIAL + "athos-median.jpg" : res("photo") ? TRIAL + "athos-10m.jpg" : DATA.colour;
+    // (`delit`: the 10 m picture with the slopes' light evened out — ESA's own
+    // terrain correction had taken it out a little too far, the slopes turned
+    // to the morning sun coming out darker — so the page's sun alone lights it)
+    const photoSrc = res("delit") ? TRIAL + "athos-delit.jpg" : res("superres") ? TRIAL + "athos-sr.jpg" : res("median") ? TRIAL + "athos-median.jpg" : res("photo") ? TRIAL + "athos-10m.jpg" : DATA.colour;
     const lightSrc = res("shadows") || res("ao") ? TRIAL + (res("erosion") ? "light-eroded.png" : res("dem") ? "light-dem.png" : "light-base.png") : null;
-    groundPromise = Promise.all([load(root + encodeURI(DATA.heights)), load(root + encodeURI(photoSrc)), load(root + encodeURI("images/Apoteker Tepe/Apoteker Tepe Logo.webp")), fineSrc ? load(root + encodeURI(TRIAL + fineSrc)) : null, lightSrc ? load(root + encodeURI(lightSrc)) : null]).then(([heights, photo, logo, finePic, lightPic]) => {
+    // (`canopy`: the trees' own crowns, lit by the page's sun, as a share of the light within each of the satellite's pixels)
+    const canopySrc = res("canopy") ? TRIAL + "canopy.jpg" : null;
+    const osmSrc = res("osmtrails") || res("buildings") ? TRIAL + "athos-osm.json" : null;
+    const json = (src) => fetch(src).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    groundPromise = Promise.all([load(root + encodeURI(DATA.heights)), load(root + encodeURI(photoSrc)), load(root + encodeURI("images/Apoteker Tepe/Apoteker Tepe Logo.webp")), fineSrc ? load(root + encodeURI(TRIAL + fineSrc)) : null, lightSrc ? load(root + encodeURI(lightSrc)) : null, canopySrc ? load(root + encodeURI(canopySrc)) : null, osmSrc ? json(root + encodeURI(osmSrc)) : null]).then(([heights, photo, logo, finePic, lightPic, canopyPic, osm]) => {
+      // (`osmtrails`: the real footpaths, in place of the page's, before anything reads them)
+      if (osm && res("osmtrails") && DATA.trails) { DATA.trails.length = 0; osm.trails.forEach((t) => DATA.trails.push(t.pts)); }
       // THE HEIGHTS, out of their picture: red the high byte, green the low.
       const readHeights = (pic, size, scale) => {
         const out = new Float32Array(size * size);
@@ -438,7 +509,7 @@
         trailMap = { size: P, data: out, reach: REACH };
       }
       return {
-        normalMap, heightMap, trailMap, lightPic, L0, F, FN,
+        normalMap, heightMap, trailMap, lightPic, canopyPic, osm, L0, F, FN,
         n, H, at, h, athos, proc, hollowAt, tex, colourAt, landAt, landColour, sign, noise, cu, cv, SQ,
         LIFT: DATA.view ? DATA.view.lift : 0.42, WORLD, summit: DATA.summit, trails: DATA.trails, places: DATA.places || {}, figure: DATA.figure, top: DATA.top, view: DATA.view,
       };
@@ -482,6 +553,41 @@
     }
     #ifdef TRIALS
     uniform float uBlueOn;  // the dither's steps off a blue noise (the noise's own fourth channel), not Bayer's pattern
+    uniform vec4 uAirM;     // \`haze\`: km to a unit across, km to a unit up, the aerosols' extinction at sea level (/km), on (0 or 1)
+    uniform vec4 uSunM;     // \`light\`: on (0 or 1), the sun's strength, the sky's, the ground's bounce
+    // (\`haze\`) How much air lies along a way from height h0 to h1 (km), d
+    // long, in air thinning upward as exp(-h / H): in closed form.
+    float airAlong(float h0, float h1, float d, float H) {
+      float dh = h1 - h0;
+      return abs(dh) < 0.002 ? d * exp(-h0 / H) : d * H * (exp(-h0 / H) - exp(-h1 / H)) / dh;
+    }
+    vec3 airOf(vec3 col, vec3 p, vec3 d, float dist) {
+      float h0 = uEyeP.y * uAirM.y, h1 = max(p.y, 0.0) * uAirM.y, D = dist * uAirM.x;   // (from the eye itself, as real air is)
+      float lR = airAlong(h0, h1, D, 8.0);
+      float lM = 0.65 * airAlong(h0, h1, D, 0.75) + 0.35 * airAlong(h0, h1, D, 2.4);
+      // Rayleigh's air (per km, red green blue) and the aerosols' (the blue
+      // lost 1.3 times as fast as the green, the red 0.76 times)
+      vec3 tR = vec3(0.0058, 0.0135, 0.0331) * lR, tM = uAirM.z * vec3(0.76, 1.0, 1.34) * lM;
+      vec3 T = exp(-(tR + tM));
+      float mu = dot(d, uSun), g = 0.76;
+      float pM = (1.0 - g * g) / pow(1.0 + g * g - 2.0 * g * mu, 1.5);   // (Henyey-Greenstein's, 1 where it has no way it prefers)
+      // (seen along the ground, the air's own light is the horizon's: Rayleigh's
+      // a little of the blue overhead in it, the aerosols' the horizon's white)
+      vec3 cR = mix(uSkyHor, uSkyZen, 0.5) * (0.75 + 0.75 * mu * mu), cM = uSkyHor * (0.88 + 0.08 * min(pM, 4.0));
+      vec3 air = (tR * cR + tM * cM) / max(tR + tM, vec3(1e-5));
+      return col * T + (1.0 - T) * air;
+    }
+    // (\`light\`) The sun and the sky on albedo, in light's own units: the
+    // sun as far as this place sees it (sunV), the sky as far as it sees
+    // that (skyV), a cloud's shadow most of the sun's — and back to the
+    // screen's curve.
+    vec3 sunLit(vec3 albedo, vec3 n, float lam, float sunV, float skyV, float cloud, float bright) {
+      vec3 a = pow(max(albedo, vec3(0.0)), vec3(2.2)) * pow(bright, 2.2);
+      float c = 1.0 - ${SUN_LIGHT.cloud.toFixed(2)} * (1.0 - cloud) / 0.12;
+      vec3 sunC = vec3(${SUN_LIGHT.sun.map((v) => v.toFixed(3)).join(", ")}) * uSunM.y, skyC = vec3(${SUN_LIGHT.sky.map((v) => v.toFixed(3)).join(", ")}) * uSunM.z;
+      vec3 E = sunC * lam * sunV * c + skyC * skyV * (0.62 + 0.38 * n.y) + sunC * uSunM.w * (1.0 - n.y) * vec3(1.0, 0.92, 0.78);
+      return pow(clamp(a * E, 0.0, 1.0), vec3(1.0 / 2.2));
+    }
     #endif
     float stepAt() {
       #ifdef TRIALS
@@ -506,6 +612,9 @@
     // worked out along the whole of the way (an exponential mist, in closed
     // form), lying in wisps where the way ends.
     vec3 throughAir(vec3 col, vec3 p, vec2 w, vec3 d, float dist, vec3 sky) {
+      #ifdef TRIALS
+      if (uAirM.w > 0.5) col = airOf(col, p, d, dist); else
+      #endif
       col = mix(col, sky, 1.0 - exp(-max(0.0, dist - uHazeFrom) * uAir.x));
       #ifdef LITE
       // (only the haze, and the mist lying over the lowest ground)
@@ -580,7 +689,10 @@
     uniform vec2 uSignTurn; // cos, sin
     uniform vec2 uSignScale; // the photo's uv to the piece's own units, along x and z
     #ifdef TRIALS
-    uniform sampler2D uNormalMap, uLightMap, uTrailMap;
+    uniform sampler2D uNormalMap, uLightMap, uTrailMap, uCanopy;
+    uniform float uCanopyOn;   // \`canopy\` (0 or 1)
+    uniform float uSeaOn;      // \`sea\` (0 or 1)
+    uniform float uRockOn;     // \`rock\` (0 or 1)
     // THE TRIALS (each 0 or 1): the light a pixel at a time off the baked
     // normals, the sky baked, the sun baked (its shadows), fine relief; the
     // mountain's own contours, relief shading, the trails drawn into the
@@ -647,7 +759,10 @@
         // as the window (its depth out to sea still the triangles').
         float hp = texture2D(uNormalMap, uv).a * ${SHORE_TOP.toFixed(3)};
         land = smoothstep(0.0004, 0.0016, hp);
-        depth = hp > 0.0006 ? -hp : max(depth, 0.0002 + (0.0006 - hp));
+        // (out at sea, the land's heights near it, blurred, say how near the
+        // coast is — so only the water by the land counts as its edge)
+        float nearL = texture2D(uNormalMap, uv, 3.0).a;
+        depth = hp > 0.0006 ? -hp : max(depth, 0.0002 + (0.0006 - hp) + 0.006 * (1.0 - smoothstep(0.0, 0.08, nearL)));
       }
       if (uRes.x > 0.5) {
         vec3 m = texture2D(uNormalMap, uv).xyz * 2.0 - 1.0;
@@ -669,6 +784,41 @@
       #endif
       #endif
       vec3 albedo = mix(landOf(w, h, n), texture2D(uPhoto, uv).rgb, land);
+      #ifdef TRIALS
+      // THE TREES' OWN CROWNS (\`canopy\`): each place's share of the light
+      // within the satellite's pixel round it — its crowns' sunny sides, their
+      // shaded sides and their shadows on each other — in the screen's curve
+      // (before the sign, which bares the earth under them).
+      if (uCanopyOn > 0.5) albedo *= mix(1.0, pow(texture2D(uCanopy, uv).r * ${CANOPY_MOST.toFixed(1)}, 1.0 / 2.2), sq * land);
+      #if defined(GL_OES_standard_derivatives) && !defined(LITE)
+      if (uRockOn > 0.5) {
+        // THE MARBLE (\`rock\`): a picture taken from straight above has few
+        // pixels for a cliff, and smears it down the slope; on the steep, bare
+        // faces (pale, not green), fine gullies are cut down the fall line
+        // instead — the way the summit's white marble breaks, in joints and
+        // flutes, never in layers — a few metres apart, lighter on their
+        // ribs and darker in their grooves, their slopes lit, gone where they
+        // would be finer than a pixel.
+        float steep = smoothstep(0.28, 0.62, 1.0 - n.y);
+        float bare = smoothstep(0.02, 0.1, dot(albedo, vec3(0.45, -0.55, 0.1)) + 0.06 * (albedo.r - albedo.g) + 0.04) * smoothstep(0.32, 0.5, dot(albedo, vec3(0.333)));
+        float k = steep * bare * land * sq;
+        // (worked out everywhere the trial is on, not only where it shows: a
+        // pixel's size, and the noise's, are only sure outside a branch)
+        {
+          vec2 fall = normalize(n.xz + 1e-4), across = vec2(-fall.y, fall.x);
+          vec2 pm = P.xz * uWorld.x * ${DATA_KM_HALF.toFixed(1)};   // (metres about the summit)
+          vec2 q = vec2(dot(pm, across) / 7.0, P.y / uWorld.w * ${DATA_TOP.toFixed(1)} / 46.0);
+          float fw = length(fwidth(q));
+          float fade = 1.0 - smoothstep(0.35, 0.9, fw);
+          vec2 wv = q + vec2(texture2D(uNoise, q * vec2(0.02, 0.05)).r - 0.5, 0.0) * 6.0;
+          float g1 = texture2D(uNoise, wv * vec2(1.0 / 256.0, 1.0 / 2048.0)).g, g2 = texture2D(uNoise, wv * vec2(2.6 / 256.0, 2.6 / 2048.0) + 0.37).b;
+          float flute = (g1 - 0.5) * 0.75 + (g2 - 0.5) * 0.45 * (1.0 - smoothstep(0.2, 0.55, fw * 2.6));
+          albedo *= 1.0 + flute * 0.42 * k * fade;
+          n = normalize(n + vec3(across.x, 0.0, across.y) * (g1 - texture2D(uNoise, (wv + vec2(0.35, 0.0)) * vec2(1.0 / 256.0, 1.0 / 2048.0)).g) * 1.6 * k * fade);
+        }
+      }
+      #endif
+      #endif
       // THE SIGN, cut in: its shape lowered into the ground, the earth it
       // lays bare a little paler.
       if (uSurf.w > 0.5) {
@@ -711,6 +861,14 @@
       }
       #endif
       vec3 col = albedo * lightness;
+      #ifdef TRIALS
+      if (uSunM.x > 0.5) {
+        // THE SUN AND THE SKY (\`light\`), the baked maps each on its own light
+        vec2 lm = texture2D(uLightMap, uv).rg;
+        float sunV = mix(1.0, uRes.z > 0.5 ? lm.r : 1.0, sq), skyV = mix(ao, uRes.y > 0.5 ? 0.2 + 0.85 * lm.g : ao, sq);
+        col = sunLit(albedo, n, lam, sunV, skyV, cloud, uSurf.x);
+      }
+      #endif
       #if defined(GL_OES_standard_derivatives) && !defined(LITE)
       #ifdef TRIALS
       if (uRes2.w > 0.5) {
@@ -750,6 +908,29 @@
         float fres = 0.18 + 0.7 * pow(1.0 - max(-vd.y, 0.0), 5.0);
         vec3 water = mix(mix(${L3(SHALLOW)}, ${L3(DEEP)}, smoothstep(0.0, 0.03, depth)), skyOf(rv), fres);
         water += vec3(1.0, 0.97, 0.9) * pow(max(dot(rv, uSun), 0.0), 90.0) * 0.5;
+        #ifdef TRIALS
+        if (uSeaOn > 0.5) {
+          // THE SEA AS SEA IS (\`sea\`): seen this low it is mostly the sky in
+          // it — water gives back 2% of the light straight down and more and
+          // more towards the horizon (Fresnel's, Schlick's form) — over the
+          // dark of deep water (its shallows only a few metres wide here: the
+          // sea floor drops to 500 m within 4 km, GEBCO's; the satellite's own
+          // sea, seen from straight above, is too dark for this slant);
+          // rougher in lanes of wind and glassy in slicks
+          // between them, the glassy giving back the sky the more sharply.
+          float lane = texture2D(uNoise, w * 0.31 + vec2(uTime * 0.0016, uTime * 0.0007) * uLook.w).g;
+          float rough = mix(0.62, 1.2, smoothstep(0.3, 0.75, lane));
+          vec2 r2 = (vec2(texture2D(uNoise, w * 6.1 - vec2(uTime * 0.016, 0.0) * uLook.w).b, texture2D(uNoise, w * 6.1 + vec2(0.0, uTime * 0.013) * uLook.w).r) - 0.5) * 0.08;
+          vec3 wn2 = normalize(vec3((r.x + r2.x) * rough, 1.0, (r.y + r2.y) * rough));
+          vec3 rv2 = reflect(vd, wn2);
+          rv2.y = abs(rv2.y);
+          float c = clamp(dot(-vd, wn2), 0.0, 1.0);
+          float F = 0.02 + 0.98 * pow(1.0 - c, 5.0);
+          vec3 body = mix(vec3(0.05, 0.115, 0.15), ${L3(SHALLOW)} * 0.62, (1.0 - smoothstep(0.0, 0.0012, depth)) * 0.6);
+          water = mix(body, skyOf(rv2), F);
+          water += vec3(1.0, 0.97, 0.9) * pow(max(dot(rv2, uSun), 0.0), mix(420.0, 60.0, rough / 1.2)) * 0.45;
+        }
+        #endif
         float shore = 1.0 - smoothstep(0.0, 0.003, depth);
         water = mix(water, vec3(0.88, 0.87, 0.82), shore * 0.55);
         col = mix(col, water, smoothstep(-0.0004, 0.0008, depth));
@@ -891,12 +1072,15 @@
     // lit on the processor once, as it always was)
     uniform vec4 uRes, uRes2, uSq;   // uSq: the square's uv off the piece's units (u = x * uSq.x + uSq.y, v = z * uSq.x + uSq.z)
     uniform vec3 uLight2;
-    uniform sampler2D uLightMap;
+    uniform sampler2D uLightMap, uCanopy;
+    uniform float uCanopyOn;
     varying vec3 vNrm; varying float vAo;
     vec3 speckLight(vec3 albedo, vec2 w) {
       vec3 n = normalize(vNrm);
       vec2 uv = vec2(vPos.x * uSq.x + uSq.y, vPos.z * uSq.x + uSq.z), e2 = min(uv, 1.0 - uv);
       float sq = smoothstep(0.0, 0.006, min(e2.x, e2.y));
+      // (\`canopy\`: a speck takes its crowns' light too, a little blurred — it is a point)
+      if (uCanopyOn > 0.5) albedo *= mix(1.0, pow(texture2D(uCanopy, uv, 1.5).r * ${CANOPY_MOST.toFixed(1)}, 1.0 / 2.2), sq);
       float lam = max(dot(n, uSun), 0.0);
       if (uRes2.y > 0.5) lam = mix(lam, 0.55 * lam + 0.55 * max(dot(n, uLight2), 0.0) * (1.0 - 0.25 * (1.0 - n.y)), sq);
       float cloud = cloudShade(w), ao = vAo;
@@ -908,6 +1092,11 @@
         lightness = mix(lightness, (${SHADE_FLOOR.toFixed(2)} * amb + ${SHADE_GAIN.toFixed(2)} * lam * sun * (uRes.y > 0.5 ? 0.86 + 0.14 * skyV : ao)) * cloud, sq);
       }
       if (uRes2.w > 0.5) return mix(vec3(0.925, 0.898, 0.824), albedo, 0.42) * (0.74 + 0.36 * lam) * mix(1.0, ao, 0.5);
+      if (uSunM.x > 0.5) {
+        vec2 lm = texture2D(uLightMap, uv).rg;
+        float sunV = mix(1.0, uRes.z > 0.5 ? lm.r : 1.0, sq), skyV = mix(ao, uRes.y > 0.5 ? 0.2 + 0.85 * lm.g : ao, sq);
+        return sunLit(albedo, n, lam, sunV, skyV, cloud, 1.0);
+      }
       return albedo * lightness;
     }
     #endif
@@ -989,6 +1178,9 @@
       float lit = 0.45 + 0.55 * max(dot(nrm, uSun), 0.0) - (1.0 - n2) * 0.18;
       vec3 col = mix(uMistShade, uMistLit, clamp(lit, 0.0, 1.0));
       vec3 v = vWorld - uEyeP;
+      #ifdef TRIALS
+      if (uAirM.w > 0.5) col = airOf(col, vWorld, normalize(v), length(v)); else
+      #endif
       col = mix(col, skyOf(normalize(v)), 1.0 - exp(-max(0.0, length(v) - uHazeFrom) * uAir.x));
       float a = dens * soft * vA * uMistA * quietHere();
       #ifdef TRIALS
@@ -997,6 +1189,31 @@
       a = floor(a * uLook.y * 0.5 + stepAt()) / (uLook.y * 0.5);
       #endif   // (in steps too, unless drawn smooth to be laid down again)
       gl_FragColor = vec4(digital(col) * a, a);
+    }`;
+
+  // THE BUILDINGS (`buildings`): walls and a roof, lit as the ground is and
+  // in its air.
+  const BUILD_VS = `
+    attribute vec3 aPos; attribute vec3 aNrm; attribute vec3 aCol;
+    uniform mat4 uM;
+    varying vec3 vPos; varying vec3 vNrm; varying vec3 vCol;
+    void main() { vPos = aPos; vNrm = aNrm; vCol = aCol; gl_Position = uM * vec4(aPos, 1.0); }`;
+  const BUILD_FS = HEAD + `
+    uniform vec4 uWorld;
+    varying vec3 vPos; varying vec3 vNrm; varying vec3 vCol;
+    void main() {
+      vec2 w = vPos.xz * uWorld.x + uWorld.yz;
+      vec3 v = vPos - uEyeP;
+      float dist = length(v);
+      vec3 d = v / dist, n = normalize(vNrm), sky = skyOf(d);
+      float lam = max(dot(n, uSun), 0.0), cloud = cloudShade(w);
+      vec3 col = vCol * (${SHADE_FLOOR.toFixed(2)} + ${SHADE_GAIN.toFixed(2)} * lam * cloud) * 0.95;
+      #ifdef TRIALS
+      if (uSunM.x > 0.5) col = sunLit(vCol, n, lam, 1.0, 0.75 + 0.25 * n.y, cloud, 0.95);
+      #endif
+      col = throughAir(col, vPos, w, d, dist, sky);
+      col = mix(sky, col, quietHere());
+      gl_FragColor = vec4(digital(col), 1.0);
     }`;
 
   // THE PICTURE LAID DOWN AGAIN (`ss2`, `accum`, `fxaa`, `cas`): the
@@ -1047,9 +1264,158 @@
       vec3 wt = amp * (-1.0 / mix(8.0, 5.0, sharp));
       return clamp((b * wt + d * wt + f * wt + h * wt + e) / (1.0 + 4.0 * wt), 0.0, 1.0);
     }
+    #ifdef LOOK
+    // THROUGH THE CAMERA (the trials' LOOKS): the picture is light to spare
+    // (half floats); here it is taken back to the light it stands for, its
+    // glow added, the corners darkened as a lens darkens them, put through a
+    // film's curve and back to the screen's, graded, and its grain laid on.
+    uniform sampler2D uBloom, uGlare;
+    uniform vec4 uFx;       // exposure, the glow's mix (of the light, a little), the vignette's, the grain's
+    uniform vec4 uFx2;      // the colours parted at the corners (device px), the film's curve (0 none, 1 Khronos neutral, 2 AgX), this picture's seed, the window's width to its height
+    uniform vec4 uFx3;      // halation's, clarity's, the grade (0 or 1), the sensor's noise
+    uniform vec4 uFx4;      // the grain's cell (device px), the glare's (the lens's veil of all its light), the glow's steps, the last dither (0 or 1)
+    uniform float uLookOn;  // (only the last pass down onto the window)
+    vec3 toLinear(vec3 c) { return pow(max(c, vec3(0.0)), vec3(2.2)); }
+    vec3 toDisplay(vec3 c) { return pow(max(c, vec3(0.0)), vec3(1.0 / 2.2)); }
+    float luma(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
+    // Khronos PBR Neutral (2024): the base colours as they are, only the
+    // brightest rolled off and let go towards white.
+    vec3 neutral(vec3 c) {
+      float x = min(c.r, min(c.g, c.b));
+      float off = x < 0.08 ? x - 6.25 * x * x : 0.04;
+      c -= off;
+      float peak = max(c.r, max(c.g, c.b));
+      if (peak < 0.76) return c;
+      float d = 0.24, np = 1.0 - d * d / (peak + d - 0.76);
+      c *= np / peak;
+      return mix(c, vec3(np), 1.0 - 1.0 / (0.15 * (peak - np) + 1.0));
+    }
+    // AgX (Troy Sobotka, Blender 4; the short fit, as three.js has it) with its
+    // "punchy" look (power 1.35, saturation 1.4): the film's own toe and
+    // shoulder, the brightest going to white rather than to a hard colour.
+    vec3 agx(vec3 c) {
+      c = mat3(0.842479062253094, 0.0423282422610123, 0.0423756549057051, 0.0784335999999992, 0.878468636469772, 0.0784336, 0.0792237451477643, 0.0791661274605434, 0.879142973793104) * c;
+      c = clamp(log2(max(c, vec3(1e-10))), -12.47393, 4.026069);
+      c = (c + 12.47393) / 16.500999;
+      vec3 x2 = c * c, x4 = x2 * x2;
+      c = 15.5 * x4 * x2 - 40.14 * x4 * c + 31.96 * x4 - 6.868 * x2 * c + 0.4298 * x2 + 0.1191 * c - 0.00232;
+      float l = luma(c);
+      c = pow(max(c, vec3(0.0)), vec3(1.35));
+      c = l + 1.4 * (c - l);
+      c = mat3(1.19687900512017, -0.0528968517574562, -0.0529716355144438, -0.0980208811401368, 1.15190312990417, -0.0980434501171241, -0.0990297440797205, -0.0989611768448433, 1.15107367264116) * c;
+      return clamp(c, 0.0, 1.0);
+    }
+    float hash12(vec2 p) { vec3 q = fract(vec3(p.xyx) * 0.1031); q += dot(q, q.yzx + 33.33); return fract((q.x + q.y) * q.z); }
+    // soft-edged noise: hashes at the cells' corners, smoothly between
+    float vnoise(vec2 p) {
+      vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+      return mix(mix(hash12(i), hash12(i + vec2(1.0, 0.0)), f.x), mix(hash12(i + vec2(0.0, 1.0)), hash12(i + vec2(1.0, 1.0)), f.x), f.y);
+    }
+    vec3 lookOf(vec3 c, vec2 uv) {
+      vec2 q = (uv - 0.5) * vec2(uFx2.w, 1.0);
+      float r2 = dot(q, q);
+      // the lens parting its colours, a little, towards the corners
+      if (uFx2.x > 0.0) {
+        vec2 d = (uv - 0.5) * r2 * 4.0 * uFx2.x * uTexel;
+        c = vec3(tap(uv + d).r, c.g, tap(uv - d).b);
+      }
+      vec3 lin = toLinear(c) * uFx.x;
+      vec3 blur = texture2D(uBloom, uv).rgb / uFx4.z;
+      // clarity: the broad shapes' contrast lifted (a photographer's local
+      // contrast, against the glow's wide blur), never the pixels'
+      if (uFx3.y > 0.0) {
+        float L = luma(lin), Lb = max(luma(blur), 1e-4);
+        lin *= exp2(uFx3.y * clamp(log2(max(L, 1e-4) / Lb), -1.0, 1.0));
+      }
+      lin = mix(lin, blur, uFx.y) + texture2D(uGlare, uv).rgb * uFx4.y;
+      // halation: the film's own red-orange round its brightest edges
+      if (uFx3.x > 0.0) lin += max(blur - lin, vec3(0.0)) * vec3(1.0, 0.3, 0.12) * uFx3.x;
+      // a digital camera's noise, in the light itself: as much again as its
+      // light (shot noise) and a little always (read noise), some in colour
+      if (uFx3.w > 0.0) {
+        vec2 px = floor(gl_FragCoord.xy);
+        float L = luma(lin);
+        float n = (hash12(px + uFx2.z * 13.0) + hash12(px * 1.31 + uFx2.z * 7.0 + 5.0) - 1.0) * sqrt(0.6 * L + 0.004);
+        vec3 chroma = vec3(hash12(px + 3.7 + uFx2.z), hash12(px + 9.1 + uFx2.z), hash12(px + 1.3 + uFx2.z)) - 0.5;
+        lin += uFx3.w * (n + chroma * 0.33 * (1.0 - smoothstep(0.0, 0.25, L)) * 0.12);
+        lin = max(lin, vec3(0.0));
+      }
+      // the lens darkening its corners: the cosine to the fourth, as light falls off across a lens
+      float k = 1.0 + r2 * uFx.z;
+      lin /= k * k;
+      vec3 o = uFx2.y > 1.5 ? agx(lin) : uFx2.y > 0.5 ? toDisplay(neutral(lin)) : toDisplay(lin);
+      // the grade: the blacks lifted a little (film seldom reaches black), the
+      // shadows a little cooler and the light warmer (sky and sun), the
+      // greens a little quieter, nothing more saturated
+      if (uFx3.z > 0.5) {
+        float L = luma(o);
+        o = o * 0.985 + 0.015;
+        o += (1.0 - L) * vec3(-0.006, 0.0, 0.012) + L * vec3(0.012, 0.004, -0.010);
+        float g = clamp((o.g - max(o.r, o.b)) * 4.0, 0.0, 1.0);
+        o = mix(o, vec3(luma(o)), 0.12 * g);
+      }
+      // the film's grain: soft-edged, a cell a little under a css px, two
+      // sizes of it clumping, strongest in the middle tones as a film's is
+      if (uFx.w > 0.0) {
+        vec2 p = gl_FragCoord.xy / uFx4.x + uFx2.z * vec2(37.1, 17.7);
+        float n = vnoise(p) + vnoise(p * 1.93 + 5.1) - 1.0;
+        float L = luma(clamp(o, 0.0, 1.0));
+        o += n * uFx.w * mix(0.35, 1.0, 4.0 * L * (1.0 - L));
+      }
+      // and last, in place of the dither's steps, one step of the screen's
+      // own either way at random — no banding, nothing to see
+      if (uFx4.w > 0.5) {
+        vec2 px = gl_FragCoord.xy;
+        o += (hash12(px + uFx2.z * 3.1) + hash12(px + 0.5 + uFx2.z * 5.7) - 1.0) / 255.0;
+      }
+      return o;
+    }
+    #endif
     void main() {
       vec3 c = uMode.y > 0.5 ? fxaa(vUV) : uMode.z > 0.0 ? cas(vUV, uMode.z) : tap(vUV);
+      #ifdef LOOK
+      if (uLookOn > 0.5) c = lookOf(c, vUV);
+      #endif
       gl_FragColor = vec4(uMode.w > 0.5 ? digital(c) : c, 1.0);
+    }`;
+  // THE GLOW (the trials' `bloom`, `halation`, `clarity`): the picture taken
+  // down a step at a time to a sixty-fourth of its size and back up again,
+  // each step spread a little further (Jimenez's way, 2014) — light spreading
+  // in the air and in the lens as a camera sees it. No threshold (a lens
+  // spreads a little of all its light, not only the brightest), and at the
+  // first step each tap weighted by 1 / (1 + its light) (Karis), so no one
+  // speck's glint sparkles through it.
+  const BLOOM_FS = `
+    #ifdef GL_FRAGMENT_PRECISION_HIGH
+    precision highp float;
+    #else
+    precision mediump float;
+    #endif
+    uniform sampler2D uScene;
+    uniform vec2 uTexel;    // 1 / the size read from
+    uniform vec4 uMode;     // 0 the first step down, 1 down, 2 up; -; -; the step's weight up
+    varying vec2 vUV;
+    vec3 lin(vec2 uv) { return pow(max(texture2D(uScene, uv).rgb, vec3(0.0)), vec3(2.2)); }
+    void main() {
+      vec2 o = uTexel;
+      if (uMode.x < 0.5) {
+        vec3 s = vec3(0.0); float ws = 0.0;
+        for (int i = 0; i < 4; i++) {
+          vec2 q = vec2(i == 1 || i == 3 ? 1.0 : -1.0, i >= 2 ? 1.0 : -1.0);
+          vec3 c = lin(vUV + o * q); float w = 1.0 / (1.0 + dot(c, vec3(0.2126, 0.7152, 0.0722)));
+          s += c * w; ws += w;
+        }
+        gl_FragColor = vec4(s / ws, 1.0);
+      } else if (uMode.x < 1.5) {
+        vec3 c = 0.5 * (texture2D(uScene, vUV + o * vec2(-1.0, -1.0)).rgb + texture2D(uScene, vUV + o * vec2(1.0, -1.0)).rgb + texture2D(uScene, vUV + o * vec2(-1.0, 1.0)).rgb + texture2D(uScene, vUV + o * vec2(1.0, 1.0)).rgb) * 0.25
+          + 0.125 * (texture2D(uScene, vUV + o * vec2(-2.0, 0.0)).rgb + texture2D(uScene, vUV + o * vec2(2.0, 0.0)).rgb + texture2D(uScene, vUV + o * vec2(0.0, -2.0)).rgb + texture2D(uScene, vUV + o * vec2(0.0, 2.0)).rgb);
+        gl_FragColor = vec4(c, 1.0);
+      } else {
+        vec3 c = 4.0 * texture2D(uScene, vUV).rgb
+          + 2.0 * (texture2D(uScene, vUV + vec2(o.x, 0.0)).rgb + texture2D(uScene, vUV - vec2(o.x, 0.0)).rgb + texture2D(uScene, vUV + vec2(0.0, o.y)).rgb + texture2D(uScene, vUV - vec2(0.0, o.y)).rgb)
+          + texture2D(uScene, vUV + o).rgb + texture2D(uScene, vUV - o).rgb + texture2D(uScene, vUV + vec2(o.x, -o.y)).rgb + texture2D(uScene, vUV + vec2(-o.x, o.y)).rgb;
+        gl_FragColor = vec4(c / 16.0 * uMode.w, 1.0);
+      }
     }`;
   const ACC_FS = `
     precision highp float;
@@ -1147,12 +1513,13 @@
     const uint = gl.getExtension("OES_element_index_uint");
     // (what the trials ask of the machine)
     const ext = (...names) => { for (const nm of names) { const e = gl.getExtension(nm); if (e) return e; } return null; };
+    const UNITS = TRIALS ? gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS) : 8;   // (how many pictures a program may read at once)
     const aniso = res("aniso") ? ext("EXT_texture_filter_anisotropic", "WEBKIT_EXT_texture_filter_anisotropic", "MOZ_EXT_texture_filter_anisotropic") : null;
     const fragDepth = res("raymarch") ? ext("EXT_frag_depth") : null;
     const fl = res("raymarch") && ext("OES_texture_float") && ext("OES_texture_float_linear");
     const half = ext("OES_texture_half_float"), halfLinear = half && ext("OES_texture_half_float_linear");
     if (half) ext("EXT_color_buffer_half_float");
-    const post = !soft && (res("ss2") || res("accum") || res("fxaa") || res("cas"));
+    const post = !soft && (res("ss2") || res("accum") || res("fxaa") || res("cas") || LOOKS);
     const SS = res("ss2") ? 2 : 1;
     // (Without a graphics card, the programs' LITE version: the same picture
     // with fewer of its finest touches — no grain, no fields, no contours, no
@@ -1165,7 +1532,9 @@
     // (the trials' own programs, where they are asked for and the machine can)
     const heightBytes = !fl && !halfLinear;
     const rayP = fragDepth ? program(gl, RAY_VS, lite(RAY_FS).replace("#ifdef GL_FRAGMENT_PRECISION_HIGH", (heightBytes ? "#define HEIGHT_BYTES 1\n" : "") + "    #ifdef GL_FRAGMENT_PRECISION_HIGH")) : null;
-    const postP = post ? program(gl, POST_VS, POST_FS) : null, accP = post && res("accum") ? program(gl, POST_VS, ACC_FS) : null;
+    const postP = post ? program(gl, POST_VS, lite(LOOKS ? POST_FS.replace("#ifdef GL_FRAGMENT_PRECISION_HIGH", "#define LOOK 1\n    #ifdef GL_FRAGMENT_PRECISION_HIGH") : POST_FS)) : null, accP = post && res("accum") ? program(gl, POST_VS, ACC_FS) : null;
+    const bloomP = post && (res("bloom") || res("halation") || res("clarity")) ? program(gl, POST_VS, BLOOM_FS) : null;
+    const buildP = res("buildings") ? program(gl, BUILD_VS, lite(BUILD_FS)) : null;
     window.__tepeTrials = { res: [...RES], code: "uRes" in groundP.u || "uRound" in speckP.u, aniso: !!aniso, fragDepth: !!fragDepth, ray: !!rayP, heights: fl ? "float" : halfLinear ? "half" : "bytes", post: !!postP, acc: !!accP, half: !!half, error: window.__tepeShaderError || "" };
     let W = 1, H = 1, ratio = 1, G = null;
     const textures = {};
@@ -1198,6 +1567,7 @@
     const byteTex = (name, map, mip) => texture(name, () => { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, map.size, map.size, 0, gl.RGBA, gl.UNSIGNED_BYTE, map.data); wrap(gl.CLAMP_TO_EDGE); return mip; });
     const normalTex = () => (G.normalMap ? byteTex("normals", G.normalMap, true) : noiseTex());
     const trailTex = () => (G.trailMap ? byteTex("trailmap", G.trailMap, false) : noiseTex());
+    const canopyTex = () => (G.canopyPic ? texture("canopy", () => { gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, gl.LUMINANCE, gl.UNSIGNED_BYTE, G.canopyPic); wrap(gl.CLAMP_TO_EDGE); return true; }) : noiseTex());
     const lightTex = () => (G.lightPic ? texture("light", () => { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, G.lightPic); wrap(gl.CLAMP_TO_EDGE); return true; }) : noiseTex());
     const f16 = (() => { const f = new Float32Array(1), i = new Uint32Array(f.buffer); return (v) => { f[0] = v; const x = i[0], sg = (x >>> 16) & 0x8000, e = ((x >>> 23) & 0xff) - 112, m = x & 0x7fffff; if (e <= 0) return sg; if (e >= 31) return sg | 0x7c00; return sg | ((e << 10) + ((m + 0x1000) >>> 13)); }; })();
     const heightTex = () => texture("heightmap", () => {
@@ -1501,13 +1871,70 @@
       gl.uniform1f(u.uHazeFrom, look.hazeFrom == null ? 0 : look.hazeFrom);
       // (drawn into a picture to be laid down again, the steps are put in after: none here)
       gl.uniform4fv(u.uLook, [look.quiet && quietTex ? 1 : 0, drawingInto ? 0 : look.levels == null ? 40 : look.levels, look.dissolve ? 1 : 0, look.still ? 0 : 1]);
-      const s = look.sky || {};
+      const s = res("sky") ? { ...(look.sky || {}), ...SKY_REAL } : look.sky || {};
       gl.uniform3fv(u.uSkyZen, rgb(s.zen || [200, 211, 210]));
       gl.uniform3fv(u.uSkyHor, rgb(s.hor || [233, 228, 211]));
       gl.uniform3fv(u.uHaze, rgb(s.haze || [222, 222, 210]));
       gl.uniform3fv(u.uMistLit, rgb(s.mistLit || [248, 246, 238]));
       gl.uniform3fv(u.uMistShade, rgb(s.mistShade || [214, 216, 210]));
       gl.uniform3fv(u.uGlow, rgb(s.glow || [255, 244, 220]));
+      if (TRIALS) {
+        // (`haze`: the world's units are half-widths across, and top / LIFT up)
+        gl.uniform4fv(u.uAirM, [DATA.km / 2, (DATA.top / 1000) / (DATA.view ? DATA.view.lift : 0.42), AIR_KM, res("haze") ? 1 : 0]);
+        gl.uniform4fv(u.uSunM, [res("light") ? 1 : 0, 1, 1, SUN_LIGHT.bounce]);
+      }
+    }
+    // (`buildings`) Each footprint raised: its walls from a little under the
+    // lowest ground it stands on to its height over the highest, and a flat
+    // roof over them, cut into triangles by its ears.
+    function buildingsOf(p) {
+      const top = G.top || 1973, out = [];
+      const X = (u) => (u - p.centre[0]) / p.scale, Z = (v) => (v - p.centre[1]) / p.scale, Y = (hs) => (Math.max(0, hs) - p.base) * p.lift;
+      let seed = 11;
+      const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+      const put = (x, y, z, n, c) => out.push(x, y, z, n[0], n[1], n[2], c[0], c[1], c[2]);
+      G.osm.buildings.forEach((b) => {
+        let R = b.ring;
+        if (R.length < 3) return;
+        // (anticlockwise on the window's ground: u east, v south)
+        let area = 0;
+        for (let i = 0; i < R.length; i++) { const [a, c] = R[i], [d, e] = R[(i + 1) % R.length]; area += a * e - d * c; }
+        if (area < 0) R = R.slice().reverse();
+        const hs = R.map(([u, v]) => G.h(u, v));
+        const lo = Y(Math.min(...hs) - 3 / top), hi = Y(Math.max(...hs) + b.tall / top);
+        const mu = R.reduce((s, q) => s + q[0], 0) / R.length, mv = R.reduce((s, q) => s + q[1], 0) / R.length, seen = G.colourAt(mu, mv);
+        const k = 0.9 + 0.12 * rnd(), wall = BUILD_STONE.map((c) => c * k);
+        const roof = BUILD_SLATE.map((c, i) => c * 0.5 + (seen[i] / 255) * 0.5);
+        for (let i = 0; i < R.length; i++) {
+          const [u0, v0] = R[i], [u1, v1] = R[(i + 1) % R.length];
+          const x0 = X(u0), z0 = Z(v0), x1 = X(u1), z1 = Z(v1), l = Math.hypot(x1 - x0, z1 - z0) || 1;
+          const n = [(z1 - z0) / l, 0, -(x1 - x0) / l];
+          put(x0, lo, z0, n, wall); put(x1, lo, z1, n, wall); put(x1, hi, z1, n, wall);
+          put(x0, lo, z0, n, wall); put(x1, hi, z1, n, wall); put(x0, hi, z0, n, wall);
+        }
+        // the roof, ear by ear
+        const idx = R.map((_, i) => i), cross = (a, b, c) => (R[b][0] - R[a][0]) * (R[c][1] - R[a][1]) - (R[b][1] - R[a][1]) * (R[c][0] - R[a][0]);
+        const inTri = (p, a, b, c) => { const s1 = cross(a, b, p) >= 0, s2 = cross(b, c, p) >= 0, s3 = cross(c, a, p) >= 0; return s1 === s2 && s2 === s3; };
+        let guard = 0;
+        while (idx.length > 3 && guard++ < 400) {
+          let cut = false;
+          for (let i = 0; i < idx.length; i++) {
+            const a = idx[(i + idx.length - 1) % idx.length], b = idx[i], c = idx[(i + 1) % idx.length];
+            if (cross(a, b, c) <= 0) continue;
+            if (idx.some((q) => q !== a && q !== b && q !== c && inTri(q, a, b, c))) continue;
+            [a, b, c].forEach((q) => put(X(R[q][0]), hi, Z(R[q][1]), [0, 1, 0], roof));
+            idx.splice(i, 1);
+            cut = true;
+            break;
+          }
+          if (!cut) break;
+        }
+        if (idx.length === 3) idx.forEach((q) => put(X(R[q][0]), hi, Z(R[q][1]), [0, 1, 0], roof));
+      });
+      const data = new Float32Array(out), buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+      return { buf, count: data.length / 9 };
     }
     // The trials' uniforms and maps, for the ground and the ray (a piece `p`).
     function trials(prog, p, cam) {
@@ -1524,11 +1951,17 @@
       gl.activeTexture(gl.TEXTURE4); gl.bindTexture(gl.TEXTURE_2D, normalTex()); gl.uniform1i(u.uNormalMap, 4);
       gl.activeTexture(gl.TEXTURE5); gl.bindTexture(gl.TEXTURE_2D, lightTex()); gl.uniform1i(u.uLightMap, 5);
       gl.activeTexture(gl.TEXTURE6); gl.bindTexture(gl.TEXTURE_2D, trailTex()); gl.uniform1i(u.uTrailMap, 6);
+      // (the ninth of the machine's pictures at once: the ray's heights are the eighth)
+      const canopy = !!G.canopyPic && UNITS > 8;
+      gl.uniform1f(u.uCanopyOn, canopy ? 1 : 0);
+      gl.uniform1f(u.uSeaOn, res("sea") ? 1 : 0);
+      gl.uniform1f(u.uRockOn, res("rock") ? 1 : 0);
+      if (canopy) { gl.activeTexture(gl.TEXTURE8); gl.bindTexture(gl.TEXTURE_2D, canopyTex()); gl.uniform1i(u.uCanopy, 8); }
     }
 
     // ---------- THE PICTURE LAID DOWN AGAIN (the trials' `post`) ----------
     let tw = 1, th = 1, drawingInto = false, jit = null;
-    let sceneT = null, histA = null, histB = null, midT = null, accK = 0, lastCam = null;
+    let sceneT = null, histA = null, histB = null, midT = null, accK = 0, lastCam = null, bloomTs = [];
     const ACC_MOST = 16;             // `accum`: so many frames laid over each other, at most, while the camera barely moves
     const halton = (i, b) => { let f = 1, r = 0; while (i > 0) { f /= b; r += f * (i % b); i = Math.floor(i / b); } return r; };
     function targetOf(w, h, depth, halfFloat) {
@@ -1555,8 +1988,17 @@
     function targets() {
       const w = canvas.width * SS, h = canvas.height * SS;
       if (sceneT && sceneT.w === w && sceneT.h === h) return;
-      [sceneT, histA, histB, midT].forEach(drop);
-      sceneT = targetOf(w, h, true, false);
+      [sceneT, histA, histB, midT, ...bloomTs].forEach(drop);
+      // (the LOOKS: light to spare, in half floats where the machine has them)
+      sceneT = targetOf(w, h, true, LOOKS && !!half);
+      if (!sceneT.ok && LOOKS) { drop(sceneT); sceneT = targetOf(w, h, true, false); }
+      bloomTs = [];
+      if (bloomP) for (let i = 1, bw = canvas.width, bh = canvas.height; i <= BLOOM_STEPS; i++) {
+        bw = Math.max(1, Math.ceil(bw / 2)); bh = Math.max(1, Math.ceil(bh / 2));
+        let t = targetOf(bw, bh, false, !!half);
+        if (!t.ok) { drop(t); t = targetOf(bw, bh, false, false); }
+        bloomTs.push(t);
+      }
       if (accP) {
         histA = targetOf(w, h, false, !!half); histB = targetOf(w, h, false, !!half);
         if (!histA.ok || !histB.ok) { drop(histA); drop(histB); histA = targetOf(w, h, false, false); histB = targetOf(w, h, false, false); }
@@ -1564,10 +2006,11 @@
       midT = res("fxaa") && res("cas") ? targetOf(canvas.width, canvas.height, false, false) : null;
       accK = 0;
     }
-    function pass(prog, into, set) {
+    function pass(prog, into, set, add) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, into ? into.fb : null);
       gl.viewport(0, 0, into ? into.w : canvas.width, into ? into.h : canvas.height);
-      gl.disable(gl.DEPTH_TEST); gl.disable(gl.BLEND);
+      gl.disable(gl.DEPTH_TEST);
+      if (add) { gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE); } else gl.disable(gl.BLEND);
       gl.useProgram(prog.p);
       set(prog.u);
       attrib(prog, "aXY", quad, 2);
@@ -1622,15 +2065,47 @@
           accK++;
         }
         tw = canvas.width; th = canvas.height;
-        const out = (from, into, mode) => pass(postP, into, (u) => {
+        // (the glow: down a step at a time, the bright part kept at the first, and back up, each step added to the one above)
+        let glare = null;
+        if (bloomP && bloomTs.length) {
+          let from = src;
+          bloomTs.forEach((t, i) => {
+            pass(bloomP, t, (u) => {
+              gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, from.tex); gl.uniform1i(u.uScene, 2);
+              gl.uniform2fv(u.uTexel, [1 / from.w, 1 / from.h]);
+              gl.uniform4fv(u.uMode, [i ? 1 : 0, 0, 0, 0]);
+            });
+            from = t;
+          });
+          glare = bloomTs[bloomTs.length - 1];   // (the widest, before anything is added to it)
+          for (let i = bloomTs.length - 1; i > 0; i--) {
+            const t = bloomTs[i], into = bloomTs[i - 1];
+            pass(bloomP, into, (u) => {
+              gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, t.tex); gl.uniform1i(u.uScene, 2);
+              gl.uniform2fv(u.uTexel, [1 / t.w, 1 / t.h]);
+              gl.uniform4fv(u.uMode, [2, 0, 0, 1]);
+            }, true);
+          }
+        }
+        const out = (from, into, mode, last) => pass(postP, into, (u) => {
           common(postP, { yaw: 0, pitch: 0, eye: 1, eyeP: [0, 0, 0] }, look);
           gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, from.tex); gl.uniform1i(u.uScene, 2);
           gl.uniform2fv(u.uTexel, [1 / from.w, 1 / from.h]);
           gl.uniform4fv(u.uMode, mode);
+          if (LOOKS) {
+            gl.uniform1f(u.uLookOn, last ? 1 : 0);
+            gl.activeTexture(gl.TEXTURE4); gl.bindTexture(gl.TEXTURE_2D, bloomTs.length ? bloomTs[0].tex : noiseTex()); gl.uniform1i(u.uBloom, 4);
+            gl.activeTexture(gl.TEXTURE5); gl.bindTexture(gl.TEXTURE_2D, glare ? glare.tex : noiseTex()); gl.uniform1i(u.uGlare, 5);
+            const glow = bloomTs.length && res("bloom");
+            gl.uniform4fv(u.uFx, [LOOK.exposure * (res("agx") ? LOOK.agx : res("tonemap") ? LOOK.neutral : 1), glow ? BLOOM.mix : 0, res("vignette") ? LOOK.vignette : 0, res("grain") ? LOOK.grain : 0]);
+            gl.uniform4fv(u.uFx2, [res("aberration") ? LOOK.aberration * ratio : 0, res("agx") ? 2 : res("tonemap") ? 1 : 0, look.still ? 1 : Math.floor((look.time || 0) * 24) % 997, canvas.width / canvas.height]);
+            gl.uniform4fv(u.uFx3, [bloomTs.length && res("halation") ? LOOK.halation : 0, bloomTs.length && res("clarity") ? LOOK.clarity : 0, res("grade") ? 1 : 0, res("sensor") ? LOOK.sensor : 0]);
+            gl.uniform4fv(u.uFx4, [Math.max(1, LOOK.cell * ratio), glow ? BLOOM.glare : 0, Math.max(1, bloomTs.length), res("grain") || res("sensor") ? 1 : 0]);
+          }
         });
-        const down = src.w > canvas.width + 1 ? 2 : 1, sharp = res("cas") ? 0.6 : 0;
-        if (midT) { out(src, midT, [down, 1, 0, 0]); out(midT, null, [1, 0, sharp, 1]); }
-        else out(src, null, [down, res("fxaa") ? 1 : 0, sharp, 1]);
+        const down = src.w > canvas.width + 1 ? 2 : 1, sharp = res("cas") ? 0.6 : 0, steps = res("grain") || res("sensor") ? 0 : 1;
+        if (midT) { out(src, midT, [down, 1, 0, 0], false); out(midT, null, [1, 0, sharp, steps], true); }
+        else out(src, null, [down, res("fxaa") ? 1 : 0, sharp, steps], true);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       },
       /** How many pictures `accum` has laid over each other since the camera last moved. */
@@ -1702,6 +2177,20 @@
         gl.depthMask(true);
         gl.disable(gl.BLEND);
         ground();
+        // (`buildings`: the monasteries and the rest, on the ground)
+        if (buildP && G.osm) {
+          if (!p.built) p.built = buildingsOf(p);
+          const b = p.built;
+          gl.useProgram(buildP.p);
+          common(buildP, cam, look);
+          gl.uniformMatrix4fv(buildP.u.uM, false, M);
+          gl.uniform4fv(buildP.u.uWorld, [p.scale / G.SQ, (p.centre[0] - G.cu) / G.SQ, (p.centre[1] - G.cv) / G.SQ, p.lift]);
+          attrib(buildP, "aPos", b.buf, 3, gl.FLOAT, false, 36, 0);
+          attrib(buildP, "aNrm", b.buf, 3, gl.FLOAT, false, 36, 12);
+          attrib(buildP, "aCol", b.buf, 3, gl.FLOAT, false, 36, 24);
+          gl.drawArrays(gl.TRIANGLES, 0, b.count);
+          off(buildP);
+        }
         // (`raymarch`: over the mountain's square, the ground a ray finds)
         if (rayP && p.box && G.heightMap) {
           gl.useProgram(rayP.p);

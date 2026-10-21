@@ -148,10 +148,20 @@
   // over it.
   const res = GL.res || (() => false);
   const CLOSER = 1.32;
+  // (the realism trials that draw on more of the world's data say whose, in
+  // the mountain's credit, while they are asked for)
+  {
+    const said = [];
+    if (res("canopy")) said.push("Its trees’ crowns from the Canopy Height Map v2 of Meta and the World Resources Institute (CC BY 4.0).");
+    if (res("osmtrails") || res("buildings")) said.push("Its " + [res("osmtrails") && "footpaths", res("buildings") && "monasteries and buildings"].filter(Boolean).join(" and ") + " © OpenStreetMap contributors (ODbL 1.0), via the Overture Maps Foundation.");
+    const text = said.length && document.querySelector(".house-credit-ground .house-credit-text");
+    if (text) text.append(" " + said.join(" "));
+  }
   // (`clear`: the air between the eye and the mountain clearer — a third of
   // the haze and the mist, the banks fainter — for contrast is half of what
   // reads as sharp)
   const CLEAR_AIR = [0.13 * 0.4, 5.5 * 0.35, 30, 0.85];
+  const HAZE_AIR = [0.13, 5.5 * 0.6, 30, 0.85];
 
   // ---------- THE GROUND ----------
   const n = DATA.n;
@@ -235,7 +245,8 @@
     time: t, still: REDUCE, quiet,
     surface: SURFACE,
     speck: narrow ? SPECK_NARROW : SPECK_WIDE,
-    air: res("clear") ? CLEAR_AIR : AIR, hazeFrom: res("clear") ? HAZE_FROM * 1.4 : HAZE_FROM, sky: SKY, wind: WIND, cap: top3, mist: res("clear") ? MIST.alpha * 0.55 : MIST.alpha,
+    // (`haze`: the real air doing much of what the mist did, less of it)
+    air: res("clear") ? CLEAR_AIR : res("haze") ? HAZE_AIR : AIR, hazeFrom: res("clear") ? HAZE_FROM * 1.4 : HAZE_FROM, sky: SKY, wind: WIND, cap: top3, mist: res("clear") ? MIST.alpha * 0.55 : res("haze") ? MIST.alpha * 0.7 : MIST.alpha,
     levels: res("nodither") ? 0 : res("levels") ? 128 : DITHER.levels, grain: res("nodither") ? 0 : DITHER.grain, ditherPx: res("ditherfine") ? 1 / ratio : DITHER.px,
   });
   const clock = () => (REDUCE ? 0 : (performance.now() / 1000) % 3000);
