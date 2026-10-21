@@ -143,6 +143,58 @@
   // at all — `#ifdef TRIALS` — nor their arithmetic on the processor: the
   // page draws exactly as it did, at its own speed.)
   const TRIALS = RES.size > 0;
+  // THE LOOKS (2026-10-21, last — "i want you to add effects to it too, so
+  // that it looks unique, and not entirely lifelike ... should not be 1:1
+  // but rather inspiration ... a temporary setting on the bottom right of
+  // the page where i can cycle through them"): `style` in `?res=` puts the
+  // panel on the page (tepe.js) and these in the programs, each changed
+  // while the page is open, nothing made again for it —
+  //   a colour   THE SUNSET GRADIENT: the light and the height turned into a
+  //              gradient — a magenta sky, an indigo sea, cyan at the coast,
+  //              teal and green land, peach on the ridges and in the sun;
+  //              INFRARED FILM, as Kodak's Aerochrome saw: what grows crimson
+  //              (by the satellite's own near-infrared, its NDVI, over the
+  //              mountain), the sky a deep blue; a TWO-INK PRINT, a deep blue
+  //              and an orange on paper, in few tones;
+  //   a texture  HALFTONE DOTS (four inks on their own screens, each a little
+  //              out of register as a risograph prints them), the page's
+  //              DIGITAL DITHER, ENGRAVED LINES (the heights and the sea's
+  //              depths in fine lines, thicker where it is darker, as a map
+  //              or a banknote is engraved), FILM GRAIN;
+  //   extras     a GLOWING COASTLINE, the air in the gradient's colours
+  //              (COLOUR HAZE), GLOWING CONTOURS, the colours DRIFTING.
+  // (The line art over it is the page's, tepe.js's.)
+  const STYLE = res("style");
+  const PAPER_INK = [0.95, 0.92, 0.84], INK_A = [0.12, 0.22, 0.48], INK_B = [0.97, 0.45, 0.2];
+  const inks = (a, b) => PAPER_INK.map((p, i) => p * (1 - a * (1 - INK_A[i])) * (1 - b * (1 - INK_B[i])));   // (so much of each ink on the paper)
+  // Each a ramp of five for the sky (horizon to the top), the sea (by the
+  // coast to the deep) and the land (in shade and low to sunlit and high).
+  const PALETTES = {
+    sunset: {
+      mode: 1,
+      sky: [[1.0, 0.7, 0.57], [0.97, 0.46, 0.57], [0.8, 0.25, 0.56], [0.5, 0.14, 0.5], [0.22, 0.07, 0.34]],
+      sea: [[0.34, 0.9, 0.86], [0.1, 0.56, 0.7], [0.17, 0.31, 0.63], [0.24, 0.17, 0.51], [0.13, 0.07, 0.32]],
+      land: [[0.03, 0.14, 0.22], [0.05, 0.34, 0.38], [0.18, 0.56, 0.43], [0.78, 0.75, 0.46], [1.0, 0.58, 0.48]],
+      glow: [1.0, 0.78, 0.6], cloud: [1.0, 0.8, 0.82], coast: [1.0, 0.7, 0.52], contour: [1.0, 0.86, 0.72], mistLit: [1.0, 0.82, 0.76], mistShade: [0.78, 0.52, 0.7],
+    },
+    infrared: {
+      mode: 2,
+      sky: [[0.66, 0.82, 0.92], [0.42, 0.66, 0.88], [0.22, 0.46, 0.8], [0.12, 0.28, 0.64], [0.05, 0.14, 0.44]],
+      sea: [[0.3, 0.5, 0.72], [0.1, 0.2, 0.44], [0.04, 0.09, 0.27], [0.02, 0.05, 0.18], [0.01, 0.03, 0.12]],
+      land: [[0.1, 0.14, 0.2], [0.36, 0.44, 0.48], [0.62, 0.7, 0.7], [0.86, 0.88, 0.84], [1.0, 0.97, 0.92]],
+      glow: [0.85, 0.92, 1.0], cloud: [0.93, 0.96, 1.0], coast: [1.0, 0.42, 0.64], contour: [1.0, 0.78, 0.88], mistLit: [0.88, 0.93, 0.98], mistShade: [0.55, 0.64, 0.8],
+    },
+    print: {
+      mode: 3,
+      sky: [inks(0, 0.45), inks(0.05, 0.22), inks(0.18, 0.05), inks(0.34, 0), inks(0.55, 0)],
+      sea: [inks(0.25, 0), inks(0.45, 0), inks(0.62, 0), inks(0.78, 0.05), inks(0.9, 0.12)],
+      land: [inks(1, 0.4), inks(0.8, 0.05), inks(0.38, 0.2), inks(0.06, 0.7), inks(0, 0.25)],
+      glow: inks(0, 0.12), cloud: PAPER_INK, coast: INK_B, contour: [0.95, 0.82, 0.62], mistLit: PAPER_INK, mistShade: inks(0.18, 0.08),
+    },
+  };
+  const ENGRAVE_PX = 3.2;          // css px between the engraved lines
+  const HALFTONE = { cell: 2.7, register: 0.8 };   // css px: the screens' cell, and how far out of register the inks are
+  const DRIFT_EVERY = 80;          // s: the colours' drift, there and back
   // THE TRIALS OF ITS REALISM (2026-10-21, later — "I want it to feel as
   // realistic as possible. I then want you to research ways to add effects
   // that hide it being lower quality"): the same words in `?res=`. Those
@@ -158,7 +210,7 @@
   // noise (`sensor`) in place of the dither's steps, with one invisible step
   // of the screen's own at random under it.
   const LOOK_FX = ["tonemap", "agx", "grain", "sensor", "bloom", "halation", "vignette", "aberration", "clarity", "grade"];
-  const LOOKS = LOOK_FX.some(res);
+  const LOOKS = LOOK_FX.some(res) || STYLE;   // (the looks' textures are done to the finished picture too)
   const LOOK = { exposure: 1, neutral: 1.12, agx: 1.6, vignette: 0.08, grain: 0.03, cell: 0.8, aberration: 0.35, halation: 0.08, clarity: 0.2, sensor: 0.05 };
   // (the page's colours are the screen's, not light to spare: each film's
   // curve is given a little more of it — the neutral one takes 4% off the
@@ -299,8 +351,10 @@
     // (`canopy`: the trees' own crowns, lit by the page's sun, as a share of the light within each of the satellite's pixels)
     const canopySrc = res("canopy") ? TRIAL + "canopy.jpg" : null;
     const osmSrc = res("osmtrails") || res("buildings") ? TRIAL + "athos-osm.json" : null;
+    // (`style`: what grows, by the satellite's own near-infrared — for infrared film)
+    const ndviSrc = STYLE ? TRIAL + "ndvi.png" : null;
     const json = (src) => fetch(src).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-    groundPromise = Promise.all([load(root + encodeURI(DATA.heights)), load(root + encodeURI(photoSrc)), load(root + encodeURI("images/Apoteker Tepe/Apoteker Tepe Logo.webp")), fineSrc ? load(root + encodeURI(TRIAL + fineSrc)) : null, lightSrc ? load(root + encodeURI(lightSrc)) : null, canopySrc ? load(root + encodeURI(canopySrc)) : null, osmSrc ? json(root + encodeURI(osmSrc)) : null]).then(([heights, photo, logo, finePic, lightPic, canopyPic, osm]) => {
+    groundPromise = Promise.all([load(root + encodeURI(DATA.heights)), load(root + encodeURI(photoSrc)), load(root + encodeURI("images/Apoteker Tepe/Apoteker Tepe Logo.webp")), fineSrc ? load(root + encodeURI(TRIAL + fineSrc)) : null, lightSrc ? load(root + encodeURI(lightSrc)) : null, canopySrc ? load(root + encodeURI(canopySrc)) : null, osmSrc ? json(root + encodeURI(osmSrc)) : null, ndviSrc ? load(root + encodeURI(ndviSrc)) : null]).then(([heights, photo, logo, finePic, lightPic, canopyPic, osm, ndviPic]) => {
       // (`osmtrails`: the real footpaths, in place of the page's, before anything reads them)
       if (osm && res("osmtrails") && DATA.trails) { DATA.trails.length = 0; osm.trails.forEach((t) => DATA.trails.push(t.pts)); }
       // THE HEIGHTS, out of their picture: red the high byte, green the low.
@@ -509,7 +563,7 @@
         trailMap = { size: P, data: out, reach: REACH };
       }
       return {
-        normalMap, heightMap, trailMap, lightPic, canopyPic, osm, L0, F, FN,
+        normalMap, heightMap, trailMap, lightPic, canopyPic, osm, ndviPic, L0, F, FN,
         n, H, at, h, athos, proc, hollowAt, tex, colourAt, landAt, landColour, sign, noise, cu, cv, SQ,
         LIFT: DATA.view ? DATA.view.lift : 0.42, WORLD, summit: DATA.summit, trails: DATA.trails, places: DATA.places || {}, figure: DATA.figure, top: DATA.top, view: DATA.view,
       };
@@ -589,6 +643,103 @@
       return pow(clamp(a * E, 0.0, 1.0), vec3(1.0 / 2.2));
     }
     #endif
+    #ifdef STYLE
+    // THE LOOKS' COLOURS (\`style\`): uStyle — the colour (0 the real, 1 the
+    // sunset gradient, 2 infrared film, 3 the two-ink print), the
+    // gradient's sky drawn (0 or 1), the coastline's glow, the contours';
+    // uStyle2 — engraved (0 or 1), the drift's turn of the hue, its shift
+    // along the ramps, how much of the specks is drawn; uStyle3 — the
+    // engraved lines' spacing (device px), the near-infrared read (0 or 1).
+    uniform vec4 uStyle, uStyle2, uStyle3;
+    uniform vec3 uPal[15];   // the ramps: the sky (0 to 4), the sea (5 to 9), the land (10 to 14)
+    float lumaOf(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
+    vec3 ramp5(float t, vec3 a, vec3 b, vec3 c, vec3 d, vec3 e) {
+      t = clamp(t, 0.0, 1.0) * 4.0;
+      vec3 r = mix(a, b, clamp(t, 0.0, 1.0));
+      r = mix(r, c, clamp(t - 1.0, 0.0, 1.0));
+      r = mix(r, d, clamp(t - 2.0, 0.0, 1.0));
+      return mix(r, e, clamp(t - 3.0, 0.0, 1.0));
+    }
+    // (the print in terraces of tone, as few as two inks give)
+    float terraced(float t) {
+      if (uStyle.x < 2.5) return t;
+      float k = clamp(t, 0.0, 1.0) * 4.0;
+      return (floor(k) + smoothstep(0.36, 0.64, fract(k))) / 4.0;
+    }
+    vec3 turnHue(vec3 c, float a) {
+      vec3 k = vec3(0.57735);
+      float ca = cos(a);
+      return c * ca + cross(k, c) * sin(a) + k * dot(k, c) * (1.0 - ca);
+    }
+    // THE DRIFT: the gradient's hue turned a little and back; with the real
+    // colours, the day's light a little warmer and a little cooler.
+    vec3 drifted(vec3 c) {
+      if (abs(uStyle2.y) < 1e-4) return c;
+      if (uStyle.x < 0.5) return c * (1.0 + uStyle2.y * vec3(0.28, 0.02, -0.28));
+      return max(turnHue(c, uStyle2.y), vec3(0.0));
+    }
+    vec3 paletteSky(vec3 d) {
+      float t = pow(clamp(d.y / 0.06, 0.0, 1.0), 0.8) + uStyle2.z * 0.5;   // (the window shows little sky: the gradient whole within it)
+      vec3 c = ramp5(terraced(t), uPal[0], uPal[1], uPal[2], uPal[3], uPal[4]);
+      float s = max(dot(d, uSun), 0.0);
+      return drifted(c + uGlow * (pow(s, 6.0) * 0.16 + pow(s, 40.0) * 0.2));
+    }
+    // What stands behind the drawing, for its quiet behind the writing.
+    vec3 behind(vec3 d) { return uStyle.y > 0.5 ? paletteSky(d) : skyOf(d); }
+    // THE LAND in the look: \`lit\` as the page lights it, its own colour, its
+    // height (a share of the top) and what grows there (NDVI, or under -0.5
+    // where it is not known and is guessed off the colour).
+    vec3 styleLand(vec3 lit, vec3 albedo, float h, float ndvi) {
+      if (uStyle.x < 0.5) return drifted(lit);
+      float L = lumaOf(lit);
+      if (uStyle.x < 2.5 && uStyle.x > 1.5) {
+        // INFRARED FILM: the near-infrared printed red, the red green and the
+        // green blue — so what grows, which gives back most of the infrared,
+        // comes out crimson, and the rock pale.
+        vec3 a = pow(max(albedo, vec3(0.0)), vec3(2.2));
+        float v = ndvi < -0.5 ? clamp(0.12 + (a.g - a.r) / (a.g + a.r + 0.02) * 2.6, -0.2, 0.85) : ndvi;
+        float nir = clamp(a.r * (1.0 + v) / max(1.0 - v, 0.15), 0.0, 0.75);
+        vec3 film = pow(vec3(nir * 1.3, a.r * 1.1, a.g * 1.05 + 0.012 * (1.0 - v)), vec3(1.0 / 2.2));
+        float lightK = L / max(lumaOf(albedo), 0.02);
+        film *= lightK;
+        // (the film's dyes: the reds deeper, a little magenta in them)
+        float red = clamp((film.r - film.g) * 2.2, 0.0, 1.0);
+        film = mix(film, film * vec3(1.08, 0.78, 0.95), red * 0.6);
+        return drifted(film);
+      }
+      float t = clamp((L - 0.1) / 0.55, 0.0, 1.0) * 0.72 + clamp(h, 0.0, 1.0) * 0.4 - 0.04 + uStyle2.z;
+      return drifted(ramp5(terraced(t), uPal[10], uPal[11], uPal[12], uPal[13], uPal[14]));
+    }
+    // THE SEA in the look: by how deep it is, the gradient's sky in it
+    // towards the horizon, and its own ripples and glints kept.
+    vec3 styleSea(vec3 real, float depth, vec3 vd) {
+      if (uStyle.x < 0.5) return drifted(real);
+      float t = smoothstep(0.0, 0.035, depth) * 0.9 + uStyle2.z;
+      vec3 c = ramp5(terraced(t), uPal[5], uPal[6], uPal[7], uPal[8], uPal[9]);
+      float F = 0.02 + 0.98 * pow(1.0 - clamp(-vd.y, 0.0, 1.0), 5.0);
+      vec3 up = vec3(vd.x, abs(vd.y), vd.z);
+      c = mix(c, ramp5(terraced(pow(clamp(up.y / 0.06, 0.0, 1.0), 0.8)), uPal[0], uPal[1], uPal[2], uPal[3], uPal[4]), F * 0.55);
+      float L = lumaOf(real);
+      c *= 0.82 + 0.36 * clamp(L / 0.62, 0.0, 1.4);
+      return drifted(c + max(L - 0.85, 0.0) * vec3(1.0, 0.9, 0.8));
+    }
+    // ENGRAVED: the tone in lines along m (the heights or the depths, in
+    // metres; the sky's own rows), as many to the window wherever they are —
+    // a pair of the lines' scales, each twice the other, faded between — each
+    // line as thick as the place is dark.
+    vec3 engravedAt(vec3 col, float m, float fw) {
+      float L = clamp(lumaOf(col), 0.0, 1.0);
+      float share = clamp(1.0 - L * 1.15, 0.05, 0.92);
+      fw = max(fw, 1e-5);
+      float k = log2(fw * uStyle3.x), k0 = floor(k), f = k - k0, cover = 0.0;
+      for (int i = 0; i < 2; i++) {
+        float I = exp2(k0 + float(i)), sp = I / fw;
+        float d = abs(fract(m / I + 0.5) - 0.5) * sp, w = share * sp * 0.5;
+        cover += (1.0 - smoothstep(w - 0.6, w + 0.6, d)) * (i == 0 ? 1.0 - f : f);
+      }
+      return mix(col * 1.22 + 0.05, col * 0.28, cover);
+    }
+    #endif
     float stepAt() {
       #ifdef TRIALS
       if (uBlueOn > 0.5) return texture2D(uNoise, (floor(gl_FragCoord.xy / uFrame.z) + 0.5) / 256.0).a;
@@ -658,6 +809,9 @@
     void main() {
       vec3 d = normalize(vDir);
       vec3 c = skyOf(d);
+      #ifdef STYLE
+      if (uStyle.y > 0.5) c = paletteSky(d);
+      #endif
       // High cloud, drifting very slowly.
       #ifndef LITE
       if (d.y > 0.0) {
@@ -665,6 +819,10 @@
         float cl = smoothstep(0.5, 0.86, texture2D(uNoise, q * 0.45).b * 0.7 + texture2D(uNoise, q * 1.6).r * 0.42);
         c = mix(c, uCloud, cl * 0.34 * smoothstep(0.015, 0.22, d.y));
       }
+      #endif
+      #ifdef STYLE
+      // (engraved: the sky in level rows, as an engraver rules it)
+      if (uStyle2.x > 0.5) c = engravedAt(c, gl_FragCoord.y, 1.0);
       #endif
       gl_FragColor = vec4(digital(c), 1.0);
     }`;
@@ -702,6 +860,10 @@
     uniform vec3 uLight2;   // relief shading's second light, from the window's upper left
     uniform float uMapPx;
     uniform float uShore;   // the coast a pixel at a time (0 or 1), off the heights near the sea in the normals' fourth channel
+    #endif
+    #ifdef STYLE
+    uniform sampler2D uNdvi;   // what grows: the satellite's NDVI, -0.2 to 0.9 as 0 to 1
+    uniform vec3 uCoast, uContour;
     #endif
     vec3 landOf(vec2 w, float h, vec3 n) {
       #ifdef LITE
@@ -896,6 +1058,9 @@
       }
       #endif
       #endif
+      #ifdef STYLE
+      vec3 landLit = col;
+      #endif
       // THE WATER, where the land lies under it: the sky in it, a glint of
       // the sun, the shallows paler and a line where it meets the land.
       #ifdef LITE
@@ -936,6 +1101,14 @@
         col = mix(col, water, smoothstep(-0.0004, 0.0008, depth));
       }
       #endif
+      #ifdef STYLE
+      // THE LOOK'S COLOUR, the land and the sea each its own way.
+      if (uStyle.x > 0.5) {
+        float wf = depth > -0.0004 ? smoothstep(-0.0004, 0.0008, depth) : 0.0;
+        float ndvi = uStyle3.y > 0.5 && sq > 0.5 ? texture2D(uNdvi, uv).r * 1.1 - 0.2 : -1.0;
+        col = mix(styleLand(landLit, albedo, h, ndvi), styleSea(col, max(depth, 0.0), vd), wf);
+      } else col = drifted(col);
+      #endif
       col = throughAir(col, P, w, vd, dist, sky);
       #if defined(GL_OES_standard_derivatives) && !defined(LITE) && defined(TRIALS)
       // THE TRAILS, drawn into the ground: a line of so many pixels however
@@ -954,6 +1127,14 @@
         col = mix(col, vec3(0.541, 0.227, 0.149) * (0.75 + 0.3 * lightness), core * dash * 0.92 * near);
       }
       #endif
+      #ifdef STYLE
+      #if defined(GL_OES_standard_derivatives) && !defined(LITE)
+      // ENGRAVED: along the heights over the sea and the depths under it (metres)
+      if (uStyle2.x > 0.5) { float m = -depth * uRes3.y; col = engravedAt(col, m, fwidth(m)); }
+      #endif
+      // (behind the writing, it goes the way to the gradient's sky, where that is drawn)
+      sky = behind(vd);
+      #endif
       return col;
     }
   `;
@@ -970,6 +1151,36 @@
       // one in front of it.
       col = mix(sky, col, quietHere());
       gl_FragColor = vec4(digital(col), 1.0);
+    }`;
+  // THE LOOKS' GLOWING LINES (`style`): the ground drawn again over its
+  // specks, adding only light — the COASTLINE, a line a few pixels wide where
+  // the land meets the sea and a fainter glow round it, and the CONTOURS,
+  // every 100 m and every 500 m brighter — as many pixels wide however far
+  // off, fainter into the haze, hidden by the ground in front, losing their
+  // opacity behind the writing with the rest.
+  const GLOW_FS = GROUND_LIB + `
+    varying vec3 vPos; varying vec3 vNrm; varying vec2 vUV; varying vec4 vMore;
+    void main() {
+      if (uLook.z > 0.5 && vMore.y < stepAt() * 0.998 + 0.002) discard;
+      vec2 uv = vUV, e2 = min(uv, 1.0 - uv);
+      float depth = vMore.z, sq = smoothstep(0.0, 0.006, min(e2.x, e2.y));
+      if (uShore > 0.5 && sq > 0.5) {
+        float hp = texture2D(uNormalMap, uv).a * ${SHORE_TOP.toFixed(3)};
+        float nearL = texture2D(uNormalMap, uv, 3.0).a;
+        depth = hp > 0.0006 ? -hp : max(depth, 0.0002 + (0.0006 - hp) + 0.006 * (1.0 - smoothstep(0.0, 0.08, nearL)));
+      }
+      float m = -depth * uRes3.y;   // (metres over the sea, less than nothing under it)
+      vec3 glow = vec3(0.0);
+      #if defined(GL_OES_standard_derivatives) && !defined(LITE)
+      float fw = max(fwidth(m), 1e-4), px = abs(m) / fw;
+      glow += uCoast * (exp(-px * px / 3.5) * 0.95 + exp(-px / 8.0) * 0.3) * uStyle.z;
+      float minor = isoLine(m / 100.0, 1.0) * (1.0 - smoothstep(0.25, 0.5, fwidth(m / 100.0)));
+      float major = isoLine(m / 500.0, 1.4), halo = isoLine(m / 500.0, 5.0);
+      glow += uContour * (minor * 0.3 + major * 0.7 + halo * 0.12) * uStyle.w * smoothstep(4.0, 12.0, m);
+      #endif
+      vec3 v = vPos - uEyeP;
+      glow *= exp(-max(0.0, length(v) - uHazeFrom) * uAir.x * 0.8) * quietHere();
+      gl_FragColor = vec4(glow, 0.0);
     }`;
   // THE GROUND FOUND BY A RAY (`raymarch`): over the mountain's square, the
   // faces of a box round it drawn, and from each a ray marched on through
@@ -1075,6 +1286,9 @@
     uniform sampler2D uLightMap, uCanopy;
     uniform float uCanopyOn;
     varying vec3 vNrm; varying float vAo;
+    #ifdef STYLE
+    uniform sampler2D uNdvi;
+    #endif
     vec3 speckLight(vec3 albedo, vec2 w) {
       vec3 n = normalize(vNrm);
       vec2 uv = vec2(vPos.x * uSq.x + uSq.y, vPos.z * uSq.x + uSq.z), e2 = min(uv, 1.0 - uv);
@@ -1111,13 +1325,23 @@
       float dist = length(v);
       vec3 d = v / dist;
       vec3 sky = skyOf(d);
-      #ifdef TRIALS
+      #ifdef STYLE
+      vec2 suv = vec2(vPos.x * uSq.x + uSq.y, vPos.z * uSq.x + uSq.z), se = min(suv, 1.0 - suv);
+      float ndvi = uStyle3.y > 0.5 && min(se.x, se.y) > 0.003 ? texture2D(uNdvi, suv, 1.5).r * 1.1 - 0.2 : -1.0;
+      vec3 col = throughAir(styleLand(speckLight(vCol, w), vCol, vPos.y / uWorld.w, ndvi), vPos, w, d, dist, sky);
+      sky = behind(d);
+      #elif defined(TRIALS)
       vec3 col = throughAir(speckLight(vCol, w), vPos, w, d, dist, sky);
       #else
       vec3 col = throughAir(vCol * cloudShade(w), vPos, w, d, dist, sky);
       #endif
       col = mix(sky, col, quietHere());
       float a = (uLook.z > 0.5 ? 1.0 : vA) * cover;
+      #ifdef STYLE
+      // (engraved, the lines are the ground's alone: no specks over them)
+      a *= uStyle2.w;
+      if (a <= 0.0) discard;
+      #endif
       gl_FragColor = vec4(digital(col) * a, a);
     }`;
   const MIST_VS = `
@@ -1211,7 +1435,13 @@
       #ifdef TRIALS
       if (uSunM.x > 0.5) col = sunLit(vCol, n, lam, 1.0, 0.75 + 0.25 * n.y, cloud, 0.95);
       #endif
+      #ifdef STYLE
+      col = styleLand(col, vCol, vPos.y / uWorld.w, 0.0);
       col = throughAir(col, vPos, w, d, dist, sky);
+      sky = behind(d);
+      #else
+      col = throughAir(col, vPos, w, d, dist, sky);
+      #endif
       col = mix(sky, col, quietHere());
       gl_FragColor = vec4(digital(col), 1.0);
     }`;
@@ -1370,11 +1600,47 @@
       }
       return o;
     }
+    #ifdef STYLE
+    // HALFTONE DOTS (the looks): the picture printed in four inks — cyan,
+    // magenta, yellow and black — each on a screen of its own turned to its
+    // own angle (15°, 75°, 0°, 45°), a dot as large as the ink's share,
+    // its holes as small once more than half is ink; and the three colours
+    // a little out of register, as a risograph prints them: each laid a
+    // part of a pixel off the black, and its share read there.
+    uniform vec4 uHalf;     // on (0 or 1), the cell (device px), out of register (device px), -
+    float screenOf(vec2 px, float ang, float cell, float v) {
+      float s = sin(ang), co = cos(ang);
+      vec2 q = vec2(co * px.x - s * px.y, s * px.x + co * px.y) / cell;
+      float aa = 0.8 / cell;
+      v = clamp(v, 0.0, 1.0);
+      if (v < 0.5) { float r = sqrt(v / 3.14159); return 1.0 - smoothstep(r - aa, r + aa, length(fract(q) - 0.5)); }
+      float r = sqrt((1.0 - v) / 3.14159);
+      return smoothstep(r - aa, r + aa, length(fract(q + 0.5) - 0.5));
+    }
+    vec3 halftone(vec3 c, vec2 uv) {
+      vec2 px = gl_FragCoord.xy;
+      float cell = uHalf.y, o = uHalf.z;
+      vec3 here = tap(uv);
+      vec2 oc = vec2(o, 0.35 * o), om = vec2(-0.6 * o, 0.8 * o), oy = vec2(-0.3 * o, -0.9 * o);
+      vec3 cc = clamp(c + tap(uv + oc * uTexel) - here, 0.0, 1.0), cm = clamp(c + tap(uv + om * uTexel) - here, 0.0, 1.0), cy = clamp(c + tap(uv + oy * uTexel) - here, 0.0, 1.0);
+      c = clamp(c, 0.0, 1.0);
+      // (the black only for the darkest, as a riso's colours are printed: the
+      // rest of the dark in the three colours, so it stays coloured)
+      float K = 1.0 - max(c.r, max(c.g, c.b)), k = 0.7 * pow(K, 2.2), kk = max(1.0 - k, 1e-3);
+      float C = (1.0 - cc.r - k) / kk, M = (1.0 - cm.g - k) / kk, Y = (1.0 - cy.b - k) / kk;
+      float dc = screenOf(px + oc, 0.2618, cell, C), dm = screenOf(px + om, 1.309, cell, M), dy = screenOf(px + oy, 0.0, cell, Y), dk = screenOf(px, 0.7854, cell, k);
+      return vec3(1.0, 0.985, 0.955) * vec3(1.0 - dc, 1.0 - dm, 1.0 - dy) * (1.0 - dk);
+    }
+    #endif
     #endif
     void main() {
       vec3 c = uMode.y > 0.5 ? fxaa(vUV) : uMode.z > 0.0 ? cas(vUV, uMode.z) : tap(vUV);
       #ifdef LOOK
       if (uLookOn > 0.5) c = lookOf(c, vUV);
+      #ifdef STYLE
+      // (behind the writing, the dots go as the drawing does: faint, so the words read)
+      if (uLookOn > 0.5 && uHalf.x > 0.5) c = mix(c, halftone(c, vUV), 0.12 + 0.88 * quietHere());
+      #endif
       #endif
       gl_FragColor = vec4(uMode.w > 0.5 ? digital(c) : c, 1.0);
     }`;
@@ -1525,7 +1791,7 @@
     // with fewer of its finest touches — no grain, no fields, no contours, no
     // ripples, the clouds' shadows and the mist's wisps simpler.)
     // (And with a trial asked for, its code: `#define TRIALS`.)
-    const lite = (fs) => (soft || TRIALS ? fs.replace("#ifdef GL_FRAGMENT_PRECISION_HIGH", (soft ? "#define LITE 1\n" : "") + (TRIALS ? "#define TRIALS 1\n" : "") + "    #ifdef GL_FRAGMENT_PRECISION_HIGH") : fs);
+    const lite = (fs) => (soft || TRIALS ? fs.replace("#ifdef GL_FRAGMENT_PRECISION_HIGH", (soft ? "#define LITE 1\n" : "") + (TRIALS ? "#define TRIALS 1\n" : "") + (STYLE ? "#define STYLE 1\n" : "") + "    #ifdef GL_FRAGMENT_PRECISION_HIGH") : fs);
     const vert = (vs) => (TRIALS ? "#define TRIALS 1\n" + vs : vs);
     const skyP = program(gl, SKY_VS, lite(SKY_FS)), groundP = program(gl, GROUND_VS, lite(GROUND_FS)), speckP = program(gl, vert(SPECK_VS), lite(SPECK_FS)), mistP = program(gl, MIST_VS, lite(MIST_FS));
     if (!skyP || !groundP || !speckP || !mistP) return null;
@@ -1535,7 +1801,9 @@
     const postP = post ? program(gl, POST_VS, lite(LOOKS ? POST_FS.replace("#ifdef GL_FRAGMENT_PRECISION_HIGH", "#define LOOK 1\n    #ifdef GL_FRAGMENT_PRECISION_HIGH") : POST_FS)) : null, accP = post && res("accum") ? program(gl, POST_VS, ACC_FS) : null;
     const bloomP = post && (res("bloom") || res("halation") || res("clarity")) ? program(gl, POST_VS, BLOOM_FS) : null;
     const buildP = res("buildings") ? program(gl, BUILD_VS, lite(BUILD_FS)) : null;
-    window.__tepeTrials = { res: [...RES], code: "uRes" in groundP.u || "uRound" in speckP.u, aniso: !!aniso, fragDepth: !!fragDepth, ray: !!rayP, heights: fl ? "float" : halfLinear ? "half" : "bytes", post: !!postP, acc: !!accP, half: !!half, error: window.__tepeShaderError || "" };
+    // (the looks' glowing lines, drawn again over the ground: not without a graphics card)
+    const glowP = STYLE && !soft ? program(gl, GROUND_VS, lite(GLOW_FS)) : null;
+    window.__tepeTrials = { res: [...RES], code: "uRes" in groundP.u || "uRound" in speckP.u, aniso: !!aniso, fragDepth: !!fragDepth, ray: !!rayP, heights: fl ? "float" : halfLinear ? "half" : "bytes", post: !!postP, acc: !!accP, half: !!half, style: STYLE && "uStyle" in groundP.u, glow: !!glowP, error: window.__tepeShaderError || "" };
     let W = 1, H = 1, ratio = 1, G = null;
     const textures = {};
     const quad = gl.createBuffer();
@@ -1568,6 +1836,7 @@
     const normalTex = () => (G.normalMap ? byteTex("normals", G.normalMap, true) : noiseTex());
     const trailTex = () => (G.trailMap ? byteTex("trailmap", G.trailMap, false) : noiseTex());
     const canopyTex = () => (G.canopyPic ? texture("canopy", () => { gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, gl.LUMINANCE, gl.UNSIGNED_BYTE, G.canopyPic); wrap(gl.CLAMP_TO_EDGE); return true; }) : noiseTex());
+    const ndviTex = () => (G.ndviPic ? texture("ndvi", () => { gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, gl.LUMINANCE, gl.UNSIGNED_BYTE, G.ndviPic); wrap(gl.CLAMP_TO_EDGE); return true; }) : noiseTex());
     const lightTex = () => (G.lightPic ? texture("light", () => { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, G.lightPic); wrap(gl.CLAMP_TO_EDGE); return true; }) : noiseTex());
     const f16 = (() => { const f = new Float32Array(1), i = new Uint32Array(f.buffer); return (v) => { f[0] = v; const x = i[0], sg = (x >>> 16) & 0x8000, e = ((x >>> 23) & 0xff) - 112, m = x & 0x7fffff; if (e <= 0) return sg; if (e >= 31) return sg | 0x7c00; return sg | ((e << 10) + ((m + 0x1000) >>> 13)); }; })();
     const heightTex = () => texture("heightmap", () => {
@@ -1871,7 +2140,11 @@
       gl.uniform1f(u.uHazeFrom, look.hazeFrom == null ? 0 : look.hazeFrom);
       // (drawn into a picture to be laid down again, the steps are put in after: none here)
       gl.uniform4fv(u.uLook, [look.quiet && quietTex ? 1 : 0, drawingInto ? 0 : look.levels == null ? 40 : look.levels, look.dissolve ? 1 : 0, look.still ? 0 : 1]);
-      const s = res("sky") ? { ...(look.sky || {}), ...SKY_REAL } : look.sky || {};
+      let s = res("sky") ? { ...(look.sky || {}), ...SKY_REAL } : look.sky || {};
+      // (the looks' COLOUR HAZE: the air, the haze and the mist in the gradient's colours)
+      const st = STYLE ? styleOf(look) : null;
+      if (st && st.haze) s = { ...s, zen: st.pal.sky[2].map((v) => v * 255), hor: st.pal.sky[0].map((v) => v * 255), haze: st.pal.sky[0].map((v) => v * 245), mistLit: st.pal.mistLit.map((v) => v * 255), mistShade: st.pal.mistShade.map((v) => v * 255) };
+      if (st && st.skyOn) s = { ...s, glow: st.pal.glow.map((v) => v * 255) };
       gl.uniform3fv(u.uSkyZen, rgb(s.zen || [200, 211, 210]));
       gl.uniform3fv(u.uSkyHor, rgb(s.hor || [233, 228, 211]));
       gl.uniform3fv(u.uHaze, rgb(s.haze || [222, 222, 210]));
@@ -1883,6 +2156,26 @@
         gl.uniform4fv(u.uAirM, [DATA.km / 2, (DATA.top / 1000) / (DATA.view ? DATA.view.lift : 0.42), AIR_KM, res("haze") ? 1 : 0]);
         gl.uniform4fv(u.uSunM, [res("light") ? 1 : 0, 1, 1, SUN_LIGHT.bounce]);
       }
+      if (st) {
+        gl.uniform4fv(u.uStyle, [st.mode, st.skyOn ? 1 : 0, st.coast ? 1 : 0, st.contours ? 1 : 0]);
+        gl.uniform4fv(u.uStyle2, [st.engrave ? 1 : 0, st.hue, st.shift, st.engrave ? 0 : 1]);
+        gl.uniform4fv(u.uStyle3, [ENGRAVE_PX * ratio * (drawingInto ? SS : 1), G && G.ndviPic && UNITS > 9 ? 1 : 0, 0, 0]);
+        gl.uniform3fv(u.uPal, st.flat);
+        gl.uniform3fv(u.uCoast, st.pal.coast);
+        gl.uniform3fv(u.uContour, st.mode ? st.pal.contour : [1, 0.94, 0.84]);
+      }
+    }
+    // THE LOOKS asked for (`look.style`, from the page's panel): which colour
+    // (its palette, or the sunset's for the sky and the air when only the
+    // haze is asked), and the rest; the drift worked out from the clock.
+    const flats = {};
+    function styleOf(look) {
+      const o = look.style || {};
+      const name = PALETTES[o.palette] ? o.palette : "real", mode = name === "real" ? 0 : PALETTES[name].mode;
+      const pal = PALETTES[name] || PALETTES.sunset, key = PALETTES[name] ? name : "sunset";
+      if (!flats[key]) flats[key] = new Float32Array([...pal.sky, ...pal.sea, ...pal.land].flat());
+      const ph = o.drift && !look.still ? ((look.time || 0) / DRIFT_EVERY) * Math.PI * 2 : 0;
+      return { ...o, mode, pal, flat: flats[key], skyOn: mode > 0 || !!o.haze, hue: o.drift ? 0.34 * Math.sin(ph) : 0, shift: o.drift ? 0.07 * Math.sin(ph + 1.1) : 0 };
     }
     // (`buildings`) Each footprint raised: its walls from a little under the
     // lowest ground it stands on to its height over the highest, and a flat
@@ -1957,6 +2250,8 @@
       gl.uniform1f(u.uSeaOn, res("sea") ? 1 : 0);
       gl.uniform1f(u.uRockOn, res("rock") ? 1 : 0);
       if (canopy) { gl.activeTexture(gl.TEXTURE8); gl.bindTexture(gl.TEXTURE_2D, canopyTex()); gl.uniform1i(u.uCanopy, 8); }
+      // (the looks: what grows, the tenth)
+      if (STYLE && G.ndviPic && UNITS > 9) { gl.activeTexture(gl.TEXTURE9); gl.bindTexture(gl.TEXTURE_2D, ndviTex()); gl.uniform1i(u.uNdvi, 9); }
     }
 
     // ---------- THE PICTURE LAID DOWN AGAIN (the trials' `post`) ----------
@@ -2097,19 +2392,24 @@
             gl.activeTexture(gl.TEXTURE4); gl.bindTexture(gl.TEXTURE_2D, bloomTs.length ? bloomTs[0].tex : noiseTex()); gl.uniform1i(u.uBloom, 4);
             gl.activeTexture(gl.TEXTURE5); gl.bindTexture(gl.TEXTURE_2D, glare ? glare.tex : noiseTex()); gl.uniform1i(u.uGlare, 5);
             const glow = bloomTs.length && res("bloom");
-            gl.uniform4fv(u.uFx, [LOOK.exposure * (res("agx") ? LOOK.agx : res("tonemap") ? LOOK.neutral : 1), glow ? BLOOM.mix : 0, res("vignette") ? LOOK.vignette : 0, res("grain") ? LOOK.grain : 0]);
+            // (the looks' textures, the panel's: the film's grain and the dither as it says, the halftone)
+            const grain = STYLE ? !!(look.style && look.style.grain) : res("grain");
+            gl.uniform4fv(u.uFx, [LOOK.exposure * (res("agx") ? LOOK.agx : res("tonemap") ? LOOK.neutral : 1), glow ? BLOOM.mix : 0, res("vignette") ? LOOK.vignette : 0, grain ? LOOK.grain : 0]);
+            if (STYLE) gl.uniform4fv(u.uHalf, [look.style && look.style.halftone ? 1 : 0, HALFTONE.cell * ratio, HALFTONE.register * ratio, 0]);
             gl.uniform4fv(u.uFx2, [res("aberration") ? LOOK.aberration * ratio : 0, res("agx") ? 2 : res("tonemap") ? 1 : 0, look.still ? 1 : Math.floor((look.time || 0) * 24) % 997, canvas.width / canvas.height]);
             gl.uniform4fv(u.uFx3, [bloomTs.length && res("halation") ? LOOK.halation : 0, bloomTs.length && res("clarity") ? LOOK.clarity : 0, res("grade") ? 1 : 0, res("sensor") ? LOOK.sensor : 0]);
-            gl.uniform4fv(u.uFx4, [Math.max(1, LOOK.cell * ratio), glow ? BLOOM.glare : 0, Math.max(1, bloomTs.length), res("grain") || res("sensor") ? 1 : 0]);
+            gl.uniform4fv(u.uFx4, [Math.max(1, LOOK.cell * ratio), glow ? BLOOM.glare : 0, Math.max(1, bloomTs.length), grain || res("sensor") ? 1 : 0]);
           }
         });
-        const down = src.w > canvas.width + 1 ? 2 : 1, sharp = res("cas") ? 0.6 : 0, steps = res("grain") || res("sensor") ? 0 : 1;
+        const down = src.w > canvas.width + 1 ? 2 : 1, sharp = res("cas") ? 0.6 : 0, steps = STYLE ? (look.style && look.style.dither ? 1 : 0) : res("grain") || res("sensor") ? 0 : 1;
         if (midT) { out(src, midT, [down, 1, 0, 0], false); out(midT, null, [1, 0, sharp, steps], true); }
         else out(src, null, [down, res("fxaa") ? 1 : 0, sharp, steps], true);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       },
       /** How many pictures `accum` has laid over each other since the camera last moved. */
       settled: () => accK,
+      /** (the looks changed: the pictures laid over each other begun again) */
+      restart() { accK = 0; },
       clear(c) {
         gl.viewport(0, 0, tw, th);
         if (c) gl.clearColor(c[0], c[1], c[2], 1);
@@ -2130,7 +2430,8 @@
         gl.uniformMatrix3fv(skyP.u.uBack, false, new Float32Array([R[0][0], R[0][1], R[0][2], R[1][0], R[1][1], R[1][2], R[2][0], R[2][1], R[2][2]]));
         gl.uniform3fv(skyP.u.uLens, [cam.cx + (jit ? jit[0] : 0), cam.cy + (jit ? jit[1] : 0), cam.S * cam.eye]);
         gl.uniform2fv(skyP.u.uSize, [W, H]);
-        gl.uniform3fv(skyP.u.uCloud, rgb((look.sky && look.sky.cloud) || [250, 248, 242]));
+        const st = STYLE ? styleOf(look) : null;
+        gl.uniform3fv(skyP.u.uCloud, st && st.skyOn ? st.pal.cloud : rgb((look.sky && look.sky.cloud) || [250, 248, 242]));
         attrib(skyP, "aXY", quad, 2);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         off(skyP);
@@ -2226,6 +2527,24 @@
           if (p.dots.nrm) attrib(speckP, "aNrm", p.dots.nrm, 3, gl.BYTE, true, 4, 0);
           gl.drawArrays(gl.POINTS, 0, p.dots.count);
           off(speckP);
+          gl.depthMask(true);
+        }
+        // (the looks: the coastline and the contours glowing, over the specks)
+        const st = glowP ? styleOf(look) : null;
+        if (st && (st.coast || st.contours)) {
+          gl.useProgram(glowP.p);
+          surface(glowP);
+          gl.depthMask(false);
+          gl.blendFunc(gl.ONE, gl.ONE);
+          const S12 = 48;
+          attrib(glowP, "aPos", p.mesh.v, 3, gl.FLOAT, false, S12, 0);
+          attrib(glowP, "aNrm", p.mesh.v, 3, gl.FLOAT, false, S12, 12);
+          attrib(glowP, "aUV", p.mesh.v, 2, gl.FLOAT, false, S12, 24);
+          attrib(glowP, "aMore", p.mesh.v, 4, gl.FLOAT, false, S12, 32);
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, p.mesh.idx);
+          gl.drawElements(gl.TRIANGLES, p.mesh.count, p.mesh.type, 0);
+          off(glowP);
+          gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
           gl.depthMask(true);
         }
       },

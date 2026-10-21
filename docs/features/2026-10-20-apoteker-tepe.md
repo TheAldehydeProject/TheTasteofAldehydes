@@ -1,6 +1,6 @@
 # Apoteker Tepe, the thirteenth house, and its mountain
 Date: 2026-10-20
-Files touched: `houses/apoteker-tepe.html` (new), `tepe.js` (new), `tepe-gl.js` (new, the mountain drawn, for the page and the Houses view), `tepe-data.js` (new, written by the tool), `tools/apoteker/mountain.mjs` (new), `images/Apoteker Tepe/` (the owner's uploads, with `web/`, `house-web/`, `mountain/athos.jpg` and `mountain/heights.png` (written by the tool) and a README), `style.css`, `notes-data.js`, `tools/note-library/base.json`, `tools/note-library/research/NEW5.py` (new), `note-library/index.html` (its catalogue, written by `catalogue.py`), `note-figures.js`, `network.js` (`HOUSES`), `motifs.js` (`ridge`), `scent-descriptions/index.html` (the thirteenth frame, and `tepe-data.js` and `tepe-gl.js`), `houses/lost-tribe.html` and `houses/pineward.html` (the chain), `search-page.js`, `tools/seo.py`, `nav.js` (`Writing`, a closed part's writing), `package.json` (image-js and geotiff, for the tool), `tests/apoteker-tepe.spec.js` (new), and the house lists in `tests/houses.spec.js`, `mobile.spec.js`, `notes.spec.js`, `writing.spec.js`; and, for **the resolution trials** (2026-10-21), `tepe-gl.js` and `tepe.js` again (`?res=`), `tools/apoteker/trials.mjs` (new), `tools/apoteker/upscale.py` (new), `images/Apoteker Tepe/mountain/trials/` (new, written by those two) and `tests/tepe-resolution.spec.js` (new); and, for **the realism trials** (the same day, later), `tepe-gl.js`, `tepe.js`, `trials.mjs` and its test again, `tools/apoteker/osm.py` (new), and in the trials' folder `ndvi.png`, `athos-delit.jpg`, `canopy.jpg` and `athos-osm.json`
+Files touched: `houses/apoteker-tepe.html` (new), `tepe.js` (new), `tepe-gl.js` (new, the mountain drawn, for the page and the Houses view), `tepe-data.js` (new, written by the tool), `tools/apoteker/mountain.mjs` (new), `images/Apoteker Tepe/` (the owner's uploads, with `web/`, `house-web/`, `mountain/athos.jpg` and `mountain/heights.png` (written by the tool) and a README), `style.css`, `notes-data.js`, `tools/note-library/base.json`, `tools/note-library/research/NEW5.py` (new), `note-library/index.html` (its catalogue, written by `catalogue.py`), `note-figures.js`, `network.js` (`HOUSES`), `motifs.js` (`ridge`), `scent-descriptions/index.html` (the thirteenth frame, and `tepe-data.js` and `tepe-gl.js`), `houses/lost-tribe.html` and `houses/pineward.html` (the chain), `search-page.js`, `tools/seo.py`, `nav.js` (`Writing`, a closed part's writing), `package.json` (image-js and geotiff, for the tool), `tests/apoteker-tepe.spec.js` (new), and the house lists in `tests/houses.spec.js`, `mobile.spec.js`, `notes.spec.js`, `writing.spec.js`; and, for **the resolution trials** (2026-10-21), `tepe-gl.js` and `tepe.js` again (`?res=`), `tools/apoteker/trials.mjs` (new), `tools/apoteker/upscale.py` (new), `images/Apoteker Tepe/mountain/trials/` (new, written by those two) and `tests/tepe-resolution.spec.js` (new); and, for **the realism trials** (the same day, later), `tepe-gl.js`, `tepe.js`, `trials.mjs` and its test again, `tools/apoteker/osm.py` (new), and in the trials' folder `ndvi.png`, `athos-delit.jpg`, `canopy.jpg` and `athos-osm.json`; and, for **the looks** (the same day, last), `tepe-gl.js`, `tepe.js`, `style.css` and `tests/tepe-resolution.spec.js` again
 
 ## What changed
 
@@ -709,6 +709,64 @@ photograph hid the writing — the writing's columns quiet — because the photo
 one frame for `real` (it waited twenty-four only for words with *best* or *accum* in them). Settled,
 they are gone.
 
+### The looks (2026-10-21, last)
+
+The owner, with a picture of Athos in false colour — a magenta sky, an indigo sea, cyan and teal at
+the coast, green land and peach on the ridges, a glowing rim along the shore, a fine halftone over it
+all, and white line drawings over that (dashed trails, an eye at the summit, an arc ending in a ring,
+steps, an arch, a seal of lettering round a sign): *"i want you to add effects to it too, so that it
+looks unique, and not entirely lifelike. i have uploaded an image which should not be 1:1 but rather
+inspiration. I want it to have effects that make it look cool. Before you run your tests and all
+that, give me some options about what to do."*
+
+**The options put to them**, four questions: a colour (*a sunset gradient*, *infrared film*, *a
+two-ink print*, *the real colours*), a texture (*halftone dots*, *the digital dither*, *engraved
+lines*, *film grain*), line art (*an icon per fragrance*, *abstract shapes*, *a turning seal*, *none*)
+and extras (*a glowing coastline*, *colour haze to the horizon*, *glowing contour lines*, *a slow
+colour drift*). **Their answer, to all four**: *"I want you to create a temporary setting on the
+bottom right of the page where i can cycle through them"* — *"Also allow a setting on the bottom right
+to toggle these and see them in practice"*. So every one of them is built, and **a panel** chooses.
+
+**`?res=style` on the address** puts the panel at the bottom right of the page and the looks in the
+drawing; `?res=real,style` lays them over the realistic one. Everything the panel changes is a uniform
+of the programs (`uStyle`, `uStyle2`, `uStyle3`, `uPal`, `uHalf`), so a press changes the picture at
+once and nothing is made again; it is kept in the address as `fx=` (`fx=sunset,halftone,icons`),
+so a reload or a link shows the same. Opened without `fx=`, it shows **the sunset gradient in halftone
+dots, the icons, the glowing coastline and the colour haze** — what was closest to the picture.
+
+| row | the choices | how |
+|---|---|---|
+| Colour (gone round by its arrows) | **Real colours** — the drawing's own · **Sunset gradient** — the light and the height turned into a gradient: in shade and low a deep blue-teal, then teal and green, then a pale yellow, and peach where it is sunlit and high; the sea cyan by the coast to indigo and violet in the deep, the gradient's sky in it towards the horizon; the sky peach at the horizon to pink, magenta and violet over it · **Infrared film** — as Kodak's Aerochrome saw: the near-infrared printed red, the red green and the green blue, so what grows comes out crimson and the rock pale, the sky a deep blue and the sea near black; over the mountain its near-infrared is the satellite's own (its NDVI, `trials/ndvi.png`), round it guessed off the colour · **Two-ink print** — a deep blue and an orange on paper: the shade blue, the sunlit ridges orange, the lightest the paper, in four terraces of tone | `PALETTES` in `tepe-gl.js`, each three ramps of five (`styleLand`, `styleSea`, `paletteSky`, `terraced`); infrared its own arithmetic |
+| Texture (each on or off) | **Halftone** — four inks, cyan, magenta, yellow and black, each on its own screen turned to its own angle (15°, 75°, 0°, 45°), a dot 2.7 css px apart as large as the ink's share; the three colours each a part of a pixel out of register, as a risograph prints; the black only for the darkest (`k = 0.7 K^2.2`), so the dark stays coloured · **Dither** — the page's own Bayer steps · **Engraved** — the tone in fine lines a little over 3 css px apart, each as thick as the place is dark: on the ground along its heights, on the sea along its depths (a chart's), the sky in level rows; two scales of the lines faded into each other, so as many to the window wherever they are; no specks over them · **Grain** — the film's, as the realism trials have it | the halftone, dither and grain done to the finished picture (`POST_FS`, `halftone`, `screenOf`); the engraving in the ground's own program (`engravedAt`) |
+| Line art (each on or off) | **Icons** — at each fragrance's place, on a short stem, a white line drawing of what it is: an eye in a triangle (The Holy Mountain), a plateau under the sun (Kogen — the high plain), a crescent and a star (Brother Night), a crow in flight (Karasu — the crow), a cut crystal (The Peradam), a flame (Pale Fire), steps going up (Anabasis — the going up), waves under a rainbow (After the Flood); and the trails white, dashed, their numbers and blazes white · **Shapes** — geometry in the mountain's air, meaning nothing in particular: an arc from over the summit to a ring on a slope, a stair of six steps up a trail, an arch standing on the ground, three dashed rings round a trail's foot, sights on three places, a plumb line ticked up from the summit — all of it in the ground's own space, turning with it · **Seal** — fixed to the window, the house's sign in a ring of the picture's own words, *CAUSA LATET VIS EST NOTISSIMA FONTIS* (Ovid, *Metamorphoses* IV: the cause is hidden, the power of the spring well known), turning once in 150 s; at the bottom left of a wide window, under the button at the top right of a phone's | `tepe.js` (`artAgain`, `iconPath`, `drawArt`, `drawSeal`), on the trails' canvas |
+| Extras (each on or off) | **Coastline** — a line of light a few pixels wide where the land meets the sea, and a fainter glow round it, in the gradient's peach (a magenta for infrared, the orange for the print) · **Colour haze** — the air, the haze and the mist in the gradient's colours (the sunset's, with the real colours), so the far land melts into the sky · **Contours** — glowing lines every 100 m and every 500 m brighter · **Drift** — the gradient's hue turned a little and back, and its ramps shifted, every 80 s (with the real colours, the day's light warmer and cooler) | the coastline and contours a second pass of the ground over its specks, adding only light (`GLOW_FS`); the haze by the sky's own colours; the drift off the clock (`DRIFT_EVERY`) |
+| Base | **As it is** — the page's drawing · **Realistic** — `?res=real` under the looks; a reload, keeping the looks | links |
+
+**What does not change**: the page without `?res=` is **the same to the pixel** as before — compared
+on a laptop's and a phone's window against the last commit, not one pixel differs — and none of the
+looks' code is in its programs (`#ifdef STYLE`, inside the trials' own `#ifdef TRIALS`).
+
+**Behind the writing** the looks go quiet with the mountain: it goes the way to **the gradient's own
+sky** where that is drawn (`behind`), not to the page's paper-coloured one, which would have stood
+behind the words as a pale band; **the halftone's dots fade with it** to an eighth of their contrast
+where the drawing is quiet (`0.12 + 0.88 × quiet`) — the first pictures had the words over a busy field
+of dots, on a phone everywhere; the glowing lines and the line art lose their opacity as the trails do.
+
+**What they showed**, by eye, here: **the sunset gradient with the halftone and the colour haze** reads
+most as the picture did — a print of a mountain at dusk, the coast a rim of light; without the colour
+haze the far land goes to a pale grey, which reads as washed out against the magenta. **Infrared** is
+the most striking: a crimson mountain in a blue world. **The two-ink print** is the most graphic,
+blue and orange. **Engraved** reads as an old engraved map, the far land in swirls of contours, the
+peak in close level lines. **The line art** is small at a laptop's size; the shapes and the seal are
+decoration, the icons the most use (they say where each fragrance is). On a phone the panel takes the
+lower quarter of the window; **Hide** folds it to its head.
+
+**Without a graphics card** (`soft`) the looks' colours, the line art and the seal are drawn, but not
+the halftone, the dither and grain of the finished picture, the engraving or the glowing lines: the
+picture is not laid down again there, and the glowing lines need a second pass of the ground. Nothing
+of it was timed on a graphics chip; it costs the finished picture's pass while `style` is on, and a
+second pass of the ground while the coastline or the contours are.
+
 ### Om's opening, in two beats
 
 The same round, on Om Parfums. It is written in [Om's
@@ -759,13 +817,20 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
   to a page and `real` on its own (the camera's laid down through the film, `post` on); the canopy
   tool's source named in it; **fewer than a hundred of OpenStreetMap's features** in `athos-osm.json`,
   its credit in it; and *the trials that draw on more of the world's data say whose, in the mountain's
-  credit* — and not without them.
+  credit* — and not without them. **The looks**: no panel without `?res=style`; with it, the
+  programs compiled with the looks' code and the glowing lines' program, the panel at the bottom
+  right (the page's reading there put away), opened on the sunset gradient, halftone, icons, coast
+  and haze; the colour gone round both ways and kept in the address, a chip pressed on and off, the
+  shapes drawn, the realistic base's link keeping the looks, the panel folded and back, the mountain
+  still solid; and, at a phone's size, the looks read off `fx=` and the panel inside the window.
 - The trials' pictures: `NODE_USE_ENV_PROXY=1 node tools/apoteker/trials.mjs` (all of them, or
   `--only=dem,erosion,photo,native,median,light`), then `python3 tools/apoteker/upscale.py <folder
   holding realesrgan-x4plus.param and .bin>` for `superres` (half an hour on the processor here);
   `--only=ndvi,delit,canopy` for the realism trials' (the canopy three minutes, out of four tiles of
   CHMv2, 167 MB, kept in the temporary folder), and `python3 tools/apoteker/osm.py` (with pyarrow,
   shapely and networkx) for the real paths and buildings.
+- By eye, the looks: `houses/apoteker-tepe.html?res=style` (and `?res=real,style`), pressing round
+  the panel; `fx=` on the address opens it on a given set (`&fx=infrared,halftone,icons,seal`).
 - By eye, the trials: `houses/apoteker-tepe.html?tepe=full&res=best` beside the page without it, and
   each word alone; `?res=real` and `?res=realdither` for the realism trials together; with a graphics
   card `?tepe=full` is not needed. A photograph of a trial that lays pictures over each other
@@ -824,3 +889,10 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
   bent towards them; the far land, the page's own imagined one, goes a little mauve under the blue
   haze, its browns being warmer than a real land's. None of them was seen on a phone's graphics chip
   here, nor measured for its speed on one.
+- **The looks are a trial too**, and the panel is temporary: until the owner says which they keep, it
+  all stands behind `?res=style`, and whichever is not kept comes out of the code, the panel with it.
+  Kept, a look would be the page's own (no switch), drawn on every page's visit. **The seal's words**
+  are the owner's picture's, Ovid's line about the spring of Salmacis — not the house's; if the seal is
+  kept, its words are the owner's to give. The icons are drawn from the fragrances' names (Kogen as a
+  plateau, Karasu as a crow, Anabasis as steps); the abstract shapes stand where the page's invented
+  trails run, and move with them if `osmtrails` is on. The drift is still with reduced motion.
