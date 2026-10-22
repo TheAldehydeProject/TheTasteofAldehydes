@@ -892,7 +892,14 @@ everywhere rather than behind a test, which on the processor costs more than it 
 card it is worked out only where the drawing is quiet at all): **109 ms on a phone's window and 65 on a
 laptop's**, a tenth over the plain page's (100 and 57, measured beside it), which is the print itself.
 (Tried and slower: the land's colour and the sea's each worked out behind a test, only where it shows —
-the processor pays for both sides of a test.)
+the processor pays for both sides of a test.) **And the little picture is read nearest, not blended**
+(`gl.NEAREST`): a blended read on the processor is four reads, and the print's reads were most of that
+tenth — the sky 13 ms where it was 10, the ground and its specks 87 where they were 73. Read nearest, the
+sky is 10 again and the phone's picture **106 ms against the plain page's 101**, and its frames while
+being read **43 to 46 a second against 42 to 48** (three times each, beside each other); a picture taken
+both ways differs nowhere by more than one of the dither's steps — 256 steps in the picture are finer
+than the dither's 34. (The phone's speed test failed once in the full suite at 36 frames a second
+while read, beside another file's heavy page, before this.)
 
 It was not measured on a graphics card or a real phone here; there the drawing runs on the card, the
 processor only sending it the frames, and the memory above is mostly the card's, which this machine

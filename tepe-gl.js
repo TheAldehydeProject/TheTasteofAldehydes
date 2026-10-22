@@ -1659,12 +1659,14 @@
     const PRINT_FLAT = new Float32Array([...PRINT.sky, ...PRINT.sea, ...PRINT.land].flat());
     // (without a graphics card, the three ramps in their terraces as a little
     // picture, worked out once, and laid down again turned by the drift's hue
-    // `R` whenever it has turned — 768 colours, not every pixel)
+    // `R` whenever it has turned — 768 colours, not every pixel — and read
+    // nearest, not blended: 256 steps are finer than the dither's, and on
+    // the processor a blended read is four)
     const PAL_W = 256, palBase = [PRINT.sky, PRINT.sea, PRINT.land].map((P) => Array.from({ length: PAL_W }, (_, x) => inkAt(P, x / (PAL_W - 1))));
     const palBytes = new Uint8Array(PAL_W * 4 * 4).fill(255);
     let palT = null, palA = null;
     const paletteTex = (R, a) => {
-      if (!palT) { palT = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, palT); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); wrap(gl.CLAMP_TO_EDGE); }
+      if (!palT) { palT = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, palT); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST); wrap(gl.CLAMP_TO_EDGE); }
       gl.bindTexture(gl.TEXTURE_2D, palT);
       if (a !== palA) {
         palA = a;
