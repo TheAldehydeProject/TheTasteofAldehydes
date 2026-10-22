@@ -139,7 +139,8 @@ test("Apoteker Tepe's mountain is solid, coloured, very dense, in a land all rou
   expect(at.vertices, "the ground's own grid, fine").toBeGreaterThan(at.soft ? 40000 : 250000);
   expect(at.n, "its heights 40 m apart").toBe(384);
   expect(at.heights, "in a picture of their own").toMatch(/heights\.png$/);
-  expect(at.trails).toBeGreaterThanOrEqual(5);
+  // (on its own page, OpenStreetMap's four real paths to the summit since 2026-10-21, last; six invented before)
+  expect(at.trails).toBeGreaterThanOrEqual(4);
   const ground = await page.evaluate(async () => {
     const g = await TepeGL.ground();
     let top = 0;
@@ -161,8 +162,11 @@ test("Apoteker Tepe's mountain is solid, coloured, very dense, in a land all rou
   expect(look.covers, "the ground is drawn").toBeGreaterThan(0.3);
   expect(look.body, "its body solid").toBeGreaterThan(0.99);
   expect(look.solid, "and all of it").toBeGreaterThan(0.95);
-  expect(look.green, "not all green: under two thirds of it").toBeLessThan(0.66);
-  expect(look.grey + look.warm, "greys and warm colours too").toBeGreaterThan(0.25);
+  // (in the page's own look since 2026-10-21, last: a print in two inks, a
+  // blue and an apricot — it was the satellite's colours, under two thirds green)
+  expect(look.green, "the print's inks, not the satellite's greens").toBeLessThan(0.2);
+  expect(look.warm, "its apricot").toBeGreaterThan(0.1);
+  expect(look.cool, "and its blue").toBeGreaterThan(0.1);
   // The sign: cut into the ground where the tool chose, its shape and not
   // beside it; and nothing of the pale stone that was laid over it.
   const sign = await page.evaluate(async () => {
@@ -272,7 +276,9 @@ test("Apoteker Tepe's mountain loses its opacity behind the writing, Ataraxia's 
     }
     await page.close();
   }
-  expect(read("tepe-gl.js"), "the drawing itself drawn that much of the way to the sky behind it").toMatch(/mix\(sky, col, quietHere\(\)\)/);
+  // (in one step every program shares, `quieted`, since 2026-10-21, last: the
+  // colour behind worked out only where the drawing is quiet at all)
+  expect(read("tepe-gl.js"), "the drawing itself drawn that much of the way to the sky behind it").toMatch(/float q = quietHere\(\);[\s\S]*?return mix\(sky, col, q\);/);
 });
 
 /* SMOOTH ("make sure everything works on the phone, and is not buggy and
@@ -516,4 +522,60 @@ test("Apoteker Tepe's mountain is written by its tool, with image-js", () => {
   const pkg = JSON.parse(read("package.json"));
   expect(pkg.devDependencies["image-js"], "image-js for the tool only").toBeTruthy();
   expect(pkg.devDependencies.geotiff, "and geotiff").toBeTruthy();
+});
+
+/* THE PAGE'S OWN LOOK, drawn whole (2026-10-21, last — see tepe-look.spec.js).
+   Here, at the foot of this file, rather than there: drawing it as a
+   graphics card would, in software, is heavy, and in a worker of its own it
+   ran beside this file's speed and slowed it past its limits. Here they take
+   their turn after it. */
+const readyWhole = (page) => expect.poll(() => page.evaluate(() => !!(window.TepeMountain && TepeMountain.ready())), { timeout: 60000 }).toBe(true);
+
+test("the page's own look, whole, as a graphics card draws it: through the camera, the trails in the ground, the mountain solid", async ({ page }) => {
+  test.setTimeout(240000);
+  const errors = collectPageErrors(page);
+  await page.setViewportSize({ width: 800, height: 520 });
+  await page.goto(`${TEPE}?tepe=full`);
+  await readyWhole(page);
+  const d = await page.evaluate(() => TepeMountain.drawing());
+  expect(await page.evaluate(() => window.__tepeShaderError || ""), "every program compiled").toBe("");
+  expect(d.real, "the realistic drawing").toBe(true);
+  expect(d.post, "through the camera").toBe(true);
+  expect(d.inGround, "the trails drawn into the ground").toBe(true);
+  expect(await page.evaluate(() => TepeMountain.settle(3)), "the pictures laid over each other").toBeGreaterThan(0);
+  const look = await page.evaluate(() => TepeMountain.sample());
+  expect(look.covers, "the land fills the window").toBeGreaterThan(0.4);
+  expect(look.body, "the mountain is solid").toBeGreaterThan(0.85);
+  // THE PRINT: its two inks, the blue and the apricot, and next to no green.
+  expect(look.cool, "the print's blue").toBeGreaterThan(0.1);
+  expect(look.warm, "and its apricot").toBeGreaterThan(0.1);
+  expect(look.green, "not the satellite's greens").toBeLessThan(0.2);
+  expect(errors).toEqual([]);
+});
+
+/* WITHIN ITS MEANS ("make sure that the reaslitic version doesnt kill the CPU
+   or RAM"): the screen's pixels at most two to a css px, never three; the
+   mesh and the maps smaller on a phone; one picture of the history, not two;
+   no smoothing of the window's own; and drawn at the pace it needs. */
+test("the page's own look keeps within its means: its pixels, its mesh, its maps and its pace", async ({ page }) => {
+  test.setTimeout(240000);
+  const gl = read("tepe-gl.js"), js = read("tepe.js");
+  expect(gl, "a phone's maps half the size").toMatch(/MAP_PX = window\.innerWidth < 700 \? 1024 : 2048/);
+  expect(gl, "the mesh's grid, smaller on a phone").toMatch(/MESH_WIDE = 900, MESH_NARROW = 640/);
+  expect(gl, "no smoothing of the window's own with the page's own look").toMatch(/antialias: !soft && !real/);
+  expect(gl, "one picture of the history, the blending mixing it").toMatch(/CONSTANT_ALPHA/);
+  expect(gl, "the history's second picture gone").not.toMatch(/histB/);
+  expect(js, "never the screen's every pixel").not.toMatch(/devicePixelRatio \|\| 1, 3/);
+  expect(js, "drawn at the pace it needs").toMatch(/FRAME_BUSY = 1000 \/ 60, FRAME_IDLE = 1000 \/ 30, FRAME_AWAY = 1000 \/ 12/);
+  // On a phone's window, drawn whole: at most two pixels to a css px, and a smaller mesh.
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto(`${TEPE}?tepe=full`);
+  await readyWhole(page);
+  const d = await page.evaluate(() => TepeMountain.drawing());
+  expect(d.ratio).toBeLessThanOrEqual(2);
+  expect(d.canvas[0]).toBeLessThanOrEqual(390 * 2);
+  expect(await page.evaluate(() => TepeMountain.vertices()), "the phone's mesh").toBeLessThan(641 * 641 + 1);
+  // Left alone, it is not drawn faster than the idle pace.
+  await page.waitForTimeout(1500);
+  expect((await page.evaluate(() => TepeMountain.drawing())).every, "left alone, no faster than a picture every 1/30 s").toBeGreaterThan(1000 / 31);
 });

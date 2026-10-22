@@ -1,6 +1,6 @@
 # Apoteker Tepe, the thirteenth house, and its mountain
 Date: 2026-10-20
-Files touched: `houses/apoteker-tepe.html` (new), `tepe.js` (new), `tepe-gl.js` (new, the mountain drawn, for the page and the Houses view), `tepe-data.js` (new, written by the tool), `tools/apoteker/mountain.mjs` (new), `images/Apoteker Tepe/` (the owner's uploads, with `web/`, `house-web/`, `mountain/athos.jpg` and `mountain/heights.png` (written by the tool) and a README), `style.css`, `notes-data.js`, `tools/note-library/base.json`, `tools/note-library/research/NEW5.py` (new), `note-library/index.html` (its catalogue, written by `catalogue.py`), `note-figures.js`, `network.js` (`HOUSES`), `motifs.js` (`ridge`), `scent-descriptions/index.html` (the thirteenth frame, and `tepe-data.js` and `tepe-gl.js`), `houses/lost-tribe.html` and `houses/pineward.html` (the chain), `search-page.js`, `tools/seo.py`, `nav.js` (`Writing`, a closed part's writing), `package.json` (image-js and geotiff, for the tool), `tests/apoteker-tepe.spec.js` (new), and the house lists in `tests/houses.spec.js`, `mobile.spec.js`, `notes.spec.js`, `writing.spec.js`; and, for **the resolution trials** (2026-10-21), `tepe-gl.js` and `tepe.js` again (`?res=`), `tools/apoteker/trials.mjs` (new), `tools/apoteker/upscale.py` (new), `images/Apoteker Tepe/mountain/trials/` (new, written by those two) and `tests/tepe-resolution.spec.js` (new); and, for **the realism trials** (the same day, later), `tepe-gl.js`, `tepe.js`, `trials.mjs` and its test again, `tools/apoteker/osm.py` (new), and in the trials' folder `ndvi.png`, `athos-delit.jpg`, `canopy.jpg` and `athos-osm.json`; and, for **the looks** (the same day, last), `tepe-gl.js`, `tepe.js`, `style.css` and `tests/tepe-resolution.spec.js` again
+Files touched: `houses/apoteker-tepe.html` (new), `tepe.js` (new), `tepe-gl.js` (new, the mountain drawn, for the page and the Houses view), `tepe-data.js` (new, written by the tool), `tools/apoteker/mountain.mjs` (new), `images/Apoteker Tepe/` (the owner's uploads, with `web/`, `house-web/`, `mountain/athos.jpg` and `mountain/heights.png` (written by the tool) and a README), `style.css`, `notes-data.js`, `tools/note-library/base.json`, `tools/note-library/research/NEW5.py` (new), `note-library/index.html` (its catalogue, written by `catalogue.py`), `note-figures.js`, `network.js` (`HOUSES`), `motifs.js` (`ridge`), `scent-descriptions/index.html` (the thirteenth frame, and `tepe-data.js` and `tepe-gl.js`), `houses/lost-tribe.html` and `houses/pineward.html` (the chain), `search-page.js`, `tools/seo.py`, `nav.js` (`Writing`, a closed part's writing), `package.json` (image-js and geotiff, for the tool), `tests/apoteker-tepe.spec.js` (new), and the house lists in `tests/houses.spec.js`, `mobile.spec.js`, `notes.spec.js`, `writing.spec.js`; and, for **the resolution trials** (2026-10-21), `tepe-gl.js` and `tepe.js` again (`?res=`), `tools/apoteker/trials.mjs` (new), `tools/apoteker/upscale.py` (new), `images/Apoteker Tepe/mountain/trials/` (new, written by those two) and `tests/tepe-resolution.spec.js` (new); and, for **the realism trials** (the same day, later), `tepe-gl.js`, `tepe.js`, `trials.mjs` and its test again, `tools/apoteker/osm.py` (new), and in the trials' folder `ndvi.png`, `athos-delit.jpg`, `canopy.jpg` and `athos-osm.json`; and, for **the looks** (the same day, last), `tepe-gl.js`, `tepe.js`, `style.css` and `tests/tepe-resolution.spec.js` again; and, for **the page's own look** (the same day, the very last), `tepe-gl.js`, `tepe.js`, `style.css`, `houses/apoteker-tepe.html` (the credit), `tools/apoteker/fine.mjs` (was `trials.mjs`), `tools/apoteker/osm.py`, `images/Apoteker Tepe/mountain/fine/` (new; `trials/` and `upscale.py` gone), `images/Apoteker Tepe/README.txt`, `.gitignore`, `tests/tepe-look.spec.js` (was `tepe-resolution.spec.js`) and `tests/apoteker-tepe.spec.js
 
 ## What changed
 
@@ -507,6 +507,8 @@ the house's page: the Houses view keeps its own white, as the owner asked of Out
 
 ### The resolution trials (2026-10-21)
 
+*(Gone since the last round of the day, with the switch and all its code, but for what the owner kept — see* ***The page's own look*** *below. Kept here for the reasoning.)*
+
 The owner, the next day: *"listen; its ugly, and the main reason is the resolution. I want you to
 now look for as many possible ways for you to up the resolution. I want you to give me a list of
 ways to make the resolution better, including demonstrations of each way separately (a trial
@@ -610,6 +612,8 @@ on a phone. Here, without a graphics card, `?tepe=full` draws a picture in two t
 
 ### The realism trials (2026-10-21, later)
 
+*(Gone since the last round of the day, with the switch and all its code, but for what the owner kept — see* ***The page's own look*** *below. Kept here for the reasoning.)*
+
 The owner, on the resolution trials: *"okay, so those were pretty fine, but i still want it better;
 I want it to feel as realistic as possible. I then want you to research ways to add effects that
 hide it being lower quality. Can you do that? Be as comprehensive as you can, and search as much as
@@ -711,6 +715,8 @@ they are gone.
 
 ### The looks (2026-10-21, last)
 
+*(Gone since the last round of the day, with the switch and all its code, but for what the owner kept — see* ***The page's own look*** *below. Kept here for the reasoning.)*
+
 The owner, with a picture of Athos in false colour — a magenta sky, an indigo sea, cyan and teal at
 the coast, green land and peach on the ridges, a glowing rim along the shore, a fine halftone over it
 all, and white line drawings over that (dashed trails, an eye at the summit, an arc ending in a ring,
@@ -767,6 +773,131 @@ picture is not laid down again there, and the glowing lines need a second pass o
 of it was timed on a graphics chip; it costs the finished picture's pass while `style` is on, and a
 second pass of the ground while the coastline or the contours are.
 
+### The page's own look (2026-10-21, last)
+
+The owner, having gone round the panel: *"okay, then i want you to to remove the mnu, make it
+realistic, give it grain, two ink print, colour haze, drift, but make the colours slightly lighter and
+less contrasted. I also want you to make it easier to look at; and the text easier to read. Make it
+look appealing. Also please make sure that the reaslitic version doesnt kill the CPU or RAM"*.
+
+**What was kept, and is now simply how the page draws** — no switch on the address, on every visit
+(`PAGE` in `tepe-gl.js`: the house's own page only; the Houses view's fragments are drawn exactly as
+they were — the programs it compiles were compared, as the graphics card reads them, against the
+last commit, and are the same):
+
+- **The realistic drawing** (`REAL`, with a graphics card): what `?res=real` was — the ground at 10 m
+  (Copernicus GLO-30, its slopes and its coast worked out a pixel at a time), the light baked and in
+  light's own units, the air as air is, the satellite's colour at 10 m with its morning taken out,
+  the trees' own crowns, the marble's gullies, the sea as sea is, **OpenStreetMap's four real paths
+  drawn into the ground** (Agia Anna, Kafsokalyvia, Prodromou, the Great Lavra — in place of the six
+  invented ones, which the Houses view keeps) and its monasteries raised — through **the camera**:
+  the pictures laid over each other while it stands still, a little glow, the corners darkened, a
+  film's curve.
+- **The two-ink print** over all of it: a soft blue and an apricot on warm paper (`PAPER_INK`,
+  `INK_A`, `INK_B`, `inks()`), the sky from the horizon up, the sea from the coast to the deep, the
+  land from shade and low to sunlit and high (`PRINT`, `printSky`, `printSea`, `printLand`).
+- **Grain**: the film's, as the realism trials had it (`CAMERA.grain`), in place of the dither's
+  steps — and **a third as strong behind the writing** (`grainQuiet`), so the words stand on a calm
+  ground.
+- **Colour haze**: the haze, the air and the mist in the print's own colours (`PRINT_AIR`).
+- **The drift**: the inks' hue turned a little and back every 80 s, and their ramps shifted
+  (`DRIFT_*`) — gentler than the trial's (0.26 radians and 0.06, where it turned 0.34 and 0.07). It
+  is still with reduced motion.
+- **Without a graphics card** (`LITE`, this machine and a test's): the lighter drawing it always had,
+  in the print's colours, dithered as it was, the real paths drawn over it on the trails' canvas.
+
+**Slightly lighter and less contrasted.** Every ramp of the print was brought half way nearer the
+paper and nearer to itself: the sky's horizon a third of the apricot where it was nearly half
+(`inks(0, 0.34)` against `0.45`), its top 48% of the blue against 55%; the sea's deep 81% blue against
+90%; the land's darkest 88% blue and 35% apricot against the whole of the blue and 40%, its sunlit 64%
+apricot against 70%; **the terraces softer** (`TERRACES` 0.24, it was 0.3); and the realistic sea's own
+light moves the print's less (0.86 + 0.28 of it, against 0.82 + 0.36). **Tried and not kept**, both
+measured on the same picture against the trial's: the whole of that step (the sky's horizon a quarter of
+the apricot, the land's darkest 78% blue) — a fifth lighter and half the contrast, calm but more than
+"slightly"; and lighter still (the horizon nearly the paper, the land's darkest 70% blue) — foggy, the
+far land washed into the haze and the two inks lost.
+
+**Easier to read.** Besides the lighter print behind it and the grain quieter there: **a soft halo
+of the print's paper round every letter** of the writing, the credit and the foot (`text-shadow`,
+7px and 2px, only while the mountain is drawn), as a map's names have — the words stand off the
+drawing behind them with nothing laid over it (the veil the owner did not want stays gone); and the
+page's quieter ink a little darker (`--muted` #4f5745, it was #5f6652), for the subtitle and the
+readings. A halo in ems was tried first, and round the title it was a 50px glow; it is in pixels now.
+The quiet behind the writing is still Ataraxia's (`QUIET`, 0.26).
+
+**Gone, with all their code** (the owner's rule: what is not kept comes out): the switch `?res=` and
+every trial not kept — the resolution's (the 10 m picture as it was, a median, the AI's enlargement,
+erosion, the ray through the heights, twice the pixels, FXAA, CAS, the screen's every pixel, the
+dither's kinds, contours, an engraved map, clearer air, closer), the realism's not kept (AgX,
+halation, aberration, clarity, the grade, a camera's noise, a blue sky), and **the looks** but the
+print, the grain, the haze and the drift (the sunset gradient, infrared, halftone, engraved lines,
+the dither as a look, the icons, the shapes, the seal, the glowing coastline and contours) — and **the
+panel**. Their pictures (`mountain/trials/`) went too, but for the five the page now draws from,
+which moved to **`mountain/fine/`**: `heights-10m.png`, `colour-10m.jpg` (the de-lit picture),
+`light.png`, `canopy.jpg` and `athos-osm.json`; the light and the canopy made again at half their size
+(1024 and 2048 — the mean of each square of four, so the light and the trees' share keep their
+averages). `tools/apoteker/trials.mjs` is **`fine.mjs`**, writing only those; `upscale.py` is gone.
+Old addresses with `?res=` and `fx=` simply draw the page's own look. **The credit names every source
+the page now draws from, always**: GLO-30 (© DLR and Airbus, under Copernicus), the Sentinel-2 scene,
+Meta and WRI's Canopy Height Map v2 (CC BY 4.0) and OpenStreetMap's contributors (ODbL), beside
+Mapzen's tiles, which the lighter drawing and the Houses view still use.
+
+**Within its means.** Measured here before and after — the browser and every process under it, on
+this machine's processor (no graphics card: the realistic drawing forced with `?tepe=full`, which
+shows what it asks of a machine rather than how fast a graphics card would be), a laptop's window
+(1440 × 900, two pixels a point) and a phone's (390 × 844, three):
+
+| | memory | at most | a picture takes | ready in |
+|---|---|---|---|---|
+| laptop, before | 1,575 MB | 1,828 MB | 13.4 s | 95 s |
+| laptop, now | **1,225 MB** | **1,344 MB** | **7.8 s** | 69 s |
+| phone, before | 1,280 MB | 1,513 MB | 6.5 s | — |
+| phone, now | **749 MB** | **755 MB** | **1.9 s** | 6.5 s |
+
+(The page as it was before the trials, without the realistic drawing: 1,019 MB and 3.9 s on the
+laptop, 643 MB and 1.0 s on the phone.) What made the difference:
+
+- **never more than two pixels to a point** — the trials' `native` drew a phone at three, more than
+  twice the pixels; the drawing takes `window.Sharpness`'s, which also lets it down on a slow machine;
+- **no smoothing of the window's own** (`antialias` off with the page's own look): the pictures laid
+  over each other smooth its edges already, and a smoothed window is four times its memory;
+- **one picture of the history, not two** — the blending lays each new picture over it
+  (`CONSTANT_ALPHA`), where a program read one and wrote the other — and **the picture drawn into in
+  bytes**, not half floats (its colours are the print's, within the screen's); the history keeps its
+  half floats, so many pictures add up smoothly;
+- **the mesh 900 across, 640 on a phone** (it was 1100 — 1.2 million corners, now 810,000 and
+  410,000), its triangles' corners written straight into the numbers the graphics card takes (they
+  were a list of numbers first, five times the memory);
+- **the maps smaller on a phone** (`MAP_PX` 1024, a quarter of the memory) and the colour picture
+  read at 1024 there; the light at 1024 and the trees at 2048 for everyone (they were 2048 and 4096);
+  **the processor's copy of each map let go** once the graphics card has it; the trails' map made in
+  a third of the memory;
+- **the specks a fifth more on a laptop, as many as ever on a phone** (the trials' were half as many
+  again everywhere);
+- **drawn at the pace it needs** (`tepe.js`): up to 60 pictures a second while the page is scrolled,
+  the free view turned or the camera on its way (`FRAME_BUSY`; a screen at 120 gets 60, not 120),
+  **30 while only the mist, the clouds and its breathing move** (`FRAME_IDLE`), 12 while the window is
+  not in front (`FRAME_AWAY`, so it still moves when clicked off, as every page does), and **none
+  while it cannot be seen**. `TepeMountain.drawing()` says which.
+
+**Without a graphics card** the print's colour arithmetic, done for every pixel, first made the
+lighter drawing **twice as slow** (a picture 200 ms on a phone's window where it was 96, 98 on a
+laptop's where it was 54). Now **its three ramps are read off a little picture of them** (`paletteTex`,
+`skyInk`, `seaInk`, `landInk` — on the processor a picture read is a third of the arithmetic), **made
+again turned by the drift's hue whenever it turns** (768 colours, not every pixel; with a graphics card
+the turn is a matrix, `uHue`, worked out once a picture), **each pixel looks up only the land's ramp or
+the sea's**, the coast a clean switch, **the specks are put in the inks once, as they are laid**
+(`printLandAt`), the sea's reflection of the sky is left out, and the quiet's colour is worked out
+everywhere rather than behind a test, which on the processor costs more than it saves (with a graphics
+card it is worked out only where the drawing is quiet at all): **109 ms on a phone's window and 65 on a
+laptop's**, a tenth over the plain page's (100 and 57, measured beside it), which is the print itself.
+(Tried and slower: the land's colour and the sea's each worked out behind a test, only where it shows —
+the processor pays for both sides of a test.)
+
+It was not measured on a graphics card or a real phone here; there the drawing runs on the card, the
+processor only sending it the frames, and the memory above is mostly the card's, which this machine
+holds in its own.
+
 ### Om's opening, in two beats
 
 The same round, on Om Parfums. It is written in [Om's
@@ -779,6 +910,8 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
   - **the pictures stand a little further off**: a cut-out padded in its frame, a scene at its own
     shape, the house's picture at the Houses view's frame's;
   - the credit names the mountain, Scentorium and the Sentinel-2 data;
+  - (the colours, since 2026-10-21, last: **the print's two inks**, its blue and its apricot, next to
+    no green; and OpenStreetMap's four real paths, not six invented);
   - **the mountain is solid** (the same drawn over black and over white), **coloured as a mountain
     is** (under two thirds of it green; greys and warm colours), in **very many specks** on a fine
     grid, out of 384 by 384 heights read whole out of their picture; **a land all round it** (land
@@ -807,35 +940,27 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
     drawn by `TepeGL`;
   - the data is the tool's, with image-js and geotiff, and the colour and the heights it wrote are
     there.
-- `npm test -- tests/tepe-resolution.spec.js` (the resolution trials): without `?res=` no trial is
-  on — **none of the trials' code in the programs**, no picture laid down again, no ray, no
-  anisotropic filtering; every trial, a few to a page and
-  `best` on its own, drawn whole in a small window — its programs compiled, the ray's where the
-  machine can write a pixel's depth, the pictures laid over each other where asked, the land filling
-  the window and the mountain solid, no fault; and every trial's own picture there, written by its
-  tool from Copernicus's heights and Sentinel-2's archive. **The realism trials** the same way, a few
-  to a page and `real` on its own (the camera's laid down through the film, `post` on); the canopy
-  tool's source named in it; **fewer than a hundred of OpenStreetMap's features** in `athos-osm.json`,
-  its credit in it; and *the trials that draw on more of the world's data say whose, in the mountain's
-  credit* — and not without them. **The looks**: no panel without `?res=style`; with it, the
-  programs compiled with the looks' code and the glowing lines' program, the panel at the bottom
-  right (the page's reading there put away), opened on the sunset gradient, halftone, icons, coast
-  and haze; the colour gone round both ways and kept in the address, a chip pressed on and off, the
-  shapes drawn, the realistic base's link keeping the looks, the panel folded and back, the mountain
-  still solid; and, at a phone's size, the looks read off `fx=` and the panel inside the window.
-- The trials' pictures: `NODE_USE_ENV_PROXY=1 node tools/apoteker/trials.mjs` (all of them, or
-  `--only=dem,erosion,photo,native,median,light`), then `python3 tools/apoteker/upscale.py <folder
-  holding realesrgan-x4plus.param and .bin>` for `superres` (half an hour on the processor here);
-  `--only=ndvi,delit,canopy` for the realism trials' (the canopy three minutes, out of four tiles of
-  CHMv2, 167 MB, kept in the temporary folder), and `python3 tools/apoteker/osm.py` (with pyarrow,
-  shapely and networkx) for the real paths and buildings.
-- By eye, the looks: `houses/apoteker-tepe.html?res=style` (and `?res=real,style`), pressing round
-  the panel; `fx=` on the address opens it on a given set (`&fx=infrared,halftone,icons,seal`).
-- By eye, the trials: `houses/apoteker-tepe.html?tepe=full&res=best` beside the page without it, and
-  each word alone; `?res=real` and `?res=realdither` for the realism trials together; with a graphics
-  card `?tepe=full` is not needed. A photograph of a trial that lays pictures over each other
-  (`accum`, `best`, `real`) wants twenty-odd frames settled first (`TepeMountain.settle(24)`): taken
-  after one, it still holds the frames drawn while the writing's columns were quiet, as pale veils.
+- `npm test -- tests/tepe-look.spec.js` (the page's own look): an old address with `?res=` and
+  `fx=` draws the page's own look without a fault, the print and no panel; **none of the trials' or
+  the looks' code is left** in `tepe-gl.js`, `tepe.js` or `style.css`, nor their pictures and tools;
+  and, **at the foot of `apoteker-tepe.spec.js`** (so they take their turn after its speed, in the
+  same worker — beside it, drawing it whole in software slowed the phone's past its 200 ms), drawn
+  whole (`?tepe=full`, as a graphics card draws it) every program compiles, it goes through the
+  camera, the trails are in the ground, the pictures are laid over each other, the mountain is solid
+  and **in the print's two inks** (its blue and its apricot, next to no green); **within its means** —
+  a phone's maps half the size, the mesh 900 and 640, no smoothing of the window's own, one picture of
+  the history, never three pixels to a point, the pace's three speeds; on a phone's window at most two
+  pixels to a point and the phone's mesh, and left alone no faster than 30 a second; the fine pictures
+  there, written by `fine.mjs` and `osm.py`; and **the credit naming every source**.
+- The fine pictures: `NODE_USE_ENV_PROXY=1 node tools/apoteker/fine.mjs` (all of them, or
+  `--only=dem,colour,light,canopy`; the canopy three minutes, out of four tiles of CHMv2, 167 MB, kept
+  in the temporary folder), and `python3 tools/apoteker/osm.py` (with pyarrow, shapely and networkx)
+  for the real paths and buildings.
+- By eye, the page's own look: `houses/apoteker-tepe.html` with a graphics card (here
+  `?tepe=full`); a photograph wants twenty-odd frames settled first (`TepeMountain.settle(24)`) —
+  taken after one, it still holds the frames drawn while the writing's columns were quiet, as pale
+  veils. `TepeMountain.drawing()` says whether it is the realistic one, through the camera, and its
+  pace.
 - `tests/writing.spec.js`: *the writing inside a shut part is not counted until it is opened*.
 - `tests/mobile.spec.js`: the mountain's canvas is drawn at twice the css pixels on a phone.
 - The house is in every house list: `houses.spec.js` (the chain both ways, the return button at
@@ -856,8 +981,9 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
   environment's network policy, so the spellings, the lists and the years come from search
   summaries of those pages. Allowing those hosts in the environment's network settings would let a
   later round read them straight.
-- **The trails are invented** — the owner's "random indications": they climb the real ground, but
-  no real path on Athos is drawn. The satellite's picture under them shows the real tracks, pale.
+- **The trails are real on the page now** (OpenStreetMap's four paths to the summit, since
+  2026-10-21, last), but **the free view's nodes were placed along the invented ones** (Anabasis "half
+  way up a trail"), and the Houses view's fragments still walk the invented six.
 - **The places of the eight are read off their names**, chosen by the tool; they are not where
   anything of the house's is on Athos.
 - **Without WebGL there is no mountain** (and no Free view): the page is its writing on the aged
@@ -872,27 +998,11 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
   be measured here. If a phone ever struggles, `window.Sharpness` lets the drawing down a step at a
   time, and the mist's banks are the first thing to make fewer (`MIST_NARROW`).
 - The summit's height is no longer written anywhere on the page (the owner asked the coordinates off).
-- **The resolution trials are trials**: until the owner says which to keep, every one stands behind
-  `?res=` and the page draws as it did. Kept, `photo` and `dem` want smaller files than the trials
-  carry (the heights at 20 m and the light at 1024 px would do) and the credit naming Copernicus's
-  GLO-30 beside Sentinel-2; `superres` and `erosion` are invented detail and would have to say so in
-  the credit; `raymarch` was only measured without a graphics card (eleven seconds a picture), never
-  on a phone's chip. Whatever is not kept comes out of the code, with its pictures and its lines in
-  `trials.mjs`.
-- **So are the realism trials.** Kept, `canopy` would want its credit (Meta and WRI, CC BY 4.0) in the
-  page itself, not only while asked for, and a 1.5 MB picture (2048 px, a phone's, would be under
-  half); `osmtrails` and `buildings` the same with OpenStreetMap's, and the page's own invented trails
-  and the free view's nodes along them would have to be thought again (the nodes stand where the
-  invented trails ran); `grain` takes the place of the digital dither the owner asked for on 2026-10-20,
-  so `realdither` keeps it. The `light`, `haze` and `sky` numbers are measured or physical (the sun's
-  share of the light on level ground, Rayleigh's air, Ouranoupolis's haze), the page's own palette
-  bent towards them; the far land, the page's own imagined one, goes a little mauve under the blue
-  haze, its browns being warmer than a real land's. None of them was seen on a phone's graphics chip
-  here, nor measured for its speed on one.
-- **The looks are a trial too**, and the panel is temporary: until the owner says which they keep, it
-  all stands behind `?res=style`, and whichever is not kept comes out of the code, the panel with it.
-  Kept, a look would be the page's own (no switch), drawn on every page's visit. **The seal's words**
-  are the owner's picture's, Ovid's line about the spring of Salmacis — not the house's; if the seal is
-  kept, its words are the owner's to give. The icons are drawn from the fragrances' names (Kogen as a
-  plateau, Karasu as a crow, Anabasis as steps); the abstract shapes stand where the page's invented
-  trails run, and move with them if `osmtrails` is on. The drift is still with reduced motion.
+- **The page's own look was not seen on a graphics card or a real phone here**, only drawn on this
+  machine's processor; its pace and memory are measured there (see *Within its means*). On a phone
+  with a graphics card it fetches about 4.7 MB of fine pictures (the heights at 10 m are 2.4 MB of
+  them); without one, only the paths (30 KB).
+- **The drift turns the inks a little and back** (every 80 s); with reduced motion it stands still,
+  as the trial's did.
+- The trails' numbers (I to IV) are the real paths in the order the tool found them, not the
+  fragrances'.

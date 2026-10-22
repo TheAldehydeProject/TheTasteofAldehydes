@@ -1,52 +1,45 @@
 // ============================================================
-// THE MOUNTAIN'S RESOLUTION, TRIED — tools/apoteker/trials.mjs, run by
-// hand, never by the site.
+// THE MOUNTAIN, FINER — tools/apoteker/fine.mjs, run by hand, never by the
+// site.
 //
-// The owner, 2026-10-21: "its ugly, and the main reason is the resolution.
-// I want you to now look for as many possible ways for you to up the
-// resolution ... including demonstrations of each way separately (a trial
-// render) ... new ways to render it, as well as alterations to the existing
-// model to improve quality." This writes the finer pictures some of those
-// trials draw from, into images/Apoteker Tepe/mountain/trials/ — the same
+// What Apoteker Tepe's page draws its mountain from on a machine with a
+// graphics card, since 2026-10-21, when the owner chose the realistic one
+// of the trials ("make it realistic, give it grain, two ink print, colour
+// haze, drift ... make sure that the reaslitic version doesnt kill the CPU
+// or RAM"). It writes into images/Apoteker Tepe/mountain/fine/ — the same
 // square as tools/apoteker/mountain.mjs (its corners worked out the same
 // way, off the same terrain tiles), so they lie exactly on the mountain the
 // page already draws:
 //
-//   heights-dem.png      THE GROUND AT 10 M: the Copernicus DEM (GLO-30,
+//   heights-10m.png      THE GROUND AT 10 M: the Copernicus DEM (GLO-30,
 //                        1 arc-second, about 31 by 24 m here), read out of
 //                        its open archive on AWS with geotiff and laid on
 //                        the square at FINE by FINE, bicubic — where the
 //                        page's own heights are Mapzen's at 40 m, softened.
-//   heights-eroded.png   the same, AMPLIFIED: rain run over it (a droplet
-//                        erosion, after Hans Beyer's thesis and Sebastian
-//                        Lague's), so the gullies and spurs finer than the
-//                        DEM can show are carved as water carves them —
-//                        a few metres, never more than ERODE_MOST.
-//   athos-10m.jpg        THE COLOUR AT ITS OWN 10 M: the same Sentinel-2
-//                        scene, printed as the page's is but at PHOTO px
-//                        and never softened (the page's is 1024 px, 15 m,
-//                        and blurred), with a little sharpening.
-//   athos-median.jpg     the same, out of MEDIAN cloudless summer scenes,
-//                        each pixel the middle of them: less of one
-//                        morning's haze and noise.
-//   ndvi.png             WHAT GROWS, for the realism trials (the same day,
-//                        later): NDVI off the satellite's red and infrared.
-//   athos-delit.jpg      THE COLOUR WITHOUT ITS MORNING: the 10 m picture,
-//                        the light the satellite's sun left on each slope
-//                        evened out, so the page's sun alone lights it.
+//   colour-10m.jpg       THE COLOUR AT ITS OWN 10 M, WITHOUT ITS MORNING: the
+//                        Sentinel-2 scene printed as mountain.mjs prints it,
+//                        at PHOTO px, a little sharpened — and the light the
+//                        satellite's sun left on each slope evened out
+//                        (fitted over the forest, by what grows: its NDVI,
+//                        off the satellite's red and near-infrared), so the
+//                        page's sun alone lights it.
 //   canopy.jpg           THE TREES THEMSELVES: Meta and WRI's Canopy Height
 //                        Map v2, each crown lit by the page's sun — each
 //                        place's share of the light within the satellite's
-//                        pixel.
-//   light-*.png          THE LIGHT, BAKED: red how much of the sun each
-//                        place sees (soft shadows cast by the mountain on
-//                        itself, from the page's own sun), green how much of
-//                        the sky (its hollows and gullies darker) — for the
-//                        page's heights (-base), the DEM's and the eroded.
+//                        pixel — at CANOPY px.
+//   light.png            THE LIGHT, BAKED for the 10 m ground, at BAKE px and
+//                        written at LIGHT: red how much of the sun each place
+//                        sees (soft shadows cast by the mountain on itself,
+//                        from the page's own sun), green how much of the sky
+//                        (its hollows and gullies darker).
 //
-//   node tools/apoteker/trials.mjs             (NODE_USE_ENV_PROXY=1 behind a proxy)
+//   node tools/apoteker/fine.mjs                (NODE_USE_ENV_PROXY=1 behind a proxy)
+//   node tools/apoteker/fine.mjs --only=light   (any of dem, colour, canopy, light)
 //
 // (The real paths and buildings, athos-osm.json, are tools/apoteker/osm.py's.)
+// (It was tools/apoteker/trials.mjs, which also wrote the trials not kept —
+// the eroded heights, the median and enlarged pictures, the old light; they
+// are gone, with their code, and are in the repository's history.)
 //
 // Credits they ask for: the canopy heights, Meta and World Resources
 // Institute (2026), Canopy Height Map v2, CC BY 4.0; Copernicus DEM GLO-30
@@ -63,7 +56,7 @@ import { fromUrl } from "geotiff";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "..", "..");
-const OUT = path.join(ROOT, "images/Apoteker Tepe/mountain/trials");
+const OUT = path.join(ROOT, "images/Apoteker Tepe/mountain/fine");
 const CACHE = path.join(os.tmpdir(), "tepe-terrain-tiles");
 const ONLY = (process.argv.find((a) => a.startsWith("--only=")) || "").slice(7).split(",").filter(Boolean);
 const want = (k) => !ONLY.length || ONLY.includes(k);
@@ -76,10 +69,9 @@ const SUMMIT = { lat: 40.1572, lon: 24.3264 };
 const ZOOM = 12, SPAN = DATA.km, N = DATA.n, TOP = DATA.top;
 const FINE = 1536;               // the fine heights, FINE by FINE (10.1 m apart)
 const PHOTO = 2048;              // the fine colour, PHOTO px (7.6 m to a pixel, the satellite's own 10 m resampled)
-const LIGHT = 2048;              // the baked light, LIGHT px
+const BAKE = 2048;               // the light baked at BAKE px...
+const LIGHT = 1024;              // ...and written at LIGHT px, each the mean of its four (soft shadows: half the size, none of the look lost)
 const HEIGHT_SCALE = 1.25;       // the fine heights are written as a share of TOP / HEIGHT_SCALE (so a summit above TOP is kept)
-const ERODE_MOST = 14;           // m: the most the rain carves or lays down anywhere
-const MEDIAN = 7;                // cloudless scenes for the median
 const SUN = { az: (165 * Math.PI) / 180, alt: (32 * Math.PI) / 180 };   // tepe-gl.js SUN
 const LIFT = DATA.view.lift;     // the page's height of the summit, half-widths of the square
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -179,79 +171,13 @@ async function demHeights() {
   dem = out;
   return out;
 }
-if (want("dem") || want("erosion") || want("light")) {
+if (want("dem") || want("light")) {
   const d = await demHeights();
-  if (want("dem")) await writeHeights("heights-dem.png", d, FINE);
+  if (want("dem")) await writeHeights("heights-10m.png", d, FINE);
   // Where its summit is, against the page's.
   let b = { k: 0, h: -1 };
   for (let k = 0; k < d.length; k++) if (d[k] > b.h) b = { k, h: d[k] };
   console.log(`  its summit at (${((b.k % FINE) + 0.5) * N / FINE - 0.5}, ${(Math.floor(b.k / FINE) + 0.5) * N / FINE - 0.5}) cells; the page's at ${DATA.summit}`);
-}
-
-// 2. THE GROUND, AMPLIFIED BY RAIN ------------------------------------
-let eroded = null;
-function erode(Hm, n, drops, seed = 7) {
-  // Heights in cells (so a slope is its own tangent), a droplet at a time.
-  const cellM = (SPAN * 1000) / n;
-  const h = Float32Array.from(Hm, (v) => v / cellM);
-  let s = seed >>> 0;
-  const rnd = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
-  const R = 3, brush = [];
-  let wsum = 0;
-  for (let y = -R; y <= R; y++) for (let x = -R; x <= R; x++) { const d = Math.hypot(x, y); if (d <= R) { const w = 1 - d / R; brush.push([x, y, w]); wsum += w; } }
-  brush.forEach((b) => (b[2] /= wsum));
-  const INERTIA = 0.06, CAPACITY = 3.2, MIN_SLOPE = 0.012, ERODE = 0.28, DEPOSIT = 0.25, EVAPORATE = 0.02, GRAVITY = 4, STEPS = 70;
-  const gradAt = (x, y) => {
-    const i = x | 0, j = y | 0, u = x - i, v = y - j, k = j * n + i;
-    const a = h[k], b = h[k + 1], c = h[k + n], d = h[k + n + 1];
-    return { gx: (b - a) * (1 - v) + (d - c) * v, gy: (c - a) * (1 - u) + (d - b) * u, z: a * (1 - u) * (1 - v) + b * u * (1 - v) + c * (1 - u) * v + d * u * v };
-  };
-  for (let q = 0; q < drops; q++) {
-    let x = 1 + rnd() * (n - 3), y = 1 + rnd() * (n - 3);
-    if (h[(y | 0) * n + (x | 0)] < 0.3) continue;            // (no rain on the sea)
-    let dx = 0, dy = 0, speed = 1, water = 1, sed = 0;
-    for (let st = 0; st < STEPS; st++) {
-      const i = x | 0, j = y | 0, u = x - i, v = y - j;
-      const g = gradAt(x, y);
-      dx = dx * INERTIA - g.gx * (1 - INERTIA); dy = dy * INERTIA - g.gy * (1 - INERTIA);
-      const len = Math.hypot(dx, dy);
-      if (len < 1e-9) break;
-      dx /= len; dy /= len;
-      const nx = x + dx, ny = y + dy;
-      if (nx < 1 || ny < 1 || nx >= n - 2 || ny >= n - 2) break;
-      const dh = gradAt(nx, ny).z - g.z;
-      const cap = Math.max(-dh, MIN_SLOPE) * speed * water * CAPACITY;
-      if (sed > cap || dh > 0) {
-        const put = dh > 0 ? Math.min(dh, sed) : (sed - cap) * DEPOSIT;
-        sed -= put;
-        const k = j * n + i;
-        h[k] += put * (1 - u) * (1 - v); h[k + 1] += put * u * (1 - v); h[k + n] += put * (1 - u) * v; h[k + n + 1] += put * u * v;
-      } else {
-        const take = Math.min((cap - sed) * ERODE, -dh);
-        for (const [bx, by, w] of brush) {
-          const ii = i + bx, jj = j + by;
-          if (ii < 0 || jj < 0 || ii >= n || jj >= n) continue;
-          const kk = jj * n + ii, t = Math.min(h[kk], take * w);
-          h[kk] -= t; sed += t;
-        }
-      }
-      speed = Math.sqrt(Math.max(0, speed * speed + dh * GRAVITY));
-      water *= 1 - EVAPORATE;
-      x = nx; y = ny;
-    }
-  }
-  // Never more than ERODE_MOST from the real ground; the sea left the sea.
-  const out = new Float32Array(n * n);
-  for (let k = 0; k < out.length; k++) out[k] = Hm[k] < 0.5 ? 0 : Math.max(0, Hm[k] + clamp(h[k] * cellM - Hm[k], -ERODE_MOST, ERODE_MOST));
-  return out;
-}
-if (want("erosion") || want("light")) {
-  const t0 = Date.now();
-  eroded = erode(await demHeights(), FINE, Math.round(FINE * FINE * 0.55));
-  let moved = 0;
-  for (let k = 0; k < eroded.length; k++) moved += Math.abs(eroded[k] - dem[k]);
-  console.log(`erosion: ${((Date.now() - t0) / 1000).toFixed(1)} s, on average ${(moved / eroded.length).toFixed(2)} m moved`);
-  if (want("erosion")) await writeHeights("heights-eroded.png", eroded, FINE);
 }
 
 // 3. THE COLOUR AT ITS OWN 10 M ----------------------------------------
@@ -320,28 +246,13 @@ async function printColour(raw, C, file, sharpen) {
   await write(path.join(OUT, file), out, file.endsWith(".png") ? { format: "png" } : { format: "jpeg", encoderOptions: { quality: 88 } });
   console.log(`colour: ${file} (${C} px), stretched ${lo.toFixed(0)}–${hi.toFixed(0)}`);
 }
-if (want("photo")) await printColour(await sceneSquare(FIRST, PHOTO), PHOTO, "athos-10m.jpg", 0.55);
-// (and at the satellite's own 10 m, unsharpened, as a PNG: what the
-// upscaler, tools/apoteker/upscale.py, is given to enlarge — `superres`)
-if (want("native")) await printColour(await sceneSquare(FIRST, 1536), 1536, "athos-10m-native.png", 0);
-if (want("median")) {
-  // Cloudless midsummer mornings over the same grid square (each read for
-  // cloud over this very square in its own scene classification): each
-  // pixel the middle of them — less of one morning's haze and noise.
-  const ids = [FIRST, "S2B_35TKE_20240713_0_L2A", "S2B_35TKE_20250618_0_L2A", "S2A_35TKE_20250625_0_L2A", "S2C_35TKE_20250703_0_L2A", "S2A_35TKE_20250705_0_L2A", "S2B_35TKE_20250708_0_L2A"].slice(0, MEDIAN);
-  console.log(`median of ${ids.length}: ${ids.join(", ")}`);
-  const all = [];
-  for (const id of ids) { try { all.push(await sceneSquare(id, PHOTO)); } catch (e) { console.log(`  (${id}: ${e.message})`); } }
-  const med = new Float32Array(PHOTO * PHOTO * 3), v = new Float32Array(all.length);
-  for (let k = 0; k < med.length; k++) { for (let q = 0; q < all.length; q++) v[q] = all[q][k]; v.sort(); med[k] = all.length % 2 ? v[(all.length - 1) / 2] : (v[all.length / 2 - 1] + v[all.length / 2]) / 2; }
-  await printColour(med, PHOTO, "athos-median.jpg", 0.55);
-}
 
-// 3b. WHAT GROWS, AND THE COLOUR WITHOUT ITS MORNING (the realism trials) --
+// 3b. WHAT GROWS, AND THE COLOUR WITHOUT ITS MORNING ----------------------
 // NDVI off the satellite's own red and near-infrared at 10 m (B04, B08; L2A
 // reflectance = DN / 10000 - 0.1): green leaves reflect the infrared and take
 // in the red, so the more of the one over the other, the more is growing —
-// where the trials put trees and the forest's grain (`trees`, `canopy`).
+// what the colour's fit below is made over (the dense forest's own colour
+// is even, so what changes over it is the morning's light).
 let ndvi = null;
 async function ndviOf() {
   if (ndvi) return ndvi;
@@ -353,13 +264,6 @@ async function ndviOf() {
   }
   return ndvi;
 }
-if (want("ndvi")) {
-  const v = await ndviOf(), pic = new Image(PHOTO, PHOTO, { colorModel: "GREY" });
-  let sum = 0;
-  for (let k = 0; k < PHOTO * PHOTO; k++) { sum += v[k]; pic.setValue(k % PHOTO, Math.floor(k / PHOTO), 0, Math.round(clamp((v[k] + 0.2) / 1.1, 0, 1) * 255)); }
-  await write(path.join(OUT, "ndvi.png"), pic, { format: "png" });
-  console.log(`ndvi.png (${PHOTO} px, NDVI -0.2 to 0.9 as 0 to 255), the square's mean ${(sum / PHOTO / PHOTO).toFixed(3)}`);
-}
 // DE-LIT: the satellite saw Athos at 09:19 UTC on 14 July 2023, the sun 66°
 // up from 136° (its scene's own metadata), and every slope's light from that
 // sun is in its colour. The page lights it again from its own sun, so each
@@ -368,7 +272,7 @@ if (want("ndvi")) {
 // colour's brightness is fitted against it over the land (a little light from
 // the sky and the rest from the sun), and each place divided by its share.
 const SUN_SEEN = { az: (135.95 * Math.PI) / 180, alt: (66.33 * Math.PI) / 180 };
-if (want("delit")) {
+if (want("colour")) {
   const d = await demHeights(), raw = await sceneSquare(FIRST, PHOTO), C = PHOTO, cell = (SPAN * 1000) / FINE;
   const L = [Math.sin(SUN_SEEN.az) * Math.cos(SUN_SEEN.alt), Math.cos(SUN_SEEN.az) * Math.cos(SUN_SEEN.alt), Math.sin(SUN_SEEN.alt)];   // east, north, up
   const hAt = (x, y) => cubic(d, FINE, FINE, x, y);
@@ -396,10 +300,10 @@ if (want("delit")) {
     const shade = land[k] ? clamp((icept + slope * facing[k]) / flat, 0.35, 1.6) : 1;
     for (let c = 0; c < 3; c++) out[k * 3 + c] = clamp(raw[k * 3 + c] / shade, 0, 255);
   }
-  await printColour(out, C, "athos-delit.jpg", 0.55);
+  await printColour(out, C, "colour-10m.jpg", 0.55);
 }
 
-// 3c. THE TREES THEMSELVES (`canopy`) ----------------------------------
+// 3c. THE TREES THEMSELVES ---------------------------------------------
 // Meta and the World Resources Institute's Canopy Height Map (CHMv2, 2026,
 // CC BY 4.0): the height of the trees everywhere, about a metre to a pixel,
 // read off very fine satellite pictures by a model (DINOv3). Real, and
@@ -410,10 +314,10 @@ if (want("delit")) {
 // each place is written as a share of the light round it within the
 // satellite's own pixel — so the 10 m colour is kept exactly as it is on
 // average, and only what lies inside its pixels is added.
-const CANOPY = 4096;             // canopy.jpg, CANOPY px over the square (3.8 m to a pixel)
+const CANOPY = 2048;             // canopy.jpg, CANOPY px over the square (7.5 m to a pixel: finer than the window shows it; it was 4096 for the trials, four times the memory for nothing seen)
 const CHM = ["1221000120", "1221000121", "1221000122", "1221000123"];   // the four tiles (zoom 10, Web Mercator) Athos is on
 const CHM_URL = (q) => `https://dataforgood-fb-data.s3.amazonaws.com/forests/v2/global/dinov3_global_chm_v2_ml3/chm/${q}.tif`;
-const CANOPY_SKY = 0.22;         // the sky's share of the light on level ground (trials' `light`, SUN_LIGHT)
+const CANOPY_SKY = 0.22;         // the sky's share of the light on level ground (tepe-gl.js SUN_LIGHT)
 const CANOPY_MOST = 2;           // canopy.jpg: the share, 0 to CANOPY_MOST over 0 to 255 (128 is as the satellite saw it) — as itself, not its logarithm, so that the picture made smaller for the distance averages to the satellite's own colour
 if (want("canopy")) {
   const { fromFile } = await import("geotiff");
@@ -497,7 +401,7 @@ if (want("canopy")) {
     share[k] = 1 + (m - 1) * t;
   }
   // down to CANOPY px (each the mean of the share over its area)
-  const pic = new Image(CANOPY, CANOPY, { colorModel: "RGB" }), f = W / CANOPY;
+  const pic = new Image(CANOPY, CANOPY, { colorModel: "GREY" }), f = W / CANOPY;
   let lo = 1, hi = 1, sum = 0;
   for (let b = 0; b < CANOPY; b++) for (let a = 0; a < CANOPY; a++) {
     const i0 = Math.floor(a * f), i1 = Math.max(i0 + 1, Math.floor((a + 1) * f)), j0 = Math.floor(b * (H / CANOPY)), j1 = Math.max(j0 + 1, Math.floor((b + 1) * (H / CANOPY)));
@@ -506,7 +410,7 @@ if (want("canopy")) {
     const v = s / n;
     lo = Math.min(lo, v); hi = Math.max(hi, v); sum += v;
     const g = Math.round(clamp((v / CANOPY_MOST) * 255, 0, 255));
-    pic.setValue(a, b, 0, g); pic.setValue(a, b, 1, g); pic.setValue(a, b, 2, g);
+    pic.setValue(a, b, 0, g);
   }
   await write(path.join(OUT, "canopy.jpg"), pic, { format: "jpeg", quality: 88 });
   console.log(`canopy.jpg (${CANOPY} px), the light's share ${lo.toFixed(2)} to ${hi.toFixed(2)}, ${(sum / CANOPY / CANOPY).toFixed(3)} on average`);
@@ -516,7 +420,7 @@ if (want("canopy")) {
 // The ground as the page raises it: x and z in half-widths of the square
 // (LIGHT px across 2 of them), y the height as a share of TOP times LIFT.
 async function bake(file, heightAt) {
-  const n = LIGHT, step = 2 / n, Y = new Float32Array(n * n);
+  const n = BAKE, step = 2 / n, Y = new Float32Array(n * n);
   for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) Y[j * n + i] = (heightAt((i + 0.5) / n, (j + 0.5) / n) / TOP) * LIFT;
   const yAt = (x, z) => { const fx = clamp(x, 0, n - 1.001), fz = clamp(z, 0, n - 1.001), i = fx | 0, j = fz | 0, u = fx - i, v = fz - j, k = j * n + i; return (Y[k] * (1 - u) + Y[k + 1] * u) * (1 - v) + (Y[k + n] * (1 - u) + Y[k + n + 1] * u) * v; };
   const L = [Math.sin(SUN.az), -Math.cos(SUN.az)], rise = Math.tan(SUN.alt);
@@ -556,23 +460,26 @@ async function bake(file, heightAt) {
     }
     sky[j * n + i] = vis / DIRS;
   }
-  const pic = new Image(n, n, { colorModel: "RGB" });
-  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
-    // (the sky worked out every SKY_STEP pixels, filled between)
+  // (the sky worked out every SKY_STEP pixels, filled between)
+  const skyAt = (i, j) => {
     const last = n - SKY_STEP, i1 = Math.min(i - (i % SKY_STEP), last), j1 = Math.min(j - (j % SKY_STEP), last);
     const i2 = Math.min(i1 + SKY_STEP, last), j2 = Math.min(j1 + SKY_STEP, last), u = clamp((i - i1) / SKY_STEP, 0, 1), v = clamp((j - j1) / SKY_STEP, 0, 1);
-    const s = (sky[j1 * n + i1] * (1 - u) + sky[j1 * n + i2] * u) * (1 - v) + (sky[j2 * n + i1] * (1 - u) + sky[j2 * n + i2] * u) * v;
-    pic.setValue(i, j, 0, Math.round(sun[j * n + i] * 255));
-    pic.setValue(i, j, 1, Math.round(clamp(s, 0, 1) * 255));
-    pic.setValue(i, j, 2, 0);
+    return (sky[j1 * n + i1] * (1 - u) + sky[j1 * n + i2] * u) * (1 - v) + (sky[j2 * n + i1] * (1 - u) + sky[j2 * n + i2] * u) * v;
+  };
+  // written at LIGHT px, each the mean of the BAKE / LIGHT squared round it
+  const f = n / LIGHT, pic = new Image(LIGHT, LIGHT, { colorModel: "RGB" });
+  for (let b = 0; b < LIGHT; b++) for (let a = 0; a < LIGHT; a++) {
+    let su = 0, sk = 0;
+    for (let j = b * f; j < (b + 1) * f; j++) for (let i = a * f; i < (a + 1) * f; i++) { su += Math.round(sun[j * n + i] * 255); sk += Math.round(clamp(skyAt(i, j), 0, 1) * 255); }
+    pic.setValue(a, b, 0, Math.round(su / (f * f)));
+    pic.setValue(a, b, 1, Math.round(sk / (f * f)));
+    pic.setValue(a, b, 2, 0);
   }
   await write(path.join(OUT, file), pic, { format: "png" });
   console.log(`light: ${file} in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 }
 if (want("light")) {
-  // (s, t across the square, 0 to 1, to each source's own pixels)
-  await bake("light-base.png", (s, t) => cubic(base, N, N, s * N - 0.5, t * N - 0.5));
-  await bake("light-dem.png", (s, t) => cubic(dem, FINE, FINE, s * FINE - 0.5, t * FINE - 0.5));
-  await bake("light-eroded.png", (s, t) => cubic(eroded, FINE, FINE, s * FINE - 0.5, t * FINE - 0.5));
+  // (s, t across the square, 0 to 1, to the 10 m ground's own pixels)
+  await bake("light.png", (s, t) => cubic(dem, FINE, FINE, s * FINE - 0.5, t * FINE - 0.5));
 }
 console.log("written to " + path.relative(ROOT, OUT));

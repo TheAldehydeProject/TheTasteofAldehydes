@@ -36,44 +36,28 @@ is Scentorium's. Both are credited at the foot of the page.
                           of the highest in sixteen bits (red the high byte,
                           green the low): what the page raises. Written by
                           the same tool, never by hand.
-  mountain/trials/        the resolution trials' own pictures (2026-10-21),
-                          asked for only by ?res= on the page's address
-                          (see docs/features/2026-10-20-apoteker-tepe.md):
-                          written by tools/apoteker/trials.mjs and
-                          tools/apoteker/upscale.py, never by hand. Those
-                          the owner does not keep come out with their trial.
-    heights-dem.png       the heights from Copernicus GLO-30, 1536 by 1536,
-                          10 m apart (?res=dem).
-    heights-eroded.png    the same, raindrops run over them (?res=erosion).
-    athos-10m.jpg         the satellite's picture at its own 10 m, 2048 px,
-                          a little sharpened (?res=photo).
-    athos-10m-native.png  the same unsharpened and unprinted, 1536 px,
-                          which the upscaler reads — not kept in the
-                          repository (.gitignore); trials.mjs --only=native
-                          makes it again.
-    athos-median.jpg      the middle of seven summer passes (?res=median).
-    athos-sr.jpg          the 10 m picture enlarged four times by
-                          Real-ESRGAN, 4096 px — invented detail
-                          (?res=superres).
-    light-*.png           the light baked for the page's sun: red how much
-                          of the sun, green how much of the sky each place
-                          sees, for the old heights, GLO-30's, and the
-                          eroded (?res=shadows, ?res=ao).
-    ndvi.png              how much is growing at every place, off the
-                          satellite's red and near infrared (the realism
-                          trials, the same day, later), for the two below.
-    athos-delit.jpg       the 10 m picture with the morning's light on its
-                          slopes evened out (ESA's terrain correction had
-                          taken it a little too far), so the page's sun
-                          alone lights it (?res=delit).
-    canopy.jpg            the trees' own crowns, 4096 px (3.8 m), out of Meta
+  mountain/fine/          the finer ground the page draws on a machine with
+                          a graphics card (since 2026-10-21, chosen from the
+                          realism trials): written by tools/apoteker/fine.mjs
+                          and tools/apoteker/osm.py, never by hand; credited
+                          at the foot of the page.
+    heights-10m.png       its heights from Copernicus GLO-30, 1536 by 1536,
+                          10 m apart, each a share of the highest over 1.25
+                          in sixteen bits (red the high byte, green the low).
+    colour-10m.jpg        the satellite's picture at its own 10 m, 2048 px,
+                          the morning's light on its slopes evened out (ESA's
+                          terrain correction had taken it a little too far),
+                          so the page's sun alone lights it.
+    light.png             the light baked for the page's sun, 1024 px: red
+                          how much of the sun, green how much of the sky each
+                          place sees.
+    canopy.jpg            the trees' own crowns, 2048 px (7.5 m), out of Meta
                           and the World Resources Institute's Canopy Height
                           Map v2 (CC BY 4.0), lit by the page's sun: each
                           place's share of the light within the satellite's
-                          pixel, 128 as the satellite saw it (?res=canopy).
+                          pixel, 128 as the satellite saw it.
     athos-osm.json        OpenStreetMap's footpaths to the summit from four
                           places, and the 95 largest of its buildings — its
                           monasteries, sketes and chapels — on the page's
-                          grid, written by tools/apoteker/osm.py (ODbL 1.0,
-                          © OpenStreetMap contributors, via the Overture Maps
-                          Foundation; ?res=osmtrails, ?res=buildings).
+                          grid (ODbL 1.0, © OpenStreetMap contributors, via
+                          the Overture Maps Foundation).

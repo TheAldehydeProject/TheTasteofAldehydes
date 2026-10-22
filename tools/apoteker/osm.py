@@ -2,10 +2,10 @@
 # THE MOUNTAIN'S REAL PATHS AND BUILDINGS — tools/apoteker/osm.py, run by
 # hand, never by the site.
 #
-# For the realism trials on Apoteker Tepe's page (2026-10-21 — "I want it to
-# feel as realistic as possible"): `osmtrails`, the real footpaths up Athos in
-# place of the trails the page invents, and `buildings`, its monasteries,
-# sketes and chapels standing on it. Both are OpenStreetMap's, read out of the
+# For Apoteker Tepe's realistic mountain (the realism trials, 2026-10-21 —
+# "I want it to feel as realistic as possible" — and the owner's choice of
+# them, the same day): the real footpaths up Athos, in place of the trails
+# the page invents, and its monasteries, sketes and chapels standing on it. Both are OpenStreetMap's, read out of the
 # Overture Maps Foundation's open release on AWS (GeoParquet, no account),
 # within the page's own square:
 #
@@ -20,7 +20,7 @@
 #                  from its floors or its size).
 #
 # Written as cells of the page's own grid (u, v: 0 to n, as tepe-data.js's
-# trails are), into images/Apoteker Tepe/mountain/trials/athos-osm.json.
+# trails are), into images/Apoteker Tepe/mountain/fine/athos-osm.json.
 #
 #   pip install pyarrow shapely networkx
 #   python3 tools/apoteker/osm.py          (HTTPS_PROXY is used if it is set)
@@ -37,7 +37,7 @@ from shapely.geometry import LineString, Polygon
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
-OUT = os.path.join(ROOT, "images", "Apoteker Tepe", "mountain", "trials", "athos-osm.json")
+OUT = os.path.join(ROOT, "images", "Apoteker Tepe", "mountain", "fine", "athos-osm.json")
 RELEASE = "2026-09-23.0"
 BUILDINGS = 95                       # with the four paths, fewer than a hundred features
 SUMMIT = (40.1572, 24.3264)          # mountain.mjs's SUMMIT, the square's middle

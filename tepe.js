@@ -62,10 +62,19 @@
 //                 that fragrance. Left alone, the nodes say what they are of
 //                 their own accord, one after another (POP_*).
 //
+//   ITS OWN LOOK  (2026-10-21, last, out of the day's trials — see
+//                 tepe-gl.js): a print in two inks, realistic under it with a
+//                 graphics card, with a film's grain, its air in the print's
+//                 colours and its hue drifting; the writing over it with a
+//                 soft halo of the paper (style.css).
+//
 // QUICK TO DRAW: the drawing is drawn every frame while anything moves and
-// at half that while only the mist and the clouds do; where the trails and
-// the nodes can be seen is worked out again only when the camera has moved.
-// Sharp on every screen (`window.Sharpness`), let down on a slow one.
+// at half that while only the mist and the clouds do — with the page's own
+// look whole, at the pace it needs (FRAME_BUSY, FRAME_IDLE, FRAME_AWAY, and
+// not at all while it cannot be seen); where the trails and the nodes can be
+// seen is worked out again only when the camera has moved. Sharp on every
+// screen (`window.Sharpness`, never more than two pixels to a point), let
+// down on a slow one.
 //
 // WITH REDUCED MOTION: the mountain stands as the scroll puts it, at once,
 // nothing going along the trails, the mist and the clouds still, no
@@ -139,55 +148,20 @@
   const POP_FIRST = 2600, POP_EVERY = 4600, POP_SHOWN = 3200, POP_AFTER = 4000;
   const SOFT_WIDE = 0.5;            // the mountain's pixels to a css px without a graphics card, on a wide window
   const SOFT_EVERY = 300;          // ms: without a graphics card, at most one new picture of it so often
-  // THE TRIALS OF ITS RESOLUTION (`?res=` on the address; see tepe-gl.js):
-  // those that are the page's to do — the screen's every pixel, never let
-  // down (`native`); the mountain larger in the window (`closer`); the
-  // dither's steps a device pixel each (`ditherfine`), finer (`levels`) or
-  // none (`nodither`); the specks gone (`nospecks`) or finer and more
-  // (`finespecks`); and the trails drawn into the ground (`trailsgl`), not
-  // over it.
-  const res = GL.res || (() => false);
-  const CLOSER = 1.32;
-  // (the realism trials that draw on more of the world's data say whose, in
-  // the mountain's credit, while they are asked for)
-  {
-    const said = [];
-    if (res("canopy")) said.push("Its trees’ crowns from the Canopy Height Map v2 of Meta and the World Resources Institute (CC BY 4.0).");
-    if (res("osmtrails") || res("buildings")) said.push("Its " + [res("osmtrails") && "footpaths", res("buildings") && "monasteries and buildings"].filter(Boolean).join(" and ") + " © OpenStreetMap contributors (ODbL 1.0), via the Overture Maps Foundation.");
-    const text = said.length && document.querySelector(".house-credit-ground .house-credit-text");
-    if (text) text.append(" " + said.join(" "));
-  }
-  // (`clear`: the air between the eye and the mountain clearer — a third of
-  // the haze and the mist, the banks fainter — for contrast is half of what
-  // reads as sharp)
-  const CLEAR_AIR = [0.13 * 0.4, 5.5 * 0.35, 30, 0.85];
-  const HAZE_AIR = [0.13, 5.5 * 0.6, 30, 0.85];
-  // THE LOOKS (`?res=style`, a trial — 2026-10-21, last: "add effects to it
-  // too, so that it looks unique, and not entirely lifelike ... a temporary
-  // setting on the bottom right of the page where i can cycle through them"):
-  // a panel at the bottom right of the page, changing the drawing as it is
-  // pressed — its colour (tepe-gl.js's palettes), its texture, the line art
-  // over it and the extras — and keeping what it shows in the address
-  // (`fx=`), for a reload or a link. Opened without `fx=`, it shows the
-  // sunset gradient in halftone dots, a drawing at each fragrance's place,
-  // the coastline glowing and the air in the gradient's colours. Whichever the owner does not keep comes out.
-  const STYLE = res("style");
-  const FX_WORDS = ["halftone", "dither", "engrave", "grain", "icons", "shapes", "seal", "coast", "haze", "contours", "drift"];
-  const COLOURS = [["real", "Real colours"], ["sunset", "Sunset gradient"], ["infrared", "Infrared film"], ["print", "Two-ink print"]];
-  const FX = { palette: "sunset", halftone: true, icons: true, coast: true, haze: true };
-  {
-    const asked = (location.search.match(/[?&]fx=([^&#]*)/) || [])[1];
-    if (asked != null) {
-      const words = decodeURIComponent(asked).split(/[,+]/).map((w) => w.trim());
-      FX_WORDS.forEach((k) => { FX[k] = words.includes(k); });
-      FX.palette = (COLOURS.find(([k]) => words.includes(k)) || ["real"])[0];
-    }
-  }
-  const ART = [255, 255, 255];     // the line art's white
-  const ART_UNDER = [24, 14, 34];  // and the faint dark under it, so it reads on the light
-  const ART_WIDE = 1.35, ART_NARROW = 1.15;   // px, its lines
-  const SEAL_WORDS = "CAUSA LATET VIS EST NOTISSIMA FONTIS";   // (the owner's picture's — Ovid, Metamorphoses IV: the cause is hidden, the power of the spring well known)
-  const SEAL_TURN = 150;           // s a turn of the seal
+  // THE PAGE'S OWN LOOK (2026-10-21, last; see tepe-gl.js), with a graphics
+  // card: the air as air is doing much of what the mist did, so less of it
+  // (REAL_AIR, REAL_MIST); the specks round and soft, a fifth more of them on
+  // a wide window (REAL_SPECKS); and drawn at the pace it needs — up to
+  // FRAME_BUSY while the page is scrolled or the mountain turned, FRAME_IDLE
+  // while only the mist, the clouds and the breathing move, FRAME_AWAY while
+  // the window is not in front, and not at all while it cannot be seen.
+  const REAL_AIR = [0.13, 5.5 * 0.6, 30, 0.85];
+  const REAL_MIST = 0.7;           // of MIST.alpha
+  const REAL_SPECKS = 1.2;         // (a phone's as many as ever)
+  const FRAME_BUSY = 1000 / 60, FRAME_IDLE = 1000 / 30, FRAME_AWAY = 1000 / 12;
+  const BUSY_AFTER = 600;          // ms after the last scroll or drag it is still busy
+  // THE TRAILS' INK on the page's own look, the print's terracotta (tepe-gl.js PRINT.trail).
+  const TRAIL_PRINT = [157, 109, 82], PAPER_PRINT = [246, 241, 230];
 
   // ---------- THE GROUND ----------
   const n = DATA.n;
@@ -219,10 +193,9 @@
   // ONE SIDE OF IT: drawn nearly twice as large, its summit towards the
   // right edge, so one flank runs across the window.
   const frameOf = () => {
-    const k = res("closer") ? CLOSER : 1;
-    if (narrow) { const S = Math.min(W * 1.02, H * 0.92) * k; return { S, cx: W * 0.78, cy: H * (res("closer") ? 0.62 : 0.58) }; }
-    const S = Math.min(W * 0.56, H * 0.8) * k;
-    return { S, cx: W / 2, cy: H * (res("closer") ? 0.66 : 0.6) };
+    if (narrow) { const S = Math.min(W * 1.02, H * 0.92); return { S, cx: W * 0.78, cy: H * 0.58 }; }
+    const S = Math.min(W * 0.56, H * 0.8);
+    return { S, cx: W / 2, cy: H * 0.6 };
   };
   // And in the free view, the whole of it, a little above the middle.
   const fitFree = () => {
@@ -238,10 +211,10 @@
   function size() {
     W = window.innerWidth; H = window.innerHeight;
     narrow = W < NARROW_AT;
-    ratio = res("native") ? Math.min(window.devicePixelRatio || 1, 3) : sharp ? sharp.ratio : Math.min(window.devicePixelRatio || 1, 2);
+    ratio = sharp ? sharp.ratio : Math.min(window.devicePixelRatio || 1, 2);
     // (Without a graphics card on a wide window, at SOFT_WIDE of the
     // screen's pixels: that much less for the processor to draw.)
-    draw3d.size(W, H, draw3d.soft && !narrow && !res("native") ? Math.min(ratio, SOFT_WIDE) : ratio);
+    draw3d.size(W, H, draw3d.soft && !narrow ? Math.min(ratio, SOFT_WIDE) : ratio);
     field.style.width = W + "px"; field.style.height = H + "px";
     trailCanvas.width = Math.round(W * ratio); trailCanvas.height = Math.round(H * ratio);
     trailCanvas.style.width = W + "px"; trailCanvas.style.height = H + "px";
@@ -257,11 +230,9 @@
     if (world) world.dispose();
     if (mist) mist.dispose();
     specksFor = narrow ? "narrow" : "wide";
-    const more = res("nospecks") ? 0 : res("finespecks") ? 1.5 : 1;
+    const more = draw3d.real && !narrow ? REAL_SPECKS : 1;
     world = draw3d.piece(ground, { world: true, lift: LIFT, specks: Math.round((narrow ? SPECKS_NARROW : SPECKS_WIDE) * more), landSpecks: Math.round((narrow ? LAND_NARROW : LAND_WIDE) * more), grid: narrow && !draw3d.soft ? 420 : undefined, seed: 1925 });
-    const m0 = draw3d.soft ? MIST_SOFT : narrow ? MIST_NARROW : MIST;
-    const m = res("clear") ? { banks: Math.round(m0.banks * 0.5), wisps: Math.round(m0.wisps * 0.5), cap: m0.cap, far: m0.far } : m0;
-    mist = draw3d.mist(ground, { lift: LIFT, ...m, seed: 31 });
+    mist = draw3d.mist(ground, { lift: LIFT, ...(draw3d.soft ? MIST_SOFT : narrow ? MIST_NARROW : MIST), seed: 31 });
     drawnCam = null;
   }
 
@@ -271,10 +242,8 @@
     time: t, still: REDUCE, quiet,
     surface: SURFACE,
     speck: narrow ? SPECK_NARROW : SPECK_WIDE,
-    // (`haze`: the real air doing much of what the mist did, less of it)
-    air: res("clear") ? CLEAR_AIR : res("haze") ? HAZE_AIR : AIR, hazeFrom: res("clear") ? HAZE_FROM * 1.4 : HAZE_FROM, sky: SKY, wind: WIND, cap: top3, mist: res("clear") ? MIST.alpha * 0.55 : res("haze") ? MIST.alpha * 0.7 : MIST.alpha,
-    levels: res("nodither") ? 0 : res("levels") ? 128 : DITHER.levels, grain: res("nodither") ? 0 : DITHER.grain, ditherPx: res("ditherfine") ? 1 / ratio : DITHER.px,
-    style: STYLE ? FX : undefined,
+    air: draw3d.real ? REAL_AIR : AIR, hazeFrom: HAZE_FROM, sky: SKY, wind: WIND, cap: top3, mist: MIST.alpha * (draw3d.real ? REAL_MIST : 1),
+    levels: DITHER.levels, grain: DITHER.grain, ditherPx: DITHER.px,
   });
   const clock = () => (REDUCE ? 0 : (performance.now() / 1000) % 3000);
   function drawAll(t) {
@@ -317,7 +286,6 @@
       });
     });
     nodesAgain();
-    if (STYLE) artAgain();
     lookKey++;
   }
 
@@ -332,17 +300,16 @@
     const g = c.getContext("2d");
     g.drawImage(logo, 0, 0, w, h);
     g.globalCompositeOperation = "source-in";
-    g.fillStyle = "rgb(" + TRAIL.join(",") + ")";
+    g.fillStyle = "rgb(" + INK.join(",") + ")";
     g.fillRect(0, 0, w, h);
     blaze = c;
-    if (STYLE) {
-      // (the looks: the same in the line art's white, as a blaze and in the seal)
-      const tint = (hh) => { const cw = Math.round((logo.width / logo.height) * hh), cc = document.createElement("canvas"); cc.width = cw; cc.height = hh; const gg = cc.getContext("2d"); gg.drawImage(logo, 0, 0, cw, hh); gg.globalCompositeOperation = "source-in"; gg.fillStyle = "rgb(" + ART.join(",") + ")"; gg.fillRect(0, 0, cw, hh); return cc; };
-      blazeWhite = tint(h); logoWhite = tint(240);
-    }
   };
   const LOGO_SRC = (window.SITE_ROOT || "../") + "images/Apoteker Tepe/Apoteker Tepe Logo.webp";
   logo.src = LOGO_SRC;
+  // (on the page's own look, the print's terracotta on its paper, drawn into
+  // the ground where it can be; elsewhere the pencil's red-brown)
+  const INK = draw3d.real || draw3d.page ? TRAIL_PRINT : TRAIL, UNDER_INK = draw3d.real || draw3d.page ? PAPER_PRINT : PAPER;
+  let inGround = false;
   const rgb = (c, a = 1) => (a >= 1 ? "rgb(" + c.join(",") + ")" : "rgba(" + c.join(",") + "," + a + ")");
 
   // The trails, losing their opacity behind the writing with the mountain:
@@ -352,9 +319,7 @@
     pen.setTransform(ratio, 0, 0, ratio, 0, 0);
     pen.clearRect(0, 0, W, H);
     if (!ground) return;
-    // (the looks: with the line art's drawings, the trails white too)
-    const white = STYLE && FX.icons, ink = white ? ART : TRAIL, under = white ? ART_UNDER : PAPER;
-    const colour = rgb(ink);
+    const colour = rgb(INK), under = UNDER_INK;
     pen.lineCap = "round";
     const width = narrow ? TRAIL_NARROW : TRAIL_WIDE;
     const marks = [];
@@ -368,11 +333,11 @@
       const runs = Array.from({ length: LEVELS }, () => []);
       for (let k = 1; k < pts.length; k++) if (pts[k - 1].seen && pts[k].seen && away(pts[k])) runs[level((pts[k - 1].x + pts[k].x) / 2, (pts[k - 1].y + pts[k].y) / 2)].push(pts[k - 1], pts[k]);
       runs.forEach((run, lv) => {
-        if (!run.length || !lv || res("trailsgl")) return;   // (`trailsgl`: drawn into the ground itself)
+        if (!run.length || !lv || inGround) return;   // (on the page's own look, drawn into the ground itself)
         const strength = lv / (LEVELS - 1);
         const path = () => { pen.beginPath(); for (let q = 0; q < run.length; q += 2) { pen.moveTo(run[q].x, run[q].y); pen.lineTo(run[q + 1].x, run[q + 1].y); } };
         pen.setLineDash([]);
-        pen.globalAlpha = (white ? 0.3 : UNDER) * strength;
+        pen.globalAlpha = UNDER * strength;
         pen.strokeStyle = rgb(under);
         pen.lineWidth = width + 1.4;
         path(); pen.stroke();
@@ -395,13 +360,13 @@
     for (const m of marks) {
       const q = free ? 1 : quietAt(m.x, m.y);
       if (m.kind === "blaze") {
-        const mark = white ? blazeWhite : blaze;
+        const mark = blaze;
         if (!mark) continue;
         const h = BLAZE_TALL * (0.75 + 0.3 * (cam.eye / (cam.eye + m.z))), w = (mark.width / mark.height) * h;
         pen.globalAlpha = 0.9 * q;
         pen.drawImage(mark, m.x - w / 2, m.y - h - 2, w, h);
       } else {
-        pen.globalAlpha = (white ? 0.42 : 0.75) * q;
+        pen.globalAlpha = 0.75 * q;
         pen.fillStyle = rgb(under);
         pen.beginPath(); pen.arc(m.x, m.y, 7.5, 0, Math.PI * 2); pen.fill();
         pen.globalAlpha = 0.95 * q;
@@ -413,193 +378,6 @@
       }
     }
     pen.globalAlpha = 1;
-    if (STYLE) drawArt(t);
-  }
-
-  // ---------- THE LOOKS' LINE ART ----------
-  // White line drawings over the mountain, turning with it (each worked out
-  // in the ground's own space and put on the window as the camera moves):
-  //   icons   at each fragrance's place, on a short stem, a drawing of what
-  //           it is — an eye in a triangle (The Holy Mountain), a plateau
-  //           under the sun (Kogen, the high plain), a crescent and a star
-  //           (Brother Night), a crow in flight (Karasu, the crow), a cut
-  //           crystal (The Peradam), a flame (Pale Fire), steps going up
-  //           (Anabasis, the going up), waves under a rainbow (After the
-  //           Flood) — and the trails white;
-  //   shapes  geometry standing in the mountain's air, meaning nothing in
-  //           particular: an arc from the summit down to a ring on a slope,
-  //           a stair of steps up a trail, an arch standing on the ground,
-  //           rings round a trail's foot, sights on three places, a plumb
-  //           line ticked up from the summit;
-  //   seal    fixed to the window: the house's sign in a ring of words,
-  //           turning slowly.
-  // All of it losing its opacity behind the writing with the mountain.
-  const KINDS = [["holy mountain", "eye"], ["kogen", "plateau"], ["brother night", "moon"], ["karasu", "crow"], ["peradam", "crystal"], ["pale fire", "flame"], ["anabasis", "stairs"], ["flood", "waves"]];
-  let artIcons = [], artShapes = [], artMarks = [];
-  let looksSet = () => {};
-  const add3 = (a, b, k = 1) => ({ x: a.x + b.x * k, y: a.y + b.y * k, z: a.z + b.z * k });
-  const sub3 = (a, b) => ({ x: a.x - b.x, y: a.y - b.y, z: a.z - b.z });
-  const len3 = (a) => Math.hypot(a.x, a.y, a.z);
-  function artAgain() {
-    if (!world) return;
-    const P = (w) => GL.project(w, cam);
-    // the icons, where the free view's nodes stand
-    artIcons = !FX.icons ? [] : all.filter((d) => !d.house).map((d) => {
-      const w = worldOf(d.u, d.v, NODE_UP * 0.5), q = P(w), name = d.name.toLowerCase();
-      return { ...q, seen: seen(w), kind: (KINDS.find(([k]) => name.includes(k)) || [null, "eye"])[1] };
-    });
-    artShapes = []; artMarks = [];
-    if (!FX.shapes) return;
-    const T = DATA.trails, at = (ti, share, up = 0) => { const tr = T[ti % T.length], c = tr[Math.round(share * (tr.length - 1))]; return worldOf(c[0], c[1], up); };
-    const line = (pts, o = {}) => artShapes.push({ pts: pts.map(P), ...o });
-    // an arc from over the summit down to a ring on a slope
-    const A = worldOf(pi, pj, 0.03), B = at(1, 0.45, 0.006), C = { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2, z: (A.z + B.z) / 2 }, r = len3(sub3(A, C));
-    const e1 = { x: (A.x - C.x) / r, y: (A.y - C.y) / r, z: (A.z - C.z) / r }, d = e1.y, e2l = Math.hypot(-d * e1.x, 1 - d * e1.y, -d * e1.z) || 1;
-    const e2 = { x: (-d * e1.x) / e2l, y: (1 - d * e1.y) / e2l, z: (-d * e1.z) / e2l };
-    line(Array.from({ length: 49 }, (_, k) => { const th = (k / 48) * Math.PI; return add3(add3(C, e1, r * Math.cos(th)), e2, r * Math.sin(th)); }));
-    artMarks.push({ kind: "ring", ...P(B) }, { kind: "dot", ...P(A) });
-    // a stair up a trail, standing a little over it
-    let g0 = at(3, 0.2, 0.024), g1 = at(3, 0.55, 0.024);
-    if (g1.y < g0.y) [g0, g1] = [g1, g0];
-    const stairs = [g0];
-    for (let i = 1; i <= 6; i++) { const f = i / 6, x = g0.x + (g1.x - g0.x) * f, z = g0.z + (g1.z - g0.z) * f; stairs.push({ x, y: g0.y + (g1.y - g0.y) * (i - 1) / 6, z }, { x, y: g0.y + (g1.y - g0.y) * f, z }); }
-    line(stairs);
-    // an arch standing on the ground, square to the page's view
-    const Q = at(5, 0.4, 0), right = { x: Math.cos(HOME), y: 0, z: -Math.sin(HOME) }, up = { x: 0, y: 1, z: 0 };
-    const arch = (wd, ht) => {
-      const pts = [add3(Q, right, -wd / 2)];
-      pts.push(add3(pts[0], up, ht - wd / 2));
-      const top = add3(Q, up, ht - wd / 2);
-      for (let k = 1; k < 24; k++) { const th = Math.PI - (k / 24) * Math.PI; pts.push(add3(add3(top, right, (wd / 2) * Math.cos(th)), up, (wd / 2) * Math.sin(th))); }
-      pts.push(add3(add3(Q, right, wd / 2), up, ht - wd / 2), add3(Q, right, wd / 2));
-      return pts;
-    };
-    line(arch(0.075, 0.11)); line(arch(0.05, 0.085));
-    line([add3(Q, right, -0.07), add3(Q, right, 0.07)]);
-    // rings round a trail's foot, on the ground
-    const F = at(4, 0, 0.002);
-    [0.045, 0.075, 0.11].forEach((rr) => line(Array.from({ length: 73 }, (_, k) => { const th = (k / 72) * Math.PI * 2; return { x: F.x + rr * Math.cos(th), y: F.y, z: F.z + rr * Math.sin(th) }; }), { dash: [3, 4] }));
-    // sights on three places
-    [[0, 0.7], [2, 0.3], [4, 0.62]].forEach(([ti, sh]) => { const w = at(ti, sh, 0.004); artMarks.push({ kind: "sight", ...P(w), seen: seen(w) }); });
-    // a plumb line ticked up from the summit
-    const p0 = worldOf(pi, pj, 0.035), p1 = add3(p0, up, 0.24);
-    line([p0, p1], { dash: [2, 3] });
-    for (let k = 1; k <= 5; k++) artMarks.push({ kind: "tick", ...P(add3(p0, up, k * 0.04)) });
-    artMarks.push({ kind: "ring", ...P(p1) });
-  }
-  // A drawing of `kind`, half its size `s`, round (x, y): its lines as a path.
-  function iconPath(kind, x, y, s) {
-    const g = pen;
-    g.beginPath();
-    if (kind === "eye") {
-      g.moveTo(x, y - s * 1.05); g.lineTo(x + s * 1.05, y + s * 0.75); g.lineTo(x - s * 1.05, y + s * 0.75); g.closePath();
-      g.moveTo(x - s * 0.62, y + s * 0.22); g.quadraticCurveTo(x, y - s * 0.32, x + s * 0.62, y + s * 0.22); g.quadraticCurveTo(x, y + s * 0.7, x - s * 0.62, y + s * 0.22);
-      g.moveTo(x + s * 0.2, y + s * 0.22); g.arc(x, y + s * 0.22, s * 0.2, 0, Math.PI * 2);
-    } else if (kind === "plateau") {
-      g.moveTo(x - s, y + s * 0.6); g.lineTo(x - s * 0.55, y - s * 0.05); g.lineTo(x + s * 0.55, y - s * 0.05); g.lineTo(x + s, y + s * 0.6); g.closePath();
-      g.moveTo(x + s * 0.3, y - s * 0.62); g.arc(x, y - s * 0.62, s * 0.3, 0, Math.PI * 2);
-    } else if (kind === "moon") {
-      g.arc(x - s * 0.1, y, s * 0.8, Math.PI * 0.3, Math.PI * 1.7);
-      g.arc(x + s * 0.22, y - s * 0.02, s * 0.62, Math.PI * 1.45, Math.PI * 0.55, true);
-      g.closePath();
-      g.moveTo(x + s * 0.75, y - s * 0.95); g.lineTo(x + s * 0.75, y - s * 0.35); g.moveTo(x + s * 0.45, y - s * 0.65); g.lineTo(x + s * 1.05, y - s * 0.65);
-    } else if (kind === "crow") {
-      g.moveTo(x - s * 1.05, y - s * 0.35); g.quadraticCurveTo(x - s * 0.5, y - s * 0.65, x - s * 0.08, y + s * 0.08);
-      g.quadraticCurveTo(x + s * 0.45, y - s * 0.7, x + s * 1.05, y - s * 0.4);
-      g.moveTo(x - s * 0.3, y + s * 0.12); g.quadraticCurveTo(x, y + s * 0.38, x + s * 0.32, y + s * 0.1); g.lineTo(x + s * 0.55, y + s * 0.42);
-      g.moveTo(x - s * 0.3, y + s * 0.12); g.lineTo(x - s * 0.52, y + s * 0.06);
-    } else if (kind === "crystal") {
-      g.moveTo(x, y - s); g.lineTo(x + s * 0.68, y - s * 0.34); g.lineTo(x + s * 0.5, y + s * 0.42); g.lineTo(x, y + s); g.lineTo(x - s * 0.5, y + s * 0.42); g.lineTo(x - s * 0.68, y - s * 0.34); g.closePath();
-      g.moveTo(x - s * 0.68, y - s * 0.34); g.lineTo(x + s * 0.68, y - s * 0.34);
-      g.moveTo(x - s * 0.28, y - s * 0.34); g.lineTo(x, y + s); g.lineTo(x + s * 0.28, y - s * 0.34);
-      g.moveTo(x - s * 0.28, y - s * 0.34); g.lineTo(x, y - s); g.lineTo(x + s * 0.28, y - s * 0.34);
-    } else if (kind === "flame") {
-      g.moveTo(x, y - s * 1.05); g.bezierCurveTo(x + s * 0.55, y - s * 0.38, x + s * 0.78, y + s * 0.38, x, y + s * 0.95); g.bezierCurveTo(x - s * 0.78, y + s * 0.38, x - s * 0.55, y - s * 0.38, x, y - s * 1.05);
-      g.moveTo(x, y - s * 0.2); g.bezierCurveTo(x + s * 0.3, y + s * 0.14, x + s * 0.36, y + s * 0.5, x, y + s * 0.72); g.bezierCurveTo(x - s * 0.36, y + s * 0.5, x - s * 0.3, y + s * 0.14, x, y - s * 0.2);
-    } else if (kind === "stairs") {
-      g.moveTo(x - s, y + s * 0.85);
-      for (let k = 0; k < 4; k++) { const sx = x - s + (k + 1) * s * 0.5, sy = y + s * 0.85 - (k + 1) * s * 0.42; g.lineTo(sx - s * 0.5, sy); g.lineTo(sx, sy); }
-      g.moveTo(x + s, y - s * 0.83); g.lineTo(x + s, y - s * 1.2); g.lineTo(x + s * 0.64, y - s * 1.08); g.lineTo(x + s, y - s * 0.96);
-    } else {
-      for (let k = 0; k < 3; k++) { const yy = y + s * (0.18 + k * 0.32); g.moveTo(x - s, yy); for (let i = 1; i <= 12; i++) g.lineTo(x - s + (i / 12) * 2 * s, yy + Math.sin((i / 12) * Math.PI * 3) * s * 0.1); }
-      [0.95, 0.72].forEach((rr) => { g.moveTo(x + s * rr, y + s * 0.02); g.arc(x, y + s * 0.02, s * rr, 0, Math.PI, true); });
-    }
-  }
-  function strokeArt(alpha, width) {
-    pen.globalAlpha = 0.3 * alpha; pen.strokeStyle = rgb(ART_UNDER); pen.lineWidth = width + 1.6; pen.stroke();
-    pen.globalAlpha = 0.95 * alpha; pen.strokeStyle = rgb(ART); pen.lineWidth = width; pen.stroke();
-  }
-  // A polyline in stretches, each at the quiet where it stands.
-  function strokeRuns(pts, dash, width) {
-    const runs = Array.from({ length: LEVELS }, () => []);
-    for (let k = 1; k < pts.length; k++) runs[free ? LEVELS - 1 : Math.round(quietAt((pts[k - 1].x + pts[k].x) / 2, (pts[k - 1].y + pts[k].y) / 2) * (LEVELS - 1))].push(pts[k - 1], pts[k]);
-    pen.setLineDash(dash || []);
-    runs.forEach((run, lv) => {
-      if (!run.length || !lv) return;
-      pen.beginPath();
-      for (let q = 0; q < run.length; q += 2) { pen.moveTo(run[q].x, run[q].y); pen.lineTo(run[q + 1].x, run[q + 1].y); }
-      strokeArt(lv / (LEVELS - 1), width);
-    });
-    pen.setLineDash([]);
-  }
-  let logoWhite = null, blazeWhite = null;
-  function drawArt(t) {
-    const width = narrow ? ART_NARROW : ART_WIDE;
-    pen.lineCap = "round"; pen.lineJoin = "round";
-    const qAt = (x, y) => (free ? 1 : quietAt(x, y));
-    // the icons, each on a stem from its place
-    const s = narrow ? 9 : 12.5, stem = narrow ? 13 : 18;
-    for (const ic of artIcons) {
-      if (!ic.seen || ic.x < -30 || ic.x > W + 30 || ic.y < -30 || ic.y > H + 30) continue;
-      const a = qAt(ic.x, ic.y - stem);
-      pen.beginPath(); pen.moveTo(ic.x, ic.y - 2.5); pen.lineTo(ic.x, ic.y - stem);
-      pen.moveTo(ic.x + 1.8, ic.y); pen.arc(ic.x, ic.y, 1.8, 0, Math.PI * 2);
-      strokeArt(a, width);
-      iconPath(ic.kind, ic.x, ic.y - stem - s - 2, s);
-      strokeArt(a, width);
-    }
-    // the shapes
-    for (const sh of artShapes) strokeRuns(sh.pts, sh.dash, width);
-    for (const m of artMarks) {
-      if (m.seen === false) continue;
-      const a = qAt(m.x, m.y);
-      pen.beginPath();
-      if (m.kind === "ring") { pen.arc(m.x, m.y, 5, 0, Math.PI * 2); pen.moveTo(m.x + 1.6, m.y); pen.arc(m.x, m.y, 1.6, 0, Math.PI * 2); }
-      else if (m.kind === "dot") pen.arc(m.x, m.y, 2.2, 0, Math.PI * 2);
-      else if (m.kind === "tick") { pen.moveTo(m.x - 4, m.y); pen.lineTo(m.x + 4, m.y); }
-      else { pen.arc(m.x, m.y, 4.5, 0, Math.PI * 2); [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { pen.moveTo(m.x + dx * 6.5, m.y + dy * 6.5); pen.lineTo(m.x + dx * 10, m.y + dy * 10); }); }
-      strokeArt(a, width);
-    }
-    if (FX.seal) drawSeal(t);
-    pen.globalAlpha = 1;
-  }
-  // THE SEAL: the house's sign in a ring of words, turning slowly, fixed to
-  // the window — at the bottom left of a wide one, under the button at the
-  // top right of a phone's.
-  function drawSeal(t) {
-    const R = narrow ? 44 : 62, cx = narrow ? W - R - 16 : R + 34, cy = narrow ? 74 + R : H - R - 34;
-    const a = free ? 1 : quietAt(cx, cy), turn = REDUCE ? 0 : ((t % SEAL_TURN) / SEAL_TURN) * Math.PI * 2;
-    const width = narrow ? ART_NARROW : ART_WIDE, band = narrow ? 12 : 16;
-    pen.beginPath();
-    pen.arc(cx, cy, R, 0, Math.PI * 2);
-    pen.moveTo(cx + R - band, cy); pen.arc(cx, cy, R - band, 0, Math.PI * 2);
-    for (let k = 0; k < 48; k++) { const th = turn * -0.6 + (k / 48) * Math.PI * 2, r0 = R - band - 3, r1 = r0 - (k % 4 ? 2.5 : 5); pen.moveTo(cx + Math.cos(th) * r0, cy + Math.sin(th) * r0); pen.lineTo(cx + Math.cos(th) * r1, cy + Math.sin(th) * r1); }
-    strokeArt(a, width);
-    const chars = (SEAL_WORDS + "  ·  ").split(""), step = (Math.PI * 2) / chars.length, rt = R - band / 2;
-    pen.font = "500 " + (narrow ? 7 : 8.6) + "px 'IBM Plex Mono', ui-monospace, monospace";
-    pen.textAlign = "center"; pen.textBaseline = "middle";
-    pen.fillStyle = rgb(ART);
-    pen.globalAlpha = 0.95 * a;
-    chars.forEach((ch, k) => {
-      if (ch === " ") return;
-      const th = turn + k * step - Math.PI / 2;
-      pen.save(); pen.translate(cx + Math.cos(th) * rt, cy + Math.sin(th) * rt); pen.rotate(th + Math.PI / 2); pen.fillText(ch, 0, 0.5); pen.restore();
-    });
-    if (logoWhite) {
-      const h = (R - band - 9) * 1.35, w = (logoWhite.width / logoWhite.height) * h;
-      pen.globalAlpha = 0.95 * a;
-      pen.drawImage(logoWhite, cx - w / 2, cy - h / 2, w, h);
-    }
   }
 
   // ---------- THE QUIET ----------
@@ -880,72 +658,17 @@
   stage.addEventListener("wheel", (e) => e.preventDefault(), { passive: false });
   stage.addEventListener("dblclick", (e) => { if (e.target === stage) Object.assign(want, { yaw: HOME, pitch: freePitch() }); });
 
-  // ---------- THE LOOKS' PANEL (a trial: `?res=style`) ----------
-  // At the bottom right: the colour, gone round by its arrows; the texture,
-  // the line art and the extras, each pressed on or off; and the drawing
-  // under it — the page as it is, or the realistic one (`?res=real`), which
-  // is a reload. What it shows is kept in the address as it changes.
-  if (STYLE) {
-    const panel = document.createElement("aside");
-    panel.className = "tepe-looks";
-    panel.setAttribute("aria-label", "Looks — a temporary panel, to try them");
-    const chip = (k, say) => '<button type="button" class="tepe-looks-chip" data-fx="' + k + '" aria-pressed="false">' + say + "</button>";
-    panel.innerHTML =
-      '<div class="tepe-looks-head"><span class="tepe-looks-title">Looks</span><span class="tepe-looks-note">Temporary</span><button type="button" class="tepe-looks-fold" aria-expanded="true">Hide</button></div>' +
-      '<div class="tepe-looks-body">' +
-      '<div class="tepe-looks-row"><span class="tepe-looks-name">Colour</span><span class="tepe-looks-cycle"><button type="button" class="tepe-looks-step" data-step="-1" aria-label="The colour before">‹</button><span class="tepe-looks-colour" aria-live="polite"></span><button type="button" class="tepe-looks-step" data-step="1" aria-label="The next colour">›</button></span></div>' +
-      '<div class="tepe-looks-row"><span class="tepe-looks-name">Texture</span><span class="tepe-looks-chips">' + chip("halftone", "Halftone") + chip("dither", "Dither") + chip("engrave", "Engraved") + chip("grain", "Grain") + "</span></div>" +
-      '<div class="tepe-looks-row"><span class="tepe-looks-name">Line art</span><span class="tepe-looks-chips">' + chip("icons", "Icons") + chip("shapes", "Shapes") + chip("seal", "Seal") + "</span></div>" +
-      '<div class="tepe-looks-row"><span class="tepe-looks-name">Extras</span><span class="tepe-looks-chips">' + chip("coast", "Coastline") + chip("haze", "Colour haze") + chip("contours", "Contours") + chip("drift", "Drift") + "</span></div>" +
-      '<div class="tepe-looks-row"><span class="tepe-looks-name">Base</span><span class="tepe-looks-chips"><a class="tepe-looks-chip" data-base="page">As it is</a><a class="tepe-looks-chip" data-base="real">Realistic</a></span></div>' +
-      "</div>";
-    document.body.appendChild(panel);
-    document.documentElement.classList.add("tepe-looks-on");
-    const baseNow = res("real") ? "real" : "page";
-    const words = () => [FX.palette, ...FX_WORDS.filter((k) => FX[k])].join(",");
-    // (a word put in the address as it is: commas and all, as tepe-gl.js reads `res=`)
-    const withParam = (search, key, value) => { const re = new RegExp("([?&])" + key + "=[^&#]*"); return re.test(search) ? search.replace(re, "$1" + key + "=" + value) : search + (search ? "&" : "?") + key + "=" + value; };
-    function show() {
-      panel.querySelector(".tepe-looks-colour").textContent = COLOURS.find(([k]) => k === FX.palette)[1];
-      panel.querySelectorAll("[data-fx]").forEach((b) => b.setAttribute("aria-pressed", FX[b.dataset.fx] ? "true" : "false"));
-      panel.querySelectorAll("[data-base]").forEach((a) => {
-        const b = a.dataset.base, search = withParam(withParam(location.search, "res", b === "real" ? "real,style" : "style"), "fx", words());
-        a.href = location.pathname + search + location.hash;
-        if (b === baseNow) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
-      });
-    }
-    function changed() {
-      show();
-      try { history.replaceState(history.state, "", location.pathname + withParam(location.search, "fx", words()) + location.hash); } catch (e) { /* only the address */ }
-      drawnCam = null;
-      if (draw3d.restart) draw3d.restart();
-      if (REDUCE) requestAnimationFrame((t) => frame(t));
-    }
-    panel.addEventListener("click", (e) => {
-      const b = e.target.closest("button");
-      if (!b) return;
-      if (b.dataset.fx) { FX[b.dataset.fx] = !FX[b.dataset.fx]; changed(); }
-      else if (b.dataset.step) { const i = COLOURS.findIndex(([k]) => k === FX.palette); FX.palette = COLOURS[(i + Number(b.dataset.step) + COLOURS.length) % COLOURS.length][0]; changed(); }
-      else if (b.classList.contains("tepe-looks-fold")) {
-        const folded = panel.classList.toggle("folded");
-        b.setAttribute("aria-expanded", folded ? "false" : "true");
-        b.textContent = folded ? "Show" : "Hide";
-      }
-    });
-    show();
-    looksSet = (o) => { Object.assign(FX, o); changed(); };
-  }
-
   // ---------- KEEPING UP ----------
   window.addEventListener("resize", size);
   size();
   GL.ground().then((g) => {
     ground = g;
+    inGround = draw3d.real && !!g.trailMap;
     build();
     drawnCam = null;
   });
 
-  let last = performance.now(), drawnAt = -1e9, frames = 0, scrolledAt = 0;
+  let last = performance.now(), drawnAt = -1e9, frames = 0, scrolledAt = 0, paceNow = 0;
   window.addEventListener("scroll", () => { scrolledAt = performance.now(); }, { passive: true });
   function frame(now) {
     if (sharp) sharp.frame(now);
@@ -975,7 +698,14 @@
     // it keeps its frames, and the mountain catches up as it comes to rest
     // — and while nothing moves but the mist, a picture a second is enough)
     const slowEvery = draw3d.soft ? (now - scrolledAt < 250 ? SOFT_EVERY * 2.5 : moved ? SOFT_EVERY : SOFT_EVERY * 3.3) : SOFT_EVERY * 10;
-    const due = REDUCE ? moved || quietMoved() || drawnAt < 0 : draw3d.slow ? now - drawnAt >= slowEvery : moved || !odd;
+    // (the page's own look: at the pace it needs, never faster than a
+    // picture every FRAME_BUSY, however quick the screen — a little early
+    // counts, so a 60 Hz screen loses none)
+    if (draw3d.real) {
+      const busy = held.size > 0 || now - scrolledAt < BUSY_AFTER || now - handAt < BUSY_AFTER || Math.abs(want.yaw + sway.y - cam.yaw) * S > 4 || Math.abs(want.S - cam.S) > 1.5;
+      paceNow = document.hidden ? Infinity : !document.hasFocus() ? FRAME_AWAY : busy ? FRAME_BUSY : FRAME_IDLE;
+    }
+    const due = REDUCE ? moved || quietMoved() || drawnAt < 0 : draw3d.slow ? now - drawnAt >= slowEvery : draw3d.real ? now - drawnAt >= paceNow - 3 : moved || !odd;
     popAgain(now);
     if (!due) return;
     drawAll(t);
@@ -1027,7 +757,7 @@
       drawnCam = null;
       const top = GL.project(worldOf(pi, pj, 0), cam), r = draw3d.gl.canvas.width / W;
       const body = { l: (top.x - cam.S * 0.22) * r, r: (top.x + cam.S * 0.22) * r, t: (top.y + cam.S * 0.06) * r, b: (top.y + cam.S * 0.26) * r };
-      let inBody = 0, bodySolid = 0, land = 0, solid = 0, green = 0, grey = 0, warm = 0;
+      let inBody = 0, bodySolid = 0, land = 0, solid = 0, green = 0, grey = 0, warm = 0, cool = 0;
       for (let k = 0; k < a.length; k += 4 * 5) {
         const shown = a[k] + a[k + 1] + a[k + 2] > 6 || b[k] + b[k + 1] + b[k + 2] < 759;
         if (!shown) continue;
@@ -1041,8 +771,9 @@
         if (g > R * 1.06 && g > bl * 1.06) green++;
         else if (hi - lo < 16) grey++;
         else if (R >= g) warm++;
+        if (bl > R + 8) cool++;
       }
-      return { covers: land / (a.length / 20), body: bodySolid / Math.max(1, inBody), solid: solid / Math.max(1, land), green: green / Math.max(1, solid), grey: grey / Math.max(1, solid), warm: warm / Math.max(1, solid) };
+      return { covers: land / (a.length / 20), body: bodySolid / Math.max(1, inBody), solid: solid / Math.max(1, land), green: green / Math.max(1, solid), grey: grey / Math.max(1, solid), warm: warm / Math.max(1, solid), cool: cool / Math.max(1, solid) };
     },
     // THE DITHER, read off the sky at the top of the window: how many of its
     // pixels stand a step of light from the one beside them (a step is a
@@ -1062,9 +793,10 @@
       return { steps: steps / Math.max(1, pairs), shades: shades.size, levels: DITHER.levels };
     },
     specks: () => (world ? world.specks : 0),
-    // THE TRIALS: which are on and what the machine let them do; and, for
-    // a still picture of `accum`, so many more pictures laid over it.
-    trials: () => ({ ...(window.__tepeTrials || {}), ratio, canvas: [field.width, field.height] }),
+    // THE DRAWING: the page's own look whole (`real`), through the camera
+    // (`post`), the trails in the ground, its pixels; and how often it is
+    // drawn now (ms between pictures, at the least).
+    drawing: () => ({ real: draw3d.real, post: draw3d.post, page: draw3d.page, inGround, ratio, canvas: [field.width, field.height], every: paceNow }),
     bare: (on = true) => { bare = on; drawnCam = null; },
     // where a place on the grid stands on the window (css px), as drawn now
     at: (u, v, up = 0) => (world ? GL.project(worldOf(u, v, up), cam) : null),
@@ -1087,10 +819,6 @@
     limits: () => ({ yaw: [HOME - FREE, HOME + FREE], pitch: PITCH_FREE.slice(), page: [HOME - PAGE, HOME + PAGE] }),
     nodes: () => all.map((d) => ({ no: d.house ? "house" : d.no, name: d.name, x: d.q ? d.q.x : null, y: d.q ? d.q.y : null, seen: !d.el.classList.contains("behind") })),
     card: () => (shownCard ? { part: card.dataset.part, by: shownBy } : null),
-    // THE LOOKS (a trial): what the panel shows, and changing it as a press would
-    looks: () => (STYLE ? { ...FX } : null),
-    setLooks: (o) => looksSet(o),
-    art: () => ({ icons: artIcons.filter((d) => d.seen).length, shapes: artShapes.length, marks: artMarks.length, seal: STYLE && !!FX.seal }),
   };
   if (REDUCE) {
     const again = () => requestAnimationFrame((t) => frame(t));
