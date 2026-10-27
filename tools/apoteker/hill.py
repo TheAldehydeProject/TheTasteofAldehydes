@@ -293,8 +293,9 @@ def write_page(W, H, lines):
         f"{rows}\n"
         "     </svg>\n"
         "    </div>\n")
-    land = lambda clip, alt: (
+    land = lambda clip, alt: (                                  # the right block's is the same picture again
         f'    <img class="tepe-hill-land" src="../images/Apoteker Tepe/hill/the-hill.webp" alt="{alt}" '
+        + ('' if alt else 'aria-hidden="true" ') +
         f'width="{W}" height="{H}" decoding="async" style="clip-path:{clip}">\n')
     block = (
         "<!-- THE HILL: begin — written by tools/apoteker/hill.py, never by hand. -->\n"
