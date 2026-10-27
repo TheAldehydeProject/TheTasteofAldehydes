@@ -967,57 +967,96 @@ middle of yhe screen, inspired by the image provided in this message."
 
 **The pictures are the owner's own**: each carries the site's own mark (H₂C=O, the icon's drawing)
 in its lower right corner, so they are credited as theirs at the foot of the page — *The mountain
-behind the page is my own photograph.* — on that reading (the question is put to the owner).
+behind the page is my own photograph.* — on that reading, and the owner said so when asked ("Yes,
+they're mine").
 
 **What it is** (`tepe.js`, a new script under the old name; `canvas.human-field.tepe-photo`):
 
 - **The frost**: the photograph laid over the whole window — placed so its peak stands in the window
-  (`PICTURES`: a `focus` and a `zoom` for each, chosen by eye) — blurred out (`blur`, 8 + 1 css px a
-  step) and **misted towards the house's paper** (`mist`, `PAPER`), as the poster's glass is pale.
-- **The window**: **a sharp upright rectangle** of clear glass on the right-ish middle, as the
-  poster's is — later the same day, before any of it went up: "I want the mask to be a sharp
-  rctangle, as it was with the horse picture." (`windowRect`): 2 : 3 (`TALL` 1.5), round
-  `CLEAR_AT` — 0.775 across and half way down on a wide window (to the right of the paragraphs, under
-  the parts' rows; 316 by 476 css px on a laptop), 0.68 on a phone (137 by 205) — never more than
-  0.86 of the window high. Inside it the mountain sharp and clear (the mist cleared, `GLASS` 0.9);
-  outside it the frost, **misted right up to its edge**, and **the edge cut on whole pixels of the
-  screen**, so there is a step from the one to the other and nothing between. **Window** is its size;
-  **Edge**, which starts at 0, softens it for a look (`EDGE_MOST`: at 100 eased over 0.45 of its
-  narrower side, a ring a little less blurred round it, `LIGHT_BLUR`). Across and down are worked out
-  apart and multiplied (`along`), a rectangle being the one shape that can be, so it costs nothing.
-  **On a phone** a picture is brought no nearer than 1.15 (`PHONE_ZOOM`): laid over a tall window by
-  its height it is far nearer already, and the third showed only grass.
-  (**For its first round it was an irregular upright shape** — its outline three slow waves of its
-  own, sharp at its heart, a ring a little soft round it, then the frost, the poster read wrongly as
-  the horse sharp only where it touched the glass — on small masks blurred out at their edges. It came out with
-  the rectangle: no `windowMask`, no masks at all.)
+  (`PICTURES`: a `focus` and a `zoom` for each, chosen by eye; on a phone no nearer than 1.15,
+  `PHONE_ZOOM`, being laid over a tall window by its height and far nearer already) — blurred out and
+  **misted towards the house's paper** (`mist`, `PAPER`), as the poster's glass is pale. **Less
+  blurred** since the owner's third note (below): `BLUR_LEAST` + `BLUR_STEP` × Blur, 4 to 84 css px,
+  32 to begin with (it was 8 + Blur, 78 to begin with).
+- **The window** (`windowRect`): **an upright rectangle**, 2 : 3 (`TALL` 1.5), round `CLEAR_AT` —
+  0.775 across and half way down on a wide window (to the right of the paragraphs, under the parts'
+  rows; 316 by 476 css px on a laptop), 0.68 on a phone (137 by 205) — never more than 0.86 of the
+  window high. **Inside it nothing is feathered**: the mountain sharp and clear (the mist cleared,
+  `GLASS` 0.9) right up to its edge, on whole pixels of the screen.
+- **The feather, outside it only** (`shareAt`): the frost **already blurred hard right at the edge**
+  — the **Edge** slider's share of its blur, half to begin with — and rising from there, quickly at
+  first and gently at the last, to the whole a **Feather**'s width out (`FEATHER_MOST`: at 100, 0.7 of
+  the window's shorter side; 25 to begin with, 158 css px on a laptop); the mist with it. A place's
+  blur is drawn from **the ladder** — the same piece of picture blurred more and more, each rung the
+  last and a half again (twice below 2 css px), the two rungs either side of its own blur mixed
+  (`ladder`, `rungs`, `grade`); a rung is made only when it is wanted, laid only into its own pixels
+  (`order`) and let go, so one is ever held. Where the feather is blurred less than the small frost can
+  show (only with the Edge turned well down), it is drawn at the whole sharpness round the window (the
+  near piece, handed over to the frost across a few pixels, `hand`).
+- **The line** where the window is: **white, laid on as a screen**, 3 css px, astride the edge
+  (`LINE`, `LINE_WIDE`).
 - **The panel** (`.tepe-try`): a boxed button at the top right, level with the Menu — *Mountain 1 /
-  5* — opening under it: **the five pictures** as thumbnails (`mountain-thumbs/`, 192 by 128), four
-  sliders (**Blur**, **Mist**, **Window**, **Edge**), **a colour** (Natural, Black & white, Sepia,
-  Duotone in the house's green and paper, Frost in the poster's grey-green, Warm) and **filters**
-  (Faded, Contrast, Vignette, Grain, Posterise, Negative), **Reset** and **Close**. What is chosen is
-  kept **in the address** (`?mountain=3&colour=sepia&fx=grain,vignette&blur=80` — nothing there for a
-  default) and in the browser for the next visit (`localStorage`, wrapped so it is never needed). It
-  opens shut; Escape, Close or a press on the page put it away. On a phone the button stands on the
-  chrome's ground and the panel is the window's width. **It is temporary**: once the owner settles on
-  one, the rest comes out of the code.
-- **Easier to read**: round every letter a soft halo of the paper (`text-shadow`, only once the
-  photograph is drawn), so the words read where they cross the window.
+  5* — opening under it: **the five pictures** as thumbnails (`mountain-thumbs/`, 192 by 128), five
+  sliders (**Blur**, **Mist**, **Window**, **Feather**, **Edge**), **a colour** (Natural, Black &
+  white, Sepia, Duotone in the house's green and paper, Frost in the poster's grey-green, Warm),
+  **filters** (Faded, Contrast, Vignette, Grain, Posterise, Negative) and **the text's blending**
+  (below), **Reset** and **Close**. What is chosen is kept **in the address**
+  (`?mountain=3&colour=sepia&fx=grain,vignette&blur=80&text=multiply` — nothing there for a default)
+  and in the browser for the next visit (`localStorage`, wrapped so it is never needed). It opens shut;
+  Escape, Close or a press on the page put it away. On a phone the button stands on the chrome's
+  ground and the panel is the window's width. **It is temporary**: once the owner settles on one, the
+  rest comes out of the code.
+- **The text's blending** ("Also allow a person to change the blending of the text"): Normal,
+  Multiply, Colour burn, Hard light, Overlay, Soft light, Luminosity and **Invert** (the writing turned
+  light, `filter: invert(1)`, and laid on as a difference, so it reads as the picture turned over) —
+  `data-tepe-text` on `<html>` and the mode in `--tepe-text-blend`, laid on **the writing's own blocks
+  and never a picture**: the head, the introduction, each part's summary but its little picture, each
+  open part's writing, the credit and the foot. The parts' row lets go of its own layer (`z-index:
+  auto`) while one is on, or what is in it would blend with nothing but itself. The drawing is not
+  made again for it.
+- **No halo round the letters** ("i want you to remove the white shadow"): a soft halo of the paper
+  stood round every letter for the first two rounds.
+
+**How it came to be, the same day, before any of it went up** — the owner looking at each round's
+pictures first ("Before running any tests, send screenshot about what it looks like, and then let me
+confirm"):
+
+1. **An irregular upright shape**, its outline three slow waves of its own, sharp at its heart, a ring
+   a little soft round it, then the frost — the poster read wrongly as the horse sharp only where it
+   touched the glass — on small masks blurred out at their edges.
+2. "I want the mask to be a sharp rctangle, as it was with the horse picture": **a rectangle cut
+   clean**, the frost (78 css px) misted right up to it.
+3. "The ones above still did not look great; i want there to be a blur of everything, except one
+   rectangular NOT FEATHERED mask. On the outside of the rectangle, it should be feathered (and
+   gradually getting more blurry). On the inside, no feather whatsoever" and "Less blur on the outside
+   of the rectangle, and feather the edges of the rectangle in the outward direction ONLY": **the
+   feather outward**, from nothing at the edge on a plain ease, the blur 32; and the halo gone and the
+   text's blending.
+4. "I want you to put a line border to where the actual mask is, it should be white and screen
+   blended. Make the feather a bit smoother": **the line**, a hairline; the feather rising evenly to
+   the eye (each step out growing the blur by the same proportion) over a wider feather.
+5. "The blur should be way more intense nex to the masks border. Make the feather less. Also make the
+   border thicker by a factor of 3": **the Edge** — blurred hard right at the border — a shorter
+   feather, the line 3 css px. This is what is up.
 
 **Drawn once, not every frame.** The page scrolls over a still picture on a canvas fixed to the
-window, made again only when something in the panel changes, or the window's width does (never as a
-phone's bar comes and goes: it is drawn to the tallest the window has been, `tallest`). Blurring is
-done on small copies, laid down large — **the frost a quarter of the pixels each way**, being blurred,
-and **only the window at the whole of the window's sharpness**, in a box of its own; the
-colour, filters and mist a pixel at a time on those two only; the vignette and the grain laid over the
-whole as a gradient and a square of noise (`overlay`), never a filter over the window. A slider being
-dragged draws it at half the pixels, and the whole on letting go. At the flat drawing's sharpness: two
-to a css px at most on a wide window, 1.5 on a phone, and never more than 3.6 million pixels in all.
-Measured here, without a graphics card: **a laptop's plain screen 0.05 to 0.09 s a picture, its sharp
-screen 0.12 s, a phone's under 0.08 s, and scrolling 60 frames a second on both** (the irregular
-window, on its masks, took 0.25 to 0.45 s on the sharp screen). (Drawn first whole at the window's
-size, every layer full size, it took 0.8 s on a plain laptop screen and 1.7 on a sharp one: that is
-why.)
+window, made again only when something in the panel changes (not the text's blending), or the window's
+width does (never as a phone's bar comes and goes: it is drawn to the tallest the window has been,
+`tallest`). The frost is drawn **small** — a quarter of the pixels each way where it is blurred enough
+for that to lose nothing (`least`), more where the blur is slight — and laid down large; **only the
+window at the whole of the window's sharpness**, in a box of its own; the colour, filters and mist a
+pixel at a time on those two only; the vignette and the grain laid over the whole as a gradient and a
+square of noise (`overlay`), and the line as four strips, never a filter over the window. **The
+blurring is the browser's own** where it can (a canvas's `filter`, many times quicker; `FILTER`, read
+off a dot drawn through it), and three box blurs in the script where it cannot (some Safaris). A slider
+being dragged draws it at half the pixels, and the whole on letting go. At the flat drawing's
+sharpness: two to a css px at most on a wide window, 1.5 on a phone, and never more than 3.6 million
+pixels in all. Measured here, without a graphics card: **a laptop's plain screen 0.05 to 0.13 s a
+picture, its sharp screen 0.1 to 0.25 s, a phone's under 0.15 s, and scrolling 60 frames a second on
+both, with a text blend on too**. (The rounds between were slower: the irregular window 0.25 to 0.45 s
+on the sharp screen, the even feather 0.6 to 0.9 s, its gentle start drawn at the whole sharpness far
+out; drawn first whole at the window's size, every layer full size, it took 0.8 s on a plain laptop
+screen and 1.7 on a sharp one.)
 
 Without the script the page is its writing on the aged paper (the canvas never comes up) and there is
 no panel; with reduced motion nothing moves anyway. The Houses view still brings nothing up for the
@@ -1038,19 +1077,24 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
     (and nothing of Mount Athos);
   - **behind frosted glass**, on a laptop and on a phone: the photograph drawn, the window right of the
     middle and half way down, **sharp there** (three times as busy as the frost at least) and **pale in
-    the frost**, nothing sharp in it; **the window a sharp upright rectangle**, 2 : 3, round that
-    middle, cut clean to begin with — all round it a step from the last pixel of frost to the first of
-    the mountain (over 40, the three colours summed; measured 150 to 250) and the frost even right up
-    to it (under 1 between its last two pixels; measured 0.01 to 0.1); drawn at 2 (1.5 on a phone) at
-    most; not drawn again by a scroll;
+    the frost**, nothing sharp in it; **the window an upright rectangle**, 2 : 3, round that middle,
+    **sharp right up to the line** and **blurred right outside it** — all round it a strip just inside
+    the line two and a half times as busy as one just outside at least (measured: 4 to 25 times), the
+    outside under 4 — the Edge half to begin with and nothing outside drawn sharp; **the line** 3 css px
+    and white (its palest least colour over 205); **no halo round the letters**; drawn at 2 (1.5 on a
+    phone) at most; not drawn again by a scroll;
     none of the 3D mountain's scripts asked for; nothing wider than the window;
   - **the panel** at the top right: *1 / 5*; the five pictures, each pressed and drawn, its thumbnail
     pressed, the button saying which, the address keeping it (nothing for the first); the thumbnails
     arrive; Escape puts it away;
-  - **the colours and filters**: Black & white takes the colour out of the window; Vignette and Grain kept
-    in the address with the colour; the Window slider moved; **the Edge slider softens the rectangle**,
-    its edge stepping no more than the frost does; a reload brings it all back; Reset puts it back
-    (the edge clean again) and clears the address;
+  - **the colours and filters**: Black & white takes the colour out of the window; **the Edge** turned
+    to 0 blurs the frost right outside the window less (half as busy again at least) and draws the
+    feather sharp near it; the Feather moved; Vignette and Grain kept in the address with the colour;
+    the Window slider moved; a reload brings it all back; Reset puts it back and clears the address;
+  - **the text's blending**: the eight in the panel; Multiply laid on the head, the introduction, a
+    summary's title and the credit, never a picture (a summary's little picture, a plate), the parts'
+    row let go of its layer; Invert a difference over the writing turned over; kept in the address and
+    brought back by it; Normal takes it off and out of the address;
   - **on a phone** the panel fits the window; **without the script** the eight fragrances open, no
     panel, the canvas never shown;
   - **the Houses view** at Apoteker Tepe brings nothing up and asks for none of the 3D mountain's
@@ -1078,8 +1122,10 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
 - **The photographed mountain is a trial**: the owner is to choose a picture, and what of the panel to
   keep; then the panel and everything not chosen come out of the code, as always. Until then **the
   panel is on the live page for every visitor** (shut, a small boxed button).
-- **The five pictures are credited as the owner's own** because each carries the site's own mark; the
-  owner was asked to say if that is wrong.
+- **The text's blending is only laid on the writing's own blocks**: anything new in the page's writing
+  (a fold, a list) is blended only if it stands inside one of them.
+- **Without a canvas `filter`** (some Safaris) the blurring is the script's own, and a draw takes a few
+  times as long — still once a change.
 - **The Houses view brings nothing up for Apoteker Tepe** (its fragments of the 3D mountain went on
   2026-10-22). Its frame still names a motif (`data-motif="apoteker-tepe"`) for whatever comes next.
 - **Measured without a graphics card only**: on one, the canvas's drawing is quicker and reading its
