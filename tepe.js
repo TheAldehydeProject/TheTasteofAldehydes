@@ -92,8 +92,8 @@
   const MOST_PIXELS = 3.6e6;            // device pixels the picture is drawn in at most
   const BLUR_LEAST = 4, BLUR_STEP = 0.8; // the frost's blur, css px: 4 at Blur 0, 84 at 100
   const FEATHER_MOST = 0.7;             // the widest feather, Feather at 100: this share of the window's shorter side
-  const BLUR_FROM = 1;                  // the feather's blur rises evenly to the eye, from about this (css px)
   const LINE = 0.85;                    // THE LINE round the window: white, laid on as a screen, this strong
+  const LINE_WIDE = 3;                  // and this wide (css px), astride the window's edge
   const COLOURS = ["natural", "bw", "sepia", "duotone", "frost", "warm"];
   const COLOUR_NAMES = { natural: "Natural", bw: "Black & white", sepia: "Sepia", duotone: "Duotone", frost: "Frost", warm: "Warm" };
   const FX = ["faded", "contrast", "vignette", "grain", "posterise", "negative"];
@@ -107,8 +107,8 @@
   const TEXTS = ["normal", "multiply", "burn", "hardlight", "overlay", "softlight", "luminosity", "invert"];
   const TEXT_NAMES = { normal: "Normal", multiply: "Multiply", burn: "Colour burn", hardlight: "Hard light", overlay: "Overlay", softlight: "Soft light", luminosity: "Luminosity", invert: "Invert" };
   const TEXT_BLEND = { normal: "normal", multiply: "multiply", burn: "color-burn", hardlight: "hard-light", overlay: "overlay", softlight: "soft-light", luminosity: "luminosity", invert: "difference" };
-  const DEFAULTS = { mountain: 1, blur: 35, mist: 68, window: 50, feather: 60, colour: "natural", fx: [], text: "normal" };
-  const KEYS = ["mountain", "blur", "mist", "window", "feather", "colour", "fx", "text"];
+  const DEFAULTS = { mountain: 1, blur: 35, mist: 68, window: 50, feather: 25, edge: 50, colour: "natural", fx: [], text: "normal" };
+  const KEYS = ["mountain", "blur", "mist", "window", "feather", "edge", "colour", "fx", "text"];
   const STORE = "tepe-mountain-trial";
 
   // ============================================================
@@ -127,6 +127,7 @@
       mist: clampInt(get("mist"), 0, 100, DEFAULTS.mist),
       window: clampInt(get("window"), 0, 100, DEFAULTS.window),
       feather: clampInt(get("feather"), 0, 100, DEFAULTS.feather),
+      edge: clampInt(get("edge"), 0, 100, DEFAULTS.edge),
       colour: COLOURS.includes(colour) ? colour : DEFAULTS.colour,
       fx: FX.filter((f) => list.includes(f)),
       text: TEXTS.includes(get("text")) ? get("text") : DEFAULTS.text,
@@ -265,19 +266,22 @@
   // How far through the feather a place `d` css px out of the window is: 0
   // in it and at its edge, 1 a feather's width out and beyond.
   const throughAt = (d, F) => (d <= 0 ? 0 : F > 0 ? Math.min(1, d / F) : 1);
-  // How blurred it is there, as a share of the blur at its most: rising
-  // EVENLY TO THE EYE — each step out the blur grows by the same proportion,
-  // which is how a blur is seen (a pixel's blur is plain, a tenth more of a
-  // large one is not) — from nothing at the window's edge. (It rose on a
-  // plain ease for a round, which looked too quick near the window: "Make the
-  // feather a bit smoother".) The mist comes up on a plain ease.
-  const blurShare = (t, R) => (t <= 0 ? 0 : t >= 1 ? 1 : (Math.pow(1 + R / BLUR_FROM, t) - 1) / (R / BLUR_FROM));
-  // How far out the blur reaches `share` of its most.
-  function outFor(share, F, R) {
-    if (!(F > 0)) return 0;
-    let lo = 0, hi = 1;
-    for (let i = 0; i < 32; i++) { const m = (lo + hi) / 2; if (blurShare(m, R) < share) lo = m; else hi = m; }
-    return hi * F;
+  // How blurred and misted it is there, as a share of the frost at its
+  // most: nothing in the window; outside it, already the Edge's share right
+  // at its edge — "The blur should be way more intense nex to the masks
+  // border" — and rising from there, quickly at first and gently at the
+  // last, to the whole a feather's width out. (Its first rounds rose from
+  // nothing at the edge: on a plain ease, then evenly to the eye — "Make the
+  // feather a bit smoother" — then the owner asked for the edge blurred.)
+  const edgeShare = () => state.edge / 100;
+  const shareAt = (t) => { if (t <= 0) return 0; const E = edgeShare(); return t >= 1 ? 1 : E + (1 - E) * (1 - (1 - t) * (1 - t)); };
+  // How far out the blur reaches `share` of its most (0 when the edge
+  // already has it).
+  function outFor(share, F) {
+    const E = edgeShare();
+    if (!(F > 0) || share <= E) return 0;
+    if (share >= 1) return F;
+    return (1 - Math.sqrt(1 - (share - E) / (1 - E))) * F;
   }
   // How far out of the window, across or down, a line of `n` pixels stands,
   // starting at `from` (css px) a `step` at a time.
@@ -381,10 +385,10 @@
       smg.drawImage(img, ox * lr, oy * lr, iw * lr, ih * lr);
       const low = make(lw, lh), lg = ctxOf(low);
       lg.drawImage(small, 0, 0);
-      // (with no feather, the frost is frost right up to the window — misted
-      // in it too, so nothing clear is smeared out past its edge as the
-      // small frost is laid down large; the near piece covers it)
-      grade(lg, lw, lh, { x: 0, y: 0, sx: W / lw, sy: H / lh, win: r, F, R, steps: ladder(small, rungs(least, R), lr), frost: !(F > 0) });
+      // (in the window the frost is drawn as it is at the window's edge, so
+      // nothing clear is smeared out past the edge as the small frost is laid
+      // down large; the near piece covers it)
+      grade(lg, lw, lh, { x: 0, y: 0, sx: W / lw, sy: H / lh, win: r, F, R, steps: ladder(small, rungs(least, R), lr), frost: true });
       // (drawn straight into the page's own canvas: all of it at once, before
       // the next frame, so nothing half drawn is ever seen)
       if (canvas.width !== cw || canvas.height !== ch) { canvas.width = cw; canvas.height = ch; }
@@ -395,18 +399,19 @@
       og.imageSmoothingQuality = "high";
       og.drawImage(low, 0, 0, cw, ch);
       // THE NEAR PIECE: the window, sharp on whole pixels of the screen, and
-      // round it, as far as the grade is blurred less than the frost can
-      // show, the grade at the whole sharpness — handed over to the frost
-      // across a few pixels (`HAND`) where both are blurred alike.
-      const band = R > least ? outFor(least / R, F, R) : 0;
-      const hand = F > 0 ? Math.max(4, least * 1.5) : 0;
+      // round it, as far as the feather is blurred less than the frost can
+      // show (none, when the edge is blurred more than that already), the
+      // feather at the whole sharpness — handed over to the frost across a
+      // few pixels (`hand`) where both are blurred alike.
+      const band = R > least ? outFor(least / R, F) : 0;
+      const hand = band > 0 ? Math.max(4, least * 1.5) : 0;
       const reach = band + hand;
       const x0 = Math.max(0, Math.round((r.x - reach) * ratio)), y0 = Math.max(0, Math.round((r.y - reach) * ratio));
       const x1 = Math.min(cw, Math.round((r.x + r.w + reach) * ratio)), y1 = Math.min(ch, Math.round((r.y + r.h + reach) * ratio));
       const bw = Math.max(1, x1 - x0), bh = Math.max(1, y1 - y0);
       // (the picture taken a little wider than the piece, so its blurring
       // has the picture to draw on at the piece's edge, not nothing)
-      const most = F > 0 ? R * blurShare(throughAt(reach, F), R) : 0;
+      const most = reach > 0 ? R * shareAt(throughAt(reach, F)) : 0;
       const pad = Math.ceil(most * 2.5 * ratio) + 2;
       const near = make(bw + pad * 2, bh + pad * 2), ng = ctxOf(near);
       ng.imageSmoothingQuality = "high";
@@ -417,16 +422,17 @@
       grade(pg, bw, bh, {
         x: x0 / ratio, y: y0 / ratio, sx: 1 / ratio, sy: 1 / ratio, win: r, F, R,
         steps: nearRungs, pad, padW: bw + pad * 2,
-        alpha: F > 0 ? (d) => (d <= band ? 1 : 1 - ease((d - band) / hand)) : () => 1,
+        alpha: hand > 0 ? (d) => (d <= band ? 1 : 1 - ease((d - band) / hand)) : () => 1,
       });
       og.drawImage(piece, x0, y0);
       // THE LINE where the window is ("put a line border to where the actual
-      // mask is, it should be white and screen blended"): a hairline just
-      // inside its edge, on whole pixels of the screen.
+      // mask is, it should be white and screen blended"; "make the border
+      // thicker by a factor of 3" — it was a hairline): astride its edge, on
+      // whole pixels of the screen.
       {
-        const lw = Math.max(1, Math.round(ratio));
-        const rx0 = Math.round(r.x * ratio), ry0 = Math.round(r.y * ratio);
-        const rx1 = Math.round((r.x + r.w) * ratio), ry1 = Math.round((r.y + r.h) * ratio);
+        const lw = Math.max(LINE_WIDE, Math.round(LINE_WIDE * ratio)), half = Math.floor(lw / 2);
+        const rx0 = Math.round(r.x * ratio) - half, ry0 = Math.round(r.y * ratio) - half;
+        const rx1 = Math.round((r.x + r.w) * ratio) - half + lw, ry1 = Math.round((r.y + r.h) * ratio) - half + lw;
         og.globalCompositeOperation = "screen";
         og.fillStyle = "rgba(255, 255, 255, " + LINE + ")";
         og.fillRect(rx0, ry0, rx1 - rx0, lw);
@@ -439,7 +445,7 @@
         x: Math.round(r.x * ratio) / ratio, y: Math.round(r.y * ratio) / ratio,
         w: (Math.round((r.x + r.w) * ratio) - Math.round(r.x * ratio)) / ratio,
         h: (Math.round((r.y + r.h) * ratio) - Math.round(r.y * ratio)) / ratio,
-        feather: F, blur: R, near: reach,
+        feather: F, blur: R, edge: edgeShare(), near: reach, line: Math.max(LINE_WIDE, Math.round(LINE_WIDE * ratio)) / ratio,
       };
       // THE VIGNETTE and THE GRAIN, laid over the whole.
       const fx = new Set(state.fx);
@@ -480,16 +486,17 @@
   function grade(g, w, h, o) {
     const img = g.createImageData(w, h), d = img.data, n = w * h;
     const { win, F, R, steps, alpha, frost } = o;
+    // (`frost`: the small frost, drawn in the window as it is at its edge)
     const pad = o.pad || 0, rw = o.padW || w, radii = steps.radii, top = radii.length - 1;
     const outX = outAlong(w, o.x, o.sx, win.x, win.x + win.w), outY = outAlong(h, o.y, o.sy, win.y, win.y + win.h);
-    const outOf = (p) => { const px = p % w, ax = outX[px], ay = outY[(p - px) / w]; return ax || ay ? Math.sqrt(ax * ax + ay * ay) : 0; };
+    const outOf = (p) => { const px = p % w, ax = outX[px], ay = outY[(p - px) / w]; return ax || ay ? Math.sqrt(ax * ax + ay * ay) : frost ? 1e-3 : 0; };
     // which two rungs each pixel is drawn from (`lo`, and the one after it)
     // and how far between them (`at`, in 255ths) — and the pixels put in
     // order of their rung (`order`, rung k's from `from[k]`), so each rung
     // is laid only into its own
     const lo = new Uint8Array(n), at = new Uint8Array(n), count = new Uint32Array(top + 2);
     for (let p = 0; p < n; p++) {
-      const blur = R * blurShare(frost ? 1 : throughAt(outOf(p), F), R);
+      const blur = R * shareAt(throughAt(outOf(p), F));
       let k = 0;
       while (k < top && radii[k + 1] <= blur) k++;
       if (k < top && blur > radii[k]) at[p] = Math.round((255 * (blur - radii[k])) / (radii[k + 1] - radii[k]));
@@ -523,7 +530,7 @@
     const q = 255 / 4;
     for (let i = 0, p = 0; i < d.length; i += 4, p++) {
       const out = outOf(p);
-      const t = frost ? 1 : throughAt(out, F);
+      const share = shareAt(throughAt(out, F));
       let r = d[i], gr = d[i + 1], b = d[i + 2];
       const L = 0.2126 * r + 0.7152 * gr + 0.0722 * b;
       // the photograph's colour
@@ -536,8 +543,8 @@
       if (contrast) { r = (r - 128) * 1.35 + 128; gr = (gr - 128) * 1.35 + 128; b = (b - 128) * 1.35 + 128; }
       if (poster) { r = Math.round(r / q) * q; gr = Math.round(gr / q) * q; b = Math.round(b / q) * q; }
       if (negative) { r = 255 - r; gr = 255 - gr; b = 255 - b; }
-      // the mist, cleared in the window and coming up through the feather
-      const a = most * (1 - GLASS * (1 - ease(t)));
+      // the mist, cleared in the window and coming up with the blur
+      const a = most * (1 - GLASS * (1 - share));
       d[i] = r + (mist[0] - r) * a; d[i + 1] = gr + (mist[1] - gr) * a; d[i + 2] = b + (mist[2] - b) * a;
       d[i + 3] = alpha ? 255 * alpha(out) : 255;
     }
@@ -581,7 +588,7 @@
     b.innerHTML = `<img alt="" loading="lazy" src="${thumbOf(i + 1)}"><span>${i + 1}</span>`;
     pics.appendChild(b);
   });
-  const SLIDERS = [["blur", "Blur"], ["mist", "Mist"], ["window", "Window"], ["feather", "Feather"]];
+  const SLIDERS = [["blur", "Blur"], ["mist", "Mist"], ["window", "Window"], ["feather", "Feather"], ["edge", "Edge"]];
   const sliders = box.querySelector(".tepe-try-sliders");
   for (const [k, name] of SLIDERS) {
     const l = document.createElement("label");
