@@ -3,8 +3,8 @@
 //
 // The thirteenth house, and its ground since 2026-10-27: A MOUNTAIN,
 // PHOTOGRAPHED, BEHIND FROSTED GLASS — A TRIAL. The owner, with the
-// Musica 2011 poster (a horse behind frosted glass, only what touches the
-// glass sharp): "For apoteker tepe, remove the mointain as it is currently,
+// Musica 2011 poster (a horse behind frosted glass, seen sharp through a
+// clear rectangle in it): "For apoteker tepe, remove the mointain as it is currently,
 // and i want you to replace it with one of the files from AT MOINTAIN 1-5.
 // I want you to replace it with all pf ghe, and then let me see how its
 // goimg yo look with each of them do this with a top right setting which
@@ -17,12 +17,15 @@
 //                 n.webp) laid over the whole window, blurred out and
 //                 misted towards the house's paper — glass the mountain
 //                 stands behind.
-//   THE WINDOW    on the right-ish middle, an irregular upright shape where
-//                 the mountain touches the glass: SHARP at its heart, a
-//                 little soft round that, and into the frost — graded, as the
-//                 poster's horse is sharp where it is pressed to the glass
-//                 and a shadow where it is not. Each picture is placed so its
-//                 peak stands in it (`focus`).
+//   THE WINDOW    on the right-ish middle, A SHARP UPRIGHT RECTANGLE of
+//                 clear glass, 2 : 3 (since later the same day — "I want the
+//                 mask to be a sharp rctangle, as it was with the horse
+//                 picture"; it was an irregular shape, sharp at its heart and
+//                 soft round it, for its first round): the mountain sharp and
+//                 clear inside it and frosted from its very edge, cut on whole
+//                 pixels of the screen. Each picture is placed so its peak
+//                 stands in it (`focus`). The Edge slider softens it, for a
+//                 look; at 0, where it starts, it is cut clean.
 //   THE TRIAL     the boxed button at the top right — "Mountain 1 / 5" —
 //                 opens THE PANEL: the five pictures, the blur, the mist, the
 //                 window's size and its edge, a colour (natural, black and
@@ -72,10 +75,12 @@
   const PAPER = [236, 229, 210];        // the house's paper (--bg), what the frost mists towards
   const CLEAR_AT = [0.775, 0.5];        // the window's middle on a wide window, as a share of it
   const CLEAR_AT_NARROW = [0.68, 0.5];  // and on a phone
-  const TALL = 1.6;                    // the window's height to its width: upright, as the poster's horse is
+  const TALL = 1.5;                     // the window's height to its width: upright, 2 : 3, as the poster's is
+  const PHONE_ZOOM = 1.15;              // on a phone a picture is brought no nearer than this
   const GLASS = 0.9;                    // how much of the mist the window clears at its heart
   const MOST_PIXELS = 3.6e6;            // device pixels the picture is drawn in at most
-  const LIGHT_BLUR = 0.18;              // the soft ring round the window's heart: this share of the frost's blur
+  const LIGHT_BLUR = 0.18;              // with a soft edge, the ring round the window: this share of the frost's blur
+  const EDGE_MOST = 0.45;               // the softest edge, Edge at 100: this share of the window's narrower side
   const COLOURS = ["natural", "bw", "sepia", "duotone", "frost", "warm"];
   const COLOUR_NAMES = { natural: "Natural", bw: "Black & white", sepia: "Sepia", duotone: "Duotone", frost: "Frost", warm: "Warm" };
   const FX = ["faded", "contrast", "vignette", "grain", "posterise", "negative"];
@@ -83,7 +88,7 @@
   // THE FROST colour's mist (the poster's pale grey-green) and the warm one's.
   const MIST_OF = { frost: [214, 224, 220], warm: [241, 228, 204] };
   const GREEN = [46, 76, 46];           // the house's green (--tepe-green), the duotone's dark
-  const DEFAULTS = { mountain: 1, blur: 70, mist: 68, window: 50, edge: 50, colour: "natural", fx: [] };
+  const DEFAULTS = { mountain: 1, blur: 70, mist: 68, window: 50, edge: 0, colour: "natural", fx: [] };
   const STORE = "tepe-mountain-trial";
 
   // ============================================================
@@ -196,40 +201,31 @@
   }
 
   // ============================================================
-  // THE WINDOW — an irregular upright shape round its middle, its outline a
-  // few slow waves of its own (the same for each picture every time), on a
-  // small picture of its own, made soft at its edge.
+  // THE WINDOW — a sharp upright rectangle on the right-ish middle, as the
+  // poster's is: the glass clear inside it, frosted from its very edge. The
+  // Edge slider can soften it, for a look; at 0 it is cut clean, on whole
+  // pixels of the screen.
   // ============================================================
-  function windowMask(W, H, scale, soft, seed, k) {
-    // (`k`: how many css px a pixel of the mask is. It covers the whole
-    // window; `box` is where in it, in css px, anything of it stands.)
-    const mw = Math.max(8, Math.round(W / k)), mh = Math.max(8, Math.round(H / k));
-    const m = make(mw, mh), g = m.getContext("2d");
+  function windowRect(W, H) {
     const at = W < 700 ? CLEAR_AT_NARROW : CLEAR_AT;
     const base = W < 700 ? W * 1.6 : Math.min(W, H * 1.6);
-    const rx = base * (0.07 + 0.15 * state.window / 100) * scale / k, ry = rx * TALL;
-    const cx = (W * at[0]) / k, cy = (H * at[1]) / k;
-    const rnd = seeded(seed);
-    const waves = [2, 3, 5].map((n, i) => ({ n, a: [0.09, 0.07, 0.035][i] * (0.6 + rnd() * 0.8), p: rnd() * 6.283 }));
-    const most = 1 + waves.reduce((t, w) => t + w.a, 0);
-    g.fillStyle = "#fff";
-    g.beginPath();
-    const N = 96;
-    for (let i = 0; i <= N; i++) {
-      const t = (i / N) * 6.283;
-      let r = 1;
-      for (const w of waves) r += w.a * Math.sin(w.n * t + w.p);
-      const x = cx + Math.cos(t) * rx * r, y = cy + Math.sin(t) * ry * r;
-      i ? g.lineTo(x, y) : g.moveTo(x, y);
+    let w = base * (0.12 + 0.2 * state.window / 100), h = w * TALL;
+    if (h > H * 0.86) { h = H * 0.86; w = h / TALL; }
+    return { x: W * at[0] - w / 2, y: H * at[1] - h / 2, w, h };
+  }
+  const softOf = (r) => (state.edge / 100) * EDGE_MOST * Math.min(r.w, r.h);
+  const ease = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
+  // How clear the glass is along one line of `n` pixels, starting at `from`
+  // (css px) a `step` at a time: 1 between `a` and `b`, 0 outside, eased
+  // across each edge over `soft` (none, when it is 0). The window is a
+  // rectangle, so across and down are worked out apart and multiplied.
+  function along(n, from, step, a, b, soft) {
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const v = from + (i + 0.5) * step;
+      out[i] = soft > 0 ? ease((v - a) / soft + 0.5) * ease((b - v) / soft + 0.5) : v >= a && v < b ? 1 : 0;
     }
-    g.closePath();
-    g.fill();
-    const blur = Math.max(1, Math.round(rx * soft));
-    boxBlur(m, blur, true);
-    const pad = blur * 2.2 + 2;
-    const box = [(cx - rx * most - pad) * k, (cy - ry * most - pad) * k, (cx + rx * most + pad) * k, (cy + ry * most + pad) * k]
-      .map((v, i) => Math.max(0, Math.min(i % 2 ? H : W, v)));
-    return { m, box };
+    return out;
   }
 
   // ============================================================
@@ -251,6 +247,7 @@
   // Its height: the tallest the window has been at this width, so a phone's
   // bar coming and going does not draw it again (it is laid at the top).
   let tallest = 0, drawnWidth = 0, drawnAt = 0, drawing = null, again = false;
+  let shown = null;                    // where the window was last drawn, css px (for the tests)
   function size() {
     const W = Math.max(1, document.documentElement.clientWidth || innerWidth);
     if (W !== drawnWidth) tallest = 0;
@@ -289,36 +286,26 @@
       // THE PICTURE, laid over the window with its peak in the window (in css px).
       const P = PICTURES[n - 1];
       const at = W < 700 ? CLEAR_AT_NARROW : CLEAR_AT;
-      const s = Math.max(W / img.naturalWidth, H / img.naturalHeight) * P.zoom;
+      // (on a phone the picture already stands far nearer, laid over a tall
+      // window by its height, so it is brought only a little nearer — enough
+      // to move its peak up or down into the window)
+      const s = Math.max(W / img.naturalWidth, H / img.naturalHeight) * (W < 700 ? Math.min(P.zoom, PHONE_ZOOM) : P.zoom);
       const iw = img.naturalWidth * s, ih = img.naturalHeight * s;
       const ox = Math.min(0, Math.max(W - iw, W * at[0] - P.focus[0] * iw));
       const oy = Math.min(0, Math.max(H - ih, H * at[1] - P.focus[1] * ih));
-      // THE WINDOW: its heart and the ring round it, each a mask over the
-      // whole window, and how clear the glass is at each place.
-      const soft = 0.06 + 0.42 * state.edge / 100;
-      const k = 6;
-      const inner = windowMask(W, H, 0.82, soft, 1009 * n, k), outer = windowMask(W, H, 1.22, soft * 1.6 + 0.12, 1009 * n, k);
-      const clearMask = make(inner.m.width, inner.m.height), cmg = clearMask.getContext("2d");
-      cmg.globalAlpha = 0.6; cmg.drawImage(outer.m, 0, 0);
-      cmg.globalAlpha = 1; cmg.drawImage(inner.m, 0, 0);
-      // THE FROST, small: the picture, blurred out, and the ring a little
-      // soft round the heart; coloured and misted.
+      // THE WINDOW, and how soft its edge is (css px; 0, cut clean).
+      const r = windowRect(W, H), soft = softOf(r);
+      // THE FROST, small: the picture, blurred out — with a soft edge, a ring
+      // a little less blurred round the window — coloured and misted.
       const lr = ratio / SMALL, lw = Math.max(16, Math.round(W * lr)), lh = Math.max(16, Math.round(H * lr));
       const small = make(lw, lh), smg = small.getContext("2d");
       smg.imageSmoothingQuality = "high";
       smg.drawImage(img, ox * lr, oy * lr, iw * lr, ih * lr);
       const R = 8 + state.blur * 1.0;                        // css px
-      const heavy = blurred(small, R * lr), light = blurred(small, Math.max(1.6, R * LIGHT_BLUR * lr));
       const low = make(lw, lh), lg = ctxOf(low);
-      lg.imageSmoothingQuality = "high";
-      lg.drawImage(heavy, 0, 0);
-      const ring = make(lw, lh), rg = ring.getContext("2d");
-      rg.drawImage(light, 0, 0);
-      rg.globalCompositeOperation = "destination-in";
-      rg.imageSmoothingQuality = "high";
-      rg.drawImage(outer.m, 0, 0, lw, lh);
-      lg.drawImage(ring, 0, 0);
-      finish(lg, lw, lh, clearOf(clearMask, [0, 0, W, H], lw, lh));
+      lg.drawImage(blurred(small, R * lr), 0, 0);
+      const light = soft > 0 ? ctxOf(blurred(small, Math.max(1.6, R * LIGHT_BLUR * lr))).getImageData(0, 0, lw, lh).data : null;
+      finish(lg, lw, lh, { x: 0, y: 0, sx: W / lw, sy: H / lh, r, soft, light });
       // (drawn straight into the page's own canvas: all of it at once, before
       // the next frame, so nothing half drawn is ever seen)
       if (canvas.width !== cw || canvas.height !== ch) { canvas.width = cw; canvas.height = ch; }
@@ -328,17 +315,18 @@
       og.globalAlpha = 1;
       og.imageSmoothingQuality = "high";
       og.drawImage(low, 0, 0, cw, ch);
-      // THE HEART, sharp, in its own box.
-      const [bx0, by0, bx1, by1] = inner.box;
-      const x0 = Math.floor(bx0 * ratio), y0 = Math.floor(by0 * ratio);
-      const bw = Math.max(1, Math.ceil(bx1 * ratio) - x0), bh = Math.max(1, Math.ceil(by1 * ratio) - y0);
+      // THE WINDOW ITSELF, sharp, in its own box — the rectangle on whole
+      // pixels of the screen, and with a soft edge as far out as it goes.
+      const pad = soft > 0 ? soft / 2 + 2 : 0;
+      const x0 = Math.max(0, Math.round((r.x - pad) * ratio)), y0 = Math.max(0, Math.round((r.y - pad) * ratio));
+      const x1 = Math.min(cw, Math.round((r.x + r.w + pad) * ratio)), y1 = Math.min(ch, Math.round((r.y + r.h + pad) * ratio));
+      const bw = Math.max(1, x1 - x0), bh = Math.max(1, y1 - y0);
       const heart = make(bw, bh), hg = ctxOf(heart);
       hg.imageSmoothingQuality = "high";
       hg.drawImage(img, ox * ratio - x0, oy * ratio - y0, iw * ratio, ih * ratio);
-      finish(hg, bw, bh, clearOf(clearMask, [x0 / ratio, y0 / ratio, (x0 + bw) / ratio, (y0 + bh) / ratio], bw, bh));
-      hg.globalCompositeOperation = "destination-in";
-      hg.drawImage(inner.m, (x0 / ratio) / k, (y0 / ratio) / k, (bw / ratio) / k, (bh / ratio) / k, 0, 0, bw, bh);
+      finish(hg, bw, bh, { x: x0 / ratio, y: y0 / ratio, sx: 1 / ratio, sy: 1 / ratio, r, soft, heart: true });
       og.drawImage(heart, x0, y0);
+      shown = { x: x0 / ratio, y: y0 / ratio, w: bw / ratio, h: bh / ratio, soft };
       // THE VIGNETTE and THE GRAIN, laid over the whole.
       const fx = new Set(state.fx);
       if (fx.has("vignette")) {
@@ -366,26 +354,32 @@
       if (again) { const d = again === "draft"; again = false; draw(d); }
     }
   }
-  // How clear the glass is over `rect` (css px) of the window, `w` by `h`,
-  // read off the mask (which covers the whole window).
-  function clearOf(mask, rect, w, h) {
-    const c = make(w, h), g = ctxOf(c);
-    g.imageSmoothingQuality = "high";
-    const sx = mask.width / size()[0];
-    g.drawImage(mask, rect[0] * sx, rect[1] * sx, (rect[2] - rect[0]) * sx, (rect[3] - rect[1]) * sx, 0, 0, w, h);
-    return g.getImageData(0, 0, w, h).data;
-  }
-
-  // THE COLOUR, THE FILTERS AND THE MIST, a pixel at a time.
-  function finish(g, w, h, clear) {
+  // THE COLOUR, THE FILTERS AND THE MIST, a pixel at a time, over a piece of
+  // the window `w` by `h` pixels whose first stands at (`x`, `y`) css px, a
+  // pixel `sx` by `sy` css px. The mist is cleared in the window; drawing
+  // the window itself (`heart`), what is outside it is left out, to see the
+  // frost through; a `light` copy is the ring round a soft window.
+  function finish(g, w, h, o) {
     const img = g.getImageData(0, 0, w, h), d = img.data;
+    const { r: win, soft, light, heart } = o;
+    const inX = along(w, o.x, o.sx, win.x, win.x + win.w, soft), inY = along(h, o.y, o.sy, win.y, win.y + win.h, soft);
+    const ringX = light ? along(w, o.x, o.sx, win.x - soft * 0.8, win.x + win.w + soft * 0.8, soft * 1.6) : null;
+    const ringY = light ? along(h, o.y, o.sy, win.y - soft * 0.8, win.y + win.h + soft * 0.8, soft * 1.6) : null;
+    // Cut clean, the window is all window and the frost all frost: misted
+    // right up to the edge, so nothing clear is smeared out past it as the
+    // small frost is laid down large.
+    const clean = !(soft > 0);
     const c = state.colour, fx = new Set(state.fx);
     const mist = MIST_OF[c] || PAPER;
     const most = (state.mist / 100) * 0.94;
     const faded = fx.has("faded"), contrast = fx.has("contrast"), poster = fx.has("posterise"), negative = fx.has("negative");
     const q = 255 / 4;
-    for (let i = 0; i < d.length; i += 4) {
+    for (let i = 0, p = 0; i < d.length; i += 4, p++) {
+      const px = p % w, py = (p - px) / w;
+      const inner = clean ? (heart ? 1 : 0) : inX[px] * inY[py];
+      const ring = light ? ringX[px] * ringY[py] : 0;
       let r = d[i], gr = d[i + 1], b = d[i + 2];
+      if (ring > 0) { r += (light[i] - r) * ring; gr += (light[i + 1] - gr) * ring; b += (light[i + 2] - b) * ring; }
       const L = 0.2126 * r + 0.7152 * gr + 0.0722 * b;
       // the photograph's colour
       if (c === "bw") { r = gr = b = L; }
@@ -398,8 +392,9 @@
       if (poster) { r = Math.round(r / q) * q; gr = Math.round(gr / q) * q; b = Math.round(b / q) * q; }
       if (negative) { r = 255 - r; gr = 255 - gr; b = 255 - b; }
       // the mist, cleared in the window
-      const a = most * (1 - GLASS * (clear[i + 3] / 255));
-      d[i] = r + (mist[0] - r) * a; d[i + 1] = gr + (mist[1] - gr) * a; d[i + 2] = b + (mist[2] - b) * a; d[i + 3] = 255;
+      const a = most * (1 - GLASS * (inner + 0.6 * ring * (1 - inner)));
+      d[i] = r + (mist[0] - r) * a; d[i + 1] = gr + (mist[1] - gr) * a; d[i + 2] = b + (mist[2] - b) * a;
+      d[i + 3] = heart ? 255 * inner : 255;
     }
     g.putImageData(img, 0, 0);
   }
@@ -522,8 +517,10 @@
     drawn: () => root.classList.contains("tepe-photo-drawn") && !drawing,
     took: () => drawnAt,
     pictures: () => PICTURES.map((p) => p.file),
-    // Where the window's heart stands, in css px.
+    // Where the window's middle stands, and the window as last drawn
+    // (its box on the screen's pixels, and how soft its edge), in css px.
     clearAt: () => { const [W, H] = size(); const at = W < 700 ? CLEAR_AT_NARROW : CLEAR_AT; return { x: W * at[0], y: H * at[1] }; },
+    windowRect: () => shown && { ...shown },
     set: (s) => { Object.assign(state, read({ ...state, ...s })); change(false); },
   };
 })();

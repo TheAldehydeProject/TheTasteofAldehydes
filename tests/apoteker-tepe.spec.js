@@ -11,7 +11,9 @@
 //                 misted but for a window on the right-ish middle where it is
 //                 sharp, after the Musica 2011 poster ("The mountain should be
 //                 blurred out, except for a mask on the right-ish middle of
-//                 the screen"); drawn once, by tepe.js, on a canvas fixed to
+//                 the screen") — A SHARP RECTANGLE, upright, cut clean ("I
+//                 want the mask to be a sharp rctangle, as it was with the
+//                 horse picture"); drawn once, by tepe.js, on a canvas fixed to
 //                 the window. THE PANEL at the top right switches between the
 //                 five and turns on colours and filters ("let me see how its
 //                 going to look with each of them ... Add optional filters
@@ -123,10 +125,37 @@ const look = (page, x, y, r) => page.evaluate(([x, y, r]) => {
   return { busy: busy / n, light: L / n, sat: sat / n };
 }, [x, y, r]);
 
+/** The window as drawn, and its edge: `jump`, the mean step (summed over
+    the three colours) from the last pixel of frost to the first of the
+    window, all round it; `out`, the mean step between the last two pixels
+    of frost. Cut clean, the first is large and the second next to nothing;
+    softened, the two are alike. */
+const edgeOf = (page) => page.evaluate(() => {
+  const c = document.querySelector(".tepe-photo"), k = c.width / c.clientWidth, g = c.getContext("2d");
+  const R = TepePhoto.windowRect(), W = c.width, d = g.getImageData(0, 0, c.width, c.height).data;
+  const px = (x, y) => (y * W + x) * 4;
+  const diff = (a, b) => Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]);
+  const x0 = Math.round(R.x * k), y0 = Math.round(R.y * k), x1 = Math.round((R.x + R.w) * k), y1 = Math.round((R.y + R.h) * k);
+  let jump = 0, out = 0, n = 0;
+  for (let y = y0 + 4; y < y1 - 4; y += 2) {
+    jump += diff(px(x0 - 1, y), px(x0, y)) + diff(px(x1, y), px(x1 - 1, y));
+    out += diff(px(x0 - 2, y), px(x0 - 1, y)) + diff(px(x1 + 1, y), px(x1, y));
+    n += 2;
+  }
+  for (let x = x0 + 4; x < x1 - 4; x += 2) {
+    jump += diff(px(x, y0 - 1), px(x, y0)) + diff(px(x, y1), px(x, y1 - 1));
+    out += diff(px(x, y0 - 2), px(x, y0 - 1)) + diff(px(x, y1 + 1), px(x, y1));
+    n += 2;
+  }
+  return { rect: R, jump: jump / n, out: out / n };
+});
+
 /* BEHIND FROSTED GLASS: on a laptop and a phone, the photograph is drawn,
    blurred out and pale everywhere but the window on the right-ish middle,
-   where it is sharp; the page asks for none of the 3D mountain's scripts,
-   and nothing is wider than the window. */
+   where it is sharp — a sharp upright rectangle, a step from the frost to
+   the mountain at its very edge ("as it was with the horse picture"); the
+   page asks for none of the 3D mountain's scripts, and nothing is wider
+   than the window. */
 for (const [where, size] of [["a laptop", LAPTOP], ["a phone", PHONE]]) {
   test(`Apoteker Tepe's mountain is blurred out behind frosted glass but for a window on the right-ish middle, on ${where}`, async ({ page }) => {
     const errors = collectPageErrors(page);
@@ -144,6 +173,13 @@ for (const [where, size] of [["a laptop", LAPTOP], ["a phone", PHONE]]) {
     expect(sharp.busy, "sharp in the window").toBeGreaterThan(frost.busy * 3);
     expect(frost.light, "pale in the frost").toBeGreaterThan(sharp.light);
     expect(frost.busy, "the frost has nothing sharp in it").toBeLessThan(4);
+    const edge = await edgeOf(page);
+    expect(edge.rect.soft, "cut clean to begin with").toBe(0);
+    expect(edge.rect.h / edge.rect.w, "an upright rectangle, 2 : 3").toBeCloseTo(1.5, 1);
+    expect(edge.rect.x + edge.rect.w / 2, "round its middle").toBeCloseTo(at.x, -1);
+    expect(edge.rect.y + edge.rect.h / 2).toBeCloseTo(at.y, -1);
+    expect(edge.jump, "a step from the frost to the mountain at its edge").toBeGreaterThan(40);
+    expect(edge.out, "the frost even right up to it").toBeLessThan(1);
     // Drawn once, not every frame, at the flat drawing's sharpness (1.5 on a phone).
     const r = await page.evaluate(() => { const c = document.querySelector(".tepe-photo"); return c.width / c.clientWidth; });
     expect(r).toBeLessThanOrEqual(size.width < 700 ? 1.5 : 2);
@@ -216,15 +252,23 @@ test("Apoteker Tepe's colours and filters change the drawing, come back with the
   // a slider, drawn at half while it moves and whole once let go
   await page.locator('.tepe-try-slider input[data-k="window"]').fill("80");
   await expect.poll(() => page.evaluate(() => TepePhoto.state().window)).toBe(80);
+  // the Edge softens the rectangle, for a look: no step at its edge then
+  await page.locator('.tepe-try-slider input[data-k="edge"]').fill("40");
+  await expect.poll(() => page.evaluate(() => TepePhoto.drawn() && (TepePhoto.windowRect() || {}).soft > 0)).toBe(true);
+  await drawn(page);
+  const soft = await edgeOf(page);
+  // (the grain is on, so every pixel steps from the next a little: the
+  // edge steps no more than the frost does)
+  expect(soft.jump, "softened, no step at its edge").toBeLessThan(soft.out * 1.5 + 5);
   // the address brings it all back
   await page.reload();
   await drawn(page);
-  expect(await page.evaluate(() => TepePhoto.state())).toMatchObject({ mountain: 2, colour: "bw", fx: ["vignette", "grain"], window: 80 });
+  expect(await page.evaluate(() => TepePhoto.state())).toMatchObject({ mountain: 2, colour: "bw", fx: ["vignette", "grain"], window: 80, edge: 40 });
   // and Reset puts it back as it was
   await page.locator(".tepe-try-open").click();
   await page.locator(".tepe-try-reset").click();
   await drawn(page);
-  expect(await page.evaluate(() => TepePhoto.state())).toMatchObject({ mountain: 1, colour: "natural", fx: [], window: 50 });
+  expect(await page.evaluate(() => TepePhoto.state())).toMatchObject({ mountain: 1, colour: "natural", fx: [], window: 50, edge: 0 });
   expect(new URL(page.url()).search, "nothing left in the address").toBe("");
   expect(errors).toEqual([]);
 });

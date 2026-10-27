@@ -958,8 +958,7 @@ repository's history, whole, at the commit before this one.
 ### The mountain photographed, behind frosted glass (2026-10-27, a trial)
 
 The owner, with five photographs uploaded as `images/Apoteker Tepe/AT MOUNTAIN 1.webp` to `5` and the
-Musica 2011 poster (a horse behind frosted glass, only its hooves and the top of its head sharp where
-they touch the glass): "For apoteker tepe, remove the mointain as it is currently, and i want you to
+Musica 2011 poster (a horse behind frosted glass, seen sharp through a clear rectangle in it): "For apoteker tepe, remove the mointain as it is currently, and i want you to
 replace it with one of the files from AT MOINTAIN 1-5. I want you to replace it with all pf ghe, and
 then let me see how its goimg yo look with each of them do this with a top right setting which allows
 you to switch between the pictures. Add optional filters too so that i can have fun with it before
@@ -975,12 +974,23 @@ behind the page is my own photograph.* — on that reading (the question is put 
 - **The frost**: the photograph laid over the whole window — placed so its peak stands in the window
   (`PICTURES`: a `focus` and a `zoom` for each, chosen by eye) — blurred out (`blur`, 8 + 1 css px a
   step) and **misted towards the house's paper** (`mist`, `PAPER`), as the poster's glass is pale.
-- **The window**: an irregular upright shape (`TALL` 1.6, its outline three slow waves of its own,
-  the same for each picture every time) at the right-ish middle — `CLEAR_AT`, 0.775 across and half
-  way down on a wide window (to the right of the paragraphs, under the parts' rows), 0.68 on a phone —
-  **graded as the poster's horse is**: its heart sharp, a ring round it a little soft
-  (`LIGHT_BLUR`, a fifth of the frost's blur), then the frost; the mist cleared there (`GLASS` 0.9).
-  Its size and how soft its edge are two of the sliders.
+- **The window**: **a sharp upright rectangle** of clear glass on the right-ish middle, as the
+  poster's is — later the same day, before any of it went up: "I want the mask to be a sharp
+  rctangle, as it was with the horse picture." (`windowRect`): 2 : 3 (`TALL` 1.5), round
+  `CLEAR_AT` — 0.775 across and half way down on a wide window (to the right of the paragraphs, under
+  the parts' rows; 316 by 476 css px on a laptop), 0.68 on a phone (137 by 205) — never more than
+  0.86 of the window high. Inside it the mountain sharp and clear (the mist cleared, `GLASS` 0.9);
+  outside it the frost, **misted right up to its edge**, and **the edge cut on whole pixels of the
+  screen**, so there is a step from the one to the other and nothing between. **Window** is its size;
+  **Edge**, which starts at 0, softens it for a look (`EDGE_MOST`: at 100 eased over 0.45 of its
+  narrower side, a ring a little less blurred round it, `LIGHT_BLUR`). Across and down are worked out
+  apart and multiplied (`along`), a rectangle being the one shape that can be, so it costs nothing.
+  **On a phone** a picture is brought no nearer than 1.15 (`PHONE_ZOOM`): laid over a tall window by
+  its height it is far nearer already, and the third showed only grass.
+  (**For its first round it was an irregular upright shape** — its outline three slow waves of its
+  own, sharp at its heart, a ring a little soft round it, then the frost, the poster read wrongly as
+  the horse sharp only where it touched the glass — on small masks blurred out at their edges. It came out with
+  the rectangle: no `windowMask`, no masks at all.)
 - **The panel** (`.tepe-try`): a boxed button at the top right, level with the Menu — *Mountain 1 /
   5* — opening under it: **the five pictures** as thumbnails (`mountain-thumbs/`, 192 by 128), four
   sliders (**Blur**, **Mist**, **Window**, **Edge**), **a colour** (Natural, Black & white, Sepia,
@@ -998,14 +1008,16 @@ behind the page is my own photograph.* — on that reading (the question is put 
 window, made again only when something in the panel changes, or the window's width does (never as a
 phone's bar comes and goes: it is drawn to the tallest the window has been, `tallest`). Blurring is
 done on small copies, laid down large — **the frost a quarter of the pixels each way**, being blurred,
-and **only the window's heart at the whole of the window's sharpness**, in a box of its own; the
+and **only the window at the whole of the window's sharpness**, in a box of its own; the
 colour, filters and mist a pixel at a time on those two only; the vignette and the grain laid over the
 whole as a gradient and a square of noise (`overlay`), never a filter over the window. A slider being
 dragged draws it at half the pixels, and the whole on letting go. At the flat drawing's sharpness: two
 to a css px at most on a wide window, 1.5 on a phone, and never more than 3.6 million pixels in all.
-Measured here, without a graphics card: **a laptop's sharp screen 0.25 to 0.45 s a picture, a phone's
-under 0.1 s, and scrolling 60 frames a second on both**. (Drawn first whole at the window's size,
-every layer full size, it took 0.8 s on a plain laptop screen and 1.7 on a sharp one: that is why.)
+Measured here, without a graphics card: **a laptop's plain screen 0.05 to 0.09 s a picture, its sharp
+screen 0.12 s, a phone's under 0.08 s, and scrolling 60 frames a second on both** (the irregular
+window, on its masks, took 0.25 to 0.45 s on the sharp screen). (Drawn first whole at the window's
+size, every layer full size, it took 0.8 s on a plain laptop screen and 1.7 on a sharp one: that is
+why.)
 
 Without the script the page is its writing on the aged paper (the canvas never comes up) and there is
 no panel; with reduced motion nothing moves anyway. The Houses view still brings nothing up for the
@@ -1026,14 +1038,19 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
     (and nothing of Mount Athos);
   - **behind frosted glass**, on a laptop and on a phone: the photograph drawn, the window right of the
     middle and half way down, **sharp there** (three times as busy as the frost at least) and **pale in
-    the frost**, nothing sharp in it; drawn at 2 (1.5 on a phone) at most; not drawn again by a scroll;
+    the frost**, nothing sharp in it; **the window a sharp upright rectangle**, 2 : 3, round that
+    middle, cut clean to begin with — all round it a step from the last pixel of frost to the first of
+    the mountain (over 40, the three colours summed; measured 150 to 250) and the frost even right up
+    to it (under 1 between its last two pixels; measured 0.01 to 0.1); drawn at 2 (1.5 on a phone) at
+    most; not drawn again by a scroll;
     none of the 3D mountain's scripts asked for; nothing wider than the window;
   - **the panel** at the top right: *1 / 5*; the five pictures, each pressed and drawn, its thumbnail
     pressed, the button saying which, the address keeping it (nothing for the first); the thumbnails
     arrive; Escape puts it away;
   - **the colours and filters**: Black & white takes the colour out of the window; Vignette and Grain kept
-    in the address with the colour; a slider moved; a reload brings it all back; Reset puts it back
-    and clears the address;
+    in the address with the colour; the Window slider moved; **the Edge slider softens the rectangle**,
+    its edge stepping no more than the frost does; a reload brings it all back; Reset puts it back
+    (the edge clean again) and clears the address;
   - **on a phone** the panel fits the window; **without the script** the eight fragrances open, no
     panel, the canvas never shown;
   - **the Houses view** at Apoteker Tepe brings nothing up and asks for none of the 3D mountain's
