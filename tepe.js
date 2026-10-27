@@ -17,21 +17,32 @@
 //                 n.webp) laid over the whole window, blurred out and
 //                 misted towards the house's paper — glass the mountain
 //                 stands behind.
-//   THE WINDOW    on the right-ish middle, A SHARP UPRIGHT RECTANGLE of
-//                 clear glass, 2 : 3 (since later the same day — "I want the
-//                 mask to be a sharp rctangle, as it was with the horse
-//                 picture"; it was an irregular shape, sharp at its heart and
-//                 soft round it, for its first round): the mountain sharp and
-//                 clear inside it and frosted from its very edge, cut on whole
-//                 pixels of the screen. Each picture is placed so its peak
-//                 stands in it (`focus`). The Edge slider softens it, for a
-//                 look; at 0, where it starts, it is cut clean.
+//   THE WINDOW    on the right-ish middle, AN UPRIGHT RECTANGLE, 2 : 3,
+//                 the mountain sharp and clear in it right to its edge,
+//                 nothing feathered inside it; and THE GRADE outside it,
+//                 blurred and misted more the further out, from nothing at
+//                 its edge to the whole frost a feather's width out. Later
+//                 the same day, in three notes: "I want the mask to be a sharp
+//                 rctangle, as it was with the horse picture"; then "a blur
+//                 of everything, except one rectangular NOT FEATHERED mask.
+//                 On the outside of the rectangle, it should be feathered
+//                 (and gradually getting more blurry). On the inside, no
+//                 feather whatsoever"; then "Less blur on the outside of the
+//                 rectangle, and feather the edges of the rectangle in the
+//                 outward direction ONLY". (It was an irregular shape, sharp
+//                 at its heart and soft round it, for its first round, and a
+//                 rectangle cut clean for its second.) Each picture is
+//                 placed so its peak stands in it (`focus`).
 //   THE TRIAL     the boxed button at the top right — "Mountain 1 / 5" —
 //                 opens THE PANEL: the five pictures, the blur, the mist, the
-//                 window's size and its edge, a colour (natural, black and
-//                 white, sepia, duotone, frost, warm) and filters (faded,
-//                 contrast, vignette, grain, posterise, negative). Kept in
-//                 the address (`?mountain=3&colour=sepia&fx=grain`), and in
+//                 window's size and its feather, a colour (natural, black and
+//                 white, sepia, duotone, frost, warm), filters (faded,
+//                 contrast, vignette, grain, posterise, negative) and THE
+//                 TEXT'S BLENDING ("allow a person to change the blending of
+//                 the text") — the writing laid over the mountain normally,
+//                 multiplied, burnt, as hard or soft light, overlaid, by
+//                 luminosity or inverted. Kept in the address
+//                 (`?mountain=3&colour=sepia&fx=grain&text=multiply`), and in
 //                 the browser for the next visit, until the owner settles on
 //                 one; then the rest comes out.
 //
@@ -77,10 +88,10 @@
   const CLEAR_AT_NARROW = [0.68, 0.5];  // and on a phone
   const TALL = 1.5;                     // the window's height to its width: upright, 2 : 3, as the poster's is
   const PHONE_ZOOM = 1.15;              // on a phone a picture is brought no nearer than this
-  const GLASS = 0.9;                    // how much of the mist the window clears at its heart
+  const GLASS = 0.9;                    // how much of the mist the window clears
   const MOST_PIXELS = 3.6e6;            // device pixels the picture is drawn in at most
-  const LIGHT_BLUR = 0.18;              // with a soft edge, the ring round the window: this share of the frost's blur
-  const EDGE_MOST = 0.45;               // the softest edge, Edge at 100: this share of the window's narrower side
+  const BLUR_LEAST = 4, BLUR_STEP = 0.8; // the frost's blur, css px: 4 at Blur 0, 84 at 100
+  const FEATHER_MOST = 0.7;             // the widest feather, Feather at 100: this share of the window's shorter side
   const COLOURS = ["natural", "bw", "sepia", "duotone", "frost", "warm"];
   const COLOUR_NAMES = { natural: "Natural", bw: "Black & white", sepia: "Sepia", duotone: "Duotone", frost: "Frost", warm: "Warm" };
   const FX = ["faded", "contrast", "vignette", "grain", "posterise", "negative"];
@@ -88,7 +99,14 @@
   // THE FROST colour's mist (the poster's pale grey-green) and the warm one's.
   const MIST_OF = { frost: [214, 224, 220], warm: [241, 228, 204] };
   const GREEN = [46, 76, 46];           // the house's green (--tepe-green), the duotone's dark
-  const DEFAULTS = { mountain: 1, blur: 70, mist: 68, window: 50, edge: 0, colour: "natural", fx: [] };
+  // THE TEXT'S BLENDING — how the writing is laid over the mountain (a
+  // `mix-blend-mode`; Invert is the writing turned light and laid on as a
+  // difference, so it reads as the picture turned over).
+  const TEXTS = ["normal", "multiply", "burn", "hardlight", "overlay", "softlight", "luminosity", "invert"];
+  const TEXT_NAMES = { normal: "Normal", multiply: "Multiply", burn: "Colour burn", hardlight: "Hard light", overlay: "Overlay", softlight: "Soft light", luminosity: "Luminosity", invert: "Invert" };
+  const TEXT_BLEND = { normal: "normal", multiply: "multiply", burn: "color-burn", hardlight: "hard-light", overlay: "overlay", softlight: "soft-light", luminosity: "luminosity", invert: "difference" };
+  const DEFAULTS = { mountain: 1, blur: 35, mist: 68, window: 50, feather: 45, colour: "natural", fx: [], text: "normal" };
+  const KEYS = ["mountain", "blur", "mist", "window", "feather", "colour", "fx", "text"];
   const STORE = "tepe-mountain-trial";
 
   // ============================================================
@@ -106,21 +124,22 @@
       blur: clampInt(get("blur"), 0, 100, DEFAULTS.blur),
       mist: clampInt(get("mist"), 0, 100, DEFAULTS.mist),
       window: clampInt(get("window"), 0, 100, DEFAULTS.window),
-      edge: clampInt(get("edge"), 0, 100, DEFAULTS.edge),
+      feather: clampInt(get("feather"), 0, 100, DEFAULTS.feather),
       colour: COLOURS.includes(colour) ? colour : DEFAULTS.colour,
       fx: FX.filter((f) => list.includes(f)),
+      text: TEXTS.includes(get("text")) ? get("text") : DEFAULTS.text,
     };
   }
   const here = new URLSearchParams(location.search);
   let stored = null;
   try { stored = JSON.parse(localStorage.getItem(STORE) || "null"); } catch (e) { stored = null; }
-  const asked = ["mountain", "blur", "mist", "window", "edge", "colour", "fx"].some((k) => here.has(k));
+  const asked = KEYS.some((k) => here.has(k));
   const state = read(asked ? here : stored || {});
 
   function keep() {
     const p = new URLSearchParams(location.search);
-    ["mountain", "blur", "mist", "window", "edge", "colour", "fx"].forEach((k) => p.delete(k));
-    for (const k of ["mountain", "blur", "mist", "window", "edge", "colour"]) if (state[k] !== DEFAULTS[k]) p.set(k, state[k]);
+    KEYS.forEach((k) => p.delete(k));
+    for (const k of KEYS) if (k !== "fx" && state[k] !== DEFAULTS[k]) p.set(k, state[k]);
     if (state.fx.length) p.set("fx", state.fx.join(","));
     const q = p.toString().replace(/%2C/g, ",");
     try { history.replaceState(history.state, "", location.pathname + (q ? "?" + q : "") + location.hash); } catch (e) { /* (a file:// page) */ }
@@ -185,7 +204,15 @@
   // again — the laying down itself smooth.
   function blurred(src, radius) {
     const w = src.width, h = src.height;
-    if (radius < 1.5) return src;
+    if (radius < (FILTER ? 0.5 : 1.5)) return src;
+    // (where the browser blurs a canvas itself, it is asked to: many times
+    // quicker than the blur here, and the same to the eye)
+    if (FILTER) {
+      const out = make(w, h), g = out.getContext("2d");
+      g.filter = "blur(" + (radius * 0.82).toFixed(2) + "px)";
+      g.drawImage(src, 0, 0);
+      return out;
+    }
     const step = Math.max(1, radius / 3);
     const small = shrink(src, Math.max(8, Math.round(w / step)), Math.max(8, Math.round(h / step)));
     boxBlur(small, 2);
@@ -194,6 +221,20 @@
     g.drawImage(small, 0, 0, w, h);
     return out;
   }
+  // Whether this browser blurs a canvas itself (`filter` on a canvas's
+  // drawing: not every Safari does): a dot drawn through a blur, and read.
+  const FILTER = (() => {
+    try {
+      const dot = make(9, 1), g = dot.getContext("2d");
+      if (!("filter" in g)) return false;
+      g.fillStyle = "#000";
+      g.fillRect(4, 0, 1, 1);
+      const c = make(9, 1), cg = ctxOf(c);
+      cg.filter = "blur(2px)";
+      cg.drawImage(dot, 0, 0);
+      return cg.getImageData(2, 0, 1, 1).data[3] > 0;
+    } catch (e) { return false; }
+  })();
   // A seeded random, so a picture's window and grain are the same every time.
   function seeded(seed) {
     let s = seed >>> 0 || 1;
@@ -201,10 +242,13 @@
   }
 
   // ============================================================
-  // THE WINDOW — a sharp upright rectangle on the right-ish middle, as the
-  // poster's is: the glass clear inside it, frosted from its very edge. The
-  // Edge slider can soften it, for a look; at 0 it is cut clean, on whole
-  // pixels of the screen.
+  // THE WINDOW — an upright rectangle on the right-ish middle, sharp to its
+  // very edge and nothing feathered inside it ("one rectangular NOT FEATHERED
+  // mask"). THE GRADE outside it: the further out from it, the more blurred
+  // and misted — "feathered (and gradually getting more blurry) ... feather
+  // the edges of the rectangle in the outward direction ONLY" — from nothing
+  // at its edge to the whole frost a feather's width out. Feather at 0 is the
+  // frost from the edge at once.
   // ============================================================
   function windowRect(W, H) {
     const at = W < 700 ? CLEAR_AT_NARROW : CLEAR_AT;
@@ -213,18 +257,39 @@
     if (h > H * 0.86) { h = H * 0.86; w = h / TALL; }
     return { x: W * at[0] - w / 2, y: H * at[1] - h / 2, w, h };
   }
-  const softOf = (r) => (state.edge / 100) * EDGE_MOST * Math.min(r.w, r.h);
+  const featherOf = (W, H) => (state.feather / 100) * FEATHER_MOST * Math.min(W, H);
+  const blurOf = () => BLUR_LEAST + BLUR_STEP * state.blur;
   const ease = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
-  // How clear the glass is along one line of `n` pixels, starting at `from`
-  // (css px) a `step` at a time: 1 between `a` and `b`, 0 outside, eased
-  // across each edge over `soft` (none, when it is 0). The window is a
-  // rectangle, so across and down are worked out apart and multiplied.
-  function along(n, from, step, a, b, soft) {
+  // How far through the grade a place `d` css px out of the window is: 0 in
+  // it and at its edge, 1 a feather's width out and beyond.
+  const gradeAt = (d, F) => (d <= 0 ? 0 : F > 0 ? ease(d / F) : 1);
+  // How far out the grade reaches `g`.
+  function outFor(g, F) {
+    if (!(F > 0)) return 0;
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 32; i++) { const m = (lo + hi) / 2; if (ease(m) < g) lo = m; else hi = m; }
+    return hi * F;
+  }
+  // How far out of the window, across or down, a line of `n` pixels stands,
+  // starting at `from` (css px) a `step` at a time.
+  function outAlong(n, from, step, a, b) {
     const out = new Float32Array(n);
-    for (let i = 0; i < n; i++) {
-      const v = from + (i + 0.5) * step;
-      out[i] = soft > 0 ? ease((v - a) / soft + 0.5) * ease((b - v) / soft + 0.5) : v >= a && v < b ? 1 : 0;
-    }
+    for (let i = 0; i < n; i++) { const v = from + (i + 0.5) * step; out[i] = v < a ? a - v : v > b ? v - b : 0; }
+    return out;
+  }
+  // THE LADDER: the same piece of picture blurred more and more, each rung
+  // twice the last (in css px; `sc` of its pixels to a css px) — a place is
+  // drawn from the two rungs either side of its own blur.
+  function ladder(src, radii, sc) {
+    return radii.map((r) => {
+      const c = r > 0 ? blurred(src, r * sc) : src;
+      return { r, d: ctxOf(c).getImageData(0, 0, c.width, c.height).data };
+    });
+  }
+  function rungs(from, to) {
+    const out = [];
+    for (let r = from; r < to * 0.999; r *= 2) out.push(r);
+    out.push(to);
     return out;
   }
 
@@ -293,19 +358,24 @@
       const iw = img.naturalWidth * s, ih = img.naturalHeight * s;
       const ox = Math.min(0, Math.max(W - iw, W * at[0] - P.focus[0] * iw));
       const oy = Math.min(0, Math.max(H - ih, H * at[1] - P.focus[1] * ih));
-      // THE WINDOW, and how soft its edge is (css px; 0, cut clean).
-      const r = windowRect(W, H), soft = softOf(r);
-      // THE FROST, small: the picture, blurred out — with a soft edge, a ring
-      // a little less blurred round the window — coloured and misted.
-      const lr = ratio / SMALL, lw = Math.max(16, Math.round(W * lr)), lh = Math.max(16, Math.round(H * lr));
+      // THE WINDOW, THE FEATHER (css px out from its edge to the whole frost)
+      // and THE BLUR at its most (css px).
+      const r = windowRect(W, H), F = featherOf(W, H), R = blurOf();
+      // THE FROST, small — as small as it can be and still be drawn true at
+      // the least blur it is ever seen at (`least`, css px); nearer the window
+      // than that, THE NEAR PIECE is drawn over it at the whole sharpness.
+      const lr = Math.min(ratio, Math.max(ratio / SMALL, 3.75 / R));
+      const least = Math.min(R, 2.5 / lr);
+      const lw = Math.max(16, Math.round(W * lr)), lh = Math.max(16, Math.round(H * lr));
       const small = make(lw, lh), smg = small.getContext("2d");
       smg.imageSmoothingQuality = "high";
       smg.drawImage(img, ox * lr, oy * lr, iw * lr, ih * lr);
-      const R = 8 + state.blur * 1.0;                        // css px
       const low = make(lw, lh), lg = ctxOf(low);
-      lg.drawImage(blurred(small, R * lr), 0, 0);
-      const light = soft > 0 ? ctxOf(blurred(small, Math.max(1.6, R * LIGHT_BLUR * lr))).getImageData(0, 0, lw, lh).data : null;
-      finish(lg, lw, lh, { x: 0, y: 0, sx: W / lw, sy: H / lh, r, soft, light });
+      lg.drawImage(small, 0, 0);
+      // (with no feather, the frost is frost right up to the window — misted
+      // in it too, so nothing clear is smeared out past its edge as the
+      // small frost is laid down large; the near piece covers it)
+      grade(lg, lw, lh, { x: 0, y: 0, sx: W / lw, sy: H / lh, win: r, F, R, rungs: ladder(small, rungs(least, R), lr), frost: !(F > 0) });
       // (drawn straight into the page's own canvas: all of it at once, before
       // the next frame, so nothing half drawn is ever seen)
       if (canvas.width !== cw || canvas.height !== ch) { canvas.width = cw; canvas.height = ch; }
@@ -315,18 +385,38 @@
       og.globalAlpha = 1;
       og.imageSmoothingQuality = "high";
       og.drawImage(low, 0, 0, cw, ch);
-      // THE WINDOW ITSELF, sharp, in its own box — the rectangle on whole
-      // pixels of the screen, and with a soft edge as far out as it goes.
-      const pad = soft > 0 ? soft / 2 + 2 : 0;
-      const x0 = Math.max(0, Math.round((r.x - pad) * ratio)), y0 = Math.max(0, Math.round((r.y - pad) * ratio));
-      const x1 = Math.min(cw, Math.round((r.x + r.w + pad) * ratio)), y1 = Math.min(ch, Math.round((r.y + r.h + pad) * ratio));
+      // THE NEAR PIECE: the window, sharp on whole pixels of the screen, and
+      // round it, as far as the grade is blurred less than the frost can
+      // show, the grade at the whole sharpness — handed over to the frost
+      // across a few pixels (`HAND`) where both are blurred alike.
+      const band = R > least ? outFor(least / R, F) : 0;
+      const hand = F > 0 ? Math.max(4, least * 1.5) : 0;
+      const reach = band + hand;
+      const x0 = Math.max(0, Math.round((r.x - reach) * ratio)), y0 = Math.max(0, Math.round((r.y - reach) * ratio));
+      const x1 = Math.min(cw, Math.round((r.x + r.w + reach) * ratio)), y1 = Math.min(ch, Math.round((r.y + r.h + reach) * ratio));
       const bw = Math.max(1, x1 - x0), bh = Math.max(1, y1 - y0);
-      const heart = make(bw, bh), hg = ctxOf(heart);
-      hg.imageSmoothingQuality = "high";
-      hg.drawImage(img, ox * ratio - x0, oy * ratio - y0, iw * ratio, ih * ratio);
-      finish(hg, bw, bh, { x: x0 / ratio, y: y0 / ratio, sx: 1 / ratio, sy: 1 / ratio, r, soft, heart: true });
-      og.drawImage(heart, x0, y0);
-      shown = { x: x0 / ratio, y: y0 / ratio, w: bw / ratio, h: bh / ratio, soft };
+      // (the picture taken a little wider than the piece, so its blurring
+      // has the picture to draw on at the piece's edge, not nothing)
+      const most = F > 0 ? R * gradeAt(reach, F) : 0;
+      const pad = Math.ceil(most * 2.5 * ratio) + 2;
+      const near = make(bw + pad * 2, bh + pad * 2), ng = ctxOf(near);
+      ng.imageSmoothingQuality = "high";
+      ng.drawImage(img, ox * ratio - x0 + pad, oy * ratio - y0 + pad, iw * ratio, ih * ratio);
+      const nearRungs = ladder(near, most > 0 ? [0].concat(rungs(Math.min(1, most), most)) : [0], ratio);
+      const piece = make(bw, bh), pg = ctxOf(piece);
+      pg.drawImage(near, -pad, -pad);
+      grade(pg, bw, bh, {
+        x: x0 / ratio, y: y0 / ratio, sx: 1 / ratio, sy: 1 / ratio, win: r, F, R,
+        rungs: nearRungs, pad, padW: bw + pad * 2,
+        alpha: F > 0 ? (d) => (d <= band ? 1 : 1 - ease((d - band) / hand)) : () => 1,
+      });
+      og.drawImage(piece, x0, y0);
+      shown = {
+        x: Math.round(r.x * ratio) / ratio, y: Math.round(r.y * ratio) / ratio,
+        w: (Math.round((r.x + r.w) * ratio) - Math.round(r.x * ratio)) / ratio,
+        h: (Math.round((r.y + r.h) * ratio) - Math.round(r.y * ratio)) / ratio,
+        feather: F, blur: R, near: reach,
+      };
       // THE VIGNETTE and THE GRAIN, laid over the whole.
       const fx = new Set(state.fx);
       if (fx.has("vignette")) {
@@ -354,32 +444,39 @@
       if (again) { const d = again === "draft"; again = false; draw(d); }
     }
   }
-  // THE COLOUR, THE FILTERS AND THE MIST, a pixel at a time, over a piece of
-  // the window `w` by `h` pixels whose first stands at (`x`, `y`) css px, a
-  // pixel `sx` by `sy` css px. The mist is cleared in the window; drawing
-  // the window itself (`heart`), what is outside it is left out, to see the
-  // frost through; a `light` copy is the ring round a soft window.
-  function finish(g, w, h, o) {
+  // THE GRADE, THE COLOUR, THE FILTERS AND THE MIST, a pixel at a time, over
+  // a piece of the window `w` by `h` pixels whose first stands at (`x`, `y`)
+  // css px, a pixel `sx` by `sy` css px: each pixel taken from the ladder's
+  // rungs either side of its blur, and misted as far as it is through the
+  // grade (the mist cleared in the window). `alpha`, by how far out it is,
+  // hands the near piece over to the frost. (The near piece's rungs are a
+  // little wider than it, by `pad` all round, `padW` across.)
+  function grade(g, w, h, o) {
     const img = g.getImageData(0, 0, w, h), d = img.data;
-    const { r: win, soft, light, heart } = o;
-    const inX = along(w, o.x, o.sx, win.x, win.x + win.w, soft), inY = along(h, o.y, o.sy, win.y, win.y + win.h, soft);
-    const ringX = light ? along(w, o.x, o.sx, win.x - soft * 0.8, win.x + win.w + soft * 0.8, soft * 1.6) : null;
-    const ringY = light ? along(h, o.y, o.sy, win.y - soft * 0.8, win.y + win.h + soft * 0.8, soft * 1.6) : null;
-    // Cut clean, the window is all window and the frost all frost: misted
-    // right up to the edge, so nothing clear is smeared out past it as the
-    // small frost is laid down large.
-    const clean = !(soft > 0);
+    const { win, F, R, rungs: steps, alpha, frost } = o;
+    const pad = o.pad || 0, rw = o.padW || w;
+    const outX = outAlong(w, o.x, o.sx, win.x, win.x + win.w), outY = outAlong(h, o.y, o.sy, win.y, win.y + win.h);
     const c = state.colour, fx = new Set(state.fx);
     const mist = MIST_OF[c] || PAPER;
     const most = (state.mist / 100) * 0.94;
     const faded = fx.has("faded"), contrast = fx.has("contrast"), poster = fx.has("posterise"), negative = fx.has("negative");
     const q = 255 / 4;
+    const top = steps.length - 1;
     for (let i = 0, p = 0; i < d.length; i += 4, p++) {
       const px = p % w, py = (p - px) / w;
-      const inner = clean ? (heart ? 1 : 0) : inX[px] * inY[py];
-      const ring = light ? ringX[px] * ringY[py] : 0;
-      let r = d[i], gr = d[i + 1], b = d[i + 2];
-      if (ring > 0) { r += (light[i] - r) * ring; gr += (light[i + 1] - gr) * ring; b += (light[i + 2] - b) * ring; }
+      const ax = outX[px], ay = outY[py];
+      const out = ax || ay ? Math.sqrt(ax * ax + ay * ay) : 0;
+      const t = frost ? 1 : gradeAt(out, F), blur = R * t;
+      // the two rungs either side of its blur
+      let k = 0;
+      while (k < top && steps[k + 1].r <= blur) k++;
+      const j = ((py + pad) * rw + px + pad) * 4;
+      let r, gr, b;
+      if (k >= top || blur <= steps[0].r) { const from = steps[blur <= steps[0].r ? 0 : top].d; r = from[j]; gr = from[j + 1]; b = from[j + 2]; }
+      else {
+        const A = steps[k], B = steps[k + 1], f = (blur - A.r) / (B.r - A.r);
+        r = A.d[j] + (B.d[j] - A.d[j]) * f; gr = A.d[j + 1] + (B.d[j + 1] - A.d[j + 1]) * f; b = A.d[j + 2] + (B.d[j + 2] - A.d[j + 2]) * f;
+      }
       const L = 0.2126 * r + 0.7152 * gr + 0.0722 * b;
       // the photograph's colour
       if (c === "bw") { r = gr = b = L; }
@@ -391,10 +488,10 @@
       if (contrast) { r = (r - 128) * 1.35 + 128; gr = (gr - 128) * 1.35 + 128; b = (b - 128) * 1.35 + 128; }
       if (poster) { r = Math.round(r / q) * q; gr = Math.round(gr / q) * q; b = Math.round(b / q) * q; }
       if (negative) { r = 255 - r; gr = 255 - gr; b = 255 - b; }
-      // the mist, cleared in the window
-      const a = most * (1 - GLASS * (inner + 0.6 * ring * (1 - inner)));
+      // the mist, cleared in the window and coming up through the grade
+      const a = most * (1 - GLASS * (1 - t));
       d[i] = r + (mist[0] - r) * a; d[i + 1] = gr + (mist[1] - gr) * a; d[i + 2] = b + (mist[2] - b) * a;
-      d[i + 3] = heart ? 255 * inner : 255;
+      d[i + 3] = alpha ? 255 * alpha(out) : 255;
     }
     g.putImageData(img, 0, 0);
   }
@@ -417,6 +514,8 @@
       <div class="tepe-try-chips" data-row="colour" role="group" aria-label="Colour"></div>
       <p class="tepe-try-label">Filters</p>
       <div class="tepe-try-chips" data-row="fx" role="group" aria-label="Filters"></div>
+      <p class="tepe-try-label">Text</p>
+      <div class="tepe-try-chips" data-row="text" role="group" aria-label="The text's blending"></div>
       <div class="tepe-try-foot">
         <button type="button" class="tepe-try-reset">Reset</button>
         <button type="button" class="tepe-try-close">Close</button>
@@ -434,7 +533,7 @@
     b.innerHTML = `<img alt="" loading="lazy" src="${thumbOf(i + 1)}"><span>${i + 1}</span>`;
     pics.appendChild(b);
   });
-  const SLIDERS = [["blur", "Blur"], ["mist", "Mist"], ["window", "Window"], ["edge", "Edge"]];
+  const SLIDERS = [["blur", "Blur"], ["mist", "Mist"], ["window", "Window"], ["feather", "Feather"]];
   const sliders = box.querySelector(".tepe-try-sliders");
   for (const [k, name] of SLIDERS) {
     const l = document.createElement("label");
@@ -455,6 +554,7 @@
   };
   chipsOf("colour", COLOURS, COLOUR_NAMES);
   chipsOf("fx", FX, FX_NAMES);
+  chipsOf("text", TEXTS, TEXT_NAMES);
 
   function show() {
     now.textContent = state.mountain + " / " + PICTURES.length;
@@ -462,8 +562,16 @@
     box.querySelectorAll(".tepe-try-slider input").forEach((i) => { i.value = state[i.dataset.k]; i.nextElementSibling.textContent = state[i.dataset.k]; });
     box.querySelectorAll("[data-colour]").forEach((b) => { if (b.classList.contains("tepe-try-chip")) b.setAttribute("aria-pressed", String(b.dataset.colour === state.colour)); });
     box.querySelectorAll(".tepe-try-chip[data-fx]").forEach((b) => b.setAttribute("aria-pressed", String(state.fx.includes(b.dataset.fx))));
+    box.querySelectorAll(".tepe-try-chip[data-text]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.text === state.text)));
+    blendText();
   }
-  function change(draft) { show(); keep(); draw(draft); }
+  // The text's blending is the stylesheet's (`data-tepe-text` on <html>, the
+  // mode in `--tepe-text-blend`); the drawing is not made again for it.
+  function blendText() {
+    if (state.text === "normal") { delete root.dataset.tepeText; root.style.removeProperty("--tepe-text-blend"); }
+    else { root.dataset.tepeText = state.text; root.style.setProperty("--tepe-text-blend", TEXT_BLEND[state.text]); }
+  }
+  function change(draft, redraw = true) { show(); keep(); if (redraw) draw(draft); }
   function setOpen(on) {
     panel.hidden = !on;
     open.setAttribute("aria-expanded", String(on));
@@ -483,6 +591,7 @@
   box.addEventListener("click", (e) => {
     const b = e.target.closest(".tepe-try-chip");
     if (!b) return;
+    if (b.dataset.text) { state.text = b.dataset.text; change(false, false); return; }
     if (b.dataset.colour) state.colour = b.dataset.colour;
     else if (b.dataset.fx) state.fx = FX.filter((f) => (f === b.dataset.fx ? !state.fx.includes(f) : state.fx.includes(f)));
     change(false);
@@ -517,8 +626,9 @@
     drawn: () => root.classList.contains("tepe-photo-drawn") && !drawing,
     took: () => drawnAt,
     pictures: () => PICTURES.map((p) => p.file),
-    // Where the window's middle stands, and the window as last drawn
-    // (its box on the screen's pixels, and how soft its edge), in css px.
+    // Where the window's middle stands, and the window as last drawn (on
+    // the screen's pixels), with its feather, its blur at its most and how
+    // far out the near piece reaches, in css px.
     clearAt: () => { const [W, H] = size(); const at = W < 700 ? CLEAR_AT_NARROW : CLEAR_AT; return { x: W * at[0], y: H * at[1] }; },
     windowRect: () => shown && { ...shown },
     set: (s) => { Object.assign(state, read({ ...state, ...s })); change(false); },

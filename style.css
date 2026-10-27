@@ -13791,13 +13791,25 @@ body.tepe-page {
 /* THE MOUNTAIN BEHIND FROSTED GLASS (2026-10-27, a trial — tepe.js): the
    owner's photograph, blurred out but for a window on the right-ish middle,
    drawn once onto the canvas fixed to the window; it comes up over the
-   paper once it is drawn. Round every letter a soft halo of the paper, so
-   the words read where they cross the window. */
+   paper once it is drawn. (A soft halo of the paper stood round every
+   letter for its first round — "remove the white shadow".)
+
+   THE TEXT'S BLENDING, chosen in the trial's panel: `data-tepe-text` on
+   <html>, the mode in `--tepe-text-blend`. Laid on the writing's own blocks
+   and never on a picture — the head, the introduction, each part's
+   summary but its little picture, each open part's writing, the credit and
+   the foot — and the parts' row let go of its own layer (`z-index`) while it
+   is on, or what is in it would blend with nothing but itself. Invert is
+   the writing turned light and laid on as a difference. */
 .tepe-photo { opacity: 0; transition: opacity 0.9s var(--menu-ease); }
 html.tepe-photo-drawn .tepe-photo { opacity: 1; }
-html.tepe-photo-drawn .tepe-page .page-main,
-html.tepe-photo-drawn .tepe-page .house-credit,
-html.tepe-photo-drawn .tepe-page .human-foot { text-shadow: 0 0 8px rgba(236, 229, 210, 0.85), 0 0 2px rgba(236, 229, 210, 0.95); }
+html[data-tepe-text] .tepe-page .human-parts { z-index: auto; }
+html[data-tepe-text] .tepe-page :is(.human-head, .human-intro, .human-part > summary > :not(.human-thumb), .human-body > .human-text, .house-credit, .human-foot) {
+  mix-blend-mode: var(--tepe-text-blend, normal);
+}
+html[data-tepe-text="invert"] .tepe-page :is(.human-head, .human-intro, .human-part > summary > :not(.human-thumb), .human-body > .human-text, .house-credit, .human-foot) {
+  filter: invert(1);
+}
 
 /* THE TRIAL'S PANEL — the boxed button at the top right ("Mountain 1 / 5"),
    level with the Menu, and what it opens under it: the five pictures, four
