@@ -107,7 +107,7 @@
   const TEXTS = ["normal", "multiply", "burn", "hardlight", "overlay", "softlight", "luminosity", "invert"];
   const TEXT_NAMES = { normal: "Normal", multiply: "Multiply", burn: "Colour burn", hardlight: "Hard light", overlay: "Overlay", softlight: "Soft light", luminosity: "Luminosity", invert: "Invert" };
   const TEXT_BLEND = { normal: "normal", multiply: "multiply", burn: "color-burn", hardlight: "hard-light", overlay: "overlay", softlight: "soft-light", luminosity: "luminosity", invert: "difference" };
-  const DEFAULTS = { mountain: 1, blur: 35, mist: 68, window: 50, feather: 25, edge: 50, colour: "natural", fx: [], text: "normal" };
+  const DEFAULTS = { mountain: 1, blur: 45, mist: 68, window: 50, feather: 32, edge: 20, colour: "natural", fx: [], text: "normal" };
   const KEYS = ["mountain", "blur", "mist", "window", "feather", "edge", "colour", "fx", "text"];
   const STORE = "tepe-mountain-trial";
 
@@ -267,21 +267,25 @@
   // in it and at its edge, 1 a feather's width out and beyond.
   const throughAt = (d, F) => (d <= 0 ? 0 : F > 0 ? Math.min(1, d / F) : 1);
   // How blurred and misted it is there, as a share of the frost at its
-  // most: nothing in the window; outside it, already the Edge's share right
-  // at its edge — "The blur should be way more intense nex to the masks
-  // border" — and rising from there, quickly at first and gently at the
-  // last, to the whole a feather's width out. (Its first rounds rose from
-  // nothing at the edge: on a plain ease, then evenly to the eye — "Make the
-  // feather a bit smoother" — then the owner asked for the edge blurred.)
-  const edgeShare = () => state.edge / 100;
-  const shareAt = (t) => { if (t <= 0) return 0; const E = edgeShare(); return t >= 1 ? 1 : E + (1 - E) * (1 - (1 - t) * (1 - t)); };
+  // most — after the owner's drawing (a rectangle "clear / no blur", "nvb"
+  // — not very blurry — just outside each of its sides, and arrows out to
+  // "vb", very blurry; "blur" all about): nothing in the window; outside
+  // it, NOT VERY BLURRY at its edge, the Edge's share, and growing from
+  // there evenly to the eye — each step out by the same proportion, as a
+  // blur is seen — to VERY BLURRY, the whole, a Feather's width out. (Its
+  // rounds before: from nothing at the edge on a plain ease, then evenly to
+  // the eye from nothing — "Make the feather a bit smoother" — then half
+  // blurred at the edge and rising quickly — "The blur should be way more
+  // intense nex to the masks border".)
+  const startOf = () => Math.max(state.edge / 100, 0.5 / blurOf());
+  const shareAt = (t) => { if (t <= 0) return 0; if (t >= 1) return 1; const s0 = startOf(); return s0 * Math.pow(1 / s0, t); };
   // How far out the blur reaches `share` of its most (0 when the edge
   // already has it).
   function outFor(share, F) {
-    const E = edgeShare();
-    if (!(F > 0) || share <= E) return 0;
+    const s0 = startOf();
+    if (!(F > 0) || share <= s0) return 0;
     if (share >= 1) return F;
-    return (1 - Math.sqrt(1 - (share - E) / (1 - E))) * F;
+    return (Math.log(share / s0) / Math.log(1 / s0)) * F;
   }
   // How far out of the window, across or down, a line of `n` pixels stands,
   // starting at `from` (css px) a `step` at a time.
@@ -445,7 +449,7 @@
         x: Math.round(r.x * ratio) / ratio, y: Math.round(r.y * ratio) / ratio,
         w: (Math.round((r.x + r.w) * ratio) - Math.round(r.x * ratio)) / ratio,
         h: (Math.round((r.y + r.h) * ratio) - Math.round(r.y * ratio)) / ratio,
-        feather: F, blur: R, edge: edgeShare(), near: reach, line: Math.max(LINE_WIDE, Math.round(LINE_WIDE * ratio)) / ratio,
+        feather: F, blur: R, edge: startOf(), near: reach, line: Math.max(LINE_WIDE, Math.round(LINE_WIDE * ratio)) / ratio,
       };
       // THE VIGNETTE and THE GRAIN, laid over the whole.
       const fx = new Set(state.fx);
