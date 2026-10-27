@@ -161,9 +161,9 @@ const edgeOf = (page) => page.evaluate(() => {
 /* BEHIND FROSTED GLASS: on a laptop and a phone, the photograph is drawn,
    blurred out and pale everywhere but the window on the right-ish middle,
    where it is sharp — an upright rectangle, sharp right up to its edge
-   ("On the inside, no feather whatsoever") and the frost already well
-   blurred right outside it ("The blur should be way more intense nex to
-   the masks border"), with THE LINE round it, white, laid on as a screen,
+   ("On the inside, no feather whatsoever") and, after the owner's drawing,
+   NOT VERY BLURRY just outside it and VERY BLURRY further out, with THE
+   LINE round it, white, laid on as a screen,
    three css px ("make the border thicker by a factor of 3"); no halo round
    the letters ("remove the white shadow"); the page asks for none of the
    3D mountain's scripts, and nothing is wider than the window. */
@@ -188,10 +188,11 @@ for (const [where, size] of [["a laptop", LAPTOP], ["a phone", PHONE]]) {
     expect(edge.rect.h / edge.rect.w, "an upright rectangle, 2 : 3").toBeCloseTo(1.5, 1);
     expect(edge.rect.x + edge.rect.w / 2, "round its middle").toBeCloseTo(at.x, -1);
     expect(edge.rect.y + edge.rect.h / 2).toBeCloseTo(at.y, -1);
-    expect(edge.rect.edge, "the frost half blurred already at the edge, to begin with").toBe(0.5);
-    expect(edge.rect.near, "so nothing outside the window is drawn sharp").toBe(0);
-    expect(edge.inner, "sharp right up to the line").toBeGreaterThan(edge.outer * 2.5);
-    expect(edge.outer, "and blurred right outside it").toBeLessThan(4);
+    expect(edge.rect.edge, "not very blurry right at the edge — a fifth of the frost's blur, to begin with").toBe(0.2);
+    expect(edge.inner, "sharp right up to the line, blurred right outside it").toBeGreaterThan(edge.outer * 2.5);
+    // and very blurry further out: a strip a feather's width out is calmer still
+    const far = await look(page, edge.rect.x - edge.rect.feather - 20, at.y, 12), near = await look(page, edge.rect.x - 14, at.y, 8);
+    expect(far.busy, "very blurry a feather's width out").toBeLessThan(near.busy);
     expect(edge.rect.line, "the line three css px").toBeGreaterThanOrEqual(3);
     expect(edge.line, "white").toBeGreaterThan(205);
     expect(await page.evaluate(() => getComputedStyle(document.querySelector(".human-intro p")).textShadow), "no halo round the letters").toBe("none");
@@ -287,7 +288,7 @@ test("Apoteker Tepe's colours and filters change the drawing, come back with the
   await page.locator(".tepe-try-open").click();
   await page.locator(".tepe-try-reset").click();
   await drawn(page);
-  expect(await page.evaluate(() => TepePhoto.state())).toMatchObject({ mountain: 1, colour: "natural", fx: [], window: 50, edge: 50, feather: 25, text: "normal" });
+  expect(await page.evaluate(() => TepePhoto.state())).toMatchObject({ mountain: 1, colour: "natural", fx: [], window: 50, edge: 20, feather: 32, text: "normal" });
   expect(new URL(page.url()).search, "nothing left in the address").toBe("");
   expect(errors).toEqual([]);
 });

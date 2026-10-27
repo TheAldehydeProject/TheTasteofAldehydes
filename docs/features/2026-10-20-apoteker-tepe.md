@@ -977,22 +977,27 @@ they're mine").
   `PHONE_ZOOM`, being laid over a tall window by its height and far nearer already) — blurred out and
   **misted towards the house's paper** (`mist`, `PAPER`), as the poster's glass is pale. **Less
   blurred** since the owner's third note (below): `BLUR_LEAST` + `BLUR_STEP` × Blur, 4 to 84 css px,
-  32 to begin with (it was 8 + Blur, 78 to begin with).
+  40 to begin with (it was 8 + Blur, 78 to begin with; 32 for two rounds).
 - **The window** (`windowRect`): **an upright rectangle**, 2 : 3 (`TALL` 1.5), round `CLEAR_AT` —
   0.775 across and half way down on a wide window (to the right of the paragraphs, under the parts'
   rows; 316 by 476 css px on a laptop), 0.68 on a phone (137 by 205) — never more than 0.86 of the
   window high. **Inside it nothing is feathered**: the mountain sharp and clear (the mist cleared,
   `GLASS` 0.9) right up to its edge, on whole pixels of the screen.
-- **The feather, outside it only** (`shareAt`): the frost **already blurred hard right at the edge**
-  — the **Edge** slider's share of its blur, half to begin with — and rising from there, quickly at
-  first and gently at the last, to the whole a **Feather**'s width out (`FEATHER_MOST`: at 100, 0.7 of
-  the window's shorter side; 25 to begin with, 158 css px on a laptop); the mist with it. A place's
+- **The feather, outside it only** (`shareAt`), **after the owner's drawing** — the rectangle *clear /
+  no blur*, *nvb* (not very blurry) just outside each of its sides, and arrows out to *vb* (very
+  blurry): the frost **not very blurry right at the edge** — the **Edge** slider's share of its blur, a
+  fifth to begin with (8 css px) — and growing from there **evenly to the eye**, each step out by the
+  same proportion, to **very blurry**, the whole, a **Feather**'s width out (`FEATHER_MOST`: at 100,
+  0.7 of the window's shorter side; 32 to begin with, 202 css px on a laptop and 87 on a phone, about
+  the length of the drawing's arrows against its rectangle); the mist with it. The Edge at 0 starts
+  from half a pixel, nearly sharp. A place's
   blur is drawn from **the ladder** — the same piece of picture blurred more and more, each rung the
   last and a half again (twice below 2 css px), the two rungs either side of its own blur mixed
   (`ladder`, `rungs`, `grade`); a rung is made only when it is wanted, laid only into its own pixels
   (`order`) and let go, so one is ever held. Where the feather is blurred less than the small frost can
-  show (only with the Edge turned well down), it is drawn at the whole sharpness round the window (the
-  near piece, handed over to the frost across a few pixels, `hand`).
+  show (on a laptop's plain screen, the first 43 css px out; none on a sharp one or a phone), it is
+  drawn at the whole sharpness round the window (the near piece, handed over to the frost across a few
+  pixels, `hand`).
 - **The line** where the window is: **white, laid on as a screen**, 3 css px, astride the edge
   (`LINE`, `LINE_WIDE`).
 - **The panel** (`.tepe-try`): a boxed button at the top right, level with the Menu — *Mountain 1 /
@@ -1036,23 +1041,27 @@ confirm"):
    blended. Make the feather a bit smoother": **the line**, a hairline; the feather rising evenly to
    the eye (each step out growing the blur by the same proportion) over a wider feather.
 5. "The blur should be way more intense nex to the masks border. Make the feather less. Also make the
-   border thicker by a factor of 3": **the Edge** — blurred hard right at the border — a shorter
-   feather, the line 3 css px. This is what is up.
+   border thicker by a factor of 3": **the Edge** — half the blur right at the border, rising quickly
+   — a shorter feather (158 css px), the line 3 css px.
+6. **A drawing** (the rectangle, *nvb* just outside each side, arrows out to *vb*): the edge **not
+   very blurry**, a fifth, growing evenly to the eye to very blurry, the blur 40, the feather 202 css
+   px. This is what is up.
 
 **Drawn once, not every frame.** The page scrolls over a still picture on a canvas fixed to the
 window, made again only when something in the panel changes (not the text's blending), or the window's
 width does (never as a phone's bar comes and goes: it is drawn to the tallest the window has been,
 `tallest`). The frost is drawn **small** — a quarter of the pixels each way where it is blurred enough
 for that to lose nothing (`least`), more where the blur is slight — and laid down large; **only the
-window at the whole of the window's sharpness**, in a box of its own; the colour, filters and mist a
+window — and the feather where it is blurred less than the small frost can show — at the whole of
+the window's sharpness**, in a box of its own; the colour, filters and mist a
 pixel at a time on those two only; the vignette and the grain laid over the whole as a gradient and a
 square of noise (`overlay`), and the line as four strips, never a filter over the window. **The
 blurring is the browser's own** where it can (a canvas's `filter`, many times quicker; `FILTER`, read
 off a dot drawn through it), and three box blurs in the script where it cannot (some Safaris). A slider
 being dragged draws it at half the pixels, and the whole on letting go. At the flat drawing's
 sharpness: two to a css px at most on a wide window, 1.5 on a phone, and never more than 3.6 million
-pixels in all. Measured here, without a graphics card: **a laptop's plain screen 0.05 to 0.13 s a
-picture, its sharp screen 0.1 to 0.25 s, a phone's under 0.15 s, and scrolling 60 frames a second on
+pixels in all. Measured here, without a graphics card: **a laptop's plain screen 0.08 to 0.18 s a
+picture, its sharp screen 0.1 to 0.2 s, a phone's under 0.1 s, and scrolling 60 frames a second on
 both, with a text blend on too**. (The rounds between were slower: the irregular window 0.25 to 0.45 s
 on the sharp screen, the even feather 0.6 to 0.9 s, its gentle start drawn at the whole sharpness far
 out; drawn first whole at the window's size, every layer full size, it took 0.8 s on a plain laptop
@@ -1079,8 +1088,9 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
     middle and half way down, **sharp there** (three times as busy as the frost at least) and **pale in
     the frost**, nothing sharp in it; **the window an upright rectangle**, 2 : 3, round that middle,
     **sharp right up to the line** and **blurred right outside it** — all round it a strip just inside
-    the line two and a half times as busy as one just outside at least (measured: 4 to 25 times), the
-    outside under 4 — the Edge half to begin with and nothing outside drawn sharp; **the line** 3 css px
+    the line two and a half times as busy as one just outside at least — the Edge a fifth to begin
+    with, and **very blurry a feather's width out** (calmer there than just outside the window); **the
+    line** 3 css px
     and white (its palest least colour over 205); **no halo round the letters**; drawn at 2 (1.5 on a
     phone) at most; not drawn again by a scroll;
     none of the 3D mountain's scripts asked for; nothing wider than the window;
