@@ -1,8 +1,20 @@
-# Apoteker Tepe, the thirteenth house, and its mountain
+# Apoteker Tepe, the thirteenth house, and its mountain (in 3D until 2026-10-22; photographed behind frosted glass since 2026-10-27, a trial)
 Date: 2026-10-20
-Files touched: `houses/apoteker-tepe.html` (new), `tepe.js` (new), `tepe-gl.js` (new, the mountain drawn, for the page and the Houses view), `tepe-data.js` (new, written by the tool), `tools/apoteker/mountain.mjs` (new), `images/Apoteker Tepe/` (the owner's uploads, with `web/`, `house-web/`, `mountain/athos.jpg` and `mountain/heights.png` (written by the tool) and a README), `style.css`, `notes-data.js`, `tools/note-library/base.json`, `tools/note-library/research/NEW5.py` (new), `note-library/index.html` (its catalogue, written by `catalogue.py`), `note-figures.js`, `network.js` (`HOUSES`), `motifs.js` (`ridge`), `scent-descriptions/index.html` (the thirteenth frame, and `tepe-data.js` and `tepe-gl.js`), `houses/lost-tribe.html` and `houses/pineward.html` (the chain), `search-page.js`, `tools/seo.py`, `nav.js` (`Writing`, a closed part's writing), `package.json` (image-js and geotiff, for the tool), `tests/apoteker-tepe.spec.js` (new), and the house lists in `tests/houses.spec.js`, `mobile.spec.js`, `notes.spec.js`, `writing.spec.js`; and, for **the resolution trials** (2026-10-21), `tepe-gl.js` and `tepe.js` again (`?res=`), `tools/apoteker/trials.mjs` (new), `tools/apoteker/upscale.py` (new), `images/Apoteker Tepe/mountain/trials/` (new, written by those two) and `tests/tepe-resolution.spec.js` (new); and, for **the realism trials** (the same day, later), `tepe-gl.js`, `tepe.js`, `trials.mjs` and its test again, `tools/apoteker/osm.py` (new), and in the trials' folder `ndvi.png`, `athos-delit.jpg`, `canopy.jpg` and `athos-osm.json`; and, for **the looks** (the same day, last), `tepe-gl.js`, `tepe.js`, `style.css` and `tests/tepe-resolution.spec.js` again; and, for **the page's own look** (the same day, the very last), `tepe-gl.js`, `tepe.js`, `style.css`, `houses/apoteker-tepe.html` (the credit), `tools/apoteker/fine.mjs` (was `trials.mjs`), `tools/apoteker/osm.py`, `images/Apoteker Tepe/mountain/fine/` (new; `trials/` and `upscale.py` gone), `images/Apoteker Tepe/README.txt`, `.gitignore`, `tests/tepe-look.spec.js` (was `tepe-resolution.spec.js`) and `tests/apoteker-tepe.spec.js
+Files touched: `houses/apoteker-tepe.html` (new), `tepe.js` (new), `tepe-gl.js` (new, the mountain drawn, for the page and the Houses view), `tepe-data.js` (new, written by the tool), `tools/apoteker/mountain.mjs` (new), `images/Apoteker Tepe/` (the owner's uploads, with `web/`, `house-web/`, `mountain/athos.jpg` and `mountain/heights.png` (written by the tool) and a README), `style.css`, `notes-data.js`, `tools/note-library/base.json`, `tools/note-library/research/NEW5.py` (new), `note-library/index.html` (its catalogue, written by `catalogue.py`), `note-figures.js`, `network.js` (`HOUSES`), `motifs.js` (`ridge`), `scent-descriptions/index.html` (the thirteenth frame, and `tepe-data.js` and `tepe-gl.js`), `houses/lost-tribe.html` and `houses/pineward.html` (the chain), `search-page.js`, `tools/seo.py`, `nav.js` (`Writing`, a closed part's writing), `package.json` (image-js and geotiff, for the tool), `tests/apoteker-tepe.spec.js` (new), and the house lists in `tests/houses.spec.js`, `mobile.spec.js`, `notes.spec.js`, `writing.spec.js`; and, for **the resolution trials** (2026-10-21), `tepe-gl.js` and `tepe.js` again (`?res=`), `tools/apoteker/trials.mjs` (new), `tools/apoteker/upscale.py` (new), `images/Apoteker Tepe/mountain/trials/` (new, written by those two) and `tests/tepe-resolution.spec.js` (new); and, for **the realism trials** (the same day, later), `tepe-gl.js`, `tepe.js`, `trials.mjs` and its test again, `tools/apoteker/osm.py` (new), and in the trials' folder `ndvi.png`, `athos-delit.jpg`, `canopy.jpg` and `athos-osm.json`; and, for **the looks** (the same day, last), `tepe-gl.js`, `tepe.js`, `style.css` and `tests/tepe-resolution.spec.js` again; and, for **the page's own look** (the same day, the very last), `tepe-gl.js`, `tepe.js`, `style.css`, `houses/apoteker-tepe.html` (the credit), `tools/apoteker/fine.mjs` (was `trials.mjs`), `tools/apoteker/osm.py`, `images/Apoteker Tepe/mountain/fine/` (new; `trials/` and `upscale.py` gone), `images/Apoteker Tepe/README.txt`, `.gitignore`, `tests/tepe-look.spec.js` (was `tepe-resolution.spec.js`) and `tests/apoteker-tepe.spec.js; and, for **the mountain taken out** (2026-10-22), `tepe.js`, `tepe-gl.js`, `tepe-data.js`, `tools/apoteker/` (all three tools), `images/Apoteker Tepe/mountain/` and `tests/tepe-look.spec.js` deleted, and `houses/apoteker-tepe.html` (its drawing, its mountain's credit and the three scripts), `scent-descriptions/index.html` (the two scripts), `motifs.js` (`ridge`), `style.css`, `package.json` and `package-lock.json` (image-js and geotiff), `images/Apoteker Tepe/README.txt`, `tests/apoteker-tepe.spec.js`, `tests/contact-sheet.spec.js` (`NO_MOTIF_YET`) and `tests/mobile.spec.js`; and, for **the mountain photographed, behind frosted glass** (2026-10-27, a trial), `tepe.js` (new, a different script under the old name), `houses/apoteker-tepe.html` (its canvas, the script, the credit), `style.css`, `images/Apoteker Tepe/AT MOUNTAIN 1.webp` to `5` (the owner's upload), `images/Apoteker Tepe/mountain-thumbs/` (new), `images/Apoteker Tepe/README.txt` and `tests/apoteker-tepe.spec.js`
 
 ## What changed
+
+**The mountain is photographed now, behind frosted glass — a trial (2026-10-27).** The 3D mountain
+was taken out on 2026-10-22 — "yk what, just remove it for now, i will redesign the whole thing.
+remove the mountain": Mount Athos behind the writing, its land, mist and trails, Free view, its
+fragments on the Houses view, and every look of it the sections below describe went, with all their
+code, pictures and tools (see *The mountain taken out*). Five days later the owner sent five
+photographs of their own (*AT MOUNTAIN 1* to *5*) and the Musica 2011 poster — a horse behind
+frosted glass — and the page is now **the photograph blurred out and misted towards the house's paper
+but for a window on the right-ish middle where it is sharp**, with **a panel at the top right** to go
+between the five and turn on colours and filters (see *The mountain photographed, behind frosted
+glass*, the last section). Everything written here about the 3D mountain is its history, kept for the
+reasoning.
 
 **A thirteenth house, Apoteker Tepe** — *The Apothecary on the Hill* (the owner's choice of
 subtitle) — with the owner's introduction and eight fragrances in their order: Kogen, The Holy
@@ -905,6 +917,100 @@ It was not measured on a graphics card or a real phone here; there the drawing r
 processor only sending it the frames, and the memory above is mostly the card's, which this machine
 holds in its own.
 
+### The mountain taken out (2026-10-22)
+
+The owner, the morning after the page's own look went live: "yk what, just remove it for now, i will
+redesign the whole thing. remove the mountain" — and, asked whether its fragments on the Houses view
+should go too, *remove those too*. So, as every removal on this site is, **it came out of the code,
+not switched off**:
+
+- **The page** (`houses/apoteker-tepe.html`): its drawing (`canvas.human-field`), the mountain's
+  credit under the pictures' (`.house-credit-ground`, which named Mount Athos, GLO-30, Mapzen,
+  Sentinel-2, the Canopy Height Map and OpenStreetMap), and its three scripts. It is the house's shape
+  (`house.js`), its notes, and the owner's writing and pictures on **the house's aged paper**, the
+  paper the mountain was drawn over — its tokens, its corner shading, its green and its pencil kept.
+- **Its scripts**: `tepe.js` (the turn, the quiet, the trails, Free view and its nodes, the pace),
+  `tepe-gl.js` (every program the mountain was drawn with, for the page and for the Houses view) and
+  `tepe-data.js` (the heights' picture's address, the trails, the places, the sign) — deleted.
+- **Its pictures**, `images/Apoteker Tepe/mountain/` (the heights at 40 m and 10 m, the satellite's
+  colour, the baked light, the trees' crowns, OpenStreetMap's paths and buildings), and **its tools**,
+  `tools/apoteker/` (`mountain.mjs`, `fine.mjs`, `osm.py`) — deleted, and **image-js and geotiff**,
+  which only those tools used, out of `package.json`. The house's sign (`Apoteker Tepe Logo.webp`)
+  is kept: the owner's upload, used nowhere now, for the redesign.
+- **The Houses view**: Apoteker Tepe's line in `HOUSES` in `motifs.js` (`ridge`, its fragments of the
+  mountain and their trails) and `HouseMotifs.ridges()` — so the house at the front brings nothing up
+  until it has motifs of its own again; its frame keeps `data-motif="apoteker-tepe"`, which names
+  nothing for now; the page no longer loads `tepe-data.js` or `tepe-gl.js`.
+- **The stylesheet**: everything the mountain and Free view had — the halo round the writing that
+  kept it read over the drawing, the trails' canvas, the drawing's coming up, Free view's button,
+  stage, hint, nodes and cards, the cue's ground "so the mountain never stands over its word", the
+  mountain credit's spacing. The pictures standing a little further off, *when it was made* and the
+  page's colours stay.
+- **The tests**: the mountain's (solid, dithered, turning, quiet, quick, Free view, reduced motion,
+  the motif, the tools, and the whole of `tepe-look.spec.js`) went with it; the house's own stay, and
+  new ones say it is gone. The Houses view's "every house has motifs of its own" test makes
+  Apoteker Tepe its one exception (`NO_MOTIF_YET`) until it has its own again; the phone's "every 3D
+  drawing at two device pixels" no longer lists it.
+
+Everything above this section is what the mountain was and why, kept for the redesign; it is in the
+repository's history, whole, at the commit before this one.
+
+### The mountain photographed, behind frosted glass (2026-10-27, a trial)
+
+The owner, with five photographs uploaded as `images/Apoteker Tepe/AT MOUNTAIN 1.webp` to `5` and the
+Musica 2011 poster (a horse behind frosted glass, only its hooves and the top of its head sharp where
+they touch the glass): "For apoteker tepe, remove the mointain as it is currently, and i want you to
+replace it with one of the files from AT MOINTAIN 1-5. I want you to replace it with all pf ghe, and
+then let me see how its goimg yo look with each of them do this with a top right setting which allows
+you to switch between the pictures. Add optional filters too so that i can have fun with it before
+settling kn a final version. The mountain should be blurred out, except for a mask on the right-ish
+middle of yhe screen, inspired by the image provided in this message."
+
+**The pictures are the owner's own**: each carries the site's own mark (H₂C=O, the icon's drawing)
+in its lower right corner, so they are credited as theirs at the foot of the page — *The mountain
+behind the page is my own photograph.* — on that reading (the question is put to the owner).
+
+**What it is** (`tepe.js`, a new script under the old name; `canvas.human-field.tepe-photo`):
+
+- **The frost**: the photograph laid over the whole window — placed so its peak stands in the window
+  (`PICTURES`: a `focus` and a `zoom` for each, chosen by eye) — blurred out (`blur`, 8 + 1 css px a
+  step) and **misted towards the house's paper** (`mist`, `PAPER`), as the poster's glass is pale.
+- **The window**: an irregular upright shape (`TALL` 1.6, its outline three slow waves of its own,
+  the same for each picture every time) at the right-ish middle — `CLEAR_AT`, 0.775 across and half
+  way down on a wide window (to the right of the paragraphs, under the parts' rows), 0.68 on a phone —
+  **graded as the poster's horse is**: its heart sharp, a ring round it a little soft
+  (`LIGHT_BLUR`, a fifth of the frost's blur), then the frost; the mist cleared there (`GLASS` 0.9).
+  Its size and how soft its edge are two of the sliders.
+- **The panel** (`.tepe-try`): a boxed button at the top right, level with the Menu — *Mountain 1 /
+  5* — opening under it: **the five pictures** as thumbnails (`mountain-thumbs/`, 192 by 128), four
+  sliders (**Blur**, **Mist**, **Window**, **Edge**), **a colour** (Natural, Black & white, Sepia,
+  Duotone in the house's green and paper, Frost in the poster's grey-green, Warm) and **filters**
+  (Faded, Contrast, Vignette, Grain, Posterise, Negative), **Reset** and **Close**. What is chosen is
+  kept **in the address** (`?mountain=3&colour=sepia&fx=grain,vignette&blur=80` — nothing there for a
+  default) and in the browser for the next visit (`localStorage`, wrapped so it is never needed). It
+  opens shut; Escape, Close or a press on the page put it away. On a phone the button stands on the
+  chrome's ground and the panel is the window's width. **It is temporary**: once the owner settles on
+  one, the rest comes out of the code.
+- **Easier to read**: round every letter a soft halo of the paper (`text-shadow`, only once the
+  photograph is drawn), so the words read where they cross the window.
+
+**Drawn once, not every frame.** The page scrolls over a still picture on a canvas fixed to the
+window, made again only when something in the panel changes, or the window's width does (never as a
+phone's bar comes and goes: it is drawn to the tallest the window has been, `tallest`). Blurring is
+done on small copies, laid down large — **the frost a quarter of the pixels each way**, being blurred,
+and **only the window's heart at the whole of the window's sharpness**, in a box of its own; the
+colour, filters and mist a pixel at a time on those two only; the vignette and the grain laid over the
+whole as a gradient and a square of noise (`overlay`), never a filter over the window. A slider being
+dragged draws it at half the pixels, and the whole on letting go. At the flat drawing's sharpness: two
+to a css px at most on a wide window, 1.5 on a phone, and never more than 3.6 million pixels in all.
+Measured here, without a graphics card: **a laptop's sharp screen 0.25 to 0.45 s a picture, a phone's
+under 0.1 s, and scrolling 60 frames a second on both**. (Drawn first whole at the window's size,
+every layer full size, it took 0.8 s on a plain laptop screen and 1.7 on a sharp one: that is why.)
+
+Without the script the page is its writing on the aged paper (the canvas never comes up) and there is
+no panel; with reduced motion nothing moves anyway. The Houses view still brings nothing up for the
+house.
+
 ### Om's opening, in two beats
 
 The same round, on Om Parfums. It is written in [Om's
@@ -916,100 +1022,54 @@ report](2026-10-10-om-outsider-and-lost-tribe.md#2026-10-20--the-opening-in-two-
   - every fragrance says when it was made, in the format, and its pictures arrive;
   - **the pictures stand a little further off**: a cut-out padded in its frame, a scene at its own
     shape, the house's picture at the Houses view's frame's;
-  - the credit names the mountain, Scentorium and the Sentinel-2 data;
-  - (the colours, since 2026-10-21, last: **the print's two inks**, its blue and its apricot, next to
-    no green; and OpenStreetMap's four real paths, not six invented);
-  - **the mountain is solid** (the same drawn over black and over white), **coloured as a mountain
-    is** (under two thirds of it green; greys and warm colours), in **very many specks** on a fine
-    grid, out of 384 by 384 heights read whole out of their picture; **a land all round it** (land
-    beyond the water nearly everywhere from 1.8 to 5 half-widths out, and far ranges); **the house's
-    sign cut into it** where the tool chose, nothing of it beside it, no pale stone laid on;
-  - **dithered**: neighbours a step of light apart all through the sky;
-  - **it turns a little** (the page's whole turn under 40°, from one end at its head to the other at
-    its foot), **breathes** left alone, and **nothing answers the hand**;
-  - **it loses its opacity behind the writing**, with Ataraxia's numbers, nothing laid over it: QUIET
-    behind the words on a laptop and the whole of itself clear of them; on a phone QUIET everywhere
-    and less again behind the words;
-  - **it is quick to draw and to scroll** on a laptop and a phone (a picture under 140 and 200 ms
-    without a graphics card, 24 with one; scrolling over 24 and 30 frames a second, read over 30 and
-    40, under a loaded suite) — **each measured three times and the best kept, the laptop's and the
-    phone's one after the other** (2026-10-21: side by side, each measuring the other, they failed one
-    run in two on the page as it was before the trials, and as often after);
-  - **Free view**: at the top right; the writing goes; nine nodes, the house's first; nothing can be
-    selected and a node's number is hidden until it is pointed at; every node seen from both ends of
-    its turn; a drag past its limit gives a little and springs back; the wheel brings it no nearer;
-    left alone a card comes up of its own accord; the summit's card is the house's sign; *The Holy
-    Mountain*'s says *2015, before 2018* and, pressed, goes to part 02, opened; Escape comes back. On
-    a phone a tap says which and a second, on the card, goes;
-  - still with reduced motion (and no card of its own accord), and the page is its writing (and no
-    Free view) without the scripts;
-  - the Houses view's fragments are whole on the window and apart, one and only one with the sign,
-    drawn by `TepeGL`;
-  - the data is the tool's, with image-js and geotiff, and the colour and the heights it wrote are
-    there.
-- `npm test -- tests/tepe-look.spec.js` (the page's own look): an old address with `?res=` and
-  `fx=` draws the page's own look without a fault, the print and no panel; **none of the trials' or
-  the looks' code is left** in `tepe-gl.js`, `tepe.js` or `style.css`, nor their pictures and tools;
-  and, **at the foot of `apoteker-tepe.spec.js`** (so they take their turn after its speed, in the
-  same worker — beside it, drawing it whole in software slowed the phone's past its 200 ms), drawn
-  whole (`?tepe=full`, as a graphics card draws it) every program compiles, it goes through the
-  camera, the trails are in the ground, the pictures are laid over each other, the mountain is solid
-  and **in the print's two inks** (its blue and its apricot, next to no green); **within its means** —
-  a phone's maps half the size, the mesh 900 and 640, no smoothing of the window's own, one picture of
-  the history, never three pixels to a point, the pace's three speeds; on a phone's window at most two
-  pixels to a point and the phone's mesh, and left alone no faster than 30 a second; the fine pictures
-  there, written by `fine.mjs` and `osm.py`; and **the credit naming every source**.
-- The fine pictures: `NODE_USE_ENV_PROXY=1 node tools/apoteker/fine.mjs` (all of them, or
-  `--only=dem,colour,light,canopy`; the canopy three minutes, out of four tiles of CHMv2, 167 MB, kept
-  in the temporary folder), and `python3 tools/apoteker/osm.py` (with pyarrow, shapely and networkx)
-  for the real paths and buildings.
-- By eye, the page's own look: `houses/apoteker-tepe.html` with a graphics card (here
-  `?tepe=full`); a photograph wants twenty-odd frames settled first (`TepeMountain.settle(24)`) —
-  taken after one, it still holds the frames drawn while the writing's columns were quiet, as pale
-  veils. `TepeMountain.drawing()` says whether it is the realistic one, through the camera, and its
-  pace.
-- `tests/writing.spec.js`: *the writing inside a shut part is not counted until it is opened*.
-- `tests/mobile.spec.js`: the mountain's canvas is drawn at twice the css pixels on a phone.
+  - **the credit** names apotekertepe.net and Scentorium, and the mountain as the owner's own photograph
+    (and nothing of Mount Athos);
+  - **behind frosted glass**, on a laptop and on a phone: the photograph drawn, the window right of the
+    middle and half way down, **sharp there** (three times as busy as the frost at least) and **pale in
+    the frost**, nothing sharp in it; drawn at 2 (1.5 on a phone) at most; not drawn again by a scroll;
+    none of the 3D mountain's scripts asked for; nothing wider than the window;
+  - **the panel** at the top right: *1 / 5*; the five pictures, each pressed and drawn, its thumbnail
+    pressed, the button saying which, the address keeping it (nothing for the first); the thumbnails
+    arrive; Escape puts it away;
+  - **the colours and filters**: Black & white takes the colour out of the window; Vignette and Grain kept
+    in the address with the colour; a slider moved; a reload brings it all back; Reset puts it back
+    and clears the address;
+  - **on a phone** the panel fits the window; **without the script** the eight fragrances open, no
+    panel, the canvas never shown;
+  - **the Houses view** at Apoteker Tepe brings nothing up and asks for none of the 3D mountain's
+    scripts;
+  - **none of the 3D mountain is left in the code**: `tepe-gl.js`, `tepe-data.js`, the tools, the
+    pictures and `tepe-look.spec.js` gone, no page asking for them, the new `tepe.js` in no WebGL,
+    nothing of the mountain or Free view in `style.css` or of the fragments in `motifs.js`, image-js and
+    geotiff out of `package.json`.
+- `tests/contact-sheet.spec.js`: *every house on the wall has motifs of its own* — Apoteker Tepe the
+  one without, until it has its own (`NO_MOTIF_YET`).
+- `tests/writing.spec.js`: *the writing inside a shut part is not counted until it is opened*, and the
+  credit in front on every house.
 - The house is in every house list: `houses.spec.js` (the chain both ways, the return button at
   `#house-13`, the rank of eight, the subtitle in title case), `mobile.spec.js`, `notes.spec.js`,
   `writing.spec.js`.
 - `node tools/note-library/rulebook.js --check` and `python3 tools/note-library/catalogue.py
   --check` are clean; `tests/rulebook.spec.js` finds every note After the Flood names (the page's
   newest) in the library, counted for it at its tier, and opens the first one's window.
-- By eye: `houses/apoteker-tepe.html?tepe=full` at a laptop's and a phone's size, scrolled slowly
-  from head to foot; Free view, turned to both ends, left alone for its cards, a node pointed at;
-  `scent-descriptions/?tepe=full#house-13`. (Here, without a graphics card, the whole of it is drawn
-  once in two seconds; with motion turned off it is drawn only when something changes, which is the
-  way to take a still picture of it.)
+- By eye: `houses/apoteker-tepe.html` at a laptop's and a phone's size, each of the five pictures and
+  a few colours and filters from the panel, scrolled from head to foot; `scent-descriptions/#house-13`,
+  nothing coming up round the house.
 
 ## Known issues / TODO
 
+- **The photographed mountain is a trial**: the owner is to choose a picture, and what of the panel to
+  keep; then the panel and everything not chosen come out of the code, as always. Until then **the
+  panel is on the live page for every visitor** (shut, a small boxed button).
+- **The five pictures are credited as the owner's own** because each carries the site's own mark; the
+  owner was asked to say if that is wrong.
+- **The Houses view brings nothing up for Apoteker Tepe** (its fragments of the 3D mountain went on
+  2026-10-22). Its frame still names a motif (`data-motif="apoteker-tepe"`) for whatever comes next.
+- **Measured without a graphics card only**: on one, the canvas's drawing is quicker and reading its
+  pixels back a little slower; it is drawn once a change either way.
 - **The pages were not read directly.** The house's site, Fragrantica and Parfumo are denied by the
   environment's network policy, so the spellings, the lists and the years come from search
   summaries of those pages. Allowing those hosts in the environment's network settings would let a
   later round read them straight.
-- **The trails are real on the page now** (OpenStreetMap's four paths to the summit, since
-  2026-10-21, last), but **the free view's nodes were placed along the invented ones** (Anabasis "half
-  way up a trail"), and the Houses view's fragments still walk the invented six.
-- **The places of the eight are read off their names**, chosen by the tool; they are not where
-  anything of the house's is on Athos.
-- **Without WebGL there is no mountain** (and no Free view): the page is its writing on the aged
-  paper. Without a graphics card it is drawn lighter, as above.
-- The satellite's picture is of one summer morning (14 July 2023): its light is in it, a little,
-  under the page's own low sun from the south-south-east.
-- **The land round the mountain is made up** (`proc`): no map of what lies round Athos — the credit
-  says so. Its water is where the mountain's own sea was, near it; the real Aegean beyond it is land
-  here.
-- **A phone's smoothness was measured without a graphics card**, where everything is drawn on the
-  processor; on a real phone the programs run on its graphics chip at full sharpness, which could not
-  be measured here. If a phone ever struggles, `window.Sharpness` lets the drawing down a step at a
-  time, and the mist's banks are the first thing to make fewer (`MIST_NARROW`).
-- The summit's height is no longer written anywhere on the page (the owner asked the coordinates off).
-- **The page's own look was not seen on a graphics card or a real phone here**, only drawn on this
-  machine's processor; its pace and memory are measured there (see *Within its means*). On a phone
-  with a graphics card it fetches about 4.7 MB of fine pictures (the heights at 10 m are 2.4 MB of
-  them); without one, only the paths (30 KB).
-- **The drift turns the inks a little and back** (every 80 s); with reduced motion it stands still,
-  as the trial's did.
-- The trails' numbers (I to IV) are the real paths in the order the tool found them, not the
-  fragrances'.
+- The 3D mountain, its data and its tools are in the repository's history (the commit before the one
+  that took them out) if any of it is wanted again.

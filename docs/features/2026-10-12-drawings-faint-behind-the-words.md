@@ -153,4 +153,7 @@ mountain went quiet in paragraph-shaped patches: it is now Ataraxia's own rule, 
 numbers — the whole column at `QUIET` on a wide window, and on a phone `QUIET` everywhere and
 `Writing.under` behind the words — by a veil of the page's paper laid over the whole drawing. On a
 phone the veil is made from `Writing.boxes()` once a frame (asking `Writing.under` cell by cell took
-28 ms a frame). See [Apoteker Tepe's report](2026-10-20-apoteker-tepe.md).
+28 ms a frame). See [Apoteker Tepe's report](2026-10-20-apoteker-tepe.md). (Since 2026-10-22 there is no 3D mountain on Apoteker Tepe — it was taken out, to be redesigned — and
+since 2026-10-27 its ground is a still photograph behind frosted glass, pale everywhere but a window on
+the right-ish middle; the words carry a soft halo of the paper there instead of the drawing going
+quiet behind them.)

@@ -3290,181 +3290,6 @@
     };
   }
 
-  // ---------- APOTEKER TEPE: fragments of the mountain, and its trails ----------
-  /** A FRAGMENT OF THE MOUNTAIN (2026-10-20 — "fragments of the mountains
-      and the lines in the actual page will appear, and the lines will move
-      as if along the path. Make it not too flashy, but make it pretty"): a
-      torn-edged piece of the house's own page's ground — Mount Athos, drawn
-      as its page draws it (tepe-gl.js): the real heights as a solid surface
-      coloured by the satellite's photograph of it, small specks over it,
-      many — round a stretch of one of its trails, raised in three
-      dimensions and turning, slowly, as it stands; the trail across it
-      dashed in the pencil's red-brown, the dashes going along it, and a
-      walker, a small ring, going the length of it while the fragment
-      stands. Several at once, apart from each other — and while none of
-      them carries it, the next is the piece the HOUSE'S SIGN is cut into
-      (2026-10-20, later — "Please also apply the above changes to be true
-      for the house in SD": smaller specks and far more, the textures
-      smooth, the green quieted, solid, coloured as a mountain is, the sign
-      on it, turning slower, nothing answering the hand; and last — "change
-      the SD apoteker tepe hovering mechanism accordingly": denser again and
-      DITHERED as the page is, the sign cut in rather than laid on, the
-      piece dissolving at its edge in the dither's own steps rather than torn
-      off like an island, turning slower again — and, as every house on the
-      Houses view since that day, only while it is the house at the front). */
-  const TEPE_PENCIL = "138, 58, 38";
-  const RIDGE_SPECKS = 16000;        // a fragment's specks (three fifths on a phone; 9,000, and 1,300, before)
-  const RIDGE_SPECK = 0.45;          // px a speck is, near
-  const RIDGE_CELLS = [15, 21];      // its reach round its trail, in cells of the heights (of 160: more on a finer grid)
-  const RIDGE_SIGN_CELLS = 19;       // the reach of the piece the sign is on
-  const RIDGE_PX = [100, 165];       // and on the window
-  const RIDGE_RELIEF = 1.3;          // its heights drawn this much taller than the page's (2.4 for its specks: solid, a slope that tall stood as a wall)
-  const RIDGE_LIFE = [7600, 10400];  // ms it stands
-  const RIDGE_SPIN = [0.009, 0.018]; // radians a second it turns (twice that, and 0.06 to 0.12, before)
-  // Drawn as the page draws its mountain, on the Houses view's white: the
-  // air white, a little haze and no mist, dithered a css px to a step.
-  const RIDGE_LOOK = { surface: 0.96, speck: RIDGE_SPECK, dissolve: true, air: [0.12, 0, 30, 0], hazeFrom: 3.2, levels: 34, grain: 0.75,
-    sky: { zen: [255, 255, 255], hor: [255, 255, 255], haze: [255, 255, 255], mistLit: [255, 255, 255], mistShade: [240, 240, 238], glow: [255, 250, 240] } };
-  const RIDGE_EVERY = 70;            // ms between one picture of it and the next: it turns too slowly to want more
-  let tepeGround = null, tepeDraw = null, tepeCanvas = null, tepeAsked = false;
-  function tepeReady() {
-    if (tepeGround) return true;
-    if (!tepeAsked && window.TepeGL) {
-      tepeAsked = true;
-      tepeCanvas = document.createElement("canvas");
-      tepeDraw = window.TepeGL.make(tepeCanvas);
-      if (tepeDraw) window.TepeGL.ground().then((g) => { tepeGround = g; });
-    }
-    return false;
-  }
-  // (Made ready a little after the page has arrived, so the first
-  // fragments are there the moment the house is rested on.)
-  if (window.TEPE && window.TepeGL) setTimeout(tepeReady, 2200);
-  function ridge() {
-    if (!tepeReady() || !tepeDraw) return null;
-    const G = tepeGround, n = G.n, scale = n / 160;
-    const hAt = (u, v) => Math.max(0, G.at(u, v));
-    // The piece the sign is on, while no other carries it; else a stretch
-    // of a trail, of a few tried the one climbing the most, so the piece
-    // is of the mountain's slopes.
-    const signShown = things.some((t) => t.ridge && t.ridge.sign && !t.ending);
-    let trail = null, run = null, cu, cv, R, sign = false;
-    if (!signShown && G.figure) {
-      sign = true;
-      [cu, cv] = G.figure.at;
-      R = Math.max(RIDGE_SIGN_CELLS * scale, G.figure.tall * 0.72);
-      // The trail that passes nearest, as much of it as the piece holds.
-      let best = 0;
-      G.trails.forEach((t) => {
-        let a = -1;
-        t.forEach((q, k) => {
-          const inside = Math.hypot(q[0] - cu, q[1] - cv) < R * 0.78;
-          if (inside && a < 0) a = k;
-          if ((!inside || k === t.length - 1) && a >= 0) { const b = inside ? k + 1 : k; if (b - a > best) { best = b - a; trail = t; run = t.slice(a, b); } a = -1; }
-        });
-      });
-      if (!run || run.length < 6) { trail = null; run = null; }
-    } else {
-      let climbBest = -1;
-      for (let k = 0; k < 6; k++) {
-        const t = pick(G.trails.filter((tt) => tt.length > 30 * scale));
-        if (!t) continue;
-        const len = Math.round(rand(26, 38) * scale), i0 = Math.floor(rand(0, Math.max(1, t.length - len))), r = t.slice(i0, i0 + len);
-        const hs = r.map((q) => hAt(q[0], q[1])), climb = Math.max(...hs) - Math.min(...hs);
-        if (climb > climbBest) { climbBest = climb; trail = t; run = r; }
-      }
-      if (!run) return null;
-      cu = run.reduce((s, q) => s + q[0], 0) / run.length; cv = run.reduce((s, q) => s + q[1], 0) / run.length;
-      R = Math.max(rand(RIDGE_CELLS[0], RIDGE_CELLS[1]) * scale, ...run.map((q) => Math.hypot(q[0] - cu, q[1] - cv) + 3 * scale));
-    }
-    const px = rand(RIDGE_PX[0], RIDGE_PX[1]);
-    // Kept off the house, the chrome and the other fragments.
-    let at = null;
-    for (let k = 0; k < 10 && !at; k++) {
-      const s = spot(px * 1.1);
-      if (s && (s.x < px * 1.05 || s.x > W - px * 1.05)) continue;   // whole on the window
-      if (s && !things.some((t) => t.ridge && Math.hypot(t.ridge.x - s.x, t.ridge.y - s.y) < (t.ridge.px + px) * 1.15)) at = s;
-    }
-    if (!at) return null;
-    // Its edge, dissolving: the reach wanders a little with the angle.
-    const tear = Array.from({ length: 3 }, () => rand(0, 6.28));
-    const edge = (a) => 0.9 + 0.06 * Math.sin(a * 3 + tear[0]) + 0.03 * Math.sin(a * 5 + tear[1]) + 0.02 * Math.sin(a * 9 + tear[2]);
-    // The page's own lift at this fragment's scale, about the trail's (or the sign's) own height.
-    const lift = RIDGE_RELIEF * 0.5 * (n / (2 * R)) * 0.42;
-    const h0 = run ? run.reduce((s, q) => s + hAt(q[0], q[1]), 0) / run.length : hAt(cu, cv);
-    const piece = tepeDraw.piece(G, { centre: [cu, cv], scale: R, reach: R, edge, fade: 0.5, lift, base: h0, specks: Math.round(RIDGE_SPECKS * (PHONE ? FEWER_PHONE : 1)), seed: Math.floor(rand(1, 1e6)), fine: true });
-    const path = run ? run.map(([u, v]) => piece.point(u, v, 0.02)) : null;
-    const yaw0 = rand(0, 6.283), spin = rand(RIDGE_SPIN[0], RIDGE_SPIN[1]) * (Math.random() < 0.5 ? -1 : 1), pitch = rand(0.55, 0.75);
-    const life = rand(RIDGE_LIFE[0], RIDGE_LIFE[1]), number = trail ? ["I", "II", "III", "IV", "V", "VI"][G.trails.indexOf(trail)] || "" : "";
-    // Its picture, made again only so often, and laid down every frame.
-    const box = Math.ceil(px * 2.3), picture = document.createElement("canvas"), pic = picture.getContext("2d");
-    const k = Math.min(window.devicePixelRatio || 1, PHONE ? 1.5 : 2) * SMALL;
-    picture.width = picture.height = Math.ceil(box * k);
-    let shotAt = -1e9, shotYaw = NaN;
-    const camAt = (yaw) => ({ yaw, pitch, S: px, cx: box / 2, cy: box / 2 + px * 0.08, eye: 3.2 });
-    return {
-      life,
-      fadeIn: 1400,
-      ridge: { x: at.x, y: at.y, px, sign },
-      end() { piece.dispose(); },
-      draw(c, age, alpha) {
-        const t = age / 1000, yaw = yaw0 + spin * t, now = performance.now();
-        if (now - shotAt > RIDGE_EVERY || yaw !== shotYaw && shotAt < 0) {
-          tepeDraw.size(box, box, k);
-          tepeDraw.clear();
-          tepeDraw.draw(piece, camAt(yaw), { ...RIDGE_LOOK, time: (now / 1000) % 3000 });
-          pic.clearRect(0, 0, picture.width, picture.height);
-          pic.drawImage(tepeCanvas, 0, 0, picture.width, picture.height);
-          shotAt = now; shotYaw = yaw;
-        }
-        c.globalAlpha = alpha;
-        c.drawImage(picture, at.x - box / 2, at.y - box / 2 - px * 0.08, box, box);
-        if (!path) { c.globalAlpha = 1; return; }
-        // The trail: its dashes going along it, its foot numbered, and the
-        // walker going its length while the fragment stands — laid on the
-        // picture as it was last made.
-        const cam = camAt(shotYaw);
-        const pts = path.map((q) => { const p = window.TepeGL.project(q, cam); return [at.x - box / 2 + p.x, at.y - box / 2 - px * 0.08 + p.y]; });
-        c.globalAlpha = 0.5 * alpha;
-        c.strokeStyle = "rgb(236, 229, 210)";
-        c.lineWidth = 2.4;
-        c.lineCap = "round";
-        c.beginPath();
-        pts.forEach(([x, y], q) => (q ? c.lineTo(x, y) : c.moveTo(x, y)));
-        c.stroke();
-        c.globalAlpha = 0.85 * alpha;
-        c.strokeStyle = "rgb(" + TEPE_PENCIL + ")";
-        c.lineWidth = 1.15;
-        c.setLineDash([5, 4]);
-        c.lineDashOffset = -t * 9;
-        c.beginPath();
-        pts.forEach(([x, y], q) => (q ? c.lineTo(x, y) : c.moveTo(x, y)));
-        c.stroke();
-        c.setLineDash([]);
-        const [fx, fy] = pts[0];
-        c.fillStyle = "rgb(236, 229, 210)";
-        c.globalAlpha = 0.8 * alpha;
-        c.beginPath(); c.arc(fx, fy, 6.5, 0, 6.283); c.fill();
-        c.globalAlpha = 0.9 * alpha;
-        c.lineWidth = 0.9;
-        c.beginPath(); c.arc(fx, fy, 6.5, 0, 6.283); c.stroke();
-        c.fillStyle = "rgb(" + TEPE_PENCIL + ")";
-        c.font = "500 8px 'IBM Plex Mono', ui-monospace, monospace";
-        c.textAlign = "center"; c.textBaseline = "middle";
-        c.fillText(number, fx, fy + 0.5);
-        const go = Math.min(1, age / (life * 0.92)), along = go * (pts.length - 1), k0 = Math.floor(along), f = along - k0;
-        const a = pts[k0], b = pts[Math.min(pts.length - 1, k0 + 1)];
-        const wx = a[0] + (b[0] - a[0]) * f, wy = a[1] + (b[1] - a[1]) * f;
-        c.globalAlpha = 0.9 * alpha;
-        c.lineWidth = 1.2;
-        c.beginPath(); c.arc(wx, wy, 2.6, 0, 6.283); c.stroke();
-        c.globalAlpha = 0.18 * alpha;
-        c.beginPath(); c.arc(wx, wy, 5.5, 0, 6.283); c.fill();
-        c.globalAlpha = 1;
-      },
-    };
-  }
-
   // How often each is born (per second), and how many may stand at once.
   const HOUSES = {
     pineward: [{ make: tree, rate: 2, most: 16 }, { make: needle, rate: 5, most: 50 }],
@@ -3489,8 +3314,9 @@
     // armoire does.
     outsider: [{ make: door, rate: 5, most: 1, first: 1 }],
     "lost-tribe": [{ make: flock, rate: 0.22, most: 2, first: 1 }, { make: leafFall, rate: 1.1, most: 10 }, { make: pollenRise, rate: 12, most: 70 }],
-    // Apoteker Tepe: fragments of its mountain, each round a stretch of trail.
-    "apoteker-tepe": [{ make: ridge, rate: 0.5, most: 4, first: 2 }],
+    // Apoteker Tepe: none since 2026-10-22, when its mountain was taken out
+    // ("remove the mountain") until the owner redesigns it; its fragments of
+    // the mountain stood here.
   };
 
   // ============================================================
@@ -3592,10 +3418,6 @@
     // How each of Om's rings standing now is drawn, for the tests.
     rings() {
       return things.filter((t) => t.rings && !t.ending).map((t) => t.rings);
-    },
-    // Where Apoteker Tepe's fragments stand and how large, for the tests.
-    ridges() {
-      return things.filter((t) => t.ridge && !t.ending).map((t) => ({ x: t.ridge.x * SMALL, y: t.ridge.y * SMALL, px: t.ridge.px * SMALL, sign: t.ridge.sign }));
     },
     // Where Lost Tribe's birds are, flock by flock, for the tests.
     flocks() {

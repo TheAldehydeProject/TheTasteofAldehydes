@@ -1632,7 +1632,11 @@ test("leaving a house lets its motifs fade rather than vanish", async ({ page })
   expect(await page.evaluate(() => window.HouseMotifs.census(true).rise || 0), "and a little later they have gone").toBe(0);
 });
 
-/* EVERY HOUSE HAS MOTIFS OF ITS OWN, and each of them draws. */
+/* EVERY HOUSE HAS MOTIFS OF ITS OWN, and each of them draws — but for a
+   house whose motifs the owner has taken out to redesign: Apoteker Tepe's
+   fragments of its mountain, since 2026-10-22 ("remove the mountain"). That
+   one draws nothing until it has its own again. */
+const NO_MOTIF_YET = ["apoteker-tepe"];
 test("every house on the wall has motifs of its own, and they draw", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
@@ -1645,7 +1649,8 @@ test("every house on the wall has motifs of its own, and they draw", async ({ pa
     await page.waitForTimeout(1900);
     await pointAt(page, i);
     await page.waitForTimeout(2200);
-    expect(await motifInk(page), `${keys[i]} should draw something`).toBeGreaterThan(20);
+    if (NO_MOTIF_YET.includes(keys[i])) expect(await page.evaluate(() => window.HouseMotifs.census()), `${keys[i]} has none yet`).toEqual({});
+    else expect(await motifInk(page), `${keys[i]} should draw something`).toBeGreaterThan(20);
   }
   expect(errors).toEqual([]);
 });

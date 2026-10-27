@@ -374,4 +374,6 @@ house image"): `house-web/apoteker-tepe-house.webp` is made again at **640 by 74
 frame's own shape (0.86 : 1) — the whole square picture, a little smaller than the frame is wide, on a
 soft, darkened copy of itself, its edges eased in — where the square was cut at its sides. And
 `mountain/athos.jpg`, the satellite's picture of Mount Athos the page's mountain is coloured by, is
-written there by `tools/apoteker/mountain.mjs`.
+written there by `tools/apoteker/mountain.mjs`. (Gone since 2026-10-22, with the whole of `mountain/` and `tools/apoteker/`, when the mountain was
+taken out; `Apoteker Tepe Logo.webp` is kept, used nowhere, for the redesign — see [Apoteker Tepe's
+report](2026-10-20-apoteker-tepe.md#the-mountain-taken-out-2026-10-22).)

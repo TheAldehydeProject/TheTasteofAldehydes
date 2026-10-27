@@ -1073,3 +1073,11 @@ house on the view since that day, **only while Apoteker Tepe is the house at the
 sets nothing off ([the axis](2026-09-24-the-axis.md#2026-10-20--only-the-house-at-the-front-the-hand-sets-nothing-off)).
 `HouseMotifs.census(true)` counts the motifs still fading too, for a test. See [Apoteker Tepe's
 report](2026-10-20-apoteker-tepe.md#denser-and-digital-the-sign-cut-in-a-land-round-it-mist-the-quiet-in-the-drawing-and-the-free-view-held-the-last-round-of-the-day).
+
+**Taken out on 2026-10-22**, with the mountain itself ("remove the mountain"; asked, *remove those
+too*): `ridge()`, its `RIDGE_*`, its line in `HOUSES` and `HouseMotifs.ridges()` are gone, and the view
+no longer loads `tepe-data.js` or `tepe-gl.js` (both deleted). Apoteker Tepe at the front brings
+nothing up until the owner redesigns it; its frame still carries `data-motif="apoteker-tepe"`, which
+names nothing for now, and the "every house has motifs of its own" test makes it the one exception
+(`NO_MOTIF_YET` in `contact-sheet.spec.js`). See [Apoteker Tepe's
+report](2026-10-20-apoteker-tepe.md#the-mountain-taken-out-2026-10-22).
