@@ -13766,10 +13766,14 @@ body.tribe-page {
 /* ==================================================================
    APOTEKER TEPE — the thirteenth house, 2026-10-20. Its paper aged — a
    warm, faded cream, darker towards its corners as an old print is — its
-   accent a mountain green and a pencil's red-brown. (The mountain that
-   stood behind its writing, Mount Athos in three dimensions with its
-   trails and its free view, was taken out on 2026-10-22 — "just remove it
-   for now, i will redesign the whole thing. remove the mountain".)
+   accent a mountain green and a pencil's red-brown; at its head since
+   2026-10-27, THE HILL (below). (The mountain that stood behind its
+   writing, Mount Athos in three dimensions with its trails and its free
+   view, was taken out on 2026-10-22 — "just remove it for now, i will
+   redesign the whole thing. remove the mountain" — and the owner's
+   photographs behind frosted glass, a trial with a panel of pictures,
+   filters and the text's blending, gave way to the hill the same day it
+   was made.)
    ================================================================== */
 body.tepe-page {
   --bg: #ece5d2; --bg-2: #e3dbc5; --line: #cfc5aa;
@@ -13788,135 +13792,275 @@ body.tepe-page {
 .tepe-page .human-section-mark { color: rgb(var(--tepe-green)); }
 .tepe-page .human-stage { color: rgb(var(--tepe-pencil)); }
 .tepe-page .human-text p { color: #2a3326; }
-/* THE MOUNTAIN BEHIND FROSTED GLASS (2026-10-27, a trial — tepe.js): the
-   owner's photograph, blurred out but for a window on the right-ish middle,
-   drawn once onto the canvas fixed to the window; it comes up over the
-   paper once it is drawn. (A soft halo of the paper stood round every
-   letter for its first rounds — "remove the white shadow".)
+/* THE HILL (2026-10-27 — "try something new with the apoteker tepe page
+   ... use the image numbver 5 from the mountains. make it look cool, make
+   it minimalist"): the owner's photograph AT MOUNTAIN 5, its sky cut away
+   along the ridge so the mountain stands on the house's own paper and the
+   title is written in the paper's sky, printed in two inks (the house's
+   green and its paper, a little of the photograph's own colour let back
+   in) and let go into the paper at its foot — and over it four contour
+   lines echoing the ridge upward, each further off and gentler than the
+   last, a small mark at the summit. And THE FAULT, the same day ("split
+   the montain somewhere on the right so like 3/4 of the way ... in a
+   semi-diagonal line and insert something in the split"): the mountain cut
+   along a leaning line, its right block moved off it up and to the right,
+   and in the split the house's eight juices, numbered, with a section line
+   up out of it. All of it is written by tools/apoteker/hill.py
+   (`.tepe-hill` in the page, between its THE HILL markers).
 
-   THE TEXT'S BLENDING, chosen in the trial's panel: `data-tepe-text` on
-   <html>, the mode in `--tepe-text-blend`. Laid on the writing's own blocks
-   and never on a picture — the head, the introduction, each part's
-   summary but its little picture, each open part's writing, the credit and
-   the foot — and the parts' row let go of its own layer (`z-index`) while it
-   is on, or what is in it would blend with nothing but itself. Invert is
-   the writing turned light and laid on as a difference. */
-.tepe-photo { opacity: 0; transition: opacity 0.9s var(--menu-ease); }
-html.tepe-photo-drawn .tepe-photo { opacity: 1; }
-html[data-tepe-text] .tepe-page .human-parts { z-index: auto; }
-html[data-tepe-text] .tepe-page :is(.human-head, .human-intro, .human-part > summary > :not(.human-thumb), .human-body > .human-text, .house-credit, .human-foot) {
-  mix-blend-mode: var(--tepe-text-blend, normal);
-}
-html[data-tepe-text="invert"] .tepe-page :is(.human-head, .human-intro, .human-part > summary > :not(.human-thumb), .human-body > .human-text, .house-credit, .human-foot) {
-  filter: invert(1);
-}
+   Placed by the window, never by a script: as wide as the window (wider on
+   a window short for its width, `--hill-w`), its summit 44% of the window
+   down (`--hill-top`), and the head as tall as the hill, so the
+   introduction begins where the mountain is let go. On a phone it is
+   drawn a little under twice the window's width, the fault three quarters
+   of the way across and both peaks in the window.
 
-/* THE TRIAL'S PANEL — the boxed button at the top right ("Mountain 1 / 5"),
-   level with the Menu, and what it opens under it: the five pictures, four
-   sliders, a colour and the filters. Temporary, until the owner settles on
-   one. */
-.tepe-try {
-  position: fixed;
-  top: 19px;
-  right: 22px;
-  z-index: 20;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  font-family: var(--mono);
-  color: var(--ink);
+   Opening ("make it smoother, animate it on scrolling and opening; and
+   make it all more coherent"), one movement on one curve: the mountain
+   rises into place, the lines draw out from the summit, the split opens
+   (`--open`, 0 to 1), its numbers come up down it one by one and the
+   section line draws up out of it. Scrolled (tepe.js, following the page
+   a little behind it, so it glides): the split opens further (`--wide`, to
+   as much again) and the lines lift off the ridge and thin like mist, the
+   mountain scrolling with the page so that its foot is always let go into
+   the paper. None of that with reduced motion: the split simply open. The
+   reading in the corner stands on a ground of the paper, as on a phone,
+   so it reads over the green. */
+@property --open {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
 }
-.tepe-try-open {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px 8px 11px;
-  border: 1px solid rgba(var(--ink-rgb), 0.45);
-  background: rgba(236, 229, 210, 0.86);
-  color: inherit;
-  font: inherit;
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: border-color 0.3s var(--menu-ease), background-color 0.3s var(--menu-ease);
+.tepe-page {
+  --hill-w: max(100vw, 140svh);
+  --hill-x: calc((100vw - var(--hill-w)) * 0.7);
+  --hill-h: calc(var(--hill-w) * 0.6665);
+  --hill-top: calc(44svh - var(--hill-w) * 0.2405);
 }
-.tepe-try-open:hover,
-.tepe-try-open:focus-visible,
-.tepe-try.open .tepe-try-open { border-color: rgba(var(--ink-rgb), 0.85); background-color: rgba(236, 229, 210, 0.96); }
-.tepe-try-mark { flex: none; overflow: visible; }
-.tepe-try-mark path { fill: rgba(var(--tepe-green), 0.18); stroke: currentColor; stroke-width: 1.1; stroke-linejoin: round; }
-.tepe-try-now { color: rgb(var(--tepe-pencil)); letter-spacing: 0.08em; }
-.tepe-try-panel {
-  width: 288px;
-  max-height: calc(100vh - 90px);
-  overflow-y: auto;
-  padding: 14px 14px 12px;
-  border: 1px solid rgba(var(--ink-rgb), 0.4);
-  background: rgba(236, 229, 210, 0.94);
+.tepe-hill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: calc(var(--hill-top) + var(--hill-h));
+  overflow: hidden;
+  overflow: clip;
+  pointer-events: none;
+  z-index: 0;
+}
+.tepe-hill-box {
+  --wide: 0;
+  position: absolute;
+  left: var(--hill-x);
+  top: var(--hill-top);
+  width: var(--hill-w);
+  aspect-ratio: 2108 / 1405;
+  container-type: inline-size;        /* so the shift, in its widths (cqw), moves anything in it */
+}
+/* THE TWO BLOCKS: the same picture and its lines twice, each cut to its
+   side of the fault (the outlines are hill.py's, on each; the left runs a
+   hair under the right, so nothing shows between them while it is shut),
+   the right one moved off it, up and to the right, as far as it is open. */
+.tepe-hill-part { position: absolute; inset: 0; }
+.tepe-hill-right {
+  translate:
+    calc(var(--shift-x) * (var(--open) + var(--wide)))
+    calc(var(--shift-y) * (var(--open) + var(--wide)));
+}
+.tepe-hill-land { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.tepe-hill-ink { position: absolute; inset: 0; }
+.tepe-hill-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.tepe-contour {
+  fill: none;
+  stroke: rgb(var(--ink-rgb));
+  stroke-opacity: var(--ink);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+/* THE SUMMIT: a hairline up off the peak, and the site's small open square
+   at its head. */
+.tepe-summit {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 0;
+  height: 0;
+}
+.tepe-summit::before {
+  content: "";
+  position: absolute;
+  left: -0.5px;
+  bottom: 6px;
+  width: 1px;
+  height: 46px;
+  background: rgba(var(--ink-rgb), 0.55);
+}
+.tepe-summit::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  bottom: 52px;
+  width: 7px;
+  height: 7px;
+  border: 1px solid rgba(var(--ink-rgb), 0.7);
+}
+/* THE SEAM: the mountain's inside, seen in the split — the house's eight
+   juices running down it one into the next, in the order the page has them
+   (Kogen's olive gold, The Holy Mountain's dark amber, Brother Night's
+   copper, Karasu's and The Peradam's gold, Pale Fire's and Anabasis'
+   yellow, After the Flood's pale green), a hairline stratum between each,
+   the left wall's shade and its cut edge catching the light; the right
+   wall's shade (`.tepe-wall`) goes with the right block. Drawn by hill.py
+   at the split's widest, the right block covering what is not yet open,
+   and shown as it opens; its colours are these. */
+.tepe-seam {
+  --j1: 150, 140, 66;
+  --j2: 150, 80, 26;
+  --j3: 172, 96, 56;
+  --j4: 214, 168, 52;
+  --j5: 222, 186, 86;
+  --j6: 230, 214, 128;
+  --j7: 212, 192, 98;
+  --j8: 190, 206, 162;
+}
+.tepe-seam,
+.tepe-wall {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: calc(var(--open) * 6);
+}
+.tepe-stratum {
+  fill: none;
+  stroke: rgba(30, 40, 28, 0.32);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.tepe-cut {
+  stroke: rgba(246, 240, 224, 0.75);
+  stroke-width: 2;                    /* on the split's own edge: only its inner half shows */
+  vector-effect: non-scaling-stroke;
+}
+/* EACH STRATUM'S NUMBER, the page's own part numbers, on the right block
+   beside the split, a tick back to its face, as strong as the land under
+   it (`--a`, hill.py's). */
+.tepe-stratum-no {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  translate: 15px -50%;
+  font: 400 9px/1 var(--mono);
+  letter-spacing: 0.08em;
+  color: rgba(246, 240, 224, calc(0.84 * var(--a, 1)));
+}
+.tepe-stratum-no::before {
+  content: "";
+  position: absolute;
+  right: calc(100% + 4px);
+  top: 50%;
+  width: 8px;
+  height: 1px;
+  background: rgba(246, 240, 224, calc(0.6 * var(--a, 1)));
+}
+/* THE SECTION LINE: as a technical drawing marks where it is cut — a long
+   and short dash up out of the middle of the split's mouth through the
+   sky, along the fault, and at its head an arrow at right angles with its
+   letter; moved with the mouth's middle as the split opens. */
+.tepe-section {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 1px;
+  height: var(--len);
+  translate:
+    calc(-50% + var(--shift-x) * (var(--open) + var(--wide) - 1) / 2)
+    calc(-100% + var(--shift-y) * (var(--open) + var(--wide) - 1) / 2);
+  transform-origin: 50% 100%;
+  rotate: 21.8deg;
+  background: repeating-linear-gradient(to top,
+    rgba(var(--ink-rgb), 0.5) 0 16px, transparent 16px 21px,
+    rgba(var(--ink-rgb), 0.5) 21px 23px, transparent 23px 28px);
+}
+.tepe-section-end {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 0;
+  height: 0;
+  translate:
+    calc(var(--shift-x) * (var(--open) + var(--wide) - 1) / 2)
+    calc(var(--shift-y) * (var(--open) + var(--wide) - 1) / 2);
+}
+.tepe-section-end i {
+  position: absolute;
+  right: 0;
+  top: -0.5px;
+  width: 26px;
+  height: 1px;
+  background: rgba(var(--ink-rgb), 0.6);
+  transform-origin: 100% 50%;
+  rotate: 21.8deg;
+}
+.tepe-section-end i::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: -3px;
+  border-right: 7px solid rgba(var(--ink-rgb), 0.6);
+  border-top: 3.5px solid transparent;
+  border-bottom: 3.5px solid transparent;
+}
+.tepe-section-end b {
+  position: absolute;
+  right: 30px;
+  bottom: 14px;
+  font: 400 11px/1 var(--mono);
+  letter-spacing: 0.04em;
+  color: rgba(var(--ink-rgb), 0.7);
+}
+.tepe-page .human-head { box-sizing: border-box; min-height: calc(var(--hill-top) + var(--hill-h) * 0.9); }
+.tepe-page .human-readout {
+  padding: 5px 9px 6px;
+  border-radius: 3px;
+  background: var(--chrome-ground);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(31, 42, 32, 0.12);
-  font-size: 10.5px;
-  letter-spacing: 0.06em;
 }
-.tepe-try-panel[hidden] { display: none; }
-.tepe-try-head { margin: 0 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.14em; font-size: 9.5px; }
-.tepe-try-pics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 12px; }
-.tepe-try-pic {
-  position: relative;
-  padding: 0;
-  aspect-ratio: 3 / 2;
-  border: 1px solid rgba(var(--ink-rgb), 0.3);
-  background: var(--bg-2);
-  cursor: pointer;
-  overflow: hidden;
+/* THE OPENING, one movement on gentle curves: the mountain rising into
+   place; the lines drawn out from the summit to both edges, one a beat
+   after the other; the split opening; its numbers coming up down it; the
+   section line drawn up out of it, its arrow last. All in four seconds. */
+@keyframes tepe-rise { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+@keyframes tepe-draw { from { clip-path: inset(-20% 18.88% -20% 81.12%); } to { clip-path: inset(-20% 0 -20% 0); } }
+@keyframes tepe-show { from { opacity: 0; } to { opacity: 1; } }
+@keyframes tepe-open { from { --open: 0; } to { --open: 1; } }
+@keyframes tepe-up { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+.tepe-hill-lines { animation: tepe-draw 2.6s cubic-bezier(0.45, 0, 0.2, 1) 0.5s both; }
+.tepe-contour { animation: tepe-show 1.4s ease calc(0.5s + var(--k) * 0.22s) both; }
+.tepe-summit { animation: tepe-show 1s ease 2s both; }
+/* the whole hill rises as one, so where the two blocks meet is never seen twice */
+.tepe-hill-box {
+  animation:
+    tepe-rise 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) 0.1s both,
+    tepe-open 2.6s cubic-bezier(0.45, 0, 0.15, 1) 1s both;
 }
-.tepe-try-pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.tepe-try-pic span {
-  position: absolute;
-  left: 3px;
-  bottom: 2px;
-  font-family: var(--mono);
-  font-size: 9px;
-  color: #fff;
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
-}
-.tepe-try-pic[aria-pressed="true"] { outline: 2px solid rgb(var(--tepe-pencil)); outline-offset: 1px; border-color: transparent; }
-.tepe-try-sliders { display: grid; gap: 6px; margin-bottom: 12px; }
-.tepe-try-slider { display: grid; grid-template-columns: 54px 1fr 26px; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.1em; font-size: 9.5px; }
-.tepe-try-slider input { width: 100%; margin: 0; accent-color: rgb(var(--tepe-green)); }
-.tepe-try-slider output { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
-.tepe-try-label { margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.14em; font-size: 9.5px; color: var(--muted); }
-.tepe-try-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
-.tepe-try-chip,
-.tepe-try-foot button {
-  padding: 5px 8px;
-  border: 1px solid rgba(var(--ink-rgb), 0.3);
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-}
-.tepe-try-chip:hover,
-.tepe-try-foot button:hover { border-color: rgba(var(--ink-rgb), 0.7); }
-.tepe-try-chip[aria-pressed="true"] { background: rgba(var(--tepe-green), 0.88); border-color: rgb(var(--tepe-green)); color: #f4efe2; }
-.tepe-try-foot { display: flex; justify-content: space-between; gap: 8px; padding-top: 2px; }
-.tepe-try-foot button { text-transform: uppercase; letter-spacing: 0.12em; }
-.tepe-try-pic:focus-visible,
-.tepe-try-chip:focus-visible,
-.tepe-try-foot button:focus-visible,
-.tepe-try-open:focus-visible { outline: 2px solid rgb(var(--tepe-pencil)); outline-offset: 2px; }
+.tepe-stratum-no { animation: tepe-show 0.9s ease calc(2.2s + var(--n, 0) * 0.12s) both; }
+.tepe-section { animation: tepe-up 1.3s cubic-bezier(0.45, 0, 0.2, 1) 2.6s both; }
+.tepe-section-end { animation: tepe-show 0.9s ease 3.5s both; }
 @media (max-width: 700px) {
-  .tepe-try { top: 17px; right: 14px; }
-  .tepe-try-open { padding: 7px 10px 7px 9px; letter-spacing: 0.1em; background: var(--chrome-ground); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-  .tepe-try-panel { width: calc(100vw - 28px); max-height: calc(100vh - 80px); }
+  .tepe-page { --hill-w: 172vw; --hill-x: -54vw; }
+  .tepe-summit::before { height: 30px; }
+  .tepe-summit::after { bottom: 36px; }
+  .tepe-section-end i { width: 18px; }
+  .tepe-section-end b { right: 21px; bottom: 10px; font-size: 9px; }
+  .tepe-stratum-no { translate: 12px -50%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .tepe-photo { transition: none; }
+  .tepe-hill-box, .tepe-hill-lines, .tepe-contour, .tepe-summit,
+  .tepe-stratum-no, .tepe-section, .tepe-section-end { animation: none; }
 }
 /* THE PICTURES A LITTLE FURTHER OFF (2026-10-20, last — "zoom out the
    images a little; they are out of frame"): a bottle cut out of its ground
