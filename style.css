@@ -13819,13 +13819,16 @@ body.tepe-page {
    make it all more coherent"), one movement on one curve: the mountain
    rises into place, the lines draw out from the summit, the split opens
    (`--open`, 0 to 1), its numbers come up down it one by one and the
-   section line draws up out of it. Scrolled (tepe.js, following the page
-   a little behind it, so it glides): the split opens further (`--wide`, to
-   as much again) and the lines lift off the ridge and thin like mist, the
-   mountain scrolling with the page so that its foot is always let go into
-   the paper. None of that with reduced motion: the split simply open. The
-   reading in the corner stands on a ground of the paper, as on a phone,
-   so it reads over the green. */
+   section line draws up out of it. Scrolled: the split opens further (to
+   as much again) and the lines lift off the ridge and thin like mist —
+   since 2026-10-28 ("when scrolling it is slow and laggy") driven by the
+   page's own scroll (`animation-timeline`, below), so it is where the page
+   is the frame it is there, and nothing in the hill masked by the browser
+   (hill.py cuts it all) — the mountain scrolling with the page so that its
+   foot is always let go into the paper. None of that with reduced motion:
+   the split simply open. The reading in the corner stands on a ground of
+   the paper, as on a phone, so it reads over the green. And down the page,
+   the strata and the margins' contour lines (below). */
 @property --open {
   syntax: "<number>";
   inherits: true;
@@ -13849,7 +13852,6 @@ body.tepe-page {
   z-index: 0;
 }
 .tepe-hill-box {
-  --wide: 0;
   position: absolute;
   left: var(--hill-x);
   top: var(--hill-top);
@@ -13857,19 +13859,19 @@ body.tepe-page {
   aspect-ratio: 2108 / 1405;
   container-type: inline-size;        /* so the shift, in its widths (cqw), moves anything in it */
 }
-/* THE TWO BLOCKS: the same picture and its lines twice, each cut to its
-   side of the fault (the outlines are hill.py's, on each; the left runs a
-   hair under the right, so nothing shows between them while it is shut),
-   the right one moved off it, up and to the right, as far as it is open. */
+/* THE TWO BLOCKS: the picture in two, each its own side of the fault, and
+   the contour lines cut where they cross it — all cut by hill.py, nothing
+   masked by the browser (the left block runs a hair under the right, so
+   nothing shows between them while it is shut) — the right one moved off
+   the fault, up and to the right, as far as it is open; each on a layer of
+   its own, so moving it draws nothing again. */
 .tepe-hill-part { position: absolute; inset: 0; }
 .tepe-hill-right {
-  translate:
-    calc(var(--shift-x) * (var(--open) + var(--wide)))
-    calc(var(--shift-y) * (var(--open) + var(--wide)));
+  translate: calc(var(--shift-x) * var(--open)) calc(var(--shift-y) * var(--open));
+  will-change: transform;
 }
-.tepe-hill-land { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
-.tepe-hill-ink { position: absolute; inset: 0; }
-.tepe-hill-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.tepe-hill-land { position: absolute; top: 0; height: 100%; display: block; }
+.tepe-hill-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; will-change: transform, opacity; }
 .tepe-contour {
   fill: none;
   stroke: rgb(var(--ink-rgb));
@@ -13910,11 +13912,14 @@ body.tepe-page {
    (Kogen's olive gold, The Holy Mountain's dark amber, Brother Night's
    copper, Karasu's and The Peradam's gold, Pale Fire's and Anabasis'
    yellow, After the Flood's pale green), a hairline stratum between each,
-   the left wall's shade and its cut edge catching the light; the right
-   wall's shade (`.tepe-wall`) goes with the right block. Drawn by hill.py
+   the left wall's shade; the right wall's shade (`.tepe-wall`) goes with
+   the right block. (Its cut edge caught the light in a fine line of the
+   paper for a round — "remove the few white pixels on the LEFT of the
+   red/warm thing" — and is gone.) Drawn by hill.py
    at the split's widest, the right block covering what is not yet open,
-   and shown as it opens; its colours are these. */
-.tepe-seam {
+   and shown as it opens; its colours (on the page, for the strata down it
+   too) are these. */
+.tepe-page {
   --j1: 150, 140, 66;
   --j2: 150, 80, 26;
   --j3: 172, 96, 56;
@@ -13937,11 +13942,6 @@ body.tepe-page {
   fill: none;
   stroke: rgba(30, 40, 28, 0.32);
   stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-.tepe-cut {
-  stroke: rgba(246, 240, 224, 0.75);
-  stroke-width: 2;                    /* on the split's own edge: only its inner half shows */
   vector-effect: non-scaling-stroke;
 }
 /* EACH STRATUM'S NUMBER, the page's own part numbers, on the right block
@@ -13976,10 +13976,11 @@ body.tepe-page {
   width: 1px;
   height: var(--len);
   translate:
-    calc(-50% + var(--shift-x) * (var(--open) + var(--wide) - 1) / 2)
-    calc(-100% + var(--shift-y) * (var(--open) + var(--wide) - 1) / 2);
+    calc(-50% + var(--shift-x) * (var(--open) - 1) / 2)
+    calc(-100% + var(--shift-y) * (var(--open) - 1) / 2);
   transform-origin: 50% 100%;
-  rotate: 21.8deg;
+  transform: translate(0, 0) rotate(21.8deg);
+  will-change: transform;
   background: repeating-linear-gradient(to top,
     rgba(var(--ink-rgb), 0.5) 0 16px, transparent 16px 21px,
     rgba(var(--ink-rgb), 0.5) 21px 23px, transparent 23px 28px);
@@ -13991,8 +13992,9 @@ body.tepe-page {
   width: 0;
   height: 0;
   translate:
-    calc(var(--shift-x) * (var(--open) + var(--wide) - 1) / 2)
-    calc(var(--shift-y) * (var(--open) + var(--wide) - 1) / 2);
+    calc(var(--shift-x) * (var(--open) - 1) / 2)
+    calc(var(--shift-y) * (var(--open) - 1) / 2);
+  will-change: transform;
 }
 .tepe-section-end i {
   position: absolute;
@@ -14021,13 +14023,111 @@ body.tepe-page {
   letter-spacing: 0.04em;
   color: rgba(var(--ink-rgb), 0.7);
 }
+/* THE HOUSE'S SIGN at the summit (2026-10-28 — "on the point above the
+   break/split, if you hover it, add the apoteker tepe logo please", and
+   then "Add the logo to the box/square, not the arrow"): the house's own
+   mark raised over the summit's square, as a flag on a peak, while the hand
+   is on the square — a tap on a phone, and a tap again or anywhere else
+   puts it away (tepe.js). The head lets the hand through to it, but for
+   its links. (It came up over the section line's arrow for one round.) */
+.tepe-page .human-head { pointer-events: none; }
+.tepe-page .human-head a,
+.tepe-page .human-head button { pointer-events: auto; }
+.tepe-sign {                            /* where the hand finds it: the square and the sign above it */
+  position: absolute;
+  left: -20px;
+  bottom: 42px;
+  width: 40px;
+  height: 84px;
+  pointer-events: auto;
+}
+.tepe-sign::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0;
+  width: 32px;
+  height: 54px;
+  background: url("images/Apoteker Tepe/Apoteker Tepe Logo.webp") center / contain no-repeat;
+  opacity: 0;
+  translate: 0 8px;
+  transition: opacity 0.5s ease, translate 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.tepe-summit:hover .tepe-sign::after,
+.tepe-summit.is-signed .tepe-sign::after { opacity: 0.86; translate: 0 0; }
+.tepe-summit::after { transition: border-color 0.4s ease; }
+/* on a phone the summit stands right under the section line's head, so the
+   line steps back while the sign is up */
+.tepe-section,
+.tepe-section-end { transition: opacity 0.45s ease; }
+@media (max-width: 700px) {
+  .tepe-hill-box:has(.tepe-summit:hover, .tepe-summit.is-signed) :is(.tepe-section, .tepe-section-end) { opacity: 0; }
+}
+.tepe-summit:hover::after,
+.tepe-summit.is-signed::after { border-color: rgba(var(--ink-rgb), 1); }
 .tepe-page .human-head { box-sizing: border-box; min-height: calc(var(--hill-top) + var(--hill-h) * 0.9); }
+/* the reading in the corner on a ground of the paper, so it reads over the
+   green — plain, never blurred: a blur behind a fixed thing is drawn again
+   every frame the page scrolls under it */
 .tepe-page .human-readout {
   padding: 5px 9px 6px;
   border-radius: 3px;
-  background: var(--chrome-ground);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background: rgba(236, 229, 210, 0.92);
+}
+/* DOWN THE PAGE (2026-10-28 — "i want there to be design elements of this
+   mountain on the houses page, and also going down the page too. nothing
+   too fancy"), two things, both still, so the scroll pays nothing for them:
+
+   THE STRATA — each fragrance a stratum, as in the split: a band of its
+   juice down the side of its row, the eight one under the next, Kogen's
+   olive gold at the top to After the Flood's pale green at the foot, a
+   hairline of the page between each, and as long as the row is, open or
+   shut — the core of the mountain beside the list. */
+.tepe-page .human-part { position: relative; }
+.tepe-page .human-part::before {
+  content: "";
+  position: absolute;
+  left: -26px;
+  top: 0;
+  bottom: 1px;
+  width: 4px;
+  background: rgb(var(--j, var(--j1)));
+  opacity: 0.85;
+  pointer-events: none;
+}
+.tepe-page #part-02 { --j: var(--j2); }
+.tepe-page #part-03 { --j: var(--j3); }
+.tepe-page #part-04 { --j: var(--j4); }
+.tepe-page #part-05 { --j: var(--j5); }
+.tepe-page #part-06 { --j: var(--j6); }
+.tepe-page #part-07 { --j: var(--j7); }
+.tepe-page #part-08 { --j: var(--j8); }
+@media (max-width: 860px) {
+  .tepe-page .human-part::before { left: -14px; width: 3px; }
+}
+/* THE MARGINS — the ridge turned on its side and run on down the page from
+   the hill's foot, four contour lines each side of the writing (hill.py's
+   `margin-left.svg` and `margin-right.svg`, repeated down), coming in under
+   the hill and going out at the page's foot. Only where there are margins
+   for them. (On the body, which nothing on the page is drawn over: laid on
+   the page's main, it stood over the hill and took the hand from its
+   sign.) */
+body.tepe-page { position: relative; }     /* the margins' lines are laid down the whole of it */
+@media (min-width: 1180px) {
+  body.tepe-page::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--hill-top) + var(--hill-h) * 0.9);
+    bottom: 0;
+    pointer-events: none;
+    background:
+      url("images/Apoteker Tepe/hill/margin-left.svg") left calc(50vw - 470px - 196px) top 0 / 160px 960px repeat-y,
+      url("images/Apoteker Tepe/hill/margin-right.svg") left calc(50vw + 470px + 36px) top 0 / 160px 960px repeat-y;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 260px, #000 calc(100% - 320px), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 260px, #000 calc(100% - 320px), transparent 100%);
+  }
 }
 /* THE OPENING, one movement on gentle curves: the mountain rising into
    place; the lines drawn out from the summit to both edges, one a beat
@@ -14038,7 +14138,7 @@ body.tepe-page {
 @keyframes tepe-show { from { opacity: 0; } to { opacity: 1; } }
 @keyframes tepe-open { from { --open: 0; } to { --open: 1; } }
 @keyframes tepe-up { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
-.tepe-hill-lines { animation: tepe-draw 2.6s cubic-bezier(0.45, 0, 0.2, 1) 0.5s both; }
+.tepe-hill-lines { animation: tepe-draw 2.6s cubic-bezier(0.45, 0, 0.2, 1) 0.5s backwards; }
 .tepe-contour { animation: tepe-show 1.4s ease calc(0.5s + var(--k) * 0.22s) both; }
 .tepe-summit { animation: tepe-show 1s ease 2s both; }
 /* the whole hill rises as one, so where the two blocks meet is never seen twice */
@@ -14048,19 +14148,67 @@ body.tepe-page {
     tepe-open 2.6s cubic-bezier(0.45, 0, 0.15, 1) 1s both;
 }
 .tepe-stratum-no { animation: tepe-show 0.9s ease calc(2.2s + var(--n, 0) * 0.12s) both; }
-.tepe-section { animation: tepe-up 1.3s cubic-bezier(0.45, 0, 0.2, 1) 2.6s both; }
-.tepe-section-end { animation: tepe-show 0.9s ease 3.5s both; }
+.tepe-section { animation: tepe-up 1.3s cubic-bezier(0.45, 0, 0.2, 1) 2.6s backwards; }
+.tepe-section-end { animation: tepe-show 0.9s ease 3.5s backwards; }
+/* SCROLLED ("when scrolling it is slow and laggy", 2026-10-28): the split
+   opens further — the right block moved off the fault by as much again,
+   the section line with the middle of its mouth — over the first four
+   fifths of the hill, and the lines lift off the ridge and thin like mist
+   over the whole of it, driven by the page's own scroll, so they are drawn
+   by the browser off the scroll itself and never a frame behind it (they
+   followed a script a moment behind the page until then, every frame drawn
+   again). A browser without these (Firefox, for now) has tepe.js do it. */
+@keyframes tepe-widen { from { transform: translate(0, 0); } to { transform: translate(var(--shift-x), var(--shift-y)); } }
+@keyframes tepe-widen-half {
+  from { transform: translate(0, 0); }
+  to { transform: translate(calc(var(--shift-x) / 2), calc(var(--shift-y) / 2)); }
+}
+@keyframes tepe-widen-line {
+  from { transform: translate(0, 0) rotate(21.8deg); }
+  to { transform: translate(calc(var(--shift-x) / 2), calc(var(--shift-y) / 2)) rotate(21.8deg); }
+}
+@keyframes tepe-lift {
+  0% { transform: translate(0, 0); opacity: 1; }
+  75% { opacity: 0; }
+  100% { transform: translate(0, calc((var(--hill-top) + var(--hill-h)) * -0.3)); opacity: 0; }
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .tepe-hill-right {
+      animation: tepe-widen 1ms cubic-bezier(0.45, 0, 0.55, 1) both;
+      animation-timeline: scroll(root);
+      animation-range: 0 calc((var(--hill-top) + var(--hill-h)) * 0.8);
+    }
+    .tepe-section-end {
+      animation: tepe-show 0.9s ease 3.5s backwards, tepe-widen-half 1ms cubic-bezier(0.45, 0, 0.55, 1) both;
+      animation-timeline: auto, scroll(root);
+      animation-range: normal, 0 calc((var(--hill-top) + var(--hill-h)) * 0.8);
+    }
+    .tepe-section {
+      animation: tepe-up 1.3s cubic-bezier(0.45, 0, 0.2, 1) 2.6s backwards, tepe-widen-line 1ms cubic-bezier(0.45, 0, 0.55, 1) both;
+      animation-timeline: auto, scroll(root);
+      animation-range: normal, 0 calc((var(--hill-top) + var(--hill-h)) * 0.8);
+    }
+    .tepe-hill-lines {
+      animation: tepe-draw 2.6s cubic-bezier(0.45, 0, 0.2, 1) 0.5s backwards, tepe-lift 1ms linear both;
+      animation-timeline: auto, scroll(root);
+      animation-range: normal, 0 calc(var(--hill-top) + var(--hill-h));
+    }
+  }
+}
 @media (max-width: 700px) {
   .tepe-page { --hill-w: 172vw; --hill-x: -54vw; }
   .tepe-summit::before { height: 30px; }
   .tepe-summit::after { bottom: 36px; }
   .tepe-section-end i { width: 18px; }
+  .tepe-sign { bottom: 26px; height: 80px; }
   .tepe-section-end b { right: 21px; bottom: 10px; font-size: 9px; }
   .tepe-stratum-no { translate: 12px -50%; }
 }
 @media (prefers-reduced-motion: reduce) {
   .tepe-hill-box, .tepe-hill-lines, .tepe-contour, .tepe-summit,
   .tepe-stratum-no, .tepe-section, .tepe-section-end { animation: none; }
+  .tepe-sign::after { transition: none; }
 }
 /* THE PICTURES A LITTLE FURTHER OFF (2026-10-20, last — "zoom out the
    images a little; they are out of frame"): a bottle cut out of its ground

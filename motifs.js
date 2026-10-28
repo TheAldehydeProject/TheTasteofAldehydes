@@ -3290,6 +3290,194 @@
     };
   }
 
+  // ---------- APOTEKER TEPE: the hill, in pieces ----------
+  // Since 2026-10-28 ("i want there to be design elements of this mountain
+  // on the houses page ... nothing too fancy"): the house's own hill, as its
+  // page draws it, in two kinds of piece. A stretch of THE RIDGE — the
+  // owner's mountain's own skyline, hill.py's, every other point — drawn in
+  // a hairline left to right, its contour lines drawing in over it one after
+  // another, fainter and gentler the further off, and the summit's small
+  // mark on its highest point. And now and then THE CORE: the split's eight
+  // juices in a short leaning strip, Kogen's olive gold at its head to After
+  // the Flood's pale green at its foot, hairline strata across it, growing
+  // down out of nothing as the split opens, and its section line drawn up
+  // out of its head to an arrow and A. Each comes up, stands a while and
+  // goes; none on another, nor on the house at the front.
+  const TEPE_INK = "31, 42, 32";
+  const TEPE_JUICES = ["150, 140, 66", "150, 80, 26", "172, 96, 56", "214, 168, 52", "222, 186, 86", "230, 214, 128", "212, 192, 98", "190, 206, 162"];
+  const TEPE_RIDGE = [[0, 0.3567], [0.047, 0.3577], [0.071, 0.3653], [0.095, 0.3601], [0.142, 0.3416], [0.19, 0.3306],
+    [0.237, 0.315], [0.285, 0.297], [0.295, 0.2979], [0.301, 0.3083], [0.313, 0.2965], [0.332, 0.287], [0.342, 0.2827],
+    [0.349, 0.2941], [0.351, 0.3202], [0.361, 0.3292], [0.38, 0.3235], [0.403, 0.3178], [0.427, 0.3202], [0.451, 0.3321],
+    [0.474, 0.3425], [0.522, 0.3435], [0.546, 0.3416], [0.569, 0.3354], [0.593, 0.3269], [0.617, 0.3283], [0.64, 0.3235],
+    [0.664, 0.3174], [0.688, 0.306], [0.707, 0.2965], [0.723, 0.287], [0.752, 0.2832], [0.771, 0.2728], [0.787, 0.2585],
+    [0.797, 0.2438], [0.811, 0.2405], [0.83, 0.2467], [0.854, 0.2547], [0.878, 0.2557], [0.897, 0.2524], [0.901, 0.2353],
+    [0.925, 0.2372], [0.972, 0.2111], [1, 0.1921]];   // across and down, both in the photograph's widths
+  const TEPE_LINES = [[0, 0.62], [9, 0.38], [19, 0.24], [31, 0.13]];   // the ridge, then each contour: how far above, how strong
+  const TEPE_DRAW_MS = 1300;               // a line drawn in, left to right
+  const TEPE_LEAN = 0.4;                   // the core leans as the fault does (22° off upright)
+  const tepeBoxes = () => things.filter((t) => t.tepe && !t.ending).map((t) => t.tepe);
+  function tepeRoom(w, h) {
+    // A place for a piece w by h whose box is clear of the house at the
+    // front and of every piece of the hill standing.
+    for (let i = 0; i < 16; i++) {
+      const at = spot(Math.max(w, h) * 0.5);
+      if (!at) continue;
+      const box = { left: at.x - w / 2 - 14, right: at.x + w / 2 + 14, top: at.y - h / 2 - 14, bottom: at.y + h / 2 + 14 };
+      if (box.top < CHROME || box.bottom > H || box.left < 0 || box.right > W) continue;
+      // not under the way round — at the right of a wide window, across
+      // the foot of a phone's
+      if (W * SMALL > 700 ? box.right > W - 200 : box.bottom > H - 110 / SMALL) continue;
+      const off = (b) => box.right < b.left || box.left > b.right || box.bottom < b.top || box.top > b.bottom;
+      if (avoid && !off(avoid)) continue;
+      if (!readAround.every(off) || !tepeBoxes().every(off)) continue;
+      return { x: at.x, y: at.y, box };
+    }
+    return null;
+  }
+  function hillRidge() {
+    // A stretch of the ridge, a third of it or so, at its own shape.
+    const len = rand(0.26, 0.42), from = rand(0, 1 - len), w = rand(190, 300), k = w / len;
+    const pts = [];
+    for (let i = 0; i <= 40; i++) {
+      const u = from + (len * i) / 40;
+      let j = 1;
+      while (j < TEPE_RIDGE.length - 1 && TEPE_RIDGE[j][0] < u) j++;
+      const [x0, y0] = TEPE_RIDGE[j - 1], [x1, y1] = TEPE_RIDGE[j];
+      pts.push([(u - from) * k, (y0 + ((y1 - y0) * (u - x0)) / (x1 - x0 || 1)) * k]);
+    }
+    const top = Math.min(...pts.map((p) => p[1])), low = Math.max(...pts.map((p) => p[1]));
+    pts.forEach((p) => { p[1] -= top; });
+    const h = low - top + TEPE_LINES[TEPE_LINES.length - 1][0] + 26;
+    const room = tepeRoom(w, h);
+    if (!room) return null;
+    // Each contour the ridge's upper envelope over a stretch rounded off by
+    // a mean over the same, lifted — gentle domes, never touching it.
+    const lines = TEPE_LINES.map(([off, ink], n) => {
+      const reach = 1 + n * 4;
+      const env = pts.map((_, i) => Math.min(...pts.slice(Math.max(0, i - reach), i + reach + 1).map((p) => p[1])));
+      const soft = env.map((_, i) => { const s = env.slice(Math.max(0, i - reach), i + reach + 1); return s.reduce((a, b) => a + b, 0) / s.length; });
+      return { ink, pts: pts.map((p, i) => [p[0], (n ? Math.min(soft[i], p[1]) : p[1]) - off]) };
+    });
+    const peak = pts.reduce((a, p) => (p[1] < a[1] ? p : a), pts[0]);
+    const ox = room.x - w / 2, oy = room.y - h / 2 + TEPE_LINES[TEPE_LINES.length - 1][0] + 18;
+    return {
+      tepe: room.box,
+      life: rand(7000, 9500),
+      draw(c, age, a) {
+        c.save();
+        c.translate(ox, oy);
+        c.lineWidth = 1;
+        c.lineJoin = "round";
+        // every line let go at both ends, so a piece is a stretch of the
+        // hill and not a cut-out of it
+        const thin = c.createLinearGradient(0, 0, w, 0);
+        thin.addColorStop(0, "rgba(" + TEPE_INK + ", 0)");
+        thin.addColorStop(0.16, "rgba(" + TEPE_INK + ", 1)");
+        thin.addColorStop(0.84, "rgba(" + TEPE_INK + ", 1)");
+        thin.addColorStop(1, "rgba(" + TEPE_INK + ", 0)");
+        c.strokeStyle = thin;
+        lines.forEach((line, n) => {
+          const drawn = ease((age - n * 260) / TEPE_DRAW_MS);
+          if (drawn <= 0) return;
+          const upto = drawn * (line.pts.length - 1);
+          c.globalAlpha = line.ink * a;
+          c.beginPath();
+          for (let i = 0; i <= upto; i++) (i ? c.lineTo : c.moveTo).call(c, line.pts[i][0], line.pts[i][1]);
+          const i = Math.floor(upto), f = upto - i;
+          if (f > 0 && i + 1 < line.pts.length) c.lineTo(line.pts[i][0] + (line.pts[i + 1][0] - line.pts[i][0]) * f, line.pts[i][1] + (line.pts[i + 1][1] - line.pts[i][1]) * f);
+          c.stroke();
+        });
+        // the summit's mark, once the ridge is drawn
+        const mark = ease((age - TEPE_DRAW_MS) / 500);
+        if (mark > 0) {
+          c.strokeStyle = "rgb(" + TEPE_INK + ")";
+          c.globalAlpha = 0.6 * a * mark;
+          c.beginPath();
+          c.moveTo(peak[0] + 0.5, peak[1] - 4);
+          c.lineTo(peak[0] + 0.5, peak[1] - 22);
+          c.stroke();
+          c.strokeRect(peak[0] - 2.5, peak[1] - 28.5, 6, 6);
+        }
+        c.restore();
+      },
+    };
+  }
+  function hillCore() {
+    // The split's juices in a short leaning strip, its section line above.
+    const len = rand(70, 110), wide = 7, up = rand(30, 44);
+    const w = len * TEPE_LEAN + 40, h = len + up + 16;
+    const room = tepeRoom(w, h);
+    if (!room) return null;
+    // the strip's head: its foot is LEAN of its length to the left
+    const hx = room.x + (len * TEPE_LEAN) / 2, hy = room.y - h / 2 + up + 16;
+    return {
+      tepe: room.box,
+      life: rand(7500, 9500),
+      draw(c, age, a) {
+        const grown = ease(age / 1400), lined = ease((age - 1100) / 900), lettered = ease((age - 1800) / 600);
+        c.save();
+        c.translate(hx, hy);
+        // the juices, down the strip as far as it has grown, let go at its foot
+        const n = TEPE_JUICES.length, seg = len / n;
+        for (let i = 0; i < n; i++) {
+          const y0 = i * seg, y1 = Math.min((i + 1) * seg, len * grown);
+          if (y1 <= y0) break;
+          c.globalAlpha = 0.9 * a * (i < n - 2 ? 1 : i === n - 2 ? 0.75 : 0.45);
+          c.fillStyle = "rgb(" + TEPE_JUICES[i] + ")";
+          c.beginPath();
+          c.moveTo(-y0 * TEPE_LEAN, y0);
+          c.lineTo(-y0 * TEPE_LEAN + wide, y0);
+          c.lineTo(-y1 * TEPE_LEAN + wide, y1 + 0.6);
+          c.lineTo(-y1 * TEPE_LEAN, y1 + 0.6);
+          c.fill();
+        }
+        // the strata, hairlines across it
+        c.strokeStyle = "rgb(30, 40, 28)";
+        c.lineWidth = 0.8;
+        for (let i = 1; i < n; i++) {
+          const y = i * seg;
+          if (y > len * grown) break;
+          c.globalAlpha = 0.35 * a;
+          c.beginPath();
+          c.moveTo(-y * TEPE_LEAN, y);
+          c.lineTo(-y * TEPE_LEAN + wide, y + 1.2);
+          c.stroke();
+        }
+        // the section line, a long and short dash up out of its head
+        if (lined > 0) {
+          const mx = wide / 2, reach = up * lined;
+          c.strokeStyle = "rgb(" + TEPE_INK + ")";
+          c.lineWidth = 1;
+          c.globalAlpha = 0.5 * a;
+          c.setLineDash([9, 3, 2, 3]);
+          c.beginPath();
+          c.moveTo(mx, -2);
+          c.lineTo(mx + reach * TEPE_LEAN, -2 - reach);
+          c.stroke();
+          c.setLineDash([]);
+          if (lettered > 0) {
+            const ex = mx + up * TEPE_LEAN, ey = -2 - up, ang = Math.atan(TEPE_LEAN);
+            c.globalAlpha = 0.6 * a * lettered;
+            c.translate(ex, ey);
+            c.rotate(ang);
+            c.beginPath();
+            c.moveTo(0, 0);
+            c.lineTo(-16, 0);
+            c.stroke();
+            c.fillStyle = "rgb(" + TEPE_INK + ")";
+            c.beginPath();
+            c.moveTo(-18, 0); c.lineTo(-13, -2.6); c.lineTo(-13, 2.6);
+            c.fill();
+            c.rotate(-ang);
+            c.font = "9px \"IBM Plex Mono\", ui-monospace, monospace";
+            c.fillText("A", -24, -10);
+          }
+        }
+        c.restore();
+      },
+    };
+  }
+
   // How often each is born (per second), and how many may stand at once.
   const HOUSES = {
     pineward: [{ make: tree, rate: 2, most: 16 }, { make: needle, rate: 5, most: 50 }],
@@ -3314,9 +3502,9 @@
     // armoire does.
     outsider: [{ make: door, rate: 5, most: 1, first: 1 }],
     "lost-tribe": [{ make: flock, rate: 0.22, most: 2, first: 1 }, { make: leafFall, rate: 1.1, most: 10 }, { make: pollenRise, rate: 12, most: 70 }],
-    // Apoteker Tepe: none since 2026-10-22, when its mountain was taken out
-    // ("remove the mountain") until the owner redesigns it; its fragments of
-    // the mountain stood here.
+    // Apoteker Tepe: its hill in pieces, since 2026-10-28 (its fragments of
+    // the 3D mountain stood here until 2026-10-22, "remove the mountain").
+    "apoteker-tepe": [{ make: hillRidge, rate: 0.45, most: 3, first: 2 }, { make: hillCore, rate: 0.16, most: 1, first: 1 }],
   };
 
   // ============================================================
@@ -3418,6 +3606,10 @@
     // How each of Om's rings standing now is drawn, for the tests.
     rings() {
       return things.filter((t) => t.rings && !t.ending).map((t) => t.rings);
+    },
+    // Where Apoteker Tepe's pieces of the hill stand, box by box, for the tests.
+    hills() {
+      return things.filter((t) => t.tepe && !t.ending).map((t) => ({ kind: t.kind.make.name, left: t.tepe.left * SMALL, right: t.tepe.right * SMALL, top: t.tepe.top * SMALL, bottom: t.tepe.bottom * SMALL }));
     },
     // Where Lost Tribe's birds are, flock by flock, for the tests.
     flocks() {

@@ -1633,10 +1633,10 @@ test("leaving a house lets its motifs fade rather than vanish", async ({ page })
 });
 
 /* EVERY HOUSE HAS MOTIFS OF ITS OWN, and each of them draws — but for a
-   house whose motifs the owner has taken out to redesign: Apoteker Tepe's
-   fragments of its mountain, since 2026-10-22 ("remove the mountain"). That
-   one draws nothing until it has its own again. */
-const NO_MOTIF_YET = ["apoteker-tepe"];
+   house whose motifs the owner has taken out to redesign, which draws
+   nothing until it has its own again. None now: Apoteker Tepe's, taken out
+   on 2026-10-22 ("remove the mountain"), are its hill's since 2026-10-28. */
+const NO_MOTIF_YET = [];
 test("every house on the wall has motifs of its own, and they draw", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);

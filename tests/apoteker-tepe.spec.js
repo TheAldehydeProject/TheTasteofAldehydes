@@ -19,8 +19,14 @@
 //                 section line up out of it. It opens as one movement and
 //                 opens further as the page is scrolled ("Make it smoother,
 //                 animate it on scrolling and opening; and make it all more
-//                 coherent so there arent any weird edges"). Written by
-//                 tools/apoteker/hill.py; tepe.js does the scroll. (The
+//                 coherent so there arent any weird edges"), the scroll
+//                 drawn off the page's own scroll and nothing in it masked
+//                 by the browser ("when scrolling it is slow and laggy",
+//                 2026-10-28), the white line by the split gone, the house's
+//                 sign over the summit's square under the hand, the hill's
+//                 strata and contour lines down the page, and its pieces on
+//                 the Houses view. Written by tools/apoteker/hill.py;
+//                 tepe.js does the scroll where the stylesheet cannot. (The
 //                 frosted glass it replaced, the same day, is gone.)
 //   NO 3D MOUNTAIN  Mount Athos in three dimensions, its trails, its free
 //                 view and its fragments on the Houses view were taken out on
@@ -115,14 +121,20 @@ test("Apoteker Tepe credits its pictures, and the mountain as the owner's own", 
     what is in it. */
 const hillOf = (page) => page.evaluate(() => {
   const box = document.querySelector(".tepe-hill-box"), b = box.getBoundingClientRect();
-  const right = document.querySelector(".tepe-hill-right");
-  const [tx, ty] = (getComputedStyle(right).translate || "0 0").split(" ").map((v) => parseFloat(v) || 0);
+  const right = document.querySelector(".tepe-hill-right"), cs = getComputedStyle(right);
+  const [ox, oy] = (cs.translate === "none" ? "0 0" : cs.translate).split(" ").map((v) => parseFloat(v) || 0);
+  const m = new DOMMatrixReadOnly(cs.transform === "none" ? undefined : cs.transform);
+  const tx = ox + m.m41, ty = oy + m.m42;   // opened (translate) and scrolled further (transform)
   const lands = [...document.querySelectorAll(".tepe-hill-land")];
   return {
     box: { x: b.x, y: b.y + scrollY, w: b.width, h: b.height },
     open: +getComputedStyle(box).getPropertyValue("--open"),
     moved: { x: tx, y: ty },
-    lands: lands.map((i) => ({ w: i.naturalWidth, h: i.naturalHeight, src: i.getAttribute("src"), alt: i.getAttribute("alt"), clip: getComputedStyle(i).clipPath })),
+    lands: lands.map((i) => ({ w: i.naturalWidth, h: i.naturalHeight, src: i.getAttribute("src"), alt: i.getAttribute("alt"), hidden: i.getAttribute("aria-hidden"), clip: getComputedStyle(i).clipPath })),
+    // what moves, or holds what moves: none of it masked (the split's own
+    // drawing is cut inside itself, and stands still)
+    masked: [...document.querySelectorAll(".tepe-hill-part, .tepe-hill-land, .tepe-hill-lines, .tepe-section, .tepe-section-end")]
+      .filter((e) => getComputedStyle(e).clipPath !== "none").map((e) => e.getAttribute("class")),
     contours: [...document.querySelectorAll(".tepe-hill-lines")].map((s) => s.querySelectorAll(".tepe-contour").length),
     juices: document.querySelectorAll("#tepe-juice stop").length,
     seam: +getComputedStyle(document.querySelector(".tepe-seam")).opacity,
@@ -135,7 +147,9 @@ const hillOf = (page) => page.evaluate(() => {
 });
 const settled = (page) => page.waitForFunction(() => {
   const box = document.querySelector(".tepe-hill-box");
-  return box && getComputedStyle(box).getPropertyValue("--open").trim() === "1" && box.getAnimations({ subtree: true }).every((a) => a.playState !== "running");
+  // the opening's own animations done (those driven by the scroll run as long as the page)
+  return box && getComputedStyle(box).getPropertyValue("--open").trim() === "1"
+    && box.getAnimations({ subtree: true }).every((a) => a.timeline !== document.timeline || a.playState !== "running");
 }, null, { timeout: 15000 });
 
 /* THE HILL, on a laptop and a phone: the photograph arrives, its sky cut
@@ -157,21 +171,29 @@ for (const [where, size] of [["a laptop", LAPTOP], ["a phone", PHONE]]) {
     await page.waitForFunction(() => [...document.querySelectorAll(".tepe-hill-land")].every((i) => i.complete && i.naturalWidth));
     const h = await hillOf(page);
     expect(asked, "none of the 3D mountain's scripts").toEqual([]);
-    expect(h.lands.map((l) => [l.w, l.h]), "the same picture for both blocks").toEqual([[2108, 1405], [2108, 1405]]);
-    expect(h.lands[0].src).toBe(h.lands[1].src);
+    // two pictures, the picture's two blocks, each cut to its side of the
+    // fault in its own pixels — nothing in the hill masked by the browser
+    expect(h.lands.map((l) => l.src.split("/").pop()), "the two blocks").toEqual(["the-hill-left.webp", "the-hill-right.webp"]);
+    expect(h.lands.map((l) => l.h)).toEqual([1405, 1405]);
+    expect(h.lands[0].w + h.lands[1].w, "each cropped to its side").toBeLessThan(2108 * 1.25);
     expect(h.lands[0].alt, "described once").toMatch(/my own photograph/);
-    expect(h.lands[1].alt, "and the right block's copy left undescribed").toBe("");
-    for (const l of h.lands) expect(l.clip, "each cut to its side of the fault").toMatch(/^polygon/);
-    // its sky cut away, its land solid
+    expect([h.lands[1].alt, h.lands[1].hidden], "and the right block's half left undescribed, hidden").toEqual(["", "true"]);
+    expect(h.masked, "nothing masked by the browser once it has opened").toEqual([]);
+    // its sky cut away, its land solid, and each block only its own side
     const alpha = await page.evaluate(() => {
-      const i = document.querySelector(".tepe-hill-land"), c = document.createElement("canvas");
-      c.width = i.naturalWidth; c.height = i.naturalHeight;
-      const g = c.getContext("2d"); g.drawImage(i, 0, 0);
-      return { sky: g.getImageData(300, 200, 1, 1).data[3], land: g.getImageData(1000, 900, 1, 1).data[3], foot: g.getImageData(1000, 1400, 1, 1).data[3] };
+      const [l, r] = [...document.querySelectorAll(".tepe-hill-land")].map((i) => {
+        const c = document.createElement("canvas");
+        c.width = i.naturalWidth; c.height = i.naturalHeight;
+        const g = c.getContext("2d"); g.drawImage(i, 0, 0);
+        return (x, y) => g.getImageData(x, y, 1, 1).data[3];
+      });
+      return { sky: l(300, 200), land: l(1000, 900), foot: l(1000, 1400), right: r(330, 900), notLeft: r(2, 700) };
     });
     expect(alpha.sky, "no sky").toBe(0);
     expect(alpha.land, "the land solid").toBe(255);
     expect(alpha.foot, "let go into the paper at its foot").toBeLessThan(20);
+    expect(alpha.right, "the right block's land solid").toBe(255);
+    expect(alpha.notLeft, "and nothing of the left block in it").toBe(0);
     expect(h.contours, "four contour lines on each block").toEqual([4, 4]);
     expect(h.title, "the title in the paper's sky, above the ridge").toBeLessThan(h.box.y + h.box.h * 0.5);
     expect(h.intro, "the introduction where the mountain is let go").toBeGreaterThan(h.box.y + h.box.h * 0.8);
@@ -213,15 +235,17 @@ test("Apoteker Tepe's hill opens as one movement, the split shut and then open, 
   }));
   expect(how.box, "the hill rises as one, and the split opens").toBe("tepe-rise, tepe-open");
   expect(how.lands, "never each block's picture on its own").toEqual(["none", "none"]);
-  expect(how.section).toBe("tepe-up");
+  expect(how.section, "drawn up, and moved by the scroll after").toMatch(/^tepe-up\b/);
   await settled(page);
   expect((await hillOf(page)).open, "open at the end").toBe(1);
 });
 
 /* SCROLLED, the split opens further — the right block moved off the fault
-   by up to as much again — and the lines lift off the ridge and thin, the
-   whole following the page a little behind it so it glides; scrolled back
-   up, the split closes to its own and the lines come home. */
+   by up to as much again — and the lines lift off the ridge and thin,
+   drawn off the page's own scroll by the stylesheet, so they are where the
+   page is the moment it is there ("when scrolling it is slow and laggy":
+   they followed a script a moment behind it); scrolled back up, the split
+   closes to its own and the lines come home. */
 test("Apoteker Tepe's split opens further as the page is scrolled, and the lines lift, and back", async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.setViewportSize(LAPTOP);
@@ -229,16 +253,18 @@ test("Apoteker Tepe's split opens further as the page is scrolled, and the lines
   await settled(page);
   const top = await hillOf(page);
   expect(await page.evaluate(() => TepeHill.wide()), "no further open at the top").toBe(0);
-  await page.evaluate(() => window.scrollTo(0, document.querySelector(".tepe-hill").offsetHeight * 0.5));
-  await page.waitForTimeout(150);
-  const gliding = await page.evaluate(() => TepeHill.wide());
-  await expect.poll(() => page.evaluate(() => TepeHill.wide()), { timeout: 4000 }).toBeGreaterThan(0.4);
-  expect(gliding, "it follows a little behind the page").toBeLessThan(await page.evaluate(() => TepeHill.wide()));
+  expect(await page.evaluate(() => TepeHill.byStylesheet()), "by the stylesheet, off the scroll").toBe(true);
+  const at = await page.evaluate(() => new Promise((done) => {
+    window.scrollTo(0, document.querySelector(".tepe-hill").offsetHeight * 0.5);
+    requestAnimationFrame(() => requestAnimationFrame(() => done(TepeHill.wide())));
+  }));
+  expect(at, "where the page is, the frame it is there").toBeGreaterThan(0.4);
   const down = await hillOf(page);
   expect(down.moved.x, "the right block further off the fault").toBeGreaterThan(top.moved.x * 1.3);
   expect(down.moved.y).toBeLessThan(top.moved.y);
   expect(await page.evaluate(() => TepeHill.lift()), "the lines lifted").toBeGreaterThan(50);
   expect(await page.evaluate(() => TepeHill.strength()), "and thinned").toBeLessThan(0.7);
+  expect(await page.evaluate(() => getComputedStyle(document.querySelector(".human-readout")).backdropFilter), "nothing blurred behind the reading").toBe("none");
   await page.evaluate(() => window.scrollTo(0, 0));
   await expect.poll(() => page.evaluate(() => TepeHill.lift()), { timeout: 4000, message: "the lines home" }).toBe(0);
   expect(await page.evaluate(() => TepeHill.wide()), "the split back to its own").toBe(0);
@@ -276,10 +302,125 @@ test("Apoteker Tepe's hill stands still with reduced motion, and opens without t
   await bare.close();
 });
 
-/* ON THE HOUSES VIEW Apoteker Tepe at the front, resting, brings nothing
-   up: its fragments of the 3D mountain went with it, until the owner
-   redesigns it. */
-test("Apoteker Tepe brings nothing up on the Houses view, and the 3D mountain's scripts are not asked for", async ({ page }) => {
+/* WHERE A BROWSER CANNOT DRIVE AN ANIMATION BY THE SCROLL (Firefox, for
+   now), tepe.js moves the same things straight off where the page is. */
+test("Apoteker Tepe's split opens with the scroll where the stylesheet cannot do it, by the script", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.setViewportSize(LAPTOP);
+  await page.addInitScript(() => { const s = CSS.supports.bind(CSS); CSS.supports = (a, b) => (/animation-timeline/.test(a + (b || "")) ? false : b === undefined ? s(a) : s(a, b)); });
+  await page.route(/style\.css/, async (r) => {
+    const res = await r.fetch();
+    r.fulfill({ response: res, body: (await res.text()).replace("@supports (animation-timeline: scroll())", "@supports (animation-timeline: none-such)") });
+  });
+  await page.goto(TEPE);
+  await settled(page);
+  expect(await page.evaluate(() => TepeHill.byStylesheet())).toBe(false);
+  await page.evaluate(() => window.scrollTo(0, document.querySelector(".tepe-hill").offsetHeight * 0.5));
+  await expect.poll(() => page.evaluate(() => TepeHill.wide()), { timeout: 3000 }).toBeGreaterThan(0.4);
+  expect(await page.evaluate(() => TepeHill.lift())).toBeGreaterThan(50);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect.poll(() => page.evaluate(() => TepeHill.wide()), { timeout: 3000 }).toBe(0);
+  expect(errors).toEqual([]);
+});
+
+/* NO WHITE LINE BY THE SPLIT ("remove the few white pixels on the LEFT of
+   the red/warm thing that goes through the mountain"): the left wall's cut
+   edge drew a line of the paper there for a round; nothing of it is left. */
+test("Apoteker Tepe's split has no line of the paper down its left side", async ({ page }) => {
+  await page.goto(TEPE);
+  expect(await page.locator(".tepe-seam line, .tepe-cut").count()).toBe(0);
+  expect(read("style.css"), "nor its style").not.toContain(".tepe-cut");
+  expect(read("tools/apoteker/hill.py"), "nor its drawing").not.toContain("tepe-cut");
+});
+
+/* THE HOUSE'S SIGN at the summit ("on the point above the break/split, if
+   you hover it, add the apoteker tepe logo please" — and then "Add the logo
+   to the box/square, not the arrow"): the hand on the summit's square
+   raises the house's own mark over it, and it goes as the hand goes; on a
+   phone a tap shows it, a tap elsewhere puts it away, and the section line
+   steps back while it is up. The head lets the hand through but for its
+   links — the way back to the houses still pressed. */
+test("Apoteker Tepe's sign comes up over the summit's square under the hand, or a tap on a phone", async ({ browser }) => {
+  const page = await browser.newPage({ viewport: LAPTOP });
+  await serveDependenciesLocally(page);
+  await page.goto(TEPE);
+  await settled(page);
+  const sign = () => page.evaluate(() => +getComputedStyle(document.querySelector(".tepe-sign"), "::after").opacity);
+  expect(await page.evaluate(() => getComputedStyle(document.querySelector(".tepe-sign"), "::after").backgroundImage), "the house's own mark").toContain("Apoteker%20Tepe%20Logo.webp");
+  expect(await sign(), "not until the hand comes").toBe(0);
+  const sq = await page.evaluate(() => { const s = document.querySelector(".tepe-summit").getBoundingClientRect(); return { x: s.x, y: s.y - 55 }; });
+  await page.mouse.move(sq.x, sq.y);
+  await expect.poll(sign, { timeout: 3000 }).toBeGreaterThan(0.8);
+  await page.mouse.move(400, 700);
+  await expect.poll(sign, { timeout: 3000 }).toBe(0);
+  const back = await page.evaluate(() => { const a = document.querySelector(".house-return").getBoundingClientRect(); return !!document.elementFromPoint(a.x + 8, a.y + 8).closest(".house-return"); });
+  expect(back, "the way back still pressed").toBe(true);
+  await page.close();
+
+  const phone = await browser.newContext({ viewport: PHONE, isMobile: true, hasTouch: true });
+  const p = await phone.newPage();
+  await serveDependenciesLocally(p);
+  await p.goto(TEPE);
+  await settled(p);
+  const at = await p.evaluate(() => { const s = document.querySelector(".tepe-summit").getBoundingClientRect(); return { x: s.x, y: s.y - 39 }; });
+  await p.touchscreen.tap(at.x, at.y);
+  await expect(p.locator(".tepe-summit")).toHaveClass(/is-signed/);
+  await expect.poll(() => p.evaluate(() => +getComputedStyle(document.querySelector(".tepe-section-end")).opacity), { timeout: 3000, message: "the section line steps back" }).toBe(0);
+  await p.touchscreen.tap(60, 700);
+  await expect(p.locator(".tepe-summit")).not.toHaveClass(/is-signed/);
+  await phone.close();
+});
+
+/* DOWN THE PAGE ("design elements of this mountain ... going down the page
+   too. nothing too fancy"): each fragrance a stratum, a band of its juice
+   down the side of its row in the split's order, as long as the row is —
+   longer when it is opened; and on a wide window the hill's contour lines
+   run on down both margins (none on a phone). All of it still, nothing the
+   scroll pays for. */
+test("Apoteker Tepe's strata run down the list beside its fragrances, and its contours down the margins", async ({ browser }) => {
+  const page = await browser.newPage({ viewport: LAPTOP });
+  await serveDependenciesLocally(page);
+  await page.goto(TEPE);
+  const bands = () => page.evaluate(() => [...document.querySelectorAll(".human-part")].map((d) => {
+    const b = getComputedStyle(d, "::before");
+    return { colour: b.backgroundColor, tall: parseFloat(b.height), row: d.getBoundingClientRect().height, left: parseFloat(b.left) };
+  }));
+  const shut = await bands();
+  const juices = await page.evaluate(() => [1, 2, 3, 4, 5, 6, 7, 8].map((n) => "rgb(" + getComputedStyle(document.body).getPropertyValue("--j" + n).trim() + ")"));
+  expect(shut.map((b) => b.colour), "each its own juice, in the split's order").toEqual(juices);
+  expect(new Set(juices).size).toBe(8);
+  for (const b of shut) {
+    expect(b.left, "beside the row").toBeLessThan(0);
+    expect(b.tall, "as long as its row (but its rule and a hairline of the page)").toBeCloseTo(b.row - 2, 0);
+  }
+  await page.locator(".human-part > summary").first().click();
+  await expect.poll(async () => (await bands())[0].tall, { timeout: 4000, message: "longer as its fragrance opens" }).toBeGreaterThan(shut[0].tall * 2);
+  const margins = await page.evaluate(() => getComputedStyle(document.body, "::after").backgroundImage);
+  expect(margins).toContain("margin-left.svg");
+  expect(margins).toContain("margin-right.svg");
+  for (const f of ["margin-left.svg", "margin-right.svg"]) {
+    const svg = read(`images/Apoteker Tepe/hill/${f}`);
+    expect((svg.match(/<path /g) || []).length, `${f}: four contour lines`).toBe(4);
+  }
+  await page.close();
+
+  const phone = await browser.newPage({ viewport: PHONE });
+  await serveDependenciesLocally(phone);
+  await phone.goto(TEPE);
+  expect(await phone.evaluate(() => getComputedStyle(document.body, "::after").backgroundImage), "no margins on a phone, no lines").toBe("none");
+  const band = await phone.evaluate(() => { const b = getComputedStyle(document.querySelector(".human-part"), "::before"); return { left: parseFloat(b.left), w: parseFloat(b.width) }; });
+  expect(band.w, "the strata on a phone, finer").toBeGreaterThan(0);
+  expect(await phone.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(PHONE.width);
+  await phone.close();
+});
+
+/* ON THE HOUSES VIEW Apoteker Tepe at the front, resting, brings up its
+   hill in pieces ("i want there to be design elements of this mountain on
+   the houses page"): stretches of its ridge with their contour lines and
+   the summit's mark, and a core of its juices with its section line — none
+   on another, none on the house at the front; and none of the 3D
+   mountain's scripts asked for. */
+test("Apoteker Tepe brings its hill up on the Houses view, in pieces clear of the house and of each other", async ({ page }) => {
   const errors = collectPageErrors(page);
   const asked = [];
   page.on("request", (r) => { if (/tepe(-data|-gl)?\.js/.test(r.url())) asked.push(r.url()); });
@@ -287,8 +428,14 @@ test("Apoteker Tepe brings nothing up on the Houses view, and the 3D mountain's 
   await page.goto("/scent-descriptions/#house-13");
   await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
   await expect(page.locator("#sheet")).toHaveAttribute("data-front", "13");
-  await page.waitForTimeout(3000);
-  expect(await page.evaluate(() => window.HouseMotifs.census()), "no motif of its own").toEqual({});
+  await expect.poll(() => page.evaluate(() => window.HouseMotifs.census()), { timeout: 8000 }).toMatchObject({ hillRidge: expect.any(Number), hillCore: 1 });
+  const hills = await page.evaluate(() => window.HouseMotifs.hills());
+  const front = await page.evaluate(() => { const r = document.querySelectorAll(".sheet-frame")[+document.getElementById("sheet").dataset.front - 1].getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom }; });
+  const apart = (a, b) => a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom;
+  for (let i = 0; i < hills.length; i++) {
+    expect(apart(hills[i], front), `${hills[i].kind} clear of the house`).toBe(true);
+    for (let j = i + 1; j < hills.length; j++) expect(apart(hills[i], hills[j]), "and of each other").toBe(true);
+  }
   expect(asked).toEqual([]);
   expect(errors).toEqual([]);
 });
@@ -318,7 +465,7 @@ test("none of Apoteker Tepe's 3D mountain, nor its frosted glass, is left in the
   for (const gone of ["tepe-photo", "human-field", "data-tepe-text"]) expect(html, gone).not.toContain(gone);
   expect(html, "the hill written by its tool").toContain("<!-- THE HILL: begin — written by tools/apoteker/hill.py, never by hand. -->");
   const motifs = read("motifs.js");
-  for (const gone of ["TepeGL", "RIDGE_", "function ridge", "ridges()"]) expect(motifs, gone).not.toContain(gone);
+  for (const gone of ["TepeGL", "RIDGE_", "function ridge(", "ridges()"]) expect(motifs, gone).not.toContain(gone);
   const pkg = JSON.parse(read("package.json"));
   expect(Object.keys(pkg.devDependencies), "image-js and geotiff, for its tools only").toEqual(["@playwright/test", "three"]);
 });

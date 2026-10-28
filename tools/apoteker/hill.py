@@ -28,10 +28,21 @@
 # little more as it is scrolled (style.css, tepe.js); the split is drawn
 # here at its widest (`WIDE`), the right block covering what is not open.
 #
+# EVERYTHING IS CUT HERE, NOTHING IN THE BROWSER ("when scrolling it is
+# slow and laggy", 2026-10-28): the two blocks are two pictures, each its
+# own side of the fault in its own pixels, and the contour lines are cut
+# where they cross it, so nothing in the hill is masked by the browser as
+# the page moves — a mask held on the lines cost a fifth of every frame.
+#
 #   python3 tools/apoteker/hill.py
 #
 # writes
-#   images/Apoteker Tepe/hill/the-hill.webp   the mountain, cut and printed
+#   images/Apoteker Tepe/hill/the-hill-left.webp, the-hill-right.webp
+#                                             the mountain, cut and printed,
+#                                             in its two blocks
+#   images/Apoteker Tepe/hill/margin-left.svg, margin-right.svg
+#                                             the contour lines that run on
+#                                             down the page's margins
 #   houses/apoteker-tepe.html                 the hill's markup — the two
 #                                             blocks, the contour lines, the
 #                                             split — between its THE HILL
@@ -49,7 +60,8 @@ from PIL import Image, ImageDraw
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
 SRC = os.path.join(ROOT, "images", "Apoteker Tepe", "AT MOUNTAIN 5.webp")
-OUT = os.path.join(ROOT, "images", "Apoteker Tepe", "hill", "the-hill.webp")
+OUT = os.path.join(ROOT, "images", "Apoteker Tepe", "hill")
+LEFT_OUT, RIGHT_OUT = "the-hill-left.webp", "the-hill-right.webp"
 PAGE = os.path.join(ROOT, "houses", "apoteker-tepe.html")
 
 RIDGE = [
@@ -94,12 +106,21 @@ CONTOURS = [(16, 18, 0.5), (36, 60, 0.32), (62, 120, 0.19), (94, 210, 0.1)]
 
 
 def cut_and_print():
+    # The photograph printed, cut out of its sky, let go at its foot, and cut
+    # in two along the fault: the left block to OVERLAP past it, the right
+    # from it, each antialiased by drawing its edge at four times the size,
+    # and each cropped to what it holds.
     im = Image.open(SRC).convert("RGB")
     W, H = im.size
     S = 4
-    m = Image.new("L", (W * S, H * S), 0)
-    ImageDraw.Draw(m).polygon([(x * S, (y + CUT_INTO) * S) for x, y in RIDGE] + [(W * S, H * S), (0, H * S)], fill=255)
-    mask = np.asarray(m.resize((W, H), Image.LANCZOS)).astype(np.float32) / 255
+    def coverage(poly):
+        m = Image.new("L", (W * S, H * S), 0)
+        ImageDraw.Draw(m).polygon([(x * S, y * S) for x, y in poly], fill=255)
+        return np.asarray(m.resize((W, H), Image.LANCZOS)).astype(np.float32) / 255
+    land = coverage([(x, y + CUT_INTO) for x, y in RIDGE] + [(W, H), (0, H)])
+    top, foot = -H, 2 * H
+    left = coverage([(-W, top), (at(top) + OVERLAP, top), (at(foot) + OVERLAP, foot), (-W, foot)])
+    right = coverage([(at(top), top), (2 * W, top), (2 * W, foot), (at(foot), foot)])
     ys = np.arange(H, dtype=np.float32)[:, None]
     fade = np.clip((H - ys) / (H - FADE_FROM), 0, 1)
     fade = fade * fade * (3 - 2 * fade)
@@ -110,17 +131,25 @@ def cut_and_print():
     hi = np.clip(t * 2 - 1, 0, 1)                              # green to paper over the lights
     rgb = np.where(t < 0.5, DARK + (GREEN - DARK) * lo, GREEN + (PAPER - GREEN) * hi)
     rgb = rgb * (1 - ORIGINAL) + a * ORIGINAL                  # and a little of the photograph's own
-    rgba = np.dstack([np.clip(rgb, 0, 255), mask * fade * 255]).astype(np.uint8)
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    Image.fromarray(rgba, "RGBA").save(OUT, quality=84, method=6)
-    return W, H
+    rgb = np.clip(rgb, 0, 255)
+    os.makedirs(OUT, exist_ok=True)
+    boxes = []
+    for side, name in ((left, LEFT_OUT), (right, RIGHT_OUT)):
+        alpha = land * fade * side
+        cols = np.where(alpha.max(axis=0) > 0.002)[0]
+        x0, x1 = int(cols[0]), int(cols[-1]) + 1
+        rgba = np.dstack([rgb, alpha * 255]).astype(np.uint8)[:, x0:x1]
+        Image.fromarray(rgba, "RGBA").save(os.path.join(OUT, name), quality=84, method=6)
+        boxes.append((x0, x1))
+    return W, H, boxes
 
 
 def contours(W):
     # Each line is the ridge's upper envelope (the highest of it within a
     # stretch either way) rounded off by a running mean over the same
     # stretch, lifted by its offset — gentle domes over the peaks, never
-    # touching the ridge.
+    # touching the ridge. Each is cut where it crosses the fault, into the
+    # piece on the left block and the piece on the right.
     step = 6
     xs = np.arange(0, W + step, step, dtype=np.float32)
     xs[-1] = W
@@ -134,8 +163,14 @@ def contours(W):
         pad = np.pad(env, k, mode="edge")
         soft = np.convolve(pad, np.ones(2 * k + 1) / (2 * k + 1), mode="valid")
         y = np.minimum(soft - off, ridge - off * 0.6)
-        d = "M" + " L".join(f"{int(round(x))} {int(round(v))}" for x, v in zip(xs, y))
-        out.append((ink, d))
+        pts = list(zip(xs.tolist(), y.tolist()))
+        side = [x - at(v) for x, v in pts]                      # below nought, left of the fault
+        i = next(j for j in range(1, len(pts)) if side[j - 1] < 0 <= side[j])
+        (xa, ya), (xb, yb) = pts[i - 1], pts[i]
+        f = side[i - 1] / (side[i - 1] - side[i])
+        cross = (xa + (xb - xa) * f, ya + (yb - ya) * f)
+        path = lambda seg: "M" + " L".join(f"{x:.0f} {v:.0f}" if (x, v) != cross else f"{x:.1f} {v:.1f}" for x, v in seg)
+        out.append((ink, path(pts[:i] + [cross]), path([cross] + pts[i:])))
     return out
 
 
@@ -158,30 +193,25 @@ def let_go(H, opacity_of="stop-opacity"):
 
 
 def fault(W, H):
-    # Where the cut runs, as the stylesheet wants it: each block's outline
-    # in percentages of the picture's own box (drawn well past its top and
-    # foot), the section line's foot and head, and the shift, in the box's
-    # own widths (`cqw`), so anything in the hill can be moved by it.
+    # Where the section line stands — its foot at the middle of the split's
+    # mouth, its head SECTION_TO down — in percentages of the picture's own
+    # box, and the shift in the box's own widths (`cqw`), so anything in
+    # the hill can be moved by it.
     fx, fy = FAULT
     dx, dy = SHIFT
-    top, foot = -0.5 * H, 1.5 * H
-    pc = lambda x, y: f"{x / W * 100:.3f}% {y / H * 100:.3f}%"
-    left = (f"polygon({pc(-0.2 * W, top)}, {pc(at(top) + OVERLAP, top)}, "
-            f"{pc(at(foot) + OVERLAP, foot)}, {pc(-0.2 * W, foot)})")
-    right = f"polygon({pc(at(top), top)}, {pc(1.2 * W, top)}, {pc(1.2 * W, foot)}, {pc(at(foot), foot)})"
     mx, my = fx + dx / 2, fy - dy / 2                        # the middle of the split's mouth
     length = (my - SECTION_TO) * (1 + LEAN * LEAN) ** 0.5
     section = f"--x:{mx / W * 100:.3f}%; --y:{my / H * 100:.3f}%; --len:{length / H * 100:.3f}%"
     end = f"--x:{(mx + LEAN * (my - SECTION_TO)) / W * 100:.3f}%; --y:{SECTION_TO / H * 100:.3f}%"
     shift = f"--shift-x:{dx / W * 100:.3f}cqw; --shift-y:{-dy / W * 100:.3f}cqw"
-    return left, right, section, end, shift
+    return section, end, shift
 
 
 def seam(W, H):
     # The mountain's inside, drawn at the split's widest: the house's eight
     # juices running down it one into the next (`--j1` to `--j8` in
     # style.css), a hairline stratum between each, dipping a little; the left
-    # wall's shade in it and its cut edge catching the light; let go at the
+    # wall's shade in it; let go at the
     # foot with the mountain. Its mouth is the line from the left block's
     # ridge along the way the right block moves, so the right block's ridge
     # stays on it however far it is open.
@@ -224,7 +254,6 @@ def seam(W, H):
         f'     <rect width="{W}" height="{H}" fill="url(#tepe-juice)"/>\n'
         + "".join(f"     {p}\n" for p in strata) +
         f'     <rect width="{W}" height="{H}" fill="url(#tepe-wall)"/>\n'
-        f'     <line class="tepe-cut" x1="{at(ty):.1f}" y1="{ty:.1f}" x2="{at(H):.1f}" y2="{H}"/>\n'
         "    </g>\n"
         "   </svg>\n"
     )
@@ -280,37 +309,78 @@ def numbers(W, H):
     return "".join(out)
 
 
-def write_page(W, H, lines):
+# THE MARGINS (2026-10-28 — "design elements of this mountain ... going
+# down the page too. nothing too fancy"): the ridge turned on its side and
+# run down the page, a few contour lines each side of the writing, as the
+# hill's are over it — each a tile the stylesheet repeats down the margin.
+MARGIN = (160, 960)           # a tile, css px: as wide as a margin, and repeated down it
+MARGIN_LINES = [(34, 26, 0.3), (66, 60, 0.22), (98, 110, 0.15), (128, 180, 0.09)]   # across, how gentle, how strong
+MARGIN_SWAY = 26              # how far the ridge sways across, css px
+
+
+def margins():
+    # The ridge's profile, its rise and fall taken out so a tile's foot
+    # meets the next tile's head, made the sway down a line; each line the
+    # profile rounded off over its own stretch, as the hill's contours are.
+    tw, th = MARGIN
+    px, py = zip(*RIDGE)
+    n = th // 4 + 1
+    t = np.linspace(0, 1, n)
+    f = np.interp(t * px[-1], px, py)
+    f = f - (f[0] + (f[-1] - f[0]) * t)                       # the ends meet
+    f = (f - f.mean()) / (np.abs(f).max() or 1)
+    out = []
+    for flip in (False, True):
+        rows = []
+        for across, wide, ink in MARGIN_LINES:
+            k = max(1, int(wide / 4))
+            loop = np.concatenate([f[-k - 1:-1], f, f[1:k + 1]])   # round the tile's join, too
+            soft = np.convolve(loop, np.ones(2 * k + 1) / (2 * k + 1), mode="valid")
+            soft = soft / (np.abs(soft).max() or 1)
+            if flip:
+                soft = np.roll(soft[:-1], (n - 1) // 2)
+                soft = np.append(soft, soft[0])
+            xs = across + soft * MARGIN_SWAY * (0.55 + 0.45 * across / tw)
+            if flip:
+                xs = tw - xs
+            d = "M" + " L".join(f"{x:.1f} {y:.0f}" for x, y in zip(xs, t * th))
+            rows.append(f'<path d="{d}" stroke-opacity="{ink}"/>')
+        out.append(
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="{tw}" height="{th}" viewBox="0 0 {tw} {th}">'
+            f'<g fill="none" stroke="rgb(31,42,32)" stroke-width="1" stroke-linejoin="round">{"".join(rows)}</g></svg>\n')
+    for name, svg in zip(("margin-left.svg", "margin-right.svg"), out):
+        with open(os.path.join(OUT, name), "w", encoding="utf-8") as fh:
+            fh.write(svg)
+
+
+def write_page(W, H, boxes, lines):
     sx, sy = SUMMIT
-    left, right, section, end, shift = fault(W, H)
-    rows = "\n".join(
-        f'       <path class="tepe-contour" style="--k:{i}; --ink:{ink}" pathLength="1" d="{d}"/>'
-        for i, (ink, d) in enumerate(lines)
-    )
-    ink = lambda clip: (
-        f'    <div class="tepe-hill-ink" style="clip-path:{clip}">\n'
-        f'     <svg class="tepe-hill-lines" viewBox="0 0 {W} {H}" preserveAspectRatio="none" focusable="false">\n'
-        f"{rows}\n"
-        "     </svg>\n"
-        "    </div>\n")
-    land = lambda clip, alt: (                                  # the right block's is the same picture again
-        f'    <img class="tepe-hill-land" src="../images/Apoteker Tepe/hill/the-hill.webp" alt="{alt}" '
-        + ('' if alt else 'aria-hidden="true" ') +
-        f'width="{W}" height="{H}" decoding="async" style="clip-path:{clip}">\n')
+    section, end, shift = fault(W, H)
+    ink = lambda side: (
+        f'    <svg class="tepe-hill-lines" viewBox="0 0 {W} {H}" preserveAspectRatio="none" focusable="false">\n'
+        + "\n".join(f'     <path class="tepe-contour" style="--k:{i}; --ink:{c[0]}" pathLength="1" d="{c[side]}"/>'
+                    for i, c in enumerate(lines))
+        + "\n    </svg>\n")
+    def land(name, box, alt):
+        x0, x1 = box
+        return (f'    <img class="tepe-hill-land" src="../images/Apoteker Tepe/hill/{name}" alt="{alt}" '
+                + ("" if alt else 'aria-hidden="true" ')            # the right block: the same picture's other half
+                + f'width="{x1 - x0}" height="{H}" decoding="async" '
+                f'style="left:{x0 / W * 100:.3f}%; width:{(x1 - x0) / W * 100:.3f}%">\n')
     block = (
         "<!-- THE HILL: begin — written by tools/apoteker/hill.py, never by hand. -->\n"
         '<div class="tepe-hill" aria-hidden="true">\n'
         f'  <div class="tepe-hill-box" style="{shift}">\n'
         '   <div class="tepe-hill-part tepe-hill-left">\n'
-        + land(left, "The mountain, my own photograph, its sky cut away, printed in the house's green")
-        + ink(left) +
+        + land(LEFT_OUT, boxes[0], "The mountain, my own photograph, its sky cut away, printed in the house's green")
+        + ink(1) +
         "   </div>\n"
         + seam(W, H) +
         '   <div class="tepe-hill-part tepe-hill-right">\n'
         + wall(W, H)
-        + land(right, "")
-        + f'    <span class="tepe-summit" style="--x:{sx / W * 100:.3f}%; --y:{sy / H * 100:.3f}%"></span>\n'
-        + ink(right)
+        + land(RIGHT_OUT, boxes[1], "")
+        + f'    <span class="tepe-summit" style="--x:{sx / W * 100:.3f}%; --y:{sy / H * 100:.3f}%"><i class="tepe-sign"></i></span>\n'
+        + ink(2)
         + numbers(W, H) +
         "   </div>\n"
         f'   <span class="tepe-section" style="{section}"></span>\n'
@@ -330,6 +400,7 @@ def write_page(W, H, lines):
 
 
 if __name__ == "__main__":
-    W, H = cut_and_print()
-    write_page(W, H, contours(W))
-    print("the hill:", os.path.relpath(OUT, ROOT), "and its contours in", os.path.relpath(PAGE, ROOT))
+    W, H, boxes = cut_and_print()
+    margins()
+    write_page(W, H, boxes, contours(W))
+    print("the hill:", os.path.relpath(OUT, ROOT), "(two blocks) and its markup in", os.path.relpath(PAGE, ROOT))

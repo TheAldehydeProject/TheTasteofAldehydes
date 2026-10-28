@@ -21,21 +21,30 @@ is Scentorium's. Both are credited at the foot of the page.
                           wood).
   Brother+Night+2.webp    Brother Night's one picture (the bottle beside
                           its box, on marble).
-  Apoteker Tepe Logo.webp the house's sign. Used nowhere on the site since
-                          2026-10-22: the mountain that carried it (blazed
-                          along its trails, cut into its slope, at its
-                          summit in the free view) was taken out at the
-                          owner's word, to be redesigned. Kept for that.
+  Apoteker Tepe Logo.webp the house's sign: raised over the hill's summit
+                          square under the hand since 2026-10-28 (the
+                          stylesheet's .tepe-sign). From 2026-10-20 to
+                          10-22 the mountain carried it (blazed along its
+                          trails, cut into its slope, at its summit in the
+                          free view), and it was used nowhere between.
 
   AT MOUNTAIN 1.webp      the owner's own photographs of a mountain (the
     ... AT MOUNTAIN 5.webp site's mark, H2C=O, in each corner), uploaded on
                           2026-10-27. AT MOUNTAIN 5 is the page's hill;
                           1 to 4 are kept, used nowhere since the frosted
                           glass they stood behind was replaced the same day.
-  hill/the-hill.webp      AT MOUNTAIN 5 cut out of its sky and printed in
+  hill/the-hill-left.webp AT MOUNTAIN 5 cut out of its sky and printed in
+  hill/the-hill-right.webp
                           the house's green, see-through above its ridge:
-                          the hill at the head of the page. Written by
-                          tools/apoteker/hill.py, never by hand.
+                          the hill at the head of the page, in its two
+                          blocks, each cut to its own side of the fault
+                          and cropped to it (2026-10-28; it was one
+                          picture, the-hill.webp, cut by the browser).
+  hill/margin-left.svg    the ridge on its side, four contour lines, one
+  hill/margin-right.svg   tile of it: repeated down both margins of the
+                          page at 1180px and wider.
+                          All four written by tools/apoteker/hill.py,
+                          never by hand.
 
   web/                    the copies the page shows: each cut picture 640
                           wide, each scene 900, Kogen and Brother Night as
