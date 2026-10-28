@@ -144,6 +144,10 @@ words stand; only the empty columns come back.
 `tests/writing.spec.js`, *the writing inside a shut part is not counted until it is opened*, on Lost
 Tribe: a shut part's summary is writing, its first paragraph — measured where it would stand — is not,
 and once opened it is. The other tests open every part first, so they are as they were.
+(2026-10-28: on a busy machine the page could still stand at its head when the opened paragraph was
+measured, the paragraph under the window and so no writing — it failed under the full suite, the
+page's code as it was before and after. The paragraph is brought onto the screen before it is
+measured, as the shut one already was.)
 
 ## 2026-10-20, last — Apoteker Tepe quiet as Ataraxia is
 
