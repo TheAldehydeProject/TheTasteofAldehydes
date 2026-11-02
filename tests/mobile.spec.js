@@ -31,7 +31,7 @@ const PAGES = [
   "/theories/",
   "/favourites/",
   "/explorations-and-researches/",
-  "/photography/",
+  "/perfumers/",
   "/note-library/",
   "/houses/pineward.html",
   "/houses/adar.html",

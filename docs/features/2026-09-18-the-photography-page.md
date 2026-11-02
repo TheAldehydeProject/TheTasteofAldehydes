@@ -94,3 +94,10 @@ website will be completed later.*, and shows the page as it is.
 The page-level checks in `tests/pages.spec.js` and `tests/mobile.spec.js` still cover it (it loads
 with no errors, its title, its links, no sideways scroll at 390px). The known issues above about the
 twelve placeholder frames no longer apply: there are none.
+
+## 2026-11-02 — replaced by Perfumers
+
+The owner asked for a new page, Perfumers, to "replace photographs": it took Photography's place in
+the Menu, on the home page's formula slide and on the node map, and `photography/index.html` is a
+signpost to `/perfumers/` now (so is `categories/other-2.html`). `photography.js` was taken out; the
+page as it was is in the repository's history. See [Perfumers](2026-11-02-perfumers.md).

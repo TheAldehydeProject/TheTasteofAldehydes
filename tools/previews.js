@@ -41,7 +41,7 @@ const PAGES = [
     name: "note-library", url: "note-library/", wait: 5000,
     after: async (page) => { await page.keyboard.press("Shift"); await page.waitForTimeout(1400); },
   },
-  { name: "photography", url: "photography/", wait: 1800 },
+  { name: "perfumers", url: "perfumers/", wait: 3200 },
   {
     name: "search", url: "search/", wait: 2600,
     then: async (page) => { await page.locator("input").first().fill("pine"); },

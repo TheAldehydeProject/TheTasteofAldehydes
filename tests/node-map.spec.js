@@ -22,7 +22,7 @@ const EXPECTED_LABELS = [
   "Explorations & Researches",
   "Favourites",
   "Note Library",
-  "Photography",
+  "Perfumers",
   "Search",
   "Contact",
 ];
@@ -410,28 +410,20 @@ test("at rest, no two node labels overlap", async ({ page }) => {
   expect(nearest, "pixels between the two nearest labels").toBeGreaterThan(20);
 });
 
-/* THE OWNER ASKED FOR PHOTOGRAPHY TO SAY SO. Clicking it opens the
-   preview rather than the page, and the window carries a line of its
-   own saying the page is unfinished. */
-test("the Photography node says it is a work in progress", async ({ page }) => {
+/* THE OWNER ASKED FOR PHOTOGRAPHY TO SAY SO (a note in its window, that
+   the page was unfinished). Perfumers took its place on 2026-11-02, and
+   no node carries a note now: Perfumers opens its window, without one. */
+test("the Perfumers node opens its window, with no note", async ({ page }) => {
   await serveDependenciesLocally(page);
   await page.goto(HOME_WITH_MAP);
   await jumpToSlide(page, "slide-3");
   await waitForMapSettled(page);
 
-  await pressNode(page.locator(".node3d-label", { hasText: "Photography" }));
-  await expect(page.locator(".node-preview-modal")).toBeVisible();
-  await expect(page.locator(".node-preview-note")).toBeVisible();
-  await expect(page.locator(".node-preview-note")).toContainText(/work in progress/i);
-  expect(page.url(), "and it opens the window rather than the page")
-    .toContain("index.html");
-
-  // Only the page that has something to say gets one.
-  await page.locator(".node-preview-close").click();
-  await page.waitForTimeout(700);
-  await pressNode(page.locator(".node3d-label", { hasText: "Theories" }));
+  await pressNode(page.locator(".node3d-label", { hasText: "Perfumers" }));
   await expect(page.locator(".node-preview-modal")).toBeVisible();
   await expect(page.locator(".node-preview-note")).toHaveCount(0);
+  expect(page.url(), "and it opens the window rather than the page")
+    .toContain("index.html");
 });
 
 /* SOLID SPHERES, AND A LIGHTER SLIDE — the owner, 2026-09-26: "make the

@@ -94,19 +94,11 @@ const REAL_NODES = [
     preview: { image: "images/Previews/note-library.jpg", description: "Every note named in a fragrance on this site, shelved by family, each with a brief explanation of what it is." },
   },
   {
-    label: "Photography", sub: "frames in sets, and what is written on the back",
-    href: "photography/", pos: [2.0, -1.2, 2.19],
-    preview: {
-      image: "images/Previews/photography.jpg",
-      description: "The frames stand in sets, numbered down the margin, each with what a photographer writes on the back of a print.",
-      // THE OWNER ASKED FOR THIS ONE TO SAY SO. It is a `note` rather
-      // than part of the description because it is a state of the page
-      // rather than a line about it, and the window sets it apart.
-      // (It said the frames were in place until the owner emptied the
-      // page, 2026-09-29: "This part of the webpage will be completed
-      // later".)
-      note: "Work in progress — this part of the website will be completed later.",
-    },
+    // Photography's place since 2026-11-02, when Perfumers took it in the
+    // Menu. Its picture is still to be taken (`node tools/previews.js`).
+    label: "Perfumers", sub: "who made them, round one circle",
+    href: "perfumers/", pos: [2.0, -1.2, 2.19],
+    preview: { description: "Every perfumer behind a perfume on this site, and Prin Lomros’ houses, round one circle: the houses, the perfumes and their years, each with its sources." },
   },
   {
     label: "Search", sub: "one field over the whole site",

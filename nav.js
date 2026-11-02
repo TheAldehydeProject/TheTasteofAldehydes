@@ -360,7 +360,7 @@ const SITE_LINKS = [
   { label: "Explorations & Researches", href: "explorations-and-researches/" },
   { label: "Favourites", href: "favourites/" },
   { label: "Note Library", href: "note-library/" },
-  { label: "Photography", href: "photography/" },
+  { label: "Perfumers", href: "perfumers/" },
   { label: "Search", href: "search/" },
   { label: "Contact", href: "contact/" },
 ];

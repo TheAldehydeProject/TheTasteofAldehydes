@@ -59,7 +59,7 @@ P = {
  "favourites/index.html": dict(desc="Favourites — things I like, no other criteria than that: fragrances in chapters, among them Des Cendres, Haxan and De Profundis.", crumbs=[HOME]),
  "explorations-and-researches/index.html": dict(desc="Explorations & Researches. Here you will find my researches and my explorations: a guide to perfume, dupes, designers and niches, resins in perfumery, and more.", crumbs=[HOME]),
  "note-library/index.html": dict(desc="The Note Library: every note named in a fragrance on this site, as a network in three dimensions — what each is, its variations, and its sources.", crumbs=[HOME]),
- "photography/index.html": dict(desc="Photography: pictures taken alongside the writing — mostly of the things being described, sometimes of the places they brought to mind.", crumbs=[HOME]),
+ "perfumers/index.html": dict(desc="Perfumers: every perfumer behind a perfume on this site, and Prin Lomros’ houses — their houses, their perfumes and the years, on one circle, with sources.", crumbs=[HOME]),
  "houses/pineward.html": dict(type="article", desc="Pineward, the house that smells like trees: forty-eight fragrances described with their notes and photographs — Murkwood, Snoqualmie, White Fir and more.", crumbs=[HOME, SD]),
  "houses/adar.html": dict(type="article", desc="ADAR, the house that you have never heard of: eleven fragrances described with their notes — Amber Zero, Aetherialism, Incantu, Lignum Dei, Tyrian and more.", crumbs=[HOME, SD]),
  "houses/almost-human.html": dict(type="article", desc="Almost Human, abstraction done quite well: Burning Bridges, Dear Future, Desert Hope, Ritual Code and Silent Rain, described with their olfactory landscapes.", crumbs=[HOME, SD]),
@@ -101,7 +101,7 @@ P["works/individual-fragrances.html"] = dict(desc=P["individual-fragrances/indiv
 # and the old addresses forward to them (and /home to the home page).
 MENU_MOVES = {"categories/scent-descriptions.html": "scent-descriptions", "categories/theories.html": "theories",
               "categories/researches.html": "explorations-and-researches", "categories/favorites.html": "favourites",
-              "categories/note-library.html": "note-library", "categories/other-2.html": "photography",
+              "categories/note-library.html": "note-library", "categories/other-2.html": "perfumers", "photography/index.html": "perfumers",
               "search.html": "search", "contact.html": "contact"}
 for old, new in MENU_MOVES.items():
     P[old] = dict(desc=P[new + "/index.html"]["desc"], noindex=True, canonical=new + "/")
@@ -130,6 +130,7 @@ THEME = {
  "houses/tale-parfums.html": "#fbf8f0",
  "houses/tombstone.html": "#ecebe8",
  "search/index.html": "#191c21",
+ "perfumers/index.html": "#0b0c0d",
 }
 for essay in ["theory-01", "theory-02", "theory-03", "resins-in-perfumery", "skin",
               "buying-a-perfume", "dupes-designers-and-niches", "my-personal-introduction-to-perfume"]:

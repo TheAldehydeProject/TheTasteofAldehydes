@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfumers — The Taste of Aldehydes</title>
+<!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
+<meta name="description" content="Perfumers: every perfumer behind a perfume on this site, and Prin Lomros’ houses — their houses, their perfumes and the years, on one circle, with sources.">
+<link rel="canonical" href="https://thetasteofaldehydes.com/perfumers/">
+<link rel="icon" href="../favicon.svg?v=2026-10-05" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2026-10-05">
+<meta name="theme-color" content="#0b0c0d">
+<meta property="og:site_name" content="The Taste of Aldehydes">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Perfumers">
+<meta property="og:description" content="Perfumers: every perfumer behind a perfume on this site, and Prin Lomros’ houses — their houses, their perfumes and the years, on one circle, with sources.">
+<meta property="og:url" content="https://thetasteofaldehydes.com/perfumers/">
+<meta property="og:image" content="https://thetasteofaldehydes.com/images/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Perfumers">
+<meta name="twitter:description" content="Perfumers: every perfumer behind a perfume on this site, and Prin Lomros’ houses — their houses, their perfumes and the years, on one circle, with sources.">
+<meta name="twitter:image" content="https://thetasteofaldehydes.com/images/social-card.png">
+<meta name="twitter:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://thetasteofaldehydes.com/"}, {"@type": "ListItem", "position": 2, "name": "Perfumers", "item": "https://thetasteofaldehydes.com/perfumers/"}]}</script>
+<!-- SEARCH ENGINES: end -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=5a921ef4b0">
+</head>
+<!--
+  PERFUMERS — what took the Photography page's place in the Menu
+  (2026-11-02: "add a new page called Perfumers. It should replace
+  photographs ... I want it to look like picture 1 and when you click on
+  somewhere then it zooms in on somewhere").
+
+  Picture 1 was a poster: a year laid round a circle, the Earth in the
+  middle, a line out from it for every event, the months in spaced
+  capitals and every day numbered round the rim, the events written out
+  past it. Here the same drawing carries PERFUMER → HOUSE → PERFUME: the
+  perfumers round the circle (A–Z, or by year from the switch at the top
+  right), each perfume a line out from the middle — THE FURTHER OUT, THE
+  MORE RECENT — its number on the rim and its name past it. A click
+  tips the whole chart back and flies down to where you clicked, as
+  picture 2 does, the near part sharp and the rest out of focus.
+
+  NOTHING ON THIS PAGE IS WRITTEN BY HAND BUT THE WORDS AROUND THE CHART.
+  Every perfume, perfumer, year, house and source is in
+  tools/perfumers/LEDGER.md, the store of facts the owner asked for
+  ("a separate text document ... the perfume, its perfumer(s) and the
+  year of creation, and the house of that perfume. Based on that, create
+  this page"). tools/perfumers/build.py reads it and writes
+  perfumers-data.js, which perfumers.js draws, and the index and the
+  sources at the foot of this page, between their markers. Edit the
+  ledger, never those.
+
+  WITHOUT JAVASCRIPT the page is its index and its sources: every
+  perfumer, their houses and their perfumes, each linked to where it is
+  written about on the site.
+-->
+<body class="perfumers-page dark-surface">
+
+<p class="page-where">Perfumers</p>
+
+<main class="pf">
+
+  <section class="pf-stage" aria-label="The perfumers, drawn round a circle">
+    <canvas class="pf-chart" aria-hidden="true"></canvas>
+    <canvas class="pf-dof" aria-hidden="true"></canvas>
+    <canvas class="pf-live" aria-hidden="true"></canvas>
+
+    <header class="pf-title">
+      <h1 class="pf-title-word">Perfumers</h1>
+      <p class="pf-title-years" aria-hidden="true">2009 — 2026</p>
+      <p class="pf-title-say">A guide to the noses behind the perfumes on this site, house by house — and the whole of Prin Lomros.</p>
+    </header>
+
+    <div class="pf-sort" role="group" aria-label="Arrange the chart">
+      <span class="pf-sort-say">Arrange</span>
+      <button type="button" class="pf-sort-button" data-sort="az" aria-pressed="true">A–Z</button>
+      <button type="button" class="pf-sort-button" data-sort="year" aria-pressed="false">By year</button>
+    </div>
+
+    <button type="button" class="pf-back" hidden>
+      <span class="pf-back-mark" aria-hidden="true"></span>The whole chart
+    </button>
+
+    <p class="pf-hint" aria-hidden="true">Click anywhere to look closer</p>
+    <div class="pf-tip" aria-hidden="true" hidden></div>
+  </section>
+
+  <section class="pf-notes" aria-label="About the chart">
+    <div class="pf-notes-col pf-notes-left">
+      <h2 class="pf-notes-head">Intro</h2>
+      <p>Every perfume written about on this site, traced back to the person who made it — and the whole
+        catalogue of Prin Lomros, whose Haxan is one of them.</p>
+      <p>The perfumers stand round the circle, their houses inside each, and every perfume is a line out
+        from the middle: <strong>the further out, the more recent.</strong> Its number is on the rim, its name past it.</p>
+      <h2 class="pf-notes-head">Disclaimer</h2>
+      <p>Who made a perfume, and when, is taken only from the sources at the foot of this page. Where none
+        could be found the chart says so rather than guess — a hollow mark has no year, and the perfumes no
+        source credits stand together under <em>Perfumer not found</em>.</p>
+    </div>
+    <div class="pf-notes-col pf-notes-right">
+      <h2 class="pf-notes-head">Legend</h2>
+      <ul class="pf-legend">
+        <li><span class="pf-key pf-key-dot pf-key-gold" aria-hidden="true"></span><b>Individual fragrance</b> written about here</li>
+        <li><span class="pf-key pf-key-dot pf-key-blue" aria-hidden="true"></span><b>House perfume</b> written about here</li>
+        <li><span class="pf-key pf-key-dot pf-key-rose" aria-hidden="true"></span><b>Prin Lomros' houses</b>, not written about here</li>
+        <li><span class="pf-key pf-key-line" aria-hidden="true"></span><b>Named</b> — a source names its perfumer</li>
+        <li><span class="pf-key pf-key-line pf-key-dash" aria-hidden="true"></span><b>The house's perfumer</b> — no nose named for this one</li>
+        <li><span class="pf-key pf-key-line pf-key-dot-line" aria-hidden="true"></span><b>Perfumer not found</b></li>
+        <li><span class="pf-key pf-key-dot pf-key-hollow" aria-hidden="true"></span><b>Year not found</b> — on the dashed ring</li>
+        <li><span class="pf-key pf-key-ring" aria-hidden="true"></span><b>Rings</b> — one a year, 2009 in the middle to 2026 outside</li>
+      </ul>
+      <p class="pf-counts" data-counts>280 perfumes · 142 written about here · 23 perfumers · 27 houses</p>
+    </div>
+  </section>
+
+  <section class="pf-foot">
+    <div class="pf-index">
+      <h2 class="pf-notes-head">Index</h2>
+      <div class="pf-index-cols">
+      <!-- THE INDEX: begin — written by tools/perfumers/build.py from tools/perfumers/LEDGER.md; never by hand. -->
+      <article class="pf-entry" id="perfumer-russian-adam">
+        <h3 class="pf-entry-name">Russian Adam <span class="pf-entry-count">1</span></h3>
+        <p class="pf-entry-house">Areej Le Doré</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-12">Forbidden Flower</a></span> <span class="pf-entry-year">2024</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-dan-roxana-adar">
+        <h3 class="pf-entry-name">Dan &amp; Roxana Adar <span class="pf-entry-count">11</span></h3>
+        <p class="pf-entry-house">ADAR</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/adar.html#part-05">α11 Alpha11</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/adar.html#part-07">ADHD</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/adar.html#part-02">Aetherialism</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/adar.html#part-04">Against All Odds</a></span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/adar.html#part-06">Alta Luna</a></span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/adar.html#part-01">Amber Zero</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/adar.html#part-03">Incantu</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/adar.html#part-09">Lignum Dei</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/adar.html#part-10">Lithos Diaphanes Λίθος Διαφανές</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/adar.html#part-08">Root Code</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/adar.html#part-11">Tyrian</a></span> <span class="pf-entry-year">2026</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-goran-bajazetov">
+        <h3 class="pf-entry-name">Goran Bajazetov <span class="pf-entry-count">5</span></h3>
+        <p class="pf-entry-house">Almost Human</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/almost-human.html#part-01">Burning Bridges</a></span> <span class="pf-entry-year">2026</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/almost-human.html#part-02">Dear Future</a></span> <span class="pf-entry-year">2026</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/almost-human.html#part-03">Desert Hope</a></span> <span class="pf-entry-year">2026</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/almost-human.html#part-04">Ritual Code</a></span> <span class="pf-entry-year">2026</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/almost-human.html#part-05">Silent Rain</a></span> <span class="pf-entry-year">2026</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-rajesh-balkrishnan">
+        <h3 class="pf-entry-name">Rajesh Balkrishnan <span class="pf-entry-count">1</span></h3>
+        <p class="pf-entry-house">Lost Tribe</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/lost-tribe.html#part-03">Pan’s Labyrinth</a></span> <span class="pf-entry-year">year not found</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-christian-carbonnel">
+        <h3 class="pf-entry-name">Christian Carbonnel <span class="pf-entry-count">1</span></h3>
+        <p class="pf-entry-house">Sultan Pasha Perfumes</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-11">Quintessentially Amber</a></span> <span class="pf-entry-year">2025</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-francois-demachy">
+        <h3 class="pf-entry-name">François Demachy <span class="pf-entry-count">1</span></h3>
+        <p class="pf-entry-house">Dior</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-04">Tobacolor</a></span> <span class="pf-entry-year">2021</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-chad-hodge">
+        <h3 class="pf-entry-name">Chad Hodge <span class="pf-entry-count">1</span></h3>
+        <p class="pf-entry-house">Tale Parfums</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/tale-parfums.html#part-04">Water Me</a></span> <span class="pf-entry-year">year not found</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-david-lev-jipa-slivinschi">
+        <h3 class="pf-entry-name">David-Lev Jipa-Slivinschi <span class="pf-entry-count">2</span></h3>
+        <p class="pf-entry-house">Ataraxia</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/ataraxia.html#part-01">Amaretto Jazz in the Melting Room</a></span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/ataraxia.html#part-05">Vestibule</a></span> <span class="pf-entry-year">2024</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-antoine-lie">
+        <h3 class="pf-entry-name">Antoine Lie <span class="pf-entry-count">4</span></h3>
+        <p class="pf-entry-house">Les Abstraits</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/les-abstraits.html#part-01">Belle Âme</a></span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/les-abstraits.html#part-02">Des Cendres</a></span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/les-abstraits.html#part-03">La Douleur Exquise</a></span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/les-abstraits.html#part-04">Philosopher’s Walk</a></span> <span class="pf-entry-year">2025</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-aichi-liu">
+        <h3 class="pf-entry-name">Aichi Liu <span class="pf-entry-count">14</span></h3>
+        <p class="pf-entry-house">Om Parfums</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/om-parfums.html#part-03">Burnana</a></span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/om-parfums.html#part-04">Cannabis Café</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/om-parfums.html#part-05">Dark Night of the Soul</a></span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/om-parfums.html#part-02">Lust</a></span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/om-parfums.html#part-01">Nymphaea Caerulea</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/om-parfums.html#part-08">Oud de Pasión</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/om-parfums.html#part-09">Smoke Oud</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/om-parfums.html#part-06">This Too Shall Pass</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/om-parfums.html#part-07">When the Linden Blooms</a></span> <span class="pf-entry-year">2024</span></li>
+        </ul>
+        <p class="pf-entry-house">Outsider Parfums</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/outsider-parfums.html#part-05">Amaretto Coffee</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/outsider-parfums.html#part-02">Draco</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/outsider-parfums.html#part-01">Dragon’s Breath</a></span> <span class="pf-entry-year">2026</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/outsider-parfums.html#part-04">Guilty as Charged</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/outsider-parfums.html#part-03">Xocolate Crotch</a></span> <span class="pf-entry-year">year not found</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-josh-lobb">
+        <h3 class="pf-entry-name">Josh Lobb <span class="pf-entry-count">1</span></h3>
+        <p class="pf-entry-house">Slumberhouse</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-13">Ore</a></span> <span class="pf-entry-year">2009</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-prin-lomros">
+        <h3 class="pf-entry-name">Prin Lomros <span class="pf-entry-count">139</span></h3>
+        <p class="pf-entry-house">Parfum Prissana</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume">Akhetaten</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Apsarah</span> <span class="pf-entry-year">2018</span></li>
+          <li><span class="pf-entry-perfume">Ayutthaya</span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume">Chetyre</span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume">Dunhuang</span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume">Emerald Curry</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Gularb Matana</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-03">Haxan</a></span> <span class="pf-entry-year">2018</span></li>
+          <li><span class="pf-entry-perfume">Hayra</span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume">Hirun</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Karuna</span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume">Keerati</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">L&#x27;Ombre d&#x27;Hier</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Lágrima Sagrada</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Le Cirque Bleu</span> <span class="pf-entry-year">2017</span></li>
+          <li><span class="pf-entry-perfume">Ma Nishtana</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Mandarava</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Maruyama 丸山</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Mohragot</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Narasimha Attar</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Narasimha Extrait de Parfum</span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume">Natsumeku</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Nefer</span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume">Nesnás Qareen</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Nimitr</span> <span class="pf-entry-year">2018</span></li>
+          <li><span class="pf-entry-perfume">Ronda</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Sahar</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Savitri สาวิตรี</span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume">Thichila</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Tirtha</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Tom Yum</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Vallée des Roses</span> <span class="pf-entry-year">year not found</span></li>
+        </ul>
+        <p class="pf-entry-house">PRIN</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume">0125</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">0225 ๐๒๒๕</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Ahuizotl</span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume">Anatolia</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Anatolia Anatolia</span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume">Aran</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Arsalan</span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume">Burmite Honey</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Dveṣa</span> <span class="pf-entry-year">2026</span></li>
+          <li><span class="pf-entry-perfume">Eshu</span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume">Fantôme de la Nuit</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Ganja Kasturi</span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume">Homa</span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume">Hürrem Sultan</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Indigo Night</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Kheerin คีรินทร์</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Krissana</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Loup</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Mandodari มณโฑ</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Mandodari Mandodari</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Moha</span> <span class="pf-entry-year">2026</span></li>
+          <li><span class="pf-entry-perfume">Mongolian Mriga</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Mriga มฤค</span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume">Naruemit</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Nilmalee</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Nilubol</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Nisatiruk นิศาทิรุกข์</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Nocturnal Poetry</span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume">Onthamara</span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume">Oqachol</span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume">Pathavi</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Persephone</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Prajñā</span> <span class="pf-entry-year">2026</span></li>
+          <li><span class="pf-entry-perfume">Rāga</span> <span class="pf-entry-year">2026</span></li>
+          <li><span class="pf-entry-perfume">Rahassanai</span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume">Rattikarn รัตติกาล</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Saringkarn ศฤงคาร</span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume">Saringkarn Saringkarn</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Sgàil</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Varuek วฤค</span> <span class="pf-entry-year">2021</span></li>
+        </ul>
+        <p class="pf-entry-house">Strangers Parfumerie</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume">À la folie</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">A Sorta Fairytale in Hyde Park</span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume">Aroon Sawat</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Autumn Tea and Yuzu Vanilla</span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume">Burning Ben</span> <span class="pf-entry-year">2018</span></li>
+          <li><span class="pf-entry-perfume">Cachouli</span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume">Caffeine Honey</span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume">Câlin d&#x27;Été</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Cherry Amaretto</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Chokedee</span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume">Cigar Rum</span> <span class="pf-entry-year">2017</span></li>
+          <li><span class="pf-entry-perfume">Cigar Rum (2024)</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Cigar Rum Intense</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Comme un Carrousel</span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume">Concrete Forest</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Cornwall Rose</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Ember</span> <span class="pf-entry-year">2017</span></li>
+          <li><span class="pf-entry-perfume">Eternal Summer</span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume">Euphories</span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume">Fleur de Lune</span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume">Fume Ma Peau</span> <span class="pf-entry-year">2017</span></li>
+          <li><span class="pf-entry-perfume">Garden of Eden</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Gheorghe</span> <span class="pf-entry-year">2018</span></li>
+          <li><span class="pf-entry-perfume">Green Lunar</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Guido</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Iridescent Sky</span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume">Kira Kira</span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume">La Malila</span> <span class="pf-entry-year">2017</span></li>
+          <li><span class="pf-entry-perfume">La Porte</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Lava Rose</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Les Mauvais Garçons</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Lights upon Orange Tree</span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume">Limonsitano</span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume">Lom Hom Khao Hom</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Lumberjack Cologne</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Magenta Pop</span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume">Maia</span> <span class="pf-entry-year">2017</span></li>
+          <li><span class="pf-entry-perfume">Muscat Jasmine Tea</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Nobles &#x27;17</span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume">Oliver</span> <span class="pf-entry-year">2018</span></li>
+          <li><span class="pf-entry-perfume">Pink Clouds</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Plunge</span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume">Punk #2077</span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume">Red Lime Soda</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Rêve du Matin</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Roasted Coffee Cigarette Whisky Come and Get Your Suede Honey Baby</span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume">Rosa Raimunda</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Rosso Amaretto</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Salted Green Mango</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">San Clemente</span> <span class="pf-entry-year">2018</span></li>
+          <li><span class="pf-entry-perfume">Sangre Dulce</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Scotch Peat</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">SM Café</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">So Fetch!</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Soleil de Thé</span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume">Sombre</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Spring Ambience</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Summer Peaches by the Tea Room</span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume">Sweet Celestials</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Sweet Farewell</span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume">Sweet Muskmelon</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Sweet Tani</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Tokiwa</span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume">Virginia</span> <span class="pf-entry-year">2018</span></li>
+          <li><span class="pf-entry-perfume">Wicked John</span> <span class="pf-entry-year">2019</span></li>
+          <li><span class="pf-entry-perfume">Yue Tu 月兔</span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume">Yuzu Soda</span> <span class="pf-entry-year">2021</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-ramon-monegal">
+        <h3 class="pf-entry-name">Ramón Monegal <span class="pf-entry-count">1</span></h3>
+        <p class="pf-entry-house">Ramón Monegal</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-05">Flamenco EDP</a></span> <span class="pf-entry-year">2017</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-pierre-montale">
+        <h3 class="pf-entry-name">Pierre Montale <span class="pf-entry-count">1</span></h3>
+        <p class="pf-entry-house">Mancera</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-06">French Riviera</a></span> <span class="pf-entry-year">2022</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-nicholas-nilsson">
+        <h3 class="pf-entry-name">Nicholas Nilsson <span class="pf-entry-count">48</span></h3>
+        <p class="pf-entry-house">Pineward</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-25">Acadian</a></span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-29">Akero</a></span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-30">Apple Tabac</a></span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-01">Bindebole</a></span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-02">Boreal</a></span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-03">Brokilän</a></span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-15">Bucolic</a></span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-31">Caravansary</a></span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-21">Christmas Wine</a></span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-32">Clemenpine</a></span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-26">Coastal Veil</a></span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-33">Coffee Tabac</a></span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-04">Cotswold</a></span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-34">Delfiño</a></span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-05">Eldritch</a></span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-06">Fanghorn II</a></span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-07">Funerie</a></span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-22">Gingerbread</a></span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-27">Gingermoss</a></span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-23">Glühwein</a></span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-35">Greymist</a></span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-36">Gristmill</a></span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-16">Hayloft</a></span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-17">Hayride</a></span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-37">Holy Cross</a></span> <span class="pf-entry-year">2026</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-38">Icefall</a></span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-39">Ivymoss</a></span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-08">Juniperus</a></span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-40">Lime Cola</a></span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-41">Meadowmoss</a></span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-42">Mint Cocoa</a></span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-09">Murkwood</a></span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-10">Nocturnis</a></span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-43">Noki</a></span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-11">Oxylus</a></span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-18">Pastoral</a></span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-44">Ponderosa</a></span> <span class="pf-entry-year">2022</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-45">Pumpkivus</a></span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-24">Revelries</a></span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-19">Shire</a></span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-12">Snoqualmie</a></span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-20">Steading</a></span> <span class="pf-entry-year">2020</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-13">Sturbridge</a></span> <span class="pf-entry-year">2023</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-28">Subalpine</a></span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-46">Tome</a></span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-47">Treacle</a></span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-48">Velvetine</a></span> <span class="pf-entry-year">2021</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/pineward.html#part-14">White Fir</a></span> <span class="pf-entry-year">2022</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-michael-nordstrand">
+        <h3 class="pf-entry-name">Michael Nordstrand <span class="pf-entry-count">1</span></h3>
+        <p class="pf-entry-house">Tale Parfums</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/tale-parfums.html#part-01">Bad Lily</a></span> <span class="pf-entry-year">2024</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-sultan-pasha">
+        <h3 class="pf-entry-name">Sultan Pasha <span class="pf-entry-count">1</span></h3>
+        <p class="pf-entry-house">Sultan Pasha Perfumes</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-11">Quintessentially Amber</a></span> <span class="pf-entry-year">2025</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-jakub-pietrynka">
+        <h3 class="pf-entry-name">Jakub Pietrynka <span class="pf-entry-count">2</span></h3>
+        <p class="pf-entry-house">JMP Artisan Perfumes</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-10">Fir of the Dark</a></span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-09">Fir of the Light</a></span> <span class="pf-entry-year">year not found</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-qimu">
+        <h3 class="pf-entry-name">Qimu <span class="pf-entry-count">1</span></h3>
+        <p class="pf-entry-house">Qimu &amp; Musicians</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/qimu-and-musicians.html#part-04">Drummer</a></span> <span class="pf-entry-year">year not found</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-holladay-penick-saltz">
+        <h3 class="pf-entry-name">Holladay Penick Saltz <span class="pf-entry-count">7</span></h3>
+        <p class="pf-entry-house">Apoteker Tepe</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/apoteker-tepe.html#part-08">After the Flood</a></span> <span class="pf-entry-year">2015</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/apoteker-tepe.html#part-07">Anabasis</a></span> <span class="pf-entry-year">2015</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/apoteker-tepe.html#part-03">Brother Night</a></span> <span class="pf-entry-year">2016</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/apoteker-tepe.html#part-04">Karasu</a></span> <span class="pf-entry-year">2016</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/apoteker-tepe.html#part-06">Pale Fire</a></span> <span class="pf-entry-year">2016</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/apoteker-tepe.html#part-02">The Holy Mountain</a></span> <span class="pf-entry-year">2015</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/apoteker-tepe.html#part-05">The Peradam</a></span> <span class="pf-entry-year">2015</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-mathew-schmuelian">
+        <h3 class="pf-entry-name">Mathew Schmuelian <span class="pf-entry-count">6</span></h3>
+        <p class="pf-entry-house">Lost Tribe</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/lost-tribe.html#part-04">Dirty Soda</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/lost-tribe.html#part-05">Equatorial</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/lost-tribe.html#part-01">Kong</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/lost-tribe.html#part-03">Pan’s Labyrinth</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/lost-tribe.html#part-06">Santal Absolu</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/lost-tribe.html#part-02">Watch King</a></span> <span class="pf-entry-year">year not found</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-christopher-sheldrake">
+        <h3 class="pf-entry-name">Christopher Sheldrake <span class="pf-entry-count">1</span></h3>
+        <p class="pf-entry-house">Serge Lutens</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-02">De Profundis</a></span> <span class="pf-entry-year">2011</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-sy-truong">
+        <h3 class="pf-entry-name">Sy Truong <span class="pf-entry-count">1</span></h3>
+        <p class="pf-entry-house">Ataraxia</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/ataraxia.html#part-02">Deity</a></span> <span class="pf-entry-year">2025</span></li>
+        </ul>
+      </article>
+      <article class="pf-entry" id="perfumer-not-found">
+        <h3 class="pf-entry-name">Perfumer not found <span class="pf-entry-count">31</span></h3>
+        <p class="pf-entry-house">Apoteker Tepe</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/apoteker-tepe.html#part-01">Kogen</a></span> <span class="pf-entry-year">2024</span></li>
+        </ul>
+        <p class="pf-entry-house">Ataraxia</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/ataraxia.html#part-03">My Doll’s Makeup</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/ataraxia.html#part-04">Spinal Fluid</a></span> <span class="pf-entry-year">2025</span></li>
+        </ul>
+        <p class="pf-entry-house">Casa Goa</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-07">Velvet Fog</a></span> <span class="pf-entry-year">year not found</span></li>
+        </ul>
+        <p class="pf-entry-house">Grande Parfums</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-01">5 Years Anniversary</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-02">Ambresso</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-03">Ancient Oud</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-04">Choco Powder</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-05">Cookie something (?)</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-06">Cuore</a></span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-07">Dreaming Maldives</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-08">Giardino di Sorrento</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-09">Hot Stuff</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-10">Intimate Spell</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-11">Karak &amp; Shisha</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-12">Mystical Incense</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-13">Vanilla Ash</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-14">Vintage Memoir</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/grande-parfums.html#part-15">White Label</a></span> <span class="pf-entry-year">year not found</span></li>
+        </ul>
+        <p class="pf-entry-house">Lussur</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-01">CV99</a></span> <span class="pf-entry-year">year not found</span></li>
+        </ul>
+        <p class="pf-entry-house">Matca</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../individual-fragrances/individual-fragrances.html#part-08">House of Ellixirz</a></span> <span class="pf-entry-year">2021</span></li>
+        </ul>
+        <p class="pf-entry-house">Qimu &amp; Musicians</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/qimu-and-musicians.html#part-03">Bassist</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/qimu-and-musicians.html#part-01">Guitarist</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/qimu-and-musicians.html#part-02">Vocal</a></span> <span class="pf-entry-year">year not found</span></li>
+        </ul>
+        <p class="pf-entry-house">Tale Parfums</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/tale-parfums.html#part-02">Fleurt</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/tale-parfums.html#part-03">Rouse</a></span> <span class="pf-entry-year">year not found</span></li>
+        </ul>
+        <p class="pf-entry-house">Tombstone</p>
+        <ul class="pf-entry-list">
+          <li><span class="pf-entry-perfume"><a href="../houses/tombstone.html#part-01">3 Feet 5</a></span> <span class="pf-entry-year">2024</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/tombstone.html#part-02">Evergrow</a></span> <span class="pf-entry-year">2025</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/tombstone.html#part-03">No Need to Come By</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/tombstone.html#part-04">Sing at My Funeral</a></span> <span class="pf-entry-year">year not found</span></li>
+          <li><span class="pf-entry-perfume"><a href="../houses/tombstone.html#part-05">Sweet Coffin</a></span> <span class="pf-entry-year">2024</span></li>
+        </ul>
+      </article>
+      <!-- THE INDEX: end -->
+      </div>
+    </div>
+
+    <aside class="pf-terms" aria-label="Terms">
+      <h2 class="pf-notes-head">Terms</h2>
+      <dl>
+        <dt>Perfumer</dt><dd>The person who composes a perfume; also called its nose.</dd>
+        <dt>House</dt><dd>The name a perfume is made and sold under.</dd>
+        <dt>Named</dt><dd>A source names this perfumer as the maker of this perfume.</dd>
+        <dt>The house's perfumer</dt><dd>A source names this person as the house's own, or only, perfumer — but none names the nose of this one perfume.</dd>
+        <dt>Not found</dt><dd>No source found says. The chart leaves it empty rather than guess.</dd>
+        <dt>Year</dt><dd>The year a source gives for a perfume's first release; a later version is noted beside it.</dd>
+      </dl>
+    </aside>
+
+    <div class="pf-sources">
+      <h2 class="pf-notes-head">Sources</h2>
+      <ol class="pf-source-list">
+      <!-- THE SOURCES: begin — written by tools/perfumers/build.py; MLA 8, in the order the ledger numbers them. -->
+        <li id="source-s01"><span class="pf-source-no">01</span> “Nicholas Nilsson.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumers/nicholas-nilsson">www.parfumo.com/Perfumers/nicholas-nilsson</a></li>
+        <li id="source-s02"><span class="pf-source-no">02</span> “Pineward: Interesting Facts.” <cite>Parfumo</cite>, parfumo.net. Accessed 2 Nov. 2026. <a href="https://www.parfumo.net/PerfumeBrand/pineward">www.parfumo.net/PerfumeBrand/pineward</a></li>
+        <li id="source-s03"><span class="pf-source-no">03</span> “Pineward Perfumes.” <cite>Scent Verdict</cite>, scentverdict.com. Accessed 2 Nov. 2026. <a href="https://scentverdict.com/brand/pineward-perfumes">scentverdict.com/brand/pineward-perfumes</a></li>
+        <li id="source-s04"><span class="pf-source-no">04</span> “Pineward Perfumes.” <cite>Perfume Posse</cite>, perfumeposse.com. Accessed 2 Nov. 2026. <a href="https://perfumeposse.com/2021/08/03/pineward-perfumes">perfumeposse.com/2021/08/03/pineward-perfumes</a></li>
+        <li id="source-s05"><span class="pf-source-no">05</span> “Apoteker Tepe: All Perfumes &amp; Information.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/Apoteker_Tepe">www.parfumo.com/Perfumes/Apoteker_Tepe</a></li>
+        <li id="source-s06"><span class="pf-source-no">06</span> “Holladay Saltz.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumers/Holladay_Saltz">www.parfumo.com/Perfumers/Holladay_Saltz</a></li>
+        <li id="source-s07"><span class="pf-source-no">07</span> “Kogen.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/Apoteker_Tepe/kogen">www.parfumo.com/Perfumes/Apoteker_Tepe/kogen</a></li>
+        <li id="source-s08"><span class="pf-source-no">08</span> “Apoteker Tepe returns!.” <cite>Basenotes</cite>, basenotes.com. Accessed 2 Nov. 2026. <a href="https://basenotes.com/threads/apoteker-tepe-returns.524188/">basenotes.com/threads/apoteker-tepe-returns.524188/</a></li>
+        <li id="source-s09"><span class="pf-source-no">09</span> The Taste of Aldehydes. “Apoteker Tepe (the years each was made, as the owner wrote them).” <cite>The Taste of Aldehydes</cite>. <a href="../houses/apoteker-tepe.html">thetasteofaldehydes.com/houses/apoteker-tepe.html</a></li>
+        <li id="source-s10"><span class="pf-source-no">10</span> “Adar.” <cite>Scent Split</cite>, scentsplit.com. Accessed 2 Nov. 2026. <a href="https://www.scentsplit.com/collections/adar">www.scentsplit.com/collections/adar</a></li>
+        <li id="source-s11"><span class="pf-source-no">11</span> “Adar (Spanish edition of the house page).” <cite>Scent Split</cite>, scentsplit.com. Accessed 2 Nov. 2026. <a href="https://www.scentsplit.com/es/collections/adar">www.scentsplit.com/es/collections/adar</a></li>
+        <li id="source-s12"><span class="pf-source-no">12</span> “Adar – Tyrian.” <cite>The Perfumery Barcelona</cite>, theperfumerybarcelona.com. Accessed 2 Nov. 2026. <a href="https://www.theperfumerybarcelona.com/en/?p=27314">www.theperfumerybarcelona.com/en/?p=27314</a></li>
+        <li id="source-s13"><span class="pf-source-no">13</span> “Against all Odds.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/adar/against-all-odds">www.parfumo.com/Perfumes/adar/against-all-odds</a></li>
+        <li id="source-s14"><span class="pf-source-no">14</span> “Alta Luna.” <cite>Scent Split</cite>, scentsplit.com. Accessed 2 Nov. 2026. <a href="https://www.scentsplit.com/es/products/adar-alta-luna">www.scentsplit.com/es/products/adar-alta-luna</a></li>
+        <li id="source-s15"><span class="pf-source-no">15</span> “Almost Human: All Perfumes &amp; Information.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/almost-human">www.parfumo.com/Perfumes/almost-human</a></li>
+        <li id="source-s16"><span class="pf-source-no">16</span> “Almost Human: Brand Profile.” <cite>Pitti Fragranze</cite>, fragranze.pittimmagine.com. Accessed 2 Nov. 2026. <a href="https://fragranze.pittimmagine.com/en/exhibitors/A/almost-human">fragranze.pittimmagine.com/en/exhibitors/A/almost-human</a></li>
+        <li id="source-s17"><span class="pf-source-no">17</span> “Almost Human – Ritual Code.” <cite>The Perfumery Barcelona</cite>, theperfumerybarcelona.com. Accessed 2 Nov. 2026. <a href="https://www.theperfumerybarcelona.com/en/producto/almost-human-ritual-code/">www.theperfumerybarcelona.com/en/producto/almost-human-ritual-code/</a></li>
+        <li id="source-s18"><span class="pf-source-no">18</span> “Amaretto Jazz in the Melting Room (2024).” <cite>ScentAdvice</cite>, scentadvice.com. Accessed 2 Nov. 2026. <a href="https://scentadvice.com/amaretto-jazz-in-the-melting-room-2024-toskovat/">scentadvice.com/amaretto-jazz-in-the-melting-room-2024-toskovat/</a></li>
+        <li id="source-s19"><span class="pf-source-no">19</span> “Ataraxia Vestibule.” <cite>WhatScent</cite>, whatscent.app. Accessed 2 Nov. 2026. <a href="https://whatscent.app/nl/perfume/vestibule-by-ataraxia-1789572525295?hl=nl">whatscent.app/nl/perfume/vestibule-by-ataraxia-1789572525295?hl=nl</a></li>
+        <li id="source-s20"><span class="pf-source-no">20</span> “Ataraxia Perfumery DEITY (Sy Truong) 2025.” <cite>Ça Fleure Bon</cite>, cafleurebon.com. Accessed 2 Nov. 2026. <a href="https://cafleurebon.com/ataraxia-perfumery-deity-sy-truong-2025-plus-divine-honey-giveaway/">cafleurebon.com/ataraxia-perfumery-deity-sy-truong-2025-plus-divine-honey-giveaway/</a></li>
+        <li id="source-s21"><span class="pf-source-no">21</span> “Spinal Fluid.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/ataraxia/spinal-fluid">www.parfumo.com/Perfumes/ataraxia/spinal-fluid</a></li>
+        <li id="source-s22"><span class="pf-source-no">22</span> “Spinal Fluid.” <cite>Turin, Luca</cite>, lucaturin.substack.com. Accessed 2 Nov. 2026. <a href="https://lucaturin.substack.com/p/spinal-fluid">lucaturin.substack.com/p/spinal-fluid</a></li>
+        <li id="source-s23"><span class="pf-source-no">23</span> “Toskovat'.” <cite>Scento</cite>, scento.com. Accessed 2 Nov. 2026. <a href="https://www.scento.com/brand/toskovat">www.scento.com/brand/toskovat</a></li>
+        <li id="source-s24"><span class="pf-source-no">24</span> “Toskovat.” <cite>Parfinity</cite>, parfinity.com. Accessed 2 Nov. 2026. <a href="https://www.parfinity.com/en/brand/toskovat">www.parfinity.com/en/brand/toskovat</a></li>
+        <li id="source-s25"><span class="pf-source-no">25</span> “Grande Perfumes S.R.L..” <cite>OnCosmetics</cite>, oncosmetics.com. Accessed 2 Nov. 2026. <a href="https://oncosmetics.com/company/grande-perfumes-s-r-l/">oncosmetics.com/company/grande-perfumes-s-r-l/</a></li>
+        <li id="source-s26"><span class="pf-source-no">26</span> “Cuore Grande.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Parfums/grande/cuore-grande">www.parfumo.com/Parfums/grande/cuore-grande</a></li>
+        <li id="source-s27"><span class="pf-source-no">27</span> “Les Abstraits.” <cite>Sainte Cellier</cite>, saintecellier.com. Accessed 2 Nov. 2026. <a href="https://saintecellier.com/collections/les-abstraits">saintecellier.com/collections/les-abstraits</a></li>
+        <li id="source-s28"><span class="pf-source-no">28</span> “Belle Âme.” <cite>Sainte Cellier</cite>, saintecellier.com. Accessed 2 Nov. 2026. <a href="https://saintecellier.com/products/belle-ame">saintecellier.com/products/belle-ame</a></li>
+        <li id="source-s29"><span class="pf-source-no">29</span> “Des Cendres.” <cite>Sainte Cellier</cite>, saintecellier.com. Accessed 2 Nov. 2026. <a href="https://saintecellier.com/en-my/products/des-cendres">saintecellier.com/en-my/products/des-cendres</a></li>
+        <li id="source-s30"><span class="pf-source-no">30</span> “Philosopher's Walk.” <cite>Sainte Cellier</cite>, saintecellier.com. Accessed 2 Nov. 2026. <a href="https://saintecellier.com/products/philosophers-walk">saintecellier.com/products/philosophers-walk</a></li>
+        <li id="source-s31"><span class="pf-source-no">31</span> “Les Abstraits La Douleur Exquise.” <cite>Noah</cite>, noah.com.au. Accessed 2 Nov. 2026. <a href="https://noah.com.au/products/les-abstraits-la-douleur-exquise">noah.com.au/products/les-abstraits-la-douleur-exquise</a></li>
+        <li id="source-s32"><span class="pf-source-no">32</span> “Antoine Lie: The Abstract Perfumer Redefining Modern Fragrance.” <cite>Parfinity</cite>, next.parfinity.com. Accessed 2 Nov. 2026. <a href="https://next.parfinity.com/en/perfumer/antoine-lie">next.parfinity.com/en/perfumer/antoine-lie</a></li>
+        <li id="source-s33"><span class="pf-source-no">33</span> “Antoine Lie.” <cite>Luckyscent</cite>, luckyscent.com. Accessed 2 Nov. 2026. <a href="https://www.luckyscent.com/perfumers/antoine-lie">www.luckyscent.com/perfumers/antoine-lie</a></li>
+        <li id="source-s34"><span class="pf-source-no">34</span> “Tale Parfum Bad Lily (Michael Nordstrand) 2024.” <cite>Ça Fleure Bon</cite>, cafleurebon.com. Accessed 2 Nov. 2026. <a href="https://cafleurebon.com/tale-parfum-bad-lily-michael-nordstrand-2024-plus-surreal-muget-giveaway/">cafleurebon.com/tale-parfum-bad-lily-michael-nordstrand-2024-plus-surreal-muget-giveaway/</a></li>
+        <li id="source-s35"><span class="pf-source-no">35</span> “Bad Lily.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/tale-parfum/bad-lily">www.parfumo.com/Perfumes/tale-parfum/bad-lily</a></li>
+        <li id="source-s36"><span class="pf-source-no">36</span> “TALE Parfum Bad Lily Eau de Parfum.” <cite>Stéle</cite>, stele.nyc. Accessed 2 Nov. 2026. <a href="https://stele.nyc/products/tale-bad-lily-eau-de-parfum">stele.nyc/products/tale-bad-lily-eau-de-parfum</a></li>
+        <li id="source-s37"><span class="pf-source-no">37</span> “Sweet Coffin.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/tombstone/sweet-coffin">www.parfumo.com/Perfumes/tombstone/sweet-coffin</a></li>
+        <li id="source-s38"><span class="pf-source-no">38</span> “3 Feet 5.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/tombstone/3-feet-5">www.parfumo.com/Perfumes/tombstone/3-feet-5</a></li>
+        <li id="source-s39"><span class="pf-source-no">39</span> “Evergrow.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/tombstone/evergrow">www.parfumo.com/Perfumes/tombstone/evergrow</a></li>
+        <li id="source-s40"><span class="pf-source-no">40</span> “Tombstone: Brand Profile.” <cite>Pitti Fragranze</cite>, fragranze.pittimmagine.com. Accessed 2 Nov. 2026. <a href="https://fragranze.pittimmagine.com/en/exhibitors/T/tombstone">fragranze.pittimmagine.com/en/exhibitors/T/tombstone</a></li>
+        <li id="source-s41"><span class="pf-source-no">41</span> “Qimu &amp; Musicians Drummer.” <cite>WhatScent</cite>, whatscent.app. Accessed 2 Nov. 2026. <a href="https://whatscent.app/perfume/drummer-1783425703668">whatscent.app/perfume/drummer-1783425703668</a></li>
+        <li id="source-s42"><span class="pf-source-no">42</span> “OM Parfum: All Perfumes &amp; Information.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/om-parfum">www.parfumo.com/Perfumes/om-parfum</a></li>
+        <li id="source-s43"><span class="pf-source-no">43</span> “OM Parfum: Info and Facts.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/PerfumeBrand/om-parfum">www.parfumo.com/PerfumeBrand/om-parfum</a></li>
+        <li id="source-s44"><span class="pf-source-no">44</span> “Dragon's Breath.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/outsider-parfum/dragon-s-breath">www.parfumo.com/Perfumes/outsider-parfum/dragon-s-breath</a></li>
+        <li id="source-s45"><span class="pf-source-no">45</span> “Amaretto Coffee.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/outsider-parfum/amaretto-coffee">www.parfumo.com/Perfumes/outsider-parfum/amaretto-coffee</a></li>
+        <li id="source-s46"><span class="pf-source-no">46</span> “Lost Tribe.” <cite>Scent Verdict</cite>, scentverdict.com. Accessed 2 Nov. 2026. <a href="https://scentverdict.com/brand/lost-tribe">scentverdict.com/brand/lost-tribe</a></li>
+        <li id="source-s47"><span class="pf-source-no">47</span> “Lost Tribe Pan's Labyrinth v2 Extrait.” <cite>Venba Fragrance</cite>, venbafragrance.com. Accessed 2 Nov. 2026. <a href="https://www.venbafragrance.com/products/lost-tribe-pans-labyrinth-v2-extrait">www.venbafragrance.com/products/lost-tribe-pans-labyrinth-v2-extrait</a></li>
+        <li id="source-s48"><span class="pf-source-no">48</span> “Lost Tribe Fougère Rouge Elixir de Parfum.” <cite>Stéle</cite>, stele.nyc. Accessed 2 Nov. 2026. <a href="https://stele.nyc/products/lost-tribe-fougere-rouge-elixir-de-parfum">stele.nyc/products/lost-tribe-fougere-rouge-elixir-de-parfum</a></li>
+        <li id="source-s49"><span class="pf-source-no">49</span> “Serge Lutens de Profundis.” <cite>Surrender to Chance</cite>, surrendertochance.com. Accessed 2 Nov. 2026. <a href="https://surrendertochance.com/serge-lutens-de-profundis/?revpage=2">surrendertochance.com/serge-lutens-de-profundis/?revpage=2</a></li>
+        <li id="source-s50"><span class="pf-source-no">50</span> “Christopher Sheldrake.” <cite>Wikipedia</cite>, en.wikipedia.org. Accessed 2 Nov. 2026. <a href="https://en.wikipedia.org/wiki/Christopher_Sheldrake">en.wikipedia.org/wiki/Christopher_Sheldrake</a></li>
+        <li id="source-s51"><span class="pf-source-no">51</span> “Christopher Sheldrake.” <cite>The Fragrance Foundation UK</cite>, fragrancefoundation.org.uk. Accessed 2 Nov. 2026. <a href="https://www.fragrancefoundation.org.uk/christopher-sheldrake">www.fragrancefoundation.org.uk/christopher-sheldrake</a></li>
+        <li id="source-s52"><span class="pf-source-no">52</span> “Tobacolor by Dior.” <cite>Scento</cite>, scento.com. Accessed 2 Nov. 2026. <a href="https://www.scento.com/perfumes/tobacolor-dior">www.scento.com/perfumes/tobacolor-dior</a></li>
+        <li id="source-s53"><span class="pf-source-no">53</span> “François Demachy.” <cite>Wikipedia</cite>, en.wikipedia.org. Accessed 2 Nov. 2026. <a href="https://en.wikipedia.org/wiki/Fran%C3%A7ois_Demachy">en.wikipedia.org/wiki/Fran%C3%A7ois_Demachy</a></li>
+        <li id="source-s54"><span class="pf-source-no">54</span> “François Demachy.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumers/Franois_Demachy">www.parfumo.com/Perfumers/Franois_Demachy</a></li>
+        <li id="source-s55"><span class="pf-source-no">55</span> “Ramon Monegal Flamenco ~ new perfume.” <cite>Now Smell This</cite>, nstperfume.com. Accessed 2 Nov. 2026. <a href="https://nstperfume.com/2017/04/29/ramon-monegal-flamenco-new-perfume/">nstperfume.com/2017/04/29/ramon-monegal-flamenco-new-perfume/</a></li>
+        <li id="source-s56"><span class="pf-source-no">56</span> “Ramón Monegal: Interesting Facts.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/PerfumeBrand/Ramon_Monegal">www.parfumo.com/PerfumeBrand/Ramon_Monegal</a></li>
+        <li id="source-s57"><span class="pf-source-no">57</span> “Myrurgia.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/PerfumeBrand/Myrurgia">www.parfumo.com/PerfumeBrand/Myrurgia</a></li>
+        <li id="source-s58"><span class="pf-source-no">58</span> “Mancera French Riviera.” <cite>Scent Verdict</cite>, scentverdict.com. Accessed 2 Nov. 2026. <a href="https://scentverdict.com/perfume/mancera-french-riviera-eau-de-parfum">scentverdict.com/perfume/mancera-french-riviera-eau-de-parfum</a></li>
+        <li id="source-s59"><span class="pf-source-no">59</span> “Mancera Catalogue.” <cite>Mancera</cite>, manceraparfums.com. Accessed 2 Nov. 2026. <a href="https://manceraparfums.com/us/upload/Mancera_Catalogue.pdf">manceraparfums.com/us/upload/Mancera_Catalogue.pdf</a></li>
+        <li id="source-s60"><span class="pf-source-no">60</span> “Mancera.” <cite>Pamco</cite>, pamcogrp.com. Accessed 2 Nov. 2026. <a href="https://www.pamcogrp.com/catalogues/perfume/MANCERA.pdf">www.pamcogrp.com/catalogues/perfume/MANCERA.pdf</a></li>
+        <li id="source-s61"><span class="pf-source-no">61</span> “Introducing Lussur – Italian niche perfumery.” <cite>Basenotes</cite>, basenotes.com. Accessed 2 Nov. 2026. <a href="https://basenotes.com/goto/post?id=6402949">basenotes.com/goto/post?id=6402949</a></li>
+        <li id="source-s62"><span class="pf-source-no">62</span> “Velvet Fog – 50ml.” <cite>Spezieri</cite>, spezieri.com. Accessed 2 Nov. 2026. <a href="https://spezieri.com/en/velvet-fog-50-ml-casa-goa">spezieri.com/en/velvet-fog-50-ml-casa-goa</a></li>
+        <li id="source-s63"><span class="pf-source-no">63</span> “MATCA.” <cite>Fragplace</cite>, fragplace.com. Accessed 2 Nov. 2026. <a href="https://fragplace.com/ja-US/brands/1172/matca.md">fragplace.com/ja-US/brands/1172/matca.md</a></li>
+        <li id="source-s64"><span class="pf-source-no">64</span> “Jakub Pietrynka.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumers/jakub-pietrynka">www.parfumo.com/Perfumers/jakub-pietrynka</a></li>
+        <li id="source-s65"><span class="pf-source-no">65</span> “JMP Artisan Perfumes.” <cite>Luckyscent</cite>, luckyscent.com. Accessed 2 Nov. 2026. <a href="https://www.luckyscent.com/brand/871/jmp-artisan-perfumes?section=1">www.luckyscent.com/brand/871/jmp-artisan-perfumes?section=1</a></li>
+        <li id="source-s66"><span class="pf-source-no">66</span> “Quintessentially Amber.” <cite>WhatScent</cite>, whatscent.app. Accessed 2 Nov. 2026. <a href="https://whatscent.app/perfume/quintessentially-amber-1784060250942">whatscent.app/perfume/quintessentially-amber-1784060250942</a></li>
+        <li id="source-s67"><span class="pf-source-no">67</span> “Quintessentially Amber by Sultan Pasha Perfumes.” <cite>Luckyscent</cite>, luckyscent.com. Accessed 2 Nov. 2026. <a href="https://www.luckyscent.com/products/quintessentially-amber-by-sultan-pasha-perfumes">www.luckyscent.com/products/quintessentially-amber-by-sultan-pasha-perfumes</a></li>
+        <li id="source-s68"><span class="pf-source-no">68</span> “Areej Le Dore Forbidden Flower.” <cite>Fragrance Samples UK</cite>, fragrancesamplesuk.com. Accessed 2 Nov. 2026. <a href="https://www.fragrancesamplesuk.com/products/areej-le-dore-fordbidden-flower">www.fragrancesamplesuk.com/products/areej-le-dore-fordbidden-flower</a></li>
+        <li id="source-s69"><span class="pf-source-no">69</span> “Areej Le Doré: Interesting Facts.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/Areej_Le_Dore?col_id=2278">www.parfumo.com/Perfumes/Areej_Le_Dore?col_id=2278</a></li>
+        <li id="source-s70"><span class="pf-source-no">70</span> “Niche Fragrance Review: slumberhouse Ore.” <cite>Ça Fleure Bon</cite>, cafleurebon.com. Accessed 2 Nov. 2026. <a href="https://cafleurebon.com/niche-fragrance-review-slumberhouse-ore-better-the-second-time-draw/">cafleurebon.com/niche-fragrance-review-slumberhouse-ore-better-the-second-time-draw/</a></li>
+        <li id="source-s71"><span class="pf-source-no">71</span> “Josh Lobb.” <cite>Luckyscent</cite>, checkout.luckyscent.com. Accessed 2 Nov. 2026. <a href="https://checkout.luckyscent.com/collections/perfumer-josh-lobb.oembed">checkout.luckyscent.com/collections/perfumer-josh-lobb.oembed</a></li>
+        <li id="source-s72"><span class="pf-source-no">72</span> “Prin Lomros.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumers/Prin_Lomros">www.parfumo.com/Perfumers/Prin_Lomros</a></li>
+        <li id="source-s73"><span class="pf-source-no">73</span> “Strangers Parfumerie: All Perfumes &amp; Information.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/Strangers_Parfumerie">www.parfumo.com/Perfumes/Strangers_Parfumerie</a></li>
+        <li id="source-s74"><span class="pf-source-no">74</span> “Strangers Parfumerie.” <cite>Bloom Perfumery</cite>, bloomperfume.com. Accessed 2 Nov. 2026. <a href="https://bloomperfume.com/collections/strangers-parfumerie/tag-sexy">bloomperfume.com/collections/strangers-parfumerie/tag-sexy</a></li>
+        <li id="source-s75"><span class="pf-source-no">75</span> “Parfum Prissana.” <cite>Luckyscent</cite>, luckyscent.com. Accessed 2 Nov. 2026. <a href="https://www.luckyscent.com/brand/843/parfum-prissana?f=keyword%3D124">www.luckyscent.com/brand/843/parfum-prissana?f=keyword%3D124</a></li>
+        <li id="source-s76"><span class="pf-source-no">76</span> “PRIN.” <cite>Luckyscent</cite>, luckyscent.com. Accessed 2 Nov. 2026. <a href="https://www.luckyscent.com/brand/847/prin">www.luckyscent.com/brand/847/prin</a></li>
+        <li id="source-s77"><span class="pf-source-no">77</span> “Pineward: All Perfumes &amp; Information.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/pineward?o=y_desc">www.parfumo.com/Perfumes/pineward?o=y_desc</a></li>
+        <li id="source-s78"><span class="pf-source-no">78</span> “Ataraxia Perfumery.” <cite>Thingtesting</cite>, thingtesting.com. Accessed 2 Nov. 2026. <a href="https://thingtesting.com/brands/ataraxia-perfumery">thingtesting.com/brands/ataraxia-perfumery</a></li>
+        <li id="source-s79"><span class="pf-source-no">79</span> “Serge Lutens.” <cite>Jarrold</cite>, jarrold.co.uk. Accessed 2 Nov. 2026. <a href="https://jarrold.co.uk/brands/serge-lutens">jarrold.co.uk/brands/serge-lutens</a></li>
+        <li id="source-s80"><span class="pf-source-no">80</span> “Dior Women's Perfume.” <cite>Harrods</cite>, harrods.com. Accessed 2 Nov. 2026. <a href="https://www.harrods.com/en-tz/designers/dior/perfume/womens-perfume">www.harrods.com/en-tz/designers/dior/perfume/womens-perfume</a></li>
+        <li id="source-s81"><span class="pf-source-no">81</span> “François Demachy.” <cite>The Fragrance Foundation UK</cite>, fragrancefoundation.org.uk. Accessed 2 Nov. 2026. <a href="https://fragrancefoundation.org.uk/francois-demanchy">fragrancefoundation.org.uk/francois-demanchy</a></li>
+      <!-- THE SOURCES: end -->
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<!-- THE WINDOW: a perfumer, a house or a perfume, opened from the chart or the index. -->
+<div class="pf-card" hidden>
+  <div class="pf-card-sheet" role="dialog" aria-modal="true" aria-labelledby="pf-card-name" tabindex="-1">
+    <div class="pf-card-bar">
+      <button type="button" class="pf-card-back" hidden>‹ Back</button>
+      <button type="button" class="pf-card-close" aria-label="Close">×</button>
+    </div>
+    <div class="pf-card-body"></div>
+  </div>
+</div>
+
+<script>window.SITE_ROOT = "../";</script>
+<script src="../nav.js?v=ddedcc2da4"></script>
+<script src="../perfumers-data.js?v=37f927dbd9"></script>
+<script src="../perfumers.js?v=7ec6fa6e72"></script>
+</body>
+</html>

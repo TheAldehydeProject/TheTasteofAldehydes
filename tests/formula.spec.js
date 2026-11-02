@@ -915,13 +915,13 @@ test("a name pressed asks first, on the stage's own dark: Stay, Escape and the v
   await expect(ask).toBeVisible();
   await page.mouse.click(60, 860);
   await expect(ask).toBeHidden();
-  // a page whose window carried a note carries it here, set apart
-  const photo = page.locator(".formula-link").nth(5);
-  await photo.click();
+  // Perfumers took Photography's place (2026-11-02), and with it went the
+  // one note a window carried: none carries one now
+  const perfumers = page.locator(".formula-link").nth(5);
+  await perfumers.click();
   await expect(ask).toBeVisible();
-  await expect(page.locator(".formula-ask-name")).toHaveText("Photography");
-  await expect(page.locator(".formula-ask-note")).toBeVisible();
-  await expect(page.locator(".formula-ask-note")).toHaveText("Work in progress — this part of the website will be completed later.");
+  await expect(page.locator(".formula-ask-name")).toHaveText("Perfumers");
+  await expect(page.locator(".formula-ask-note")).toBeHidden();
   await page.keyboard.press("Escape");
   await expect(ask).toBeHidden();
   // a key held: no asking (nothing is being left)

@@ -20,7 +20,7 @@ const PAGES = [
   { url: "/theories/", root: "../", title: /Theories/ },
   { url: "/favourites/", root: "../", title: /Favourites/ },
   { url: "/explorations-and-researches/", root: "../", title: /Explorations/ },
-  { url: "/photography/", root: "../", title: /Photography/ },
+  { url: "/perfumers/", root: "../", title: /Perfumers/ },
   { url: "/note-library/", root: "../", title: /Note Library/ },
   { url: "/works/example-gallery-work.html", root: "../", title: /Vetiver/ },
   { url: "/works/example-article-work.html", root: "../", title: /vetiver/ },

@@ -51,7 +51,7 @@
     { url: "works/skin.html", trail: ["Explorations & Researches", "Skin"] },
     { url: "works/resins-in-perfumery.html", trail: ["Explorations & Researches", "Resins in Perfumery"] },
     { url: "note-library/", trail: ["Note Library"] },
-    { url: "photography/", trail: ["Photography"] },
+    { url: "perfumers/", trail: ["Perfumers"] },
   ];
 
   let everything = null;
