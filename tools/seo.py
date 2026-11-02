@@ -90,6 +90,18 @@ P = {
  "works/test-node-b.html": dict(desc="A sandbox page, not a part of the site.", noindex=True),
  "works/example-article-work.html": dict(desc="A template for a piece of writing, not a part of the site.", noindex=True),
  "works/example-gallery-work.html": dict(desc="A template for a gallery of pictures, not a part of the site.", noindex=True),
+ # THE FOUR TEST PAGES (2026-11-02 — the owner: "make sure that they are
+ # excluded from any other part of the website ... and are not involved in
+ # any way shape or form with the search engines"): reached only by the
+ # four unseen squares at the foot of Contact, and told to search engines
+ # neither to index them nor to follow anything on them — noindex AND
+ # nofollow, the only pages here that say nofollow. Not in robots.txt on
+ # purpose: a page a crawler is barred from is a page whose noindex it
+ # never reads.
+ "test-pages/1/index.html": dict(desc="A test page, not a part of the site: skin, scanned — the sites on the body a perfume is worn, after the research Skin.", noindex=True, nofollow=True),
+ "test-pages/2/index.html": dict(desc="A test page, not a part of the site: Accord Spectrums 2026 — the houses' notes laid round the sixteen accords.", noindex=True, nofollow=True),
+ "test-pages/3/index.html": dict(desc="A test page, not a part of the site: Material Origin System — where the materials the site's fragrances name come from.", noindex=True, nofollow=True),
+ "test-pages/4/index.html": dict(desc="A test page, not a part of the site: The Network Map — every house, perfumer, perfume and note, on a board to draw on.", noindex=True, nofollow=True),
 }
 # The forwarding pages: canonical to where the house lives now.
 for slug in ["adar", "almost-human", "ataraxia", "grande-parfums", "les-abstraits", "pineward"]:
@@ -131,6 +143,8 @@ THEME = {
  "houses/tombstone.html": "#ecebe8",
  "search/index.html": "#191c21",
  "perfumers/index.html": "#0b0c0d",
+ "test-pages/1/index.html": "#060708", "test-pages/2/index.html": "#0b0b16",
+ "test-pages/3/index.html": "#070b10", "test-pages/4/index.html": "#101012",
 }
 for essay in ["theory-01", "theory-02", "theory-03", "resins-in-perfumery", "skin",
               "buying-a-perfume", "dupes-designers-and-niches", "my-personal-introduction-to-perfume"]:
@@ -158,7 +172,7 @@ for path, meta in P.items():
     if "canonical" not in meta:
         lines.append('<link rel="canonical" href="%s">' % canon)
     if meta.get("noindex"):
-        lines.append('<meta name="robots" content="noindex, follow">')
+        lines.append('<meta name="robots" content="noindex, %s">' % ("nofollow" if meta.get("nofollow") else "follow"))
     lines += ['<link rel="icon" href="%sfavicon.svg?v=%s" type="image/svg+xml">' % (root, ICON_V),
               '<link rel="apple-touch-icon" href="%sapple-touch-icon.png?v=%s">' % (root, ICON_V),
               '<meta name="theme-color" content="%s">' % THEME.get(path, PAPER)]
@@ -215,5 +229,5 @@ xml.append("</urlset>")
 open("sitemap.xml", "w").write("\n".join(xml) + "\n")
 open("robots.txt", "w").write("User-agent: *\nAllow: /\n# A copy of an earlier view, kept as it was; not a page of the site.\nDisallow: /archive/\n\nSitemap: %ssitemap.xml\n" % BASE)
 print(len(done), "pages;", len(urls), "in the sitemap")
-missing = [f for f in os.popen("ls *.html */*.html").read().split() if f not in P and not f.startswith("archive/")]
+missing = [f for f in os.popen("ls *.html */*.html */*/*.html").read().split() if f not in P and not f.startswith(("archive/", "node_modules/"))]
 print("pages without an entry:", missing)

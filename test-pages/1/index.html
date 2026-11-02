@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test page 1 — The Taste of Aldehydes</title>
+<!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
+<meta name="description" content="A test page, not a part of the site: skin, scanned — the sites on the body a perfume is worn, after the research Skin.">
+<link rel="canonical" href="https://thetasteofaldehydes.com/test-pages/1/">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../../favicon.svg?v=2026-10-05" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png?v=2026-10-05">
+<meta name="theme-color" content="#060708">
+<!-- SEARCH ENGINES: end -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!--
+  TEST PAGE 1 (2026-11-02) — the owner's: "two buttons on the very bottom of
+  the contact page ... white and not visible at all ... these buttons should
+  take you to separate pages which are going to be test pages ... make them
+  four ... First one should be modelled after image 1". Image 1: a scan of
+  a spine drawn as a plexus of points and lines, two red rings marking
+  places on it, a glitched numeral and a column of readings.
+
+  Here it is the site's Skin research (works/skin.html) as that scan: a
+  skeleton in points and hairlines — skull, spine, ribs, an arm — turning
+  slowly, and the four body sites of its "Geography of Skin" (behind the
+  ear, the neck, the inner elbow, the inner wrist) marked two at a time,
+  their readings beside them, the research's own numbers.
+
+  NOT A PAGE OF THE SITE: nothing on the site links here but the four
+  unseen squares at the foot of Contact; it loads none of the site's
+  scripts or its stylesheet, is in no menu, search or sitemap, and tells
+  search engines to leave it alone. Everything it needs is in this folder.
+-->
+<style>
+  :root {
+    --ground: #060708;
+    --ink: #e9e7e2;
+    --muted: #8a8c90;
+    --faint: #4a4c50;
+    --red: #ff3a44;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --sans: "Archivo", "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--ground); color: var(--ink); font-family: var(--mono); overflow: hidden; }
+  .t1-scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+  .t1-scene.is-dragging { cursor: grabbing; }
+  /* the grain: a picture of noise jumped about by its transform — the
+     compositor's work, never drawn again */
+  .t1-grain {
+    position: fixed; inset: -60%; pointer-events: none; opacity: 0.075; mix-blend-mode: screen;
+    animation: t1-grain 0.9s steps(7) infinite; will-change: transform;
+  }
+  @keyframes t1-grain {
+    0% { transform: translate(0, 0); } 15% { transform: translate(-7%, 4%); } 30% { transform: translate(5%, -6%); }
+    45% { transform: translate(-3%, 8%); } 60% { transform: translate(8%, 2%); } 75% { transform: translate(-6%, -5%); }
+    90% { transform: translate(3%, 6%); } 100% { transform: translate(0, 0); }
+  }
+  .t1-vignette { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 42% 50%, transparent 40%, rgba(0, 0, 0, 0.72) 100%); }
+  .t1 { position: fixed; inset: 0; pointer-events: none; }
+  .t1 a, .t1 button { pointer-events: auto; }
+  .t1-back {
+    position: absolute; top: 18px; left: 22px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none;
+  }
+  .t1-back:hover { color: var(--ink); }
+  .t1-title { position: absolute; top: 16px; right: 24px; margin: 0; text-align: right; font: 500 10.5px/1.6 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .t1-title b { display: block; font: 700 13px var(--sans); letter-spacing: 0.22em; color: var(--ink); }
+
+  /* LEFT: the bar, the numeral, the lines under it */
+  .t1-left { position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 260px; }
+  .t1-bar { position: relative; height: 10px; width: 210px; background: rgba(233, 231, 226, 0.08); }
+  .t1-bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ink); width: 0; transition: width 1.2s cubic-bezier(.2,.7,.2,1); }
+  .t1-bar span { position: absolute; left: calc(100% + 10px); top: -3px; font-size: 10px; letter-spacing: 0.2em; color: var(--muted); }
+  .t1-num {
+    position: relative; display: inline-block; margin: 34px 0 0 70px; font: 500 74px/1 var(--mono); letter-spacing: 0.04em; color: #fff;
+    text-shadow: -2px 0 rgba(255, 40, 70, 0.85), 2px 0 rgba(0, 220, 255, 0.8);
+  }
+  .t1-num::before, .t1-num::after { content: attr(data-v); position: absolute; left: 0; top: 0; color: #fff; opacity: 0; }
+  .t1-num.is-glitch::before { opacity: 0.9; transform: translate(6px, 0); clip-path: inset(18% 0 58% 0); text-shadow: -3px 0 rgba(255, 40, 70, 0.9); }
+  .t1-num.is-glitch::after { opacity: 0.9; transform: translate(-7px, 0); clip-path: inset(62% 0 12% 0); text-shadow: 3px 0 rgba(0, 220, 255, 0.9); }
+  .t1-num small { position: absolute; left: calc(100% + 8px); top: 6px; font-size: 13px; text-shadow: none; color: var(--muted); }
+  .t1-unit { margin: 6px 0 0 70px; font-size: 9.5px; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
+  .t1-lines { margin: 26px 0 0 70px; display: grid; grid-template-columns: auto 1fr; gap: 6px 22px; font-size: 8.5px; letter-spacing: 0.12em; color: var(--faint); text-transform: uppercase; }
+  .t1-lines i { display: block; width: 12px; height: 2px; margin-top: 4px; background: var(--muted); }
+
+  /* RIGHT: the readings, and the four sites */
+  .t1-right { position: absolute; right: 7vw; top: 50%; transform: translateY(-40%); width: 230px; font-size: 9.5px; line-height: 2.05; letter-spacing: 0.14em; text-transform: uppercase; }
+  .t1-right h2 { margin: 0 0 4px; font: 500 9.5px var(--mono); letter-spacing: 0.22em; color: var(--red); }
+  .t1-right dl { margin: 0 0 20px; display: grid; grid-template-columns: auto 1fr; gap: 0 10px; }
+  .t1-right dt { color: var(--muted); }
+  .t1-right dd { margin: 0; color: var(--ink); transition: color 0.4s; }
+  .t1-right dd.is-new { color: var(--red); }
+  .t1-sites { list-style: none; margin: 0; padding: 0; }
+  .t1-sites button {
+    display: flex; gap: 10px; align-items: center; width: 100%; padding: 2px 0; font: inherit; letter-spacing: inherit; text-transform: inherit;
+    color: var(--muted); background: none; border: 0; text-align: left; cursor: pointer;
+  }
+  .t1-sites button::before { content: ""; width: 8px; height: 8px; border: 1px solid currentColor; border-radius: 50%; }
+  .t1-sites button:hover { color: var(--ink); }
+  .t1-sites button.is-on { color: var(--ink); }
+  .t1-sites button.is-on::before { border-color: var(--red); background: radial-gradient(circle, var(--red) 0 2px, transparent 2.5px); }
+  .t1-foot { position: absolute; right: 24px; bottom: 18px; font-size: 8.5px; letter-spacing: 0.16em; color: var(--faint); text-transform: uppercase; text-align: right; }
+  .t1-foot span { display: inline-block; width: 26px; height: 1px; margin-left: 6px; vertical-align: middle; background: var(--muted); }
+  @media (max-width: 760px) {
+    .t1-left { top: auto; bottom: 18px; transform: none; width: 50%; }
+    .t1-bar { width: 120px; }
+    .t1-num { margin: 18px 0 0 22px; font-size: 48px; }
+    .t1-unit, .t1-lines { margin-left: 22px; }
+    .t1-lines { display: none; }
+    .t1-right { right: 0; top: auto; bottom: 0; transform: none; width: 52%; padding: 40px 14px 16px 14px; font-size: 8.5px; line-height: 1.85; background: linear-gradient(180deg, rgba(6,7,8,0), rgba(6,7,8,0.88) 40px); }
+    .t1-right dl:first-of-type { display: none; }
+    .t1-title { top: 44px; right: 14px; }
+    .t1-foot { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .t1-grain { animation: none; }
+    .t1-bar i { transition: none; }
+  }
+</style>
+</head>
+<body>
+<canvas class="t1-scene" aria-hidden="true"></canvas>
+<div class="t1-grain" aria-hidden="true"></div>
+<div class="t1-vignette" aria-hidden="true"></div>
+<main class="t1">
+  <a class="t1-back" href="../../contact/">← Back</a>
+  <h1 class="t1-title"><b>Skin, scanned</b>Test page 1 · after the research <i>Skin</i></h1>
+
+  <section class="t1-left" aria-label="The site marked">
+    <div class="t1-bar"><i></i><span>SKN</span></div>
+    <p class="t1-num" data-v="35">35<small>°C</small></p>
+    <p class="t1-unit">Average temperature · <span data-say="site">neck, sides</span></p>
+    <div class="t1-lines" aria-hidden="true">
+      <i></i><span>pH 4.5 — 6.5</span>
+      <i></i><span>Oily · 8 — 12 h</span>
+      <i></i><span>Dry · 2 — 4 h</span>
+      <i></i><span>Sites · 4</span>
+    </div>
+  </section>
+
+  <section class="t1-right" aria-label="Readings">
+    <h2>Skin</h2>
+    <dl>
+      <dt>pH</dt><dd>4.5 – 6.5</dd>
+      <dt>Oily</dt><dd>8 – 12 h</dd>
+      <dt>Moisturised</dt><dd>Longer than dry</dd>
+      <dt>Dry</dt><dd>2 – 4 h</dd>
+      <dt>S. hominis</dt><dd>Thioalcohols</dd>
+    </dl>
+    <h2 data-say="head">Site · neck, sides</h2>
+    <dl class="t1-reading">
+      <dt>Temperature</dt><dd data-say="temp">~35°C</dd>
+      <dt>Sebum</dt><dd data-say="sebum">Moderate</dd>
+      <dt>Character</dt><dd data-say="char">Strong projection</dd>
+    </dl>
+    <h2>Sites</h2>
+    <ul class="t1-sites"></ul>
+  </section>
+
+  <p class="t1-foot">Drag to turn · the research's Table 2<span></span></p>
+</main>
+<script src="page.js?v=226837d53b"></script>
+</body>
+</html>

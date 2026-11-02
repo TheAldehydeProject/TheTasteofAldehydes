@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test page 3 — The Taste of Aldehydes</title>
+<!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
+<meta name="description" content="A test page, not a part of the site: Material Origin System — where the materials the site&#x27;s fragrances name come from.">
+<link rel="canonical" href="https://thetasteofaldehydes.com/test-pages/3/">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../../favicon.svg?v=2026-10-05" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png?v=2026-10-05">
+<meta name="theme-color" content="#070b10">
+<!-- SEARCH ENGINES: end -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!--
+  TEST PAGE 3 (2026-11-02) — "third after image 3": the owner's picture of
+  a dashboard — a globe with a country raised in columns by how many cases
+  each place has, the totals and a ranking down the left, three trends
+  down the right, a slider through the days along the foot.
+
+  Here: where the materials the site's fragrances name are traditionally
+  grown — bergamot in Calabria, vanilla in Madagascar, oud in Assam — on a
+  globe of dots, each place raised in columns by how many of the site's
+  fragrances name something from it; the totals, the ranking, the trends
+  by year, and a slider through the years the fragrances were made.
+
+  NOT A PAGE OF THE SITE: reached only by the third of the four unseen
+  squares at the foot of Contact; none of the site's scripts or its
+  stylesheet, in no menu, search or sitemap, and search engines told to
+  leave it alone. Its numbers are a snapshot of the site's; the regions
+  are general knowledge, and it says so at its foot.
+-->
+<style>
+  :root {
+    --ground: #070b10;
+    --panel: rgba(16, 22, 30, 0.72);
+    --line: rgba(160, 190, 220, 0.14);
+    --ink: #e6edf3;
+    --muted: #8796a6;
+    --faint: #4d5a68;
+    --red: #e2464f;
+    --pink: #f0a6a0;
+    --blue: #6aa8d8;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --sans: "Archivo", "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { background: radial-gradient(ellipse at 50% 55%, #0d1621 0%, var(--ground) 70%); color: var(--ink); font-family: var(--sans); overflow: hidden; }
+  .t3-globe { position: fixed; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+  .t3-globe.is-dragging { cursor: grabbing; }
+  .t3 { position: fixed; inset: 0; pointer-events: none; }
+  .t3 a, .t3 button, .t3 input, .t3 .t3-rank tr, .t3-config { pointer-events: auto; }
+
+  /* the bar along the top */
+  .t3-top { position: absolute; left: 0; right: 0; top: 0; height: 62px; display: flex; align-items: center; gap: 18px; padding: 0 24px; background: linear-gradient(180deg, rgba(7, 11, 16, 0.85), rgba(7, 11, 16, 0)); }
+  .t3-mark { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font: 500 9px/1.15 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; }
+  .t3-mark i { width: 22px; height: 22px; border: 1px solid var(--ink); position: relative; }
+  .t3-mark i::after { content: ""; position: absolute; inset: 6px; background: var(--red); }
+  .t3-top h1 { margin: 0; padding-left: 18px; border-left: 1px solid var(--line); font: 500 17px var(--sans); }
+  .t3-top h1 span { display: block; font: 400 10px var(--mono); color: var(--muted); letter-spacing: 0.02em; margin-top: 2px; }
+  .t3-acts { margin-left: auto; display: flex; gap: 22px; }
+  .t3-act { display: flex; align-items: center; gap: 8px; padding: 6px 2px; font: 500 11.5px var(--sans); color: var(--ink); background: none; border: 0; cursor: pointer; opacity: 0.85; }
+  .t3-act:hover, .t3-act[aria-pressed="true"] { opacity: 1; color: #fff; }
+  .t3-act i { width: 13px; height: 13px; border: 1.5px solid currentColor; border-radius: 50%; position: relative; }
+  .t3-act[data-act="config"] i::after { content: ""; position: absolute; inset: 2px; border-radius: 50%; background: currentColor; }
+  .t3-act[data-act="scenario"] i::before, .t3-act[data-act="scenario"] i::after { content: ""; position: absolute; left: 50%; top: 50%; width: 7px; height: 1.5px; margin: -0.75px 0 0 -3.5px; background: currentColor; }
+  .t3-act[data-act="scenario"] i::after { transform: rotate(90deg); }
+  .t3-act[data-act="compare"] i { background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+  .t3-act[aria-pressed="true"] { color: var(--pink); }
+  .t3-config { position: absolute; top: 56px; right: 24px; width: 220px; padding: 14px 16px; background: rgba(12, 17, 24, 0.95); border: 1px solid var(--line); font: 400 11px var(--sans); }
+  .t3-config[hidden] { display: none; }
+  .t3-config label { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; cursor: pointer; color: var(--muted); }
+  .t3-config label:hover { color: var(--ink); }
+  .t3-config input { accent-color: var(--red); }
+  .t3-config h2 { margin: 0 0 6px; font: 500 9.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+  /* the panels */
+  .t3-panel { position: absolute; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .t3-head { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 10px; padding: 3px 9px 4px 0; font: 500 11.5px var(--sans); color: var(--ink); }
+  .t3-head::before { content: ""; width: 3px; height: 12px; background: var(--red); }
+  .t3-left { left: 20px; top: 76px; width: 286px; }
+  .t3-big { display: flex; align-items: center; gap: 10px; margin: 2px 0 2px; font: 600 38px/1 var(--sans); letter-spacing: -0.01em; }
+  .t3-badge { display: inline-flex; align-items: center; gap: 4px; padding: 1px 6px; font: 500 10.5px var(--mono); color: #fff; background: rgba(226, 70, 79, 0.75); }
+  .t3-badge.is-down { background: rgba(106, 168, 216, 0.6); }
+  .t3-label { font: 400 10.5px var(--sans); color: var(--muted); }
+  .t3-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .t3-grid b { display: block; margin: 3px 0 4px; font: 600 21px var(--sans); }
+  .t3-rankbox { left: 20px; top: 352px; width: 286px; }
+  .t3-rank { width: 100%; border-collapse: collapse; font: 400 11px var(--sans); }
+  .t3-rank th { padding: 4px 0 7px; text-align: left; font-weight: 400; font-size: 10px; color: var(--muted); }
+  .t3-rank th:last-child, .t3-rank td:last-child { text-align: right; }
+  .t3-rank td { padding: 5px 0; border-top: 1px solid rgba(160, 190, 220, 0.06); }
+  .t3-rank td:first-child { width: 32px; font-family: var(--mono); color: var(--muted); }
+  .t3-rank tr { cursor: pointer; transition: background 0.2s; }
+  .t3-rank tbody tr:hover { background: rgba(226, 70, 79, 0.12); }
+  .t3-rank tr.is-on td { color: var(--pink); }
+  .t3-right { right: 20px; top: 76px; width: 300px; padding-bottom: 6px; }
+  .t3-chart { margin: 0 0 12px; }
+  .t3-chart h2 { margin: 0 0 4px; font: 500 10px var(--sans); color: var(--muted); text-align: center; }
+  .t3-chart svg { display: block; width: 100%; height: 118px; overflow: visible; }
+  .t3-chart text { font: 400 8px var(--mono); fill: var(--muted); }
+  .t3-key { display: flex; gap: 12px; justify-content: center; margin-top: 2px; font: 400 8.5px var(--sans); color: var(--muted); }
+  .t3-key span::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 5px; border-radius: 50%; background: var(--red); }
+  .t3-key span.b::before { background: var(--blue); }
+  .t3-key span[hidden] { display: none; }
+  .t3-pill { position: absolute; display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px 6px; font: 500 10.5px var(--sans); color: #fff; background: linear-gradient(90deg, rgba(226, 70, 79, 0.85), rgba(226, 70, 79, 0.25)); border-radius: 2px; transform: translate(-50%, -50%); white-space: nowrap; }
+  .t3-pill::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle, #fff 0 2px, transparent 2.5px), conic-gradient(var(--pink), var(--red), var(--pink)); }
+  .t3-scenario { position: absolute; left: 50%; top: 78px; transform: translateX(-50%); display: none; align-items: center; gap: 10px; padding: 6px 8px 6px 12px; font: 500 11px var(--sans); background: rgba(12, 17, 24, 0.9); border: 1px solid rgba(226, 70, 79, 0.5); }
+  .t3-scenario.is-on { display: inline-flex; }
+  .t3-scenario button { font: inherit; color: var(--muted); background: none; border: 0; cursor: pointer; padding: 0 4px; }
+  .t3-scenario button:hover { color: var(--ink); }
+
+  /* the foot: the legend, the years, the disclaimer */
+  .t3-legend { position: absolute; left: 22px; bottom: 74px; list-style: none; margin: 0; padding: 0; font: 400 10px var(--mono); color: var(--muted); }
+  .t3-legend li { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  .t3-legend i { width: 9px; height: 9px; }
+  .t3-time { position: absolute; left: 50%; bottom: 40px; width: min(560px, 46vw); transform: translateX(-50%); display: flex; align-items: center; gap: 12px; pointer-events: auto; }
+  .t3-play { flex: none; width: 26px; height: 26px; border: 1px solid var(--line); background: rgba(12, 17, 24, 0.8); color: var(--ink); cursor: pointer; font-size: 9px; }
+  .t3-track { position: relative; flex: 1; height: 26px; }
+  .t3-track input { position: absolute; inset: 0; width: 100%; margin: 0; opacity: 0; cursor: pointer; }
+  .t3-rail { position: absolute; left: 0; right: 0; top: 12px; height: 2px; background-image: repeating-linear-gradient(90deg, rgba(230, 237, 243, 0.65) 0 7px, transparent 7px 10px); }
+  .t3-fill { position: absolute; left: 0; top: 12px; height: 2px; background: var(--blue); box-shadow: 0 0 8px var(--blue); }
+  .t3-knob { position: absolute; top: 13px; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 4px rgba(106, 168, 216, 0.25), 0 0 14px var(--blue); }
+  .t3-when { position: absolute; top: -26px; padding: 3px 8px; font: 500 10px var(--mono); border: 1px solid var(--line); background: rgba(12, 17, 24, 0.85); transform: translateX(-50%); white-space: nowrap; }
+  .t3-ticks { position: absolute; left: 0; right: 0; top: 24px; display: flex; justify-content: space-between; font: 400 9px var(--mono); color: var(--muted); }
+  .t3-note { position: absolute; left: 22px; bottom: 12px; max-width: 360px; margin: 0; font: 400 9px/1.5 var(--sans); color: var(--faint); }
+  .t3-note a { color: var(--muted); }
+  .t3-mini { position: absolute; right: 20px; bottom: 26px; width: 168px; height: 88px; border: 1px solid var(--line); background: rgba(7, 11, 16, 0.6); }
+  .t3-tip { position: absolute; z-index: 5; padding: 8px 11px 9px; font: 400 10px/1.55 var(--mono); color: var(--ink); background: rgba(10, 14, 20, 0.94); border: 1px solid rgba(226, 70, 79, 0.45); max-width: 260px; pointer-events: none; }
+  .t3-tip b { display: block; font: 600 12px var(--sans); }
+  .t3-tip[hidden] { display: none; }
+  @media (max-width: 1100px) {
+    .t3-right { display: none; }
+  }
+  @media (max-width: 760px) {
+    body { overflow: auto; }
+    .t3-top { height: auto; flex-wrap: wrap; padding: 12px 14px; gap: 10px; }
+    .t3-top h1 { font-size: 14px; padding-left: 10px; }
+    .t3-acts { width: 100%; margin: 0; gap: 14px; }
+    .t3-act { font-size: 10.5px; }
+    .t3-left { left: 10px; right: 10px; width: auto; top: auto; bottom: 120px; padding: 10px 12px; }
+    .t3-grid, .t3-rankbox, .t3-legend, .t3-mini { display: none; }
+    .t3-big { font-size: 28px; }
+    .t3-time { width: calc(100% - 28px); bottom: 66px; }
+    .t3-note { left: 14px; right: 14px; bottom: 10px; font-size: 8.5px; }
+    .t3-pill { display: none; }
+  }
+</style>
+</head>
+<body>
+<canvas class="t3-globe" aria-hidden="true"></canvas>
+<main class="t3">
+  <header class="t3-top">
+    <a class="t3-mark" href="../../contact/" title="Back"><i></i>The Taste<br>of Aldehydes</a>
+    <h1>Material Origin System <span>note sourcing configuration &amp; distribution · test page 3</span></h1>
+    <div class="t3-acts">
+      <button type="button" class="t3-act" data-act="config" aria-pressed="false"><i></i>Configuration</button>
+      <button type="button" class="t3-act" data-act="scenario"><i></i>New Scenario</button>
+      <button type="button" class="t3-act" data-act="compare" aria-pressed="false"><i></i>Comparison Mode</button>
+    </div>
+  </header>
+  <div class="t3-config" hidden>
+    <h2>Configuration</h2>
+    <label>Turn by itself <input type="checkbox" data-opt="spin" checked></label>
+    <label>Names of the places <input type="checkbox" data-opt="labels" checked></label>
+    <label>Columns <input type="checkbox" data-opt="bars" checked></label>
+    <label>Atmosphere <input type="checkbox" data-opt="air" checked></label>
+    <label>Graticule <input type="checkbox" data-opt="grid"></label>
+  </div>
+  <div class="t3-scenario"><span></span><button type="button" aria-label="Back to every fragrance">✕</button></div>
+
+  <section class="t3-panel t3-left" aria-label="Totals">
+    <p class="t3-head">Site-wide material mentions</p>
+    <p class="t3-label">Fragrances naming a material from a place</p>
+    <div class="t3-big"><span data-n="total">0</span><span class="t3-badge" data-n="delta">0 ↑</span></div>
+    <div class="t3-grid">
+      <div><span class="t3-label">Fragrances counted</span><b data-n="frag">0</b><span class="t3-badge" data-n="fragd">0</span></div>
+      <div><span class="t3-label">Places reached</span><b data-n="places">0</b><span class="t3-badge" data-n="placesd">0</span></div>
+      <div><span class="t3-label">Notes named</span><b data-n="notes">0</b></div>
+      <div><span class="t3-label">Undated fragrances</span><b data-n="undated">0</b></div>
+    </div>
+  </section>
+  <section class="t3-panel t3-rankbox" aria-label="Rankings">
+    <p class="t3-head">Place rankings by fragrances</p>
+    <table class="t3-rank">
+      <thead><tr><th>Rank</th><th>Places</th><th>Quantity</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="t3-panel t3-right" aria-label="Trends">
+    <p class="t3-head">Distribution trend</p>
+    <div class="t3-chart"><h2>[ Fragrances by the year they were made ]</h2><svg data-chart="made"></svg>
+      <div class="t3-key"><span>On the site</span><span class="b" hidden>Prin Lomros' houses</span></div></div>
+    <div class="t3-chart"><h2>[ Notes named, by year ]</h2><svg data-chart="notes"></svg></div>
+    <div class="t3-chart"><h2>[ Places reached, all years up to ]</h2><svg data-chart="places"></svg></div>
+  </section>
+
+  <span class="t3-pill" aria-hidden="true">Distribution results</span>
+
+  <ul class="t3-legend" aria-label="Legend"></ul>
+  <div class="t3-time">
+    <button type="button" class="t3-play" aria-label="Play through the years">▶</button>
+    <div class="t3-track">
+      <div class="t3-rail"></div><div class="t3-fill"></div><div class="t3-knob"></div>
+      <span class="t3-when">All years</span>
+      <div class="t3-ticks"><span>2009</span><span>2014</span><span>2020</span><span>All</span></div>
+      <input type="range" min="0" max="18" step="1" value="18" aria-label="Up to which year">
+    </div>
+  </div>
+  <canvas class="t3-mini" aria-hidden="true"></canvas>
+  <p class="t3-note">The places are where each material is traditionally grown or gathered — general knowledge, not where any one perfume's oil came from — and the fragrances are the site's own, as of the day this was made. A test page, not a part of the site. <a href="../../contact/">Back</a></p>
+  <div class="t3-tip" hidden></div>
+</main>
+<script src="page.js?v=0f9e5fcffc"></script>
+</body>
+</html>

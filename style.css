@@ -3737,6 +3737,14 @@ body.structured .page-where { color: rgba(226, 232, 242, 0.55); border-left-colo
 .contact-lock.is-scripted .contact-lock-nojs { display: none; }
 .contact-lock-nojs { font-size: 15px; color: var(--muted); margin: 0; }
 @media (prefers-reduced-motion: reduce) { .contact-details { animation: none; } }
+/* THE FOUR TEST PAGES' SQUARES (2026-11-02): "on the very bottom of the
+   contact page ... white and not visible at all on the bottom right" —
+   four squares in the page's own ground, at the foot of the page however
+   long it is (the body at least the window's height, and their place), each
+   a finger's size for a phone. Nothing about them changes under the hand. */
+body.contact-body { position: relative; min-height: 100vh; min-height: 100dvh; }
+.contact-tests { position: absolute; right: 10px; bottom: 10px; display: flex; gap: 6px; }
+.contact-tests a { display: block; width: 22px; height: 22px; background: var(--bg); cursor: default; outline: none; -webkit-tap-highlight-color: transparent; }
 
 /* ==================================================================
    FOCUS STATES

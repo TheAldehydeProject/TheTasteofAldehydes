@@ -147,3 +147,17 @@ comments and `contact.js` say it is the site's own now.
 
 Whether mail sent to it arrives is set where the domain is managed, not here: GitHub Pages serves
 the site and carries no mail. (It could not be checked from here.)
+
+## 2026-11-02 — four unseen squares at the foot of the page
+
+The owner asked for buttons "on the very bottom of the contact page ... white and not visible
+at all on the bottom right", four of them, each opening one of their test pages. They stand
+after the page's `<main>` in a `.contact-tests` block: four 22px squares at the very foot of
+the page on its right, 1 to 4 from the left, in the page's own colour (`var(--bg)` — the
+paper, `#fafaf9`, which a white square would have shown against). The body is given at least
+the window's height (`body.contact-body`) so that "the very foot" is the window's foot on a
+page this short. They are out of the keyboard's and a screen reader's way and `nofollow`, and
+**`contact.js` stops the hand's passing over them from reaching the site's cursor**, which
+closes in on anything pressable and would have given them away — a few lines at its head, before
+the captcha, which they do not touch. The pages themselves, and why they are kept apart from
+the site, are in [their report](2026-11-02-the-four-test-pages.md).

@@ -26,6 +26,14 @@
 // WITHOUT THIS SCRIPT the page is its sentence, the owner's line under
 // it, and a line saying the email needs JavaScript.
 // ============================================================
+// THE FOUR TEST PAGES' SQUARES at the foot of the page (2026-11-02): the
+// site's cursor closes in on anything that can be pressed, which would give
+// them away, so the hand passing over them is not told to it.
+(function () {
+  const tests = document.querySelector(".contact-tests");
+  if (tests) tests.addEventListener("mouseover", (e) => e.stopPropagation());
+})();
+
 (function () {
   const lock = document.querySelector(".contact-lock");
   if (!lock) return;
