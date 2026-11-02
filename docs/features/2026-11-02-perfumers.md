@@ -169,10 +169,13 @@ animations and smooth them out. OPTIMIZE!!!"
   the wheel listened for only while something is chosen, so the page's own scrolling never waits on it;
   the resize gathered into one a frame; and `window.Sharpness` lets it down a step on a machine that
   cannot keep up.
-- **Measured** (the same browser, no graphics card, a laptop's window, the main thread's time a frame):
-  at rest on the whole chart about 0.5 ms a frame — turning and idling — where the old page spent as
-  much standing still; flying in, a 95th-percentile frame of 4.3 ms against 12.9 and a worst of 7.6 ms
-  against 33.7; close in at rest, 0.2 ms a frame, swaying.
+- **Measured** (the same browser, no graphics card, a laptop's window and a phone's, the main thread's
+  time in a frame, the old page against the new): on the whole chart at rest, 46 ms of work a second
+  against 40 — the new one turning and idling, the old one only turning its globe — its worst frame 3.4 ms
+  against 1.9; **flying in, 86 frames in a second and a half against 162** (the old flight dropped every
+  other frame), a 95th-percentile frame of 10 ms against 4.5; flying out, 78 frames against 136; on a
+  phone, the flights' work a second nearly halved (205 ms against 117). Close in at rest the new page
+  spends 9 to 16 ms a second (the old spent 2, standing still) — the sway and the idle things.
 - **The list is the chart's A–Z**, by surname as the rim is, so the two read the same way round.
 - **Wide choices stay on the whole chart** because framing 147 degrees of circle close in leaves nothing
   readable; lit there, with their houses on the rim, the next step is a house.
@@ -195,6 +198,11 @@ script and from an address; on a phone the list is a drawer and the chart looks 
 By hand: open `/perfumers/` — watch it turn and the lights run; choose Aichi Liu in the list, then Om
 Parfums, then a perfume; Esc twice; choose Prin Lomros, then Strangers Parfumerie, and click inside it to
 look closer; try the wheel close in; *By year*; on a phone, the drawer.
+
+The full suite, on a machine with two processors and no graphics card: 593 of 594 passed. The one that
+did not is Om's speed check (`om-and-the-tribe.spec.js:748`, "frames a second, coming together", 20
+against more than 24) under the whole suite's load; run alone it passed, twice, as it did on the commit
+before.
 
 ### Known issues / TODO
 
