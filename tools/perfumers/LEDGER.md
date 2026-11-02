@@ -158,7 +158,7 @@ Change something here, then run `python3 tools/perfumers/build.py` and `python3 
 | Pale Fire | Holladay Penick Saltz | named | 2016 | Apoteker Tepe | houses/apoteker-tepe.html#part-06 | S06, S09 |  |
 | Anabasis | Holladay Penick Saltz | named | 2015 | Apoteker Tepe | houses/apoteker-tepe.html#part-07 | S06, S09 |  |
 | After the Flood | Holladay Penick Saltz | named | 2015 | Apoteker Tepe | houses/apoteker-tepe.html#part-08 | S06, S09 |  |
-| Brother Night | Holladay Penick Saltz | named | 2016 | Apoteker Tepe | houses/apoteker-tepe.html#part-03 | S06, S08, S09 | First made in 2016 as a small boutique run; brought back in 2022 — the year the site's own page gives. |
+| Brother Night | Holladay Penick Saltz | named | 2016 | Apoteker Tepe | houses/apoteker-tepe.html#part-03 | S06, S08, S82, S83 | Its first version: made in 2016 as a boutique-only release, sold only at the Neon Heart shop in New Orleans; Pineward brought it back in 2022, the year Parfumo and this site's own page give. |
 | CV99 |  | none |  | Lussur | individual-fragrances/individual-fragrances.html#part-01 | S61 |  |
 | De Profundis | Christopher Sheldrake | named | 2011 | Serge Lutens | individual-fragrances/individual-fragrances.html#part-02 | S49 |  |
 | Haxan | Prin Lomros | named | 2018 | Parfum Prissana | individual-fragrances/individual-fragrances.html#part-03 | S72 |  |
@@ -611,7 +611,7 @@ MLA 8, the site's format. One line each: its number, then the citation, then `|`
 - S05: “Apoteker Tepe: All Perfumes & Information.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026. | https://www.parfumo.com/Perfumes/Apoteker_Tepe
 - S06: “Holladay Saltz.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026. | https://www.parfumo.com/Perfumers/Holladay_Saltz
 - S07: “Kogen.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026. | https://www.parfumo.com/Perfumes/Apoteker_Tepe/kogen
-- S08: “Apoteker Tepe returns!.” *Basenotes*, basenotes.com. Accessed 2 Nov. 2026. | https://basenotes.com/threads/apoteker-tepe-returns.524188/
+- S08: “Apoteker Tepe returns!.” *Basenotes*, basenotes.com. Accessed 2 Nov. 2026. | https://basenotes.com/community/threads/apoteker-tepe-returns.524188/
 - S09: The Taste of Aldehydes. “Apoteker Tepe (the years each was made, as the owner wrote them).” *The Taste of Aldehydes*. | SITE:houses/apoteker-tepe.html
 - S10: “Adar.” *Scent Split*, scentsplit.com. Accessed 2 Nov. 2026. | https://www.scentsplit.com/collections/adar
 - S11: “Adar (Spanish edition of the house page).” *Scent Split*, scentsplit.com. Accessed 2 Nov. 2026. | https://www.scentsplit.com/es/collections/adar
@@ -685,3 +685,5 @@ MLA 8, the site's format. One line each: its number, then the citation, then `|`
 - S79: “Serge Lutens.” *Jarrold*, jarrold.co.uk. Accessed 2 Nov. 2026. | https://jarrold.co.uk/brands/serge-lutens
 - S80: “Dior Women's Perfume.” *Harrods*, harrods.com. Accessed 2 Nov. 2026. | https://www.harrods.com/en-tz/designers/dior/perfume/womens-perfume
 - S81: “François Demachy.” *The Fragrance Foundation UK*, fragrancefoundation.org.uk. Accessed 2 Nov. 2026. | https://fragrancefoundation.org.uk/francois-demanchy
+- S82: “Brother Night by Apoteker Tepe.” *Basenotes*, basenotes.com. Accessed 2 Nov. 2026. | https://basenotes.com/fragrances/brother-night-by-apoteker-tepe.26191067
+- S83: “Brother Night by Apoteker Tepe.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026. | https://www.parfumo.com/Perfumes/Apoteker_Tepe/brother-night

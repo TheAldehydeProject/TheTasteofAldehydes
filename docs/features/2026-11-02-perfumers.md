@@ -73,8 +73,7 @@ run: the owner asked to see it first. The page has no tests of its own yet.
 - **Its picture on the node map** is not taken yet: `node tools/previews.js` takes it, and then
   `image: "images/Previews/perfumers.jpg"` goes on its node in `node-scene.js`. Until then
   `tests/node-map.spec.js`' "every node shows a picture" fails.
-- **Brother Night** is dated 2016 (Basenotes); Apoteker Tepe's own page on this site says 2022.
-  For the owner to say.
+- **Brother Night** is dated **2016, its first version** (the owner: "find the soonest earliest iteration of the perfume rather than reformulations"): Basenotes' page dates it 2016, and Pineward's own announcement on Basenotes says it was made in 2016 as a boutique-only release, sold only at the Neon Heart shop in New Orleans. Parfumo's 2022 is the year Pineward brought it back. **The Apoteker Tepe page itself still says *2022, after 2018***, the owner's own line; it was left alone, and is theirs to change.
 - **The page's introduction and disclaimer** at the corners are written for the page, not by
   the owner; theirs to rewrite.
 - **Prin Lomros' houses are 138 of the 280 perfumes**; trimming them is the owner's call.
