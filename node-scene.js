@@ -95,10 +95,10 @@ const REAL_NODES = [
   },
   {
     // Photography's place since 2026-11-02, when Perfumers took it in the
-    // Menu. Its picture is still to be taken (`node tools/previews.js`).
+    // Menu.
     label: "Perfumers", sub: "who made them, round one circle",
     href: "perfumers/", pos: [2.0, -1.2, 2.19],
-    preview: { description: "Every perfumer behind a perfume on this site, and Prin Lomros’ houses, round one circle: the houses, the perfumes and their years, each with its sources." },
+    preview: { image: "images/Previews/perfumers.jpg", description: "Every perfumer behind a perfume on this site, and Prin Lomros’ houses, round one circle: the houses, the perfumes and their years, each with its sources." },
   },
   {
     label: "Search", sub: "one field over the whole site",

@@ -14491,8 +14491,8 @@ body.perfumers-page {
 }
 
 .pf-legend { list-style: none; margin: 0; padding: 0; }
-.pf-legend li { display: flex; align-items: baseline; gap: 10px; margin: 0 0 7px; }
-.pf-key { flex: none; display: inline-block; width: 18px; height: 9px; position: relative; top: 1px; }
+.pf-legend li { position: relative; padding-left: 28px; margin: 0 0 7px; }
+.pf-key { position: absolute; left: 0; top: 0.45em; display: block; width: 18px; height: 9px; }
 .pf-key-dot::after { content: ""; position: absolute; left: 4px; top: 0; width: 9px; height: 9px; border-radius: 50%; }
 .pf-key-gold::after { background: var(--pf-gold); box-shadow: 0 0 6px rgba(235, 163, 63, 0.7); }
 .pf-key-blue::after { background: var(--pf-blue); box-shadow: 0 0 6px rgba(188, 211, 234, 0.6); }

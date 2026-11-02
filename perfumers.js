@@ -196,7 +196,21 @@
     W = stage.clientWidth; H = stage.clientHeight;
     DPR = Math.min(window.devicePixelRatio || 1, W < 700 ? 1.5 : 2);
     [cvChart, cvDof, cvLive].forEach((c) => { c.width = Math.round(W * DPR); c.height = Math.round(H * DPR); });
-    fitZ = Math.min(W, H) / (2 * R.fit);
+    // Where the notes stand over the stage (a wide window), the chart is
+    // fitted between their columns, never under them.
+    let room = Math.min(W, H);
+    const cols = Array.from(document.querySelectorAll(".pf-notes-col"));
+    if (cols.length && getComputedStyle(cols[0].parentNode).position === "absolute") {
+      const sb = stage.getBoundingClientRect();
+      let side = 0;
+      cols.forEach((col) => {
+        const b = col.getBoundingClientRect();
+        if (!b.width) return;
+        side = Math.max(side, b.left - sb.left < W / 2 ? b.right - sb.left : sb.right - b.left);
+      });
+      room = Math.min(room, W - 2 * (side + 12));
+    }
+    fitZ = Math.max(80, room) / (2 * R.fit);
     if (!zoomed) { Object.assign(cam, overview()); camT0 = -1; }
     widths.clear();
     dofOff();
@@ -404,7 +418,7 @@
     c.strokeStyle = "rgba(" + COL.ink + "," + 0.16 * fade + ")"; c.stroke();
 
     // the gold haze round the globe
-    specks(c, haze, 2, COL.gold, 0.9 * fade);
+    specks(c, haze, 4, COL.gold, 0.9 * fade);
 
     // the years named up the gap at the top
     c.font = F.mono; c.textBaseline = "middle"; c.textAlign = "left";
@@ -662,6 +676,7 @@
   function drawHover(c) {
     const list = hover.type === "entry" ? [hover.e] : hover.g.members;
     c.setTransform(DPR, 0, 0, DPR, 0, 0);
+    c.textBaseline = "middle"; c.textAlign = "left";
     list.forEach((e) => {
       proj(Math.cos(e.a) * R.base, Math.sin(e.a) * R.base, T0);
       proj(Math.cos(e.a) * e.rDot, Math.sin(e.a) * e.rDot, T1);

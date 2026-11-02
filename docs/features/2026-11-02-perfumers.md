@@ -55,6 +55,10 @@ window** — a perfumer, a house or a perfume — with what is known about it an
 - **Three canvases**: the chart (redrawn only when something changed), the out-of-focus copy,
   and a live layer for the turning globe and what the hand is on.
 - **No page search mark** in the top right: that is where the switch is.
+- **Fitted between the columns.** On a wide window (1180px and over) the Intro, Disclaimer and Legend
+  stand over the stage, and the chart is sized to the room between them (`resize`), never under them.
+- **Its picture on the node map** is `images/Previews/perfumers.jpg` (`node tools/previews.js perfumers`);
+  Photography's was taken out.
 - **Photography's page is a signpost now** to `/perfumers/`, as is its older address in
   `categories/`; `photography.js` went with it. Its emptied page is in the history.
 
@@ -65,14 +69,15 @@ window** — a perfumer, a house or a perfume — with what is known about it an
 Esc, a double click or *The whole chart* goes back. The switch at the top right sorts by year.
 
 The tests that named Photography were changed to name Perfumers (the Menu, the formula slide's
-names, the node map's names, the pages and the phone checks, the signposts). None of it has been
-run: the owner asked to see it first. The page has no tests of its own yet.
+names, the node map's names, the pages and the phone checks, the signposts). The page has no tests of its
+own yet; it was looked at by eye at a laptop's and a phone's size before it went live (the overview,
+flying in, the switch, the windows, a tap on a phone), which found three faults, fixed: the gold
+haze round the globe read four numbers at a time as two and drew a gold square; the name lit under
+the hand stood a few pixels off the one under it (its layer's text was not centred on its line); and
+the legend's words broke into columns.
 
 ## Known issues / TODO
 
-- **Its picture on the node map** is not taken yet: `node tools/previews.js` takes it, and then
-  `image: "images/Previews/perfumers.jpg"` goes on its node in `node-scene.js`. Until then
-  `tests/node-map.spec.js`' "every node shows a picture" fails.
 - **Brother Night** is dated **2016, its first version** (the owner: "find the soonest earliest iteration of the perfume rather than reformulations"): Basenotes' page dates it 2016, and Pineward's own announcement on Basenotes says it was made in 2016 as a boutique-only release, sold only at the Neon Heart shop in New Orleans. Parfumo's 2022 is the year Pineward brought it back. **The Apoteker Tepe page itself still says *2022, after 2018***, the owner's own line; it was left alone, and is theirs to change.
 - **The page's introduction and disclaimer** at the corners are written for the page, not by
   the owner; theirs to rewrite.
