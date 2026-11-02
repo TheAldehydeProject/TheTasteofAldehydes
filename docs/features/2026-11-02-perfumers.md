@@ -76,6 +76,12 @@ haze round the globe read four numbers at a time as two and drew a gold square; 
 the hand stood a few pixels off the one under it (its layer's text was not centred on its line); and
 the legend's words broke into columns.
 
+The full suite was run before it went live, on a machine with two processors and no graphics card:
+578 of 582 passed. The four that did not are all speed or timing checks on Om's and the Note
+Library's drawings (`om-and-the-tribe.spec.js:748`, `note-library.spec.js:1417` and `:1521`,
+`rulebook.spec.js:47`) — pages this change touched only in their scripts' versions; the first two
+failed the same way on the commit before it, and `:1521` passed run alone.
+
 ## Known issues / TODO
 
 - **Brother Night** is dated **2016, its first version** (the owner: "find the soonest earliest iteration of the perfume rather than reformulations"): Basenotes' page dates it 2016, and Pineward's own announcement on Basenotes says it was made in 2016 as a boutique-only release, sold only at the Neon Heart shop in New Orleans. Parfumo's 2022 is the year Pineward brought it back. **The Apoteker Tepe page itself still says *2022, after 2018***, the owner's own line; it was left alone, and is theirs to change.
