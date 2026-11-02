@@ -14272,9 +14272,19 @@ body.perfumers-page {
 
 .pf { position: relative; }
 
-/* THE STAGE: the whole window, the chart drawn over all of it. Three
-   canvases: the chart, its out-of-focus copy (faded in once a zoom has
-   settled), and the live layer — the sphere and what the hand is on. */
+/* THE STAGE: the whole window, the chart drawn over all of it — in layers,
+   so that what only turns is turned by the browser rather than drawn again
+   (2026-11-02, later: "optimize tf out of it"):
+     .pf-rotor  the whole chart at rest, drawn once into a square canvas and
+                TURNED by its transform — the chart turning slowly costs the
+                page nothing a frame;
+     .pf-sway   the chart drawn in perspective (flying, and close in) with
+                its out-of-focus copy; close in, it is SWAYED by its
+                transform, never drawn again for it;
+     .pf-live   what moves of itself: the globe, the far field, the dust
+                drifting, the lights running out along the spokes, the names
+                on the rim while the chart turns, what the hand is on.
+   data-view on the stage says which is shown: turn, live or still. */
 .pf-stage {
   position: relative;
   height: 100vh;
@@ -14282,17 +14292,23 @@ body.perfumers-page {
   min-height: 520px;
   overflow: hidden;
   touch-action: pan-y;
-  cursor: zoom-in;
+  cursor: default;
+  --chart-x: 50%;
 }
-.pf-stage.is-zoomed { cursor: grab; touch-action: none; }
-.pf-stage.is-dragging { cursor: grabbing; }
 .pf-stage.is-over { cursor: pointer; }
-.pf-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.pf-dof { opacity: 0; transition: opacity 0.7s ease; pointer-events: none; }
-.pf-dof.is-on { opacity: 1; }
-.pf-live { pointer-events: none; }
+.pf-stage.is-chosen { touch-action: none; }
+.pf-stage canvas { position: absolute; display: block; }
+.pf-rotor { position: absolute; left: 0; top: 0; transform-origin: 50% 50%; will-change: transform; pointer-events: none; }
+.pf-rotor canvas { position: static; width: 100%; height: 100%; }
+.pf-sway { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform-origin: 0 0; will-change: transform; pointer-events: none; }
+.pf-stage[data-view="turn"] .pf-sway,
+.pf-stage:not([data-view="turn"]) .pf-rotor { display: none; }
+.pf-live { left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+.pf-dof { opacity: 0; transition: opacity 0.2s ease; pointer-events: none; }
+.pf-dof.is-on { opacity: 1; transition-duration: 0.9s; }
 
-/* THE TITLE, top left under the Menu, as the poster's is. */
+/* THE TITLE, top left under the Menu, as the poster's is. It gives its
+   place to what is chosen. */
 .pf-title {
   position: absolute;
   top: 74px;
@@ -14329,13 +14345,84 @@ body.perfumers-page {
   letter-spacing: 0.04em;
   color: var(--pf-muted);
 }
+.pf.is-chosen .pf-title { opacity: 0; transform: translateY(-8px); }
+
+/* WHAT IS CHOSEN, in the title's place: a kicker, its name, how many, and
+   the way to its window. */
+.pf-here {
+  position: absolute;
+  top: 74px;
+  left: 34px;
+  z-index: 2;
+  width: 300px;
+  padding: 0 0 14px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s ease, transform 0.7s var(--menu-ease);
+  pointer-events: none;
+}
+.pf-here[hidden] { display: none; }
+.pf-here.is-on { opacity: 1; transform: none; pointer-events: auto; }
+.pf-here::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -60px;
+  top: -50px;
+  right: -60px;
+  bottom: -40px;
+  background: radial-gradient(closest-side, rgba(11, 12, 13, 0.82), rgba(11, 12, 13, 0));
+  pointer-events: none;
+}
+.pf-here-kicker {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 8px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pf-gold);
+}
+.pf-here-kicker::before { content: ""; flex: none; width: 9px; height: 9px; border: 1px solid currentColor; box-sizing: border-box; }
+.pf-here-name {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1.02;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pf-ink);
+}
+.pf-here-meta { margin: 9px 0 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; color: var(--pf-muted); }
+.pf-here-about {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 7px 12px 8px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pf-ink);
+  background: rgba(11, 12, 13, 0.6);
+  border: 1px solid var(--pf-rule);
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+.pf-here-about::after { content: "→"; color: var(--pf-gold); }
+.pf-here-about:hover { color: var(--pf-gold); border-color: rgba(235, 163, 63, 0.55); }
+.pf-here-about[hidden] { display: none; }
 
 /* THE SWITCH, top right: A–Z or by year. */
 .pf-sort {
   position: absolute;
   top: 20px;
   right: 30px;
-  z-index: 3;
+  z-index: 5;
   display: flex;
   align-items: center;
   gap: 0;
@@ -14358,10 +14445,114 @@ body.perfumers-page {
 .pf-sort-button:hover { color: var(--pf-ink); border-color: rgba(235, 232, 226, 0.34); }
 .pf-sort-button[aria-pressed="true"] { color: var(--pf-ground); background: var(--pf-ink); border-color: var(--pf-ink); }
 
-/* THE WAY BACK OUT, once zoomed. */
+/* THE PERFUMERS, A TO Z — in the legend's old place, down the right, the
+   list scrolling in its own box ("instead of the legend, I want you to add
+   a fixed list of perfumers that you can scroll. alphabetical"). A
+   perfumer chosen opens to its houses, a house to its perfumes. */
+.pf-nav {
+  position: absolute;
+  z-index: 3;
+  right: 30px;
+  top: 74px;
+  bottom: 30px;
+  width: 256px;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--pf-muted);
+}
+.pf-nav[hidden] { display: none; }
+/* a ground behind the list, so a long name on the chart passes under it
+   rather than through its words */
+.pf-nav::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -14px;
+  bottom: -30px;
+  left: -56px;
+  right: -30px;
+  background: linear-gradient(90deg, rgba(11, 12, 13, 0), rgba(11, 12, 13, 0.9) 50px);
+  pointer-events: none;
+}
+.pf-nav-head { flex: none; display: flex; align-items: baseline; gap: 10px; padding: 0 0 12px; border-bottom: 1px solid var(--pf-rule); }
+.pf-nav-title { margin: 0; font-family: var(--sans); font-weight: 700; font-size: 15px; letter-spacing: 0.06em; color: var(--pf-ink); }
+.pf-nav-total { font-size: 10.5px; color: var(--pf-faint); }
+.pf-nav-toggle { display: none; }
+.pf-nav-scroll {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 8px 6px 28px 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(235, 232, 226, 0.18) transparent;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14px, #000 calc(100% - 30px), transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 14px, #000 calc(100% - 30px), transparent 100%);
+}
+.pf-nav-scroll::-webkit-scrollbar { width: 4px; }
+.pf-nav-scroll::-webkit-scrollbar-thumb { background: rgba(235, 232, 226, 0.18); }
+.pf-nav-list, .pf-nav-houses, .pf-nav-perfumes { list-style: none; margin: 0; padding: 0; }
+.pf-nav-row {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin: 0;
+  padding: 5px 2px 5px 18px;
+  font: inherit;
+  text-align: left;
+  color: var(--pf-ink);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+.pf-nav-row::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -4px;
+  border: 1px solid rgba(235, 232, 226, 0.28);
+  box-sizing: border-box;
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.35s var(--menu-ease);
+}
+.pf-nav-name { min-width: 0; overflow-wrap: anywhere; }
+.pf-nav-n { flex: none; font-family: var(--mono); font-size: 10px; color: var(--pf-faint); transition: color 0.25s ease; }
+.pf-nav-per { font-family: var(--sans); font-weight: 500; font-size: 13px; letter-spacing: 0.01em; }
+.pf-nav-row:hover, .pf-nav-row:focus-visible, .pf-nav-row.is-hot { color: var(--pf-gold); }
+.pf-nav-row:hover::before, .pf-nav-row.is-hot::before { border-color: var(--pf-gold); }
+.pf-nav-row:hover .pf-nav-n { color: var(--pf-muted); }
+.is-on > .pf-nav-row { color: var(--pf-gold); }
+.is-on > .pf-nav-row::before { border-color: var(--pf-gold); background: var(--pf-gold); transform: rotate(45deg); }
+.is-on > .pf-nav-row .pf-nav-n { color: var(--pf-gold); }
+.pf-nav-houses {
+  margin: 2px 0 8px 5px;
+  padding: 2px 0 2px 9px;
+  border-left: 1px solid rgba(235, 163, 63, 0.35);
+}
+.pf-nav-houses[hidden], .pf-nav-perfumes[hidden] { display: none; }
+.pf-nav-house { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #d9d6cf; }
+.pf-nav-perfumes { margin: 1px 0 6px 5px; padding: 0 0 0 9px; border-left: 1px solid var(--pf-rule); }
+.pf-nav-perfume { font-family: var(--sans); font-size: 12px; padding-top: 3px; padding-bottom: 3px; color: #cfccc5; }
+.pf-nav-perfume::before { width: 4px; height: 4px; margin-top: -2px; left: 3px; border-radius: 50%; border: 0; background: rgba(235, 232, 226, 0.3); }
+.pf-nav-perfume.is-here::before { background: var(--pf-gold); }
+.pf-nav-perfume.is-lit { color: var(--pf-gold); }
+.pf-nav-perfume i { font-style: normal; font-family: var(--mono); font-size: 10px; color: var(--pf-faint); flex: none; }
+.pf-nav-opened { animation: pf-nav-in 0.45s var(--menu-ease) both; }
+@keyframes pf-nav-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* THE WAY BACK OUT, once something is chosen. */
 .pf-back {
   position: absolute;
-  left: 50%;
+  left: var(--chart-x);
   bottom: 26px;
   z-index: 3;
   transform: translateX(-50%);
@@ -14374,11 +14565,10 @@ body.perfumers-page {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--pf-ink);
-  background: rgba(11, 12, 13, 0.72);
+  background: rgba(11, 12, 13, 0.82);
   border: 1px solid var(--pf-rule);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
   cursor: pointer;
+  transition: border-color 0.3s ease;
 }
 .pf-back[hidden] { display: none; }
 .pf-back:hover { border-color: rgba(235, 232, 226, 0.4); }
@@ -14387,7 +14577,7 @@ body.perfumers-page {
 
 .pf-hint {
   position: absolute;
-  left: 50%;
+  left: var(--chart-x);
   bottom: 30px;
   z-index: 2;
   margin: 0;
@@ -14401,7 +14591,8 @@ body.perfumers-page {
   white-space: nowrap;
   transition: opacity 0.6s ease;
 }
-.pf-stage.is-zoomed .pf-hint { bottom: 70px; }
+.pf-stage.is-chosen .pf-hint { bottom: 66px; padding: 5px 12px 6px; background: rgba(11, 12, 13, 0.78); }
+.pf-hint:empty { display: none; }
 
 /* WHAT THE HAND IS ON, beside it. */
 .pf-tip {
@@ -14424,9 +14615,9 @@ body.perfumers-page {
 .pf-tip b { font-family: var(--sans); font-weight: 600; font-size: 12.5px; letter-spacing: 0.01em; }
 .pf-tip span { display: block; color: var(--pf-muted); }
 
-/* THE WORDS ROUND THE CHART: Intro and Disclaimer down the left, the
-   Legend down the right — laid over the stage where there is room either
-   side of the circle, and under it where there is not. */
+/* THE WORDS BESIDE THE CHART: Intro and Disclaimer down the left — over the
+   stage where there is room beside the circle, under it where there is
+   not. */
 .pf-notes {
   font-family: var(--mono);
   font-size: 11px;
@@ -14450,74 +14641,179 @@ body.perfumers-page {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
+    width: 0;
     height: 100vh;
     height: 100svh;
     min-height: 520px;
-    pointer-events: none;
   }
   .pf-notes-col {
     position: absolute;
     width: 236px;
-    pointer-events: auto;
     transition: opacity 0.6s ease, transform 0.8s var(--menu-ease);
   }
   .pf-notes-left { left: 34px; bottom: 40px; }
-  .pf-notes-right { right: 30px; top: 74px; }
-  .pf.is-zoomed .pf-notes-col,
-  .pf.is-zoomed .pf-title { opacity: 0; pointer-events: none; }
-  .pf.is-zoomed .pf-notes-left { transform: translateX(-16px); }
-  .pf.is-zoomed .pf-notes-right { transform: translateX(16px); }
+  .pf.is-chosen .pf-notes-col { opacity: 0; pointer-events: none; transform: translateX(-16px); }
 }
 @media (max-width: 1179px) {
   .pf-notes {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 34px;
+    columns: 2 260px;
+    column-gap: 40px;
     padding: 40px 34px 10px;
     border-top: 1px solid var(--pf-rule);
   }
-  .pf.is-zoomed .pf-title { opacity: 0; }
+  .pf-nav { width: 220px; right: 22px; }
 }
 @media (max-width: 700px) {
-  .pf-notes { grid-template-columns: 1fr; gap: 10px; padding: 30px 20px 0; }
+  .pf-notes { columns: 1; padding: 30px 20px 0; }
   .pf-title { top: 64px; left: 20px; width: 180px; }
   .pf-title-word { font-size: 28px; }
   .pf-title-years { font-size: 20px; }
   .pf-title-say { display: none; }
+  .pf-here { top: 64px; left: 20px; width: calc(100% - 40px); }
+  .pf-here::before { left: -30px; right: -10px; }
+  .pf-here-name { font-size: 22px; }
+  .pf-here-meta { margin-top: 6px; font-size: 10.5px; }
+  .pf-here-about { margin-top: 10px; }
   .pf-sort { top: 16px; right: 14px; padding: 4px; background: var(--chrome-ground); border-radius: 3px; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
   .pf-sort-say { display: none; }
-  .pf-hint { bottom: 22px; font-size: 9.5px; }
+  .pf-hint { bottom: 70px; font-size: 9.5px; }
+  .pf-stage.is-chosen .pf-hint { bottom: 112px; }
+  .pf-back { bottom: 68px; }
+
+  /* the list is a drawer at the foot of the window on a phone: its bar
+     always there, saying where you are; pressed, the list comes up over
+     the lower half of the chart, and the chart looks closer above it. */
+  .pf-nav {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    width: auto;
+    height: 52%;
+    padding: 0 16px;
+    background: rgba(14, 15, 17, 0.97);
+    border-top: 1px solid var(--pf-rule);
+    transform: translateY(calc(100% - 56px));
+    transition: transform 0.55s var(--menu-ease);
+  }
+  .pf-nav::before { display: none; }
+  .pf-nav.is-open { transform: none; }
+  .pf-nav.is-open ~ .pf-back { bottom: calc(52% + 12px); }
+  .pf-nav.is-open ~ .pf-hint { opacity: 0; }
+  .pf-nav-head { position: relative; height: 56px; box-sizing: border-box; align-items: center; padding: 0; }
+  .pf-nav-title { font-size: 13px; }
+  .pf-nav-toggle {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 0 2px 0 40%;
+    font: inherit;
+    color: var(--pf-ink);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+  .pf-nav-path { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10.5px; letter-spacing: 0.04em; color: var(--pf-gold); }
+  .pf-nav-chev { flex: none; width: 8px; height: 8px; border-left: 1px solid var(--pf-ink); border-top: 1px solid var(--pf-ink); transform: translateY(2px) rotate(45deg); transition: transform 0.4s var(--menu-ease); }
+  .pf-nav.is-open .pf-nav-chev { transform: translateY(-2px) rotate(225deg); }
+  .pf-nav-scroll { padding-bottom: 40px; }
 }
 
-.pf-legend { list-style: none; margin: 0; padding: 0; }
-.pf-legend li { position: relative; padding-left: 28px; margin: 0 0 7px; }
-.pf-key { position: absolute; left: 0; top: 0.45em; display: block; width: 18px; height: 9px; }
-.pf-key-dot::after { content: ""; position: absolute; left: 4px; top: 0; width: 9px; height: 9px; border-radius: 50%; }
-.pf-key-gold::after { background: var(--pf-gold); box-shadow: 0 0 6px rgba(235, 163, 63, 0.7); }
-.pf-key-blue::after { background: var(--pf-blue); box-shadow: 0 0 6px rgba(188, 211, 234, 0.6); }
-.pf-key-rose::after { background: var(--pf-rose); box-shadow: 0 0 6px rgba(226, 88, 126, 0.6); }
-.pf-key-hollow::after { border: 1px solid var(--pf-ink); box-sizing: border-box; }
-.pf-key-line::after { content: ""; position: absolute; left: 0; right: 0; top: 4px; border-top: 1px solid var(--pf-ink); }
-.pf-key-dash::after { border-top-style: dashed; }
-.pf-key-dot-line::after { border-top-style: dotted; }
-.pf-key-ring::after { content: ""; position: absolute; left: 1px; top: -3px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(235, 232, 226, 0.35); box-sizing: border-box; }
-.pf-counts { margin-top: 16px !important; padding-top: 12px; border-top: 1px solid var(--pf-rule); color: var(--pf-ink); }
-
-/* THE FOOT: the index (perfumer → house → perfumes), the terms, the
-   sources — the poster's lists along its foot and its glossary. */
+/* THE FOOT: the index behind its button, then the legend and the terms,
+   then the sources — the poster's lists along its foot and its glossary.
+   The index stands a little way down from the chart, on its own. */
 .pf-foot {
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(220px, 1fr);
-  gap: 40px 56px;
-  padding: 70px 34px 90px;
-  border-top: 1px solid var(--pf-rule);
+  gap: 56px 56px;
+  padding: 150px 34px 90px;
   font-family: var(--mono);
   font-size: 11px;
   line-height: 1.55;
   color: var(--pf-muted);
 }
-.pf-index-cols { columns: 3 220px; column-gap: 40px; }
+.pf-index { grid-column: 1 / -1; }
+.pf-index-open {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 34px;
+  padding: 40px 44px 42px;
+  list-style: none;
+  cursor: pointer;
+  border: 1px solid var(--pf-rule);
+  background:
+    linear-gradient(90deg, rgba(235, 163, 63, 0) 4%, rgba(235, 163, 63, 0.55) 30%, rgba(226, 88, 126, 0.45) 72%, rgba(226, 88, 126, 0) 96%) top / 100% 1px no-repeat,
+    linear-gradient(180deg, rgba(30, 31, 34, 0.55), rgba(17, 18, 20, 0.55));
+  transition: border-color 0.4s ease, background-color 0.4s ease;
+}
+.pf-index-open::-webkit-details-marker { display: none; }
+.pf-index-open::marker { content: ""; }
+.pf-index-open::before,
+.pf-index-open::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 0 solid rgba(235, 163, 63, 0.9);
+  transition: width 0.5s var(--menu-ease), height 0.5s var(--menu-ease);
+}
+.pf-index-open::before { left: -1px; top: -1px; border-left-width: 1px; border-top-width: 1px; }
+.pf-index-open::after { right: -1px; bottom: -1px; border-right-width: 1px; border-bottom-width: 1px; }
+.pf-index-open:hover { border-color: rgba(235, 232, 226, 0.3); }
+.pf-index-open:hover::before, .pf-index-open:hover::after { width: 34px; height: 34px; }
+.pf-index-open:focus-visible { outline: 1px solid var(--pf-gold); outline-offset: 4px; }
+.pf-index-mark {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(235, 232, 226, 0.4);
+  border-radius: 50%;
+  transition: border-color 0.4s ease, transform 0.6s var(--menu-ease);
+}
+.pf-index-mark::before,
+.pf-index-mark::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 1px;
+  margin: -0.5px 0 0 -8px;
+  background: var(--pf-ink);
+  transition: transform 0.6s var(--menu-ease);
+}
+.pf-index-mark::after { transform: rotate(90deg); }
+.pf-index[open] .pf-index-mark { transform: rotate(180deg); border-color: var(--pf-gold); }
+.pf-index[open] .pf-index-mark::after { transform: rotate(0deg); }
+.pf-index-open:hover .pf-index-mark { border-color: var(--pf-gold); }
+.pf-index-word {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: clamp(40px, 6.4vw, 92px);
+  line-height: 0.9;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pf-ink);
+  transition: color 0.4s ease;
+}
+.pf-index-open:hover .pf-index-word { color: #fff8ec; }
+.pf-index-say { display: flex; flex-direction: column; gap: 6px; font-size: 11px; letter-spacing: 0.04em; color: var(--pf-muted); }
+.pf-index-counts { color: var(--pf-ink); letter-spacing: 0.06em; }
+.pf-index-cue { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pf-gold); }
+.pf-index-cue-shut { display: none; }
+.pf-index[open] .pf-index-cue-open { display: none; }
+.pf-index[open] .pf-index-cue-shut { display: inline; }
+.pf-index-cols { columns: 3 220px; column-gap: 40px; padding: 48px 0 10px; }
+.pf-index.is-opening .pf-index-cols { animation: pf-index-in 0.7s var(--menu-ease) both; }
+.pf-index.is-closing .pf-index-cols { animation: pf-index-out 0.28s ease both; }
+@keyframes pf-index-in { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
+@keyframes pf-index-out { from { opacity: 1; } to { opacity: 0; transform: translateY(-8px); } }
 .pf-entry { break-inside: avoid; margin: 0 0 24px; }
 .pf-entry-name {
   margin: 0 0 6px;
@@ -14549,8 +14845,24 @@ body.perfumers-page {
 .pf-entry-perfume a { color: var(--pf-ink); text-decoration: none; border-bottom: 1px solid rgba(235, 163, 63, 0.5); }
 .pf-entry-perfume a:hover { color: var(--pf-gold); }
 .pf-entry-year { flex: none; color: var(--pf-faint); }
+.pf-legend-box { color: var(--pf-muted); }
+.pf-legend { list-style: none; margin: 0; padding: 0; columns: 2 250px; column-gap: 40px; }
+.pf-legend li { position: relative; padding-left: 28px; margin: 0 0 7px; break-inside: avoid; }
+.pf-legend b { color: var(--pf-ink); font-weight: 500; }
+.pf-key { position: absolute; left: 0; top: 0.45em; display: block; width: 18px; height: 9px; }
+.pf-key-dot::after { content: ""; position: absolute; left: 4px; top: 0; width: 9px; height: 9px; border-radius: 50%; }
+.pf-key-gold::after { background: var(--pf-gold); box-shadow: 0 0 6px rgba(235, 163, 63, 0.7); }
+.pf-key-blue::after { background: var(--pf-blue); box-shadow: 0 0 6px rgba(188, 211, 234, 0.6); }
+.pf-key-rose::after { background: var(--pf-rose); box-shadow: 0 0 6px rgba(226, 88, 126, 0.6); }
+.pf-key-hollow::after { border: 1px solid var(--pf-ink); box-sizing: border-box; }
+.pf-key-line::after { content: ""; position: absolute; left: 0; right: 0; top: 4px; border-top: 1px solid var(--pf-ink); }
+.pf-key-dash::after { border-top-style: dashed; }
+.pf-key-dot-line::after { border-top-style: dotted; }
+.pf-key-ring::after { content: ""; position: absolute; left: 1px; top: -3px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(235, 232, 226, 0.35); box-sizing: border-box; }
+.pf-counts { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--pf-rule); color: var(--pf-ink); }
 .pf-terms dl { margin: 0; }
 .pf-terms dt { margin: 12px 0 2px; font-family: var(--sans); font-weight: 600; font-size: 12px; color: var(--pf-ink); }
+.pf-terms dt:first-child { margin-top: 0; }
 .pf-terms dd { margin: 0; }
 .pf-sources { grid-column: 1 / -1; }
 .pf-source-list { margin: 0; padding: 0; list-style: none; columns: 2 360px; column-gap: 48px; }
@@ -14560,7 +14872,11 @@ body.perfumers-page {
 .pf-source-list a { color: var(--pf-muted); }
 .pf-source-list li:target { color: var(--pf-ink); }
 @media (max-width: 900px) {
-  .pf-foot { grid-template-columns: 1fr; padding: 50px 20px 70px; }
+  .pf-foot { grid-template-columns: 1fr; gap: 44px; padding: 110px 20px 70px; }
+  .pf-index-open { grid-template-columns: auto minmax(0, 1fr) auto; gap: 18px 20px; padding: 28px 22px 30px; }
+  .pf-index-say { grid-column: 1 / -1; grid-row: 2; }
+  .pf-index-cue { grid-column: 3; grid-row: 1; }
+  .pf-index-mark { width: 38px; height: 38px; }
 }
 
 /* THE WINDOW: a perfumer, a house or a perfume. The About me sheet's dark
@@ -14749,5 +15065,7 @@ body.perfumers-page {
   .pf-card-name { font-size: 24px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .pf-card::before, .pf-card-sheet, .pf-card-body, .pf-dof, .pf-title, .pf-notes-col { transition: none; }
+  .pf-card::before, .pf-card-sheet, .pf-card-body, .pf-dof, .pf-title, .pf-notes-col, .pf-here, .pf-nav,
+  .pf-index-mark, .pf-index-mark::before, .pf-index-mark::after { transition: none; }
+  .pf-nav-opened, .pf-index.is-opening .pf-index-cols, .pf-index.is-closing .pf-index-cols { animation: none; }
 }

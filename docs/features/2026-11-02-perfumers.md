@@ -2,6 +2,11 @@
 Date: 2026-11-02
 Files touched: `perfumers/index.html`, `perfumers.js`, `perfumers-data.js` (written), `tools/perfumers/LEDGER.md`, `tools/perfumers/build.py`, `style.css` (the PERFUMERS section; `.pf-card` out of the Menu's dimming; the page in the dark `--chrome-ground` list), `nav.js` (`SITE_LINKS`), `index.html` (the formula slide's link), `node-scene.js` (`REAL_NODES`), `search-page.js` (`PAGES`), `tools/seo.py`, `tools/previews.js`, `photography/index.html` and `categories/other-2.html` (signposts now), `photography.js` (removed), and the tests that named Photography (`menu`, `node-map`, `mobile`, `pages`, `repository`, `formula`).
 
+(The second round, the same day — turning, idle animations, the list of perfumers, choosing
+perfumer → house → perfume, staying put close in, the index behind a button, and the whole of it
+drawn in layers — is [its own section below](#2026-11-02-later--turning-the-list-choosing-and-drawn-in-layers);
+what it changed of the first is said there.)
+
 ## What changed
 
 A new page, **Perfumers**, at `/perfumers/`, in Photography's place in the Menu. The owner: "add
@@ -65,8 +70,9 @@ window** — a perfumer, a house or a perfume — with what is known about it an
 ## How to test it
 
 `python3 tools/perfumers/build.py --check` checks the ledger. The page: serve the site and open
-`/perfumers/`. Click anywhere to fly in; drag to move; the wheel zooms; a name opens its window;
-Esc, a double click or *The whole chart* goes back. The switch at the top right sorts by year.
+`/perfumers/` — and see the second round's section below for what it does now (the drag, the wheel's
+zoom and the double click went in it). `tests/perfumers.spec.js` is the page's own (since the second
+round).
 
 The tests that named Photography were changed to name Perfumers (the Menu, the formula slide's
 names, the node map's names, the pages and the phone checks, the signposts). The page has no tests of its
@@ -88,3 +94,114 @@ failed the same way on the commit before it, and `:1521` passed run alone.
 - **The page's introduction and disclaimer** at the corners are written for the page, not by
   the owner; theirs to rewrite.
 - **Prin Lomros' houses are 138 of the 280 perfumes**; trimming them is the owner's call.
+
+## 2026-11-02, later — turning, the list, choosing, and drawn in layers
+
+Files touched: `perfumers.js` (rebuilt), `perfumers/index.html` (the stage's layers, the caption, the
+list, the index behind a button, the legend to the foot, the Intro's last sentence), `style.css` (the
+PERFUMERS section), `tests/perfumers.spec.js` (new), `CLAUDE.md`, every page's versions
+(`tools/versions.py`, because the stylesheet changed).
+
+### What changed
+
+The owner, the round after the page went live: "move the index down a few, and make it a big button
+that you can press to open the actual index. For the main thing, I want it to turn slowly; and have idle
+animations. this is true for zoomed in. When you click and zoom in, i want you to be in a fixed place,
+where you cannot use the scrollwheel. instead of the legend, I want you to add a fixed list of perfumers
+that you can scroll. alphabetical. I want you to make it more navigatable, so that when you select
+something, you select the perfumer then the houses appear, all the information doesnt have to be there
+from the zoomed out view. next, i want you to optimize tf out of it. it needs to run smoothly. keep the
+animations and smooth them out. OPTIMIZE!!!"
+
+- **It turns, slowly** — once every 260 seconds at rest (`TURN_S`) — and **idles**: a light runs out
+  along a spoke now and then and its dot flares (`pulses`), a glint goes round the band, the dust past
+  the rim drifts and twinkles, the far field turns a little on its own, the globe turns and its night
+  lights twinkle. **Close in it sways** — a slow roll of a degree or two about the point looked at, a
+  breath of scale, a drift of a few pixels (`SWAY`) — and the same idle things go on there, faded out of
+  the part in focus as the blurred copy is.
+- **Less on the whole chart.** The perfumes' names, their numbers and years on the rim are written out
+  **only for what is chosen**; the rest are the poster's faint lines where the words would be. No
+  houses on the rim until a perfumer is chosen.
+- **The list of perfumers** (`.pf-nav`) stands where the legend stood, down the right: every perfumer
+  A to Z by surname (the chart's own order), scrolling in its own box, *Perfumer not found* last. On a
+  phone it is **a drawer** at the foot — its bar always there saying where you are; pressed, the list
+  comes up over the lower half and the chart looks closer above it. The legend went to the foot of the
+  page, beside the terms.
+- **Choosing, a level at a time** ("you select the perfumer then the houses appear"): a perfumer —
+  pressed on the circle, or in the list — flies the camera to it, **its houses appear** in its name's
+  place on the rim and under it in the list, and its perfumes are written out; a house (on the rim, by
+  pressing inside the perfumer's arc, or in the list) closes in on it and its perfumes appear in the
+  list; a perfume (its name, its spoke, or the list) opens its window, the camera going to it beneath.
+  What is chosen is said in the title's place (`.pf-here`) with a button to its window. By year the
+  circle's groups are years: a year is chosen on the circle, a perfumer still in the list. A choice too
+  wide to frame — Prin Lomros' 139, a perfumer's perfumes scattered by year — stays on the whole chart
+  with what is chosen lit and the rest dimmed. Pressed inside a chosen house too big to read whole
+  (Strangers Parfumerie's 67), **a closer look** there (`look`). **Esc goes back a level at a time**,
+  *The whole chart* all the way, and a perfumer or house pressed again in the list too.
+- **A fixed place.** While anything is chosen, the wheel and the keys that scroll do nothing over the
+  chart and the page is held at its top (only the list and an open window scroll); the drag that moved
+  the camera and the wheel that zoomed it are gone. The camera moves only when something is chosen.
+- **The index behind one big button**, a way down from the chart (`.pf-index`, a `<details>`): INDEX
+  in large capitals, the counts, a ring with a plus that turns to a minus; pressed, the index opens
+  under it. It opens without the script too, and an address into it (`#perfumer-…`) opens it.
+
+### Why / key decisions
+
+- **Drawn in layers so that moving costs nothing.** The whole chart at rest is drawn once into a square
+  canvas (**the rotor**) that the browser turns by its transform — the turning is the compositor's, so a
+  frame at rest draws only the small live layer. Close in, the chart is drawn once (with its
+  out-of-focus copy, in the same box) and **the sway is a transform** too. Only a flight, the switch's
+  sweep and the emphasis fading draw the chart every frame (`data-view` on the stage: `turn`, `live`,
+  `still`). The rotor also carries any move that stays flat and centred — a turn, a slide, a scale —
+  which is all the phone's drawer asks of the whole chart.
+- **The names on the rim are drawn live while the chart turns**, never in the rotor: drawn there they
+  would come round upside down. Each turns over as it crosses the sides of the circle by a crossfade
+  (`FLIP`), never a jump.
+- **The camera is two springs, one behind the other** (`stepCam`): a flight sets off gently and lands
+  gently, and turns smoothly if it is sent somewhere else on the way — the eased tween before it started
+  again from standing. It is at rest once nothing is left to move by more than a third of a pixel
+  (`REST_PX`), so the out-of-focus copy comes in as soon as the eye can tell it has stopped.
+- **The rest of the measures**: only the part of each ring that is on the window is walked
+  (`visibleArc`); every perfume's label widths measured once (and again when the fonts arrive); specks
+  in one colour at a varied `globalAlpha`, lines and dots batched by emphasis into a few paths; the
+  globe's specks without a colour string each; the blurred copy at half size; nothing drawn while the
+  chart is off the screen (an `IntersectionObserver`), the tab is hidden or a window is open over it;
+  the wheel listened for only while something is chosen, so the page's own scrolling never waits on it;
+  the resize gathered into one a frame; and `window.Sharpness` lets it down a step on a machine that
+  cannot keep up.
+- **Measured** (the same browser, no graphics card, a laptop's window, the main thread's time a frame):
+  at rest on the whole chart about 0.5 ms a frame — turning and idling — where the old page spent as
+  much standing still; flying in, a 95th-percentile frame of 4.3 ms against 12.9 and a worst of 7.6 ms
+  against 33.7; close in at rest, 0.2 ms a frame, swaying.
+- **The list is the chart's A–Z**, by surname as the rim is, so the two read the same way round.
+- **Wide choices stay on the whole chart** because framing 147 degrees of circle close in leaves nothing
+  readable; lit there, with their houses on the rim, the next step is a house.
+- **The Intro's last sentence** was changed to say how to choose (it was written for the page, not by
+  the owner, and said where a perfume's number and name stood).
+
+### How to test it
+
+`npm test -- tests/perfumers.spec.js`: the chart turns at rest without being drawn again (the rotor's
+transform) and the idle layer goes on; with motion reduced nothing turns and nothing is drawn at rest;
+the list stands in the legend's place, A to Z, and the legend is at the foot; a perfumer chosen in the
+list shows its houses, a house its perfumes, a perfume its window, and the chart settles out of focus;
+a perfumer pressed on the circle is chosen, then a house on its rim; close in the wheel neither zooms nor
+scrolls the page and the sway is a transform with no drawing; Esc goes back a level at a time and *The
+whole chart* all the way, and with nothing chosen the page scrolls; by year a year is chosen on the
+circle; the index is one big button, shut until pressed, a way down from the chart, opening without the
+script and from an address; on a phone the list is a drawer and the chart looks closer above it.
+`window.PerfumersChart` has `choose`, `up`, `state`, `stats` and `pointOf` for them.
+
+By hand: open `/perfumers/` — watch it turn and the lights run; choose Aichi Liu in the list, then Om
+Parfums, then a perfume; Esc twice; choose Prin Lomros, then Strangers Parfumerie, and click inside it to
+look closer; try the wheel close in; *By year*; on a phone, the drawer.
+
+### Known issues / TODO
+
+- **The sway is a transform of the drawn chart**, not a true move of the camera: close in, it rolls
+  the picture a degree or two about the point looked at. It reads as the view turning slowly; a true
+  orbit would mean drawing the chart every frame.
+- **The labels are small on a phone at a whole house** — Pineward's 48, Strangers' 67 framed whole;
+  a press inside looks closer.
+- **The index's perfumers still open their window**, rather than choosing them on the chart.
+

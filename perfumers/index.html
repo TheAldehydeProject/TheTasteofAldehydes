@@ -30,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=eb75110f9c">
+<link rel="stylesheet" href="../style.css?v=2e830b2f56">
 </head>
 <!--
   PERFUMERS — what took the Photography page's place in the Menu
@@ -60,7 +60,8 @@
 
   WITHOUT JAVASCRIPT the page is its index and its sources: every
   perfumer, their houses and their perfumes, each linked to where it is
-  written about on the site.
+  written about on the site — the index behind its button, a <details>,
+  which opens without the script.
 -->
 <body class="perfumers-page dark-surface">
 
@@ -69,8 +70,11 @@
 <main class="pf">
 
   <section class="pf-stage" aria-label="The perfumers, drawn round a circle">
-    <canvas class="pf-chart" aria-hidden="true"></canvas>
-    <canvas class="pf-dof" aria-hidden="true"></canvas>
+    <div class="pf-rotor" aria-hidden="true"><canvas class="pf-turn"></canvas></div>
+    <div class="pf-sway" aria-hidden="true">
+      <canvas class="pf-chart"></canvas>
+      <canvas class="pf-dof"></canvas>
+    </div>
     <canvas class="pf-live" aria-hidden="true"></canvas>
 
     <header class="pf-title">
@@ -79,17 +83,43 @@
       <p class="pf-title-say">A guide to the noses behind the perfumes on this site, house by house — and the whole of Prin Lomros.</p>
     </header>
 
+    <!-- WHAT IS CHOSEN: written by perfumers.js where the title stands while
+         a perfumer, a house, a year or a perfume is chosen. -->
+    <div class="pf-here" hidden>
+      <p class="pf-here-kicker"></p>
+      <p class="pf-here-name"></p>
+      <p class="pf-here-meta"></p>
+      <button type="button" class="pf-here-about"></button>
+    </div>
+
     <div class="pf-sort" role="group" aria-label="Arrange the chart">
       <span class="pf-sort-say">Arrange</span>
       <button type="button" class="pf-sort-button" data-sort="az" aria-pressed="true">A–Z</button>
       <button type="button" class="pf-sort-button" data-sort="year" aria-pressed="false">By year</button>
     </div>
 
+    <!-- THE PERFUMERS, A TO Z: where the legend stood (the legend is at the
+         foot now). Built by perfumers.js from the ledger's data; a perfumer
+         chosen opens to its houses, a house to its perfumes. -->
+    <nav class="pf-nav" aria-label="Perfumers, A to Z" hidden>
+      <div class="pf-nav-head">
+        <h2 class="pf-nav-title">Perfumers</h2>
+        <span class="pf-nav-total"></span>
+        <button type="button" class="pf-nav-toggle" aria-expanded="false">
+          <span class="pf-nav-path">Choose a perfumer</span>
+          <span class="pf-nav-chev" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="pf-nav-scroll">
+        <ul class="pf-nav-list"></ul>
+      </div>
+    </nav>
+
     <button type="button" class="pf-back" hidden>
       <span class="pf-back-mark" aria-hidden="true"></span>The whole chart
     </button>
 
-    <p class="pf-hint" aria-hidden="true">Click anywhere to look closer</p>
+    <p class="pf-hint" aria-hidden="true">Choose a perfumer — on the circle or in the list</p>
     <div class="pf-tip" aria-hidden="true" hidden></div>
   </section>
 
@@ -98,32 +128,27 @@
       <h2 class="pf-notes-head">Intro</h2>
       <p>Every perfume written about on this site, traced back to the person who made it — and the whole
         catalogue of Prin Lomros, whose Haxan is one of them.</p>
-      <p>The perfumers stand round the circle, their houses inside each, and every perfume is a line out
-        from the middle: <strong>the further out, the more recent.</strong> Its number is on the rim, its name past it.</p>
+      <p>The perfumers stand round the circle, and every perfume is a line out from the middle:
+        <strong>the further out, the more recent.</strong> Choose a perfumer — on the circle or in the list — and
+        their houses appear; choose a house, and its perfumes are written out.</p>
       <h2 class="pf-notes-head">Disclaimer</h2>
       <p>Who made a perfume, and when, is taken only from the sources at the foot of this page. Where none
         could be found the chart says so rather than guess — a hollow mark has no year, and the perfumes no
         source credits stand together under <em>Perfumer not found</em>.</p>
     </div>
-    <div class="pf-notes-col pf-notes-right">
-      <h2 class="pf-notes-head">Legend</h2>
-      <ul class="pf-legend">
-        <li><span class="pf-key pf-key-dot pf-key-gold" aria-hidden="true"></span><b>Individual fragrance</b> written about here</li>
-        <li><span class="pf-key pf-key-dot pf-key-blue" aria-hidden="true"></span><b>House perfume</b> written about here</li>
-        <li><span class="pf-key pf-key-dot pf-key-rose" aria-hidden="true"></span><b>Prin Lomros' houses</b>, not written about here</li>
-        <li><span class="pf-key pf-key-line" aria-hidden="true"></span><b>Named</b> — a source names its perfumer</li>
-        <li><span class="pf-key pf-key-line pf-key-dash" aria-hidden="true"></span><b>The house's perfumer</b> — no nose named for this one</li>
-        <li><span class="pf-key pf-key-line pf-key-dot-line" aria-hidden="true"></span><b>Perfumer not found</b></li>
-        <li><span class="pf-key pf-key-dot pf-key-hollow" aria-hidden="true"></span><b>Year not found</b> — on the dashed ring</li>
-        <li><span class="pf-key pf-key-ring" aria-hidden="true"></span><b>Rings</b> — one a year, 2009 in the middle to 2026 outside</li>
-      </ul>
-      <p class="pf-counts" data-counts>280 perfumes · 142 written about here · 23 perfumers · 27 houses</p>
-    </div>
   </section>
 
   <section class="pf-foot">
-    <div class="pf-index">
-      <h2 class="pf-notes-head">Index</h2>
+    <!-- THE INDEX, behind one big button (2026-11-02, later: "move the index
+         down a few, and make it a big button that you can press to open the
+         actual index"). A <details>, so it opens without the script too. -->
+    <details class="pf-index">
+      <summary class="pf-index-open">
+        <span class="pf-index-mark" aria-hidden="true"></span>
+        <h2 class="pf-index-word">Index</h2>
+        <span class="pf-index-say">Every perfumer, their houses and their perfumes<span class="pf-index-counts" data-index-counts>23 perfumers · 27 houses · 280 perfumes</span></span>
+        <span class="pf-index-cue" aria-hidden="true"><span class="pf-index-cue-open">Open</span><span class="pf-index-cue-shut">Close</span></span>
+      </summary>
       <div class="pf-index-cols">
       <!-- THE INDEX: begin — written by tools/perfumers/build.py from tools/perfumers/LEDGER.md; never by hand. -->
       <article class="pf-entry" id="perfumer-russian-adam">
@@ -587,7 +612,22 @@
       </article>
       <!-- THE INDEX: end -->
       </div>
-    </div>
+    </details>
+
+    <aside class="pf-legend-box" aria-label="Legend">
+      <h2 class="pf-notes-head">Legend</h2>
+      <ul class="pf-legend">
+        <li><span class="pf-key pf-key-dot pf-key-gold" aria-hidden="true"></span><b>Individual fragrance</b> written about here</li>
+        <li><span class="pf-key pf-key-dot pf-key-blue" aria-hidden="true"></span><b>House perfume</b> written about here</li>
+        <li><span class="pf-key pf-key-dot pf-key-rose" aria-hidden="true"></span><b>Prin Lomros' houses</b>, not written about here</li>
+        <li><span class="pf-key pf-key-line" aria-hidden="true"></span><b>Named</b> — a source names its perfumer</li>
+        <li><span class="pf-key pf-key-line pf-key-dash" aria-hidden="true"></span><b>The house's perfumer</b> — no nose named for this one</li>
+        <li><span class="pf-key pf-key-line pf-key-dot-line" aria-hidden="true"></span><b>Perfumer not found</b></li>
+        <li><span class="pf-key pf-key-dot pf-key-hollow" aria-hidden="true"></span><b>Year not found</b> — on the dashed ring</li>
+        <li><span class="pf-key pf-key-ring" aria-hidden="true"></span><b>Rings</b> — one a year, 2009 in the middle to 2026 outside</li>
+      </ul>
+      <p class="pf-counts" data-counts>280 perfumes · 142 written about here · 23 perfumers · 27 houses</p>
+    </aside>
 
     <aside class="pf-terms" aria-label="Terms">
       <h2 class="pf-notes-head">Terms</h2>
@@ -709,6 +749,6 @@
 <script>window.SITE_ROOT = "../";</script>
 <script src="../nav.js?v=ddedcc2da4"></script>
 <script src="../perfumers-data.js?v=0e2308a91c"></script>
-<script src="../perfumers.js?v=2faa0c743f"></script>
+<script src="../perfumers.js?v=e65150ed1a"></script>
 </body>
 </html>

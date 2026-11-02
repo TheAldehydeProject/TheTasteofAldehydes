@@ -1,55 +1,75 @@
 // ============================================================
-// PERFUMERS — perfumers/index.html only (2026-11-02).
+// PERFUMERS — perfumers/index.html only (2026-11-02; rebuilt the same day,
+// later — "turn slowly; and have idle animations ... When you click and zoom
+// in, i want you to be in a fixed place, where you cannot use the
+// scrollwheel. instead of the legend ... a fixed list of perfumers that you
+// can scroll. alphabetical ... when you select something, you select the
+// perfumer then the houses appear ... optimize tf out of it").
 //
 // The owner's picture 1 — a poster of a year round a circle — redrawn as
 // PERFUMER → HOUSE → PERFUME, and their picture 2 — the same poster seen
 // up close, tipped back, the near part sharp and the rest out of focus —
-// as what a click does.
+// as what choosing something does.
 //
 // WHAT IT DRAWS, from the middle out (world units: the chart is about
 // 2,300 across; R below):
-//   THE GLOBE     a sphere of specks turning slowly, lit from the upper
-//                 left, with a few gold lights on its night side — the
-//                 poster's Earth at night — and a ring of gold dust round
-//                 it in the plane of the chart.
+//   THE GLOBE     a sphere of specks turning, lit from the upper left, with
+//                 lights on its night side, and a ring of gold dust round it.
 //   THE BAND      a segment for each group round the globe: a perfumer
-//                 (A–Z) or a year (By year).
+//                 (A–Z) or a year (By year), and a glint running round it.
 //   THE SPOKES    one line out from the band for every perfume, ending in
 //                 its dot at ITS YEAR — the rings are years, 2009 nearest
 //                 the middle and 2026 furthest out; a perfume no source
 //                 dates ends hollow on the dashed ring beyond them. The
-//                 line says how sure its perfumer is (solid: named;
-//                 dashed: the house's perfumer; dotted: not found); the dot
-//                 says what it is (gold: an individual fragrance written
-//                 about here; blue-white: a house perfume written about
-//                 here; rose: Prin Lomros' houses, not written about here).
-//   THE NAMES     each group's name in spaced capitals along the rim, as
-//                 the poster's months are, and its houses smaller under it.
-//   THE RIM       every perfume's number and year, as the poster's days.
-//   THE LABELS    every perfume's name written out past the rim, its house
-//                 after it, on a drift of dust.
+//                 line says how sure its perfumer is (solid: named; dashed:
+//                 the house's perfumer; dotted: not found); the dot says what
+//                 it is (gold: an individual fragrance written about here;
+//                 blue-white: a house perfume written about here; rose:
+//                 Prin Lomros' houses, not written about here). Now and then
+//                 a light runs out along one and its dot flares.
+//   THE NAMES     each group's name in spaced capitals along the rim — and,
+//                 for a chosen perfumer, its HOUSES in its name's place.
+//   THE RIM       a tick for every perfume; its number and year are written
+//                 only for what is chosen, a faint line for the rest.
+//   THE LABELS    every perfume's name past the rim — written out only for
+//                 what is chosen, the poster's faint lines for the rest
+//                 ("all the information doesnt have to be there from the
+//                 zoomed out view").
 //
-// THE CAMERA. Everything is projected through one camera — a focus point,
-// a zoom, a turn and a tilt, with perspective — so the same drawing is the
-// flat poster at rest and picture 2 up close. Text is drawn letter-true in
-// perspective by giving each piece of text the camera's own local
-// stretch (its Jacobian) as its transform. A click flies the camera to the
-// point clicked (`zoomTo`); once it has settled, a blurred copy of the
-// drawing is laid over it with the part in focus cut out of it (`dof`),
-// faded in, never redrawn every frame.
+// CHOOSING: a perfumer (on the circle, or in THE LIST down the right, A to
+// Z), then one of its houses, then a perfume, which opens its window. The
+// camera flies to what is chosen and STAYS there — no wheel, no drag ("a
+// fixed place") — the page held still under it; Esc, the list or "The whole
+// chart" go back up. By year, the circle's groups are years.
 //
-// THE SWITCH at the top right re-sorts the perfumes and sweeps every
-// spoke round to its new place (`arrange`, `SORT_MS`).
+// HOW IT IS KEPT SMOOTH — three layers, so that nothing is drawn again only
+// because it moves:
+//   THE ROTOR   (.pf-rotor) the whole chart at rest, drawn ONCE into a
+//               square canvas that the browser TURNS by its transform: the
+//               slow turn costs nothing a frame.
+//   THE SWAY    (.pf-sway) the chart in perspective — drawn every frame only
+//               while the camera flies; close in, drawn once, with its
+//               out-of-focus copy, and SWAYED by its transform, slowly.
+//   THE LIVE    (.pf-live) what moves of itself, all of it small: the globe,
+//               the far field and the dust drifting, the lights on the
+//               spokes, the glint, the names while the chart turns (so they
+//               never stand upside down), what the hand is on.
+// data-view on the stage says which: "turn", "live" (flying) or "still".
+// Nothing is drawn while the chart is off the screen, the tab is hidden or
+// a window is open over it. Every speck is drawn in one colour at a varied
+// globalAlpha, every line batched, every glyph's width measured once.
 //
-// THE WINDOW: a perfumer, a house or a perfume, opened by a click on its
-// name once zoomed in (or from the index at the foot of the page), with
-// what is known of it and its sources, numbered.
+// THE CAMERA: a focus point, a zoom, a turn and a tilt, with perspective,
+// eased by two springs one behind the other (`stepCam`) — so a flight sets
+// off gently, lands gently, and turns smoothly when it is sent somewhere
+// else on the way.
 //
 // All of it reads window.PERFUMERS_DATA, written by tools/perfumers/build.py
 // from tools/perfumers/LEDGER.md. Nothing here knows a perfume by name.
 //
-// prefers-reduced-motion: nothing moves — the globe stands still, the
-// chart is simply there, the camera and the switch go at once.
+// prefers-reduced-motion: nothing moves of itself — the chart does not
+// turn or sway, no lights run, the globe stands still, the camera and the
+// switch go at once.
 // ============================================================
 (function () {
   "use strict";
@@ -58,17 +78,31 @@
   const stage = document.querySelector(".pf-stage");
   if (!D || !stage) return;
   const root = document.querySelector(".pf");
+  const rotor = stage.querySelector(".pf-rotor");
+  const cvTurn = stage.querySelector(".pf-turn");
+  const swayBox = stage.querySelector(".pf-sway");
   const cvChart = stage.querySelector(".pf-chart");
   const cvDof = stage.querySelector(".pf-dof");
   const cvLive = stage.querySelector(".pf-live");
+  const tctx = cvTurn.getContext("2d");
   const ctx = cvChart.getContext("2d");
   const dctx = cvDof.getContext("2d");
   const lctx = cvLive.getContext("2d");
+  const mctx = document.createElement("canvas").getContext("2d");
+  const title = stage.querySelector(".pf-title");
   const tip = stage.querySelector(".pf-tip");
   const hint = stage.querySelector(".pf-hint");
   const backBtn = stage.querySelector(".pf-back");
+  const here = stage.querySelector(".pf-here");
+  const nav = stage.querySelector(".pf-nav");
+  const navList = nav.querySelector(".pf-nav-list");
+  const navScroll = nav.querySelector(".pf-nav-scroll");
+  const navToggle = nav.querySelector(".pf-nav-toggle");
+  const navPath = nav.querySelector(".pf-nav-path");
   const sortBtns = Array.from(stage.querySelectorAll(".pf-sort-button"));
   const STILL = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const PHONE = window.matchMedia("(max-width: 700px)");
+  const TAU = Math.PI * 2;
 
   // ---- THE GEOMETRY, in world units -----------------------------------
   const R = {
@@ -77,30 +111,42 @@
     base: 214,                 // where every spoke leaves from
     y0: 250, y1: 640,          // 2008 … 2026
     und: 686,                  // the ring of perfumes with no year found
-    group: 716, house: 732,    // the names along the rim
+    group: 716,                // the names along the rim
     tick0: 742, tick1: 751,    // the rim's ticks
     num: 757,                  // the rim's numbers
     label: 826,                // the names past the rim
     dust0: 800, dust1: 1160,
     fit: 1180,                 // what the whole chart is fitted to
+    look: 760,                 // the radius a close look is centred on
   };
   const Y_FROM = 2008, Y_TO = 2026;
   const GAP = 2.4;             // slots of gap before each group
-  const SORT_MS = 1700, CAM_MS = 1500, INTRO_MS = 2100;
-  const TILT = 0.94;           // how far a zoom tips the chart back
-  const FOCUS_X = 0.43, FOCUS_Y = 0.56;
-  const COL = {
-    gold: "235,163,63", blue: "188,211,234", rose: "226,88,126",
-    ink: "235,232,226", muted: "141,143,146",
-  };
+  const SORT_MS = 1700, INTRO_MS = 2100, EM_MS = 650;
+  const TILT = 0.94;           // how far a close look tips the chart back
+  const TURN_S = 260;          // seconds the chart takes to turn once, at rest
+  const SPIN = TAU / TURN_S;
+  const SPRING = 7.2;          // the camera's two springs (per second)
+  const REST_PX = 0.35;        // the camera is at rest once nothing is left to move by more than this
+  const DIM = 0.2;             // what is not chosen, of itself
+  const MAX_FRAME = 2.2;       // radians: a choice wider than this is shown on the whole chart
+  const FLIP = 0.07;           // a name on the rim turns over across this band, crossfading
+  // the sway close in: a slow roll about the point looked at, a breath of
+  // scale, a drift of a few pixels — the browser's to draw (`swayBox`)
+  const SWAY = { roll: 0.03, roll2: 0.011, breath: 0.011, dx: 7, dy: 4, rollHz: 1 / 27, roll2Hz: 1 / 11.5, breathHz: 1 / 19, driftHz: 1 / 23 };
+  const RGB = { gold: "235,163,63", blue: "188,211,234", rose: "226,88,126", ink: "235,232,226", muted: "141,143,146" };
+  const SOLID = {}; Object.keys(RGB).forEach((k) => (SOLID[k] = "rgb(" + RGB[k] + ")"));
+  const GROUND = "#0b0c0d";
   const F = {
     label: '400 20px Archivo, "Segoe UI", sans-serif',
     labelHere: '600 20px Archivo, "Segoe UI", sans-serif',
     group: '700 20px Archivo, "Segoe UI", sans-serif',
+    house: '500 20px "IBM Plex Mono", ui-monospace, monospace',
     mono: '400 20px "IBM Plex Mono", ui-monospace, monospace',
   };
   const FPX = 20;
-  const TAU = Math.PI * 2;
+  const TONES = ["rose", "blue", "gold"];
+  const CREDITS = ["named", "house", "none"];
+  const LV = 8;                // the levels emphasis is batched in
 
   // ---- THE DATA --------------------------------------------------------
   const PER = {}; D.perfumers.forEach((p) => (PER[p.id] = p));
@@ -108,6 +154,7 @@
   const SRC = {}; D.sources.forEach((s) => (SRC[s.id] = s));
   const cmp = (a, b) => String(a).localeCompare(String(b), "en", { sensitivity: "base" });
   const perSort = (id) => (id === "not-found" ? "￿" : (PER[id].sort || PER[id].name));
+  const yearKey = (e) => e.p.y || "none";
 
   const entries = [];
   D.perfumes.forEach((p) => {
@@ -117,27 +164,48 @@
         tone: p.k === "individual" ? "gold" : p.k === "house" ? "blue" : "rose",
         a: 0, from: 0, to: 0, no: 0,
         rDot: p.y ? R.y0 + ((p.y - Y_FROM) / (Y_TO - Y_FROM)) * (R.y1 - R.y0) : R.und,
+        em: 1, emFrom: 1, emTo: 1,
         withWho: false,
       });
     });
   });
   const N = entries.length;
   const yearR = (y) => R.y0 + ((y - Y_FROM) / (Y_TO - Y_FROM)) * (R.y1 - R.y0);
+  const byCT = {};
+  CREDITS.forEach((cr) => { byCT[cr] = {}; TONES.forEach((t) => (byCT[cr][t] = entries.filter((e) => e.p.c === cr && e.tone === t))); });
+  // the perfumers in the list's order, which is the chart's A–Z: by surname
+  const PERFUMERS = D.perfumers.slice().sort((a, b) => cmp(perSort(a.id), perSort(b.id)));
+  const named = PERFUMERS.filter((p) => p.id !== "not-found");
+  const entriesOf = (pid) => entries.filter((e) => e.pid === pid);
+  function housesOf(pid) {
+    const m = new Map();
+    entriesOf(pid).forEach((e) => { if (!m.has(e.p.h)) m.set(e.p.h, []); m.get(e.p.h).push(e); });
+    m.forEach((list) => list.sort((x, y) => cmp(x.p.n, y.p.n)));
+    return Array.from(m.entries()).sort((a, b) => cmp(HOU[a[0]].name, HOU[b[0]].name));
+  }
+
+  // ---- THE TOOLS -------------------------------------------------------
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const smooth = (t) => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  function angDist(a, b) { let d = ((a - b) % TAU + TAU) % TAU; return d > Math.PI ? TAU - d : d; }
+  function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]); }
+  const level = (em) => clamp(Math.round(em * LV), 0, LV);
 
   // ---- ARRANGING: A–Z or by year --------------------------------------
   let mode = "az";
   try { if (localStorage.getItem("pf-sort") === "year") mode = "year"; } catch (e) { /* no storage */ }
-  let groups = [], oldGroups = [];
-  let order = entries.slice();
-  let slot = 0, gapAngle = 0;
-  let sortT0 = -1;
+  let groups = [], oldGroups = [], order = entries.slice();
+  let slot = 0, gapAngle = 0, sortT0 = -1;
 
   function arrange(m, animate) {
     const list = entries.slice();
     const byWho = (x, y) => cmp(perSort(x.pid), perSort(y.pid)) || cmp(HOU[x.p.h].name, HOU[y.p.h].name) || cmp(x.p.n, y.p.n);
     if (m === "az") list.sort(byWho);
     else list.sort((x, y) => (x.p.y || 9999) - (y.p.y || 9999) || byWho(x, y));
-    const keyOf = (e) => (m === "az" ? e.pid : (e.p.y || "none"));
+    const keyOf = (e) => (m === "az" ? e.pid : yearKey(e));
     const gs = [];
     list.forEach((e) => {
       const k = keyOf(e);
@@ -148,23 +216,22 @@
     gapAngle = -Math.PI / 2 + (slot * GAP) / 2;
     let i = 0;
     gs.forEach((g, gi) => {
-      const first = i;
       g.members.forEach((e) => {
         e.from = e.a;
         e.to = -Math.PI / 2 + ((gi + 1) * GAP + i + 0.5) * slot;
         e.no = i + 1;
+        e.g = g;
         i++;
       });
       g.a0 = g.members[0].to - slot / 2;
       g.a1 = g.members[g.members.length - 1].to + slot / 2;
       g.label = m === "az" ? PER[g.key].name : g.key === "none" ? "Year not found" : String(g.key);
       g.id = m === "az" ? g.key : null;
-      g.first = first;
-      // the houses inside it, for the smaller names and the square markers
+      // the houses inside it
       g.houses = [];
       g.members.forEach((e) => {
         const last = g.houses[g.houses.length - 1];
-        if (!last || last.h !== e.p.h) g.houses.push({ h: e.p.h, members: [e] });
+        if (!last || last.h !== e.p.h) g.houses.push({ h: e.p.h, g, members: [e] });
         else last.members.push(e);
       });
       g.houses.forEach((h) => {
@@ -172,178 +239,240 @@
         h.a1 = h.members[h.members.length - 1].to + slot / 2;
       });
     });
-    oldGroups = animate ? groups : [];
+    oldGroups = animate && !STILL ? groups : [];
     groups = gs;
     order = list;
     measureGroups();
     if (animate && !STILL) sortT0 = performance.now();
     else { entries.forEach((e) => (e.a = e.to)); sortT0 = -1; oldGroups = []; }
-    dirty = true;
+    rotorDirty = true; chartDirty = true;
     kick();
   }
 
-  // ---- THE CANVASES ----------------------------------------------------
-  let W = 0, H = 0, DPR = 1, fitZ = 1;
-  const cam = { fx: 0, fy: 0, z: 1, rot: 0, tilt: 0, cx: 0.5, cy: 0.5 };
-  let camFrom = null, camTo = null, camT0 = -1;
-  let zoomed = false;
-
-  function overview() {
-    return { fx: 0, fy: 0, z: fitZ, rot: 0, tilt: 0, cx: 0.5, cy: 0.5 };
+  // ---- TEXT: widths measured once, set true to the perspective ----------
+  const widths = new Map();
+  let widthsEpoch = 0;
+  function wOf(font, txt) {
+    const key = font + "|" + txt;
+    let w = widths.get(key);
+    if (w === undefined) { mctx.font = font; w = mctx.measureText(txt).width; widths.set(key, w); }
+    return w;
+  }
+  const charsMemo = new Map();
+  function charsOf(font, txt) {
+    const key = font + "|" + txt;
+    let m = charsMemo.get(key);
+    if (!m) {
+      const chars = Array.from(txt);
+      m = { chars, ws: chars.map((ch) => wOf(font, ch)) };
+      charsMemo.set(key, m);
+    }
+    return m;
+  }
+  const trackOf = (size) => (size > 12 ? 0.32 : 0.24);
+  function arcLen(txt, size, font, track) {
+    const m = charsOf(font, txt);
+    let t = 0;
+    for (const w of m.ws) t += (w * size) / FPX;
+    return t + size * track * (m.chars.length - 1);
+  }
+  const NAME_SIZES = [15, 10, 7, 5];
+  const HOUSE_SIZES = [26, 20, 15, 11, 8, 6, 4.5, 3.5];
+  function fitSize(txt, a0, a1, sizes, font, track) {
+    for (const s of sizes) if (arcLen(txt, s, font, track(s)) < (a1 - a0) * R.group - 10) return s;
+    return 0;
+  }
+  // a chosen perfumer's houses are written as large as their arcs allow on
+  // the whole chart, and no larger than reads well close in
+  function houseSize(h, z) {
+    let best = 0;
+    for (const s of h.sizes) { if (s * z <= 17) return s; best = s; }
+    return best;
+  }
+  function measureGroups() {
+    groups.forEach((g) => {
+      g.text = g.label.toUpperCase();
+      g.size = fitSize(g.text, g.a0, g.a1, NAME_SIZES, F.group, trackOf);
+      g.houses.forEach((h) => {
+        h.text = HOU[h.h].name.toUpperCase();
+        h.sizes = mode === "az" ? HOUSE_SIZES.filter((sz) => arcLen(h.text, sz, F.house, 0.18) < (h.a1 - h.a0) * R.group - 10) : [];
+        h.size = h.sizes[0] || 0;
+      });
+      g.members.forEach((e) => (e.withWho = mode === "year"));
+    });
   }
 
-  function resize() {
+  // ---- THE LAYOUT -------------------------------------------------------
+  let W = 0, H = 0, DPR = 1, OV = 0, S = 0, fitZ = 0.3, phone = false;
+  const L = { ocx: 0.5, ocy: 0.5, oz: 0.3, zx: 0.4, zy: 0.56, zoomH: 600 };
+  let navOpen = false;
+  let rotorDirty = true, chartDirty = true;
+  const sharp = typeof window.Sharpness === "function"
+    ? window.Sharpness(() => { sizeCanvases(); rotorDirty = chartDirty = true; dofOff(); kick(); })
+    : null;
+
+  function measure() {
     W = stage.clientWidth; H = stage.clientHeight;
-    DPR = Math.min(window.devicePixelRatio || 1, W < 700 ? 1.5 : 2);
-    [cvChart, cvDof, cvLive].forEach((c) => { c.width = Math.round(W * DPR); c.height = Math.round(H * DPR); });
-    // Where the notes stand over the stage (a wide window), the chart is
-    // fitted between their columns, never under them.
-    let room = Math.min(W, H);
-    const cols = Array.from(document.querySelectorAll(".pf-notes-col"));
-    if (cols.length && getComputedStyle(cols[0].parentNode).position === "absolute") {
-      const sb = stage.getBoundingClientRect();
-      let side = 0;
-      cols.forEach((col) => {
-        const b = col.getBoundingClientRect();
-        if (!b.width) return;
-        side = Math.max(side, b.left - sb.left < W / 2 ? b.right - sb.left : sb.right - b.left);
-      });
-      room = Math.min(room, W - 2 * (side + 12));
+    phone = PHONE.matches;
+    DPR = sharp ? sharp.ratio : Math.min(window.devicePixelRatio || 1, 2);
+    OV = Math.ceil(Math.max(W, H) * (phone ? 0.05 : 0.06));
+    const sb = stage.getBoundingClientRect();
+    let x0 = 0, x1 = W, y0 = 0, y1 = H;
+    if (!phone && !nav.hidden) {
+      const b = nav.getBoundingClientRect();
+      if (b.width) x1 = b.left - sb.left - 14;
     }
-    fitZ = Math.max(80, room) / (2 * R.fit);
-    if (!zoomed) { Object.assign(cam, overview()); camT0 = -1; }
-    widths.clear();
+    const notes = document.querySelector(".pf-notes");
+    const left = document.querySelector(".pf-notes-left");
+    if (notes && left && getComputedStyle(notes).position === "absolute") {
+      const b = left.getBoundingClientRect();
+      if (b.width) x0 = b.right - sb.left + 14;
+    }
+    if (phone) {
+      const t = title.getBoundingClientRect();
+      y0 = Math.max(0, t.bottom - sb.top + 4);
+      y1 = H - 60;
+    }
+    const room = Math.max(140, Math.min(x1 - x0, y1 - y0));
+    fitZ = room / (2 * R.fit);
+    L.ocx = (x0 + x1) / 2 / W;
+    L.ocy = (y0 + y1) / 2 / H;
+    L.oz = fitZ;
+    if (phone && navOpen) {
+      // the list up over the lower half: the whole chart stands smaller, above it
+      const y2 = H * 0.48 - 6, room2 = Math.max(120, Math.min(x1 - x0, y2 - y0));
+      L.oz = room2 / (2 * R.fit);
+      L.ocy = (y0 + y2) / 2 / H;
+    }
+    // a close look stands left of the middle of its room, the names
+    // reading out to its right; on a phone, above the list when it is up
+    L.zx = phone ? 0.25 : (0.4 * x1) / W;
+    L.zy = phone ? (navOpen ? 0.26 : 0.46) : 0.56;
+    L.zoomH = phone ? H * (navOpen ? 0.36 : 0.56) : H * 0.8;
+    S = Math.ceil(2 * R.fit * fitZ) + 4;
+    stage.style.setProperty("--chart-x", Math.round(L.ocx * W) + "px");
+  }
+  function sizeCanvases() {
+    if (sharp) DPR = sharp.ratio;
+    const k = DPR;
+    const cw = W + 2 * OV, ch = H + 2 * OV;
+    cvChart.width = Math.round(cw * k); cvChart.height = Math.round(ch * k);
+    cvDof.width = Math.round(cw * k * 0.5); cvDof.height = Math.round(ch * k * 0.5);
+    [cvChart, cvDof].forEach((c) => {
+      c.style.left = -OV + "px"; c.style.top = -OV + "px";
+      c.style.width = cw + "px"; c.style.height = ch + "px";
+    });
+    cvLive.width = Math.round(W * k); cvLive.height = Math.round(H * k);
+    cvTurn.width = Math.round(S * k); cvTurn.height = Math.round(S * k);
+    rotor.style.width = S + "px"; rotor.style.height = S + "px";
+    lastRotor = "";
+  }
+  function resize() {
+    measure();
+    sizeCanvases();
+    rotorDirty = chartDirty = true;
     dofOff();
-    dirty = true;
+    setGoal(poseFor(), true);
     kick();
   }
 
   // ---- THE PROJECTION ---------------------------------------------------
-  const PJ = { c: 1, s: 0, ct: 1, st: 0, F: 1000, cx: 0, cy: 0 };
-  function prep() {
-    PJ.c = Math.cos(cam.rot); PJ.s = Math.sin(cam.rot);
-    PJ.ct = Math.cos(cam.tilt); PJ.st = Math.sin(cam.tilt);
-    PJ.F = 1.25 * Math.max(H, 400);
-    PJ.cx = cam.cx * W; PJ.cy = cam.cy * H;
+  const V = { fx: 0, fy: 0, z: 1, rot: 0, c: 1, s: 0, ct: 1, st: 0, F: 1000, cx: 0, cy: 0 };
+  function view(fx, fy, z, rot, tilt, cxPx, cyPx) {
+    V.fx = fx; V.fy = fy; V.z = z; V.rot = rot;
+    V.c = Math.cos(rot); V.s = Math.sin(rot);
+    V.ct = Math.cos(tilt); V.st = Math.sin(tilt);
+    V.F = 1.25 * Math.max(H, 400);
+    V.cx = cxPx; V.cy = cyPx;
   }
+  function viewCam() { view(cam.fx, cam.fy, Math.exp(cam.lz), cam.rot, cam.tilt, cam.cx * W, cam.cy * H); }
   // world (x, y) -> screen; o.ok is false behind the eye.
   function proj(x, y, o) {
-    const dx = x - cam.fx, dy = y - cam.fy;
-    const u = (dx * PJ.c - dy * PJ.s) * cam.z;
-    const v = (dx * PJ.s + dy * PJ.c) * cam.z;
-    const d = PJ.F - v * PJ.st;
-    if (d < PJ.F * 0.16) { o.ok = false; return o; }
-    const k = PJ.F / d;
-    o.x = PJ.cx + u * k; o.y = PJ.cy + v * PJ.ct * k; o.k = k; o.ok = true;
+    const dx = x - V.fx, dy = y - V.fy;
+    const u = (dx * V.c - dy * V.s) * V.z;
+    const v = (dx * V.s + dy * V.c) * V.z;
+    const d = V.F - v * V.st;
+    if (d < V.F * 0.16) { o.ok = false; return o; }
+    const k = V.F / d;
+    o.x = V.cx + u * k; o.y = V.cy + v * V.ct * k; o.k = k; o.ok = true;
     return o;
   }
   // screen -> world, on the chart's plane; null above its horizon.
   function unproj(X, Y) {
-    const xs = X - PJ.cx, ys = Y - PJ.cy;
-    const den = PJ.ct * PJ.F + ys * PJ.st;
+    const xs = X - V.cx, ys = Y - V.cy;
+    const den = V.ct * V.F + ys * V.st;
     if (den <= 1e-6) return null;
-    const v = (ys * PJ.F) / den;
-    const u = (xs * (PJ.F - v * PJ.st)) / PJ.F;
-    const uu = u / cam.z, vv = v / cam.z;
-    return { x: cam.fx + uu * PJ.c + vv * PJ.s, y: cam.fy - uu * PJ.s + vv * PJ.c };
+    const v = (ys * V.F) / den;
+    const u = (xs * (V.F - v * V.st)) / V.F;
+    const uu = u / V.z, vv = v / V.z;
+    return { x: V.fx + uu * V.c + vv * V.s, y: V.fy - uu * V.s + vv * V.c };
   }
   const T0 = {}, T1 = {}, T2 = {};
 
-  // ---- TEXT, true to the perspective -----------------------------------
-  const widths = new Map();
-  function wOf(c, font, txt) {
-    const key = font + "|" + txt;
-    let w = widths.get(key);
-    if (w === undefined) { c.font = font; w = c.measureText(txt).width; widths.set(key, w); }
-    return w;
+  // ---- THE SURFACE being drawn on: its device transform and its bounds ---
+  const SF = { c: null, a: 1, b: 0, cc: 0, d: 1, e: 0, f: 0, x0: 0, y0: 0, x1: 0, y1: 0 };
+  function surface(c, a, b, cc, d, e, f, x0, y0, x1, y1) {
+    SF.c = c; SF.a = a; SF.b = b; SF.cc = cc; SF.d = d; SF.e = e; SF.f = f;
+    SF.x0 = x0; SF.y0 = y0; SF.x1 = x1; SF.y1 = y1;
   }
-  let texture = [];
+  function base() { SF.c.setTransform(SF.a, SF.b, SF.cc, SF.d, SF.e, SF.f); }
+  function local(la, lb, lc, ld, le, lf) {
+    const s = SF;
+    s.c.setTransform(s.a * la + s.cc * lb, s.b * la + s.d * lb, s.a * lc + s.cc * ld, s.b * lc + s.d * ld,
+      s.a * le + s.cc * lf + s.e, s.b * le + s.d * lf + s.f);
+  }
+  const inView = (x, y, pad) => x > SF.x0 - pad && x < SF.x1 + pad && y > SF.y0 - pad && y < SF.y1 + pad;
+
   // Draw txt with its start (or centre) at world (x, y), reading along world
-  // angle `ang`, `size` world units tall. Returns false if not drawn.
+  // angle `ang`, `size` world units tall. Too small or off the surface: not drawn.
   function textAt(c, x, y, ang, txt, size, align, font) {
     const ux = Math.cos(ang), uy = Math.sin(ang);
     proj(x, y, T0); if (!T0.ok) return false;
     proj(x + ux, y + uy, T1); if (!T1.ok) return false;
     proj(x - uy, y + ux, T2); if (!T2.ok) return false;
     const jux = T1.x - T0.x, juy = T1.y - T0.y, jvx = T2.x - T0.x, jvy = T2.y - T0.y;
-    const tall = Math.hypot(jvx, jvy) * size;
-    const wWorld = (wOf(c, font, txt) * size) / FPX;
+    if (Math.hypot(jvx, jvy) * size < 1.6) return false;
+    const wWorld = (wOf(font, txt) * size) / FPX;
     let sx = T0.x, sy = T0.y;
     if (align === "center") { sx -= (jux * wWorld) / 2; sy -= (juy * wWorld) / 2; }
     const ex = sx + jux * wWorld, ey = sy + juy * wWorld;
-    const pad = 40;
-    if (Math.max(sx, ex) < -pad || Math.min(sx, ex) > W + pad || Math.max(sy, ey) < -pad || Math.min(sy, ey) > H + pad) return false;
-    if (tall < 1.7) { texture.push(sx, sy, ex, ey, tall); return true; }
+    if (Math.max(sx, ex) < SF.x0 - 40 || Math.min(sx, ex) > SF.x1 + 40 || Math.max(sy, ey) < SF.y0 - 40 || Math.min(sy, ey) > SF.y1 + 40) return false;
     const s = size / FPX;
-    c.setTransform(DPR * jux * s, DPR * juy * s, DPR * jvx * s, DPR * jvy * s, DPR * sx, DPR * sy);
+    local(jux * s, juy * s, jvx * s, jvy * s, sx, sy);
     c.fillText(txt, 0, 0);
     return true;
   }
-  function flushTexture(c, rgb, alpha) {
-    if (!texture.length) return;
-    c.setTransform(DPR, 0, 0, DPR, 0, 0);
-    c.strokeStyle = "rgba(" + rgb + "," + alpha + ")";
-    c.beginPath();
-    let lw = 0;
-    for (let i = 0; i < texture.length; i += 5) {
-      c.moveTo(texture[i], texture[i + 1]); c.lineTo(texture[i + 2], texture[i + 3]);
-      lw += texture[i + 4];
-    }
-    c.lineWidth = Math.max(0.5, (lw / (texture.length / 5)) * 0.55);
-    c.stroke();
-    texture = [];
+  // letters spaced round an arc, upright at the top and at the bottom — and
+  // turned over across the sides by a crossfade, never a jump, as the chart
+  // turns them round
+  function arcText(c, txt, r, mid, size, font, track, alpha) {
+    if (alpha <= 0.003) return;
+    const wb = smooth((Math.sin(mid + V.rot) + FLIP) / (2 * FLIP));
+    if (wb < 0.999) { c.globalAlpha = alpha * (1 - wb); arcRun(c, txt, r, mid, size, font, track, 1); }
+    if (wb > 0.001) { c.globalAlpha = alpha * wb; arcRun(c, txt, r, mid, size, font, track, -1); }
   }
-  // letters spaced round an arc, upright at the top and at the bottom
-  function arcText(c, txt, r, mid, size, font, track) {
-    const chars = Array.from(txt);
-    const ws = chars.map((ch) => (wOf(c, font, ch) * size) / FPX);
-    const gap = size * track;
-    const total = ws.reduce((a, b) => a + b, 0) + gap * (chars.length - 1);
-    const bottom = Math.sin(mid + cam.rot) > 0.05;
-    const dir = bottom ? -1 : 1;
+  function arcRun(c, txt, r, mid, size, font, track, dir) {
+    const m = charsOf(font, txt);
+    const k = size / FPX, gap = size * track;
+    let total = gap * (m.chars.length - 1);
+    for (const w of m.ws) total += w * k;
     let a = mid - (dir * total) / (2 * r);
-    for (let i = 0; i < chars.length; i++) {
-      const ac = a + (dir * ws[i]) / (2 * r);
-      const tan = ac + (dir * Math.PI) / 2;
-      // centre the letter on the arc's radius (its middle, not its baseline)
-      textAt(c, Math.cos(ac) * r, Math.sin(ac) * r, tan, chars[i], size, "center", font);
-      a += (dir * (ws[i] + gap)) / r;
+    for (let i = 0; i < m.chars.length; i++) {
+      const w = m.ws[i] * k;
+      const ac = a + (dir * w) / (2 * r);
+      textAt(c, Math.cos(ac) * r, Math.sin(ac) * r, ac + (dir * Math.PI) / 2, m.chars[i], size, "center", font);
+      a += (dir * (w + gap)) / r;
     }
-    return total;
-  }
-  function arcFits(txt, r, a0, a1, size, font, track) {
-    const chars = Array.from(txt);
-    const total = chars.reduce((s, ch) => s + (wOf(ctx, font, ch) * size) / FPX, 0) + size * track * (chars.length - 1);
-    return total < (a1 - a0) * r - 10;
   }
 
-  function measureGroups() {
-    groups.forEach((g) => {
-      g.size = 15; g.text = g.label.toUpperCase();
-      g.fits = arcFits(g.text, R.group, g.a0, g.a1, g.size, F.group, 0.32);
-      if (!g.fits) { g.size = 10; g.fits = arcFits(g.text, R.group, g.a0, g.a1, g.size, F.group, 0.24); }
-      g.houses.forEach((h) => {
-        h.text = HOU[h.h].name.toUpperCase();
-        h.fits = mode === "az" && arcFits(h.text, R.house, h.a0, h.a1, 6, F.mono, 0.18);
-      });
-      g.members.forEach((e) => (e.withWho = mode === "year" || !g.fits));
-    });
-  }
-
-  // ---- THE STILL THINGS: dust, haze, the globe's specks ----------------
-  function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+  // ---- THE STILL THINGS, and the moving ones ------------------------------
   const rand = rng(20261102);
   const dust = [];
-  for (let i = 0; i < 2600; i++) {
+  for (let i = 0; i < 2300; i++) {
     const t = rand();
     const r = R.dust0 + Math.pow(t, 1.6) * (R.dust1 - R.dust0);
     const a = rand() * TAU;
     dust.push(Math.cos(a) * r, Math.sin(a) * r, 0.5 + rand() * 1.4, 0.12 + rand() * 0.5 * (1 - t * 0.6));
-  }
-  const field = [];
-  for (let i = 0; i < 380; i++) {
-    const r = 220 + rand() * 1500, a = rand() * TAU;
-    field.push(Math.cos(a) * r, Math.sin(a) * r, 0.4 + rand() * 1.0, 0.05 + rand() * 0.18);
   }
   const haze = [];
   for (let i = 0; i < 1100; i++) {
@@ -355,259 +484,515 @@
     if (rand() > side) continue;
     haze.push(Math.cos(a) * r, Math.sin(a) * r, 0.5 + rand() * 1.1, (0.2 + rand() * 0.6) * (1 - t * 0.7));
   }
-  const globe = [];
-  const GN = W < 700 ? 900 : 1500;
+  // the far field, turning a little on its own and twinkling: r, a, size, alpha, turn, phase, rate
+  const SKY = 300;
+  const sky = new Float32Array(SKY * 7);
+  for (let i = 0; i < SKY; i++) {
+    sky.set([220 + rand() * 1500, rand() * TAU, 0.4 + rand() * 1.0, 0.05 + rand() * 0.2, (rand() - 0.5) * 0.006, rand() * TAU, 0.3 + rand() * 1.2], i * 7);
+  }
+  // the dust drifting past the rim: r, a, size, alpha, turn, swell, phase, rate
+  const DRIFT = 360;
+  const drift = new Float32Array(DRIFT * 8);
+  for (let i = 0; i < DRIFT; i++) {
+    const t = rand();
+    drift.set([R.dust0 - 30 + Math.pow(t, 1.3) * (R.dust1 - R.dust0 + 60), rand() * TAU, 0.6 + rand() * 1.5, 0.18 + rand() * 0.42,
+      (0.004 + rand() * 0.012) * (rand() < 0.3 ? -1 : 1), 4 + rand() * 14, rand() * TAU, 0.15 + rand() * 0.5], i * 8);
+  }
+  // the globe's specks: x, y, z, and a number for its lights
+  const GN = 760;
+  const globe = new Float32Array(GN * 4);
   for (let i = 0; i < GN; i++) {
     const y = 1 - (2 * (i + 0.5)) / GN, r = Math.sqrt(1 - y * y), th = i * 2.399963229728653;
-    globe.push(Math.cos(th) * r, y, Math.sin(th) * r, rand());
+    globe.set([Math.cos(th) * r, y, Math.sin(th) * r, rand()], i * 4);
   }
 
-  // ---- DRAWING THE CHART -------------------------------------------------
-  let dirty = true, introT0 = -1, intro = STILL ? 1 : 0;
-  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  // ---- THE CAMERA, on two springs -----------------------------------------
+  const KEYS = ["fx", "fy", "lz", "rot", "tilt", "cx", "cy"];
+  // how many pixels on the window a unit of each comes to, to say when it is at rest
+  const PX = { fx: 1, fy: 1, lz: 600, rot: 700, tilt: 400, cx: 1000, cy: 800 };
+  const cam = { fx: 0, fy: 0, lz: Math.log(0.3), rot: 0, tilt: 0, cx: 0.5, cy: 0.5 };
+  const lead = Object.assign({}, cam), goal = Object.assign({}, cam);
+  const camV = {}, leadV = {};
+  KEYS.forEach((k) => { camV[k] = 0; leadV[k] = 0; });
+  let labelZ = 1.5;            // the zoom the chosen names are sized for
+  function stepCam(dt) {
+    let moving = false;
+    const w = SPRING;
+    const e = Math.exp(-w * dt);
+    PX.fx = PX.fy = Math.exp(Math.max(cam.lz, goal.lz));
+    PX.cx = W; PX.cy = H;
+    for (const k of KEYS) {
+      let d = lead[k] - goal[k], t1 = (leadV[k] + w * d) * dt;
+      lead[k] = goal[k] + (d + t1) * e; leadV[k] = (leadV[k] - w * t1) * e;
+      d = cam[k] - lead[k]; t1 = (camV[k] + w * d) * dt;
+      cam[k] = lead[k] + (d + t1) * e; camV[k] = (camV[k] - w * t1) * e;
+      const px = PX[k];
+      if (Math.abs(cam[k] - goal[k]) * px > REST_PX || Math.abs(lead[k] - goal[k]) * px > REST_PX || Math.abs(camV[k]) * px > 8) moving = true;
+    }
+    if (!moving) jumpCam();
+    return moving;
+  }
+  function jumpCam() { for (const k of KEYS) { cam[k] = lead[k] = goal[k]; camV[k] = leadV[k] = 0; } }
+  function setGoal(p, jump) {
+    let r = p.rot;
+    while (r - cam.rot > Math.PI) r -= TAU;
+    while (r - cam.rot < -Math.PI) r += TAU;
+    Object.assign(goal, p);
+    goal.rot = r;
+    if (goal.tilt > 0.01) labelZ = Math.exp(goal.lz);
+    if (jump || STILL) jumpCam();
+    kick();
+  }
+  const zoomed = () => goal.tilt > 0.01;
+  const zHi = () => (phone ? 1.35 : 2.1);
+  const zLo = () => Math.max(fitZ * 1.8, phone ? 0.5 : 0.62);
+  function overviewPose() {
+    return { fx: 0, fy: 0, lz: Math.log(L.oz), rot: goal.rot, tilt: 0, cx: L.ocx, cy: L.ocy };
+  }
+  function closePose(ang, r, z) {
+    return { fx: Math.cos(ang) * r, fy: Math.sin(ang) * r, lz: Math.log(z), rot: -0.4 - ang, tilt: TILT, cx: L.zx, cy: L.zy };
+  }
+  // the smallest arc round the circle holding every angle given
+  function coverArc(as) {
+    const n = as.map((a) => ((a % TAU) + TAU) % TAU).sort((x, y) => x - y);
+    if (n.length === 1) return { mid: n[0], span: 0 };
+    let gap = TAU - n[n.length - 1] + n[0], at = 0;
+    for (let i = 1; i < n.length; i++) { const g = n[i] - n[i - 1]; if (g > gap) { gap = g; at = i; } }
+    const span = TAU - gap;
+    return { mid: n[at] + span / 2, span };
+  }
+  function poseFor() {
+    if (!sel.kind || !focus || !focus.size) return overviewPose();
+    if (sel.kind === "perfume") return closePose(sel.e.to, R.look, zHi() * 1.04);
+    if (look != null) return closePose(look, R.look, zHi());
+    const arc = coverArc(Array.from(focus, (e) => e.to));
+    const span = arc.span + slot * 2;
+    if (span > MAX_FRAME) return overviewPose();
+    return closePose(arc.mid, R.look, clamp(L.zoomH / (span * R.label * 0.95), zLo(), zHi()));
+  }
 
-  function ring(c, r, a0, a1, step) {
+  // ---- WHAT IS CHOSEN ---------------------------------------------------
+  let sel = { kind: null, pid: null, hid: null, year: null, e: null };
+  let focus = null, focusList = null, emT0 = -1;
+  // a closer look inside what is chosen, at an angle round the circle — for
+  // a house of many perfumes, whose names are small when it is seen whole
+  let look = null;
+  const canLookCloser = () => zoomed() && sel.kind !== "perfume" && Math.exp(goal.lz) < zHi() * 0.8;
+
+  // ---- DRAWING THE CHART -------------------------------------------------
+  let intro = STILL ? 1 : 0, introT0 = -1;
+  const labelsOn = () => clamp(intro * 1.6 - 0.6, 0, 1);
+  function growth(e) {
+    if (intro >= 1) return 1;
+    return ease(clamp(intro * 1.55 - (e.no / N) * 0.55, 0, 1));
+  }
+  // how far the chosen names are written: none on the whole chart, all close in
+  const closeAmt = () => clamp((cam.tilt / TILT - 0.35) / 0.5, 0, 1);
+  const labelSize = () => clamp(11.5 / labelZ, 8.4, 12.5);
+  const written = (e) => focus && focus.has(e) && zoomed();
+
+  // Close in, only part of the circle is on the window: the angles round it
+  // that can be seen at all, found once a drawing from the window's edge, so
+  // a ring is walked only where it shows.
+  const VIS = { all: true, a0: 0, a1: 0 };
+  function visibleArc() {
+    VIS.all = true;
+    proj(0, 0, T0);
+    if (V.st < 1e-3 || (T0.ok && inView(T0.x, T0.y, 0))) return;
+    const as = [];
+    const n = 10, w = SF.x1 - SF.x0, h = SF.y1 - SF.y0;
+    for (let i = 0; i <= n; i++) {
+      for (const [x, y] of [[SF.x0 + (w * i) / n, SF.y0], [SF.x0 + (w * i) / n, SF.y1], [SF.x0, SF.y0 + (h * i) / n], [SF.x1, SF.y0 + (h * i) / n]]) {
+        const q = unproj(x, y);
+        if (!q) return;
+        as.push(Math.atan2(q.y, q.x));
+      }
+    }
+    const arc = coverArc(as);
+    if (arc.span > Math.PI * 1.5) return;
+    VIS.all = false;
+    VIS.a0 = arc.mid - arc.span / 2 - 0.08;
+    VIS.a1 = arc.mid + arc.span / 2 + 0.08;
+  }
+  function ringPath(c, r, a0, a1) {
+    if (VIS.all) { ringWalk(c, r, a0, a1); return; }
+    // the parts of [a0, a1] inside the window's arc, taken round the circle
+    const L = VIS.a1 - VIS.a0;
+    let v0 = VIS.a0;
+    while (v0 > a0) v0 -= TAU;
+    while (v0 + TAU <= a0) v0 += TAU;
+    for (let k = 0; k < 2; k++, v0 += TAU) {
+      const lo = Math.max(a0, v0), hi = Math.min(a1, v0 + L);
+      if (hi > lo) ringWalk(c, r, lo, hi);
+    }
+  }
+  function ringWalk(c, r, a0, a1) {
+    const step = clamp(5 / (r * V.z), 0.004, 0.06);
     let pen = false;
     for (let a = a0; a <= a1 + 1e-9; a += step) {
       proj(Math.cos(a) * r, Math.sin(a) * r, T0);
-      if (!T0.ok) { pen = false; continue; }
+      if (!T0.ok || !inView(T0.x, T0.y, 260)) { pen = false; continue; }
       if (!pen) { c.moveTo(T0.x, T0.y); pen = true; } else c.lineTo(T0.x, T0.y);
     }
   }
-  function specks(c, arr, step, rgb, mul) {
-    c.fillStyle = "rgb(" + rgb + ")";
-    const zs = cam.z;
-    for (let i = 0; i < arr.length; i += step) {
+  function specks(c, arr, col, mul) {
+    if (mul <= 0) return;
+    c.fillStyle = col;
+    const z = V.z, x0 = SF.x0 - 4, x1 = SF.x1 + 4, y0 = SF.y0 - 4, y1 = SF.y1 + 4;
+    for (let i = 0; i < arr.length; i += 4) {
       proj(arr[i], arr[i + 1], T0);
-      if (!T0.ok || T0.x < -4 || T0.x > W + 4 || T0.y < -4 || T0.y > H + 4) continue;
-      const sz = Math.max(0.55, arr[i + 2] * zs * T0.k * 1.4);
+      if (!T0.ok) continue;
+      const X = T0.x, Y = T0.y;
+      if (X < x0 || X > x1 || Y < y0 || Y > y1) continue;
+      const s = Math.max(0.55, arr[i + 2] * z * T0.k * 1.4);
       c.globalAlpha = arr[i + 3] * mul;
-      c.fillRect(T0.x - sz / 2, T0.y - sz / 2, sz, sz);
+      c.fillRect(X - s / 2, Y - s / 2, s, s);
     }
     c.globalAlpha = 1;
   }
+  function sortMix() {
+    if (sortT0 < 0) return [1, 0];
+    const t = clamp((performance.now() - sortT0) / SORT_MS, 0, 1);
+    return [clamp(t * 2 - 1, 0, 1), clamp(1 - t * 2, 0, 1)];
+  }
+  function groupEm(g) { let m = 0; for (const e of g.members) if (e.em > m) m = e.em; return m; }
 
-  function drawChart(now) {
-    prep();
-    const c = ctx;
-    c.setTransform(1, 0, 0, 1, 0, 0);
-    c.clearRect(0, 0, cvChart.width, cvChart.height);
-    c.setTransform(DPR, 0, 0, DPR, 0, 0);
-    const lw = clamp(0.8 * cam.z, 0.55, 2.4);
-    const fade = intro;
+  function drawScene(withNames) {
+    const c = SF.c, z = V.z, fade = intro;
+    visibleArc();
+    base();
+    c.globalAlpha = 1;
+    c.textBaseline = "middle"; c.textAlign = "left";
 
-    // the dust and the far field
-    specks(c, field, 4, COL.ink, fade);
-    specks(c, dust, 4, COL.ink, 0.85 * fade);
+    // the dust past the rim
+    specks(c, dust, SOLID.ink, 0.8 * fade);
 
-    // the years' rings
-    c.lineWidth = Math.max(0.5, 0.6 * cam.z);
-    for (let y = Y_FROM + 1; y <= Y_TO; y++) {
-      c.beginPath(); ring(c, yearR(y), -Math.PI / 2, Math.PI * 1.5, 0.03);
-      c.strokeStyle = "rgba(" + COL.ink + "," + ((y % 5 === 0 ? 0.13 : 0.06) * fade) + ")";
+    // the years' rings, every fifth a little brighter
+    c.strokeStyle = SOLID.ink;
+    c.lineWidth = Math.max(0.5, 0.6 * z);
+    for (const bright of [false, true]) {
+      c.beginPath();
+      for (let y = Y_FROM + 1; y <= Y_TO; y++) if ((y % 5 === 0) === bright) ringPath(c, yearR(y), -Math.PI / 2, Math.PI * 1.5);
+      c.globalAlpha = (bright ? 0.13 : 0.06) * fade;
       c.stroke();
     }
     c.setLineDash([3, 4]);
-    c.beginPath(); ring(c, R.und, -Math.PI / 2, Math.PI * 1.5, 0.02);
-    c.strokeStyle = "rgba(" + COL.ink + "," + 0.2 * fade + ")"; c.stroke();
+    c.beginPath(); ringPath(c, R.und, -Math.PI / 2, Math.PI * 1.5);
+    c.globalAlpha = 0.2 * fade; c.stroke();
     c.setLineDash([]);
-    c.beginPath(); ring(c, R.base, -Math.PI / 2, Math.PI * 1.5, 0.03);
-    c.strokeStyle = "rgba(" + COL.ink + "," + 0.12 * fade + ")"; c.stroke();
-    c.beginPath(); ring(c, R.tick1 + 1, -Math.PI / 2, Math.PI * 1.5, 0.02);
-    c.strokeStyle = "rgba(" + COL.ink + "," + 0.16 * fade + ")"; c.stroke();
+    c.beginPath(); ringPath(c, R.base, -Math.PI / 2, Math.PI * 1.5);
+    c.globalAlpha = 0.12 * fade; c.stroke();
+    c.beginPath(); ringPath(c, R.tick1 + 1, -Math.PI / 2, Math.PI * 1.5);
+    c.globalAlpha = 0.16 * fade; c.stroke();
 
     // the gold haze round the globe
-    specks(c, haze, 4, COL.gold, 0.9 * fade);
+    specks(c, haze, SOLID.gold, 0.9 * fade);
 
     // the years named up the gap at the top
-    c.font = F.mono; c.textBaseline = "middle"; c.textAlign = "left";
-    c.fillStyle = "rgba(" + COL.ink + "," + 0.42 * fade + ")";
+    c.font = F.mono; c.fillStyle = SOLID.ink; c.globalAlpha = 0.42 * fade;
     const ga = gapAngle;
     [2010, 2014, 2018, 2022, 2026].forEach((y) => {
       textAt(c, Math.cos(ga) * yearR(y), Math.sin(ga) * yearR(y) - 4, ga + Math.PI / 2, String(y), 6.5, "center", F.mono);
     });
     textAt(c, Math.cos(ga) * R.und, Math.sin(ga) * R.und - 4, ga + Math.PI / 2, "NO YEAR FOUND", 5.4, "center", F.mono);
-    c.setTransform(DPR, 0, 0, DPR, 0, 0);
+    base();
 
     // the band round the globe: a segment a group
-    const sortT = sortT0 < 0 ? 1 : clamp((now - sortT0) / SORT_MS, 0, 1);
-    const gNew = sortT0 < 0 ? 1 : clamp(sortT * 2 - 1, 0, 1);
-    const gOld = sortT0 < 0 ? 0 : clamp(1 - sortT * 2, 0, 1);
+    const [gNew, gOld] = sortMix();
     c.lineCap = "butt";
+    c.lineWidth = Math.max(1, (R.band1 - R.band0) * z * 0.9);
     const band = (gs, alpha) => {
       if (alpha <= 0) return;
-      c.lineWidth = Math.max(1, (R.band1 - R.band0) * cam.z * 0.9);
       gs.forEach((g, i) => {
-        c.beginPath(); ring(c, (R.band0 + R.band1) / 2, g.a0 + slot * 0.3, g.a1 - slot * 0.3, 0.01);
-        c.strokeStyle = "rgba(" + COL.ink + "," + (i % 2 ? 0.1 : 0.2) * alpha * fade + ")";
+        c.beginPath(); ringPath(c, (R.band0 + R.band1) / 2, g.a0 + slot * 0.3, g.a1 - slot * 0.3);
+        c.globalAlpha = (i % 2 ? 0.1 : 0.2) * alpha * fade * (gs === groups ? 0.4 + 0.6 * groupEm(g) : 1);
         c.stroke();
       });
     };
     band(oldGroups, gOld); band(groups, gNew);
 
-    // the spokes, by tone and by credit
-    const dashes = { named: [], house: [clamp(3.5 * cam.z, 2, 9), clamp(3 * cam.z, 2, 7)], none: [1, clamp(3 * cam.z, 2.4, 7)] };
-    ["named", "house", "none"].forEach((cr) => {
+    // the spokes, by credit, tone and emphasis
+    const lw = clamp(0.8 * z, 0.55, 2.4);
+    const dashes = { named: [], house: [clamp(3.5 * z, 2, 9), clamp(3 * z, 2, 7)], none: [1, clamp(3 * z, 2.4, 7)] };
+    c.lineWidth = lw;
+    for (const cr of CREDITS) {
       c.setLineDash(dashes[cr]);
-      ["rose", "blue", "gold"].forEach((tone) => {
-        c.beginPath();
-        let any = false;
-        for (let i = 0; i < order.length; i++) {
-          const e = order[i];
-          if (e.p.c !== cr || e.tone !== tone) continue;
+      for (const tone of TONES) {
+        const paths = [];
+        for (const e of byCT[cr][tone]) {
           const g = growth(e);
           if (g <= 0) continue;
+          const ca = Math.cos(e.a), sa = Math.sin(e.a);
           const r1 = R.base + (e.rDot - R.base) * g;
-          proj(Math.cos(e.a) * R.base, Math.sin(e.a) * R.base, T0);
-          proj(Math.cos(e.a) * r1, Math.sin(e.a) * r1, T1);
+          proj(ca * R.base, sa * R.base, T0);
+          proj(ca * r1, sa * r1, T1);
           if (!T0.ok || !T1.ok) continue;
-          c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); any = true;
+          if (!inView(T0.x, T0.y, 40) && !inView(T1.x, T1.y, 40)) continue;
+          const lv = level(e.em);
+          const p = paths[lv] || (paths[lv] = new Path2D());
+          p.moveTo(T0.x, T0.y); p.lineTo(T1.x, T1.y);
         }
-        if (!any) return;
-        c.lineWidth = lw;
-        c.strokeStyle = "rgba(" + COL[tone] + "," + (tone === "rose" ? 0.42 : 0.6) + ")";
-        c.stroke();
-      });
-    });
+        c.strokeStyle = SOLID[tone];
+        const a = tone === "rose" ? 0.42 : 0.6;
+        for (let lv = 0; lv <= LV; lv++) if (paths[lv]) { c.globalAlpha = (a * lv) / LV; c.stroke(paths[lv]); }
+      }
+    }
     c.setLineDash([]);
 
     // the dots
-    for (let i = 0; i < order.length; i++) {
-      const e = order[i];
-      const g = growth(e);
-      if (g < 0.98) continue;
-      proj(Math.cos(e.a) * e.rDot, Math.sin(e.a) * e.rDot, T0);
-      if (!T0.ok || T0.x < -20 || T0.x > W + 20 || T0.y < -20 || T0.y > H + 20) continue;
-      const rr = Math.max(1.1, (e.tone === "rose" ? 3 : 3.8) * cam.z * T0.k);
-      const col = COL[e.tone];
-      if (e.p.y) {
-        c.fillStyle = "rgba(" + col + ",0.16)";
-        c.beginPath(); c.arc(T0.x, T0.y, rr * 2.6, 0, TAU); c.fill();
-        c.fillStyle = "rgb(" + col + ")";
-        c.beginPath(); c.arc(T0.x, T0.y, rr, 0, TAU); c.fill();
-      } else {
-        c.strokeStyle = "rgb(" + col + ")"; c.lineWidth = Math.max(0.7, rr * 0.4);
-        c.beginPath(); c.arc(T0.x, T0.y, rr, 0, TAU); c.stroke();
+    for (const tone of TONES) {
+      const glow = [], core = [], hollow = [];
+      let hw = 0, hn = 0;
+      for (const e of entries) {
+        if (e.tone !== tone || growth(e) < 0.98) continue;
+        proj(Math.cos(e.a) * e.rDot, Math.sin(e.a) * e.rDot, T0);
+        if (!T0.ok || !inView(T0.x, T0.y, 20)) continue;
+        const rr = Math.max(1.1, (tone === "rose" ? 3 : 3.8) * z * T0.k);
+        const lv = level(e.em);
+        if (e.p.y) {
+          const g = glow[lv] || (glow[lv] = new Path2D());
+          g.moveTo(T0.x + rr * 2.6, T0.y); g.arc(T0.x, T0.y, rr * 2.6, 0, TAU);
+          const k = core[lv] || (core[lv] = new Path2D());
+          k.moveTo(T0.x + rr, T0.y); k.arc(T0.x, T0.y, rr, 0, TAU);
+        } else {
+          const h = hollow[lv] || (hollow[lv] = new Path2D());
+          h.moveTo(T0.x + rr, T0.y); h.arc(T0.x, T0.y, rr, 0, TAU);
+          hw += rr * 0.4; hn++;
+        }
+      }
+      c.fillStyle = SOLID[tone]; c.strokeStyle = SOLID[tone];
+      c.lineWidth = Math.max(0.7, hn ? hw / hn : 1);
+      for (let lv = 0; lv <= LV; lv++) {
+        const k = lv / LV;
+        if (glow[lv]) { c.globalAlpha = 0.16 * k; c.fill(glow[lv]); }
+        if (core[lv]) { c.globalAlpha = k; c.fill(core[lv]); }
+        if (hollow[lv]) { c.globalAlpha = k; c.stroke(hollow[lv]); }
       }
     }
 
-    // the group names along the rim, and their houses
-    c.textBaseline = "middle";
-    const names = (gs, alpha) => {
-      if (alpha <= 0) return;
-      c.font = F.group;
-      c.fillStyle = "rgba(" + COL.ink + "," + 0.92 * alpha * fade + ")";
-      gs.forEach((g) => { if (g.fits) arcText(c, g.text, R.group, (g.a0 + g.a1) / 2, g.size, F.group, g.size > 12 ? 0.32 : 0.24); });
-      flushTexture(c, COL.ink, 0.35 * alpha * fade);
-      c.font = F.mono;
-      c.fillStyle = "rgba(" + COL.ink + "," + 0.5 * alpha * fade + ")";
-      gs.forEach((g) => g.houses.forEach((h) => { if (h.fits) arcText(c, h.text, R.house, (h.a0 + h.a1) / 2, 6, F.mono, 0.18); }));
-      flushTexture(c, COL.ink, 0.2 * alpha * fade);
-      c.setTransform(DPR, 0, 0, DPR, 0, 0);
-      // a square where each house begins, a longer tick where each group does
-      gs.forEach((g) => g.houses.forEach((h, hi) => {
-        const a = h.a0 + slot * 0.5;
-        proj(Math.cos(a) * (R.tick0 - 5), Math.sin(a) * (R.tick0 - 5), T0);
-        if (!T0.ok) return;
-        const sq = Math.max(1.2, 2.6 * cam.z * T0.k);
-        c.fillStyle = "rgba(" + COL.ink + "," + (hi === 0 ? 0.85 : 0.45) * alpha * fade + ")";
-        c.fillRect(T0.x - sq / 2, T0.y - sq / 2, sq, sq);
-      }));
-    };
-    names(oldGroups, gOld); names(groups, gNew);
-
-    // the rim: a tick, a number and a year for every perfume
+    // the rim: a tick for every perfume
     c.beginPath();
-    for (let i = 0; i < order.length; i++) {
-      const e = order[i];
-      proj(Math.cos(e.a) * R.tick0, Math.sin(e.a) * R.tick0, T0);
-      proj(Math.cos(e.a) * R.tick1, Math.sin(e.a) * R.tick1, T1);
-      if (!T0.ok || !T1.ok) continue;
+    for (const e of order) {
+      const ca = Math.cos(e.a), sa = Math.sin(e.a);
+      proj(ca * R.tick0, sa * R.tick0, T0);
+      proj(ca * R.tick1, sa * R.tick1, T1);
+      if (!T0.ok || !T1.ok || !inView(T0.x, T0.y, 20)) continue;
       c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y);
     }
-    c.lineWidth = Math.max(0.5, 0.5 * cam.z);
-    c.strokeStyle = "rgba(" + COL.ink + "," + 0.4 * fade + ")"; c.stroke();
+    c.lineWidth = Math.max(0.5, 0.5 * z);
+    c.strokeStyle = SOLID.ink; c.globalAlpha = 0.4 * fade; c.stroke();
 
-    const labelsOn = clamp(intro * 1.6 - 0.6, 0, 1);
-    if (labelsOn > 0) {
-      c.font = F.mono;
-      for (let i = 0; i < order.length; i++) {
-        const e = order[i];
-        const flip = Math.cos(e.a + cam.rot) < 0;
-        const no = String(e.no).padStart(3, "0");
-        const yr = e.p.y ? "’" + String(e.p.y).slice(2) : "—";
-        c.fillStyle = "rgba(" + COL.ink + "," + 0.72 * labelsOn + ")";
-        runText(c, e.a, R.num, flip, [[no, 5.6, F.mono, "rgba(" + COL.ink + "," + 0.72 * labelsOn + ")"], [" " + yr, 5.6, F.mono, "rgba(" + COL.muted + "," + 0.75 * labelsOn + ")"]]);
-      }
-      flushTexture(c, COL.ink, 0.25 * labelsOn);
+    drawRim(c);
+    if (withNames) drawNames(c, 1);
+    c.globalAlpha = 1;
+    base();
+  }
 
-      // the names past the rim
-      for (let i = 0; i < order.length; i++) {
-        const e = order[i];
-        const flip = Math.cos(e.a + cam.rot) < 0;
-        const here = !!e.p.at;
-        const main = e.p.n;
-        let sub = "  " + HOU[e.p.h].name;
-        if (e.withWho && e.pid !== "not-found") sub += " · " + PER[e.pid].name;
-        const a1 = here ? 0.94 : 0.6;
-        runText(c, e.a, R.label, flip, [
-          [main, 8.4, here ? F.labelHere : F.label, "rgba(" + (here ? COL.ink : COL.ink) + "," + a1 * labelsOn + ")"],
-          [sub, 6.4, F.mono, "rgba(" + COL.muted + "," + 0.7 * labelsOn + ")"],
-        ]);
-      }
-      flushTexture(c, COL.ink, 0.2 * labelsOn);
+  // Where a perfume's words stand along its spoke: its name, then its house
+  // (and, by year, its perfumer), reading outward — or, on the left of the
+  // circle, reading inward so nothing is upside down, ending at the rim's
+  // side as the poster's do.
+  const LP = { flip: false, dir: 0, main: "", sub: "", size: 0, sub2: 0, wMain: 0, wSub: 0, rMain: 0, rSub: 0, font: "" };
+  function placeLabel(e, size) {
+    LP.flip = Math.cos(e.a + V.rot) < 0;
+    LP.dir = LP.flip ? e.a + Math.PI : e.a;
+    LP.main = e.p.n;
+    LP.sub = "  " + HOU[e.p.h].name + (e.withWho && e.pid !== "not-found" ? " · " + PER[e.pid].name : "");
+    LP.size = size; LP.sub2 = size * 0.76;
+    LP.font = e.p.at ? F.labelHere : F.label;
+    if (e.wEpoch !== widthsEpoch || e.wMode !== mode) {
+      e.wMain = wOf(LP.font, LP.main); e.wSub = wOf(F.mono, LP.sub);
+      e.wEpoch = widthsEpoch; e.wMode = mode;
     }
-    c.setTransform(DPR, 0, 0, DPR, 0, 0);
+    LP.wMain = (e.wMain * size) / FPX;
+    LP.wSub = (e.wSub * LP.sub2) / FPX;
+    if (LP.flip) { LP.rMain = R.label + LP.wMain + LP.wSub; LP.rSub = R.label + LP.wSub; }
+    else { LP.rMain = R.label; LP.rSub = R.label + LP.wMain; }
+    return LP;
   }
-
-  // Pieces of text one after another along a spoke at radius r, reading
-  // outward — or, on the left of the circle, reading inward so nothing is
-  // upside down, ending at r as the poster's do.
-  function runText(c, a, r, flip, parts) {
-    let total = 0;
-    parts.forEach((p) => (p.w = (wOf(c, p[2], p[0]) * p[1]) / FPX));
-    parts.forEach((p) => (total += p.w));
-    const dir = flip ? a + Math.PI : a;
-    let rr = flip ? r + total : r;
-    const step = flip ? -1 : 1;
-    for (const p of parts) {
-      c.font = p[2]; c.fillStyle = p[3];
-      textAt(c, Math.cos(a) * rr, Math.sin(a) * rr, dir, p[0], p[1], "left", p[2]);
-      rr += step * p.w;
+  // a run of words as a faint line, where they are not written
+  function lineRun(p, a, r0, len) {
+    const ca = Math.cos(a), sa = Math.sin(a);
+    proj(ca * r0, sa * r0, T0); proj(ca * (r0 + len), sa * (r0 + len), T1);
+    if (!T0.ok || !T1.ok || (!inView(T0.x, T0.y, 10) && !inView(T1.x, T1.y, 10))) return;
+    p.moveTo(T0.x, T0.y); p.lineTo(T1.x, T1.y);
+  }
+  function drawRim(c) {
+    const on = labelsOn();
+    if (on <= 0) return;
+    const z = V.z, close = closeAmt();
+    const ls = labelSize();
+    const mains = [], subs = [], nums = [];
+    const chosen = [];
+    for (const e of order) {
+      const w = written(e) ? close : 0;
+      if (w > 0.01) chosen.push(e);
+      if (w > 0.99) continue;
+      const lv = level(e.em * (1 - w));
+      if (!lv) continue;
+      // the faint lines stand the same way round whichever way the words
+      // would read, so turning the chart never shuffles them
+      const P = placeLabel(e, 8.4);
+      lineRun(mains[lv] || (mains[lv] = new Path2D()), e.a, R.label, P.wMain);
+      lineRun(subs[lv] || (subs[lv] = new Path2D()), e.a, R.label + P.wMain + 4, P.wSub * 0.8);
+      lineRun(nums[lv] || (nums[lv] = new Path2D()), e.a, R.num, 13);
     }
+    c.strokeStyle = SOLID.ink;
+    const strokeAll = (paths, width, alpha) => {
+      c.lineWidth = Math.max(0.5, width);
+      for (let lv = 1; lv <= LV; lv++) if (paths[lv]) { c.globalAlpha = (alpha * lv * on) / LV; c.stroke(paths[lv]); }
+    };
+    strokeAll(mains, 8.4 * 0.36 * z, 0.24);
+    strokeAll(subs, 6.4 * 0.3 * z, 0.13);
+    strokeAll(nums, 5.6 * 0.32 * z, 0.2);
+    if (!chosen.length) return;
+
+    // the chosen, written out: their names, their houses, their numbers
+    c.textBaseline = "middle"; c.textAlign = "left";
+    c.fillStyle = SOLID.ink;
+    for (const font of [F.label, F.labelHere]) {
+      c.font = font;
+      for (const e of chosen) {
+        const P = placeLabel(e, ls);
+        if (P.font !== font) continue;
+        c.globalAlpha = (e.p.at ? 0.95 : 0.66) * close * e.em * on;
+        textAt(c, Math.cos(e.a) * P.rMain, Math.sin(e.a) * P.rMain, P.dir, P.main, P.size, "left", font);
+      }
+    }
+    c.font = F.mono; c.fillStyle = SOLID.muted;
+    for (const e of chosen) {
+      const P = placeLabel(e, ls);
+      c.globalAlpha = 0.72 * close * e.em * on;
+      textAt(c, Math.cos(e.a) * P.rSub, Math.sin(e.a) * P.rSub, P.dir, P.sub, P.sub2, "left", F.mono);
+    }
+    const ns = ls * 0.667;
+    for (const e of chosen) {
+      const flip = Math.cos(e.a + V.rot) < 0;
+      const no = String(e.no).padStart(3, "0");
+      const yr = e.p.y ? " ’" + String(e.p.y).slice(2) : " —";
+      const w = ((wOf(F.mono, no) + wOf(F.mono, yr)) * ns) / FPX;
+      const r0 = flip ? R.num + w : R.num, dir = flip ? e.a + Math.PI : e.a;
+      c.globalAlpha = 0.75 * close * e.em * on;
+      c.fillStyle = SOLID.ink;
+      textAt(c, Math.cos(e.a) * r0, Math.sin(e.a) * r0, dir, no, ns, "left", F.mono);
+      const r1 = flip ? r0 - (wOf(F.mono, no) * ns) / FPX : r0 + (wOf(F.mono, no) * ns) / FPX;
+      c.fillStyle = SOLID.muted;
+      textAt(c, Math.cos(e.a) * r1, Math.sin(e.a) * r1, dir, yr, ns, "left", F.mono);
+    }
+    base();
   }
 
-  function growth(e) {
-    if (intro >= 1) return 1;
-    const i = e.no / N;
-    return ease(clamp(intro * 1.55 - i * 0.55, 0, 1));
+  // The group names along the rim — and, for a chosen perfumer, its houses
+  // in its name's place, with a square where each begins.
+  function drawNames(c, mul) {
+    const [gNew, gOld] = sortMix();
+    namesFor(c, oldGroups, gOld * mul);
+    namesFor(c, groups, gNew * mul);
+  }
+  function namesFor(c, gs, alpha) {
+    alpha *= labelsOn();
+    if (alpha <= 0.003) return;
+    const z = V.z;
+    c.textBaseline = "middle"; c.textAlign = "left";
+    const chosenG = mode === "az" && sel.pid && gs === groups ? gs.find((g) => g.id === sel.pid) : null;
+    c.font = F.group; c.fillStyle = SOLID.ink;
+    for (const g of gs) {
+      if (g === chosenG || !g.size || g.size * z < 2.3) continue;
+      const em = gs === groups && focus ? 0.4 + 0.6 * (groupEm(g) - DIM) / (1 - DIM) : 1;
+      arcText(c, g.text, R.group, (g.a0 + g.a1) / 2, g.size, F.group, trackOf(g.size), 0.92 * alpha * em);
+    }
+    if (!chosenG) { base(); return; }
+    c.font = F.house;
+    for (const h of chosenG.houses) {
+      const size = houseSize(h, z);
+      if (!size || size * z < 2.3) continue;
+      const on = sel.hid === h.h;
+      c.fillStyle = on ? SOLID.gold : SOLID.ink;
+      arcText(c, h.text, R.group, (h.a0 + h.a1) / 2, size, F.house, 0.18, alpha * (sel.hid && !on ? 0.5 : 0.95));
+    }
+    base();
+    for (const h of chosenG.houses) {
+      const a = h.a0 + slot * 0.5;
+      proj(Math.cos(a) * (R.tick0 - 4), Math.sin(a) * (R.tick0 - 4), T0);
+      if (!T0.ok) continue;
+      const sq = Math.max(1.4, 2.8 * z * T0.k);
+      c.fillStyle = sel.hid === h.h ? SOLID.gold : SOLID.ink;
+      c.globalAlpha = 0.85 * alpha;
+      c.fillRect(T0.x - sq / 2, T0.y - sq / 2, sq, sq);
+    }
+    c.globalAlpha = 1;
   }
 
-  // ---- THE OUT-OF-FOCUS COPY, once a zoom has settled ---------------------
-  let dofDone = false;
+  // ---- THE ROTOR: the chart at rest, drawn once, turned by the browser -----
+  let lastRotor = "";
+  const stats = { rotor: 0, chart: 0, live: 0, dof: 0 };
+  function renderRotor() {
+    rotorDirty = false;
+    stats.rotor++;
+    const k = DPR;
+    tctx.setTransform(1, 0, 0, 1, 0, 0);
+    tctx.clearRect(0, 0, cvTurn.width, cvTurn.height);
+    surface(tctx, k, 0, 0, k, 0, 0, 0, 0, S, S);
+    view(0, 0, fitZ, 0, 0, S / 2, S / 2);
+    drawScene(false);
+  }
+  function placeRotor() {
+    const x = cam.cx * W - S / 2, y = cam.cy * H - S / 2;
+    const sc = Math.exp(cam.lz) / fitZ;
+    const t = "translate(" + x.toFixed(2) + "px," + y.toFixed(2) + "px) rotate(" + (cam.rot % TAU).toFixed(5) + "rad)" +
+      (Math.abs(sc - 1) > 1e-4 ? " scale(" + sc.toFixed(5) + ")" : "");
+    if (t !== lastRotor) { rotor.style.transform = t; lastRotor = t; }
+  }
+
+  // ---- THE CHART IN PERSPECTIVE ---------------------------------------------
+  function drawChart() {
+    chartDirty = false;
+    stats.chart++;
+    const k = DPR;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, cvChart.width, cvChart.height);
+    surface(ctx, k, 0, 0, k, k * OV, k * OV, -OV, -OV, W + OV, H + OV);
+    viewCam();
+    drawScene(true);
+  }
+
+  // ---- THE OUT-OF-FOCUS COPY, once a close look has settled -----------------
+  let dofDone = false, stillSince = 0;
+  const canFilter = typeof dctx.filter === "string";
+  let small = null;
   function dofOff() { cvDof.classList.remove("is-on"); dofDone = false; }
   function renderDof() {
     dofDone = true;
-    if (!zoomed || STILL) return;
+    if (STILL) return;
+    stats.dof++;
     const w = cvDof.width, h = cvDof.height;
     dctx.setTransform(1, 0, 0, 1, 0, 0);
     dctx.globalCompositeOperation = "source-over";
-    dctx.clearRect(0, 0, w, h);
-    dctx.fillStyle = "#0b0c0d";
+    dctx.globalAlpha = 1;
+    dctx.fillStyle = GROUND;
     dctx.fillRect(0, 0, w, h);
-    dctx.filter = "blur(" + (2.8 * DPR).toFixed(1) + "px)";
-    dctx.drawImage(cvChart, 0, 0);
-    dctx.filter = "none";
-    // cut the part in focus back out, softly: a wide band through the
-    // point flown to, as a lens close to a page has it
+    if (canFilter) {
+      dctx.filter = "blur(" + (1.4 * DPR).toFixed(1) + "px)";
+      dctx.drawImage(cvChart, 0, 0, w, h);
+      dctx.filter = "none";
+    } else {
+      // no canvas filter (an older Safari): blur by drawing small and back
+      if (!small) small = document.createElement("canvas");
+      small.width = Math.max(1, Math.round(w / 4)); small.height = Math.max(1, Math.round(h / 4));
+      const sc = small.getContext("2d");
+      sc.drawImage(cvChart, 0, 0, small.width, small.height);
+      dctx.imageSmoothingQuality = "high";
+      dctx.drawImage(small, 0, 0, w, h);
+    }
+    // cut the part in focus back out, softly: a wide band through the point
+    // looked at, as a lens close to a page has it
     dctx.globalCompositeOperation = "destination-out";
-    const cx = cam.cx * w, cy = cam.cy * h;
+    const sc = w / (W + 2 * OV);
     dctx.save();
-    dctx.translate(cx, cy);
+    dctx.translate((OV + cam.cx * W) * sc, (OV + cam.cy * H) * sc);
     dctx.rotate(-0.18);
     dctx.scale(1.9, 1);
-    const rad = Math.max(w, h) * 0.3;
+    const rad = Math.max(W, H) * 0.3 * sc;
     const gr = dctx.createRadialGradient(0, 0, rad * 0.35, 0, 0, rad);
     gr.addColorStop(0, "rgba(0,0,0,1)");
     gr.addColorStop(1, "rgba(0,0,0,0)");
@@ -617,312 +1002,739 @@
     dctx.globalCompositeOperation = "source-over";
     cvDof.classList.add("is-on");
   }
+  // how far a point on the window is from the part in focus, as a quiet:
+  // the live specks fade out of it as the copy blurs it
+  function quietAt(X, Y, amt) {
+    if (amt <= 0) return 1;
+    const dx = X - cam.cx * W, dy = Y - cam.cy * H;
+    const c = Math.cos(0.18), s = Math.sin(0.18);
+    const u = (dx * c - dy * s) / 1.9, v = dx * s + dy * c;
+    const d = Math.hypot(u, v) / (Math.max(W, H) * 0.3);
+    return 1 - amt * 0.7 * smooth((d - 0.35) / 0.65);
+  }
 
-  // ---- THE LIVE LAYER: the globe, and what the hand is on -----------------
-  let hover = null;
-  let globeAngle = 0;
-  function drawLive(now, dt) {
-    const c = lctx;
+  // ---- THE SWAY, close in: the browser's to draw ---------------------------
+  let swayAmt = 0;
+  const M = { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
+  let lastSway = "";
+  function sway(t) {
+    if (swayAmt <= 0) { M.a = 1; M.b = 0; M.c = 0; M.d = 1; M.e = 0; M.f = 0; }
+    else {
+      const th = swayAmt * (SWAY.roll * Math.sin(TAU * SWAY.rollHz * t) + SWAY.roll2 * Math.sin(TAU * SWAY.roll2Hz * t + 1.3));
+      const sc = 1 + swayAmt * SWAY.breath * (0.5 - 0.5 * Math.cos(TAU * SWAY.breathHz * t));
+      const tx = swayAmt * SWAY.dx * Math.sin(TAU * SWAY.driftHz * t + 0.6);
+      const ty = swayAmt * SWAY.dy * Math.sin(TAU * SWAY.driftHz * 0.77 * t + 2.1);
+      const px = cam.cx * W, py = cam.cy * H;
+      const c = Math.cos(th) * sc, s = Math.sin(th) * sc;
+      M.a = c; M.b = s; M.c = -s; M.d = c;
+      M.e = px + tx - (c * px - s * py);
+      M.f = py + ty - (s * px + c * py);
+    }
+    const css = swayAmt <= 0 ? "none" : "matrix(" + [M.a, M.b, M.c, M.d, M.e, M.f].map((v) => v.toFixed(5)).join(",") + ")";
+    if (css !== lastSway) { swayBox.style.transform = css; lastSway = css; }
+  }
+  function unsway(X, Y) {
+    const det = M.a * M.d - M.b * M.c;
+    const x = X - M.e, y = Y - M.f;
+    return { x: (M.d * x - M.c * y) / det, y: (-M.b * x + M.a * y) / det };
+  }
+
+  // ---- THE LIVE LAYER: what moves of itself, and what the hand is on --------
+  let clock = 0, globeAngle = 0, hover = null;
+  const pulses = [];
+  let pulseNext = 1.2;
+  function tendPulses() {
+    if (STILL || intro < 1) return;
+    for (let i = pulses.length - 1; i >= 0; i--) if (clock > pulses[i].t0 + pulses[i].dur + 1) pulses.splice(i, 1);
+    if (clock < pulseNext || pulses.length >= 9) return;
+    const pool = focusList && zoomed() ? focusList : order;
+    const e = pool[Math.floor(Math.random() * pool.length)];
+    if (e) pulses.push({ e, t0: clock, dur: 1.5 + Math.random() * 1.2 });
+    pulseNext = clock + (zoomed() ? 0.5 : 0.28) + Math.random() * 0.55;
+  }
+  function drawLive() {
+    stats.live++;
+    const c = lctx, k = DPR;
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.clearRect(0, 0, cvLive.width, cvLive.height);
-    c.setTransform(DPR, 0, 0, DPR, 0, 0);
-    prep();
+    surface(c, k * M.a, k * M.b, k * M.c, k * M.d, k * M.e, k * M.f, -50, -50, W + 50, H + 50);
+    viewCam();
+    VIS.all = true;
+    base();
+    const t = STILL ? 0 : clock;
+    const z = V.z, fade = intro;
+    const q = cam.tilt / TILT;
+
+    // the far field and the dust past the rim, drifting
+    c.fillStyle = SOLID.ink;
+    for (let i = 0; i < SKY; i++) {
+      const o = i * 7, a = sky[o + 1] + sky[o + 4] * t, r = sky[o];
+      proj(Math.cos(a) * r, Math.sin(a) * r, T0);
+      if (!T0.ok || !inView(T0.x, T0.y, 4)) continue;
+      const s = Math.max(0.5, sky[o + 2] * z * T0.k * 1.4);
+      c.globalAlpha = sky[o + 3] * (0.6 + 0.4 * Math.sin(sky[o + 6] * t + sky[o + 5])) * fade * quietAt(T0.x, T0.y, q);
+      c.fillRect(T0.x - s / 2, T0.y - s / 2, s, s);
+    }
+    for (let i = 0; i < DRIFT; i++) {
+      const o = i * 8, a = drift[o + 1] + drift[o + 4] * t, r = drift[o] + drift[o + 5] * Math.sin(drift[o + 7] * t + drift[o + 6]);
+      proj(Math.cos(a) * r, Math.sin(a) * r, T0);
+      if (!T0.ok || !inView(T0.x, T0.y, 4)) continue;
+      const s = Math.max(0.55, drift[o + 2] * z * T0.k * 1.3);
+      c.globalAlpha = drift[o + 3] * (0.55 + 0.45 * Math.sin(drift[o + 7] * 2.3 * t + drift[o + 6] * 1.7)) * fade * quietAt(T0.x, T0.y, q);
+      c.fillRect(T0.x - s / 2, T0.y - s / 2, s, s);
+    }
+
     // the globe
     proj(0, 0, T0);
-    let visible = false;
     if (T0.ok) {
-      const gr = R.sphere * cam.z * T0.k;
-      if (T0.x + gr > 0 && T0.x - gr < W && T0.y + gr > 0 && T0.y - gr < H) {
-        visible = true;
-        if (!STILL) globeAngle += dt * 0.00007;
-        drawGlobe(c, T0.x, T0.y, gr, clamp(intro * 2, 0, 1));
+      const gr = R.sphere * z * T0.k;
+      if (T0.x + gr > -50 && T0.x - gr < W + 50 && T0.y + gr > -50 && T0.y - gr < H + 50) {
+        drawGlobe(c, T0.x, T0.y, gr, clamp(intro * 2, 0, 1) * quietAt(T0.x, T0.y, q * 0.8), t);
       }
     }
+
+    // a glint running round the band
+    if (!STILL && intro >= 1) {
+      const a = -Math.PI / 2 + ((t / 24) % 1) * TAU;
+      c.strokeStyle = SOLID.gold;
+      c.lineCap = "round";
+      c.lineWidth = Math.max(1, (R.band1 - R.band0) * z * 0.5);
+      const rm = (R.band0 + R.band1) / 2;
+      [[0.32, 0.07], [0.16, 0.12], [0.06, 0.22]].forEach(([len, al]) => {
+        c.beginPath(); ringPath(c, rm, a - len, a);
+        c.globalAlpha = al; c.stroke();
+      });
+      c.lineCap = "butt";
+    }
+
+    // the lights running out along the spokes
+    drawPulses(c, t);
+
+    // the names on the rim, while the chart turns — here so that they turn
+    // over as they come round, rather than stand upside down
+    if (viewNow === "turn") drawNames(c, 1);
+
+    // what is chosen, lit, while it is seen on the whole chart (close in its
+    // names are written instead)
+    if (focusList && !sel.e && q < 0.5) { c.globalAlpha = 1; markSpokes(c, focusList, 0.75 * (1 - 2 * q)); }
+    // what is lit, and what the hand is on
+    if (sel.e) markEntry(c, sel.e);
     if (hover) drawHover(c);
-    return visible;
+    c.globalAlpha = 1;
   }
-  function drawGlobe(c, cx, cy, gr, alpha) {
+  function drawGlobe(c, cx, cy, gr, alpha, t) {
+    if (alpha <= 0.01) return;
     // a dark disc first, so the dust behind does not show through it
     const g0 = c.createRadialGradient(cx - gr * 0.35, cy - gr * 0.4, gr * 0.1, cx, cy, gr);
-    g0.addColorStop(0, "rgba(40,46,56," + alpha + ")");
-    g0.addColorStop(1, "rgba(8,9,11," + alpha + ")");
+    g0.addColorStop(0, "rgb(40,46,56)");
+    g0.addColorStop(1, "rgb(8,9,11)");
+    c.globalAlpha = alpha;
     c.fillStyle = g0;
     c.beginPath(); c.arc(cx, cy, gr, 0, TAU); c.fill();
     const ca = Math.cos(globeAngle), sa = Math.sin(globeAngle);
-    const tilt = 0.41, ct = Math.cos(tilt), st = Math.sin(tilt);
+    const ct = Math.cos(0.41), st = Math.sin(0.41);
     const lx = -0.55, ly = -0.55, lz = 0.63;
-    const sz = Math.max(0.6, gr * 0.018);
-    for (let i = 0; i < globe.length; i += 4) {
-      let x = globe[i], y = globe[i + 1], z = globe[i + 2];
-      const x1 = x * ca + z * sa, z1 = -x * sa + z * ca;
-      const y2 = y * ct - z1 * st, z2 = y * st + z1 * ct;
-      if (z2 < -0.05) continue;
-      const lit = x1 * lx + y2 * ly + z2 * lz;
-      const px = cx + x1 * gr, py = cy + y2 * gr;
-      if (lit > 0) {
-        c.fillStyle = "rgba(" + COL.blue + "," + (0.18 + lit * 0.7) * z2 * alpha + ")";
-        c.fillRect(px - sz / 2, py - sz / 2, sz, sz);
-      } else if (globe[i + 3] > 0.84) {
-        // lights on the night side
-        c.fillStyle = "rgba(" + COL.gold + "," + (0.35 + globe[i + 3] * 0.5) * z2 * alpha + ")";
-        c.fillRect(px - sz / 2, py - sz / 2, sz * 1.2, sz * 1.2);
+    const sz = Math.max(0.6, gr * 0.02);
+    for (let pass = 0; pass < 2; pass++) {
+      c.fillStyle = pass ? SOLID.gold : SOLID.blue;
+      for (let i = 0; i < GN; i++) {
+        const o = i * 4, x = globe[o], y = globe[o + 1], zz = globe[o + 2];
+        const x1 = x * ca + zz * sa, z1 = -x * sa + zz * ca;
+        const y2 = y * ct - z1 * st, z2 = y * st + z1 * ct;
+        if (z2 < -0.05) continue;
+        const lit = x1 * lx + y2 * ly + z2 * lz;
+        if (!pass && lit > 0) {
+          c.globalAlpha = (0.18 + lit * 0.7) * z2 * alpha;
+          c.fillRect(cx + x1 * gr - sz / 2, cy + y2 * gr - sz / 2, sz, sz);
+        } else if (pass && lit <= 0 && globe[o + 3] > 0.84) {
+          // the lights on the night side, twinkling
+          c.globalAlpha = (0.35 + globe[o + 3] * 0.5) * z2 * alpha * (0.75 + 0.25 * Math.sin(t * (1.3 + globe[o + 3] * 2) + i));
+          c.fillRect(cx + x1 * gr - sz * 0.6, cy + y2 * gr - sz * 0.6, sz * 1.2, sz * 1.2);
+        }
       }
     }
-    // the rim of light
-    c.strokeStyle = "rgba(" + COL.blue + "," + 0.35 * alpha + ")";
+    c.globalAlpha = 0.35 * alpha;
+    c.strokeStyle = SOLID.blue;
     c.lineWidth = Math.max(0.6, gr * 0.012);
     c.beginPath(); c.arc(cx, cy, gr, Math.PI * 0.85, Math.PI * 1.75); c.stroke();
+    c.globalAlpha = 1;
+  }
+  function drawPulses(c, t) {
+    if (!pulses.length) return;
+    const z = V.z;
+    c.lineCap = "round";
+    for (const p of pulses) {
+      const e = p.e, u = (t - p.t0) / p.dur;
+      if (u < 0) continue;
+      const ca = Math.cos(e.a), sa = Math.sin(e.a);
+      c.strokeStyle = SOLID[e.tone]; c.fillStyle = SOLID[e.tone];
+      const em = 0.35 + 0.65 * e.em;
+      if (u < 1) {
+        const k = ease(u), r = R.base + (e.rDot - R.base) * k;
+        const tail = Math.min(46, r - R.base);
+        proj(ca * (r - tail), sa * (r - tail), T0); proj(ca * r, sa * r, T1);
+        if (!T0.ok || !T1.ok || (!inView(T0.x, T0.y, 20) && !inView(T1.x, T1.y, 20))) continue;
+        const a = Math.sin(Math.PI * u);
+        c.lineWidth = clamp(1.7 * z, 1, 3.2);
+        c.globalAlpha = 0.85 * a * em;
+        c.beginPath(); c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); c.stroke();
+        c.globalAlpha = 0.95 * a * em;
+        c.beginPath(); c.arc(T1.x, T1.y, clamp(2.2 * z * T1.k, 1.2, 4), 0, TAU); c.fill();
+      } else {
+        // its dot flares as the light arrives
+        const v = (t - p.t0 - p.dur) / 1;
+        if (v > 1) continue;
+        proj(ca * e.rDot, sa * e.rDot, T0);
+        if (!T0.ok || !inView(T0.x, T0.y, 30)) continue;
+        const rr = Math.max(1.4, 3.6 * z * T0.k);
+        c.lineWidth = clamp(1.1 * z, 0.7, 2);
+        c.globalAlpha = 0.7 * (1 - v) * em;
+        c.beginPath(); c.arc(T0.x, T0.y, rr * (1.4 + v * 3.2), 0, TAU); c.stroke();
+        c.globalAlpha = 0.35 * (1 - v) * em;
+        c.beginPath(); c.arc(T0.x, T0.y, rr * 1.6, 0, TAU); c.fill();
+      }
+    }
+    c.lineCap = "butt";
+    c.globalAlpha = 1;
+  }
+  function markSpokes(c, list, alpha) {
+    const z = V.z;
+    c.lineWidth = clamp(1.4 * z, 1, 3.4);
+    for (const tone of TONES) {
+      c.strokeStyle = SOLID[tone];
+      c.globalAlpha = 0.95 * (alpha == null ? 1 : alpha);
+      c.beginPath();
+      for (const e of list) {
+        if (e.tone !== tone) continue;
+        const ca = Math.cos(e.a), sa = Math.sin(e.a);
+        proj(ca * R.base, sa * R.base, T0); proj(ca * e.rDot, sa * e.rDot, T1);
+        if (!T0.ok || !T1.ok) continue;
+        c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y);
+        const rr = Math.max(2.2, 5.2 * z * T1.k);
+        c.moveTo(T1.x + rr, T1.y); c.arc(T1.x, T1.y, rr, 0, TAU);
+      }
+      c.stroke();
+    }
+  }
+  function markEntry(c, e) {
+    markSpokes(c, [e]);
+    if (!written(e) || closeAmt() < 0.5) return;
+    const P = placeLabel(e, labelSize());
+    c.textBaseline = "middle"; c.textAlign = "left";
+    c.font = P.font; c.fillStyle = SOLID[e.tone]; c.globalAlpha = closeAmt();
+    textAt(c, Math.cos(e.a) * P.rMain, Math.sin(e.a) * P.rMain, P.dir, P.main, P.size, "left", P.font);
+    base();
   }
   function drawHover(c) {
-    const list = hover.type === "entry" ? [hover.e] : hover.g.members;
-    c.setTransform(DPR, 0, 0, DPR, 0, 0);
-    c.textBaseline = "middle"; c.textAlign = "left";
-    list.forEach((e) => {
-      proj(Math.cos(e.a) * R.base, Math.sin(e.a) * R.base, T0);
-      proj(Math.cos(e.a) * e.rDot, Math.sin(e.a) * e.rDot, T1);
-      if (!T0.ok || !T1.ok) return;
-      c.strokeStyle = "rgba(" + COL[e.tone] + ",0.95)";
-      c.lineWidth = clamp(1.4 * cam.z, 1, 3.4);
-      c.beginPath(); c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); c.stroke();
-      const rr = Math.max(2.2, 5.2 * cam.z * T1.k);
-      c.beginPath(); c.arc(T1.x, T1.y, rr, 0, TAU); c.stroke();
-    });
-    if (hover.type === "entry") {
-      const e = hover.e;
-      const flip = Math.cos(e.a + cam.rot) < 0;
-      runText(c, e.a, R.label, flip, [[e.p.n, 8.4, F.labelHere, "rgb(" + COL[e.tone] + ")"]]);
-      texture = [];
-      c.setTransform(DPR, 0, 0, DPR, 0, 0);
-    } else {
-      const g = hover.g;
-      c.lineWidth = Math.max(1, (R.band1 - R.band0) * cam.z * 0.9);
-      c.strokeStyle = "rgba(" + COL.gold + ",0.8)";
-      c.beginPath(); ring(c, (R.band0 + R.band1) / 2, g.a0 + slot * 0.3, g.a1 - slot * 0.3, 0.01); c.stroke();
-      if (g.fits) {
-        c.fillStyle = "rgb(" + COL.gold + ")";
-        arcText(c, g.text, R.group, (g.a0 + g.a1) / 2, g.size, F.group, g.size > 12 ? 0.32 : 0.24);
-        texture = [];
+    const h = hover;
+    if (h.type === "entry") { markEntry(c, h.e); return; }
+    const list = h.type === "group" ? h.g.members : h.type === "house" ? h.h.members : h.list;
+    markSpokes(c, list);
+    const g = h.type === "group" ? h.g : h.type === "house" ? null : h.g;
+    if (g) {
+      c.lineWidth = Math.max(1, (R.band1 - R.band0) * V.z * 0.9);
+      c.strokeStyle = SOLID.gold; c.globalAlpha = 0.8;
+      c.beginPath(); ringPath(c, (R.band0 + R.band1) / 2, g.a0 + slot * 0.3, g.a1 - slot * 0.3); c.stroke();
+      const chosenHere = mode === "az" && sel.pid === g.id;
+      if (g.size && !chosenHere) {
+        c.font = F.group; c.fillStyle = SOLID.gold;
+        c.textBaseline = "middle"; c.textAlign = "left";
+        arcText(c, g.text, R.group, (g.a0 + g.a1) / 2, g.size, F.group, trackOf(g.size), 1);
       }
-      c.setTransform(DPR, 0, 0, DPR, 0, 0);
     }
+    if (h.type === "house" && h.h.size) {
+      c.font = F.house; c.fillStyle = SOLID.gold;
+      c.textBaseline = "middle"; c.textAlign = "left";
+      arcText(c, h.h.text, R.group, (h.h.a0 + h.h.a1) / 2, houseSize(h.h, V.z), F.house, 0.18, 1);
+    }
+    base();
   }
 
   // ---- THE CLOCK -------------------------------------------------------
-  let raf = 0, last = 0, lastMove = 0, dragging = false;
+  let raf = 0, last = 0, viewNow = "", seen = true;
   function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+  function setView(v) {
+    viewNow = v;
+    stage.dataset.view = v;
+  }
   function frame(now) {
     raf = 0;
-    const dt = last ? Math.min(64, now - last) : 16;
+    if (!W) return;
+    if (sharp) sharp.frame(now);
+    const dt = last ? Math.min(0.064, (now - last) / 1000) : 1 / 60;
     last = now;
-    let moving = false;
+    const running = !STILL && seen && !document.hidden;
+    if (running) clock += dt;
+
     // the opening
     if (intro < 1) {
       if (introT0 < 0) introT0 = now;
       intro = clamp((now - introT0) / INTRO_MS, 0, 1);
-      moving = true;
     }
     // the switch's sweep
+    let sorting = false;
     if (sortT0 >= 0) {
       const t = clamp((now - sortT0) / SORT_MS, 0, 1);
       for (let i = 0; i < order.length; i++) {
         const e = order[i];
-        const local = ease(clamp(t * 1.4 - (i / N) * 0.4, 0, 1));
-        e.a = e.from + (e.to - e.from) * local;
+        e.a = e.from + (e.to - e.from) * ease(clamp(t * 1.4 - (i / N) * 0.4, 0, 1));
       }
-      if (t >= 1) { sortT0 = -1; oldGroups = []; }
-      moving = true;
+      if (t >= 1) { sortT0 = -1; oldGroups = []; } else sorting = true;
     }
-    // the camera's flight
-    if (camT0 >= 0) {
-      const t = clamp((now - camT0) / CAM_MS, 0, 1), k = ease(t);
-      for (const key of ["fx", "fy", "z", "tilt", "cx", "cy"]) cam[key] = camFrom[key] + (camTo[key] - camFrom[key]) * k;
-      cam.z = Math.exp(Math.log(camFrom.z) + (Math.log(camTo.z) - Math.log(camFrom.z)) * k);
-      cam.rot = camFrom.rot + (camTo.rot - camFrom.rot) * k;
-      if (t >= 1) { camT0 = -1; if (!zoomed) setZoomedClasses(false); }
-      moving = true;
+    // the emphasis, coming and going
+    let fading = false;
+    if (emT0 >= 0) {
+      const t = clamp((now - emT0) / EM_MS, 0, 1), k = ease(t);
+      for (const e of entries) e.em = e.emFrom + (e.emTo - e.emFrom) * k;
+      if (t >= 1) emT0 = -1; else fading = true;
     }
-    if (moving || dirty || dragging) { drawChart(now); dirty = false; lastMove = now; if (dofDone || cvDof.classList.contains("is-on")) dofOff(); }
-    const globeOn = drawLive(now, dt);
-    if (zoomed && !dofDone && !moving && !dragging && now - lastMove > 160) renderDof();
-    if (moving || dragging || (globeOn && !STILL) || (zoomed && !dofDone) || dirty) kick();
-  }
+    // the camera; at rest on the whole chart, the chart turns
+    const moving = !STILL && stepCam(dt);
+    if (!moving && !zoomed() && running) {
+      goal.rot += SPIN * dt;
+      cam.rot = lead.rot = goal.rot;
+    }
+    if (running) globeAngle += dt * 0.07;
 
-  // ---- THE CAMERA'S MOVES -----------------------------------------------
-  function flyTo(target) {
-    if (STILL) { Object.assign(cam, target); camT0 = -1; dirty = true; kick(); if (!zoomed) setZoomedClasses(false); return; }
-    camFrom = Object.assign({}, cam);
-    camTo = target;
-    camT0 = performance.now();
-    dofOff();
-    kick();
-  }
-  function zoomLevel() { return Math.max(fitZ * 5.4, W < 700 ? 1.25 : 1.55); }
-  function zoomTo(wx, wy) {
-    const r = Math.hypot(wx, wy);
-    if (r > R.fit) { wx *= R.fit / r; wy *= R.fit / r; }
-    let rot = cam.rot;
-    if (r > 150) {
-      rot = -0.4 - Math.atan2(wy, wx);
-      while (rot - cam.rot > Math.PI) rot -= TAU;
-      while (rot - cam.rot < -Math.PI) rot += TAU;
+    // flat and centred, a move is only a turn, a slide and a scale — the
+    // rotor's to carry; anything else is drawn as it goes
+    const flat = !zoomed() && cam.tilt < 1e-4 && Math.abs(cam.fx) < 0.01 && Math.abs(cam.fy) < 0.01;
+    const settling = moving || sorting || fading || intro < 1;
+    const v = settling && !(flat && !sorting && !fading && intro >= 1) ? "live" : zoomed() ? "still" : "turn";
+    if (v !== viewNow) {
+      if (v === "turn") { if (rotorDirty) renderRotor(); dofOff(); }
+      if (v === "live") dofOff();
+      if (v === "still") { chartDirty = true; }
+      setView(v);
     }
-    zoomed = true;
-    setZoomedClasses(true);
-    flyTo({ fx: wx, fy: wy, z: zoomed && cam.z > fitZ * 2 ? cam.z : zoomLevel(), rot, tilt: TILT, cx: W < 700 ? 0.4 : FOCUS_X, cy: FOCUS_Y });
-  }
-  function zoomOut() {
-    if (!zoomed) return;
-    zoomed = false;
-    hideTip(); hover = null;
-    const o = overview();
-    // come back the short way round
-    o.rot = Math.round(cam.rot / TAU) * TAU;
-    flyTo(o);
-    // the rest of the page's words come back at once
-    root.classList.remove("is-zoomed");
-    backBtn.hidden = true;
-    hint.textContent = "Click anywhere to look closer";
-  }
-  function setZoomedClasses(on) {
-    stage.classList.toggle("is-zoomed", on);
-    root.classList.toggle("is-zoomed", on);
-    backBtn.hidden = !on;
-    hint.textContent = on ? (W < 700 ? "Tap a name · drag to move" : "Click a name for more · drag to move · Esc for the whole chart") : "Click anywhere to look closer";
-    if (!on) cam.rot = 0;
+    // the sway comes in slowly once a close look has settled, and goes quickly
+    const swayOn = v === "still" && !STILL;
+    swayAmt += ((swayOn ? 1 : 0) - swayAmt) * (1 - Math.exp(-dt / (swayOn ? 1.8 : 0.32)));
+    if (!swayOn && swayAmt < 0.002) swayAmt = 0;
+    sway(clock);
+
+    if (v === "live") { drawChart(); rotorDirty = true; }
+    else if (v === "turn") { if (rotorDirty) renderRotor(); placeRotor(); }
+    else {
+      if (chartDirty) { drawChart(); dofOff(); stillSince = now; }
+      if (!dofDone && now - stillSince > 240) renderDof();
+    }
+    tendPulses();
+    drawLive();
+
+    const idle = running && card.hidden && !menuOpen;
+    if (settling || idle || swayAmt > 0 && running || (v === "still" && !dofDone)) kick();
+    else last = 0;
   }
 
   // ---- WHAT IS UNDER THE HAND --------------------------------------------
-  function normAngle(a) { while (a < -Math.PI / 2) a += TAU; while (a >= Math.PI * 1.5) a -= TAU; return a; }
-  function angDist(a, b) { let d = Math.abs(normAngle(a) - normAngle(b)); return d > Math.PI ? TAU - d : d; }
+  function groupAt(th) {
+    let best = null, bd = Infinity;
+    for (const g of groups) {
+      const d = Math.max(0, angDist(th, (g.a0 + g.a1) / 2) - (g.a1 - g.a0) / 2);
+      if (d < bd) { bd = d; best = g; }
+    }
+    return bd <= slot * GAP ? best : null;
+  }
+  function houseAt(g, th) {
+    let best = null, bd = Infinity;
+    for (const h of g.houses) {
+      const d = Math.max(0, angDist(th, (h.a0 + h.a1) / 2) - (h.a1 - h.a0) / 2);
+      if (d < bd) { bd = d; best = h; }
+    }
+    return best;
+  }
   function hit(X, Y) {
-    prep();
-    const w = unproj(X, Y);
+    const p = unsway(X, Y);
+    viewCam();
+    const w = unproj(p.x, p.y);
     if (!w) return null;
     const r = Math.hypot(w.x, w.y);
+    if (r < R.sphere || r > R.fit) return null;
     const th = Math.atan2(w.y, w.x);
-    if (r < R.sphere) return null;
-    const groupAt = () => groups.find((g) => angDist(th, (g.a0 + g.a1) / 2) <= (g.a1 - g.a0) / 2);
-    if ((r >= R.band0 - 6 && r <= R.band1 + 6) || (r >= R.group - 14 && r <= R.house + 5)) {
-      const g = groupAt();
-      return g ? { type: "group", g } : null;
+    const g = groupAt(th);
+    if (!g) return null;
+    // a perfume whose name is written can be pressed by its name or its spoke
+    if (closeAmt() > 0.5) {
+      let best = null, bd = Infinity;
+      for (const e of g.members) { if (!written(e)) continue; const d = angDist(th, e.a); if (d < bd) { bd = d; best = e; } }
+      if (best) {
+        const onSpoke = r >= R.base - 6 && r <= best.rDot + 12 && bd * r < 9;
+        const P = placeLabel(best, labelSize());
+        const onLabel = r >= R.tick0 - 4 && r <= R.label + P.wMain + P.wSub + 8 && bd < slot * 0.55;
+        if (onSpoke || onLabel) return { type: "entry", e: best, g, th };
+      }
     }
-    let best = null, bd = Infinity;
-    for (const e of order) { const d = angDist(th, e.a); if (d < bd) { bd = d; best = e; } }
-    if (!best) return null;
-    if (r >= R.base - 4 && r <= best.rDot + 10) return bd * r < 7 ? { type: "entry", e: best } : null;
-    if (r >= R.tick0 - 3) {
-      const len = (wOf(ctx, F.labelHere, best.p.n) * 8.4) / FPX + 150;
-      if (bd < slot * 0.6 && r <= R.label + len) return { type: "entry", e: best };
-    }
-    return null;
+    if (mode === "az" && sel.pid === g.id) return { type: "house", g, h: houseAt(g, th), th };
+    return { type: "group", g, th };
   }
-
+  function sameHover(a, b) {
+    if (!a || !b || a.type !== b.type) return a === b;
+    return (a.e || a.h || a.g || a.list) === (b.e || b.h || b.g || b.list);
+  }
   function tipFor(h) {
     if (h.type === "entry") {
       const e = h.e, p = e.p;
       const who = p.p.map((id) => PER[id].name).join(" & ");
       return "<b>" + esc(p.n) + "</b><span>" + esc(HOU[p.h].name) + " · " + (p.y || "year not found") + "</span><span>" + esc(who) + "</span>";
     }
-    const g = h.g;
-    const n = g.members.length;
-    return "<b>" + esc(g.label) + "</b><span>" + n + (n === 1 ? " perfume" : " perfumes") + (g.id && zoomed ? " · click for more" : "") + "</span>";
+    if (h.type === "house") {
+      const n = h.h.members.length;
+      return "<b>" + esc(HOU[h.h.h].name) + "</b><span>" + n + (n === 1 ? " perfume" : " perfumes") + (sel.hid === h.h.h ? "" : " · choose the house") + "</span>";
+    }
+    const g = h.g, n = g.members.length;
+    const houses = mode === "az" ? g.houses.length : 0;
+    return "<b>" + esc(g.label) + "</b><span>" + n + (n === 1 ? " perfume" : " perfumes") +
+      (houses ? " · " + houses + (houses === 1 ? " house" : " houses") : "") + "</span>";
   }
+  let tipAt = null;
   function showTip(h, X, Y) {
     tip.innerHTML = tipFor(h);
     tip.hidden = false;
+    tipAt = { x: X, y: Y };
+    placeTip();
+  }
+  function placeTip() {
     const tw = tip.offsetWidth, th = tip.offsetHeight;
-    let x = X + 16, y = Y + 16;
-    if (x + tw > W - 8) x = X - tw - 16;
-    if (y + th > H - 8) y = Y - th - 16;
+    let x = tipAt.x + 16, y = tipAt.y + 16;
+    if (x + tw > W - 8) x = tipAt.x - tw - 16;
+    if (y + th > H - 8) y = tipAt.y - th - 16;
     tip.style.transform = "translate(" + Math.round(x) + "px," + Math.round(y) + "px)";
   }
-  function hideTip() { tip.hidden = true; }
+  function hideTip() { tip.hidden = true; tipAt = null; }
 
   // ---- THE HAND ----------------------------------------------------------
-  let down = null;
-  function local(ev) { const b = stage.getBoundingClientRect(); return { x: ev.clientX - b.left, y: ev.clientY - b.top }; }
+  let down = null, handHover = false;
+  const CHROME = "button, a, .pf-nav, .pf-here, .pf-sort";
+  function localXY(ev) { const b = stage.getBoundingClientRect(); return { x: ev.clientX - b.left, y: ev.clientY - b.top }; }
   stage.addEventListener("pointerdown", (ev) => {
-    if (ev.target.closest("button, a")) return;
-    const p = local(ev);
-    down = { x: p.x, y: p.y, id: ev.pointerId, moved: false, world: zoomed ? unproj(p.x, p.y) : null, type: ev.pointerType };
+    if (ev.target.closest(CHROME)) return;
+    const p = localXY(ev);
+    down = { x: p.x, y: p.y };
   });
   stage.addEventListener("pointermove", (ev) => {
-    const p = local(ev);
-    if (down && zoomed && down.world) {
-      if (!down.moved && Math.hypot(p.x - down.x, p.y - down.y) > 5) {
-        down.moved = true; dragging = true;
-        stage.classList.add("is-dragging");
-        try { stage.setPointerCapture(down.id); } catch (e) { /* fine */ }
-        camT0 = -1; hideTip(); hover = null;
-      }
-      if (down.moved) {
-        prep();
-        const now = unproj(p.x, p.y);
-        if (now) { cam.fx += down.world.x - now.x; cam.fy += down.world.y - now.y; }
-        dirty = true; kick();
-        return;
-      }
-    }
     if (ev.pointerType === "touch") return;
-    if (camT0 >= 0 || sortT0 >= 0) return;
+    if (ev.target.closest(CHROME)) { if (handHover) clearHandHover(); return; }
+    if (viewNow === "live" && zoomed()) return;
+    const p = localXY(ev);
     const h = hit(p.x, p.y);
-    const same = h && hover && h.type === hover.type && (h.e || h.g) === (hover.e || hover.g);
-    if (!same) { hover = h; kick(); }
-    stage.classList.toggle("is-over", !!h && zoomed);
+    if (!sameHover(h, hover)) { hover = h; kick(); }
+    handHover = !!h;
+    stage.classList.toggle("is-over", !!h);
     if (h) showTip(h, p.x, p.y); else hideTip();
   });
-  stage.addEventListener("pointerleave", () => { if (!dragging) { hover = null; hideTip(); kick(); } });
-  function endDrag(ev) {
+  function clearHandHover() {
+    handHover = false; hover = null; hideTip();
+    stage.classList.remove("is-over");
+    kick();
+  }
+  stage.addEventListener("pointerleave", () => { if (handHover) clearHandHover(); });
+  stage.addEventListener("pointerup", (ev) => {
     if (!down) return;
-    const p = local(ev);
-    const was = down;
+    const p = localXY(ev), was = down;
     down = null;
-    if (was.moved) {
-      dragging = false; stage.classList.remove("is-dragging");
-      lastMove = performance.now(); kick();
-      return;
-    }
-    if (ev.type === "pointercancel") return;
-    click(p.x, p.y);
-  }
-  stage.addEventListener("pointerup", endDrag);
-  stage.addEventListener("pointercancel", endDrag);
+    if (Math.hypot(p.x - was.x, p.y - was.y) > 10) return;
+    press(hit(p.x, p.y));
+  });
+  stage.addEventListener("pointercancel", () => { down = null; });
 
-  function click(X, Y) {
-    prep();
-    if (!zoomed) {
-      const w = unproj(X, Y);
-      if (w) zoomTo(w.x, w.y);
-      return;
-    }
-    const h = hit(X, Y);
-    if (h && h.type === "entry") { openCard("perfume", h.e.p, false); return; }
-    if (h && h.type === "group" && h.g.id) { openCard("perfumer", h.g.id, false); return; }
-    const w = unproj(X, Y);
-    if (w) zoomTo(w.x, w.y);
+  function press(h) {
+    if (!h) return;
+    if (h.type === "entry") { choosePerfume(h.e); return; }
+    // pressed inside what is already chosen: a closer look there, if there
+    // is one to be had
+    const already = h.type === "house" ? sel.kind === "house" && sel.hid === h.h.h
+      : mode === "az" ? sel.pid === h.g.id && sel.kind === "perfumer" : sel.kind === "year" && sel.year === h.g.key;
+    if (already) { if (canLookCloser() || look != null) lookAt(h.th); return; }
+    if (h.type === "house") { chooseHouse(h.g.id, h.h.h); return; }
+    if (mode === "az") choosePerfumer(h.g.id);
+    else chooseYear(h.g.key);
+  }
+  function lookAt(th) {
+    // the nearest of the chosen to where it was pressed
+    let best = null, bd = Infinity;
+    for (const e of focusList || []) { const d = angDist(th, e.to); if (d < bd) { bd = d; best = e; } }
+    if (!best) return;
+    look = best.to;
+    hover = null; hideTip();
+    setGoal(poseFor());
+    showChosen();
   }
 
-  stage.addEventListener("dblclick", (ev) => { if (zoomed) { ev.preventDefault(); zoomOut(); } });
-  stage.addEventListener("wheel", (ev) => {
-    if (!zoomed) return;
+  // ---- CHOOSING ----------------------------------------------------------
+  function choose(next) {
+    sel = Object.assign({ kind: null, pid: null, hid: null, year: null, e: null }, next || {});
+    look = null;
+    if (!sel.kind) focus = null;
+    else {
+      let f;
+      if (sel.hid) f = (e) => e.pid === sel.pid && e.p.h === sel.hid;
+      else if (sel.pid) f = (e) => e.pid === sel.pid;
+      else if (sel.year != null) f = (e) => yearKey(e) === sel.year;
+      else f = (e) => e === sel.e;
+      focus = new Set(entries.filter(f));
+    }
+    focusList = focus ? order.filter((e) => focus.has(e)) : null;
+    for (const e of entries) { e.emFrom = e.em; e.emTo = !focus || focus.has(e) ? 1 : DIM; }
+    if (STILL) { for (const e of entries) e.em = e.emTo; emT0 = -1; } else emT0 = performance.now();
+    rotorDirty = chartDirty = true;
+    hover = null; hideTip(); handHover = false; stage.classList.remove("is-over");
+    setGoal(poseFor());
+    showChosen();
+    if (sel.kind && window.scrollY > 1) window.scrollTo({ top: 0, behavior: STILL ? "auto" : "smooth" });
+    kick();
+  }
+  const choosePerfumer = (pid) => choose({ kind: "perfumer", pid });
+  const chooseHouse = (pid, hid) => choose({ kind: "house", pid, hid });
+  const chooseYear = (year) => choose({ kind: "year", year });
+  function choosePerfume(e, quiet) {
+    const next = { kind: "perfume", e };
+    if (sel.year != null && sel.kind !== null && !sel.pid) next.year = sel.year;
+    else { next.pid = e.pid; next.hid = e.p.h; }
+    choose(next);
+    if (!quiet) openCard("perfume", e.p, false);
+  }
+  function up() {
+    if (look != null) { look = null; setGoal(poseFor()); showChosen(); return; }
+    if (sel.kind === "perfume") { if (sel.year != null) chooseYear(sel.year); else chooseHouse(sel.pid, sel.hid); return; }
+    if (sel.kind === "house") { choosePerfumer(sel.pid); return; }
+    choose(null);
+  }
+
+  // what is chosen, said in the title's place, the list and the hint
+  let hereTimer = 0;
+  function showChosen() {
+    const on = !!sel.kind;
+    root.classList.toggle("is-chosen", on);
+    stage.classList.toggle("is-chosen", on);
+    backBtn.hidden = !on;
+    hold(on);
+    const touch = window.matchMedia("(hover: none)").matches;
+    const back = touch ? "" : " · Esc to go back";
+    hint.textContent = !on ? (mode === "az" ? (touch ? "Tap a perfumer — on the circle or in the list" : "Choose a perfumer — on the circle or in the list")
+      : (touch ? "Tap a year — or a perfumer in the list" : "Choose a year — or a perfumer in the list"))
+      : sel.kind === "perfumer" ? (zoomed() || mode === "az" ? "Choose a house" + back : "Choose a house in the list" + back)
+      : sel.kind === "perfume" ? (touch ? "" : "Esc to go back")
+      : (!zoomed() ? "Choose a perfume in the list" : canLookCloser() ? (touch ? "Tap a perfume — or tap to look closer" : "Choose a perfume — or click to look closer") : "Choose a perfume") + back;
+    clearTimeout(hereTimer);
+    if (!on) {
+      here.classList.remove("is-on");
+      hereTimer = setTimeout(() => { here.hidden = true; }, STILL ? 0 : 600);
+    } else {
+      fillHere();
+      if (here.hidden) { here.hidden = false; void here.offsetWidth; }
+      here.classList.add("is-on");
+    }
+    syncNav();
+  }
+  const about = here.querySelector(".pf-here-about");
+  function fillHere() {
+    const k = here.querySelector(".pf-here-kicker"), n = here.querySelector(".pf-here-name"), m = here.querySelector(".pf-here-meta");
+    let kicker = "", name = "", meta = "", aboutSay = "", aboutDo = null;
+    const plural = (x, one, many) => x + " " + (x === 1 ? one : many);
+    if (sel.kind === "perfumer") {
+      const p = PER[sel.pid], list = entriesOf(sel.pid), hs = housesOf(sel.pid);
+      kicker = sel.pid === "not-found" ? "Perfumer" : "Perfumer · " + String(named.indexOf(p) + 1).padStart(2, "0") + " of " + named.length;
+      name = p.name;
+      meta = plural(list.length, "perfume", "perfumes") + " · " + plural(hs.length, "house", "houses");
+      aboutSay = sel.pid === "not-found" ? "About these" : "About " + p.name;
+      aboutDo = () => openCard("perfumer", sel.pid, false);
+    } else if (sel.kind === "house") {
+      const h = HOU[sel.hid], list = entries.filter((e) => e.pid === sel.pid && e.p.h === sel.hid);
+      kicker = "House · " + PER[sel.pid].name;
+      name = h.name;
+      meta = plural(list.length, "perfume", "perfumes") + (h.founded ? " · founded " + h.founded : "");
+      aboutSay = "About the house";
+      aboutDo = () => openCard("house", sel.hid, false);
+    } else if (sel.kind === "year") {
+      const list = entries.filter((e) => yearKey(e) === sel.year);
+      kicker = "Year";
+      name = sel.year === "none" ? "Year not found" : String(sel.year);
+      meta = plural(list.length, "perfume", "perfumes") + " · " + plural(new Set(list.map((e) => e.pid)).size, "perfumer", "perfumers");
+    } else if (sel.kind === "perfume") {
+      const p = sel.e.p;
+      kicker = "Perfume · " + HOU[p.h].name;
+      name = p.n;
+      meta = (p.y || "year not found") + " · " + p.p.map((id) => PER[id].name).join(" & ");
+      aboutSay = "Its window";
+      aboutDo = () => openCard("perfume", p, false);
+    }
+    k.textContent = kicker; n.textContent = name; m.textContent = meta;
+    about.hidden = !aboutDo;
+    about.textContent = aboutSay;
+    about.onclick = aboutDo;
+  }
+
+  // ---- THE LIST OF PERFUMERS ----------------------------------------------
+  const navItems = {};
+  function row(cls, name, n) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "pf-nav-row " + cls;
+    b.innerHTML = '<span class="pf-nav-name">' + esc(name) + '</span><span class="pf-nav-n">' + n + "</span>";
+    return b;
+  }
+  function buildNav() {
+    nav.querySelector(".pf-nav-total").textContent = String(named.length);
+    PERFUMERS.forEach((p) => {
+      const li = document.createElement("li");
+      li.className = "pf-nav-item";
+      li.dataset.per = p.id;
+      const b = row("pf-nav-per", p.name, entriesOf(p.id).length);
+      b.setAttribute("aria-expanded", "false");
+      li.appendChild(b);
+      navList.appendChild(li);
+      navItems[p.id] = li;
+    });
+    nav.hidden = false;
+  }
+  function housesList(li, pid) {
+    let ul = li.querySelector(".pf-nav-houses");
+    if (ul) return ul;
+    ul = document.createElement("ul");
+    ul.className = "pf-nav-houses";
+    ul.hidden = true;
+    housesOf(pid).forEach(([hid, list]) => {
+      const hli = document.createElement("li");
+      hli.className = "pf-nav-hitem";
+      hli.dataset.house = hid;
+      const b = row("pf-nav-house", HOU[hid].name, list.length);
+      b.setAttribute("aria-expanded", "false");
+      hli.appendChild(b);
+      const pul = document.createElement("ul");
+      pul.className = "pf-nav-perfumes";
+      pul.hidden = true;
+      list.forEach((e) => {
+        const pli = document.createElement("li");
+        const pb = document.createElement("button");
+        pb.type = "button";
+        pb.className = "pf-nav-row pf-nav-perfume" + (e.p.at ? " is-here" : "");
+        pb.dataset.entry = String(entries.indexOf(e));
+        pb.innerHTML = '<span class="pf-nav-name">' + esc(e.p.n) + "</span><i>" + (e.p.y || "—") + "</i>";
+        pli.appendChild(pb);
+        pul.appendChild(pli);
+      });
+      hli.appendChild(pul);
+      ul.appendChild(hli);
+    });
+    li.appendChild(ul);
+    return ul;
+  }
+  function reveal(el, show) {
+    if (show === !el.hidden) return;
+    el.hidden = !show;
+    if (show && !STILL) { el.classList.remove("pf-nav-opened"); void el.offsetWidth; el.classList.add("pf-nav-opened"); }
+  }
+  function syncNav() {
+    let target = null;
+    PERFUMERS.forEach((p) => {
+      const li = navItems[p.id];
+      const on = sel.pid === p.id;
+      li.classList.toggle("is-on", on);
+      li.firstChild.setAttribute("aria-expanded", on ? "true" : "false");
+      const ul = on ? housesList(li, p.id) : li.querySelector(".pf-nav-houses");
+      if (ul) reveal(ul, on);
+      if (!on) return;
+      target = li.firstChild;
+      ul.querySelectorAll(".pf-nav-hitem").forEach((hli) => {
+        const hon = sel.hid === hli.dataset.house;
+        hli.classList.toggle("is-on", hon);
+        hli.firstChild.setAttribute("aria-expanded", hon ? "true" : "false");
+        reveal(hli.querySelector(".pf-nav-perfumes"), hon);
+        if (hon) target = hli.firstChild;
+      });
+      ul.querySelectorAll(".pf-nav-perfume").forEach((b) => {
+        const lit = sel.e === entries[+b.dataset.entry];
+        b.classList.toggle("is-lit", lit);
+        if (lit) target = b;
+      });
+    });
+    navPath.textContent = !sel.kind ? "Choose a perfumer"
+      : sel.kind === "year" ? (sel.year === "none" ? "Year not found" : String(sel.year))
+      : [sel.pid && PER[sel.pid].name, sel.hid && HOU[sel.hid].name, sel.e && sel.e.p.n].filter(Boolean).join(" · ") || (sel.e ? sel.e.p.n : "");
+    if (target) {
+      // bring the chosen row into the list's view, never moving the page
+      const sb = navScroll.getBoundingClientRect(), tb = target.getBoundingClientRect();
+      if (tb.top < sb.top + 20 || tb.bottom > sb.bottom - 40) {
+        navScroll.scrollTo({ top: navScroll.scrollTop + tb.top - sb.top - 30, behavior: STILL ? "auto" : "smooth" });
+      }
+    }
+  }
+  navList.addEventListener("click", (ev) => {
+    const b = ev.target.closest("button");
+    if (!b) return;
+    if (b.classList.contains("pf-nav-per")) {
+      const pid = b.parentNode.dataset.per;
+      if (sel.kind === "perfumer" && sel.pid === pid) choose(null);
+      else choosePerfumer(pid);
+    } else if (b.classList.contains("pf-nav-house")) {
+      const hid = b.parentNode.dataset.house, pid = b.closest(".pf-nav-item").dataset.per;
+      if (sel.kind === "house" && sel.hid === hid) choosePerfumer(pid);
+      else chooseHouse(pid, hid);
+    } else if (b.classList.contains("pf-nav-perfume")) {
+      choosePerfume(entries[+b.dataset.entry]);
+    }
+  });
+  // pointed at in the list, it lights on the chart
+  navList.addEventListener("pointerover", (ev) => {
+    if (ev.pointerType === "touch") return;
+    const b = ev.target.closest("button");
+    if (!b) return;
+    let h = null;
+    if (b.classList.contains("pf-nav-per")) {
+      const pid = b.parentNode.dataset.per;
+      h = { type: "list", list: entriesOf(pid), g: mode === "az" ? groups.find((g) => g.id === pid) : null };
+    } else if (b.classList.contains("pf-nav-house")) {
+      const hid = b.parentNode.dataset.house, pid = b.closest(".pf-nav-item").dataset.per;
+      h = { type: "list", list: entries.filter((e) => e.pid === pid && e.p.h === hid), g: null };
+    } else if (b.classList.contains("pf-nav-perfume")) {
+      h = { type: "entry", e: entries[+b.dataset.entry] };
+    }
+    if (h && !(hover && hover.from === b)) { h.from = b; hover = h; kick(); }
+  });
+  navList.addEventListener("pointerleave", () => { if (hover && hover.from) { hover = null; kick(); } });
+  navToggle.addEventListener("click", () => {
+    navOpen = !navOpen;
+    nav.classList.toggle("is-open", navOpen);
+    navToggle.setAttribute("aria-expanded", navOpen ? "true" : "false");
+    measure();
+    setGoal(poseFor());
+  });
+
+  // ---- STAYING PUT WHILE SOMETHING IS CHOSEN ("a fixed place, where you
+  // cannot use the scrollwheel"): the wheel and the keys that scroll the page
+  // do nothing over the chart; the list and an open window still scroll.
+  function canScroll(el, dy) {
+    if (!el || el.scrollHeight <= el.clientHeight + 1) return false;
+    return dy < 0 ? el.scrollTop > 0 : el.scrollTop + el.clientHeight < el.scrollHeight - 1;
+  }
+  // listened for only while something is chosen, so the page's own
+  // scrolling never waits on it the rest of the time
+  function holdWheel(ev) {
+    const t = ev.target && ev.target.closest ? ev.target : null;
+    const list = t && t.closest(".pf-nav-scroll");
+    if (list && canScroll(list, ev.deltaY)) return;
+    if (t && t.closest(".pf-card") && canScroll(card, ev.deltaY)) return;
     ev.preventDefault();
-    const p = local(ev);
-    prep();
-    const before = unproj(p.x, p.y);
-    camT0 = -1;
-    const nz = clamp(cam.z * Math.exp(-ev.deltaY * 0.0016), fitZ * 1.2, Math.max(4.5, zoomLevel() * 2.6));
-    if (nz <= fitZ * 1.25 && ev.deltaY > 0) { zoomOut(); return; }
-    cam.z = nz;
-    prep();
-    const after = unproj(p.x, p.y);
-    if (before && after) { cam.fx += before.x - after.x; cam.fy += before.y - after.y; }
-    dirty = true; dofOff(); kick();
-  }, { passive: false });
-  backBtn.addEventListener("click", zoomOut);
+  }
+  let holding = false;
+  function hold(on) {
+    if (on === holding) return;
+    holding = on;
+    if (on) window.addEventListener("wheel", holdWheel, { passive: false });
+    else window.removeEventListener("wheel", holdWheel, { passive: false });
+  }
+  const SCROLL_KEYS = new Set([" ", "PageDown", "PageUp", "ArrowDown", "ArrowUp", "Home", "End"]);
   document.addEventListener("keydown", (ev) => {
-    if (ev.key !== "Escape") return;
-    if (!card.hidden) { closeCard(); return; }
-    if (zoomed) zoomOut();
+    if (ev.key === "Escape") {
+      if (!card.hidden && card.classList.contains("is-open")) { closeCard(); return; }
+      if (sel.kind) { ev.preventDefault(); up(); }
+      return;
+    }
+    if (!sel.kind || !card.hidden || !SCROLL_KEYS.has(ev.key)) return;
+    const a = document.activeElement;
+    if (a && a.closest && (a.closest(".pf-nav-scroll") || a.matches("input, textarea, select, button, summary, a"))) return;
+    ev.preventDefault();
   });
 
   // ---- THE SWITCH --------------------------------------------------------
@@ -936,9 +1748,12 @@
     try { localStorage.setItem("pf-sort", m); } catch (e) { /* no storage */ }
     pressSort(m);
     hover = null; hideTip();
-    dofOff();
     arrange(m, true);
+    // a year chosen means nothing A to Z; a perfumer chosen stays chosen
+    if (m === "az" && sel.kind === "year") choose(null);
+    else choose(sel.kind ? sel : null);
   }));
+  backBtn.addEventListener("click", () => choose(null));
 
   // ---- THE WINDOW ---------------------------------------------------------
   const card = document.querySelector(".pf-card");
@@ -947,8 +1762,6 @@
   const cardBack = card.querySelector(".pf-card-back");
   const cardClose = card.querySelector(".pf-card-close");
   let stack = [], current = null, opener = null, closeTimer = 0;
-
-  function esc(s) { return String(s).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]); }
   const ROOT = window.SITE_ROOT || "../";
 
   function citeHtml(s) {
@@ -977,7 +1790,7 @@
     };
   }
   const perfumesOf = (pid) => D.perfumes.filter((p) => p.p.includes(pid));
-  const housesOf = (list) => {
+  const housesOfList = (list) => {
     const m = new Map();
     list.forEach((p) => { if (!m.has(p.h)) m.set(p.h, []); m.get(p.h).push(p); });
     return Array.from(m.entries()).sort((a, b) => cmp(HOU[a[0]].name, HOU[b[0]].name));
@@ -991,26 +1804,25 @@
   const houseButton = (id) => '<button type="button" class="pf-card-link" data-house="' + esc(id) + '">' + esc(HOU[id].name) + "</button>";
 
   function renderPerfumer(id) {
-    const p = PER[id], S = numberer();
+    const p = PER[id], S2 = numberer();
     const mine = perfumesOf(id);
-    const here = mine.filter((x) => x.at).length;
-    const houses = housesOf(mine);
-    const sorted = D.perfumers.filter((x) => x.id !== "not-found").sort((a, b) => cmp(a.sort || a.name, b.sort || b.name));
-    const idx = sorted.indexOf(p);
+    const hereN = mine.filter((x) => x.at).length;
+    const houses = housesOfList(mine);
+    const idx = named.indexOf(p);
     const meta = [];
     if (p.born) meta.push("Born <b>" + esc(p.born) + "</b>");
     if (p.from) meta.push(esc(p.from));
     meta.push("<b>" + mine.length + "</b> " + (mine.length === 1 ? "perfume" : "perfumes") + " on the chart");
-    if (here !== mine.length) meta.push("<b>" + here + "</b> written about here");
-    const about = (p.about || []).map((a) => esc(a.t) + S.ref(a.s)).join(" ");
-    let h = '<p class="pf-card-kicker">' + (id === "not-found" ? "Not found" : "Perfumer · " + String(idx + 1).padStart(2, "0") + " of " + sorted.length) + "</p>";
+    if (hereN !== mine.length) meta.push("<b>" + hereN + "</b> written about here");
+    const aboutTxt = (p.about || []).map((a) => esc(a.t) + S2.ref(a.s)).join(" ");
+    let h = '<p class="pf-card-kicker">' + (id === "not-found" ? "Not found" : "Perfumer · " + String(idx + 1).padStart(2, "0") + " of " + named.length) + "</p>";
     h += '<h2 class="pf-card-name" id="pf-card-name">' + esc(p.name) + "</h2>";
     h += '<p class="pf-card-meta">' + meta.join(" · ") + "</p>";
-    if (about) h += '<div class="pf-card-about"><p>' + about + "</p></div>";
+    if (aboutTxt) h += '<div class="pf-card-about"><p>' + aboutTxt + "</p></div>";
     h += '<h3 class="pf-card-sub">' + (houses.length === 1 ? "House & perfumes" : "Houses & perfumes") + "</h3>";
     houses.forEach(([hid, list]) => { h += '<div class="pf-card-house">' + houseButton(hid) + chips(list) + "</div>"; });
-    mine.forEach((x) => S.add(x.s));
-    h += S.list();
+    mine.forEach((x) => S2.add(x.s));
+    h += S2.list();
     return h;
   }
   const CREDIT = {
@@ -1019,21 +1831,21 @@
     none: "No source found names its perfumer.",
   };
   function renderPerfume(p) {
-    const S = numberer();
+    const S2 = numberer();
     const e = entries.find((x) => x.p === p);
     let h = '<p class="pf-card-kicker">Perfume · No. ' + String(e ? e.no : 0).padStart(3, "0") + "</p>";
-    h += '<h2 class="pf-card-name" id="pf-card-name">' + esc(p.n) + S.ref(p.s) + "</h2>";
+    h += '<h2 class="pf-card-name" id="pf-card-name">' + esc(p.n) + S2.ref(p.s) + "</h2>";
     h += '<p class="pf-card-meta">' + houseButton(p.h) + " · " + (p.y ? "<b>" + p.y + "</b>" : "year not found") + "</p>";
     h += '<h3 class="pf-card-sub">' + (p.p.length > 1 ? "Perfumers" : "Perfumer") + "</h3>";
     h += '<p class="pf-card-people">' + p.p.map(perfumerButton).join("") + "</p>";
     h += '<p class="pf-card-meta">' + esc(CREDIT[p.c] || "") + "</p>";
     if (p.note) h += '<p class="pf-card-note">' + esc(p.note) + "</p>";
     if (p.at) h += '<a class="pf-card-go" href="' + esc(ROOT + p.at) + '">Read it on this site →</a>';
-    h += S.list();
+    h += S2.list();
     return h;
   }
   function renderHouse(id) {
-    const ho = HOU[id], S = numberer();
+    const ho = HOU[id], S2 = numberer();
     const list = D.perfumes.filter((p) => p.h === id);
     const who = Array.from(new Set(list.flatMap((p) => p.p)));
     const meta = [];
@@ -1043,12 +1855,12 @@
     let h = '<p class="pf-card-kicker">House</p>';
     h += '<h2 class="pf-card-name" id="pf-card-name">' + esc(ho.name) + "</h2>";
     h += '<p class="pf-card-meta">' + meta.join(" · ") + "</p>";
-    if (ho.about) h += '<div class="pf-card-about"><p>' + esc(ho.about) + S.ref(ho.s) + "</p></div>";
+    if (ho.about) h += '<div class="pf-card-about"><p>' + esc(ho.about) + S2.ref(ho.s) + "</p></div>";
     h += '<h3 class="pf-card-sub">' + (who.length > 1 ? "Perfumers" : "Perfumer") + '</h3><p class="pf-card-people">' + who.map(perfumerButton).join("") + "</p>";
     h += '<h3 class="pf-card-sub">Perfumes</h3>' + chips(list);
     if (ho.page) h += '<a class="pf-card-go" href="' + esc(ROOT + ho.page) + '">Go to the house →</a>';
-    list.forEach((p) => S.add(p.s));
-    h += S.list();
+    list.forEach((p) => S2.add(p.s));
+    h += S2.list();
     return h;
   }
   function render(item) {
@@ -1088,8 +1900,9 @@
   }
   function closeCard() {
     card.classList.remove("is-open");
-    closeTimer = setTimeout(() => { card.hidden = true; body.innerHTML = ""; }, STILL ? 0 : 450);
+    closeTimer = setTimeout(() => { card.hidden = true; body.innerHTML = ""; kick(); }, STILL ? 0 : 450);
     if (opener && opener.focus) opener.focus({ preventScroll: true });
+    kick();
   }
   card.addEventListener("click", (ev) => {
     if (!sheet.contains(ev.target)) { closeCard(); return; }
@@ -1118,7 +1931,38 @@
     cardBack.hidden = !stack.length;
   });
 
-  // the index at the foot of the page opens the same window
+  // ---- THE INDEX AT THE FOOT, behind its button ---------------------------
+  const index = document.querySelector(".pf-index");
+  if (index) {
+    const open = index.querySelector(".pf-index-open");
+    let indexTimer = 0;
+    open.addEventListener("click", (ev) => {
+      if (STILL) return;
+      ev.preventDefault();
+      clearTimeout(indexTimer);
+      if (index.open) {
+        index.classList.remove("is-opening");
+        index.classList.add("is-closing");
+        indexTimer = setTimeout(() => { index.open = false; index.classList.remove("is-closing"); }, 260);
+      } else {
+        index.classList.remove("is-closing");
+        index.open = true;
+        index.classList.add("is-opening");
+        indexTimer = setTimeout(() => index.classList.remove("is-opening"), 760);
+      }
+    });
+    // an address pointing into the index opens it
+    const toHash = () => {
+      const id = decodeURIComponent(location.hash.slice(1));
+      const t = id && document.getElementById(id);
+      if (t && index.contains(t) && !index.open) { index.open = true; t.scrollIntoView(); }
+    };
+    window.addEventListener("hashchange", toHash);
+    toHash();
+    const ic = index.querySelector("[data-index-counts]");
+    if (ic && D.counts) ic.textContent = D.counts.perfumers + " perfumers · " + D.counts.houses + " houses · " + D.counts.perfumes + " perfumes";
+  }
+  // the index's perfumers open the same window
   document.querySelectorAll(".pf-entry").forEach((art) => {
     const id = art.id.replace(/^perfumer-/, "");
     const h = art.querySelector(".pf-entry-name");
@@ -1134,19 +1978,71 @@
       D.counts.perfumers + " perfumers · " + D.counts.houses + " houses";
   }
 
+  // ---- NOTHING DRAWN THAT CANNOT BE SEEN -----------------------------------
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((list) => {
+      seen = list[list.length - 1].isIntersecting;
+      if (seen) { last = 0; kick(); }
+    }).observe(stage);
+  }
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) { last = 0; kick(); } });
+  // nor under the site's Menu, which stands over the page
+  let menuOpen = false;
+  new MutationObserver(() => {
+    const was = menuOpen;
+    menuOpen = document.body.classList.contains("menu-open");
+    if (was && !menuOpen) { last = 0; kick(); }
+  }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
   // ---- BEGIN -------------------------------------------------------------
   pressSort(mode);
-  window.addEventListener("resize", resize);
-  resize();
+  buildNav();
+  let resizeQ = 0;
+  window.addEventListener("resize", () => {
+    if (resizeQ) return;
+    resizeQ = requestAnimationFrame(() => { resizeQ = 0; resize(); });
+  });
+  measure();
+  sizeCanvases();
   arrange(mode, false);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { widths.clear(); measureGroups(); dirty = true; kick(); });
+  Object.assign(goal, overviewPose());
+  goal.rot = 0;
+  jumpCam();
+  showChosen();
+  setView("live");
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => { widths.clear(); charsMemo.clear(); widthsEpoch++; measureGroups(); rotorDirty = chartDirty = true; kick(); });
+  }
   kick();
 
-  // for whoever needs to look at it from outside
+  // for whoever needs to look at it from outside (the tests)
   window.PerfumersChart = {
-    zoomTo, zoomOut,
-    arrange: (m) => { mode = m; pressSort(m); arrange(m, true); },
-    state: () => ({ zoomed, mode, n: N, cam: Object.assign({}, cam) }),
+    choose: (kind, a, b) => {
+      if (!kind) choose(null);
+      else if (kind === "perfumer") choosePerfumer(a);
+      else if (kind === "house") chooseHouse(a, b);
+      else if (kind === "year") chooseYear(a);
+    },
+    up,
+    arrange: (m) => { const b = sortBtns.find((x) => x.dataset.sort === m); if (b) b.click(); },
+    state: () => ({
+      mode, n: N, view: viewNow, zoomed: zoomed(), chosen: Object.assign({}, sel, { e: sel.e ? sel.e.p.n : null }),
+      rot: cam.rot, cam: Object.assign({}, cam, { z: Math.exp(cam.lz) }), sway: swayAmt, dof: cvDof.classList.contains("is-on"),
+      pulses: pulses.length, clock,
+    }),
+    stats: () => Object.assign({}, stats),
     open: openCard,
+    // where on the window a group (a perfumer A–Z, a year by year) or one of
+    // the chosen perfumer's houses stands, for a test to press
+    pointOf: (key, house) => {
+      const g = groups.find((x) => x.key === key);
+      if (!g) return null;
+      const h = house ? g.houses.find((x) => x.h === house) : null;
+      const a = h ? (h.a0 + h.a1) / 2 : (g.a0 + g.a1) / 2;
+      viewCam();
+      proj(Math.cos(a) * R.und, Math.sin(a) * R.und, T0);
+      const b = stage.getBoundingClientRect();
+      return { x: b.left + M.a * T0.x + M.c * T0.y + M.e, y: b.top + M.b * T0.x + M.d * T0.y + M.f };
+    },
   };
 })();
