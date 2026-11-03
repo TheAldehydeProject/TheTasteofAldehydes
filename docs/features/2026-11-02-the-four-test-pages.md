@@ -188,6 +188,41 @@ heads and headings.
 
 ### Known issues / TODO
 
-- **What test page 2 should become** — the owner asked for suggestions to make it hold the whole
-  site rather than some houses; the suggestions were put to them, and nothing is changed until they
-  choose.
+- ~~What test page 2 should become~~ — chosen: **Every fragrance** (below).
+
+## 2026-11-03, last — test page 2 holds everything ("Every fragrance")
+
+The owner had asked for suggestions to make test page 2 hold the whole site; of those put to them
+they chose **Every fragrance**: *keep the poster as it is, but one dome for every house plus one for
+the individual fragrances, and the arc carrying every note named anywhere on the site, so nothing is
+left out.*
+
+### What changed
+
+- **The domes** were already one for every house and one for the individual fragrances (fourteen),
+  and every one of the site's 142 fragrances was already in them. What was missing was **notes**:
+  the first snapshot counted only a fragrance's **first** list, so the notes named only in a
+  **second** list — Ataraxia's Fragrantica halves (Spinal Fluid, Lipstick, Porcelain …), Haxan's,
+  Vestibule's and the rest — were not on the arc. **Twenty-eight notes** were left out, and
+  thirty-seven others were counted short (Cedarwood 38 where the Note Library says 41).
+- **The snapshot is made again** the way the Note Library counts a note's fragrances
+  (`counted()` in `network.js`: the lists and the second list, every spelling folded into its note
+  by the library's own `base.json`): **all 379 notes**, each with at least one fragrance, every
+  count agreeing with the library's. Woods has 30 notes now (Papyrus), Gourmand 50, Impressions 26;
+  a house's figures (its different notes, its accords) are made from the same fragrances — Ataraxia
+  names 80 different notes, where the poster said 43.
+- **The words on the left say so**: thirteen domes and a fourteenth for the individual fragrances,
+  all 379 notes, all 142 fragrances, nothing left out; the sources name the second list; the
+  disclaimer dates the snapshot.
+- **Test page 4 had the same gap** — it says "every note named on The Taste of Aldehydes is a hill"
+  and carried 359 — and counted a note twice where one fragrance names it at two tiers (Vanilla 35,
+  where the library says 34). Its snapshot now carries each fragrance's second list too (`x`) and
+  counts a note once a fragrance: **379 hills, every height the library's**, and the same numbers as
+  page 2's, note for note. Pages 1 and 3 are as they were — they draw a fragrance's own list by its
+  tiers, and say so.
+
+### How to test it
+
+`npm test -- tests/test-pages.spec.js` — the page-2 tests count what the new snapshot carries: Woods'
+notes are **30** (it was 29) and Sandalwood's fragrances **36** (35). By hand: search *spinal* on
+page 2 — Spinal Fluid is on the arc, named by one fragrance, Ataraxia's.

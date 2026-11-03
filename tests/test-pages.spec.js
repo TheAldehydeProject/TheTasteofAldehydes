@@ -262,7 +262,7 @@ test("test page 2 says what it shows: a house, an accord and, closer in, a note,
   // its accords, each a way on
   await page.locator('.t2-info .t2-row[data-go="accord:WOO"]').click();
   expect(await info()).toEqual({ kind: "accord", name: "Woods" });
-  await expect(page.locator(".t2-info .t2-row[data-go^='note:']")).toHaveCount(29);
+  await expect(page.locator(".t2-info .t2-row[data-go^='note:']")).toHaveCount(30);
   expect(await t2(page, () => window.TestPage2.focus())).toBe("WOO");
   // shown on the poster: closer, and the accord's notes there to be pressed
   await page.locator(".t2-info-show").click();
@@ -272,8 +272,8 @@ test("test page 2 says what it shows: a house, an accord and, closer in, a note,
   await page.mouse.click(x, y);
   expect(await info()).toEqual({ kind: "note", name: "Sandalwood" });
   expect(await t2(page, () => window.TestPage2.focus())).toBe("note:Sandalwood");
-  await expect(page.locator(".t2-info .t2-list li")).toHaveCount(35);
-  await expect(page.locator(".t2-info .t2-stats")).toContainText("35");
+  await expect(page.locator(".t2-info .t2-list li")).toHaveCount(36);
+  await expect(page.locator(".t2-info .t2-stats")).toContainText("36");
   // pressed where there is nothing, the panel goes
   await page.locator(".t2-fit").click();
   await settled(page);
