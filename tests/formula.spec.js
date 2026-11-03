@@ -841,128 +841,20 @@ test("the electronegative hand draws the aldehyde's own specks to it", async ({ 
   await expect(page.locator(".molecule-charge")).not.toHaveClass(/is-on/, { timeout: 3000 });
 });
 
-test("a name pressed asks first, on the stage's own dark: Stay, Escape and the veil keep the page, Go goes, and a key held goes at once", async ({ page }) => {
-  test.setTimeout(90000);
+/* 2026-11-03 — "please remove the popup on the main page when you click one
+   of the categories": for five weeks a name pressed asked first, on a dark
+   sheet of its own (Stay, Go). It is gone: a name is a plain link, and the
+   sheet, its specks and the words it said are out of the page. */
+test("a name pressed goes straight to its page, with nothing asked first", async ({ page }) => {
   const errors = collectPageErrors(page);
-  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/index.html");
   await jumpToSlide(page, "slide-formula");
   await settled(page, 4);
-  await expect(page.locator("#aldehyde-stage")).toHaveClass(/names-here/, { timeout: 4000 });
-  const name = page.locator(".formula-link").nth(1);
-  const ask = page.locator("#formula-ask");
-  await expect(ask).toBeHidden();
-  await name.click();
-  await expect(ask).toBeVisible();
-  await expect(page.locator(".formula-ask-sheet")).toHaveAttribute("role", "alertdialog");
-  await expect(page.locator(".formula-ask-name")).toHaveText("Theories");
-  // what the page is, in the words its window said on the map; no kicker
-  // over the name any more ("remove the text 'leave the aldehyde'")
-  await expect(page.locator(".formula-ask-say")).toHaveText("Some frameworks that I came up with myself.");
-  await expect(page.locator(".formula-ask-note")).toBeHidden();
-  await expect(page.locator(".formula-ask-kicker")).toHaveCount(0);
-  await expect(page.locator("#formula-ask")).not.toContainText("Leave the aldehyde");
-  await expect(page.locator(".formula-ask-go")).toHaveAttribute("href", "theories/");
-  await expect(page.locator(".formula-ask-go")).toBeFocused();
-  expect(new URL(page.url()).pathname, "not gone yet").toBe("/index.html");
-  // on theme: the stage's dark, its gold, the page behind out of focus
-  const look = await page.evaluate(() => ({
-    sheet: getComputedStyle(document.querySelector(".formula-ask-sheet")).backgroundColor,
-    corner: getComputedStyle(document.querySelector(".formula-ask-sheet"), "::before").borderTopColor,
-    // (on its veil, faded in at one size since 2026-10-01, as About me's is)
-    veil: getComputedStyle(document.getElementById("formula-ask"), "::before").backdropFilter,
-  }));
-  expect(look.corner).toBe("rgba(224, 178, 82, 0.9)");
-  expect(look.sheet).toMatch(/^rgba\(26, 26, 27/);
-  expect(look.veil).toMatch(/blur/);
-  // (and it is up — waited for: read straight after it was pressed, its
-  // fading in can be a frame from starting)
-  await expect.poll(() => page.evaluate(() => +getComputedStyle(document.getElementById("formula-ask"), "::before").opacity),
-    { message: "and it is up" }).toBeGreaterThan(0);
-  // specks in it ("I want the popup window to have some particles too"),
-  // in the aldehyde's colours
-  await expect.poll(() => page.evaluate(() => {
-    const c = document.querySelector(".formula-ask-specks");
-    const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
-    let n = 0;
-    for (let k = 3; k < d.length; k += 4) if (d[k] > 20) n++;
-    return n;
-  }), { timeout: 4000 }).toBeGreaterThan(60);
-  // and the page behind it still moving ("I also want the page in the back
-  // to keep moving"): the sillage, beside the sheet, one moment and the next
-  const [lx] = await roomXs(page);
-  const strip = { x: 20, y: 120, width: Math.max(40, lx - 60), height: 520 };
-  const one = await page.screenshot({ clip: strip });
-  await page.waitForTimeout(900);
-  const two = await page.screenshot({ clip: strip });
-  expect(one.equals(two), "the page behind goes on moving").toBe(false);
-  // the keys stay in it
-  await page.keyboard.press("Tab");
-  await expect(page.locator(".formula-ask-stay")).toBeFocused();
-  await page.keyboard.press("Tab");
-  await expect(page.locator(".formula-ask-go")).toBeFocused();
-  // Stay
-  await page.locator(".formula-ask-stay").click();
-  await expect(ask).toBeHidden();
-  await expect(name).toBeFocused();
-  // Escape
-  await name.click();
-  await expect(ask).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(ask).toBeHidden();
-  // the veil round it
-  await name.click();
-  await expect(ask).toBeVisible();
-  await page.mouse.click(60, 860);
-  await expect(ask).toBeHidden();
-  // Perfumers took Photography's place (2026-11-02), and with it went the
-  // one note a window carried: none carries one now
-  const perfumers = page.locator(".formula-link").nth(5);
-  await perfumers.click();
-  await expect(ask).toBeVisible();
-  await expect(page.locator(".formula-ask-name")).toHaveText("Perfumers");
-  await expect(page.locator(".formula-ask-note")).toBeHidden();
-  await page.keyboard.press("Escape");
-  await expect(ask).toBeHidden();
-  // a key held: no asking (nothing is being left)
-  const prevented = await name.evaluate((a) => {
-    let was = null;
-    const see = (e) => { was = e.defaultPrevented; e.preventDefault(); };
-    window.addEventListener("click", see);
-    a.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, ctrlKey: true }));
-    window.removeEventListener("click", see);
-    return was;
-  });
-  expect(prevented, "a click with a key held is the browser's").toBe(false);
-  await expect(ask).toBeHidden();
-  // Go
-  await name.click();
-  await page.locator(".formula-ask-go").click();
+  await expect(page.locator("#formula-ask, .formula-ask")).toHaveCount(0);
+  expect(await page.locator(".formula-link[data-say]").count()).toBe(0);
+  await page.locator('.formula-link[href="theories/"]').click();
   await page.waitForURL(/\/theories\/$/);
   expect(errors).toEqual([]);
-});
-
-/* "now, just use the text from what would have been the popup windows on
-   page 4 for the same text in the home page now" (2026-09-30): what a name
-   says when it asks is what its node's window said on the map, word for
-   word — the map is switched off, so the words are kept on the names, and
-   this keeps the two copies the same. */
-test("what each name says when it asks is its page's window on the map, word for word", async ({ page }) => {
-  const src = fs.readFileSync(path.join(__dirname, "..", "node-scene.js"), "utf8");
-  const start = src.indexOf("const REAL_NODES = [");
-  const end = src.indexOf("\n];", start) + 3;
-  const nodes = new Function(src.slice(start, end) + "\nreturn REAL_NODES;")();
-  await page.goto("/index.html");
-  const names = await page.locator(".formula-link").evaluateAll((all) => all.map((a) => ({
-    href: a.getAttribute("href"), say: a.dataset.say || null, note: a.dataset.note || null,
-  })));
-  expect(names).toHaveLength(8);
-  for (const n of names) {
-    const node = nodes.find((x) => x.href === n.href);
-    expect(node, n.href + " is on the map's list").toBeTruthy();
-    expect(n.say, n.href).toBe(node.preview.description);
-    expect(n.note, n.href).toBe(node.preview.note || null);
-  }
 });
 
 /* "for the main titles, i want you to make them slightly particular when
@@ -1027,7 +919,7 @@ test("with motion turned off the stages are simply there, still", async ({ page 
   await expect(page.locator(".molecule-charge")).not.toHaveClass(/is-on/);
 });
 
-test("without the 3D library the last stage is the eight names, plainly, and a name still asks first", async ({ page }) => {
+test("without the 3D library the last stage is the eight names, plainly, and a name still goes to its page", async ({ page }) => {
   const errors = collectPageErrors(page, ["three.min.js", "ERR_FAILED", "Failed to load resource"]);
   await blockThreeJs(page);
   await page.goto("/index.html");
@@ -1040,8 +932,7 @@ test("without the 3D library the last stage is the eight names, plainly, and a n
     expect(await links.nth(i).evaluate((e) => +getComputedStyle(e).opacity)).toBe(1);
   }
   await links.nth(0).click();
-  await expect(page.locator("#formula-ask")).toBeVisible();
-  await expect(page.locator(".formula-ask-name")).toHaveText("Scent Descriptions");
+  await page.waitForURL(/\/scent-descriptions\/$/);
   expect(errors).toEqual([]);
 });
 

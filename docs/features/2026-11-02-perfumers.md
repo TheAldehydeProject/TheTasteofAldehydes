@@ -244,3 +244,81 @@ script they still open; and on a wide window, scrolled to the foot, the Menu and
 stand on the page's dark ground, feathered, the word at 22px as it was, and none of it while the
 Menu is open. (The index's tests now find its button inside `.pf-index`, the sources' button
 sharing its classes.)
+
+## 2026-11-03, later — every choice zooms, a perfume's own window, the list's search, smoother
+
+The owner, with a picture of a perfumer chosen on an iPad and one of the head of the page on a
+short wide window: "The legend, and the terms should be drop downs too, and should be subtle. Also
+change "142 written about here" to "142 written about on The Taste of Aldehydes" ... make the
+zooming consistent; such that it zooms once a user selects a house or perfumer. Also let the popup
+window be animated with the chart, and the animation would start from the perspective provided in
+image 1; such that the specific perfume being viewed would be highlighted, then the popup would
+appear. Please make the popups simple; perfumer, perfume, year, and source. Make the animation
+smoother please. Put a search button on the top right of the perfumers list on the right. Make the
+disclaimers thing on the left at the bottom; when you scroll. It should be drop down, like the terms
+and legend, and should be demarcated by an asterisk that is also present on the title of perfumers.
+Otherwise fix the text (view image 2)." And, later the same day: "remove the text a guide to the
+noses whatevr…".
+
+### What changed
+
+- **The foot's three dropdowns** (`.pf-drops`, `<details class="pf-drop">`): **Legend**, **Terms**
+  and **Disclaimer**, each a quiet hairline row — its name in spaced capitals, a few words of what
+  it holds, a plus that turns to a minus — shut until pressed. **The disclaimer** came down from
+  the left of the chart to the foot, marked with **an asterisk** that also stands on the title
+  (`.pf-star`, a link to `#disclaimer`, which opens it and brings it into view). The counts read
+  *142 written about on The Taste of Aldehydes*. **The line under the title** (*A guide to the
+  noses behind the perfumes on this site …*, `.pf-title-say`) is gone.
+- **The writing on the left no longer runs into the title on a short wide window** (image 2): the
+  notes stand over the chart only from 1180px wide **and** 700px tall; on a shorter window they
+  flow under the chart.
+- **Every choice zooms** (`poseOf`, `densest`): a choice too wide to frame whole — Prin Lomros, a
+  perfumer by year — was shown on the whole chart; it is now looked at close in, on where most of it
+  is (the window of the circle holding the most of it), at the closest look's widest (`zLo`).
+- **A perfume chosen is lit where its house is seen, and then its window comes out of its dot**
+  (`choosePerfume`, `callFor`, `openCall`): the chart stays (or goes) where the house — or the
+  year — is seen, moved only as far as it takes to bring the perfume's dot onto the window
+  (`screenUnder`); the perfume is lit there — its spoke and name, a ring breathing round its dot and
+  two rings going out from it as it is lit (`markLit`), the rest of its house stepped back
+  (`AROUND`, 0.46); and once the chart has settled (`CALL_AFTER`, 560ms, at most `CALL_WAIT`) a
+  line is drawn out of the dot (`drawCallLine`) and **the window opens from the end of it** (a
+  clip-path circle from where the line meets it, `--ox`/`--oy`), standing beside the dot on
+  whichever side covers least (`placeCallFirst`: the room, the chrome, the names written out to the
+  right of the rim) and **carried with the chart** as it sways (`placeCall`, every frame). **No
+  veil**: the chart goes on behind it. Its × (`dismissCall`), Esc or a press elsewhere on the chart
+  put it away and go back to the house, keeping a closer look if there was one.
+- **The windows are simple** (`renderCall`, `renderPerfumer`, `renderHouse`): a perfume's says
+  **Perfumer, Perfume, Year, Source** and nothing else — the perfumer a way to them on the chart,
+  *as the house's perfumer* under them where that is the credit, the perfume's name the way to it on
+  the site where it is written about, each source where it is and what it is called there; a
+  perfumer's and a house's (still the centred window) are a name, a line, what the ledger says of
+  them, and **their perfumes as a plain table** — perfume, house or perfumer, year — each perfume
+  pressed shown on the chart, lit, with its own window.
+- **The list's search** (`.pf-nav-find`, top right of its head): pressed, a field under the head;
+  what is typed finds a perfumer, a house (with its perfumer) or a perfume, as it is typed (a name
+  beginning with it first, accents ignored); Enter or a press chooses it on the chart as from the
+  list, and the list comes back to it; Esc shuts it.
+- **Smoother** ("make the animation smoother please"): the camera's springs gentler (`SPRING` 5.8;
+  it was 7.2); **while it flies, the chart is drawn at a lower resolution** on a canvas of its own
+  (`.pf-fly`, `FLY_K`: 0.6 of a sharp screen's, never below 1) and sharp again the frame it lands —
+  measured at a sharp screen's resolution, a fifth quicker a frame and the long frames gone; **no
+  blur behind the Menu, the page's name and the switch** on this page (a blur over the moving chart
+  is the browser blurring that corner again every frame); and **the stage can no longer be scrolled
+  within itself** (`overflow: clip`, and a guard in `perfumers.js`) — a focus inside it could shift
+  the whole chart and its list sideways.
+
+### How to test it
+
+`npm test -- tests/perfumers.spec.js` — seven more: every choice zooms (Prin Lomros, and a
+perfumer by year); a perfume is lit with no window, then its window comes beside its dot, the
+chart where the house was seen, saying Perfumer, Perfume, Year and Sources; its close, another
+perfume and a press elsewhere put it away; a perfumer's window is a plain table and a perfume in it
+is shown on the chart; the list's search finds a perfumer, a house and a perfume, Enter chooses,
+Esc shuts it; the legend, the terms and the disclaimer are shut dropdowns at the foot and the
+title's asterisk opens the disclaimer; and while the chart flies it is drawn on the lower
+resolution canvas, and sharp once it lands.
+
+### Known issues / TODO
+
+- A window's side is chosen once, as it opens; if the chart moves a long way while it is open (the
+  switch between A–Z and by year), it follows its dot on that side, kept inside the window.

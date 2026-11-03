@@ -103,10 +103,168 @@ test("a perfumer chosen shows its houses, a house its perfumes, a perfume its wi
   await expect(page.locator(".pf-nav-perfume:visible")).toHaveCount(9);
 
   await page.locator(".pf-nav-perfume:visible").first().click();
-  await expect(page.locator(".pf-card")).toBeVisible();
-  await expect(page.locator(".pf-card .pf-card-kicker")).toContainText("Perfume");
+  await expect(page.locator(".pf-call")).toBeVisible();
+  await expect(page.locator(".pf-card")).toBeHidden();
   expect((await state(page)).chosen.kind).toBe("perfume");
   expect(errors).toEqual([]);
+});
+
+/* 2026-11-03 — "make the zooming consistent; such that it zooms once a user
+   selects a house or perfumer. Also let the popup window be animated with
+   the chart, and the animation would start from the perspective provided in
+   image 1; such that the specific perfume being viewed would be highlighted,
+   then the popup would appear. Please make the popups simple; perfumer,
+   perfume, year, and source." */
+test("every choice zooms — a perfumer too wide to frame whole as well", async ({ page }) => {
+  await page.goto(PAGE);
+  await atRest(page, "turn");
+  await page.evaluate(() => window.PerfumersChart.choose("perfumer", "prin-lomros"));
+  await atRest(page, "still");
+  expect((await state(page)).zoomed).toBe(true);
+  await page.evaluate(() => window.PerfumersChart.choose(null));
+  await page.locator('.pf-sort-button[data-sort="year"]').click();
+  await atRest(page, "turn");
+  await page.locator('.pf-nav-item[data-per="nicholas-nilsson"] > .pf-nav-row').click();
+  await atRest(page, "still");
+  expect((await state(page)).zoomed).toBe(true);
+  await page.evaluate(() => localStorage.removeItem("pf-sort"));
+});
+
+test("a perfume is lit where its house is seen, and then its small window comes out of its dot", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto(PAGE);
+  await atRest(page, "turn");
+  await page.evaluate(() => window.PerfumersChart.choose("house", "aichi-liu", "om-parfums"));
+  await atRest(page, "still");
+  const house = (await state(page)).cam;
+  await page.locator('.pf-nav-perfume:visible:has-text("Dark Night of the Soul")').click();
+  // lit first: chosen, and no window yet
+  expect((await state(page)).chosen.e).toBe("Dark Night of the Soul");
+  expect((await state(page)).call).toBe(null);
+  await expect(page.locator(".pf-call")).toBeHidden();
+  // then the window, beside its dot, the chart where the house was seen
+  await expect.poll(async () => (await state(page)).call, { timeout: 6000 }).toBe("Dark Night of the Soul");
+  await atRest(page, "still");
+  const cam = (await state(page)).cam;
+  expect(cam.z).toBeCloseTo(house.z, 3);
+  expect(cam.tilt).toBeCloseTo(house.tilt, 3);
+  const call = page.locator(".pf-call");
+  await expect(call).toBeVisible();
+  await expect(page.locator(".pf-card")).toBeHidden();
+  // simple: the perfumer, the perfume, the year and the source, and no more
+  await expect(call.locator("dt")).toHaveText(["Perfumer", "Perfume", "Year", "Sources"]);
+  await expect(call.locator(".pf-call-name")).toContainText("Dark Night of the Soul");
+  await expect(call.locator("dd").nth(2)).toHaveText("2024");
+  await expect(call.locator(".pf-call-sources a").first()).toHaveAttribute("href", /^https:/);
+  await page.waitForTimeout(900);
+  const dot = await page.evaluate(() => window.PerfumersChart.dotOf("Dark Night of the Soul"));
+  const box = await page.locator(".pf-call-sheet").boundingBox();
+  const near = Math.hypot(Math.max(box.x - dot.x, 0, dot.x - box.x - box.width), Math.max(box.y - dot.y, 0, dot.y - box.y - box.height));
+  expect(near).toBeGreaterThan(8);
+  expect(near).toBeLessThan(140);
+  expect(dot.x).toBeGreaterThan(0);
+  expect(dot.y).toBeGreaterThan(0);
+  // Esc puts it away and goes back to the house, where it was
+  await page.keyboard.press("Escape");
+  expect((await state(page)).chosen.kind).toBe("house");
+  await expect(call).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+test("a perfume's window is put away by its close, another perfume, or a press elsewhere on the chart", async ({ page }) => {
+  await page.goto(PAGE);
+  await atRest(page, "turn");
+  await page.evaluate(() => window.PerfumersChart.choose("house", "aichi-liu", "om-parfums"));
+  await page.locator('.pf-nav-perfume:visible:has-text("Burnana")').click();
+  await expect.poll(async () => (await state(page)).call, { timeout: 6000 }).toBe("Burnana");
+  await page.locator(".pf-call-close").click();
+  expect((await state(page)).chosen.kind).toBe("house");
+  await page.locator('.pf-nav-perfume:visible:has-text("Lust")').click();
+  await expect.poll(async () => (await state(page)).call, { timeout: 6000 }).toBe("Lust");
+  await page.locator('.pf-nav-perfume:visible:has-text("Burnana")').click();
+  expect((await state(page)).call).toBe(null);
+  await expect.poll(async () => (await state(page)).call, { timeout: 6000 }).toBe("Burnana");
+  await page.mouse.click(700, 120);
+  await expect.poll(async () => (await state(page)).call).toBe(null);
+  await expect(page.locator(".pf-call")).toBeHidden();
+  expect((await state(page)).chosen.e).not.toBe("Burnana");
+});
+
+test("a perfumer's window is a plain table, and a perfume in it is shown on the chart", async ({ page }) => {
+  await page.goto(PAGE);
+  await atRest(page, "turn");
+  await page.evaluate(() => window.PerfumersChart.choose("perfumer", "aichi-liu"));
+  await page.locator(".pf-here-about").click();
+  const card = page.locator(".pf-card");
+  await expect(card).toBeVisible();
+  await expect(card.locator(".pf-card-table th")).toHaveText(["Perfume", "House", "Year"]);
+  await expect(card.locator(".pf-card-row")).toHaveCount(14);
+  await card.locator('.pf-card-row:has-text("Lust")').click();
+  await expect(card).toBeHidden();
+  expect((await state(page)).chosen.e).toBe("Lust");
+  await expect.poll(async () => (await state(page)).call, { timeout: 6000 }).toBe("Lust");
+});
+
+test("the list has a search at its top right: a perfumer, a house or a perfume", async ({ page }) => {
+  await page.goto(PAGE);
+  await atRest(page, "turn");
+  const find = page.locator(".pf-nav-find");
+  const head = await page.locator(".pf-nav-head").boundingBox();
+  const fb = await find.boundingBox();
+  expect(fb.x + fb.width).toBeGreaterThan(head.x + head.width - 4);
+  await find.click();
+  const q = page.locator(".pf-nav-query");
+  await expect(q).toBeFocused();
+  await q.fill("nilss");
+  await expect(page.locator(".pf-nav-hit").first()).toContainText("Nicholas Nilsson");
+  await expect(page.locator(".pf-nav-list")).toBeHidden();
+  await q.fill("om parf");
+  await expect(page.locator(".pf-nav-hit-house").first()).toContainText("Om Parfums");
+  await q.fill("burnan");
+  await q.press("Enter");
+  expect((await state(page)).chosen.e).toBe("Burnana");
+  await expect(page.locator(".pf-nav-search")).toBeHidden();
+  await expect(page.locator(".pf-nav-list")).toBeVisible();
+  await expect.poll(async () => (await state(page)).call, { timeout: 6000 }).toBe("Burnana");
+  // Esc in the field shuts the search and nothing else
+  await find.click();
+  await q.fill("zzzz");
+  await expect(page.locator(".pf-nav-none")).toBeVisible();
+  await q.press("Escape");
+  await expect(page.locator(".pf-nav-search")).toBeHidden();
+  expect((await state(page)).chosen.e).toBe("Burnana");
+});
+
+test("the legend, the terms and the disclaimer are shut dropdowns at the foot, the title's asterisk opening the disclaimer", async ({ page }) => {
+  await page.goto(PAGE);
+  for (const sel of [".pf-legend-box", ".pf-terms", ".pf-disclaimer"]) {
+    const d = page.locator(sel);
+    await expect(d).toHaveJSProperty("tagName", "DETAILS");
+    expect(await d.evaluate((el) => el.open)).toBe(false);
+    expect(await d.evaluate((el) => !!el.closest(".pf-foot"))).toBe(true);
+  }
+  await expect(page.locator(".pf-notes-left")).not.toContainText("Disclaimer");
+  await expect(page.locator(".pf-counts")).toContainText("written about on The Taste of Aldehydes");
+  await page.locator(".pf-terms summary").click();
+  expect(await page.locator(".pf-terms").evaluate((el) => el.open)).toBe(true);
+  await page.locator(".pf-star").click();
+  await expect.poll(() => page.locator(".pf-disclaimer").evaluate((el) => el.open)).toBe(true);
+  await expect(page.locator(".pf-disclaimer .pf-drop-body")).toBeInViewport();
+});
+
+test("while the chart flies it is drawn at a lower resolution, and sharp once it lands", async ({ browser }) => {
+  const page = await browser.newPage({ viewport: { width: 1180, height: 820 }, deviceScaleFactor: 2 });
+  await serveDependenciesLocally(page);
+  await page.goto(PAGE);
+  await atRest(page, "turn");
+  await page.evaluate(() => window.PerfumersChart.choose("perfumer", "nicholas-nilsson"));
+  await expect.poll(async () => (await state(page)).flying).toBe(true);
+  await expect(page.locator(".pf-fly")).toBeVisible();
+  await atRest(page, "still");
+  expect((await state(page)).flying).toBe(false);
+  await expect(page.locator(".pf-chart")).toBeVisible();
+  await expect(page.locator(".pf-fly")).toBeHidden();
+  await page.close();
 });
 
 test("a perfumer pressed on the circle is chosen, and then one of its houses", async ({ page }) => {

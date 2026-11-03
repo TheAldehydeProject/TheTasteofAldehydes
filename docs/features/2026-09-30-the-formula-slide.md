@@ -279,7 +279,12 @@ The owner:
   stands only once they are strong enough to be felt.
 - None under reduced motion, and none on a finger (there is no hovering).
 
-### The way out, asked first (`index.html`, `landing.js`, `style.css`)
+### The way out, asked first (`index.html`, `landing.js`, `style.css`) — **removed 2026-11-03**
+
+**Gone** (2026-11-03 — "please remove the popup on the main page when you click one of the
+categories"): a name pressed goes straight to its page. The sheet, its specks, `ask-shown`, the
+names' `data-say` and the two tests of it are out of the code — see [the section at the
+end](#2026-11-03--a-name-goes-straight-to-its-page). What follows is what it was.
 
 - "when you click it, I want a confirmation message to pop up to go to that thing. it should be on
   theme": a name pressed brings up **`#formula-ask`** over the page veiled and a little out of focus:
@@ -913,11 +918,8 @@ read for the drift where they read for the lines.
   speck drawn, the names hidden, the hand well off the orbit's ring.
 - **`the electronegative hand draws the aldehyde's own specks to it`** — and at the title, far less
   (no δ−, the specks less stirred).
-- **`a name pressed asks first, on the stage's own dark: Stay, Escape and the veil keep the page, Go
-  goes, and a key held goes at once`** — with the map's words for the page, no kicker, specks drawn
-  in it, the page behind still moving, and Photography's note set apart.
-- **`what each name says when it asks is its page's window on the map, word for word`** — read
-  against `REAL_NODES` in `node-scene.js`.
+- **`a name pressed goes straight to its page, with nothing asked first`** (2026-11-03; it replaced
+  the two tests of the way out asked first).
 - **`a name pointed at stands on a slight backdrop of specks, which goes when the hand does`**.
 - **`the names wait for the last stage, and a name tabbed to takes the page there`**.
 - **`with motion turned off the stages are simply there, still`**.
@@ -988,3 +990,24 @@ and tap. The sillage's movements: the home page with `?sillage=diffuse`, `rise`,
   possible and were left out, so that nothing at the edge of the window draws the eye from the middle.
 - The glide is laid on the clock, so a machine that draws slowly shows it in fewer, larger steps rather
   than taking longer; a stall of over a quarter of a second is not counted (it waits instead).
+
+## 2026-11-03 — a name goes straight to its page
+
+The owner: "please remove the popup on the main page when you click one of the categories."
+
+### What changed
+
+The way out, asked first (`#formula-ask`, 2026-09-30) is **taken out of the code**: its markup in
+`index.html`, its block and its specks (`askSpecks`) in `landing.js`, its styles in `style.css` (and
+its place in the two rules that keep the Menu's dimming off things standing over the page),
+`ask-shown` (which `landing.js` read to hold the keys, and `molecule.js` to let the hand go), the
+`is-lit` a name carried while it asked, and the names' `data-say` — the node map's words for each
+page, which only the sheet said (they are still on the map, `REAL_NODES`, switched off with it). A
+name is a plain link: pressed, it goes. A name tabbed to before the names are up still takes the
+page to them.
+
+### How to test it
+
+`npm test -- tests/formula.spec.js` — `a name pressed goes straight to its page, with nothing asked
+first` (no sheet in the page, no `data-say`, Theories pressed goes to `/theories/`); and without
+the 3D library, a name still goes to its page.

@@ -223,8 +223,8 @@
   // IT IS"): on a wide window the Menu's eight pages stand on an orbit round
   // the aldehyde, drawn here where landing.js says it stands (`--orbit-*` on
   // the names' nav) — and an ELECTRON for each page beside its name (its
-  // place round the ring, `--oa` on the name). Under the hand (or the keys,
-  // or while the page is asked for) a name's electron and the stretch of ring
+  // place round the ring, `--oa` on the name). Under the hand (or the keys)
+  // a name's electron and the stretch of ring
   // round it light up in the aldehyde's gold, as gradually as the name comes
   // up. It is traced round from the top, both ways, as the last stage comes;
   // quiet under the names' letters; brightened a little by the
@@ -1210,10 +1210,9 @@ ${MOVE_GLSL[MOVE]}${MOVE_TAIL}
   window.addEventListener("resize", forget);
 
   // ---- the hand ------------------------------------------------------------
-  // A name is lit while the hand or the keys are on it, and while it asks
-  // to be left for (landing.js marks it `is-lit`).
+  // A name is lit while the hand or the keys are on it.
   const hotTo = new Float32Array(8), heat = new Float32Array(8);
-  const litNow = (a) => a.matches(":hover") || a.matches(":focus-visible") || a.classList.contains("is-lit");
+  const litNow = (a) => a.matches(":hover") || a.matches(":focus-visible");
   // (read on every frame; these only ask for one when the drawing is still)
   const again = () => { drewAt = -1; };
   links.forEach((a) => ["pointerenter", "pointerleave", "focus", "blur"].forEach((ev) => a.addEventListener(ev, again)));
@@ -1279,7 +1278,7 @@ ${MOVE_GLSL[MOVE]}${MOVE_TAIL}
     // here: read here, straight after landing.js has set the page for this
     // frame, it made the browser lay the page out again every frame)
     const box = boxNow();
-    const handOn = !REDUCE && pointer.on && !document.body.classList.contains("ask-shown") &&
+    const handOn = !REDUCE && pointer.on &&
       pointer.y >= box.top && pointer.y <= box.bottom;
     pull += ((handOn ? 1 : 0) - pull) * Math.min(1, dt / 220);
     if (pull < 0.002) pull = 0;

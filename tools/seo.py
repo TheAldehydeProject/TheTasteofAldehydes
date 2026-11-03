@@ -98,10 +98,10 @@ P = {
  # nofollow, the only pages here that say nofollow. Not in robots.txt on
  # purpose: a page a crawler is barred from is a page whose noindex it
  # never reads.
- "test-pages/1/index.html": dict(desc="A test page, not a part of the site: skin, scanned — the sites on the body a perfume is worn, after the research Skin.", noindex=True, nofollow=True),
+ "test-pages/1/index.html": dict(desc="A test page, not a part of the site: Worlds — every fragrance on the site as a world of its notes.", noindex=True, nofollow=True),
  "test-pages/2/index.html": dict(desc="A test page, not a part of the site: Accord Spectrums 2026 — the houses' notes laid round the sixteen accords.", noindex=True, nofollow=True),
- "test-pages/3/index.html": dict(desc="A test page, not a part of the site: Material Origin System — where the materials the site's fragrances name come from.", noindex=True, nofollow=True),
- "test-pages/4/index.html": dict(desc="A test page, not a part of the site: The Network Map — every house, perfumer, perfume and note, on a board to draw on.", noindex=True, nofollow=True),
+ "test-pages/3/index.html": dict(desc="A test page, not a part of the site: top, middle and base — the site's pyramids taken apart into their layers.", noindex=True, nofollow=True),
+ "test-pages/4/index.html": dict(desc="A test page, not a part of the site: The Scent Landscape — every note on the site a hill, growing year by year.", noindex=True, nofollow=True),
 }
 # The forwarding pages: canonical to where the house lives now.
 for slug in ["adar", "almost-human", "ataraxia", "grande-parfums", "les-abstraits", "pineward"]:
@@ -143,8 +143,8 @@ THEME = {
  "houses/tombstone.html": "#ecebe8",
  "search/index.html": "#191c21",
  "perfumers/index.html": "#0b0c0d",
- "test-pages/1/index.html": "#060708", "test-pages/2/index.html": "#0b0b16",
- "test-pages/3/index.html": "#070b10", "test-pages/4/index.html": "#101012",
+ "test-pages/1/index.html": "#e6eae7", "test-pages/2/index.html": "#0b0b16",
+ "test-pages/3/index.html": "#050506", "test-pages/4/index.html": "#1b1c20",
 }
 for essay in ["theory-01", "theory-02", "theory-03", "resins-in-perfumery", "skin",
               "buying-a-perfume", "dupes-designers-and-niches", "my-personal-introduction-to-perfume"]:

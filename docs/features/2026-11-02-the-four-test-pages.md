@@ -143,3 +143,51 @@ note, Back goes back, an accord's 29 notes, Show on the poster, a note pressed c
 fragrances), a press on nothing and Escape put it away; the search finds Bergamot and flies there,
 on the screen beside the panel; on a phone a tap opens the sheet at the foot, under three fifths of
 the window, and the + comes closer.
+
+## 2026-11-03, later — pages 1, 3 and 4 made again
+
+The owner, with seven more pictures: "Recreate test page 1 with images 3 and 4. Recreate test page
+4 with the remaining images. If youre unsure what to do, create a variation of it on test page 3.
+Test Page 3 should be about top mid bottom stratification, and page 4 surprise me." Page 2 is as it
+was. **Skin, scanned, the Material Origin System and the Network Map are gone**, each page made
+again whole; each is still its own (its own `page.js` with a snapshot of the site in it, none of
+the site's scripts or its stylesheet, `noindex, nofollow`, only the way back to Contact).
+
+| page | after the owner's pictures of | made of the site's |
+|---|---|---|
+| **1 · Worlds** | a planet glowing in a gradient with its readings down the left (surface pressure, escape velocity, an atmosphere gauge) and a ring of nodes round it; a pale poster — a title and date over a heavy rule, dark spheres out of focus with coloured edges, a thin double circle, three lines of text | **every fragrance on the site with notes (129) as a world**: its surface the colours of the accords its notes are in, wrapped round a sphere a strip at a time so it turns as one does, a warm glow and a lit limb; **its ring** its notes (a top note an open ring, a middle one a dot, a base one a ring round a dot; pointed at, what the note is, in the Note Library's words); its moons its accords, as large as their share; the readings — its notes, its pyramid, its year, **its atmosphere** as a gauge (its two largest accords); the mark on its surface the note the site names most of its; **its three lines** its top, middle and base (or its notes in three); the worlds before and after it **out of focus round it**, dark with coloured edges, and the double circle finding one under the hand — pressed, it comes into focus. ‹ › and the arrow keys, every world by house in a list, Any. |
+| **3 · Top, middle and base** | skin taken apart into its layers (a film, glass spheres, sheets, a thick slab, wire meshes between); a mountain in exploded layers ruled down to its height map; a city as a stack of map layers, named on the right | **the site's pyramids (the 43 fragrances whose source divides their notes) taken apart**: the top a field of glass spheres, the middle a layer of hex cells coloured by how many name a note there, the base a slab coloured as a height map is — every note at the same place on all three, in its accord's corner, so a note named at more than one tier is **threaded straight down** through them; wire meshes between; each tier named on the left **in the primer's own words** (*"what you smell 20–30 minutes into spraying the perfume"*); a fragrance chosen is drawn through its three layers, its notes named; **Spray** brings the film down and plays the pyramid as the primer tells it — the top rising away, then the heart, the dry down left; the accords as a legend, pointed at to light their corner; drag to turn it. |
+| **4 · The Scent Landscape** | a block of terrain in isometric under a floating plane of gold contour lines; a site drawn as an architect draws one — a lettered and numbered grid, dashed circles, a survey tower, the ground again below in wireframe | **every note named on the site a hill** in its accord's corner, as high as how many of the site's fragrances name it; **its contours in gold** on a plane over it, ruled down to its corners — lowered (Plane), the hills it cuts through are drawn on the land and **whatever stands above it is named**; under it the grid, lettered A–T and numbered 1–20, dashed circles and axes, and the land again in wireframe. **The surprise: it grows** — Grow raises it year by year, from the first fragrance on the site to the last (and those with no year) — and **a survey tower** walks to wherever the land is pressed and says what is underfoot: the cell, its accord, the tallest note there, every note near and how many name it, and who names the tallest. Drag or ↺ ↻ to turn it. |
+
+### Why / key decisions
+
+- **Each snapshot is made from the same files as before** (`notes-data.js`, `perfumers-data.js`,
+  `tools/note-library/base.json`, and the Note Library's own words for what each note is, from its
+  catalogue), by a script in the session's scratchpad; page 1 and page 3 carry a note's first
+  sentences from the Note Library, page 4 only its accord. None of that script is in the repository.
+- **Page 1's worlds are drawn whole before they fade**: a sphere wrapped in strips shows the strips'
+  seams through each other at part strength, so each world is drawn on a canvas of its own and laid
+  down at its strength. Its texture is made once a world (a few tens of milliseconds as it comes).
+- **Page 3 lays its two flat layers down by one transform each** (a flat square in this projection
+  is an affine picture of itself), drawn once and again only when what is lit changes; only the
+  spheres, the meshes and the film are drawn each frame.
+- **Page 4's land is drawn into a picture of its own** and drawn again only while it turns or grows;
+  the plane, the grid, the wire, the tower and the names are drawn each frame.
+- **Page 4's tower is the surprise the owner asked for**, after the second picture's tower: a survey
+  station, which is what that kind of drawing records.
+
+### How to test it
+
+`npm test -- tests/test-pages.spec.js` — the tests for the three pages are new: page 1's worlds go
+on and back by the arrow and the keys and one chosen from the list is in focus, with its three
+lines; page 3's fragrance chosen is drawn through its three tiers, All lets it go, Spray goes top,
+heart, dry down, and a drag turns it; page 4 grows from the first year to the last, the tower goes
+where it is sent and where the land is pressed and says which cell, and the plane comes down. The
+four pages still draw, move, fit a phone and have no errors; `repository.spec.js` checks their
+heads and headings.
+
+### Known issues / TODO
+
+- **What test page 2 should become** — the owner asked for suggestions to make it hold the whole
+  site rather than some houses; the suggestions were put to them, and nothing is changed until they
+  choose.

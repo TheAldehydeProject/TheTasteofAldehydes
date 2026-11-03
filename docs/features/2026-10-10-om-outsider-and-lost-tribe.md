@@ -1301,6 +1301,47 @@ every frame from the split's first:
 The big split test still sees the split from its first frame, apart and not shaking, fading in from
 nothing.
 
+## 2026-11-03 — Outsider's window on the Houses view, its incense, and Om's word settling
+
+The owner: "complicate the window in the SD page when selecting outsider parfumerie, and remove the
+door. Add another element on the bottom left that is small. Finally, please make it so that the
+particles that outline the om written in the back that appear when you click om (the central
+button) their fade away animation is smoother out a little. Im specifically talking after they
+finish outlining and circuling the letters."
+
+### What changed
+
+- **Outsider on the Houses view** (`motifs.js`): **the door is gone** (there; the house's own page
+  keeps its door, `outsider.js`) and **the window is the motif** (`casement`): an arch to a point
+  in ink hairlines with a speck at each joint, drawn up from its sill — its casing and opening, a
+  keystone, the sill on two brackets, louvred shutters folded back either side, a rose of tracery
+  under the arch (two rings round an eight-pointed star), and two pointed lights either side of a
+  mullion, glazed in **diamond quarries of lead**. The right light's **casement eases open** into
+  the room on its hinge as the door did (damped, never past where it rests, a breath of a draft,
+  a touch more with the hand near). **Its light**, from one light outside high on the right: the
+  panes washed with the house's green, a faint shaft with rays and dust in it, and **the window
+  thrown onto the floor before the wall** (`floorOf`) — the arch, the rose and every quarry,
+  foreshortened and a little to the left, the lead in shadow and the open casement a clear patch —
+  and a glint crossing the glass now and then. **Small, at the bottom left, incense** (`incense`):
+  a stick in a little boat of a holder, its ember breathing in the house's green, and a thread of
+  smoke rising and curling and coming apart as it goes — Dragon's Breath — pushed aside by the
+  hand. On a phone both stand above the way round across the foot. `HouseMotifs.windows()` and
+  `HouseMotifs.incense()` for the tests (`doors()` is gone).
+- **Om's word, once written** (`om.js`): pressed, OM writes the โอม of specks over the calligraphy,
+  a pen of light tracing each letter and circling its heads. **The pen's bright trail went out in
+  the one frame the last letter was closed** — that was the jolt. It now goes out over
+  `PEN_SETTLE_MS` (1.3s), gently at both ends (`afterglowAt`), and the word's extra light settles
+  over `WORD_SETTLE_MS` (1.8s), never quicker than the halves' closing takes it (`settledAmp`).
+  `OmGlass.word()` says both (`glow`, `amp`).
+
+### How to test it
+
+`npm test -- tests/om-and-the-tribe.spec.js` — `Outsider's window on the Houses view stands on
+white, its casement easing open, its light on the floor, and incense at the bottom left` (no door;
+the casement rising to rest and never past it; nothing darkened; the window high on the right,
+clear of the way round; green in its panes and on the floor below; the incense small at the bottom
+left, smoking); and house 11's motifs are `casement` and `incense`. Om's tests run as before.
+
 ## Same round, other reports
 
 - [The newer houses — Qimu's Bassist and Drummer written](2026-09-21-the-newer-houses.md#2026-10-10--bassist-and-drummer-written-and-a-fold-in-housejs)

@@ -401,6 +401,14 @@
   const CALLI_HAND = 0.045;        // how much the hand lights it
   const CALLI_OUT = [0.28, 0.9];   // shares of the closing over which the calligraphy goes
   const WRITE = [0.1, 0.86];       // and over which the โอม of specks is written over it
+  // ONCE IT IS WRITTEN (2026-11-03 — "make it so that the particles that
+  // outline the om ... their fade away animation is smoother out a little
+  // ... after they finish outlining and circling the letters"): the pen's
+  // bright trail no longer goes out in the frame the last letter is closed,
+  // and the word's extra light no longer drops with the halves meeting —
+  // both settle on a clock of their own, gently at both ends.
+  const WORD_SETTLE_MS = 1800;     // the word's light settling to the page's own
+  const PEN_SETTLE_MS = 1300;      // the pen's trail going out
   const SHRINK_TO = 0.85;          // and by when it has drawn in to its size
   // THE EDGES: the page broke along one line, and both halves are cut
   // along it — so they fit back together exactly, as broken things do. It
@@ -898,9 +906,10 @@
       it is written over the calligraphy, only `drawn` of it (0 to 1): each
       line of its construction run out so far, each head's circle drawn so
       far round, each letter's outline traced so far, a light at the pen. */
-  function drawWord(cx, cy, scale, t, alpha, hx, hy, drawn) {
+  function drawWord(cx, cy, scale, t, alpha, hx, hy, drawn, afterglow) {
     if (alpha < 0.004 || !GLYPH) return;
     if (drawn == null) drawn = 1;
+    afterglow = afterglow || 0;
     if (drawn <= 0) return;
     const box = GLYPH.box;
     const oy = cy - ((box[1] + box[3]) / 2) * scale;
@@ -933,7 +942,8 @@
       for (let i = 0; i < n; i++) {
         if (i >= upTo) break;
         // (The pen: the specks it has just set down, brighter.)
-        const fresh = drawn < 1 ? clamp(1 - (upTo - i) / pen, 0, 1) : 0;
+        // (written: the trail it left, going out on its own clock)
+        const fresh = drawn < 1 ? clamp(1 - (upTo - i) / pen, 0, 1) : afterglow > 0 ? afterglow * clamp(1 - (n - i) / pen, 0, 1) : 0;
         let x = X(c[2 * i]), y = Y(c[2 * i + 1]);
         if (!REDUCE) {
           x += Math.sin(t * 1.3 + i * 0.7 + ci) * 0.6;
@@ -2856,6 +2866,18 @@
     };
   }
 
+  /** Once the โอม of specks is written (WORD_SETTLE_MS): its extra light,
+      as it was the moment it was written, settling — never quicker than
+      the halves' closing would take it; and the pen's trail, going out. */
+  let writtenAt = 0, writtenAmp = 0;
+  function settledAmp(now, voidness) {
+    if (!writtenAt) return voidness;
+    return Math.max(voidness, writtenAmp * (1 - smoother(clamp((now - writtenAt) / WORD_SETTLE_MS, 0, 1))));
+  }
+  function afterglowAt(now) {
+    return writtenAt ? 1 - smoother(clamp((now - writtenAt) / PEN_SETTLE_MS, 0, 1)) : 0;
+  }
+
   /** THE WORD while the page is split (see CALLI_FILL): the calligraphy,
       coming up as the page comes in; and once OM is pressed, drawing in to
       the size the page keeps it at and going, as the โอม of specks is
@@ -2867,7 +2889,11 @@
       callA *= 1 - smoother(clamp((c - CALLI_OUT[0]) / (CALLI_OUT[1] - CALLI_OUT[0]), 0, 1));
       scale = big + (small - big) * smoother(clamp(c / SHRINK_TO, 0, 1));
       drawn = smooth01((c - WRITE[0]) / (WRITE[1] - WRITE[0]));
-    } else if (halves.revertAt) {
+      if (drawn >= 1 && !writtenAt) { writtenAt = now; writtenAmp = voidness; }
+    } else {
+      writtenAt = 0;
+    }
+    if (!gatherAt && halves.revertAt) {
       // REVERT PAGE: the โอม of specks unwritten — the pen going back round
       // each letter — drawing out to the calligraphy's size as the
       // calligraphy comes back.
@@ -2876,8 +2902,9 @@
       drawn = 1 - smooth01(c / 0.75);
     }
     drawCalli(x, cy - scale * 0.1, scale, big, callA, now, handX, handY);
-    if (drawn > 0) drawWord(x, cy - scale * 0.1, scale, t, gatherAt ? 0.24 + 0.46 * voidness : 0.24, handX, handY, drawn);
-    word = { mode: drawn <= 0 ? "calligraphy" : drawn < 1 || callA > 0.004 ? "writing" : "specks", calligraphy: callA, drawn, scale, x };
+    if (drawn > 0) drawWord(x, cy - scale * 0.1, scale, t, gatherAt ? 0.24 + 0.46 * settledAmp(now, voidness) : 0.24, handX, handY, drawn, afterglowAt(now));
+    word = { mode: drawn <= 0 ? "calligraphy" : drawn < 1 || callA > 0.004 ? "writing" : "specks", calligraphy: callA, drawn, scale, x,
+      glow: afterglowAt(now), amp: gatherAt ? settledAmp(now, voidness) : 0 };
   }
 
   // ============================================================
@@ -3018,8 +3045,8 @@
     } else {
       worldIn = 1;
       drawWorld(cx, cy, turn, t, pageAlpha + voidness * 0.4, handX, handY);
-      drawWord(wx, cy - scale * 0.1, scale, t, 0.24 + 0.46 * voidness, handX, handY);
-      if (glassStyle === "split") word = { mode: "specks", calligraphy: 0, drawn: 1, scale, x: wx };
+      drawWord(wx, cy - scale * 0.1, scale, t, 0.24 + 0.46 * settledAmp(now, voidness), handX, handY, 1, afterglowAt(now));
+      if (glassStyle === "split") word = { mode: "specks", calligraphy: 0, drawn: 1, scale, x: wx, glow: afterglowAt(now), amp: settledAmp(now, voidness) };
       if (voidness > 0.003 || sparks.length) drawSparks(cx, cy, portalR() * (0.6 + 0.4 * voidness), t, dt, voidness, gatherAt ? 0 : 1);
       if (gap) {
         moveGap(gap, t, dt, gap.push, gx, gy, calm);

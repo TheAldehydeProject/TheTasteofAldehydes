@@ -88,6 +88,15 @@
   const ctx = cvChart.getContext("2d");
   const dctx = cvDof.getContext("2d");
   const lctx = cvLive.getContext("2d");
+  // the chart while the camera flies, drawn at a lower resolution — every
+  // frame of a flight is a whole new drawing, and on a sharp screen most of
+  // its cost is pixels no one can see while it moves; it is drawn sharp
+  // again the frame it lands (2026-11-03 — "make the animation smoother")
+  const cvFly = document.createElement("canvas");
+  cvFly.className = "pf-fly";
+  swayBox.insertBefore(cvFly, cvChart);
+  const fctx = cvFly.getContext("2d");
+  let FLY_K = 1, flying = false;
   const mctx = document.createElement("canvas").getContext("2d");
   const title = stage.querySelector(".pf-title");
   const tip = stage.querySelector(".pf-tip");
@@ -125,11 +134,17 @@
   const TILT = 0.94;           // how far a close look tips the chart back
   const TURN_S = 260;          // seconds the chart takes to turn once, at rest
   const SPIN = TAU / TURN_S;
-  const SPRING = 7.2;          // the camera's two springs (per second)
+  const SPRING = 5.8;          // the camera's two springs (per second) — gentler since 2026-11-03 ("make the animation smoother")
   const REST_PX = 0.35;        // the camera is at rest once nothing is left to move by more than this
   const DIM = 0.2;             // what is not chosen, of itself
-  const MAX_FRAME = 2.2;       // radians: a choice wider than this is shown on the whole chart
+  const AROUND = 0.46;         // the rest of a chosen perfume's house, of itself
+  const MAX_FRAME = 2.2;       // radians: a choice wider than this is looked at where most of it is
   const FLIP = 0.07;           // a name on the rim turns over across this band, crossfading
+  // a perfume's window (2026-11-03): lit first, then the window drawn out of it
+  const CALL_AFTER = 560;      // ms the perfume is lit before its window comes
+  const CALL_WAIT = 2400;      // at most this long waiting for the chart to settle
+  const CALL_LINE_MS = 320;    // the line drawn out to the window
+  const CALL_GAP = 46;         // from the dot to the window, about
   // the sway close in: a slow roll about the point looked at, a breath of
   // scale, a drift of a few pixels — the browser's to draw (`swayBox`)
   const SWAY = { roll: 0.03, roll2: 0.011, breath: 0.011, dx: 7, dy: 4, rollHz: 1 / 27, roll2Hz: 1 / 11.5, breathHz: 1 / 19, driftHz: 1 / 23 };
@@ -304,7 +319,7 @@
 
   // ---- THE LAYOUT -------------------------------------------------------
   let W = 0, H = 0, DPR = 1, OV = 0, S = 0, fitZ = 0.3, phone = false;
-  const L = { ocx: 0.5, ocy: 0.5, oz: 0.3, zx: 0.4, zy: 0.56, zoomH: 600 };
+  const L = { ocx: 0.5, ocy: 0.5, oz: 0.3, zx: 0.4, zy: 0.56, zoomH: 600, free: { x0: 0, y0: 0, x1: 0, y1: 0 } };
   let navOpen = false;
   let rotorDirty = true, chartDirty = true;
   const sharp = typeof window.Sharpness === "function"
@@ -333,6 +348,7 @@
       y0 = Math.max(0, t.bottom - sb.top + 4);
       y1 = H - 60;
     }
+    L.free = { x0, y0, x1, y1 };
     const room = Math.max(140, Math.min(x1 - x0, y1 - y0));
     fitZ = room / (2 * R.fit);
     L.ocx = (x0 + x1) / 2 / W;
@@ -358,7 +374,9 @@
     const cw = W + 2 * OV, ch = H + 2 * OV;
     cvChart.width = Math.round(cw * k); cvChart.height = Math.round(ch * k);
     cvDof.width = Math.round(cw * k * 0.5); cvDof.height = Math.round(ch * k * 0.5);
-    [cvChart, cvDof].forEach((c) => {
+    FLY_K = k > 1.25 ? Math.max(1, k * 0.6) : k;
+    cvFly.width = FLY_K < k ? Math.round(cw * FLY_K) : 1; cvFly.height = FLY_K < k ? Math.round(ch * FLY_K) : 1;
+    [cvChart, cvDof, cvFly].forEach((c) => {
       c.style.left = -OV + "px"; c.style.top = -OV + "px";
       c.style.width = cw + "px"; c.style.height = ch + "px";
     });
@@ -373,6 +391,7 @@
     rotorDirty = chartDirty = true;
     dofOff();
     setGoal(poseFor(), true);
+    if (callE) { sway(clock); placeCallFirst(); }
     kick();
   }
 
@@ -561,18 +580,65 @@
     const span = TAU - gap;
     return { mid: n[at] + span / 2, span };
   }
+  // where most of a choice too wide to frame stands: the window of `w`
+  // radians round the circle holding the most of it
+  function densest(f, w) {
+    const as = Array.from(f, (e) => ((e.to % TAU) + TAU) % TAU).sort((x, y) => x - y);
+    const n = as.length, two = as.concat(as.map((a) => a + TAU));
+    let best = 0, at = 0;
+    for (let i = 0, j = 0; i < n; i++) {
+      if (j < i) j = i;
+      while (j + 1 < i + n && two[j + 1] - two[i] <= w) j++;
+      if (j - i + 1 > best) { best = j - i + 1; at = i; }
+    }
+    let j = at; while (j + 1 < at + n && two[j + 1] - two[at] <= w) j++;
+    return (two[at] + two[j]) / 2;
+  }
+  // the pose for a set chosen: framed whole if it can be, and if it is too
+  // wide (Prin Lomros, a perfumer by year) close in all the same, on where
+  // most of it is — every choice zooms (2026-11-03: "make the zooming
+  // consistent; such that it zooms once a user selects a house or perfumer")
+  function poseOf(f, at) {
+    if (!f || !f.size) return overviewPose();
+    if (at != null) return closePose(at, R.look, zHi());
+    const arc = coverArc(Array.from(f, (e) => e.to));
+    const span = arc.span + slot * 2;
+    if (span <= MAX_FRAME) return closePose(arc.mid, R.look, clamp(L.zoomH / (span * R.label * 0.95), zLo(), zHi()));
+    return closePose(densest(f, MAX_FRAME * 0.8), R.look, zLo());
+  }
+  // where a point of the chart would stand on the window, from a pose
+  function screenUnder(q, x, y) {
+    view(q.fx, q.fy, Math.exp(q.lz), q.rot, q.tilt, q.cx * W, q.cy * H);
+    proj(x, y, T2);
+    const o = { ok: T2.ok, x: T2.x, y: T2.y };
+    viewCam();
+    return o;
+  }
   function poseFor() {
     if (!sel.kind || !focus || !focus.size) return overviewPose();
-    if (sel.kind === "perfume") return closePose(sel.e.to, R.look, zHi() * 1.04);
-    if (look != null) return closePose(look, R.look, zHi());
-    const arc = coverArc(Array.from(focus, (e) => e.to));
-    const span = arc.span + slot * 2;
-    if (span > MAX_FRAME) return overviewPose();
-    return closePose(arc.mid, R.look, clamp(L.zoomH / (span * R.label * 0.95), zLo(), zHi()));
+    if (sel.kind === "perfume") {
+      // a perfume is looked at from where its house (or its year) is: the
+      // same place, its name lit there — moved only as far as it takes to
+      // bring its dot onto the window, clear of its edges
+      const p = poseOf(focus, look), e = sel.e;
+      const wx = Math.cos(e.to) * e.rDot, wy = Math.sin(e.to) * e.rDot;
+      const F = callRoom(), m = phone ? 34 : 64;
+      for (let i = 0; i <= 6; i++) {
+        const t = i / 6;
+        const q = Object.assign({}, p, { fx: lerp(p.fx, wx, t), fy: lerp(p.fy, wy, t) });
+        const o = screenUnder(q, wx, wy);
+        if (o.ok && o.x > F.x0 + m && o.x < F.x1 - m && o.y > F.y0 + m && o.y < F.y1 - m) return q;
+      }
+      return Object.assign({}, p, { fx: wx, fy: wy });
+    }
+    return poseOf(focus, look);
   }
 
   // ---- WHAT IS CHOSEN ---------------------------------------------------
   let sel = { kind: null, pid: null, hid: null, year: null, e: null };
+  // a perfume's window: the one shown (callE), the one waiting to be shown
+  // once the chart has settled, and when the perfume was lit
+  let callE = null, callWait = null, litT0 = -1;
   let focus = null, focusList = null, emT0 = -1;
   // a closer look inside what is chosen, at an angle round the circle — for
   // a house of many perfumes, whose names are small when it is seen whole
@@ -945,15 +1011,22 @@
   }
 
   // ---- THE CHART IN PERSPECTIVE ---------------------------------------------
-  function drawChart() {
+  function drawChart(lo) {
     chartDirty = false;
     stats.chart++;
-    const k = DPR;
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, cvChart.width, cvChart.height);
-    surface(ctx, k, 0, 0, k, k * OV, k * OV, -OV, -OV, W + OV, H + OV);
+    lo = !!lo && FLY_K < DPR;
+    const k = lo ? FLY_K : DPR, c = lo ? fctx : ctx, cv = lo ? cvFly : cvChart;
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.clearRect(0, 0, cv.width, cv.height);
+    surface(c, k, 0, 0, k, k * OV, k * OV, -OV, -OV, W + OV, H + OV);
     viewCam();
     drawScene(true);
+    setFlying(lo);
+  }
+  function setFlying(on) {
+    if (on === flying) return;
+    flying = on;
+    stage.classList.toggle("is-flying", on);
   }
 
   // ---- THE OUT-OF-FOCUS COPY, once a close look has settled -----------------
@@ -1118,7 +1191,8 @@
     // names are written instead)
     if (focusList && !sel.e && q < 0.5) { c.globalAlpha = 1; markSpokes(c, focusList, 0.75 * (1 - 2 * q)); }
     // what is lit, and what the hand is on
-    if (sel.e) markEntry(c, sel.e);
+    if (sel.e) { markEntry(c, sel.e); markLit(c, sel.e); }
+    if (callE && callAt.ok) drawCallLine(c);
     if (hover) drawHover(c);
     c.globalAlpha = 1;
   }
@@ -1225,6 +1299,52 @@
     textAt(c, Math.cos(e.a) * P.rMain, Math.sin(e.a) * P.rMain, P.dir, P.main, P.size, "left", P.font);
     base();
   }
+  // the perfume chosen, lit where it stands: a ring breathing round its dot,
+  // and as it is lit, two going out from it
+  function markLit(c, e) {
+    proj(Math.cos(e.a) * e.rDot, Math.sin(e.a) * e.rDot, T0);
+    if (!T0.ok) return;
+    const rr = Math.max(3, 5.2 * V.z * T0.k);
+    const t = STILL ? 0 : clock;
+    c.strokeStyle = SOLID[e.tone];
+    c.lineWidth = 1;
+    c.globalAlpha = 0.55 + 0.3 * Math.sin(t * 2.2);
+    c.beginPath(); c.arc(T0.x, T0.y, rr * 2.1, 0, TAU); c.stroke();
+    c.fillStyle = SOLID[e.tone];
+    c.globalAlpha = 0.16;
+    c.beginPath(); c.arc(T0.x, T0.y, rr * 2.1, 0, TAU); c.fill();
+    if (litT0 >= 0 && !STILL) {
+      const v = (performance.now() - litT0) / 1200;
+      if (v < 1) {
+        for (const d of [0, 0.3]) {
+          const w = clamp((v - d) / 0.7, 0, 1);
+          if (w <= 0 || w >= 1) continue;
+          c.globalAlpha = 0.85 * (1 - w) * (1 - w);
+          c.beginPath(); c.arc(T0.x, T0.y, rr * (2.1 + ease(w) * 7), 0, TAU); c.stroke();
+        }
+      }
+    }
+    c.globalAlpha = 1;
+  }
+  // the line from the dot out to its window, drawn out as the window comes
+  function drawCallLine(c) {
+    const u = callT0 < 0 ? 1 : clamp((performance.now() - callT0) / CALL_LINE_MS, 0, 1);
+    const nx = clamp(callAt.x, callX, callX + callW), ny = clamp(callAt.y, callY, callY + callH);
+    const a = unsway(callAt.x, callAt.y), b = unsway(nx, ny);
+    const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
+    if (d < 14) return;
+    const r0 = Math.min(d * 0.4, 12), k = ease(u);
+    const sx = a.x + (dx / d) * r0, sy = a.y + (dy / d) * r0;
+    c.strokeStyle = SOLID[callE.tone];
+    c.lineWidth = 1;
+    c.globalAlpha = 0.85;
+    c.beginPath(); c.moveTo(sx, sy); c.lineTo(sx + (b.x - sx) * k, sy + (b.y - sy) * k); c.stroke();
+    if (u >= 1) {
+      c.fillStyle = SOLID[callE.tone];
+      c.fillRect(b.x - 2.5, b.y - 2.5, 5, 5);
+    }
+    c.globalAlpha = 1;
+  }
   function drawHover(c) {
     const h = hover;
     if (h.type === "entry") { markEntry(c, h.e); return; }
@@ -1312,9 +1432,17 @@
     swayAmt += ((swayOn ? 1 : 0) - swayAmt) * (1 - Math.exp(-dt / (swayOn ? 1.8 : 0.32)));
     if (!swayOn && swayAmt < 0.002) swayAmt = 0;
     sway(clock);
+    // a perfume's window, once it has been lit a moment and the chart has
+    // (nearly) settled; and wherever it is, beside its dot
+    if (callWait && now - callWait.t0 >= callWait.delay && (!moving || now - callWait.t0 > CALL_WAIT)) {
+      const e = callWait.e;
+      callWait = null;
+      openCall(e);
+    }
+    if (callE) placeCall();
 
-    if (v === "live") { drawChart(); rotorDirty = true; }
-    else if (v === "turn") { if (rotorDirty) renderRotor(); placeRotor(); }
+    if (v === "live") { drawChart(moving); rotorDirty = true; }
+    else if (v === "turn") { if (rotorDirty) renderRotor(); placeRotor(); setFlying(false); }
     else {
       if (chartDirty) { drawChart(); dofOff(); stillSince = now; }
       if (!dofDone && now - stillSince > 240) renderDof();
@@ -1323,7 +1451,7 @@
     drawLive();
 
     const idle = running && card.hidden && !menuOpen;
-    if (settling || idle || swayAmt > 0 && running || (v === "still" && !dofDone)) kick();
+    if (settling || idle || callWait || swayAmt > 0 && running || (v === "still" && !dofDone)) kick();
     else last = 0;
   }
 
@@ -1405,7 +1533,7 @@
 
   // ---- THE HAND ----------------------------------------------------------
   let down = null, handHover = false;
-  const CHROME = "button, a, .pf-nav, .pf-here, .pf-sort";
+  const CHROME = "button, a, .pf-nav, .pf-here, .pf-sort, .pf-call";
   function localXY(ev) { const b = stage.getBoundingClientRect(); return { x: ev.clientX - b.left, y: ev.clientY - b.top }; }
   stage.addEventListener("pointerdown", (ev) => {
     if (ev.target.closest(CHROME)) return;
@@ -1439,7 +1567,7 @@
   stage.addEventListener("pointercancel", () => { down = null; });
 
   function press(h) {
-    if (!h) return;
+    if (!h) { if (callE) dismissCall(); return; }
     if (h.type === "entry") { choosePerfume(h.e); return; }
     // pressed inside what is already chosen: a closer look there, if there
     // is one to be had
@@ -1463,8 +1591,15 @@
 
   // ---- CHOOSING ----------------------------------------------------------
   function choose(next) {
+    const was = sel;
     sel = Object.assign({ kind: null, pid: null, hid: null, year: null, e: null }, next || {});
-    look = null;
+    // a perfume chosen where a closer look already is keeps that look: the
+    // perspective it is chosen from is the one it is shown in
+    // — and going back up from it keeps it too
+    const sameParent = (sel.kind === "perfume" || was.kind === "perfume") && was.kind && sel.kind &&
+      was.pid === sel.pid && was.hid === sel.hid && was.year === sel.year;
+    if (!sameParent) look = null;
+    if (sel.e !== callE) closeCall(true);
     if (!sel.kind) focus = null;
     else {
       let f;
@@ -1475,7 +1610,9 @@
       focus = new Set(entries.filter(f));
     }
     focusList = focus ? order.filter((e) => focus.has(e)) : null;
-    for (const e of entries) { e.emFrom = e.em; e.emTo = !focus || focus.has(e) ? 1 : DIM; }
+    // a perfume chosen is lit, the rest of its house stepped back a little
+    // and everything else as far as ever
+    for (const e of entries) { e.emFrom = e.em; e.emTo = !focus ? 1 : sel.e ? (e === sel.e ? 1 : focus.has(e) ? AROUND : DIM) : focus.has(e) ? 1 : DIM; }
     if (STILL) { for (const e of entries) e.em = e.emTo; emT0 = -1; } else emT0 = performance.now();
     rotorDirty = chartDirty = true;
     hover = null; hideTip(); handHover = false; stage.classList.remove("is-over");
@@ -1487,14 +1624,23 @@
   const choosePerfumer = (pid) => choose({ kind: "perfumer", pid });
   const chooseHouse = (pid, hid) => choose({ kind: "house", pid, hid });
   const chooseYear = (year) => choose({ kind: "year", year });
+  // a perfume chosen: the chart goes (or stays) where its house is seen,
+  // the perfume is lit there, and then its window is drawn out of its dot
+  // (2026-11-03 — "let the popup window be animated with the chart ... the
+  // specific perfume being viewed would be highlighted, then the popup would
+  // appear")
   function choosePerfume(e, quiet) {
     const next = { kind: "perfume", e };
     if (sel.year != null && sel.kind !== null && !sel.pid) next.year = sel.year;
     else { next.pid = e.pid; next.hid = e.p.h; }
+    if (sel.kind === "perfume" && sel.e === e) { if (!quiet && !callE) callFor(e, 0); return; }
     choose(next);
-    if (!quiet) openCard("perfume", e.p, false);
+    litT0 = performance.now();
+    if (phone && navOpen) toggleNav(false);
+    if (!quiet) callFor(e, STILL ? 0 : CALL_AFTER);
   }
   function up() {
+    if (sel.kind === "perfume") { closeCall(); if (sel.year != null) chooseYear(sel.year); else chooseHouse(sel.pid, sel.hid); return; }
     if (look != null) { look = null; setGoal(poseFor()); showChosen(); return; }
     if (sel.kind === "perfume") { if (sel.year != null) chooseYear(sel.year); else chooseHouse(sel.pid, sel.hid); return; }
     if (sel.kind === "house") { choosePerfumer(sel.pid); return; }
@@ -1557,7 +1703,7 @@
       name = p.n;
       meta = (p.y || "year not found") + " · " + p.p.map((id) => PER[id].name).join(" & ");
       aboutSay = "Its window";
-      aboutDo = () => openCard("perfume", p, false);
+      aboutDo = () => callFor(sel.e, 0);
     }
     k.textContent = kicker; n.textContent = name; m.textContent = meta;
     about.hidden = !aboutDo;
@@ -1693,13 +1839,116 @@
     if (h && !(hover && hover.from === b)) { h.from = b; hover = h; kick(); }
   });
   navList.addEventListener("pointerleave", () => { if (hover && hover.from) { hover = null; kick(); } });
-  navToggle.addEventListener("click", () => {
-    navOpen = !navOpen;
+  // ---- THE LIST'S SEARCH (2026-11-03 — "Put a search button on the top
+  // right of the perfumers list"): a perfumer, a house or a perfume, found
+  // as it is typed, the list standing aside while it is; one chosen is
+  // chosen on the chart as from the list, and the list comes back to it.
+  const findBtn = nav.querySelector(".pf-nav-find");
+  const findBox = nav.querySelector(".pf-nav-search");
+  const query = nav.querySelector(".pf-nav-query");
+  const found = nav.querySelector(".pf-nav-found");
+  const findCount = nav.querySelector(".pf-nav-count");
+  const fold = (t) => String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const findables = [];
+  PERFUMERS.forEach((p) => { if (p.id !== "not-found") findables.push({ kind: "perfumer", pid: p.id, name: p.name, sub: entriesOf(p.id).length + " perfumes" }); });
+  const pairs = new Map();
+  entries.forEach((e) => { const k = e.pid + "|" + e.p.h; if (!pairs.has(k)) pairs.set(k, { kind: "house", pid: e.pid, hid: e.p.h, name: HOU[e.p.h].name, sub: e.pid === "not-found" ? "perfumer not found" : PER[e.pid].name }); });
+  pairs.forEach((v) => findables.push(v));
+  entries.forEach((e) => findables.push({ kind: "perfume", e, name: e.p.n, sub: HOU[e.p.h].name + " · " + (e.p.y || "year not found") }));
+  findables.forEach((f) => { f.key = fold(f.name); f.subKey = fold(f.sub); });
+  const KIND_RANK = { perfumer: 0, house: 1, perfume: 2 };
+  function search(q) {
+    const t = fold(q.trim());
+    if (!t) return null;
+    const hits = [];
+    for (const f of findables) {
+      const at = f.key.indexOf(t);
+      let rank = -1;
+      if (at === 0) rank = 0;
+      else if (at > 0 && /[^a-z0-9]/.test(f.key[at - 1])) rank = 1;
+      else if (at > 0) rank = 2;
+      else if (f.kind !== "perfumer" && f.subKey.indexOf(t) >= 0) rank = 3;
+      if (rank >= 0) hits.push({ f, rank });
+    }
+    hits.sort((a, b) => a.rank - b.rank || KIND_RANK[a.f.kind] - KIND_RANK[b.f.kind] || cmp(a.f.name, b.f.name));
+    return hits.map((h) => h.f);
+  }
+  const KIND_SAY = { perfumer: "Perfumer", house: "House", perfume: "Perfume" };
+  let foundList = [];
+  function showFound() {
+    const r = search(query.value);
+    if (!r) {
+      found.hidden = true; navList.hidden = false;
+      found.innerHTML = ""; findCount.textContent = "";
+      foundList = [];
+      return;
+    }
+    foundList = r.slice(0, 60);
+    navList.hidden = true; found.hidden = false;
+    findCount.textContent = r.length ? String(r.length) : "";
+    found.innerHTML = foundList.length ? foundList.map((f, i) =>
+      '<li><button type="button" class="pf-nav-row pf-nav-hit pf-nav-hit-' + f.kind + '" data-hit="' + i + '"><span class="pf-nav-name">' + esc(f.name) +
+      '<small>' + KIND_SAY[f.kind] + " · " + esc(f.sub) + "</small></span></button></li>").join("")
+      : '<li class="pf-nav-none">Nothing on the chart by that name.</li>';
+    navScroll.scrollTop = 0;
+  }
+  function openFind(on) {
+    if (on === !findBox.hidden) { if (on) query.focus(); return; }
+    findBox.hidden = !on;
+    findBtn.setAttribute("aria-expanded", on ? "true" : "false");
+    nav.classList.toggle("is-finding", on);
+    if (on) {
+      if (phone && !navOpen) toggleNav(true);
+      query.focus({ preventScroll: true });
+    } else {
+      query.value = "";
+      showFound();
+    }
+  }
+  function takeHit(f) {
+    openFind(false);
+    if (f.kind === "perfumer") choosePerfumer(f.pid);
+    else if (f.kind === "house") chooseHouse(f.pid, f.hid);
+    else choosePerfume(f.e);
+  }
+  findBtn.addEventListener("click", () => openFind(findBox.hidden));
+  query.addEventListener("input", showFound);
+  query.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape") { ev.stopPropagation(); ev.preventDefault(); openFind(false); findBtn.focus({ preventScroll: true }); }
+    else if (ev.key === "Enter") { ev.preventDefault(); if (foundList[0]) takeHit(foundList[0]); }
+    else if (ev.key === "ArrowDown") { const b = found.querySelector("button"); if (b) { ev.preventDefault(); b.focus(); } }
+  });
+  found.addEventListener("click", (ev) => {
+    const b = ev.target.closest("[data-hit]");
+    if (b) takeHit(foundList[+b.dataset.hit]);
+  });
+  found.addEventListener("keydown", (ev) => {
+    const b = ev.target.closest("[data-hit]");
+    if (!b) return;
+    const all = Array.from(found.querySelectorAll("[data-hit]")), i = all.indexOf(b);
+    if (ev.key === "ArrowDown" && all[i + 1]) { ev.preventDefault(); all[i + 1].focus(); }
+    else if (ev.key === "ArrowUp") { ev.preventDefault(); (all[i - 1] || query).focus(); }
+    else if (ev.key === "Escape") { ev.stopPropagation(); ev.preventDefault(); openFind(false); findBtn.focus({ preventScroll: true }); }
+  });
+  found.addEventListener("pointerover", (ev) => {
+    if (ev.pointerType === "touch") return;
+    const b = ev.target.closest("[data-hit]");
+    if (!b) return;
+    const f = foundList[+b.dataset.hit];
+    const h = f.kind === "perfume" ? { type: "entry", e: f.e }
+      : { type: "list", list: f.kind === "house" ? entries.filter((e) => e.pid === f.pid && e.p.h === f.hid) : entriesOf(f.pid), g: null };
+    h.from = b; hover = h; kick();
+  });
+  found.addEventListener("pointerleave", () => { if (hover && hover.from) { hover = null; kick(); } });
+
+  function toggleNav(on) {
+    navOpen = on;
     nav.classList.toggle("is-open", navOpen);
     navToggle.setAttribute("aria-expanded", navOpen ? "true" : "false");
     measure();
     setGoal(poseFor());
-  });
+  }
+  navToggle.addEventListener("click", () => toggleNav(!navOpen));
 
   // ---- STAYING PUT WHILE SOMETHING IS CHOSEN ("a fixed place, where you
   // cannot use the scrollwheel"): the wheel and the keys that scroll the page
@@ -1715,6 +1964,7 @@
     const list = t && t.closest(".pf-nav-scroll");
     if (list && canScroll(list, ev.deltaY)) return;
     if (t && t.closest(".pf-card") && canScroll(card, ev.deltaY)) return;
+    if (t && t.closest(".pf-call") && canScroll(callSheet, ev.deltaY)) return;
     ev.preventDefault();
   }
   let holding = false;
@@ -1789,84 +2039,60 @@
       },
     };
   }
-  const perfumesOf = (pid) => D.perfumes.filter((p) => p.p.includes(pid));
-  const housesOfList = (list) => {
-    const m = new Map();
-    list.forEach((p) => { if (!m.has(p.h)) m.set(p.h, []); m.get(p.h).push(p); });
-    return Array.from(m.entries()).sort((a, b) => cmp(HOU[a[0]].name, HOU[b[0]].name));
-  };
-  function chips(list) {
-    return '<ul class="pf-card-chips">' + list.slice().sort((a, b) => (a.y || 9999) - (b.y || 9999) || cmp(a.n, b.n)).map((p) =>
-      '<li><button type="button" class="pf-card-chip' + (p.at ? " is-here" : "") + '" data-perfume="' + D.perfumes.indexOf(p) + '">' +
-      esc(p.n) + " <i>" + (p.y || "—") + "</i></button></li>").join("") + "</ul>";
+  // a list of perfumes as a plain table — the perfume, then the one other
+  // thing the window is not already about, then its year — each perfume
+  // pressed shown on the chart, lit, with its own small window
+  function table(list, other) {
+    const rows = list.slice().sort((a, b) => (a.p.y || 9999) - (b.p.y || 9999) || cmp(a.p.n, b.p.n));
+    return '<table class="pf-card-table"><thead><tr><th scope="col">Perfume</th><th scope="col">' + (other === "house" ? "House" : "Perfumer") +
+      '</th><th scope="col">Year</th></tr></thead><tbody>' + rows.map((e) =>
+        "<tr><td>" + '<button type="button" class="pf-card-row' + (e.p.at ? " is-here" : "") + '" data-entry="' + entries.indexOf(e) + '">' + esc(e.p.n) + "</button></td>" +
+        "<td>" + (other === "house" ? houseButton(e.p.h) : e.pid === "not-found" ? '<span class="pf-card-none">Not found</span>' : perfumerButton(e.pid)) + "</td>" +
+        "<td>" + (e.p.y || '<span class="pf-card-none">—</span>') + "</td></tr>").join("") + "</tbody></table>";
   }
   const perfumerButton = (id) => '<button type="button" class="pf-card-link" data-perfumer="' + esc(id) + '">' + esc(PER[id].name) + "</button>";
   const houseButton = (id) => '<button type="button" class="pf-card-link" data-house="' + esc(id) + '">' + esc(HOU[id].name) + "</button>";
 
+  // the windows, simple since 2026-11-03 ("Please make the popups simple;
+  // perfumer, perfume, year, and source"): a name, a line about it, its
+  // perfumes as a table, and the sources
   function renderPerfumer(id) {
     const p = PER[id], S2 = numberer();
-    const mine = perfumesOf(id);
-    const hereN = mine.filter((x) => x.at).length;
-    const houses = housesOfList(mine);
+    const mine = entriesOf(id);
     const idx = named.indexOf(p);
     const meta = [];
     if (p.born) meta.push("Born <b>" + esc(p.born) + "</b>");
     if (p.from) meta.push(esc(p.from));
-    meta.push("<b>" + mine.length + "</b> " + (mine.length === 1 ? "perfume" : "perfumes") + " on the chart");
-    if (hereN !== mine.length) meta.push("<b>" + hereN + "</b> written about here");
     const aboutTxt = (p.about || []).map((a) => esc(a.t) + S2.ref(a.s)).join(" ");
     let h = '<p class="pf-card-kicker">' + (id === "not-found" ? "Not found" : "Perfumer · " + String(idx + 1).padStart(2, "0") + " of " + named.length) + "</p>";
     h += '<h2 class="pf-card-name" id="pf-card-name">' + esc(p.name) + "</h2>";
-    h += '<p class="pf-card-meta">' + meta.join(" · ") + "</p>";
+    if (meta.length) h += '<p class="pf-card-meta">' + meta.join(" · ") + "</p>";
     if (aboutTxt) h += '<div class="pf-card-about"><p>' + aboutTxt + "</p></div>";
-    h += '<h3 class="pf-card-sub">' + (houses.length === 1 ? "House & perfumes" : "Houses & perfumes") + "</h3>";
-    houses.forEach(([hid, list]) => { h += '<div class="pf-card-house">' + houseButton(hid) + chips(list) + "</div>"; });
-    mine.forEach((x) => S2.add(x.s));
-    h += S2.list();
-    return h;
-  }
-  const CREDIT = {
-    named: "A source names its perfumer.",
-    house: "Credited to the house's own perfumer — no source names the nose of this one.",
-    none: "No source found names its perfumer.",
-  };
-  function renderPerfume(p) {
-    const S2 = numberer();
-    const e = entries.find((x) => x.p === p);
-    let h = '<p class="pf-card-kicker">Perfume · No. ' + String(e ? e.no : 0).padStart(3, "0") + "</p>";
-    h += '<h2 class="pf-card-name" id="pf-card-name">' + esc(p.n) + S2.ref(p.s) + "</h2>";
-    h += '<p class="pf-card-meta">' + houseButton(p.h) + " · " + (p.y ? "<b>" + p.y + "</b>" : "year not found") + "</p>";
-    h += '<h3 class="pf-card-sub">' + (p.p.length > 1 ? "Perfumers" : "Perfumer") + "</h3>";
-    h += '<p class="pf-card-people">' + p.p.map(perfumerButton).join("") + "</p>";
-    h += '<p class="pf-card-meta">' + esc(CREDIT[p.c] || "") + "</p>";
-    if (p.note) h += '<p class="pf-card-note">' + esc(p.note) + "</p>";
-    if (p.at) h += '<a class="pf-card-go" href="' + esc(ROOT + p.at) + '">Read it on this site →</a>';
+    h += '<h3 class="pf-card-sub">' + (mine.length === 1 ? "Perfume" : mine.length + " perfumes") + "</h3>" + table(mine, "house");
+    mine.forEach((e) => S2.add(e.p.s));
     h += S2.list();
     return h;
   }
   function renderHouse(id) {
     const ho = HOU[id], S2 = numberer();
-    const list = D.perfumes.filter((p) => p.h === id);
-    const who = Array.from(new Set(list.flatMap((p) => p.p)));
+    const list = entries.filter((e) => e.p.h === id);
     const meta = [];
     if (ho.founded) meta.push("Founded <b>" + esc(ho.founded) + "</b>");
     if (ho.from) meta.push(esc(ho.from));
-    meta.push("<b>" + list.length + "</b> on the chart");
     let h = '<p class="pf-card-kicker">House</p>';
     h += '<h2 class="pf-card-name" id="pf-card-name">' + esc(ho.name) + "</h2>";
-    h += '<p class="pf-card-meta">' + meta.join(" · ") + "</p>";
+    if (meta.length) h += '<p class="pf-card-meta">' + meta.join(" · ") + "</p>";
     if (ho.about) h += '<div class="pf-card-about"><p>' + esc(ho.about) + S2.ref(ho.s) + "</p></div>";
-    h += '<h3 class="pf-card-sub">' + (who.length > 1 ? "Perfumers" : "Perfumer") + '</h3><p class="pf-card-people">' + who.map(perfumerButton).join("") + "</p>";
-    h += '<h3 class="pf-card-sub">Perfumes</h3>' + chips(list);
+    const n = new Set(list.map((e) => e.p)).size;
+    h += '<h3 class="pf-card-sub">' + (n === 1 ? "Perfume" : n + " perfumes") + "</h3>" + table(list, "perfumer");
     if (ho.page) h += '<a class="pf-card-go" href="' + esc(ROOT + ho.page) + '">Go to the house →</a>';
-    list.forEach((p) => S2.add(p.s));
+    list.forEach((e) => S2.add(e.p.s));
     h += S2.list();
     return h;
   }
   function render(item) {
     if (item.kind === "perfumer") return renderPerfumer(item.id);
-    if (item.kind === "house") return renderHouse(item.id);
-    return renderPerfume(item.id);
+    return renderHouse(item.id);
   }
   function openCard(kind, id, push) {
     const item = { kind, id };
@@ -1921,14 +2147,162 @@
     if (per) { openCard("perfumer", per.dataset.perfumer, true); return; }
     const ho = ev.target.closest("[data-house]");
     if (ho) { openCard("house", ho.dataset.house, true); return; }
-    const pe = ev.target.closest("[data-perfume]");
-    if (pe) { openCard("perfume", D.perfumes[+pe.dataset.perfume], true); return; }
+    // a perfume in a window's table: the window goes, and the chart shows it
+    const row = ev.target.closest("[data-entry]");
+    if (row) { const e = entries[+row.dataset.entry]; closeCard(); choosePerfume(e); return; }
   });
   cardClose.addEventListener("click", closeCard);
   cardBack.addEventListener("click", () => {
     const prev = stack.pop();
     if (prev) swap(prev);
     cardBack.hidden = !stack.length;
+  });
+
+  // ---- A PERFUME'S WINDOW, drawn out of the chart ---------------------------
+  // (2026-11-03 — "let the popup window be animated with the chart, and the
+  // animation would start from the perspective provided in image 1; such
+  // that the specific perfume being viewed would be highlighted, then the
+  // popup would appear. Please make the popups simple; perfumer, perfume,
+  // year, and source"): no veil and no flight of its own. The chart goes (or
+  // stays) where its house is seen, the perfume is lit there, a line is drawn
+  // out of its dot and the window opens from the end of it — and then stands
+  // beside the dot, carried with the chart as it sways or moves.
+  const call = document.createElement("div");
+  call.className = "pf-call";
+  call.hidden = true;
+  call.innerHTML = '<div class="pf-call-sheet" role="dialog" aria-labelledby="pf-call-name" tabindex="-1">' +
+    '<button type="button" class="pf-call-close" aria-label="Close">×</button><div class="pf-call-body"></div></div>';
+  stage.appendChild(call);
+  const callSheet = call.querySelector(".pf-call-sheet"), callBody = call.querySelector(".pf-call-body");
+  const callAt = { x: 0, y: 0, ok: false };   // its dot, on the window
+  let callT0 = -1, callOff = { dx: 0, dy: 0 }, callW = 0, callH = 0, callX = 0, callY = 0, callTimer = 0, callOpener = null, lastCall = "";
+
+  // a source said simply: where it is, linked, and what it is called there
+  function shortSource(id) {
+    const s = SRC[id];
+    if (!s) return esc(id);
+    const where = /\*(.+?)\*/.exec(s.cite), title = /“(.+?)”/.exec(s.cite);
+    const href = s.url.startsWith("SITE:") ? ROOT + s.url.slice(5) : s.url;
+    const at = where ? where[1] : s.url.replace(/^(SITE:|https?:\/\/)/, "").split("/")[0];
+    return '<a href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(at) + "</a>" +
+      (title ? " <span>" + esc(title[1].replace(/[.,]$/, "")) + "</span>" : "");
+  }
+  function renderCall(e) {
+    const p = e.p, srcs = p.s || [];
+    const who = p.p.map((id) => id === "not-found" ? '<span class="pf-call-none">Not found</span>'
+      : '<button type="button" class="pf-call-link" data-perfumer="' + esc(id) + '">' + esc(PER[id].name) + "</button>").join('<span class="pf-call-and"> &amp; </span>');
+    // written about on the site: its name is the way to it, the arrow kept
+    // on the line of its last word
+    const words = p.n.split(" "), last = words.pop();
+    const name = p.at ? '<a class="pf-call-read" href="' + esc(ROOT + p.at) + '">' + esc(words.length ? words.join(" ") + " " : "") +
+      '<span class="pf-call-tail">' + esc(last) + '<span class="pf-call-go" aria-hidden="true"> →</span></span></a>' : esc(p.n);
+    return '<dl class="pf-call-facts">' +
+      "<dt>Perfumer</dt><dd>" + who + (p.c === "house" ? '<span class="pf-call-aside">as the house’s perfumer</span>' : "") + "</dd>" +
+      '<dt>Perfume</dt><dd class="pf-call-name" id="pf-call-name">' + name + "</dd>" +
+      "<dt>Year</dt><dd>" + (p.y ? "<b>" + p.y + "</b>" : '<span class="pf-call-none">Not found</span>') + "</dd>" +
+      "<dt>" + (srcs.length > 1 ? "Sources" : "Source") + "</dt><dd>" +
+      (srcs.length ? '<ul class="pf-call-sources">' + srcs.map((id) => "<li>" + shortSource(id) + "</li>").join("") + "</ul>" : "—") + "</dd></dl>";
+  }
+  function callFor(e, delay) {
+    if (!e) return;
+    callWait = { e, t0: performance.now(), delay: STILL ? 0 : delay };
+    kick();
+  }
+  function openCall(e) {
+    if (sel.e !== e) return;
+    clearTimeout(callTimer);
+    if (!call.contains(document.activeElement)) callOpener = document.activeElement;
+    callE = e;
+    callBody.innerHTML = renderCall(e);
+    call.classList.remove("is-open");
+    call.hidden = false;
+    callW = call.offsetWidth; callH = call.offsetHeight;
+    placeCallFirst();
+    callT0 = STILL ? -1 : performance.now();
+    void call.offsetWidth;
+    call.classList.add("is-open");
+    callSheet.focus({ preventScroll: true });
+    hint.textContent = window.matchMedia("(hover: none)").matches ? "" : "Esc to go back";
+    kick();
+  }
+  function closeCall(quick) {
+    callWait = null;
+    if (!callE) return;
+    callE = null;
+    callAt.ok = false;
+    call.classList.remove("is-open");
+    clearTimeout(callTimer);
+    const done = () => { call.hidden = true; callBody.innerHTML = ""; };
+    if (quick || STILL) done(); else callTimer = setTimeout(done, 280);
+    if (call.contains(document.activeElement)) {
+      const o = callOpener;
+      callOpener = null;
+      if (o && o.isConnected && o.focus && o !== document.body) o.focus({ preventScroll: true });
+      else document.activeElement.blur();
+    }
+    kick();
+  }
+  // put away by its ×, a press on nothing, or Esc: back to its house
+  function dismissCall() { if (sel.kind === "perfume") up(); else closeCall(); }
+  function dotOnWindow(e, o) {
+    viewCam();
+    proj(Math.cos(e.a) * e.rDot, Math.sin(e.a) * e.rDot, T2);
+    if (!T2.ok) { o.ok = false; return o; }
+    o.x = M.a * T2.x + M.c * T2.y + M.e;
+    o.y = M.b * T2.x + M.d * T2.y + M.f;
+    o.ok = true;
+    return o;
+  }
+  // which side of its dot it stands: wherever it covers least — the room
+  // left by the list, the notes and the chrome, then the names written out
+  // to the right of the rim, then the nearest
+  function placeCallFirst() {
+    dotOnWindow(callE, callAt);
+    const F = callRoom(), w = callW, h = callH, g = phone ? CALL_GAP * 0.8 : CALL_GAP, d = g * 0.72;
+    const sb = stage.getBoundingClientRect();
+    const blocks = [];
+    document.querySelectorAll(".pf-here, .pf-sort, .pf-back, .pf-hint, .menu-trigger, .page-where").forEach((el) => {
+      if (el.hidden) return;
+      const b = el.getBoundingClientRect();
+      if (b.width && b.height) blocks.push({ x0: b.left - sb.left - 6, y0: b.top - sb.top - 6, x1: b.right - sb.left + 6, y1: b.bottom - sb.top + 6 });
+    });
+    const fx = cam.cx * W, fy = cam.cy * H;
+    const names = { x0: fx - 10, y0: fy - H * 0.42, x1: F.x1, y1: fy + H * 0.42 };
+    const over = (a, b) => Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)) * Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0));
+    const tries = [[-d - w, -d - h], [-g - w, -h / 2], [-d - w, d], [-w / 2, -g - h], [-w / 2, g], [d, -d - h], [g, -h / 2], [d, d]];
+    let best = null, bs = Infinity;
+    tries.forEach(([dx, dy], i) => {
+      const r = { x0: callAt.x + dx, y0: callAt.y + dy, x1: callAt.x + dx + w, y1: callAt.y + dy + h };
+      const inside = Math.max(0, Math.min(r.x1, F.x1 - 8) - Math.max(r.x0, F.x0 + 8)) * Math.max(0, Math.min(r.y1, F.y1 - 8) - Math.max(r.y0, F.y0 + 8));
+      let score = (w * h - inside) * 5 + over(r, names) * 0.6 + i * 40;
+      blocks.forEach((b) => (score += over(r, b) * 4));
+      if (score < bs) { bs = score; best = { dx, dy }; }
+    });
+    callOff = best;
+    lastCall = "";
+    placeCall();
+    // the window opens from where the line meets it
+    const ox = clamp(callAt.x, callX, callX + w) - callX, oy = clamp(callAt.y, callY, callY + h) - callY;
+    callSheet.style.setProperty("--ox", Math.round(ox) + "px");
+    callSheet.style.setProperty("--oy", Math.round(oy) + "px");
+  }
+  // the room it may stand in: the chart's, and the notes' on the left too,
+  // which step aside while anything is chosen
+  const callRoom = () => ({ x0: 0, y0: L.free.y0, x1: L.free.x1, y1: L.free.y1 });
+  function placeCall() {
+    dotOnWindow(callE, callAt);
+    if (!callAt.ok) return;
+    const F = callRoom();
+    const x = clamp(callAt.x + callOff.dx, F.x0 + 8, Math.max(F.x0 + 8, F.x1 - callW - 8));
+    const y = clamp(callAt.y + callOff.dy, F.y0 + 8, Math.max(F.y0 + 8, F.y1 - callH - 8));
+    callX = x; callY = y;
+    const t = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)";
+    if (t !== lastCall) { call.style.transform = t; lastCall = t; }
+  }
+  call.addEventListener("click", (ev) => {
+    if (ev.target.closest(".pf-call-close")) { dismissCall(); return; }
+    const per = ev.target.closest("[data-perfumer]");
+    if (per) { choosePerfumer(per.dataset.perfumer); return; }
   });
 
   // ---- THE INDEX AND THE SOURCES AT THE FOOT, each behind its button --------
@@ -1961,6 +2335,21 @@
     window.addEventListener("hashchange", toHash);
     toHash();
   });
+  // the dropdowns at the foot (the legend, the terms, the disclaimer): an
+  // address into one opens it — the title's asterisk is #disclaimer
+  const toDrop = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const t = id && document.getElementById(id);
+    const d = t && t.closest(".pf-drop");
+    if (d && !d.open) d.open = true;
+    if (d) d.scrollIntoView({ behavior: STILL ? "auto" : "smooth", block: "center" });
+  };
+  window.addEventListener("hashchange", toDrop);
+  toDrop();
+  const star = document.querySelector(".pf-star");
+  if (star) star.addEventListener("click", (ev) => {
+    if (location.hash === "#disclaimer") { ev.preventDefault(); toDrop(); }
+  });
   const ic = document.querySelector("[data-index-counts]");
   if (ic && D.counts) ic.textContent = D.counts.perfumers + " perfumers · " + D.counts.houses + " houses · " + D.counts.perfumes + " perfumes";
   const sc = document.querySelector("[data-source-count]");
@@ -1977,7 +2366,7 @@
   });
   const counts = document.querySelector("[data-counts]");
   if (counts && D.counts) {
-    counts.textContent = D.counts.perfumes + " perfumes · " + D.counts.onSite + " written about here · " +
+    counts.textContent = D.counts.perfumes + " perfumes · " + D.counts.onSite + " written about on The Taste of Aldehydes · " +
       D.counts.perfumers + " perfumers · " + D.counts.houses + " houses";
   }
 
@@ -1996,6 +2385,10 @@
     menuOpen = document.body.classList.contains("menu-open");
     if (was && !menuOpen) { last = 0; kick(); }
   }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
+  // the stage is never scrolled within itself (where `overflow: clip` is not
+  // known, `hidden` still lets a focus scroll it)
+  stage.addEventListener("scroll", () => { if (stage.scrollTop || stage.scrollLeft) { stage.scrollTop = 0; stage.scrollLeft = 0; } });
 
   // ---- BEGIN -------------------------------------------------------------
   pressSort(mode);
@@ -2031,8 +2424,16 @@
     state: () => ({
       mode, n: N, view: viewNow, zoomed: zoomed(), chosen: Object.assign({}, sel, { e: sel.e ? sel.e.p.n : null }),
       rot: cam.rot, cam: Object.assign({}, cam, { z: Math.exp(cam.lz) }), sway: swayAmt, dof: cvDof.classList.contains("is-on"),
-      pulses: pulses.length, clock,
+      pulses: pulses.length, clock, call: callE ? callE.p.n : null, flying,
     }),
+    // where a perfume's dot stands on the window
+    dotOf: (name) => {
+      const e = entries.find((x) => x.p.n === name);
+      if (!e) return null;
+      dotOnWindow(e, T1);
+      const b = stage.getBoundingClientRect();
+      return T1.ok ? { x: b.left + T1.x, y: b.top + T1.y } : null;
+    },
     stats: () => Object.assign({}, stats),
     open: openCard,
     // where on the window a group (a perfumer A–Z, a year by year) or one of

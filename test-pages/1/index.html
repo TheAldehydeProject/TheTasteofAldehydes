@@ -5,29 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Test page 1 — The Taste of Aldehydes</title>
 <!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
-<meta name="description" content="A test page, not a part of the site: skin, scanned — the sites on the body a perfume is worn, after the research Skin.">
+<meta name="description" content="A test page, not a part of the site: Worlds — every fragrance on the site as a world of its notes.">
 <link rel="canonical" href="https://thetasteofaldehydes.com/test-pages/1/">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="../../favicon.svg?v=2026-10-05" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../../apple-touch-icon.png?v=2026-10-05">
-<meta name="theme-color" content="#060708">
+<meta name="theme-color" content="#e6eae7">
 <!-- SEARCH ENGINES: end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!--
-  TEST PAGE 1 (2026-11-02) — the owner's: "two buttons on the very bottom of
-  the contact page ... white and not visible at all ... these buttons should
-  take you to separate pages which are going to be test pages ... make them
-  four ... First one should be modelled after image 1". Image 1: a scan of
-  a spine drawn as a plexus of points and lines, two red rings marking
-  places on it, a glitched numeral and a column of readings.
+  TEST PAGE 1 — WORLDS (2026-11-03; "Skin, scanned" stood here from
+  2026-11-02). The owner: "Recreate test page 1 with images 3 and 4." Image
+  3: a planet glowing in a gradient, its readings down the left (surface
+  pressure, escape velocity, an atmosphere gauge) and a ring of nodes round
+  it. Image 4: a pale poster — a title and a date over a heavy rule, dark
+  spheres out of focus with coloured edges, a thin double circle, three
+  lines of text.
 
-  Here it is the site's Skin research (works/skin.html) as that scan: a
-  skeleton in points and hairlines — skull, spine, ribs, an arm — turning
-  slowly, and the four body sites of its "Geography of Skin" (behind the
-  ear, the neck, the inner elbow, the inner wrist) marked two at a time,
-  their readings beside them, the research's own numbers.
+  Here every fragrance on the site is a world: coloured by the accords its
+  notes are in, ringed by its notes, its moons its accords, its atmosphere
+  how its notes divide between them, its three lines its top, middle and
+  base. The worlds near it hang out of focus round it; the double circle
+  finds one under the hand, and pressed, it comes into focus.
 
   NOT A PAGE OF THE SITE: nothing on the site links here but the four
   unseen squares at the foot of Contact; it loads none of the site's
@@ -36,134 +37,179 @@
 -->
 <style>
   :root {
-    --ground: #060708;
-    --ink: #e9e7e2;
-    --muted: #8a8c90;
-    --faint: #4a4c50;
-    --red: #ff3a44;
+    --ground: #e6eae7;
+    --ink: #1c1d22;
+    --muted: #6d7177;
+    --faint: #a3a8ab;
+    --blue: #2f5bea;
     --mono: "IBM Plex Mono", ui-monospace, monospace;
     --sans: "Archivo", "Segoe UI", sans-serif;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; }
-  body { background: var(--ground); color: var(--ink); font-family: var(--mono); overflow: hidden; }
-  .t1-scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
-  .t1-scene.is-dragging { cursor: grabbing; }
-  /* the grain: a picture of noise jumped about by its transform — the
-     compositor's work, never drawn again */
+  body { background: var(--ground); color: var(--ink); font-family: var(--sans); overflow: hidden; }
+  .t1-scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: manipulation; }
+  /* the poster's grain: a picture of noise jumped about by its transform */
   .t1-grain {
-    position: fixed; inset: -60%; pointer-events: none; opacity: 0.075; mix-blend-mode: screen;
-    animation: t1-grain 0.9s steps(7) infinite; will-change: transform;
+    position: fixed; inset: -60%; pointer-events: none; opacity: 0.09; mix-blend-mode: multiply;
+    animation: t1-grain 1.1s steps(6) infinite; will-change: transform;
   }
   @keyframes t1-grain {
-    0% { transform: translate(0, 0); } 15% { transform: translate(-7%, 4%); } 30% { transform: translate(5%, -6%); }
-    45% { transform: translate(-3%, 8%); } 60% { transform: translate(8%, 2%); } 75% { transform: translate(-6%, -5%); }
-    90% { transform: translate(3%, 6%); } 100% { transform: translate(0, 0); }
+    0% { transform: translate(0, 0); } 17% { transform: translate(-6%, 4%); } 33% { transform: translate(5%, -6%); }
+    50% { transform: translate(-3%, 7%); } 67% { transform: translate(7%, 2%); } 83% { transform: translate(-5%, -5%); } 100% { transform: translate(0, 0); }
   }
-  .t1-vignette { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 42% 50%, transparent 40%, rgba(0, 0, 0, 0.72) 100%); }
   .t1 { position: fixed; inset: 0; pointer-events: none; }
-  .t1 a, .t1 button { pointer-events: auto; }
-  .t1-back {
-    position: absolute; top: 18px; left: 22px; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--muted); text-decoration: none;
-  }
+  .t1 a, .t1 button, .t1 select { pointer-events: auto; }
+
+  /* THE POSTER'S HEAD: a title and a date over a heavy rule */
+  .t1-head { position: absolute; top: 36px; left: 48px; right: 48px; display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 14px; border-bottom: 3px solid #2a1d22; }
+  .t1-head h1 { margin: 0; font: 700 13px/1.2 var(--sans); letter-spacing: 0.01em; }
+  .t1-head h1 span { font-weight: 400; color: var(--muted); }
+  .t1-date { font: 500 12px var(--sans); letter-spacing: 0.06em; }
+
+  /* THE READINGS, down the left, as the picture's */
+  .t1-hud { position: absolute; left: 48px; top: 50%; transform: translateY(-46%); width: 250px; }
+  .t1-read { margin: 0 0 26px; }
+  .t1-read dt { position: relative; font: 400 12.5px var(--sans); color: #3c3f45; padding-bottom: 7px; }
+  .t1-bar { position: relative; display: block; height: 1px; background: #2a2c31; margin-bottom: 9px; }
+  .t1-bar i { position: absolute; left: 0; top: -1px; height: 3px; width: 40%; background: var(--blue); transition: width 0.9s cubic-bezier(.2,.7,.2,1); }
+  .t1-read dd { margin: 0; font: 300 30px/1.1 var(--sans); letter-spacing: -0.01em; }
+  .t1-read dd small { font: 400 13px var(--sans); color: var(--muted); margin-left: 6px; letter-spacing: 0; }
+  .t1-read .t1-world { font-size: 26px; font-weight: 400; overflow-wrap: anywhere; }
+  .t1-read .t1-sub { display: block; margin-top: 4px; font: 400 11px var(--mono); color: var(--muted); letter-spacing: 0.04em; }
+  .t1-atm dt b { font-weight: 400; color: var(--ink); }
+  .t1-atm dt span { position: absolute; left: 92px; top: 0; color: rgba(60, 63, 69, 0.22); }
+  .t1-gaugebox { display: flex; align-items: center; gap: 16px; margin-top: 4px; }
+  .t1-gauge { width: 68px; height: 68px; transform: rotate(135deg); flex: none; }
+  .t1-gauge circle { fill: none; stroke-width: 6; }
+  .t1-gauge .t1-gauge-bed { stroke: rgba(28, 29, 34, 0.08); stroke-dasharray: 75 100; }
+  .t1-gauge .t1-gauge-arc { stroke: var(--blue); stroke-dasharray: 30 100; transition: stroke-dasharray 0.9s cubic-bezier(.2,.7,.2,1), stroke 0.6s; stroke-linecap: butt; }
+  .t1-shares { font: 400 11px/1.35 var(--mono); color: var(--muted); }
+  .t1-shares b { display: block; font: 500 12px var(--mono); color: var(--ink); }
+  .t1-shares p { margin: 0 0 6px; }
+  .t1-shares p + p { opacity: 0.55; }
+  .t1-atm-name { margin: 8px 0 0; font: 400 11px/1.4 var(--sans); color: var(--muted); }
+
+  /* the mark on its surface, and the name the double circle has found */
+  .t1-markbox { position: absolute; left: 0; top: 0; font: 400 9.5px/1.35 var(--mono); color: rgba(255, 255, 255, 0.95); text-shadow: 0 1px 6px rgba(20, 10, 40, 0.5); white-space: nowrap; }
+  .t1-markbox b { display: block; font: 500 10px var(--mono); letter-spacing: 0.04em; }
+  .t1-aim { position: absolute; left: 0; top: 0; width: 240px; text-align: center; font: 500 11px var(--sans); color: var(--ink); opacity: 0; transition: opacity 0.25s; }
+  .t1-aim.is-on { opacity: 1; }
+
+  /* THE THREE LINES, as the poster's */
+  .t1-lines { position: absolute; left: calc(52% - 12vw); bottom: 92px; width: min(440px, 40vw); margin: 0; padding: 0; list-style: none; font: 400 12.5px/1.55 var(--sans); color: #2c2e33; }
+  .t1-lines b { font-weight: 500; color: var(--muted); margin-right: 4px; }
+
+  /* the tip a note pointed at brings */
+  .t1-tip { position: absolute; left: 0; top: 0; max-width: 270px; padding: 9px 11px 10px; background: rgba(250, 251, 250, 0.94); border: 1px solid rgba(28, 29, 34, 0.14); box-shadow: 0 10px 30px rgba(30, 35, 40, 0.12); font: 400 11px/1.45 var(--sans); color: #34363b; pointer-events: none; }
+  .t1-tip[hidden] { display: none; }
+  .t1-tip b { display: block; font: 600 13px var(--sans); color: var(--ink); }
+  .t1-tip span { display: block; margin: 2px 0 5px; font: 400 10px var(--mono); color: var(--muted); }
+  .t1-tip em { font-style: normal; }
+
+  /* THE FOOT: back, and the way through the worlds */
+  .t1-back { position: absolute; left: 48px; bottom: 30px; font: 500 10.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
   .t1-back:hover { color: var(--ink); }
-  .t1-title { position: absolute; top: 16px; right: 24px; margin: 0; text-align: right; font: 500 10.5px/1.6 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
-  .t1-title b { display: block; font: 700 13px var(--sans); letter-spacing: 0.22em; color: var(--ink); }
+  .t1-ways { position: absolute; right: 48px; bottom: 26px; display: flex; align-items: center; gap: 10px; font: 400 11px var(--mono); color: var(--muted); }
+  .t1-ways button { font: 500 11px var(--mono); color: var(--ink); background: none; border: 1px solid rgba(28, 29, 34, 0.25); padding: 6px 10px; cursor: pointer; }
+  .t1-ways button:hover { border-color: var(--ink); }
+  .t1-pick { max-width: 190px; font: 400 11px var(--mono); color: var(--ink); background: transparent; border: 1px solid rgba(28, 29, 34, 0.25); padding: 6px 8px; border-radius: 0; }
+  .t1-no { min-width: 9ch; text-align: center; }
+  .t1-hint { position: absolute; left: 50%; bottom: 33px; transform: translateX(-50%); margin: 0; font: 400 10px var(--mono); color: #8d9296; letter-spacing: 0.04em; text-align: center; white-space: nowrap; }
+  @media (max-width: 1240px) { .t1-hint { display: none; } }
 
-  /* LEFT: the bar, the numeral, the lines under it */
-  .t1-left { position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 260px; }
-  .t1-bar { position: relative; height: 10px; width: 210px; background: rgba(233, 231, 226, 0.08); }
-  .t1-bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ink); width: 0; transition: width 1.2s cubic-bezier(.2,.7,.2,1); }
-  .t1-bar span { position: absolute; left: calc(100% + 10px); top: -3px; font-size: 10px; letter-spacing: 0.2em; color: var(--muted); }
-  .t1-num {
-    position: relative; display: inline-block; margin: 34px 0 0 70px; font: 500 74px/1 var(--mono); letter-spacing: 0.04em; color: #fff;
-    text-shadow: -2px 0 rgba(255, 40, 70, 0.85), 2px 0 rgba(0, 220, 255, 0.8);
+  @media (max-width: 1100px) {
+    .t1-hud { width: 210px; left: 32px; }
+    .t1-read dd { font-size: 25px; }
+    .t1-head { left: 32px; right: 32px; }
+    .t1-back { left: 32px; }
+    .t1-ways { right: 32px; }
   }
-  .t1-num::before, .t1-num::after { content: attr(data-v); position: absolute; left: 0; top: 0; color: #fff; opacity: 0; }
-  .t1-num.is-glitch::before { opacity: 0.9; transform: translate(6px, 0); clip-path: inset(18% 0 58% 0); text-shadow: -3px 0 rgba(255, 40, 70, 0.9); }
-  .t1-num.is-glitch::after { opacity: 0.9; transform: translate(-7px, 0); clip-path: inset(62% 0 12% 0); text-shadow: 3px 0 rgba(0, 220, 255, 0.9); }
-  .t1-num small { position: absolute; left: calc(100% + 8px); top: 6px; font-size: 13px; text-shadow: none; color: var(--muted); }
-  .t1-unit { margin: 6px 0 0 70px; font-size: 9.5px; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
-  .t1-lines { margin: 26px 0 0 70px; display: grid; grid-template-columns: auto 1fr; gap: 6px 22px; font-size: 8.5px; letter-spacing: 0.12em; color: var(--faint); text-transform: uppercase; }
-  .t1-lines i { display: block; width: 12px; height: 2px; margin-top: 4px; background: var(--muted); }
-
-  /* RIGHT: the readings, and the four sites */
-  .t1-right { position: absolute; right: 7vw; top: 50%; transform: translateY(-40%); width: 230px; font-size: 9.5px; line-height: 2.05; letter-spacing: 0.14em; text-transform: uppercase; }
-  .t1-right h2 { margin: 0 0 4px; font: 500 9.5px var(--mono); letter-spacing: 0.22em; color: var(--red); }
-  .t1-right dl { margin: 0 0 20px; display: grid; grid-template-columns: auto 1fr; gap: 0 10px; }
-  .t1-right dt { color: var(--muted); }
-  .t1-right dd { margin: 0; color: var(--ink); transition: color 0.4s; }
-  .t1-right dd.is-new { color: var(--red); }
-  .t1-sites { list-style: none; margin: 0; padding: 0; }
-  .t1-sites button {
-    display: flex; gap: 10px; align-items: center; width: 100%; padding: 2px 0; font: inherit; letter-spacing: inherit; text-transform: inherit;
-    color: var(--muted); background: none; border: 0; text-align: left; cursor: pointer;
-  }
-  .t1-sites button::before { content: ""; width: 8px; height: 8px; border: 1px solid currentColor; border-radius: 50%; }
-  .t1-sites button:hover { color: var(--ink); }
-  .t1-sites button.is-on { color: var(--ink); }
-  .t1-sites button.is-on::before { border-color: var(--red); background: radial-gradient(circle, var(--red) 0 2px, transparent 2.5px); }
-  .t1-foot { position: absolute; right: 24px; bottom: 18px; font-size: 8.5px; letter-spacing: 0.16em; color: var(--faint); text-transform: uppercase; text-align: right; }
-  .t1-foot span { display: inline-block; width: 26px; height: 1px; margin-left: 6px; vertical-align: middle; background: var(--muted); }
   @media (max-width: 760px) {
-    .t1-left { top: auto; bottom: 18px; transform: none; width: 50%; }
-    .t1-bar { width: 120px; }
-    .t1-num { margin: 18px 0 0 22px; font-size: 48px; }
-    .t1-unit, .t1-lines { margin-left: 22px; }
+    .t1-head { top: 16px; left: 16px; right: 16px; padding-bottom: 10px; border-bottom-width: 2px; }
+    .t1-head h1 { font-size: 11.5px; }
+    .t1-head h1 span { display: none; }
+    .t1-date { font-size: 10.5px; }
+    .t1-hint { display: none; }
+    .t1-hud { left: 16px; right: 16px; width: auto; top: auto; bottom: 74px; transform: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+    .t1-read { margin-bottom: 14px; }
+    .t1-read dd { font-size: 20px; }
+    .t1-read .t1-world { font-size: 18px; }
+    .t1-read dt { font-size: 11px; padding-bottom: 5px; }
+    .t1-bar { margin-bottom: 6px; }
+    .t1-read-year { display: none; }
+    .t1-atm { grid-column: 1 / -1; }
+    .t1-gauge { width: 46px; height: 46px; }
+    .t1-atm-name { display: none; }
     .t1-lines { display: none; }
-    .t1-right { right: 0; top: auto; bottom: 0; transform: none; width: 52%; padding: 40px 14px 16px 14px; font-size: 8.5px; line-height: 1.85; background: linear-gradient(180deg, rgba(6,7,8,0), rgba(6,7,8,0.88) 40px); }
-    .t1-right dl:first-of-type { display: none; }
-    .t1-title { top: 44px; right: 14px; }
-    .t1-foot { display: none; }
+    .t1-back { left: 16px; bottom: 22px; }
+    .t1-ways { right: 16px; left: 110px; bottom: 16px; justify-content: flex-end; gap: 6px; }
+    .t1-pick { max-width: 108px; }
+    .t1-any { display: none; }
+  }
+  @media (max-height: 640px) and (min-width: 761px) {
+    .t1-read { margin-bottom: 14px; }
+    .t1-lines { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     .t1-grain { animation: none; }
-    .t1-bar i { transition: none; }
+    .t1-bar i, .t1-gauge .t1-gauge-arc { transition: none; }
   }
 </style>
 </head>
 <body>
 <canvas class="t1-scene" aria-hidden="true"></canvas>
 <div class="t1-grain" aria-hidden="true"></div>
-<div class="t1-vignette" aria-hidden="true"></div>
 <main class="t1">
+  <header class="t1-head">
+    <h1>Worlds <span>· every fragrance on The Taste of Aldehydes, as a world of its notes</span></h1>
+    <span class="t1-date">2026 11 03</span>
+  </header>
+  <p class="t1-hint">Point at a world out of focus · press it to look at it · ← → for the next</p>
+
+  <section class="t1-hud" aria-label="The world in focus" aria-live="polite">
+    <dl class="t1-read">
+      <dt>World</dt>
+      <dd class="t1-world"><span data-v="name"></span><span class="t1-sub" data-v="house"></span></dd>
+    </dl>
+    <dl class="t1-read">
+      <dt>Notes named<span class="t1-bar t1-bar-notes"><i></i></span></dt>
+      <dd><span data-v="notes"></span><small data-v="most"></small></dd>
+    </dl>
+    <dl class="t1-read">
+      <dt>Pyramid<span class="t1-bar"></span></dt>
+      <dd><span data-v="pyramid"></span><small data-v="pyramid-say"></small></dd>
+    </dl>
+    <dl class="t1-read t1-read-year">
+      <dt>Year<span class="t1-bar"></span></dt>
+      <dd data-v="year"></dd>
+    </dl>
+    <dl class="t1-read t1-atm">
+      <dt><b>Atmosphere</b><span aria-hidden="true">Atmosphere</span><span class="t1-bar"><i style="width:34%"></i></span></dt>
+      <dd>
+        <div class="t1-gaugebox">
+          <svg class="t1-gauge" viewBox="0 0 36 36" role="img" aria-label=""><circle class="t1-gauge-bed" cx="18" cy="18" r="15.9" pathLength="100"/><circle class="t1-gauge-arc" cx="18" cy="18" r="15.9" pathLength="100"/></svg>
+          <div class="t1-shares"><p><b data-v="atm1"></b><span data-v="atm1p"></span></p><p><b data-v="atm2"></b><span data-v="atm2p"></span></p></div>
+        </div>
+        <p class="t1-atm-name"></p>
+      </dd>
+    </dl>
+  </section>
+
+  <div class="t1-markbox" aria-hidden="true"><b class="t1-mark"></b><span class="t1-mark-say"></span></div>
+  <p class="t1-aim" aria-hidden="true"></p>
+  <ul class="t1-lines" aria-label="Its notes"></ul>
+  <div class="t1-tip" role="tooltip" hidden></div>
+
   <a class="t1-back" href="../../contact/">← Back</a>
-  <h1 class="t1-title"><b>Skin, scanned</b>Test page 1 · after the research <i>Skin</i></h1>
-
-  <section class="t1-left" aria-label="The site marked">
-    <div class="t1-bar"><i></i><span>SKN</span></div>
-    <p class="t1-num" data-v="35">35<small>°C</small></p>
-    <p class="t1-unit">Average temperature · <span data-say="site">neck, sides</span></p>
-    <div class="t1-lines" aria-hidden="true">
-      <i></i><span>pH 4.5 — 6.5</span>
-      <i></i><span>Oily · 8 — 12 h</span>
-      <i></i><span>Dry · 2 — 4 h</span>
-      <i></i><span>Sites · 4</span>
-    </div>
-  </section>
-
-  <section class="t1-right" aria-label="Readings">
-    <h2>Skin</h2>
-    <dl>
-      <dt>pH</dt><dd>4.5 – 6.5</dd>
-      <dt>Oily</dt><dd>8 – 12 h</dd>
-      <dt>Moisturised</dt><dd>Longer than dry</dd>
-      <dt>Dry</dt><dd>2 – 4 h</dd>
-      <dt>S. hominis</dt><dd>Thioalcohols</dd>
-    </dl>
-    <h2 data-say="head">Site · neck, sides</h2>
-    <dl class="t1-reading">
-      <dt>Temperature</dt><dd data-say="temp">~35°C</dd>
-      <dt>Sebum</dt><dd data-say="sebum">Moderate</dd>
-      <dt>Character</dt><dd data-say="char">Strong projection</dd>
-    </dl>
-    <h2>Sites</h2>
-    <ul class="t1-sites"></ul>
-  </section>
-
-  <p class="t1-foot">Drag to turn · the research's Table 2<span></span></p>
+  <nav class="t1-ways" aria-label="The worlds">
+    <button type="button" class="t1-prev" aria-label="The world before">‹</button>
+    <span class="t1-no" data-v="no"></span>
+    <button type="button" class="t1-next" aria-label="The next world">›</button>
+    <select class="t1-pick" aria-label="Every world, by house"></select>
+    <button type="button" class="t1-any">Any</button>
+  </nav>
 </main>
-<script src="page.js?v=226837d53b"></script>
+<script src="page.js?v=9d4e9a2d7f"></script>
 </body>
 </html>

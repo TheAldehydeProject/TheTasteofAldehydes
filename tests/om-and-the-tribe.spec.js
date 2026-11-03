@@ -1134,28 +1134,30 @@ test("Om's rings on the Houses view are several at once, and each drawn its own 
   const all = rings.flat().map(look);
   expect(new Set(all).size, `no two circles drawn alike: ${all.join(" ")}`).toBe(all.length);
 });
-/* OUTSIDER'S DOOR AND WINDOW ON THE HOUSES VIEW, under one light (2026-10-12
-   — "please make the door less animated, more sobtle and do something
-   similar maybe with a window on the right side of the page. make sure that
-   the light sources agree with one another"; the day before, "ignore the
-   making the darkening of the page for outsider, make it white"): nothing
-   is darkened — the motifs' canvas has no ground of its own, the words stay
-   ink; the door is let open slowly to rest a little ajar and never swings
-   past it; a window stands high on the right of the same wall, clear of the
-   way round; the house's green comes through the door's gap and the
-   window's panes alike, and falls through both at one slant, from one
-   light; and the frames are in ink. */
-test("Outsider's door and window on the Houses view stand on white, the door easing open, one light through both", async ({ page }) => {
+/* OUTSIDER'S WINDOW ON THE HOUSES VIEW, and its incense (2026-11-03 —
+   "complicate the window in the SD page when selecting outsider
+   parfumerie, and remove the door. Add another element on the bottom left
+   that is small"; before that, a door and a window under one light, and
+   "ignore the making the darkening of the page for outsider, make it
+   white"): nothing is darkened — the motifs' canvas has no ground of its
+   own, the words stay ink; no door; the window high on the right, clear of
+   the way round, its casement let open slowly to rest a little ajar and
+   never swinging past it; the house's green in its panes and thrown onto
+   the floor before the wall; a small stick of incense at the bottom left,
+   its smoke rising. */
+test("Outsider's window on the Houses view stands on white, its casement easing open, its light on the floor, and incense at the bottom left", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/scent-descriptions/#house-11");
   await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
-  await expect.poll(() => page.evaluate(() => window.HouseMotifs.doors().length), { timeout: 20000 }).toBe(1);
-  // THE DOOR, let open slowly: rising to rest and never past it.
+  await expect.poll(() => page.evaluate(() => window.HouseMotifs.windows().length), { timeout: 20000 }).toBe(1);
+  // NO DOOR: a window and the incense, and nothing else.
+  expect(Object.keys(await page.evaluate(() => window.HouseMotifs.census())).sort()).toEqual(["casement", "incense"]);
+  // THE CASEMENT, let open slowly: rising to rest and never past it.
   let most = 0, last = 0, rest = 0, fell = 0;
   for (let i = 0; i < 50; i++) {
-    const d = await page.evaluate(() => window.HouseMotifs.doors()[0]);
+    const d = await page.evaluate(() => window.HouseMotifs.windows()[0]);
     if (d) {
       rest = d.rest;
       if (d.angle < last - 0.004) fell++;
@@ -1175,20 +1177,23 @@ test("Outsider's door and window on the Houses view stand on white, the door eas
   expect(menu.match(/\d+/g).slice(0, 3).map(Number).every((v) => v < 80), "the Menu in ink: " + menu).toBe(true);
   expect(await page.locator(".sheet-stage.dark-surface, body.sheet-night").count()).toBe(0);
   // THE WINDOW, high on the right, clear of the way round.
-  const d = await page.evaluate(() => window.HouseMotifs.doors()[0]);
+  const d = await page.evaluate(() => window.HouseMotifs.windows()[0]);
   const nav = await page.locator(".sheet-nav").boundingBox();
-  expect(d.window, "a window").not.toBeNull();
-  expect(d.window.left, "on the right").toBeGreaterThan(1440 * 0.6);
+  expect(d.window.left, "on the right").toBeGreaterThan(1440 * 0.55);
   expect(d.window.right, "clear of the way round").toBeLessThan(nav.x);
-  expect(d.window.bottom, "high in the wall").toBeLessThan(900 * 0.5);
-  // ONE LIGHT: falling through the door and the window at one slant.
-  expect(Math.abs(d.slant.door - d.slant.window), `one slant (${d.slant.door.toFixed(1)}° and ${d.slant.window.toFixed(1)}°)`).toBeLessThan(4);
-  // The house's green through the door, on the left, and through the
-  // window, in its box; between them, across the middle of the room, none —
-  // and the frames in ink.
-  const light = await page.locator(".sheet-motifs").evaluate((c, w) => {
+  expect(d.window.bottom, "high in the wall").toBeLessThan(900 * 0.6);
+  expect(d.floor.top, "its light lands on the floor, below it").toBeGreaterThan(d.window.bottom);
+  // THE INCENSE, small, at the bottom left, smoking.
+  const inc = (await page.evaluate(() => window.HouseMotifs.incense()))[0];
+  expect(inc.x, "on the left").toBeLessThan(1440 * 0.15);
+  expect(inc.y, "at the foot").toBeGreaterThan(900 * 0.8);
+  expect(inc.y - inc.tip.y, "small").toBeLessThan(90);
+  expect(inc.smoke, "its smoke rising").toBeGreaterThan(20);
+  // The house's green in the window's panes and on the floor, and the
+  // frames in ink.
+  const light = await page.locator(".sheet-motifs").evaluate((c, b) => {
     const k = c.width / innerWidth, px = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
-    let door = 0, win = 0, middle = 0, inked = 0;
+    let win = 0, floor = 0, inked = 0;
     for (let y = 0; y < c.height; y += 2) for (let x = 0; x < c.width; x += 2) {
       const i = (y * c.width + x) * 4;
       if (px[i + 3] < 40) continue;
@@ -1196,16 +1201,14 @@ test("Outsider's door and window on the Houses view stand on white, the door eas
       const green = px[i + 1] > px[i] + 25 && px[i + 1] > px[i + 2] + 12;
       if (!green) continue;
       const X = x / k, Y = y / k;
-      if (X < innerWidth * 0.3) door++;
-      else if (X > w.left && X < w.right && Y > w.top && Y < w.bottom) win++;
-      else if (X > innerWidth * 0.35 && X < innerWidth * 0.6) middle++;
+      if (X > b.window.left && X < b.window.right && Y > b.window.top && Y < b.window.bottom) win++;
+      else if (X > b.floor.left && X < b.floor.right && Y > b.floor.top && Y < b.floor.bottom) floor++;
     }
-    return { door, win, middle, inked };
-  }, d.window);
-  expect(light.door, "green through the door's gap and on the floor").toBeGreaterThan(300);
-  expect(light.win, "and through the window").toBeGreaterThan(300);
-  expect(light.middle, "and none across the middle of the room").toBeLessThan(light.door / 20);
-  expect(light.inked, "the door, the window and their frames drawn in ink").toBeGreaterThan(200);
+    return { win, floor, inked };
+  }, d);
+  expect(light.win, "green in the window's panes").toBeGreaterThan(300);
+  expect(light.floor, "and thrown onto the floor").toBeGreaterThan(150);
+  expect(light.inked, "the window and its frames drawn in ink").toBeGreaterThan(200);
   expect(errors).toEqual([]);
 });
 
@@ -1245,7 +1248,7 @@ test("Lost Tribe's birds on the Houses view stay when the page is pressed, and s
   }, { timeout: 30000, message: "the near ones flap faster, turning away" }).toBe(true);
   expect(errors).toEqual([]);
 });
-for (const [no, kinds] of [["10", ["omRing"]], ["11", ["door"]], ["12", ["flock", "leafFall", "pollenRise"]]]) {
+for (const [no, kinds] of [["10", ["omRing"]], ["11", ["casement", "incense"]], ["12", ["flock", "leafFall", "pollenRise"]]]) {
   test(`the Houses view's motifs come up for house ${no} at the front`, async ({ page }) => {
     test.setTimeout(60000);
     const errors = collectPageErrors(page);

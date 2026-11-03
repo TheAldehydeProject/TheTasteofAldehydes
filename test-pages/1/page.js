@@ -1,461 +1,585 @@
-// ============================================================
-// TEST PAGE 1 — "Skin, scanned" (test-pages/1/). Not a page of the site:
-// it loads nothing of the site's and nothing of the site loads it.
-//
-// The owner's image 1 — a spine drawn as a plexus, two red rings marking
-// places on it, a glitched numeral, a column of readings — made of the
-// site's Skin research: a skeleton (skull, spine, ribs, one arm) in points
-// joined to their nearest neighbours, turning slowly in three dimensions,
-// shards drifting off it; the four body sites of the research's Table 2
-// marked two at a time by red rings with a hairline in to the place, and
-// their readings — temperature, sebum, character — beside them. Drag to
-// turn it; press a site to mark it.
-//
-// KEPT SMOOTH: the skeleton is built once; a frame projects ~1,500 points
-// and strokes its hairlines in four paths by depth. The grain is a CSS
-// layer moved by its transform. Nothing is drawn while the tab is hidden.
-// With motion reduced: still, no glitch, no drift.
-// ============================================================
+/* The site, as it stood on 2026-11-03: every fragrance on it with notes, by
+   tier where its source divides them; every note's accord and the Note
+   Library's first words on what it is. A snapshot — see the comment below. */
+const DATA = {"accords":[{"c":"CIT","n":"Citrus"},{"c":"ARO","n":"Aromatic & Herbal"},{"c":"GRN","n":"Green"},{"c":"FLO","n":"Floral"},{"c":"FRU","n":"Fruit"},{"c":"SPI","n":"Spice"},{"c":"GOU","n":"Gourmand"},{"c":"BRW","n":"Brews & Spirits"},{"c":"WOO","n":"Woods"},{"c":"CON","n":"Conifers"},{"c":"RES","n":"Resins & Balsams"},{"c":"ANI","n":"Musk, Skin & Animalic"},{"c":"EAR","n":"Earth, Moss & Mineral"},{"c":"AIR","n":"Water & Air"},{"c":"SMK","n":"Smoke & Char"},{"c":"IMP","n":"Impressions"}],"houses":{"pineward":"Pineward","apoteker-tepe":"Apoteker Tepe","adar":"ADAR","almost-human":"Almost Human","ataraxia":"Ataraxia","grande-parfums":"Grande Parfums","les-abstraits":"Les Abstraits","tale-parfums":"Tale Parfums","tombstone":"Tombstone","qimu-musicians":"Qimu & Musicians","om-parfums":"Om Parfums","outsider-parfums":"Outsider Parfums","lost-tribe":"Lost Tribe","serge-lutens":"Serge Lutens","dior":"Dior","ramon-monegal":"Ramón Monegal","mancera":"Mancera","casa-goa":"Casa Goa","matca":"Matca","lussur":"Lussur","jmp-artisan-perfumes":"JMP Artisan Perfumes","sultan-pasha-perfumes":"Sultan Pasha Perfumes","areej-le-dore":"Areej Le Doré","slumberhouse":"Slumberhouse","strangers-parfumerie":"Strangers Parfumerie","parfum-prissana":"Parfum Prissana","prin":"PRIN"},"frags":[{"n":"Bindebole","h":"pineward","y":2021,"f":["Poplar Bud","Citrus","Pine Needles","Ambrette","Crushed Leaves","Cedarwood"]},{"n":"Boreal","h":"pineward","y":2020,"f":["Pine Needles","Mint","Cedarwood","Resins","Moss"]},{"n":"Brokilän","h":"pineward","y":2021,"f":["Black Hemlock","Larch Cones","Sandarac","Fir","Sandalwood","Oud"]},{"n":"Cotswold","h":"pineward","y":2021,"f":["Cedarwood","Smoke","Oak","Pine Needles","Vanilla"]},{"n":"Eldritch","h":"pineward","y":2021,"f":["Leather","Myrrh","Patchouli","Fir","Oolong Tea","Opoponax","Smoke","Pine Needles","Sage","Oakmoss"]},{"n":"Fanghorn II","h":"pineward","y":2021,"f":["Fir","Moss","Lichen","Pine Needles","Soil","Damp Vegetation"]},{"n":"Funerie","h":"pineward","y":2022,"f":["Mushroom","Decayed Rose","Leather","Tobacco","Smoke","Pineboard","Incense","Opoponax","Cedarwood","Pine Needles","Oud"]},{"n":"Juniperus","h":"pineward","y":2024,"f":["Lemon","Juniper","Rosemary","Lavender","Juniper Berry","Sandalwood","Patchouli"]},{"n":"Murkwood","h":"pineward","y":2020,"f":["Fir","Black Hemlock","Lapsang Souchong","Moss","Incense","Myrrh"]},{"n":"Nocturnis","h":"pineward","y":2022,"f":["Pine","Juniper","Bergamot","Carnation","Geranium","Chamomile","Hay","Tobacco","Fir","Lavender","Amber","Vetiver","Sandalwood","Oakmoss","Patchouli"]},{"n":"Oxylus","h":"pineward","y":2021,"f":["Pine Needles","Juniper","Vetiver","Myrtle","Soil","Swamp Water"]},{"n":"Snoqualmie","h":"pineward","y":2024,"f":["Sandarac","Tamarack","Balsam","Snoqualmie Forest Evergreens"]},{"n":"Sturbridge","h":"pineward","y":2023,"f":["Baked Apple","Pine","Frankincense","Fir","Spices","Resins","Myrrh","Cedarwood","Amber","Spikenard","Ambergris","Poplar Bud"]},{"n":"White Fir","h":"pineward","y":2022,"f":["Orange","Fir","Pine","Ginger","Clove","Musk","Oakmoss","Anise","Vetiver"]},{"n":"Bucolic","h":"pineward","y":2024,"f":["Sheep Wool","Lanolin","Raspberry","Lavender","Honey","Brown Sugar","Amber","Beeswax","Sweetgrass"]},{"n":"Hayloft","h":"pineward","y":2022,"f":["Hay","Honey","Oat","Wheat","Hazelnut","Almond","Lavender","Grass","Saffron"]},{"n":"Hayride","h":"pineward","y":2022,"f":["Hay","Cacao","Vanilla","Sweet Vernalgrass","Sweetgrass","Bread","Nutmeg","Cardamom","Spikenard","Dried Fruits","Tonka","Oakmoss"]},{"n":"Pastoral","h":"pineward","y":2022,"f":["Apricot","Blackberry","Honey","Propolis","Beeswax","Sweetgrass","Hay","Wheat","Oat","Vetiver","Maté","Oakmoss"]},{"n":"Shire","h":"pineward","y":2024,"f":["Hay","Oat","Hazelnut","Bergamot","Lavender","Herbal Tea","Westfarthing Leaf","Seed Cake","Jasmine","Orris","Honey"]},{"n":"Steading","h":"pineward","y":2020,"f":["Beeswax","Tobacco","Hay","Maple","Barley","Hops","Peat","Pine Needles","Poplar Bud"]},{"n":"Christmas Wine","h":"pineward","y":2020,"f":["Cranberry","Nutmeg","Fir","Plum","Clove","Blood Orange"]},{"n":"Gingerbread","h":"pineward","y":2023,"f":["Ginger","Cinnamon","Clove","Nutmeg","Wheat","Molasses","Brown Sugar","Black Walnut","Milk","Butter","Vanilla","Icing"]},{"n":"Glühwein","h":"pineward","y":2021,"f":["Cranberry","Champaca","Cherry","Raspberry","Fir","Chocolate","Davana","Oakmoss","Tolu Balsam","Rose","Sandalwood","Frankincense"]},{"n":"Revelries","h":"pineward","y":2021,"f":["Clove","Rum","Cinnamon","Oud","Hazelnut"]},{"n":"Acadian","h":"pineward","y":2023,"f":["Yuzu","Bergamot","Juniper Berry","Ivy","Eucalyptus","Waterlily","Goldenrod","Heliotrope","Seaweed","Cedarwood","Oakmoss"]},{"n":"Coastal Veil","h":"pineward","y":2023,"f":["Juniper Berry","Juniper","Sea Water","Seaweed","Cypress","Mushroom","Water Pepper","Eucalyptus","Ambergris","Sandalwood"]},{"n":"Gingermoss","h":"pineward","y":2023,"f":["Ginger","Neroli","Bergamot","Blood Orange","Cedarwood","Rosemary","Leather","Oakmoss"]},{"n":"Subalpine","h":"pineward","y":2025,"f":["Fir","Bergamot","Black Pepper","Cedar Leaf","Sandalwood","Vetiver","Ambrette","Moss"]},{"n":"Akero","h":"pineward","y":2023,"f":["Green Apple","Benzoin","Patchouli","Sandalwood","Cedarwood"]},{"n":"Apple Tabac","h":"pineward","y":2020,"f":["Apple","Tobacco","Fir","Rum Resin","Dried Fruits"]},{"n":"Caravansary","h":"pineward","y":2023,"f":["Fir","Spruce","Tea","Smoke","Chamomile","Incense","Musk","Lavender","Vanilla","Oakmoss"]},{"n":"Clemenpine","h":"pineward","y":2023,"f":["Suede","Leather","Clementine","Tobacco","Ambergris","Pine","Saffron","Passionfruit","Blood Orange","Fir","Sandalwood","Cedarwood","Jasmine","White Lotus"]},{"n":"Coffee Tabac","h":"pineward","y":2024,"f":["Coffee","Tobacco","Cedarwood","Patchouli","Resins","Spices","Frankincense","Guaiac Wood","Vanilla"]},{"n":"Delfiño","h":"pineward","y":2022,"f":["Clementine","Juniper","Tomato Leaf","Vetiver","Sandalwood","Ambergris"]},{"n":"Greymist","h":"pineward","y":2023,"f":["Fir","Pine","Citron","Tobacco","Botanical Musk","Vetiver"]},{"n":"Gristmill","h":"pineward","y":2022,"f":["Cedarwood","Sawdust","Smouldering Logs","Edelwood Oil","Amber","Black Walnut","Mahogany","Labdanum"]},{"n":"Holy Cross","h":"pineward","y":2026,"f":["Juniper","Wet Stone","Musk","Ambrette","Bluebell","Lichen","Watercress","Yarrow","Pine"]},{"n":"Icefall","h":"pineward","y":2021,"f":["Cypress","Grapefruit","Juniper","Nootka","Seaweed","Pine","Cedarwood","Sandalwood"]},{"n":"Ivymoss","h":"pineward","y":2023,"f":["Ivy","Green Tea","Mint","Lime","Lemon Verbena","Waterlily","Cypress","Pine","Cedarwood","Oakmoss","Treemoss","Cedarmoss"]},{"n":"Lime Cola","h":"pineward","y":2025,"f":["Lime","Cherry","Ginger","Rum","Cola","Neroli","Bitter Orange","Sugar","Vanilla","Nutmeg","Coriander","Cinnamon"]},{"n":"Meadowmoss","h":"pineward","y":2023,"f":["Oakmoss","Alpine Sandwort","Grass","Green Wheat","Orange Blossom","Fir","Tomato Leaf","Azure Bluet","Mountain Wildflowers"]},{"n":"Mint Cocoa","h":"pineward","y":2024,"f":["Chocolate","Mint","Patchouli","Vanilla","Spices","Resins","Malt","Cedarwood"]},{"n":"Noki","h":"pineward","y":2022,"f":["Mint","Mango","Litchi","Ambergris","Cassis","Rhubarb","Sandalwood"]},{"n":"Ponderosa","h":"pineward","y":2022,"f":["Ponderosa Resin","Pine Needles","Cedarwood","Vanilla","Strawberry","Cinnamon","Butterscotch","Beeswax","Raisin Cookies"]},{"n":"Pumpkivus","h":"pineward","y":2025,"f":["Pumpkin","Brown Sugar","Vetiver","Osmanthus","Cedarwood","Sandalwood","Patchouli","Hay","Soil","Corn Silk","Corn Silage","Oud"]},{"n":"Tome","h":"pineward","y":2025,"f":["Aged Parchment","Paper","Leather","Tobacco","Tea","Sandalwood","Cedarwood","Orris","Rice","Ambrette","Coffee","Oakmoss","Cypriol"]},{"n":"Treacle","h":"pineward","y":2021,"f":["Tobacco","Lapsang Souchong","Molasses","Honey","Dried Fruits"]},{"n":"Velvetine","h":"pineward","y":2021,"f":["Ambergris","Cypress","Vanilla","Clove","Labdanum","Fir","Dragon's Blood","Sandalwood","Musk","Mousse de Saxe"]},{"n":"Amber Zero","h":"adar","y":0,"t":["Fig Leaf","Ginger","Ozone"],"m":["Saffron","Osmanthus","Mineral Accord"],"b":["Amber","Vetiver","Resins","Ambergris"]},{"n":"Aetherialism","h":"adar","y":0,"t":["Galbanum","Lime","Violet Leaf","Marine Accord"],"m":["Ylang Ylang","Neroli","Myrrh","Clary Sage"],"b":["Vetiver","Cedarwood","Tonka","Leather"]},{"n":"Incantu","h":"adar","y":0,"t":["Honeysuckle","Carob Pods","Sea Salt"],"m":["Honey","Tobacco","Candle Wax"],"b":["Amber Oud","Almond","Petrified Driftwood"]},{"n":"Against All Odds","h":"adar","y":2025,"f":["Oud","Jasmine","Bitter Orange","Sandalwood","Ambergris"]},{"n":"α11 Alpha11","h":"adar","y":0,"t":["Banana","Mint","Saffron"],"m":["Tuberose","Jasmine","Ylang Ylang"],"b":["Tobacco","Incense","Tonka","Civet"]},{"n":"Alta Luna","h":"adar","y":2025,"f":["Musk","Aquatic Notes","Coumarin","Vanilla","Heliotrope","Citrus","Orange Blossom"]},{"n":"ADHD","h":"adar","y":0,"t":["Pink Pepper","Yuzu","Quince","Absinthe"],"m":["Saffron","Green Tea Flowers","Cherry","Murumuru Butter","Myrrh"],"b":["Tonka","Maninka"]},{"n":"Root Code","h":"adar","y":0,"t":["Bergamot","Black Pepper","Pine Needles"],"m":["Petrichor","Clear Orchid","Mineral Accord"],"b":["Patchouli","Rose","Amber","Palo Santo","Oakmoss"]},{"n":"Lignum Dei","h":"adar","y":0,"t":["Cold Night Air","Frankincense"],"m":["Cedarwood","Sawn Resin","Moss","Rose","Oud"],"b":["Myrrh","Aged Parchment","Skin"]},{"n":"Tyrian","h":"adar","y":2026,"f":["Chocolate","Birch Tar","Clary Sage","Honey","Ambergris"]},{"n":"Burning Bridges","h":"almost-human","y":2026,"f":["Woody Notes","Smoke","Spices","Citrus"]},{"n":"Dear Future","h":"almost-human","y":2026,"f":["Ozone","Skin","Amber"]},{"n":"Desert Hope","h":"almost-human","y":2026,"f":["Sand","Resins","Solar Notes","Dust","Woody Notes","Rose"]},{"n":"Ritual Code","h":"almost-human","y":2026,"f":["Resins","Ash","Smoke","Animal Notes","Herbal Notes","Soil"]},{"n":"Silent Rain","h":"almost-human","y":2026,"f":["Soil","Rain Notes","Concrete","Green Notes","Airy Note","Solar Notes"]},{"n":"Amaretto Jazz in the Melting Room","h":"ataraxia","y":2024,"t":["Amaretto","Holy Bread"],"m":["Liquor","Amaretto","Honey","Candle Wax"],"b":["Chocolate","Cognac","Almond","Dusty Sofa","Passionflower","Cocoa Butter","Honeycomb","Vanilla","Tobacco"]},{"n":"Deity","h":"ataraxia","y":2025,"t":["Honey","Japanese Plum","Cherry","Chantilly Cream","Goldenberry"],"m":["Condensed Milk","Tobacco","Cocoa Butter","Beeswax","Snowdrops"],"b":["Frankincense","Labdanum","Cacao","Vanilla","Tonka","Amber","Benzoin","Elemi","Myrrh","Gold","Patchouli","Dates","Nectar"]},{"n":"My Doll’s Makeup","h":"ataraxia","y":0,"t":["Porcelain","Lipstick","Orris","Raspberry","Soda Bubbles"],"m":["Blush","Velvet","Orris","Candle Wax","Chocolate"],"b":["Makeup Palette","Lip Gloss","Eye Pencil","Instant Film","Myrrh"]},{"n":"Spinal Fluid","h":"ataraxia","y":2025,"f":["Myrrh","Marigold","Rose","Cypriol","Hay","Birch Tar","Seaweed","Cumin","Tuberose"]},{"n":"Vestibule","h":"ataraxia","y":2024,"f":["Chocolate","Spices","Dusty Antiques"]},{"n":"5 Years Anniversary","h":"grande-parfums","y":0,"t":["Raspberry","Pink Pepper","Sugar Cane","Cinnamon","Saffron","Clove"],"m":["Chocolate","Ylang Ylang","Cognac","Suede","Honey","Oud","Oak"],"b":["Leather","Musk","Peru Balsam","Tonka","Cedarwood","Labdanum","Vanilla","Benzoin","Tobacco","Honey","Oud","Sandalwood","Vetiver"]},{"n":"Ambresso","h":"grande-parfums","y":0,"t":["Coffee","Allspice","Myrrh"],"m":["Coffee","Rum","Cognac","Tobacco","Beeswax","Dried Fruits","Myrtle","Rose","Nutmeg","Lily of the Valley","Cedarwood"],"b":["Labdanum","Resins","Benzoin","Amber","Castoreum","Vanilla","Tolu Balsam","Peru Balsam","Patchouli","Guaiac Wood","Tonka","Ambergris","Opoponax","Sandalwood","Musk"]},{"n":"Ancient Oud","h":"grande-parfums","y":0,"t":["Oud"],"m":["Oud","Benzoin"],"b":["Oud","Musk","CO2 Extracts"]},{"n":"Choco Powder","h":"grande-parfums","y":0,"t":["Saffron","Cherry","Cacao"],"m":["Chocolate","Osmanthus","Jasmine","Rose"],"b":["Sandalwood","Vanilla","Amberwood"]},{"n":"Cuore","h":"grande-parfums","y":2024,"t":["Incense","Spices","Orris","Red Berries","Clementine","Saffron","Orange"],"m":["Blackberry","Dried Fruits","Blueberry","Liquor","Plum","Plum Blossom","Sugar Cane","Toffee","Lily of the Valley","Strawberry","Myrrh","Fig","Tiare Flower","Cinnamon","Rose","Jasmine","Fir"],"b":["Amber","Tonka","Vanilla","Guaiac Wood","Opoponax","Castoreum","Labdanum","Benzoin","Teak Wood","Cedarwood","Musk","Patchouli"]},{"n":"Dreaming Maldives","h":"grande-parfums","y":0,"t":["Lemon","Pear","Peach","Pink Pepper"],"m":["Yellow Flowers","Freesia","Caramel","Lily of the Valley"],"b":["Vanilla","Musk","Cedarwood","Myrrh"]},{"n":"Giardino di Sorrento","h":"grande-parfums","y":0,"t":["Blood Orange","Grapefruit","Lemon"],"m":["Lily of the Valley","Raspberry Leaf","Neroli","Tuberose","Magnolia","Jasmine","Rose"],"b":["Tuberose","Cashmeran","Amber","Patchouli","Tonka","Vanilla","Musk"]},{"n":"Hot Stuff","h":"grande-parfums","y":0,"t":["Scorched Pineapple","Tobacco"],"m":["Baked Apple"],"b":["Tonka","Vetiver","Oakmoss","Beeswax"]},{"n":"Intimate Spell","h":"grande-parfums","y":0,"t":["Bergamot","Orange Blossom","Rosemary"],"m":["Clove","Cypriol","Geranium","Cedarwood"],"b":["Patchouli","Vetiver","Musk","Labdanum","Benzoin","Guaiac Wood","Amyris"]},{"n":"Karak & Shisha","h":"grande-parfums","y":0,"f":["Peru Balsam","Strawberry","Raspberry","Tea","Cinnamon","Tobacco","Apple","Clove","Bark","Rose","Cardamom","Dried Fruits","Saffron","Ambergris","Labdanum","Masala Chai","Musk","Castoreum","Oud","Beeswax","Vanilla","Tonka","Amber","Tobacco Flower"]},{"n":"Mystical Incense","h":"grande-parfums","y":0,"t":["Frankincense","CO2 Extracts","Litchi","Sparkling Water"],"m":["Frankincense","Dates","Rose"],"b":["Frankincense","Amber","Musk"]},{"n":"Vanilla Ash","h":"grande-parfums","y":0,"t":["Brown Sugar","Raspberry Leaf","Spices","Rum"],"m":["Vanilla","Guaiac Wood","Heliotrope","Lily of the Valley"],"b":["Castoreum","Tonka","Vanilla","Fenugreek","Musk","Frankincense"]},{"n":"Vintage Memoir","h":"grande-parfums","y":0,"t":["Jasmine Tea","Peach","Lemon","Bergamot"],"m":["Orris","Violet Leaf","Jasmine","Ylang Ylang","Geranium","Tuberose","Rose","Carnation","Gardenia"],"b":["Musk","Ambergris","Sandalwood","Clove","Vetiver","Vanilla","Oakmoss","Benzoin","Civet","Patchouli","Tolu Balsam","Tonka","Cedarwood","Labdanum"]},{"n":"White Label","h":"grande-parfums","y":0,"t":["Orange Blossom","Green Mandarin","Pear","Guava","Ginger","CO2 Extracts"],"m":["Mango","Moroccan Tea","Lily of the Valley","Woody Notes","Raspberry","Orange"],"b":["Musk"]},{"n":"Belle Âme","h":"les-abstraits","y":2022,"t":["Orris","Ginger"],"m":["Cacao","Frankincense","Cardamom"],"b":["Tonka","Musk","Sandalwood"]},{"n":"Des Cendres","h":"les-abstraits","y":2023,"t":["Pine Tar","Galbanum","Birch Tar","Mint","Clove"],"m":["Leather","Violet Leaf","Tuberose"],"b":["Oakmoss","Hyrax","Vetiver","Patchouli"]},{"n":"La Douleur Exquise","h":"les-abstraits","y":2022,"t":["Rose","Orris","Frankincense"],"m":["Clove","Cumin","Saffron"],"b":["Castoreum","Patchouli","Cedarwood","Labdanum","Opoponax","Myrrh"]},{"n":"Philosopher’s Walk","h":"les-abstraits","y":2025,"t":["Bergamot","Lemon","Neroli","Orange Blossom","Pink Pepper","Cardamom","Clove","Cinnamon","Artemisia","Juniper"],"m":["Geranium","Clary Sage","Carnation","Violet","Lavender"],"b":["Cedarmoss","Vetiver","Patchouli","Costus","Musk","Benzoin","Tonka","Vanilla"]},{"n":"Watch King","h":"lost-tribe","y":0,"f":["Oud","Incense","Benzoin","Vanilla","Amber","Leather","Rose"]},{"n":"Dirty Soda","h":"lost-tribe","y":0,"t":["Lime","Orange","Bergamot","Pink Pepper"],"m":["Cassia","Coriander","Neroli","Clove"],"b":["Oud","Vanilla","Tonka","Benzoin","Patchouli","Sandalwood","Cedarwood"]},{"n":"Equatorial","h":"lost-tribe","y":0,"f":["Frankincense","Lavender","Bergamot","Petitgrain","Pink Pepper","Ambergris","Fir","Cypress","Patchouli","Spruce","Juniper","Clary Sage","Mint-Sandalwood Co-Distillation","Musk","Oud","Oakmoss","Cedarwood","Vetiver","Thyme","Bakhoor"]},{"n":"Santal Absolu","h":"lost-tribe","y":0,"f":["Sandalwood","Costus","Lavender","Orris","Rose","Ylang Ylang","Benzoin","Vanilla"]},{"n":"Pan’s Labyrinth","h":"lost-tribe","y":0,"t":["Bergamot","Rose","Powder Accord","Almond","Ambergris"],"m":["Lavender","Coumarin","Rose","Ylang Ylang","Patchouli"],"b":["Sandalwood","Musk","Oud","Oakmoss","Treemoss","Fir","Labdanum","Bakhoor"]},{"n":"Lust","h":"om-parfums","y":2023,"f":["Rum","Cherry","Whiskey","Anise","Tobacco","Patchouli","Cedarwood","Benzoin","Tolu Balsam","Oakmoss","Cashmeran","Cabreuva","Labdanum","Caramel","Suede","Animal Notes","Oak Barrel"]},{"n":"Burnana","h":"om-parfums","y":2024,"f":["Banana","Apple","Smoke","Frankincense","Styrax","Cade Oil","Copaiba Balsam","Underground Tunnel","Tomato Leaf","Fruity Notes","Amber","Guaiac Wood","Vetiver","Woody Notes","Benzoin","Osmanthus","Huang Qi","Oud","Beeswax","Oakmoss","Civet","Castoreum"]},{"n":"Dark Night of the Soul","h":"om-parfums","y":2024,"f":["Cacao","Oud","Castoreum","Paprika","Milk","Civet","Hinoki","Amyris","Plum","Jasmine","Butter","Orris","Guaiac Wood","Oak","Sichuan Pepper","Sandalwood","Patchouli","Cheese","Vanilla","Oakmoss","Jonquil","Amber","Lemon","Cedarwood"]},{"n":"This Too Shall Pass","h":"om-parfums","y":0,"f":["Benzoin","Apricot","Peach","Butterscotch","Mint","Cacao","Oud","Vetiver","Linden Blossom","Gardenia","Champaca","Coconut Milk","Sandalwood","Patchouli","Tobacco"]},{"n":"When the Linden Blooms","h":"om-parfums","y":2024,"f":["Bergamot","Linden Blossom","Jasmine","Apricot","Lilac","Green Tea","Osmanthus","Buddhawood","Sandalwood","Clary Sage","Maté","Iso E Super","Amberwood","Cannabis","Benzoin","Vanilla","Oud","Musk"]},{"n":"Oud de Pasión","h":"om-parfums","y":0,"f":["Passionfruit","Gardenia","Chocolate Cake","Orange Blossom","Cocktail Accord","Patchouli","Sandalwood","Civet","Tobacco","Cacao","Vanilla","Benzoin","Musk","Oud"]},{"n":"Dragon’s Breath","h":"outsider-parfums","y":2026,"f":["Lava","Shiso","Geranium","Turmeric","Birch Tar","Cacao","Vetiver","Styrax","Metallic Notes","Tea","Maté","Vanilla","Oud","Oakmoss"]},{"n":"Draco","h":"outsider-parfums","y":0,"f":["Frankincense","Green Apple","Aquatic Notes","Patchouli","Castoreum","Lavender","Geranium","Leather","Tobacco","Civet","Musk","Pea","Oud","Cedarwood","Cade Oil","Evernyl"]},{"n":"Xocolate Crotch","h":"outsider-parfums","y":0,"f":["Clove","Gardenia","Orange","Chocolate","Sandalwood","Smoke","Leather","Dulce de Leche","Civet","Tobacco","Cream","Woody Notes","Patchouli","Whiskey","Cashmeran"]},{"n":"Guilty as Charged","h":"outsider-parfums","y":0,"f":["Airy Note","Bergamot","Lime","Orange","Neroli","Lily of the Valley","Angelica Root","Leather","Orange Blossom","Cedarwood","Patchouli","Saffron","Pine","Soil","Vetiver","Cashmeran","Musk","Oakmoss"]},{"n":"Amaretto Coffee","h":"outsider-parfums","y":0,"f":["Amaretto","Vanilla","Coffee","Cedarwood","Sandalwood","Jasmine","Popcorn","Musk","Chocolate"]},{"n":"Vocal","h":"qimu-musicians","y":0,"t":["Mint","Lily of the Valley"],"m":["Saffron","Violet"],"b":["Orris","Musk"]},{"n":"3 Feet 5","h":"tombstone","y":2024,"t":["Heliotrope"],"m":["Jasmine","Mimosa"],"b":["Orris","Smoke"]},{"n":"Evergrow","h":"tombstone","y":2025,"t":["Galbanum","Bergamot"],"m":["Rose","Labdanum","Orris"],"b":["Oakmoss","Patchouli","Musk"]},{"n":"No Need to Come By","h":"tombstone","y":0,"t":["Mint","Thyme","Black Pepper","Turpentine"],"m":["Myrrh","Frankincense","Jasmine"],"b":["Patchouli","Tonka","Sandalwood"]},{"n":"Sing at My Funeral","h":"tombstone","y":0,"t":["Mint","Honey","Neroli"],"m":["Jasmine","Lily of the Valley","Orris"],"b":[]},{"n":"Sweet Coffin","h":"tombstone","y":2024,"t":["Willow Bark","Apricot"],"m":["Moldy Cedarwood","Nutmeg"],"b":["Dead Water"]},{"n":"Kogen","h":"apoteker-tepe","y":2024,"f":["Yuzu","Pear","Ginger","Birch","Hinoki","Peat","Vetiver","Incense","Smoke","Hiba","Pine Needles","Oakmoss","Kuromoji"]},{"n":"The Holy Mountain","h":"apoteker-tepe","y":2015,"f":["Pine Smoke","Incense","Fir","Labdanum","Guaiac Wood"]},{"n":"Karasu","h":"apoteker-tepe","y":2016,"f":["Costus","Siam Wood","Hinoki","Paper","Cardamom"]},{"n":"The Peradam","h":"apoteker-tepe","y":2015,"f":["Lily","Jasmine","Orris","Sandalwood"]},{"n":"Pale Fire","h":"apoteker-tepe","y":2016,"f":["Amber","Frankincense","Oakmoss","Whiskey","Cacao"]},{"n":"Anabasis","h":"apoteker-tepe","y":2015,"f":["Citrus","Shiso","Birch","Mint","Pine","Cedarwood","Musk"]},{"n":"After the Flood","h":"apoteker-tepe","y":2015,"f":["Violet Leaf","Waterlily","Mushroom","Patchouli","Soil"]},{"n":"Brother Night","h":"apoteker-tepe","y":2016,"f":["Copal","Marigold","Frankincense","Smoke"]},{"n":"CV99","h":"lussur","y":0,"t":["Balsamic Vinegar","Cherry","Citrus","Milk"],"m":["Cinnamon","Clove","Black Pepper"],"b":["Woody Notes","Caramel","Smoke","Oak"]},{"n":"De Profundis","h":"serge-lutens","y":2011,"f":["Chrysanthemum","Green Notes","Violet","Soil","Incense","Plum"]},{"n":"Haxan","h":"parfum-prissana","y":2018,"f":["Lavender","Birch","Cedarwood","Fir","Guaiac Wood","Cypriol","Sandalwood","Wormwood","Styrax","Pine Needles","Saffron","Thyme","Rosemary","Black Pepper","Nutmeg","Caraway","Cinnamon","Violet Leaf","Tobacco","Mushroom","Basil","Marjoram","Vetiver","Goat Hair","Seaweed"]},{"n":"Tobacolor","h":"dior","y":2021,"f":["Tobacco","Honey","Smoke","Plum","Amber","Oriental Notes","Peach","Citrus"]},{"n":"Flamenco EDP","h":"ramon-monegal","y":2017,"t":["Raspberry","Apple","Violet","Orange Blossom"],"m":["Rose","Jasmine","Orris"],"b":["Cedarwood","Cypress","Amber","Pine"]},{"n":"French Riviera","h":"mancera","y":2022,"t":["Lemon","Orange","Tangerine","Ginger","Black Pepper"],"m":["Marine Accord","Tiare Flower","Pine","Mimosa","Vetiver"],"b":["Sea Salt","Musk","Amber"]},{"n":"Velvet Fog","h":"casa-goa","y":0,"t":["Neroli"],"m":["Lavender","Ylang Ylang"],"b":["Orris","Vetiver","Sandalwood","Honey"]},{"n":"House of Ellixirz","h":"matca","y":2021,"t":["Lemon","Petitgrain"],"m":["Cassia","Rose"],"b":["Cypriol","Tobacco","Leather","Birch Tar","Vanilla","Caramel"]},{"n":"Fir of the Light","h":"jmp-artisan-perfumes","y":0,"t":["Spruce","Incense","Orange","Lemon","Black Pepper"],"m":["Cedarwood","Papyrus","Cashmeran","Nutmeg","Sage"],"b":["Fir","Incense","Woody Notes","Oakmoss","Ambergris"]},{"n":"Fir of the Dark","h":"jmp-artisan-perfumes","y":2024,"t":["Incense","Spruce","Black Pepper","Cypress","Galbanum"],"m":["Incense","Cedarwood","Leather","Sage"],"b":["Fir","Cade Oil","Vetiver","Oakmoss"]},{"n":"Quintessentially Amber","h":"sultan-pasha-perfumes","y":2025,"f":["Citrus","Aldehydes","Spices","Rose","Amber","Labdanum","Benzoin","Styrax","Musk","Patchouli","Vetiver","Sandalwood","Vanilla","Ambergris"]},{"n":"Forbidden Flower","h":"areej-le-dore","y":2024,"t":["Skunk Oil","Grapefruit","Cannabis"],"m":["Jasmine","Night Blooming Jasmine","Sandalwood"],"b":["Patchouli","Cedarwood","Benzoin","Vetiver","Turmeric","Vanilla","Ginger","Coriander","Lime"]},{"n":"Ore","h":"slumberhouse","y":2009,"f":["Oak","Vanilla","Guaiac Wood","Peru Balsam","Tolu Balsam","Amber","Muhuhu","Benzoin","Cacao","Patchouli","Milk","Bushman Candle Resin"]}],"notes":{"Poplar Bud":["GRN","The sticky, resin-coated leaf buds of the balsam poplar, which fill the air with a sweet smell as they open in spring."],"Citrus":["CIT","No single fruit: the whole family of citrus peels, lemon, orange, bergamot, mandarin, grapefruit and lime, used together for a bright, sparkling, clean opening."],"Pine Needles":["CON","The needles rather than the wood: green, sharp and fresh, resinous and a little citrusy, like needles crushed on a forest path. It is the brightest, most outdoor side of the pine."],"Ambrette":["ANI","The seeds of the musk mallow, a relative of hibiscus from India."],"Crushed Leaves":["GRN","The sharp green smell of a leaf torn or a stem snapped."],"Cedarwood":["WOO","The wood of pencils and cedar chests: dry, clean and woody, like pencil shavings, with a resinous, slightly smoky warmth."],"Mint":["ARO","Cool, sharp and green: a crushed sprig from the garden. It can lean towards peppermint's icy bite, spearmint's softer sweetness, or a darker, more herbal wild mint."],"Resins":["RES","The whole family of hardened tree saps: frankincense, myrrh, benzoin, labdanum and more. Perfumers extract them with solvents into resinoids."],"Moss":["EAR","Moss as the forest floor smells of it: damp, green, earthy and inky-bitter, cool under old trees after rain."],"Black Hemlock":["CON","Not the poisonous herb but the hemlock tree, a tall conifer of old, damp forests."],"Larch Cones":["CON","The small, egg-shaped cones of the larch, a conifer that turns gold and drops its needles in autumn."],"Sandarac":["RES","A pale resin from the sandarac tree, a cypress of Morocco and North Africa, used for centuries in varnish and as incense."],"Fir":["CON","The Christmas tree of Europe and North America: soft needles and sticky resin."],"Sandalwood":["WOO","The heartwood of a slow-growing tree, sacred in India. Its oil is creamy, milky and soft, sweet and warm, rich and smooth, the smoothest wood there is."],"Oud":["WOO","Agarwood: the dark, resin-soaked heartwood of the aquilaria tree of South and Southeast Asia, formed only when the tree is infected and defends itself."],"Smoke":["SMK","Smoke is not one thing: wood smoke, incense, tobacco and tar all smell different, and perfumers build each from smoky materials, birch and cade tars made by heating wood, guaiacol, syringol and other phenols, vetiver and guaiac wood."],"Oak":["WOO","The great hardwood of forests and barrels: dry, woody and grounding, a little sharp and sour, with a soft hint of vanilla and dried fruit from its aged wood."],"Vanilla":["GOU","The cured pod of a climbing orchid, and the most loved note in perfumery. Real vanilla absolute is dark and rich: sweet and creamy, but also smoky, woody, boozy and a little animal, opening dark and settling powdery and soft."],"Leather":["ANI","There is no leather oil to take: a leather note is always built, from materials that smell of tanned hide."],"Myrrh":["RES","The gum of the Commiphora tree of Somalia, Ethiopia and Yemen, one of the three gifts of the Magi, used in incense and embalming."],"Patchouli":["WOO","The leaves of a bushy mint-family plant from Southeast Asia, dried and distilled. Patchouli is earthy and woody, dark and damp like a forest floor, sweet and balsamic, a little camphorous and chocolatey, and very long-lasting."],"Oolong Tea":["BRW","The half-oxidised tea between green and black. As a note it is warm and toasted, earthy and sometimes smoky, with a soft, creamy, almost milky smoothness and a gentle herbal side, like the steam from a freshly poured cup."],"Opoponax":["RES","Sweet myrrh: the resin of a myrrh tree of Somalia. It smells warmer, sweeter and softer than myrrh, balsamic and powdery, a little honeyed and slightly animal, round and cosy where myrrh is bitter and cool."],"Sage":["ARO","Kitchen sage, the grey-green herb of stuffing and smoke-cleansing. Its oil is powerful: herbal, camphorous and slightly medicinal, with a savoury, softly peppery warmth and a resinous, cedar-like dryness."],"Oakmoss":["EAR","Not a moss but a lichen, Evernia prunastri, that grows on oaks in the mountain forests of Europe and North Africa."],"Lichen":["EAR","The crusty, leafy growths on bark and stone, half fungus and half alga. In perfume lichen smells the same as oakmoss, which is itself a lichen: earthy, woody, sharp and a little sweet, like damp bark in shade."],"Soil":["EAR","Earth as it smells when turned over or rained on: damp, dark, a little like beetroot. That smell is mostly geosmin, one of the most powerful smells in nature, and perfumers use it, and earth tinctures, in tiny amounts."],"Damp Vegetation":["EAR","Pineward's picture of leaves, stems and moss lying wet on a forest or bog floor, going soft: green, earthy, heavy with water and just starting to rot."],"Mushroom":["EAR","The smell of mushrooms: earthy and musty, fresh and a little sharp, sometimes like mushrooms with the dirt still on them."],"Decayed Rose":["IMP","Pineward's rose at the end of its life, the petals gone brown and soft: still rosy, but jammy, musty and a little sour, sweetness turning to rot. It belongs with dried-rose notes and the wilted, funerary flowers of dark perfumes."],"Tobacco":["GOU","Dried, cured tobacco leaf, not smoke. In a perfume it is warm, sweet and honeyed, like hay, dried fruit and tea, with a little leather, cocoa and flowers: more like a humidor or a pouch of pipe tobacco than an ashtray."],"Pineboard":["WOO","Freshly cut pine boards: the strong smell of sawn pine, sticky with resin, a little like turpentine, sweet and sharp, the smell of a timber yard."],"Incense":["RES","The smoke of resins and woods burned for their smell, and in a perfume the idea of it."],"Lemon":["CIT","Pressed cold from the peel, so it smells like the fruit's fresh zest: sharp, sour, clean and sparkling, with a sweet, almost sherbet brightness."],"Juniper":["CON","The shrubby conifer, its wood and needles as well as its berries: fresh, balsamic and piney, sappy and a little bitter, with a gin-like brightness and a dry woody side."],"Rosemary":["ARO","The needle-leaved Mediterranean herb: aromatic, pungent and camphorous, a little minty and lavender-like, clean and sharp."],"Lavender":["ARO","The purple flower of Provence, and the backbone of fougères and barbershop perfumes."],"Juniper Berry":["ARO","The small blue berries of the juniper bush, the flavour of gin, whose name comes from the Dutch and French words for juniper. The oil is fresh, piney and resinous, a little sappy and bitter, bracing and clean."],"Lapsang Souchong":["BRW","A Chinese black tea whose leaves are dried over a pinewood fire. It smells intensely smoky, woody and resinous, almost like bacon or a campfire, with the dark tea underneath."],"Pine":["CON","The classic evergreen: pine needles smell fresh and icy, a little like menthol, herbal and balmy, bright and green, the smell of Christmas and of cleaning products. It gives woody and masculine perfumes a fresh, outdoors lift."],"Bergamot":["CIT","A small, knobbly citrus, somewhere between a lemon and a bitter orange, grown almost entirely on the coast of Calabria, the toe of Italy."],"Carnation":["FLO","The frilly pink of buttonholes, and a floral that smells of spice: clove above all, peppery and warm, over a soft rosy flower. That clove is literal, since carnation and clove share their main molecule, eugenol."],"Geranium":["FLO","Not the red balcony plant but the rose geranium, whose leaves are distilled. It smells like rose with a green, minty, lemony twist and none of the powder: fresh, fruity and a little sharp."],"Chamomile":["ARO","The small daisy of chamomile tea."],"Hay":["GRN","Cut grass dried in the sun, and it smells sweet rather than green: warm, herbal and faintly like vanilla and almonds, with a honey and tobacco softness."],"Amber":["RES","Not the fossil stone and not ambergris, though it borrows the name. Amber in perfume is an idea built by hand: labdanum, benzoin and vanilla melted together, sometimes with other resins and balsams."],"Vetiver":["WOO","The long, tangled roots of an Indian grass, distilled into one of perfumery's great materials: earthy and woody, smoky and a little green, like damp soil and roots, cool and deep."],"Myrtle":["ARO","A Mediterranean shrub with glossy, fragrant leaves, sacred to Venus. Its oil is fresh and bright: green, camphorous and a little like eucalyptus, with a lemony, piney sharpness and a faint floral, fruity sweetness underneath."],"Swamp Water":["EAR","Pineward's picture of still, dark water in a bog: green and dusty, fruity and stuffy all at once, with sedge and pond-lilies, decaying wood and wet moss. Perfumers build it from soil notes, dark vetiver, oakmoss and galbanum."],"Tamarack":["CON","The American larch, a conifer of northern bogs that turns gold and loses its needles each autumn. Its needle oil smells fresh and fruity, green and resinous."],"Balsam":["RES","The sweet, sticky, fragrant resins some trees give when cut: Peru and Tolu balsams, benzoin and styrax among them."],"Snoqualmie Forest Evergreens":["CON","Pineward's picture of the evergreen forests around Snoqualmie, in the Cascade mountains of Washington, where Douglas fir, western hemlock and western red cedar grow thick and wet."],"Baked Apple":["GOU","Apple warmed in an oven until it softens and its sugars caramelise, usually with cinnamon, clove or vanilla beside it. It smells cosy and dessert-like, sweet and juicy with a buttery, spiced warmth: autumn and a festive kitchen."],"Frankincense":["RES","The gum of Boswellia trees in Somalia, Oman and Ethiopia, burned in temples and churches for thousands of years."],"Spices":["SPI","No single spice: a blend of them, which can be warm, like cinnamon, clove, nutmeg and pepper, or fresh, like ginger, coriander and cardamom. Warm spices make a perfume cosy and rich; fresh ones make it bright and tingling."],"Spikenard":["EAR","The root of Nardostachys jatamansi, a small plant of the high Himalayas, and the nard of the ancient world."],"Ambergris":["ANI","A waxy lump made in the gut of the sperm whale, around the beaks of the squid it eats, then cast out to float on the sea for years before it washes up on a beach."],"Orange":["CIT","Sweet orange: the peel of the everyday orange, pressed. It smells sweet, juicy, fresh and tangy, exactly like an orange being peeled: cheerful and round, less bitter than bitter orange and warmer than lemon."],"Ginger":["SPI","The knobbly root: warm but fresh, spicy and bracing, almost nose-tingling, with a lemony brightness at the top and a sweet, woody, almost balsamic depth."],"Clove":["SPI","The dried flower buds of the clove tree: intensely warm and spicy, sweet and woody, a little medicinal, one of the most powerful natural materials a perfumer has."],"Musk":["ANI","Once the dried gland of the male musk deer, the most precious raw material perfumery had, and banned since the deer was protected in 1979; now almost always made in the laboratory."],"Anise":["SPI","The sweet, liquorice smell of aniseed, star anise and fennel, which share one molecule, anethole. It is sweet and warm, herbal and a little like root beer, the flavour of pastis, ouzo and liquorice sweets."],"Sheep Wool":["ANI","A sheep's fleece, before it is washed: its smell is mostly lanolin, the wax sheep secrete into their wool. Warm, soft and waxy, faintly animal, the smell of a wool jumper just come in from the rain."],"Lanolin":["ANI","The wax sheep secrete into their wool, washed out of it and used in creams and balms. It smells of raw wool: soft, waxy and dense, warm and faintly animal."],"Raspberry":["FRU","A raspberry crushed: sweet, tart and jammy, with a soft, powdery, slightly woody side."],"Honey":["GOU","Sweet, thick and golden, and more complicated than it seems: floral and waxy, with warm tobacco and even a little chocolate, and underneath an animal, almost urine-like edge that some noses catch more than others."],"Brown Sugar":["GOU","Sugar with some of its molasses left in: rich, soft and caramel-like, a little boozy and treacly, sweeter and deeper than white sugar. It can read as caramel, maple syrup or breakfast pancakes, and it warms gourmand perfumes."],"Beeswax":["GOU","The wax of the honeycomb, extracted: honeyed and sweet, warm and softly animal, with hay, tobacco and a little pollen in it, like a candle of real beeswax."],"Sweetgrass":["GRN","A sacred grass for many Indigenous peoples of North America, braided and burned as incense, and full of coumarin: it smells of fresh-mown hay and spring flowers, sweet like vanilla and almonds, with a hint of thyme and lavender."],"Oat":["GOU","Oats: warm, soft and a little nutty, dry like the grain and creamy like porridge or oat milk. It is a quiet, comforting, not very sweet gourmand, the smell of oat biscuits from the oven."],"Wheat":["GOU","The grain of bread: soft, warm and nutty, cereal-like and almost skin-like, like flour-dusted hands and warm loaves. It sits in gourmands and ambers, where it adds a quiet, snuggly warmth."],"Hazelnut":["GOU","The small round nut of praline and chocolate spreads: savoury, nutty and woody, and when roasted warm, toasty and sweet, like chestnuts sold in winter streets. Fresh, it is greener."],"Almond":["GOU","Sweet and bitter at once, soft and nutty: the smell of marzipan, amaretto and cherry stones. Most of it is benzaldehyde, a molecule that is nearly all of bitter almond oil and that almonds share with cherries and peach kernels."],"Grass":["GRN","The burst of smell that rises from a lawn just after mowing: torn blades and crushed stems, bright, green and sappy. Grass gives it off as a defence when it is cut, and perfumers rebuild it from those same molecules."],"Saffron":["SPI","The red threads of the crocus, the costliest spice in the world."],"Cacao":["GOU","The bean chocolate is made from, roasted and ground."],"Sweet Vernalgrass":["GRN","A small meadow grass that flowers early in spring, and the plant that gives hay its sweet smell. It is full of coumarin, so dried it smells of fresh hay with a hint of vanilla and almond, sweet and soft."],"Bread":["GOU","The smell of a bakery in the morning: warm crust, yeast and flour, toasty and faintly sweet. It is built from roasted, bready molecules, and it gives a perfume an intensely comforting, homely warmth."],"Nutmeg":["SPI","The seed of a tropical tree, grated over custard and eggnog. Its oil is fresh and warm at once: a light, piney top, then a sweet-spicy, woody heart, a little nutty and lemony."],"Cardamom":["SPI","The green pods of chai and Scandinavian buns. Its oil opens cool and fresh, a little like eucalyptus and mint, then turns warm, sweet and aromatic, spicy with a soft balsamic and floral finish."],"Dried Fruits":["FRU","Fruit dried in the sun until it is dark and sticky: dates, figs, prunes, apricots and raisins. It smells sweet, deep and chewy, a little like liquorice and brandy, less fresh and more concentrated than fresh fruit."],"Tonka":["GOU","A black, wrinkled bean from South America, almost nine tenths of whose absolute is coumarin."],"Apricot":["FRU","The velvety orange stone fruit. As a note it is soft and fuzzy, sweet and juicy, a little creamy and even faintly animal, like skin warm in the sun."],"Blackberry":["FRU","The bramble fruit of late summer hedgerows: tangy and sweet at once, juicy, a little sour when not quite ripe, with a faint floral and musky side."],"Propolis":["RES","Bee glue: the resin bees gather from tree buds and bark and use to seal their hive."],"Maté":["BRW","The South American tea of yerba maté leaves, sipped from a gourd. Its absolute smells like dried, slightly roasted green tea, with hay, herbs and a sun-baked, tobacco-like warmth."],"Herbal Tea":["BRW","An infusion of herbs and flowers rather than of the tea plant: chamomile, mint, linden, mountain herbs. It smells soft, green and slightly sweet, herbal and a little floral, like the steam rising from a cup, soothing and quiet."],"Westfarthing Leaf":["IMP","Pineward's tobacco, named for the Westfarthing, the part of Tolkien's Shire where Bag End stands; the Shire's hobbits smoked pipe-weed, their tobacco."],"Seed Cake":["GOU","An old British teacake of flour, butter, sugar and eggs, flavoured with caraway seeds, loved since the sixteenth century and in the Victorian era."],"Jasmine":["FLO","The great white flower of perfumery, picked by hand at dawn."],"Orris":["FLO","The root of the iris, not its flower: dug up, dried and stored for three years or more while its scent slowly develops, then ground and distilled."],"Maple":["GOU","Maple syrup: sweet, warm and caramel-like, like burnt sugar and pancakes. Much of it comes from sotolon, a molecule that smells of maple syrup when faint and of fenugreek and curry when strong. It is cosy and breakfast-sweet."],"Barley":["GOU","The grain of beer and whisky. As a note it is warm, toasty and cereal-like, like sun-warmed straw and husks, and when it has been malted it turns sweeter and savoury, reminiscent of beer, whisky and a little milky honey."],"Hops":["ARO","The papery green cones of the hop plant, the flower that gives beer its bitterness and much of its smell."],"Peat":["EAR","The dark, half-rotted plant matter of bogs, cut and burned for fuel, most famously to dry the barley of Islay whiskies."],"Cranberry":["FRU","The small, hard, glossy red berry, and famously sour: tart, sharp and a little bitter, with only a hint of sweetness and a faint forest greenness."],"Plum":["FRU","The dark stone fruit, and one of perfumery's old secrets, part of the classic bases of the early twentieth century."],"Blood Orange":["CIT","A sweet orange whose flesh has turned red. It smells like orange made deeper and sweeter and less sharp, with a juicy, berry-like tartness that people often call a hint of raspberry."],"Cinnamon":["SPI","The rolled bark of the cinnamon tree: warm, sweet and spicy, with a hot red bite and a soft, woody sweetness, the smell of baking and mulled wine."],"Molasses":["GOU","The dark syrup left when sugar is refined from cane: sweet but earthy, thick and burnt, like treacle and dark caramel, with a slight bitterness. It is what rum is made from, and it brings a deep, Christmassy sweetness."],"Black Walnut":["GOU","The American walnut, whose nut hides inside a green husk that stains your hands brown. The husk smells green, earthy, citrusy and a little piney; the nut is woody, rich and slightly bitter, with a milky softness."],"Milk":["GOU","Milk is never in the bottle: the note is an illusion, built from lactones, soft musks and a little sweetness, sometimes with vanilla or sandalwood."],"Butter":["GOU","Melted butter: rich, creamy and sweet, a dairy warmth. Its smell is mostly diacetyl, the molecule of butter and buttered popcorn, which also brings caramel. In a perfume it makes vanilla and caramel feel richer and more edible."],"Icing":["GOU","Sugar and liquid beaten into a sweet glaze for cakes: very sweet and a little powdery, smooth, often with vanilla or lemon. It is built from sugary molecules and makes a gourmand feel like a bakery counter."],"Champaca":["FLO","The golden-orange flower of a magnolia tree from India and Southeast Asia, offered in temples and worn in the hair."],"Cherry":["FRU","Sweet and tart at once, with a bitter-almond edge, because cherry and almond are cousins and share benzaldehyde, the molecule of marzipan. As a note it can be fresh and juicy, or dark, syrupy and liqueur-like."],"Chocolate":["GOU","Chocolate is built in perfume more often than extracted, since cocoa absolute is costly and subtle."],"Davana":["ARO","An Indian herb, a cousin of wormwood, whose oil smells nothing like a herb at all: sweet, fruity and boozy, like dried apricots and prunes soaked in rum or bourbon, with a tea-like softness and a hint of blackcurrant."],"Tolu Balsam":["RES","A balsam from a tree of Colombia, named after the town of Tolú. It smells sweet and warm, of vanilla and cinnamon, soft, gentler and lighter than its cousin Peru balsam; it rounds out ambers and gourmands."],"Rose":["FLO","The queen of perfumery and, with jasmine, one of its two pillars. Rose is a whole world: fresh petals at dawn, cool and dewy and a little lemony, or a heavy bouquet in a warm room, honeyed, jammy and spicy."],"Rum":["BRW","The spirit of the sugar cane: warm cane sugar and dark molasses, oak barrels and a sweet heat, sometimes with vanilla, clove, ginger or ripe fruit in it."],"Yuzu":["CIT","A Japanese citrus used for its peel, and it smells like several citruses at once: the bitter side of grapefruit, lime, bergamot and a little mandarin."],"Ivy":["GRN","The dark evergreen climber, and its smell is quiet: cool, dark green and leafy, with a dash of spice, a minty lift at the top and an earthy side like loam or bean sprouts."],"Eucalyptus":["ARO","The leaves of the Australian gum tree, and the smell of a cough sweet or a sauna: icy, camphor-sharp and medicinal at first, cooling the nose, then greener and more herbal, like crushed leaves, with a faint sweet woodiness at the end."],"Waterlily":["FLO","The flat-leaved flower of ponds, imagined in a bottle: fresh, soft and watery, green and clean, a light floral floating on water. It softens aquatic perfumes and makes them feel elegant rather than marine."],"Goldenrod":["FLO","The tall golden plumes of late-summer meadows in North America, and a major honey plant for bees."],"Heliotrope":["FLO","A small purple flower whose smell is sweet and powdery, like almond, vanilla and a little cherry: marzipan, meringue, a soft cloud."],"Seaweed":["AIR","The weeds of the shore and the sea, taken as absolutes from brown algae like kelp and wrack."],"Sea Water":["AIR","Pineward's picture of the water itself, at the shore: salty, cool and a little green with algae, rather than the bright blue of a sport perfume. It is built from marine molecules with salt and seaweed notes."],"Cypress":["CON","The tall, dark, candle-shaped tree of Mediterranean hills and cemeteries. Its oil is fresh and resinous, dry and green, a little camphorous and piney, turning clean and woody, like clear forest air."],"Water Pepper":["SPI","A small wild plant of riverbanks and damp meadows, whose leaves taste sharply of pepper and give off a pungent smell when crushed. That bite comes from polygodial, not from black pepper's piperine."],"Neroli":["FLO","The white blossom of the bitter orange, distilled with steam. It is fresh, green and a little bitter, citrusy and honeyed at once, clean and faintly soapy, with a touch of something metallic."],"Black Pepper":["SPI","Freshly cracked peppercorns: hot and fresh, dry and woody, almost tingling to sniff, with a citrusy lift."],"Cedar Leaf":["CON","Not true cedar but the leaves of thuja, the white cedar of North America."],"Green Apple":["FRU","The crisp, sour green apple: tart, sharp and juicy, clean and very fresh, less sweet than red apple. Perfumers build it from fruity esters that catch its bite, and it gives a perfume an easy, bright, orchard-in-the-morning energy."],"Benzoin":["RES","A resin that hardens in tears on the bark of styrax trees in Southeast Asia, from Laos and Thailand to Sumatra."],"Apple":["FRU","The first bite of an apple: the skin breaks and the smell rises at once, watery and bright, sweet and tart together."],"Rum Resin":["RES","Pineward's pairing of rum and resin: rum's sweet, boozy warmth, like molasses and dark sugar, poured over warm, balsamic tree resin, so the resin smells syrupy and a little spirited."],"Spruce":["CON","The tall, sharp-needled Christmas tree of the north. Spruce smells green, woody and balsamic, with a sweetish undertone; black spruce is darker, fir-like and coniferous."],"Tea":["BRW","Tea leaves, dry or steeped: slightly tannic and bitter, fresh or dark, a little like hay and dried leaves, calm and grounding."],"Suede":["ANI","Leather made soft: an accord built by perfumers to smell of the brushed, velvety underside of hide rather than a polished or smoky one."],"Clementine":["CIT","A small, seedless mandarin, the Christmas mandarin, and its note smells like peeling one: sweet, juicy and soft, hardly bitter at all."],"Passionfruit":["FRU","The wrinkled purple fruit full of seeds and pulp. Its smell is intense and tropical: tangy and sharp, a little like grapefruit, with a jammy sweetness and a faint sulphurous burn from the real fruit."],"White Lotus":["FLO","The white form of the sacred lotus. As a note it is usually light and airy, watery and softly sweet, a floral floating on still water; extracted, the real flower turns out dense, dark and honeyed."],"Coffee":["BRW","Freshly roasted, freshly ground coffee: dark, roasted and bitter, nutty and a little chocolatey, oily and rich, like opening a bag of beans."],"Guaiac Wood":["WOO","The wood of a South American tree, distilled into a thick oil: smoky and woody, like a campfire or incense, but mellow, round and sweet, with balsamic, rosy, vanilla and tobacco facets and a tarry, leathery edge."],"Tomato Leaf":["GRN","The smell left on your fingers after brushing a tomato plant: intensely green, sharp and bitter, astringent and a little spicy, vegetal and clean."],"Citron":["CIT","The ancient citrus, cédrat in French, and one of the few wild fruits most other citruses descend from: big, knobbly and almost all thick rind."],"Botanical Musk":["ANI","Musk from plants rather than animals or the laboratory: seeds and roots that happen to make musky molecules of their own, above all ambrette, the musk mallow seed, and angelica root."],"Sawdust":["WOO","The fine dust of a sawmill: soft, creamy and nutty wood, a little powdery and green, like freshly cut timber and pencil shavings."],"Smouldering Logs":["SMK","Pineward's picture of logs burned down and still glowing, after the flames: warm, charred and smoky, softer than a blaze, with a little ash. It is built from smoky wood materials, tars and phenols."],"Edelwood Oil":["WOO","No perfume material by this name could be found: it seems to be Pineward's own name, in Gristmill, for an oil of fine, polished wood ('edel' is German for noble)."],"Mahogany":["WOO","The rich, red furniture wood. As a note it is velvety and refined, deep and woody with a faint smokiness and a touch of caramel, like freshly sanded fine wood. It is rare in perfumery and usually built by the perfumer."],"Labdanum":["RES","The sticky resin of the rockrose, a shrub of the dry Mediterranean hills; it was once combed from the beards of goats that had grazed on it."],"Wet Stone":["EAR","Stone after rain: cool, clean and mineral, a little metallic, watery and earthy at once. It is built from mineral notes, often with a touch of vetiver for a smoky, flinty edge."],"Bluebell":["FLO","The wild English bluebell of spring woods. Its scent is clear, sweet, green and delicate, with a hint of honey: standing in a bluebell wood you are wrapped in a soft green-floral haze."],"Watercress":["GRN","The small leaves of a stream-grown salad, and they smell as they taste: bright, crisp and peppery-green, juicy and a little mustardy. In a perfume it adds a fresh, vegetal bite, like a garden rinsed with cold water."],"Yarrow":["ARO","A common meadow flower whose oil comes out a startling deep blue, from azulene formed as it is distilled."],"Grapefruit":["CIT","Tart, bitter and juicy, like the fruit cut open."],"Nootka":["CON","The Nootka cypress, or yellow cedar, of the Pacific Northwest."],"Green Tea":["BRW","Unoxidised tea leaves: fresh, green and softly bitter, clean and calm, with a faint sweetness."],"Lime":["CIT","Greener, sharper and more bitter than lemon, with a sherbet fizz."],"Lemon Verbena":["ARO","A South American shrub with long, narrow leaves that smell more of lemon than lemons do. Crushed, they are bright, sweet and zesty, lemon-fresh and clean with a green, herbal, almost tea-like softness underneath."],"Treemoss":["EAR","Pseudevernia furfuracea, a lichen that grows on the bark of firs and pines and is gathered in quantity for French perfumery."],"Cedarmoss":["EAR","Lichen gathered from cedar trees, mostly tree moss with some beard lichen, and sold as an absolute from Morocco."],"Cola":["BRW","The soft drink, and a note built the way the drink is flavoured: citrus peel, lime and orange, cinnamon and a touch of nutmeg and coriander, over vanilla and caramel."],"Bitter Orange":["CIT","The Seville orange, too sour to eat, and the most generous tree in perfumery: its peel gives this oil, its blossom gives neroli and orange flower, and its leaves and twigs give petitgrain."],"Sugar":["GOU","Sugar itself has no smell, so perfumers build its idea: sweet, warm and faintly burnt, from molecules like maltol and ethyl maltol that smell of caramel, candyfloss and jam."],"Coriander":["SPI","The seed, not the leaf: coriander seed oil is mostly linalool, so it smells clean, soft and elegant, peppery and woody at first, then warmly floral, almost sweet like a sweet shop."],"Alpine Sandwort":["FLO","A tiny white flower of the high Rocky Mountains, with five notched petals, growing in cracks of rock and stony ground where little else will."],"Green Wheat":["GRN","Wheat still growing in the field, before it turns gold. It smells fresh, green and a little sweet, with the soft, nutty, cereal warmth of the grain underneath, and a hint of flour and bread."],"Orange Blossom":["FLO","The same white blossom as neroli, but taken with solvents rather than steam, so it smells richer, sweeter, warmer and headier: honeyed and heady, with a jasmine-like, slightly animal depth."],"Azure Bluet":["FLO","A tiny sky-blue flower with a yellow eye, also called Quaker ladies, that carpets meadows in the eastern United States in spring."],"Mountain Wildflowers":["FLO","No single flower: the smell of a high meadow in bloom, a fantasy note of many small wild flowers together."],"Malt":["GOU","Grain, usually barley, sprouted and dried with hot air: the heart of beer, whisky and malted milk. It smells savoury-sweet, toasty and bready, like roasted barley, with a soft milky, honeyed side."],"Mango":["FRU","The tropical fruit: juicy and sweet, with hints of peach and plum and a lush, green, slightly peppery edge from the skin. It gives fruity florals an exotic, sunny ripeness."],"Litchi":["FRU","Lychee: under a rough pink shell, white, juicy flesh that smells like a very juicy grape with a delicate rose note."],"Cassis":["FRU","Blackcurrant, in French."],"Rhubarb":["GRN","The pink stalks of spring, tart and green: sour and juicy, vegetal and a little earthy, with a red-berry sweetness. The perfumer's rhubarb is usually tidier than the real thing, less sour and more fruity, but still unmistakable."],"Ponderosa Resin":["RES","The resin of the ponderosa pine of the American West, a tree whose bark smells of vanilla or butterscotch when the sun warms it. Its resin is piney and resinous, with that sweet, vanilla warmth running under it."],"Strawberry":["FRU","Sweet, jammy, a little green and a little creamy: the strawberry is built from a handful of molecules, above all furaneol, which smells of strawberry when dilute and of caramel when strong."],"Butterscotch":["GOU","The sweet of brown sugar and butter cooked together, with cream and a little salt: rich, sweet and buttery, toasty and caramel-like, like a boiled sweet or a pudding sauce. It is intensely gourmand and very long-lasting."],"Raisin Cookies":["GOU","Biscuits baked with raisins: buttery, brown-sugary dough, warm from the oven, with the dark, sticky, winey sweetness of the raisins in it. It is Pineward's picture of a kitchen, homely and sweet."],"Pumpkin":["GOU","The orange flesh of the pumpkin, a winter squash."],"Osmanthus":["FLO","A tiny apricot-coloured flower from China, where it scents tea. Its absolute is fruity and leathery at once: ripe apricot and peach skin, honeyed petals and a suggestion of suede, with a tea-like softness and a violet sweetness."],"Corn Silk":["GRN","The fine, pale threads that spill out of the top of an ear of corn under its husk, one for every kernel."],"Corn Silage":["GRN","Green maize chopped and packed tight, then left to ferment until it sours, to feed cattle through the winter."],"Aged Parchment":["IMP","The smell of old writing skin and old paper, as in an archive: dry, dusty and faintly sweet, with a leathery edge."],"Paper":["IMP","The smell of paper: clean and dry with a faint woody sweetness from the lignin in it, which is close to vanillin."],"Rice":["GOU","Steamed rice, and above all basmati: warm and cosy, starchy and a little nutty, grassy and faintly earthy, with a soft, milky sweetness. Its steamed-basmati smell comes largely from a single molecule."],"Cypriol":["WOO","The root of an Indian sedge, nagarmotha, and a chameleon: spicy at first, like cinnamon, then earthy and green like vetiver, then woody like cedar, with a smoky breath of frankincense and campfire."],"Dragon's Blood":["RES","A deep red resin from the fruit of rattan palms and from dragon trees, used for centuries as a dye, a varnish and a medicine."],"Mousse de Saxe":["IMP","Saxon moss: one of the famous old perfume bases made by the de Laire company, which from the late 1800s mixed the new synthetic molecules with natural oils into ready accords."],"Fig Leaf":["GRN","Not the fruit but the tree: the big, rough leaves and their milky sap. It smells green and a little bitter at first, then soft and creamy, almost coconut-like and gently sweet, with a faint woodiness from the sun-warmed branches."],"Ozone":["AIR","The smell of the air after a storm, or of washing dried in the wind: fresh, sharp, clean and a little metallic."],"Mineral Accord":["EAR","The smell of stone, an impression built from several materials rather than from rock: flint struck against steel, wet slate, sea salt, hot rocks, chalk. It feels cool, clean and a little metallic, and makes a perfume seem clear."],"Galbanum":["GRN","A sticky gum from a giant fennel-like plant of Iran, and the greenest material in perfumery."],"Violet Leaf":["GRN","The heart-shaped leaves of the violet, not its flowers, and they smell completely different: intensely green, cool and watery, strikingly like cucumber, with a slightly metallic edge and a faint flower underneath."],"Marine Accord":["AIR","The sea as a perfume: salt spray, wind, seaweed, wet rocks and driftwood, built from marine molecules like Calone with salt, mineral and algae notes."],"Ylang Ylang":["FLO","The drooping, star-shaped yellow flower of a tree from the Philippines and Indonesia, distilled in stages into different grades, the first and finest the fruitiest."],"Clary Sage":["ARO","A tall sage with pale purple flowers, and softer and sweeter than kitchen sage: herbal and a little like lavender, but with a warm, musky, amber-like depth and a wine-like, hay-and-tobacco richness underneath."],"Honeysuckle":["FLO","The climbing hedgerow flower whose smell pours out on summer evenings: sweet and nectar-like, heady, a little like jasmine tinged with vanilla and honey, with a green freshness and a hint of pollen."],"Carob Pods":["GOU","The long brown pods of the carob tree, sweet enough to be used as a chocolate substitute. They smell cocoa-like and date-like, sweet and a little dusty, fruity and faintly earthy. It is a rare note in perfume."],"Sea Salt":["AIR","Salt itself has no smell; in perfume it is an effect, built to give the feel of salt on warm skin or in the sea air. It makes the notes near it brighter, as salt does sweetness, and often sits with ambrette and seaweed."],"Candle Wax":["IMP","The smell of a candle, lit or just blown out: warm, soft and waxy, a little sweet, with a thread of smoke. Beeswax brings honey, hay and a golden amber warmth; paraffin, a plainer, dustier melted wax."],"Amber Oud":["WOO","Oud wrapped in amber: the dark, woody, sometimes animal smell of agarwood made sweeter and warmer by an ambery, resinous, vanilla-soft base."],"Petrified Driftwood":["WOO","Wood washed by the sea until it is bleached and hard as stone: a dry, woody note with a salty, mineral, seaside edge, the smell of a beach where the wind carries salt, with none of the tropics in it."],"Banana":["FRU","Ripe banana, sweet and creamy, and a note that swings between fruit and sweets."],"Tuberose":["FLO","The most voluptuous white flower of all: a few stems can fill a room for days."],"Civet":["ANI","A secretion of the civet cat, once gathered for perfume and now replaced by civetone, the molecule that gives it most of its smell."],"Aquatic Notes":["AIR","The smell of water, built in the laboratory: fresh, cool, a little salty and green, like sea spray or wet air."],"Coumarin":["GOU","The molecule that smells of fresh hay and tonka beans, first found in tonka and first made in a lab in 1868. It is sweet and warm, like hay drying in the sun and like almond and vanilla, and its character shifts with the dose."],"Pink Pepper":["SPI","Not a true pepper but the pink berries of a South American tree. It is sparkling rather than hot: fresh and fruity, a little citrusy, with a rosy, woody sweetness, quite different from the tingle of black pepper."],"Quince":["FRU","A hard, golden fruit, a cousin of apple and pear. Its smell sits between apple and pear, aromatic, a little sour and dry, with pineapple and a faint rose in it."],"Absinthe":["BRW","The green spirit of fin-de-siècle Paris, made from wormwood, anise, fennel and other herbs."],"Green Tea Flowers":["FLO","The small white flowers of the tea plant itself, a camellia."],"Murumuru Butter":["GOU","A butter pressed from the seeds of a spiny Amazonian palm, used in skin care. Refined, it smells of almost nothing; the virgin butter is gently nutty, a little like coconut oil. As a note it is soft, creamy and skin-like."],"Maninka":["FRU","The fruit of a wild tree of the West African savannah, also called tallow plum or sweet detar, eaten fresh or dried across the Sahel."],"Petrichor":["EAR","The smell of rain on dry ground, named in 1964 from the Greek for stone and the blood of the gods."],"Clear Orchid":["FLO","ADAR's own name for an orchid made sheer."],"Palo Santo":["SMK","The wood of Bursera graveolens, a tree of South America's dry coasts, whose name means holy wood, burned to clear a room."],"Cold Night Air":["AIR","ADAR's picture of stepping outside on a cold night: the air sharp, clean and almost without smell."],"Sawn Resin":["RES","ADAR's picture of resin laid bare when resinous wood is cut: the fresh, sharp, sappy smell of the saw going through, resin and sawdust together."],"Skin":["ANI","The smell of clean, warm skin, built rather than taken from anywhere: soft musks above all, sometimes with ambergris, a trace of powder, and a little sweetness like a lotion."],"Birch Tar":["SMK","A thick, black tar made by heating birch bark without air, used for thousands of years as a glue and to cure leather."],"Woody Notes":["WOO","No single wood: the whole family of them, from cedar and sandalwood to vetiver, patchouli and oud."],"Sand":["EAR","The smell of warm, dry sand, built as an impression: a soft mineral note, often with a woody, sandalwood-like warmth and a little salt. It feels granular, dry and sunny, the beach or the desert rather than the sea."],"Solar Notes":["AIR","The feeling of sunshine on skin: warm, radiant, a little creamy, like sun cream on a beach."],"Dust":["EAR","The dry smell of dust in a closed room or an old house, built rather than taken: mostly powdery materials, iris, musk and benzoin, kept dry so that they read as dust and paper rather than face powder."],"Ash":["SMK","What is left when the fire is out: the dry, grey, mineral smell of wood ash, or at its darker end a cold ashtray."],"Animal Notes":["ANI","The smells of animals, and of the animal in us: once taken from the musk deer, the beaver, the civet and the sperm whale, now almost always made in the laboratory, or taken without harm from things like hyrax stone and goat hair."],"Herbal Notes":["ARO","No one herb: the green, aromatic smell of a bundle of them, rosemary, thyme, sage, mint, lavender and the like, which perfumers call aromatic notes."],"Rain Notes":["AIR","The smell of rain, built rather than bottled: the fresh, watery lift of ozonic and aquatic molecules like Calone and Helional, and the earthy side of petrichor, vetiver, mosses, mineral notes and damp wood."],"Concrete":["EAR","The smell of the city's ground: grey, cool and chalky, and at its best like pavement just after the rain has hit it, moist, a little oily and oddly sweet."],"Green Notes":["GRN","No one plant but the family of green smells: leaves, stems, cut grass, sap, a little galbanum or violet leaf. They are crisp, sharp and alive, and even a trace of them makes a perfume feel fresher and more natural."],"Airy Note":["AIR","Not a material but a quality: something in a perfume that makes it feel light, open and full of air, as if you could breathe it in deeply."],"Amaretto":["BRW","The Italian liqueur, bitter by name but sweet in fact, made with apricot kernels for their almond taste."],"Holy Bread":["GOU","Prosphora, the bread of the Orthodox communion: a small leavened loaf of just white flour, water, yeast and salt, made in two layers and stamped with a cross before it is baked, with prayer."],"Liquor":["BRW","The general idea of a spirit or liqueur: the warm, aromatic sting of alcohol, sometimes dark and mellow like aged spirits in oak, sometimes sharp and sweet like a fruit liqueur."],"Cognac":["BRW","The French brandy, aged in oak: warm, golden and smooth, with a honeyed sweetness, dried fruit like prunes and raisins, a touch of candied orange peel, and the dry, tannic wood of the barrel."],"Dusty Sofa":["IMP","Ataraxia's picture, in Amaretto Jazz in the Melting Room, of an old upholstered sofa: worn fabric, dust, and the warmth of the room around it. It is an impression, built from dusty and powdery notes, soft, stale and comfortable."],"Passionflower":["FLO","The extraordinary purple flower of the passion-fruit vine. Its smell is delicate, sweet and fruity, tropical and a little like grapes, with a green, dewy freshness of cut stems."],"Cocoa Butter":["GOU","The pale fat pressed from cocoa beans, the base of white chocolate and of many skin creams."],"Honeycomb":["GOU","Honey still in its wax cells. It smells of honey and beeswax together: sweet and golden, waxy, with hay, a little pollen and a softly animal warmth, a whole hive rather than a jar."],"Japanese Plum":["FRU","Here the loquat, the small orange fruit also called Japanese plum, grown in Japan for over a thousand years."],"Chantilly Cream":["GOU","Crème Chantilly: cream whipped with sugar and vanilla. As a note it is creamy, sweet and vanilla-soft, a little powdery, and above all airy: dessert that feels light rather than heavy."],"Goldenberry":["FRU","The small orange fruit in a papery husk, also called cape gooseberry or physalis. It tastes and smells sweet and tart together, tangy and tropical, like cherry tomato crossed with pineapple, mango and a touch of vanilla."],"Condensed Milk":["GOU","Milk cooked down with sugar until thick: sweet, gooey and warm, creamy and syrupy, with a caramelised edge."],"Snowdrops":["FLO","The small, nodding white flowers that come up through the snow at the very end of winter. Up close, and especially in a large drift, they give off a faint, sweet honey smell, the nectar they make for the first bees."],"Elemi":["RES","A soft resin from Canarium trees of the Philippines, used by the Egyptians in embalming. It smells bright and fresh: lemony and peppery at first, then balsamic, a little like frankincense but lighter and greener."],"Gold":["IMP","Gold has no smell; it is an idea perfumers chase. They give the feeling of it with yellow flowers, benzoin, white or pink pepper, rose and bergamot, and with metallic materials that seem smooth, shiny and cool."],"Dates":["FRU","The fruit of the date palm, from the Middle East, sweet as candy. As a note it is a fantasy, rich and fruity-sweet, with caramel, honey and a buttery softness, like a date split open."],"Nectar":["FLO","The sugary liquid flowers make to draw in bees, imagined as a smell: sweet, thick and a little sticky, like runny honey or syrup, with a jammy richness and a floral softness around it."],"Porcelain":["IMP","The smell of cold white china, which in perfume is a mineral, clay-like note: cool, clean and faintly like damp plaster, sometimes powdery."],"Lipstick":["IMP","The smell of old-fashioned lipstick, which was scented with rose, violet and iris: in perfume an undefined, powdery, red-purple floral in which you cannot quite pick out the rose or the violet, with something waxy and creamy under it."],"Soda Bubbles":["BRW","Fizz rather than a flavour: the prickle of bubbles rising from a glass of soda. Perfumers make it with sparkling aldehydes and airy musks, and it makes the top of a perfume feel effervescent and tingly."],"Blush":["IMP","No house page says what goes into it; it is one of the cosmetic notes Fragrantica lists for Ataraxia's My Doll's Makeup, named for the pressed powder brushed on the cheeks."],"Velvet":["IMP","A texture rather than a smell: the soft, heavy, plush feel of velvet, given by soft musks, powdery flowers and warm woods, like cashmeran, a molecule said to smell of cashmere wool."],"Makeup Palette":["IMP","No house page says what goes into it; it is one of the cosmetic notes Fragrantica lists for Ataraxia's My Doll's Makeup, named for an open palette of powders and colours."],"Lip Gloss":["IMP","The smell of lip gloss: sweet and sugary, candyfloss, cherry, peach or vanilla, over something waxy and slick."],"Eye Pencil":["IMP","No house page says what goes into it; it is one of the cosmetic notes Fragrantica lists for Ataraxia's My Doll's Makeup, named for the kohl or eyeliner pencil: the dry, woody smell of a cedar pencil being sharpened, with the waxy, powdery softness of the makeup inside it."],"Instant Film":["IMP","The smell of a Polaroid as it comes out of the camera and the picture appears: a fantasy note, chemical and a little metallic from the developing paste, with a plastic note from the frame and a faint, almost vanilla sweetness."],"Marigold":["FLO","Tagetes, the pungent orange marigold, and a far stranger smell than its cheerful colour suggests: a burst of crushed green leaves and bitter herbs, sharp and vegetal, then a sweet, fruity side like green apple and apricot, a little like chamomile."],"Cumin":["SPI","The earthy spice of curries, and perfumery's most divisive one. It is sharp, green and pungent at first, then warm and resinous, and then unmistakably like skin and sweat: an intimate, animal warmth."],"Dusty Antiques":["IMP","Ataraxia's picture of a room full of old things, in Vestibule, a vampire's lair: old wood and polish, faded fabric and paper, and dust over all of it."],"Sugar Cane":["GRN","The tall grass sugar comes from."],"Peru Balsam":["RES","A thick, dark balsam from a tree of Central America, mostly El Salvador, despite the name. It smells sweet, warm and rich, like vanilla and cinnamon, soft and balsamic; it gives ambers and gourmands a creamy warmth."],"Allspice":["SPI","The dried berry of a Jamaican tree, named because it smells like several spices at once: cinnamon, clove and nutmeg together, sweet and dry, warm and a little peppery."],"Lily of the Valley":["FLO","The tiny white bells of May, lucky charms in France. Their smell is fresh, green and dewy, clean and delicate: cool morning air, snapped green stems, a wet garden on a warm spring morning, with a faint sweetness."],"Castoreum":["ANI","A secretion of the beaver, which it uses to mark its territory, once taken for perfume and now nearly always rebuilt from other materials."],"CO2 Extracts":["IMP","Not a smell but a way of taking one: carbon dioxide, pressed until it behaves like a liquid, washes the smell out of a plant at low temperature and then simply evaporates, leaving no solvent behind."],"Amberwood":["WOO","Not a tree but a family of modern synthetic woody-ambers, the best known sold as Amberwood or Boisambrene."],"Red Berries":["FRU","No single berry: strawberries, raspberries, cherries and cranberries together, tangy and sweet, bright and fruity. It is a general red-fruit note, and depending on the perfume it can be fresh and crisp or syrupy."],"Blueberry":["FRU","Small blue berries, and a note that can be refreshing and gently sweet or thick and jammy: tart and fruity with a creamy, almost vanilla softness, sometimes smelling more of blueberry muffins and pie than of the fruit."],"Plum Blossom":["FLO","The pale blossom of the Asian plum, ume, which flowers in late winter and announces spring in Japan and China."],"Toffee":["GOU","Sugar and butter boiled until hard and glossy: sweet and buttery, with burnt sugar and a slightly smoky edge, rich and chewy, between caramel and condensed milk. It is gourmand comfort, like caramel popcorn."],"Fig":["FRU","The ripe fruit rather than the leaf: golden skin warmed by the sun, a honeyed, jammy lushness, between fruity and green. The fig tree's milky sap gives it a soft, creamy, coconut-like side, rebuilt by perfumers with lactones."],"Tiare Flower":["FLO","The Tahitian gardenia, symbol of Tahiti, soaked in coconut oil to make monoi. It is heady and intensely sweet, creamy and tropical, close to gardenia and tuberose but greener and more watery-fresh."],"Teak Wood":["WOO","The dense tropical wood of boat decks and garden furniture. As a note it is a 'blond' woody fantasy, warm and a little smoky, with an old-leather side from the wood's resin. It is built by the perfumer."],"Pear":["FRU","Juicy, sweet and watery, like apple but softer and less crisp."],"Peach":["FRU","A ripe peach warmed by the sun: sweet, juicy and velvety, creamy, with a touch of coconut."],"Yellow Flowers":["FLO","Flowers that are literally yellow, ylang-ylang, mimosa, narcissus, frangipani, used together: sweet, waxy and a little heady, with a powdery, pollen-like softness and a sunny, optimistic brightness."],"Freesia":["FLO","A florist's favourite, and a flower whose real smell has never been caught in a bottle: every freesia in perfume is a reconstruction."],"Caramel":["GOU","Sugar heated until it turns golden and brown: warm, sweet and a little burnt, toffee-like and comforting."],"Raspberry Leaf":["GRN","Nothing like the berry: the leaf smells of the forest floor rather than of sweets."],"Magnolia":["FLO","The big, creamy flowers of the magnolia tree. They smell softly floral and creamy-sweet, a little like jasmine but lighter, with a bright, fresh lemony edge, a hint of honey and sometimes something faintly salty."],"Cashmeran":["WOO","A synthetic molecule named for the feel of cashmere: musky and woody at once, dry and 'woolly' like a new jumper, powdery and a little spicy and piney, with a clean, sun-warmed, skin-like saltiness."],"Scorched Pineapple":["FRU","Pineapple roasted until its sugars catch and darken: still juicy and tangy, but deeper, caramelised and a little smoky, fruit on the edge of burning."],"Amyris":["WOO","The oil of a small Caribbean tree, often called West Indian sandalwood though it is no sandalwood at all."],"Bark":["WOO","The skin of a tree: dry, dusty and woody, a little earthy and resinous, like rough bark warmed in the sun. It is an impression built from woody materials, and it makes a woody perfume feel outdoors rather than polished."],"Masala Chai":["BRW","Indian spiced tea: black tea brewed with milk, sugar and spices like cardamom, cinnamon, ginger, clove and black pepper. As a note it is sweet, spicy and milky, warm and deeply comforting."],"Tobacco Flower":["FLO","The white, trumpet-shaped flowers of ornamental tobacco plants, which scent the garden at night."],"Sparkling Water":["BRW","Water with bubbles in it: clean, cold and fizzy, with a faint mineral sharpness. As a note it is an effect, made with aldehydes and musks, and it gives a perfume a bright, prickling, effervescent freshness."],"Fenugreek":["SPI","Small golden seeds used in curries, and a smell that changes with strength: strong it is savoury, like curry; diluted it turns sweet, nutty and like maple syrup and burnt sugar. Both come from one molecule, sotolon."],"Jasmine Tea":["BRW","Green tea scented with jasmine flowers, usually jasmine sambac. It smells of green, slightly bitter, astringent tea with a sweet, fresh jasmine floating over it, delicate and comforting, like steam from a cup."],"Gardenia":["FLO","A creamy white flower with glossy leaves, and one of the most intoxicating smells in a garden: rich and buttery, but also green, dewy and almost cool, with strange mushroomy and even cheesy facets up close."],"Green Mandarin":["CIT","Mandarin pressed while the fruit is still green and unripe: sharper, tarter and leafier than the sweet, candied smell of ripe mandarin, with a floral hint. It is the smell left on your hands after peeling one."],"Guava":["FRU","The pink-fleshed tropical fruit. As a note it is lush, sweet and juicy, with a bittersweet, lemony tang and sometimes the dry, slightly musky smell of its thick skin."],"Moroccan Tea":["BRW","North African mint tea: gunpowder green tea brewed with spearmint and plenty of sugar. It smells fresh, green and minty, sweet and a little tannic, clean and refreshing."],"Pine Tar":["SMK","Tar made from pine wood, dark and sticky, once painted on boats and ropes to keep the water out. It smells resinous, smoky and balsamic, like hot pine resin and burnt wood, sweeter and more piney than birch tar's leather."],"Hyrax":["ANI","Africa stone: the droppings of the rock hyrax, a small animal of Africa, hardened and aged into stone, and collected without harm."],"Artemisia":["ARO","The wormwood family of silvery, bitter herbs, and in perfumery most often armoise, the oil of a wild Mediterranean artemisia."],"Violet":["FLO","The small purple flower of spring, and the sweetest, most powdery floral there is: soft and romantic, airy and dewy, like old-fashioned sweets and face powder, a little like iris."],"Costus":["ANI","A root whose oil smells like unwashed hair: a scalp warmed by the sun, a cat's fur, a wet dog, a goat. Under that animal warmth it is soft and powdery like orris root, creamy and fatty, even a little like violets at first."],"Cassia":["SPI","Chinese cinnamon, the bark most 'cinnamon' in shops really is."],"Petitgrain":["CIT","Not from the fruit but from the leaves and green twigs of the bitter orange tree, distilled with steam."],"Mint-Sandalwood Co-Distillation":["ARO","Mint and sandalwood distilled together rather than apart, the way the attars of India are made: plants are distilled in a copper still, and their vapour is caught in sandalwood oil, which takes up their smell and holds it."],"Thyme":["ARO","The small-leaved herb of Mediterranean hillsides. Its smell is strong and rich: herbal and spicy, sharply medicinal, warm, and in a perfume surprisingly leathery."],"Bakhoor":["RES","Arabic for incense: chips of agarwood or sandalwood soaked in fragrant oils and resins, often rose, bound with honey or sugar syrup and left to cure for weeks, then heated on charcoal in a burner, the mabkhara, so that the perfumed smoke can be passed through clothes, hair and the rooms of a home."],"Powder Accord":["IMP","An accord of cosmetic powder, the face powder and talc of a dressing table."],"Whiskey":["BRW","A spirit distilled from fermented grain, barley, corn or rye, and aged for years in oak casks; Scotland and Japan spell it whisky, Ireland and America whiskey."],"Cabreuva":["WOO","The oil of a South American tree, Myrocarpus, which grows wild in Brazil, Paraguay and Argentina and is prized as timber; it is distilled from the wood chips and sawdust the timber leaves."],"Oak Barrel":["WOO","The inside of the oak cask that whisky, cognac, rum and wine are aged in. Toasted and charred, the oak gives the spirit vanilla, coconut and cream, caramel and a little smoke, and the spirit soaks back into the wood."],"Styrax":["RES","The balsam of the sweetgum tree, from Turkey and Central America; not to be confused with benzoin, whose trees share the name."],"Cade Oil":["SMK","A dark tar oil made from the wood of the prickly juniper, a shrub of the Mediterranean, by heating the wood without air until it breaks down, much as charcoal is made, rather than by gently distilling it."],"Copaiba Balsam":["RES","An oleoresin, a thick, golden mix of resin and oil, drawn from holes bored into the trunks of copaiba trees in the Amazon, and used there as a medicine for centuries."],"Underground Tunnel":["IMP","Not a material but an impression, OM Parfum's own: the air of a tunnel under the ground."],"Fruity Notes":["FRU","Not one fruit but fruit in general: a fresh, sweet, juicy note, of pear, plum, peach, berries, apple or whatever the perfumer reaches for, used to brighten the flowers or warm the woods around it."],"Huang Qi":["ARO","Astragalus root, one of the great tonics of Chinese medicine, taken for more than two thousand years: the dried root of a milk vetch, Astragalus membranaceus, a plant of the pea family from northern China, sold in long, pale, yellowish slices (huang qi means 'yellow leader')."],"Paprika":["SPI","The red spice made from sweet peppers, Capsicum annuum, dried and ground, chiefly in Hungary and Spain, where the pimentón of La Vera is dried over oak smoke."],"Hinoki":["CON","The Japanese cypress, Chamaecyparis obtusa, whose pale, fragrant wood Japan has long used for its temples and its traditional baths."],"Sichuan Pepper":["SPI","Not a true pepper but the dried husks of the berries of a prickly ash, Zanthoxylum, of China and Japan: the spice that makes the mouth tingle and go numb."],"Cheese":["GOU","Ripened cheese, rebuilt: its smell comes from short-chain fatty acids such as butyric and isovaleric acid, the molecules that form as butter and cheese age, and that are in sweat too."],"Jonquil":["FLO","A small, sweet-scented narcissus, Narcissus jonquilla, grown around Grasse and in Morocco, whose flowers are washed with solvents to make a rare and costly absolute."],"Linden Blossom":["FLO","The small, pale yellow flowers of the linden, the lime tree of European avenues (nothing to do with the citrus lime), tilleul in French and a soothing tea."],"Coconut Milk":["GOU","The rich white milk pressed from the grated flesh of ripe coconuts, not the clear water inside the nut. No oil for perfume can be drawn from it, so it is built from lactones, molecules with a soft, creamy, coconut-like smell."],"Lilac":["FLO","The spring blossom of the lilac bush, a relative of the olive from south-eastern Europe."],"Buddhawood":["WOO","The oil steam-distilled from the heartwood of Eremophila mitchellii, a small tree of the dry inland scrub of Queensland and New South Wales, also called false sandalwood or desert rosewood."],"Iso E Super":["WOO","A synthetic molecule made by the fragrance company IFF in 1973, and now one of the most used materials in perfumery."],"Cannabis":["GRN","The hemp plant, Cannabis sativa."],"Chocolate Cake":["GOU","A baked chocolate cake: cocoa and chocolate with the warm, buttery, flour-and-sugar smell of sponge, sometimes with cream or icing. It is gourmand at its most homely."],"Cocktail Accord":["BRW","No one drink named: an accord of a mixed drink, a spirit with fruit, sugar and something sharp."],"Lava":["EAR","An accord of molten rock, which has no smell anyone could bottle: a fantasy of hot stone, ash and volcanic air."],"Shiso":["ARO","The leaf of perilla, a herb of the mint family grown and eaten across East Asia, distilled for its oil."],"Turmeric":["SPI","The golden root of curries. Its smell is warm and earthy, woody and a little like carrot, with a peppery ginger zing at the back."],"Metallic Notes":["EAR","The smell of metal: coins, steel, a cold key, a hint of blood."],"Pea":["GRN","Fresh green peas: young pods torn open, green, a little sweet, starchy and earthy, like a vegetable garden in early summer, sometimes with the faintly lily-like smell of the pea's flower."],"Evernyl":["EAR","A synthetic molecule, sold by Givaudan, that stands in for oakmoss, the lichen whose extract has been strictly limited because it can irritate the skin."],"Dulce de Leche":["GOU","The caramel of South America: milk and sugar simmered slowly until they thicken and turn a deep golden brown. Its name means 'sweet of milk'."],"Cream":["GOU","Fresh dairy cream as a note. There is no extract of cream, so it is built from lactones and milky materials, often with vanilla, to give a smooth, rich, slightly sweet and buttery softness."],"Angelica Root":["ARO","The root of angelica, a tall herb of northern Europe, dried and distilled for its oil."],"Popcorn":["GOU","Freshly popped corn: warm, buttery, toasty and nutty, a little salty and sweet, the smell of a cinema foyer."],"Mimosa":["FLO","The fluffy yellow pompom flowers of the silver wattle, a sign of the end of winter in the south of France."],"Turpentine":["RES","The oil distilled from pine resin, the painter's solvent. It smells sharp and piney, resinous and bright, cold and a little like a solvent: the smell of an artist's studio or a freshly tapped pine."],"Willow Bark":["WOO","The bark of the riverbank willow, which holds salicin, the forerunner of aspirin. It smells like peeling a twig by the water: wet wood and cool green sap, a little bitter, with a sharp, medicinal, almost wintergreen edge."],"Moldy Cedarwood":["WOO","Cedar gone damp and mildewed: the dry, clean pencil wood turned musty, earthy and a little mushroomy, like an old chest in a wet cellar or a coffin in the ground. It is Tombstone's picture of decay."],"Dead Water":["AIR","Tombstone's name for still, stagnant water, the water of a grave or a mire that nothing moves through: murky, green, a little rotten and cold."],"Birch":["WOO","The white-barked tree of northern forests. Its leaves and buds smell green; its bark and wood, and above all the tar distilled from them, smell smoky, leathery and a little like wintergreen."],"Hiba":["CON","The wood of Thujopsis dolabrata, a Japanese conifer of the cypress family, the hinoki's cousin, most of it from the forests of Aomori in the far north of Honshu."],"Kuromoji":["ARO","Lindera umbellata, a deciduous shrub of the Japanese mountains of the laurel family, one of the spicebushes."],"Pine Smoke":["SMK","The smoke of burning pine, rather than of smoke in general."],"Siam Wood":["WOO","The wood of Fokienia hodginsii, a cypress of the mountains of Vietnam, Laos and southern China."],"Lily":["FLO","The big white lily of bouquets and funerals. It smells sweet, creamy and waxy, with a spicy warmth of clove, cinnamon and saffron, and in full bloom something almost meaty."],"Copal":["RES","The resin of tropical American trees, Protium copal and several Bursera, burned as incense in Mexico and Central America since the Maya, who called it pom; the word itself is the Nahuatl copalli, incense."],"Balsamic Vinegar":["GOU","Aged Italian vinegar made from cooked grape juice and left for years in wooden barrels: dark, thick, sweet and sour at once, fruity and winey, with a sharp tang and a woody depth."],"Chrysanthemum":["FLO","The big autumn flower, and one that smells more of leaves than of flowers: sharp, green, bitter and herbal, cool and a little camphorous, with a hint of pine and the chilly smell of a florist's fridge."],"Wormwood":["ARO","Artemisia absinthium, the bitterest herb there is, and the one that flavours absinthe and vermouth. Its smell is sharp, bitter and intensely green, herbal and a little camphorous, with a dry hint of hay and smoke."],"Caraway":["SPI","The small crescent seeds of rye bread and aquavit. Their oil is mostly carvone, which in caraway's form smells warm, spicy and a little minty-herbal, exactly like fresh rye bread."],"Basil":["ARO","The kitchen herb, and it smells like a leaf rubbed between your fingers: green, sharp and a little spicy, with a touch of clove, since it shares clove's molecule, eugenol."],"Marjoram":["ARO","Oregano's gentler cousin. Sweet marjoram oil is warm and sweet-spicy rather than green: more like nutmeg and cardamom than a leafy herb, with a soft woody, faintly medicinal warmth underneath."],"Goat Hair":["ANI","The hair of a billy goat in rut, steeped in alcohol as a tincture: an animal note natural perfumers can take without harming the animal."],"Oriental Notes":["IMP","Not one material but an old name for a whole family: the warm, rich, sweet perfumes of amber, vanilla, resins, spices, sandalwood and coumarin."],"Tangerine":["CIT","Almost the same fruit as mandarin, named after Tangier in Morocco, where it was shipped from, and it smells almost the same: sweet, fruity and zesty, with a touch of honey and a hint of neroli."],"Papyrus":["WOO","The tall reed of the Nile, whose pith the Egyptians pressed into paper. Perfumers draw it dry and woody, earthy and a little smoky, like snapped reeds and the pages of an old, dusty book, close to vetiver but drier."],"Aldehydes":["AIR","A family of molecules, mostly made in the laboratory though they also occur in citrus peel and flowers, that perfumers name by the number of carbon atoms in their chain: C-10, C-11, C-12."],"Skunk Oil":["ANI","The skunk's own defence: the oily spray it shoots from two glands under its tail when it is threatened, which can be smelled from far off and lingers for days."],"Night Blooming Jasmine":["FLO","Not a jasmine at all but Cestrum nocturnum, a shrub of the nightshade family, kin to tomatoes and potatoes, from the tropical Americas and grown all over the warm world."],"Muhuhu":["WOO","The wood of Brachylaena huillensis, an East African tree of the daisy family, distilled into an oil and often sold as African sandalwood, though it smells little like real sandalwood."],"Bushman Candle Resin":["RES","The resin of Sarcocaulon, a small succulent shrub of the dry Namaqualand, Karoo and Namibian desert, whose waxy bark is so full of resin that its stems burn like candles, which is where its name comes from."]}};
+/* ============================================================
+   TEST PAGE 1 — WORLDS (2026-11-03, in place of "Skin, scanned").
+
+   The owner: "Recreate test page 1 with images 3 and 4." Image 3: a planet
+   glowing in a gradient, its readings down the left (surface pressure,
+   escape velocity, an atmosphere gauge), a ring of nodes and lines round
+   it. Image 4: a pale poster — a title and a date over a heavy rule, dark
+   spheres out of focus with coloured edges, a thin double circle, three
+   lines of text.
+
+   Here every fragrance on the site is a world: its colours are the accords
+   its notes are in, its ring is its notes (top, middle and base where its
+   source divides them), its moons the accords, its atmosphere how its notes
+   divide between them. The worlds near it in the site's order hang out of
+   focus round it; the double circle finds one under the hand, and pressed
+   it comes into focus. A snapshot of the site, written in below: nothing on
+   the site reads this page, and it reads nothing of the site.
+   ============================================================ */
 (function () {
   "use strict";
-
-  const canvas = document.querySelector(".t1-scene");
-  const ctx = canvas.getContext("2d");
   const STILL = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const TAU = Math.PI * 2;
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+  const hash = (t) => { let h = 2166136261; for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
 
-  // ---- WHAT IT SAYS: the Skin research's Table 2 (works/skin.html) ------
-  const SITES = [
-    { id: "ear", name: "Behind ear", temp: 34, sebum: "Low", char: "True-to-formula, intimate sillage", at: [0.088, 0.645, -0.085] },
-    { id: "neck", name: "Neck, sides", temp: 35, sebum: "Moderate", char: "Strong projection, more body interaction", at: [0.062, 0.5, -0.13] },
-    { id: "elbow", name: "Inner elbow", temp: 33, sebum: "Low", char: "Quiet, close-range, long-lasting", at: [0.25, 0.05, 0.04] },
-    { id: "wrist", name: "Inner wrist", temp: 32, sebum: "Low-moderate", char: "Clean, linear, moderate projection", at: [0.215, -0.265, 0.125] },
-  ];
-  const PAIRS = [[0, 1], [2, 3], [1, 3], [0, 2]];
-
-  // ---- THE SKELETON, in points (y up, the figure facing +z) ------------
-  let seed = 20261102;
-  const rand = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296);
-  const P = [];          // x, y, z, brightness, part
-  const parts = [];      // [start, end) of each part, for joining neighbours within it
-  const chains = [];     // pairs joined in order (ribs, bones)
-  function part(fn) { const s = P.length / 5; fn(); parts.push([s, P.length / 5]); }
-  function pt(x, y, z, b, k) { P.push(x, y, z, b, k || 0); return P.length / 5 - 1; }
-
-  const j = (a) => (rand() - 0.5) * a;
-  // the spine: twenty-four vertebrae down an S, each a cloud of points —
-  // its body a squat drum, its arch and spinous process back and down, its
-  // transverse processes out to the sides — then the sacrum
-  const V = 24;
-  const spine = (t) => [0, 0.56 - t * 1.08, -0.12 + 0.045 * Math.sin(t * Math.PI * 2.1 + 0.25) - 0.02 * t];
-  const vertebrae = [], vparts = [];
-  for (let i = 0; i < V; i++) {
-    const t = i / (V - 1);
-    const [x0, y0, z0] = spine(t);
-    const r = 0.024 + 0.03 * Math.pow(t, 1.3), h = 0.016 + 0.012 * t;
-    part(() => {
-      for (let k = 0; k < 18; k++) {
-        const a = rand() * TAU, rr = r * (0.5 + 0.5 * Math.sqrt(rand()));
-        const yy = (rand() < 0.5 ? 1 : -1) * h * (0.55 + 0.45 * rand());
-        pt(x0 + Math.cos(a) * rr, y0 + yy, z0 + Math.sin(a) * rr * 0.85, 1);
-      }
-      const lift = i > 6 && i < 19 ? 1.7 : 0.7;
-      for (let k = 0; k <= 6; k++) pt(x0 + j(0.01), y0 - k * 0.005 * lift + j(0.005), z0 - r * 0.85 - k * (0.011 + 0.004 * t), 0.95);
-      for (const side of [-1, 1]) for (let k = 1; k <= 3; k++) pt(x0 + side * (r * 0.8 + k * 0.012) + j(0.004), y0 + j(0.008), z0 - r * 0.55 - k * 0.004, 0.85);
-    });
-    vparts.push(parts[parts.length - 1]);
-    vertebrae.push({ y: y0, z: z0, r });
-  }
-  part(() => {
-    for (let i = 0; i < 80; i++) {
-      const t = rand(), w = 0.075 * (1 - t * 0.85);
-      pt(j(2 * w), -0.565 - t * 0.21, -0.135 - 0.06 * t + j(0.022), 0.9);
-    }
+  // ---- THE DATA ---------------------------------------------------------
+  const D = DATA;
+  const ACC = {}; D.accords.forEach((a) => (ACC[a.c] = a.n));
+  // every accord a colour, leaning to the picture's: magenta, coral, red,
+  // violet and blue, with gold for the brightest
+  const HUE = {
+    CIT: [242, 185, 75], ARO: [74, 160, 150], GRN: [110, 172, 96], FLO: [226, 85, 143], FRU: [239, 107, 74],
+    SPI: [210, 60, 60], GOU: [196, 128, 70], BRW: [150, 62, 48], WOO: [118, 62, 104], CON: [46, 116, 100],
+    RES: [190, 74, 50], ANI: [140, 48, 92], EAR: [86, 108, 140], AIR: [62, 122, 214], SMK: [62, 56, 92], IMP: [112, 98, 205],
+  };
+  const uses = {};
+  const notesOf = (f) => (f.f ? f.f : [].concat(f.t || [], f.m || [], f.b || []));
+  D.frags.forEach((f) => notesOf(f).forEach((n) => (uses[n] = (uses[n] || 0) + 1)));
+  const WORLDS = D.frags.map((f, i) => {
+    const notes = notesOf(f);
+    const share = {};
+    notes.forEach((n) => { const a = (D.notes[n] || [""])[0]; if (a) share[a] = (share[a] || 0) + 1; });
+    const atm = Object.keys(share).map((a) => ({ a, n: share[a], p: share[a] / notes.length })).sort((x, y) => y.n - x.n || (x.a < y.a ? -1 : 1));
+    const tier = (n) => (f.f ? "" : (f.t || []).includes(n) ? "Top" : (f.m || []).includes(n) ? "Middle" : "Base");
+    const most = notes.slice().sort((a, b) => (uses[b] || 0) - (uses[a] || 0))[0];
+    return { i, f, name: f.n, house: D.houses[f.h] || f.h, year: f.y, notes, atm, tier, most, seed: hash(f.n + f.h) };
   });
-  vparts.push(parts[parts.length - 1]);
-  // the skull, sat on the first vertebra: a cranium of points, the face
-  // left open below the brow, its sockets, and the jaw
-  const SK = { x: 0, y: 0.705, z: -0.055 };
-  part(() => {
-    const n = 340;
-    for (let i = 0; i < n; i++) {
-      const yy = 1 - (2 * (i + 0.5)) / n, rr = Math.sqrt(1 - yy * yy), th = i * 2.39996 + j(0.5);
-      let px = Math.cos(th) * rr * 0.1, py = yy * 0.118, pz = Math.sin(th) * rr * 0.135;
-      if (pz > 0.08) pz = 0.08 + (pz - 0.08) * 0.45;
-      if (py < -0.02 && pz > 0.035) continue;
-      if (py < -0.08 && Math.abs(px) < 0.05) continue;
-      pt(SK.x + px + j(0.006), SK.y + py + j(0.006), SK.z + pz + j(0.006), 0.6 + 0.35 * rand());
-    }
-  });
-  part(() => {
-    for (let i = 0; i <= 22; i++) {
-      const a = Math.PI * (i / 22);
-      pt(Math.cos(a) * 0.078 + j(0.004), 0.6 - Math.sin(a) * 0.025 + j(0.004), SK.z - 0.03 + Math.sin(a) * 0.15 + j(0.004), 0.9);
-    }
-    for (let i = 0; i < 10; i++) pt(j(0.07), 0.585 + j(0.012), SK.z + 0.1 + j(0.02), 0.7);
-  });
-  for (const side of [-1, 1]) {
-    part(() => { for (let i = 0; i < 12; i++) { const a = (i / 12) * TAU; pt(side * 0.042 + Math.cos(a) * 0.025, 0.71 + Math.sin(a) * 0.02, SK.z + 0.105, 0.95); } });
-  }
-  // the ribs: twelve pairs, out from the thoracic vertebrae round to the front
-  for (let i = 0; i < 12; i++) {
-    const v = vertebrae[7 + i];
-    const t = i / 11;
-    const ax = 0.11 + 0.1 * Math.sin(Math.PI * (0.25 + t * 0.6)), az = 0.1 + 0.07 * Math.sin(Math.PI * (0.2 + t * 0.65));
-    const reach = i < 7 ? 0.98 : 0.98 - (i - 6) * 0.12;
-    for (const side of [-1, 1]) {
-      part(() => {
-        let prev = -1;
-        const n = 13;
-        for (let k = 0; k <= n; k++) {
-          const s = (k / n) * reach;
-          const a = -Math.PI / 2 + s * Math.PI * 0.95;
-          const p = pt(side * (v.r + Math.cos(a) * ax) + j(0.006), v.y - 0.01 - s * 0.11 + j(0.006), v.z + 0.02 + (Math.sin(a) + 1) * az * 0.95 + j(0.006), 0.5);
-          if (prev >= 0) chains.push(prev, p);
-          prev = p;
-        }
-      });
-    }
-  }
-  // the sternum
-  part(() => { for (let k = 0; k < 14; k++) pt(j(0.02), 0.33 - k * 0.02, vertebrae[10].z + 0.24 - k * 0.003 + j(0.008), 0.6); });
-  // the collar bones and one arm (the near side), as clouds along each bone
-  function bone(a, b, r, n, br) {
-    part(() => {
-      for (let k = 0; k < n; k++) {
-        const t = rand(), q = rand() * TAU, rr = r * (0.6 + 0.4 * rand()) * (1 + 0.6 * Math.pow(Math.abs(t - 0.5) * 2, 4));
-        pt(a[0] + (b[0] - a[0]) * t + Math.cos(q) * rr, a[1] + (b[1] - a[1]) * t + j(0.006), a[2] + (b[2] - a[2]) * t + Math.sin(q) * rr, br);
-      }
-    });
-  }
-  bone([0.02, 0.40, 0.07], [0.2, 0.43, -0.03], 0.008, 22, 0.6);
-  bone([-0.02, 0.40, 0.07], [-0.2, 0.43, -0.03], 0.008, 22, 0.45);
-  bone([0.23, 0.42, -0.03], [0.25, 0.06, 0.02], 0.016, 95, 0.75);     // the humerus
-  bone([0.25, 0.04, 0.03], [0.215, -0.27, 0.12], 0.012, 80, 0.75);    // the forearm
-  part(() => {                                                       // the hand, splayed
-    for (let f = 0; f < 5; f++) {
-      let prev = -1;
-      for (let k = 0; k < 5; k++) {
-        const p = pt(0.215 + (f - 2) * 0.011 + j(0.004), -0.29 - k * 0.022, 0.13 + (f - 2) * 0.006 + k * 0.006, 0.6);
-        if (prev >= 0) chains.push(prev, p);
-        prev = p;
-      }
-    }
-  });
+  const N = WORLDS.length;
+  const MOST_NOTES = Math.max(...WORLDS.map((w) => w.notes.length));
 
-  const NP = P.length / 5;
-  // joined to their nearest neighbours within a part: the plexus — and
-  // each vertebra to the next by its three nearest pairs
-  const links = chains.slice();
-  const d2 = (i, k) => { const dx = P[i * 5] - P[k * 5], dy = P[i * 5 + 1] - P[k * 5 + 1], dz = P[i * 5 + 2] - P[k * 5 + 2]; return dx * dx + dy * dy + dz * dz; };
-  for (const [s0, e0] of parts) {
-    for (let i = s0; i < e0; i++) {
-      const near = [];
-      for (let k = s0; k < e0; k++) if (k !== i) { const d = d2(i, k); if (d < 0.0025) near.push([d, k]); }
-      near.sort((x, y) => x[0] - y[0]);
-      for (let k = 0; k < Math.min(3, near.length); k++) if (i < near[k][1]) links.push(i, near[k][1]);
-    }
-  }
-  for (let v = 0; v + 1 < vparts.length; v++) {
-    const [a0, a1] = vparts[v], [b0, b1] = vparts[v + 1];
-    const pairs = [];
-    for (let i = a0; i < a1; i++) for (let k = b0; k < b1; k++) pairs.push([d2(i, k), i, k]);
-    pairs.sort((x, y) => x[0] - y[0]);
-    for (let k = 0; k < 3; k++) links.push(pairs[k][1], pairs[k][2]);
-  }
-  // a few facets filled faintly, from three points joined in a row
-  const facets = [];
-  for (let i = 0; i + 5 < links.length && facets.length < 540; i += 14) facets.push(links[i], links[i + 1], links[i + 3]);
-  // and lines out from the spine to the dark around it, as the image's
-  const reach = [];
-  for (let i = 0; i < 26; i++) {
-    const a = rand() * TAU, s = vertebrae[Math.floor(rand() * V)];
-    reach.push(0, s.y, s.z, Math.cos(a) * (0.6 + rand() * 0.6), s.y + (rand() - 0.5) * 0.5, Math.sin(a) * 0.4);
-  }
-  // the shards drifting off it
-  const SH = STILL ? 60 : 140;
-  const shards = [];
-  for (let i = 0; i < SH; i++) {
-    const v = vertebrae[Math.floor(rand() * V)];
-    shards.push({
-      x: (rand() - 0.5) * 0.9, y: v.y + (rand() - 0.5) * 0.3, z: (rand() - 0.5) * 0.8,
-      vx: (rand() - 0.5) * 0.01, vy: 0.004 + rand() * 0.012, vz: (rand() - 0.5) * 0.01,
-      s: 0.006 + rand() * 0.03, a: rand() * TAU, w: (rand() - 0.5) * 0.8, tri: rand() < 0.55, life: rand(),
-    });
-  }
+  // ---- THE PAGE ------------------------------------------------------------
+  const cv = document.querySelector(".t1-scene");
+  const ctx = cv.getContext("2d");
+  const tip = document.querySelector(".t1-tip");
+  const el = (s) => document.querySelector(s);
+  let W = 0, H = 0, DPR = 1, phone = false;
+  const P = { x: 0, y: 0, r: 100 };     // the world in focus
+  let ground = null;                     // the poster's ground, drawn once a size
 
-  // ---- THE VIEW --------------------------------------------------------
-  let W = 0, H = 0, DPR = 1, S = 1, CX = 0, CY = 0;
   function resize() {
-    W = innerWidth; H = innerHeight;
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
-    const phone = W < 760;
-    S = Math.min(H * 0.62, W * (phone ? 0.85 : 0.55));
-    CX = W * (phone ? 0.34 : 0.36); CY = H * (phone ? 0.42 : 0.53);
+    W = window.innerWidth; H = window.innerHeight;
+    phone = W < 760;
+    DPR = Math.min(window.devicePixelRatio || 1, phone ? 2 : 2);
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    cv.style.width = W + "px"; cv.style.height = H + "px";
+    if (phone) { P.r = Math.min(W * 0.3, H * 0.17); P.x = W * 0.5; P.y = H * 0.36; }
+    else { P.r = Math.min(H * 0.25, W * 0.17); P.x = W * 0.52; P.y = H * 0.5; }
+    ground = null;
+    layBlobs(true);
+    layRing();
+    if (cur) cur.halo = null;
   }
-  addEventListener("resize", resize);
-  resize();
 
-  let yaw = -1.05, yawGoal = -1.05, yawV = 0, pitch = 0.06;
-  const Q = new Float32Array(NP * 3);
-  const F = 3.4;
-  function project(x, y, z, out, o) {
-    const c = Math.cos(yaw), s = Math.sin(yaw);
-    const rx = x * c - z * s, rz = x * s + z * c;
-    const cp = Math.cos(pitch), sp = Math.sin(pitch);
-    const ry = (y - 0.12) * cp - rz * sp, rz2 = (y - 0.12) * sp + rz * cp;
-    const k = F / (F + rz2);
-    out[o] = CX + rx * S * k; out[o + 1] = CY - ry * S * k; out[o + 2] = rz2;
+  // ---- A WORLD'S SURFACE: a strip of its colours, mottled, wrapped round a
+  // sphere a strip at a time so it turns as a sphere does --------------------
+  const TW = 384, TH = 192;
+  function noise2(seed) {
+    const R = rng(seed), G = 64, g = new Float32Array(G * G);
+    for (let i = 0; i < g.length; i++) g[i] = R();
+    const at = (x, y) => g[(((y % G) + G) % G) * G + (((x % G) + G) % G)];
+    return (x, y) => {
+      const x0 = Math.floor(x), y0 = Math.floor(y), fx = x - x0, fy = y - y0;
+      const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
+      const a = at(x0, y0), b = at(x0 + 1, y0), c = at(x0, y0 + 1), d = at(x0 + 1, y0 + 1);
+      return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy;
+    };
   }
-  const tmp = new Float32Array(3);
-  const glow = document.createElement("canvas");
-  glow.width = glow.height = 32;
-  { const g = glow.getContext("2d"), gr = g.createRadialGradient(16, 16, 0, 16, 16, 16); gr.addColorStop(0, "rgba(255,255,255,1)"); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; g.fillRect(0, 0, 32, 32); }
+  function surfaceOf(w) {
+    if (w.tex) return w.tex;
+    const c = document.createElement("canvas");
+    c.width = TW * 2; c.height = TH;
+    const x = c.getContext("2d");
+    const img = x.createImageData(TW, TH), d = img.data;
+    const cols = w.atm.slice(0, 3).map((a) => HUE[a.a] || [140, 120, 160]);
+    while (cols.length < 3) cols.push(cols.length ? cols[0].map((v) => v * 0.6) : [160, 90, 140]);
+    const n1 = noise2(w.seed), n2 = noise2(w.seed ^ 0x9e3779b9);
+    // the noise wraps round in x, so the strip has no seam: sampled on a circle
+    for (let j = 0; j < TH; j++) {
+      const lat = j / TH;
+      for (let i = 0; i < TW; i++) {
+        const a = (i / TW) * TAU;
+        const px = 8 + Math.cos(a) * 3.2, pz = 8 + Math.sin(a) * 3.2, py = lat * 6;
+        let v = 0, amp = 0.55, fr = 1;
+        for (let o = 0; o < 4; o++) { v += amp * n1(px * fr + py * 0.7 * fr, pz * fr + py * fr); amp *= 0.5; fr *= 2.03; }
+        const warp = n2(px * 1.6 + v * 2.2, pz * 1.6 + py * 1.3);
+        // across the world from pole to pole: its first accord, its second,
+        // its third, swirled by the noise
+        let t = clamp(lat * 0.9 + (v - 0.5) * 0.9 + (warp - 0.5) * 0.5, 0, 1) * 2;
+        const k = Math.min(1, Math.floor(t)), u = t - k;
+        const A = cols[k], B = cols[k + 1];
+        const dark = 0.72 + 0.42 * warp - 0.18 * Math.max(0, v - 0.62) * 4;
+        const o = (j * TW + i) * 4;
+        d[o] = clamp((A[0] + (B[0] - A[0]) * u) * dark, 0, 255);
+        d[o + 1] = clamp((A[1] + (B[1] - A[1]) * u) * dark, 0, 255);
+        d[o + 2] = clamp((A[2] + (B[2] - A[2]) * u) * dark, 0, 255);
+        d[o + 3] = 255;
+      }
+    }
+    x.putImageData(img, 0, 0);
+    x.drawImage(c, 0, 0, TW, TH, TW, 0, TW, TH);
+    w.tex = c;
+    return c;
+  }
+  const STRIPS = 36;
+  // a world is drawn whole on a canvas of its own and laid down at its
+  // strength, so the strips it is wrapped in never show through each other
+  const slots = [document.createElement("canvas"), document.createElement("canvas")];
+  function drawWorld(c0, w, cx0, cy0, r0, turn, alpha, slot) {
+    if (alpha <= 0.002) return;
+    const tex = surfaceOf(w);
+    const pad = 4, size = Math.ceil((r0 + pad) * 2 * DPR);
+    const oc = slots[slot || 0];
+    if (oc.width !== size) { oc.width = size; oc.height = size; }
+    const c = oc.getContext("2d");
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.clearRect(0, 0, size, size);
+    c.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const cx = r0 + pad, cy = r0 + pad, r = r0;
+    c.save();
+    c.beginPath(); c.arc(cx, cy, r, 0, TAU); c.clip();
+    const u0 = ((turn % 1) + 1) % 1 * TW;
+    for (let s = 0; s < STRIPS; s++) {
+      const x0 = -1 + (2 * s) / STRIPS, x1 = -1 + (2 * (s + 1)) / STRIPS;
+      const a0 = Math.asin(x0) / Math.PI, a1 = Math.asin(x1) / Math.PI;   // -0.5 … 0.5 of a half turn
+      const sx = u0 + (a0 + 0.5) * (TW / 2), sw = (a1 - a0) * (TW / 2);
+      c.drawImage(tex, sx, 0, Math.max(0.5, sw), TH, cx + x0 * r - 0.5, cy - r, (x1 - x0) * r + 1, 2 * r);
+    }
+    // the light: from the upper left, a warm limb, the night on the right
+    let g = c.createRadialGradient(cx - r * 0.55, cy - r * 0.35, r * 0.05, cx - r * 0.2, cy - r * 0.1, r * 1.25);
+    g.addColorStop(0, "rgba(255,246,220,0.55)");
+    g.addColorStop(0.45, "rgba(255,226,190,0.12)");
+    g.addColorStop(1, "rgba(255,226,190,0)");
+    c.fillStyle = g; c.fillRect(cx - r, cy - r, 2 * r, 2 * r);
+    g = c.createLinearGradient(cx - r, cy - r * 0.2, cx + r, cy + r * 0.2);
+    g.addColorStop(0, "rgba(20,24,70,0)");
+    g.addColorStop(0.55, "rgba(20,24,70,0.08)");
+    g.addColorStop(1, "rgba(14,18,64,0.62)");
+    c.fillStyle = g; c.fillRect(cx - r, cy - r, 2 * r, 2 * r);
+    g = c.createRadialGradient(cx, cy, r * 0.62, cx, cy, r);
+    g.addColorStop(0, "rgba(30,20,60,0)");
+    g.addColorStop(1, "rgba(30,20,60,0.42)");
+    c.fillStyle = g; c.fillRect(cx - r, cy - r, 2 * r, 2 * r);
+    // a glowing limb on the lit side, added as light
+    c.globalCompositeOperation = "lighter";
+    g = c.createLinearGradient(cx - r, cy - r, cx + r * 0.4, cy + r);
+    g.addColorStop(0, "rgba(255,236,170,0.75)");
+    g.addColorStop(0.55, "rgba(255,200,150,0.18)");
+    g.addColorStop(1, "rgba(255,200,150,0)");
+    c.strokeStyle = g;
+    for (const [lw, a] of [[r * 0.16, 0.35], [r * 0.06, 0.6], [r * 0.018, 1]]) {
+      c.globalAlpha = a;
+      c.lineWidth = lw;
+      c.beginPath(); c.arc(cx, cy, r, 0, TAU); c.stroke();
+    }
+    c.restore();
+    c0.save();
+    c0.globalAlpha = alpha;
+    c0.drawImage(oc, cx0 - cx, cy0 - cy, size / DPR, size / DPR);
+    c0.restore();
+  }
+  // its glow, which is the picture's: a soft warm halo, strongest low left
+  function haloOf(w, r) {
+    const pad = r * 0.7, s = Math.ceil((r + pad) * 2 * DPR);
+    const c = document.createElement("canvas");
+    c.width = c.height = s;
+    const x = c.getContext("2d"), m = s / 2, rr = r * DPR;
+    const main = HUE[(w.atm[0] || {}).a] || [255, 210, 150];
+    const warm = [Math.min(255, 200 + main[0] * 0.25), Math.min(255, 190 + main[1] * 0.2), 120];
+    for (const [dx, dy, k, a] of [[0, 0, 1.42, 0.55], [-0.18, 0.2, 1.3, 0.5]]) {
+      const g = x.createRadialGradient(m + dx * rr, m + dy * rr, rr * 0.97, m + dx * rr, m + dy * rr, rr * k);
+      g.addColorStop(0, "rgba(255,250,215," + a + ")");
+      g.addColorStop(0.35, "rgba(" + warm.map(Math.round).join(",") + "," + a * 0.55 + ")");
+      g.addColorStop(1, "rgba(255,240,220,0)");
+      x.fillStyle = g; x.fillRect(0, 0, s, s);
+    }
+    return { c, s: s / DPR };
+  }
 
-  // ---- THE HAND --------------------------------------------------------
-  let drag = null;
-  canvas.addEventListener("pointerdown", (e) => { drag = { x: e.clientX, yaw }; canvas.setPointerCapture(e.pointerId); canvas.classList.add("is-dragging"); });
-  canvas.addEventListener("pointermove", (e) => { if (drag) { yawGoal = drag.yaw + (e.clientX - drag.x) * 0.008; yaw = yawGoal; } });
-  const up = () => { drag = null; canvas.classList.remove("is-dragging"); idleFrom = performance.now(); };
-  canvas.addEventListener("pointerup", up);
-  canvas.addEventListener("pointercancel", up);
-  let idleFrom = 0;
+  // ---- THE WORLDS OUT OF FOCUS: dark spheres with coloured edges, as the
+  // poster's are — the ones near this one in the site's order ----------------
+  function blobOf(w, r) {
+    const s = Math.ceil(r * 3.2 * DPR);
+    const c = document.createElement("canvas");
+    c.width = c.height = s;
+    const x = c.getContext("2d"), m = s / 2, rr = r * DPR;
+    const main = HUE[(w.atm[0] || {}).a] || [80, 40, 90];
+    const soft = (dx, dy, rgb, a, k0, k1) => {
+      const g = x.createRadialGradient(m + dx * rr, m + dy * rr, rr * k0, m + dx * rr, m + dy * rr, rr * k1);
+      g.addColorStop(0, "rgba(" + rgb + "," + a + ")");
+      g.addColorStop(1, "rgba(" + rgb + ",0)");
+      x.fillStyle = g; x.fillRect(0, 0, s, s);
+    };
+    soft(0, 0, "255,255,255", 0.5, 0.9, 1.45);
+    soft(-0.05, -0.11, "70,90,255", 0.85, 0.72, 1.12);
+    soft(0.05, 0.1, "255,214,40", 0.8, 0.72, 1.1);
+    soft(0.0, 0.0, Math.round(main[0] * 0.28 + 30) + "," + Math.round(main[1] * 0.12 + 8) + "," + Math.round(main[2] * 0.3 + 34), 1, 0.62, 1.0);
+    soft(0.0, 0.0, "28,6,22", 0.85, 0.2, 0.86);
+    soft(-0.3, -0.34, "150,120,220", 0.22, 0, 0.5);
+    return { c, s: s / DPR };
+  }
+  let blobs = [];
+  function layBlobs(keep) {
+    const near = phone ? [-2, -1, 1, 2] : [-3, -2, -1, 1, 2, 3, 4];
+    const R = rng(cur ? cur.w.seed : 7);
+    // clear of the readings on the left, the three lines and the foot
+    const spots = phone
+      ? [[0.13, 0.12], [0.08, 0.55], [0.88, 0.13], [0.93, 0.56]]
+      : [[0.3, 0.25], [0.28, 0.6], [0.33, 0.86], [0.62, 0.15], [0.8, 0.24], [0.9, 0.58], [0.77, 0.85]];
+    const old = new Map(blobs.map((b) => [b.w, b]));
+    blobs = near.map((k, i) => {
+      const w = WORLDS[((cur ? cur.w.i : 0) + k + N) % N];
+      const r = (phone ? 14 : 26) + R() * (phone ? 10 : 30) * (k === 1 ? 1.3 : 1);
+      const was = keep ? null : old.get(w);
+      const b = { w, k, r, x: spots[i][0] * W, y: spots[i][1] * H, dx: 0, dy: 0, ph: R() * TAU, sp: 0.15 + R() * 0.2, img: blobOf(w, r), in: was ? was.in : 0 };
+      return b;
+    });
+  }
 
-  // ---- THE SITES: the list, the readings, the numeral -------------------
-  const list = document.querySelector(".t1-sites");
-  const num = document.querySelector(".t1-num");
-  const bar = document.querySelector(".t1-bar i");
-  const say = (k) => document.querySelector('[data-say="' + k + '"]');
-  SITES.forEach((s, i) => {
-    const li = document.createElement("li");
-    const b = document.createElement("button");
-    b.type = "button"; b.textContent = s.name; b.dataset.i = i;
-    b.addEventListener("click", () => { chosen = i; pairAt = performance.now(); showSite(i, true); });
-    li.appendChild(b); list.appendChild(li);
+  // ---- ITS RING: its notes, as the picture's nodes, and its moons ---------
+  let ring = [], moons = [];
+  function layRing() {
+    if (!cur) return;
+    const w = cur.w, R = rng(w.seed ^ 0x51ed);
+    const list = w.notes.slice(0, phone ? 16 : 26);
+    const n = Math.max(list.length, 5);
+    ring = list.map((note, i) => {
+      const a = -Math.PI / 2 + (i / n) * TAU + (R() - 0.5) * 0.18;
+      const k = 1.32 + R() * 0.42 + (i % 3 === 1 ? 0.12 : 0);
+      return { note, a, k, tier: w.tier(note), big: R() < 0.22 ? 0.18 + R() * 0.2 : 0, ph: R() * TAU };
+    });
+    moons = w.atm.map((x, i) => ({ a: x.a, p: x.p, ang: R() * TAU, k: 1.15 + R() * 0.75, sp: (R() < 0.5 ? -1 : 1) * (0.02 + R() * 0.05) }));
+  }
+  const ringXY = (n, t) => {
+    const turn = STILL ? 0 : t * 0.012;
+    const k = n.k + (STILL ? 0 : 0.015 * Math.sin(t * 0.6 + n.ph));
+    return [P.x + Math.cos(n.a + turn) * P.r * k, P.y + Math.sin(n.a + turn) * P.r * k];
+  };
+  const moonXY = (m, t) => {
+    const a = m.ang + (STILL ? 0 : t * m.sp);
+    return [P.x + Math.cos(a) * P.r * m.k * 1.05, P.y + Math.sin(a) * P.r * m.k * 0.92];
+  };
+
+  // ---- WHAT IS IN FOCUS, and the change from one to the next --------------
+  let cur = null, prev = null, changeT0 = -1;
+  const CHANGE_MS = 1100;
+  function show(i, quick) {
+    const w = WORLDS[(i + N) % N];
+    if (cur && cur.w === w) return;
+    prev = cur && !quick ? cur : null;
+    cur = { w, halo: null };
+    changeT0 = STILL || quick ? -1 : performance.now();
+    layBlobs();
+    layRing();
+    writeHud(w);
+    try { history.replaceState(null, "", "#" + encodeURIComponent(w.name.toLowerCase().replace(/\s+/g, "-"))); } catch (e) { /* a file: page */ }
+  }
+  function writeHud(w) {
+    const set = (s, v) => { const e = el(s); if (e) e.textContent = v; };
+    set("[data-v=name]", w.name);
+    set("[data-v=house]", w.house);
+    set("[data-v=notes]", String(w.notes.length));
+    set("[data-v=most]", "the most, " + MOST_NOTES);
+    set("[data-v=pyramid]", w.f.f ? "Flat" : [w.f.t, w.f.m, w.f.b].map((l) => (l || []).length).join(" · "));
+    set("[data-v=pyramid-say]", w.f.f ? "one list, undivided" : "top · middle · base");
+    set("[data-v=year]", w.year ? String(w.year) : "—");
+    set("[data-v=no]", String(w.i + 1).padStart(3, "0") + " / " + N);
+    el(".t1-bar-notes i").style.width = Math.round((w.notes.length / MOST_NOTES) * 100) + "%";
+    const a0 = w.atm[0], a1 = w.atm[1];
+    set("[data-v=atm1]", a0 ? a0.a : "—");
+    set("[data-v=atm1p]", a0 ? Math.round(a0.p * 100) + "%" : "");
+    set("[data-v=atm2]", a1 ? a1.a : "");
+    set("[data-v=atm2p]", a1 ? Math.round(a1.p * 100) + "%" : "");
+    el(".t1-gauge").setAttribute("aria-label", w.atm.slice(0, 3).map((x) => ACC[x.a] + " " + Math.round(x.p * 100) + "%").join(", "));
+    const arc = el(".t1-gauge-arc");
+    arc.style.strokeDasharray = (a0 ? a0.p : 0) * 100 * 0.75 + " 100";
+    arc.style.stroke = "rgb(" + (HUE[a0 && a0.a] || [40, 90, 220]).join(",") + ")";
+    el(".t1-atm-name").textContent = a0 ? ACC[a0.a] + (a1 ? ", then " + ACC[a1.a] : "") : "";
+    // the three lines: its top, middle and base — or its notes in three
+    const lines = el(".t1-lines");
+    let rows;
+    if (!w.f.f) rows = [["Top", w.f.t], ["Middle", w.f.m], ["Base", w.f.b]];
+    else { const l = w.f.f, k = Math.ceil(l.length / 3); rows = [["", l.slice(0, k)], ["", l.slice(k, 2 * k)], ["", l.slice(2 * k)]]; }
+    lines.innerHTML = rows.filter((r) => (r[1] || []).length).map((r) => "<li>" + (r[0] ? "<b>" + r[0] + "</b> " : "") + esc((r[1] || []).join(", ")) + "</li>").join("");
+    const sel = el(".t1-pick");
+    if (sel && +sel.value !== w.i) sel.value = String(w.i);
+    el(".t1-mark").textContent = w.most ? w.most : "";
+    el(".t1-mark-say").textContent = w.most ? "named by " + (uses[w.most] || 0) + " of the site's " + N : "";
+  }
+
+  // ---- THE HAND: the double circle finds a world under it; a note named ----
+  const hand = { x: -1, y: -1, on: false };
+  let aim = null;                 // the blob under the hand
+  let hot = null;                 // the note or moon under the hand
+  const ret = { x: 0, y: 0, r: 0, tx: 0, ty: 0, tr: 0 };
+  function under(x, y) {
+    for (const b of blobs) { const bx = b.x + b.dx, by = b.y + b.dy; if (Math.hypot(x - bx, y - by) < b.r * 1.1) return b; }
+    return null;
+  }
+  function noteUnder(x, y, t) {
+    let best = null, bd = phone ? 18 : 12;
+    ring.forEach((n) => { const [nx, ny] = ringXY(n, t); const d = Math.hypot(x - nx, y - ny); if (d < bd) { bd = d; best = { type: "note", n, x: nx, y: ny }; } });
+    moons.forEach((m) => { const [mx, my] = moonXY(m, t); const d = Math.hypot(x - mx, y - my); if (d < bd) { bd = d; best = { type: "moon", m, x: mx, y: my }; } });
+    return best;
+  }
+  function showTip(h) {
+    if (!h) { tip.hidden = true; return; }
+    if (h.type === "note") {
+      const nd = D.notes[h.n.note] || ["", ""];
+      tip.innerHTML = "<b>" + esc(h.n.note) + "</b><span>" + (h.n.tier ? h.n.tier + " · " : "") + esc(ACC[nd[0]] || "") +
+        " · named by " + (uses[h.n.note] || 0) + "</span>" + (nd[1] ? "<em>" + esc(nd[1]) + "</em>" : "");
+    } else {
+      tip.innerHTML = "<b>" + esc(ACC[h.m.a]) + "</b><span>" + Math.round(h.m.p * 100) + "% of its notes</span>";
+    }
+    tip.hidden = false;
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    let x = h.x + 14, y = h.y + 14;
+    if (x + tw > W - 10) x = h.x - tw - 14;
+    if (y + th > H - 10) y = h.y - th - 14;
+    tip.style.transform = "translate(" + Math.round(Math.max(8, x)) + "px," + Math.round(Math.max(8, y)) + "px)";
+  }
+  cv.addEventListener("pointermove", (ev) => {
+    hand.x = ev.clientX; hand.y = ev.clientY; hand.on = true;
+    const t = clock;
+    aim = under(hand.x, hand.y);
+    const h = aim ? null : noteUnder(hand.x, hand.y, t);
+    if ((h && h.n) !== (hot && hot.n) || (h && h.m) !== (hot && hot.m)) { hot = h; showTip(h); }
+    else if (h) { hot = h; }
+    cv.style.cursor = aim || h ? "pointer" : "default";
+    el(".t1-aim").textContent = aim ? aim.w.name : "";
+    el(".t1-aim").classList.toggle("is-on", !!aim);
   });
-  let pair = 0, chosen = 1, pairAt = performance.now();
-  let markers = [{ i: 0, t0: 0 }, { i: 1, t0: 0 }];
-  function showSite(i, pressed) {
-    const s = SITES[i];
-    list.querySelectorAll("button").forEach((b) => b.classList.toggle("is-on", +b.dataset.i === i));
-    say("site").textContent = s.name.toLowerCase();
-    say("head").textContent = "Site · " + s.name.toLowerCase();
-    for (const [k, v] of [["temp", "~" + s.temp + "°C"], ["sebum", s.sebum], ["char", s.char]]) {
-      const el = say(k);
-      el.textContent = v; el.classList.add("is-new");
-      setTimeout(() => el.classList.remove("is-new"), 700);
+  cv.addEventListener("pointerleave", () => { hand.on = false; aim = null; hot = null; showTip(null); el(".t1-aim").classList.remove("is-on"); });
+  cv.addEventListener("click", (ev) => {
+    const b = under(ev.clientX, ev.clientY);
+    if (b) {
+      show(b.w.i); hot = null; showTip(null);
+      // what is under the hand now is another world
+      aim = hand.on ? under(hand.x, hand.y) : null;
+      el(".t1-aim").textContent = aim ? aim.w.name : "";
+      el(".t1-aim").classList.toggle("is-on", !!aim);
+      return;
     }
-    bar.style.width = ((s.temp - 30) / 6) * 100 + "%";
-    scramble(String(s.temp));
-    if (pressed) {
-      const other = markers.find((m) => m.i !== i) || markers[1];
-      markers = [{ i, t0: performance.now() }, { i: other.i === i ? (i + 1) % 4 : other.i, t0: other.t0 }];
-    }
-  }
-  // the numeral scrambles through digits on its way to the next, glitching
-  let scrambleT = 0;
-  function scramble(to) {
-    if (STILL) { num.firstChild.nodeValue = to; num.dataset.v = to; return; }
-    clearInterval(scrambleT);
-    let n = 0;
-    num.classList.add("is-glitch");
-    scrambleT = setInterval(() => {
-      n++;
-      const v = n < 7 ? String(10 + Math.floor(Math.random() * 89)) : to;
-      num.firstChild.nodeValue = v; num.dataset.v = v;
-      if (n >= 7) { clearInterval(scrambleT); setTimeout(() => num.classList.remove("is-glitch"), 120); }
-    }, 55);
-  }
-  function nextPair(now) {
-    pair = (pair + 1) % PAIRS.length;
-    const [a, b] = PAIRS[pair];
-    markers = [{ i: a, t0: now }, { i: b, t0: now + 260 }];
-    chosen = a;
-    showSite(a, false);
-  }
-  showSite(1, false);
-  markers = [{ i: 0, t0: -1e9 }, { i: 1, t0: -1e9 }];
+    const h = noteUnder(ev.clientX, ev.clientY, clock);
+    if (h) { hot = h; showTip(h); }
+  });
+  el(".t1-prev").addEventListener("click", () => show(cur.w.i - 1));
+  el(".t1-next").addEventListener("click", () => show(cur.w.i + 1));
+  el(".t1-any").addEventListener("click", () => { let j; do { j = Math.floor(Math.random() * N); } while (N > 1 && j === cur.w.i); show(j); });
+  document.addEventListener("keydown", (ev) => {
+    if (ev.target && ev.target.matches && ev.target.matches("select, input")) return;
+    if (ev.key === "ArrowRight") { ev.preventDefault(); show(cur.w.i + 1); }
+    else if (ev.key === "ArrowLeft") { ev.preventDefault(); show(cur.w.i - 1); }
+  });
+  // the list of every world, by house
+  const pick = el(".t1-pick");
+  const byHouse = new Map();
+  WORLDS.forEach((w) => { if (!byHouse.has(w.house)) byHouse.set(w.house, []); byHouse.get(w.house).push(w); });
+  pick.innerHTML = Array.from(byHouse.entries()).map(([h, l]) =>
+    '<optgroup label="' + esc(h) + '">' + l.map((w) => '<option value="' + w.i + '">' + esc(w.name) + "</option>").join("") + "</optgroup>").join("");
+  pick.addEventListener("change", () => show(+pick.value));
 
-  // ---- THE FRAME -------------------------------------------------------
-  const INK = "rgb(233,231,226)", RED = "rgb(255,58,68)";
-  let last = 0, glitchUntil = 0, glitchNext = 2500;
+  // ---- DRAWING ------------------------------------------------------------
+  function drawGround() {
+    const c = document.createElement("canvas");
+    c.width = cv.width; c.height = cv.height;
+    const x = c.getContext("2d");
+    x.scale(DPR, DPR);
+    let g = x.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#e9ece8"); g.addColorStop(1, "#dfe5e2");
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    g = x.createRadialGradient(W * 0.5, H * 0.46, Math.min(W, H) * 0.2, W * 0.5, H * 0.5, Math.max(W, H) * 0.75);
+    g.addColorStop(0, "rgba(255,255,255,0.5)"); g.addColorStop(1, "rgba(160,175,170,0.18)");
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    return c;
+  }
+  let clock = 0, last = 0, raf = 0;
   function frame(now) {
     raf = 0;
-    const dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016;
+    const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
     last = now;
-    // turning slowly, and back to it a moment after a drag
-    if (!drag && !STILL) {
-      const idle = now - idleFrom > 2200;
-      if (idle) yawGoal += dt * 0.12;
-      yawV += (yawGoal - yaw) * 0.04; yawV *= 0.82; yaw += yawV;
-      pitch = 0.06 + 0.03 * Math.sin(now / 5200);
-    }
-    if (!STILL && now - pairAt > 7000) { pairAt = now; nextPair(now); }
-
+    if (!STILL) clock += dt;
+    const t = clock;
+    if (!ground) ground = drawGround();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(ground, 0, 0);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    for (let i = 0; i < NP; i++) project(P[i * 5], P[i * 5 + 1], P[i * 5 + 2], Q, i * 3);
+    const k = changeT0 < 0 ? 1 : clamp((now - changeT0) / CHANGE_MS, 0, 1);
+    if (k >= 1) { changeT0 = -1; prev = null; }
 
-    // lines out into the dark
-    ctx.lineWidth = 0.6;
-    ctx.strokeStyle = INK;
-    ctx.globalAlpha = 0.07;
+    // the worlds out of focus, drifting, a little the other way to the hand
+    const px = hand.on ? (hand.x / W - 0.5) : 0, py = hand.on ? (hand.y / H - 0.5) : 0;
+    for (const b of blobs) {
+      b.in = Math.min(1, b.in + dt * 1.2);
+      b.dx = (STILL ? 0 : Math.sin(t * b.sp + b.ph) * 10) - px * 14 * (b.r / 40);
+      b.dy = (STILL ? 0 : Math.cos(t * b.sp * 0.8 + b.ph) * 8) - py * 12 * (b.r / 40);
+      const s = b.img.s * (aim === b ? 1.06 : 1);
+      ctx.globalAlpha = ease(clamp(b.in, 0, 1)) * (aim === b ? 1 : 0.92);
+      ctx.drawImage(b.img.c, b.x + b.dx - s / 2, b.y + b.dy - s / 2, s, s);
+    }
+    ctx.globalAlpha = 1;
+
+    // the world in focus: the one before going out as this comes in
+    const turn = STILL ? 0.15 : t * 0.018;
+    if (!cur.halo) cur.halo = haloOf(cur.w, P.r);
+    if (prev) {
+      if (!prev.halo) prev.halo = haloOf(prev.w, P.r);
+      const a = 1 - ease(clamp(k * 1.6, 0, 1));
+      const s = 1 + 0.25 * ease(k);
+      ctx.globalAlpha = a;
+      ctx.drawImage(prev.halo.c, P.x - (prev.halo.s * s) / 2, P.y - (prev.halo.s * s) / 2, prev.halo.s * s, prev.halo.s * s);
+      ctx.globalAlpha = 1;
+      drawWorld(ctx, prev.w, P.x, P.y, P.r * s, turn, a, 1);
+    }
+    const kin = prev ? ease(clamp(k * 1.4 - 0.3, 0, 1)) : changeT0 < 0 ? 1 : ease(k);
+    const sIn = 0.72 + 0.28 * kin;
+    ctx.globalAlpha = kin;
+    ctx.drawImage(cur.halo.c, P.x - (cur.halo.s * sIn) / 2, P.y - (cur.halo.s * sIn) / 2, cur.halo.s * sIn, cur.halo.s * sIn);
+    ctx.globalAlpha = 1;
+    drawWorld(ctx, cur.w, P.x, P.y, P.r * sIn, turn, kin, 0);
+
+    // its ring of notes, traced as it comes in
+    drawRing(t, kin);
+    // the mark on its surface: the note the site names most of all of its
+    const ma = -2.35, mr = P.r * 0.48;
+    const mx = P.x + Math.cos(ma) * mr, my = P.y + Math.sin(ma) * mr;
+    ctx.globalAlpha = kin;
+    ctx.strokeStyle = "rgba(255,255,255,0.9)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(mx, my, 11, 0, TAU); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(mx - 4, my); ctx.lineTo(mx + 4, my); ctx.moveTo(mx, my - 4); ctx.lineTo(mx, my + 4); ctx.stroke();
+    ctx.globalAlpha = 1;
+    const mk = el(".t1-markbox");
+    const mkT = "translate(" + Math.round(mx + 18) + "px," + Math.round(my - 10) + "px)";
+    if (mk.dataset.t !== mkT) { mk.style.transform = mkT; mk.dataset.t = mkT; }
+    mk.style.opacity = kin.toFixed(3);
+
+    // the double circle: round the world in focus at rest, on a world out of
+    // focus under the hand
+    if (aim) { ret.tx = aim.x + aim.dx; ret.ty = aim.y + aim.dy; ret.tr = aim.r * 1.25; }
+    else { ret.tx = P.x + P.r * 0.06; ret.ty = P.y - P.r * 0.02; ret.tr = P.r * 0.64; }
+    if (!ret.r) { ret.x = ret.tx; ret.y = ret.ty; ret.r = ret.tr; }
+    const f = STILL ? 1 : 1 - Math.exp(-dt * 7);
+    ret.x += (ret.tx - ret.x) * f; ret.y += (ret.ty - ret.y) * f; ret.r += (ret.tr - ret.r) * f;
+    ctx.strokeStyle = "rgba(255,255,255,0.92)"; ctx.lineWidth = 1;
+    const wob = STILL ? 0 : Math.sin(t * 0.7) * 0.04;
+    ctx.beginPath(); ctx.arc(ret.x, ret.y, ret.r, 0, TAU); ctx.stroke();
+    ctx.beginPath(); ctx.arc(ret.x + ret.r * (0.035 + wob * 0.3), ret.y - ret.r * (0.06 - wob * 0.2), ret.r * 0.97, 0, TAU); ctx.stroke();
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    for (let i = 0; i < reach.length; i += 6) {
-      project(reach[i], reach[i + 1], reach[i + 2], tmp, 0); const ax = tmp[0], ay = tmp[1];
-      project(reach[i + 3], reach[i + 4], reach[i + 5], tmp, 0);
-      ctx.moveTo(ax, ay); ctx.lineTo(tmp[0], tmp[1]);
+    ctx.moveTo(ret.x - 3, ret.y - 3); ctx.lineTo(ret.x - 1, ret.y - 1); ctx.moveTo(ret.x + 3, ret.y - 3); ctx.lineTo(ret.x + 1, ret.y - 1);
+    ctx.moveTo(ret.x - 3, ret.y + 3); ctx.lineTo(ret.x - 1, ret.y + 1); ctx.moveTo(ret.x + 3, ret.y + 3); ctx.lineTo(ret.x + 1, ret.y + 1);
+    ctx.stroke();
+    const al = el(".t1-aim");
+    const aT = "translate(" + Math.round(ret.x - 120) + "px," + Math.round(ret.y + ret.r + 10) + "px)";
+    if (al.dataset.t !== aT) { al.style.transform = aT; al.dataset.t = aT; }
+
+    if (hot) showTipAt();
+    if (!STILL && !document.hidden) raf = requestAnimationFrame(frame);
+    else last = 0;
+  }
+  function showTipAt() {
+    // the tip follows the node it names as the ring turns
+    if (hot.type === "note") { const [x, y] = ringXY(hot.n, clock); hot.x = x; hot.y = y; }
+    else { const [x, y] = moonXY(hot.m, clock); hot.x = x; hot.y = y; }
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    let x = hot.x + 14, y = hot.y + 14;
+    if (x + tw > W - 10) x = hot.x - tw - 14;
+    if (y + th > H - 10) y = hot.y - th - 14;
+    tip.style.transform = "translate(" + Math.round(Math.max(8, x)) + "px," + Math.round(Math.max(8, y)) + "px)";
+  }
+  function drawRing(t, kin) {
+    if (!ring.length) return;
+    const pts = ring.map((n) => ringXY(n, t));
+    const n = pts.length;
+    // traced round from the top as the world comes in
+    const upto = kin * n;
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(70,74,82,0.55)";
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const u = clamp(upto - i, 0, 1);
+      if (u <= 0) break;
+      const [x0, y0] = pts[i], [x1, y1] = pts[(i + 1) % n];
+      ctx.moveTo(x0, y0); ctx.lineTo(x0 + (x1 - x0) * u, y0 + (y1 - y0) * u);
     }
     ctx.stroke();
-
-    // the facets, faintly
-    ctx.fillStyle = INK;
-    ctx.globalAlpha = 0.035;
+    // a few chords across, as the picture's
+    ctx.strokeStyle = "rgba(70,74,82,0.22)";
     ctx.beginPath();
-    for (let i = 0; i < facets.length; i += 3) {
-      const a = facets[i] * 3, b = facets[i + 1] * 3, c = facets[i + 2] * 3;
-      ctx.moveTo(Q[a], Q[a + 1]); ctx.lineTo(Q[b], Q[b + 1]); ctx.lineTo(Q[c], Q[c + 1]); ctx.closePath();
+    for (let i = 0; i < n; i += 3) {
+      if (i > upto) break;
+      const [x0, y0] = pts[i], [x1, y1] = pts[(i + 2) % n];
+      ctx.moveTo(x0, y0); ctx.lineTo(x1, y1);
     }
-    ctx.fill();
-
-    // the hairlines, in four paths by depth: the near ones brighter
-    const paths = [new Path2D(), new Path2D(), new Path2D(), new Path2D()];
-    for (let i = 0; i < links.length; i += 2) {
-      const a = links[i] * 3, b = links[i + 1] * 3;
-      const z = (Q[a + 2] + Q[b + 2]) * 0.5;
-      const lv = z < -0.12 ? 3 : z < 0 ? 2 : z < 0.12 ? 1 : 0;
-      paths[lv].moveTo(Q[a], Q[a + 1]); paths[lv].lineTo(Q[b], Q[b + 1]);
-    }
-    ctx.lineWidth = 0.7;
-    [0.16, 0.26, 0.4, 0.55].forEach((al, lv) => { ctx.globalAlpha = al; ctx.stroke(paths[lv]); });
-
-    // the points, added light to light, so where they crowd they glow
-    ctx.globalCompositeOperation = "lighter";
-    ctx.fillStyle = INK;
-    for (let i = 0; i < NP; i++) {
-      const o = i * 3, z = Q[o + 2];
-      const b = P[i * 5 + 3];
-      ctx.globalAlpha = Math.max(0.05, (0.55 - z * 1.4) * b);
-      const s = 1.1 + b * 1.1 - z * 1.5;
-      ctx.fillRect(Q[o] - s / 2, Q[o + 1] - s / 2, s, s);
-    }
-    ctx.globalAlpha = 0.05;
-    for (let i = 0; i < NP; i++) {
-      if (P[i * 5 + 3] < 0.95) continue;
-      const o = i * 3, gs = 14 - Q[o + 2] * 10;
-      ctx.drawImage(glow, Q[o] - gs / 2, Q[o + 1] - gs / 2, gs, gs);
-    }
-    ctx.globalCompositeOperation = "source-over";
-
-    // the shards, drifting up and away, turning
-    ctx.strokeStyle = INK; ctx.fillStyle = INK; ctx.lineWidth = 0.6;
-    for (const s of shards) {
-      if (!STILL) {
-        s.x += s.vx * dt; s.y += s.vy * dt; s.z += s.vz * dt; s.a += s.w * dt; s.life += dt * 0.05;
-        if (s.life > 1) { const v = vertebrae[Math.floor(Math.random() * V)]; s.x = (Math.random() - 0.5) * 0.3; s.y = v.y; s.z = v.z + (Math.random() - 0.5) * 0.2; s.life = 0; }
+    ctx.stroke();
+    // the nodes: a top note an open ring, a middle one a dot, a base one a
+    // ring round a dot; and here and there a wide faint circle
+    for (let i = 0; i < n; i++) {
+      if (i > upto) break;
+      const nd = ring[i], [x, y] = pts[i];
+      const lit = hot && hot.n === nd;
+      if (nd.big) {
+        ctx.strokeStyle = "rgba(70,74,82,0.16)";
+        ctx.beginPath(); ctx.arc(x, y, P.r * nd.big, 0, TAU); ctx.stroke();
       }
-      project(s.x, s.y, s.z, tmp, 0);
-      const k = Math.sin(Math.PI * Math.min(1, s.life)), r = s.s * S * 0.5;
-      ctx.globalAlpha = 0.5 * k;
-      if (s.tri) {
-        ctx.beginPath();
-        for (let j = 0; j < 3; j++) { const q = s.a + (j * TAU) / 3; ctx[j ? "lineTo" : "moveTo"](tmp[0] + Math.cos(q) * r, tmp[1] + Math.sin(q) * r * 0.7); }
-        ctx.closePath(); ctx.stroke();
-        ctx.globalAlpha = 0.08 * k; ctx.fill();
-      } else {
-        ctx.fillRect(tmp[0], tmp[1], 1.4, 1.4);
+      ctx.fillStyle = "#f2f4f2";
+      ctx.strokeStyle = lit ? "#1d1f24" : "rgba(40,42,48,0.8)";
+      ctx.lineWidth = lit ? 1.6 : 1;
+      const r = lit ? 5.5 : 3.6;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); ctx.stroke();
+      if (nd.tier === "Middle" || nd.tier === "Base") {
+        ctx.fillStyle = "rgba(40,42,48,0.85)";
+        ctx.beginPath(); ctx.arc(x, y, nd.tier === "Base" ? 1.8 : 1.4, 0, TAU); ctx.fill();
       }
+      if (nd.tier === "Base") { ctx.strokeStyle = "rgba(40,42,48,0.35)"; ctx.beginPath(); ctx.arc(x, y, r + 3, 0, TAU); ctx.stroke(); }
     }
-
-    // the markers: a red ring out to the right, a hairline in to the place
+    // its moons: an accord each, the picture's pink, as large as its share
+    for (const m of moons) {
+      const [x, y] = moonXY(m, t);
+      const lit = hot && hot.m === m;
+      ctx.globalAlpha = kin * (lit ? 1 : 0.62);
+      ctx.fillStyle = "rgb(" + (HUE[m.a] || [230, 120, 150]).map((v) => Math.round(v * 0.5 + 232 * 0.5)).join(",") + ")";
+      ctx.beginPath(); ctx.arc(x, y, 2.4 + m.p * 7, 0, TAU); ctx.fill();
+    }
     ctx.globalAlpha = 1;
-    const narrow = W < 760;
-    const ringX = Math.min(W - (narrow ? 34 : 340), CX + S * 0.62);
-    const ys = [];
-    markers.forEach((m, n) => {
-      const s = SITES[m.i];
-      project(s.at[0], s.at[1], s.at[2], tmp, 0);
-      const px = tmp[0], py = tmp[1];
-      let ry = py;
-      for (const y of ys) if (Math.abs(ry - y) < 70) ry = y + (ry >= y ? 70 : -70);
-      ys.push(ry);
-      const age = STILL ? 1 : Math.max(0, Math.min(1, (now - m.t0) / 700));
-      const e = 1 - Math.pow(1 - age, 3);
-      const rad = 20 + (W < 760 ? -4 : 0);
-      // the line, drawn out from the ring to the place
-      ctx.strokeStyle = INK; ctx.globalAlpha = 0.75; ctx.lineWidth = 0.8;
-      ctx.beginPath(); ctx.moveTo(ringX - rad, ry); ctx.lineTo(ringX - rad + (px - ringX + rad) * e, ry + (py - ry) * e); ctx.stroke();
-      // a second, fainter, as the image has
-      ctx.globalAlpha = 0.25;
-      ctx.beginPath(); ctx.moveTo(ringX - rad, ry); ctx.lineTo(ringX - rad + (px - 18 - ringX + rad) * e, ry + (py - 30 - ry) * e); ctx.stroke();
-      // the place itself, pulsing
-      ctx.globalAlpha = e;
-      ctx.fillStyle = "#fff"; ctx.fillRect(px - 1.5, py - 1.5, 3, 3);
-      ctx.strokeStyle = RED; ctx.lineWidth = 1;
-      const pulse = STILL ? 0 : (now / 1400 + n * 0.5) % 1;
-      ctx.globalAlpha = (1 - pulse) * 0.6 * e;
-      ctx.beginPath(); ctx.arc(px, py, 4 + pulse * 14, 0, TAU); ctx.stroke();
-      // the ring
-      ctx.globalAlpha = e;
-      ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(ringX, ry, rad * (0.6 + 0.4 * e), 0, TAU); ctx.stroke();
-      ctx.lineWidth = 1; ctx.strokeStyle = INK; ctx.globalAlpha = 0.9 * e;
-      ctx.beginPath(); ctx.arc(ringX, ry, 4, 0, TAU); ctx.stroke();
-      ctx.fillStyle = INK; ctx.fillRect(ringX - 1, ry - 1, 2, 2);
-      // its words
-      ctx.font = '500 8.5px "IBM Plex Mono", monospace';
-      ctx.textBaseline = "middle";
-      ctx.globalAlpha = e;
-      ctx.fillStyle = INK;
-      const label = s.name.toUpperCase().split("").join(" ");
-      if (narrow) {
-        ctx.textAlign = "right";
-        ctx.fillText(label, ringX + rad, ry + rad + 12);
-        ctx.fillStyle = RED;
-        ctx.fillText(s.temp + "°C", ringX + rad, ry + rad + 24);
-        ctx.textAlign = "left";
-      } else {
-        ctx.fillText(label, ringX + rad + 10, ry - 2);
-        ctx.fillStyle = RED;
-        ctx.fillText(s.temp + "°C", ringX + rad + 10, ry + 10);
-        ctx.fillStyle = INK; ctx.globalAlpha = 0.5 * e;
-        ctx.fillRect(ringX + rad + 10 + ctx.measureText(label).width + 8, ry - 2, 16 * e, 1);
-      }
-    });
-    ctx.globalAlpha = 1;
-
-    // now and then the picture slips: a few bands of it pulled sideways
-    if (!STILL) {
-      if (now > glitchNext) { glitchUntil = now + 140 + Math.random() * 120; glitchNext = now + 3000 + Math.random() * 4000; num.classList.add("is-glitch"); setTimeout(() => num.classList.remove("is-glitch"), 220); }
-      if (now < glitchUntil) {
-        for (let k = 0; k < 4; k++) {
-          const y = Math.random() * H, h = 4 + Math.random() * 26, dx = (Math.random() - 0.5) * 50;
-          ctx.setTransform(1, 0, 0, 1, 0, 0);
-          ctx.drawImage(canvas, 0, y * DPR, canvas.width, h * DPR, dx * DPR, y * DPR, canvas.width, h * DPR);
-        }
-      }
-    }
-    raf = 0;
-    if (!STILL && !document.hidden) kick();
+    ctx.lineWidth = 1;
   }
-  let raf = 0;
+
+  // ---- THE GRAIN, as the poster's: a picture of noise jumped about by its
+  // transform, never drawn again ---------------------------------------------
+  (function grain() {
+    const g = document.createElement("canvas");
+    g.width = g.height = 160;
+    const x = g.getContext("2d"), im = x.createImageData(160, 160), R = rng(3);
+    for (let i = 0; i < im.data.length; i += 4) { const v = R() * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; }
+    x.putImageData(im, 0, 0);
+    el(".t1-grain").style.backgroundImage = "url(" + g.toDataURL() + ")";
+  })();
+
+  // ---- BEGIN -----------------------------------------------------------------
+  let start = 0;
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (h) { const j = WORLDS.findIndex((w) => w.name.toLowerCase().replace(/\s+/g, "-") === h); if (j >= 0) start = j; }
+  resize();
+  show(start, true);
+  changeT0 = STILL ? -1 : performance.now();
+  layBlobs(true);
+  window.addEventListener("resize", () => { resize(); kick(); });
   function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) { last = 0; kick(); } });
+  if (STILL) {
+    // drawn once, and again whenever something changes
+    const again = () => { requestAnimationFrame(frame); };
+    ["click", "keydown", "change", "pointermove"].forEach((e) => document.addEventListener(e, again));
+  }
   kick();
-  // still, it is drawn again only when turned by hand or a site is pressed
-  canvas.addEventListener("pointermove", () => { if (drag) kick(); });
-  list.addEventListener("click", kick);
-  addEventListener("resize", kick);
-  document.addEventListener("visibilitychange", () => { last = 0; kick(); });
-
-  // ---- THE GRAIN: a small picture of noise, made once -------------------
-  const g = document.createElement("canvas");
-  g.width = g.height = 160;
-  const gx = g.getContext("2d"), img = gx.createImageData(160, 160);
-  for (let i = 0; i < img.data.length; i += 4) { const v = Math.random() * 255; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255; }
-  gx.putImageData(img, 0, 0);
-  document.querySelector(".t1-grain").style.backgroundImage = "url(" + g.toDataURL() + ")";
-
-  window.TestPage1 = { sites: () => markers.map((m) => SITES[m.i].id), yaw: () => yaw };
+  window.TestPage1 = { show: (n) => show(typeof n === "number" ? n : WORLDS.findIndex((w) => w.name === n)), now: () => cur.w.name, count: N };
 })();

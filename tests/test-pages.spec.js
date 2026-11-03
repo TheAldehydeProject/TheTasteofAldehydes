@@ -152,18 +152,31 @@ for (const n of PAGES) {
   });
 }
 
-test("test page 1: a site pressed is scanned, its numbers and its ring", async ({ page }) => {
+/* 2026-11-03 — "Recreate test page 1 with images 3 and 4" (a planet's
+   readings and its ring of nodes; a pale poster of spheres out of focus and
+   a thin double circle): every fragrance on the site a world. */
+test("test page 1: every fragrance a world, and a world out of focus pressed comes into focus", async ({ page }) => {
+  const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/test-pages/1/");
   await page.waitForTimeout(600);
-  await page.locator(".t1-sites button", { hasText: /wrist/i }).click();
-  await expect.poll(() => page.evaluate(() => window.TestPage1.sites())).toContain("wrist");
-  await expect(page.locator(".t1-sites button.is-on")).toHaveText(/wrist/i);
-  await expect.poll(() => page.locator(".t1-num").getAttribute("data-v"), { timeout: 4000 }).toMatch(/^\d+$/);
-  // left alone a moment, the body turns
-  const yaw = await page.evaluate(() => window.TestPage1.yaw());
-  await expect.poll(() => page.evaluate(() => window.TestPage1.yaw()), { timeout: 6000 }).not.toBe(yaw);
+  expect(await page.evaluate(() => window.TestPage1.count)).toBeGreaterThan(100);
+  const first = await page.evaluate(() => window.TestPage1.now());
+  await expect(page.locator("[data-v=name]")).toHaveText(first);
+  // the next, by the arrow and by the key
+  await page.locator(".t1-next").click();
+  const second = await page.evaluate(() => window.TestPage1.now());
+  expect(second).not.toBe(first);
+  await expect(page.locator("[data-v=name]")).toHaveText(second);
+  await page.keyboard.press("ArrowLeft");
+  expect(await page.evaluate(() => window.TestPage1.now())).toBe(first);
+  // a world chosen by name, from the list of every one
+  await page.locator(".t1-pick").selectOption({ label: "Amber Zero" });
+  expect(await page.evaluate(() => window.TestPage1.now())).toBe("Amber Zero");
+  await expect(page.locator(".t1-lines li")).toHaveCount(3);
+  await expect(page.locator(".t1-lines li").first()).toContainText("Top");
+  expect(errors).toEqual([]);
 });
 
 test("test page 2: an accord pointed at in the list is the one in focus", async ({ page }) => {
@@ -314,64 +327,61 @@ test.describe("test page 2 on a phone", () => {
   });
 });
 
-test("test page 3: the years, a new scenario and comparison all work", async ({ page }) => {
+/* 2026-11-03 — "Test Page 3 should be about top mid bottom
+   stratification": the pyramids on the site taken apart into three layers. */
+test("test page 3: the pyramids taken apart — a fragrance drawn through its layers, and Spray plays them in the primer's order", async ({ page }) => {
+  const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/test-pages/3/");
-  await page.waitForTimeout(800);
-  const all = await page.evaluate(() => window.TestPage3.places());
-  expect(all).toBeGreaterThan(20);
-  await page.locator(".t3-track input").fill("0");
-  expect(await page.evaluate(() => window.TestPage3.year())).toBe(0);
-  expect(await page.evaluate(() => window.TestPage3.places()), "fewer places in the first year").toBeLessThan(all);
-  await page.locator(".t3-track input").fill("18");
-  await page.locator('[data-act="scenario"]').click();
-  expect(await page.evaluate(() => window.TestPage3.scenario())).toBeGreaterThanOrEqual(0);
-  await expect(page.locator(".t3-scenario")).toHaveClass(/is-on/);
-  await page.locator(".t3-scenario button").click();
-  expect(await page.evaluate(() => window.TestPage3.scenario())).toBe(-1);
-  await page.locator('[data-act="compare"]').click();
-  await expect(page.locator('[data-act="compare"]')).toHaveAttribute("aria-pressed", "true");
-  const lon = await page.evaluate(() => window.TestPage3.lon());
-  await page.waitForTimeout(500);
-  expect(await page.evaluate(() => window.TestPage3.lon()), "the globe turns").not.toBe(lon);
+  await page.waitForTimeout(600);
+  expect(await page.evaluate(() => window.TestPage3.count)).toBeGreaterThan(30);
+  await expect(page.locator('.t3-label[data-tier="m"]')).toContainText("20–30 minutes");
+  await page.locator(".t3-pick").selectOption({ label: "Amber Zero — ADAR" });
+  expect(await page.evaluate(() => window.TestPage3.chosen())).toBe("Amber Zero");
+  await expect(page.locator(".t3-chosen h3")).toHaveText("Amber Zero");
+  await expect(page.locator(".t3-chosen dt")).toHaveText(["Top", "Middle", "Base"]);
+  await page.locator(".t3-clear").click();
+  expect(await page.evaluate(() => window.TestPage3.chosen())).toBe(null);
+  // spray: the top first, then the heart, then the dry down
+  await page.locator(".t3-spray").click();
+  await expect.poll(() => page.evaluate(() => window.TestPage3.stage()), { timeout: 4000 }).toBe("t");
+  await expect.poll(() => page.evaluate(() => window.TestPage3.stage()), { timeout: 6000 }).toBe("m");
+  await expect.poll(() => page.evaluate(() => window.TestPage3.stage()), { timeout: 6000 }).toBe("b");
+  // and it turns when dragged
+  const yaw = await page.evaluate(() => window.TestPage3.yaw());
+  await page.mouse.move(640, 600); await page.mouse.down(); await page.mouse.move(760, 600, { steps: 6 }); await page.mouse.up();
+  expect(await page.evaluate(() => window.TestPage3.yaw())).not.toBe(yaw);
+  expect(errors).toEqual([]);
 });
 
-test("test page 4: draw, write a note, undo, rub out — and it is kept", async ({ page }) => {
+/* 2026-11-03 — "Recreate test page 4 with the remaining images ... page 4
+   surprise me": every note a hill, the land growing year by year, a gold
+   contour plane over it and a survey tower walking it. */
+test("test page 4: the land grows year by year, the tower surveys where it is sent, and the plane comes down", async ({ page }) => {
+  const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/test-pages/4/");
-  await page.evaluate(() => { try { localStorage.clear(); } catch (e) { /* none */ } });
-  await page.reload();
-  await page.waitForTimeout(800);
-  const items = () => page.evaluate(() => window.TestPage4.items());
-  await page.locator('.t4-btn[data-k="pen"]').click();
-  await page.mouse.move(200, 200); await page.mouse.down();
-  for (let i = 0; i < 12; i++) await page.mouse.move(200 + i * 12, 200 + (i % 2) * 20);
-  await page.mouse.up();
-  expect(await items()).toEqual(["stroke"]);
-  await page.locator('.t4-btn[data-k="note"]').click();
-  await page.mouse.click(220, 420);
-  await page.keyboard.type("Aldehydes");
-  await page.keyboard.press("Escape");
-  expect(await items()).toEqual(["stroke", "note"]);
-  expect(await page.evaluate(() => window.TestPage4.texts())).toContain("Aldehydes");
-  await page.locator('.t4-btn[data-k="undo"]').click();
-  expect(await items()).toEqual(["stroke"]);
-  await page.locator('.t4-btn[data-k="redo"]').click();
-  expect(await items()).toEqual(["stroke", "note"]);
-  await page.locator('.t4-btn[data-k="eraser"]').click();
-  await page.mouse.move(236, 190); await page.mouse.down(); await page.mouse.move(260, 225, { steps: 6 }); await page.mouse.up();
-  expect(await items()).toEqual(["note"]);
-  // the wheel zooms
-  const z = await page.evaluate(() => window.TestPage4.zoom());
-  await page.mouse.move(640, 400);
-  await page.mouse.wheel(0, -400);
-  await expect.poll(() => page.evaluate(() => window.TestPage4.zoom())).toBeGreaterThan(z);
-  // kept in this browser
-  await page.waitForTimeout(700);
-  await page.reload();
   await page.waitForTimeout(600);
-  expect(await items()).toEqual(["note"]);
-  await page.evaluate(() => { try { localStorage.clear(); } catch (e) { /* none */ } });
+  const full = await page.evaluate(() => window.TestPage4.year());
+  await page.locator(".t4-grow").click();
+  await page.waitForTimeout(1200);
+  expect(await page.evaluate(() => window.TestPage4.year()), "growing from the first year").toBeLessThan(full);
+  await expect.poll(() => page.evaluate(() => window.TestPage4.year()), { timeout: 15000 }).toBe(full);
+  // the tower, sent to the land's far corner, walks there and says so
+  await page.evaluate(() => window.TestPage4.send(-0.8, -0.8));
+  const s = await page.evaluate(() => window.TestPage4.survey());
+  expect(s.cell).toMatch(/^[A-T] · \d+$/);
+  await expect(page.locator(".t4-survey [data-v=cell]")).toHaveText(s.cell);
+  await expect.poll(() => page.evaluate(() => window.TestPage4.tower().x), { timeout: 5000 }).toBeLessThan(-0.7);
+  // pressed on the land, it goes there too
+  const before = await page.evaluate(() => window.TestPage4.tower());
+  await page.mouse.click(700, 420);
+  await expect.poll(async () => { const t = await page.evaluate(() => window.TestPage4.tower()); return Math.hypot(t.x - before.x, t.z - before.z); }, { timeout: 5000 }).toBeGreaterThan(0.2);
+  // the plane lowered
+  const high = await page.evaluate(() => window.TestPage4.plane());
+  await page.locator(".t4-level").fill("20");
+  await expect.poll(() => page.evaluate(() => window.TestPage4.plane()), { timeout: 4000 }).toBeLessThan(high - 0.5);
+  expect(errors).toEqual([]);
 });

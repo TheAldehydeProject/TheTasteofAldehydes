@@ -5,124 +5,148 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Test page 4 — The Taste of Aldehydes</title>
 <!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
-<meta name="description" content="A test page, not a part of the site: The Network Map — every house, perfumer, perfume and note, on a board to draw on.">
+<meta name="description" content="A test page, not a part of the site: The Scent Landscape — every note on the site a hill, growing year by year.">
 <link rel="canonical" href="https://thetasteofaldehydes.com/test-pages/4/">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="../../favicon.svg?v=2026-10-05" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../../apple-touch-icon.png?v=2026-10-05">
-<meta name="theme-color" content="#101012">
+<meta name="theme-color" content="#1b1c20">
 <!-- SEARCH ENGINES: end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!--
-  TEST PAGE 4 (2026-11-02) — "4 should be modelled after image 4": the
-  owner's picture of a whiteboard — a dense, many-coloured network of
-  lines, circles and labelled boxes, a square frame through it, a few
-  bees, and a toolbar along the foot (undo, redo, delete, duplicate; select,
-  hand, pen, eraser, arrow, text, note, picture, circle).
+  TEST PAGE 4 — THE SCENT LANDSCAPE (2026-11-03; the Network Map stood
+  here from 2026-11-02). The owner: "Recreate test page 4 with the
+  remaining images ... page 4 surprise me." The remaining pictures: a block
+  of terrain in isometric under a floating plane of gold contour lines; and
+  a site drawn as an architect draws one — a lettered and numbered grid,
+  dashed circles, a survey tower, the ground again below in wireframe.
 
-  Here: the whole site as that network — every house, perfumer, perfume and
-  note, joined as the Perfumers ledger and the notes join them — on a board
-  where every tool on the toolbar works: draw on it, write on it, pin notes
-  and pictures to it, move anything, rub it out, undo it. What is drawn is
-  kept in this browser.
+  Here every note named on the site is a hill, in its accord's corner, as
+  high as how many of the site's fragrances name it; its contours in gold
+  over it, its wireframe and the grid under it. The surprise: the land
+  grows, year by year, and a survey tower walks to wherever it is sent and
+  says what is underfoot.
 
-  NOT A PAGE OF THE SITE: reached only by the fourth of the four unseen
-  squares at the foot of Contact; none of the site's scripts or its
-  stylesheet, in no menu, search or sitemap, links to nothing of the site's
-  but the way back, and search engines told to leave it alone.
+  NOT A PAGE OF THE SITE: nothing on the site links here but the four
+  unseen squares at the foot of Contact; it loads none of the site's
+  scripts or its stylesheet, is in no menu, search or sitemap, and tells
+  search engines to leave it alone. Everything it needs is in this folder.
 -->
 <style>
   :root {
-    --ground: #101012;
-    --ink: #ececee;
-    --muted: #8b8b93;
-    --panel: #1d1d21;
-    --edge: rgba(255, 255, 255, 0.09);
-    --blue: #4f7ff0;
+    --ground: #1b1c20;
+    --ink: #eeeeef;
+    --muted: #9a9ca2;
+    --faint: #63656b;
+    --gold: #d6a44e;
     --mono: "IBM Plex Mono", ui-monospace, monospace;
     --sans: "Archivo", "Segoe UI", sans-serif;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; overflow: hidden; }
-  body { background: var(--ground); color: var(--ink); font-family: var(--sans); }
-  .t4-board { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--ground); color: var(--ink); font-family: var(--sans); overflow: hidden; }
+  .t4-scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+  .t4-grain {
+    position: fixed; inset: -50%; pointer-events: none; opacity: 0.06; mix-blend-mode: screen;
+    background-image: radial-gradient(rgba(255,255,255,0.9) 0.6px, transparent 0.8px);
+    background-size: 3px 3px; animation: t4-grain 1.2s steps(5) infinite; will-change: transform;
+  }
+  @keyframes t4-grain { 0% { transform: translate(0, 0); } 25% { transform: translate(-1px, 2px); } 50% { transform: translate(2px, -1px); } 75% { transform: translate(-2px, -2px); } 100% { transform: translate(0, 0); } }
   .t4 { position: fixed; inset: 0; pointer-events: none; }
-  .t4 > * { pointer-events: auto; }
-  .t4-title { position: absolute; left: 18px; top: 14px; margin: 0; font: 600 13px var(--sans); letter-spacing: 0.02em; pointer-events: none; }
-  .t4-title span { display: block; margin-top: 3px; font: 400 9.5px var(--mono); color: var(--muted); letter-spacing: 0.04em; }
-  .t4-back { position: absolute; right: 18px; top: 14px; font: 500 10px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
+  .t4 a, .t4 button, .t4 input { pointer-events: auto; }
+
+  .t4-head { position: absolute; top: 30px; left: 48px; right: 48px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+  .t4-head h1 { margin: 0; font: 300 30px/1.05 var(--sans); letter-spacing: 0.01em; }
+  .t4-head h1 span { display: block; margin-top: 8px; font: 400 11px/1.5 var(--mono); letter-spacing: 0.04em; color: var(--muted); max-width: 440px; }
+  .t4-head p { margin: 0; text-align: right; font: 400 10.5px/1.7 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .t4-head p b { color: var(--gold); font-weight: 500; }
+
+  /* THE SURVEY, what the tower says is underfoot */
+  .t4-survey { position: absolute; left: 48px; top: 190px; width: 250px; font: 400 11px/1.5 var(--mono); color: var(--muted); }
+  .t4-survey h2 { margin: 0 0 10px; font: 500 10px var(--mono); letter-spacing: 0.2em; text-transform: uppercase; color: var(--faint); display: flex; align-items: center; gap: 8px; }
+  .t4-survey h2::before { content: ""; width: 7px; height: 7px; border: 1px solid var(--gold); }
+  .t4-cell { margin: 0; font: 300 34px/1 var(--sans); color: var(--ink); letter-spacing: 0.02em; }
+  .t4-zone { margin: 6px 0 12px; color: var(--gold); }
+  .t4-survey dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 0 0 12px; padding: 10px 0; border-top: 1px solid rgba(238,238,239,0.12); border-bottom: 1px solid rgba(238,238,239,0.12); }
+  .t4-survey dt { color: var(--faint); text-transform: uppercase; font-size: 9.5px; letter-spacing: 0.12em; padding-top: 1px; }
+  .t4-survey dd { margin: 0; color: var(--ink); }
+  .t4-survey ul { list-style: none; margin: 0 0 10px; padding: 0; }
+  .t4-survey li { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; border-bottom: 1px dashed rgba(238,238,239,0.1); }
+  .t4-survey li b { font: 400 12.5px var(--sans); color: var(--ink); }
+  .t4-survey li i { font-style: normal; color: var(--gold); }
+  .t4-survey .t4-none { color: var(--faint); border: 0; }
+  .t4-frags { margin: 0; font: 400 11.5px/1.5 var(--sans); color: #c4c5c9; }
+
+  /* THE CONTROLS along the foot */
+  .t4-controls { position: absolute; left: 48px; right: 48px; bottom: 26px; display: flex; align-items: center; gap: 26px; font: 400 10.5px var(--mono); letter-spacing: 0.08em; color: var(--muted); }
+  .t4-controls label { display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
+  .t4-controls output, .t4-controls .t4-yv { min-width: 13ch; color: var(--ink); text-transform: none; letter-spacing: 0.02em; }
+  .t4-controls input[type=range] { width: 200px; accent-color: var(--gold); }
+  .t4-btn { font: 500 10.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); background: none; border: 1px solid rgba(238,238,239,0.3); padding: 8px 12px; cursor: pointer; }
+  .t4-btn:hover { border-color: var(--ink); }
+  .t4-grow.is-on { border-color: var(--gold); color: var(--gold); }
+  .t4-turns { display: flex; gap: 6px; margin-left: auto; }
+  .t4-back { color: var(--muted); text-decoration: none; letter-spacing: 0.14em; text-transform: uppercase; }
   .t4-back:hover { color: var(--ink); }
 
-  /* the toolbar, two rows, along the foot */
-  .t4-bar { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .t4-row { display: flex; gap: 2px; padding: 5px; background: var(--panel); border: 1px solid var(--edge); border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); }
-  .t4-row-small { padding: 3px 4px; border-radius: 10px; }
-  .t4-btn {
-    position: relative; display: grid; place-items: center; width: 40px; height: 38px; padding: 0; border: 0; border-radius: 9px;
-    color: #d8d8dd; background: none; cursor: pointer; transition: background 0.15s, color 0.15s;
-  }
-  .t4-row-small .t4-btn { width: 32px; height: 30px; }
-  .t4-btn:hover { background: rgba(255, 255, 255, 0.07); }
-  .t4-btn.is-on { background: var(--blue); color: #fff; }
-  .t4-btn:disabled { opacity: 0.35; cursor: default; background: none; }
-  .t4-btn svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-  .t4-btn kbd { position: absolute; right: 3px; bottom: 1px; font: 400 7px var(--mono); color: var(--muted); }
-  .t4-btn.is-on kbd { color: rgba(255, 255, 255, 0.7); }
-  .t4-pop {
-    position: absolute; bottom: 108px; left: 50%; transform: translateX(-50%); display: flex; gap: 2px; padding: 5px;
-    background: var(--panel); border: 1px solid var(--edge); border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  }
-  .t4-pop[hidden] { display: none; }
-  .t4-menu { flex-direction: column; min-width: 190px; transform: translateX(-10%); }
-  .t4-menu button { padding: 8px 12px; text-align: left; font: 400 12px var(--sans); color: var(--ink); background: none; border: 0; border-radius: 7px; cursor: pointer; }
-  .t4-menu button:hover { background: rgba(255, 255, 255, 0.07); }
-  .t4-colors { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; padding: 10px 8px; background: var(--panel); border: 1px solid var(--edge); border-radius: 12px; }
-  .t4-colors[hidden] { display: none; }
-  .t4-colors button { width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
-  .t4-colors button.is-on { border-color: #fff; box-shadow: 0 0 0 2px var(--blue); }
-  .t4-zoom { position: absolute; right: 18px; bottom: 18px; display: flex; align-items: center; gap: 2px; padding: 3px; background: var(--panel); border: 1px solid var(--edge); border-radius: 10px; font: 500 11px var(--mono); }
-  .t4-zoom button { width: 28px; height: 26px; border: 0; border-radius: 7px; background: none; color: var(--ink); cursor: pointer; font: 500 15px var(--sans); }
-  .t4-zoom button:hover { background: rgba(255, 255, 255, 0.07); }
-  .t4-zoom span { min-width: 46px; text-align: center; color: var(--muted); }
-  .t4-edit {
-    position: absolute; min-width: 40px; padding: 2px 3px; outline: 1px dashed var(--blue); white-space: pre-wrap;
-    font: 500 16px var(--sans); color: var(--ink); transform-origin: 0 0;
-  }
-  .t4-edit[hidden] { display: none; }
-  .t4-tip { position: absolute; padding: 7px 10px 8px; font: 400 10.5px/1.5 var(--mono); color: var(--ink); background: rgba(22, 22, 26, 0.94); border: 1px solid var(--edge); border-radius: 6px; max-width: 260px; pointer-events: none; }
-  .t4-tip b { display: block; font: 600 12px var(--sans); }
+  .t4-tip { position: absolute; left: 0; top: 0; padding: 8px 10px; background: rgba(14,14,17,0.94); border: 1px solid rgba(238,238,239,0.18); font: 400 10.5px/1.45 var(--mono); color: var(--muted); pointer-events: none; }
   .t4-tip[hidden] { display: none; }
-  .t4-help { position: absolute; left: 18px; bottom: 18px; font: 400 9.5px/1.6 var(--mono); color: #5d5d66; pointer-events: none; }
-  @media (max-width: 700px) {
-    .t4-btn { width: 32px; height: 34px; }
-    .t4-btn kbd { display: none; }
-    .t4-row-small .t4-btn { width: 30px; }
-    .t4-help, .t4-title span { display: none; }
-    .t4-zoom { bottom: 112px; right: 10px; }
-    .t4-colors { left: 8px; }
+  .t4-tip b { display: block; color: var(--ink); font-weight: 500; font-size: 12px; }
+  .t4-tip span { display: block; color: var(--gold); }
+  .t4-tip i { display: block; font-style: normal; color: var(--faint); margin-top: 3px; }
+
+  @media (max-width: 1100px) {
+    .t4-head, .t4-controls { left: 28px; right: 28px; }
+    .t4-survey { left: 28px; width: 210px; }
+    .t4-controls { gap: 16px; }
+    .t4-controls input[type=range] { width: 130px; }
   }
+  @media (max-width: 760px) {
+    .t4-head { top: 14px; left: 16px; right: 16px; }
+    .t4-head h1 { font-size: 20px; }
+    .t4-head h1 span, .t4-head p { display: none; }
+    .t4-survey { left: 16px; right: 16px; top: auto; bottom: 150px; width: auto; display: grid; grid-template-columns: auto 1fr; gap: 0 14px; align-items: start; }
+    .t4-survey h2, .t4-survey dl, .t4-frags { display: none; }
+    .t4-cell { font-size: 22px; }
+    .t4-zone { margin: 4px 0 0; }
+    .t4-survey ul { grid-column: 2; grid-row: 1 / span 2; margin: 0; max-height: 92px; overflow: hidden; }
+    .t4-controls { left: 16px; right: 16px; bottom: 14px; flex-wrap: wrap; gap: 10px 14px; }
+    .t4-controls input[type=range] { width: 120px; }
+    .t4-controls output, .t4-controls .t4-yv { min-width: 0; }
+    .t4-turns { margin-left: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .t4-grain { animation: none; } }
 </style>
 </head>
 <body>
-<canvas class="t4-board" aria-label="A whiteboard with a network of the site's houses, perfumers, perfumes and notes" role="img"></canvas>
+<canvas class="t4-scene" aria-hidden="true"></canvas>
+<div class="t4-grain" aria-hidden="true"></div>
 <main class="t4">
-  <h1 class="t4-title">The Network Map <span>Test page 4 · every house, perfumer, perfume and note on the site</span></h1>
-  <a class="t4-back" href="../../contact/">← Back</a>
-  <div class="t4-edit" contenteditable="true" spellcheck="false" hidden></div>
-  <input class="t4-file" type="file" accept="image/*" hidden>
-  <div class="t4-colors" hidden aria-label="Colour"></div>
-  <div class="t4-pop t4-shapes" hidden aria-label="More shapes"></div>
-  <div class="t4-pop t4-menu" hidden aria-label="More"></div>
-  <div class="t4-bar">
-    <div class="t4-row t4-row-small" aria-label="Edit"></div>
-    <div class="t4-row t4-row-tools" aria-label="Tools"></div>
+  <header class="t4-head">
+    <h1>The Scent Landscape<span>Every note named on The Taste of Aldehydes is a hill, in its accord’s corner, as high as how many of the site’s fragrances name it.</span></h1>
+    <p>Test page 4<br><b data-v="notes"></b> notes · <b data-v="total"></b> fragrances<br><span data-v="span"></span></p>
+  </header>
+
+  <section class="t4-survey" aria-label="What the tower stands on" aria-live="polite">
+    <h2>Survey</h2>
+    <p class="t4-cell" data-v="cell"></p>
+    <p class="t4-zone" data-v="zone"></p>
+    <dl><dt>Tallest</dt><dd><span data-v="elev"></span></dd><dt>Grown to</dt><dd><span data-v="year"></span> · <span data-v="count"></span> fragrances</dd></dl>
+    <ul></ul>
+    <p class="t4-frags" data-v="frags"></p>
+  </section>
+
+  <div class="t4-controls">
+    <a class="t4-back" href="../../contact/">← Back</a>
+    <button type="button" class="t4-btn t4-grow">Grow</button>
+    <label>Year <input class="t4-year" type="range" aria-label="The land as it stood in a year"></label>
+    <label>Plane <input class="t4-level" type="range" min="0" max="100" value="100" aria-label="How high the gold plane stands"></label>
+    <div class="t4-turns"><button type="button" class="t4-btn t4-turn-l" aria-label="Turn the land left">↺</button><button type="button" class="t4-btn t4-turn-r" aria-label="Turn the land right">↻</button></div>
   </div>
-  <div class="t4-zoom"><button type="button" data-zoom="-1" aria-label="Zoom out">−</button><span>100%</span><button type="button" data-zoom="1" aria-label="Zoom in">+</button></div>
-  <p class="t4-help">Wheel or pinch to zoom · space to pan · double-click a note or words to write in it</p>
-  <div class="t4-tip" hidden></div>
+  <div class="t4-tip" role="tooltip" hidden></div>
 </main>
-<script src="page.js?v=159c76cd91"></script>
+<script src="page.js?v=ef3960f9fd"></script>
 </body>
 </html>
