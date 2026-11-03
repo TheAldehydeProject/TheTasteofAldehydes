@@ -26,6 +26,14 @@
   site's fragrances name a tick in its accord (the days), and from each
   house a line out to every accord its notes are in, as strong as its share.
 
+  ZOOMABLE AND SAYING WHAT IT SHOWS (2026-11-03 — "make test page 2
+  zoomable, and functional for information"): the wheel, a pinch, a
+  double-click, the + and − at the foot or the keys + − 0 come closer, a
+  drag moves about, more notes are named the closer you come; and a house,
+  an accord or (closer in) a note pressed opens the panel — its accords,
+  notes, fragrances, houses and what it is most often with, every name a way
+  on — and the search finds any of them by name.
+
   NOT A PAGE OF THE SITE: reached only by the second of the four unseen
   squares at the foot of Contact; none of the site's scripts or its
   stylesheet, in no menu, search or sitemap, and search engines told to
@@ -80,12 +88,115 @@
   }
   .t2-tip[hidden] { display: none; }
   .t2-tip b { display: block; font: 600 11px var(--sans); }
+  .t2-tip em { display: block; margin-top: 4px; font-style: normal; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; font-size: 8px; }
+  .t2-tip i { color: var(--muted); }
+
+  /* the search, under the title */
+  .t2-find { position: relative; margin: 20px 0 4px; }
+  .t2-find input {
+    width: 100%; padding: 8px 10px 8px 28px; font: 400 10.5px var(--mono); color: var(--ink);
+    background: rgba(236, 233, 244, 0.05) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%238f8aa6' stroke-width='1.3'%3E%3Ccircle cx='5' cy='5' r='3.8'/%3E%3Cpath d='m8 8 3 3'/%3E%3C/svg%3E") 9px 50% no-repeat;
+    border: 1px solid rgba(236, 233, 244, 0.16); border-radius: 0; outline: none; -webkit-appearance: none; appearance: none;
+  }
+  .t2-find input::placeholder { color: var(--faint); }
+  .t2-find input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+  .t2-find input:focus { border-color: rgba(235, 163, 63, 0.7); }
+  .t2-found { position: absolute; left: 0; right: 0; top: 100%; z-index: 6; margin: 2px 0 0; padding: 4px 0; list-style: none; background: #12121f; border: 1px solid rgba(236, 233, 244, 0.16); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5); }
+  .t2-found[hidden] { display: none; }
+  .t2-found button { display: block; width: 100%; padding: 6px 10px; text-align: left; font: inherit; color: var(--ink); background: none; border: 0; cursor: pointer; }
+  .t2-found button:hover, .t2-found button:focus-visible { background: rgba(236, 233, 244, 0.07); outline: none; }
+  .t2-found span { display: block; font: 600 11px var(--sans); }
+  .t2-found small { font-size: 8.5px; color: var(--muted); }
+  .t2-found-none { padding: 6px 10px; color: var(--muted); }
+  .t2-gloss li { cursor: pointer; }
+  .t2-gloss li:hover i, .t2-gloss li:focus-visible i { color: var(--gold); }
+  .t2-gloss li:focus-visible { outline: 1px solid rgba(235, 163, 63, 0.6); outline-offset: 2px; }
+
+  /* the zoom, at the foot on the right, and a word on how */
+  .t2-zoom { position: absolute; right: 18px; bottom: 18px; z-index: 3; display: flex; align-items: center; gap: 1px; padding: 3px; background: rgba(11, 11, 22, 0.82); border: 1px solid rgba(236, 233, 244, 0.16); font: 500 10px var(--mono); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .t2-zoom button { min-width: 28px; height: 26px; padding: 0 7px; font: 500 15px var(--sans); color: var(--ink); background: none; border: 0; cursor: pointer; }
+  .t2-zoom button:hover { background: rgba(236, 233, 244, 0.08); }
+  .t2-zoom .t2-fit { font: 500 9px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; border-left: 1px solid rgba(236, 233, 244, 0.16); }
+  .t2-zoom-say { min-width: 44px; text-align: center; color: var(--muted); }
+  .t2-hint { position: absolute; left: 318px; bottom: 22px; z-index: 3; margin: 0; font: 400 9px var(--mono); letter-spacing: 0.06em; color: rgba(36, 24, 58, 0.62); pointer-events: none; transition: opacity 0.4s; }
+  .t2.is-zoomed .t2-hint { opacity: 0; }
+  /* closer in, the words on the left stand on the night whole, with nothing of the poster through them */
+  .t2-text { transition: background-color 0.3s; }
+  .t2.is-zoomed .t2-text { background: var(--night); box-shadow: 18px 0 30px rgba(11, 11, 22, 0.85); }
+
+  /* the panel: what a house, an accord or a note is — over the words on the left */
+  .t2-info {
+    position: absolute; left: 0; top: 0; bottom: 0; z-index: 5; width: 330px; overflow-y: auto; scrollbar-width: thin;
+    padding: 0 24px 34px 30px; font: 400 9.5px/1.55 var(--mono); color: var(--muted);
+    background: linear-gradient(90deg, var(--night) 92%, rgba(11, 11, 22, 0.94));
+    border-right: 1px solid rgba(236, 233, 244, 0.1); box-shadow: 20px 0 40px rgba(0, 0, 0, 0.35);
+    animation: t2-in 0.35s cubic-bezier(.2, .7, .2, 1);
+  }
+  .t2-info[hidden] { display: none; }
+  @keyframes t2-in { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: none; } }
+  .t2-info-bar { position: sticky; top: 0; z-index: 1; display: flex; gap: 6px; align-items: center; margin: 0 -24px 0 -30px; padding: 14px 24px 10px 30px; background: var(--night); border-bottom: 1px solid rgba(236, 233, 244, 0.08); }
+  .t2-info-bar button { font: 500 9px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); background: none; border: 1px solid rgba(236, 233, 244, 0.16); padding: 5px 8px; cursor: pointer; }
+  .t2-info-bar button:hover { color: var(--ink); border-color: rgba(236, 233, 244, 0.4); }
+  .t2-info-bar button[hidden] { display: none; }
+  .t2-info-show { color: var(--gold) !important; border-color: rgba(235, 163, 63, 0.45) !important; }
+  .t2-info-close { margin-left: auto; font-size: 14px !important; line-height: 1; padding: 3px 8px !important; }
+  .t2-info-body { padding-top: 18px; }
+  .t2-k { margin: 0 0 6px; font-size: 8.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+  .t2 .t2-n { margin: 0; font: 700 24px/1.05 var(--sans); color: var(--ink); }
+  .t2-s { margin: 8px 0 0; font: 500 10.5px/1.4 var(--sans); color: #bfb6d8; }
+  .t2-where { margin: 6px 0 0; letter-spacing: 0.08em; text-transform: uppercase; font-size: 8.5px; }
+  .t2-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin: 18px 0 0; background: rgba(236, 233, 244, 0.1); border: 1px solid rgba(236, 233, 244, 0.1); }
+  .t2-stats div { padding: 8px 10px; background: var(--night); }
+  .t2-stats dt { font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; }
+  .t2-stats dd { margin: 2px 0 0; font: 600 14px var(--sans); color: var(--ink); }
+  .t2-info h3 { display: flex; justify-content: space-between; gap: 10px; margin: 22px 0 8px; padding-bottom: 5px; font: 600 11.5px var(--sans); color: var(--ink); border-bottom: 1px solid rgba(236, 233, 244, 0.1); }
+  .t2-info h3 span { font: 400 8.5px var(--mono); color: var(--faint); align-self: flex-end; }
+  .t2-none { color: var(--faint); }
+  .t2-rows { display: grid; gap: 1px; }
+  .t2-row { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(40px, 1fr) auto; align-items: center; gap: 10px; padding: 4px 4px 4px 0; text-align: left; font: inherit; color: var(--ink); background: none; border: 0; cursor: pointer; }
+  .t2-row:hover, .t2-row:focus-visible { background: rgba(236, 233, 244, 0.05); outline: none; }
+  .t2-row-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 10.5px var(--sans); }
+  .t2-row:hover .t2-row-name { color: var(--gold); }
+  .t2-code { display: inline-block; margin-right: 6px; padding: 0 3px; font: 500 7.5px var(--mono); color: var(--night); background: #b9a6d2; vertical-align: 1px; }
+  .t2-row-bar { height: 3px; background: rgba(236, 233, 244, 0.08); }
+  .t2-row-bar i { display: block; height: 100%; background: linear-gradient(90deg, #6c5c8f, #e8dcf6); }
+  .t2-row-n { min-width: 22px; text-align: right; color: var(--ink); }
+  .t2-row-n small { color: var(--faint); font-size: 8px; }
+  .t2-frags { display: grid; gap: 1px; }
+  .t2-frag summary { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; cursor: pointer; list-style: none; color: var(--ink); font: 500 10.5px var(--sans); }
+  .t2-frag summary::-webkit-details-marker { display: none; }
+  .t2-frag summary::before { content: "+"; width: 10px; color: var(--gold); font-family: var(--mono); }
+  .t2-frag[open] summary::before { content: "−"; }
+  .t2-frag summary span { flex: 1; }
+  .t2-frag summary small { font: 400 8.5px var(--mono); color: var(--faint); white-space: nowrap; }
+  .t2-chips { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 0 8px 10px; }
+  .t2-chip { padding: 3px 6px; font: 400 9px var(--mono); color: var(--ink); background: rgba(236, 233, 244, 0.05); border: 1px solid rgba(236, 233, 244, 0.14); cursor: pointer; }
+  .t2-chip span { color: var(--gold); }
+  .t2-chip:hover { border-color: rgba(235, 163, 63, 0.6); color: #fff; }
+  .t2-list { list-style: none; margin: 0; padding: 0; }
+  .t2-list li { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; border-bottom: 1px dotted rgba(236, 233, 244, 0.08); }
+  .t2-list small { color: var(--faint); text-align: right; }
+  .t2-link { padding: 0; font: 500 10.5px var(--sans); text-align: left; color: var(--ink); background: none; border: 0; cursor: pointer; }
+  .t2-k .t2-link { font: inherit; color: var(--gold); text-decoration: underline; text-underline-offset: 2px; text-transform: uppercase; letter-spacing: inherit; }
+  .t2-link:hover { color: var(--gold); }
+  @media (prefers-reduced-motion: reduce) { .t2-info { animation: none; } }
+
   @media (max-width: 900px) {
     body { overflow: auto; }
     .t2 { position: relative; inset: auto; margin: 14px; overflow: visible; }
     .t2-arc { position: relative; height: 160vw; max-height: 1300px; }
     .t2-text { position: relative; width: auto; padding: 26px 20px 40px; background: none; overflow: visible; }
     .t2-back { position: absolute; top: 12px; left: 16px; z-index: 2; }
+    .t2-zoom { top: calc(min(160vw, 1300px) - 44px); bottom: auto; right: 10px; }
+    .t2-hint { display: none; }
+    .t2-info {
+      position: fixed; left: 0; right: 0; top: auto; bottom: 0; width: auto; max-height: 58vh; max-height: 58svh;
+      padding: 0 18px 26px; border-right: 0; border-top: 1px solid rgba(236, 233, 244, 0.16);
+      background: var(--night); box-shadow: 0 -18px 40px rgba(0, 0, 0, 0.5);
+      animation-name: t2-up;
+    }
+    .t2-info-bar { margin: 0 -18px; padding: 12px 18px 9px; }
+    @keyframes t2-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
   }
 </style>
 </head>
@@ -93,15 +204,26 @@
 <main class="t2">
   <canvas class="t2-arc" aria-hidden="true"></canvas>
   <div class="t2-tip" hidden></div>
+  <div class="t2-zoom" aria-label="Zoom"><button type="button" data-z="-1" aria-label="Zoom out">−</button><span class="t2-zoom-say">100%</span><button type="button" data-z="1" aria-label="Zoom in">+</button><button type="button" class="t2-fit" data-z="0">Fit</button></div>
+  <p class="t2-hint">Scroll to zoom · drag to move · press a house, an accord or, closer in, a note</p>
+  <aside class="t2-info" hidden aria-label="About what is chosen">
+    <div class="t2-info-bar"><button type="button" class="t2-info-back" hidden>‹ Back</button><button type="button" class="t2-info-show">Show on the poster</button><button type="button" class="t2-info-close" aria-label="Close">×</button></div>
+    <div class="t2-info-body"></div>
+  </aside>
   <section class="t2-text">
     <a class="t2-back" href="../../contact/">← Back</a>
     <h1>Accord <span>Spectrums 2026</span></h1>
     <span class="t2-sub">Mapping the notes of the houses · test page 2</span>
+    <div class="t2-find"><input type="search" placeholder="Find a house, an accord or a note" aria-label="Find a house, an accord or a note" autocomplete="off" spellcheck="false"><ul class="t2-found" hidden></ul></div>
     <p style="margin-top:18px">Every house on the site is a dome down the arc, and every note its fragrances name is a tick round it, in its accord — the sixteen families of the Note Library, laid round as a year is laid round its months.</p>
     <p>From each house a line runs out to every accord its notes are in, as bright as that accord's share of them. Point at a house, or at an accord, and the rest steps back.</p>
 
     <h2>The Sixteen Accords</h2>
     <ul class="t2-gloss"></ul>
+
+    <h2>How to Use It</h2>
+    <p>Scroll, pinch or double-click to come closer, and drag to move about; the + and − at the foot do the same, and Fit shows the whole again. The closer you come, the more of the notes are named, with how many fragrances name each.</p>
+    <p>Press a house, an accord — on the arc or in the list below — or, closer in, a single note, and what it is opens here: a house's accords, notes and fragrances; an accord's houses and notes; a note's houses, the fragrances that name it and what it is most often with. Every name in it opens its own.</p>
 
     <h2>How to Read It</h2>
     <p>A dome turns as its house's fragrances go round it; the path over it rises with how many there are. A tick is a note, longer the more fragrances name it. The bands deepen from the domes outward, as the arc of the poster this is after does from night to day.</p>
@@ -117,6 +239,6 @@
     <p>A snapshot of the site's notes on the day this page was made; a test page, not a part of the site. A house with no notes found yet has a dome and no lines.</p>
   </section>
 </main>
-<script src="page.js?v=b2692b2d65"></script>
+<script src="page.js?v=c4c1b00d42"></script>
 </body>
 </html>

@@ -146,6 +146,29 @@ test.describe("on a phone", () => {
     expect(g.small, "the motifs' scale").toBe(0.6);
   });
 
+  /* THE MENU KEPT CLEAR AS THE PAGE SCROLLS — the owner, 2026-11-03: "Make
+     suure the menu remains clear when you scroll". The writing travels under
+     the Menu on a phone; its box is the page's ground laid twice (about nine
+     tenths: on a dark page 1 − 0.38², on the paper 1 − 0.24²), let out past
+     its edges in a feather of the same ground — on the paper's pages and
+     the dark ones alike — and none of it while the Menu is open. */
+  test("the Menu stands clear of the writing scrolled under it, on light pages and dark", async ({ page }) => {
+    await serveDependenciesLocally(page);
+    for (const [path, dark] of [["/houses/pineward.html", false], ["/works/theory-03.html", true], ["/perfumers/", true]]) {
+      await page.goto(path);
+      await page.evaluate(() => window.scrollTo(0, 900));
+      const look = await page.locator(".menu-trigger").evaluate((el) => {
+        const cs = getComputedStyle(el);
+        return { image: cs.backgroundImage, colour: cs.backgroundColor, shadow: cs.boxShadow };
+      });
+      const alpha = +look.colour.match(/[\d.]+\)$/)[0].replace(")", "");
+      expect(look.image, path + ": the ground laid twice").toContain("gradient");
+      expect(1 - (1 - alpha) ** 2, path + ": about nine tenths").toBeGreaterThan(0.84);
+      expect(look.shadow, path + ": feathered").toContain(dark ? "rgba(11, 12, 15" : "rgba(");
+      expect(look.shadow).not.toBe("none");
+    }
+  });
+
   test("no page can be dragged sideways", async ({ page }) => {
     // THIS ONE GROWS WITH THE SITE. It opens every page in turn and
     // waits out each one's arrival, so the default thirty seconds ran

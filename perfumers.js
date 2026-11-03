@@ -1931,37 +1931,40 @@
     cardBack.hidden = !stack.length;
   });
 
-  // ---- THE INDEX AT THE FOOT, behind its button ---------------------------
-  const index = document.querySelector(".pf-index");
-  if (index) {
-    const open = index.querySelector(".pf-index-open");
-    let indexTimer = 0;
+  // ---- THE INDEX AND THE SOURCES AT THE FOOT, each behind its button --------
+  // (the sources since 2026-11-03 — "make the perfumers page sources also
+  // collapsible"): the same <details>, opening and shutting the same way.
+  document.querySelectorAll(".pf-fold").forEach((fold) => {
+    const open = fold.querySelector(".pf-index-open");
+    let timer = 0;
     open.addEventListener("click", (ev) => {
       if (STILL) return;
       ev.preventDefault();
-      clearTimeout(indexTimer);
-      if (index.open) {
-        index.classList.remove("is-opening");
-        index.classList.add("is-closing");
-        indexTimer = setTimeout(() => { index.open = false; index.classList.remove("is-closing"); }, 260);
+      clearTimeout(timer);
+      if (fold.open) {
+        fold.classList.remove("is-opening");
+        fold.classList.add("is-closing");
+        timer = setTimeout(() => { fold.open = false; fold.classList.remove("is-closing"); }, 260);
       } else {
-        index.classList.remove("is-closing");
-        index.open = true;
-        index.classList.add("is-opening");
-        indexTimer = setTimeout(() => index.classList.remove("is-opening"), 760);
+        fold.classList.remove("is-closing");
+        fold.open = true;
+        fold.classList.add("is-opening");
+        timer = setTimeout(() => fold.classList.remove("is-opening"), 760);
       }
     });
-    // an address pointing into the index opens it
+    // an address pointing into it opens it
     const toHash = () => {
       const id = decodeURIComponent(location.hash.slice(1));
       const t = id && document.getElementById(id);
-      if (t && index.contains(t) && !index.open) { index.open = true; t.scrollIntoView(); }
+      if (t && fold.contains(t) && !fold.open) { fold.open = true; t.scrollIntoView(); }
     };
     window.addEventListener("hashchange", toHash);
     toHash();
-    const ic = index.querySelector("[data-index-counts]");
-    if (ic && D.counts) ic.textContent = D.counts.perfumers + " perfumers · " + D.counts.houses + " houses · " + D.counts.perfumes + " perfumes";
-  }
+  });
+  const ic = document.querySelector("[data-index-counts]");
+  if (ic && D.counts) ic.textContent = D.counts.perfumers + " perfumers · " + D.counts.houses + " houses · " + D.counts.perfumes + " perfumes";
+  const sc = document.querySelector("[data-source-count]");
+  if (sc && D.sources) sc.textContent = D.sources.length + " sources";
   // the index's perfumers open the same window
   document.querySelectorAll(".pf-entry").forEach((art) => {
     const id = art.id.replace(/^perfumer-/, "");

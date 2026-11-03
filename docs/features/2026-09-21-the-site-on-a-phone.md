@@ -614,3 +614,21 @@ nothing else off.
 
 `tests/mobile.spec.js`, **`Scent Descriptions' search square stands in the middle of its box, as tall
 as the Menu's`**; and *Scent Descriptions' search, opened, stands clear of the buttons* still passes.
+
+## 2026-11-03 — the Menu kept clear as the page scrolls
+
+The owner: "Make suure the menu remains clear when you scroll". Most pages have writing passing under the Menu
+on a phone (measured: 20 of the 27 scrolled top to foot — all but the home page, Scent
+Descriptions, Theories, Favourites, Explorations & Researches, Search and Contact), and the
+Menu's box was the page's ground at its own strength — a little over half on the dark pages,
+three quarters or a little more on the paper — so a line passing under it still read
+through it and ran right up to the word. Now **the ground is laid twice** (a gradient of it over
+it: about nine tenths) and **let out past the box's edges in a feather of the same ground**
+(`box-shadow: 0 0 12px 7px var(--chrome-ground)`, written out where it is used — a variable
+holding it took the light page's ground everywhere, a pale glow on the dark pages, the first try),
+so the letters either side fade before they reach the word. The box is the size it was (Scent
+Descriptions' search square is measured against it), and none of it while the Menu is open.
+Nothing above 700px moved but on the Perfumers page, the one page whose writing runs under the
+Menu there too ([its report](2026-11-02-perfumers.md)). `tests/mobile.spec.js`: the Menu stands
+on about nine tenths of the ground, feathered, on Pineward's paper, the Note Dissemination
+Framework's dark and Perfumers'.

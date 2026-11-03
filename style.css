@@ -254,17 +254,30 @@ body.perfumers-page,
 body.network-page,
 body.chapter-open { --chrome-ground: rgba(11, 12, 15, 0.62); }
 
+/* KEPT CLEAR AS THE PAGE SCROLLS (2026-11-03 — the owner: "Make suure the
+   menu remains clear when you scroll"): the box was the ground at its own
+   strength, a little over half on the dark pages, and a line of writing
+   passing under it still read through it and ran right up to the word.
+   Now the ground is laid twice — about nine tenths, the writing under it
+   no more than a shadow — and let out past the box's edges in a soft
+   feather of the same ground, so the letters either side
+   fade before they reach it (written out where it is used: a variable
+   holding it would take the light page's ground everywhere). The box itself
+   is the size it was: Scent Descriptions' search square is measured against
+   it. */
 @media (max-width: 700px) {
   .menu-trigger {
     left: 14px;
     padding: 4px 8px 5px;
     border-radius: 3px;
-    background: var(--chrome-ground);
+    background: linear-gradient(var(--chrome-ground), var(--chrome-ground)), var(--chrome-ground);
+    box-shadow: 0 0 12px 7px var(--chrome-ground);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
   }
   body.menu-open .menu-trigger {
     background: none;
+    box-shadow: none;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
@@ -14277,6 +14290,26 @@ body.perfumers-page {
 }
 .perfumers-page .menu-trigger { color: #e6e3dc; }
 .perfumers-page .page-where { color: var(--pf-muted); border-left-color: var(--pf-rule); }
+/* THE MENU KEPT CLEAR ON A WIDE WINDOW TOO (2026-11-03): this is the one page
+   whose writing — the notes, the legend, the terms, the sources — runs the
+   width of the window, under the Menu and the page's name beside it. Both
+   take the phone's ground here at every width (the word where it was: the
+   box's padding taken back out of `left`); over the chart's own dark it is
+   not seen at all. */
+@media (min-width: 701px) {
+  .perfumers-page .menu-trigger,
+  .perfumers-page .page-where {
+    border-radius: 3px;
+    background: linear-gradient(var(--chrome-ground), var(--chrome-ground)), var(--chrome-ground);
+    box-shadow: 0 0 12px 7px var(--chrome-ground);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  .perfumers-page .menu-trigger { left: 14px; padding: 4px 8px 5px; }
+  .perfumers-page .page-where { padding-right: 9px; border-radius: 0 3px 3px 0; }
+  body.perfumers-page.menu-open .menu-trigger,
+  body.perfumers-page.menu-open .page-where { background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
 
 .pf { position: relative; }
 
@@ -14796,8 +14829,8 @@ body.perfumers-page {
   transition: transform 0.6s var(--menu-ease);
 }
 .pf-index-mark::after { transform: rotate(90deg); }
-.pf-index[open] .pf-index-mark { transform: rotate(180deg); border-color: var(--pf-gold); }
-.pf-index[open] .pf-index-mark::after { transform: rotate(0deg); }
+.pf-fold[open] .pf-index-mark { transform: rotate(180deg); border-color: var(--pf-gold); }
+.pf-fold[open] .pf-index-mark::after { transform: rotate(0deg); }
 .pf-index-open:hover .pf-index-mark { border-color: var(--pf-gold); }
 .pf-index-word {
   margin: 0;
@@ -14815,11 +14848,13 @@ body.perfumers-page {
 .pf-index-counts { color: var(--pf-ink); letter-spacing: 0.06em; }
 .pf-index-cue { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pf-gold); }
 .pf-index-cue-shut { display: none; }
-.pf-index[open] .pf-index-cue-open { display: none; }
-.pf-index[open] .pf-index-cue-shut { display: inline; }
+.pf-fold[open] .pf-index-cue-open { display: none; }
+.pf-fold[open] .pf-index-cue-shut { display: inline; }
 .pf-index-cols { columns: 3 220px; column-gap: 40px; padding: 48px 0 10px; }
-.pf-index.is-opening .pf-index-cols { animation: pf-index-in 0.7s var(--menu-ease) both; }
-.pf-index.is-closing .pf-index-cols { animation: pf-index-out 0.28s ease both; }
+.pf-index.is-opening .pf-index-cols,
+.pf-sources.is-opening .pf-source-list { animation: pf-index-in 0.7s var(--menu-ease) both; }
+.pf-index.is-closing .pf-index-cols,
+.pf-sources.is-closing .pf-source-list { animation: pf-index-out 0.28s ease both; }
 @keyframes pf-index-in { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
 @keyframes pf-index-out { from { opacity: 1; } to { opacity: 0; transform: translateY(-8px); } }
 .pf-entry { break-inside: avoid; margin: 0 0 24px; }
@@ -14873,7 +14908,12 @@ body.perfumers-page {
 .pf-terms dt:first-child { margin-top: 0; }
 .pf-terms dd { margin: 0; }
 .pf-sources { grid-column: 1 / -1; }
-.pf-source-list { margin: 0; padding: 0; list-style: none; columns: 2 360px; column-gap: 48px; }
+/* THE SOURCES' BUTTON (2026-11-03): the index's, a size down — it is the
+   second thing at the foot, and the last. */
+.pf-sources-open { padding: 28px 40px 30px; gap: 30px; }
+.pf-sources-open .pf-index-word { font-size: clamp(30px, 4.2vw, 60px); }
+.pf-sources-open .pf-index-mark { width: 38px; height: 38px; }
+.pf-source-list { margin: 0; padding: 40px 0 0; list-style: none; columns: 2 360px; column-gap: 48px; }
 .pf-source-list li { break-inside: avoid; margin: 0 0 7px; padding-left: 34px; text-indent: -34px; overflow-wrap: anywhere; }
 .pf-source-no { display: inline-block; width: 34px; text-indent: 0; color: var(--pf-gold); }
 .pf-source-list cite { font-style: italic; color: var(--pf-ink); }
@@ -15075,5 +15115,6 @@ body.perfumers-page {
 @media (prefers-reduced-motion: reduce) {
   .pf-card::before, .pf-card-sheet, .pf-card-body, .pf-dof, .pf-title, .pf-notes-col, .pf-here, .pf-nav,
   .pf-index-mark, .pf-index-mark::before, .pf-index-mark::after { transition: none; }
-  .pf-nav-opened, .pf-index.is-opening .pf-index-cols, .pf-index.is-closing .pf-index-cols { animation: none; }
+  .pf-nav-opened, .pf-index.is-opening .pf-index-cols, .pf-index.is-closing .pf-index-cols,
+  .pf-sources.is-opening .pf-source-list, .pf-sources.is-closing .pf-source-list { animation: none; }
 }

@@ -180,9 +180,9 @@ test("the index is one big button, shut until it is pressed", async ({ page }) =
   await page.goto(PAGE);
   const index = page.locator(".pf-index");
   await expect(index).not.toHaveAttribute("open", "");
-  await expect(page.locator(".pf-index-word")).toHaveText("Index");
+  await expect(page.locator(".pf-index .pf-index-word")).toHaveText("Index");
   await expect(page.locator(".pf-entry").first()).toBeHidden();
-  await page.locator(".pf-index-open").click();
+  await page.locator(".pf-index .pf-index-open").click();
   await expect(index).toHaveAttribute("open", "");
   await expect(page.locator(".pf-entry").first()).toBeVisible();
   const perfumers = await page.evaluate(() => window.PERFUMERS_DATA.perfumers.length);
@@ -191,7 +191,7 @@ test("the index is one big button, shut until it is pressed", async ({ page }) =
   const gap = await page.evaluate(() => document.querySelector(".pf-index").getBoundingClientRect().top -
     document.querySelector(".pf-foot").getBoundingClientRect().top);
   expect(gap).toBeGreaterThan(80);
-  await page.locator(".pf-index-open").click();
+  await page.locator(".pf-index .pf-index-open").click();
   await expect(index).not.toHaveAttribute("open", "");
 });
 
@@ -201,7 +201,7 @@ test("without the script the index still opens, and the list is not there to be 
   await serveDependenciesLocally(page);
   await page.goto(PAGE);
   await expect(page.locator(".pf-nav")).toBeHidden();
-  await page.locator(".pf-index-open").click();
+  await page.locator(".pf-index .pf-index-open").click();
   await expect(page.locator(".pf-entry").first()).toBeVisible();
   await context.close();
 });
@@ -209,6 +209,69 @@ test("without the script the index still opens, and the list is not there to be 
 test("an address into the index opens it", async ({ page }) => {
   await page.goto(PAGE + "#perfumer-josh-lobb");
   await expect(page.locator(".pf-index")).toHaveAttribute("open", "");
+});
+
+/* THE SOURCES BEHIND A BUTTON OF THEIR OWN — the owner, 2026-11-03: "make
+   the perfumers page sources also collapsible". The index's button a size
+   down: shut until pressed, every source in it, an address into it opens
+   it, and without the script it still opens. */
+test("the sources are behind a button of their own, shut until it is pressed", async ({ page }) => {
+  await page.goto(PAGE);
+  const sources = page.locator(".pf-sources");
+  await expect(sources).not.toHaveAttribute("open", "");
+  await expect(page.locator(".pf-sources .pf-index-word")).toHaveText("Sources");
+  await expect(page.locator(".pf-source-list li").first()).toBeHidden();
+  const n = await page.evaluate(() => window.PERFUMERS_DATA.sources.length);
+  await expect(page.locator("[data-source-count]")).toHaveText(n + " sources");
+  await page.locator(".pf-sources .pf-index-open").click();
+  await expect(sources).toHaveAttribute("open", "");
+  await expect(page.locator(".pf-source-list li").first()).toBeVisible();
+  await expect(page.locator(".pf-source-list li")).toHaveCount(n);
+  await page.locator(".pf-sources .pf-index-open").click();
+  await expect(sources).not.toHaveAttribute("open", "");
+  // the index is not opened with it, nor it with the index
+  await expect(page.locator(".pf-index")).not.toHaveAttribute("open", "");
+});
+
+test("an address into the sources opens them, and without the script they still open", async ({ page, browser }) => {
+  await page.goto(PAGE + "#source-s05");
+  await expect(page.locator(".pf-sources")).toHaveAttribute("open", "");
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const bare = await context.newPage();
+  await serveDependenciesLocally(bare);
+  await bare.goto(PAGE);
+  await bare.locator(".pf-sources .pf-index-open").click();
+  await expect(bare.locator(".pf-source-list li").first()).toBeVisible();
+  await context.close();
+});
+
+/* THE MENU KEPT CLEAR AS THE PAGE SCROLLS — the owner, 2026-11-03: "Make
+   suure the menu remains clear when you scroll". This is the one page whose
+   writing runs under the Menu on a wide window: the Menu and the page's name
+   beside it stand on the page's ground there, feathered at its edges, and
+   the word does not move to get it. */
+test("the Menu and the page's name stand clear of the writing scrolled under them", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(PAGE);
+  const before = await page.locator(".menu-trigger").evaluate((el) => {
+    const r = document.createRange(); r.selectNodeContents(el); return Math.round(r.getBoundingClientRect().left);
+  });
+  expect(before, "the word where it was").toBe(22);
+  await page.locator(".pf-sources .pf-index-open").click();
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  for (const sel of [".menu-trigger", ".page-where"]) {
+    const look = await page.locator(sel).evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return { image: cs.backgroundImage, colour: cs.backgroundColor, shadow: cs.boxShadow };
+    });
+    expect(look.image, sel + ": on a ground").toContain("gradient");
+    expect(look.colour, sel + ": the page's dark").toMatch(/rgba\(11, 12, 15/);
+    expect(look.shadow, sel + ": feathered").not.toBe("none");
+  }
+  // and nothing of it while the Menu is open
+  await page.locator(".menu-trigger").click();
+  await expect(page.locator("body")).toHaveClass(/menu-open/);
+  expect(await page.locator(".menu-trigger").evaluate((el) => getComputedStyle(el).boxShadow)).toBe("none");
 });
 
 test.describe("on a phone", () => {

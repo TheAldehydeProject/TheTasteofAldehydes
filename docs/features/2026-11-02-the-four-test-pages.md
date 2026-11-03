@@ -97,3 +97,49 @@ page is after one of the owner's pictures, and is filled from the site:
   the owner said they will build their own things on them.
 - On a touch screen the squares are found by touch alone, as they are meant to be; there is
   nothing to see there.
+
+## 2026-11-03 — test page 2 zoomable, and saying what it shows
+
+The owner: "make test page 2 zoomable, and functional for information".
+
+### What changed
+
+- **Zoomable.** The wheel (about a quarter closer a notch, towards the hand), a pinch, a
+  double-click (2.4×), the **− 100% + Fit** box at the foot on the right, and the keys `+`
+  `−` `0` (and the arrows to move, closer in) bring the poster closer, from the whole to ten
+  times; a drag moves about once closer, and Fit shows the whole again. The view eases to
+  where it is sent. **Hairlines stay hairlines** at every zoom (`lw`), **words grow only by a
+  root of it** (`fs`), so closer in there is room for more: the notes are named in order of
+  how many fragrances name them, each only where there is room on the screen, every one of
+  them from about three times as close, **each with that number beside it**. On a phone a
+  finger scrolls the page past the whole poster and moves the poster once it is closer in
+  (`touch-action` turns from `pan-y` to `none`); the + and − stand at the poster's foot.
+- **The panel** (`.t2-info`, over the words on the left; a sheet at the window's foot on a
+  phone): pressed, a **house** opens its numbers (fragrances, notes named, different notes,
+  the accord most in), **its accords** as bars, **its most named notes** and **its
+  fragrances**, each a fold opening onto its notes; an **accord** its houses as bars and
+  **all its notes** by how many name them; and — **closer in than a little over twice**
+  (`NOTE_FROM`), where the ticks are far enough apart to be pressed one by one — a **note**:
+  how many of the 142 fragrances name it, its place in its accord and among all 351, **the
+  houses naming it** (so many of so many), **the fragrances**, and **what it is most often
+  with**. Every name in it opens its own; **Back** goes back; **Show on the poster** flies
+  there, framed in what the panel leaves of the window; ×, Escape or a press on nothing put
+  it away. A note chosen draws **a line from every house that names it**, as heavy as how many
+  of its fragrances do, and lights the notes it is most often with; a house chosen lights the
+  notes it names. The list of the sixteen accords down the left opens each accord too.
+- **The search** under the title finds any house, accord or note by its name as it is typed
+  (accents ignored, a name beginning with what is typed first); Enter or a press opens it and
+  flies there.
+- **The data**: the snapshot now carries every fragrance on the site with its group, year and
+  notes (`DATA.frags`, from the same `site.json` the first snapshot was made from); the notes'
+  counts made from it agree with the old ones, every one.
+
+### How to test it
+
+`npm test -- tests/test-pages.spec.js` — four more: the wheel, the +, a double-click and the
+keys come closer, a drag chooses nothing, Fit and − go back to the whole and no further, and
+no closer than ten times; a house pressed opens its 48 fragrances, a fragrance's note opens the
+note, Back goes back, an accord's 29 notes, Show on the poster, a note pressed closer in (its 35
+fragrances), a press on nothing and Escape put it away; the search finds Bergamot and flies there,
+on the screen beside the panel; on a phone a tap opens the sheet at the foot, under three fifths of
+the window, and the + comes closer.

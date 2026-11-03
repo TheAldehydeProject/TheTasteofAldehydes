@@ -30,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=93eeac51ca">
+<link rel="stylesheet" href="../style.css?v=22a40493ae">
 </head>
 <!--
   PERFUMERS — what took the Photography page's place in the Menu
@@ -142,7 +142,7 @@
     <!-- THE INDEX, behind one big button (2026-11-02, later: "move the index
          down a few, and make it a big button that you can press to open the
          actual index"). A <details>, so it opens without the script too. -->
-    <details class="pf-index">
+    <details class="pf-fold pf-index">
       <summary class="pf-index-open">
         <span class="pf-index-mark" aria-hidden="true"></span>
         <h2 class="pf-index-word">Index</h2>
@@ -641,8 +641,17 @@
       </dl>
     </aside>
 
-    <div class="pf-sources">
-      <h2 class="pf-notes-head">Sources</h2>
+    <!-- THE SOURCES, behind a button of their own (2026-11-03 — the owner:
+         "make the perfumers page sources also collapsible"): a <details> as
+         the index is, shut until pressed, and open without the script too;
+         an address into it (#source-s05) opens it. -->
+    <details class="pf-fold pf-sources">
+      <summary class="pf-index-open pf-sources-open">
+        <span class="pf-index-mark" aria-hidden="true"></span>
+        <h2 class="pf-index-word">Sources</h2>
+        <span class="pf-index-say">Where every perfumer, house and year on the chart comes from, in MLA 8<span class="pf-index-counts" data-source-count>83 sources</span></span>
+        <span class="pf-index-cue" aria-hidden="true"><span class="pf-index-cue-open">Open</span><span class="pf-index-cue-shut">Close</span></span>
+      </summary>
       <ol class="pf-source-list">
       <!-- THE SOURCES: begin — written by tools/perfumers/build.py; MLA 8, in the order the ledger numbers them. -->
         <li id="source-s01"><span class="pf-source-no">01</span> “Nicholas Nilsson.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumers/nicholas-nilsson">www.parfumo.com/Perfumers/nicholas-nilsson</a></li>
@@ -730,7 +739,7 @@
         <li id="source-s83"><span class="pf-source-no">83</span> “Brother Night by Apoteker Tepe.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumes/Apoteker_Tepe/brother-night">www.parfumo.com/Perfumes/Apoteker_Tepe/brother-night</a></li>
       <!-- THE SOURCES: end -->
       </ol>
-    </div>
+    </details>
   </section>
 
 </main>
@@ -749,6 +758,6 @@
 <script>window.SITE_ROOT = "../";</script>
 <script src="../nav.js?v=ddedcc2da4"></script>
 <script src="../perfumers-data.js?v=0e2308a91c"></script>
-<script src="../perfumers.js?v=e65150ed1a"></script>
+<script src="../perfumers.js?v=f918d48c66"></script>
 </body>
 </html>

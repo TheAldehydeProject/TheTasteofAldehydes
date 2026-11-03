@@ -213,3 +213,34 @@ before.
   a press inside looks closer.
 - **The index's perfumers still open their window**, rather than choosing them on the chart.
 
+
+## 2026-11-03 — the sources behind a button, and the Menu kept clear
+
+The owner: "make the perfumers page sources also collapsible. Make suure the menu remains clear
+when you scroll".
+
+### What changed
+
+- **The sources are a `<details>` of their own** (`.pf-sources`, with the index both `.pf-fold`),
+  behind **the index's button a size down** — the word SOURCES, *where every perfumer, house and
+  year on the chart comes from, in MLA 8*, the count (written by the script from the data:
+  `[data-source-count]`), Open / Close — shut until it is pressed, opening and shutting as the
+  index does (one handler for both in `perfumers.js`, *THE INDEX AND THE SOURCES AT THE FOOT*), an
+  address into it (`#source-s05`) opening it, and open without the script too. `build.py` writes
+  only between its SOURCES markers, inside the list, so it is untouched.
+- **The Menu kept clear.** This is the one page whose writing — the notes, the legend, the terms,
+  the sources — runs the width of the window, under the Menu and the page's name beside it, and it
+  was printed straight through them as the page scrolled. Both stand on the page's ground at every
+  width now: the ground laid twice (about nine tenths), let out past their edges in a feather of
+  the same ground, the word where it was (the box's padding taken back out of `left`), none of it
+  while the Menu is open. Over the chart's own dark it is not seen at all. The phone's Menu
+  everywhere on the site was made the same at the same time — see the phone report.
+
+### How to test it
+
+`npm test -- tests/perfumers.spec.js`: the sources are shut until pressed, every source in them,
+the count right, the index not opened with them; an address into them opens them, and without the
+script they still open; and on a wide window, scrolled to the foot, the Menu and the page's name
+stand on the page's dark ground, feathered, the word at 22px as it was, and none of it while the
+Menu is open. (The index's tests now find its button inside `.pf-index`, the sources' button
+sharing its classes.)
