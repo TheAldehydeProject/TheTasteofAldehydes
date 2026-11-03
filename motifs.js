@@ -2733,26 +2733,27 @@
   // outsider parfumerie, and remove the door. Add another element on the
   // bottom left that is small" — THE DOOR IS GONE (on this view; the house's
   // own page keeps its door) and the window is the motif:
-  //   THE WINDOW  high on the right, clear of the way round (`casement`): an
-  //               arch to a point, in the frame's ink hairlines with a speck
-  //               at every joint, drawn up from its sill — its casing and its
-  //               opening inside it, a keystone, the sill on two brackets,
-  //               louvred shutters folded back either side; under the arch a
-  //               rose of tracery, a ring round an eight-pointed star; under
-  //               that two lights, each pointed, either side of a mullion,
-  //               each glazed in diamond quarries of lead. The right light's
-  //               casement EASES OPEN into the room (the door's swing,
-  //               `CASE_*`: let open slowly to rest a little ajar, damped so it
-  //               never swings past, a breath of a draft now and then, a touch
-  //               more with the hand near it).
+  //   THE WINDOW  high on the right, clear of the way round (`casement`) —
+  //               "Nono too much for the window; i want you to model it after
+  //               the old windows with blinds like in italy or spain" (the
+  //               same day; for a round it was an arch with tracery and
+  //               leaded diamonds): a tall plain opening in a stone surround,
+  //               a lintel's lip over it and a sill under it, the glazed
+  //               window behind in two leaves of three panes — and in front of
+  //               it, LOUVRED SHUTTERS (persiane, contraventanas), in ink
+  //               hairlines with a speck at every joint, drawn up from the
+  //               sill: the left leaf shut, the light coming in a line between
+  //               each of its slats; the right leaf EASING OPEN into the room on
+  //               its outer hinge (`CASE_*`: let open slowly to rest, damped so
+  //               it never swings past, a breath of a draft now and then, a
+  //               touch more with the hand near it).
   //   THE LIGHT   one light outside, high and to the right, its rays parallel
-  //               (`LIGHT`): the panes washed with the house's green, and the
-  //               window thrown along the light onto the floor before the wall
-  //               — the arch, the rose and every quarry, the lead between them
-  //               in shadow, foreshortened as a floor is, the open casement a
-  //               clear patch in it (`floorOf`) — a faint shaft from the one to
-  //               the other, rays along it, dust lit only in it, and now and
-  //               then a glint crossing the glass.
+  //               (`LIGHT`): the glass the open leaf has left washed with the
+  //               house's green, and the window thrown along the light onto
+  //               the floor before the wall (`floorOf`), foreshortened as a
+  //               floor is — IN STRIPES where the slats stand in the way, clear
+  //               where the leaf has swung away, the glazing's bars in shadow
+  //               across it; a faint shaft, dust lit only in it.
   //   THE INCENSE small, at the bottom left (`incense`): a stick in a little
   //               boat of a holder, its ember breathing, and a thread of smoke
   //               rising from it, curling and coming apart as it goes — the
@@ -2764,8 +2765,8 @@
   const CASE_BUILD = 1700;               // ms, the window drawn up from its sill
   const CASE_OPEN_AT = 1500;             // when the casement is let open
   const CASE_OPEN_MS = 3400;             // and how long it takes, easing, to come to rest
-  const CASE_REST = 0.52;                // radians it rests at
-  const CASE_HAND = 0.1;                 // radians more it gives with the hand near it
+  const CASE_REST = 1.05;                // radians the right shutter rests at
+  const CASE_HAND = 0.12;                // radians more it gives with the hand near it
   const CASE_SPRING = 5;                 // how hard it is drawn to where it is going
   const CASE_DAMP = 2 * Math.sqrt(5);    // and damped just enough that it never swings past
   const CASE_FOCAL = 1500;               // px, the eye's distance
@@ -2796,27 +2797,17 @@
     const nav = document.querySelector(".sheet-nav");
     const navBox = nav ? nav.getBoundingClientRect() : null;
     const navLeft = !PHONE && navBox ? navBox.left / SMALL : W;
-    const ww = PHONE ? Math.min(210, W * 0.3) : Math.max(150, Math.min(250, W * 0.155));
-    const shutter = ww * 0.3;
-    const wr = Math.min(W - shutter - 30, navLeft - shutter - 34), wl = wr - ww;
-    const apexY = Math.max(CHROME + 26, H * (PHONE ? 0.14 : 0.1));
-    const rise = ww * Math.sqrt(3) / 2;              // an equilateral arch
-    const ys = apexY + rise;                         // where the arch springs
-    const wb = Math.min(ys + ww * 0.95, H * (PHONE ? 0.5 : 0.56)); // the sill
-    const tallW = wb - apexY;
-    const cw = ww * 0.075;                           // the casing's width
-    const X1 = wl + cw, X2 = wr - cw;                // the opening
-    const mx = (wl + wr) / 2, mw = ww * 0.022;       // the mullion
-    const lancetSpring = ys + ww * 0.08;             // where the two lights' heads spring
-    const lw = (X2 - X1 - 2 * mw) / 2;               // each light's width
-    const L1 = [X1, mx - mw], L2 = [mx + mw, X2];
-    const roseR = ww * 0.17, roseY = ys - rise * 0.34;
-    const casementTop = lancetSpring;                // the casement: the right light below its head
-    const opBottom = wb - cw * 0.5;
-    // The eye, to the left of the window and a little below its middle, so
-    // the casement, swung into the room on its right-hand hinge, is seen
-    // narrowed towards its hinge.
-    const eye = { x: wl - ww * 0.9, y: (ys + wb) / 2 };
+    const ww = PHONE ? Math.min(170, W * 0.26) : Math.max(130, Math.min(200, W * 0.125));
+    const cw = ww * 0.085;                           // the plain stone surround's width
+    const wr = Math.min(W - cw - 34, navLeft - cw - 40), wl = wr - ww;
+    const wt = Math.max(CHROME + 34, H * (PHONE ? 0.15 : 0.12));
+    const wb = Math.min(wt + ww * 1.62, H * (PHONE ? 0.48 : 0.56));   // the sill
+    const tallW = wb - wt;
+    const X1 = wl, X2 = wr, mx = (wl + wr) / 2;      // the opening, and where its two leaves meet
+    const half = (X2 - X1) / 2;
+    // The eye, to the left of the window and level with its middle, so the
+    // right leaf, swung into the room on its outer hinge, is seen narrowed.
+    const eye = { x: wl - ww * 0.9, y: (wt + wb) / 2 };
     const proj = (x, y, z) => { const k = CASE_FOCAL / (CASE_FOCAL + z); return [eye.x + (x - eye.x) * k, eye.y + (y - eye.y) * k]; };
 
     // THE LINES, each drawn up from its lower end as the window is built.
@@ -2825,100 +2816,37 @@
       let len = 0;
       const at = [0];
       for (let i = 1; i < pts.length; i++) { len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); at.push(len); }
-      const ys2 = pts.map((q) => (wb + cw - q[1]) / (tallW + cw * 2));
-      lines.push({ pts, at, len: Math.max(0.01, len), from: Math.min(...ys2), to: Math.max(...ys2), weight: weight || 1 });
+      const ys = pts.map((q) => (wb + cw * 1.6 - q[1]) / (tallW + cw * 3));
+      lines.push({ pts, at, len: Math.max(0.01, len), from: Math.min(...ys), to: Math.max(...ys), weight: weight || 1 });
     };
-    // A pointed arch from (x0, y) to (x1, y): two arcs of radius r, each
-    // struck from a point r in from its own springing, meeting at the apex
-    // (an equilateral arch when r is the width). 33 points, the apex the 17th.
-    const arch = (x0, x1, y, r) => {
-      const w = x1 - x0, n = 16, pts = [];
-      const la = Math.acos((w / 2 - r) / r), ra = Math.acos((r - w / 2) / r);
-      for (let i = 0; i <= n; i++) { const t = Math.PI + (la - Math.PI) * (i / n); pts.push([x0 + r + Math.cos(t) * r, y - Math.sin(t) * r]); }
-      for (let i = 1; i <= n; i++) { const t = ra * (1 - i / n); pts.push([x1 - r + Math.cos(t) * r, y - Math.sin(t) * r]); }
-      return pts;
-    };
-    const archOut = arch(wl, wr, ys, ww), archIn = arch(X1, X2, ys, X2 - X1);
-    // casing and opening, each a jamb, its arch and the other jamb
-    put([[wl, wb]].concat(archOut, [[wr, wb]]));
-    put([[X1, opBottom]].concat(archIn, [[X2, opBottom]]), 0.85);
-    // the keystone at the apex
-    const ap = archOut[16];
-    put([[ap[0] - cw * 0.6, ap[1] + cw * 1.3], [ap[0] - cw * 0.9, ap[1] - cw * 0.9], [ap[0] + cw * 0.9, ap[1] - cw * 0.9], [ap[0] + cw * 0.6, ap[1] + cw * 1.3]], 0.8);
-    // the sill, proud of the casing, and its two brackets
-    const sl = wl - cw * 1.1, sr = wr + cw * 1.1;
-    put([[sl, wb], [sr, wb]]); put([[sl, wb + cw * 0.7], [sr, wb + cw * 0.7]], 0.8);
-    put([[sl, wb], [sl, wb + cw * 0.7]], 0.7); put([[sr, wb], [sr, wb + cw * 0.7]], 0.7);
-    [wl + cw * 0.6, wr - cw * 1.6].forEach((bx) => put([[bx, wb + cw * 0.7], [bx + cw * 0.5, wb + cw * 2.4], [bx + cw, wb + cw * 0.7]], 0.6));
-    // the mullion, and the two lights' pointed heads
-    put([[mx - mw, opBottom], [mx - mw, lancetSpring]], 0.8); put([[mx + mw, opBottom], [mx + mw, lancetSpring]], 0.8);
-    const head1 = arch(L1[0], L1[1], lancetSpring, lw * 1.05), head2 = arch(L2[0], L2[1], lancetSpring, lw * 1.05);
-    put(head1, 0.8); put(head2, 0.8);
-    // the transom at the lights' springing, and the bottom rail
-    put([[X1, lancetSpring], [X2, lancetSpring]], 0.55); put([[X1, opBottom - cw * 0.4], [X2, opBottom - cw * 0.4]], 0.55);
-    // the rose: two rings, and an eight-pointed star of two squares
-    const ring = (r, n) => Array.from({ length: n + 1 }, (_, i) => [mx + Math.cos((i / n) * Math.PI * 2) * r, roseY + Math.sin((i / n) * Math.PI * 2) * r]);
-    put(ring(roseR, 36), 0.85); put(ring(roseR * 0.8, 32), 0.55);
-    const star = [];
-    for (let i = 0; i <= 16; i++) { const t = (i / 16) * Math.PI * 2 - Math.PI / 2, r = i % 2 ? roseR * 0.5 : roseR * 0.78; star.push([mx + Math.cos(t) * r, roseY + Math.sin(t) * r]); }
-    put(star, 0.7);
-    put(ring(roseR * 0.16, 14), 0.6);
-    // the shutters, folded back either side, their louvres
-    const shutters = [[wl - shutter - cw * 0.3, wl - cw * 0.3], [wr + cw * 0.3, wr + shutter + cw * 0.3]];
-    shutters.forEach(([s0, s1]) => {
-      put([[s0, wb - cw * 0.2], [s0, ys], [s1, ys], [s1, wb - cw * 0.2], [s0, wb - cw * 0.2]], 0.75);
-      put([[s0 + shutter * 0.12, wb - cw * 0.9], [s0 + shutter * 0.12, ys + cw * 0.7], [s1 - shutter * 0.12, ys + cw * 0.7], [s1 - shutter * 0.12, wb - cw * 0.9], [s0 + shutter * 0.12, wb - cw * 0.9]], 0.45);
-      for (let y = ys + cw * 1.6; y < wb - cw * 1.4; y += Math.max(6, ww * 0.034)) put([[s0 + shutter * 0.16, y], [s1 - shutter * 0.16, y + 2]], 0.32);
-    });
-    // THE QUARRIES: diamonds of lead in each light below its head, and the
-    // panes they make (for the light).
-    const q = Math.max(9, lw / 3.4);                 // a quarry's half-width
-    const quarries = (x0, x1, y0, y1) => {
-      const out = [];
-      for (let row = -1; row * q * 0.9 < y1 - y0 + q; row++) {
-        for (let col = -1; col * q * 2 < x1 - x0 + q * 2; col++) {
-          const cx = x0 + col * q * 2 + (row % 2 ? q : 0), cy = y0 + row * q * 0.9 * 1.0;
-          out.push([[cx, cy - q * 0.9], [cx + q, cy], [cx, cy + q * 0.9], [cx - q, cy]]);
-        }
-      }
-      return out;
-    };
-    const lights = [
-      { x0: L1[0], x1: L1[1], y0: lancetSpring, y1: opBottom - cw * 0.4, swings: false },
-      { x0: L2[0], x1: L2[1], y0: lancetSpring, y1: opBottom - cw * 0.4, swings: true },
-    ];
-    lights.forEach((li) => (li.q = quarries(li.x0, li.x1, li.y0, li.y1)));
-    // The lead of the fixed light, drawn as lines across it, clipped to it
-    // (the swung one is drawn on its leaf, each frame).
-    const lattice = (li) => {
-      const out = [], step = q * 2, h = li.y1 - li.y0, slope = 0.9;
-      for (let k = -Math.ceil(h / step) - 2; k * step < li.x1 - li.x0 + step * 2; k++) {
-        [1, -1].forEach((sgn) => {
-          // a line of slope ±0.9 through (x0 + k step, y0)
-          const xa = li.x0 + k * step + (sgn > 0 ? 0 : q);
-          const seg = [];
-          for (const [yy] of [[li.y0], [li.y1]]) seg.push([xa + sgn * (yy - li.y0) / slope, yy]);
-          // clip to the light's sides
-          let [p0, p1] = seg;
-          const clip = (p, other) => {
-            if (p[0] < li.x0) { const t = (li.x0 - p[0]) / (other[0] - p[0]); return [li.x0, p[1] + (other[1] - p[1]) * t]; }
-            if (p[0] > li.x1) { const t = (li.x1 - p[0]) / (other[0] - p[0]); return [li.x1, p[1] + (other[1] - p[1]) * t]; }
-            return p;
-          };
-          if ((p0[0] < li.x0 && p1[0] < li.x0) || (p0[0] > li.x1 && p1[0] > li.x1)) return;
-          const a0 = clip(p0, p1), a1 = clip(p1, p0);
-          out.push(a0[1] > a1[1] ? [a0, a1] : [a1, a0]);
-        });
-      }
-      return out;
-    };
-    lattice(lights[0]).forEach((seg) => put(seg, 0.4));
-    const leadOf2 = lattice(lights[1]);
+    // the surround, plain as an old house's is, a little wider at the head
+    put([[wl - cw, wb], [wl - cw, wt - cw * 1.2], [wr + cw, wt - cw * 1.2], [wr + cw, wb]]);
+    put([[X1, wb], [X1, wt], [X2, wt], [X2, wb]], 0.85);
+    put([[wl - cw * 1.5, wt - cw * 1.2], [wr + cw * 1.5, wt - cw * 1.2]], 0.7);   // the lintel's lip
+    // the sill, proud of the wall, and its thickness
+    put([[wl - cw * 1.6, wb], [wr + cw * 1.6, wb]]); put([[wl - cw * 1.6, wb + cw * 0.75], [wr + cw * 1.6, wb + cw * 0.75]], 0.8);
+    put([[wl - cw * 1.6, wb], [wl - cw * 1.6, wb + cw * 0.75]], 0.7); put([[wr + cw * 1.6, wb], [wr + cw * 1.6, wb + cw * 0.75]], 0.7);
+    // the glazed window behind the shutters: two leaves of three panes
+    const gi = ww * 0.05;
+    put([[mx, wb], [mx, wt]], 0.5);
+    [1, 2].forEach((k) => put([[X1 + gi, wt + (tallW * k) / 3], [X2 - gi, wt + (tallW * k) / 3]], 0.4));
+    put([[X1 + gi, wb - gi], [X1 + gi, wt + gi], [X2 - gi, wt + gi], [X2 - gi, wb - gi]], 0.45);
+    // THE SHUTTERS' SLATS: pitched so a light comes between each
+    const pitch = Math.max(5, tallW / 30);
+    const slats = [];
+    for (let y = wt + pitch * 1.1; y < wb - pitch * 0.9; y += pitch) slats.push(y);
+    // The left leaf, shut: its frame, a rail across its middle, its slats.
+    const lf = ww * 0.045;
+    put([[X1, wb], [X1, wt], [mx, wt], [mx, wb], [X1, wb]], 0.9);
+    put([[X1 + lf, wb - lf], [X1 + lf, wt + lf], [mx - lf, wt + lf], [mx - lf, wb - lf], [X1 + lf, wb - lf]], 0.55);
+    const midRail = wt + tallW * 0.5;
+    put([[X1 + lf, midRail], [mx - lf, midRail]], 0.6);
+    slats.forEach((y) => { if (Math.abs(y - midRail) > pitch * 0.6) put([[X1 + lf, y], [mx - lf, y + pitch * 0.32]], 0.42); });
 
     const joints = [];
     const seen = new Set();
     lines.forEach((l) => l.pts.forEach((p, i) => {
-      if (l.weight < 0.6 || (i > 0 && i < l.pts.length - 1 && l.pts.length > 6)) return;
+      if (l.weight < 0.6) return;
       const key = Math.round(p[0]) + "," + Math.round(p[1]);
       if (seen.has(key)) return;
       seen.add(key);
@@ -2926,35 +2854,37 @@
     }));
 
     // THE FLOOR, before the wall: where the light through a point of the
-    // window lands. The floor is seen foreshortened, so the window is thrown
-    // there upside down (its head lands furthest out, nearest us) and
-    // squashed; the light's slant takes it a little to the left.
-    // (on a phone, above the way round across its foot)
+    // window lands — foreshortened, upside down (the window's head lands
+    // furthest out, nearest us), a little to the left.
     const floorY = PHONE && navBox ? Math.min(H - 70, navBox.top / SMALL - 40) : H - Math.max(34, H * 0.06);
-    const drop = floorY - wb;
-    const FORE = 0.36;                               // how much the floor foreshortens
-    const floorOf = (x, y) => {
-      const s = drop + (wb - y);                     // how far the light from it travels to the floor
-      return [x + LIGHT.x * s * (PHONE ? 0.55 : 1.4), floorY - (wb - y) * FORE * 0.9 - drop * 0.02];
-    };
-    // the patch's outline: the opening's outline thrown down
-    const patchOutline = [[X1, opBottom]].concat(archIn, [[X2, opBottom]]).map(([x, y]) => floorOf(x, y));
+    const drop = floorY - wb, FORE = 0.36;
+    const floorOf = (x, y) => [x + LIGHT.x * (drop + (wb - y)) * (PHONE ? 0.55 : 1.4), floorY - (wb - y) * FORE * 0.9 - drop * 0.02];
+    const patchOutline = [[X1, wb], [X1, wt], [X2, wt], [X2, wb]].map(([x, y]) => floorOf(x, y));
 
-    // THE SWING: an angle on a damped spring.
+    // THE SWING of the right leaf: an angle on a damped spring.
     let angle = 0, spin = 0, lastAge = 0, handGive = 0, nextDraft = rand(9, 15);
-    const hinge = L2[1];
-    const leafAt = (x, y) => { const d = hinge - x; return [hinge - d * Math.cos(angle), y, -d * Math.sin(angle)]; };
-    // THE DUST in the shaft, in the shaft's own terms: s along it (0 at the
-    // window, 1 at the floor), u across it.
+    const leafAt = (x, y) => { const d = X2 - x; return [X2 - d * Math.cos(angle), y, -d * Math.sin(angle)]; };
     const dust = Array.from({ length: SHAFT_DUST }, () => ({ s: rand(0.05, 0.95), u: rand(0.05, 0.95), v: rand(0.1, 0.9), ds: rand(-0.01, 0.01), du: rand(-0.01, 0.01), r: rand(0.8, 1.7), ph: rand(0, 6.3) }));
-    const rays = Array.from({ length: 11 }, () => ({ u: rand(0.06, 0.94), v: rand(0.05, 0.95), w: rand(0.4, 1), thick: rand(1, 3.6) }));
-    let glintAt = rand(5, 9) * 1000;
-
     const poly = (c, pts) => { c.beginPath(); pts.forEach((p, i) => (i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]))); c.closePath(); };
+    // the stripes of light the slats let through, on the floor, across a run
+    // of the opening from xa to xb
+    const stripes = (c, xa, xb, L) => {
+      if (xb - xa < 1) return;
+      c.fillStyle = "rgba(" + OUT_GREEN + "," + (0.2 * L).toFixed(3) + ")";
+      c.beginPath();
+      slats.forEach((y, i) => {
+        const y0 = y + pitch * 0.42, y1 = (slats[i + 1] || wb - pitch * 0.4) - pitch * 0.12;
+        if (y1 <= y0) return;
+        const a = floorOf(xa, y0), b = floorOf(xb, y0), d = floorOf(xb, y1), e = floorOf(xa, y1);
+        c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.lineTo(d[0], d[1]); c.lineTo(e[0], e[1]); c.closePath();
+      });
+      c.fill();
+    };
+
     return {
       fadeIn: 1,
       swing: () => ({ angle, spin, rest: CASE_REST, most: CASE_REST + CASE_HAND,
-        window: { left: wl - shutter, right: wr + shutter, top: apexY, bottom: wb },
+        window: { left: wl - cw, right: wr + cw, top: wt - cw * 1.2, bottom: wb },
         floor: { left: Math.min(...patchOutline.map((p) => p[0])), right: Math.max(...patchOutline.map((p) => p[0])), top: Math.min(...patchOutline.map((p) => p[1])), bottom: Math.max(...patchOutline.map((p) => p[1])) } }),
       draw(c, age, a) {
         const dt = Math.min(0.05, Math.max(0, (age - lastAge) / 1000));
@@ -2968,12 +2898,13 @@
         const opened = ease((age - CASE_OPEN_AT) / CASE_OPEN_MS);
         nextDraft -= dt;
         if (opened >= 1 && nextDraft <= 0) { spin += rand(-0.03, 0.04); nextDraft = rand(9, 15); }
-        const near = hand.x > wl - ww && hand.x < wr + ww && hand.y > apexY - 40 && hand.y < wb + 60 ? 1 : 0;
+        const near = hand.x > wl - ww && hand.x < wr + ww && hand.y > wt - 40 && hand.y < wb + 60 ? 1 : 0;
         handGive += (near - handGive) * Math.min(1, dt * 1.5);
         const target = CASE_REST * opened + CASE_HAND * handGive * opened;
         spin += (-CASE_SPRING * (angle - target) - CASE_DAMP * spin) * dt;
-        angle = Math.max(0, Math.min(1.2, angle + spin * dt));
-        const open = Math.min(1, angle / CASE_REST);
+        angle = Math.max(0, Math.min(1.5, angle + spin * dt));
+        // how much of the right half the leaf has left clear
+        const clearW = half * Math.min(1, 1 - Math.cos(angle));
 
         c.save();
         c.lineCap = "round";
@@ -2981,93 +2912,43 @@
         const L = LIGHT_A * a * Math.max(0, Math.min(1, (built - 0.55) / 0.35));
 
         if (L > 0.002) {
-          // THE SHAFT: the window to its patch on the floor, a faint wash
-          // fading as it goes, rays along it.
-          const top = floorOf(mx, apexY), A0 = [wl + cw, wb], A1 = [wr - cw, wb];
-          const sh = c.createLinearGradient(mx, (ys + wb) / 2, top[0], top[1]);
-          sh.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.05 * L).toFixed(3) + ")");
-          sh.addColorStop(1, "rgba(" + OUT_GREEN + "," + (0.012 * L).toFixed(3) + ")");
+          // THE SHAFT: the opening to its patch on the floor, a faint wash.
+          const sh = c.createLinearGradient(mx, (wt + wb) / 2, (patchOutline[0][0] + patchOutline[2][0]) / 2, floorY);
+          sh.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.045 * L).toFixed(3) + ")");
+          sh.addColorStop(1, "rgba(" + OUT_GREEN + "," + (0.01 * L).toFixed(3) + ")");
           c.fillStyle = sh;
-          poly(c, [archIn[16], A1, patchOutline[patchOutline.length - 1], floorOf(X2, ys), floorOf(mx, apexY), floorOf(X1, ys), patchOutline[0], A0, [X1, ys]]);
+          poly(c, [[X1, wt], [X2, wt], [X2, wb], patchOutline[3], patchOutline[1], patchOutline[0], [X1, wb]]);
           c.fill();
-          c.strokeStyle = "rgb(" + OUT_GREEN + ")";
-          rays.forEach((ry) => {
-            const x = X1 + (X2 - X1) * ry.u, y = ys + (opBottom - ys) * ry.v;
-            const p1 = floorOf(x, y);
-            c.lineWidth = Math.max(0.8, ry.thick * 0.5);
-            for (let k = 0; k < 4; k++) {
-              c.globalAlpha = Math.min(1, 0.06 * L * ry.w * (1 - k / 4) * (1 - k / 4));
-              c.beginPath();
-              c.moveTo(x + (p1[0] - x) * (k / 4), y + (p1[1] - y) * (k / 4));
-              c.lineTo(x + (p1[0] - x) * ((k + 1) / 4), y + (p1[1] - y) * ((k + 1) / 4));
-              c.stroke();
-            }
-          });
-          c.globalAlpha = 1;
-
-          // THE PATCH ON THE FLOOR: the window thrown down, its lead in
-          // shadow, the open casement a clear patch in it.
-          c.fillStyle = "rgba(" + OUT_GREEN + "," + (0.16 * L).toFixed(3) + ")";
-          poly(c, patchOutline); c.fill();
-          // where the casement stands open, the light comes through clear
-          const clearW = (L2[1] - L2[0]) * open;
+          // THE FLOOR: stripes where a leaf's slats stand in the way, and
+          // clear where the right leaf has swung away; the glazing's bars in
+          // shadow across the clear part.
+          stripes(c, X1, mx, L);
+          stripes(c, mx, X2 - clearW, L);
           if (clearW > 1) {
-            c.fillStyle = "rgba(" + OUT_GREEN + "," + (0.12 * L).toFixed(3) + ")";
-            poly(c, [floorOf(L2[1] - clearW, lights[1].y0), floorOf(L2[1], lights[1].y0), floorOf(L2[1], lights[1].y1), floorOf(L2[1] - clearW, lights[1].y1)]);
+            c.fillStyle = "rgba(" + OUT_GREEN + "," + (0.2 * L).toFixed(3) + ")";
+            poly(c, [floorOf(X2 - clearW, wt), floorOf(X2, wt), floorOf(X2, wb), floorOf(X2 - clearW, wb)]);
             c.fill();
+            c.strokeStyle = "rgba(255, 255, 255," + (0.85 * Math.min(1, L * 1.4)).toFixed(3) + ")";
+            c.lineWidth = 1.2;
+            c.beginPath();
+            [1, 2].forEach((k) => { const y = wt + (tallW * k) / 3, p = floorOf(X2 - clearW, y), q = floorOf(X2, y); c.moveTo(p[0], p[1]); c.lineTo(q[0], q[1]); });
+            c.stroke();
           }
-          // the lead and the stone, thrown down as shadow: the paper again
-          c.strokeStyle = "rgba(255, 255, 255," + (0.85 * Math.min(1, L * 1.4)).toFixed(3) + ")";
-          c.lineWidth = 1.2;
-          c.beginPath();
-          lines.forEach((l) => {
-            if (l.weight > 0.9 || l.weight < 0.38) return;   // the casing and the louvres throw nothing onto the patch
-            if (l.pts.some(([x]) => x < X1 - 1 || x > X2 + 1)) return;
-            l.pts.forEach(([x, y], i) => { const p = floorOf(x, y); if (i) c.lineTo(p[0], p[1]); else c.moveTo(p[0], p[1]); });
-          });
-          // the swung light's lead, where it is still in the way
-          leadOf2.forEach(([p0, p1]) => {
-            if (Math.max(p0[0], p1[0]) < L2[1] - clearW) {
-              const f0 = floorOf(...p0), f1 = floorOf(...p1);
-              c.moveTo(f0[0], f0[1]); c.lineTo(f1[0], f1[1]);
-            }
-          });
-          c.stroke();
-          c.lineWidth = 3.2;
-          c.beginPath();
-          const m0 = floorOf(mx, opBottom), m1 = floorOf(mx, lancetSpring);
-          c.moveTo(m0[0], m0[1]); c.lineTo(m1[0], m1[1]);
-          c.stroke();
-
-          // THE PANES, lit: each quarry washed, paler at the middle of the
-          // window; the open casement's opening clear and palest.
-          const g = c.createRadialGradient(mx, (ys + wb) / 2, 0, mx, (ys + wb) / 2, tallW * 0.7);
-          g.addColorStop(0, "rgba(" + OUT_PALE + "," + (0.5 * L).toFixed(3) + ")");
-          g.addColorStop(1, "rgba(" + OUT_GREEN + "," + (0.12 * L).toFixed(3) + ")");
-          c.fillStyle = g;
-          poly(c, [[X1, opBottom]].concat(archIn, [[X2, opBottom]]));
-          c.fill();
+          // THE OPENING, lit: the glass where the right leaf has swung away
+          // washed with the light outside; between the left leaf's slats, a
+          // line of it.
           if (clearW > 1) {
-            c.fillStyle = "rgba(" + OUT_PALE + "," + (0.55 * L).toFixed(3) + ")";
-            c.fillRect(L2[1] - clearW, lights[1].y0, clearW, lights[1].y1 - lights[1].y0);
+            const g = c.createLinearGradient(X2 - clearW, 0, X2, 0);
+            g.addColorStop(0, "rgba(" + OUT_PALE + "," + (0.55 * L).toFixed(3) + ")");
+            g.addColorStop(1, "rgba(" + OUT_GREEN + "," + (0.22 * L).toFixed(3) + ")");
+            c.fillStyle = g;
+            c.fillRect(X2 - clearW, wt, clearW, tallW);
           }
-          // a glint, now and then, crossing the glass
-          if (age > glintAt) {
-            const u = (age - glintAt) / 1400;
-            if (u >= 1) glintAt = age + rand(7, 12) * 1000;
-            else {
-              const gx = X1 - ww * 0.3 + (X2 - X1 + ww * 0.6) * ease(u);
-              c.save();
-              poly(c, [[X1, opBottom]].concat(archIn, [[X2, opBottom]]));
-              c.clip();
-              const gg = c.createLinearGradient(gx - 30, 0, gx + 30, 0);
-              gg.addColorStop(0, "rgba(255,255,255,0)"); gg.addColorStop(0.5, "rgba(255,255,255," + (0.55 * a * Math.sin(Math.PI * u)).toFixed(3) + ")"); gg.addColorStop(1, "rgba(255,255,255,0)");
-              c.fillStyle = gg;
-              c.transform(1, 0, -0.5, 1, 0, 0);
-              c.fillRect(gx - 30 + (ys + wb) * 0.25, apexY, 60, tallW);
-              c.restore();
-            }
-          }
+          c.strokeStyle = "rgba(" + OUT_GREEN + "," + (0.55 * L).toFixed(3) + ")";
+          c.lineWidth = Math.max(1, pitch * 0.28);
+          c.beginPath();
+          slats.forEach((y) => { c.moveTo(X1 + lf * 1.4, y + pitch * 0.62); c.lineTo(mx - lf * 1.4, y + pitch * 0.62 + pitch * 0.32); });
+          c.stroke();
         }
 
         // THE LINES, drawn up from the sill in ink, a speck at every joint.
@@ -3079,34 +2960,42 @@
           c.fillRect(jn.x - 1.1, jn.y - 1.1, 2.2, 2.2);
         });
 
-        // THE CASEMENT: the right light below its head, swung into the room
-        // on its right-hand hinge — its frame, its quarries and its catch.
+        // THE RIGHT LEAF, swung into the room on its outer hinge: its frame,
+        // its rail, its slats with the light between them, its catch.
         if (built > 0.7) {
           const up = Math.min(1, (built - 0.7) / 0.3) * a;
-          const li = lights[1];
           const P = (x, y) => proj(...leafAt(x, y));
-          const c0 = P(li.x0, li.y0), c1 = P(li.x1, li.y0), c2 = P(li.x1, li.y1), c3 = P(li.x0, li.y1);
-          c.fillStyle = "rgba(" + OUT_GREEN + "," + (0.07 * up).toFixed(3) + ")";
+          const c0 = P(mx, wt), c1 = P(X2, wt), c2 = P(X2, wb), c3 = P(mx, wb);
+          c.fillStyle = "rgba(255, 255, 255," + up.toFixed(3) + ")";
+          poly(c, [c0, c1, c2, c3]); c.fill();
+          c.fillStyle = "rgba(" + INK + "," + (0.04 * up).toFixed(3) + ")";
           poly(c, [c0, c1, c2, c3]); c.fill();
           c.strokeStyle = "rgba(" + INK + "," + (0.58 * up).toFixed(3) + ")";
           c.lineWidth = 1.1;
           poly(c, [c0, c1, c2, c3]); c.stroke();
-          // its edge, the thickness of the frame, catching the light
-          const t2 = Math.max(2, ww * 0.012);
-          const e0 = proj(...((() => { const p = leafAt(li.x0, li.y0); return [p[0] - Math.sin(angle) * t2, p[1], p[2] + Math.cos(angle) * t2 * 0.2]; })()));
-          const e1 = proj(...((() => { const p = leafAt(li.x0, li.y1); return [p[0] - Math.sin(angle) * t2, p[1], p[2] + Math.cos(angle) * t2 * 0.2]; })()));
-          c.fillStyle = "rgba(" + OUT_GREEN + "," + ((0.2 + 0.3 * open) * up).toFixed(3) + ")";
-          poly(c, [c0, e0, e1, c3]); c.fill();
-          // its lead
           c.strokeStyle = "rgba(" + INK + "," + (0.3 * up).toFixed(3) + ")";
           c.lineWidth = 1;
+          poly(c, [P(mx + lf, wt + lf), P(X2 - lf, wt + lf), P(X2 - lf, wb - lf), P(mx + lf, wb - lf)]); c.stroke();
           c.beginPath();
-          leadOf2.forEach(([p0, p1]) => { const a0 = P(...p0), a1 = P(...p1); c.moveTo(a0[0], a0[1]); c.lineTo(a1[0], a1[1]); });
+          { const a0 = P(mx + lf, midRail), a1 = P(X2 - lf, midRail); c.moveTo(a0[0], a0[1]); c.lineTo(a1[0], a1[1]); }
+          slats.forEach((y) => { if (Math.abs(y - midRail) > pitch * 0.6) { const a0 = P(mx + lf, y), a1 = P(X2 - lf, y + pitch * 0.32); c.moveTo(a0[0], a0[1]); c.lineTo(a1[0], a1[1]); } });
           c.stroke();
-          // the catch, on its free side
-          const k0 = P(li.x0 + lw * 0.08, (li.y0 + li.y1) / 2);
+          if (L > 0.002) {
+            c.strokeStyle = "rgba(" + OUT_GREEN + "," + (0.4 * L * up).toFixed(3) + ")";
+            c.lineWidth = Math.max(1, pitch * 0.22);
+            c.beginPath();
+            slats.forEach((y) => { const a0 = P(mx + lf * 1.4, y + pitch * 0.62), a1 = P(X2 - lf * 1.4, y + pitch * 0.94); c.moveTo(a0[0], a0[1]); c.lineTo(a1[0], a1[1]); });
+            c.stroke();
+          }
+          // its edge, as thick as a shutter is, and the catch on it
+          const t2 = Math.max(2, ww * 0.02);
+          const e0 = proj(...((() => { const p = leafAt(mx, wt); return [p[0] - Math.sin(angle) * t2, p[1], p[2]]; })()));
+          const e1 = proj(...((() => { const p = leafAt(mx, wb); return [p[0] - Math.sin(angle) * t2, p[1], p[2]]; })()));
+          c.fillStyle = "rgba(" + OUT_GREEN + "," + (0.18 * up).toFixed(3) + ")";
+          poly(c, [c0, e0, e1, c3]); c.fill();
+          const k0 = P(mx + lf * 0.6, midRail);
           c.strokeStyle = "rgba(" + INK + "," + (0.6 * up).toFixed(3) + ")";
-          c.beginPath(); c.arc(k0[0], k0[1], Math.max(1.6, ww * 0.01), 0, Math.PI * 2); c.stroke();
+          c.beginPath(); c.arc(k0[0], k0[1], Math.max(1.6, ww * 0.012), 0, Math.PI * 2); c.stroke();
         }
 
         // THE DUST, drifting in the shaft, seen only there.
@@ -3115,7 +3004,7 @@
           dust.forEach((m) => {
             m.s += m.ds * dt * 3 + rand(-0.004, 0.004) * dt * 10; m.u += m.du * dt * 3 + rand(-0.004, 0.004) * dt * 10;
             if (m.s < 0.03 || m.s > 0.97 || m.u < 0.03 || m.u > 0.97) { m.s = rand(0.1, 0.9); m.u = rand(0.1, 0.9); }
-            const x = X1 + (X2 - X1) * m.u, y = ys + (opBottom - ys) * m.v;
+            const x = X1 + (X2 - X1) * m.u, y = wt + tallW * m.v;
             const f = floorOf(x, y);
             const px = x + (f[0] - x) * m.s, py = y + (f[1] - y) * m.s;
             c.globalAlpha = Math.min(1, 0.6 * L * (1 - m.s * 0.6) * (0.6 + 0.4 * Math.sin(age / 1300 + m.ph)));
