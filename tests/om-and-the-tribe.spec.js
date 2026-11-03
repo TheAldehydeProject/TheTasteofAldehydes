@@ -1137,15 +1137,16 @@ test("Om's rings on the Houses view are several at once, and each drawn its own 
 /* OUTSIDER'S WINDOW ON THE HOUSES VIEW, and its incense (2026-11-03 —
    "complicate the window in the SD page when selecting outsider
    parfumerie, and remove the door. Add another element on the bottom left
-   that is small"; before that, a door and a window under one light, and
-   "ignore the making the darkening of the page for outsider, make it
-   white"): nothing is darkened — the motifs' canvas has no ground of its
-   own, the words stay ink; no door; the window high on the right, clear of
-   the way round, its casement let open slowly to rest a little ajar and
-   never swinging past it; the house's green in its panes and thrown onto
-   the floor before the wall; a small stick of incense at the bottom left,
-   its smoke rising. */
-test("Outsider's window on the Houses view stands on white, its casement easing open, its light on the floor, and incense at the bottom left", async ({ page }) => {
+   that is small"; then "model it after the old windows with blinds like in
+   italy or spain", with the owner's picture of one; before that, a door
+   and a window under one light, and "ignore the making the darkening of
+   the page for outsider, make it white"): nothing is darkened — the
+   motifs' canvas has no ground of its own, the words stay ink; no door; the
+   window seen from the street, high on the right, clear of the way round,
+   its two louvred shutters swung out and folded back against the wall and
+   never past it; the house's green in the shutters and the room behind the
+   glass; a small stick of incense at the bottom left, its smoke rising. */
+test("Outsider's window on the Houses view stands on white, its shutters folding back against the wall, and incense at the bottom left", async ({ page }) => {
   test.setTimeout(90000);
   const errors = collectPageErrors(page);
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -1154,19 +1155,21 @@ test("Outsider's window on the Houses view stands on white, its casement easing 
   await expect.poll(() => page.evaluate(() => window.HouseMotifs.windows().length), { timeout: 20000 }).toBe(1);
   // NO DOOR: a window and the incense, and nothing else.
   expect(Object.keys(await page.evaluate(() => window.HouseMotifs.census())).sort()).toEqual(["casement", "incense"]);
-  // THE CASEMENT, let open slowly: rising to rest and never past it.
+  // THE SHUTTERS, swung out slowly and folded back: rising to rest, never past it.
   let most = 0, last = 0, rest = 0, fell = 0;
   for (let i = 0; i < 50; i++) {
     const d = await page.evaluate(() => window.HouseMotifs.windows()[0]);
     if (d) {
       rest = d.rest;
-      if (d.angle < last - 0.004) fell++;
+      // (a breath of a draft lifts it off the wall a hair now and then;
+      // a swing back from past it would be far more than that)
+      if (d.angle < last - 0.05) fell++;
       most = Math.max(most, d.angle);
       last = d.angle;
     }
     await page.waitForTimeout(150);
   }
-  expect(last, "it came to rest a little ajar").toBeGreaterThan(rest * 0.85);
+  expect(last, "folded back against the wall").toBeGreaterThan(rest * 0.9);
   expect(most, "and never swung past where it rests").toBeLessThan(rest + 0.02);
   expect(fell, "nor back").toBe(0);
   // NOTHING DARKENED: no ground on the motifs' canvas, the Menu in ink, the
@@ -1182,18 +1185,17 @@ test("Outsider's window on the Houses view stands on white, its casement easing 
   expect(d.window.left, "on the right").toBeGreaterThan(1440 * 0.55);
   expect(d.window.right, "clear of the way round").toBeLessThan(nav.x);
   expect(d.window.bottom, "high in the wall").toBeLessThan(900 * 0.6);
-  expect(d.floor.top, "its light lands on the floor, below it").toBeGreaterThan(d.window.bottom);
   // THE INCENSE, small, at the bottom left, smoking.
   const inc = (await page.evaluate(() => window.HouseMotifs.incense()))[0];
   expect(inc.x, "on the left").toBeLessThan(1440 * 0.15);
   expect(inc.y, "at the foot").toBeGreaterThan(900 * 0.8);
   expect(inc.y - inc.tip.y, "small").toBeLessThan(90);
   expect(inc.smoke, "its smoke rising").toBeGreaterThan(20);
-  // The house's green in the window's panes and on the floor, and the
-  // frames in ink.
+  // The house's green in the shutters and the room behind the glass, and
+  // the frames in ink.
   const light = await page.locator(".sheet-motifs").evaluate((c, b) => {
     const k = c.width / innerWidth, px = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
-    let win = 0, floor = 0, inked = 0;
+    let win = 0, inked = 0;
     for (let y = 0; y < c.height; y += 2) for (let x = 0; x < c.width; x += 2) {
       const i = (y * c.width + x) * 4;
       if (px[i + 3] < 40) continue;
@@ -1202,12 +1204,10 @@ test("Outsider's window on the Houses view stands on white, its casement easing 
       if (!green) continue;
       const X = x / k, Y = y / k;
       if (X > b.window.left && X < b.window.right && Y > b.window.top && Y < b.window.bottom) win++;
-      else if (X > b.floor.left && X < b.floor.right && Y > b.floor.top && Y < b.floor.bottom) floor++;
     }
-    return { win, floor, inked };
+    return { win, inked };
   }, d);
-  expect(light.win, "green in the window's panes").toBeGreaterThan(300);
-  expect(light.floor, "and thrown onto the floor").toBeGreaterThan(150);
+  expect(light.win, "green in the shutters and the glass").toBeGreaterThan(300);
   expect(light.inked, "the window and its frames drawn in ink").toBeGreaterThan(200);
   expect(errors).toEqual([]);
 });

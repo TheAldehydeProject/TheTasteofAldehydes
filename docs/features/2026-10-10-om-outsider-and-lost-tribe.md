@@ -1312,20 +1312,23 @@ finish outlining and circuling the letters."
 ### What changed
 
 - **Outsider on the Houses view** (`motifs.js`): **the door is gone** (there; the house's own page
-  keeps its door, `outsider.js`) and **the window is the motif** (`casement`) — **an old window with
-  louvred shutters, as in Italy or Spain** ("Nono too much for the window; i want you to model it
-  after the old windows with blinds like in italy or spain", the same day; for a round it was a
-  pointed arch with a rose of tracery and leaded diamond quarries, which was too much): a tall plain
-  opening in a stone surround, a lintel's lip over it and a sill under it, in ink hairlines with a
-  speck at each joint, drawn up from the sill; the glazed window behind in two leaves of three
-  panes; and in front of it **two louvred shutters** — the left one shut, **the light coming in a
-  line between each of its slats**, the right one **easing open** into the room on its outer hinge
-  as the door did (damped, never past where it rests, a breath of a draft, a touch more with the
-  hand near). **Its light**, from one light outside high on the right: the glass the open shutter
-  has left washed with the house's green, a faint shaft with dust in it, and **the window thrown
-  onto the floor before the wall** (`floorOf`) — foreshortened and a little to the left, **in
-  stripes** where the slats stand in the way and clear where the shutter has swung away, the
-  glazing's bars in shadow across it. **Small, at the bottom left, incense** (`incense`):
+  keeps its door, `outsider.js`) and **the window is the motif** (`casement`) — **an old window in
+  an Italian street, seen from outside, after the owner's own photograph of one** ("Nono too much
+  for the window; i want you to model it after the old windows with blinds like in italy or spain",
+  then the picture, "Window i meant with outsider"; for a round it was a pointed arch with a rose
+  of tracery and leaded diamonds, "too much", and for another shutters seen from inside with the
+  light striped on the floor): a grey plaster surround, deeper under the sill; the reveal's shadow
+  under the head; a white window of two leaves of three panes, the top one the tallest; a stone
+  sill with **two boxes of marigolds** behind a thin rail; the shutters' iron catches on the wall —
+  in ink hairlines with a speck at each joint, drawn up from the sill; and **two louvred shutters
+  in the house's green** (the photograph's green, near enough), with their frames, louvres, the
+  solid panel at their foot and their hinges — **shut over the window at first, then swung out
+  towards us and folded back flat against the wall**, the left a beat before the right, on a
+  damped spring that never swings past, a breath of a draft lifting one a hair now and then, and
+  off the wall a little with the hand near. **The room behind the glass** is lit in the house's
+  green, as the house's own page lights its door: brightest low in the middle, a cane blind let
+  half down inside (the photograph has one), a still reflection across the glass, a little of the
+  light on the sill. **Small, at the bottom left, incense** (`incense`):
   a stick in a little boat of a holder, its ember breathing in the house's green, and a thread of
   smoke rising and curling and coming apart as it goes — Dragon's Breath — pushed aside by the
   hand. On a phone both stand above the way round across the foot. `HouseMotifs.windows()` and
@@ -1340,9 +1343,9 @@ finish outlining and circuling the letters."
 ### How to test it
 
 `npm test -- tests/om-and-the-tribe.spec.js` — `Outsider's window on the Houses view stands on
-white, its casement easing open, its light on the floor, and incense at the bottom left` (no door;
-the shutter rising to rest and never past it; nothing darkened; the window high on the right,
-clear of the way round; green in its panes and on the floor below; the incense small at the bottom
+white, its shutters folding back against the wall, and incense at the bottom left` (no door;
+the shutters rising to rest, folded back, never past it; nothing darkened; the window high on the
+right, clear of the way round; green in the shutters and the glass; the incense small at the bottom
 left, smoking); and house 11's motifs are `casement` and `incense`. Om's tests run as before.
 
 ## Same round, other reports

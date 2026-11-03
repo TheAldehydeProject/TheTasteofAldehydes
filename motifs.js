@@ -2734,43 +2734,42 @@
   // bottom left that is small" — THE DOOR IS GONE (on this view; the house's
   // own page keeps its door) and the window is the motif:
   //   THE WINDOW  high on the right, clear of the way round (`casement`) —
-  //               "Nono too much for the window; i want you to model it after
-  //               the old windows with blinds like in italy or spain" (the
-  //               same day; for a round it was an arch with tracery and
-  //               leaded diamonds): a tall plain opening in a stone surround,
-  //               a lintel's lip over it and a sill under it, the glazed
-  //               window behind in two leaves of three panes — and in front of
-  //               it, LOUVRED SHUTTERS (persiane, contraventanas), in ink
-  //               hairlines with a speck at every joint, drawn up from the
-  //               sill: the left leaf shut, the light coming in a line between
-  //               each of its slats; the right leaf EASING OPEN into the room on
-  //               its outer hinge (`CASE_*`: let open slowly to rest, damped so
-  //               it never swings past, a breath of a draft now and then, a
-  //               touch more with the hand near it).
-  //   THE LIGHT   one light outside, high and to the right, its rays parallel
-  //               (`LIGHT`): the glass the open leaf has left washed with the
-  //               house's green, and the window thrown along the light onto
-  //               the floor before the wall (`floorOf`), foreshortened as a
-  //               floor is — IN STRIPES where the slats stand in the way, clear
-  //               where the leaf has swung away, the glazing's bars in shadow
-  //               across it; a faint shaft, dust lit only in it.
+  //               the owner's own picture of the window meant (the same day,
+  //               after "Nono too much for the window; i want you to model it
+  //               after the old windows with blinds like in italy or spain";
+  //               an arch with tracery stood for a round, then shutters seen
+  //               from inside): a window in an old Italian street SEEN FROM
+  //               OUTSIDE — a grey plaster surround, deeper under the sill, the
+  //               reveal's shadow under its head, a white window of two leaves
+  //               of three panes (the top one the tallest), a stone sill with
+  //               two boxes of marigolds behind a thin rail, the shutters'
+  //               iron catches on the wall — in ink hairlines with a speck at
+  //               every joint, drawn up from the sill; and TWO LOUVRED
+  //               SHUTTERS, in the house's green, shut over it at first, then
+  //               swung out towards us on their hinges and folded back flat
+  //               against the wall, the left a beat before the right, on a
+  //               damped spring that never swings past (`CASE_*`) — a breath
+  //               of a draft now and then, and off the wall a little with the
+  //               hand near.
+  //   THE ROOM    behind the glass, lit in the house's green (the light the
+  //               house's own page has through its door): brightest low in
+  //               the middle, a cane blind let half down inside, a still
+  //               reflection across the glass, a little of it on the sill.
   //   THE INCENSE small, at the bottom left (`incense`): a stick in a little
   //               boat of a holder, its ember breathing, and a thread of smoke
   //               rising from it, curling and coming apart as it goes — the
   //               house's Dragon's Breath — pushed aside by the hand.
   const OUT_GREEN = "58, 132, 92";       // the house's green, deep enough to read on white
   const OUT_PALE = "214, 236, 220";      // and paled, where the light is strongest
-  const LIGHT = { x: -0.2, y: 1, z: -0.62 }; // the way the light outside travels (down, left, out of the wall)
-  const LIGHT_A = 0.8;                   // how strongly it is drawn
+  const LIGHT_A = 0.8;                   // how strongly the room's light is drawn
   const CASE_BUILD = 1700;               // ms, the window drawn up from its sill
-  const CASE_OPEN_AT = 1500;             // when the casement is let open
+  const CASE_OPEN_AT = 1500;             // when the shutters are let open
   const CASE_OPEN_MS = 3400;             // and how long it takes, easing, to come to rest
-  const CASE_REST = 1.05;                // radians the right shutter rests at
-  const CASE_HAND = 0.12;                // radians more it gives with the hand near it
+  const CASE_REST = Math.PI - 0.07;      // radians a shutter rests at: folded back, nearly flat to the wall
+  const CASE_HAND = 0.16;                // radians off the wall it comes with the hand near
   const CASE_SPRING = 5;                 // how hard it is drawn to where it is going
   const CASE_DAMP = 2 * Math.sqrt(5);    // and damped just enough that it never swings past
   const CASE_FOCAL = 1500;               // px, the eye's distance
-  const SHAFT_DUST = 70;
   const SMOKE_EVERY = 0.03;              // s between specks of the smoke's thread
   const SMOKE_LIFE = 6.5;                // s a speck of it lasts
   // Where a line drawn up from its foot has got to, for a build.
@@ -2797,51 +2796,63 @@
     const nav = document.querySelector(".sheet-nav");
     const navBox = nav ? nav.getBoundingClientRect() : null;
     const navLeft = !PHONE && navBox ? navBox.left / SMALL : W;
-    const ww = PHONE ? Math.min(170, W * 0.26) : Math.max(130, Math.min(200, W * 0.125));
-    const cw = ww * 0.085;                           // the plain stone surround's width
-    const wr = Math.min(W - cw - 34, navLeft - cw - 40), wl = wr - ww;
-    const wt = Math.max(CHROME + 34, H * (PHONE ? 0.15 : 0.12));
-    const wb = Math.min(wt + ww * 1.62, H * (PHONE ? 0.48 : 0.56));   // the sill
-    const tallW = wb - wt;
-    const X1 = wl, X2 = wr, mx = (wl + wr) / 2;      // the opening, and where its two leaves meet
-    const half = (X2 - X1) / 2;
-    // The eye, to the left of the window and level with its middle, so the
-    // right leaf, swung into the room on its outer hinge, is seen narrowed.
-    const eye = { x: wl - ww * 0.9, y: (wt + wb) / 2 };
-    const proj = (x, y, z) => { const k = CASE_FOCAL / (CASE_FOCAL + z); return [eye.x + (x - eye.x) * k, eye.y + (y - eye.y) * k]; };
+    const ww = PHONE ? Math.min(150, W * 0.22) : Math.max(120, Math.min(170, W * 0.105));
+    const wh = ww * 1.45;                            // the opening
+    const sb = ww * 0.17;                            // the grey surround, and more of it under the sill
+    const gap = ww * 0.06;                           // between the surround and a shutter's hinge
+    const sw = ww * 0.55, sh = wh * 1.04;            // a shutter, a little taller than the opening
+    const wr = Math.min(W - sw - gap - sb - 30, navLeft - sw - gap - sb - 34), wl = wr - ww;
+    const wt = Math.max(CHROME + 40, H * (PHONE ? 0.16 : 0.13)), wb = wt + wh;
+    const mx = (wl + wr) / 2, my = (wt + wb) / 2;
+    const st = wt + (wh - sh) / 2;                   // a shutter's top
+    // The eye, square on to the window: a shutter swung towards it grows,
+    // and is seen edge on half way.
+    const proj = (x, y, z) => { const k = CASE_FOCAL / (CASE_FOCAL + z); return [mx + (x - mx) * k, my + (y - my) * k]; };
 
     // THE LINES, each drawn up from its lower end as the window is built.
     const lines = [];
+    const foot = wb + sb * 1.9, high = wh + sb * 3;
     const put = (pts, weight) => {
       let len = 0;
       const at = [0];
       for (let i = 1; i < pts.length; i++) { len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); at.push(len); }
-      const ys = pts.map((q) => (wb + cw * 1.6 - q[1]) / (tallW + cw * 3));
+      const ys = pts.map((q) => (foot - q[1]) / high);
       lines.push({ pts, at, len: Math.max(0.01, len), from: Math.min(...ys), to: Math.max(...ys), weight: weight || 1 });
     };
-    // the surround, plain as an old house's is, a little wider at the head
-    put([[wl - cw, wb], [wl - cw, wt - cw * 1.2], [wr + cw, wt - cw * 1.2], [wr + cw, wb]]);
-    put([[X1, wb], [X1, wt], [X2, wt], [X2, wb]], 0.85);
-    put([[wl - cw * 1.5, wt - cw * 1.2], [wr + cw * 1.5, wt - cw * 1.2]], 0.7);   // the lintel's lip
-    // the sill, proud of the wall, and its thickness
-    put([[wl - cw * 1.6, wb], [wr + cw * 1.6, wb]]); put([[wl - cw * 1.6, wb + cw * 0.75], [wr + cw * 1.6, wb + cw * 0.75]], 0.8);
-    put([[wl - cw * 1.6, wb], [wl - cw * 1.6, wb + cw * 0.75]], 0.7); put([[wr + cw * 1.6, wb], [wr + cw * 1.6, wb + cw * 0.75]], 0.7);
-    // the glazed window behind the shutters: two leaves of three panes
-    const gi = ww * 0.05;
-    put([[mx, wb], [mx, wt]], 0.5);
-    [1, 2].forEach((k) => put([[X1 + gi, wt + (tallW * k) / 3], [X2 - gi, wt + (tallW * k) / 3]], 0.4));
-    put([[X1 + gi, wb - gi], [X1 + gi, wt + gi], [X2 - gi, wt + gi], [X2 - gi, wb - gi]], 0.45);
-    // THE SHUTTERS' SLATS: pitched so a light comes between each
-    const pitch = Math.max(5, tallW / 30);
-    const slats = [];
-    for (let y = wt + pitch * 1.1; y < wb - pitch * 0.9; y += pitch) slats.push(y);
-    // The left leaf, shut: its frame, a rail across its middle, its slats.
-    const lf = ww * 0.045;
-    put([[X1, wb], [X1, wt], [mx, wt], [mx, wb], [X1, wb]], 0.9);
-    put([[X1 + lf, wb - lf], [X1 + lf, wt + lf], [mx - lf, wt + lf], [mx - lf, wb - lf], [X1 + lf, wb - lf]], 0.55);
-    const midRail = wt + tallW * 0.5;
-    put([[X1 + lf, midRail], [mx - lf, midRail]], 0.6);
-    slats.forEach((y) => { if (Math.abs(y - midRail) > pitch * 0.6) put([[X1 + lf, y], [mx - lf, y + pitch * 0.32]], 0.42); });
+    const rect = (x0, y0, x1, y1, w) => put([[x0, y1], [x0, y0], [x1, y0], [x1, y1], [x0, y1]], w);
+    // the grey surround, deeper under the sill, and the opening in it
+    rect(wl - sb, wt - sb, wr + sb, wb + sb * 1.9, 0.55);
+    rect(wl, wt, wr, wb, 0.9);
+    // the reveal: the opening's depth, seen as a band under its head
+    const rv = ww * 0.09;
+    put([[wl, wt + rv], [wr, wt + rv]], 0.45);
+    // the window in it: its frame, two leaves meeting at the middle, three
+    // panes each, the top one the tallest
+    const fi = ww * 0.06, X1 = wl + fi, X2 = wr - fi, Y1 = wt + rv + fi * 0.4, Y2 = wb - fi * 0.3;
+    rect(X1, Y1, X2, Y2, 0.85);
+    const lw = ww * 0.035;
+    put([[mx - lw, Y2], [mx - lw, Y1]], 0.75); put([[mx + lw, Y2], [mx + lw, Y1]], 0.75);
+    const rowAt = [Y1 + lw, Y1 + (Y2 - Y1) * 0.37, Y1 + (Y2 - Y1) * 0.685, Y2 - lw];
+    const panes = [];
+    [[X1 + lw, mx - lw * 2], [mx + lw * 2, X2 - lw]].forEach(([a, b]) => {
+      for (let r = 0; r < 3; r++) {
+        const y0 = rowAt[r] + (r ? lw * 0.6 : 0), y1 = rowAt[r + 1] - (r < 2 ? lw * 0.6 : 0);
+        rect(a, y0, b, y1, 0.55);
+        panes.push([a, y0, b, y1]);
+      }
+    });
+    // the sill, proud of the surround, and its thickness
+    const sy = wb + ww * 0.02, sl = wl - ww * 0.06, sr = wr + ww * 0.06, sth = ww * 0.06;
+    put([[sl, sy], [sr, sy]]); put([[sl, sy + sth], [sr, sy + sth]], 0.8);
+    put([[sl, sy], [sl, sy + sth]], 0.7); put([[sr, sy], [sr, sy + sth]], 0.7);
+    // two boxes of flowers on it, behind a thin rail
+    const boxes = [[wl + ww * 0.05, mx - ww * 0.03], [mx + ww * 0.03, wr - ww * 0.05]];
+    const bh = ww * 0.1;
+    boxes.forEach(([a, b]) => put([[a, sy - bh], [a + ww * 0.012, sy], [b - ww * 0.012, sy], [b, sy - bh], [a, sy - bh]], 0.7));
+    put([[wl - ww * 0.01, sy - bh * 0.55], [wr + ww * 0.01, sy - bh * 0.55]], 0.45);
+    // the shutters' catches on the wall, below where they stand open
+    const catches = [[wl - gap - sw + ww * 0.06, st + sh + ww * 0.05], [wr + gap + sw - ww * 0.06, st + sh + ww * 0.05]];
+    catches.forEach(([x, y]) => put([[x, y + ww * 0.08], [x, y], [x + (x < mx ? ww * 0.04 : -ww * 0.04), y - ww * 0.02]], 0.6));
 
     const joints = [];
     const seen = new Set();
@@ -2853,39 +2864,37 @@
       joints.push({ x: p[0], y: p[1], l, at: l.at[i] });
     }));
 
-    // THE FLOOR, before the wall: where the light through a point of the
-    // window lands — foreshortened, upside down (the window's head lands
-    // furthest out, nearest us), a little to the left.
-    const floorY = PHONE && navBox ? Math.min(H - 70, navBox.top / SMALL - 40) : H - Math.max(34, H * 0.06);
-    const drop = floorY - wb, FORE = 0.36;
-    const floorOf = (x, y) => [x + LIGHT.x * (drop + (wb - y)) * (PHONE ? 0.55 : 1.4), floorY - (wb - y) * FORE * 0.9 - drop * 0.02];
-    const patchOutline = [[X1, wb], [X1, wt], [X2, wt], [X2, wb]].map(([x, y]) => floorOf(x, y));
+    // THE FLOWERS in the boxes, each its own: a head of petals on a stem,
+    // among leaves, swaying a little
+    const flowers = [];
+    boxes.forEach(([a, b]) => {
+      const n = Math.max(4, Math.round((b - a) / (ww * 0.07)));
+      for (let i = 0; i < n; i++) {
+        const x = a + (b - a) * ((i + 0.5) / n) + rand(-2, 2);
+        flowers.push({ x, y: sy - bh, h: ww * rand(0.07, 0.15), r: ww * rand(0.018, 0.03), ph: rand(0, 6.3), leaf: rand(-1, 1), open: Math.random() < 0.8 });
+      }
+    });
 
-    // THE SWING of the right leaf: an angle on a damped spring.
-    let angle = 0, spin = 0, lastAge = 0, handGive = 0, nextDraft = rand(9, 15);
-    const leafAt = (x, y) => { const d = X2 - x; return [X2 - d * Math.cos(angle), y, -d * Math.sin(angle)]; };
-    const dust = Array.from({ length: SHAFT_DUST }, () => ({ s: rand(0.05, 0.95), u: rand(0.05, 0.95), v: rand(0.1, 0.9), ds: rand(-0.01, 0.01), du: rand(-0.01, 0.01), r: rand(0.8, 1.7), ph: rand(0, 6.3) }));
+    // THE SHUTTERS, each on its outer hinge: shut over the window at first,
+    // then swung out towards us and folded back flat against the wall, on a
+    // damped spring that never swings past — the left a beat before the
+    // right; a breath of a draft now and then, and off the wall a little
+    // with the hand near.
+    const leaves = [
+      { hinge: wl - gap, dir: 1, angle: 0, spin: 0, delay: 0 },
+      { hinge: wr + gap, dir: -1, angle: 0, spin: 0, delay: 280 },
+    ];
+    // a point on a shutter, d from its hinge across, at height y
+    const onLeaf = (lf, d, y) => [lf.hinge + lf.dir * d * Math.cos(lf.angle), y, -d * Math.sin(lf.angle)];
+    let lastAge = 0, handGive = 0, nextDraft = rand(9, 15);
     const poly = (c, pts) => { c.beginPath(); pts.forEach((p, i) => (i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]))); c.closePath(); };
-    // the stripes of light the slats let through, on the floor, across a run
-    // of the opening from xa to xb
-    const stripes = (c, xa, xb, L) => {
-      if (xb - xa < 1) return;
-      c.fillStyle = "rgba(" + OUT_GREEN + "," + (0.2 * L).toFixed(3) + ")";
-      c.beginPath();
-      slats.forEach((y, i) => {
-        const y0 = y + pitch * 0.42, y1 = (slats[i + 1] || wb - pitch * 0.4) - pitch * 0.12;
-        if (y1 <= y0) return;
-        const a = floorOf(xa, y0), b = floorOf(xb, y0), d = floorOf(xb, y1), e = floorOf(xa, y1);
-        c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.lineTo(d[0], d[1]); c.lineTo(e[0], e[1]); c.closePath();
-      });
-      c.fill();
-    };
+    const slatPitch = Math.max(4.5, sh / 34);
+    const louvreTop = st + sw * 0.13, louvreBottom = st + sh * 0.82;
 
     return {
       fadeIn: 1,
-      swing: () => ({ angle, spin, rest: CASE_REST, most: CASE_REST + CASE_HAND,
-        window: { left: wl - cw, right: wr + cw, top: wt - cw * 1.2, bottom: wb },
-        floor: { left: Math.min(...patchOutline.map((p) => p[0])), right: Math.max(...patchOutline.map((p) => p[0])), top: Math.min(...patchOutline.map((p) => p[1])), bottom: Math.max(...patchOutline.map((p) => p[1])) } }),
+      swing: () => ({ angle: leaves[1].angle, left: leaves[0].angle, spin: leaves[1].spin, rest: CASE_REST, most: CASE_REST,
+        window: { left: wl - gap - sw, right: wr + gap + sw, top: wt - sb, bottom: wb + sb * 1.9 } }),
       draw(c, age, a) {
         const dt = Math.min(0.05, Math.max(0, (age - lastAge) / 1000));
         lastAge = age;
@@ -2893,62 +2902,63 @@
         if (reach <= 0) return;
         const built = Math.min(1, reach);
 
-        // THE SWING: shut, then let open to rest over CASE_OPEN_MS, a touch
-        // more with the hand near the window — never past it.
-        const opened = ease((age - CASE_OPEN_AT) / CASE_OPEN_MS);
+        // THE SWING
         nextDraft -= dt;
-        if (opened >= 1 && nextDraft <= 0) { spin += rand(-0.03, 0.04); nextDraft = rand(9, 15); }
-        const near = hand.x > wl - ww && hand.x < wr + ww && hand.y > wt - 40 && hand.y < wb + 60 ? 1 : 0;
+        const near = hand.x > wl - sw * 1.4 && hand.x < wr + sw * 1.4 && hand.y > wt - 40 && hand.y < wb + 60 ? 1 : 0;
         handGive += (near - handGive) * Math.min(1, dt * 1.5);
-        const target = CASE_REST * opened + CASE_HAND * handGive * opened;
-        spin += (-CASE_SPRING * (angle - target) - CASE_DAMP * spin) * dt;
-        angle = Math.max(0, Math.min(1.5, angle + spin * dt));
-        // how much of the right half the leaf has left clear
-        const clearW = half * Math.min(1, 1 - Math.cos(angle));
+        const draft = nextDraft <= 0;
+        if (draft) nextDraft = rand(9, 15);
+        leaves.forEach((lf) => {
+          const opened = ease((age - CASE_OPEN_AT - lf.delay) / CASE_OPEN_MS);
+          if (draft && opened >= 1) lf.spin -= rand(0.02, 0.05);
+          const target = CASE_REST * opened - CASE_HAND * handGive * opened;
+          lf.spin += (-CASE_SPRING * (lf.angle - target) - CASE_DAMP * lf.spin) * dt;
+          lf.angle = Math.max(0, Math.min(CASE_REST, lf.angle + lf.spin * dt));
+        });
 
         c.save();
         c.lineCap = "round";
         c.lineJoin = "round";
         const L = LIGHT_A * a * Math.max(0, Math.min(1, (built - 0.55) / 0.35));
 
+        // THE SURROUND, faintly grey, as the plaster round the window is,
+        // and the reveal's shadow under the head
+        c.fillStyle = "rgba(" + INK + "," + (0.035 * a * built).toFixed(3) + ")";
+        c.fillRect(wl - sb, wt - sb, ww + sb * 2, wh + sb * 2.9);
+        c.fillStyle = "rgba(" + INK + "," + (0.06 * a * built).toFixed(3) + ")";
+        c.fillRect(wl, wt, ww, rv);
+        // THE ROOM BEHIND THE GLASS, lit in the house's green: brightest low
+        // in the middle; a blind let half down inside; a reflection across
         if (L > 0.002) {
-          // THE SHAFT: the opening to its patch on the floor, a faint wash.
-          const sh = c.createLinearGradient(mx, (wt + wb) / 2, (patchOutline[0][0] + patchOutline[2][0]) / 2, floorY);
-          sh.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.045 * L).toFixed(3) + ")");
-          sh.addColorStop(1, "rgba(" + OUT_GREEN + "," + (0.01 * L).toFixed(3) + ")");
-          c.fillStyle = sh;
-          poly(c, [[X1, wt], [X2, wt], [X2, wb], patchOutline[3], patchOutline[1], patchOutline[0], [X1, wb]]);
-          c.fill();
-          // THE FLOOR: stripes where a leaf's slats stand in the way, and
-          // clear where the right leaf has swung away; the glazing's bars in
-          // shadow across the clear part.
-          stripes(c, X1, mx, L);
-          stripes(c, mx, X2 - clearW, L);
-          if (clearW > 1) {
-            c.fillStyle = "rgba(" + OUT_GREEN + "," + (0.2 * L).toFixed(3) + ")";
-            poly(c, [floorOf(X2 - clearW, wt), floorOf(X2, wt), floorOf(X2, wb), floorOf(X2 - clearW, wb)]);
-            c.fill();
-            c.strokeStyle = "rgba(255, 255, 255," + (0.85 * Math.min(1, L * 1.4)).toFixed(3) + ")";
-            c.lineWidth = 1.2;
-            c.beginPath();
-            [1, 2].forEach((k) => { const y = wt + (tallW * k) / 3, p = floorOf(X2 - clearW, y), q = floorOf(X2, y); c.moveTo(p[0], p[1]); c.lineTo(q[0], q[1]); });
-            c.stroke();
-          }
-          // THE OPENING, lit: the glass where the right leaf has swung away
-          // washed with the light outside; between the left leaf's slats, a
-          // line of it.
-          if (clearW > 1) {
-            const g = c.createLinearGradient(X2 - clearW, 0, X2, 0);
-            g.addColorStop(0, "rgba(" + OUT_PALE + "," + (0.55 * L).toFixed(3) + ")");
-            g.addColorStop(1, "rgba(" + OUT_GREEN + "," + (0.22 * L).toFixed(3) + ")");
-            c.fillStyle = g;
-            c.fillRect(X2 - clearW, wt, clearW, tallW);
-          }
-          c.strokeStyle = "rgba(" + OUT_GREEN + "," + (0.55 * L).toFixed(3) + ")";
-          c.lineWidth = Math.max(1, pitch * 0.28);
+          const g = c.createRadialGradient(mx, Y2 - (Y2 - Y1) * 0.25, 0, mx, Y2 - (Y2 - Y1) * 0.25, (Y2 - Y1) * 0.85);
+          g.addColorStop(0, "rgba(" + OUT_PALE + "," + (0.7 * L).toFixed(3) + ")");
+          g.addColorStop(0.6, "rgba(" + OUT_GREEN + "," + (0.2 * L).toFixed(3) + ")");
+          g.addColorStop(1, "rgba(" + OUT_GREEN + "," + (0.1 * L).toFixed(3) + ")");
+          c.fillStyle = g;
+          panes.forEach(([x0, y0, x1, y1]) => c.fillRect(x0 + 1, y0 + 1, x1 - x0 - 2, y1 - y0 - 2));
+          // the blind, a cane one let half down, seen through the glass
+          c.strokeStyle = "rgba(" + INK + "," + (0.16 * a).toFixed(3) + ")";
+          c.lineWidth = 0.8;
           c.beginPath();
-          slats.forEach((y) => { c.moveTo(X1 + lf * 1.4, y + pitch * 0.62); c.lineTo(mx - lf * 1.4, y + pitch * 0.62 + pitch * 0.32); });
+          const blind = Y1 + (Y2 - Y1) * 0.55;
+          panes.forEach(([x0, y0, x1, y1]) => {
+            for (let y = Math.max(y0 + 2, blind); y < y1 - 1; y += 3.2) { c.moveTo(x0 + 2, y); c.lineTo(x1 - 2, y); }
+          });
           c.stroke();
+          // a reflection across the glass, still
+          c.save();
+          c.beginPath(); panes.forEach(([x0, y0, x1, y1]) => c.rect(x0, y0, x1 - x0, y1 - y0)); c.clip();
+          c.fillStyle = "rgba(255, 255, 255," + (0.35 * a).toFixed(3) + ")";
+          c.beginPath();
+          c.moveTo(X1, Y1 + (Y2 - Y1) * 0.18); c.lineTo(X1 + ww * 0.42, Y1); c.lineTo(X1 + ww * 0.55, Y1); c.lineTo(X1, Y1 + (Y2 - Y1) * 0.3);
+          c.closePath(); c.fill();
+          c.restore();
+          // its light on the sill, a little
+          const sg = c.createLinearGradient(0, sy - bh, 0, sy + sth * 4);
+          sg.addColorStop(0, "rgba(" + OUT_GREEN + "," + (0.12 * L).toFixed(3) + ")");
+          sg.addColorStop(1, "rgba(" + OUT_GREEN + ",0)");
+          c.fillStyle = sg;
+          c.fillRect(wl, sy - bh, ww, bh + sth * 4);
         }
 
         // THE LINES, drawn up from the sill in ink, a speck at every joint.
@@ -2960,57 +2970,76 @@
           c.fillRect(jn.x - 1.1, jn.y - 1.1, 2.2, 2.2);
         });
 
-        // THE RIGHT LEAF, swung into the room on its outer hinge: its frame,
-        // its rail, its slats with the light between them, its catch.
-        if (built > 0.7) {
-          const up = Math.min(1, (built - 0.7) / 0.3) * a;
-          const P = (x, y) => proj(...leafAt(x, y));
-          const c0 = P(mx, wt), c1 = P(X2, wt), c2 = P(X2, wb), c3 = P(mx, wb);
-          c.fillStyle = "rgba(255, 255, 255," + up.toFixed(3) + ")";
-          poly(c, [c0, c1, c2, c3]); c.fill();
-          c.fillStyle = "rgba(" + INK + "," + (0.04 * up).toFixed(3) + ")";
-          poly(c, [c0, c1, c2, c3]); c.fill();
-          c.strokeStyle = "rgba(" + INK + "," + (0.58 * up).toFixed(3) + ")";
-          c.lineWidth = 1.1;
-          poly(c, [c0, c1, c2, c3]); c.stroke();
-          c.strokeStyle = "rgba(" + INK + "," + (0.3 * up).toFixed(3) + ")";
-          c.lineWidth = 1;
-          poly(c, [P(mx + lf, wt + lf), P(X2 - lf, wt + lf), P(X2 - lf, wb - lf), P(mx + lf, wb - lf)]); c.stroke();
-          c.beginPath();
-          { const a0 = P(mx + lf, midRail), a1 = P(X2 - lf, midRail); c.moveTo(a0[0], a0[1]); c.lineTo(a1[0], a1[1]); }
-          slats.forEach((y) => { if (Math.abs(y - midRail) > pitch * 0.6) { const a0 = P(mx + lf, y), a1 = P(X2 - lf, y + pitch * 0.32); c.moveTo(a0[0], a0[1]); c.lineTo(a1[0], a1[1]); } });
-          c.stroke();
-          if (L > 0.002) {
-            c.strokeStyle = "rgba(" + OUT_GREEN + "," + (0.4 * L * up).toFixed(3) + ")";
-            c.lineWidth = Math.max(1, pitch * 0.22);
+        // THE FLOWERS, as the boxes are drawn
+        if (built > 0.75) {
+          const up = Math.min(1, (built - 0.75) / 0.25) * a, t = age / 1000;
+          c.lineWidth = 0.9;
+          flowers.forEach((f) => {
+            const sway = Math.sin(t * 0.9 + f.ph) * 1.6;
+            const hx = f.x + sway, hy = f.y - f.h * up;
+            c.strokeStyle = "rgba(" + OUT_GREEN + "," + (0.6 * up).toFixed(3) + ")";
             c.beginPath();
-            slats.forEach((y) => { const a0 = P(mx + lf * 1.4, y + pitch * 0.62), a1 = P(X2 - lf * 1.4, y + pitch * 0.94); c.moveTo(a0[0], a0[1]); c.lineTo(a1[0], a1[1]); });
+            c.moveTo(f.x, f.y); c.quadraticCurveTo(f.x + sway * 0.3, (f.y + hy) / 2, hx, hy);
+            // a leaf either side
+            const ly = f.y - f.h * 0.4;
+            c.moveTo(f.x + sway * 0.2, ly); c.quadraticCurveTo(f.x + 6 * f.leaf, ly - 3, f.x + 8 * f.leaf + sway * 0.4, ly - 1);
+            c.moveTo(f.x + sway * 0.25, ly + 2); c.quadraticCurveTo(f.x - 5 * f.leaf, ly - 1, f.x - 7 * f.leaf + sway * 0.4, ly + 1);
             c.stroke();
-          }
-          // its edge, as thick as a shutter is, and the catch on it
-          const t2 = Math.max(2, ww * 0.02);
-          const e0 = proj(...((() => { const p = leafAt(mx, wt); return [p[0] - Math.sin(angle) * t2, p[1], p[2]]; })()));
-          const e1 = proj(...((() => { const p = leafAt(mx, wb); return [p[0] - Math.sin(angle) * t2, p[1], p[2]]; })()));
-          c.fillStyle = "rgba(" + OUT_GREEN + "," + (0.18 * up).toFixed(3) + ")";
-          poly(c, [c0, e0, e1, c3]); c.fill();
-          const k0 = P(mx + lf * 0.6, midRail);
-          c.strokeStyle = "rgba(" + INK + "," + (0.6 * up).toFixed(3) + ")";
-          c.beginPath(); c.arc(k0[0], k0[1], Math.max(1.6, ww * 0.012), 0, Math.PI * 2); c.stroke();
+            if (!f.open) return;
+            // the head: petals in a ring round a dot, in a marigold's yellow
+            c.fillStyle = "rgba(226, 170, 52," + (0.6 * up).toFixed(3) + ")";
+            c.beginPath();
+            for (let k = 0; k < 7; k++) { const q = (k / 7) * Math.PI * 2 + f.ph; c.moveTo(hx + Math.cos(q) * f.r, hy + Math.sin(q) * f.r * 0.8); c.arc(hx + Math.cos(q) * f.r, hy + Math.sin(q) * f.r * 0.8, f.r * 0.55, 0, Math.PI * 2); }
+            c.fill();
+            c.fillStyle = "rgba(" + INK + "," + (0.5 * up).toFixed(3) + ")";
+            c.fillRect(hx - 0.9, hy - 0.9, 1.8, 1.8);
+          });
         }
 
-        // THE DUST, drifting in the shaft, seen only there.
-        if (L > 0.01) {
-          c.fillStyle = "rgb(" + OUT_GREEN + ")";
-          dust.forEach((m) => {
-            m.s += m.ds * dt * 3 + rand(-0.004, 0.004) * dt * 10; m.u += m.du * dt * 3 + rand(-0.004, 0.004) * dt * 10;
-            if (m.s < 0.03 || m.s > 0.97 || m.u < 0.03 || m.u > 0.97) { m.s = rand(0.1, 0.9); m.u = rand(0.1, 0.9); }
-            const x = X1 + (X2 - X1) * m.u, y = wt + tallW * m.v;
-            const f = floorOf(x, y);
-            const px = x + (f[0] - x) * m.s, py = y + (f[1] - y) * m.s;
-            c.globalAlpha = Math.min(1, 0.6 * L * (1 - m.s * 0.6) * (0.6 + 0.4 * Math.sin(age / 1300 + m.ph)));
-            c.fillRect(px, py, m.r, m.r);
+        // THE SHUTTERS, last: over the window while shut, then swung out and
+        // folded back against the wall — green, their frames, the louvres,
+        // the solid panel at their foot, the hinges
+        if (built > 0.6) {
+          const up = Math.min(1, (built - 0.6) / 0.4) * a;
+          // the one swung out furthest from the wall drawn last
+          leaves.slice().sort((p, q) => Math.abs(Math.PI / 2 - q.angle) - Math.abs(Math.PI / 2 - p.angle)).forEach((lf) => {
+            const P = (d, y) => proj(...onLeaf(lf, d, y));
+            const corners = [P(0, st), P(sw, st), P(sw, st + sh), P(0, st + sh)];
+            c.fillStyle = "rgba(255, 255, 255," + (0.92 * up).toFixed(3) + ")";
+            poly(c, corners); c.fill();
+            c.fillStyle = "rgba(" + OUT_GREEN + "," + (0.2 * up).toFixed(3) + ")";
+            poly(c, corners); c.fill();
+            c.strokeStyle = "rgba(" + INK + "," + (0.6 * up).toFixed(3) + ")";
+            c.lineWidth = 1.1;
+            poly(c, corners); c.stroke();
+            const f2 = sw * 0.13;
+            c.strokeStyle = "rgba(" + INK + "," + (0.38 * up).toFixed(3) + ")";
+            c.lineWidth = 1;
+            poly(c, [P(f2, louvreTop), P(sw - f2, louvreTop), P(sw - f2, louvreBottom), P(f2, louvreBottom)]); c.stroke();
+            poly(c, [P(f2, louvreBottom + sh * 0.03), P(sw - f2, louvreBottom + sh * 0.03), P(sw - f2, st + sh - f2 * 0.8), P(f2, st + sh - f2 * 0.8)]); c.stroke();
+            // the louvres, each a slat and its shadow
+            c.strokeStyle = "rgb(" + OUT_GREEN + ")";
+            c.globalAlpha = 0.55 * up;
+            c.beginPath();
+            for (let y = louvreTop + slatPitch; y < louvreBottom - 1; y += slatPitch) { const p0 = P(f2, y), p1 = P(sw - f2, y); c.moveTo(p0[0], p0[1]); c.lineTo(p1[0], p1[1]); }
+            c.stroke();
+            c.globalAlpha = 0.22 * up;
+            c.beginPath();
+            for (let y = louvreTop + slatPitch * 1.45; y < louvreBottom - 1; y += slatPitch) { const p0 = P(f2, y), p1 = P(sw - f2, y); c.moveTo(p0[0], p0[1]); c.lineTo(p1[0], p1[1]); }
+            c.stroke();
+            c.globalAlpha = 1;
+            // its hinges, iron, at the head and the foot
+            c.fillStyle = "rgba(" + INK + "," + (0.7 * up).toFixed(3) + ")";
+            [st + sh * 0.1, st + sh * 0.9].forEach((y) => { const p = P(0, y); c.fillRect(p[0] - 2, p[1] - 4, 4, 8); });
+            // its edge, as thick as a shutter is, while it is turned
+            const s = Math.sin(lf.angle);
+            if (s > 0.08) {
+              const t2 = ww * 0.025, e0 = P(sw, st), e1 = P(sw, st + sh);
+              const off = proj(...((() => { const p = onLeaf(lf, sw, st); return [p[0] + lf.dir * -t2 * s * 0.5, p[1], p[2] + t2]; })()));
+              c.strokeStyle = "rgba(" + INK + "," + (0.35 * up * s).toFixed(3) + ")";
+              c.beginPath(); c.moveTo(e0[0], e0[1]); c.lineTo(off[0], off[1]); c.moveTo(e1[0], e1[1]); c.lineTo(off[0], e1[1] + (off[1] - e0[1])); c.stroke();
+            }
           });
-          c.globalAlpha = 1;
         }
         c.restore();
       },
@@ -3536,13 +3565,13 @@
     },
     // What is standing on the page, by kind — for anything that needs to
     // know (the tests), since the drawing itself cannot be asked.
-    // How Outsider's window stands and its casement swings, where its light
-    // lands on the floor, and where its incense stands, for the tests.
+    // How Outsider's window stands and its shutters swing, and where its
+    // incense stands, for the tests.
     windows() {
       const k = (b) => ({ left: b.left * SMALL, right: b.right * SMALL, top: b.top * SMALL, bottom: b.bottom * SMALL });
       return things.filter((t) => t.swing && !t.ending).map((t) => {
         const d = t.swing();
-        d.window = k(d.window); d.floor = k(d.floor);
+        d.window = k(d.window);
         return d;
       });
     },
