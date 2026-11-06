@@ -152,30 +152,53 @@ for (const n of PAGES) {
   });
 }
 
-/* 2026-11-03 — "Recreate test page 1 with images 3 and 4" (a planet's
-   readings and its ring of nodes; a pale poster of spheres out of focus and
-   a thin double circle): every fragrance on the site a world. */
-test("test page 1: every fragrance a world, and a world out of focus pressed comes into focus", async ({ page }) => {
+/* 2026-11-06 — "change test page 1 to make it more into a perfumer oriented
+   page ... you initially start with a diagram like this (image 2), and each
+   dot or node on that when clicked will take you to a sphere ... The central
+   sphere node should be of the perfumer, and sphere nodes around it should be
+   of the houses. You can click those and view the fragrances that were made by
+   the perfumer for that house ... a rotating earth ... a return button." */
+test("test page 1: the rays first, a dot opening its perfumer's world, a house its perfumes, and Return going back", async ({ page }) => {
   const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/test-pages/1/");
-  await page.waitForTimeout(600);
-  expect(await page.evaluate(() => window.TestPage1.count)).toBeGreaterThan(100);
-  const first = await page.evaluate(() => window.TestPage1.now());
-  await expect(page.locator("[data-v=name]")).toHaveText(first);
-  // the next, by the arrow and by the key
-  await page.locator(".t1-next").click();
-  const second = await page.evaluate(() => window.TestPage1.now());
-  expect(second).not.toBe(first);
-  await expect(page.locator("[data-v=name]")).toHaveText(second);
-  await page.keyboard.press("ArrowLeft");
-  expect(await page.evaluate(() => window.TestPage1.now())).toBe(first);
-  // a world chosen by name, from the list of every one
-  await page.locator(".t1-pick").selectOption({ label: "Amber Zero" });
-  expect(await page.evaluate(() => window.TestPage1.now())).toBe("Amber Zero");
-  await expect(page.locator(".t1-lines li")).toHaveCount(3);
-  await expect(page.locator(".t1-lines li").first()).toContainText("Top");
+  await page.waitForTimeout(2200);
+  // the rays: a dot for every perfume, every perfumer in the list
+  expect(await page.evaluate(() => window.TestPage1.view())).toBe("rays");
+  expect(await page.evaluate(() => window.TestPage1.dots())).toBe(282);
+  expect(await page.evaluate(() => window.TestPage1.perfumers)).toBe(24);
+  await expect(page.locator(".t1-return")).toBeHidden();
+  // a dot pressed: its perfumer's world, the perfumer in the middle
+  const d = await page.evaluate(() => window.TestPage1.dotOf("aichi-liu"));
+  await page.mouse.click(d.x, d.y);
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view())).toBe("world");
+  expect(await page.evaluate(() => window.TestPage1.now())).toEqual({ kind: "per", perfumer: "aichi-liu", house: null, count: 14 });
+  await expect(page.locator("[data-v=name]")).toHaveText("Aichi Liu");
+  await expect(page.locator("[data-v=houses]")).toHaveText("2");
+  await expect(page.locator(".t1-return")).toBeVisible();
+  // the Earth turns in it, to her country
+  const s0 = await page.evaluate(() => window.TestPage1.spin());
+  await page.waitForTimeout(900);
+  expect(await page.evaluate(() => window.TestPage1.spin())).not.toBe(s0);
+  // a house round it pressed: the perfumes she made for it
+  await page.waitForTimeout(800);
+  const h = await page.evaluate(() => window.TestPage1.houseAt("om-parfums"));
+  await page.mouse.click(h.x, h.y);
+  expect(await page.evaluate(() => window.TestPage1.now())).toEqual({ kind: "house", perfumer: "aichi-liu", house: "om-parfums", count: 9 });
+  await expect(page.locator("[data-v=name]")).toHaveText("Om Parfums");
+  // Return: back to the perfumer, then to the rays; Esc the same
+  await page.locator(".t1-return").click();
+  expect((await page.evaluate(() => window.TestPage1.now())).kind).toBe("per");
+  await page.locator(".t1-return").click();
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view())).toBe("rays");
+  // from the list, and Esc back
+  await page.locator(".t1-pick").selectOption({ label: "Prin Lomros · 139" });
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view())).toBe("world");
+  expect((await page.evaluate(() => window.TestPage1.now())).count).toBe(139);
+  await page.waitForTimeout(1300);
+  await page.keyboard.press("Escape");
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view())).toBe("rays");
   expect(errors).toEqual([]);
 });
 
@@ -309,6 +332,38 @@ test("test page 2's search finds a house, an accord or a note, and flies there",
   await expect(page.locator(".t2-found")).toContainText("Nothing on the poster by that name");
 });
 
+/* 2026-11-06 — "Also please edit the TESTPAGE2 TO Also acccomodate the
+   information of oerfumers": every fragrance's perfumer, a perfumer's own
+   panel, the perfumers in a house's panel and in the search. */
+test("test page 2 carries the perfumers: their list, their panel, a house's perfumers and the search", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await t2go(page);
+  expect(await t2(page, () => window.TestPage2.perfumers)).toBe(24);
+  await expect(page.locator(".t2-pers li")).toHaveCount(24);
+  // pointed at, a perfumer lights their houses; pressed, their panel
+  const li = page.locator(".t2-pers li", { hasText: "Aichi Liu" });
+  await li.scrollIntoViewIfNeeded();
+  await li.hover();
+  expect(await t2(page, () => window.TestPage2.focusPerfumer())).toBe("aichi-liu");
+  await li.click();
+  expect(await t2(page, () => window.TestPage2.info())).toEqual({ kind: "perfumer", name: "Aichi Liu" });
+  await expect(page.locator(".t2-info-body h3").first()).toContainText("Its houses");
+  await expect(page.locator('.t2-info-body [data-go^="house:"]')).toHaveCount(2);
+  // a house's panel names its perfumers, each a way to theirs
+  await page.locator('.t2-info-body [data-go^="house:"]').first().click();
+  expect((await t2(page, () => window.TestPage2.info())).kind).toBe("house");
+  await expect(page.locator(".t2-info-body h3").first()).toContainText("Its perfumers");
+  await page.locator('.t2-info-body [data-go^="perfumer:"]').first().click();
+  expect(await t2(page, () => window.TestPage2.info())).toEqual({ kind: "perfumer", name: "Aichi Liu" });
+  // the search finds a perfumer
+  await page.locator(".t2-info-close").click();
+  await page.locator(".t2-find input").fill("lomros");
+  await expect(page.locator(".t2-found li").first()).toContainText("Perfumer");
+  await page.keyboard.press("Enter");
+  expect(await t2(page, () => window.TestPage2.info())).toEqual({ kind: "perfumer", name: "Prin Lomros" });
+  expect(errors).toEqual([]);
+});
+
 test.describe("test page 2 on a phone", () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
   test("a tap opens the panel at the foot, and the + comes closer", async ({ page }) => {
@@ -327,61 +382,89 @@ test.describe("test page 2 on a phone", () => {
   });
 });
 
-/* 2026-11-03 — "Test Page 3 should be about top mid bottom
-   stratification": the pyramids on the site taken apart into three layers. */
-test("test page 3: the pyramids taken apart — a fragrance drawn through its layers, and Spray plays them in the primer's order", async ({ page }) => {
+/* 2026-11-06 — "replace TP3 with another iterations of the perfumers page,
+   which should look like image 3. Make it as functional and as
+   representative as possible": the perfumers along the top, a thread for
+   every perfume falling to its house, each house as high as its years. */
+test("test page 3: a thread for every perfume from its perfumer to its house, the houses by their years, and the panel", async ({ page }) => {
   const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/test-pages/3/");
-  await page.waitForTimeout(600);
-  expect(await page.evaluate(() => window.TestPage3.count)).toBeGreaterThan(30);
-  await expect(page.locator('.t3-label[data-tier="m"]')).toContainText("20–30 minutes");
-  await page.locator(".t3-pick").selectOption({ label: "Amber Zero — ADAR" });
-  expect(await page.evaluate(() => window.TestPage3.chosen())).toBe("Amber Zero");
-  await expect(page.locator(".t3-chosen h3")).toHaveText("Amber Zero");
-  await expect(page.locator(".t3-chosen dt")).toHaveText(["Top", "Middle", "Base"]);
-  await page.locator(".t3-clear").click();
-  expect(await page.evaluate(() => window.TestPage3.chosen())).toBe(null);
-  // spray: the top first, then the heart, then the dry down
-  await page.locator(".t3-spray").click();
-  await expect.poll(() => page.evaluate(() => window.TestPage3.stage()), { timeout: 4000 }).toBe("t");
-  await expect.poll(() => page.evaluate(() => window.TestPage3.stage()), { timeout: 6000 }).toBe("m");
-  await expect.poll(() => page.evaluate(() => window.TestPage3.stage()), { timeout: 6000 }).toBe("b");
-  // and it turns when dragged
-  const yaw = await page.evaluate(() => window.TestPage3.yaw());
-  await page.mouse.move(640, 600); await page.mouse.down(); await page.mouse.move(760, 600, { steps: 6 }); await page.mouse.up();
-  expect(await page.evaluate(() => window.TestPage3.yaw())).not.toBe(yaw);
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(() => window.TestPage3.threads())).toBe(282);
+  expect(await page.evaluate(() => window.TestPage3.perfumers)).toBe(24);
+  expect(await page.evaluate(() => window.TestPage3.houses)).toBe(27);
+  // the houses stand as high as their perfumes' middle year: Slumberhouse's
+  // 2009 above Almost Human's 2026, and a house with no year at the foot
+  const y = (id) => page.evaluate((x) => window.TestPage3.yOfHouse(x), id);
+  expect(await page.evaluate(() => window.TestPage3.yearOf("slumberhouse"))).toBe(2009);
+  expect(await y("slumberhouse")).toBeLessThan(await y("almost-human"));
+  expect(await page.evaluate(() => window.TestPage3.yearOf("lussur"))).toBe(0);
+  expect(await y("lussur")).toBeGreaterThan(await y("almost-human"));
+  // a perfumer pressed on its bar: its panel and its perfumes
+  const p = await page.evaluate(() => window.TestPage3.perfumerAt("aichi-liu"));
+  await page.mouse.click(p.x, p.y);
+  expect(await page.evaluate(() => window.TestPage3.chosen())).toEqual({ kind: "per", id: "aichi-liu" });
+  await expect(page.locator(".t3-panel")).toHaveClass(/is-open/);
+  await expect(page.locator(".t3-list li")).toHaveCount(14);
+  // a house in it, and the search
+  await page.locator('.t3-panel [data-entry]').first().hover();
+  await page.evaluate(() => window.TestPage3.choose("house", "om-parfums"));
+  await expect(page.locator(".t3-panel h2")).toHaveText("Om Parfums");
+  await expect(page.locator(".t3-list li")).toHaveCount(9);
+  await page.locator(".t3-close").click();
+  await expect(page.locator(".t3-panel")).not.toHaveClass(/is-open/);
+  await page.locator(".t3-find input").fill("haxan");
+  await page.keyboard.press("Enter");
+  expect(await page.evaluate(() => window.TestPage3.chosen())).toEqual({ kind: "perfume", id: "Haxan" });
+  await expect(page.locator(".t3-facts")).toContainText("Prin Lomros");
   expect(errors).toEqual([]);
 });
 
-/* 2026-11-03 — "Recreate test page 4 with the remaining images ... page 4
-   surprise me": every note a hill, the land growing year by year, a gold
-   contour plane over it and a survey tower walking it. */
-test("test page 4: the land grows year by year, the tower surveys where it is sent, and the plane comes down", async ({ page }) => {
+/* 2026-11-06 — "replace tp4 with another iteration of the perfumers page ...
+   something like images 5 and 6. It should have a table where you can select
+   the perfumers and then it would take you to a node, which would have
+   subnodes of houses, then further subnodes of perfumes." */
+test("test page 4: the table takes you to a perfumer's node, its houses and then their perfumes", async ({ page }) => {
   const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/test-pages/4/");
-  await page.waitForTimeout(600);
-  const full = await page.evaluate(() => window.TestPage4.year());
-  await page.locator(".t4-grow").click();
-  await page.waitForTimeout(1200);
-  expect(await page.evaluate(() => window.TestPage4.year()), "growing from the first year").toBeLessThan(full);
-  await expect.poll(() => page.evaluate(() => window.TestPage4.year()), { timeout: 15000 }).toBe(full);
-  // the tower, sent to the land's far corner, walks there and says so
-  await page.evaluate(() => window.TestPage4.send(-0.8, -0.8));
-  const s = await page.evaluate(() => window.TestPage4.survey());
-  expect(s.cell).toMatch(/^[A-T] · \d+$/);
-  await expect(page.locator(".t4-survey [data-v=cell]")).toHaveText(s.cell);
-  await expect.poll(() => page.evaluate(() => window.TestPage4.tower().x), { timeout: 5000 }).toBeLessThan(-0.7);
-  // pressed on the land, it goes there too
-  const before = await page.evaluate(() => window.TestPage4.tower());
-  await page.mouse.click(700, 420);
-  await expect.poll(async () => { const t = await page.evaluate(() => window.TestPage4.tower()); return Math.hypot(t.x - before.x, t.z - before.z); }, { timeout: 5000 }).toBeGreaterThan(0.2);
-  // the plane lowered
-  const high = await page.evaluate(() => window.TestPage4.plane());
-  await page.locator(".t4-level").fill("20");
-  await expect.poll(() => page.evaluate(() => window.TestPage4.plane()), { timeout: 4000 }).toBeLessThan(high - 0.5);
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(() => window.TestPage4.nodes())).toEqual({ perfumers: 24, houses: 35, perfumes: 282 });
+  await expect(page.locator(".t4-table tbody tr")).toHaveCount(24);
+  await expect(page.locator("[data-v=stage]")).toHaveText("STAGE 1: PERFUMERS");
+  const fit = (await page.evaluate(() => window.TestPage4.cam())).fit;
+  // a perfumer chosen in the table: its node, closer, its houses listed
+  await page.locator(".t4-table tbody tr", { hasText: "Prin Lomros" }).click();
+  expect(await page.evaluate(() => window.TestPage4.focus())).toEqual({ kind: "per", name: "Prin Lomros", stage: 2 });
+  await expect(page.locator("[data-v=stage]")).toHaveText("STAGE 2: HOUSES");
+  await expect(page.locator("[data-v=total]")).toHaveText("TOTAL: 139");
+  await expect(page.locator(".t4-sub [data-house]")).toHaveCount(3);
+  await expect.poll(async () => (await page.evaluate(() => window.TestPage4.cam())).z).toBeGreaterThan(fit * 1.5);
+  // a house: its perfumes
+  await page.locator(".t4-sub [data-house]", { hasText: "Parfum Prissana" }).click();
+  expect((await page.evaluate(() => window.TestPage4.focus())).stage).toBe(3);
+  await expect(page.locator(".t4-sub [data-leaf]")).toHaveCount(32);
+  // a perfume: spelled down the left, letter by letter
+  await page.locator(".t4-sub [data-leaf]", { hasText: "Haxan" }).click();
+  expect(await page.evaluate(() => window.TestPage4.focus())).toEqual({ kind: "perfume", name: "Haxan", stage: 4 });
+  await expect(page.locator("[data-v=stage]")).toHaveText("STAGE 4: LETTERS");
+  await expect(page.locator(".t4-letters li")).toHaveCount(5);
+  // up a level with Esc, and the whole field again
+  await page.keyboard.press("Escape");
+  expect((await page.evaluate(() => window.TestPage4.focus())).stage).toBe(3);
+  await page.locator(".t4-fit").click();
+  expect((await page.evaluate(() => window.TestPage4.focus())).stage).toBe(1);
+  // a node pressed on the field is chosen too
+  await page.waitForTimeout(900);
+  const pt = await page.evaluate(() => window.TestPage4.pointOf("Nicholas Nilsson"));
+  await page.mouse.click(pt.x, pt.y);
+  expect((await page.evaluate(() => window.TestPage4.focus())).name).toBe("Nicholas Nilsson");
+  // the ground, image 5's grey or image 6's dark
+  await page.locator('.t4-ground [data-ground="dark"]').click();
+  await expect(page.locator("body")).toHaveClass(/is-dark/);
+  await page.evaluate(() => localStorage.removeItem("t4-ground"));
   expect(errors).toEqual([]);
 });

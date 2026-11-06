@@ -5,29 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Test page 3 — The Taste of Aldehydes</title>
 <!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
-<meta name="description" content="A test page, not a part of the site: top, middle and base — the site&#x27;s pyramids taken apart into their layers.">
+<meta name="description" content="A test page, not a part of the site: A Portrait of the Perfumers — a thread for every perfume, from its perfumer to its house.">
 <link rel="canonical" href="https://thetasteofaldehydes.com/test-pages/3/">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="../../favicon.svg?v=2026-10-05" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../../apple-touch-icon.png?v=2026-10-05">
-<meta name="theme-color" content="#050506">
+<meta name="theme-color" content="#262628">
 <!-- SEARCH ENGINES: end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!--
-  TEST PAGE 3 — TOP, MIDDLE, BASE (2026-11-03; the Material Origin System
-  stood here from 2026-11-02). The owner: "Test Page 3 should be about top
-  mid bottom stratification", with three pictures: skin taken apart into
-  its layers, a mountain in exploded layers down to its height map, and a
-  city as a stack of map layers named on the right.
-
-  Here every fragrance on the site whose source divides its notes into
-  top, middle and base is taken apart into three layers — glass spheres,
-  hex cells, a slab coloured as a height map — each note standing at the
-  same place on all three, in its accord's corner, so a note named at more
-  than one tier is threaded straight down through them. Spray plays the
-  pyramid as the primer tells it.
+  TEST PAGE 3 — A PORTRAIT OF THE PERFUMERS (2026-11-06; "Top, middle and
+  base" stood here from 2026-11-03, and the Material Origin System before
+  it). The owner: "replace TP3 with another iterations of the perfumers
+  page, which should look like image 3. Make it as functional and as
+  representative as possible." Image 3: "Portrait ethnique du Canada" — the
+  countries of origin along the top as bars named upright, red to white,
+  fine threads falling from them to the provinces, each a row of squares
+  with its name, on charcoal, a legend along the foot.
 
   NOT A PAGE OF THE SITE: nothing on the site links here but the four
   unseen squares at the foot of Contact; it loads none of the site's
@@ -35,132 +31,100 @@
   search engines to leave it alone. Everything it needs is in this folder.
 -->
 <style>
-  :root {
-    --ground: #050506;
-    --ink: #ecebe7;
-    --muted: #8f9196;
-    --faint: #55575c;
-    --mono: "IBM Plex Mono", ui-monospace, monospace;
-    --sans: "Archivo", "Segoe UI", sans-serif;
-  }
+  :root { --ground: #262628; --ink: #f4f2ec; --muted: rgba(244, 242, 236, 0.55); --faint: rgba(244, 242, 236, 0.3); --mono: "IBM Plex Mono", ui-monospace, monospace; --sans: "Archivo", "Segoe UI", sans-serif; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; }
-  body { background: var(--ground); color: var(--ink); font-family: var(--sans); overflow: hidden; }
-  .t3-scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
-  .t3 { position: fixed; inset: 0; pointer-events: none; }
-  .t3 a, .t3 button, .t3 select { pointer-events: auto; }
-
-  /* THE HEAD, as the skin's poster has it: two lines each side over a rule */
-  .t3-head { position: absolute; top: 34px; left: 56px; right: 56px; display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 20px; border-bottom: 1px solid rgba(236, 235, 231, 0.75); }
-  .t3-head h1 { margin: 0; font: 300 28px/1.15 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; }
-  .t3-head p { margin: 0; text-align: right; font: 300 13px/1.6 var(--mono); letter-spacing: 0.06em; color: var(--muted); }
-  .t3-head p b { font-weight: 500; color: var(--ink); }
-
-  /* THE LABELS, with their leaders: each tier in the primer's words */
-  .t3-label { position: absolute; left: 0; top: 0; width: 220px; font: 400 12px/1.45 var(--sans); color: #cfcfd2; }
-  .t3-label.is-left { text-align: right; }
-  .t3-label b { display: block; font: 500 15px var(--sans); color: var(--ink); letter-spacing: 0.02em; }
-  .t3-label i { display: block; font-style: normal; font: 400 10px/1.5 var(--mono); color: var(--muted); margin-top: 3px; }
-  .t3-stage[data-at] .t3-label { transition: opacity 0.6s; }
-
-  /* the tiers' names large on the right, as the map's are */
-  .t3-names { position: absolute; left: 0; top: 0; pointer-events: none; }
-
-  /* THE SIDE: the fragrance chosen, the accords, the spray */
-  .t3-side { position: absolute; right: 56px; top: 130px; width: 240px; font: 400 11px/1.5 var(--mono); color: var(--muted); }
-  .t3-side h2 { margin: 0 0 8px; font: 500 10px var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); }
-  .t3-pick { width: 100%; font: 400 11px var(--mono); color: var(--ink); background: #0d0e10; border: 1px solid rgba(236, 235, 231, 0.22); padding: 7px 8px; border-radius: 0; }
-  .t3-row { display: flex; gap: 8px; margin: 8px 0 0; }
-  .t3-row button, .t3-spray { flex: 1; font: 500 10.5px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); background: none; border: 1px solid rgba(236, 235, 231, 0.28); padding: 7px 8px; cursor: pointer; }
-  .t3-row button:hover, .t3-spray:hover { border-color: var(--ink); }
-  .t3-chosen { margin: 16px 0 0; padding: 12px 0 0; border-top: 1px solid rgba(236, 235, 231, 0.14); }
-  .t3-chosen[hidden] { display: none; }
-  .t3-chosen h3 { margin: 0; font: 500 17px/1.25 var(--sans); color: var(--ink); }
-  .t3-chosen p { margin: 2px 0 10px; }
-  .t3-chosen dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 5px 10px; }
-  .t3-chosen dt { color: var(--faint); text-transform: uppercase; font-size: 9.5px; letter-spacing: 0.12em; padding-top: 1px; }
-  .t3-chosen dd { margin: 0; color: #d6d5d1; font: 400 11.5px/1.45 var(--sans); }
-  .t3-legend { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1px 10px; }
-  .t3-legend button { display: flex; align-items: center; gap: 7px; width: 100%; padding: 3px 0; font: 400 10.5px var(--sans); color: #b8b8bc; background: none; border: 0; text-align: left; cursor: pointer; }
-  .t3-legend button:hover { color: var(--ink); }
-  .t3-legend i { flex: none; width: 7px; height: 7px; border-radius: 50%; }
-  .t3-block { margin: 0 0 22px; }
-  .t3-spray { width: 100%; padding: 10px; }
-  .t3-spray.is-on { border-color: var(--ink); background: rgba(236, 235, 231, 0.08); }
-  .t3-stage { margin: 10px 0 0; min-height: 3em; font: 400 11px/1.45 var(--sans); color: var(--muted); }
-  .t3-stage span { display: none; }
-  .t3-stage[data-at="t"] [data-for="t"], .t3-stage[data-at="m"] [data-for="m"], .t3-stage[data-at="b"] [data-for="b"], .t3-stage[data-at=""] [data-for=""] { display: inline; }
-
-  .t3-tip { position: absolute; left: 0; top: 0; max-width: 290px; padding: 10px 12px 11px; background: rgba(14, 15, 18, 0.95); border: 1px solid rgba(236, 235, 231, 0.18); font: 400 11px/1.45 var(--sans); color: #cfcfd2; pointer-events: none; }
+  html, body { margin: 0; }
+  body { background: var(--ground); color: var(--ink); font-family: var(--sans); overflow-x: hidden; }
+  .t3 { position: relative; width: 100%; min-height: 100vh; }
+  .t3-scene { position: absolute; left: 0; top: 0; display: block; }
+  .t3-head { position: absolute; top: 64px; left: max(96px, 7vw); width: min(440px, 40vw); pointer-events: none; }
+  .t3-head h1 { margin: 0 0 12px; font: 700 30px/1.05 var(--sans); letter-spacing: -0.005em; }
+  .t3-head p { margin: 0; font: 400 12px/1.5 var(--sans); color: var(--muted); }
+  .t3-tools { position: absolute; top: 64px; right: max(60px, 5vw); display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+  .t3-find { position: relative; }
+  .t3-find input { width: 260px; padding: 8px 10px; font: 400 12px var(--mono); color: var(--ink); background: rgba(0, 0, 0, 0.25); border: 1px solid var(--faint); border-radius: 0; outline: none; }
+  .t3-find input:focus { border-color: var(--ink); }
+  .t3-hits { position: absolute; z-index: 5; top: 100%; right: 0; width: 260px; margin: 4px 0 0; padding: 4px 0; list-style: none; background: #1c1c1e; border: 1px solid var(--faint); max-height: 320px; overflow: auto; }
+  .t3-hits[hidden] { display: none; }
+  .t3-hits button { display: block; width: 100%; padding: 6px 10px; font: 500 12px var(--sans); color: var(--ink); background: none; border: 0; text-align: left; cursor: pointer; }
+  .t3-hits button:hover { background: rgba(255, 255, 255, 0.06); }
+  .t3-hits small { display: block; font: 400 10px var(--mono); color: var(--muted); }
+  .t3-none { padding: 6px 10px; font: 400 11px var(--mono); color: var(--muted); }
+  .t3-sort { display: flex; font: 400 10.5px var(--mono); letter-spacing: 0.06em; }
+  .t3-sort span { margin-right: 10px; color: var(--muted); text-transform: uppercase; line-height: 26px; }
+  .t3-sort button { font: inherit; color: var(--muted); background: none; border: 1px solid var(--faint); padding: 5px 10px; cursor: pointer; }
+  .t3-sort button + button { border-left: 0; }
+  .t3-sort button[aria-pressed="true"] { color: var(--ground); background: var(--ink); border-color: var(--ink); }
+  .t3-tip { position: absolute; z-index: 6; left: 0; top: 0; max-width: 280px; padding: 8px 10px 9px; background: rgba(20, 20, 22, 0.94); border: 1px solid var(--faint); font: 400 11px/1.45 var(--sans); pointer-events: none; }
   .t3-tip[hidden] { display: none; }
-  .t3-tip b { display: block; font: 600 13.5px var(--sans); color: var(--ink); }
-  .t3-tip span { display: block; margin: 2px 0 6px; font: 400 10px var(--mono); color: var(--muted); }
-  .t3-tip em { display: block; font-style: normal; margin-bottom: 6px; }
-  .t3-tip i { display: block; font-style: normal; font: 400 10px/1.45 var(--mono); color: var(--muted); }
-
-  .t3-foot { position: absolute; left: 56px; right: 56px; bottom: 26px; display: flex; justify-content: space-between; align-items: baseline; font: 400 10px var(--mono); letter-spacing: 0.1em; color: var(--faint); text-transform: uppercase; }
-  .t3-back { color: var(--muted); text-decoration: none; letter-spacing: 0.14em; }
+  .t3-tip b { display: block; font: 600 12.5px var(--sans); }
+  .t3-tip span { display: block; font: 400 10px var(--mono); color: var(--muted); }
+  /* THE PANEL: what is chosen, on the right */
+  .t3-panel { position: fixed; z-index: 7; top: 0; right: 0; bottom: 0; width: min(380px, 92vw); background: rgba(22, 22, 24, 0.97); border-left: 1px solid var(--faint); transform: translateX(102%); transition: transform 0.5s cubic-bezier(.2,.8,.2,1); display: flex; flex-direction: column; }
+  .t3-panel.is-open { transform: none; }
+  .t3-close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; font: 400 18px var(--sans); color: var(--ink); background: none; border: 1px solid var(--faint); cursor: pointer; }
+  .t3-panel-body { overflow: auto; padding: 26px 26px 40px; }
+  .t3-panel h2 { margin: 6px 40px 8px 0; font: 700 24px/1.1 var(--sans); }
+  .t3-panel h3 { margin: 22px 0 8px; font: 500 10.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .t3-k { margin: 0; font: 500 10px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: rgb(240, 162, 98); }
+  .t3-m { margin: 0 0 8px; font: 400 11px/1.5 var(--mono); color: var(--muted); }
+  .t3-a { margin: 10px 0; font: 400 12.5px/1.55 var(--sans); color: rgba(244, 242, 236, 0.82); }
+  .t3-panel button[data-per], .t3-panel button[data-house] { font: inherit; color: var(--ink); background: none; border: 0; padding: 0; text-decoration: underline; text-decoration-color: var(--faint); text-underline-offset: 3px; cursor: pointer; }
+  .t3-facts { display: grid; grid-template-columns: 84px 1fr; gap: 6px 10px; margin: 14px 0 0; font: 400 12px/1.5 var(--sans); }
+  .t3-facts dt { font: 400 10px/1.8 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .t3-facts dd { margin: 0; }
+  .t3-list { margin: 0; padding: 0; list-style: none; }
+  .t3-list button { display: grid; grid-template-columns: 1fr auto 44px; gap: 10px; width: 100%; padding: 6px 0; font: 500 12px var(--sans); color: var(--ink); background: none; border: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.07); text-align: left; cursor: pointer; }
+  .t3-list button:hover { color: rgb(242, 204, 128); }
+  .t3-list i { font: 400 10.5px var(--mono); font-style: normal; color: var(--muted); }
+  .t3-list b { font: 400 10.5px var(--mono); color: var(--muted); text-align: right; }
+  /* THE LEGEND, along the foot, as the poster's */
+  .t3-legend { position: absolute; left: max(96px, 7vw); right: max(60px, 5vw); bottom: 34px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) 1.6fr; gap: 28px; font: 400 10px/1.5 var(--mono); color: var(--muted); }
+  .t3-legend b { display: block; margin-bottom: 6px; font: 700 10.5px var(--sans); color: var(--ink); }
+  .t3-legend i { display: inline-block; vertical-align: middle; margin-right: 6px; background: var(--ink); }
+  .t3-legend p { margin: 0; }
+  .t3-back { color: var(--muted); text-decoration: none; letter-spacing: 0.14em; text-transform: uppercase; font: 500 10.5px var(--mono); }
   .t3-back:hover { color: var(--ink); }
-
-  @media (max-width: 1100px) {
-    .t3-head, .t3-foot { left: 32px; right: 32px; }
-    .t3-side { right: 32px; width: 210px; }
-    .t3-label { width: 170px; }
-  }
+  .t3-top { position: absolute; top: 22px; left: max(96px, 7vw); }
   @media (max-width: 760px) {
-    .t3-head { top: 16px; left: 16px; right: 16px; padding-bottom: 10px; }
-    .t3-head h1 { font-size: 17px; }
-    .t3-head p { font-size: 9.5px; }
-    .t3-label { width: 90px; font-size: 10px; text-align: left !important; }
-    .t3-label b { font-size: 11px; color: var(--muted); font-weight: 400; }
-    .t3-label span, .t3-label i { display: none; }
-    .t3-side { left: 16px; right: 16px; top: auto; bottom: 52px; width: auto; }
-    .t3-block-legend, .t3-chosen dl { display: none; }
-    .t3-chosen { margin-top: 8px; padding-top: 8px; }
-    .t3-chosen h3 { font-size: 14px; }
-    .t3-block { margin-bottom: 10px; }
-    .t3-side h2 { display: none; }
-    .t3-stage { min-height: 0; margin-top: 6px; font-size: 10px; }
-    .t3-foot { left: 16px; right: 16px; bottom: 16px; }
-    .t3-foot span { display: none; }
+    .t3-head { top: 56px; left: 18px; width: calc(100% - 36px); }
+    .t3-head h1 { font-size: 22px; }
+    .t3-head p { font-size: 11px; }
+    .t3-tools { right: 18px; left: 18px; align-items: stretch; position: absolute; top: 178px; }
+    .t3-find input, .t3-hits { width: 100%; }
+    .t3-sort { justify-content: flex-end; }
+    .t3-legend { left: 18px; right: 18px; bottom: 22px; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .t3-legend .t3-legend-wide { grid-column: 1 / -1; }
+    .t3-top { left: 18px; }
   }
-  @media (max-height: 660px) and (min-width: 761px) {
-    .t3-block-legend { display: none; }
-  }
+  @media (prefers-reduced-motion: reduce) { .t3-panel { transition: none; } }
 </style>
 </head>
 <body>
-<canvas class="t3-scene" aria-hidden="true"></canvas>
 <main class="t3">
+  <canvas class="t3-scene" aria-hidden="true"></canvas>
+  <a class="t3-back t3-top" href="../../contact/">← Back</a>
   <header class="t3-head">
-    <h1>Top, middle<br>and base</h1>
-    <p><b data-v="pyramids"></b> pyramids<br>on The Taste of Aldehydes</p>
+    <h1>A Portrait of the Perfumers</h1>
+    <p>Every perfume on The Taste of Aldehydes and in Prin Lomros' houses, by the perfumer who made it and the house it was made for — a thread for each, from the site's Perfumers ledger.</p>
   </header>
-
-  <div class="t3-label is-left" data-tier="t"><b>Top</b><span>“what you smell when you initially spray a perfume”</span><i data-count="t"></i></div>
-  <div class="t3-label is-left" data-tier="m"><b>Mid · heart</b><span>“what you smell 20–30 minutes into spraying the perfume”</span><i data-count="m"></i></div>
-  <div class="t3-label is-left" data-tier="b"><b>Base · dry down</b><span>“what you smell hours after you have sprayed it”</span><i data-count="b"></i></div>
-
-  <aside class="t3-side" aria-label="Choose and spray">
-    <div class="t3-block">
-      <h2>A fragrance, taken apart</h2>
-      <select class="t3-pick" aria-label="A fragrance on the site with a pyramid"></select>
-      <div class="t3-row"><button type="button" class="t3-next">Next</button><button type="button" class="t3-clear">All</button></div>
-      <div class="t3-chosen" hidden><h3></h3><p data-v="house"></p><dl></dl></div>
-    </div>
-    <div class="t3-block">
-      <button type="button" class="t3-spray">Spray</button>
-      <p class="t3-stage" data-at="" aria-live="polite"><span data-for="">The primer’s pyramid: the top first, the heart 20–30 minutes in, the base hours after.</span><span data-for="t">Just sprayed: the top.</span><span data-for="m">20–30 minutes in: the heart.</span><span data-for="b">Hours after: the dry down.</span></p>
-    </div>
-    <div class="t3-block t3-block-legend">
-      <h2>Accords · a corner each</h2>
-      <ul class="t3-legend"></ul>
-    </div>
-  </aside>
-
+  <div class="t3-tools">
+    <label class="t3-find"><input type="search" placeholder="A perfumer, a house, a perfume" aria-label="Find a perfumer, a house or a perfume" autocomplete="off" spellcheck="false"><ul class="t3-hits" hidden></ul></label>
+    <div class="t3-sort" role="group" aria-label="The threads along each bar"><span>Threads</span><button type="button" data-sort="az" aria-pressed="true">By house</button><button type="button" data-sort="year" aria-pressed="false">By year</button></div>
+  </div>
   <div class="t3-tip" role="tooltip" hidden></div>
-  <footer class="t3-foot"><a class="t3-back" href="../../contact/">← Back</a><span>Drag to turn · point at a note · press it twice for a fragrance with it</span><span>Test page 3</span></footer>
+  <section class="t3-legend" aria-label="Legend">
+    <div><b>Legend</b><p><i style="width:22px;height:1px"></i>a thread is a perfume</p></div>
+    <div><b>A perfumer</b><p><i style="width:18px;height:8px;background:rgb(228,112,82)"></i>as wide as their perfumes, A to Z</p></div>
+    <div><b>A house</b><p><i style="width:12px;height:12px"></i>as big as its perfumes, then <i style="width:6px;height:6px;background:rgb(240,162,98);margin-left:4px"></i>one for each perfumer</p></div>
+    <div><b>Where it stands</b><p>as high as the middle year of its perfumes; along the foot, none found</p></div>
+    <div class="t3-legend-wide"><b>How it is made</b><p>Who made each perfume, and when, is the site's Perfumers ledger, a source for every one; where none names a perfumer they stand together as Perfumer not found. Point at a perfumer, a house or a thread; press one for its panel.</p></div>
+  </section>
 </main>
-<script src="page.js?v=dfc2b6a94a"></script>
+<aside class="t3-panel" aria-hidden="true" aria-label="What is chosen">
+  <button type="button" class="t3-close" aria-label="Close">×</button>
+  <div class="t3-panel-body"></div>
+</aside>
+<script src="page.js?v=1d13fba8a7"></script>
 </body>
 </html>

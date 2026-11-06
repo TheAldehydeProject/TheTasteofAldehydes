@@ -52,6 +52,10 @@
   // a snapshot of the site's houses, the Note Library's accords and every
   // fragrance on the site with its notes (2026-11-03: every note counted)
   const DATA = {"houses":[{"id":"pineward","name":"Pineward","from":"United States","founded":"2020","sub":"The House That Smells Like Trees","n":48,"notes":183,"share":{"GRN":26,"CIT":19,"CON":52,"ANI":23,"WOO":57,"ARO":25,"RES":30,"EAR":31,"SMK":5,"GOU":62,"BRW":13,"IMP":5,"FLO":21,"SPI":27,"FRU":19,"AIR":4},"top":"Gourmand"},{"id":"grande-parfums","name":"Grande Parfums","from":"Romania","founded":"2021","sub":"Art Niche Expo 2026","n":15,"notes":111,"share":{"FRU":24,"SPI":20,"GRN":5,"GOU":32,"FLO":38,"BRW":11,"ANI":22,"WOO":34,"RES":31,"ARO":2,"IMP":3,"CIT":11,"CON":1,"EAR":2},"top":"Floral"},{"id":"individual","name":"Individual fragrances","from":"","founded":"","sub":"","n":13,"notes":104,"share":{"GOU":16,"FRU":6,"CIT":12,"SPI":19,"WOO":33,"SMK":4,"FLO":17,"GRN":5,"EAR":4,"RES":21,"ARO":14,"CON":12,"ANI":11,"AIR":4,"IMP":1,"BRW":1},"top":"Woods"},{"id":"adar","name":"ADAR","from":"Romania","founded":"","sub":"The House That You Have Never Heard of","n":11,"notes":71,"share":{"GRN":3,"SPI":6,"AIR":5,"FLO":14,"EAR":5,"RES":9,"WOO":10,"ANI":7,"CIT":5,"ARO":3,"GOU":13,"IMP":2,"FRU":4,"BRW":1,"CON":1,"SMK":2},"top":"Floral"},{"id":"om-parfums","name":"Om Parfums","from":"Taiwan","founded":"2021","sub":"The Olfaction of Om","n":9,"notes":75,"share":{"BRW":5,"FRU":9,"SPI":3,"GOU":17,"WOO":29,"RES":12,"EAR":3,"ANI":9,"SMK":2,"IMP":1,"GRN":2,"FLO":13,"ARO":3,"CON":1,"CIT":2},"top":"Woods"},{"id":"apoteker-tepe","name":"Apoteker Tepe","from":"United States","founded":"2014","sub":"The Apothecary on the Hill","n":8,"notes":43,"share":{"CIT":2,"FRU":1,"SPI":2,"WOO":10,"CON":8,"EAR":5,"RES":7,"SMK":3,"ARO":3,"ANI":2,"IMP":1,"FLO":5,"BRW":1,"GOU":1,"GRN":1},"top":"Woods"},{"id":"lost-tribe","name":"Lost Tribe","from":"United States","founded":"2022","sub":"A House of Notable Quality","n":6,"notes":45,"share":{"WOO":14,"RES":11,"GOU":7,"ANI":6,"FLO":7,"SPI":6,"CIT":6,"ARO":7,"CON":5,"EAR":3,"IMP":1},"top":"Woods"},{"id":"almost-human","name":"Almost Human","from":"Romania","founded":"2025","sub":"Abstraction Done Quite Well","n":5,"notes":20,"share":{"WOO":2,"SMK":3,"SPI":1,"CIT":1,"AIR":5,"ANI":2,"RES":3,"EAR":5,"FLO":1,"ARO":1,"GRN":1},"top":"Water & Air"},{"id":"ataraxia","name":"Ataraxia","from":"","founded":"","sub":"A Gothic Avante Garde House","n":5,"notes":80,"share":{"BRW":5,"GOU":30,"IMP":18,"FLO":9,"FRU":6,"EAR":1,"RES":8,"WOO":2,"GRN":1,"SMK":4,"AIR":3,"SPI":5},"top":"Gourmand"},{"id":"outsider-parfums","name":"Outsider Parfums","from":"","founded":"","sub":"The Sister House of Om","n":5,"notes":53,"share":{"EAR":6,"ARO":3,"FLO":7,"SPI":3,"SMK":3,"GOU":10,"WOO":15,"RES":2,"BRW":5,"FRU":1,"AIR":2,"ANI":9,"GRN":1,"CIT":4,"CON":1},"top":"Woods"},{"id":"tombstone","name":"Tombstone","from":"","founded":"","sub":"A House That Expanded on Death","n":5,"notes":32,"share":{"FLO":12,"SMK":1,"GRN":1,"CIT":1,"RES":5,"EAR":1,"WOO":7,"ANI":1,"ARO":3,"SPI":2,"GOU":2,"FRU":1,"AIR":1},"top":"Floral"},{"id":"les-abstraits","name":"Les Abstraits","from":"","founded":"","sub":"Eugen’s Ideas and Antoine Lie’s Execution","n":4,"notes":45,"share":{"FLO":9,"SPI":10,"GOU":4,"RES":6,"ANI":6,"WOO":7,"SMK":2,"GRN":2,"ARO":4,"EAR":2,"CIT":2,"CON":1},"top":"Spice"},{"id":"qimu-musicians","name":"Qimu & Musicians","from":"","founded":"","sub":"A House of Music and Fragrance","n":4,"notes":6,"share":{"ARO":1,"FLO":3,"SPI":1,"ANI":1},"top":"Floral"},{"id":"tale-parfums","name":"Tale Parfums","from":"United States","founded":"","sub":"","n":4,"notes":0,"share":{},"top":""}],"accords":[{"code":"CIT","name":"Citrus","say":"Peel oils: the brightest, quickest notes, gone first.","notes":[["Bergamot",15],["Lemon",9],["Orange",8],["Citrus",7],["Lime",6],["Blood Orange",4],["Clementine",3],["Grapefruit",3],["Yuzu",3],["Bitter Orange",2],["Petitgrain",2],["Citron",1],["Green Mandarin",1],["Tangerine",1]]},{"code":"ARO","name":"Aromatic & Herbal","say":"Kitchen and hillside herbs: clean, camphorous, bitter-green.","notes":[["Lavender",13],["Mint",12],["Clary Sage",6],["Rosemary",4],["Sage",4],["Chamomile",3],["Juniper Berry",3],["Thyme",3],["Eucalyptus",2],["Myrtle",2],["Shiso",2],["Angelica Root",1],["Artemisia",1],["Basil",1],["Davana",1],["Dittany of Crete",1],["Herbal Notes",1],["Hops",1],["Huang Qi",1],["Kuromoji",1],["Lemon Verbena",1],["Marjoram",1],["Mint-Sandalwood Co-Distillation",1],["Oregano",1],["Wormwood",1],["Yarrow",1]]},{"code":"GRN","name":"Green","say":"Leaves, stems, grass and hay: the smell of plants rather than flowers.","notes":[["Hay",8],["Galbanum",5],["Violet Leaf",5],["Poplar Bud",3],["Sweetgrass",3],["Tomato Leaf",3],["Cannabis",2],["Grass",2],["Green Notes",2],["Ivy",2],["Raspberry Leaf",2],["Sugar Cane",2],["Corn Silage",1],["Corn Silk",1],["Crushed Leaves",1],["Fig Leaf",1],["Green Wheat",1],["Pea",1],["Rhubarb",1],["Sweet Vernalgrass",1],["Watercress",1]]},{"code":"FLO","name":"Floral","say":"Petals and blossoms, real and reconstructed.","notes":[["Rose",20],["Jasmine",18],["Orris",16],["Lily of the Valley",9],["Neroli",9],["Orange Blossom",8],["Ylang Ylang",7],["Geranium",6],["Osmanthus",5],["Tuberose",5],["Gardenia",4],["Heliotrope",4],["Violet",4],["Carnation",3],["Waterlily",3],["Bluebell",2],["Champaca",2],["Lily",2],["Linden Blossom",2],["Marigold",2],["Mimosa",2],["Tiare Flower",2],["Alpine Sandwort",1],["Azure Bluet",1],["Chrysanthemum",1],["Clear Orchid",1],["Freesia",1],["Goldenrod",1],["Green Tea Flowers",1],["Honeysuckle",1],["Jonquil",1],["Lilac",1],["Magnolia",1],["Mountain Wildflowers",1],["Nectar",1],["Night Blooming Jasmine",1],["Passionflower",1],["Plum Blossom",1],["Pollen",1],["Snowdrops",1],["Tobacco Flower",1],["White Lotus",1],["Yellow Flowers",1]]},{"code":"FRU","name":"Fruit","say":"Flesh, juice and jam.","notes":[["Cherry",8],["Raspberry",7],["Dried Fruits",6],["Plum",5],["Apple",4],["Apricot",4],["Peach",4],["Pear",3],["Strawberry",3],["Banana",2],["Blackberry",2],["Cranberry",2],["Dates",2],["Green Apple",2],["Litchi",2],["Mango",2],["Passionfruit",2],["Blueberry",1],["Cassis",1],["Fig",1],["Fruity Notes",1],["Goldenberry",1],["Guava",1],["Japanese Plum",1],["Maninka",1],["Quince",1],["Red Berries",1],["Scorched Pineapple",1]]},{"code":"SPI","name":"Spice","say":"Seeds, barks, roots and peppers: heat, warmth and bite.","notes":[["Clove",16],["Saffron",13],["Cinnamon",10],["Ginger",10],["Black Pepper",8],["Nutmeg",8],["Spices",8],["Pink Pepper",6],["Cardamom",5],["Coriander",3],["Turmeric",3],["Allspice",2],["Anise",2],["Cassia",2],["Cumin",2],["Caraway",1],["Chilli",1],["Fenugreek",1],["Paprika",1],["Sichuan Pepper",1],["Wasabi",1],["Water Pepper",1]]},{"code":"GOU","name":"Gourmand","say":"Things you could eat: sweets, grains, nuts, pastry.","notes":[["Vanilla",34],["Tobacco",25],["Tonka",18],["Honey",13],["Cacao",11],["Chocolate",11],["Beeswax",10],["Almond",4],["Brown Sugar",4],["Caramel",4],["Hazelnut",4],["Milk",4],["Butter",3],["Oat",3],["Wheat",3],["Baked Apple",2],["Black Walnut",2],["Bread",2],["Butterscotch",2],["Chocolate Cake",2],["Cocoa Butter",2],["Coumarin",2],["Molasses",2],["Balsamic Vinegar",1],["Barley",1],["Carob Pods",1],["Chantilly Cream",1],["Cheese",1],["Cocoa Pod",1],["Coconut Milk",1],["Condensed Milk",1],["Cream",1],["Dulce de Leche",1],["Edamame",1],["Halva",1],["Holy Bread",1],["Honeycomb",1],["Icing",1],["Malt",1],["Maple",1],["Murumuru Butter",1],["Pistachio",1],["Popcorn",1],["Potato",1],["Pumpkin",1],["Raisin Cookies",1],["Rice",1],["Seed Cake",1],["Sugar",1],["Toffee",1]]},{"code":"BRW","name":"Brews & Spirits","say":"Teas, coffee and what is poured from a bottle.","notes":[["Rum",5],["Coffee",4],["Tea",4],["Whiskey",4],["Cognac",3],["Maté",3],["Amaretto",2],["Green Tea",2],["Lapsang Souchong",2],["Liquor",2],["Absinthe",1],["Cocktail Accord",1],["Cola",1],["Herbal Tea",1],["Jasmine Tea",1],["Masala Chai",1],["Moroccan Tea",1],["Oolong Tea",1],["Root Beer",1],["Soda Bubbles",1],["Sparkling Water",1]]},{"code":"WOO","name":"Woods","say":"Heartwood, bark and sawdust.","notes":[["Cedarwood",41],["Sandalwood",36],["Patchouli",34],["Vetiver",29],["Oud",20],["Guaiac Wood",10],["Woody Notes",8],["Cashmeran",6],["Oak",6],["Cypriol",5],["Birch",3],["Amberwood",2],["Amyris",2],["Mahogany",2],["Amber Oud",1],["Bark",1],["Buddhawood",1],["Cabreuva",1],["Edelwood Oil",1],["Iso E Super",1],["Moldy Cedarwood",1],["Muhuhu",1],["Oak Barrel",1],["Papyrus",1],["Petrified Driftwood",1],["Pineboard",1],["Sawdust",1],["Siam Wood",1],["Teak Wood",1],["Willow Bark",1]]},{"code":"CON","name":"Conifers","say":"Needles, cones and the trees that carry them.","notes":[["Fir",23],["Pine",14],["Pine Needles",12],["Juniper",9],["Cypress",8],["Spruce",5],["Hinoki",3],["Black Hemlock",2],["Cedar Leaf",1],["Hiba",1],["Larch Cones",1],["Nootka",1],["Snoqualmie Forest Evergreens",1],["Tamarack",1]]},{"code":"RES","name":"Resins & Balsams","say":"What trees weep: incense, amber and balm.","notes":[["Amber",23],["Benzoin",20],["Labdanum",16],["Frankincense",15],["Myrrh",14],["Incense",13],["Resins",8],["Opoponax",6],["Peru Balsam",5],["Tolu Balsam",5],["Styrax",4],["Bakhoor",2],["Elemi",2],["Sandarac",2],["Balsam",1],["Bushman Candle Resin",1],["Copaiba Balsam",1],["Copal",1],["Dragon's Blood",1],["Ponderosa Resin",1],["Propolis",1],["Rum Resin",1],["Sawn Resin",1],["Turpentine",1]]},{"code":"ANI","name":"Musk, Skin & Animalic","say":"Musks, leathers and the warmth of bodies.","notes":[["Musk",32],["Ambergris",16],["Leather",14],["Castoreum",9],["Civet",7],["Ambrette",4],["Costus",4],["Suede",3],["Animal Notes",2],["Skin",2],["Botanical Musk",1],["Goat Hair",1],["Hyrax",1],["Lanolin",1],["Sheep Wool",1],["Skunk Oil",1]]},{"code":"EAR","name":"Earth, Moss & Mineral","say":"Soil, moss, fungus and stone.","notes":[["Oakmoss",28],["Soil",8],["Moss",5],["Mushroom",4],["Cedarmoss",2],["Dust",2],["Lichen",2],["Mineral Accord",2],["Peat",2],["Spikenard",2],["Treemoss",2],["Concrete",1],["Damp Vegetation",1],["Evernyl",1],["Lava",1],["Metallic Notes",1],["Petrichor",1],["Sand",1],["Swamp Water",1],["Wet Stone",1]]},{"code":"AIR","name":"Water & Air","say":"Sea, rain, steam and open sky.","notes":[["Seaweed",5],["Airy Note",2],["Aquatic Notes",2],["Marine Accord",2],["Ozone",2],["Sea Salt",2],["Solar Notes",2],["Aldehydes",1],["Clear Skies",1],["Cold Night Air",1],["Dead Water",1],["Rain Notes",1],["Sea Water",1],["Steam",1]]},{"code":"SMK","name":"Smoke & Char","say":"Fire, tar and what burning leaves behind.","notes":[["Smoke",13],["Birch Tar",5],["Cade Oil",3],["Ash",2],["Fire",1],["Gasoline",1],["Palo Santo",1],["Pine Smoke",1],["Pine Tar",1],["Smouldering Logs",1]]},{"code":"IMP","name":"Impressions","say":"Notes that are not materials: objects, places, feelings, named by a house.","notes":[["Candle Wax",3],["CO2 Extracts",3],["Aged Parchment",2],["Paper",2],["Blush",1],["Decayed Rose",1],["Dried Blood",1],["Dusty Antiques",1],["Dusty Sofa",1],["Eye Pencil",1],["Gold",1],["Instant Film",1],["Lip Gloss",1],["Lipstick",1],["Makeup Palette",1],["Mousse de Saxe",1],["Old Books",1],["Oriental Notes",1],["Porcelain",1],["Powder Accord",1],["Rotten Flesh",1],["Salty Tears",1],["Spinal Fluid",1],["Underground Tunnel",1],["Velvet",1],["Westfarthing Leaf",1]]}],"frags":[["Bindebole",0,2021,[43,3,257,298,54,225],""],["Boreal",0,2020,[257,15,225,275,311],""],["Brokilän",0,2021,[262,265,282,255,226,229],""],["Cotswold",0,2021,[225,343,233,257,154],""],["Eldritch",0,2021,[295,273,227,255,221,276,343,257,18,309],""],["Fanghorn II",0,2021,[255,311,315,257,310,321],""],["Funerie",0,2022,[312,358,295,155,343,250,274,276,225,257,229],""],["Juniperus",0,2024,[1,258,17,14,20,226,227],""],["Murkwood",0,2020,[255,262,212,311,274,273],""],["Nocturnis",0,2022,[256,258,0,74,68,19,40,155,255,14,269,228,226,309,227],""],["Oxylus",0,2021,[257,258,228,23,310,327],""],["Snoqualmie",0,2024,[282,268,283,267],""],["Sturbridge",0,2023,[169,256,272,255,138,275,273,225,269,318,294,43],""],["White Fir",0,2022,[2,255,256,135,132,293,309,144,228],""],["Bucolic",0,2024,[307,306,105,14,157,162,269,160,44],""],["Hayloft",0,2022,[40,157,167,168,164,161,14,47,133],""],["Hayride",0,2022,[40,158,154,59,44,171,137,140,318,106,156,309],""],["Pastoral",0,2022,[109,114,157,289,160,44,40,168,167,228,209,309],""],["Shire",0,2024,[40,167,164,0,14,217,378,201,62,63,157],""],["Steading",0,2020,[160,155,40,193,178,31,317,257,43],""],["Christmas Wine",0,2020,[115,137,255,107,132,5],""],["Gingerbread",0,2023,[135,134,132,137,168,176,162,170,165,166,154,191],""],["Glühwein",0,2021,[115,77,104,105,255,159,28,309,278,61,226,272],""],["Revelries",0,2021,[132,204,134,229,164],""],["Acadian",0,2023,[8,0,20,49,22,75,88,72,329,225,309],""],["Coastal Veil",0,2023,[20,258,341,329,259,312,153,22,294,226],""],["Gingermoss",0,2023,[135,65,0,5,225,17,295,309],""],["Subalpine",0,2025,[255,0,136,263,226,228,298,311],""],["Akero",0,2023,[117,270,227,226,225],""],["Apple Tabac",0,2020,[108,155,255,290,106],""],["Caravansary",0,2023,[255,260,206,343,19,274,293,14,154,309],""],["Clemenpine",0,2023,[300,295,6,155,294,256,133,120,5,255,226,225,62,102],""],["Coffee Tabac",0,2024,[205,155,225,227,275,138,272,230,154],""],["Delfiño",0,2022,[6,258,45,228,226,294],""],["Greymist",0,2023,[255,256,11,155,303,228],""],["Gristmill",0,2022,[225,251,352,243,269,170,238,271],""],["Holy Cross",0,2026,[258,328,293,298,76,315,60,39,256],""],["Icefall",0,2021,[259,7,258,266,329,256,225,226],""],["Ivymoss",0,2023,[49,211,15,4,34,75,259,256,225,309,319,313],""],["Lime Cola",0,2025,[4,104,135,204,216,65,9,202,154,137,141,134],""],["Meadowmoss",0,2023,[309,83,47,56,66,255,45,84,94],""],["Mint Cocoa",0,2024,[159,15,227,154,138,275,192,225],""],["Noki",0,2022,[15,119,118,294,122,58,226],""],["Ponderosa",0,2022,[288,257,225,154,112,134,172,160,199],""],["Pumpkivus",0,2025,[198,162,228,69,225,226,227,40,310,53,52,229],""],["Tome",0,2025,[355,356,295,155,206,226,225,63,200,298,205,309,234],""],["Treacle",0,2021,[155,212,176,157,106],""],["Velvetine",0,2021,[294,259,154,132,271,255,287,226,293,368],""],["Amber Zero",3,0,[55,135,333,133,69,316,269,228,275,294],""],["Aetherialism",3,0,[41,4,42,332,67,65,273,16,228,225,156,295],""],["Incantu",3,0,[90,179,334,157,155,353,239,161,249],""],["Against All Odds",3,2025,[229,62,9,226,294],""],["α11 Alpha11",3,0,[113,15,133,70,62,67,155,274,156,297],""],["Alta Luna",3,2025,[293,331,175,154,72,3,66],""],["ADHD",3,0,[139,8,129,214,133,89,104,194,273,156,128],""],["Root Code",3,0,[0,136,257,325,86,316,227,61,269,349,309],""],["Lignum Dei",3,0,[338,272,225,291,311,61,229,273,355,302],""],["Lithos Diaphanes Λίθος Διαφανές",3,0,[],""],["Tyrian",3,2026,[159,344,16,157,294],""],["Burning Bridges",7,2026,[231,343,138,3],""],["Dear Future",7,2026,[333,302,269],""],["Desert Hope",7,2026,[326,275,335,314,231,61],""],["Ritual Code",7,2026,[275,346,343,301,30,310],""],["Silent Rain",7,2026,[310,340,320,48,330,335],""],["Amaretto Jazz in the Melting Room",8,2024,[210,189,213,157,353,159,208,161,361,97,174,190,154,155,171,104,314,158,164,166],""],["Deity",8,2025,[157,127,104,180,125,184,155,174,160,100,272,271,158,154,156,269,270,281,273,363,227,116,95,159],""],["My Doll’s Makeup",8,0,[371,366,63,105,223,357,377,353,159,367,365,362,364,273],""],["Spinal Fluid",8,2025,[273,80,61,234,40,344,329,146,70,342,347,374,348,373,359,375,346,337,76],""],["Vestibule",8,2024,[159,138,360,148,173,152,99,142,222,182,187,195,369,188,197],""],["5 Years Anniversary",1,0,[105,139,51,134,133,132,159,67,208,300,157,229,233,295,293,277,156,225,271,154,270,155,226,228],""],["Ambresso",1,0,[205,143,273,204,208,155,160,106,23,61,137,64,225,271,275,270,269,296,154,278,277,227,230,156,294,276,226,293],""],["Ancient Oud",1,0,[229,270,293,354],""],["Choco Powder",1,0,[133,104,158,159,69,62,61,226,154,236],""],["Cookie something (?)",1,0,[],""],["Cuore",1,2024,[274,138,63,130,6,133,2,114,106,121,213,107,98,51,203,64,112,273,123,82,134,61,62,255,269,156,154,230,276,296,271,270,253,225,293,227],""],["Dreaming Maldives",1,0,[1,111,110,139,103,87,163,64,154,293,225,273],""],["Giardino di Sorrento",1,0,[5,7,1,64,50,65,70,93,62,61,232,269,227,156,154,293],""],["Hot Stuff",1,0,[131,155,169,156,228,309,160],""],["Intimate Spell",1,0,[0,66,17,132,234,68,225,227,228,293,271,270,230,237],""],["Karak & Shisha",1,0,[277,112,105,206,134,155,108,132,240,61,140,106,133,294,271,219,293,296,229,160,154,156,269,101],""],["Mystical Incense",1,0,[272,354,118,224,116,61,269,293],""],["Vanilla Ash",1,0,[162,50,138,204,154,230,72,64,296,156,149,293,272],""],["Vintage Memoir",1,0,[218,110,1,0,63,42,62,67,68,70,61,74,71,293,294,226,132,228,154,309,270,297,227,278,156,225,271],""],["White Label",1,0,[66,12,111,126,135,354,119,220,64,231,105,2,293],""],["Belle Âme",11,2022,[63,135,158,272,140,156,293,226],""],["Des Cendres",11,2023,[351,41,344,15,132,295,42,70,309,305,228,227],""],["La Douleur Exquise",11,2022,[61,63,272,132,146,133,296,227,225,271,276,273],""],["Philosopher’s Walk",11,2025,[0,1,65,66,139,140,132,134,26,258,68,16,74,73,14,313,228,227,299,293,270,156,154],""],["Kong",6,0,[],""],["Watch King",6,0,[229,274,270,154,269,295,61,143,277,156],""],["Dirty Soda",6,0,[4,2,0,139,145,141,65,132,229,154,156,270,227,226,225],""],["Equatorial",6,0,[272,14,0,10,139,294,255,259,227,260,258,16,36,293,229,309,225,228,21,280,15,226,274],""],["Santal Absolu",6,0,[226,299,14,63,61,67,270,154],""],["Pan’s Labyrinth",6,0,[0,61,372,161,294,14,175,67,227,226,293,229,309,319,255,271,280],""],["Nymphaea Caerulea",4,0,[],""],["Lust",4,2023,[204,104,207,144,155,227,225,270,278,309,232,242,271,163,300,301,247,233],""],["Burnana",4,2024,[113,108,343,272,279,345,285,376,45,124,269,230,228,231,270,69,32,229,160,309,297,296],""],["Cannabis Café",4,0,[],""],["Dark Night of the Soul",4,2024,[158,229,296,150,165,297,261,237,107,62,166,63,230,233,151,226,227,181,154,309,91,269,1,225],""],["This Too Shall Pass",4,0,[270,109,110,172,15,158,229,228,79,71,77,183,226,227,155],""],["When the Linden Blooms",4,2024,[0,79,62,109,92,211,69,241,226,16,209,244,236,46,270,154,229,293],""],["Oud de Pasión",4,0,[120,71,173,66,215,227,226,297,155,158,154,270,293,229],""],["Smoke Oud",4,0,[],""],["Dragon’s Breath",9,2026,[323,24,68,142,344,158,228,279,324,206,209,154,229,309],""],["Draco",9,0,[272,117,331,227,296,14,68,295,155,297,293,57,229,225,345,322],""],["Xocolate Crotch",9,0,[132,71,2,159,226,343,295,186,297,155,185,231,227,207,232],""],["Guilty as Charged",9,0,[330,0,4,2,65,64,25,295,66,225,227,133,256,310,228,232,293,309],""],["Amaretto Coffee",9,0,[210,154,205,225,226,62,196,293,159],""],["Guitarist",12,0,[],""],["Vocal",12,0,[15,64,133,73,63,293],""],["Bassist",12,0,[],""],["Drummer",12,0,[],""],["Bad Lily",13,2024,[],""],["Fleurt",13,0,[],""],["Rouse",13,0,[],""],["Water Me",13,0,[],""],["3 Feet 5",10,2024,[72,62,81,63,343],""],["Evergrow",10,2025,[41,0,61,271,63,309,227,293],""],["No Need to Come By",10,0,[15,21,136,292,273,272,62,227,156,226],""],["Sing at My Funeral",10,0,[15,157,65,62,64,63,78,269,225,228],""],["Sweet Coffin",10,2024,[254,109,245,137,339],""],["Kogen",5,2024,[8,111,135,235,261,317,228,274,343,264,257,309,33,256,225],""],["The Holy Mountain",5,2015,[350,274,255,271,230,256],""],["Karasu",5,2016,[299,252,261,356,140,231],""],["The Peradam",5,2015,[78,62,63,226],""],["Pale Fire",5,2016,[269,272,309,207,158],""],["Anabasis",5,2015,[3,24,235,15,256,225,293],""],["After the Flood",5,2015,[42,75,312,227,310],""],["Brother Night",5,2016,[286,80,272,343],""],["CV99",2,0,[177,104,3,165,134,132,136,231,163,343,233],"Lussur"],["De Profundis",2,2011,[85,48,73,310,274,107],"Serge Lutens"],["Haxan",2,2018,[14,235,225,255,230,234,226,38,279,257,133,21,17,136,137,147,134,42,155,312,27,35,228,304,329,19,260,259,41,160,299,296,16,18,293,37,232,274,271,227,281,132,62,276],"Parfum Prissana"],["Tobacolor",2,2021,[155,157,343,107,269,370,110,3],"Dior"],["Flamenco EDP",2,2017,[105,108,73,66,61,62,63,225,259,269,256],"Ramón Monegal"],["French Riviera",2,2022,[1,2,13,135,136,332,82,256,81,228,334,293,269],"Mancera"],["Velvet Fog",2,0,[65,14,67,63,228,226,157],"Casa Goa"],["House of Ellixirz",2,2021,[1,10,145,61,234,155,295,344,154,163],"Matca"],["Fir of the Light",2,0,[260,274,2,1,136,225,248,232,137,18,255,231,309,294],"JMP Artisan Perfumes"],["Fir of the Dark",2,2024,[274,260,136,259,41,225,295,18,255,345,228,309],"JMP Artisan Perfumes"],["Quintessentially Amber",2,2025,[3,336,138,61,269,271,270,279,293,227,228,226,154,294],"Sultan Pasha Perfumes"],["Forbidden Flower",2,2024,[308,7,46,62,96,226,227,225,270,228,142,154,135,141,4],"Areej Le Doré"],["Ore",2,2009,[233,154,230,277,278,269,246,270,158,227,165,284,238,29,207],"Slumberhouse"]]};
+  // the site's Perfumers ledger, as it stood on 2026-11-06: who made each of
+  // the fragrances above (2026-11-06 — "edit the TESTPAGE2 TO Also
+  // acccomodate the information of oerfumers")
+  const PERFUMERS = {"list":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","sort":"Nilsson","from":"United States","born":"1995","about":"An American perfumer who grew up among the forests of the Rocky Mountains; Parfumo gives 1995 as the year he was born."},{"id":"dan-roxana-adar","name":"Dan & Roxana Adar","sort":"Adar","from":"Romania","born":"","about":"The in-house perfumers of ADAR, a European house with Romanian roots."},{"id":"goran-bajazetov","name":"Goran Bajazetov","sort":"Bajazetov","from":"","born":"","about":"The founder and perfumer of Almost Human."},{"id":"david-lev-jipa-slivinschi","name":"David-Lev Jipa-Slivinschi","sort":"Jipa-Slivinschi","from":"Romania","born":"","about":"Born in Bucharest, of Russian and Ukrainian heritage, he studied film and screenwriting and turned to perfume during the pandemic."},{"id":"sy-truong","name":"Sy Truong","sort":"Truong","from":"","born":"","about":"Named by Ça Fleure Bon as the perfumer of Ataraxia's Deity (2025), made with the house's creative director, Tudor Ristea."},{"id":"antoine-lie","name":"Antoine Lie","sort":"Lie","from":"France","born":"1966","about":"Born in Strasbourg in 1966."},{"id":"michael-nordstrand","name":"Michael Nordstrand","sort":"Nordstrand","from":"","born":"","about":"Named by Parfumo and by Ça Fleure Bon as the perfumer of Tale Parfum's Bad Lily (2024)."},{"id":"chad-hodge","name":"Chad Hodge","sort":"Hodge","from":"United States","born":"","about":"A screenwriter, and co-founder of Tale Parfum with its creative director, Diandra Barsalou."},{"id":"qimu","name":"Qimu","sort":"Qimu","from":"","born":"","about":"WhatScent names Qimu as the perfumer of Drummer, by the house that carries the name, Qimu & Musicians."},{"id":"aichi-liu","name":"Aichi Liu","sort":"Liu","from":"Taiwan","born":"","about":"She founded OM Parfum in 2021 and is based in Taiwan; her perfumes draw on films, places, her own experiences and moods."},{"id":"mathew-schmuelian","name":"Mathew Schmuelian","sort":"Schmuelian","from":"United States","born":"","about":"He founded Lost Tribe in New York City in 2022, after years of collecting all-natural, artisanal perfumes, and went on to source his own raw materials."},{"id":"rajesh-balkrishnan","name":"Rajesh Balkrishnan","sort":"Balkrishnan","from":"","born":"","about":"Named as co-perfumer, with Mathew Schmuelian, of Lost Tribe's Pan's Labyrinth."},{"id":"holladay-penick-saltz","name":"Holladay Penick Saltz","sort":"Saltz","from":"United States","born":"","about":"From the Jackson, Mississippi area, she graduated from the Rhode Island School of Design and specialised in fashion and material culture at Parsons and The New School."},{"id":"christopher-sheldrake","name":"Christopher Sheldrake","sort":"Sheldrake","from":"United Kingdom","born":"1955","about":"Born on 11 April 1955 in Madras, India."},{"id":"francois-demachy","name":"François Demachy","sort":"Demachy","from":"France","born":"","about":"Born in Cannes and raised in Grasse, where his father ran a pharmacy; he studied dentistry before perfume."},{"id":"ramon-monegal","name":"Ramón Monegal","sort":"Monegal","from":"Spain","born":"1951","about":"Born in 1951, of the family behind the Spanish house Myrurgia."},{"id":"pierre-montale","name":"Pierre Montale","sort":"Montale","from":"France","born":"","about":"A self-taught perfumer, trained in materials by a perfumer in Grasse; in 1975 he and his sister founded Comptoir Sud Pacifique, and he later founded Montale Parfums."},{"id":"jakub-pietrynka","name":"Jakub Pietrynka","sort":"Pietrynka","from":"Poland","born":"","about":"The Polish independent perfumer behind JMP Artisan Perfumes."},{"id":"sultan-pasha","name":"Sultan Pasha","sort":"Pasha","from":"","born":"","about":"WhatScent credits Quintessentially Amber (2025) to him, with Christian Carbonnel."},{"id":"christian-carbonnel","name":"Christian Carbonnel","sort":"Carbonnel","from":"","born":"","about":"Credited by WhatScent, with Sultan Pasha, for Quintessentially Amber (2025)."},{"id":"russian-adam","name":"Russian Adam","sort":"Adam","from":"","born":"","about":"Ivan Inkin, called Russian Adam: a distiller who founded Areej Le Doré in Thailand in 2017; the house is now based in Indonesia."},{"id":"josh-lobb","name":"Josh Lobb","sort":"Lobb","from":"United States","born":"","about":"An entirely self-taught perfumer in Portland, Oregon; Slumberhouse began as a collective of artist friends and became his own."},{"id":"prin-lomros","name":"Prin Lomros","sort":"Lomros","from":"Thailand","born":"","about":"A Thai perfumer who first studied film, then began his career at PerfumersWorld, a large Thai fragrance company, before founding Pryn Parfum in 2016 as a self-taught perfumer."},{"id":"not-found","name":"Perfumer not found","sort":"￿","from":"","born":"","about":"These perfumes are written about on this site, but no source found names who made them. When one is found, the perfume moves to its perfumer."}],"frag":[[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[1],1],[[1],1],[[1],1],[[1],1],[[1],1],[[1],1],[[1],1],[[1],1],[[1],1],[[1],1],[[1],0],[[2],0],[[2],0],[[2],0],[[2],0],[[2],0],[[3],0],[[4],0],[[23],2],[[23],2],[[3],0],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[5],0],[[5],0],[[5],0],[[5],0],[[10],1],[[10],1],[[10],1],[[10],1],[[10],1],[[10,11],0],[[9],1],[[9],1],[[9],1],[[9],1],[[9],1],[[9],1],[[9],1],[[9],1],[[9],1],[[9],0],[[9],1],[[9],1],[[9],1],[[9],0],[[23],2],[[23],2],[[23],2],[[8],0],[[6],0],[[23],2],[[23],2],[[7],0],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[12],0],[[12],0],[[12],0],[[12],0],[[12],0],[[12],0],[[12],0],[[23],2],[[13],0],[[22],0],[[14],0],[[15],0],[[16],0],[[23],2],[[23],2],[[17],0],[[17],0],[[18,19],0],[[20],0],[[21],0]]};
 
   const host = document.querySelector(".t2");
   const canvas = document.querySelector(".t2-arc");
@@ -87,6 +91,29 @@
     f.notes.forEach((n) => { n.frags.push(f); f.house.noteUse.set(n, (f.house.noteUse.get(n) || 0) + 1); });
     return f;
   });
+  // THE PERFUMERS (2026-11-06): who made each fragrance, as the ledger says,
+  // and from that each perfumer's houses, notes and accords
+  const CREDIT = ["named by a source", "the house's perfumer", "perfumer not found"];
+  const PERS = PERFUMERS.list.map((p, i) => Object.assign({}, p, { i, frags: [], houses: new Map(), noteUse: new Map(), share: {} }));
+  FRAGS.forEach((f) => {
+    const [who, credit] = PERFUMERS.frag[f.i];
+    f.per = who.map((q) => PERS[q]); f.credit = credit;
+    f.per.forEach((p) => {
+      p.frags.push(f);
+      p.houses.set(f.house, (p.houses.get(f.house) || 0) + 1);
+      f.notes.forEach((n) => { p.noteUse.set(n, (p.noteUse.get(n) || 0) + 1); const c = DATA.accords[n.ai].code; p.share[c] = (p.share[c] || 0) + 1; });
+    });
+  });
+  houses.forEach((h) => {
+    const m = new Map();
+    h.frags.forEach((f) => f.per.forEach((p) => m.set(p, (m.get(p) || 0) + 1)));
+    h.pers = [...m].sort((a, b) => b[1] - a[1] || a[0].sort.localeCompare(b[0].sort));
+  });
+  PERS.forEach((p) => {
+    const codes = Object.keys(p.share).sort((a, b) => p.share[b] - p.share[a]);
+    p.top = codes.length ? DATA.accords.find((a) => a.code === codes[0]).name : "";
+  });
+  const whoOf = (f) => f.per.map((p) => p.name).join(" & ");
   // what a note is most often named with, in the same fragrance
   function withOf(n) {
     if (n.with) return n.with;
@@ -111,6 +138,20 @@
     li.innerHTML = "<b>" + a.code + "</b><i>" + esc(a.name) + "</i> — " + esc(a.say) + " <span>(" + a.notes.length + ")</span>";
     gloss.appendChild(li);
   });
+
+  // the perfumers down the left, A to Z, after the accords — pointed at, their
+  // houses and notes lit; pressed, their panel
+  const persList = document.querySelector(".t2-pers");
+  if (persList) {
+    PERS.slice().sort((a, b) => (a.id === "not-found") - (b.id === "not-found") || a.sort.localeCompare(b.sort)).forEach((p) => {
+      const li = document.createElement("li");
+      li.dataset.per = String(p.i);
+      li.tabIndex = 0;
+      li.setAttribute("role", "button");
+      li.innerHTML = "<i>" + esc(p.name) + "</i> — " + esc([...p.houses.keys()].map(groupName).join(", ")) + " <span>(" + p.frags.length + ")</span>";
+      persList.appendChild(li);
+    });
+  }
 
   // ---- THE LAYOUT -------------------------------------------------------
   let W = 0, H = 0, DPR = 1, narrow = false;
@@ -231,6 +272,7 @@
     if (!focus) return 0;
     if (focus.note) return n === focus.note ? 2 : withOf(focus.note).slice(0, 12).some(([o]) => o === n) ? 1 : 0;
     if (focus.house) return focus.house.noteUse.has(n) ? 2 : 0;
+    if (focus.perfumer) return focus.perfumer.noteUse.has(n) ? 2 : 0;
     if (focus.accord != null) return n.ai === focus.accord ? 2 : 0;
     return 0;
   }
@@ -238,12 +280,14 @@
     if (!focus) return false;
     if (focus.accord != null) return focus.accord === ai;
     if (focus.house) return !!focus.house.share[DATA.accords[ai].code];
+    if (focus.perfumer) return !!focus.perfumer.share[DATA.accords[ai].code];
     if (focus.note) return focus.note.ai === ai;
     return false;
   }
   function litHouse(h) {
     if (!focus) return true;
     if (focus.house) return focus.house === h;
+    if (focus.perfumer) return focus.perfumer.houses.has(h);
     if (focus.accord != null) return !!h.share[DATA.accords[focus.accord].code];
     if (focus.note) return h.frags.some((f) => f.notes.includes(focus.note));
     return true;
@@ -364,7 +408,8 @@
       c.fillStyle = "#8f8aa6";
       const tx = x - G.dome * 1.35 - 8 * u;
       if (!narrow || W > 600 || z > 1.6) {
-        const where = [h.from, h.founded].filter(Boolean).join(" · ");
+        const who = h.pers.length === 1 ? h.pers[0][0].name : h.pers.length + " perfumers";
+        const where = [h.from, h.founded, who].filter(Boolean).join(" · ");
         if (where) c.fillText(where.toUpperCase(), tx, y - 20 * u);
         c.font = '700 ' + 9.5 * u + 'px Archivo, sans-serif'; c.fillStyle = "#ece9f4";
         c.fillText(groupName(h).toUpperCase(), tx, y - 9 * u);
@@ -587,13 +632,17 @@
     }
     return null;
   }
-  function same(a, b) { return (!a && !b) || (a && b && a.house === b.house && a.accord === b.accord && a.note === b.note); }
+  function same(a, b) { return (!a && !b) || (a && b && a.house === b.house && a.accord === b.accord && a.note === b.note && a.perfumer === b.perfumer); }
   function setFocus(f) {
     if (same(f, focus)) return;
     focus = f; stillDirty = true; kick();
     gloss.querySelectorAll("li").forEach((li) => li.classList.toggle("is-lit", !!f && litAccord(ACC[li.dataset.code].i)));
+    if (persList) persList.querySelectorAll("li").forEach((li) => {
+      const p = PERS[+li.dataset.per];
+      li.classList.toggle("is-lit", !!f && (f.perfumer === p || (f.house && p.houses.has(f.house)) || (f.note && p.noteUse.has(f.note))));
+    });
   }
-  const focusOf = (f) => f && (f.house ? { house: f.house } : f.note ? { note: f.note } : { accord: f.accord });
+  const focusOf = (f) => f && (f.house ? { house: f.house } : f.perfumer ? { perfumer: f.perfumer } : f.note ? { note: f.note } : { accord: f.accord });
 
   // ---- THE PANEL: what it is, every name in it a way on to its own -----------
   const hist = [];
@@ -615,6 +664,11 @@
       if (where) s += '<p class="t2-where">' + esc(where) + "</p>";
       s += '<dl class="t2-stats">' + stat("Fragrances", h.n) + stat("Notes named", named || "—") + stat("Different notes", h.notes || "—") + stat("Most in", h.top ? esc(h.top) : "—") + "</dl>";
       if (!named) s += '<p class="t2-none">No notes have been found for its fragrances yet.</p>';
+      if (h.pers.length) {
+        s += "<h3>Its perfumers <span>fragrances by each</span></h3><div class=\"t2-rows\">";
+        h.pers.forEach(([p, n]) => { s += row("perfumer:" + p.i, esc(p.name), n, h.n, '<small> of ' + h.n + "</small>"); });
+        s += "</div>";
+      }
       if (codes.length) {
         s += "<h3>Its accords <span>notes named in each</span></h3><div class=\"t2-rows\">";
         codes.forEach((code) => { s += row("accord:" + code, '<b class="t2-code">' + code + "</b>" + esc(ACC[code].name), h.share[code], maxS); });
@@ -627,7 +681,7 @@
       }
       s += "<h3>Its fragrances <span>" + h.frags.length + "</span></h3><div class=\"t2-frags\">";
       h.frags.slice().sort((a, b) => a.name.localeCompare(b.name)).forEach((f) => {
-        const meta = [f.from && "from " + f.from, f.year || null, f.notes.length ? f.notes.length + " notes" : "no notes found"].filter(Boolean).join(" · ");
+        const meta = [whoOf(f), f.from && "from " + f.from, f.year || null, f.notes.length ? f.notes.length + " notes" : "no notes found"].filter(Boolean).join(" · ");
         s += '<details class="t2-frag"><summary><span>' + esc(f.name) + '</span><small>' + esc(meta) + "</small></summary>";
         s += f.notes.length ? '<div class="t2-chips">' + f.notes.map((nn) => chip(nn)).join("") + "</div>" : '<p class="t2-none">No notes found for it yet.</p>';
         s += "</details>";
@@ -660,12 +714,50 @@
       hs.forEach(([h, n]) => { s += row("house:" + h.i, esc(groupName(h)), n, h.n, '<small> of ' + h.n + "</small>"); });
       s += "</div><h3>The fragrances <span>" + nn.frags.length + "</span></h3><ul class=\"t2-list\">";
       nn.frags.slice().sort((p, q) => p.name.localeCompare(q.name)).forEach((f) => {
-        s += '<li><button type="button" class="t2-link" data-go="house:' + f.house.i + '">' + esc(f.name) + "</button><small>" + esc([f.house.id === "individual" ? "from " + f.from : f.house.name, f.year || null].filter(Boolean).join(" · ")) + "</small></li>";
+        s += '<li><button type="button" class="t2-link" data-go="house:' + f.house.i + '">' + esc(f.name) + "</button><small>" + esc([f.house.id === "individual" ? "from " + f.from : f.house.name, whoOf(f), f.year || null].filter(Boolean).join(" · ")) + "</small></li>";
       });
       s += "</ul>";
       if (w.length) s += '<h3>Most often with <span>in the same fragrance</span></h3><div class="t2-chips">' + w.map(([o, n]) => chip(o, n)).join("") + "</div>";
       return s;
     },
+  };
+  // a perfumer: where they are from, their houses on the poster, the accords
+  // and notes their fragrances name, and the fragrances themselves
+  RENDER.perfumer = (p) => {
+    const named = p.frags.reduce((s2, f) => s2 + f.notes.length, 0);
+    const codes = Object.keys(p.share).sort((a, b) => p.share[b] - p.share[a]);
+    const top = [...p.noteUse].sort((a, b) => b[1] - a[1] || a[0].name.localeCompare(b[0].name)).slice(0, 14);
+    const hs = [...p.houses].sort((a, b) => b[1] - a[1] || a[0].i - b[0].i);
+    const by = [0, 0, 0]; p.frags.forEach((f) => by[f.credit]++);
+    let s = '<p class="t2-k">Perfumer</p>';
+    s += '<h2 class="t2-n">' + esc(p.name) + "</h2>";
+    const where = [p.from, p.born && "born " + p.born].filter(Boolean).join(" · ");
+    if (where) s += '<p class="t2-where">' + esc(where) + "</p>";
+    if (p.about) s += '<p class="t2-s">' + esc(p.about) + "</p>";
+    s += '<dl class="t2-stats">' + stat("Fragrances", p.frags.length) + stat("Houses", hs.length) + stat("Notes named", named || "—") + stat("Most in", p.top ? esc(p.top) : "—") + "</dl>";
+    s += '<p class="t2-where">' + CREDIT.map((c, k) => by[k] ? by[k] + " " + c : "").filter(Boolean).join(" · ") + "</p>";
+    s += "<h3>Its houses <span>fragrances made for each</span></h3><div class=\"t2-rows\">";
+    hs.forEach(([h, n]) => { s += row("house:" + h.i, esc(groupName(h)), n, h.n, '<small> of ' + h.n + "</small>"); });
+    s += "</div>";
+    if (codes.length) {
+      const maxS = p.share[codes[0]];
+      s += "<h3>The accords of their fragrances <span>notes named in each</span></h3><div class=\"t2-rows\">";
+      codes.forEach((code) => { s += row("accord:" + code, '<b class="t2-code">' + code + "</b>" + esc(ACC[code].name), p.share[code], maxS); });
+      s += "</div>";
+    }
+    if (top.length) {
+      s += "<h3>The notes they name most <span>in how many of their " + p.frags.length + "</span></h3><div class=\"t2-rows\">";
+      top.forEach(([nn, n]) => { s += row("note:" + nn.id, esc(nn.name), n, p.frags.length); });
+      s += "</div>";
+    }
+    s += "<h3>Their fragrances <span>" + p.frags.length + "</span></h3><div class=\"t2-frags\">";
+    p.frags.slice().sort((a, b) => a.name.localeCompare(b.name)).forEach((f) => {
+      const meta = [groupName(f.house), f.from && "from " + f.from, f.year || null, CREDIT[f.credit]].filter(Boolean).join(" · ");
+      s += '<details class="t2-frag"><summary><span>' + esc(f.name) + '</span><small>' + esc(meta) + "</small></summary>";
+      s += f.notes.length ? '<div class="t2-chips">' + f.notes.map((nn) => chip(nn)).join("") + "</div>" : '<p class="t2-none">No notes found for it yet.</p>';
+      s += "</details>";
+    });
+    return s + "</div>";
   };
   function openInfo(kind, obj, push = true) {
     if (push && current && !(current.kind === kind && current.obj === obj)) hist.push(current);
@@ -675,7 +767,7 @@
     info.dataset.kind = kind;
     infoBody.scrollTop = 0; info.scrollTop = 0;
     infoBack.hidden = !hist.length;
-    pinned = kind === "house" ? { house: obj } : kind === "note" ? { note: obj } : { accord: obj };
+    pinned = kind === "house" ? { house: obj } : kind === "perfumer" ? { perfumer: obj } : kind === "note" ? { note: obj } : { accord: obj };
     setFocus(pinned);
     tip.hidden = true;
   }
@@ -686,6 +778,7 @@
   function goTo(spec) {
     const [kind, id] = spec.split(":");
     if (kind === "house") openInfo("house", houses[+id]);
+    else if (kind === "perfumer") openInfo("perfumer", PERS[+id]);
     else if (kind === "accord") openInfo("accord", ACC[id].i);
     else if (kind === "note") openInfo("note", NOTES[+id]);
   }
@@ -694,6 +787,11 @@
   // one, above it on a phone), no closer than it is worth
   function boxOf(kind, obj) {
     const pts = [];
+    if (kind === "perfumer") {
+      // round all its houses' domes
+      obj.houses.forEach((n, h) => { const [x, y] = at(G.rd, angleOfHouse(h.i)); pts.push([x - G.dome * 1.4 - 160, y - 50], [x + G.dome * 2.5, y + 50]); });
+      return { pts, most: 3 };
+    }
     if (kind === "house") {
       const [x, y] = at(G.rd, angleOfHouse(obj.i));
       pts.push([x - G.dome * 1.4 - 160, y - 50], [x + G.dome * 2.5, y + 50]);
@@ -732,6 +830,7 @@
   const plain = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   const ITEMS = [
     ...houses.map((h) => ({ kind: "house", obj: h, name: groupName(h), say: h.id === "individual" ? "Group · " + h.n + " fragrances" : "House · " + h.n + " fragrances" })),
+    ...PERS.map((p) => ({ kind: "perfumer", obj: p, name: p.name, say: "Perfumer · " + p.frags.length + (p.frags.length === 1 ? " fragrance · " : " fragrances · ") + [...p.houses.keys()].map(groupName).join(", ") })),
     ...DATA.accords.map((a) => ({ kind: "accord", obj: a.i, name: a.name, say: "Accord · " + a.code + " · " + a.notes.length + " notes" })),
     ...NOTES.map((nn) => ({ kind: "note", obj: nn, name: nn.name, say: "Note · " + DATA.accords[nn.ai].name + " · in " + nn.uses })),
   ].map((it) => Object.assign(it, { key: plain(it.name) }));
@@ -740,7 +839,7 @@
     const q = plain(findIn.value.trim());
     if (!q) { found.hidden = true; results = []; return; }
     results = ITEMS.filter((it) => it.key.includes(q) || (it.kind === "accord" && plain(DATA.accords[it.obj].code) === q))
-      .sort((p, q2) => (q2.key.startsWith(q) ? 1 : 0) - (p.key.startsWith(q) ? 1 : 0) || ["house", "accord", "note"].indexOf(p.kind) - ["house", "accord", "note"].indexOf(q2.kind) || (q2.obj.uses || 0) - (p.obj.uses || 0))
+      .sort((p, q2) => (q2.key.startsWith(q) ? 1 : 0) - (p.key.startsWith(q) ? 1 : 0) || ["house", "perfumer", "accord", "note"].indexOf(p.kind) - ["house", "perfumer", "accord", "note"].indexOf(q2.kind) || (q2.obj.uses || 0) - (p.obj.uses || 0))
       .slice(0, 8);
     found.innerHTML = results.length
       ? results.map((it, i) => '<li><button type="button" data-r="' + i + '"><span>' + esc(it.name) + "</span><small>" + esc(it.say) + "</small></button></li>").join("")
@@ -880,6 +979,21 @@
     showOn("accord", ai);
   });
   gloss.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.closest("li")) { e.preventDefault(); e.target.click(); } });
+  if (persList) {
+    persList.addEventListener("pointerover", (e) => {
+      const li = e.target.closest("li"); if (!li || pinned) return;
+      setFocus({ perfumer: PERS[+li.dataset.per] });
+    });
+    persList.addEventListener("pointerleave", () => { if (!pinned) setFocus(null); });
+    persList.addEventListener("click", (e) => {
+      const li = e.target.closest("li"); if (!li) return;
+      hist.length = 0; current = null;
+      const p = PERS[+li.dataset.per];
+      openInfo("perfumer", p);
+      showOn("perfumer", p);
+    });
+    persList.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.closest("li")) { e.preventDefault(); e.target.click(); } });
+  }
 
   addEventListener("resize", () => { layout(); kick(); });
   document.addEventListener("visibilitychange", kick);
@@ -892,6 +1006,8 @@
     focus: () => focus && (focus.house ? focus.house.id : focus.note ? "note:" + focus.note.name : DATA.accords[focus.accord].code),
     houses: houses.length, accords: DATA.accords.length, notes: NOTES.length, fragrances: FRAGS.length,
     zoom: () => cam.z, goal: () => goal.z, moving: () => moving,
+    perfumers: PERS.length,
+    focusPerfumer: () => (focus && focus.perfumer ? focus.perfumer.id : null),
     info: () => (current ? { kind: current.kind, name: current.kind === "accord" ? DATA.accords[current.obj].name : current.kind === "house" ? groupName(current.obj) : current.obj.name } : null),
     at(kind, name) {
       const b = canvas.getBoundingClientRect();

@@ -5,7 +5,10 @@ Files touched: `perfumers/index.html`, `perfumers.js`, `perfumers-data.js` (writ
 (The second round, the same day — turning, idle animations, the list of perfumers, choosing
 perfumer → house → perfume, staying put close in, the index behind a button, and the whole of it
 drawn in layers — is [its own section below](#2026-11-02-later--turning-the-list-choosing-and-drawn-in-layers);
-what it changed of the first is said there.)
+what it changed of the first is said there. **Since 2026-11-06 the middle is the Earth, drawn as an
+architect draws it, with three rings in series round it — perfumer, house, perfume — the zoom fixed
+and the wheel going through the perfumes of what is chosen:** [its section](#2026-11-06--the-earth-three-rings-in-series-a-fixed-zoom-and-the-wheel-through-the-perfumes),
+at the foot; the globe of specks, its gold haze and the spokes' dashes described below are gone.)
 
 ## What changed
 
@@ -322,3 +325,115 @@ resolution canvas, and sharp once it lands.
 
 - A window's side is chosen once, as it opens; if the chart moves a long way while it is open (the
   switch between A–Z and by year), it follows its dot on that side, kept inside the window.
+
+## 2026-11-06 — the Earth, three rings in series, a fixed zoom, and the wheel through the perfumes
+
+Files touched: `perfumers.js` (the Earth, the three rings, the camera's fixed zoom and the scroll, the
+scrubber, the pins and their lines), `perfumers-earth.js` (new, written), `tools/perfumers/earth.py`
+(new), `perfumers/index.html` (the script, the legend, the Intro's last sentence), `style.css` (the
+Earth's canvas, the scrubber, the legend's new keys), `tests/perfumers.spec.js`, every page's versions.
+
+### What changed
+
+The owner, with a picture of a poster — *Crossbreedings: Brazilian architects abroad*: the Earth drawn
+as an architect draws it, grey relief and fine lines, a band of cells and a ring of bars standing out
+from it, lines from its cities out to the rim, cross-hairs and the degrees round it — "change the
+perfumers page. I want it to be more or less the same theme, but remodel it after image 1. It should
+look like the earth, with then three layers of information in series protruding from it, which is
+going to be the perfumer, the house and then the perfume. It should look like an architect's sketch of
+the earth. I want this to occupy the majority of the page and then when you click on a perfumer it does
+the exact same as it does now; however: the zoom length should be fixed, and the scrolling while
+hovering on the image will cause you to scroll through the perfumes of that house/perfumer. This is
+especially important for big perfumers like prin lomoros."
+
+- **The Earth in the middle** (where the globe of specks was), in the page's own dark — the theme kept —
+  as an architect's sketch: Natural Earth's coastlines (1:110m, public domain) in a hairline with **a
+  waterline** off them, the land **hatched**, the graticule every fifteen degrees (the equator and the
+  prime meridian a little brighter, *Greenwich* named), the latitudes named inside its rim on the left
+  and the longitudes along its equator as they come round, the night side shaded, **a cross through its
+  middle** run out across the whole chart to **a cross-hair** at each end, and a double circle round it.
+  **It turns** on its own axis at rest (once in six minutes, `EARTH_SPIN`), seen from a little above its
+  equator (`EARTH_TILT`), and **turns to the country of what is chosen** (`turnEarthTo`, 2.2s) — then
+  stands still while anything is.
+- **The pins** are the ledger's countries and nothing nearer: **a square** for every country a house
+  is from, **a ring** for every country a perfumer is from (`COUNTRY`, the middle of each country — a
+  house or a perfumer the ledger gives no country has no pin; seventeen of the twenty-seven houses do).
+  From each house's country **a line runs to every one of its perfumes' places on the rings**, as the
+  picture's lines run from its cities, fading as the country turns away. Pointed at on the whole chart,
+  a pin names its country, its houses and its perfumers, and rings its lines.
+- **Three rings in series**, a cell in each for every perfume: **1, the perfumer** — filled where a
+  source names the perfumer, half filled where it is the house's perfumer, empty where none is found
+  (what the spokes' dashes said until now), the perfumers' names along it; **2, the house** — in the
+  colour of where the perfume is (gold, blue-white, rose, as the dots were), a chosen perfumer's houses
+  named along it; **3, the perfume** — a bar out to its year, 2009 shortest to 2026 longest, the years'
+  rings behind them, its dot at the end (hollow on the dashed ring where no year is found). The rings,
+  the years and THE EARTH are named up the gap at the top, which is wider now (`TOPGAP`); two houses of
+  one perfumer have a small gap between them (`HGAP`). The lights run from a house's country across
+  the Earth to its place, and out through the three rings to its dot.
+- **It takes up most of the page**: fitted to its rim rather than past its labels (`R.fit` 890; it was
+  1180 against a smaller globe), as big as the stage's height lets it be, and moved right only as far as
+  it takes to keep its rings clear of the title and the Intro (`measure`), its faint outer parts passing
+  under them. On a laptop the Earth is about 430px across; the rings to about 700.
+- **The zoom is fixed** (`Z_FIX` 1.8, `Z_FIX_PHONE` 1.2): a perfumer of one perfume and Prin Lomros' 139
+  are looked at from exactly as close. What does not fit is **gone through by the wheel** — over the
+  chart, while anything is chosen, the wheel (a perfume every 42 px of it), a swipe on a touch screen,
+  the arrow keys, Page Up and Down, Home and End move **the scroll** (`scrollS`, counted in the chosen
+  set's perfumes) along what is chosen, the camera following on its springs, the chart turning under it
+  as a wheel does. It starts at the middle of a set the window holds, and at the beginning of one it
+  does not, its first perfume near the top. The perfume it stands at is bracketed in gold on the rim.
+  **The scrubber** (`.pf-scrub`) stands beside the chart while something is chosen: a tick for every
+  perfume, a thumb as long as the window holds, the perfume the scroll is at named over it with its
+  place (*013 / 139*); pressed or dragged, the chart goes there. A perfume's window is put away by the
+  first turn of the wheel, back to its house, and the scroll goes on from there. Going back up from a
+  house to its perfumer keeps the perfume it stood at.
+- Everything else does what it did: the list, the search, choosing a perfumer, a house, a perfume and
+  its window, the sway, the out-of-focus copy, Esc, *By year*, the index, the sources.
+
+### Why / key decisions
+
+- **"More or less the same theme"** was read as the page's own dark and its colours, with the picture's
+  drawing: the architect's sketch is drawn in light lines on the dark, as a drawing in white ink.
+- **The Earth stands upright** while the rings turn round it (it is drawn turned back by the camera's
+  own turn, `earthUpright`), so north is always up; it turns on its own axis instead.
+- **Drawn so that turning costs little** — the first version took ten times the old page's work at rest:
+  the Earth's still parts (the sea, the parallels, the shade, the rim, the latitudes) are drawn once
+  for its size; its land and meridians are drawn again only when it has turned by about half a pixel,
+  about six times a second; and the whole is **a canvas of its own on the page** (`.pf-earth`), laid
+  down by the browser every frame, never copied onto the live layer. On the turning Earth the waterline
+  is a single soft edge (two wide strokes cost two thirds of a redraw); close in, where the chart is
+  drawn once, it is the full waterline. Measured on this machine (no graphics card, a laptop's window):
+  35 ms of script a second at rest, against the old page's 37; the main thread's whole time 240 against
+  200.
+- **The land is clipped at the Earth's rim** properly (`clipFace`): a coastline ring is cut into the
+  pieces on the face, and each piece's end is joined round the rim — the way the ring runs, so its land
+  stays on its own side — to the start of the next piece there. Laying a point behind the Earth onto
+  its rim, as the first version did, ran straight cuts across the face, and joining a piece to the next
+  crossing *along the ring* rather than round the rim filled the whole disc for Antarctica.
+- **A pin is a country** because that is all the ledger says; pinning a house in a town would be
+  inventing where it is.
+
+### How to test it
+
+`npm test -- tests/perfumers.spec.js`: the earlier tests, and two that are new — **close in, the zoom is
+fixed, and the wheel goes through the perfumes of what is chosen** (Prin Lomros: the wheel moves the
+scroll on by more than eight perfumes, the zoom the same, the page not scrolled, the scrubber naming
+where it is, End going to the 139th; Antoine Lie looked at from exactly as close; and at rest it sways
+without being drawn again) — which replaced *the wheel does nothing*, deliberately; and **the Earth is
+drawn in the middle, turns on its own, and turns to what is chosen** (its rings and its pins there, it
+turns and its picture is drawn again for it but the rings are not, Prin Lomros lights Thailand and
+turns it to about 101° E, and close in it stands still). `PerfumersChart.earth()`, `.scrollBy()` and
+`.scrollTo()` are for them; `state()` carries `scroll`, `count`, `at` and `viewN`.
+
+The coastlines: `npm pack world-atlas@2.0.2`, unpack it, `python3 tools/perfumers/earth.py
+package/land-110m.json`, then `python3 tools/versions.py`.
+
+By hand: open `/perfumers/` — watch the Earth turn and the lights cross it; point at a pin; choose Prin
+Lomros, scroll through all 139, drag the scrubber; choose Aichi Liu and see the Earth turn to Taiwan;
+*By year*; on a phone, swipe.
+
+### Known issues / TODO
+
+- **Ten houses and twelve perfumers have no country in the ledger**, so no pin and no lines; adding
+  `from` to their blocks in the ledger draws them.
+- The Earth's coast is Natural Earth's coarsest; small islands under about a square degree are left
+  out.

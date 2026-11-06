@@ -11,49 +11,71 @@
 // up close, tipped back, the near part sharp and the rest out of focus —
 // as what choosing something does.
 //
-// WHAT IT DRAWS, from the middle out (world units: the chart is about
-// 2,300 across; R below):
-//   THE GLOBE     a sphere of specks turning, lit from the upper left, with
-//                 lights on its night side, and a ring of gold dust round it.
-//   THE BAND      a segment for each group round the globe: a perfumer
-//                 (A–Z) or a year (By year), and a glint running round it.
-//   THE SPOKES    one line out from the band for every perfume, ending in
-//                 its dot at ITS YEAR — the rings are years, 2009 nearest
-//                 the middle and 2026 furthest out; a perfume no source
-//                 dates ends hollow on the dashed ring beyond them. The
-//                 line says how sure its perfumer is (solid: named; dashed:
-//                 the house's perfumer; dotted: not found); the dot says what
-//                 it is (gold: an individual fragrance written about here;
-//                 blue-white: a house perfume written about here; rose:
-//                 Prin Lomros' houses, not written about here). Now and then
-//                 a light runs out along one and its dot flares.
-//   THE NAMES     each group's name in spaced capitals along the rim — and,
-//                 for a chosen perfumer, its HOUSES in its name's place.
+// REMODELLED 2026-11-06 after another picture of the owner's — a poster of
+// the Earth drawn as an architect draws it, its bands of information
+// standing out round it ("It should look like the earth, with then three
+// layers of information in series protruding from it, which is going to be
+// the perfumer, the house and then the perfume. It should look like an
+// architect's sketch of the earth. I want this to occupy the majority of
+// the page ... the zoom length should be fixed, and the scrolling while
+// hovering on the image will cause you to scroll through the perfumes of
+// that house/perfumer").
+//
+// WHAT IT DRAWS, from the middle out (world units; R below):
+//   THE EARTH     in the middle, upright, turning slowly on its axis: drawn
+//                 as an architect's sketch — its coastlines in a hairline
+//                 with two waterlines off them, the land hatched, the
+//                 graticule every fifteen degrees, the equator and the
+//                 meridian facing you run out across the whole chart to a
+//                 cross-hair at each end, the latitudes named down its left.
+//                 A square marks every country a house is from, a ring every
+//                 country a perfumer is from (the ledger's countries: a pin
+//                 is the country, never a town), and from each house's
+//                 country a line runs to every one of its perfumes' places on
+//                 the rings, as the picture's lines run from its cities.
+//                 (Natural Earth's coastlines, perfumers-earth.js.)
+//   THE THREE RINGS, in series, a cell in each for every perfume:
+//     1 PERFUMER  a cell filled where a source names the perfumer, half
+//                 filled where it is the house's perfumer, empty where none
+//                 is found; the perfumers' names along it (years, By year).
+//     2 HOUSE     a cell in the colour of where the perfume is: gold, an
+//                 individual fragrance written about here; blue-white, a
+//                 house perfume written about here; rose, Prin Lomros'
+//                 houses, not written about here. A chosen perfumer's houses
+//                 are named along it.
+//     3 PERFUME   a bar as long as ITS YEAR — 2009 shortest, 2026 longest,
+//                 the years' rings behind them — ending in its dot; a perfume
+//                 no source dates ends hollow on the dashed ring beyond.
+//                 Now and then a light runs from its house's country through
+//                 the three rings to its dot, which flares.
 //   THE RIM       a tick for every perfume; its number and year are written
 //                 only for what is chosen, a faint line for the rest.
 //   THE LABELS    every perfume's name past the rim — written out only for
-//                 what is chosen, the poster's faint lines for the rest
-//                 ("all the information doesnt have to be there from the
-//                 zoomed out view").
+//                 what is chosen, the poster's faint lines for the rest.
 //
 // CHOOSING: a perfumer (on the circle, or in THE LIST down the right, A to
 // Z), then one of its houses, then a perfume, which opens its window. The
-// camera flies to what is chosen and STAYS there — no wheel, no drag ("a
-// fixed place") — the page held still under it; Esc, the list or "The whole
-// chart" go back up. By year, the circle's groups are years.
+// camera flies to what is chosen, ALWAYS AS CLOSE (the zoom fixed), and the
+// Earth turns to its country; there THE WHEEL, a swipe, the arrow keys or
+// the scrubber beside the chart go through its perfumes one after another
+// (Prin Lomros' 139 among them), the page held still under it; Esc, the list
+// or "The whole chart" go back up. By year, the circle's groups are years.
 //
 // HOW IT IS KEPT SMOOTH — three layers, so that nothing is drawn again only
 // because it moves:
-//   THE ROTOR   (.pf-rotor) the whole chart at rest, drawn ONCE into a
-//               square canvas that the browser TURNS by its transform: the
-//               slow turn costs nothing a frame.
-//   THE SWAY    (.pf-sway) the chart in perspective — drawn every frame only
-//               while the camera flies; close in, drawn once, with its
-//               out-of-focus copy, and SWAYED by its transform, slowly.
-//   THE LIVE    (.pf-live) what moves of itself, all of it small: the globe,
-//               the far field and the dust drifting, the lights on the
-//               spokes, the glint, the names while the chart turns (so they
-//               never stand upside down), what the hand is on.
+//   THE ROTOR   (.pf-rotor) the three rings and the rim at rest, drawn ONCE
+//               into a square canvas that the browser TURNS by its
+//               transform: the slow turn costs nothing a frame.
+//   THE SWAY    (.pf-sway) the chart in perspective, the Earth with it —
+//               drawn every frame only while the camera flies; close in,
+//               drawn once, with its out-of-focus copy, and SWAYED by its
+//               transform, slowly. (The Earth stands still close in.)
+//   THE LIVE    (.pf-live) what moves of itself: the Earth on the whole
+//               chart — drawn into a picture of its own only when it has
+//               turned by a third of a pixel, and laid down every frame —
+//               its lines out to the rings, the far field and the dust
+//               drifting, the lights, the names while the chart turns (so
+//               they never stand upside down), what the hand is on.
 // data-view on the stage says which: "turn", "live" (flying) or "still".
 // Nothing is drawn while the chart is off the screen, the tab is hidden or
 // a window is open over it. Every speck is drawn in one colour at a varied
@@ -68,8 +90,8 @@
 // from tools/perfumers/LEDGER.md. Nothing here knows a perfume by name.
 //
 // prefers-reduced-motion: nothing moves of itself — the chart does not
-// turn or sway, no lights run, the globe stands still, the camera and the
-// switch go at once.
+// turn or sway, no lights run, the Earth stands still (turned at once to
+// what is chosen), the camera and the switch go at once.
 // ============================================================
 (function () {
   "use strict";
@@ -114,22 +136,29 @@
   const TAU = Math.PI * 2;
 
   // ---- THE GEOMETRY, in world units -----------------------------------
+  // (2026-11-06: the Earth in the middle, and the three rings in series
+  // standing out from it — the perfumer, the house, the perfume)
   const R = {
-    sphere: 112, hazeIn: 122, hazeOut: 176,
-    band0: 184, band1: 198,
-    base: 214,                 // where every spoke leaves from
-    y0: 250, y1: 640,          // 2008 … 2026
-    und: 686,                  // the ring of perfumes with no year found
-    group: 716,                // the names along the rim
-    tick0: 742, tick1: 751,    // the rim's ticks
-    num: 757,                  // the rim's numbers
-    label: 826,                // the names past the rim
-    dust0: 800, dust1: 1160,
-    fit: 1180,                 // what the whole chart is fitted to
-    look: 760,                 // the radius a close look is centred on
+    earth: 468,                // the Earth's radius
+    frame0: 476, frame1: 484,  // its frame, a double circle
+    per0: 494, perCell: 505, per1: 522,   // RING 1, the perfumer: its cells, and its names over them
+    hou0: 530, houCell: 540, hou1: 554,   // RING 2, the house: the same
+    base: 564,                 // RING 3, the perfume: where every bar leaves from
+    y0: 578, y1: 702,          // 2008 … 2026
+    und: 718,                  // the ring of perfumes with no year found
+    tick0: 734, tick1: 742,    // the rim's ticks
+    num: 748,                  // the rim's numbers
+    label: 806,                // the names past the rim
+    dust0: 790, dust1: 1150,
+    fit: 890,                  // what the whole chart is fitted to
+    look: 740,                 // the radius a close look is centred on
   };
+  R.perMid = (R.perCell + R.per1) / 2 + 0.5;
+  R.houMid = (R.houCell + R.hou1) / 2 + 0.5;
   const Y_FROM = 2008, Y_TO = 2026;
   const GAP = 2.4;             // slots of gap before each group
+  const HGAP = 0.7;            // slots of gap between two houses of one group
+  const TOPGAP = 9;            // slots of gap at the top, where the rings are named
   const SORT_MS = 1700, INTRO_MS = 2100, EM_MS = 650;
   const TILT = 0.94;           // how far a close look tips the chart back
   const TURN_S = 260;          // seconds the chart takes to turn once, at rest
@@ -138,8 +167,18 @@
   const REST_PX = 0.35;        // the camera is at rest once nothing is left to move by more than this
   const DIM = 0.2;             // what is not chosen, of itself
   const AROUND = 0.46;         // the rest of a chosen perfume's house, of itself
-  const MAX_FRAME = 2.2;       // radians: a choice wider than this is looked at where most of it is
   const FLIP = 0.07;           // a name on the rim turns over across this band, crossfading
+  // THE FIXED ZOOM (2026-11-06 — "the zoom length should be fixed"): every
+  // choice is looked at from as close as every other, a perfumer of one
+  // perfume and Prin Lomros' 139 alike; what does not fit on the window is
+  // gone through by the wheel
+  const Z_FIX = 1.8, Z_FIX_PHONE = 1.2;
+  const WHEEL_PX = 42;         // a perfume a step of this much of the wheel
+  const SWIPE_PX = 26;         // a perfume a step of this much of a finger
+  // the Earth: how it is seen, how fast it turns, how fast it turns to a choice
+  const EARTH_TILT = 0.4;      // radians: it is seen from a little above its equator
+  const EARTH_SPIN = TAU / 360;   // once in six minutes
+  const EARTH_TO = 1.6;        // per second, turning to what is chosen
   // a perfume's window (2026-11-03): lit first, then the window drawn out of it
   const CALL_AFTER = 560;      // ms the perfume is lit before its window comes
   const CALL_WAIT = 2400;      // at most this long waiting for the chart to settle
@@ -148,7 +187,7 @@
   // the sway close in: a slow roll about the point looked at, a breath of
   // scale, a drift of a few pixels — the browser's to draw (`swayBox`)
   const SWAY = { roll: 0.03, roll2: 0.011, breath: 0.011, dx: 7, dy: 4, rollHz: 1 / 27, roll2Hz: 1 / 11.5, breathHz: 1 / 19, driftHz: 1 / 23 };
-  const RGB = { gold: "235,163,63", blue: "188,211,234", rose: "226,88,126", ink: "235,232,226", muted: "141,143,146" };
+  const RGB = { gold: "235,163,63", blue: "188,211,234", rose: "226,88,126", ink: "235,232,226", muted: "141,143,146", sea: "15,17,20", land: "36,38,43" };
   const SOLID = {}; Object.keys(RGB).forEach((k) => (SOLID[k] = "rgb(" + RGB[k] + ")"));
   const GROUND = "#0b0c0d";
   const F = {
@@ -160,7 +199,6 @@
   };
   const FPX = 20;
   const TONES = ["rose", "blue", "gold"];
-  const CREDITS = ["named", "house", "none"];
   const LV = 8;                // the levels emphasis is batched in
 
   // ---- THE DATA --------------------------------------------------------
@@ -186,8 +224,8 @@
   });
   const N = entries.length;
   const yearR = (y) => R.y0 + ((y - Y_FROM) / (Y_TO - Y_FROM)) * (R.y1 - R.y0);
-  const byCT = {};
-  CREDITS.forEach((cr) => { byCT[cr] = {}; TONES.forEach((t) => (byCT[cr][t] = entries.filter((e) => e.p.c === cr && e.tone === t))); });
+  const byTone = {};
+  TONES.forEach((t) => (byTone[t] = entries.filter((e) => e.tone === t)));
   // the perfumers in the list's order, which is the chart's A–Z: by surname
   const PERFUMERS = D.perfumers.slice().sort((a, b) => cmp(perSort(a.id), perSort(b.id)));
   const named = PERFUMERS.filter((p) => p.id !== "not-found");
@@ -197,6 +235,40 @@
     entriesOf(pid).forEach((e) => { if (!m.has(e.p.h)) m.set(e.p.h, []); m.get(e.p.h).push(e); });
     m.forEach((list) => list.sort((x, y) => cmp(x.p.n, y.p.n)));
     return Array.from(m.entries()).sort((a, b) => cmp(HOU[a[0]].name, HOU[b[0]].name));
+  }
+
+  // ---- WHERE THEY ARE FROM, on the Earth ---------------------------------
+  // Only the countries the ledger gives a house or a perfumer ("from"), each
+  // pinned at the middle of the country — a pin says the country and nothing
+  // nearer; a house or a perfumer the ledger gives no country has no pin.
+  const DEG = Math.PI / 180;
+  const COUNTRY = {
+    "United States": [39.5, -98.5], "United Kingdom": [54, -2.4], "France": [46.6, 2.4],
+    "Spain": [40.2, -3.6], "Italy": [42.8, 12.6], "Poland": [52.1, 19.4], "Romania": [45.9, 25],
+    "Thailand": [15.4, 101], "Taiwan": [23.7, 121], "Indonesia": [-2.4, 117.5],
+  };
+  const pins = new Map();      // country -> { name, lat, lon, houses:[], perfumers:[], entries:[] }
+  function pinOf(country) {
+    if (!country || !COUNTRY[country]) return null;
+    if (!pins.has(country)) {
+      const [la, lo] = COUNTRY[country];
+      pins.set(country, { name: country, lat: la * DEG, lon: lo * DEG, houses: [], perfumers: [], entries: [], x: 0, y: 0, z: 0 });
+    }
+    return pins.get(country);
+  }
+  D.houses.forEach((h) => { const p = pinOf(h.from); if (p) p.houses.push(h.id); });
+  D.perfumers.forEach((q) => { const p = pinOf(q.from); if (p) p.perfumers.push(q.id); });
+  entries.forEach((e) => { e.pin = pinOf(HOU[e.p.h].from); if (e.pin) e.pin.entries.push(e); });
+  const PINS = Array.from(pins.values());
+  // the country the Earth turns to for a choice: the house's, or the
+  // perfumer's own, or that of the house most of its perfumes are from
+  function countryOf(list, pid) {
+    const n = new Map();
+    list.forEach((e) => { if (e.pin) n.set(e.pin, (n.get(e.pin) || 0) + 1); });
+    let best = null, bn = 0;
+    n.forEach((v, k) => { if (v > bn) { bn = v; best = k; } });
+    if (best) return best;
+    return pid && PER[pid] ? pinOf(PER[pid].from) : null;
   }
 
   // ---- THE TOOLS -------------------------------------------------------
@@ -227,16 +299,22 @@
       if (!gs.length || gs[gs.length - 1].key !== k) gs.push({ key: k, members: [] });
       gs[gs.length - 1].members.push(e);
     });
-    slot = TAU / (N + gs.length * GAP);
-    gapAngle = -Math.PI / 2 + (slot * GAP) / 2;
-    let i = 0;
+    // the gaps: one before every group, a smaller one between two houses of
+    // a group, and a wide one at the top, where the three rings are named
+    let gaps = TOPGAP + (gs.length - 1) * GAP;
+    gs.forEach((g) => g.members.forEach((e, j) => { if (j && e.p.h !== g.members[j - 1].p.h) gaps += HGAP; }));
+    slot = TAU / (N + gaps);
+    gapAngle = -Math.PI / 2;
+    let i = 0, at = TOPGAP / 2;
     gs.forEach((g, gi) => {
-      g.members.forEach((e) => {
+      if (gi) at += GAP;
+      g.members.forEach((e, j) => {
+        if (j && e.p.h !== g.members[j - 1].p.h) at += HGAP;
         e.from = e.a;
-        e.to = -Math.PI / 2 + ((gi + 1) * GAP + i + 0.5) * slot;
+        e.to = -Math.PI / 2 + (at + 0.5) * slot;
         e.no = i + 1;
         e.g = g;
-        i++;
+        i++; at++;
       });
       g.a0 = g.members[0].to - slot / 2;
       g.a1 = g.members[g.members.length - 1].to + slot / 2;
@@ -291,26 +369,28 @@
     for (const w of m.ws) t += (w * size) / FPX;
     return t + size * track * (m.chars.length - 1);
   }
-  const NAME_SIZES = [15, 10, 7, 5];
-  const HOUSE_SIZES = [26, 20, 15, 11, 8, 6, 4.5, 3.5];
-  function fitSize(txt, a0, a1, sizes, font, track) {
-    for (const s of sizes) if (arcLen(txt, s, font, track(s)) < (a1 - a0) * R.group - 10) return s;
+  // the perfumers' names along ring 1, the houses' along ring 2 — no taller
+  // than their rings
+  const NAME_SIZES = [10.5, 8.5, 6.5, 5];
+  const HOUSE_SIZES = [9, 7.5, 6, 5, 4, 3.2];
+  function fitSize(txt, a0, a1, sizes, font, track, r) {
+    for (const s of sizes) if (arcLen(txt, s, font, track(s)) < (a1 - a0) * r - 6) return s;
     return 0;
   }
   // a chosen perfumer's houses are written as large as their arcs allow on
   // the whole chart, and no larger than reads well close in
   function houseSize(h, z) {
     let best = 0;
-    for (const s of h.sizes) { if (s * z <= 17) return s; best = s; }
+    for (const s of h.sizes) { if (s * z <= 15) return s; best = s; }
     return best;
   }
   function measureGroups() {
     groups.forEach((g) => {
       g.text = g.label.toUpperCase();
-      g.size = fitSize(g.text, g.a0, g.a1, NAME_SIZES, F.group, trackOf);
+      g.size = fitSize(g.text, g.a0, g.a1, NAME_SIZES, F.group, trackOf, R.perMid);
       g.houses.forEach((h) => {
         h.text = HOU[h.h].name.toUpperCase();
-        h.sizes = mode === "az" ? HOUSE_SIZES.filter((sz) => arcLen(h.text, sz, F.house, 0.18) < (h.a1 - h.a0) * R.group - 10) : [];
+        h.sizes = mode === "az" ? HOUSE_SIZES.filter((sz) => arcLen(h.text, sz, F.house, 0.18) < (h.a1 - h.a0) * R.houMid - 4) : [];
         h.size = h.sizes[0] || 0;
       });
       g.members.forEach((e) => (e.withWho = mode === "year"));
@@ -337,22 +417,47 @@
       const b = nav.getBoundingClientRect();
       if (b.width) x1 = b.left - sb.left - 14;
     }
+    // the words that stand over the stage: the chart's rings are kept clear
+    // of them, and only its faint outer parts pass under them
+    const clear = [];
+    const box = (el) => {
+      if (!el) return;
+      const b = el.getBoundingClientRect();
+      if (b.width && b.height) clear.push({ x0: b.left - sb.left - 10, y0: b.top - sb.top - 10, x1: b.right - sb.left + 10, y1: b.bottom - sb.top + 10 });
+    };
     const notes = document.querySelector(".pf-notes");
-    const left = document.querySelector(".pf-notes-left");
-    if (notes && left && getComputedStyle(notes).position === "absolute") {
-      const b = left.getBoundingClientRect();
-      if (b.width) x0 = b.right - sb.left + 14;
-    }
+    if (notes && getComputedStyle(notes).position === "absolute") box(document.querySelector(".pf-notes-left"));
     if (phone) {
       const t = title.getBoundingClientRect();
       y0 = Math.max(0, t.bottom - sb.top + 4);
       y1 = H - 60;
+    } else {
+      box(title.querySelector(".pf-title-word"));
+      box(title.querySelector(".pf-title-years"));
+      y0 = 6; y1 = H - 6;
     }
     L.free = { x0, y0, x1, y1 };
-    const room = Math.max(140, Math.min(x1 - x0, y1 - y0));
+    // the chart as big as the stage's height lets it be ("I want this to
+    // occupy the majority of the page"), moved right as far as it takes to
+    // keep its rings clear of the title and the intro — and a little smaller
+    // only if that is not enough
+    const hits = (cx, cy, rr) => clear.some((b) => {
+      const dx = Math.max(b.x0 - cx, 0, cx - b.x1), dy = Math.max(b.y0 - cy, 0, cy - b.y1);
+      return dx * dx + dy * dy < rr * rr;
+    });
+    let room = Math.max(140, Math.min(x1 - x0, y1 - y0));
+    let cx = (x0 + x1) / 2;
+    const cy = (y0 + y1) / 2;
+    for (let tries = 0; tries < 16; tries++) {
+      const z = room / (2 * R.fit), rr = R.tick1 * z + 8;
+      cx = (x0 + x1) / 2;
+      while (hits(cx, cy, rr) && cx + rr < x1 - 4) cx += 4;
+      if (!hits(cx, cy, rr)) break;
+      room *= 0.96;
+    }
     fitZ = room / (2 * R.fit);
-    L.ocx = (x0 + x1) / 2 / W;
-    L.ocy = (y0 + y1) / 2 / H;
+    L.ocx = cx / W;
+    L.ocy = cy / H;
     L.oz = fitZ;
     if (phone && navOpen) {
       // the list up over the lower half: the whole chart stands smaller, above it
@@ -392,6 +497,8 @@
     dofOff();
     setGoal(poseFor(), true);
     if (callE) { sway(clock); placeCallFirst(); }
+    syncScrub();
+    earthKey = "";
     kick();
   }
 
@@ -493,16 +600,6 @@
     const a = rand() * TAU;
     dust.push(Math.cos(a) * r, Math.sin(a) * r, 0.5 + rand() * 1.4, 0.12 + rand() * 0.5 * (1 - t * 0.6));
   }
-  const haze = [];
-  for (let i = 0; i < 1100; i++) {
-    const t = Math.pow(rand(), 1.7);
-    const r = R.hazeIn + t * (R.hazeOut - R.hazeIn) + (rand() - 0.5) * 6;
-    const a = rand() * TAU;
-    // thicker on one side, as the poster's ring is
-    const side = 0.55 + 0.45 * Math.cos(a - 2.3);
-    if (rand() > side) continue;
-    haze.push(Math.cos(a) * r, Math.sin(a) * r, 0.5 + rand() * 1.1, (0.2 + rand() * 0.6) * (1 - t * 0.7));
-  }
   // the far field, turning a little on its own and twinkling: r, a, size, alpha, turn, phase, rate
   const SKY = 300;
   const sky = new Float32Array(SKY * 7);
@@ -517,12 +614,428 @@
     drift.set([R.dust0 - 30 + Math.pow(t, 1.3) * (R.dust1 - R.dust0 + 60), rand() * TAU, 0.6 + rand() * 1.5, 0.18 + rand() * 0.42,
       (0.004 + rand() * 0.012) * (rand() < 0.3 ? -1 : 1), 4 + rand() * 14, rand() * TAU, 0.15 + rand() * 0.5], i * 8);
   }
-  // the globe's specks: x, y, z, and a number for its lights
-  const GN = 760;
-  const globe = new Float32Array(GN * 4);
-  for (let i = 0; i < GN; i++) {
-    const y = 1 - (2 * (i + 0.5)) / GN, r = Math.sqrt(1 - y * y), th = i * 2.399963229728653;
-    globe.set([Math.cos(th) * r, y, Math.sin(th) * r, rand()], i * 4);
+  // ---- THE EARTH, as an architect draws it -------------------------------
+  // Its coastlines (perfumers-earth.js: Natural Earth's land, public domain)
+  // kept as each point's longitude and the cosine and sine of its latitude,
+  // and turned on the Earth's axis by `spin` — the longitude facing you.
+  // Seen in orthographic projection from EARTH_TILT above the equator:
+  // (x right, y up, z towards you), on a sphere of radius 1.
+  const COAST = (window.PERFUMERS_EARTH || []).map((r) => {
+    const n = r.length / 2, lam = new Float32Array(n), cp = new Float32Array(n), sp = new Float32Array(n);
+    const cl = new Float32Array(n), sl = new Float32Array(n);
+    let area = 0;
+    for (let i = 0; i < n; i++) {
+      lam[i] = r[2 * i] * DEG; const ph = r[2 * i + 1] * DEG;
+      cp[i] = Math.cos(ph); sp[i] = Math.sin(ph); cl[i] = Math.cos(lam[i]); sl[i] = Math.sin(lam[i]);
+      const j = (i + 1) % n;
+      area += r[2 * i] * r[2 * j + 1] - r[2 * j] * r[2 * i + 1];
+    }
+    // which way round it runs, so that where it goes behind the Earth it is
+    // joined along the rim on the side of its own land
+    return { n, lam, cp, sp, cl, sl, cw: area < 0 };
+  });
+  const EX = new Float32Array(2048), EY = new Float32Array(2048), EZ = new Float32Array(2048);
+  const cT = Math.cos(EARTH_TILT), sT = Math.sin(EARTH_TILT);
+  let spin = -28 * DEG;        // the Atlantic facing you first, as in the picture
+  let spinTween = null;        // its turn to a choice: { from, to, t0, ms }
+  function turnEarthTo(pin) {
+    if (!pin) { spinTween = null; return; }
+    let to = pin.lon - 0.12;
+    while (to - spin > Math.PI) to -= TAU;
+    while (to - spin < -Math.PI) to += TAU;
+    spinTween = { from: spin, to, t0: performance.now(), ms: STILL ? 0 : 2200 };
+  }
+  const E3 = { x: 0, y: 0, z: 0 };
+  function onEarth(lam, cp, sp, o) {
+    const d = lam - spin, cl = Math.cos(d);
+    o.x = cp * Math.sin(d);
+    o.y = cT * sp - sT * cp * cl;
+    o.z = sT * sp + cT * cp * cl;
+    return o;
+  }
+  PINS.forEach((p) => { p.cp = Math.cos(p.lat); p.sp = Math.sin(p.lat); });
+  function placePins() { for (const p of PINS) { onEarth(p.lon, p.cp, p.sp, E3); p.x = E3.x; p.y = E3.y; p.z = E3.z; } }
+  // a hatch for the land, made once
+  let hatch = null;
+  function hatchFor(c) {
+    if (hatch && hatch.c === c) return hatch.p;
+    const t = document.createElement("canvas");
+    t.width = t.height = 7;
+    const h = t.getContext("2d");
+    h.strokeStyle = SOLID.ink; h.globalAlpha = 0.5; h.lineWidth = 0.6;
+    h.beginPath(); h.moveTo(-1, 8); h.lineTo(8, -1); h.stroke();
+    hatch = { c, p: c.createPattern(t, "repeat") };
+    return hatch.p;
+  }
+  // The Earth drawn through a mapping from its own (x, y) — flat on the
+  // window for its picture, or onto the chart's plane through the camera —
+  // with as much of it as the moment asks for (`fine`: the waterlines and
+  // the hatching).
+  const EM = { flat: true, cx: 0, cy: 0, r: 1, cr: 1, sr: 0 };
+  function emap(x, y, o) {
+    if (EM.flat) { o.x = EM.cx + EM.r * x; o.y = EM.cy - EM.r * y; o.ok = true; o.k = 1; return o; }
+    const ex = R.earth * x, ey = -R.earth * y;
+    return proj(ex * EM.cr - ey * EM.sr, ex * EM.sr + ey * EM.cr, o);
+  }
+  function earthUpright() { EM.flat = false; EM.cr = Math.cos(-V.rot); EM.sr = Math.sin(-V.rot); }
+  // the land as two paths: closed and filled — cut at the rim where it goes
+  // round behind the Earth and joined along the rim the shorter way, so no
+  // straight cut runs across the face — and the coast as a stroke, broken
+  // where it goes behind
+  function landPaths() {
+    const fill = new Path2D(), coast = new Path2D();
+    const cS = Math.cos(spin), sS = Math.sin(spin);
+    for (const r of COAST) {
+      // (the turn by angle addition: no sine or cosine a point)
+      let front = 0;
+      for (let i = 0; i < r.n; i++) {
+        const cd = r.cl[i] * cS + r.sl[i] * sS, sd = r.sl[i] * cS - r.cl[i] * sS, cp = r.cp[i], sp = r.sp[i];
+        EX[i] = cp * sd; EY[i] = cT * sp - sT * cp * cd; EZ[i] = sT * sp + cT * cp * cd;
+        if (EZ[i] >= 0) front++;
+      }
+      if (!front) continue;
+      clipRing(fill, r.n, front === r.n, r.cw);
+      let pen = false;
+      for (let i = 0; i < r.n; i++) {
+        if (EZ[i] < 0) { pen = false; continue; }
+        emap(EX[i], EY[i], T0);
+        if (!T0.ok) { pen = false; continue; }
+        if (pen) coast.lineTo(T0.x, T0.y); else { coast.moveTo(T0.x, T0.y); pen = true; }
+      }
+      if (EZ[0] >= 0 && EZ[r.n - 1] >= 0) { emap(EX[0], EY[0], T0); if (T0.ok) coast.lineTo(T0.x, T0.y); }
+    }
+    return { fill, coast };
+  }
+  // A ring of land on the Earth's face, clipped where it goes round behind:
+  // cut into the pieces that are on the face, and each piece's end on the
+  // rim joined round the rim — the way the ring runs, so its land stays on
+  // the side it is on — to the start of the piece that comes next there.
+  // (ex, ey, ez: the ring turned, z towards you; cw: which way round it runs;
+  // put(x, y, first): a point of the outline, on the face's unit circle.)
+  function clipFace(ex, ey, ez, n, cw, put) {
+    let s0 = -1;
+    for (let i = 0; i < n; i++) if (ez[i] >= 0 && ez[(i - 1 + n) % n] < 0) { s0 = i; break; }
+    if (s0 < 0) return;
+    const cross = (a, b) => {
+      const t = ez[a] / (ez[a] - ez[b]);
+      const px = ex[a] + (ex[b] - ex[a]) * t, py = ey[a] + (ey[b] - ey[a]) * t, m = Math.hypot(px, py) || 1;
+      return [px / m, py / m];
+    };
+    // the pieces on the face, each from where it comes on to where it goes off
+    const pieces = [];
+    let cur = null;
+    for (let k = 0; k < n; k++) {
+      const b = (s0 + k) % n, a = (b - 1 + n) % n;
+      const va = ez[a] >= 0, vb = ez[b] >= 0;
+      if (!va && vb) { const c = cross(a, b); cur = { in: Math.atan2(c[1], c[0]), pts: [c, [ex[b], ey[b]]] }; }
+      else if (va && vb) { if (cur) cur.pts.push([ex[b], ey[b]]); }
+      else if (va && !vb && cur) { const c = cross(a, b); cur.pts.push(c); cur.out = Math.atan2(c[1], c[0]); pieces.push(cur); cur = null; }
+    }
+    if (!pieces.length) return;
+    const used = new Array(pieces.length).fill(false);
+    // how far round the rim, the way the ring runs, from one angle to another
+    const ahead = (from, to) => { let d = cw ? from - to : to - from; while (d < 0) d += TAU; while (d >= TAU) d -= TAU; return d; };
+    for (let s = 0; s < pieces.length; s++) {
+      if (used[s]) continue;
+      let p = s, first = true;
+      for (let guard = 0; guard <= pieces.length; guard++) {
+        used[p] = true;
+        const pc = pieces[p];
+        for (const q of pc.pts) { put(q[0], q[1], first); first = false; }
+        // the piece whose start comes first round the rim from this end
+        let next = -1, best = Infinity;
+        for (let j = 0; j < pieces.length; j++) { const d = ahead(pc.out, pieces[j].in); if (d < best) { best = d; next = j; } }
+        const steps = Math.ceil(best / 0.06);
+        for (let j = 1; j < steps; j++) { const an = pc.out + (cw ? -1 : 1) * (best * j) / steps; put(Math.cos(an), Math.sin(an), false); }
+        if (next < 0 || used[next]) break;
+        p = next;
+      }
+      put(NaN, NaN, false);
+    }
+  }
+  function clipRing(x, n, all, cw) {
+    if (all) {
+      for (let i = 0; i < n; i++) { emap(EX[i], EY[i], T0); if (!i) x.moveTo(T0.x, T0.y); else x.lineTo(T0.x, T0.y); }
+      x.closePath();
+      return;
+    }
+    clipFace(EX, EY, EZ, n, cw, (px, py, first) => {
+      if (px !== px) { x.closePath(); return; }
+      emap(px, py, T0);
+      if (!T0.ok) return;
+      if (first) x.moveTo(T0.x, T0.y); else x.lineTo(T0.x, T0.y);
+    });
+  }
+  // the graticule, every fifteen degrees, the equator and the meridian
+  // facing you a little brighter, and the prime meridian named
+  function gratPath(fine, which) {
+    const p = new Path2D(), bright = new Path2D();
+    const step = fine ? 4 * DEG : 6 * DEG;
+    if (which !== "mer") for (let la = -75; la <= 75; la += 15) {
+      const cp = Math.cos(la * DEG), sp = Math.sin(la * DEG);
+      let pen = false;
+      const into = la === 0 ? bright : p;
+      for (let lo = -180; lo <= 180.001; lo += step / DEG) {
+        onEarth(lo * DEG, cp, sp, E3);
+        if (E3.z < 0) { pen = false; continue; }
+        emap(E3.x, E3.y, T0); if (!T0.ok) { pen = false; continue; }
+        if (pen) into.lineTo(T0.x, T0.y); else { into.moveTo(T0.x, T0.y); pen = true; }
+      }
+    }
+    if (which !== "par") for (let lo = -180; lo < 180; lo += 15) {
+      let pen = false;
+      const into = lo === 0 ? bright : p;
+      for (let la = -90; la <= 90.001; la += step / DEG) {
+        onEarth(lo * DEG, Math.cos(la * DEG), Math.sin(la * DEG), E3);
+        if (E3.z < 0) { pen = false; continue; }
+        emap(E3.x, E3.y, T0); if (!T0.ok) { pen = false; continue; }
+        if (pen) into.lineTo(T0.x, T0.y); else { into.moveTo(T0.x, T0.y); pen = true; }
+      }
+    }
+    return { p, bright };
+  }
+  // the Earth's disc on the surface: a circle flat, its picture on the
+  // chart's plane otherwise
+  function discPath(r) {
+    const d = new Path2D();
+    if (EM.flat) { d.arc(EM.cx, EM.cy, EM.r * r, 0, TAU); return d; }
+    for (let i = 0; i <= 72; i++) {
+      const a = (i / 72) * TAU;
+      emap(Math.cos(a) * r, Math.sin(a) * r, T0);
+      if (!T0.ok) continue;
+      if (!i) d.moveTo(T0.x, T0.y); else d.lineTo(T0.x, T0.y);
+    }
+    d.closePath();
+    return d;
+  }
+  // The Earth in three parts, so that on the whole chart what does not move
+  // as it turns is drawn once: BACK the sea and the parallels (which a turn
+  // about the pole leaves where they are), LAND the land and the meridians,
+  // FRONT the night side's shade and the rim. Close in, all three at once.
+  function drawEarth(c, alpha, fine, part) {
+    if (alpha <= 0.01 || !COAST.length) return;
+    part = part || "all";
+    const all = part === "all";
+    const z = EM.flat ? EM.r / R.earth : V.z;
+    const disc = discPath(1);
+    c.save();
+    c.globalAlpha = alpha;
+    if (all || part === "back") {
+      c.fillStyle = "rgb(" + RGB.sea + ")";
+      c.fill(disc);
+      const g = gratPath(fine, "par");
+      c.strokeStyle = SOLID.ink; c.lineWidth = 0.6;
+      c.globalAlpha = 0.085 * alpha; c.stroke(g.p);
+      c.globalAlpha = 0.24 * alpha; c.stroke(g.bright);
+    }
+    if (all || part === "land") {
+      const land = landPaths();
+      const k = Math.max(0.55, z * 1.9);
+      if (fine === true) {
+        // a waterline: the coast drawn wide and its middle taken out, the
+        // land laid over its inner half (kept inside the Earth's rim)
+        c.save(); c.clip(disc);
+        c.lineJoin = "bevel";
+        c.globalAlpha = 0.17 * alpha; c.strokeStyle = SOLID.ink; c.lineWidth = 8.4 * k; c.stroke(land.coast);
+        c.globalAlpha = 1; c.strokeStyle = "rgb(" + RGB.sea + ")"; c.lineWidth = 6.2 * k; c.stroke(land.coast);
+        c.restore();
+      } else if (fine === "halo") {
+        // on the turning Earth, a soft edge in its place — one thin stroke,
+        // the land laid over its inner half: the waterline costs too much to
+        // draw again as it turns
+        c.lineJoin = "bevel";
+        c.globalAlpha = 0.16 * alpha; c.strokeStyle = SOLID.ink; c.lineWidth = 3.4 * k; c.stroke(land.coast);
+        c.lineJoin = "miter";
+      }
+      c.globalAlpha = alpha;
+      c.fillStyle = "rgb(" + RGB.land + ")";
+      c.fill(land.fill);
+      if (fine) { c.fillStyle = hatchFor(c); c.globalAlpha = 0.36 * alpha; c.fill(land.fill); }
+      c.lineJoin = "miter";
+      const g = gratPath(fine, "mer");
+      c.strokeStyle = SOLID.ink; c.lineWidth = 0.6;
+      c.globalAlpha = 0.085 * alpha; c.stroke(g.p);
+      c.globalAlpha = 0.24 * alpha; c.stroke(g.bright);
+      c.globalAlpha = 0.7 * alpha; c.lineWidth = Math.max(0.6, z * 1.5); c.stroke(land.coast);
+    }
+    if (all || part === "front") {
+      c.clip(disc);
+      // the night side, shaded off to the lower right
+      proj(0, 0, T1);
+      const cx = EM.flat ? EM.cx : T1.x, cy = EM.flat ? EM.cy : T1.y, rr = EM.flat ? EM.r : R.earth * V.z * T1.k;
+      const sh = c.createRadialGradient(cx - rr * 0.42, cy - rr * 0.46, rr * 0.2, cx, cy, rr * 1.08);
+      sh.addColorStop(0, "rgba(11,12,13,0)");
+      sh.addColorStop(0.62, "rgba(11,12,13,0.12)");
+      sh.addColorStop(1, "rgba(11,12,13,0.62)");
+      c.globalAlpha = alpha; c.fillStyle = sh; c.fill(disc);
+    }
+    c.restore();
+    if (all || part === "front") {
+      // its rim
+      c.strokeStyle = SOLID.ink; c.lineWidth = Math.max(0.7, z * 1.6);
+      c.globalAlpha = 0.6 * alpha; c.stroke(disc);
+    }
+    c.globalAlpha = 1;
+  }
+  // the pins: a square for a country a house is from, a ring for one a
+  // perfumer is from — those turned towards you
+  function drawPins(c, alpha) {
+    if (alpha <= 0.01) return;
+    const z = EM.flat ? EM.r / R.earth : V.z;
+    const s = clamp(5.4 * z, 3, 7);
+    for (const p of PINS) {
+      if (p.z < 0.02) continue;
+      emap(p.x, p.y, T0); if (!T0.ok) continue;
+      const a = alpha * smooth(p.z / 0.25) * (p.lit ? 1 : 0.8);
+      if (p.houses.length) {
+        c.fillStyle = p.lit ? SOLID.gold : SOLID.ink; c.globalAlpha = a;
+        c.fillRect(T0.x - s / 2, T0.y - s / 2, s, s);
+      }
+      if (p.perfumers.length) {
+        c.strokeStyle = p.lit ? SOLID.gold : SOLID.rose; c.lineWidth = 1; c.globalAlpha = a;
+        c.beginPath(); c.arc(T0.x, T0.y, s * 1.25, 0, TAU); c.stroke();
+      }
+    }
+    c.globalAlpha = 1;
+  }
+  // the lines from a house's country to its perfumes' places on the rings —
+  // the picture's lines from its cities; faded as the country turns away
+  function drawFans(c, alpha) {
+    if (alpha <= 0.02) return;
+    const paths = [];
+    for (const e of entries) {
+      const p = e.pin;
+      if (!p || p.z < 0.02 || growth(e) < 0.6) continue;
+      emap(p.x, p.y, T0); if (!T0.ok) continue;
+      proj(Math.cos(e.a) * R.frame1, Math.sin(e.a) * R.frame1, T1); if (!T1.ok) continue;
+      const lv = level(e.em * smooth(p.z / 0.35));
+      if (!lv) continue;
+      const q = paths[lv] || (paths[lv] = new Path2D());
+      q.moveTo(T0.x, T0.y); q.lineTo(T1.x, T1.y);
+    }
+    c.lineWidth = 0.6;
+    for (let lv = 1; lv <= LV; lv++) {
+      if (!paths[lv]) continue;
+      const k = lv / LV;
+      c.strokeStyle = k > 0.9 && focus ? SOLID.gold : SOLID.ink;
+      c.globalAlpha = alpha * (focus ? 0.05 + 0.3 * k * k : 0.13 * k);
+      c.stroke(paths[lv]);
+    }
+    c.globalAlpha = 1;
+  }
+  // a cross through the Earth's middle, run out across the whole chart to a
+  // cross-hair at each end, as the picture's is
+  function drawCross(c, alpha) {
+    if (alpha <= 0.01) return;
+    const ends = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    const reach = R.tick1 / R.earth + 0.05;
+    c.strokeStyle = SOLID.ink; c.lineWidth = 0.6;
+    c.globalAlpha = 0.14 * alpha;
+    c.beginPath();
+    for (const [ax, ay] of [[1, 0], [0, 1]]) {
+      emap(-ax * reach, -ay * reach, T0);
+      emap(ax * reach, ay * reach, T1);
+      if (T0.ok && T1.ok) { c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); }
+    }
+    c.stroke();
+    const z = EM.flat ? EM.r / R.earth : V.z;
+    const rr = clamp(9 * z, 5, 12);
+    c.globalAlpha = 0.4 * alpha;
+    c.beginPath();
+    for (const [ax, ay] of ends) {
+      emap(ax * reach, ay * reach, T0); if (!T0.ok) continue;
+      c.moveTo(T0.x + rr, T0.y); c.arc(T0.x, T0.y, rr, 0, TAU);
+      c.moveTo(T0.x - rr * 1.6, T0.y); c.lineTo(T0.x + rr * 1.6, T0.y);
+      c.moveTo(T0.x, T0.y - rr * 1.6); c.lineTo(T0.x, T0.y + rr * 1.6);
+    }
+    c.stroke();
+    c.globalAlpha = 1;
+  }
+  // the latitudes named off the Earth's left, and the longitudes along its
+  // equator as they come round — in its own frame, upright
+  function drawDegrees(c, alpha, which) {
+    if (alpha <= 0.01) return;
+    const z = EM.flat ? EM.r / R.earth : V.z;
+    const fs = clamp(7.5 * z * 1.3, 7, 10);
+    c.font = "400 " + fs.toFixed(1) + 'px "IBM Plex Mono", ui-monospace, monospace';
+    c.fillStyle = SOLID.ink;
+    c.textBaseline = "middle";
+    // latitude: just inside the Earth's rim on the left, level with where
+    // its parallel meets it
+    c.textAlign = "left";
+    if (which !== "lon") for (let la = -60; la <= 75; la += 15) {
+      const y = cT * Math.sin(la * DEG);
+      const x = -Math.sqrt(Math.max(0, 1 - y * y));
+      emap(x + 0.03, y, T0); if (!T0.ok) continue;
+      c.globalAlpha = 0.34 * alpha;
+      c.fillText(la === 0 ? "0°" : Math.abs(la) + "° " + (la > 0 ? "N" : "S"), T0.x, T0.y);
+    }
+    if (which === "lat") { c.globalAlpha = 1; return; }
+    // longitude, along the equator, where it faces you
+    c.textAlign = "center";
+    for (let lo = -165; lo <= 180; lo += 30) {
+      onEarth(lo * DEG, 1, 0, E3);
+      if (E3.z < 0.3) continue;
+      emap(E3.x, E3.y - 0.028, T0); if (!T0.ok) continue;
+      c.globalAlpha = 0.3 * alpha * smooth((E3.z - 0.3) / 0.3);
+      c.fillText(lo === 180 ? "180°" : Math.abs(lo) + "° " + (lo < 0 ? "W" : "E"), T0.x, T0.y);
+    }
+    onEarth(0, Math.cos(66 * DEG), Math.sin(66 * DEG), E3);
+    if (E3.z > 0.25) {
+      emap(E3.x + 0.012, E3.y, T0);
+      if (T0.ok) { c.textAlign = "left"; c.globalAlpha = 0.42 * alpha * smooth((E3.z - 0.25) / 0.3); c.fillText("Greenwich", T0.x, T0.y); }
+    }
+    c.globalAlpha = 1;
+  }
+  // The Earth's picture on the whole chart: its back and its front drawn
+  // once for its size, its land and meridians again only when it has turned
+  // by half a pixel, and the whole laid down every frame
+  // (a canvas of its own on the page, under the live layer, so that the
+  // browser lays it down every frame and nothing is copied for it)
+  const earthCv = document.createElement("canvas");
+  earthCv.className = "pf-earth";
+  earthCv.setAttribute("aria-hidden", "true");
+  stage.insertBefore(earthCv, cvLive);
+  const ectx = earthCv.getContext("2d");
+  let lastEarthCss = "";
+  const backCv = document.createElement("canvas"), frontCv = document.createElement("canvas");
+  let earthKey = "", staticKey = "", earthPad = 0;
+  const stats0 = { earth: 0, earthStill: 0 };
+  function earthPicture(r, alpha) {
+    const pad = Math.ceil(Math.max(40, r * 0.16));
+    const size = Math.ceil(2 * (r + pad));
+    const px = Math.round(size * DPR);
+    const sk = [px, Math.round(r * 4), alpha.toFixed(2)].join("|");
+    if (sk !== staticKey) {
+      staticKey = sk; earthKey = "";
+      stats0.earthStill++;
+      for (const [cv, part] of [[backCv, "back"], [frontCv, "front"]]) {
+        cv.width = cv.height = px;
+        const x = cv.getContext("2d");
+        x.setTransform(px / size, 0, 0, px / size, 0, 0);
+        EM.flat = true; EM.cx = size / 2; EM.cy = size / 2; EM.r = r;
+        drawEarth(x, alpha, true, part);
+        if (part === "front") drawDegrees(x, alpha, "lat");
+      }
+    }
+    const key = [sk, Math.round(spin * r * 1.6), PINS.map((p) => (p.lit ? 1 : 0)).join("")].join("|");
+    if (key === earthKey) return;
+    earthKey = key; earthPad = pad;
+    stats0.earth++;
+    if (earthCv.width !== px) { earthCv.width = earthCv.height = px; earthCv.style.width = earthCv.style.height = size + "px"; hatch = null; }
+    const k = px / size;
+    ectx.setTransform(1, 0, 0, 1, 0, 0);
+    ectx.clearRect(0, 0, px, px);
+    ectx.drawImage(backCv, 0, 0);
+    ectx.setTransform(k, 0, 0, k, 0, 0);
+    EM.flat = true; EM.cx = size / 2; EM.cy = size / 2; EM.r = r;
+    placePins();
+    drawEarth(ectx, alpha, "halo", "land");
+    ectx.setTransform(1, 0, 0, 1, 0, 0);
+    ectx.drawImage(frontCv, 0, 0);
+    ectx.setTransform(k, 0, 0, k, 0, 0);
+    drawPins(ectx, alpha);
+    drawDegrees(ectx, alpha, "lon");
   }
 
   // ---- THE CAMERA, on two springs -----------------------------------------
@@ -563,8 +1076,9 @@
     kick();
   }
   const zoomed = () => goal.tilt > 0.01;
-  const zHi = () => (phone ? 1.35 : 2.1);
-  const zLo = () => Math.max(fitZ * 1.8, phone ? 0.5 : 0.62);
+  // every choice from as close as every other (2026-11-06 — "the zoom
+  // length should be fixed")
+  const zFix = () => (phone ? Z_FIX_PHONE : Z_FIX);
   function overviewPose() {
     return { fx: 0, fy: 0, lz: Math.log(L.oz), rot: goal.rot, tilt: 0, cx: L.ocx, cy: L.ocy };
   }
@@ -580,31 +1094,29 @@
     const span = TAU - gap;
     return { mid: n[at] + span / 2, span };
   }
-  // where most of a choice too wide to frame stands: the window of `w`
-  // radians round the circle holding the most of it
-  function densest(f, w) {
-    const as = Array.from(f, (e) => ((e.to % TAU) + TAU) % TAU).sort((x, y) => x - y);
-    const n = as.length, two = as.concat(as.map((a) => a + TAU));
-    let best = 0, at = 0;
-    for (let i = 0, j = 0; i < n; i++) {
-      if (j < i) j = i;
-      while (j + 1 < i + n && two[j + 1] - two[i] <= w) j++;
-      if (j - i + 1 > best) { best = j - i + 1; at = i; }
-    }
-    let j = at; while (j + 1 < at + n && two[j + 1] - two[at] <= w) j++;
-    return (two[at] + two[j]) / 2;
+  // THE SCROLL: where along what is chosen the camera stands, counted in
+  // its perfumes — 0 its first, 1 its second; the wheel, a swipe, the arrow
+  // keys and the scrubber move it ("the scrolling while hovering on the
+  // image will cause you to scroll through the perfumes of that
+  // house/perfumer. This is especially important for big perfumers like
+  // prin lomoros")
+  let scrollS = 0;
+  // how many perfumes the window holds at the fixed zoom
+  const viewN = () => (L.zoomH / zFix()) / (R.label * slot);
+  // where a choice is first looked at: its middle if it fits, else its
+  // beginning, its first perfume near the top of the window
+  function startAt(n) { const v = viewN(); return n <= v * 0.85 ? (n - 1) / 2 : Math.min(n - 1, v * 0.36); }
+  function angleAt(list, s) {
+    const i = clamp(Math.floor(s), 0, list.length - 1), j = Math.min(list.length - 1, i + 1), t = clamp(s - i, 0, 1);
+    const a = list[i].to;
+    let b = list[j].to;
+    while (b - a > Math.PI) b -= TAU;
+    while (a - b > Math.PI) b += TAU;
+    return a + (b - a) * t;
   }
-  // the pose for a set chosen: framed whole if it can be, and if it is too
-  // wide (Prin Lomros, a perfumer by year) close in all the same, on where
-  // most of it is — every choice zooms (2026-11-03: "make the zooming
-  // consistent; such that it zooms once a user selects a house or perfumer")
-  function poseOf(f, at) {
-    if (!f || !f.size) return overviewPose();
-    if (at != null) return closePose(at, R.look, zHi());
-    const arc = coverArc(Array.from(f, (e) => e.to));
-    const span = arc.span + slot * 2;
-    if (span <= MAX_FRAME) return closePose(arc.mid, R.look, clamp(L.zoomH / (span * R.label * 0.95), zLo(), zHi()));
-    return closePose(densest(f, MAX_FRAME * 0.8), R.look, zLo());
+  function poseOf(list) {
+    if (!list || !list.length) return overviewPose();
+    return closePose(angleAt(list, clamp(scrollS, 0, list.length - 1)), R.look, zFix());
   }
   // where a point of the chart would stand on the window, from a pose
   function screenUnder(q, x, y) {
@@ -615,12 +1127,12 @@
     return o;
   }
   function poseFor() {
-    if (!sel.kind || !focus || !focus.size) return overviewPose();
+    if (!sel.kind || !focusList || !focusList.length) return overviewPose();
     if (sel.kind === "perfume") {
       // a perfume is looked at from where its house (or its year) is: the
       // same place, its name lit there — moved only as far as it takes to
       // bring its dot onto the window, clear of its edges
-      const p = poseOf(focus, look), e = sel.e;
+      const p = poseOf(focusList), e = sel.e;
       const wx = Math.cos(e.to) * e.rDot, wy = Math.sin(e.to) * e.rDot;
       const F = callRoom(), m = phone ? 34 : 64;
       for (let i = 0; i <= 6; i++) {
@@ -631,7 +1143,7 @@
       }
       return Object.assign({}, p, { fx: wx, fy: wy });
     }
-    return poseOf(focus, look);
+    return poseOf(focusList);
   }
 
   // ---- WHAT IS CHOSEN ---------------------------------------------------
@@ -640,10 +1152,8 @@
   // once the chart has settled, and when the perfume was lit
   let callE = null, callWait = null, litT0 = -1;
   let focus = null, focusList = null, emT0 = -1;
-  // a closer look inside what is chosen, at an angle round the circle — for
-  // a house of many perfumes, whose names are small when it is seen whole
-  let look = null;
-  const canLookCloser = () => zoomed() && sel.kind !== "perfume" && Math.exp(goal.lz) < zHi() * 0.8;
+  // the perfume the scroll stands at, close in
+  const scrollAt = () => (focusList && zoomed() && sel.kind !== "perfume" ? focusList[clamp(Math.round(scrollS), 0, focusList.length - 1)] : null);
 
   // ---- DRAWING THE CHART -------------------------------------------------
   let intro = STILL ? 1 : 0, introT0 = -1;
@@ -723,7 +1233,25 @@
   }
   function groupEm(g) { let m = 0; for (const e of g.members) if (e.em > m) m = e.em; return m; }
 
-  function drawScene(withNames) {
+  // a cell of a ring, for a perfume: a quad between two radii, across
+  // nearly the whole of its slot
+  function cellPath(p, a, r0, r1, half) {
+    const a0 = a - slot * 0.4, a1 = a + slot * 0.4;
+    const c0 = Math.cos(a0), s0 = Math.sin(a0), c1 = Math.cos(a1), s1 = Math.sin(a1);
+    if (half) r1 = (r0 + r1) / 2;
+    proj(c0 * r0, s0 * r0, T0); if (!T0.ok) return;
+    if (!inView(T0.x, T0.y, 30)) return;
+    p.moveTo(T0.x, T0.y);
+    proj(c1 * r0, s1 * r0, T0); p.lineTo(T0.x, T0.y);
+    proj(c1 * r1, s1 * r1, T0); p.lineTo(T0.x, T0.y);
+    proj(c0 * r1, s0 * r1, T0); p.lineTo(T0.x, T0.y);
+    p.closePath();
+  }
+  // how far a perfume has come in as the chart opens: ring by ring, out
+  // from the Earth — the perfumer, then the house, then its bar
+  const stageIn = (g, k) => clamp(g * 3 - k, 0, 1);
+
+  function drawScene(withNames, withEarth) {
     const c = SF.c, z = V.z, fade = intro;
     visibleArc();
     base();
@@ -733,63 +1261,136 @@
     // the dust past the rim
     specks(c, dust, SOLID.ink, 0.8 * fade);
 
-    // the years' rings, every fifth a little brighter
+    // THE EARTH, on the chart itself whenever the chart is drawn in
+    // perspective (on the whole chart at rest it is the live layer's)
+    if (withEarth) {
+      earthUpright();
+      placePins();
+      drawEarth(c, clamp(intro * 2, 0, 1), !flyingNow);
+      drawFans(c, fade);
+      drawPins(c, clamp(intro * 2, 0, 1));
+      drawCross(c, fade);
+      drawDegrees(c, fade);
+      base();
+      c.textBaseline = "middle"; c.textAlign = "left";
+    }
+
+    // its frame, a double circle
     c.strokeStyle = SOLID.ink;
+    c.lineWidth = Math.max(0.5, 0.7 * z);
+    c.beginPath(); ringPath(c, R.frame0, -Math.PI / 2, Math.PI * 1.5);
+    c.globalAlpha = 0.34 * fade; c.stroke();
+    c.lineWidth = Math.max(0.5, 0.5 * z);
+    c.beginPath(); ringPath(c, R.frame1, -Math.PI / 2, Math.PI * 1.5);
+    c.globalAlpha = 0.2 * fade; c.stroke();
+
+    // the years' rings behind the bars, every fifth a little brighter
     c.lineWidth = Math.max(0.5, 0.6 * z);
     for (const bright of [false, true]) {
       c.beginPath();
       for (let y = Y_FROM + 1; y <= Y_TO; y++) if ((y % 5 === 0) === bright) ringPath(c, yearR(y), -Math.PI / 2, Math.PI * 1.5);
-      c.globalAlpha = (bright ? 0.13 : 0.06) * fade;
+      c.globalAlpha = (bright ? 0.12 : 0.05) * fade;
       c.stroke();
     }
     c.setLineDash([3, 4]);
     c.beginPath(); ringPath(c, R.und, -Math.PI / 2, Math.PI * 1.5);
     c.globalAlpha = 0.2 * fade; c.stroke();
     c.setLineDash([]);
-    c.beginPath(); ringPath(c, R.base, -Math.PI / 2, Math.PI * 1.5);
-    c.globalAlpha = 0.12 * fade; c.stroke();
+    // the three rings' edges
+    c.beginPath();
+    for (const r of [R.per0, R.per1, R.hou0, R.hou1, R.base]) ringPath(c, r, -Math.PI / 2, Math.PI * 1.5);
+    c.globalAlpha = 0.1 * fade; c.stroke();
     c.beginPath(); ringPath(c, R.tick1 + 1, -Math.PI / 2, Math.PI * 1.5);
     c.globalAlpha = 0.16 * fade; c.stroke();
 
-    // the gold haze round the globe
-    specks(c, haze, SOLID.gold, 0.9 * fade);
-
-    // the years named up the gap at the top
-    c.font = F.mono; c.fillStyle = SOLID.ink; c.globalAlpha = 0.42 * fade;
+    // the rings and the years named up the gap at the top, as the picture
+    // names its own
+    c.font = F.mono; c.fillStyle = SOLID.ink;
     const ga = gapAngle;
-    [2010, 2014, 2018, 2022, 2026].forEach((y) => {
-      textAt(c, Math.cos(ga) * yearR(y), Math.sin(ga) * yearR(y) - 4, ga + Math.PI / 2, String(y), 6.5, "center", F.mono);
-    });
-    textAt(c, Math.cos(ga) * R.und, Math.sin(ga) * R.und - 4, ga + Math.PI / 2, "NO YEAR FOUND", 5.4, "center", F.mono);
+    const say = (r, txt, size, alpha) => {
+      c.globalAlpha = alpha * fade;
+      textAt(c, Math.cos(ga) * r, Math.sin(ga) * r, ga + Math.PI / 2, txt, size, "center", F.mono);
+    };
+    say(R.perMid, mode === "az" ? "PERFUMER" : "YEAR", 6, 0.62);
+    say(R.houMid, "HOUSE", 6, 0.62);
+    say(R.base + 7, "PERFUME", 5.4, 0.62);
+    [2010, 2014, 2018, 2022, 2026].forEach((y) => say(yearR(y) - 3, String(y), 5.2, 0.42));
+    say(R.und - 3, "NO YEAR FOUND", 4.6, 0.42);
+    say(R.frame0 - 9, "THE EARTH", 5.4, 0.42);
     base();
 
-    // the band round the globe: a segment a group
-    const [gNew, gOld] = sortMix();
-    c.lineCap = "butt";
-    c.lineWidth = Math.max(1, (R.band1 - R.band0) * z * 0.9);
-    const band = (gs, alpha) => {
-      if (alpha <= 0) return;
-      gs.forEach((g, i) => {
-        c.beginPath(); ringPath(c, (R.band0 + R.band1) / 2, g.a0 + slot * 0.3, g.a1 - slot * 0.3);
-        c.globalAlpha = (i % 2 ? 0.1 : 0.2) * alpha * fade * (gs === groups ? 0.4 + 0.6 * groupEm(g) : 1);
-        c.stroke();
-      });
-    };
-    band(oldGroups, gOld); band(groups, gNew);
+    // RING 1, the perfumer: filled where a source names the perfumer, half
+    // where it is the house's, empty where none is found; RING 2, the house:
+    // in the colour of where the perfume is
+    const fills = {}, halfs = [], empties = [];
+    for (const e of entries) {
+      const g = growth(e);
+      if (g <= 0) continue;
+      const k1 = stageIn(g, 0);
+      if (k1 > 0) {
+        const lv = level(e.em * k1);
+        if (lv) {
+          if (e.p.c === "named") { const q = fills.ink || (fills.ink = []); cellPath(q[lv] || (q[lv] = new Path2D()), e.a, R.per0 + 1.5, R.perCell); }
+          else if (e.p.c === "house") { cellPath(halfs[lv] || (halfs[lv] = new Path2D()), e.a, R.per0 + 1.5, R.perCell); }
+          else cellPath(empties[lv] || (empties[lv] = new Path2D()), e.a, R.per0 + 1.5, R.perCell);
+        }
+      }
+      const k2 = stageIn(g, 0.7);
+      if (k2 > 0) {
+        const lv = level(e.em * k2);
+        if (lv) { const q = fills[e.tone] || (fills[e.tone] = []); cellPath(q[lv] || (q[lv] = new Path2D()), e.a, R.hou0 + 1.5, R.houCell); }
+      }
+    }
+    for (const key of ["ink", "rose", "blue", "gold"]) {
+      const q = fills[key];
+      if (!q) continue;
+      c.fillStyle = SOLID[key];
+      const a = key === "ink" ? 0.5 : key === "rose" ? 0.5 : 0.62;
+      for (let lv = 1; lv <= LV; lv++) if (q[lv]) { c.globalAlpha = (a * lv) / LV; c.fill(q[lv]); }
+    }
+    c.strokeStyle = SOLID.ink; c.fillStyle = SOLID.ink;
+    c.lineWidth = Math.max(0.5, 0.55 * z);
+    for (let lv = 1; lv <= LV; lv++) {
+      if (halfs[lv]) { c.globalAlpha = (0.42 * lv) / LV; c.fill(halfs[lv]); }
+      if (empties[lv]) { c.globalAlpha = (0.42 * lv) / LV; c.stroke(empties[lv]); }
+    }
+    // a half-filled cell is outlined whole, so its empty half reads
+    const halfLines = [];
+    for (const e of entries) {
+      if (e.p.c !== "house") continue;
+      const lv = level(e.em * stageIn(growth(e), 0));
+      if (lv) cellPath(halfLines[lv] || (halfLines[lv] = new Path2D()), e.a, R.per0 + 1.5, R.perCell);
+    }
+    for (let lv = 1; lv <= LV; lv++) if (halfLines[lv]) { c.globalAlpha = (0.34 * lv) / LV; c.stroke(halfLines[lv]); }
 
-    // the spokes, by credit, tone and emphasis
-    const lw = clamp(0.8 * z, 0.55, 2.4);
-    const dashes = { named: [], house: [clamp(3.5 * z, 2, 9), clamp(3 * z, 2, 7)], none: [1, clamp(3 * z, 2.4, 7)] };
+    // a mark where every group begins on ring 1, and every house on ring 2
+    c.beginPath();
+    for (const g of groups) {
+      const a = g.a0;
+      proj(Math.cos(a) * R.frame1, Math.sin(a) * R.frame1, T0); proj(Math.cos(a) * R.per1, Math.sin(a) * R.per1, T1);
+      if (T0.ok && T1.ok && (inView(T0.x, T0.y, 20) || inView(T1.x, T1.y, 20))) { c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); }
+      for (const h of g.houses) {
+        proj(Math.cos(h.a0) * (R.hou0 - 3), Math.sin(h.a0) * (R.hou0 - 3), T0); proj(Math.cos(h.a0) * (R.hou1 + 3), Math.sin(h.a0) * (R.hou1 + 3), T1);
+        if (T0.ok && T1.ok && inView(T0.x, T0.y, 20)) { c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); }
+      }
+    }
+    c.lineWidth = Math.max(0.5, 0.6 * z);
+    c.globalAlpha = 0.3 * clamp(intro * 1.5 - 0.3, 0, 1); c.stroke();
+
+    // RING 3, the perfume: a bar out to its year
+    const lw = clamp(1.05 * z, 0.7, 2.8);
     c.lineWidth = lw;
-    for (const cr of CREDITS) {
-      c.setLineDash(dashes[cr]);
+    c.lineCap = "butt";
+    for (const dated of [true, false]) {
+      c.setLineDash(dated ? [] : [1, clamp(3 * z, 2.4, 7)]);
       for (const tone of TONES) {
         const paths = [];
-        for (const e of byCT[cr][tone]) {
-          const g = growth(e);
+        for (const e of byTone[tone]) {
+          if (!!e.p.y !== dated) continue;
+          const g = stageIn(growth(e), 1.5);
           if (g <= 0) continue;
           const ca = Math.cos(e.a), sa = Math.sin(e.a);
-          const r1 = R.base + (e.rDot - R.base) * g;
+          const r1 = R.base + (e.rDot - R.base) * ease(g);
           proj(ca * R.base, sa * R.base, T0);
           proj(ca * r1, sa * r1, T1);
           if (!T0.ok || !T1.ok) continue;
@@ -798,22 +1399,22 @@
           const p = paths[lv] || (paths[lv] = new Path2D());
           p.moveTo(T0.x, T0.y); p.lineTo(T1.x, T1.y);
         }
-        c.strokeStyle = SOLID[tone];
-        const a = tone === "rose" ? 0.42 : 0.6;
+        c.strokeStyle = tone === "rose" ? SOLID.ink : SOLID[tone];
+        const a = tone === "rose" ? 0.34 : 0.5;
         for (let lv = 0; lv <= LV; lv++) if (paths[lv]) { c.globalAlpha = (a * lv) / LV; c.stroke(paths[lv]); }
       }
     }
     c.setLineDash([]);
 
-    // the dots
+    // the dots at the bars' ends
     for (const tone of TONES) {
       const glow = [], core = [], hollow = [];
       let hw = 0, hn = 0;
       for (const e of entries) {
-        if (e.tone !== tone || growth(e) < 0.98) continue;
+        if (e.tone !== tone || stageIn(growth(e), 1.5) < 0.98) continue;
         proj(Math.cos(e.a) * e.rDot, Math.sin(e.a) * e.rDot, T0);
         if (!T0.ok || !inView(T0.x, T0.y, 20)) continue;
-        const rr = Math.max(1.1, (tone === "rose" ? 3 : 3.8) * z * T0.k);
+        const rr = Math.max(1.1, (tone === "rose" ? 2.8 : 3.5) * z * T0.k);
         const lv = level(e.em);
         if (e.p.y) {
           const g = glow[lv] || (glow[lv] = new Path2D());
@@ -830,7 +1431,7 @@
       c.lineWidth = Math.max(0.7, hn ? hw / hn : 1);
       for (let lv = 0; lv <= LV; lv++) {
         const k = lv / LV;
-        if (glow[lv]) { c.globalAlpha = 0.16 * k; c.fill(glow[lv]); }
+        if (glow[lv]) { c.globalAlpha = 0.14 * k; c.fill(glow[lv]); }
         if (core[lv]) { c.globalAlpha = k; c.fill(core[lv]); }
         if (hollow[lv]) { c.globalAlpha = k; c.stroke(hollow[lv]); }
       }
@@ -948,8 +1549,9 @@
     base();
   }
 
-  // The group names along the rim — and, for a chosen perfumer, its houses
-  // in its name's place, with a square where each begins.
+  // The groups' names along ring 1 — the perfumers (the years, By year) —
+  // and, for a chosen perfumer, its houses along ring 2, with a square where
+  // each begins.
   function drawNames(c, mul) {
     const [gNew, gOld] = sortMix();
     namesFor(c, oldGroups, gOld * mul);
@@ -961,11 +1563,12 @@
     const z = V.z;
     c.textBaseline = "middle"; c.textAlign = "left";
     const chosenG = mode === "az" && sel.pid && gs === groups ? gs.find((g) => g.id === sel.pid) : null;
-    c.font = F.group; c.fillStyle = SOLID.ink;
+    c.font = F.group;
     for (const g of gs) {
-      if (g === chosenG || !g.size || g.size * z < 2.3) continue;
+      if (!g.size || g.size * z < 2.3) continue;
+      c.fillStyle = g === chosenG ? SOLID.gold : SOLID.ink;
       const em = gs === groups && focus ? 0.4 + 0.6 * (groupEm(g) - DIM) / (1 - DIM) : 1;
-      arcText(c, g.text, R.group, (g.a0 + g.a1) / 2, g.size, F.group, trackOf(g.size), 0.92 * alpha * em);
+      arcText(c, g.text, R.perMid, (g.a0 + g.a1) / 2, g.size, F.group, trackOf(g.size), 0.92 * alpha * em);
     }
     if (!chosenG) { base(); return; }
     c.font = F.house;
@@ -974,12 +1577,12 @@
       if (!size || size * z < 2.3) continue;
       const on = sel.hid === h.h;
       c.fillStyle = on ? SOLID.gold : SOLID.ink;
-      arcText(c, h.text, R.group, (h.a0 + h.a1) / 2, size, F.house, 0.18, alpha * (sel.hid && !on ? 0.5 : 0.95));
+      arcText(c, h.text, R.houMid, (h.a0 + h.a1) / 2, size, F.house, 0.18, alpha * (sel.hid && !on ? 0.5 : 0.95));
     }
     base();
     for (const h of chosenG.houses) {
       const a = h.a0 + slot * 0.5;
-      proj(Math.cos(a) * (R.tick0 - 4), Math.sin(a) * (R.tick0 - 4), T0);
+      proj(Math.cos(a) * (R.hou1 + 4), Math.sin(a) * (R.hou1 + 4), T0);
       if (!T0.ok) continue;
       const sq = Math.max(1.4, 2.8 * z * T0.k);
       c.fillStyle = sel.hid === h.h ? SOLID.gold : SOLID.ink;
@@ -1000,7 +1603,8 @@
     tctx.clearRect(0, 0, cvTurn.width, cvTurn.height);
     surface(tctx, k, 0, 0, k, 0, 0, 0, 0, S, S);
     view(0, 0, fitZ, 0, 0, S / 2, S / 2);
-    drawScene(false);
+    // (the Earth is not in it: the rotor turns, and the Earth stands upright)
+    drawScene(false, false);
   }
   function placeRotor() {
     const x = cam.cx * W - S / 2, y = cam.cy * H - S / 2;
@@ -1011,16 +1615,19 @@
   }
 
   // ---- THE CHART IN PERSPECTIVE ---------------------------------------------
+  let flyingNow = false;
   function drawChart(lo) {
     chartDirty = false;
     stats.chart++;
-    lo = !!lo && FLY_K < DPR;
+    const moving = !!lo;
+    lo = moving && FLY_K < DPR;
     const k = lo ? FLY_K : DPR, c = lo ? fctx : ctx, cv = lo ? cvFly : cvChart;
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.clearRect(0, 0, cv.width, cv.height);
     surface(c, k, 0, 0, k, k * OV, k * OV, -OV, -OV, W + OV, H + OV);
     viewCam();
-    drawScene(true);
+    flyingNow = moving;
+    drawScene(true, true);
     setFlying(lo);
   }
   function setFlying(on) {
@@ -1113,7 +1720,7 @@
   }
 
   // ---- THE LIVE LAYER: what moves of itself, and what the hand is on --------
-  let clock = 0, globeAngle = 0, hover = null;
+  let clock = 0, hover = null;
   const pulses = [];
   let pulseNext = 1.2;
   function tendPulses() {
@@ -1157,82 +1764,63 @@
       c.fillRect(T0.x - s / 2, T0.y - s / 2, s, s);
     }
 
-    // the globe
-    proj(0, 0, T0);
-    if (T0.ok) {
-      const gr = R.sphere * z * T0.k;
-      if (T0.x + gr > -50 && T0.x - gr < W + 50 && T0.y + gr > -50 && T0.y - gr < H + 50) {
-        drawGlobe(c, T0.x, T0.y, gr, clamp(intro * 2, 0, 1) * quietAt(T0.x, T0.y, q * 0.8), t);
-      }
+    // THE EARTH, on the whole chart: its picture, laid down; its lines out
+    // to the rings and its cross-hairs, drawn on it — close in it is part of
+    // the chart's own drawing, and only the lights are drawn here
+    if (viewNow === "turn") {
+      proj(0, 0, T0);
+      const ox = T0.x, oy = T0.y;
+      const er = R.earth * z;
+      const ea = clamp(intro * 2, 0, 1);
+      earthPicture(er, ea);
+      const sz = Math.ceil(2 * (er + earthPad));
+      const css = "translate(" + (ox - sz / 2).toFixed(2) + "px," + (oy - sz / 2).toFixed(2) + "px)";
+      if (css !== lastEarthCss) { earthCv.style.transform = css; lastEarthCss = css; }
+      base();
+      EM.flat = true; EM.cx = ox; EM.cy = oy; EM.r = er;
+      drawFans(c, fade);
+      drawCross(c, fade);
+    } else {
+      viewCam();
+      earthUpright();
+      placePins();
     }
 
-    // a glint running round the band
+    // a glint running round ring 1
     if (!STILL && intro >= 1) {
       const a = -Math.PI / 2 + ((t / 24) % 1) * TAU;
       c.strokeStyle = SOLID.gold;
       c.lineCap = "round";
-      c.lineWidth = Math.max(1, (R.band1 - R.band0) * z * 0.5);
-      const rm = (R.band0 + R.band1) / 2;
+      c.lineWidth = Math.max(1, 3 * z);
       [[0.32, 0.07], [0.16, 0.12], [0.06, 0.22]].forEach(([len, al]) => {
-        c.beginPath(); ringPath(c, rm, a - len, a);
+        c.beginPath(); ringPath(c, R.frame1 + 1, a - len, a);
         c.globalAlpha = al; c.stroke();
       });
       c.lineCap = "butt";
     }
 
-    // the lights running out along the spokes
+    // the lights, from a house's country through the three rings
     drawPulses(c, t);
 
-    // the names on the rim, while the chart turns — here so that they turn
+    // the names on the rings, while the chart turns — here so that they turn
     // over as they come round, rather than stand upside down
     if (viewNow === "turn") drawNames(c, 1);
 
     // what is chosen, lit, while it is seen on the whole chart (close in its
     // names are written instead)
     if (focusList && !sel.e && q < 0.5) { c.globalAlpha = 1; markSpokes(c, focusList, 0.75 * (1 - 2 * q)); }
+    // the perfume the scroll stands at, close in
+    const at = scrollAt();
+    if (at && q > 0.6 && !hover) markAt(c, at);
     // what is lit, and what the hand is on
     if (sel.e) { markEntry(c, sel.e); markLit(c, sel.e); }
     if (callE && callAt.ok) drawCallLine(c);
     if (hover) drawHover(c);
     c.globalAlpha = 1;
   }
-  function drawGlobe(c, cx, cy, gr, alpha, t) {
-    if (alpha <= 0.01) return;
-    // a dark disc first, so the dust behind does not show through it
-    const g0 = c.createRadialGradient(cx - gr * 0.35, cy - gr * 0.4, gr * 0.1, cx, cy, gr);
-    g0.addColorStop(0, "rgb(40,46,56)");
-    g0.addColorStop(1, "rgb(8,9,11)");
-    c.globalAlpha = alpha;
-    c.fillStyle = g0;
-    c.beginPath(); c.arc(cx, cy, gr, 0, TAU); c.fill();
-    const ca = Math.cos(globeAngle), sa = Math.sin(globeAngle);
-    const ct = Math.cos(0.41), st = Math.sin(0.41);
-    const lx = -0.55, ly = -0.55, lz = 0.63;
-    const sz = Math.max(0.6, gr * 0.02);
-    for (let pass = 0; pass < 2; pass++) {
-      c.fillStyle = pass ? SOLID.gold : SOLID.blue;
-      for (let i = 0; i < GN; i++) {
-        const o = i * 4, x = globe[o], y = globe[o + 1], zz = globe[o + 2];
-        const x1 = x * ca + zz * sa, z1 = -x * sa + zz * ca;
-        const y2 = y * ct - z1 * st, z2 = y * st + z1 * ct;
-        if (z2 < -0.05) continue;
-        const lit = x1 * lx + y2 * ly + z2 * lz;
-        if (!pass && lit > 0) {
-          c.globalAlpha = (0.18 + lit * 0.7) * z2 * alpha;
-          c.fillRect(cx + x1 * gr - sz / 2, cy + y2 * gr - sz / 2, sz, sz);
-        } else if (pass && lit <= 0 && globe[o + 3] > 0.84) {
-          // the lights on the night side, twinkling
-          c.globalAlpha = (0.35 + globe[o + 3] * 0.5) * z2 * alpha * (0.75 + 0.25 * Math.sin(t * (1.3 + globe[o + 3] * 2) + i));
-          c.fillRect(cx + x1 * gr - sz * 0.6, cy + y2 * gr - sz * 0.6, sz * 1.2, sz * 1.2);
-        }
-      }
-    }
-    c.globalAlpha = 0.35 * alpha;
-    c.strokeStyle = SOLID.blue;
-    c.lineWidth = Math.max(0.6, gr * 0.012);
-    c.beginPath(); c.arc(cx, cy, gr, Math.PI * 0.85, Math.PI * 1.75); c.stroke();
-    c.globalAlpha = 1;
-  }
+  // A light runs from the perfume's house's country (when it faces you) to
+  // its place on the Earth's frame, and on out through the three rings —
+  // the perfumer, the house — to its dot, which flares as it arrives.
   function drawPulses(c, t) {
     if (!pulses.length) return;
     const z = V.z;
@@ -1243,13 +1831,28 @@
       const ca = Math.cos(e.a), sa = Math.sin(e.a);
       c.strokeStyle = SOLID[e.tone]; c.fillStyle = SOLID[e.tone];
       const em = 0.35 + 0.65 * e.em;
+      const pin = e.pin && e.pin.z > 0.08 ? e.pin : null;
+      const split = pin ? 0.42 : 0;
       if (u < 1) {
-        const k = ease(u), r = R.base + (e.rDot - R.base) * k;
-        const tail = Math.min(46, r - R.base);
+        const a = Math.sin(Math.PI * u);
+        c.lineWidth = clamp(1.6 * z, 1, 3);
+        if (u < split) {
+          // across the Earth, from the country
+          const k = ease(u / split), k0 = Math.max(0, k - 0.16);
+          emap(pin.x, pin.y, T2); if (!T2.ok) continue;
+          proj(ca * R.frame1, sa * R.frame1, T1); if (!T1.ok) continue;
+          const x0 = lerp(T2.x, T1.x, k0), y0 = lerp(T2.y, T1.y, k0), x1 = lerp(T2.x, T1.x, k), y1 = lerp(T2.y, T1.y, k);
+          if (!inView(x1, y1, 20)) continue;
+          c.globalAlpha = 0.7 * a * em;
+          c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
+          c.globalAlpha = 0.9 * a * em;
+          c.beginPath(); c.arc(x1, y1, clamp(1.8 * z, 1.1, 3.4), 0, TAU); c.fill();
+          continue;
+        }
+        const k = ease((u - split) / (1 - split)), r = R.frame1 + (e.rDot - R.frame1) * k;
+        const tail = Math.min(46, r - R.frame1);
         proj(ca * (r - tail), sa * (r - tail), T0); proj(ca * r, sa * r, T1);
         if (!T0.ok || !T1.ok || (!inView(T0.x, T0.y, 20) && !inView(T1.x, T1.y, 20))) continue;
-        const a = Math.sin(Math.PI * u);
-        c.lineWidth = clamp(1.7 * z, 1, 3.2);
         c.globalAlpha = 0.85 * a * em;
         c.beginPath(); c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); c.stroke();
         c.globalAlpha = 0.95 * a * em;
@@ -1271,12 +1874,15 @@
     c.lineCap = "butt";
     c.globalAlpha = 1;
   }
+  // what is lit: its two cells outlined and its bar, in its colour, a ring
+  // round its dot
   function markSpokes(c, list, alpha) {
     const z = V.z;
-    c.lineWidth = clamp(1.4 * z, 1, 3.4);
     for (const tone of TONES) {
       c.strokeStyle = SOLID[tone];
       c.globalAlpha = 0.95 * (alpha == null ? 1 : alpha);
+      const cells = new Path2D();
+      c.lineWidth = clamp(1.4 * z, 1, 3.4);
       c.beginPath();
       for (const e of list) {
         if (e.tone !== tone) continue;
@@ -1286,9 +1892,34 @@
         c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y);
         const rr = Math.max(2.2, 5.2 * z * T1.k);
         c.moveTo(T1.x + rr, T1.y); c.arc(T1.x, T1.y, rr, 0, TAU);
+        if (list.length < 90) { cellPath(cells, e.a, R.per0 + 0.5, R.perCell + 1); cellPath(cells, e.a, R.hou0 + 0.5, R.houCell + 1); }
       }
       c.stroke();
+      c.lineWidth = Math.max(0.7, 0.8 * z);
+      c.stroke(cells);
     }
+  }
+  // the perfume the scroll stands at, close in: a bracket at its place on
+  // the rim and its name a little brighter, as the scrubber says
+  function markAt(c, e) {
+    const ca = Math.cos(e.a), sa = Math.sin(e.a);
+    proj(ca * (R.tick0 - 6), sa * (R.tick0 - 6), T0); proj(ca * (R.tick1 + 6), sa * (R.tick1 + 6), T1);
+    if (!T0.ok || !T1.ok) return;
+    c.strokeStyle = SOLID.gold; c.lineWidth = 1.2; c.globalAlpha = 0.9;
+    c.beginPath(); c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); c.stroke();
+    proj(ca * e.rDot, sa * e.rDot, T0);
+    if (T0.ok) {
+      const rr = Math.max(3, 5 * V.z * T0.k);
+      c.globalAlpha = 0.7; c.beginPath(); c.arc(T0.x, T0.y, rr * 1.7, 0, TAU); c.stroke();
+    }
+    if (written(e) && closeAmt() > 0.5) {
+      const P = placeLabel(e, labelSize());
+      c.textBaseline = "middle"; c.textAlign = "left";
+      c.font = P.font; c.fillStyle = SOLID.gold; c.globalAlpha = 0.85 * closeAmt();
+      textAt(c, Math.cos(e.a) * P.rMain, Math.sin(e.a) * P.rMain, P.dir, P.main, P.size, "left", P.font);
+      base();
+    }
+    c.globalAlpha = 1;
   }
   function markEntry(c, e) {
     markSpokes(c, [e]);
@@ -1348,26 +1979,41 @@
   function drawHover(c) {
     const h = hover;
     if (h.type === "entry") { markEntry(c, h.e); return; }
+    if (h.type === "pin") { markSpokes(c, h.p.entries.length > 160 ? [] : h.p.entries); drawPinRing(c, h.p); return; }
     const list = h.type === "group" ? h.g.members : h.type === "house" ? h.h.members : h.list;
     markSpokes(c, list);
     const g = h.type === "group" ? h.g : h.type === "house" ? null : h.g;
     if (g) {
-      c.lineWidth = Math.max(1, (R.band1 - R.band0) * V.z * 0.9);
+      c.lineWidth = Math.max(1, 2.2 * V.z);
       c.strokeStyle = SOLID.gold; c.globalAlpha = 0.8;
-      c.beginPath(); ringPath(c, (R.band0 + R.band1) / 2, g.a0 + slot * 0.3, g.a1 - slot * 0.3); c.stroke();
-      const chosenHere = mode === "az" && sel.pid === g.id;
-      if (g.size && !chosenHere) {
+      c.beginPath(); ringPath(c, R.per0 - 3, g.a0 + slot * 0.3, g.a1 - slot * 0.3); c.stroke();
+      if (g.size) {
         c.font = F.group; c.fillStyle = SOLID.gold;
         c.textBaseline = "middle"; c.textAlign = "left";
-        arcText(c, g.text, R.group, (g.a0 + g.a1) / 2, g.size, F.group, trackOf(g.size), 1);
+        arcText(c, g.text, R.perMid, (g.a0 + g.a1) / 2, g.size, F.group, trackOf(g.size), 1);
       }
     }
-    if (h.type === "house" && h.h.size) {
-      c.font = F.house; c.fillStyle = SOLID.gold;
-      c.textBaseline = "middle"; c.textAlign = "left";
-      arcText(c, h.h.text, R.group, (h.h.a0 + h.h.a1) / 2, houseSize(h.h, V.z), F.house, 0.18, 1);
+    if (h.type === "house") {
+      c.lineWidth = Math.max(1, 2.2 * V.z);
+      c.strokeStyle = SOLID.gold; c.globalAlpha = 0.8;
+      c.beginPath(); ringPath(c, R.hou0 - 3, h.h.a0 + slot * 0.3, h.h.a1 - slot * 0.3); c.stroke();
+      if (h.h.size) {
+        c.font = F.house; c.fillStyle = SOLID.gold;
+        c.textBaseline = "middle"; c.textAlign = "left";
+        arcText(c, h.h.text, R.houMid, (h.h.a0 + h.h.a1) / 2, houseSize(h.h, V.z), F.house, 0.18, 1);
+      }
     }
     base();
+  }
+  // a country pointed at on the Earth: a ring round its pin
+  function drawPinRing(c, p) {
+    if (p.z < 0.02) return;
+    emap(p.x, p.y, T0); if (!T0.ok) return;
+    c.strokeStyle = SOLID.gold; c.lineWidth = 1; c.globalAlpha = 0.9;
+    c.beginPath(); c.arc(T0.x, T0.y, 11, 0, TAU); c.stroke();
+    c.globalAlpha = 0.4;
+    c.beginPath(); c.arc(T0.x, T0.y, 17, 0, TAU); c.stroke();
+    c.globalAlpha = 1;
   }
 
   // ---- THE CLOCK -------------------------------------------------------
@@ -1414,12 +2060,19 @@
       goal.rot += SPIN * dt;
       cam.rot = lead.rot = goal.rot;
     }
-    if (running) globeAngle += dt * 0.07;
+    // the Earth: turning slowly on its axis at rest, and turned to the
+    // country of what is chosen (and still while anything is)
+    let earthTurning = false;
+    if (spinTween) {
+      const t = STILL ? 1 : clamp((now - spinTween.t0) / spinTween.ms, 0, 1);
+      spin = spinTween.from + (spinTween.to - spinTween.from) * ease(t);
+      if (t >= 1) spinTween = null; else earthTurning = true;
+    } else if (!sel.kind && running) spin += EARTH_SPIN * dt;
 
     // flat and centred, a move is only a turn, a slide and a scale — the
     // rotor's to carry; anything else is drawn as it goes
     const flat = !zoomed() && cam.tilt < 1e-4 && Math.abs(cam.fx) < 0.01 && Math.abs(cam.fy) < 0.01;
-    const settling = moving || sorting || fading || intro < 1;
+    const settling = moving || sorting || fading || intro < 1 || (earthTurning && zoomed());
     const v = settling && !(flat && !sorting && !fading && intro >= 1) ? "live" : zoomed() ? "still" : "turn";
     if (v !== viewNow) {
       if (v === "turn") { if (rotorDirty) renderRotor(); dofOff(); }
@@ -1478,7 +2131,20 @@
     const w = unproj(p.x, p.y);
     if (!w) return null;
     const r = Math.hypot(w.x, w.y);
-    if (r < R.sphere || r > R.fit) return null;
+    if (r < R.frame1) {
+      // on the Earth, on the whole chart: a country with a pin
+      if (zoomed() || cam.tilt > 0.01) return null;
+      proj(0, 0, T0);
+      const er = R.earth * V.z;
+      let best = null, bd = 14;
+      for (const q of PINS) {
+        if (q.z < 0.05) continue;
+        const d = Math.hypot(T0.x + er * q.x - p.x, T0.y - er * q.y - p.y);
+        if (d < bd) { bd = d; best = q; }
+      }
+      return best ? { type: "pin", p: best } : null;
+    }
+    if (r > R.fit) return null;
     const th = Math.atan2(w.y, w.x);
     const g = groupAt(th);
     if (!g) return null;
@@ -1498,9 +2164,17 @@
   }
   function sameHover(a, b) {
     if (!a || !b || a.type !== b.type) return a === b;
-    return (a.e || a.h || a.g || a.list) === (b.e || b.h || b.g || b.list);
+    return (a.e || a.h || a.g || a.list || a.p) === (b.e || b.h || b.g || b.list || b.p);
   }
   function tipFor(h) {
+    if (h.type === "pin") {
+      const q = h.p, n = q.entries.length;
+      const lines = [];
+      if (q.houses.length) lines.push(q.houses.length + (q.houses.length === 1 ? " house · " : " houses · ") + n + (n === 1 ? " perfume" : " perfumes"));
+      if (q.houses.length) lines.push(q.houses.map((id) => HOU[id].name).join(", "));
+      if (q.perfumers.length) lines.push("from here: " + q.perfumers.map((id) => PER[id].name).join(", "));
+      return "<b>" + esc(q.name) + "</b>" + lines.map((t) => "<span>" + esc(t) + "</span>").join("");
+    }
     if (h.type === "entry") {
       const e = h.e, p = e.p;
       const who = p.p.map((id) => PER[id].name).join(" & ");
@@ -1533,15 +2207,25 @@
 
   // ---- THE HAND ----------------------------------------------------------
   let down = null, handHover = false;
-  const CHROME = "button, a, .pf-nav, .pf-here, .pf-sort, .pf-call";
+  const CHROME = "button, a, .pf-nav, .pf-here, .pf-sort, .pf-call, .pf-scrub";
   function localXY(ev) { const b = stage.getBoundingClientRect(); return { x: ev.clientX - b.left, y: ev.clientY - b.top }; }
   stage.addEventListener("pointerdown", (ev) => {
     if (ev.target.closest(CHROME)) return;
     const p = localXY(ev);
-    down = { x: p.x, y: p.y };
+    down = { x: p.x, y: p.y, ly: p.y, lx: p.x, swiped: false };
   });
   stage.addEventListener("pointermove", (ev) => {
-    if (ev.pointerType === "touch") return;
+    if (ev.pointerType === "touch") {
+      // a finger close in goes through the perfumes of what is chosen, as
+      // the wheel does: up for the next, down for the one before
+      if (!down || !sel.kind || !zoomed()) return;
+      const p = localXY(ev);
+      const dy = p.y - down.ly, dx = p.x - down.lx;
+      down.ly = p.y; down.lx = p.x;
+      if (Math.hypot(p.x - down.x, p.y - down.y) > 10) down.swiped = true;
+      if (down.swiped) scrollBy(-(Math.abs(dy) >= Math.abs(dx) ? dy : dx) / SWIPE_PX);
+      return;
+    }
     if (ev.target.closest(CHROME)) { if (handHover) clearHandHover(); return; }
     if (viewNow === "live" && zoomed()) return;
     const p = localXY(ev);
@@ -1561,7 +2245,7 @@
     if (!down) return;
     const p = localXY(ev), was = down;
     down = null;
-    if (Math.hypot(p.x - was.x, p.y - was.y) > 10) return;
+    if (was.swiped || Math.hypot(p.x - was.x, p.y - was.y) > 10) return;
     press(hit(p.x, p.y));
   });
   stage.addEventListener("pointercancel", () => { down = null; });
@@ -1569,36 +2253,35 @@
   function press(h) {
     if (!h) { if (callE) dismissCall(); return; }
     if (h.type === "entry") { choosePerfume(h.e); return; }
-    // pressed inside what is already chosen: a closer look there, if there
-    // is one to be had
+    // pressed inside what is already chosen: the scroll goes to the perfume
+    // nearest to where it was pressed
     const already = h.type === "house" ? sel.kind === "house" && sel.hid === h.h.h
       : mode === "az" ? sel.pid === h.g.id && sel.kind === "perfumer" : sel.kind === "year" && sel.year === h.g.key;
-    if (already) { if (canLookCloser() || look != null) lookAt(h.th); return; }
+    if (already) { lookAt(h.th); return; }
     if (h.type === "house") { chooseHouse(h.g.id, h.h.h); return; }
     if (mode === "az") choosePerfumer(h.g.id);
     else chooseYear(h.g.key);
   }
+  // pressed inside what is chosen: the scroll goes to the perfume nearest
+  // to where it was pressed
   function lookAt(th) {
-    // the nearest of the chosen to where it was pressed
-    let best = null, bd = Infinity;
-    for (const e of focusList || []) { const d = angDist(th, e.to); if (d < bd) { bd = d; best = e; } }
-    if (!best) return;
-    look = best.to;
-    hover = null; hideTip();
-    setGoal(poseFor());
-    showChosen();
+    let best = -1, bd = Infinity;
+    (focusList || []).forEach((e, i) => { const d = angDist(th, e.to); if (d < bd) { bd = d; best = i; } });
+    if (best < 0) return;
+    scrollTo(best);
   }
 
   // ---- CHOOSING ----------------------------------------------------------
   function choose(next) {
     const was = sel;
     sel = Object.assign({ kind: null, pid: null, hid: null, year: null, e: null }, next || {});
-    // a perfume chosen where a closer look already is keeps that look: the
-    // perspective it is chosen from is the one it is shown in
-    // — and going back up from it keeps it too
+    // a perfume chosen keeps the scroll where it is: the perspective it is
+    // chosen from is the one it is shown in — and going back up from it
+    // keeps it too
     const sameParent = (sel.kind === "perfume" || was.kind === "perfume") && was.kind && sel.kind &&
       was.pid === sel.pid && was.hid === sel.hid && was.year === sel.year;
-    if (!sameParent) look = null;
+    const wasAt = focusList && focusList.length ? focusList[clamp(Math.round(scrollS), 0, focusList.length - 1)] : null;
+    const wasFocus = focus;
     if (sel.e !== callE) closeCall(true);
     if (!sel.kind) focus = null;
     else {
@@ -1610,6 +2293,19 @@
       focus = new Set(entries.filter(f));
     }
     focusList = focus ? order.filter((e) => focus.has(e)) : null;
+    // where the scroll stands in it: where it stood, for a perfume chosen in
+    // it or going back up from one; at the same perfume, going up from a
+    // house to its perfumer; else at its start
+    if (focusList) {
+      const up = wasFocus && wasAt && focus.has(wasAt) && focus.size > wasFocus.size;
+      if (sameParent) scrollS = clamp(scrollS, 0, focusList.length - 1);
+      else if (up) scrollS = focusList.indexOf(wasAt);
+      else scrollS = startAt(focusList.length);
+    } else scrollS = 0;
+    // the Earth's countries lit, and the Earth turned to the choice's
+    PINS.forEach((q) => (q.lit = !!focus && (q.entries.some((e) => focus.has(e)) || !!(sel.pid && PER[sel.pid] && PER[sel.pid].from === q.name))));
+    if (!sel.kind) spinTween = null;
+    else turnEarthTo(countryOf(sel.e ? [sel.e] : focusList, sel.pid));
     // a perfume chosen is lit, the rest of its house stepped back a little
     // and everything else as far as ever
     for (const e of entries) { e.emFrom = e.em; e.emTo = !focus ? 1 : sel.e ? (e === sel.e ? 1 : focus.has(e) ? AROUND : DIM) : focus.has(e) ? 1 : DIM; }
@@ -1618,6 +2314,7 @@
     hover = null; hideTip(); handHover = false; stage.classList.remove("is-over");
     setGoal(poseFor());
     showChosen();
+    syncScrub();
     if (sel.kind && window.scrollY > 1) window.scrollTo({ top: 0, behavior: STILL ? "auto" : "smooth" });
     kick();
   }
@@ -1635,14 +2332,15 @@
     else { next.pid = e.pid; next.hid = e.p.h; }
     if (sel.kind === "perfume" && sel.e === e) { if (!quiet && !callE) callFor(e, 0); return; }
     choose(next);
+    // brought onto the window if the scroll stands far from it
+    const i = focusList ? focusList.indexOf(e) : -1;
+    if (i >= 0 && Math.abs(i - scrollS) > viewN() * 0.3) { scrollS = i; setGoal(poseFor()); syncScrub(); }
     litT0 = performance.now();
     if (phone && navOpen) toggleNav(false);
     if (!quiet) callFor(e, STILL ? 0 : CALL_AFTER);
   }
   function up() {
     if (sel.kind === "perfume") { closeCall(); if (sel.year != null) chooseYear(sel.year); else chooseHouse(sel.pid, sel.hid); return; }
-    if (look != null) { look = null; setGoal(poseFor()); showChosen(); return; }
-    if (sel.kind === "perfume") { if (sel.year != null) chooseYear(sel.year); else chooseHouse(sel.pid, sel.hid); return; }
     if (sel.kind === "house") { choosePerfumer(sel.pid); return; }
     choose(null);
   }
@@ -1657,11 +2355,15 @@
     hold(on);
     const touch = window.matchMedia("(hover: none)").matches;
     const back = touch ? "" : " · Esc to go back";
+    // the wheel goes through the perfumes of what is chosen — said only
+    // where there are more of them than the window holds
+    const many = focusList && focusList.length > viewN() * 0.85;
+    const through = many ? (touch ? " · swipe for the rest" : " · scroll for the rest") : "";
     hint.textContent = !on ? (mode === "az" ? (touch ? "Tap a perfumer — on the circle or in the list" : "Choose a perfumer — on the circle or in the list")
       : (touch ? "Tap a year — or a perfumer in the list" : "Choose a year — or a perfumer in the list"))
-      : sel.kind === "perfumer" ? (zoomed() || mode === "az" ? "Choose a house" + back : "Choose a house in the list" + back)
+      : sel.kind === "perfumer" ? (mode === "az" ? "Choose a house" : "Choose a perfume") + through + back
       : sel.kind === "perfume" ? (touch ? "" : "Esc to go back")
-      : (!zoomed() ? "Choose a perfume in the list" : canLookCloser() ? (touch ? "Tap a perfume — or tap to look closer" : "Choose a perfume — or click to look closer") : "Choose a perfume") + back;
+      : "Choose a perfume" + through + back;
     clearTimeout(hereTimer);
     if (!on) {
       here.classList.remove("is-on");
@@ -1958,7 +2660,8 @@
     return dy < 0 ? el.scrollTop > 0 : el.scrollTop + el.clientHeight < el.scrollHeight - 1;
   }
   // listened for only while something is chosen, so the page's own
-  // scrolling never waits on it the rest of the time
+  // scrolling never waits on it the rest of the time. Over the chart it goes
+  // through the perfumes of what is chosen (2026-11-06).
   function holdWheel(ev) {
     const t = ev.target && ev.target.closest ? ev.target : null;
     const list = t && t.closest(".pf-nav-scroll");
@@ -1966,7 +2669,87 @@
     if (t && t.closest(".pf-card") && canScroll(card, ev.deltaY)) return;
     if (t && t.closest(".pf-call") && canScroll(callSheet, ev.deltaY)) return;
     ev.preventDefault();
+    if (!t || !stage.contains(t) || t.closest(".pf-nav, .pf-call, .pf-here, .pf-sort") || !card.hidden) return;
+    let d = ev.deltaY;
+    if (Math.abs(ev.deltaX) > Math.abs(d)) d = ev.deltaX;
+    d *= ev.deltaMode === 1 ? 18 : ev.deltaMode === 2 ? H : 1;
+    scrollBy(d / WHEEL_PX);
   }
+  // ---- GOING THROUGH THE PERFUMES OF WHAT IS CHOSEN -------------------------
+  function scrollTo(s) {
+    if (!focusList || !focusList.length) return;
+    // a perfume's window is put away first, back to its house, where it was
+    if (sel.kind === "perfume") up();
+    if (!focusList) return;
+    const n = focusList.length;
+    const next = clamp(s, 0, n - 1);
+    if (Math.abs(next - scrollS) < 1e-4) return;
+    scrollS = next;
+    hover = null; hideTip();
+    setGoal(poseFor());
+    syncScrub();
+    kick();
+  }
+  const scrollBy = (d) => scrollTo(scrollS + d);
+  // THE SCRUBBER, beside the chart while something is chosen: a tick for
+  // every perfume of it, a thumb as long as the window holds, the one the
+  // scroll stands at named — pressed or dragged, it goes there
+  const scrub = document.createElement("div");
+  scrub.className = "pf-scrub";
+  scrub.hidden = true;
+  scrub.innerHTML = '<p class="pf-scrub-at" aria-live="polite"><b></b><span></span></p>' +
+    '<div class="pf-scrub-track" role="slider" tabindex="0" aria-label="Go through the perfumes" aria-valuemin="1"><i class="pf-scrub-ticks"></i><i class="pf-scrub-thumb"></i></div>' +
+    '<p class="pf-scrub-say" aria-hidden="true"></p>';
+  stage.appendChild(scrub);
+  const scrubTrack = scrub.querySelector(".pf-scrub-track"), scrubThumb = scrub.querySelector(".pf-scrub-thumb");
+  const scrubTicks = scrub.querySelector(".pf-scrub-ticks");
+  const scrubNo = scrub.querySelector(".pf-scrub-at b"), scrubName = scrub.querySelector(".pf-scrub-at span");
+  const scrubSay = scrub.querySelector(".pf-scrub-say");
+  let scrubFor = null;
+  function syncScrub() {
+    const list = sel.kind && sel.kind !== "perfume" ? focusList : null;
+    const n = list ? list.length : 0;
+    const on = n > 1;
+    if (scrub.hidden === on) scrub.hidden = !on;
+    stage.classList.toggle("has-scrub", on);
+    if (!on) { scrubFor = null; return; }
+    if (scrubFor !== list) {
+      scrubFor = list;
+      // a tick for every perfume, drawn as one gradient
+      const stops = [];
+      for (let i = 0; i < n; i++) { const y = n === 1 ? 50 : (i / (n - 1)) * 100; stops.push("transparent " + Math.max(0, y - 0.0001) + "%", "currentColor " + y + "%", "transparent calc(" + y + "% + 1px)"); }
+      scrubTicks.style.backgroundImage = n <= 160 ? "linear-gradient(to bottom, " + stops.join(", ") + ")" : "none";
+      scrubTrack.setAttribute("aria-valuemax", String(n));
+      scrubSay.textContent = window.matchMedia("(hover: none)").matches ? "Swipe" : "Scroll";
+    }
+    const v = Math.min(1, viewN() / n);
+    const k = n > 1 ? scrollS / (n - 1) : 0.5;
+    scrubThumb.style.height = (v * 100).toFixed(2) + "%";
+    scrubThumb.style.top = (k * (1 - v) * 100).toFixed(2) + "%";
+    const e = list[clamp(Math.round(scrollS), 0, n - 1)];
+    scrubNo.textContent = String(Math.round(scrollS) + 1).padStart(3, "0") + " / " + String(n).padStart(3, "0");
+    scrubName.textContent = e.p.n;
+    scrubTrack.setAttribute("aria-valuenow", String(Math.round(scrollS) + 1));
+    scrubTrack.setAttribute("aria-valuetext", e.p.n);
+  }
+  let scrubDrag = false;
+  function scrubAt(ev) {
+    const b = scrubTrack.getBoundingClientRect();
+    const n = focusList ? focusList.length : 0;
+    if (!n) return;
+    scrollTo(clamp((ev.clientY - b.top) / b.height, 0, 1) * (n - 1));
+  }
+  scrubTrack.addEventListener("pointerdown", (ev) => { ev.preventDefault(); scrubDrag = true; scrubTrack.setPointerCapture(ev.pointerId); scrubAt(ev); });
+  scrubTrack.addEventListener("pointermove", (ev) => { if (scrubDrag) scrubAt(ev); });
+  scrubTrack.addEventListener("pointerup", () => { scrubDrag = false; });
+  scrubTrack.addEventListener("pointercancel", () => { scrubDrag = false; });
+  scrubTrack.addEventListener("keydown", (ev) => {
+    const n = focusList ? focusList.length : 0;
+    const steps = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1, PageDown: Math.max(1, Math.round(viewN() * 0.7)), PageUp: -Math.max(1, Math.round(viewN() * 0.7)) };
+    if (ev.key in steps) { ev.preventDefault(); ev.stopPropagation(); scrollTo(Math.round(scrollS) + steps[ev.key]); }
+    else if (ev.key === "Home") { ev.preventDefault(); ev.stopPropagation(); scrollTo(0); }
+    else if (ev.key === "End") { ev.preventDefault(); ev.stopPropagation(); scrollTo(n - 1); }
+  });
   let holding = false;
   function hold(on) {
     if (on === holding) return;
@@ -1985,6 +2768,13 @@
     const a = document.activeElement;
     if (a && a.closest && (a.closest(".pf-nav-scroll") || a.matches("input, textarea, select, button, summary, a"))) return;
     ev.preventDefault();
+    // the keys go through the perfumes of what is chosen, as the wheel does
+    const n = focusList ? focusList.length : 0;
+    const page = Math.max(1, Math.round(viewN() * 0.7));
+    const steps = { ArrowDown: 1, ArrowUp: -1, PageDown: page, PageUp: -page, " ": page };
+    if (ev.key in steps) scrollTo(Math.round(scrollS) + (ev.key === " " && ev.shiftKey ? -page : steps[ev.key]));
+    else if (ev.key === "Home") scrollTo(0);
+    else if (ev.key === "End") scrollTo(n - 1);
   });
 
   // ---- THE SWITCH --------------------------------------------------------
@@ -2425,6 +3215,7 @@
       mode, n: N, view: viewNow, zoomed: zoomed(), chosen: Object.assign({}, sel, { e: sel.e ? sel.e.p.n : null }),
       rot: cam.rot, cam: Object.assign({}, cam, { z: Math.exp(cam.lz) }), sway: swayAmt, dof: cvDof.classList.contains("is-on"),
       pulses: pulses.length, clock, call: callE ? callE.p.n : null, flying,
+      scroll: scrollS, count: focusList ? focusList.length : 0, at: (scrollAt() || {}).p ? scrollAt().p.n : null, viewN: viewN(),
     }),
     // where a perfume's dot stands on the window
     dotOf: (name) => {
@@ -2434,7 +3225,11 @@
       const b = stage.getBoundingClientRect();
       return T1.ok ? { x: b.left + T1.x, y: b.top + T1.y } : null;
     },
-    stats: () => Object.assign({}, stats),
+    stats: () => Object.assign({}, stats, stats0),
+    // going through the perfumes of what is chosen
+    scrollBy, scrollTo,
+    // the Earth: the longitude facing you, and the countries lit
+    earth: () => ({ spin, turning: !!spinTween, lit: PINS.filter((q) => q.lit).map((q) => q.name), pins: PINS.map((q) => q.name), rings: COAST.length }),
     open: openCard,
     // where on the window a group (a perfumer A–Z, a year by year) or one of
     // the chosen perfumer's houses stands, for a test to press
@@ -2442,9 +3237,18 @@
       const g = groups.find((x) => x.key === key);
       if (!g) return null;
       const h = house ? g.houses.find((x) => x.h === house) : null;
-      const a = h ? (h.a0 + h.a1) / 2 : (g.a0 + g.a1) / 2;
+      let a = h ? (h.a0 + h.a1) / 2 : (g.a0 + g.a1) / 2;
+      // close in, where it is on the window: its perfume nearest to where
+      // the scroll stands
+      if (zoomed() && focusList && focusList.length) {
+        const at = angleAt(focusList, scrollS);
+        let best = null, bd = Infinity;
+        for (const e of (h ? h.members : g.members)) { const d = angDist(e.to, at); if (d < bd) { bd = d; best = e; } }
+        if (best) a = best.to;
+      }
+      const r = h ? R.houMid : R.perMid;
       viewCam();
-      proj(Math.cos(a) * R.und, Math.sin(a) * R.und, T0);
+      proj(Math.cos(a) * r, Math.sin(a) * r, T0);
       const b = stage.getBoundingClientRect();
       return { x: b.left + M.a * T0.x + M.c * T0.y + M.e, y: b.top + M.b * T0.x + M.d * T0.y + M.f };
     },

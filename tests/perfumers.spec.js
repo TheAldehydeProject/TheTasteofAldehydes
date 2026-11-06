@@ -280,26 +280,83 @@ test("a perfumer pressed on the circle is chosen, and then one of its houses", a
   expect((await state(page)).chosen.hid).toBe("pineward");
 });
 
-test("close in, the chart stays put: the wheel does nothing, and it sways without being drawn again", async ({ page }) => {
+/* 2026-11-06 — "the zoom length should be fixed, and the scrolling while
+   hovering on the image will cause you to scroll through the perfumes of
+   that house/perfumer. This is especially important for big perfumers like
+   prin lomoros." The wheel no longer does nothing close in: it goes through
+   the perfumes of what is chosen, the zoom staying as it is and the page
+   held still under it; and once it has settled, the chart sways without
+   being drawn again. */
+test("close in, the zoom is fixed, and the wheel goes through the perfumes of what is chosen", async ({ page }) => {
   await page.goto(PAGE);
   await atRest(page, "turn");
-  await page.evaluate(() => window.PerfumersChart.choose("perfumer", "antoine-lie"));
+  await page.evaluate(() => window.PerfumersChart.choose("perfumer", "prin-lomros"));
   await atRest(page, "still");
   const a = await state(page);
+  expect(a.count).toBe(139);
   await page.mouse.move(600, 450);
-  await page.mouse.wheel(0, 800);
-  await page.waitForTimeout(400);
+  for (let i = 0; i < 6; i++) await page.mouse.wheel(0, 120);
+  await atRest(page, "still");
   const b = await state(page);
+  // it went on through Prin Lomros' perfumes, as close as before
+  expect(b.scroll).toBeGreaterThan(a.scroll + 8);
+  expect(b.at).not.toBe(a.at);
   expect(b.cam.z).toBeCloseTo(a.cam.z, 5);
-  expect(b.cam.fx).toBeCloseTo(a.cam.fx, 5);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  // the scrubber says where it is
+  await expect(page.locator(".pf-scrub")).toBeVisible();
+  await expect(page.locator(".pf-scrub-at span")).toHaveText(b.at);
+  // the keys do the same, and End goes to its last perfume
+  await page.keyboard.press("End");
+  await expect.poll(async () => (await state(page)).scroll).toBe(138);
+  // a perfumer of four is looked at from exactly as close
+  await page.evaluate(() => window.PerfumersChart.choose("perfumer", "antoine-lie"));
+  await atRest(page, "still");
+  expect((await state(page)).cam.z).toBeCloseTo(a.cam.z, 5);
   // the sway is the browser's: a transform, and no drawing of the chart
+  // (a moment first, for a slow machine's sharpness to settle after the
+  // long way to the End)
+  await page.waitForTimeout(1500);
+  await atRest(page, "still");
   const s0 = await stats(page);
   await page.waitForTimeout(1200);
   const s1 = await stats(page);
   expect(s1.chart).toBe(s0.chart);
   expect((await state(page)).sway).toBeGreaterThan(0);
   expect(await page.locator(".pf-sway").evaluate((el) => el.style.transform)).toContain("matrix(");
+});
+
+/* The Earth (2026-11-06 — "It should look like the earth, with then three
+   layers of information in series protruding from it ... like an
+   architect's sketch of the earth"): drawn from its coastlines, turning on
+   its own on the whole chart without the rings being drawn again, and
+   turned to the country of what is chosen. */
+test("the Earth is drawn in the middle, turns on its own, and turns to what is chosen", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto(PAGE);
+  await atRest(page, "turn");
+  const e0 = await page.evaluate(() => window.PerfumersChart.earth());
+  expect(e0.rings).toBeGreaterThan(50);
+  expect(e0.pins).toContain("Thailand");
+  expect(e0.lit).toEqual([]);
+  const s0 = await stats(page);
+  await page.waitForTimeout(1500);
+  const e1 = await page.evaluate(() => window.PerfumersChart.earth()), s1 = await stats(page);
+  // it turned, and its picture was drawn again for it, but not the rings
+  expect(e1.spin).toBeGreaterThan(e0.spin);
+  expect(s1.earth).toBeGreaterThan(s0.earth);
+  expect(s1.rotor).toBe(s0.rotor);
+  // Prin Lomros: Thailand lit, and the Earth turned to it (101° E)
+  await page.evaluate(() => window.PerfumersChart.choose("perfumer", "prin-lomros"));
+  await atRest(page, "still");
+  const e2 = await page.evaluate(() => window.PerfumersChart.earth());
+  expect(e2.lit).toEqual(["Thailand"]);
+  const toward = ((e2.spin * 180 / Math.PI) % 360 + 360) % 360;
+  expect(Math.abs(toward - 101)).toBeLessThan(12);
+  // and close in it stands still
+  await page.waitForTimeout(800);
+  expect((await page.evaluate(() => window.PerfumersChart.earth())).spin).toBe(e2.spin);
+  expect(errors).toEqual([]);
 });
 
 test("Esc goes back a level at a time, and The whole chart all the way", async ({ page }) => {

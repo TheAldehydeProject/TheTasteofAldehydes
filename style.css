@@ -14242,6 +14242,10 @@ body.perfumers-page {
 .pf-stage[data-view="turn"] .pf-sway,
 .pf-stage:not([data-view="turn"]) .pf-rotor { display: none; }
 .pf-live { left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+/* the Earth on the whole chart, a picture of its own (2026-11-06): drawn
+   again only as it turns, laid down by the browser every frame */
+.pf-stage canvas.pf-earth { left: 0; top: 0; transform-origin: 0 0; will-change: transform; pointer-events: none; }
+.pf-stage:not([data-view="turn"]) .pf-earth { display: none; }
 .pf-fly { visibility: hidden; pointer-events: none; }
 .pf-stage.is-flying .pf-fly { visibility: visible; }
 .pf-stage.is-flying .pf-chart, .pf-stage.is-flying .pf-dof { visibility: hidden; }
@@ -14587,6 +14591,68 @@ body.perfumers-page {
 .pf-stage.is-chosen .pf-hint { bottom: 66px; padding: 5px 12px 6px; background: rgba(11, 12, 13, 0.78); }
 .pf-hint:empty { display: none; }
 
+/* THE SCRUBBER (2026-11-06 — "the scrolling while hovering on the image will
+   cause you to scroll through the perfumes of that house/perfumer"): beside
+   the chart while something is chosen, a tick for every perfume of it, a
+   thumb as long as the window holds of them, and the one the scroll stands
+   at named over it; pressed or dragged, the chart goes there. */
+.pf-scrub {
+  position: absolute;
+  z-index: 3;
+  top: 26%;
+  bottom: 22%;
+  right: calc(30px + 256px + 26px);
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: var(--mono);
+  color: var(--pf-muted);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(8px);
+  animation: pf-scrub-in 0.6s var(--menu-ease) 0.35s forwards;
+}
+.pf-scrub[hidden] { display: none; }
+@keyframes pf-scrub-in { to { opacity: 1; transform: none; } }
+.pf-scrub-at {
+  margin: 0 0 10px;
+  text-align: right;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  line-height: 1.45;
+  max-width: 160px;
+}
+.pf-scrub-at b { display: block; font-weight: 500; color: var(--pf-gold); }
+.pf-scrub-at span { display: block; color: var(--pf-ink); font-family: var(--sans); font-size: 11.5px; letter-spacing: 0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pf-scrub-track {
+  position: relative;
+  flex: 1;
+  width: 18px;
+  cursor: ns-resize;
+  pointer-events: auto;
+  touch-action: none;
+  outline-offset: 3px;
+}
+.pf-scrub-track::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px solid var(--pf-rule); }
+.pf-scrub-ticks { position: absolute; left: 4px; right: 4px; top: 0; bottom: 0; color: rgba(235, 232, 226, 0.28); }
+.pf-scrub-thumb {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  min-height: 10px;
+  box-sizing: border-box;
+  border: 1px solid var(--pf-gold);
+  background: rgba(235, 163, 63, 0.12);
+  transition: top 0.25s var(--menu-ease), height 0.25s var(--menu-ease);
+}
+.pf-scrub-say { margin: 10px 0 0; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; }
+@media (prefers-reduced-motion: reduce) {
+  .pf-scrub { animation: none; opacity: 1; transform: none; }
+  .pf-scrub-thumb { transition: none; }
+}
+@media (max-width: 1179px) { .pf-scrub { right: calc(22px + 220px + 20px); } }
+
 /* WHAT THE HAND IS ON, beside it. */
 .pf-tip {
   position: absolute;
@@ -14663,6 +14729,10 @@ body.perfumers-page {
 }
 @media (max-width: 700px) {
   .pf-notes { columns: 1; padding: 30px 20px 0; }
+  .pf-scrub { right: 12px; top: 30%; bottom: 140px; width: 96px; }
+  .pf-scrub-say { display: none; }
+  .pf-scrub-at span { font-size: 10.5px; }
+  .pf-nav.is-open ~ .pf-scrub { bottom: calc(52% + 20px); top: 22%; }
   .pf-title { top: 64px; left: 20px; width: 180px; }
   .pf-title-word { font-size: 28px; }
   .pf-title-years { font-size: 20px; }
@@ -14918,6 +14988,20 @@ body.perfumers-page {
 .pf-key-dash::after { border-top-style: dashed; }
 .pf-key-dot-line::after { border-top-style: dotted; }
 .pf-key-ring::after { content: ""; position: absolute; left: 1px; top: -3px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(235, 232, 226, 0.35); box-sizing: border-box; }
+/* the Earth's marks and the three rings (2026-11-06) */
+.pf-key-earth::after { content: ""; position: absolute; left: 1px; top: -4px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(235, 232, 226, 0.6); box-sizing: border-box;
+  background: repeating-linear-gradient(135deg, rgba(235, 232, 226, 0.22) 0 1px, transparent 1px 3px); }
+.pf-key-pin::after { content: ""; position: absolute; left: 6px; top: 1px; width: 6px; height: 6px; background: var(--pf-ink); }
+.pf-key-from::after { content: ""; position: absolute; left: 4px; top: -1px; width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--pf-rose); box-sizing: border-box; }
+.pf-key-faint::after { border-top-color: rgba(235, 232, 226, 0.45); }
+.pf-key-cell::after { content: ""; position: absolute; left: 5px; top: 0; width: 7px; height: 9px; background: rgba(235, 232, 226, 0.6); box-sizing: border-box; }
+.pf-key-half::after { background: linear-gradient(to top, rgba(235, 232, 226, 0.6) 50%, transparent 50%); border: 1px solid rgba(235, 232, 226, 0.5); }
+.pf-key-empty::after { background: none; border: 1px solid rgba(235, 232, 226, 0.55); }
+.pf-key-cell.pf-key-gold::after { background: var(--pf-gold); box-shadow: none; border-radius: 0; left: 5px; width: 7px; }
+.pf-key-cell.pf-key-blue::after { background: var(--pf-blue); box-shadow: none; border-radius: 0; left: 5px; width: 7px; }
+.pf-key-cell.pf-key-rose::after { background: var(--pf-rose); box-shadow: none; border-radius: 0; left: 5px; width: 7px; }
+.pf-key-bar::after { content: ""; position: absolute; left: 0; right: 4px; top: 4px; border-top: 2px solid rgba(235, 232, 226, 0.7); }
+.pf-key-bar::before { content: ""; position: absolute; right: 0; top: 2px; width: 6px; height: 6px; border-radius: 50%; background: var(--pf-blue); }
 .pf-counts { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--pf-rule); color: var(--pf-ink); }
 .pf-terms dl { margin: 0; }
 .pf-terms dt { margin: 12px 0 2px; font-family: var(--sans); font-weight: 600; font-size: 12px; color: var(--pf-ink); }

@@ -226,3 +226,68 @@ left out.*
 `npm test -- tests/test-pages.spec.js` — the page-2 tests count what the new snapshot carries: Woods'
 notes are **30** (it was 29) and Sandalwood's fragrances **36** (35). By hand: search *spinal* on
 page 2 — Spinal Fluid is on the arc, named by one fragrance, Ataraxia's.
+
+## 2026-11-06 — pages 1, 3 and 4 made again for the perfumers, and page 2 carrying them
+
+The owner, with six pictures: "change test page 1 to make it more into a perfumer oriented page ...
+replace TP3 with another iterations of the perfumers page, which should look like image 3 ... replace
+tp4 with another iteration of the perfumers page, and this one should be something like images 5 and
+6 ... Also please edit the TESTPAGE2 TO Also accommodate the information of perfumers. All pages
+should be functional and working, and should be smooth and not laggy." **Worlds, Top, middle and base
+and The Scent Landscape are gone**, each page made again whole; page 2 is as it was, with the
+perfumers added. Each is still its own (its own `page.js`, a snapshot of the site in it — now the
+Perfumers ledger's — none of the site's scripts or its stylesheet, `noindex, nofollow`, only the way
+back to Contact).
+
+| page | after the owner's pictures of | made of the site's |
+|---|---|---|
+| **1 · Perfumer Worlds** | image 2: on black, dots in blocks down both sides, a fine ray from every one to a point low in the middle; image 4 (the poster page 1 was already after): dark spheres out of focus with a blue edge above and a gold below, a thin double circle, three lines, grain | **The rays first**: every perfume a dot, each perfumer's a block of its own, the blocks in lanes down the two sides A to Z, every dot a ray to the point; a perfumer's rays and dots light under the hand, and its name; lights run in along the rays. **A dot pressed opens its perfumer's world**, a circle opening out of the dot onto the pale poster: **the perfumer in the middle** — a dark sphere in image 4's layers (a white glow, the blue edge, the gold edge, the dark core), drawn soft — small and laid down large, twice, which is its blur — its edge frayed (the outline wavers, and specks come off it and go), **the Earth turning inside it** (Natural Earth's coastlines, coarse) and turned to the perfumer's country; round it its perfumes on a ring (a dot in a ring where a source names the perfumer, a ring round a dot the house's perfumer, an open ring not found; gold beside one written about as an individual fragrance) and **its houses as spheres out of focus, each in three layers that part as the hand moves**, named under them. **A house pressed** comes into the middle, its ring **the perfumes the perfumer made for it**, the perfumer itself round it to go back to. The readings on the left: the perfumer (or the house), its perfumes, its houses (or the year it was founded), its years, and a gauge of how many the sources name it for, the house's perfumer, or nobody; the three lines are what the ledger says of it. **↩ Return** under the head goes back a level — the house, the perfumer, the rays — and so does Esc; ‹ › and the list go through the perfumers. A perfume on the ring pointed at says who made it; pressed, its sources too. |
+| **3 · A Portrait of the Perfumers** | image 3, *Portrait ethnique du Canada*: on charcoal, the countries of origin along the top as bars named upright, red to white; fine threads falling to the provinces, each a row of squares and its name; a legend along the foot | **The perfumers along the top**, each a bar as wide as their perfumes, A to Z, red through orange and gold to white, named upright over it; **a thread for every perfume** falling from its perfumer's bar to **its house**; every house a node of squares — the first as big as its perfumes, then one for each of its perfumers in their colours — standing **as high as the middle year of its perfumes** (the years ruled down the left, *year not found* along the foot) and across where its perfumers stand. Lights run down the threads. Pointed at, a perfumer's, a house's or one perfume's threads light and the rest steps back; **pressed, its panel** on the right — a perfumer's about and its perfumes, a house's and its perfumers, a perfume's perfumer, house, year, what it is and sources — every name in it a way on. A search over all of them, and a switch to lay each bar's threads **by house** or **by year**. A legend along the foot, as the poster's. |
+| **4 · The Perfumers' Graph** | image 5: a network of dark specks on pale grey in a camera's corners, OBJECT and its name at the top, a word spelled down the left letter by letter with where each stands, STAGE 5: LETTERS, TOTAL, a dashed ring turning; image 6: a graph view, a round field of nodes, the busiest with fans | **Every perfumer a node, each of its houses a node joined to it, every perfume a speck in a fan round its house** — a full ring round a big house — the perfumers packed in a round field by how many they made; a house more than one perfumer made for is joined across to its others, dashed. **The table** on the right — number, perfumer, houses, perfumes, years; sortable, searchable — **a row pressed takes the camera to the perfumer's node**, its houses named, and lists them under the table; **a house** pressed (there or on the field) closes in on it and lists its perfumes; **a perfume** pressed is **spelled down the left letter by letter**, `{perfumer; house; perfume; letter}` beside each, as image 5's word is, with who made it. **The stages**: 1 PERFUMERS, 2 HOUSES, 3 PERFUMES, 4 LETTERS, and TOTAL the perfumes in view. The wheel, a drag and + − move about; ↑ Up and Esc go back a level, Fit the whole; **the ground** image 5's grey or image 6's dark, remembered. Signals run along the links. |
+
+**Page 2** keeps its poster and carries the perfumers too: who made its fragrances stands over every
+dome (the perfumer, or how many); **The Perfumers** listed down the left after the accords, A to Z with
+their houses — pointed at, a perfumer lights their houses and the notes and accords their fragrances
+name; pressed, **their panel**: where they are from, what the ledger says, their fragrances, houses,
+notes named and the accord most in, how many the sources name them for, their houses as bars (each a
+way to it), the accords and the notes of their fragrances, and their fragrances, each a fold onto its
+notes. A house's panel now opens with **its perfumers**; every fragrance in a panel says who made it;
+**the search** finds perfumers; Show on the poster frames all their houses.
+
+### Why / key decisions
+
+- **One snapshot for the four**: the Perfumers ledger (`perfumers-data.js`) written into each page,
+  every perfume with its perfumers, credit, year, house, kind and its sources' names, by a script in the
+  session's scratchpad (as the snapshots before); page 1 carries Natural Earth's coastlines as well,
+  coarser than the Perfumers page's (1,200 points). Page 2's fragrances were matched to the ledger by
+  name — all 142 found — and its perfumers are the 24 behind them.
+- **Page 1's two views on one canvas**: the rays drawn once into a picture of their own (drawn out from
+  the point as the page opens), the world drawn each frame; the change from one to the other a circle
+  opening out of the dot pressed (and closing on its block on the way back), the world drawn inside it
+  over the rays for that second only.
+- **Page 1's sphere is soft by being drawn small** — at about a quarter of its size, then twice larger —
+  rather than with a blur filter every frame; the grain is the page's CSS layer, as before.
+- **Page 3 draws every thread every frame** — 282 curves of 22 segments, cheap — which is what lets
+  pointing at anything light exactly its threads; its houses are placed once, pushed apart until no
+  house covers another's name.
+- **Page 4's layout is worked out once** as it opens (the perfumers packed in a round field, their
+  houses round them, the perfumes in fans), not simulated as it runs.
+
+### How to test it
+
+`npm test -- tests/test-pages.spec.js` — page 1: the rays first, 282 dots and 24 perfumers, a dot
+pressed opening Aichi Liu's world (14 perfumes, 2 houses), the Earth turning in it, Om Parfums pressed
+(9), Return to the perfumer and to the rays, the list opening Prin Lomros (139), Esc back. Page 2: the 24
+perfumers listed, Aichi Liu pointed at and pressed (her panel, her two houses), a house's panel naming
+its perfumers and leading back, the search finding Prin Lomros. Page 3: 282 threads, 24 perfumers, 27
+houses, Slumberhouse (2009) above Almost Human (2026) and Lussur (no year) below, a perfumer pressed on
+its bar (14 perfumes in the panel), Om Parfums (9), the search finding Haxan with Prin Lomros. Page 4:
+24, 35 and 282 nodes, the table taking you to Prin Lomros (stage 2, total 139, 3 houses, closer), Parfum
+Prissana (stage 3, 32 perfumes), Haxan (stage 4, five letters), Esc up, Fit, a node pressed on the
+field, the dark ground. The four still draw, move, fit a phone and have no errors.
+
+### Known issues / TODO
+
+- The snapshots are as the ledger stood on 2026-11-06: a perfumer or a perfume added to the site does
+  not appear on them until they are made again, on purpose.
+- Page 3 on a phone is dense: 24 perfumers' names upright across 360px.
