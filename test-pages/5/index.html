@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Test page 5 — The Taste of Aldehydes</title>
 <!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
-<meta name="description" content="A test page, not a part of the site: The Perfumers in Section — the houses built above ground, the perfumers below it, drawn as an architect&#x27;s sketch.">
+<meta name="description" content="A test page, not a part of the site: A Flacon for Every Perfumer — a sketched perfume bottle for every perfumer, designed from what they made.">
 <link rel="canonical" href="https://thetasteofaldehydes.com/test-pages/5/">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="../../favicon.svg?v=2026-10-05" type="image/svg+xml">
@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700&family=Caveat:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!--
-  TEST PAGE 5 — THE PERFUMERS IN SECTION (2026-11-06). The owner: "please
+  TEST PAGE 5 — A FLACON FOR EVERY PERFUMER (2026-11-06). The owner: "please
   also generate a 5th test page (by moving all the other ones a little to
   the left on the contacts page), modelled like the image attached
   (architecture sketch) that is going to be another page that attempts to
@@ -24,7 +24,13 @@
   building on black, in white pencil and chalk — the roofline traced over
   heavily, an elastic form hanging below the ground with its levels marked,
   construction lines, notes in a hand down the left, plans in a corner,
-  details boxed at the foot, a title in a box.
+  details boxed at the foot, a title in a box. And then, seeing the section
+  of houses it first was: "Completly rework the archetecture one. It doesnt
+  look like archetecture at all. I want you to make designs of perfume
+  bottles that look like sketches and then from there design something
+  around the idea of perfumers. Make it thematic, not random houses that
+  look weird." So a designer's sheet of flacons, one for every perfumer,
+  every part of it saying something of them — page.js says what.
 
   NOT A PAGE OF THE SITE: nothing on the site links here but the unseen
   squares at the foot of Contact; it loads none of the site's scripts or its
@@ -42,6 +48,8 @@
   @keyframes t5-grain { 0% { transform: translate(0, 0); } 25% { transform: translate(-5%, 3%); } 50% { transform: translate(4%, -5%); } 75% { transform: translate(-2%, 6%); } 100% { transform: translate(0, 0); } }
   .t5 { position: fixed; inset: 0; pointer-events: none; }
   .t5 a, .t5 button, .t5 select, .t5-detail { pointer-events: auto; }
+  /* THE DESIGN SHEET, top right: the key, or the chosen flacon drawn large */
+  .t5-design { position: absolute; top: 56px; right: 26px; display: block; pointer-events: none; }
   /* THE TITLE, in a box at the top left, as the picture's */
   .t5-title { position: absolute; top: 58px; left: 30px; margin: 0; padding: 4px 8px 6px; font: 400 15px/1.2 var(--serif); letter-spacing: 0.01em; background: rgba(32, 32, 32, 0.92); border-bottom: 1px solid var(--ink); }
   /* THE NOTES, in a hand, down the left */
@@ -51,12 +59,13 @@
   .t5-notes b { font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
   .t5-notes .t5-key { font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em; }
   /* THE DETAIL, boxed at the foot on the left */
-  .t5-detail { position: absolute; left: 30px; bottom: 30px; width: min(330px, 30vw); max-height: 38vh; display: flex; flex-direction: column; border: 1px solid var(--faint); background: rgba(5, 5, 5, 0.82); }
+  .t5-detail { position: absolute; left: 30px; bottom: 30px; width: min(330px, 30vw); max-height: max(150px, min(38vh, calc(100vh - 610px))); display: flex; flex-direction: column; border: 1px solid var(--faint); background: rgba(5, 5, 5, 0.82); }
   .t5-detail.is-on { border-color: var(--muted); }
   .t5-detail-head { display: flex; justify-content: space-between; padding: 5px 9px; border-bottom: 1px solid var(--faint); font: 500 9.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
   .t5-detail-body { overflow: auto; padding: 8px 10px 10px; font: 400 15px/1.2 var(--hand); }
   .t5-detail h2 { margin: 2px 0 4px; font: 600 22px/1.05 var(--hand); }
   .t5-k { margin: 0; font: 500 9.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .t5-k.t5-gap { margin-top: 8px; }
   .t5-m { margin: 0 0 6px; font: 400 14px/1.25 var(--hand); color: var(--muted); }
   .t5-a { margin: 6px 0 0; font: 400 14px/1.25 var(--hand); color: rgba(242, 242, 238, 0.85); }
   .t5-note { margin: 0; color: var(--muted); }
@@ -86,7 +95,11 @@
     .t5-ways { top: 12px; right: 12px; }
     .t5-pick { max-width: 160px; }
     .t5-foot { display: none; }
-    .t5-detail { left: 12px; right: 12px; width: auto; bottom: 12px; max-height: 30vh; }
+    .t5-detail { left: 12px; right: 12px; width: auto; bottom: 12px; max-height: 15vh; }
+    .t5-detail-body { padding: 4px 9px 6px; }
+    .t5-detail h2 { font-size: 19px; }
+    .t5-detail .t5-a { display: none; }
+    .t5-design { top: 84px; left: 12px; right: auto; }
   }
   @media (prefers-reduced-motion: reduce) { .t5-grain { animation: none; } }
 </style>
@@ -96,29 +109,31 @@
 <div class="t5-grain" aria-hidden="true"></div>
 <main class="t5">
   <a class="t5-back" href="../../contact/">← Back</a>
-  <h1 class="t5-title">First Iteration: Housing the Perfumers</h1>
+  <h1 class="t5-title">First Iteration: A Flacon for Every Perfumer</h1>
   <ul class="t5-notes">
-    <li>a section through every house on The Taste of Aldehydes, and Prin Lomros' three, as built.</li>
-    <li><b>Above ground</b> — the houses. A bay for each perfumer a house was made by, as wide as what they made for it.</li>
-    <li>A stud a perfume, as tall as its year — 2009 short, 2026 tall; a stub, dashed, where none is found.</li>
-    <li><span class="t5-key">●</span> named by a source · <span class="t5-key">○</span> the house's perfumer · <span class="t5-key">×</span> not found.</li>
-    <li>The roof as steep as the bay is full; the one roofline traced over.</li>
-    <li><b>Below ground</b> — the perfumers, elastic, as deep as what they made. Its level: −0.139, a hundred and thirty-nine.</li>
-    <li>A house made by more than one, joined over its roofs.</li>
-    <li>How to read it? Point at it. Press it for its detail.</li>
+    <li>every perfumer behind a perfume on The Taste of Aldehydes, and Prin Lomros' three houses — a flacon each, designed from what they made.</li>
+    <li><b>Height</b> — a millilitre a perfume: 139 ml the tallest.</li>
+    <li><b>Body</b> — its perfumes by year, the earliest at the foot, the newest at the shoulder; it swells where most were made.</li>
+    <li><b>Graduations</b> up the wall, one a perfume — long: named by a source; short: the house's perfumer; dotted: not found.</li>
+    <li><b>Juice</b>, the right half cut away — a layer for each house, as deep as what was made for it.</li>
+    <li><b>Cap</b> — a tier for each house. <b>Label</b> — how sure the sources are.</li>
+    <li><b>Family</b> — where its perfumes are: round, the individual fragrances; square, a house's on the site; faceted, Prin Lomros' houses.</li>
+    <li>Under the shelf, each one's plan, from above.</li>
+    <li>Press a flacon; press it again for a layer or a graduation.</li>
   </ul>
   <section class="t5-detail" aria-live="polite" aria-label="The detail of what is chosen">
-    <p class="t5-detail-head"><span>Detail</span><span>01</span></p>
+    <p class="t5-detail-head"><span>Detail</span><span>key</span></p>
     <div class="t5-detail-body"></div>
   </section>
   <div class="t5-foot">
-    <p>· Above ground — the houses, solid state.</p>
-    <p>· Below ground — the perfumers, liquid latex form.</p>
-    <div class="t5-tag"><b>TTA</b><p>perfumes from the perfumers' imprints. — units: perfumes, years, sources, from the site's ledger.</p></div>
+    <p>· Above the shelf — the flacons, glass, half in section.</p>
+    <p>· Below it — their plans, the houses round them.</p>
+    <div class="t5-tag"><b>TTA</b><p>every flacon from its perfumer's entry in the site's ledger. — units: perfumes (ml), years, houses, sources.</p></div>
   </div>
+  <canvas class="t5-design" aria-hidden="true"></canvas>
   <nav class="t5-ways" aria-label="The perfumers"><select class="t5-pick" aria-label="Choose a perfumer"></select></nav>
   <div class="t5-tip" role="tooltip" hidden></div>
 </main>
-<script src="page.js?v=b8e3c387ac"></script>
+<script src="page.js?v=be0804f5e6"></script>
 </body>
 </html>

@@ -297,6 +297,9 @@ field, the dark ground. The four still draw, move, fit a phone and have no error
 
 ## 2026-11-06, later — test page 5, the perfumers in section, and a fifth square
 
+(The section of houses described here went the same day, for **a flacon for every perfumer** — see
+**2026-11-06, the very last**, at the foot. The fifth square stays.)
+
 The owner, with a picture of an architect's section sketch — *First Iteration Feedback: Elasticating
 The Landscape*: a long section through a building on black in white pencil and chalk, its roofline
 traced over heavily, an elastic form hanging under the ground with its levels marked (−0.05, −0.10 …),
@@ -428,3 +431,67 @@ Almost Human (2026), Lussur (no year) over it, the perfumers' bars under all of 
 282 nodes as before, more than 2,500 letters, the 379 notes, more than 4,000 lines; TOTAL for Prin Lomros
 the nodes in that cloud. By hand: open page 4 and leave it turning; press Prin Lomros, then Parfum
 Prissana, then Haxan.
+
+## 2026-11-06, the very last — page 5 made again: a flacon for every perfumer
+
+The owner, seeing the section of houses: "Completly rework the archetecture one. It doesnt look like
+archetecture at all. I want you to make designs of perfume bottles that look like sketches and then
+from there design something around the idea of perfumers. Make it thematic, not random houses that look
+weird." **The section, its bays, studs, roofs and elastic forms are gone.** Page 5 is **A Flacon for
+Every Perfumer**: a designer's sheet in the same pencil and chalk on black, the title in its box, the
+notes in the hand down the left, the note and its tag at the foot on the right.
+
+- **Every perfumer a flacon**, drawn as a sketch — the outline twice, a centre line, the ellipses of
+  its foot and shoulder, chalked over — and **every part of it saying something of them**:
+  - **the height**: a millilitre a perfume, measured beside it (*139 ml*, Prin Lomros, the tallest);
+  - **the body**: its perfumes by year, the earliest at the foot and the newest at the shoulder — it
+    swells where most were made (Nicholas Nilsson's at 2021 and 2023, narrowing to his one of 2026);
+  - **the graduations** up its wall, as a measuring flask's: one for every perfume, the earliest lowest
+    — long where a source names its perfumer, short where it is the house's perfumer, dotted where none
+    is found;
+  - **the juice**, the right half cut away as a section is: **a layer for every house**, as deep as
+    what was made for it, the house they made for first at the bottom, each hatched the other way;
+  - **the cap**: a tier for every house (five at most, the rest written *+4*);
+  - **the label**: how sure the sources are, mostly — framed named, dashed the house's perfumer,
+    crossed not found;
+  - **the family**: where its perfumes are, mostly — **a round flask** for the individual fragrances,
+    written about one by one, **a square flacon** for a house's perfumes on the site, **a faceted one**
+    for Prin Lomros' houses, not on it — which is also what gives a flacon of one perfume its shape.
+- **On one shelf, as a shop window sets them out**: the most in the middle, the rest falling away
+  either side; the shelf a hatched slab in section, chalked; **under it each one's plan** from above,
+  its houses as sectors round its neck; its name upright under its plan, in the hand; *A FLACON FOR
+  EVERY PERFUMER.* under it all. The sheet draws itself left to right as the page opens, and **a point
+  of chalk goes on retracing the flacons**, up each, over its cap and down.
+- **The design sheet**, top right (across the top on a phone): **the key** until one is chosen — a
+  flacon of a made-up perfumer with every part named, *how to read a flacon* — and then **the chosen
+  flacon drawn large**, half in section, every part named for it: each tier its house, each layer its
+  millilitres and house, the shoulder's and the foot's years, its graduations counted by credit, its
+  label, its family, its plan; drawn in from the top each time.
+- **Choosing**: a flacon pressed is its perfumer; **pressed again, a layer (or a tier of the cap) is its
+  house and a graduation its perfume** — the first press never goes past the flacon; the list at the
+  top chooses one; Esc goes back a level at a time. **The detail** at the foot lists a flacon's houses
+  as its juice, from the bottom, and a house's perfumes, each pressed saying who made it and where it is
+  from. On a phone the shelf is swiped sideways and opens on its middle.
+
+### Why / key decisions
+
+- **Every part from the ledger, nothing for show**: a shape that only looked like a bottle would have
+  been the "random houses" again. The height, the profile (its years, smoothed), the graduations, the
+  layers, the tiers, the label and the family are each one thing a perfumer's entry says, and the key
+  says which.
+- **A flacon of one perfume, or of one year, has no profile to give it**, so its family shapes it: a
+  round belly, square shoulders, or a chamfer and facets — which is why the thirteen perfumers of one
+  perfume stand as three kinds of flacon, not thirteen of one.
+- **Drawn once, laid down each frame**, as the section was: the sheet is a picture of its own; each
+  frame lays it down and draws only the chalk's point, the flacon pointed at or chosen (traced again,
+  boiling), and — only when the choice changes — the design sheet, on a canvas of its own.
+
+### How to test it
+
+`npm test -- tests/test-pages.spec.js` — page 5: 24 flacons, 282 perfumes, 35 layers; Prin Lomros taller
+than Nicholas Nilsson, taller than Josh Lobb; caps of 3, 1, 1 and 2 tiers (Prin Lomros, Nicholas Nilsson,
+Josh Lobb, Aichi Liu); Prin Lomros faceted, Josh Lobb round, Michael Nordstrand square; Nilsson's body
+wider at 2021 than at 2026; Strangers Parfumerie's layer near twice as deep as Parfum Prissana's;
+Dragon's Breath's graduation (named) longer than Lust's (the house's); Aichi Liu pressed (two houses),
+Om Parfums' layer pressed (nine perfumes), a perfume, Esc twice; Haxan's graduation pressed twice (Prin
+Lomros, then Haxan); the list (Nicholas Nilsson); Esc. It draws, moves, fits a phone and has no errors.
