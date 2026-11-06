@@ -582,3 +582,42 @@ this version. I like it (for page1) (lets call it TP1 backup)."
 `npm test -- tests/test-pages.spec.js` — page 1: the split by default, its blob drawn; `?look=backup`
 draws the backup, the same lobes and list. By hand: open page 1, press a perfumer, and look at the
 blob's upper left and lower right; then the same with `?look=backup`.
+
+## 2026-11-06, the very last — page 1's lens: the colour out of the aberration alone
+
+The owner, of the lens's split: "Maybe experiment with chromattic abberation to achieve that colour. I
+think in my reference there is blue/orange colour average that gives it that vibe. Try it, if no then we
+can revert to other strategies."
+
+- **The lens** is what page 1 draws now, and **nothing on the blob is painted**: the blob is one dark
+  shape, and each of the poster's three colours sees it a little apart, as a lens that does not bring
+  them to one place does — **the red thrown up and to the left, the blue down and to the right, the green
+  between them and out of focus a little further out**. So where the blob's edge begins on the upper
+  left, only the blue is still light — **blue going violet**; on the lower right only the red and some
+  of the green are — **gold going orange**; far out, where only the green is darkened, **the lavender
+  haze** — the owner's blue and orange averaged; and in the middle, where the red is let a little lighter
+  than the other two, **plum** rather than black, as in the picture. The spheres round it are seen through
+  the same lens, the further the softer.
+- **Kept, on the address**: the lens's split before it, `?look=split`, and **TP1 backup**, `?look=backup`.
+  `TestPage1.look()` says which (`lens`, `split` or `backup`), and `TestPage1.rim()` the colour where the
+  blob's edge begins on its upper left and on its lower right.
+
+### Why / key decisions
+
+- **Each colour is a mask of the same field, read at its own place** (`paintLens`, `LENS_AT`): how dark it
+  goes in the middle (`LENS_DEEP`, the plum), how far out its haze reaches (`LENS_HAZE`, the green's
+  most), and how much further out than the blob's own edge it begins to darken (`LENS_SOFT`).
+- **The green is out of focus outward only.** Softened both ways, it went lighter than the red and blue
+  just inside the edge and the blob had a green rim (the first try); its edge only begins further out.
+- **How far apart they are is a compromise between the two fringes**: the green nearer the red makes the
+  upper left blue-violet and the lower right red; nearer the blue, the lower right gold and the upper left
+  cyan. It stands a third of the way from the red.
+- **The picture is laid over the poster at the one opacity that darkens each colour by its own amount**,
+  so the colours are the poster's own, darkened, and nothing is lighter than the paper.
+
+### How to test it
+
+`npm test -- tests/test-pages.spec.js` — page 1: the lens by default, its edge blue on the upper left and
+warm on the lower right (`rim()`), and `?look=split` and `?look=backup` each drawing its own, the same
+lobes and list. By hand: open page 1, press a perfumer, and set it beside the owner's picture; then the
+same with `?look=split` and `?look=backup`.

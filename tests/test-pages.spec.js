@@ -221,23 +221,32 @@ test("test page 1: the rays first, a dot opening its perfumer's world, a house i
   expect(errors).toEqual([]);
 });
 
-/* 2026-11-06, last — "emphasize the chromattic abberation on test page 1 ...
-   Just in case though save this version ... (lets call it TP1 backup)": the
-   blob drawn as a lens's split, and the version before it kept whole on the
-   address. */
-test("test page 1: the lens's split by default, and TP1 backup on ?look=backup", async ({ page }) => {
+/* Test page 1's blob, the owner (2026-11-06, the very last round): "Maybe
+   experiment with chromattic abberation to achieve that colour. I think in my
+   reference there is blue/orange colour average that gives it that vibe" —
+   the lens: no colour painted, the blob's red, green and blue each seeing it
+   a little apart, so its edge is blue where it begins on the upper left and
+   gold on the lower right. The lens's split before it is ?look=split, and the
+   version the owner asked to keep, "TP1 backup", ?look=backup. */
+test("test page 1: the lens by default — blue above, gold below — the split and TP1 backup on the address", async ({ page }) => {
   const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/test-pages/1/#prin-lomros");
   await page.waitForTimeout(1500);
-  expect(await page.evaluate(() => window.TestPage1.look())).toBe("split");
+  expect(await page.evaluate(() => window.TestPage1.look())).toBe("lens");
   expect(await page.evaluate(() => window.TestPage1.lobes())).toHaveLength(3);
-  await page.goto("/test-pages/1/?look=backup#prin-lomros");
-  await page.waitForTimeout(1500);
-  expect(await page.evaluate(() => window.TestPage1.look())).toBe("backup");
-  expect(await page.evaluate(() => window.TestPage1.view())).toBe("world");
-  expect(await page.evaluate(() => window.TestPage1.lobes())).toHaveLength(3);
+  const rim = await page.evaluate(() => window.TestPage1.rim());
+  // where the edge begins: blue on the upper left, warm on the lower right
+  expect(rim.upLeft[2]).toBeGreaterThan(rim.upLeft[0] + 100);
+  expect(rim.downRight[0]).toBeGreaterThan(rim.downRight[2] + 100);
+  for (const look of ["split", "backup"]) {
+    await page.goto(`/test-pages/1/?look=${look}#prin-lomros`);
+    await page.waitForTimeout(1500);
+    expect(await page.evaluate(() => window.TestPage1.look())).toBe(look);
+    expect(await page.evaluate(() => window.TestPage1.view())).toBe("world");
+    expect(await page.evaluate(() => window.TestPage1.lobes())).toHaveLength(3);
+  }
   expect(errors).toEqual([]);
 });
 

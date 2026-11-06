@@ -50,6 +50,13 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
    the right, each feathered — a thin blue above, a thin gold below, coming
    gradually out of the black. The painter before it is kept whole: TP1
    BACKUP, on the address as ?look=backup ("save this version. I like it").
+   And since the very last round ("experiment with chromattic abberation to
+   achieve that colour ... blue/orange colour average"), THE LENS: nothing
+   painted, the blob one dark shape that each of the three colours sees a
+   little apart — the red up and to the left, the blue down and to the right,
+   the green between and out of focus further out — so its edge is blue-violet
+   above, gold going orange below, its haze lavender (the blue and the orange
+   averaged) and its middle plum. The split before it is ?look=split.
    HOW IT IS DRAWN: a blob is a field of soft lobes, f = Σ r²/d², worked out
    a pixel at a time in a small picture — the core where the field is
    strong, the blue fringe where it is strong a little up and to the left of
@@ -295,8 +302,89 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
   // below; a breath of cyan and of red at their edges — thin, and going out of
   // the black gradually. The painter before it, kept whole: TP1 BACKUP, shown
   // by ?look=backup on the page's address.
-  const LOOK = new URLSearchParams(location.search).get("look") === "backup" ? "backup" : "split";
+  //
+  // ---- THE LENS (the very last round of 2026-11-06 — "Maybe experiment with
+  // chromattic abberation to achieve that colour. I think in my reference there
+  // is blue/orange colour average that gives it that vibe"): no colour is
+  // painted at all. The blob is one dark shape, and each of the poster's three
+  // colours sees it a little apart, as a lens that does not bring them to one
+  // place does — the red thrown up and to the left, the blue down and to the
+  // right, the green between them and a little softer, out of focus further
+  // out. Where only the blue is still light the poster shows blue, above; where
+  // only the red and green are, orange and gold, below; where the green alone
+  // is darkened, far out, the lavender haze — the blue and the orange
+  // averaged. Its core is not quite black either: the red is let a little
+  // lighter than the rest, the plum of the picture. The lens's split, before
+  // it, is ?look=split; TP1 BACKUP is ?look=backup.
+  const LOOK = (() => { const v = new URLSearchParams(location.search).get("look"); return v === "backup" || v === "split" ? v : "lens"; })();
   const GROUND = [226, 234, 230];                   // the poster, about the blob
+  // how dark each colour goes in the blob's middle (red, green, blue): the plum
+  const LENS_DEEP = [0.84, 0.965, 0.92];
+  // how far out each colour's haze reaches, and how dark: the green's most
+  const LENS_HAZE = [0.15, 0.22, 0.02];
+  // where each colour sees the blob, as a share of the throw: red up and left,
+  // blue down and right, green between, nearer the red
+  const LENS_AT = [1, 0.3, -1];
+  // how much further out each colour's edge begins to darken than the blob's
+  // own: the green's furthest, so it is out of focus outwards and never
+  // lighter than the other two inside
+  const LENS_SOFT = [1, 1.55, 1];
+  function paintLens(cv2, n, lobes, shift, soft, shade) {
+    if (cv2.width !== n) { cv2.width = cv2.height = n; }
+    const x2 = cv2.getContext("2d");
+    const img = x2.createImageData(n, n), d = img.data;
+    const step = (2 * EXT) / n;
+    const L = lobes.length, lx = new Float32Array(L), ly = new Float32Array(L), ir = new Float32Array(L);
+    lobes.forEach((o, i) => { lx[i] = o.x; ly[i] = o.y; ir[i] = 1 / (o.r * o.r); });
+    const fld = new Float32Array(n * n);
+    for (let j = 0; j < n; j++) {
+      const y = -EXT + (j + 0.5) * step;
+      for (let i = 0; i < n; i++) {
+        const x = -EXT + (i + 0.5) * step;
+        let f = 0;
+        for (let k = 0; k < L; k++) { const dx = x - lx[k], dy = y - ly[k], q = (dx * dx + dy * dy) * ir[k]; if (q < 6) f += Math.exp(K * (1 - q)); }
+        fld[j * n + i] = f;
+      }
+    }
+    const at = (fx, fy) => {
+      if (fx < 0 || fy < 0 || fx > n - 1 || fy > n - 1) return 0;
+      const i = fx | 0, j = fy | 0, u = fx - i, v = fy - j, i1 = Math.min(n - 1, i + 1), j1 = Math.min(n - 1, j + 1);
+      return (fld[j * n + i] * (1 - u) + fld[j * n + i1] * u) * (1 - v) + (fld[j1 * n + i] * (1 - u) + fld[j1 * n + i1] * u) * v;
+    };
+    const sm = (a, b, v) => { const t = (v - a) / (b - a); return t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t); };
+    const w = soft || 1, sh = shade || 0;
+    const px = shift / step, ax = px * 0.8, ay = px;
+    const dk = [0, 0, 0], f = [0, 0, 0];
+    for (let j = 0; j < n; j++) {
+      const y = -EXT + (j + 0.5) * step;
+      for (let i = 0; i < n; i++) {
+        for (let c = 0; c < 3; c++) f[c] = at(i + ax * LENS_AT[c], j + ay * LENS_AT[c]);
+        const most = Math.max(f[0], f[1], f[2]);
+        if (most < 0.03) continue;
+        const x = -EXT + (i + 0.5) * step;
+        const win = 1 - sm(EXT * 0.6, EXT * 0.97, Math.sqrt(x * x + y * y));
+        if (win <= 0) continue;
+        // a little light on the upper left, where a sphere is lit: the red and
+        // the blue let up more than the green, so it is violet
+        const lt = sh ? sh * clamp(0.6 - (x * 0.55 + y * 0.75), 0, 1) * (1 - sm(1.6, 3.2, (f[0] + f[2]) / 2) * 0.4) : 0;
+        let a = 0;
+        for (let c = 0; c < 3; c++) {
+          const body = sm(1 - 0.24 * w * LENS_SOFT[c], 1 + 0.36 * w, f[c]) * LENS_DEEP[c] * (1 - lt * (c === 1 ? 0.06 : c === 0 ? 0.22 : 0.3));
+          const haze = sm(0.03, 1.0, f[c]) * LENS_HAZE[c];
+          dk[c] = Math.max(body, haze);
+          if (dk[c] > a) a = dk[c];
+        }
+        if (a <= 0.002) continue;
+        // what, laid over the poster at a, darkens each colour by its own amount
+        const o = (j * n + i) * 4;
+        d[o] = GROUND[0] * (a - dk[0]) / a;
+        d[o + 1] = GROUND[1] * (a - dk[1]) / a;
+        d[o + 2] = GROUND[2] * (a - dk[2]) / a;
+        d[o + 3] = a * win * 255;
+      }
+    }
+    x2.putImageData(img, 0, 0);
+  }
   function paintSplit(cv2, n, lobes, shift, soft, shade) {
     if (cv2.width !== n) { cv2.width = cv2.height = n; }
     const x2 = cv2.getContext("2d");
@@ -415,7 +503,8 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     const n = Math.round(24 + focus * 46);
     const lobes = [{ x: 0, y: 0, r: 0.86 }, { x: (R() - 0.5) * 0.22, y: (R() - 0.5) * 0.22, r: 0.5 + R() * 0.12 }];
     if (LOOK === "backup") paintBlob(c, n, lobes, 0.045 + (1 - focus) * 0.04, 1.6 - focus * 0.8, 0.9);
-    else paintSplit(c, n, lobes, 0.054 + (1 - focus) * 0.045, 1.5 - focus * 0.4, 0.9);
+    else if (LOOK === "split") paintSplit(c, n, lobes, 0.054 + (1 - focus) * 0.045, 1.5 - focus * 0.4, 0.9);
+    else paintLens(c, n, lobes, 0.05 + (1 - focus) * 0.045, 1.4 - focus * 0.4, 0.9);
     return { c, s: (r * 2 * EXT) / 1.1 };
   }
 
@@ -461,7 +550,8 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     w.tick = tick;
     driftLobes(w.lobes, t);
     if (LOOK === "backup") paintBlob(w.paint, phone ? 120 : 156, w.lobes, 0.05, 1.7, 0.45);
-    else paintSplit(w.paint, phone ? 120 : 156, w.lobes, 0.064, 1.2, 0.45);
+    else if (LOOK === "split") paintSplit(w.paint, phone ? 120 : 156, w.lobes, 0.064, 1.2, 0.45);
+    else paintLens(w.paint, phone ? 120 : 156, w.lobes, 0.05, 1.2, 0.45);
   }
   function drawCur(c, w, x, y, r, t, alpha) {
     if (alpha <= 0.003) return;
@@ -1026,5 +1116,19 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     list: () => listRows.map((r) => (r.kind === "house" ? HOU[r.h].name : r.e.n)),
     spheres: () => blobs.length,
     look: () => LOOK,
+    // the colour where the blob's edge begins, walking in from its upper left
+    // and from its lower right (the picture's own colour, before the poster)
+    rim: () => {
+      if (!cur || !cur.paint) return null;
+      const c = cur.paint, n = c.width, d = c.getContext("2d").getImageData(0, 0, n, n).data;
+      const walk = (s) => {
+        for (let k = 0; k < n / 2; k++) {
+          const q = (n / 2 - k) * 0.7071, i = Math.round(n / 2 + s * q), j = Math.round(n / 2 + s * q), o = (j * n + i) * 4;
+          if (d[o + 3] > 150) return [d[o], d[o + 1], d[o + 2]];
+        }
+        return null;
+      };
+      return { upLeft: walk(-1), downRight: walk(1) };
+    },
   };
 })();
