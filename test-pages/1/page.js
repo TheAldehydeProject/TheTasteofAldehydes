@@ -42,6 +42,14 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
                       rays); so does Esc.
    The readings down the left are the perfumer's (or the house's).
 
+   ITS COLOURS since the last round of 2026-11-06 ("emphasize the chromattic
+   abberation ... decreasing the colours a little (in size) ... the transition
+   brtween the black blob and the colour to be gradual and featgered"): the
+   blob drawn as a lens that does not bring the three colours to one place,
+   its red and green thrown a little up and to the left, its blue down and to
+   the right, each feathered — a thin blue above, a thin gold below, coming
+   gradually out of the black. The painter before it is kept whole: TP1
+   BACKUP, on the address as ?look=backup ("save this version. I like it").
    HOW IT IS DRAWN: a blob is a field of soft lobes, f = Σ r²/d², worked out
    a pixel at a time in a small picture — the core where the field is
    strong, the blue fringe where it is strong a little up and to the left of
@@ -275,6 +283,83 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     }
     x2.putImageData(img, 0, 0);
   }
+  // ---- THE LENS'S SPLIT (since the last round of 2026-11-06 — "emphasize the
+  // chromattic abberation ... after decreasing the colours a little (in size,
+  // so they dont stick out as much as they do currently) (i want the
+  // transition brtween the black blob and the colour to be gradual and
+  // featgered as well)"): the blob as a lens that does not bring the three
+  // colours to one place draws it — its red and green a little up and to the
+  // left of where it is, its blue a little down and to the right, each of the
+  // three a mask as feathered as the blob's own edge. Where only the red and
+  // green are dark the poster shows blue, above; where only the blue is, gold,
+  // below; a breath of cyan and of red at their edges — thin, and going out of
+  // the black gradually. The painter before it, kept whole: TP1 BACKUP, shown
+  // by ?look=backup on the page's address.
+  const LOOK = new URLSearchParams(location.search).get("look") === "backup" ? "backup" : "split";
+  const GROUND = [226, 234, 230];                   // the poster, about the blob
+  function paintSplit(cv2, n, lobes, shift, soft, shade) {
+    if (cv2.width !== n) { cv2.width = cv2.height = n; }
+    const x2 = cv2.getContext("2d");
+    const img = x2.createImageData(n, n), d = img.data;
+    const step = (2 * EXT) / n;
+    const L = lobes.length, lx = new Float32Array(L), ly = new Float32Array(L), ir = new Float32Array(L);
+    lobes.forEach((o, i) => { lx[i] = o.x; ly[i] = o.y; ir[i] = 1 / (o.r * o.r); });
+    const fld = new Float32Array(n * n);
+    for (let j = 0; j < n; j++) {
+      const y = -EXT + (j + 0.5) * step;
+      for (let i = 0; i < n; i++) {
+        const x = -EXT + (i + 0.5) * step;
+        let f = 0;
+        for (let k = 0; k < L; k++) { const dx = x - lx[k], dy = y - ly[k], q = (dx * dx + dy * dy) * ir[k]; if (q < 6) f += Math.exp(K * (1 - q)); }
+        fld[j * n + i] = f;
+      }
+    }
+    // the field between its pixels, so a shift can be less than one
+    const at = (fx, fy) => {
+      if (fx < 0 || fy < 0 || fx > n - 1 || fy > n - 1) return 0;
+      const i = fx | 0, j = fy | 0, u = fx - i, v = fy - j, i1 = Math.min(n - 1, i + 1), j1 = Math.min(n - 1, j + 1);
+      return (fld[j * n + i] * (1 - u) + fld[j * n + i1] * u) * (1 - v) + (fld[j1 * n + i] * (1 - u) + fld[j1 * n + i1] * u) * v;
+    };
+    const sm = (a, b, v) => { const t = (v - a) / (b - a); return t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t); };
+    const w = soft || 1, sh = shade || 0;
+    const lo = 1 - 0.24 * w, hi = 1 + 0.36 * w;
+    // how far each colour's mask is thrown, in pixels of the picture
+    const px = shift / step, ax = px * 0.8, ay = px;
+    const H0 = COL.haze, E0 = COL.edge, D0 = COL.deep;
+    for (let j = 0; j < n; j++) {
+      const y = -EXT + (j + 0.5) * step;
+      for (let i = 0; i < n; i++) {
+        const fR = at(i + ax, j + ay), fG = at(i + ax * 0.8, j + ay * 0.8), fB = at(i - ax, j - ay);
+        const most = Math.max(fR, fG, fB);
+        if (most < 0.035) continue;
+        const x = -EXT + (i + 0.5) * step;
+        const win = 1 - sm(EXT * 0.6, EXT * 0.97, Math.sqrt(x * x + y * y));
+        if (win <= 0) continue;
+        const mR = sm(lo, hi, fR), mG = sm(lo, hi, fG), mB = sm(lo, hi, fB);
+        const hz = sm(0.035, 1.0, most) * 0.55;
+        // the core's own colour: violet at its edge, near black deep in it,
+        // a little light on its upper left where a sphere is lit
+        const fc = (fR + fB) / 2;
+        const k = sm(1.0, 2.1, fc);
+        const lt = sh ? sh * clamp(0.6 - (x * 0.55 + y * 0.75), 0, 1) * (1 - sm(1.6, 3.2, fc) * 0.4) : 0;
+        const dR = lerp(E0[0], lerp(D0[0], 78, lt), k), dG = lerp(E0[1], lerp(D0[1], 34, lt), k), dB = lerp(E0[2], lerp(D0[2], 96, lt), k);
+        // the haze over the poster, and the three masks over that
+        const hR = lerp(GROUND[0], H0[0], hz), hG = lerp(GROUND[1], H0[1], hz), hB = lerp(GROUND[2], H0[2], hz);
+        const oR = hR * (1 - mR) + dR * mR, oB = hB * (1 - mB) + dB * mB;
+        // where only the blue has gone dark, a warmer gold than the lens's lemon
+        const oG = hG * (1 - mG) + dG * mG - Math.max(0, mB - mG) * 52;
+        // what laid over the poster gives that
+        const a = Math.max(hz, mR, mG, mB);
+        if (a <= 0.002) continue;
+        const o = (j * n + i) * 4;
+        d[o] = clamp((oR - GROUND[0] * (1 - a)) / a, 0, 255);
+        d[o + 1] = clamp((oG - GROUND[1] * (1 - a)) / a, 0, 255);
+        d[o + 2] = clamp((oB - GROUND[2] * (1 - a)) / a, 0, 255);
+        d[o + 3] = a * win * 255;
+      }
+    }
+    x2.putImageData(img, 0, 0);
+  }
   // the lobes of a world: a perfumer's, one for every house, as big as what
   // it made for it; a house's, one for every year its perfumes were made in.
   // Each real lobe keeps which part of the list it is (o.i)
@@ -329,7 +414,8 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     const c = document.createElement("canvas");
     const n = Math.round(24 + focus * 46);
     const lobes = [{ x: 0, y: 0, r: 0.86 }, { x: (R() - 0.5) * 0.22, y: (R() - 0.5) * 0.22, r: 0.5 + R() * 0.12 }];
-    paintBlob(c, n, lobes, 0.045 + (1 - focus) * 0.04, 1.6 - focus * 0.8, 0.9);
+    if (LOOK === "backup") paintBlob(c, n, lobes, 0.045 + (1 - focus) * 0.04, 1.6 - focus * 0.8, 0.9);
+    else paintSplit(c, n, lobes, 0.054 + (1 - focus) * 0.045, 1.5 - focus * 0.4, 0.9);
     return { c, s: (r * 2 * EXT) / 1.1 };
   }
 
@@ -374,7 +460,8 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     if (!force && tick === w.tick) return;
     w.tick = tick;
     driftLobes(w.lobes, t);
-    paintBlob(w.paint, phone ? 120 : 156, w.lobes, 0.05, 1.7, 0.45);
+    if (LOOK === "backup") paintBlob(w.paint, phone ? 120 : 156, w.lobes, 0.05, 1.7, 0.45);
+    else paintSplit(w.paint, phone ? 120 : 156, w.lobes, 0.064, 1.2, 0.45);
   }
   function drawCur(c, w, x, y, r, t, alpha) {
     if (alpha <= 0.003) return;
@@ -391,8 +478,10 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
   }
   // the lobes named, as a technical drawing names its parts: a number and a
   // hairline out from each, and what it is under the hand
+  // where the lobes' names stood last frame, so a sphere's name can keep clear
+  let lobeBoxes = [];
   function drawLobeNames(c, w, x, y, r, alpha) {
-    if (alpha <= 0.01) return;
+    if (alpha <= 0.01) { lobeBoxes = []; return; }
     const u = r / 1.1;
     const items = [];
     w.lobes.forEach((o) => {
@@ -420,9 +509,13 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     c.lineWidth = 0.8;
     c.textBaseline = "middle";
     c.strokeStyle = c.fillStyle = "#25262b";
+    lobeBoxes = [];
     for (const it of items) {
       c.globalAlpha = alpha * (it.lit ? 1 : 0.7);
       const x2 = it.x1 + (it.right ? 10 : -10);
+      const tw = c.measureText(it.say).width, tx = x2 + (it.right ? 4 : -4);
+      lobeBoxes.push({ x0: Math.min(it.x0, x2, it.right ? tx : tx - tw) - 4, x1: Math.max(it.x0, x2, it.right ? tx + tw : tx) + 4,
+        y0: Math.min(it.y0, it.y1) - 8, y1: Math.max(it.y0, it.y1) + 8 });
       c.beginPath(); c.moveTo(it.x0, it.y0); c.lineTo(it.x1, it.y1); c.lineTo(x2, it.y1); c.stroke();
       c.beginPath(); c.arc(it.x0, it.y0, it.lit ? 2.2 : 1.5, 0, TAU); c.fill();
       c.textAlign = it.right ? "left" : "right";
@@ -822,7 +915,21 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
       // its name, small, under it
       ctx.globalAlpha = a * (lit ? 0.95 : 0.5);
       ctx.fillStyle = "#26282d";
-      ctx.fillText((b.kind === "house" ? HOU[b.h].name : "↩ " + (b.p.none ? "Not found" : b.p.name)).toUpperCase(), b.x + b.dx, b.y + b.dy + b.r * 1.12 + 14);
+      // under it — or, where a lobe's name stands there, over it if there is
+      // room under the head, else beside it, on the side away from the middle
+      const say = (b.kind === "house" ? HOU[b.h].name : "↩ " + (b.p.none ? "Not found" : b.p.name)).toUpperCase();
+      const nx = b.x + b.dx, ny = b.y + b.dy, half = ctx.measureText(say).width / 2 + 4;
+      const clear = (xx, yy) => xx - half > F.x0 - 24 && xx + half < F.x1 + 24 &&
+        !lobeBoxes.some((o) => xx + half > o.x0 && xx - half < o.x1 && yy + 3 > o.y0 && yy - 11 < o.y1);
+      const below = ny + b.r * 1.12 + 14, above = ny - b.r * 1.12 - 6;
+      const out = nx < P.x ? -1 : 1, beside = b.r * 1.08 + 10 + half;
+      const spots = [[nx, below], [nx, above - 12 > F.y0 - 8 ? above : -1e9], [nx + out * beside, ny + 4], [nx - out * beside, ny + 4]];
+      const at = spots.find(([xx, yy]) => yy > -1e8 && clear(xx, yy)) || spots[0];
+      const ox = at[0] - nx, oy = at[1] - below;
+      if (b.ox === undefined) { b.ox = ox; b.oy = oy; }
+      const fl = STILL ? 1 : Math.min(1, dt * 6);
+      b.ox += (ox - b.ox) * fl; b.oy += (oy - b.oy) * fl;
+      ctx.fillText(say, nx + b.ox, below + b.oy);
     }
     ctx.globalAlpha = 1;
     // the one before going out as this comes in
@@ -918,5 +1025,6 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     lobes: () => (cur ? cur.lobes.filter((o) => o.part).map((o) => o.part.say) : []),
     list: () => listRows.map((r) => (r.kind === "house" ? HOU[r.h].name : r.e.n)),
     spheres: () => blobs.length,
+    look: () => LOOK,
   };
 })();

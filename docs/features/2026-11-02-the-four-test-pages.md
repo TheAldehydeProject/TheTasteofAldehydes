@@ -542,3 +542,43 @@ eight flacons of eight kinds, the atomiser first; 24 rows and 280 perfumes; Aich
 specification, two houses, fourteen perfumes) leaving the flacons as they were; Om Parfums (nine); a
 perfume's line naming her; Esc three times; the search finding Prin Lomros by *haxan*. It draws, moves,
 fits a phone and has no errors.
+
+## 2026-11-06, last of all — page 1's lens split, and TP1 backup
+
+The owner, of page 1's blob: "emphasize the chromattic abberation on test page 1; after decreasing the
+colours a little (in size, so they dont stick out as much as they do currently) (i want the transition
+brtween the black blob and the colour to be gradual and featgered as well). Just in case though save
+this version. I like it (for page1) (lets call it TP1 backup)."
+
+- **The lens's split** is what page 1 draws now: the blob as a camera lens that does not bring its three
+  colours to one point would draw it — **the red, green and blue of it each laid a little apart**, the
+  red and the green thrown up and to the left, the blue down and to the right, so where the dark of one
+  has gone and the other's has not, **a fringe of the colour left** shows: blue-violet along the upper
+  left, gold along the lower right. The fringes are **thinner than before but stronger** — narrow bands
+  rather than wide washes round the blob — and **each colour's edge is feathered as the blob's is**, so
+  the near-black goes into the fringe, and the fringe into the lavender haze, gradually, with no line
+  anywhere. The spheres round it are drawn the same way, the further the softer and the wider apart.
+- **TP1 backup** — the blob as it was before this, its fringes painted on as two soft washes — is kept
+  whole: **`?look=backup`** on page 1's address shows it (`test-pages/1/?look=backup`), changing nothing
+  else. `TestPage1.look()` says which is drawn (`split` or `backup`).
+- **A house's name keeps clear of the lobes' numbers**, in both: under its sphere as before, but where a
+  number stands there, over it if there is room under the head, and otherwise beside it, on the side away
+  from the middle — gliding there (Strangers Parfumerie's name lay over Prin Lomros' *03*).
+
+### Why / key decisions
+
+- **The split is three masks of one field, read a pixel or so apart** (`paintSplit` in page 1's
+  `page.js`): the blob's field is worked out once, read between its pixels so a shift can be less than
+  one, each colour's mask a soft step of it, and the three put back together over the poster's own
+  colour as one picture with its own opacity. That is what makes the fringes the blob's own edge, out of
+  register, rather than colour laid round it — and what keeps them thin: the step is narrower than the
+  shift (`lo`, `hi` against `shift`), or the feather swallowed the split and nothing showed (the first
+  try).
+- **The old painter is kept, not rewritten**: `paintBlob` is untouched and chosen by `LOOK`, so the
+  backup is exactly what the owner saw and liked.
+
+### How to test it
+
+`npm test -- tests/test-pages.spec.js` — page 1: the split by default, its blob drawn; `?look=backup`
+draws the backup, the same lobes and list. By hand: open page 1, press a perfumer, and look at the
+blob's upper left and lower right; then the same with `?look=backup`.

@@ -221,6 +221,26 @@ test("test page 1: the rays first, a dot opening its perfumer's world, a house i
   expect(errors).toEqual([]);
 });
 
+/* 2026-11-06, last — "emphasize the chromattic abberation on test page 1 ...
+   Just in case though save this version ... (lets call it TP1 backup)": the
+   blob drawn as a lens's split, and the version before it kept whole on the
+   address. */
+test("test page 1: the lens's split by default, and TP1 backup on ?look=backup", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await serveDependenciesLocally(page);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/test-pages/1/#prin-lomros");
+  await page.waitForTimeout(1500);
+  expect(await page.evaluate(() => window.TestPage1.look())).toBe("split");
+  expect(await page.evaluate(() => window.TestPage1.lobes())).toHaveLength(3);
+  await page.goto("/test-pages/1/?look=backup#prin-lomros");
+  await page.waitForTimeout(1500);
+  expect(await page.evaluate(() => window.TestPage1.look())).toBe("backup");
+  expect(await page.evaluate(() => window.TestPage1.view())).toBe("world");
+  expect(await page.evaluate(() => window.TestPage1.lobes())).toHaveLength(3);
+  expect(errors).toEqual([]);
+});
+
 test("test page 2: an accord pointed at in the list is the one in focus", async ({ page }) => {
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
