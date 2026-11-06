@@ -98,10 +98,11 @@ P = {
  # nofollow, the only pages here that say nofollow. Not in robots.txt on
  # purpose: a page a crawler is barred from is a page whose noindex it
  # never reads.
- "test-pages/1/index.html": dict(desc="A test page, not a part of the site: Perfumer Worlds — every perfume a ray to the middle, every perfumer a world of their houses, the Earth turning in it.", noindex=True, nofollow=True),
+ "test-pages/1/index.html": dict(desc="A test page, not a part of the site: Perfumer Worlds — every perfume a ray to the middle, every perfumer a dark blob of their houses, out of focus.", noindex=True, nofollow=True),
  "test-pages/2/index.html": dict(desc="A test page, not a part of the site: Accord Spectrums 2026 — the houses' notes laid round the sixteen accords.", noindex=True, nofollow=True),
- "test-pages/3/index.html": dict(desc="A test page, not a part of the site: A Portrait of the Perfumers — a thread for every perfume, from its perfumer to its house.", noindex=True, nofollow=True),
- "test-pages/4/index.html": dict(desc="A test page, not a part of the site: The Perfumers' Graph — every perfumer a node, its houses and their perfumes round it, chosen from a table.", noindex=True, nofollow=True),
+ "test-pages/3/index.html": dict(desc="A test page, not a part of the site: A Portrait of the Perfumers — a thread for every perfume, rising from its perfumer to its house.", noindex=True, nofollow=True),
+ "test-pages/4/index.html": dict(desc="A test page, not a part of the site: The Perfumers' Graph — every perfumer, house, perfume, letter and note a node, in clouds, chosen from a table.", noindex=True, nofollow=True),
+ "test-pages/5/index.html": dict(desc="A test page, not a part of the site: The Perfumers in Section — the houses built above ground, the perfumers below it, drawn as an architect's sketch.", noindex=True, nofollow=True),
 }
 # The forwarding pages: canonical to where the house lives now.
 for slug in ["adar", "almost-human", "ataraxia", "grande-parfums", "les-abstraits", "pineward"]:
@@ -145,6 +146,7 @@ THEME = {
  "perfumers/index.html": "#0b0c0d",
  "test-pages/1/index.html": "#050505", "test-pages/2/index.html": "#0b0b16",
  "test-pages/3/index.html": "#262628", "test-pages/4/index.html": "#c9cbce",
+ "test-pages/5/index.html": "#050505",
 }
 for essay in ["theory-01", "theory-02", "theory-03", "resins-in-perfumery", "skin",
               "buying-a-perfume", "dupes-designers-and-niches", "my-personal-introduction-to-perfume"]:

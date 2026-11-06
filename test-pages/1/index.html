@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Test page 1 — The Taste of Aldehydes</title>
 <!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
-<meta name="description" content="A test page, not a part of the site: Perfumer Worlds — every perfume a ray to the middle, every perfumer a world of their houses, the Earth turning in it.">
+<meta name="description" content="A test page, not a part of the site: Perfumer Worlds — every perfume a ray to the middle, every perfumer a dark blob of their houses, out of focus.">
 <link rel="canonical" href="https://thetasteofaldehydes.com/test-pages/1/">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="../../favicon.svg?v=2026-10-05" type="image/svg+xml">
@@ -24,17 +24,22 @@
   occupies test pages 1). The central sphere node should be of the
   perfumer, and sphere nodes around it should be of the houses. You can
   click those and view the fragrances that were made by the perfumer for
-  that house. Remember to add the layer of a rotating earth into the
-  central sphere, and also model it closer to image 4 ... a blur and a
-  grain ... Make the edges frayed ... adding layers to the nodes. Make sure
-  to have a return button."
+  that house ... model it closer to image 4 ... a blur and a grain ... Make
+  sure to have a return button." And then, seeing it: "remove the earth
+  actually, make it way more abstract and blobby like in the image i
+  referenced ... Add feathered borders, chromatic abberation and some other
+  effects to actually try and recreate it as best as possible. No need to
+  make 139 tiny nodes for prin lomoros. I want you to make the page look
+  good."
 
   Image 2: on black, dots in blocks down both sides, every one a fine ray to
   one point low in the middle. Image 4: a pale poster — a title and a date
-  over a heavy rule, dark spheres out of focus with a blue edge above and a
-  gold one below, a thin double circle, three lines of text, grain.
+  over a heavy rule, one dark abstract blob in the middle and dark spheres
+  out of focus round it, every edge feathered, a blue fringe above and a gold
+  one below, a lavender haze, a thin double circle, three lines of text,
+  grain.
 
-  NOT A PAGE OF THE SITE: nothing on the site links here but the four
+  NOT A PAGE OF THE SITE: nothing on the site links here but the
   unseen squares at the foot of Contact; it loads none of the site's
   scripts or its stylesheet, is in no menu, search or sitemap, and tells
   search engines to leave it alone. Everything it needs is in this folder.
@@ -107,11 +112,29 @@
   .t1-shares p { margin: 0 0 3px; }
   .t1-shares b { font-weight: 500; color: var(--ink); margin-right: 6px; }
 
-  .t1-aim { position: absolute; left: 0; top: 0; width: 240px; text-align: center; font: 500 11px var(--sans); color: var(--ink); opacity: 0; transition: opacity 0.25s; }
-  .t1-aim.is-on { opacity: 1; }
+  /* THE LIST, on the right: its houses, or the perfumes made for the house */
+  .t1-list { position: absolute; right: 48px; top: 112px; bottom: 128px; width: 280px; display: flex; flex-direction: column; pointer-events: auto; }
+  .t1-list-head { margin: 0 0 4px; padding-bottom: 8px; border-bottom: 1px solid #2a2c31; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .t1-list-head span { font: 400 12.5px var(--sans); color: #3c3f45; }
+  .t1-list-head b { font: 500 10px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .t1-list-how { margin: 0 0 6px; font: 400 10px var(--mono); color: var(--faint); letter-spacing: 0.03em; }
+  .t1-list-rows { margin: 0; padding: 0 4px 0 0; list-style: none; overflow-y: auto; flex: 0 1 auto; min-height: 0; scrollbar-width: thin; scrollbar-color: rgba(28, 29, 34, 0.25) transparent;
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent); -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent); padding-bottom: 20px; }
+  .t1-list-rows button { position: relative; width: 100%; display: grid; grid-template-columns: 2.6em 1fr auto; align-items: baseline; gap: 0 8px; padding: 7px 4px 8px 2px; background: none; border: 0; border-bottom: 1px solid rgba(28, 29, 34, 0.12); text-align: left; cursor: pointer; color: var(--ink); font: 400 13px/1.25 var(--sans); }
+  .t1-list-rows button:hover, .t1-list-rows button:focus-visible, .t1-list-rows button.is-pinned { background: rgba(255, 255, 255, 0.45); }
+  .t1-list-rows button:focus-visible { outline: 1px solid var(--ink); outline-offset: -1px; }
+  .t1-li-no { font: 500 10px var(--mono); color: var(--muted); letter-spacing: 0.06em; }
+  .t1-li-name { min-width: 0; overflow-wrap: anywhere; }
+  .t1-li-name small { display: block; margin-top: 2px; font: 400 10px var(--mono); color: var(--muted); letter-spacing: 0.02em; }
+  .t1-li-n { font: 400 11px var(--mono); color: #3c3f45; }
+  .t1-li-bar { position: absolute; left: 2.6em; bottom: -1px; height: 2px; background: var(--blue); opacity: 0.8; }
+  .t1-li-mark { position: absolute; right: -2px; top: 11px; width: 5px; height: 5px; border-radius: 50%; border: 1px solid #2a2c31; }
+  .t1-li-mark.t1-c0 { background: #2a2c31; }
+  .t1-li-mark.t1-c1 { background: linear-gradient(90deg, #2a2c31 50%, transparent 50%); }
+  .t1-list-rows .t1-li-n { margin-right: 8px; }
 
   /* THE THREE LINES, as the poster's: what the ledger says of it */
-  .t1-lines { position: absolute; left: calc(54% - 12vw); bottom: 74px; width: min(470px, 42vw); margin: 0; padding: 0; list-style: none; font: 400 12.5px/1.55 var(--sans); color: #2c2e33; }
+  .t1-lines { position: absolute; left: calc(54% - 12vw); bottom: 74px; width: min(470px, 42vw); margin: 0; padding: 0; list-style: none; font: 400 12px/1.55 var(--sans); color: #2c2e33; }
   .t1-lines li { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
   /* the tip a perfume brings */
@@ -148,6 +171,7 @@
     .t1-head, .t1-rays-head { left: 32px; right: 32px; }
     .t1-back, .t1-return { left: 32px; }
     .t1-ways { right: 32px; }
+    .t1-list { right: 32px; width: 240px; }
   }
   @media (max-width: 760px) {
     .t1-head, .t1-rays-head { top: 16px; left: 16px; right: 16px; }
@@ -169,6 +193,10 @@
     .t1-credit { grid-column: 1 / -1; }
     .t1-gauge { width: 46px; height: 46px; }
     .t1-lines { display: none; }
+    .t1-credit { display: none; }
+    .t1-list { left: 16px; right: 16px; width: auto; top: 46vh; bottom: 226px; }
+    .t1-list-how { display: none; }
+    .t1-list-rows button { padding: 6px 4px 6px 2px; font-size: 12.5px; }
     .t1-back { left: 16px; bottom: 22px; }
     .t1-ways { right: 16px; left: 110px; bottom: 16px; justify-content: flex-end; gap: 6px; }
     .t1-pick { max-width: 130px; }
@@ -176,6 +204,7 @@
   @media (max-height: 640px) and (min-width: 761px) {
     .t1-read { margin-bottom: 12px; }
     .t1-lines { display: none; }
+    .t1-list { bottom: 64px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .t1-grain { animation: none; }
@@ -200,7 +229,7 @@
       <h2>Perfumer Worlds <span>· <span class="t1-head-name"></span> and their houses</span></h2>
       <span class="t1-date">2026 11 06</span>
     </header>
-    <p class="t1-hint">Point at a house · press it to look at it · a perfume pressed says who made it</p>
+    <p class="t1-hint">A house pressed, or its row: what was made for it</p>
 
     <section class="t1-hud" aria-label="The perfumer in focus" aria-live="polite">
       <dl class="t1-read t1-read-who">
@@ -230,7 +259,11 @@
       </dl>
     </section>
 
-    <p class="t1-aim" aria-hidden="true"></p>
+    <section class="t1-list" aria-label="What is in the world">
+      <p class="t1-list-head"><span data-v="list-say">Its houses</span><b data-v="list-n"></b></p>
+      <p class="t1-list-how" data-v="list-how"></p>
+      <ol class="t1-list-rows"></ol>
+    </section>
     <ul class="t1-lines" aria-label="What the ledger says"></ul>
     <button type="button" class="t1-return" hidden>↩ Return</button>
   </div>
@@ -244,6 +277,6 @@
     <select class="t1-pick" aria-label="Every perfumer"></select>
   </nav>
 </main>
-<script src="page.js?v=02e5fc2bec"></script>
+<script src="page.js?v=77923b74c0"></script>
 </body>
 </html>

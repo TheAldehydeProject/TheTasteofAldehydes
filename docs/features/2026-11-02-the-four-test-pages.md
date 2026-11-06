@@ -1,6 +1,6 @@
-# The four test pages, and the unseen squares on Contact
-Date: 2026-11-02
-Files touched: `test-pages/1/` to `test-pages/4/` (each an `index.html` and a `page.js`, new), `contact/index.html`, `contact.js`, `style.css` (the CONTACT section), `tools/seo.py`, `tests/test-pages.spec.js` (new); every page's script versions, by `tools/versions.py`
+# The test pages, and the unseen squares on Contact
+Date: 2026-11-02 (four; a fifth on 2026-11-06)
+Files touched: `test-pages/1/` to `test-pages/5/` (each an `index.html` and a `page.js`, new), `contact/index.html`, `contact.js`, `style.css` (the CONTACT section), `tools/seo.py`, `tests/test-pages.spec.js` (new); every page's script versions, by `tools/versions.py`
 
 ## What changed
 
@@ -229,6 +229,9 @@ page 2 — Spinal Fluid is on the arc, named by one fragrance, Ataraxia's.
 
 ## 2026-11-06 — pages 1, 3 and 4 made again for the perfumers, and page 2 carrying them
 
+(Later the same day page 1's Earth and its ring of perfumes went, page 3 was turned the other way up
+and page 4 made dense — see **2026-11-06, last**, below; and a fifth page came, **2026-11-06, later**.)
+
 The owner, with six pictures: "change test page 1 to make it more into a perfumer oriented page ...
 replace TP3 with another iterations of the perfumers page, which should look like image 3 ... replace
 tp4 with another iteration of the perfumers page, and this one should be something like images 5 and
@@ -291,3 +294,137 @@ field, the dark ground. The four still draw, move, fit a phone and have no error
 - The snapshots are as the ledger stood on 2026-11-06: a perfumer or a perfume added to the site does
   not appear on them until they are made again, on purpose.
 - Page 3 on a phone is dense: 24 perfumers' names upright across 360px.
+
+## 2026-11-06, later — test page 5, the perfumers in section, and a fifth square
+
+The owner, with a picture of an architect's section sketch — *First Iteration Feedback: Elasticating
+The Landscape*: a long section through a building on black in white pencil and chalk, its roofline
+traced over heavily, an elastic form hanging under the ground with its levels marked (−0.05, −0.10 …),
+construction lines crossing it, notes in a hand down the left, plans in a corner, details boxed at the
+foot, a title in a box — "please also generate a 5th test page (by moving all the other ones a little to
+the left on the contacts page), modelled like the image attached (architecture sketch) that is going to
+be another page that attempts to house the perfumer information."
+
+- **A fifth square** at the foot of Contact, `test-pages/5/`, on the right of the other four, which move
+  a square's width to the left to make room (`.contact-tests`, 1 to 5 from the left).
+- **5 · The Perfumers in Section** (`test-pages/5/`): a section through every house as built. **Above
+  ground** every house is a bay — **a bay for each perfumer a house was made by**, as wide as what they
+  made for it — with **a stud for every perfume, as tall as its year** (a stub, dashed, where none is
+  found), its mark at its top (a dot named by a source, a ring the house's perfumer, a cross not
+  found), floors and a brace in fine lines, **the roof as steep as the bay is full**, and **the one
+  roofline traced over in chalk** across all of them; a house made by more than one perfumer is joined
+  over its roofs, dashed. **Below ground** every perfumer is **the elastic form** hanging under their
+  bays, hatched, **as deep as what they made**, piles down to it from each bay, **its level marked as the
+  picture's** (−0.139: a hundred and thirty-nine perfumes) and its name. Construction lines cross it all;
+  the years are ruled up its left; *ELASTIC HOUSING STRATEGY.* under it in the hand. **The notes** down
+  the left say how to read it, in the hand (Caveat); **the title** is in a box at the top left;
+  **the plan** at the top right is what is chosen, seen from above — its perfumes as radial lines as
+  long as their years, turning slowly; **the detail** boxed at the foot on the left is what is chosen:
+  a perfumer's houses, a house's perfumes, a perfume's perfumer, credit and sources, every name in it a
+  way on; and at the foot on the right, the picture's note in the hand — *above ground, the houses,
+  solid state; below ground, the perfumers, liquid latex form*. Pointed at, a bay, a stud's top or a
+  form is traced again, **its lines boiling** as a sketch's do; pressed, it is chosen; the list at the
+  top right chooses a perfumer; Esc lets go. **The section draws itself** as the page opens, a pencil's
+  edge running across it, and **a point of chalk goes on retracing the roofline**. On a phone the section
+  keeps its width and is swiped sideways, the plan staying in the corner.
+
+### Why / key decisions
+
+- **A bay a perfumer and a house** (35 of them), rather than a bay a house, so that every bay stands on
+  one perfumer's form and nothing is double counted; the houses made by several are joined over the
+  roofs instead.
+- **Drawn once, laid down each frame**: the whole sheet — the pencil's doubled, overshooting strokes and
+  the chalk's specks, seeded so it is the same drawing every time — is a picture of its own; each frame
+  lays it down (a part of it while it draws itself), and draws only the chalk's point, what is pointed
+  at or chosen, and the plan.
+- **The hand** is Google Fonts' Caveat, the page's own as the other test pages' faces are theirs; the
+  title is a serif in a box, as the picture's.
+
+### How to test it
+
+`npm test -- tests/test-pages.spec.js` — the squares are five now, 1 to 5 from the left; and page 5: 35
+bays, 24 perfumers, 282 perfumes; Bindebole's stud (2021) taller than Ore's (2009) and Amber Zero's
+(no year) a stub; Strangers Parfumerie's bay more than five times Les Abstraits'; Prin Lomros' form
+deeper than Antoine Lie's; a bay pressed (its 67 perfumes in the detail), a form pressed (Aichi Liu, two
+houses), a house from the detail (Om Parfums, 9), a perfume from it, a stud's top pressed (Haxan), the
+list (Nicholas Nilsson), Esc. It draws, moves, fits a phone and has no errors, as the others do.
+
+## 2026-11-06, last — page 1 abstract and blobby, page 3 the other way up, page 4 dense
+
+The owner, with the screenshots of page 1 and its picture again (image 4): "remove the earth actually,
+make it way more abstract and blobby like in the image i referenced ... Add feathered borders, chromatic
+abberation and some other effects to actually try and recreate it as best as possible. No need to make
+139 tiny nodes for prin lomoros. I want you to make the page look good." Of page 3, with a screenshot:
+"reverse it: i want the bottom parts to be the perfumers, and then that leads into houses and perfumes
+at the top." Of page 4: "that looks ugly, try to make it as close to the reference i have given you
+earlier as possible, not just a few lines."
+
+- **Page 1's world** has **no Earth and no ring of perfumes**. **The perfumer is one dark, abstract
+  blob** — **a lobe for every one of its houses**, as big as what it made for it, each with a bud or two
+  off it and a body under the head, so it is never round — drifting slowly and melting into itself, as
+  image 4's figure is: its core near-black going violet at its edge, **every edge feathered**, **a thin
+  blue fringe on its upper left and a gold one on its lower right, a breath of cyan and rose past them**
+  (the chromatic aberration), **a lavender haze** where it fades, a bloom behind it, the poster's grain
+  over all. Its lobes are **numbered as a drawing numbers its parts** — a hairline out from each to
+  *01*, *02* … — the numbers of **the list** now on the right: **its houses**, each with where it is from,
+  when it was founded, how many it made for it and a bar; a row pressed, or the house's sphere, brings the
+  house into the middle — **a lobe for every year its perfumes were made in**, named (*2019*, *no year*)
+  — and the list is **the perfumes the perfumer made for it**, by year, each saying how sure the sources
+  are; pointed at, its tip; pressed, its sources too. **The houses round it are spheres out of focus**,
+  the further the smaller and softer, with the same fringes and a soft light on their upper left, moving
+  with the hand by how near they are. The double circle and its cross stand over the middle, and on a
+  sphere under the hand. The rays, the readings, the three lines, Return, Esc and the way through the
+  perfumers are as they were. On a phone the world is at the top, the list under it, the readings at the
+  foot.
+- **Page 3 the other way up**: the perfumers' bars **along the foot**, their names upright under them;
+  **the threads rising** from them to the houses; every house's name and count **over** its squares, on
+  a little of the ground so the threads behind never cross the letters; **the years rising**, the newest
+  highest, *year not found* along the top; the lights running up. On a phone the page is taller, the
+  houses pushed apart up and down rather than sideways, and the years named over their rules.
+- **Page 4 dense, as its two pictures are**: about **four thousand nodes and five thousand lines**, every
+  one the ledger's or the Note Library's — every perfumer, every one of its houses, every perfume, **every
+  letter of every perfume's name** (as image 5's book is its words and their letters) and **every note
+  the Note Library files for the perfumes on the site** (all 379; a note a node in every perfumer's cloud
+  that names it, joined to the perfumes carrying it, and **the same note in two clouds joined across by
+  one faint line** — the long lines between image 5's clouds). **A cloud for every perfumer**, packed
+  round the middle, the busiest the darkest (Prin Lomros' about 1,600 nodes, Nicholas Nilsson's about
+  700); a house a cloud of its perfumes in it, a perfume its letters round it. **In three dimensions**,
+  turning slowly, in perspective — the nearer specks larger and darker — and a drag turns it. **Choosing
+  flies into it**: a perfumer's cloud (its houses named), a house (its perfumes named, the rest of the
+  field out of focus round it), a perfume (its letters named on the field, its notes named where its
+  lines reach them, the letters spelled down the left with `{perfumer; house; perfume; letter}` and its
+  notes listed under who made it). TOTAL is the nodes in view (4 044 of the whole). The table is lighter:
+  a hairline down its left over a frosted ground, its numbers in mono. Image 5's grey or image 6's dark,
+  as before.
+
+### Why / key decisions
+
+- **Page 1's blob is worked out a pixel at a time, small, and laid down large**: a field of lobes, each
+  `e^(1 − d²/r²)` — high in its middle, 1 at its edge, gone a little past twice its radius, so lobes join
+  with soft necks and stay lumps (the first try, `r²/d²`, merged everything into one round mass and
+  reached the picture's edge, which showed as a square of haze). The field is worked out once a picture
+  (156 pixels square, 120 on a phone) and the fringes read off it a few pixels to either side, which is
+  what makes them thin and offset as a lens's are; nothing reaches the picture's edge (a round window
+  takes it away). The middle blob is worked out again 24 times a second as its lobes drift; the spheres
+  round it once each. Laying the picture down six times its size is the feathering.
+- **Page 1's lobe numbers stand outside the blob**: each is walked out from its lobe until the field
+  falls below the edge, and the numbers on one side are kept a line apart, or they were lost in the dark
+  core and fell on each other.
+- **Page 4's notes are copied into every cloud that names them**: a note at one place joined to every
+  perfume naming it (the first try) strung 1,500 lines across the field into one grey hairball; a copy in
+  each cloud keeps the clouds clouds, and one line between the copies says it is the same note.
+- **Page 4 is drawn as image 5 is, cheaply**: every node turned and put in perspective each frame, the
+  lines in a handful of strokes and the specks in four fills (three by how near, one out of focus);
+  what is nearly behind the eye, once it flies in, is not drawn. About 16 ms a frame in the test
+  browser, which draws without a graphics card.
+
+### How to test it
+
+`npm test -- tests/test-pages.spec.js` — page 1: no `spin` any more; Aichi Liu's blob has a lobe for Om
+Parfums and Outsider Parfums, two spheres and two rows; Om Parfums pressed lists its 9 perfumes and its
+lobes are its years (2023, 2024, no year); a perfume in the list pressed says Aichi Liu made it; Prin
+Lomros has three lobes, and PRIN pressed in the list lists its 40. Page 3: Slumberhouse (2009) under
+Almost Human (2026), Lussur (no year) over it, the perfumers' bars under all of them. Page 4: 24, 35 and
+282 nodes as before, more than 2,500 letters, the 379 notes, more than 4,000 lines; TOTAL for Prin Lomros
+the nodes in that cloud. By hand: open page 4 and leave it turning; press Prin Lomros, then Parfum
+Prissana, then Haxan.

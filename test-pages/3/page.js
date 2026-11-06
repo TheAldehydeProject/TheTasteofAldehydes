@@ -15,13 +15,16 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
    of small squares — its people from each country — and its name under it;
    a legend along the foot.
 
-   Here: the PERFUMERS along the top, each a bar as wide as its perfumes,
-   A to Z, red to white; a THREAD FOR EVERY PERFUME falling from its
-   perfumer's bar to its HOUSE; every house a node of squares — the first as
-   big as its perfumes, then one for each of its perfumers, in their colours
-   — standing AT THE HEIGHT OF ITS PERFUMES' YEARS (the middle year of them,
-   the years ruled down the left; "year not found" along the foot), and
-   across where its perfumers stand. Lights run down the threads.
+   Here, the other way up — the owner, seeing it: "reverse it: i want the
+   bottom parts to be the perfumers, and then that leads into houses and
+   perfumes at the top": the PERFUMERS along the foot, each a bar as wide as
+   its perfumes, A to Z, red to white, its name upright under it; a THREAD
+   FOR EVERY PERFUME rising from its perfumer's bar to its HOUSE; every house
+   a node of squares — the first as big as its perfumes, then one for each
+   of its perfumers, in their colours — its name over them, standing AT THE
+   HEIGHT OF ITS PERFUMES' YEARS (the middle year of them, the years ruled
+   down the left and rising, the newest highest; "year not found" along the
+   top), and across where its perfumers stand. Lights run up the threads.
    Pointed at, a perfumer's, a house's or one perfume's threads light;
    pressed, its panel opens on the right — a perfumer's or a house's
    perfumes, each pressed lighting its own thread. The search finds any of
@@ -82,7 +85,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     W = window.innerWidth;
     phone = W < 760;
     // a tall poster, as the picture's: a little taller than the window
-    H = Math.max(window.innerHeight + (phone ? 260 : 140), phone ? 1180 : 1000);
+    H = Math.max(window.innerHeight + (phone ? 560 : 140), phone ? 1480 : 1000);
     DPR = Math.min(window.devicePixelRatio || 1, 2);
     cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
     cv.style.width = W + "px"; cv.style.height = H + "px";
@@ -91,12 +94,15 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     L.x0 = phone ? 18 : Math.max(96, W * 0.07);
     L.x1 = W - (phone ? 18 : Math.max(60, W * 0.05));
     L.labelH = phone ? 92 : 132;
-    // under the head (and on a phone the search, which stands under it)
-    const under = Math.max(head.bottom, phone ? tools.bottom : 0) + window.scrollY;
-    L.barY = under + L.labelH + (phone ? 18 : 28);
-    L.top = L.barY + (phone ? 70 : 110);
-    // and clear of the legend at the foot
-    L.bottom = H - el(".t3-legend").offsetHeight - (phone ? 120 : 110);
+    // the houses under the head (and on a phone the search, which stands
+    // under it), room left over each for its name
+    const under = Math.max(head.bottom, tools.bottom) + window.scrollY;
+    L.top = under + (phone ? 64 : 74);
+    // the perfumers' bars along the foot, their names under them, clear of
+    // the legend
+    const legendTop = H - el(".t3-legend").offsetHeight - (phone ? 22 : 34);
+    L.barY = legendTop - L.labelH - (phone ? 30 : 40);
+    L.bottom = L.barY - (phone ? 60 : 90);
     // the perfumers' bars: as wide as their perfumes, each slot wide enough
     // for its name upright over it
     const minSlot = phone ? 11 : 13.5, gap = phone ? 3 : 5;
@@ -120,7 +126,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
   // where the houses stand: as high as their perfumes' middle year, across
   // where their perfumers' bars are — and pushed apart so none covers
   // another's name
-  function yOf(year) { return year ? lerp(L.top, L.bottom - (phone ? 70 : 90), (year - Y0) / (Y1 - Y0)) : L.bottom; }
+  function yOf(year) { return year ? lerp(L.bottom, L.top + (phone ? 60 : 80), (year - Y0) / (Y1 - Y0)) : L.top; }
   function layHouses() {
     HOU.forEach((h) => {
       let sx = 0, n = 0;
@@ -136,7 +142,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
         const a = HOU[i], b = HOU[j];
         const ox = (a.w + b.w) / 2 - Math.abs(a.x - b.x), oy = (a.hh + b.hh) / 2 - Math.abs(a.y - b.y);
         if (ox > 0 && oy > 0) {
-          if (ox < oy * 1.6) { const s = (a.x < b.x || (a.x === b.x && R() < 0.5) ? -1 : 1) * ox / 2; a.x += s; b.x -= s; }
+          if (ox < oy * (phone ? 0.7 : 1.6)) { const s = (a.x < b.x || (a.x === b.x && R() < 0.5) ? -1 : 1) * ox / 2; a.x += s; b.x -= s; }
           else { const s = (a.y < b.y ? -1 : 1) * oy / 2; a.y += s; b.y -= s; }
         }
       }
@@ -170,8 +176,8 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
         let before = 0;
         keys.forEach((q, i) => { if (i < slot) before += h.by.get(q); });
         const ex = h.x - width / 2 + ((before + k + 0.5) / h.list.length) * width;
-        const ey = h.y - sq(h.list.length) / 2 + 5;
-        threads.push({ e, p, h, sx, sy: L.barY + 6, ex, ey, ph: (j * 0.137 + p.k * 0.31) % 1 });
+        const ey = h.y + sq(h.list.length) / 2 - 1;
+        threads.push({ e, p, h, sx, sy: L.barY + 2, ex, ey, ph: (j * 0.137 + p.k * 0.31) % 1 });
       });
     });
   }
@@ -181,7 +187,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
   const litOf = (t, s) => !s ? true : s.kind === "per" ? t.p === s.p : s.kind === "house" ? t.h === s.h : t.e === s.e;
   function curve(t, u) {
     const my = lerp(t.sy, t.ey, 0.5);
-    // a cubic down from the bar and into the house
+    // a cubic up from the bar and into the house
     const a = 1 - u;
     const x = a * a * a * t.sx + 3 * a * a * u * t.sx + 3 * a * u * u * t.ex + u * u * u * t.ex;
     const y = a * a * a * t.sy + 3 * a * a * u * my + 3 * a * u * u * my + u * u * u * t.ey;
@@ -200,17 +206,20 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     const sel = hover || chosen;
     // the years down the left
     c.font = "400 " + (phone ? 8.5 : 9.5) + 'px "IBM Plex Mono", monospace';
-    c.fillStyle = "rgba(236,234,228,0.32)"; c.textAlign = "right"; c.textBaseline = "middle";
+    c.fillStyle = "rgba(236,234,228,0.32)";
+    // on a phone there is no margin to name the years in: over their rules
+    const yx = phone ? L.x0 : L.x0 - 8, yd = phone ? -6 : 0;
+    c.textAlign = phone ? "left" : "right"; c.textBaseline = "middle";
     c.strokeStyle = "rgba(236,234,228,0.06)"; c.lineWidth = 1;
     for (let y = Y0; y <= Y1; y++) {
       if (y % (phone ? 4 : 2)) continue;
       const yy = yOf(y);
       c.beginPath(); c.moveTo(L.x0, yy); c.lineTo(L.x1, yy); c.stroke();
-      c.fillText(String(y), L.x0 - 8, yy);
+      c.fillText(String(y), yx, yy + yd);
     }
-    c.fillText(phone ? "no yr" : "year not found", L.x0 - 8, yOf(0));
+    c.fillText("year not found", yx, yOf(0) + yd);
     c.setLineDash([2, 4]); c.beginPath(); c.moveTo(L.x0, yOf(0)); c.lineTo(L.x1, yOf(0)); c.stroke(); c.setLineDash([]);
-    // the threads, each drawn down as the page opens; what is lit drawn last
+    // the threads, each drawn up as the page opens; what is lit drawn last
     const lit = [], rest = [];
     threads.forEach((th) => (litOf(th, sel) ? lit : rest).push(th));
     c.lineWidth = phone ? 0.8 : 1.1;
@@ -226,7 +235,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     rest.forEach((th) => drawT(th, sel ? 0.06 : 0.3));
     lit.forEach((th) => drawT(th, sel ? 0.85 : 0.3));
     c.globalAlpha = 1;
-    // lights running down the threads
+    // lights running up the threads
     if (!STILL && intro >= 1) {
       if (t > lightNext && lights.length < 24) { const pool = sel ? lit : threads; const th = pool[Math.floor(Math.random() * pool.length)]; if (th) lights.push({ th, t0: t, dur: 2.2 + Math.random() * 1.6 }); lightNext = t + 0.08 + Math.random() * 0.16; }
       for (let i = lights.length - 1; i >= 0; i--) {
@@ -239,7 +248,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
       }
       c.globalAlpha = 1;
     }
-    // the perfumers' bars and their names, upright over them
+    // the perfumers' bars and their names, upright under them
     const fs = phone ? 8.5 : 10;
     c.font = "500 " + fs + "px Archivo, sans-serif";
     ORDER.forEach((p) => {
@@ -248,16 +257,16 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
       c.fillStyle = p.css;
       c.fillRect(p.x0, L.barY, Math.max(1.5, p.x1 - p.x0), phone ? 9 : 12);
       c.save();
-      c.translate(p.cx + fs * 0.36, L.barY - 8);
+      c.translate(p.cx + fs * 0.36, L.barY + (phone ? 9 : 12) + 8);
       c.rotate(-Math.PI / 2);
-      c.textAlign = "left"; c.textBaseline = "alphabetic";
+      c.textAlign = "right"; c.textBaseline = "alphabetic";
       c.fillStyle = on ? "#f4f2ec" : "rgba(244,242,236,0.5)";
       const name = p.none ? "Perfumer not found" : p.name;
       c.fillText(name.length > (phone ? 16 : 22) ? name.slice(0, phone ? 15 : 21) + "…" : name, 0, 0);
       c.restore();
     });
     c.globalAlpha = 1;
-    // the houses: their squares, their names under them
+    // the houses: their squares, their names over them
     HOU.forEach((h) => {
       if (!h.list.length) return;
       const on = !sel || (sel.kind === "per" ? h.by.has(sel.p.i) : sel.kind === "house" ? sel.h === h : sel.e.h === h.i);
@@ -266,7 +275,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
       c.globalAlpha = a;
       const big = sq(h.list.length);
       let x = h.x - squaresW(h) / 2;
-      const y = h.y - big / 2 + 6;
+      const y = h.y - big / 2;
       c.fillStyle = "#eceae4";
       c.fillRect(x, y, big, big);
       x += big + 6;
@@ -277,11 +286,18 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
         x += s + 3;
       });
       c.font = "700 " + (phone ? 9.5 : 11) + "px Archivo, sans-serif";
-      c.fillStyle = "#f4f2ec"; c.textAlign = "center"; c.textBaseline = "top";
-      c.fillText(h.name, h.x, y + big + 6);
+      // a little of the ground behind its name, so the threads rising past
+      // it never cross the letters
+      const nw = c.measureText(h.name).width + 8;
+      c.globalAlpha = a * 0.82;
+      c.fillStyle = "#262628";
+      c.fillRect(h.x - nw / 2, y - (phone ? 29 : 34), nw, phone ? 26 : 30);
+      c.globalAlpha = a;
+      c.fillStyle = "#f4f2ec"; c.textAlign = "center"; c.textBaseline = "bottom";
+      c.fillText(h.name, h.x, y - (phone ? 16 : 19));
       c.font = "400 " + (phone ? 8 : 9) + 'px "IBM Plex Mono", monospace';
       c.fillStyle = "rgba(244,242,236,0.5)";
-      c.fillText(h.list.length + (h.year ? " · " + h.year : ""), h.x, y + big + (phone ? 19 : 22));
+      c.fillText(h.list.length + (h.year ? " · " + h.year : ""), h.x, y - 5);
     });
     c.globalAlpha = 1;
     // the one perfume pointed at: its thread bright, a ring at each end
@@ -301,14 +317,14 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
   // ---- THE HAND ----------------------------------------------------------
   function at(x, y) {
     // a perfumer's bar or name
-    if (y < L.barY + 16 && y > L.barY - L.labelH - 10) {
+    if (y > L.barY - 10 && y < L.barY + L.labelH + 26) {
       const p = ORDER.find((q) => x >= q.slot0 - 1 && x <= q.slot1 + 1);
       if (p) return { kind: "per", p };
     }
     // a house
-    for (const h of HOU) if (Math.abs(x - h.x) < h.w / 2 && Math.abs(y - h.y) < h.hh / 2 + 6) return { kind: "house", h };
+    for (const h of HOU) if (Math.abs(x - h.x) < h.w / 2 && Math.abs(y - (h.y - (phone ? 12 : 16))) < h.hh / 2 + 6) return { kind: "house", h };
     // a thread
-    if (y > L.barY + 10) {
+    if (y < L.barY - 4) {
       let best = null, bd = phone ? 9 : 6;
       for (const th of threads) {
         if (y < Math.min(th.sy, th.ey) - 4 || y > Math.max(th.sy, th.ey) + 4) continue;
