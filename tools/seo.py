@@ -102,7 +102,7 @@ P = {
  "test-pages/2/index.html": dict(desc="A test page, not a part of the site: Accord Spectrums 2026 — the houses' notes laid round the sixteen accords.", noindex=True, nofollow=True),
  "test-pages/3/index.html": dict(desc="A test page, not a part of the site: A Portrait of the Perfumers — a thread for every perfume, rising from its perfumer to its house.", noindex=True, nofollow=True),
  "test-pages/4/index.html": dict(desc="A test page, not a part of the site: The Perfumers' Graph — every perfumer, house, perfume, letter and note a node, in clouds, chosen from a table.", noindex=True, nofollow=True),
- "test-pages/5/index.html": dict(desc="A test page, not a part of the site: A Flacon for Every Perfumer — a sketched perfume bottle for every perfumer, designed from what they made.", noindex=True, nofollow=True),
+ "test-pages/5/index.html": dict(desc="A test page, not a part of the site: The Perfumers, a Sketchbook — every perfumer, house and perfume in schedules, on a sheet of sketched perfume bottles.", noindex=True, nofollow=True),
 }
 # The forwarding pages: canonical to where the house lives now.
 for slug in ["adar", "almost-human", "ataraxia", "grande-parfums", "les-abstraits", "pineward"]:

@@ -434,6 +434,9 @@ Prissana, then Haxan.
 
 ## 2026-11-06, the very last — page 5 made again: a flacon for every perfumer
 
+(The flacons drawn from the ledger described here went the same evening: the owner kept the look and
+asked for it apart from what the page does — see **2026-11-06, last of all**, below.)
+
 The owner, seeing the section of houses: "Completly rework the archetecture one. It doesnt look like
 archetecture at all. I want you to make designs of perfume bottles that look like sketches and then
 from there design something around the idea of perfumers. Make it thematic, not random houses that look
@@ -495,3 +498,47 @@ wider at 2021 than at 2026; Strangers Parfumerie's layer near twice as deep as P
 Dragon's Breath's graduation (named) longer than Lust's (the house's); Aichi Liu pressed (two houses),
 Om Parfums' layer pressed (nine perfumes), a perfume, Esc twice; Haxan's graduation pressed twice (Prin
 Lomros, then Haxan); the list (Nicholas Nilsson); Esc. It draws, moves, fits a phone and has no errors.
+
+## 2026-11-06, last of all — page 5: the sketched flacons its design, the perfumers its schedules
+
+The owner, of the flacons drawn from the ledger: "Better; but id rather have just the design of the page
+be like that, no need to make it involved with the function of the page. Can you do that? Also redesign
+it." So the two are apart, and the page is **The Perfumers, a Sketchbook**.
+
+- **The design** (the top right, across the top on a phone): a designer's sheet of perfume bottles in the
+  picture's pencil and chalk on black — **one flacon drawn large**, the atomiser, with its notes in the
+  hand (*pump, 0.1 ml a spray*, *a silk bulb, its tassel*), its height measured, its centre line and
+  ellipses, its pump circled as **A**; **seven studies** of other kinds in a grid beside it, each on a
+  ground of its own, numbered and noted — a cut obelisk with a pyramid stopper, a round flask with a
+  ball stopper, a heavy block with a weighted cap, an amphora with a teardrop stopper, a deco flacon
+  with stepped shoulders and a fan stopper, a moon flask, an extrait with its dauber — two of them half
+  in section; **their plans** from above in the top right corner; **detail A**, the pump in section
+  (nozzle, collar, spring, dip tube), boxed under them; *STUDIES FOR A FLACON.* under it all. It draws
+  itself as the page opens, a point of chalk goes on retracing the flacons, and one under the hand is
+  traced again. **It says nothing of the ledger and answers nothing chosen.** (Two studies on a phone.)
+- **The function**, as a drawing's schedules: **the perfumer schedule** down the left — number,
+  perfumer, houses, perfumes — with a search over perfumers, houses and perfumes; a perfumer pressed
+  fills **the specification** (from, born, perfumes, years, how many each credit, their houses — each a
+  button narrowing the perfumes to it, with what the ledger says of the house — and what the ledger
+  says of them) and **the schedule of perfumes** (every perfume, 280, until one is chosen; then theirs:
+  number, perfume, house, year and a mark for its credit, ● named, ○ the house's perfumer, × not found;
+  a perfume pressed opens a line saying who made it, how sure, where it is and its sources). Esc goes
+  back a level — the perfume, the house, the perfumer — and clears the search. On a phone the page
+  scrolls, the sheet at its top and the three boxes under it.
+
+### Why / key decisions
+
+- **One drawing large and the rest as studies**, as a designer's page is: eight flacons of a size each,
+  every one with its notes beside it, left a sliver of width for each and drew them tiny.
+- **A flacon's height is its stopper's top**, worked out from its own profile, so a round flask with a
+  tall ball stopper fits its cell as an obelisk does.
+- **The perfumes are counted once** here — 280; the other pages' 282 count a perfume made by two
+  perfumers twice.
+
+### How to test it
+
+`npm test -- tests/test-pages.spec.js` — page 5: 24 perfumers, 280 perfumes, 35 houses by perfumer;
+eight flacons of eight kinds, the atomiser first; 24 rows and 280 perfumes; Aichi Liu pressed (her
+specification, two houses, fourteen perfumes) leaving the flacons as they were; Om Parfums (nine); a
+perfume's line naming her; Esc three times; the search finding Prin Lomros by *haxan*. It draws, moves,
+fits a phone and has no errors.
