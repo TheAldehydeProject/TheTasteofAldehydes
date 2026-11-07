@@ -606,7 +606,9 @@ can revert to other strategies."
 
 - **Each colour is a mask of the same field, read at its own place** (`paintLens`, `LENS_AT`): how dark it
   goes in the middle (`LENS_DEEP`, the plum), how far out its haze reaches (`LENS_HAZE`, the green's
-  most), and how much further out than the blob's own edge it begins to darken (`LENS_SOFT`).
+  most — **taken out** on 2026-11-07, with the bloom behind the blob, see *nothing written round the
+  blobs, and the lens without its halo*), and how much further out than the blob's own edge it begins to
+  darken (`LENS_SOFT`).
 - **The green is out of focus outward only.** Softened both ways, it went lighter than the red and blue
   just inside the edge and the blob had a green rim (the first try); its edge only begins further out.
 - **How far apart they are is a compromise between the two fringes**: the green nearer the red makes the
@@ -733,22 +735,38 @@ perfumer. Also please animate it so its nice. I want a slightly thematic animati
 **How to test it**: `tests/test-pages.spec.js`, "a perfumer pressed gathers into the point and opens from
 it; the search takes you to the perfumer".
 
-### 2026-11-07, last — page 1: no house's name on the blobs
+### 2026-11-07, last — page 1: nothing written round the blobs, and the lens without its halo
 
-The owner: "Remove the names of the houses from the blobs in TP1. I dont want them there".
+The owner: "Remove the names of the houses from the blobs in TP1. I dont want them there"; and, shown
+it: "i want you to remove the numbers that surround the main nodes. the years. remove those too. i want
+you to remove all tthose little texts around the middle nodes if there is anything else i missed.
+additionally, please make it so that the chromatic abberation feels like that and not an extra layer. i
+am talking about the semi-transparent layer around tound the actual black mass."
 
-- **No house named on the poster**: the name that stood under each house's sphere is gone, and so is the
-  house's name that came out on a hairline from a perfumer's blob when its lobe was lit (`drawWorldView`
-  skips a house's sphere; `drawLobeNames` names only a house's years). What is still written there: a
-  house's lobes by their years, and **↩ the perfumer** under its sphere in a house's world — the way
-  back, not a house.
-- **Which sphere is which**, without a name on it: under the hand, its row in the list on the right lights
+- **Nothing is written on the poster**: no house's name under its sphere, none out of a perfumer's blob on
+  a hairline when its lobe is lit, no year by a house's lobes, and no *↩ the perfumer* under the way
+  back. `drawLobeNames` and the spheres' labels are out of the code (and `lobeBoxes`, the room the one
+  kept for the other, and `listLit`, which lit a lobe's name). The list on the right is where the houses
+  and the perfumes, with their years, are named.
+- **Which sphere is which**, without a name on it: under the hand, a house's row in the list lights
   (`lightRow`, `.is-lit`, the hover's own ground) and a small note by the hand says its name and *Press to
-  see what … made for it*, gone as the hand leaves it. The list names the houses as before.
+  see what … made for it*; the perfumer's sphere in a house's world says *↩ Prin Lomros — Press to go
+  back to their world*. A house's row pointed at, or reached by the keyboard, lights its sphere.
+- **The lens without its halo** (`paintLens`, `drawCur`): the lavender haze that reached out past the
+  edge (`LENS_HAZE`) and the faint copy a sixth larger laid behind the blob (its "bloom") are gone — they
+  were the semi-transparent layer round it. The colour comes only from the three colours seeing the blob
+  a little apart, so it sits on the edge as a lens's fringes do: blue going cyan on the upper left, red
+  going gold on the lower right. The green begins to darken only a little further out than the others
+  now (`LENS_SOFT` 1.12, it was 1.55, which threw it out into the haze), so the very edge's falloff carries
+  the faintest lavender and nothing beyond it; and the middle blob's edge is a little firmer (0.95, it was
+  1.2). The spheres round it lose their haze with it. TP1 backup and the split (`?look=backup`,
+  `?look=split`) are as they were.
 - **The head** says *Parfum Prissana, and what Prin Lomros made for it* in a house's world; it said
   *Parfum Prissana and their houses*, the perfumer's wording, until then.
 - **On a phone** the houses' names under their count (*Om Parfums, Outsider Parfums*) are left out of
   the readings — the list just above names them — so the list no longer runs 16px under *Perfumer*.
 
-**How to test it**: `tests/test-pages.spec.js`, "page 1: no house is named on the blobs; the sphere under
-the hand lights its row".
+**How to test it**: `tests/test-pages.spec.js`, "page 1: nothing is written round the blobs; a sphere under
+the hand lights its row and says what it is" — it listens to every word a canvas writes and finds none in a
+perfumer's world or a house's; and "the lens by default — blue above, gold below" still reads the fringes
+where the edge begins.
