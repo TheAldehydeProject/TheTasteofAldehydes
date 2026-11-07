@@ -78,10 +78,13 @@ test("a page's own search looks over that page, and hands on what it cannot answ
   // this one any more. Haxan is — and the misspelling is kept, because
   // matching a word somebody has typed badly is half of what this is
   // for.
+  // (Since 2026-11-07 it looks for a house or a perfume, chosen under the
+  // field, and every answer says which it is: "Perfume: Haxan".)
   await page.locator(".sheet-search-trigger").click();
+  await page.locator('.sheet-search-kind [data-kind="perfume"]').click();
   await page.locator(".sheet-search-field").fill("haxen");
   const answer = page.locator(".sheet-found-row").first();
-  await expect(answer.locator(".sheet-found-what")).toHaveText("Haxan");
+  await expect(answer.locator(".sheet-found-what")).toHaveText("Perfume: Haxan");
 
   // Something this category knows nothing about goes to the site's own
   // search page, with the question carried in the address.

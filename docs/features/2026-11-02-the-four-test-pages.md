@@ -621,3 +621,85 @@ can revert to other strategies."
 warm on the lower right (`rim()`), and `?look=split` and `?look=backup` each drawing its own, the same
 lobes and list. By hand: open page 1, press a perfumer, and set it beside the owner's picture; then the
 same with `?look=split` and `?look=backup`.
+
+## 2026-11-07 — page 1 smoothed and told more, page 2 round the perfumers, page 4 a level at a time, page 5 gone
+
+The owner, of page 1: "this is really good, overall. I want you to make the loading of it smoother, and
+i want you to be able to hover it only when it is fully loaded. also add chromatic abberation similar to
+that when you click into the second menu to the first basic test page 1 ... only keep whats on image 3
+... what is shown in image 5 (but remove 'the most 139') ... fix a hovering problem ... a button to
+learn more ... remove the random numbers ... remove that random blue bar ... make the transitions
+smoother"; of page 2: "completly redesign the hierarchy of the information, and focus on it being a
+perfumers page. not an accords page"; of page 4: "be able to hover only the strata or hierarchy level
+which youre on ... remove them [the numbers], expand the diagram a little an dmove it to the left, and
+then add a button for 'information'"; and "remove test page 5". Every page of this round was checked at
+a phone's size (390 and 360 wide), an iPad's both ways, and 13-, 15- and 17-inch laptops' (1280, 1440,
+1920): nothing scrolls sideways and nothing errs.
+
+**The snapshot.** Pages 1, 2 and 4 carry the ledger as it stood on 2026-11-07 — 32 perfumers with *Perfumer
+not found*, the 26 perfumes newly credited, and **each perfumer's biography** from the site's
+`tools/perfumers/BIOS.md` (`bio: { t: [paragraphs], s: [[MLA, url] × 3] }`). Page 3 keeps 2026-11-06's.
+
+**Page 1, Perfumer Worlds.**
+- **Coming in smoothly, and nothing answering until it has** (`ready`, `is-ready` on the body): the dots,
+  the list, the buttons and the ways answer nothing until the rays are all out and the type is in; the
+  words over the rays come up after the rays begin; the world's pictures are painted once the first
+  frames are out and the rays' finished picture made a little before they reach their dots (`layLater`,
+  in idle time), so neither holds a frame up.
+- **The rays through the lens** (`lensed`, `LENS_RAYS`, `raysAndDots`): every ray, dot and light drawn
+  three times in pure red, green and blue, added together, the blue a little up and to the left and the
+  red down and to the right — white where they meet, and every edge fringed blue-violet above and gold
+  going red below, as the blob's lens is. The names over the blocks stay white.
+- **The readings as few as the owner's pictures keep**: a perfumer — the kicker, the name, the country,
+  the perfumes against *the most, 139*, the houses; a house — the kicker, the name, *by* whom, the
+  perfumes (no *the most*), when it was founded. The years and the gauge of who is credited went.
+- **The hand followed everywhere** (`window` `pointermove`, `handS`): the spheres lean to the hand over
+  the list, the buttons and the tip too — they snapped back to rest the moment the hand reached
+  anything that could be pressed, the canvas having lost it — and they follow it a little behind, so
+  nothing jumps; only leaving the window lets go.
+- **Learn more** (`.t1-more-open`, `.t1-more`): the three lines moved a little left of the middle and the
+  button on their right; pressed, the perfumer's biography on a sheet under the poster, the page scrolled
+  down to it, its three sources at its foot, *Back to the world* scrolling back up. Only a perfumer's.
+- **No numbers by the lobes**: a house's lobes are named by their years, a perfumer's lobes only when
+  one is lit (its sphere is named beside the blob already). **No bar** under a house in the list.
+- **Softer transitions**: the world opening out of the rays through a **feathered circle** (the world
+  drawn apart and laid over the rays through a soft radial edge) on a smootherstep, 1.5 s (1.1 s on a
+  cubic, hard-edged, before); its words fading in and out with it (`--reveal`); a change of perfumer or
+  house 1.35 s; the readings, the list and the lines coming in softly (`is-fresh`).
+
+**Page 2, Perfumer Spectrums 2026** — made again round the perfumers, the poster kept:
+- **a dome for every perfumer** down the arc, A to Z by surname, and one for the perfumes no source
+  credits, the path over each as high as its perfumes, its name beside it (and its country, houses and
+  perfumes when there is room);
+- **the houses round the outside**, as the months were, each a stretch as long as its perfumes (never
+  shorter than seven places, `MIN_W`, so a house of one has room for its name), its country and count;
+- **every perfume a tick** in its house's stretch by year — longer the newer, dashed with no year — in
+  the Perfumers page's colours (gold, blue-white, rose), strong where a source names the perfumer;
+- **a line from each perfumer to each house** they made for, as heavy as how many, a light along it; a
+  perfume chosen draws its line from its perfumer to its tick;
+- zoomable as it was; the closer, the more perfumes named, with their years;
+- **the panel**: a perfumer's biography and its three sources (the first paragraph, the rest behind
+  *More about*), their houses and every perfume for each; a house's perfumers and perfumes; a perfume's
+  year, credit, perfumers, its notes with their accords' codes where the Note Library files them, the
+  others by the same hand for the house, its sources; **the search** on perfumers, houses and perfumes;
+  the lists down the left the perfumers and the houses. The accords are off the poster.
+
+**Page 4, The Perfumers' Graph.**
+- **Only the level you are on answers** (`selectable`): the whole graph, its perfumers; a perfumer, its
+  houses; a house, its perfumes; a perfume, the other perfumes of its house — and what is chosen, to go
+  back up. Notes and letters never.
+- **No matrix of numbers** down the left (the `{9; 0; 0; 3}` of each letter, and *[Perfumer 9]*): the
+  word, what it is, its line, and **Information**, which opens the perfumer's biography on a sheet under
+  the graph and scrolls down to it, its three sources at its foot.
+- **The graph larger and further left** (the room from 150px, its fit 1.2), and on a tablet clear of the
+  readings and the buttons.
+- **The table folds away with its search** (`.t4-fold`), the graph taking the room; remembered.
+
+**Page 5 is gone** — its folder, its square on Contact (four squares now), its line in `tools/seo.py`
+and its test.
+
+**How to test it**: `tests/test-pages.spec.js` — four squares; page 1 not answering until ready, the
+fringes either side of a dot, the trimmed readings, Learn more scrolled to with three sources, no bars,
+the spheres leaning to the hand over the list; page 2's domes, houses and ticks, the panel with its
+biography, a house, a perfume and Back, the zoom and the search; page 4's lock to the level, Information,
+the fold.

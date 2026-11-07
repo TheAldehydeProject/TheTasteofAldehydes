@@ -31,7 +31,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=c1a55cec1d">
+<link rel="stylesheet" href="../style.css?v=194f7731e0">
 <script>
   /* The page's own contents are held back for the moment between the
      first paint and this page's script taking over. Without it the
@@ -125,12 +125,22 @@
        — so loose in the page it could not be held back on the way in
        without being seen fading away. -->
   <div class="sheet-search">
-    <input class="sheet-search-field" type="search" placeholder="Search" aria-label="Search this sheet">
+    <input class="sheet-search-field" type="search" placeholder="A house" aria-label="Search the houses and their perfumes">
     <button class="sheet-search-trigger" type="button" aria-label="Search">
       <span class="sheet-search-mark" aria-hidden="true"></span>
       <span class="sheet-search-word">Search</span>
     </button>
+    <!-- what it looks for (2026-11-07 — "below the search bar, in small,
+         make it available to select whether you wanna search for house or
+         perfume, and make it default to house"); the perfumes are every
+         perfume on the site, read from the Perfumers ledger the first time
+         the search is opened (the link below fetches it while idle) -->
+    <div class="sheet-search-kind" role="group" aria-label="Search for">
+      <button type="button" data-kind="house" aria-pressed="true">House</button>
+      <button type="button" data-kind="perfume" aria-pressed="false">Perfume</button>
+    </div>
   </div>
+  <link class="sheet-perfumes" rel="prefetch" href="../perfumers-data.js?v=d371805173" as="script">
 
   <!-- The two ways of looking at the category. They have to be inside
        this block rather than loose in the page: the note in style.css
@@ -406,7 +416,7 @@
 <script>window.SITE_ROOT = "../";</script>
 <script src="../nav.js?v=ddedcc2da4"></script>
 <script src="../search.js?v=6a6cce26f3"></script>
-<script src="../contact-sheet.js?v=84f2bb211a"></script>
+<script src="../contact-sheet.js?v=0d6a8ac59a"></script>
 <script src="../beaker.js?v=16caa0e66d"></script>
 <script src="../qimu-pieces.js?v=93abdd4f92"></script>
 <script src="../om-glyph.js?v=712d2319fd"></script>
@@ -416,6 +426,6 @@
 <script src="../notes.js?v=ded558e310"></script>
 <script src="../fragrance-reader.js?v=2cc383228e"></script>
 <script src="../fragrance-line.js?v=b9138bcf78"></script>
-<script src="../views.js?v=8e0689dc05"></script>
+<script src="../views.js?v=7f23bbba82"></script>
 </body>
 </html>

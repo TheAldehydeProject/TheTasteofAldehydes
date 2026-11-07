@@ -203,7 +203,7 @@ const NOTES = {"names":["Bergamot","Lemon","Orange","Citrus","Lime","Blood Orang
     const t = el(".t4-table");
     const folded = t && t.classList.contains("is-folded");
     const right = !phone && t && !folded ? t.getBoundingClientRect().left : W - (phone ? 0 : 58);
-    return { x0: phone ? 0 : W < 1100 ? 30 : 150, x1: right - 10, y0: 62, y1: phone ? H * 0.56 : H - 62 };
+    return { x0: phone ? 0 : W < 1100 ? 200 : 150, x1: right - 10, y0: phone ? 62 : W < 1100 ? 100 : 62, y1: phone ? H * 0.56 : H - 62 };
   };
   let RM = { x0: 0, x1: 0, y0: 0, y1: 0, cx: 0, cy: 0 };
   function resize() {

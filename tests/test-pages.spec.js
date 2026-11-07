@@ -27,15 +27,15 @@ const path = require("path");
 const { serveDependenciesLocally, collectPageErrors } = require("./helpers");
 
 const ROOT = path.join(__dirname, "..");
-const PAGES = [1, 2, 3, 4, 5];
+const PAGES = [1, 2, 3, 4];   // (5 was taken out on 2026-11-07 — "remove test page 5")
 const read = (f) => fs.readFileSync(path.join(ROOT, f), "utf8");
 
-test("the five squares stand unseen at the foot of Contact, on its right, 1 to 5 from the left", async ({ page }) => {
+test("the four squares stand unseen at the foot of Contact, on its right, 1 to 4 from the left", async ({ page }) => {
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/contact/");
   const squares = page.locator(".contact-tests a");
-  await expect(squares).toHaveCount(5);
+  await expect(squares).toHaveCount(4);
   const seen = await squares.evaluateAll((as) => as.map((a) => {
     const r = a.getBoundingClientRect();
     return {
@@ -59,7 +59,7 @@ test("the five squares stand unseen at the foot of Contact, on its right, 1 to 5
     expect(height - s.bottom, "at the very foot").toBeLessThan(20);
     if (i) expect(s.left, "left to right").toBeGreaterThan(seen[i - 1].right);
   });
-  expect(1280 - seen[4].right, "on the right").toBeLessThan(20);
+  expect(1280 - seen[3].right, "on the right").toBeLessThan(20);
   expect(seen[0].left, "on the right").toBeGreaterThan(1280 * 0.75);
 });
 
@@ -169,7 +169,7 @@ test("test page 1: the rays first, a dot opening its perfumer's world, a house i
   // the rays: a dot for every perfume, every perfumer in the list
   expect(await page.evaluate(() => window.TestPage1.view())).toBe("rays");
   expect(await page.evaluate(() => window.TestPage1.dots())).toBe(282);
-  expect(await page.evaluate(() => window.TestPage1.perfumers)).toBe(24);
+  expect(await page.evaluate(() => window.TestPage1.perfumers)).toBe(32);
   await expect(page.locator(".t1-return")).toBeHidden();
   // a dot pressed: its perfumer's world, the perfumer in the middle
   const d = await page.evaluate(() => window.TestPage1.dotOf("aichi-liu"));
@@ -187,7 +187,7 @@ test("test page 1: the rays first, a dot opening its perfumer's world, a house i
   await expect(page.locator(".t1-list-rows button")).toHaveCount(2);
   // a house round it pressed (once the world has opened): the perfumes she
   // made for it
-  await page.waitForTimeout(1500);
+  await page.waitForTimeout(2000);
   const h = await page.evaluate(() => window.TestPage1.houseAt("om-parfums"));
   await page.mouse.click(h.x, h.y);
   expect(await page.evaluate(() => window.TestPage1.now())).toEqual({ kind: "house", perfumer: "aichi-liu", house: "om-parfums", count: 9 });
@@ -250,183 +250,198 @@ test("test page 1: the lens by default — blue above, gold below — the split 
   expect(errors).toEqual([]);
 });
 
-test("test page 2: an accord pointed at in the list is the one in focus", async ({ page }) => {
+/* Test page 1, 2026-11-07 — "make the loading of it smoother, and i want you
+   to be able to hover it only when it is fully loaded. also add chromatic
+   abberation ... to the first basic test page 1. then when you click on a
+   house, from all the information present on image 2, only keep whats on
+   image 3 ... (but remove 'the most 139') ... fix a hovering problem ... a
+   button to learn more ... also remove the random numbers ... remove that
+   random blue bar that sits below each hosue named". */
+test("test page 1: nothing answers until it is ready, the readings trimmed, Learn more, and no numbers or bars", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await serveDependenciesLocally(page);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/test-pages/1/");
+  await page.waitForTimeout(300);
+  const d = await page.evaluate(() => window.TestPage1.dotOf("prin-lomros"));
+  await page.mouse.move(d.x, d.y);
+  await page.waitForTimeout(150);
+  await expect(page.locator(".t1-tip"), "nothing answers while it comes in").toBeHidden();
+  await expect(page.locator("body")).not.toHaveClass(/is-ready/);
+  await expect(page.locator("body")).toHaveClass(/is-ready/, { timeout: 5000 });
+  await page.mouse.move(d.x + 1, d.y);
+  await expect(page.locator(".t1-tip")).toBeVisible();
+  // the rays through the lens: a red and a blue fringe either side of white
+  const fr = await page.evaluate(([x, y]) => {
+    const c = document.querySelector(".t1-scene"), k = c.width / innerWidth;
+    const g = c.getContext("2d").getImageData(Math.round((x - 6) * k), Math.round((y - 6) * k), Math.round(12 * k), Math.round(12 * k)).data;
+    let blue = 0, red = 0;
+    for (let i = 0; i < g.length; i += 4) { if (g[i + 2] > g[i] + 80) blue++; if (g[i] > g[i + 2] + 80) red++; }
+    return { blue, red };
+  }, [d.x, d.y]);
+  expect(fr.blue, "a blue fringe").toBeGreaterThan(0);
+  expect(fr.red, "a warm fringe").toBeGreaterThan(0);
+  // a perfumer's readings: who, where, perfumes against the most, houses — no years, no shares
+  await page.evaluate(() => window.TestPage1.open("antoine-lie"));
+  await page.waitForTimeout(1800);
+  await expect(page.locator("[data-v=sub]")).toHaveText("France");
+  await expect(page.locator("[data-v=most]")).toHaveText("the most, 139");
+  await expect(page.locator("[data-v=years], .t1-credit, .t1-gauge")).toHaveCount(0);
+  await expect(page.locator(".t1-li-bar")).toHaveCount(0);
+  // a house's: who for, perfumes, founded — and not "the most"
+  await page.evaluate(() => window.TestPage1.open("antoine-lie", "les-abstraits"));
+  await page.waitForTimeout(800);
+  await expect(page.locator("[data-v=sub]")).toHaveText("by Antoine Lie");
+  await expect(page.locator("[data-v=most]")).toHaveText("");
+  await expect(page.locator("[data-v=houses-say]")).toHaveText("Founded");
+  await expect(page.locator(".t1-more-open"), "Learn more is a perfumer's").toBeHidden();
+  // Learn more: the biography under the poster, scrolled to, its three sources at its foot
+  await page.evaluate(() => window.TestPage1.open("antoine-lie"));
+  await page.waitForTimeout(1600);
+  const more = page.locator(".t1-more-open");
+  await expect(more).toBeVisible();
+  const lines = await page.locator(".t1-lines").boundingBox(), mb = await more.boundingBox();
+  expect(mb.x, "to the right of the three lines").toBeGreaterThan(lines.x + lines.width);
+  await more.click();
+  await expect(page.locator(".t1-more")).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(400);
+  await expect(page.locator("[data-v=more-name]")).toHaveText("Antoine Lie");
+  await expect(page.locator(".t1-more-text p")).not.toHaveCount(0);
+  await expect(page.locator(".t1-more-sources li")).toHaveCount(3);
+  await page.locator(".t1-more-close").click();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(2);
+  await expect(page.locator(".t1-more")).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+/* 2026-11-07 — "fix a hovering problem. whenever you hover anything that is
+   clickable, the movement of the position of the objects that can move on
+   the page (and follow the mouse) snaps back to their original and defualt
+   position": the spheres lean to the hand over the list too. */
+test("test page 1: the spheres keep leaning to the hand while it is over the list", async ({ page }) => {
+  await serveDependenciesLocally(page);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/test-pages/1/#prin-lomros");
+  await page.waitForTimeout(2600);
+  const at = () => page.evaluate(() => window.TestPage1.houseAt("parfum-prissana"));
+  await page.mouse.move(640, 400);
+  await page.waitForTimeout(1500);
+  const middle = await at();
+  const row = await page.locator(".t1-list-rows button").first().boundingBox();
+  await page.mouse.move(row.x + row.width / 2, row.y + row.height / 2, { steps: 8 });
+  await page.waitForTimeout(1800);
+  const over = await at();
+  // the hand far to the right: the spheres are pushed left of where they
+  // stood with the hand in the middle, not back to their rest
+  expect(over.x, "leaning, not snapped back").toBeLessThan(middle.x - 3);
+});
+
+/* Test page 2, redesigned round the perfumers (2026-11-07 — "completly
+   redesign the hierarchy of the information, and focus on it being a
+   perfumers page. not an accords page"): a dome for every perfumer, the
+   houses round the outside, every perfume a tick; zoomable as it was; the
+   panel and the search on perfumers, houses and perfumes. */
+test("test page 2: a dome for every perfumer, their houses round it, every perfume a tick, and no accords", async ({ page }) => {
+  const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/test-pages/2/");
-  await page.waitForTimeout(600);
-  expect(await page.evaluate(() => window.TestPage2.accords)).toBe(16);
-  expect(await page.evaluate(() => window.TestPage2.houses)).toBeGreaterThan(10);
-  await page.locator('.t2-gloss li[data-code="WOO"]').hover();
-  await expect.poll(() => page.evaluate(() => window.TestPage2.focus())).toBe("WOO");
-  await expect(page.locator('.t2-gloss li[data-code="WOO"]')).toHaveClass(/is-lit/);
+  await page.waitForTimeout(900);
+  expect(await page.evaluate(() => [window.TestPage2.perfumers, window.TestPage2.houses, window.TestPage2.perfumes])).toEqual([32, 27, 280]);
+  expect(await page.evaluate(() => "accords" in window.TestPage2)).toBe(false);
+  await expect(page.locator("h1")).toContainText("Perfumer");
+  await expect(page.locator(".t2-pers li")).toHaveCount(32);
+  await expect(page.locator(".t2-houses li")).toHaveCount(27);
+  // a perfumer pointed at in the list is the one in focus
+  await page.locator(".t2-pers li", { hasText: "Antoine Lie" }).hover();
+  await expect.poll(() => page.evaluate(() => window.TestPage2.focus())).toBe("perfumer:antoine-lie");
+  await expect(page.locator(".t2-houses li.is-lit")).toHaveCount(1);
+  await expect(page.locator(".t2-houses li.is-lit")).toContainText("Les Abstraits");
+  // pressed on the poster: their panel — the biography and its three sources, their houses and perfumes
+  const [x, y] = await page.evaluate(() => window.TestPage2.at("perfumer", "Aichi Liu"));
+  await page.mouse.click(x, y);
+  expect(await page.evaluate(() => window.TestPage2.info())).toEqual({ kind: "perfumer", name: "Aichi Liu" });
+  await expect(page.locator(".t2-info .t2-n")).toHaveText("Aichi Liu");
+  await expect(page.locator(".t2-info .t2-bio p")).not.toHaveCount(0);
+  await expect(page.locator(".t2-info .t2-bio-src li")).toHaveCount(3);
+  await expect(page.locator('.t2-info .t2-row[data-go^="house:"]')).toHaveCount(2);
+  // a house in it, then a perfume, then Back
+  await page.locator('.t2-info .t2-row[data-go^="house:"]', { hasText: "Om Parfums" }).click();
+  expect(await page.evaluate(() => window.TestPage2.info())).toEqual({ kind: "house", name: "Om Parfums" });
+  await page.locator('.t2-info .t2-link[data-go^="perfume:"]').first().click();
+  expect((await page.evaluate(() => window.TestPage2.info())).kind).toBe("perfume");
+  await expect(page.locator(".t2-info .t2-n")).not.toHaveText("");
+  await page.locator(".t2-info-back").click();
+  expect((await page.evaluate(() => window.TestPage2.info())).kind).toBe("house");
+  // a perfume's notes, where the Note Library files them, with their accords
+  await page.locator(".t2-find input").fill("des cendres");
+  await page.locator(".t2-find input").press("Enter");
+  expect(await page.evaluate(() => window.TestPage2.info())).toEqual({ kind: "perfume", name: "Des Cendres" });
+  await expect(page.locator(".t2-info .t2-chip")).not.toHaveCount(0);
+  await expect(page.locator(".t2-info")).toContainText("Antoine Lie");
+  expect(errors).toEqual([]);
 });
-
-/* TEST PAGE 2 ZOOMABLE, AND SAYING WHAT IT SHOWS — the owner, 2026-11-03:
-   "make test page 2 zoomable, and functional for information". The wheel,
-   the + and −, a double-click and the keys come closer and Fit goes back to
-   the whole; a drag moves about; closer in, more of the notes are named. A
-   house, an accord or — closer in — a note pressed opens the panel, every
-   name in it opening its own, Back going back; the search finds a note and
-   flies there; on a phone a tap opens the panel at the foot. */
-const t2 = (page, js) => page.evaluate(js);
-const t2go = async (page) => {
-  await serveDependenciesLocally(page);
-  await page.goto("/test-pages/2/");
-  await page.waitForTimeout(700);
-};
-const settled = (page) => expect.poll(() => t2(page, () => window.TestPage2.moving()), { timeout: 6000 }).toBe(false);
 
 test("test page 2 zooms: the wheel, the buttons, a double-click and the keys, and Fit shows the whole again", async ({ page }) => {
+  await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
-  await t2go(page);
-  expect(await t2(page, () => window.TestPage2.zoom())).toBe(1);
-  await page.mouse.move(900, 400);
-  await page.mouse.wheel(0, -300);
-  await settled(page);
-  const z1 = await t2(page, () => window.TestPage2.zoom());
-  expect(z1, "the wheel comes closer").toBeGreaterThan(1.5);
+  await page.goto("/test-pages/2/");
+  await page.waitForTimeout(700);
+  const z = () => page.evaluate(() => window.TestPage2.goal());
+  expect(await z()).toBe(1);
+  await page.mouse.move(800, 400);
+  await page.mouse.wheel(0, -400);
+  await expect.poll(z).toBeGreaterThan(1.5);
+  await page.locator(".t2-fit").click();
+  await expect.poll(z).toBe(1);
   await page.locator('.t2-zoom [data-z="1"]').click();
-  await settled(page);
-  expect(await t2(page, () => window.TestPage2.zoom()), "and so does the +").toBeGreaterThan(z1 * 1.5);
-  await expect(page.locator(".t2-zoom-say")).not.toHaveText("100%");
-  // a drag moves about, closer in, without choosing anything
-  await page.mouse.move(900, 400); await page.mouse.down(); await page.mouse.move(700, 300, { steps: 6 }); await page.mouse.up();
-  expect(await t2(page, () => window.TestPage2.info()), "a drag chooses nothing").toBeNull();
-  await page.locator(".t2-fit").click();
-  await settled(page);
-  expect(await t2(page, () => window.TestPage2.zoom()), "Fit: the whole").toBe(1);
-  await page.mouse.dblclick(900, 400);
-  await settled(page);
-  expect(await t2(page, () => window.TestPage2.zoom()), "a double-click comes closer").toBeGreaterThan(2);
+  await expect.poll(z).toBeGreaterThan(1.5);
   await page.keyboard.press("0");
-  await settled(page);
-  await page.keyboard.press("+");
-  await settled(page);
-  expect(await t2(page, () => window.TestPage2.zoom()), "and the + key").toBeGreaterThan(1.3);
-  // never further out than the whole, nor closer than ten times
-  for (let i = 0; i < 12; i++) await page.locator('.t2-zoom [data-z="1"]').click();
-  await settled(page);
-  expect(await t2(page, () => window.TestPage2.zoom())).toBeLessThanOrEqual(10);
-  for (let i = 0; i < 12; i++) await page.locator('.t2-zoom [data-z="-1"]').click();
-  await settled(page);
-  expect(await t2(page, () => window.TestPage2.zoom())).toBe(1);
+  await expect.poll(z).toBe(1);
+  await page.mouse.dblclick(800, 400);
+  await expect.poll(z).toBeGreaterThan(2);
+  await page.keyboard.press("-");
+  await page.keyboard.press("-");
+  await page.keyboard.press("-");
+  await expect.poll(z).toBe(1);
 });
 
-test("test page 2 says what it shows: a house, an accord and, closer in, a note, each opening the next", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await t2go(page);
-  const info = () => t2(page, () => window.TestPage2.info());
-  // a house
-  let [x, y] = await t2(page, () => window.TestPage2.at("house", "Pineward"));
-  await page.mouse.click(x, y);
-  expect(await info()).toEqual({ kind: "house", name: "Pineward" });
-  await expect(page.locator(".t2-info")).toBeVisible();
-  await expect(page.locator(".t2-info .t2-n")).toHaveText("Pineward");
-  await expect(page.locator(".t2-info .t2-frag")).toHaveCount(48);
-  // one of its fragrances opens onto its notes, and a note onto its own
-  await page.locator(".t2-info .t2-frag summary").first().click();
-  await page.locator(".t2-info .t2-frag[open] .t2-chip").first().click();
-  expect((await info()).kind).toBe("note");
-  await page.locator(".t2-info-back").click();
-  expect(await info()).toEqual({ kind: "house", name: "Pineward" });
-  // its accords, each a way on
-  await page.locator('.t2-info .t2-row[data-go="accord:WOO"]').click();
-  expect(await info()).toEqual({ kind: "accord", name: "Woods" });
-  await expect(page.locator(".t2-info .t2-row[data-go^='note:']")).toHaveCount(30);
-  expect(await t2(page, () => window.TestPage2.focus())).toBe("WOO");
-  // shown on the poster: closer, and the accord's notes there to be pressed
-  await page.locator(".t2-info-show").click();
-  await settled(page);
-  expect(await t2(page, () => window.TestPage2.zoom())).toBeGreaterThan(2.2);
-  [x, y] = await t2(page, () => window.TestPage2.at("note", "Sandalwood"));
-  await page.mouse.click(x, y);
-  expect(await info()).toEqual({ kind: "note", name: "Sandalwood" });
-  expect(await t2(page, () => window.TestPage2.focus())).toBe("note:Sandalwood");
-  await expect(page.locator(".t2-info .t2-list li")).toHaveCount(36);
-  await expect(page.locator(".t2-info .t2-stats")).toContainText("36");
-  // pressed where there is nothing, the panel goes
-  await page.locator(".t2-fit").click();
-  await settled(page);
-  await page.mouse.click(700, 120);
-  expect(await info()).toBeNull();
-  await expect(page.locator(".t2-info")).toBeHidden();
-  // an accord's name pressed at the whole view
-  [x, y] = await t2(page, () => window.TestPage2.at("accord", "Citrus"));
-  await page.mouse.click(x, y);
-  expect(await info()).toEqual({ kind: "accord", name: "Citrus" });
-  await page.keyboard.press("Escape");
-  expect(await info()).toBeNull();
-});
-
-test("test page 2's search finds a house, an accord or a note, and flies there", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await t2go(page);
-  await page.locator(".t2-find input").fill("bergam");
-  await expect(page.locator(".t2-found li")).toHaveCount(1);
-  await expect(page.locator(".t2-found")).toContainText("Bergamot");
-  await page.keyboard.press("Enter");
-  expect(await t2(page, () => window.TestPage2.info())).toEqual({ kind: "note", name: "Bergamot" });
-  await settled(page);
-  expect(await t2(page, () => window.TestPage2.zoom()), "flown there").toBeGreaterThan(2);
-  const [x, y] = await t2(page, () => window.TestPage2.at("note", "Bergamot"));
-  expect(x, "on the screen, beside the panel").toBeGreaterThan(330);
-  expect(x).toBeLessThan(1440);
-  expect(y).toBeGreaterThan(0); expect(y).toBeLessThan(900);
-  await page.locator(".t2-find input").fill("tombst");
-  await page.locator(".t2-found button").first().click();
-  expect(await t2(page, () => window.TestPage2.info())).toEqual({ kind: "house", name: "Tombstone" });
-  await page.locator(".t2-find input").fill("zzzz");
-  await expect(page.locator(".t2-found")).toContainText("Nothing on the poster by that name");
-});
-
-/* 2026-11-06 — "Also please edit the TESTPAGE2 TO Also acccomodate the
-   information of oerfumers": every fragrance's perfumer, a perfumer's own
-   panel, the perfumers in a house's panel and in the search. */
-test("test page 2 carries the perfumers: their list, their panel, a house's perfumers and the search", async ({ page }) => {
-  const errors = collectPageErrors(page);
-  await t2go(page);
-  expect(await t2(page, () => window.TestPage2.perfumers)).toBe(24);
-  await expect(page.locator(".t2-pers li")).toHaveCount(24);
-  // pointed at, a perfumer lights their houses; pressed, their panel
-  const li = page.locator(".t2-pers li", { hasText: "Aichi Liu" });
-  await li.scrollIntoViewIfNeeded();
-  await li.hover();
-  expect(await t2(page, () => window.TestPage2.focusPerfumer())).toBe("aichi-liu");
-  await li.click();
-  expect(await t2(page, () => window.TestPage2.info())).toEqual({ kind: "perfumer", name: "Aichi Liu" });
-  await expect(page.locator(".t2-info-body h3").first()).toContainText("Its houses");
-  await expect(page.locator('.t2-info-body [data-go^="house:"]')).toHaveCount(2);
-  // a house's panel names its perfumers, each a way to theirs
-  await page.locator('.t2-info-body [data-go^="house:"]').first().click();
-  expect((await t2(page, () => window.TestPage2.info())).kind).toBe("house");
-  await expect(page.locator(".t2-info-body h3").first()).toContainText("Its perfumers");
-  await page.locator('.t2-info-body [data-go^="perfumer:"]').first().click();
-  expect(await t2(page, () => window.TestPage2.info())).toEqual({ kind: "perfumer", name: "Aichi Liu" });
-  // the search finds a perfumer
-  await page.locator(".t2-info-close").click();
-  await page.locator(".t2-find input").fill("lomros");
+test("test page 2's search finds a perfumer, a house or a perfume, and flies there", async ({ page }) => {
+  await serveDependenciesLocally(page);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/test-pages/2/");
+  await page.waitForTimeout(700);
+  const find = page.locator(".t2-find input");
+  await find.fill("nilss");
+  await expect(page.locator(".t2-found li").first()).toContainText("Nicholas Nilsson");
   await expect(page.locator(".t2-found li").first()).toContainText("Perfumer");
-  await page.keyboard.press("Enter");
-  expect(await t2(page, () => window.TestPage2.info())).toEqual({ kind: "perfumer", name: "Prin Lomros" });
-  expect(errors).toEqual([]);
+  await find.press("Enter");
+  expect(await page.evaluate(() => window.TestPage2.info())).toEqual({ kind: "perfumer", name: "Nicholas Nilsson" });
+  await expect.poll(() => page.evaluate(() => window.TestPage2.goal())).toBeGreaterThan(1.1);
+  await find.fill("strangers");
+  await expect(page.locator(".t2-found li").first()).toContainText("House");
+  await find.press("Enter");
+  expect(await page.evaluate(() => window.TestPage2.info())).toEqual({ kind: "house", name: "Strangers Parfumerie" });
+  await find.fill("haxan");
+  await find.press("Enter");
+  expect(await page.evaluate(() => window.TestPage2.info())).toEqual({ kind: "perfume", name: "Haxan" });
+  await find.fill("qqzzvv");
+  await expect(page.locator(".t2-found-none")).toBeVisible();
 });
 
 test.describe("test page 2 on a phone", () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
-  test("a tap opens the panel at the foot, and the + comes closer", async ({ page }) => {
-    await t2go(page);
-    const [x, y] = await t2(page, () => window.TestPage2.at("house", "ADAR"));
+  test("a tap opens the panel, and the + comes closer", async ({ page }) => {
+    await serveDependenciesLocally(page);
+    await page.goto("/test-pages/2/");
+    await page.waitForTimeout(900);
+    const [x, y] = await page.evaluate(() => window.TestPage2.at("perfumer", "Prin Lomros"));
     await page.touchscreen.tap(x, y);
-    expect(await t2(page, () => window.TestPage2.info())).toEqual({ kind: "house", name: "ADAR" });
-    const box = await page.locator(".t2-info").boundingBox();
-    expect(box.y + box.height, "at the foot of the window").toBeGreaterThan(830);
-    expect(box.height, "and leaving the poster above it").toBeLessThan(844 * 0.6);
-    await page.locator(".t2-info-close").click();
-    await page.locator('.t2-zoom [data-z="1"]').click();
-    await settled(page);
-    expect(await t2(page, () => window.TestPage2.zoom())).toBeGreaterThan(1.5);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+    await expect.poll(() => page.evaluate(() => window.TestPage2.info() && window.TestPage2.info().kind)).toBe("perfumer");
+    await expect(page.locator(".t2-info")).toBeVisible();
+    await page.locator(".t2-info-close").tap();
+    await page.locator('.t2-zoom [data-z="1"]').tap();
+    await expect.poll(() => page.evaluate(() => window.TestPage2.goal())).toBeGreaterThan(1.5);
   });
 });
 
@@ -485,14 +500,14 @@ test("test page 4: the table takes you to a perfumer's node, its houses and then
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/test-pages/4/");
   await page.waitForTimeout(800);
-  expect(await page.evaluate(() => window.TestPage4.nodes())).toEqual({ perfumers: 24, houses: 35, perfumes: 282 });
+  expect(await page.evaluate(() => window.TestPage4.nodes())).toEqual({ perfumers: 32, houses: 40, perfumes: 282 });
   // dense, as the references are ("not just a few lines"): every letter of
   // every perfume's name a node, and every note of every perfume on the site
   const n = await page.evaluate(() => window.TestPage4.counts());
   expect(n.letter).toBeGreaterThan(2500);
   expect(n.notes).toBe(379);
   expect(n.links).toBeGreaterThan(4000);
-  await expect(page.locator(".t4-table tbody tr")).toHaveCount(24);
+  await expect(page.locator(".t4-table tbody tr")).toHaveCount(32);
   await expect(page.locator("[data-v=stage]")).toHaveText("STAGE 1: PERFUMERS");
   const fit = (await page.evaluate(() => window.TestPage4.cam())).fit;
   // a perfumer chosen in the table: its node, closer, its houses listed
@@ -508,11 +523,14 @@ test("test page 4: the table takes you to a perfumer's node, its houses and then
   await page.locator(".t4-sub [data-house]", { hasText: "Parfum Prissana" }).click();
   expect((await page.evaluate(() => window.TestPage4.focus())).stage).toBe(3);
   await expect(page.locator(".t4-sub [data-leaf]")).toHaveCount(32);
-  // a perfume: spelled down the left, letter by letter
+  // a perfume: its letters drawn round it; no matrix of numbers down the
+  // left since 2026-11-07, and Information under the readings
   await page.locator(".t4-sub [data-leaf]", { hasText: "Haxan" }).click();
   expect(await page.evaluate(() => window.TestPage4.focus())).toEqual({ kind: "perfume", name: "Haxan", stage: 4 });
   await expect(page.locator("[data-v=stage]")).toHaveText("STAGE 4: LETTERS");
-  await expect(page.locator(".t4-letters li")).toHaveCount(5);
+  await expect(page.locator(".t4-letters")).toHaveCount(0);
+  await expect(page.locator(".t4-read")).not.toContainText("{");
+  await expect(page.locator(".t4-info")).toBeVisible();
   // up a level with Esc, and the whole field again
   await page.keyboard.press("Escape");
   expect((await page.evaluate(() => window.TestPage4.focus())).stage).toBe(3);
@@ -530,55 +548,50 @@ test("test page 4: the table takes you to a perfumer's node, its houses and then
   expect(errors).toEqual([]);
 });
 
-/* 2026-11-06 — "please also generate a 5th test page (by moving all the
-   other ones a little to the left on the contacts page), modelled like the
-   image attached (architecture sketch) that is going to be another page that
-   attempts to house the perfumer information": a section through the houses
-   above ground and the perfumers below it. */
-/* 2026-11-06 — test page 5, after an architect's sketch: a section of houses,
-   then a flacon drawn from every perfumer, and then — "id rather have just
-   the design of the page be like that, no need to make it involved with the
-   function of the page ... Also redesign it" — sketched flacons as the
-   page's design, and the perfumers in schedules, apart from them. */
-test("test page 5: a sheet of sketched flacons for its design, and the perfumers in schedules, apart from it", async ({ page }) => {
+/* Test page 4, 2026-11-07 — "you to be able to hover only the strata or
+   hierarchy level which youre on ... so make sure that you can only select
+   things of the appropriate hierarchy level"; "remove them [the numbers],
+   expand the diagram a little an dmove it to the left, and then add a button
+   for 'information' that you can click to scroll down and read about this
+   perfumer"; and the table, with its search, folding away. */
+test("test page 4: only the level you are on answers, Information scrolls to the perfumer, and the table folds", async ({ page }) => {
   const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto("/test-pages/5/");
-  await page.waitForTimeout(2600);
-  expect(await page.evaluate(() => [window.TestPage5.perfumers, window.TestPage5.perfumes, window.TestPage5.houses])).toEqual([24, 280, 35]);
-  // the design: eight flacons of eight kinds, the atomiser drawn large
-  const bottles = await page.evaluate(() => window.TestPage5.bottles());
-  expect(bottles).toHaveLength(8);
-  expect(bottles[0]).toBe("atomiser");
-  expect(new Set(bottles).size).toBe(8);
-  // the function: the schedule, every perfumer, and every perfume
-  expect(await page.evaluate(() => window.TestPage5.rows())).toBe(24);
-  expect(await page.evaluate(() => window.TestPage5.perfumeRows())).toBe(280);
-  await expect(page.locator(".t5-spec h2")).toHaveText("The ledger");
-  // a perfumer pressed: their specification, their houses, their perfumes
-  await page.locator(".t5-schedule tbody tr", { hasText: "Aichi Liu" }).click();
-  expect(await page.evaluate(() => window.TestPage5.chosen())).toEqual({ perfumer: "Aichi Liu", house: null, open: null });
-  await expect(page.locator(".t5-spec h2")).toHaveText("Aichi Liu");
-  await expect(page.locator(".t5-houses button")).toHaveCount(2);
-  expect(await page.evaluate(() => window.TestPage5.perfumeRows())).toBe(14);
-  // and the design does not answer it: the same flacons
-  expect(await page.evaluate(() => window.TestPage5.bottles())).toEqual(bottles);
-  // a house narrows the perfumes; a perfume pressed says who made it and its sources
-  await page.locator(".t5-houses button", { hasText: "Om Parfums" }).click();
-  expect(await page.evaluate(() => window.TestPage5.perfumeRows())).toBe(9);
-  await page.locator(".t5-perfumes tbody tr[data-e]").first().click();
-  await expect(page.locator(".t5-more")).toContainText("Aichi Liu");
-  // Esc a level at a time: the perfume, the house, the perfumer
-  await page.keyboard.press("Escape");
-  await expect(page.locator(".t5-more")).toHaveCount(0);
-  await page.keyboard.press("Escape");
-  expect(await page.evaluate(() => window.TestPage5.perfumeRows())).toBe(14);
-  await page.keyboard.press("Escape");
-  expect(await page.evaluate(() => window.TestPage5.chosen())).toBe(null);
-  // the search over the schedule: a perfume finds its perfumer
-  await page.locator(".t5-find").fill("haxan");
-  await expect(page.locator(".t5-schedule tbody tr[data-per]")).toHaveCount(1);
-  await expect(page.locator(".t5-schedule tbody tr[data-per]")).toContainText("Prin Lomros");
+  await page.goto("/test-pages/4/");
+  await page.evaluate(() => { try { localStorage.removeItem("t4-folded"); } catch (e) {} });
+  await page.reload();
+  await page.waitForTimeout(1200);
+  await page.evaluate(() => window.TestPage4.choose("Antoine Lie"));
+  await page.waitForTimeout(2200);
+  // its own house answers the hand; another perfumer's does not
+  const own = await page.evaluate(() => window.TestPage4.pointOf("Les Abstraits"));
+  await page.mouse.move(own.x, own.y);
+  await expect(page.locator(".t4-tip")).toBeVisible();
+  await expect(page.locator(".t4-tip")).toContainText("Les Abstraits");
+  const other = await page.evaluate(() => window.TestPage4.pointOf("Nicholas Nilsson"));
+  if (other.x > 0 && other.x < 1280 && other.y > 0 && other.y < 800) {
+    await page.mouse.move(other.x, other.y);
+    await page.waitForTimeout(100);
+    await expect(page.locator(".t4-tip")).not.toContainText("Nicholas Nilsson");
+  }
+  // Information: the biography on a sheet under the graph, scrolled to
+  await page.locator(".t4-info").click();
+  await expect(page.locator(".t4-more")).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(400);
+  await expect(page.locator("[data-v=more-name]")).toHaveText("Antoine Lie");
+  await expect(page.locator(".t4-more-sources li")).toHaveCount(3);
+  await page.locator(".t4-more-close").click();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(2);
+  // the table folds away with its search, and the graph takes the room
+  const x0 = (await page.evaluate(() => window.TestPage4.pointOf("Antoine Lie"))).x;
+  await page.locator(".t4-fold").click();
+  await expect(page.locator(".t4-table-scroll")).toBeHidden();
+  await expect(page.locator(".t4-find")).toBeHidden();
+  // what is looked at moves over into the middle of the room the table left
+  await expect.poll(async () => (await page.evaluate(() => window.TestPage4.pointOf("Antoine Lie"))).x).toBeGreaterThan(x0 + 60);
+  await page.locator(".t4-fold").click();
+  await expect(page.locator(".t4-table-scroll")).toBeVisible();
+  await page.evaluate(() => { try { localStorage.removeItem("t4-folded"); } catch (e) {} });
   expect(errors).toEqual([]);
 });

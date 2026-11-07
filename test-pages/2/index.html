@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Test page 2 — The Taste of Aldehydes</title>
 <!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
-<meta name="description" content="A test page, not a part of the site: Accord Spectrums 2026 — the houses&#x27; notes laid round the sixteen accords.">
+<meta name="description" content="A test page, not a part of the site: Perfumer Spectrums 2026 — every perfumer a dome, their houses round the outside and every perfume a tick.">
 <link rel="canonical" href="https://thetasteofaldehydes.com/test-pages/2/">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="../../favicon.svg?v=2026-10-05" type="image/svg+xml">
@@ -115,6 +115,13 @@
   .t2-found small { font-size: 8.5px; color: var(--muted); }
   .t2-found-none { padding: 6px 10px; color: var(--muted); }
   .t2-gloss li { cursor: pointer; }
+  /* a perfumer's biography in the panel (2026-11-07), and its sources */
+  .t2-bio p, .t2-bio-more p { margin: 0 0 10px; font: 400 12px/1.6 var(--sans); color: var(--ink); }
+  .t2-bio-more summary { cursor: pointer; font: 500 10px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .t2-bio-src { margin: 0; padding: 0 0 0 1.4em; font: 400 10.5px/1.5 var(--sans); color: var(--muted, #9a96b0); }
+  .t2-bio-src li { margin-bottom: 6px; }
+  .t2-bio-src a { color: inherit; font: 400 10px var(--mono); overflow-wrap: anywhere; }
+  span.t2-chip { cursor: default; }
   .t2-gloss li:hover i, .t2-gloss li:focus-visible i { color: var(--gold); }
   .t2-gloss li:focus-visible { outline: 1px solid rgba(235, 163, 63, 0.6); outline-offset: 2px; }
 
@@ -211,44 +218,43 @@
   <canvas class="t2-arc" aria-hidden="true"></canvas>
   <div class="t2-tip" hidden></div>
   <div class="t2-zoom" aria-label="Zoom"><button type="button" data-z="-1" aria-label="Zoom out">−</button><span class="t2-zoom-say">100%</span><button type="button" data-z="1" aria-label="Zoom in">+</button><button type="button" class="t2-fit" data-z="0">Fit</button></div>
-  <p class="t2-hint">Scroll to zoom · drag to move · press a house, an accord or, closer in, a note</p>
+  <p class="t2-hint">Scroll to zoom · drag to move · press a perfumer, a house or, closer in, a perfume</p>
   <aside class="t2-info" hidden aria-label="About what is chosen">
     <div class="t2-info-bar"><button type="button" class="t2-info-back" hidden>‹ Back</button><button type="button" class="t2-info-show">Show on the poster</button><button type="button" class="t2-info-close" aria-label="Close">×</button></div>
     <div class="t2-info-body"></div>
   </aside>
   <section class="t2-text">
     <a class="t2-back" href="../../contact/">← Back</a>
-    <h1>Accord <span>Spectrums 2026</span></h1>
-    <span class="t2-sub">Mapping the notes of the houses · test page 2</span>
-    <div class="t2-find"><input type="search" placeholder="Find a house, a perfumer, an accord or a note" aria-label="Find a house, a perfumer, an accord or a note" autocomplete="off" spellcheck="false"><ul class="t2-found" hidden></ul></div>
-    <p style="margin-top:18px">Every house on the site is a dome down the arc — thirteen, and a fourteenth for the individual fragrances, which belong to no house — and every note on the site is a tick round it, all 379 the Note Library carries, each in its accord: the sixteen families, laid round as a year is laid round its months. All 142 fragrances are in it, and nothing is left out.</p>
-    <p>From each house a line runs out to every accord its notes are in, as bright as that accord's share of them. Point at a house, or at an accord, and the rest steps back.</p>
-    <p>Over every dome stands who made its fragrances, from the site's Perfumers ledger; a perfumer pointed at in the list below lights their houses, and the notes and accords their fragrances name.</p>
-
-    <h2>The Sixteen Accords</h2>
-    <ul class="t2-gloss"></ul>
+    <h1>Perfumer <span>Spectrums 2026</span></h1>
+    <span class="t2-sub">Mapping the perfumers behind the perfumes · test page 2</span>
+    <div class="t2-find"><input type="search" placeholder="Find a perfumer, a house or a perfume" aria-label="Find a perfumer, a house or a perfume" autocomplete="off" spellcheck="false"><ul class="t2-found" hidden></ul></div>
+    <p style="margin-top:18px">Every perfumer behind a perfume on the site is a dome down the arc, A to Z — and one more for the perfumes no source credits to anyone. Round the outside stand the houses they made them for, each a stretch of the arc as long as it has perfumes, as a year is laid round its months; and in each house every perfume is a tick, by the year it was made. All 280 perfumes of the site's Perfumers ledger are in it — the site's own, and the whole of Prin Lomros' three houses.</p>
+    <p>From each perfumer a line runs out to every house they made perfumes for, as heavy as how many. Point at a perfumer or a house and the rest steps back; press one and what it is opens here.</p>
 
     <h2>The Perfumers</h2>
     <ul class="t2-gloss t2-pers"></ul>
 
+    <h2>The Houses</h2>
+    <ul class="t2-gloss t2-houses"></ul>
+
     <h2>How to Use It</h2>
-    <p>Scroll, pinch or double-click to come closer, and drag to move about; the + and − at the foot do the same, and Fit shows the whole again. The closer you come, the more of the notes are named, with how many fragrances name each.</p>
-    <p>Press a house, an accord — on the arc or in the list below — a perfumer in theirs, or, closer in, a single note, and what it is opens here: a house's perfumers, accords, notes and fragrances; a perfumer's houses, accords, notes and fragrances; an accord's houses and notes; a note's houses, the fragrances that name it and what it is most often with. Every name in it opens its own.</p>
+    <p>Scroll, pinch or double-click to come closer, and drag to move about; the + and − at the foot do the same, and Fit shows the whole again. The closer you come, the more of the perfumes are named, with the year each was made.</p>
+    <p>Press a perfumer — on the arc or in the list — a house, or, closer in, a single perfume, and what it is opens here: a perfumer's life and work in a few lines, with its sources, their houses and every perfume they made for each; a house's perfumers and perfumes; a perfume's perfumer, year, notes and sources. Every name in it opens its own.</p>
 
     <h2>How to Read It</h2>
-    <p>A dome turns as its house's fragrances go round it; the path over it rises with how many there are. A tick is a note, longer the more fragrances name it. The bands deepen from the domes outward, as the arc of the poster this is after does from night to day.</p>
+    <p>A dome turns as its perfumer's perfumes go round it; the path over it rises with how many there are. A tick is a perfume: the longer, the newer, dashed where no year was found; gold for an individual fragrance on the site, blue-white for a house's, rose for Prin Lomros' houses, which the site does not write about — strong where a source names the perfumer, fainter where it is only the house's perfumer, faint where none is found. The bands deepen from the domes outward, as the arc of the poster this is after does from night to day.</p>
 
     <h2>List of Sources</h2>
     <ul class="t2-src">
-      <li>The Note Library, its sixteen accords and their notes.</li>
-      <li>The notes of each fragrance on the site, from each house's own page or, where it gives none, Fragrantica — and its second list, where it carries one, as the Note Library counts them.</li>
-      <li>The Perfumers page's ledger, for which fragrance is whose.</li>
+      <li>The site's Perfumers ledger, for who made each perfume, when, and for which house, with every source it names.</li>
+      <li>The perfumers' biographies, each from the three sources that describe them most fully, as the site's ledger keeps them.</li>
+      <li>The Note Library, for the notes of the perfumes written about on the site.</li>
     </ul>
 
     <h2>Disclaimer</h2>
-    <p>A snapshot of the site's notes on the day this page was made, 3 November 2026; a test page, not a part of the site. A house with no notes found yet has a dome and no lines.</p>
+    <p>A snapshot of the site's ledger on the day this page was remade, 7 November 2026; a test page, not a part of the site. Who made a perfume, and when, is only what a source says; where none says, the poster says so rather than guess.</p>
   </section>
 </main>
-<script src="page.js?v=d6fc29cc5b"></script>
+<script src="page.js?v=cd88930b1b"></script>
 </body>
 </html>

@@ -266,6 +266,47 @@
   sheet.appendChild(nav);
   const navAt = nav.querySelector(".sheet-nav-at b");
   const navName = nav.querySelector(".sheet-nav-at span");
+  // THE NUMBER CAN BE TYPED (2026-11-07 — "make the number on the right
+  // typable, so you can click on it and type a house number that you want
+  // to go to"): pressed, a field stands over it holding the number, and a
+  // number typed and Enter (or the field left) goes to that house; Escape
+  // lets it be. The reading underneath stays what it was.
+  navAt.tabIndex = 0;
+  navAt.setAttribute("role", "button");
+  navAt.setAttribute("aria-label", "Type a house number to go to");
+  navAt.title = "Type a house number";
+  const navType = document.createElement("input");
+  navType.className = "sheet-nav-type";
+  navType.type = "text";
+  navType.inputMode = "numeric";
+  navType.autocomplete = "off";
+  navType.maxLength = String(N).length + 1;
+  navType.setAttribute("aria-label", "The house number to go to, 1 to " + N);
+  navType.hidden = true;
+  nav.querySelector(".sheet-nav-at").appendChild(navType);
+  const typeOpen = () => {
+    navType.value = String(front + 1);
+    navType.hidden = false;
+    nav.classList.add("typing");
+    navType.focus();
+    navType.select();
+  };
+  const typeClose = (goThere) => {
+    if (navType.hidden) return;
+    const n = parseInt(navType.value, 10);
+    navType.hidden = true;
+    nav.classList.remove("typing");
+    if (goThere && n >= 1) go(Math.min(N, n) - 1);
+  };
+  navAt.addEventListener("click", typeOpen);
+  navAt.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); typeOpen(); } });
+  navType.addEventListener("input", () => { navType.value = navType.value.replace(/[^0-9]/g, ""); });
+  navType.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); typeClose(true); navAt.focus(); }
+    else if (e.key === "Escape") { e.preventDefault(); typeClose(false); navAt.focus(); }
+    e.stopPropagation();
+  });
+  navType.addEventListener("blur", () => typeClose(true));
   nav.querySelectorAll(".sheet-nav-step").forEach((b) =>
     b.addEventListener("click", () => go(
       b.dataset.to === "first" ? 0 : b.dataset.to === "last" ? N - 1
@@ -1137,62 +1178,117 @@
     found.setAttribute("aria-live", "polite");
     search.appendChild(found);
 
-    /** Everything this page can answer for, read off the page itself. */
-    const mine = () => (window.SiteSearch
-      ? window.SiteSearch.collect(document, window.location.href, ["Scent Descriptions"])
-      : []);
-    let everything = null;
+    // WHAT IT LOOKS FOR (2026-11-07 — "I want the search option to exclude
+    // the descrption of the houses. ataraxia is simply ataraxia ... I want
+    // this search to be dynamic, and include fragrances and houses. make
+    // sure to assign a category that is visible, such that it would be
+    // HOUSE: ataraxia ... below the search bar, in small, make it available
+    // to select whether you wanna search for house or perfume, and make it
+    // default to house"): the houses by their names alone, off the frames,
+    // and every perfume on the site by its name, from the Perfumers ledger
+    // (perfumers-data.js, fetched while the page is idle and read the
+    // first time the search is opened). Each answer says what it is.
+    const kindBox = search.querySelector(".sheet-search-kind");
+    let kind = "house";
+    const HOUSES = frames.map((frame, i) => ({ kind: "house", name: nameOf(frame), href: frame.dataset.open === "no" ? null : frame.getAttribute("href"), i }));
+    let PERFUMES = null, loading = false;
+    const buildPerfumes = () => {
+      const D = window.PERFUMERS_DATA;
+      if (!D) { PERFUMES = []; return; }
+      const houseName = {};
+      D.houses.forEach((h) => { houseName[h.id] = h.name; });
+      PERFUMES = D.perfumes.filter((x) => x.at).map((x) => ({ kind: "perfume", name: x.n, house: houseName[x.h] || "", href: (window.SITE_ROOT || "") + x.at }));
+    };
+    const loadPerfumes = () => {
+      if (PERFUMES || loading) return;
+      if (window.PERFUMERS_DATA) { buildPerfumes(); return; }
+      const link = document.querySelector("link.sheet-perfumes");
+      if (!link) { PERFUMES = []; return; }
+      loading = true;
+      const tag = document.createElement("script");
+      tag.src = link.href;
+      tag.onload = tag.onerror = () => { loading = false; buildPerfumes(); applySearch(); };
+      document.head.appendChild(tag);
+    };
+    // a name that holds what is typed first, the ones that begin with it
+    // before the rest; only when none does, the near misses ("murkwod")
+    const plain = (t) => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const exactOf = (term, text) => {
+      const q = plain(term), t = plain(text);
+      if (t.startsWith(q)) return 3;
+      if (t.split(/[^a-z0-9]+/).some((w) => w.startsWith(q))) return 2.5;
+      return t.indexOf(q) >= 0 ? 2 : 0;
+    };
+    const nearOf = (term, text) => (window.SiteSearch ? Math.min(1, window.SiteSearch.score(term, text)) : 0);
+    const sameName = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
     const applySearch = () => {
       const term = fieldIn.value.trim();
       sheet.classList.toggle("searching", term.length > 0);
-      if (!everything) everything = mine();
+      const pool = kind === "house" ? HOUSES : (PERFUMES || []);
+      let hits = term ? pool.map((it) => ({ it, s: exactOf(term, it.name) })).filter((h) => h.s > 0) : [];
+      if (term && !hits.length) hits = pool.map((it) => ({ it, s: nearOf(term, it.name) })).filter((h) => h.s > 0);
+      hits = hits.sort((x, y) => y.s - x.s || x.it.name.localeCompare(y.it.name)).slice(0, 8);
 
-      const hits = term && window.SiteSearch
-        ? window.SiteSearch.rank(term, everything, 6)
-        : [];
-
-      // The houses that do not answer step back, and the first one that
-      // does is brought round to the front.
+      // The houses that do not answer step back — for a perfume, the houses
+      // it is not in — and the first that does is brought round to the front.
       let firstMatch = -1;
+      const wanted = kind === "house" ? new Set(hits.map((h) => h.it.i))
+        : new Set(frames.map((f, i) => i).filter((i) => hits.some((h) => sameName(h.it.house, HOUSES[i].name))));
       frames.forEach((frame, i) => {
-        const caption = frame.querySelector(".sheet-caption");
-        const text = caption ? caption.textContent : "";
-        const match = !term || (window.SiteSearch
-          ? window.SiteSearch.score(term, text) > 0
-          : text.toLowerCase().indexOf(term.toLowerCase()) >= 0);
+        const match = !term || wanted.has(i);
         frame.classList.toggle("dimmed", Boolean(term) && !match);
-        if (term && match && firstMatch < 0) firstMatch = i;
       });
+      if (hits.length) {
+        const top = hits[0].it;
+        firstMatch = kind === "house" ? top.i : HOUSES.findIndex((h) => sameName(h.name, top.house));
+      }
       if (firstMatch >= 0) go(firstMatch);
 
       found.innerHTML = "";
       search.classList.toggle("has-found", hits.length > 0);
-      hits.forEach((hit) => {
-        const row = document.createElement("a");
+      hits.forEach(({ it }) => {
+        const row = document.createElement(it.href ? "a" : "div");
         row.className = "sheet-found-row";
-        row.href = hit.entry.href;
-        const name = document.createElement("span");
-        name.className = "sheet-found-what";
-        name.textContent = hit.entry.name;
-        const where = document.createElement("span");
-        where.className = "sheet-found-where";
-        where.textContent = hit.entry.where.join(" · ");
-        row.append(name, where);
+        if (it.href) row.href = it.href;
+        const what = document.createElement("span");
+        what.className = "sheet-found-what";
+        const k = document.createElement("b");
+        k.className = "sheet-found-kind";
+        k.textContent = (it.kind === "house" ? "House" : "Perfume") + ": ";
+        what.append(k, document.createTextNode(it.name));
+        row.appendChild(what);
+        if (it.kind === "perfume" && it.house) {
+          const where = document.createElement("span");
+          where.className = "sheet-found-where";
+          where.textContent = it.house;
+          row.appendChild(where);
+        }
         found.appendChild(row);
       });
       if (term && !hits.length) {
         const none = document.createElement("p");
         none.className = "sheet-found-none";
-        none.textContent = "Nothing here by that name — press enter to search the site.";
+        none.textContent = kind === "perfume" && !PERFUMES ? "Reading the perfumes…"
+          : "No " + kind + " here by that name — press enter to search the site.";
         found.appendChild(none);
         search.classList.add("has-found");
       }
     };
+    kindBox.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-kind]");
+      if (!b || b.dataset.kind === kind) return;
+      kind = b.dataset.kind;
+      kindBox.querySelectorAll("[data-kind]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      fieldIn.placeholder = kind === "house" ? "A house" : "A perfume";
+      if (kind === "perfume") loadPerfumes();
+      applySearch();
+      fieldIn.focus();
+    });
 
     trigger.addEventListener("click", () => {
       search.classList.toggle("open");
-      if (search.classList.contains("open")) fieldIn.focus();
+      if (search.classList.contains("open")) { fieldIn.focus(); loadPerfumes(); }
       else { fieldIn.value = ""; applySearch(); }
     });
     fieldIn.addEventListener("input", applySearch);

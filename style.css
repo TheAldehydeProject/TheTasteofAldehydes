@@ -1815,6 +1815,31 @@ body.view-fragrances .sheet-search { display: none; }
 .sheet-search-field:focus { outline: none; border-bottom-color: var(--ink); }
 .sheet-search.open .sheet-search-field { width: min(230px, 42vw); opacity: 1; }
 .sheet-search.open .sheet-search-word { color: var(--brass); }
+/* WHAT IT LOOKS FOR, in small under the field (2026-11-07): House or
+   Perfume, House to begin with; only while the search is open. */
+.sheet-search-kind {
+  position: absolute;
+  top: calc(100% + 2px);
+  right: 0;
+  display: none;
+  gap: 4px;
+}
+.sheet-search.open .sheet-search-kind { display: flex; }
+.sheet-search-kind button {
+  padding: 2px 7px 3px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: color 0.3s, border-color 0.3s, background 0.3s;
+}
+.sheet-search-kind button:hover { color: var(--ink); border-color: var(--ink); }
+.sheet-search-kind button[aria-pressed="true"] { color: var(--bg); background: var(--ink); border-color: var(--ink); }
+.sheet-search.open .sheet-found { top: calc(100% + 30px); }
 
 /* ON A PHONE THE REST OF THE CHROME GETS A GROUND TOO. The Menu, these
    two buttons and the search all stand fixed across the top of the
@@ -1921,11 +1946,14 @@ body.view-fragrances .sheet-search { display: none; }
     backdrop-filter: blur(10px);
   }
   .sheet-search.open .sheet-found {
-    top: calc(100% + 79px);
+    top: calc(100% + 105px);
     left: 0;
     right: 0;
     width: auto;
   }
+  /* House or Perfume, under the field */
+  .sheet-search.open .sheet-search-kind { top: calc(100% + 74px); left: 0; right: auto; }
+  .sheet-search-kind button { padding: 5px 10px 6px; font-size: 10px; background: var(--chrome-ground); }
 }
 
 .sheet {
@@ -2029,7 +2057,31 @@ body.view-fragrances .sheet-search { display: none; }
   letter-spacing: 0.08em;
   color: var(--ink);
 }
-.sheet-nav-at b { display: block; font-weight: 500; }
+.sheet-nav-at { position: relative; }
+.sheet-nav-at b { display: block; font-weight: 500; cursor: text; border-bottom: 1px dotted transparent; transition: border-color 0.3s; }
+.sheet-nav-at b:hover, .sheet-nav-at b:focus-visible { border-bottom-color: var(--muted); outline: none; }
+/* the field the number is typed into (2026-11-07), standing over it */
+.sheet-nav-type {
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  width: 64px;
+  margin-left: -32px;
+  padding: 2px 4px;
+  box-sizing: border-box;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-align: center;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  outline: none;
+}
+.sheet-nav-type[hidden] { display: none; }
+.sheet-nav.typing .sheet-nav-at b { visibility: hidden; }
 .sheet-nav-at span {
   display: block;
   margin-top: 3px;
@@ -8436,6 +8488,16 @@ body.find-reading .find-reading-note { opacity: 1; }
 .sheet-found-row:last-child { border-bottom: 0; }
 .sheet-found-row:hover { background: var(--bg-2); }
 .sheet-found-what { display: block; font-size: 14px; color: var(--ink); }
+/* what an answer is, before its name: HOUSE: Ataraxia (2026-11-07) */
+.sheet-found-kind {
+  margin-right: 2px;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 .sheet-found-where {
   display: block;
   font-family: var(--mono);
@@ -12901,32 +12963,18 @@ body.frag-open .frag-stage { opacity: 0; pointer-events: none; }
 }
 
 /* THE CROSSING between the two views (views.js), whenever the Fragrances
-   are the whole-page table: both views pinned to the window, the one
-   being left fading a little way off to one side as the other fades in —
-   a press mid-way turns it round from wherever it is — and THE THREAD,
-   one line the height of the window, travelling from the houses' axis to
-   the table's divider and back. It replaced the pixel stretch, which the
-   owner had taken out. */
+   are the whole-page table: both views pinned to the window, and since
+   2026-11-07 A MORPH — the one being left drawing in a little and going
+   soft as it fades, the one arriving coming out of the same softness to
+   its own size; a press mid-way turns it round from wherever it is. The
+   thread that travelled from the houses' axis to the table's divider is
+   gone ("remove that weird line that dances"). */
 .views.swiping .view.crossing {
-  transition: opacity 0.38s var(--menu-ease), transform 0.38s var(--menu-ease);
-}
-.views-thread {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 1px;
-  z-index: 2;
-  background: rgba(var(--ink-rgb), 0.3);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s linear;
-}
-.views-thread.moving {
-  transition: transform 0.38s var(--menu-ease), opacity 0.38s var(--menu-ease);
+  transition: opacity 0.38s var(--menu-ease), transform 0.38s var(--menu-ease), filter 0.38s var(--menu-ease);
+  transform-origin: 50% 40vh;
 }
 @media (prefers-reduced-motion: reduce) {
-  .views.swiping .view.crossing, .views-thread, .views-thread.moving { transition: none; }
+  .views.swiping .view.crossing { transition: none; }
 }
 
 /* ==================================================================

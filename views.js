@@ -46,18 +46,17 @@
 // you can freely change between the houses and fragrances page. Make the
 // two pages connected somehow too."
 //
-//   SIMPLE      the view being left fades a little way off to one side as
-//               the other fades in from the other, both at once, in
-//               `CROSS_MS` — no beats, nothing held back.
+//   SIMPLE      the view being left fades as the other fades in, both at
+//               once, in `CROSS_MS` — no beats, nothing held back; since
+//               2026-11-07 A MORPH, the one drawing in and going soft as
+//               the other comes out of the softness to its own size.
 //   FREE        a press while it is running is taken AT ONCE, not
 //               remembered for later: the crossing simply turns round
 //               from wherever it has got to, both views still pinned, so
 //               you can go back and forth as fast as you like.
-//   CONNECTED   by THE THREAD: one line, the height of the window, that
-//               stands where the houses' axis stands and travels, as the
-//               views cross, to where the Fragrances view's divider stands
-//               between its aside and its table (and back). The axis
-//               becomes the divider; the two pages are one line apart.
+//   (CONNECTED by THE THREAD — one line travelling from the houses' axis
+//               to the table's divider — until 2026-11-07, when the owner
+//               asked for it gone: "remove that weird line that dances".)
 //               (Each view carried a way to the other in itself, "The
 //               fragrances →" and "← The houses", until the owner had
 //               both taken off, 2026-09-29: the two words across the top
@@ -92,7 +91,14 @@
   const SWIPE_MS = REDUCE_MOTION ? 0 : 520;
   // THE CROSSING: how long, and how far each view travels as it fades.
   const CROSS_MS = 380;
-  const CROSS_SHIFT = 26;
+  // THE MORPH (2026-11-07 — "please remove that weird line that dances when
+  // you go from fragrances to houses and back ... if theres an animation
+  // make it morph"): the line that travelled from the houses' axis to the
+  // table's divider is gone, and the two views no longer slide past each
+  // other: the one being left draws in a little and goes soft as it fades,
+  // the one arriving comes out of the same softness to its own size, so the
+  // one seems to turn into the other where it stands.
+  const MORPH_IN = "scale(1.035)", MORPH_OUT = "scale(0.965)", MORPH_SOFT = "blur(5px)";
 
   // The order the views stand in, which is the order of the buttons: it
   // is what decides which way the page travels. Going to a view further
@@ -207,46 +213,6 @@
   /** THE CROSSING — see the note at the head of this file. `way` is 1
       going on to the Fragrances and -1 coming back to the Houses. */
   let crossing = null;
-  const thread = document.createElement("div");
-  thread.className = "views-thread";
-  thread.setAttribute("aria-hidden", "true");
-  // IN THE BOX, NOT ON THE BODY: a child of the body falls under the
-  // Menu's dimming rule (`body > *:not(...)`), whose 0.85s opacity
-  // outranks the thread's own transitions — the trap the notes window
-  // fell into. The box itself never moves, so the thread is still fixed
-  // to the window.
-  (box || document.body).appendChild(thread);
-  /** Where the thread stands on each view: the houses' axis, and the
-      divider the Fragrances view publishes on its stage. */
-  function anchorOf(name) {
-    if (name === "fragrances") {
-      const stage = document.querySelector(".frag-stage");
-      return stage && stage.dataset.divider ? +stage.dataset.divider : null;
-    }
-    const sheet = document.getElementById("sheet");
-    const r = sheet ? sheet.getBoundingClientRect() : null;
-    if (!r || !r.width) return window.innerWidth / 2;
-    // WHERE THE AXIS STANDS AT REST, not where it is while its view is
-    // still drifting in: read mid-crossing, the Houses view is still 26px
-    // off to the side, and the line used to land that far from the axis
-    // (the owner, 2026-09-25: "go completely where the center line is").
-    const holder = sheet.closest(".view");
-    const moved = holder ? getComputedStyle(holder).transform : "none";
-    const off = moved && moved !== "none" ? new DOMMatrix(moved).m41 : 0;
-    return r.left - off + r.width / 2;
-  }
-  function placeThread(x, shown, moving) {
-    // SET DOWN, it is there at once, on the axis it stands over — it
-    // used to fade up as it set off, so on a slow frame it was first seen
-    // part way across rather than leaving from the axis.
-    const at = shown && !moving;
-    if (at) thread.style.transition = "none";
-    thread.classList.toggle("moving", !!moving);
-    if (x != null) thread.style.transform = "translateX(" + Math.round(x) + "px)";
-    thread.style.opacity = shown ? "1" : "0";
-    if (at) { void thread.offsetWidth; thread.style.transition = ""; }
-  }
-
   function cross(going, coming, name, way) {
     if (!crossing) {
       // PINNED, as the swipe pins them: the one being left exactly where
@@ -267,9 +233,8 @@
       pin(going, boxTop - y);
       pin(coming, boxTop);
       coming.style.opacity = "0";
-      coming.style.transform = "translateX(" + way * CROSS_SHIFT + "px)";
-      // The thread starts where the view being left has it.
-      placeThread(anchorOf(nameOf(going)), true, false);
+      coming.style.transform = way > 0 ? MORPH_IN : MORPH_OUT;
+      coming.style.filter = MORPH_SOFT;
       crossing = { from: going };
     } else {
       window.clearTimeout(crossing.timer);
@@ -281,15 +246,11 @@
     void coming.offsetWidth;
     [going, coming].forEach((view) => view.classList.add("crossing"));
     coming.style.opacity = "1";
-    coming.style.transform = "translateX(0)";
+    coming.style.transform = "scale(1)";
+    coming.style.filter = "blur(0px)";
     going.style.opacity = "0";
-    going.style.transform = "translateX(" + -way * CROSS_SHIFT + "px)";
-    // THE THREAD travels to where the arriving view has it; where it has
-    // none (a phone, whose table has no divider), it goes as it travels.
-    requestAnimationFrame(() => {
-      const to = anchorOf(name);
-      placeThread(to == null ? (way > 0 ? 0 : window.innerWidth / 2) : to, to != null, true);
-    });
+    going.style.transform = way > 0 ? MORPH_OUT : MORPH_IN;
+    going.style.filter = MORPH_SOFT;
     crossing.going = going;
     crossing.coming = coming;
     crossing.timer = window.setTimeout(() => {
@@ -299,6 +260,7 @@
       [done.going, done.coming].forEach((view) => {
         view.classList.remove("sliding", "crossing");
         view.style.transform = "";
+        view.style.filter = "";
         view.style.opacity = "";
         view.style.top = "";
         view.style.height = "";
@@ -307,9 +269,6 @@
       box.classList.remove("swiping");
       box.style.height = "";
       document.documentElement.classList.remove("view-swiping");
-      // On the Fragrances the thread stays, as the divider's own line
-      // until the stage's is there; on the Houses the axis has it.
-      placeThread(null, false, false);
     }, CROSS_MS + 30);
   }
   const nameOf = (view) => view.dataset.view;

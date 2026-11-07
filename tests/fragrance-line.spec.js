@@ -502,94 +502,56 @@ test("the old Fragrances view is kept, in the archive and in the page", async ({
   await expect(page.locator(".frag-stage")).toHaveCount(0);
 });
 
-/* THE CROSSING — "change the transition too please, so that the pixel
-   stretch is not used. I want something simple, so that you can freely
-   change between the houses and fragrances page. Make the two pages
-   connected somehow too."
-   SIMPLE: both views are on the window at once for a moment, one fading
-   as the other comes, and it is over in well under a second; nothing of
-   the stretch's canvas is ever made. CONNECTED: one line runs from where
-   the houses' axis stands to where the table's divider stands, and the
-   divider is there when it lands. */
-test("going to the Fragrances is a quick crossing, and the axis travels across to be the table's divider", async ({ page }) => {
+/* THE CROSSING IS A MORPH — 2026-11-07: "please remove that weird line
+   that dances when you go from fragrances to houses and back. idk what that
+   is but remove that entirely. if theres an animation make it morph". The
+   thread that travelled from the houses' axis to the table's divider is
+   gone; the view being left draws in and goes soft as it fades, the one
+   arriving comes out of the softness to its own size, and it is over in
+   well under a second. Both ways. */
+test("going to the Fragrances and back is a quick morph, with no line travelling between them", async ({ page }) => {
   test.setTimeout(60000);
   await serveDependenciesLocally(page);
   await page.goto(SHEET);
   await page.waitForFunction(() => document.getElementById("sheet").classList.contains("drawn"), null, { timeout: 20000 });
   await page.waitForTimeout(1500);
-  const seen = await page.evaluate(() => new Promise((done) => {
+  const watch = (to) => page.evaluate((to) => new Promise((done) => {
     const houses = document.querySelector('.view[data-view="houses"]');
     const frags = document.querySelector('.view[data-view="fragrances"]');
-    const thread = document.querySelector(".views-thread");
-    const sheet = document.getElementById("sheet").getBoundingClientRect();
-    const out = { both: 0, stretch: false, xs: [], axis: sheet.left + sheet.width / 2, overAt: null };
+    const out = { both: 0, soft: 0, scaled: 0, thread: 0, overAt: null };
     const t0 = performance.now();
     const look = () => {
       const t = performance.now() - t0;
-      if (document.querySelector(".view-stretch")) out.stretch = true;
+      if (document.querySelector(".views-thread")) out.thread++;
       const a = parseFloat(getComputedStyle(houses).opacity), b = parseFloat(getComputedStyle(frags).opacity);
       if (!houses.hidden && !frags.hidden && a > 0.1 && a < 0.9 && b > 0.1 && b < 0.9) out.both++;
-      const cs = getComputedStyle(thread);
-      if (parseFloat(cs.opacity) > 0.3) out.xs.push(new DOMMatrix(cs.transform).m41);
-      if (out.overAt === null && houses.hidden && !frags.hidden) out.overAt = t;
-      if (t < 1200) { requestAnimationFrame(look); return; }
-      out.divider = +document.querySelector(".frag-stage").dataset.divider;
-      const d = document.querySelector(".frag-divider").getBoundingClientRect();
-      out.dividerAt = d.left;
+      [houses, frags].forEach((v) => {
+        if (v.hidden) return;
+        const cs = getComputedStyle(v);
+        if (/blur\((?!0px)/.test(cs.filter)) out.soft++;
+        if (cs.transform !== "none" && Math.abs(new DOMMatrix(cs.transform).a - 1) > 0.004) out.scaled++;
+      });
+      const left = to === "fragrances" ? houses : frags, arrived = to === "fragrances" ? frags : houses;
+      if (out.overAt === null && left.hidden && !arrived.hidden) out.overAt = t;
+      if (t < 1100) { requestAnimationFrame(look); return; }
       done(out);
     };
-    document.querySelector('.sheet-filter[data-view="fragrances"]').click();
+    document.querySelector('.sheet-filter[data-view="' + to + '"]').click();
     requestAnimationFrame(look);
-  }));
-  expect(seen.stretch, "no pixel stretch").toBe(false);
-  expect(seen.both, "the two fade through each other").toBeGreaterThan(2);
-  expect(seen.overAt, "and it is over quickly").not.toBeNull();
-  expect(seen.overAt).toBeLessThan(700);
-  expect(seen.xs.length, "the line was seen travelling").toBeGreaterThan(3);
-  expect(Math.abs(seen.xs[0] - seen.axis), "it leaves from the axis").toBeLessThan(80);
-  expect(Math.abs(seen.xs[seen.xs.length - 1] - seen.divider), "and lands on the divider").toBeLessThan(3);
-  expect(Math.abs(seen.dividerAt - seen.divider), "which stands there").toBeLessThan(2);
-  expect(seen.divider, "between the aside and the table").toBeLessThan((await page.locator(".frag-main").boundingBox()).x);
-  await expect(page.locator(".frag-aside")).toHaveCSS("opacity", "1");
-  await expect(page.locator(".frag-item").last().locator(".frag-t-name")).toHaveCSS("opacity", "1");
+  }), to);
+  for (const to of ["fragrances", "houses"]) {
+    const seen = await watch(to);
+    expect(seen.thread, "no line travelling between the views").toBe(0);
+    expect(seen.both, "the two fade through each other").toBeGreaterThan(2);
+    expect(seen.soft, "going soft as they do").toBeGreaterThan(2);
+    expect(seen.scaled, "and drawing in, or out to their size").toBeGreaterThan(2);
+    expect(seen.overAt, "and it is over quickly").not.toBeNull();
+    expect(seen.overAt).toBeLessThan(700);
+    await page.waitForTimeout(400);
+  }
   await expect(page.locator(".views")).not.toHaveClass(/swiping/);
-});
-
-/* AND BACK, ALL THE WAY TO THE AXIS — 2026-09-25: "when going in SD
-   from fragrances to houses, i want the line that moves to go completely
-   where the center line is in houses (and then disappears exactly in the
-   middle of the page)". It used to land where the axis was while the
-   Houses view was still sliding in, some twenty pixels short. So: the
-   last place the line is seen is the axis as it stands once the houses
-   have settled, which is the middle of the page, and then it is gone. */
-test("coming back, the line travels all the way to the axis in the middle of the page, and goes there", async ({ page }) => {
-  test.setTimeout(60000);
-  await toTheTable(page);
-  const seen = await page.evaluate(() => new Promise((done) => {
-    const thread = document.querySelector(".views-thread");
-    const out = { xs: [] };
-    const t0 = performance.now();
-    const look = () => {
-      const cs = getComputedStyle(thread);
-      if (parseFloat(cs.opacity) > 0.3) out.xs.push(new DOMMatrix(cs.transform).m41);
-      if (performance.now() - t0 < 1500) { requestAnimationFrame(look); return; }
-      const sheet = document.getElementById("sheet").getBoundingClientRect();
-      out.axis = sheet.left + sheet.width / 2;
-      // The page's own middle: the body's, which leaves the scrollbar's
-      // gutter out of it.
-      const body = document.body.getBoundingClientRect();
-      out.middle = body.left + body.width / 2;
-      out.after = parseFloat(getComputedStyle(thread).opacity);
-      done(out);
-    };
-    document.querySelector('.sheet-filter[data-view="houses"]').click();
-    requestAnimationFrame(look);
-  }));
-  expect(seen.xs.length, "the line was seen travelling").toBeGreaterThan(3);
-  const last = seen.xs[seen.xs.length - 1];
-  expect(Math.abs(last - seen.axis), `it lands at ${last}, the axis at ${seen.axis}`).toBeLessThan(3);
-  expect(Math.abs(seen.axis - seen.middle), "which is the middle of the page").toBeLessThan(3);
-  expect(seen.after, "and then it is gone").toBeLessThan(0.05);
+  // and nothing is left blurred or scaled once it is over
+  expect(await page.locator('.view[data-view="houses"]').evaluate((v) => [getComputedStyle(v).filter, getComputedStyle(v).transform])).toEqual(["none", "none"]);
 });
 
 /* FREE: a press while the crossing is running is taken AT ONCE — it

@@ -1980,3 +1980,61 @@ test("Houses and Fragrances across the top are boxed buttons, the one you are on
   await page.locator('.sheet-filter[data-view="fragrances"]').click();
   await expect.poll(async () => (await look()).find((b) => b.on) && lum((await look())[1].bg), { timeout: 3000 }).toBeLessThan(60);
 });
+
+/* THE SEARCH, A HOUSE OR A PERFUME — 2026-11-07: "I want the search
+   option to exclude the descrption of the houses. ataraxia is simply
+   ataraxia, not ataraxia a gothic avante garde house. same with the rest. I
+   want this search to be dynamic, and include fragrances and houses. make
+   sure to assign a category that is visible, such that it would be HOUSE:
+   ataraxia. and same for perfume. below the search bar, in small, make it
+   available to select whether you wanna search for house or perfume, and
+   make it default to house." */
+test("the search finds a house by its name alone, or a perfume, and says which each is", async ({ page }) => {
+  await page.goto(SHEET);
+  await waitForSheet(page);
+  await page.locator(".sheet-search-trigger").click();
+  const kinds = page.locator(".sheet-search-kind [data-kind]");
+  await expect(kinds).toHaveCount(2);
+  await expect(page.locator('.sheet-search-kind [data-kind="house"]')).toHaveAttribute("aria-pressed", "true");
+  await page.locator(".sheet-search-field").pressSequentially("atar", { delay: 20 });
+  const rows = page.locator(".sheet-found-row");
+  await expect(rows).toHaveCount(1);
+  await expect(rows.first().locator(".sheet-found-what")).toHaveText("House: Ataraxia");
+  await expect(rows.first()).not.toContainText("Gothic");
+  await expect(page.locator(".sheet-nav-at span")).toHaveText("Ataraxia");
+  // a perfume, from any house on the site, brings its house round
+  await page.locator('.sheet-search-kind [data-kind="perfume"]').click();
+  await page.locator(".sheet-search-field").fill("spinal");
+  await expect(rows.first().locator(".sheet-found-what")).toHaveText("Perfume: Spinal Fluid");
+  await expect(rows.first().locator(".sheet-found-where")).toHaveText("Ataraxia");
+  await expect(rows.first()).toHaveAttribute("href", /houses\/ataraxia\.html#part-\d\d$/);
+  await page.locator(".sheet-search-field").fill("bad lily");
+  await expect(rows.first().locator(".sheet-found-what")).toHaveText("Perfume: Bad Lily");
+  await expect(page.locator(".sheet-nav-at span")).toHaveText("Tale Parfums");
+});
+
+/* THE NUMBER ON THE RIGHT CAN BE TYPED — 2026-11-07: "make the number on
+   the right typable, so you can click on it and type a house number that
+   you want to go to". */
+test("the house number at the side can be typed, and Enter goes there", async ({ page }) => {
+  await page.goto(SHEET);
+  await waitForSheet(page);
+  await page.locator(".sheet-nav-at b").click();
+  const field = page.locator(".sheet-nav-type");
+  await expect(field).toBeVisible();
+  await expect(field).toBeFocused();
+  await page.keyboard.type("11");
+  await page.keyboard.press("Enter");
+  await expect(field).toBeHidden();
+  await expect(page.locator(".sheet-nav-at b")).toHaveText("11 / 13");
+  await expect(page.locator(".sheet-nav-at span")).toHaveText("Outsider Parfums");
+  // past the last goes to the last; Escape lets it be
+  await page.locator(".sheet-nav-at b").click();
+  await page.keyboard.type("99");
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".sheet-nav-at b")).toHaveText("13 / 13");
+  await page.locator(".sheet-nav-at b").click();
+  await page.keyboard.type("2");
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".sheet-nav-at b")).toHaveText("13 / 13");
+});

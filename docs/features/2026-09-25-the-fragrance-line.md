@@ -691,3 +691,25 @@ by picture.
 `tests/fragrance-line.spec.js`, in **`boxes and cards fill each frame with the picture itself,
 placed on the bottle`**: Forbidden Flower's bottle — measured off the picture by eye, not by the
 reading under test — within 3% of the middle of its box and its card.
+
+## 2026-11-07 — the crossing a morph, the line gone
+
+The owner: "please remove that weird line that dances when you go from fragrances to houses and back.
+idk what that is but remove that entirely. if theres an animation make it morph."
+
+**The thread is out of the code** — the line that stood on the houses' axis and travelled to the table's
+divider and back (`.views-thread`, `placeThread`, `anchorOf` in `views.js`, its rules in `style.css`).
+**The crossing is a morph** (`MORPH_IN`, `MORPH_OUT`, `MORPH_SOFT` in `views.js`): the view being left
+draws in a little and goes soft (`scale(0.965)`, `blur(5px)`) as it fades; the one arriving comes out of
+the same softness to its own size, from `scale(1.035)` — and the other way coming back — so the one
+seems to turn into the other where it stands rather than slide past it. Still 380ms, still free (a press
+mid-way turns it round), and nothing is left scaled or blurred once it is over.
+
+The same day, the page's own search became **a house or a perfume, by name alone**, and the number at
+the side **typable** — written up with the Houses view, in [the axis's report](2026-09-24-the-axis.md#2026-11-07--the-search-a-house-or-a-perfume-and-the-number-typed).
+
+**How to test it**: `tests/fragrance-line.spec.js`, "going to the Fragrances and back is a quick morph,
+with no line travelling between them" — both ways: no `.views-thread`, the two fading through each
+other, soft and scaled while they do, over in under 700ms, and nothing left blurred after. It replaced
+the two tests that kept the thread leaving from the axis, landing on the divider and coming back to the
+middle of the page — regressions for a behaviour the owner has now asked to have taken out.

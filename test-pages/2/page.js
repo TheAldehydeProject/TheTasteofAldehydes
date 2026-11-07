@@ -1,62 +1,50 @@
 // ============================================================
-// TEST PAGE 2 — "Accord Spectrums" (test-pages/2/). Not a page of the
+// TEST PAGE 2 — "Perfumer Spectrums 2026" (test-pages/2/). Not a page of the
 // site: it loads nothing of the site's and nothing of the site loads it.
 //
-// The owner's image 2 — the Sunlight Spectrums poster — made of the
-// site's houses and the Note Library's accords:
-//   THE BANDS   a great arc out from a centre far off to the left, from
-//               night by the domes to near white past the right edge.
-//   THE DOMES   one for each house down the arc: a wire half-sphere seen
-//               from a little above, turning, a path over it as high as
-//               the house has fragrances, a light travelling the path.
-//   THE TICKS   every note the site's fragrances name, in its accord's
-//               stretch of the arc (the poster's days in their months),
-//               longer the more fragrances name it; the accords' names
-//               round the outside, as the months are.
-//   THE LINES   from each house to each accord its notes are in, as
-//               bright as that accord's share; a light runs out along each.
-//
-// ZOOMABLE (2026-11-03 — the owner: "make test page 2 zoomable, and
-// functional for information"): the wheel, a pinch, a double-click, the
-// + and − at the foot, or the keys + − 0 come closer to any part of it,
-// and a drag moves about once closer; the hairlines stay hairlines, the
-// words grow a little and no more, and the closer you come the more of
-// the notes are named, every one of them with how many fragrances name it
-// from about three times as close.
-//
-// AND IT SAYS WHAT IT SHOWS: pressed, a house, an accord or — closer in —
-// a single note opens THE PANEL: a house's accords, its most named notes
-// and its fragrances, each opening onto its notes; an accord's houses and
-// all its notes; a note's houses, the fragrances that name it and what it
-// is most often with — every name in it a way on to its own, Back the way
-// back, and "Show on the poster" flying there. A note chosen draws a line
-// from every house that names it. THE SEARCH finds any house, accord or
-// note by its name. The fragrances and their notes are a snapshot of the
-// site's (notes-data.js through the Note Library's names and spellings),
-// made again on 2026-11-03 so that NOTHING IS LEFT OUT (the owner chose
-// "Every fragrance"): a dome for every house and one for the individual
-// fragrances, all 142 fragrances, and all 379 of the Note Library's notes —
-// a fragrance's notes counted as the Note Library counts them, its second
-// list too (Ataraxia's Fragrantica halves, Haxan's), which the first
-// snapshot left out, and with them 28 notes.
-//
-// KEPT SMOOTH: the bands, the ticks and every word are drawn once into a
-// picture of their own (`still`), again only when the window, the view or
-// what is pointed at changes; a frame lays that down and draws the domes
-// and the lights over it. With motion reduced: drawn once, nothing turning,
-// and the view goes where it is sent at once.
+// REDESIGNED ROUND THE PERFUMERS (2026-11-07 — the owner: "for test page 2,
+// i want you to completly redesign the hierarchy of the information, and
+// focus on it being a perfumers page. not an accords page"). Still the
+// owner's image 2, the Sunlight Spectrums poster, but what stands where is
+// the other way about:
+//   THE DOMES   one for each perfumer down the arc, A to Z by surname, and
+//               one for the perfumes no source credits: a wire half-sphere
+//               turning, a path over it as high as the perfumer has perfumes.
+//   THE HOUSES  round the outside, as the poster's months: a stretch of the
+//               arc for each house, as long as it has perfumes, its name, its
+//               country and its count over it.
+//   THE TICKS   every perfume in the site's Perfumers ledger, all 280, in its
+//               house's stretch by year — longer the newer, dashed with no
+//               year found — in the Perfumers page's colours: gold an
+//               individual fragrance on the site, blue-white a house's,
+//               rose Prin Lomros' houses, not on the site; strong where a
+//               source names the perfumer, fainter where it is the house's,
+//               faint where none is found.
+//   THE LINES   from each perfumer to each house they made perfumes for, as
+//               heavy as how many; a light runs out along each.
+// ZOOMABLE as it was (the wheel, a pinch, a double-click, the + and − at the
+// foot, the keys + − 0, a drag once closer), and the closer you come the more
+// of the perfumes are named, with their years from about three times as
+// close. PRESSED, a perfumer, a house or — closer in — a perfume opens THE
+// PANEL: a perfumer's biography (the site's tools/perfumers/BIOS.md) and its
+// three sources, their houses and every perfume for each; a house's
+// perfumers and perfumes; a perfume's perfumer, year, credit, notes and
+// sources — every name in it a way on, Back the way back, "Show on the
+// poster" flying there. THE SEARCH finds a perfumer, a house or a perfume.
+// The accords are gone from the poster; a perfume's notes, where the Note
+// Library files them, carry their accord's code in its panel.
+// KEPT SMOOTH as it was: the bands, the ticks and the words drawn once into
+// a picture of their own, again only when the view or what is lit changes.
+// With motion reduced: drawn once, nothing turning, and a move made at once.
 // ============================================================
+/* The site's Perfumers ledger as it stood on 2026-11-07, with the perfumers'
+   biographies, and the notes the Note Library filed for the perfumes on the
+   site on 2026-11-06. A snapshot: nothing on the site reads this page, and it
+   reads nothing of the site. */
+const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","sort":"Nilsson","from":"United States","born":"1995","about":["An American perfumer who grew up among the forests of the Rocky Mountains; Parfumo gives 1995 as the year he was born.","Self-taught, he founded Pineward in Colorado in 2020, at twenty-five, meaning it to be a line of pine and fir perfumes.","The money to start it came from donating plasma after he recovered from COVID-19 in June 2020.","In 2022 he acquired Apoteker Tepe and brought its perfumes back, working with its founder, Holladay Saltz.","Parfumo knows sixty-two perfumes by him, every one of them for Pineward."],"bio":{"t":["Nicholas Nilsson is an American perfumer, born in 1995, who grew up among the forests of the Rocky Mountains. He founded Pineward in 2020, at twenty-five, meaning it to be a line of perfumes of pine and fir.","He taught himself, and every perfume he is known for is Pineward's own. Parfumo knows sixty-two by him, rated 7.3 out of ten on average, and WhatScent, too, files him as his house's one perfumer."],"s":[["“Nicholas Nilsson.” *Parfumo*, parfumo.com. Accessed 7 Nov. 2026.","https://www.parfumo.com/Perfumers/nicholas-nilsson"],["“Pineward: Info and Facts.” *Parfumo*, parfumo.net. Accessed 7 Nov. 2026.","https://www.parfumo.net/PerfumeBrand/pineward"],["“Nicholas Nilsson.” *WhatScent*, whatscent.app. Accessed 7 Nov. 2026.","https://whatscent.app/perfumers/nicholas-nilsson"]]}},{"id":"dan-roxana-adar","name":"Dan & Roxana Adar","sort":"Adar","from":"Romania","about":["The in-house perfumers of ADAR, a European house with Romanian roots.","ADAR made its perfumes only on private commission until a public collection came out in 2025.","The house also works with outside perfumers — Antoine Lie, Miguel Matos and Manuel Attardi — and does not say which of them made which perfume; here every ADAR perfume is credited to the house's own pair unless a source names its nose.","Where the house names the nose — Dan Adar, Rox (Roxana) Adar or Miguel Matos — the perfume is credited to that perfumer instead; what is left here is the house's pair."],"bio":{"t":["Dan and Roxana Adar are the two in-house perfumers of ADAR, a European house with Romanian roots. The house says it came out of a long dialogue between two creators who work as The Light and The Dark — one drawn to the luminous and ethereal, the other to depth, shadow and intensity.","For many years its perfumes went only to a small circle of private collectors, as commissions; it has been public since 2025. Every core formula is developed in-house by the two of them, each bottle is made by hand from marble, stone, wood, resin or metal, and each perfume is made in numbered micro-batches with one note left undisclosed. The house also works with a few outside perfumers, Antoine Lie, Miguel Matos and Manuel Attardi among them."],"s":[["“The House.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","https://adarperfumes.com/pages/about"],["“Adar.” *Scent Split*, scentsplit.com. Accessed 7 Nov. 2026.","https://www.scentsplit.com/collections/adar"],["“Adar – Tyrian.” *The Perfumery Barcelona*, theperfumerybarcelona.com. Accessed 2 Nov. 2026.","https://www.theperfumerybarcelona.com/en/?p=27314"]]}},{"id":"goran-bajazetov","name":"Goran Bajazetov","sort":"Bajazetov","about":["The founder and perfumer of Almost Human.","Before perfume he spent more than twenty years in design, visual design, storytelling and the development of technology products; Parfumo lists the house as a Romanian brand he founded in 2025.","Its first collection, First Signal, came out in 2026: five perfumes that do without a pyramid of notes and are described instead by how they change on the skin."],"bio":{"t":["Goran Bajazetov is the founder, perfumer and creative director of Almost Human. Before perfume he spent more than twenty years in design, visual design, storytelling and the making of technology products.","He founded the house in 2025. Its perfumes draw on science fiction, on esoteric ideas and on work across disciplines, and they are told not by a pyramid of notes but by how they change on the skin. The first collection, First Signal, came out in 2026: Burning Bridges, Dear Future, Desert Hope, Ritual Code and Silent Rain. Parfumo and Pitti Immagine give the house as Romanian; Scent Verdict places it in Novi Sad, in Serbia."],"s":[["“Almost Human.” *Pitti Immagine Fragranze*, fragranze.pittimmagine.com. Accessed 7 Nov. 2026.","https://fragranze.pittimmagine.com/en/exhibitors/A/almost-human"],["“Almost Human: All Perfumes & Information.” *Parfumo*, parfumo.com. Accessed 7 Nov. 2026.","https://www.parfumo.com/Perfumes/almost-human?o=y_desc"],["“Goran Bajazetov.” *Scent Verdict*, scentverdict.com. Accessed 7 Nov. 2026.","https://scentverdict.com/perfumer/goran-bajazetov"]]}},{"id":"david-lev-jipa-slivinschi","name":"David-Lev Jipa-Slivinschi","sort":"Jipa-Slivinschi","from":"Romania","about":["Born in Bucharest, of Russian and Ukrainian heritage, he studied film and screenwriting and turned to perfume during the pandemic.","Self-taught, he founded his own house, Toskovat', in Bucharest in 2022.","For Ataraxia he is credited with Vestibule and Amaretto Jazz in the Melting Room, both from 2024."],"bio":{"t":["David-Lev Jipa-Slivinschi was born in Bucharest, of Russian and Ukrainian heritage. He studied film and screenwriting, and came to perfume during the pandemic.","Self-taught, he founded his own house, Toskovat', in Bucharest in 2022. He calls its perfumes extraits de mémoire, each meant to set off one feeling or one memory, and he has said that the story side of a perfume is what matters most to him. For Ataraxia he made Vestibule and Amaretto Jazz in the Melting Room."],"s":[["“Toskovat.” *Parfinity*, parfinity.com. Accessed 2 Nov. 2026.","https://www.parfinity.com/en/brand/toskovat"],["“Toskovat'.” *Scento*, scento.com. Accessed 2 Nov. 2026.","https://www.scento.com/brand/toskovat"],["“The Cult Brand Making Perfume That Smells Like Gasoline, Holy Water and Money.” *Vogue Philippines*, vogue.ph. Accessed 7 Nov. 2026.","https://vogue.ph/beauty/the-cult-brand-making-perfume-that-smells-like-gasoline-holy-water-and-money/"]]}},{"id":"sy-truong","name":"Sy Truong","sort":"Truong","about":["Named by Ça Fleure Bon as the perfumer of Ataraxia's Deity (2025), made with the house's creative director, Tudor Ristea.","Deity was a finalist in the Art and Olfaction Awards."],"bio":{"t":["Sy Truong, also written Sy Trong (Trương Chiêu Sỹ), is an independent perfumer in Vietnam, who founded Sylhouette Parfums with Nhan Ngoc Bao Tran. He began studying perfume, teaching himself, in 2018, after a book on perfume changed his life.","His perfumes are dark and romantic — Poème Noir, Desir Noir and La Lune Errante among them — and Sylhouette's Molotov Cocktail won an Art and Olfaction Award in 2024. For Ataraxia he made Deity, with the house's creative director, Tudor Ristea."],"s":[["“Three Sylhouette Parfums You Should Be Wearing (Sy Trong / Truong Chieu Sy).” *Ça Fleure Bon*, cafleurebon.com. Accessed 7 Nov. 2026.","https://cafleurebon.com/three-sylhouette-parfums-you-should-be-wearing-sy-trong-truong-chieu-sy-plus-desir-noir-giveaway/"],["“Sylhouette Parfums.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/brand/1000/sylhouette-parfums"],["Vernon, Emma, host. “198. Sy Truong [Sylhouette] ~ The Man With the Paracresol Tattoo.” *Perfume Room*, Pocket Casts. Accessed 7 Nov. 2026.","https://pocketcasts.com/podcast/perfume-room/5ea88330-89c8-0139-34e7-0acc26574db2/198-sy-truong-sylhouette-the-man-with-the-paracresol-tattoo/9c686769-393a-487b-879b-5e921b04685e"]]}},{"id":"antoine-lie","name":"Antoine Lie","sort":"Lie","from":"France","born":"1966","about":["Born in Strasbourg in 1966.","He studied chemistry before moving to Grasse to train as a perfumer.","He has made perfumes for ERIS Parfums, État Libre d'Orange, Comme des Garçons, Houbigant and Les Indémodables.","Every Les Abstraits perfume is his, made with the house's founder, the fragrance critic and YouTuber Eugen Nizic."],"bio":{"t":["Antoine Lie is a French perfumer, raised in Strasbourg, who studied chemistry before moving to Grasse to study perfume, and was apprenticed to the teacher Jean Guichard. He worked in France and in the United States, where he took part in Armani Code, Versace Crystal Noir and Ralph Lauren Romance for Men, at Givaudan, at IFF and, from 2011, at Takasago.","Wanting more freedom, he left the large companies for niche houses, and since 2018 has been independent, with a studio of his own in Paris, ALOE — Antoine Lie Olfactive Experience. He calls himself an abstract perfumer. He has made perfumes for ERIS, Houbigant, Les Indémodables and Zoologist, Trudon's Absolu, Comme des Garçons' Wonderwood and État Libre d'Orange's Rien — and every perfume of Les Abstraits, with its founder, Eugen Nizic."],"s":[["“Antoine Lie.” *Nose Paris*, noseparis.com. Accessed 7 Nov. 2026.","https://noseparis.com/fr/nez/antoine-lie-nez/"],["“Antoine Lie.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/antoine-lie"],["“Antoine Lie.” *The Fragrance Foundation UK*, fragrancefoundation.org.uk. Accessed 7 Nov. 2026.","https://fragrancefoundation.org.uk/antoine-lie"]]}},{"id":"michael-nordstrand","name":"Michael Nordstrand","sort":"Nordstrand","about":["Named by Parfumo and by Ça Fleure Bon as the perfumer of Tale Parfum's Bad Lily (2024).","Nothing more about him has been filed here yet."],"bio":{"t":["Michael Nordstrand is an independent perfumer, teacher and artist, with a small studio of his own, Mythologist Studio. He trained at Givaudan, ISIPCA, the Grasse Institute of Perfumery and Cinquième Sens.","For the Getty Villa he made, in 2025, a perfume in two scents after ancient Pylos. He has worked with Epichron, Future Society and House of Mammoth, and for Tale Parfum he made Bad Lily."],"s":[["“Dab a Little 3,000-Year-Old Greek Civilization on Your Wrist.” *Getty News*, getty.edu. Accessed 7 Nov. 2026.","https://www.getty.edu/news/pylos-perfume-michael-nordstrand-q-and-a"],["“Michael Nordstrand.” *Scent Verdict*, scentverdict.com. Accessed 7 Nov. 2026.","https://scentverdict.com/perfumer/michael-nordstrand"],["“Michael Nordstrand.” *WhatScent*, whatscent.app. Accessed 7 Nov. 2026.","https://whatscent.app/perfumers/michael-nordstrand"]]}},{"id":"chad-hodge","name":"Chad Hodge","sort":"Hodge","from":"United States","about":["A screenwriter, and co-founder of Tale Parfum with its creative director, Diandra Barsalou.","Ça Fleure Bon credits Water Me to him.","Tale Parfum was founded in Los Angeles."],"bio":{"t":["Chad Hodge is an American writer and producer, born in 1977 in Kansas City, Missouri, and raised in Highland Park, Illinois; he studied at Northwestern University. He created the television series Runaway, The Playboy Club, Wayward Pines and Good Behavior, and wrote the Broadway Holiday Inn and the film The Darkest Minds.","With the creative director Diandra Barsalou he founded Tale Parfum, a house with, in Sainte Cellier's words, a cinematic instinct for character and transformation, which composes each perfume as a chapter in an evolving story. Ça Fleure Bon credits Water Me to him."],"s":[["“Chad Hodge.” *Wikipedia*, en.wikipedia.org. Accessed 7 Nov. 2026.","https://en.wikipedia.org/wiki/Chad_Hodge"],["“Tale Parfum.” *Sainte Cellier*, saintecellier.com. Accessed 7 Nov. 2026.","https://saintecellier.com/collections/tale-parfum"],["“Tale Parfum Bad Lily (Michael Nordstrand) 2024.” *Ça Fleure Bon*, cafleurebon.com. Accessed 2 Nov. 2026.","https://cafleurebon.com/tale-parfum-bad-lily-michael-nordstrand-2024-plus-surreal-muget-giveaway/"]]}},{"id":"qimu","name":"Qimu","sort":"Qimu","about":["WhatScent names Qimu as the perfumer of Drummer, by the house that carries the name, Qimu & Musicians.","No source found says who made Guitarist, Vocal or Bassist, so those stand under Perfumer not found."],"bio":{"t":["Qimu is the name WhatScent gives as the perfumer of Drummer, by the house that carries the name, Qimu & Musicians. Essencional reports that Lan, the founder of Tombstone, shows Qimu and Musicians at Esxence beside Tombstone, with Bu Feng and Scented Vision.","No source found says who Qimu is, or who made Guitarist, Vocal or Bassist."],"s":[["“Qimu & Musicians Drummer.” *WhatScent*, whatscent.app. Accessed 2 Nov. 2026.","https://whatscent.app/perfume/drummer-1783425703668"],["“Fragrance Creators from China Softly Whisper and Steadily Conquer.” *Essencional*, essencional.com. Accessed 7 Nov. 2026.","https://essencional.com/en/posts/fragrance-creators-from-china-softly-whisper-and-steadily-conquer/"]]}},{"id":"aichi-liu","name":"Aichi Liu","sort":"Liu","from":"Taiwan","about":["She founded OM Parfum in 2021 and is based in Taiwan; her perfumes draw on films, places, her own experiences and moods.","Parfumo names her as the house's only perfumer.","She also makes the perfumes of Outsider Parfum, which OM Parfum markets."],"bio":{"t":["Aichi Liu, called Archie by her friends, is a perfumer in Taiwan who founded OM Parfum in 2021. She came to it as a collector: it struck her one day that the many perfumes she had smelled and collected all seemed to be the same.","Her perfumes draw on films, places, her own experiences and moods. Parfumo names her as the only perfumer of OM Parfum and knows about fifty perfumes by her, rated 7.8 out of ten on average. She also makes the perfumes of Outsider Parfum, which OM Parfum markets."],"s":[["“From Taiwan to the World: Aichi Liu's Scented Journey with OM Parfum.” *Parfumo*, parfumo.com, June 2024. Accessed 7 Nov. 2026.","https://www.parfumo.com/Users/Chizza/Blog/Article/from-taiwan-to-the-world-aichi-liu-s-scented-journey-with-om-parfum"],["“Aichi Liu.” *Parfumo*, parfumo.com. Accessed 7 Nov. 2026.","https://www.parfumo.com/Perfumers/aichi-liu"],["“Dragon's Breath.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","https://www.parfumo.com/Perfumes/outsider-parfum/dragon-s-breath"]]}},{"id":"mathew-schmuelian","name":"Mathew Schmuelian","sort":"Schmuelian","from":"United States","about":["He founded Lost Tribe in New York City in 2022, after years of collecting all-natural, artisanal perfumes, and went on to source his own raw materials.","Lost Tribe works almost entirely with natural materials, and names him as its perfumer.","Pan's Labyrinth he composed with the perfumer Rajesh Balkrishnan."],"bio":{"t":["Mathew Schmuelian is the perfumer and founder of Lost Tribe, a house of natural perfume he started in New York City in 2022. Before it he spent several years collecting artisanal natural perfumes, which led him to source his own raw materials and to macerate animalic ones himself.","Lost Tribe is all natural and handmade in New York. Its perfumes are dense, with prominent animalic notes — musk, oud and ambergris — and an unapologetically intense style; he has described its aim as drawing attention to a niche corner of perfumery and teaching people about all-natural perfume. Pan's Labyrinth he made with the perfumer Rajesh Balkrishnan."],"s":[["“Lost Tribe.” *Scent Verdict*, scentverdict.com. Accessed 2 Nov. 2026.","https://scentverdict.com/brand/lost-tribe"],["“Lost Tribe.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/brands/lost-tribe"],["“Lost Tribe Pan's Labyrinth v2 Extrait.” *Venba Fragrance*, venbafragrance.com. Accessed 2 Nov. 2026.","https://www.venbafragrance.com/products/lost-tribe-pans-labyrinth-v2-extrait"]]}},{"id":"rajesh-balkrishnan","name":"Rajesh Balkrishnan","sort":"Balkrishnan","about":["Named as co-perfumer, with Mathew Schmuelian, of Lost Tribe's Pan's Labyrinth.","Nothing more about him has been filed here yet."],"bio":{"t":["Rajesh Balkrishnan is an independent perfumer who is also an academic, a professor of public health at the University of Virginia School of Medicine, in Charlottesville. He came to perfume from medical research, and learned it mostly by himself and by working with others.","His perfumes are dense and woody, often animalic, and often drawn from Indian culture and nature. Among them are Sayat Nova, made with Dmitry Bortnikoff after the eighteenth-century Armenian poet, and Aranyaka, made with Prin Lomros. Parfumo knows twenty-two perfumes by him; for Lost Tribe he made Pan's Labyrinth, with Mathew Schmuelian."],"s":[["“Rajesh Balkrishnan: Academic Turned Fragrance Visionary.” *Parfinity*, parfinity.com. Accessed 7 Nov. 2026.","https://next.parfinity.com/en/perfumer/rajesh-balkrishnan"],["“Rajesh Balkrishnan.” *Parfumo*, parfumo.com. Accessed 7 Nov. 2026.","https://www.parfumo.com/Perfumers/rajesh-balkrishnan"],["“Lost Tribe Pan's Labyrinth v2 Extrait.” *Venba Fragrance*, venbafragrance.com. Accessed 2 Nov. 2026.","https://www.venbafragrance.com/products/lost-tribe-pans-labyrinth-v2-extrait"]]}},{"id":"holladay-penick-saltz","name":"Holladay Penick Saltz","sort":"Saltz","from":"United States","about":["From the Jackson, Mississippi area, she graduated from the Rhode Island School of Design and specialised in fashion and material culture at Parsons and The New School.","After studying fragrance formulation and production at Le Labo in New York, she founded Apoteker Tepe in 2014, and ran it until 2018.","In 2022 Nicholas Nilsson of Pineward acquired the line and brought it back with her help."],"bio":{"t":["Holladay Penick Saltz is from the area of Jackson, Mississippi. She graduated from the Rhode Island School of Design and studied fashion and material culture at Parsons and The New School, then studied the formulation and making of perfume at Le Labo in New York.","She founded Apoteker Tepe in 2014 and ran it as a one-woman house, making and batching the line herself in her studio. Ça Fleure Bon wrote of her understanding of perfume as a symbol, and of the weight she gives to history. In 2022 Nicholas Nilsson of Pineward took the line over and brought it back with her help."],"s":[["“Holladay Saltz.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","https://www.parfumo.com/Perfumers/Holladay_Saltz"],["“In the Studio with Apoteker Tepe.” *Catbird*, catbirdnyc.blogspot.com, July 2015. Accessed 7 Nov. 2026.","https://catbirdnyc.blogspot.com/2015/07/in-studio-with-apoteker-tepe.html"],["“ÇaFleureBon Profiles in American Perfumery: Holladay Saltz of Apoteker Tepe.” *Ça Fleure Bon*, cafleurebon.com. Accessed 7 Nov. 2026.","https://cafleurebon.com/cafleurebon-profiles-in-american-perfumery-holladay-saltz-of-apoteker-tepe-transcendence-through-art-draw/"]]}},{"id":"christopher-sheldrake","name":"Christopher Sheldrake","sort":"Sheldrake","from":"United Kingdom","born":"1955","about":["Born on 11 April 1955 in Madras, India.","The perfumer Georges Cœur took him on as an apprentice in 1974; he worked at Robertet and at Chanel before meeting Serge Lutens in 1989.","He went on to make Féminité du Bois (1992), Ambre Sultan (1993) and nearly all of the Serge Lutens line.","In 2005 he returned to Chanel as perfumer and director of research and development, beside Jacques and later Olivier Polge."],"bio":{"t":["Christopher Sheldrake is a British perfumer, born on 11 April 1955 in Madras, India. Training as an architect, he went to France to improve his French and found himself in Grasse, and in perfume; the perfumer Georges Cœur took him on as an apprentice in 1974, and he worked at Chanel and for many years at Quest International.","In 1989 he met Serge Lutens, then Shiseido's artistic director. The Salons du Palais-Royal line opened in 1992 with his Féminité du Bois, and nearly the whole of the Serge Lutens line is his, Ambre Sultan and Chergui among it. In 2005 he returned to Chanel as perfumer and director of research and development, where Coco Noir is his; he has made perfumes for Rochas, Avon and Space NK as well."],"s":[["“Christopher Sheldrake.” *The Fragrance Foundation UK*, fragrancefoundation.org.uk. Accessed 2 Nov. 2026.","https://www.fragrancefoundation.org.uk/christopher-sheldrake"],["“Christopher Sheldrake.” *Wikipedia*, en.wikipedia.org. Accessed 7 Nov. 2026.","https://en.wikipedia.org/wiki/Christopher_Sheldrake"],["“Christopher Sheldrake.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/christopher-sheldrake"]]}},{"id":"francois-demachy","name":"François Demachy","sort":"Demachy","from":"France","about":["Born in Cannes and raised in Grasse, where his father ran a pharmacy; he studied dentistry before perfume.","He was Dior's perfumer-creator from 2006.","Francis Kurkdjian succeeded him as Dior's chief perfumer in October 2021."],"bio":{"t":["François Demachy is a French perfumer, born in Cannes and raised in Grasse, where his father ran a pharmacy. He studied dentistry and physiotherapy, worked at Mane, and then trained for five years at the perfumery school of Charabot.","At Chanel he became director of research and development, working at the same time on the perfumes of Chanel, Ungaro, Bourjois and Tiffany. In 2006 Dior made him its perfumer-creator and director of development for the perfumes and cosmetics of LVMH, where he also worked for Fendi and Acqua di Parma, and remade Miss Dior and the Eau Sauvage and Dior Homme lines. Francis Kurkdjian succeeded him at Dior in 2021, and he stayed on as a perfumer within LVMH."],"s":[["“François Demachy.” *Wikipedia*, en.wikipedia.org. Accessed 7 Nov. 2026.","https://en.wikipedia.org/wiki/Fran%C3%A7ois_Demachy"],["“Lifetime Achievement Perfumer: François Demachy.” *The Fragrance Foundation*, fragrance.org. Accessed 7 Nov. 2026.","https://fragrance.org/honoree/lifetime-achievement-perfumer-6/"],["“François Demachy.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","https://www.parfumo.com/Perfumers/Franois_Demachy"]]}},{"id":"ramon-monegal","name":"Ramón Monegal","sort":"Monegal","from":"Spain","born":"1951","about":["Born in 1951, of the family behind the Spanish house Myrurgia.","When Puig stopped producing Myrurgia's perfumes in 2008 he left, and after a year off, in which he wrote a book on perfume, founded the house under his own name in 2009."],"bio":{"t":["Ramón Monegal, born in Barcelona in 1951, is the fourth generation of a family of perfumers: his great-grandfather, Esteve Monegal i Prat, opened the drugstore that became Myrurgia in 1916, the house that supplied the Spanish royal family.","He studied architecture first, and began training as a perfumer in 1972 at the family company, and then in Geneva with Artur Jordi Pey, in Grasse with Marcel Carles and in Paris with Pierre Bourdon. For more than thirty years he made perfumes at Myrurgia, many of them best-sellers in Spain, and colognes for Adolfo Domínguez, Antonio Miró and Massimo Dutti. After Puig took Myrurgia over he stepped away, and in 2009 he founded his own house, Monegal, in Barcelona; his book La Perfumista came out in 2012."],"s":[["“Ramon Monegal.” *Wikipedia*, en.wikipedia.org. Accessed 7 Nov. 2026.","https://en.wikipedia.org/wiki/Ramon_Monegal"],["“Ramon Monegal.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/ramon-monegal"],["“Myrurgia.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","https://www.parfumo.com/PerfumeBrand/Myrurgia"]]}},{"id":"pierre-montale","name":"Pierre Montale","sort":"Montale","from":"France","about":["A self-taught perfumer, trained in materials by a perfumer in Grasse; in 1975 he and his sister founded Comptoir Sud Pacifique, and he later founded Montale Parfums.","He founded Mancera in 2008; his daughter Amélie became its artistic director in 2017."],"bio":{"t":["Pierre Montale is a French perfumer of whom, in Luckyscent's words, there are no photographs, no interviews and no profiles. He spent several decades as the in-house perfumer of a Middle Eastern royal family that has never been named, and helped to begin Comptoir Sud Pacifique.","He then launched the line under his own name, Montale, whose perfumes carry the tastes of Middle Eastern perfumery — oud, spice, rose, plum and coffee. In 2008 he founded Mancera with his daughter, Amélie, who became its artistic director in 2017; he is still its perfumer."],"s":[["“Pierre Montale.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/pierre-montale"],["“History.” *Mancera*, manceraparfums.com. Accessed 7 Nov. 2026.","https://manceraparfums.com/en/history"],["“Mancera.” *Pamco*, pamcogrp.com. Accessed 2 Nov. 2026.","https://www.pamcogrp.com/catalogues/perfume/MANCERA.pdf"]]}},{"id":"jakub-pietrynka","name":"Jakub Pietrynka","sort":"Pietrynka","from":"Poland","about":["The Polish independent perfumer behind JMP Artisan Perfumes.","Parfumo knows fifty-five perfumes by him."],"bio":{"t":["Jakub Pietrynka is an independent Polish perfumer, self-taught, who has been drawn to smells since he was a child. He comes from Zamość and has lived for more than a decade in Kraków, where he makes his perfumes; he left a career in tourism to do it.","He founded JMP Artisan Perfumes in 2019, its compositions minimal and classic and treated as art in a bottle. The line was soon known in Poland and across Europe, and Delusion and Eccentricity were also acclaimed in the United States. Parfumo knows fifty-five perfumes by him, rated 8.1 out of ten on average, Kraków (2023) among them."],"s":[["“JMP Artisan Perfumes.” *Fragrances & Art*, fragrancesandart.com. Accessed 7 Nov. 2026.","https://fragrancesandart.com/en/brands/jmp-artisan-perfumes/"],["“JMP Artisan Perfumes.” *Luckyscent*, luckyscent.com. Accessed 2 Nov. 2026.","https://www.luckyscent.com/brand/871/jmp-artisan-perfumes?section=1"],["“Jakub Pietrynka.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","https://www.parfumo.com/Perfumers/jakub-pietrynka"]]}},{"id":"sultan-pasha","name":"Sultan Pasha","sort":"Pasha","about":["WhatScent credits Quintessentially Amber (2025) to him, with Christian Carbonnel.","His house describes it as an amber meant to use every facet of the genre together."],"bio":{"t":["Sultan Pasha is an independent perfumer and maker of attars in London, who grew up between Dhaka and London and has a background in chemistry. Before making perfume he collected and sold rare vintage perfumes.","His paternal grandparents, who settled in Britain in the 1950s, travelled the Middle East to its holy shrines and brought back many attars, and it was to attars that he turned, as the truest way, he has said, to convey what is in him; his first, Shadee, is from 2012. His style draws on French perfumery before the 1960s, with heavy use of rare natural materials. For Zoologist he made Sacred Scarab (2023), and with Christian Carbonnel, Quintessentially Amber (2025)."],"s":[["“An Interview with Sultan Pasha, the Perfumer of Zoologist Sacred Scarab.” *Zoologist Perfumes*, zoologistperfumes.com. Accessed 7 Nov. 2026.","https://www.zoologistperfumes.com/blogs/news/an-interview-with-sultan-pasha-the-perfumer-of-zoologist-sacred-scarab"],["Turin, Luca. “Sultan Pasha Attars.” *Luca Turin*, lucaturin.substack.com. Accessed 7 Nov. 2026.","https://lucaturin.substack.com/p/sultan-pasha-attars"],["“Quintessentially Amber.” *WhatScent*, whatscent.app. Accessed 2 Nov. 2026.","https://whatscent.app/perfume/quintessentially-amber-1784060250942"]]}},{"id":"christian-carbonnel","name":"Christian Carbonnel","sort":"Carbonnel","about":["Credited by WhatScent, with Sultan Pasha, for Quintessentially Amber (2025).","Nothing more about him has been filed here yet."],"bio":{"t":["Christian Carbonnel, called Chris Maurice by some of the houses he works for — both are his real names, his full name being Christian Maurice Carbonnel — is the third generation of a Spanish family of perfumers. His grandfather, the French perfumer Maurice Carbonnel, founded Carbonnel S.A. in Spain in 1925.","He is a perfumer of the family company and its ambassador, and he has made perfumes for houses across Europe and the Middle East, Xerjoff, Amouage, Sospiro and Arabian Oud among them; he founded C De La Niche. He was the mentor of Miguel Matos, taking him into his laboratory. With Sultan Pasha he made Quintessentially Amber (2025)."],"s":[["“Christian Carbonnel a.k.a. Chris Maurice.” *Parfinity*, parfinity.com. Accessed 7 Nov. 2026.","https://www.parfinity.com/en/perfumer/christian-carbonnel-a-k-a-chris-maurice"],["“Chris Maurice.” *La Parfumerie*, laparfumerie.org. Accessed 7 Nov. 2026.","https://www.laparfumerie.org/parfumedia/article/39336-chris-maurice"],["“Miguel Matos: From Art Critic to Perfumer.” *Parfinity*, parfinity.com. Accessed 7 Nov. 2026.","https://www.parfinity.com/en/perfumer/miguel-matos"]]}},{"id":"russian-adam","name":"Russian Adam","sort":"Adam","about":["Ivan Inkin, called Russian Adam: a distiller who founded Areej Le Doré in Thailand in 2017; the house is now based in Indonesia.","Areej Le Doré specialises in natural oud and sandalwood oils it distils itself.","Forbidden Flower is from 2024."],"bio":{"t":["Ivan Inkin, known as Russian Adam, is a distiller and perfumer who founded Areej Le Doré in Thailand in 2017; the house is now based in Indonesia, and it specialises in natural oud and sandalwood oils it distils itself.","He makes his own distillations so that he has full control of the oils he puts into his perfumes — the Mysore sandalwood in Koh-i-Noor among them — and the Choco Borai oud at the head of his Russian Oud is Thai agarwood he co-distilled himself."],"s":[["“Areej Le Doré: Interesting Facts.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","https://www.parfumo.com/Perfumes/Areej_Le_Dore?col_id=2278"],["“Areej Le Dore – Koh-i-Noor.” *Luckyscent Videos*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/videos/detail/249/areej-le-dore-koh-i-noor"],["“Areej Le Doré Russian Oud: Willy Wonka's Oud.” *Kafkaesque*, kafkaesqueblog.com, 11 Feb. 2018. Accessed 7 Nov. 2026.","https://kafkaesqueblog.com/2018/02/11/areej-le-dore-russian-oud-willy-wonkas-oud/"]]}},{"id":"josh-lobb","name":"Josh Lobb","sort":"Lobb","from":"United States","about":["An entirely self-taught perfumer in Portland, Oregon; Slumberhouse began as a collective of artist friends and became his own.","Ore was one of his first perfumes, in 2009; he remade it as an extrait, and again in 2022."],"bio":{"t":["Josh Lobb is an entirely self-taught perfumer in Portland, Oregon. Slumberhouse began there as a collective among artist friends, he making the perfumes and they the art, clothing and the rest; his perfumes, sold one at a time on Etsy, took off, and it became his own house.","Though some take him for a natural perfumer, he rejects the name, and works with whatever material fits the idea, synthetic or natural. Slumberhouse's heavy, often difficult style and its sporadic production have given it a cult following. Ore was one of his first perfumes, in 2009, and he has remade it since."],"s":[["“Josh Lobb.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/49/josh-lobb"],["“The Best Perfumes in Portland.” *Portland Monthly*, pdxmonthly.com. Accessed 7 Nov. 2026.","https://www.pdxmonthly.com/articles/best-perfumes-portland"],["“Niche Fragrance Review: slumberhouse Ore.” *Ça Fleure Bon*, cafleurebon.com. Accessed 2 Nov. 2026.","https://cafleurebon.com/niche-fragrance-review-slumberhouse-ore-better-the-second-time-draw/"]]}},{"id":"prin-lomros","name":"Prin Lomros","sort":"Lomros","from":"Thailand","about":["A Thai perfumer who first studied film, then began his career at PerfumersWorld, a large Thai fragrance company, before founding Pryn Parfum in 2016 as a self-taught perfumer.","Three lines came of it: Strangers Parfumerie (2017), the one closest to his own life; Parfum Prissana (2018), named after his sister, joining classic structures with an East Asian style; and PRIN (2019), the most personal of the three.","Several of his perfumes were finalists in the Art and Olfaction Awards — Rosuerrier in 2017, Cigar Rum and Morah in 2018 — and he has made perfumes for Zoologist.","He also teaches filmmaking at a university in Bangkok."],"bio":{"t":["Prin Lomros is a Thai perfumer and filmmaker from the south of Thailand. He studied film; a visit to Grasse woke the wish to make perfume, and he trained at The Perfumer's World in Bangkok, otherwise teaching himself.","He founded Pryn Parfum, and from it three lines — Strangers Parfumerie (2017), Parfum Prissana and PRIN — since brought together under the one name, PRIN. His perfumes were recognised by the Art and Olfaction Awards in 2017 and 2018, and for Zoologist he made Bat and Sloth. He also teaches filmmaking at a university in Bangkok."],"s":[["“Prin Lomros.” *Parfinity*, parfinity.com. Accessed 7 Nov. 2026.","https://parfinity.com/en/perfumer/prin-lomros"],["“Prin Lomros.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/prin-lomros"],["“Strangers Parfumerie.” *Bloom Perfumery*, bloomperfume.com. Accessed 7 Nov. 2026.","https://bloomperfume.com/collections/strangers-parfumerie"]]}},{"id":"dan-adar","name":"Dan Adar","sort":"Adar, Dan","from":"Romania","about":["One of the two in-house perfumers of ADAR, a European house with Romanian roots.","The house's own pages give him as the nose of Amber Zero, Root Code and Lignum Dei, with Rox Adar as their artistic vision."],"bio":{"t":["Dan Adar is one of the two in-house perfumers of ADAR, a European house with Romanian roots, which he and Roxana Adar work in as two creators called The Light and The Dark. Every core formula of the house is developed by the two of them; for many years its perfumes went only to private collectors, and it has been public since 2025.","The house's own pages give him as the nose of Amber Zero, with Rox Adar as its artistic vision."],"s":[["“The House.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","https://adarperfumes.com/pages/about"],["“Amber Zero – Essence of Depths.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","https://adarperfumes.com/products/amber-zero-essence-of-dephts"],["“Adar.” *Scent Split*, scentsplit.com. Accessed 7 Nov. 2026.","https://www.scentsplit.com/collections/adar"]]}},{"id":"roxana-adar","name":"Roxana Adar","sort":"Adar, Roxana","from":"Romania","about":["One of the two in-house perfumers of ADAR, written Rox Adar on the house's own pages.","The house gives her as the nose of Tyrian, Aetherialism, Incantu and ADHD."],"bio":{"t":["Roxana Adar — Rox Adar on the house's own pages — is one of the two in-house perfumers of ADAR, a European house with Romanian roots, which she and Dan Adar work in as two creators called The Light and The Dark. Every core formula of the house is developed by the two of them; for many years its perfumes went only to private collectors, and it has been public since 2025.","The house gives her as the nose of Tyrian."],"s":[["“The House.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","https://adarperfumes.com/pages/about"],["“Adar – Tyrian.” *The Perfumery Barcelona*, theperfumerybarcelona.com. Accessed 2 Nov. 2026.","https://www.theperfumerybarcelona.com/en/?p=27314"],["“Adar.” *Scent Split*, scentsplit.com. Accessed 7 Nov. 2026.","https://www.scentsplit.com/collections/adar"]]}},{"id":"miguel-matos","name":"Miguel Matos","sort":"Matos","about":["One of the outside perfumers ADAR works with.","The house's own pages give him as the nose of Alta Luna and Alpha 11, two of its Elixirs Absolus, with ADAR as their artistic vision."],"bio":{"t":["Miguel Matos is a Portuguese perfumer who works from a small laboratory and showroom of his own in Almada, near Lisbon. For about twenty years he was a journalist of the arts — an editor at Time Out Portugal, a co-founder of the culture magazine Umbigo, a writer for Vogue Portugal — and he is a scent critic and a curator of scent art as well.","He taught himself perfumery from books until the perfumer Christian Carbonnel took him into his laboratory and became his mentor. His own label, Miguel Matos Perfumes, began in 2018. He has made perfumes for Nishane, Sarah Baker (Jungle Jezebel), Astrophil & Stella (Sweet Pulp), CALAJ and Ricardo Ramos, and he is creative director and in-house perfumer of Bruno Acampora. The Fragrance Foundation, the Perfumed Plume Awards and the Art and Olfaction Awards have all recognised his work."],"s":[["“Miguel Matos: From Art Critic to Perfumer.” *Parfinity*, parfinity.com. Accessed 7 Nov. 2026.","https://www.parfinity.com/en/perfumer/miguel-matos"],["“Miguel Matos.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/miguel-matos"],["“Miguel Matos.” *WhatScent*, whatscent.app. Accessed 7 Nov. 2026.","https://whatscent.app/perfumers/miguel-matos"]]}},{"id":"lan-xiao","name":"Lan Xiao","sort":"Xiao","about":["An independent perfumer and the founder of Tombstone, who, in Scentissime's words, explores the beauty of life through the awareness of death.","Her perfumes for the house are earthy, smoky and gourmand; Tombstone gives her Sweet Coffin, which she meant as the sweet coffin she wishes to return to, and Scentissime 3 Feet 5."],"bio":{"t":["Lan Xiao is a Chinese-American perfumer, trained in the United States and at the Grasse Institute of Perfumery, who founded Tombstone in 2024. The house breaks the taboos and fears that surround death, making the putting on of perfume a philosophical and artistic gesture; its perfumes are made by independent perfumers given complete freedom.","In Scentissime's words, she explores the beauty of life through the awareness of death. At Esxence, Tombstone's stand was one of the most popular of the fair, and beside it she showed her other brands, Bu Feng, Scented Vision and Qimu and Musicians. For Tombstone she made Sweet Coffin, which she meant as the sweet coffin she wishes to return to."],"s":[["“Fragrance Creators from China Softly Whisper and Steadily Conquer.” *Essencional*, essencional.com. Accessed 7 Nov. 2026.","https://essencional.com/en/posts/fragrance-creators-from-china-softly-whisper-and-steadily-conquer/"],["“Tombstone.” *Pitti Immagine Fragranze*, fragranze.pittimmagine.com. Accessed 7 Nov. 2026.","https://fragranze.pittimmagine.com/en/exhibitors/T/tombstone"],["“Sweet Coffin, TOMBSTONE Extrait de Parfum.” *Scentissime*, scentissime.com. Accessed 7 Nov. 2026.","https://www.scentissime.com/en/1223-sweet-coffin-3760302981212.html"]]}},{"id":"tan-shuai","name":"Tan Shuai","sort":"Tan","about":["Named by Tombstone as the perfumer of No Need to Come by, a gourmand-leather perfume he made of soft, warm notes set against hard, cool ones."],"bio":{"t":["Tan Shuai is named by Tombstone as the perfumer of No Need to Come By. Tan Shuai sees death, the house says, as a one-way adventure with no return, embracing solitude without the need for visits or tributes, and he composed the perfume, a gourmand leather, by setting soft, warm notes against hard, cool ones — mint, thyme, pepper and turpentine over myrrh, frankincense and jasmine, on patchouli, tonka and sandalwood.","Nothing more about him was found in the sources read."],"s":[["“No Need to Come by.” *Tombstone*, tombstonefragrances.shop. Accessed 7 Nov. 2026.","https://tombstonefragrances.shop/products/no-need-to-come-by-1"],["“No Need to Come By (2024), Tombstone.” *ScentAdvice*, scentadvice.com. Accessed 7 Nov. 2026.","https://scentadvice.com/no-need-to-come-by-2024-tombstone/"]]}},{"id":"yenchi-lin","name":"Yenchi Lin","sort":"Lin","from":"Taiwan","about":["A Taiwanese perfumer trained in Grasse, who composes perfumes as one writes intimate narratives, drawing on her childhood in Kaohsiung.","Tombstone gives her Sing at My Funeral, a funeral pictured with a light spirit."],"bio":{"t":["Yenchi Lin is a Taiwanese perfumer trained in Grasse, who composes perfumes as one writes intimate narratives, drawing on her childhood in Kaohsiung. Her The Hometown in Me, after the house she grew up in there, won the mAPA award for artistic perfume in 2023.","For Tombstone she made Sing at My Funeral: in her imagination, the house says, her funeral has a light spirit and a joyful air."],"s":[["“Sing at My Funeral, TOMBSTONE Extrait de Parfum.” *Scentissime*, scentissime.com. Accessed 7 Nov. 2026.","https://www.scentissime.com/en/1225-sing-at-my-funeral-3760302981229.html"],["“Sing at My Funeral.” *Tombstone*, tombstonefragrances.shop. Accessed 7 Nov. 2026.","https://tombstonefragrances.shop/products/sing-at-my-funeral-1"],["“The Hometown in Me.” *Fraganty*, fraganty.ai. Accessed 7 Nov. 2026.","https://fraganty.ai/perfume/the-hometown-in-me"]]}},{"id":"diandra-barsalou","name":"Diandra Barsalou","sort":"Barsalou","from":"United States","about":["Creative director and co-founder of Tale Parfum.","Named by Sainte Cellier as the perfumer of Rouse."],"bio":{"t":["Diandra Barsalou is the creative director of Tale Parfum, which she founded with the screenwriter and perfumer Chad Hodge. The house composes each perfume as a chapter in an evolving story.","Sainte Cellier names her as the perfumer of Rouse. Nothing more about her was found in the sources read."],"s":[["“Tale Parfum.” *Sainte Cellier*, saintecellier.com. Accessed 7 Nov. 2026.","https://saintecellier.com/collections/tale-parfum"],["“Rouse.” *Sainte Cellier*, saintecellier.com. Accessed 7 Nov. 2026.","https://saintecellier.com/products/rouse"],["“Tale Parfum Bad Lily (Michael Nordstrand) 2024.” *Ça Fleure Bon*, cafleurebon.com. Accessed 2 Nov. 2026.","https://cafleurebon.com/tale-parfum-bad-lily-michael-nordstrand-2024-plus-surreal-muget-giveaway/"]]}},{"id":"vera-nicchia","name":"Vera Nicchia","sort":"Nicchia","about":["Named by Profumix as the nose of Casa Goa's Velvet Fog."],"bio":{"t":["Vera Nicchia is named by Profumix as the nose of Casa Goa's Velvet Fog, which the retailer calls the perfume that paved the way for the house's others.","Nothing more about her was found in the sources read."],"s":[["“Home Goa Velvet Fog 50ml Eau de Parfum.” *Profumix Luxury Brands*, profumixluxurybrands.it. Accessed 7 Nov. 2026.","https://www.profumixluxurybrands.it/en/?p=103693"],["“Velvet Fog – 50ml.” *Spezieri*, spezieri.com. Accessed 2 Nov. 2026.","https://spezieri.com/en/velvet-fog-50-ml-casa-goa"]]}},{"id":"not-found","name":"Perfumer not found","sort":"￿","about":["These perfumes are written about on this site, but no source found names who made them. When one is found, the perfume moves to its perfumer."]}],"houses":[{"id":"pineward","name":"Pineward","from":"United States","founded":"2020","about":"Founded in Colorado in 2020 by the self-taught perfumer Nicholas Nilsson.","site":1},{"id":"apoteker-tepe","name":"Apoteker Tepe","from":"United States","founded":"2014","about":"Founded in 2014 by Holladay Penick Saltz, who ran it until 2018; acquired in 2022 by Nicholas Nilsson of Pineward, who revived it.","site":1},{"id":"adar","name":"ADAR","from":"Romania","about":"A European house with Romanian roots whose own perfumers are Dan and Roxana Adar; its first public collection came out in 2025.","site":1},{"id":"almost-human","name":"Almost Human","from":"Romania","founded":"2025","about":"Founded in 2025 by its perfumer and creative director, Goran Bajazetov; its first collection came out in 2026.","site":1},{"id":"ataraxia","name":"Ataraxia","about":"A house of gothic, avant-garde scents; Tudor Ristea is its creative director.","site":1},{"id":"grande-parfums","name":"Grande Parfums","from":"Romania","founded":"2021","about":"Grande Perfumes, of Bucharest, created in 2021 by Alex Marian. No source found names the perfumer of its perfumes.","site":1},{"id":"les-abstraits","name":"Les Abstraits","about":"Founded by the fragrance critic and YouTuber Eugen Nizic; every one of its perfumes is made with Antoine Lie.","site":1},{"id":"tale-parfums","name":"Tale Parfums","from":"United States","about":"Founded in Los Angeles by the screenwriter Chad Hodge and the creative director Diandra Barsalou.","site":1},{"id":"tombstone","name":"Tombstone","about":"A house about death and living, each bottle shaped as a tombstone; marketed by Wonder Senses. No source found names its perfumer.","site":1},{"id":"qimu-musicians","name":"Qimu & Musicians","about":"A perfume for each player in a band. WhatScent names Qimu as the perfumer of Drummer.","site":1},{"id":"om-parfums","name":"Om Parfums","from":"Taiwan","founded":"2021","about":"OM Parfum, founded in 2021 by Aichi Liu, its only perfumer.","site":1},{"id":"outsider-parfums","name":"Outsider Parfums","about":"Outsider Parfum, made by Aichi Liu and marketed by OM Parfum.","site":1},{"id":"lost-tribe","name":"Lost Tribe","from":"United States","founded":"2022","about":"Founded in New York City in 2022 by Mathew Schmuelian; all-natural perfumes, made by hand.","site":1},{"id":"serge-lutens","name":"Serge Lutens","from":"France","founded":"2000","about":"Parfums-Beauté Serge Lutens, his own house since 2000, its perfumes made with Christopher Sheldrake.","site":0},{"id":"dior","name":"Dior","from":"France","founded":"1947","about":"Christian Dior's first perfume, Miss Dior, came out with his first collection in 1947.","site":0},{"id":"ramon-monegal","name":"Ramón Monegal","from":"Spain","founded":"2009","about":"Founded in 2009 by Ramón Monegal, under his own name.","site":0},{"id":"mancera","name":"Mancera","from":"France","founded":"2008","about":"Founded in 2008 by Pierre Montale, with his daughter Amélie as its artistic director since 2017.","site":0},{"id":"casa-goa","name":"Casa Goa","about":"No source found names who makes its perfumes.","site":0},{"id":"matca","name":"Matca","about":"No source found names who makes its perfumes.","site":0},{"id":"lussur","name":"Lussur","from":"Italy","about":"An Italian house from Modena, founded by Lucas Chemelli. No source found names the perfumer of CV99.","site":0},{"id":"jmp-artisan-perfumes","name":"JMP Artisan Perfumes","from":"Poland","about":"The house of the Polish independent perfumer Jakub Pietrynka.","site":0},{"id":"sultan-pasha-perfumes","name":"Sultan Pasha Perfumes","about":"The house of the perfumer Sultan Pasha.","site":0},{"id":"areej-le-dore","name":"Areej Le Doré","from":"Indonesia","founded":"2017","about":"Founded in Thailand in 2017 by the distiller Russian Adam; now based in Indonesia.","site":0},{"id":"slumberhouse","name":"Slumberhouse","from":"United States","about":"Josh Lobb's house, in Portland, Oregon.","site":0},{"id":"strangers-parfumerie","name":"Strangers Parfumerie","from":"Thailand","founded":"2017","about":"Founded in 2017 by Prin Lomros; the line closest to his own life.","site":0},{"id":"parfum-prissana","name":"Parfum Prissana","from":"Thailand","founded":"2018","about":"Founded in 2018 by Prin Lomros and named after his sister; Asian history, cuisine and myth in classic structures.","site":0},{"id":"prin","name":"PRIN","from":"Thailand","founded":"2019","about":"Founded in 2019 by Prin Lomros; his signature line.","site":0}],"perfumes":[["Bindebole",[0],0,2021,0,1,[0]],["Boreal",[0],0,2020,0,1,[0]],["Brokilän",[0],0,2021,0,1,[0]],["Cotswold",[0],0,2021,0,1,[0]],["Eldritch",[0],0,2021,0,1,[0]],["Fanghorn II",[0],0,2021,0,1,[0]],["Funerie",[0],0,2022,0,1,[0]],["Juniperus",[0],0,2024,0,1,[0]],["Murkwood",[0],0,2020,0,1,[0]],["Nocturnis",[0],0,2022,0,1,[0]],["Oxylus",[0],0,2021,0,1,[0]],["Snoqualmie",[0],0,2024,0,1,[0]],["Sturbridge",[0],0,2023,0,1,[0]],["White Fir",[0],0,2022,0,1,[0]],["Bucolic",[0],0,2024,0,1,[0]],["Hayloft",[0],0,2022,0,1,[0]],["Hayride",[0],0,2022,0,1,[0]],["Pastoral",[0],0,2022,0,1,[0]],["Shire",[0],0,2024,0,1,[0]],["Steading",[0],0,2020,0,1,[0]],["Christmas Wine",[0],0,2020,0,1,[0]],["Gingerbread",[0],0,2023,0,1,[0]],["Glühwein",[0],0,2021,0,1,[0]],["Revelries",[0],0,2021,0,1,[0]],["Acadian",[0],0,2023,0,1,[0]],["Coastal Veil",[0],0,2023,0,1,[0]],["Gingermoss",[0],0,2023,0,1,[0]],["Subalpine",[0],0,2025,0,1,[0]],["Akero",[0],0,2023,0,1,[0]],["Apple Tabac",[0],0,2020,0,1,[0]],["Caravansary",[0],0,2023,0,1,[0]],["Clemenpine",[0],0,2023,0,1,[0]],["Coffee Tabac",[0],0,2024,0,1,[0]],["Delfiño",[0],0,2022,0,1,[0]],["Greymist",[0],0,2023,0,1,[0]],["Gristmill",[0],0,2022,0,1,[0]],["Holy Cross",[0],0,2026,0,1,[0]],["Icefall",[0],0,2021,0,1,[0]],["Ivymoss",[0],0,2023,0,1,[0]],["Lime Cola",[0],0,2025,0,1,[0]],["Meadowmoss",[0],0,2023,0,1,[0]],["Mint Cocoa",[0],0,2024,0,1,[0]],["Noki",[0],0,2022,0,1,[0]],["Ponderosa",[0],0,2022,0,1,[0]],["Pumpkivus",[0],0,2025,0,1,[0]],["Tome",[0],0,2025,0,1,[0]],["Treacle",[0],0,2021,0,1,[0]],["Velvetine",[0],0,2021,0,1,[0]],["Amber Zero",[23],0,0,2,1,[1,2,2]],["Aetherialism",[24],0,0,2,1,[1,2,2]],["Incantu",[24],0,0,2,1,[1,2,2]],["Against All Odds",[1],1,2025,2,1,[1,2,2,0]],["α11 Alpha11",[25],0,0,2,1,[1,2,2]],["Alta Luna",[25],0,2025,2,1,[1,2,2,2]],["ADHD",[24],0,0,2,1,[1,2,2]],["Root Code",[23],0,0,2,1,[1,2,2]],["Lignum Dei",[23],0,0,2,1,[1,2,2]],["Lithos Diaphanes Λίθος Διαφανές",[1],1,0,2,1,[1,2,2]],["Tyrian",[24],0,2026,2,1,[3,2]],["Burning Bridges",[2],0,2026,3,1,[0]],["Dear Future",[2],0,2026,3,1,[0]],["Desert Hope",[2],0,2026,3,1,[0]],["Ritual Code",[2],0,2026,3,1,[0,3]],["Silent Rain",[2],0,2026,3,1,[0]],["Amaretto Jazz in the Melting Room",[3],0,2024,4,1,[4]],["Deity",[4],0,2025,4,1,[5]],["My Doll’s Makeup",[4],0,0,4,1,[6,7]],["Spinal Fluid",[4],0,2025,4,1,[6,0,8]],["Vestibule",[3],0,2024,4,1,[9]],["5 Years Anniversary",[31],2,0,5,1,[10]],["Ambresso",[31],2,0,5,1,[10]],["Ancient Oud",[31],2,0,5,1,[10]],["Choco Powder",[31],2,0,5,1,[10]],["Cookie something (?)",[31],2,0,5,1,[10]],["Cuore",[31],2,2024,5,1,[0,10]],["Dreaming Maldives",[31],2,0,5,1,[10]],["Giardino di Sorrento",[31],2,0,5,1,[10]],["Hot Stuff",[31],2,0,5,1,[10]],["Intimate Spell",[31],2,0,5,1,[10]],["Karak & Shisha",[31],2,0,5,1,[10]],["Mystical Incense",[31],2,0,5,1,[10]],["Vanilla Ash",[31],2,0,5,1,[10]],["Vintage Memoir",[31],2,0,5,1,[10]],["White Label",[31],2,0,5,1,[10]],["Belle Âme",[5],0,2022,6,1,[11,11]],["Des Cendres",[5],0,2023,6,1,[11,11]],["La Douleur Exquise",[5],0,2022,6,1,[12,11]],["Philosopher’s Walk",[5],0,2025,6,1,[11,11]],["Kong",[10],1,0,12,1,[13,14]],["Watch King",[10],1,0,12,1,[13,14]],["Dirty Soda",[10],1,0,12,1,[13,14]],["Equatorial",[10],1,0,12,1,[13,14]],["Santal Absolu",[10],1,0,12,1,[13,14]],["Pan’s Labyrinth",[10,11],0,0,12,1,[15]],["Nymphaea Caerulea",[9],1,0,10,1,[0,0]],["Lust",[9],0,2023,10,1,[16,0,0,0]],["Burnana",[9],0,2024,10,1,[16,0,0,0]],["Cannabis Café",[9],1,0,10,1,[0,0]],["Dark Night of the Soul",[9],0,2024,10,1,[16,0,0,0]],["This Too Shall Pass",[9],0,0,10,1,[16,0,0]],["When the Linden Blooms",[9],0,2024,10,1,[16,0,0,0]],["Oud de Pasión",[9],1,0,10,1,[0,0]],["Smoke Oud",[9],1,0,10,1,[0,0]],["Dragon’s Breath",[9],0,2026,11,1,[0]],["Draco",[9],1,0,11,1,[0,0]],["Xocolate Crotch",[9],1,0,11,1,[0,0]],["Guilty as Charged",[9],1,0,11,1,[0,0]],["Amaretto Coffee",[9],0,0,11,1,[0]],["Guitarist",[31],2,0,9,1,[9]],["Vocal",[31],2,0,9,1,[9]],["Bassist",[31],2,0,9,1,[9]],["Drummer",[8],0,0,9,1,[9]],["Bad Lily",[6],0,2024,7,1,[0,5]],["Fleurt",[7],0,2024,7,1,[11,14]],["Rouse",[29],0,0,7,1,[11,14]],["Water Me",[7],0,0,7,1,[5]],["3 Feet 5",[26],0,2024,8,1,[17,0]],["Evergrow",[31],2,2025,8,1,[18,0]],["No Need to Come By",[27],0,0,8,1,[18,19]],["Sing at My Funeral",[28],0,0,8,1,[17,18,19]],["Sweet Coffin",[26],0,2024,8,1,[17,18,0]],["Kogen",[31],2,2024,1,1,[0,0]],["The Holy Mountain",[12],0,2015,1,1,[0,20]],["Karasu",[12],0,2016,1,1,[0,20]],["The Peradam",[12],0,2015,1,1,[0,20]],["Pale Fire",[12],0,2016,1,1,[0,20]],["Anabasis",[12],0,2015,1,1,[0,20]],["After the Flood",[12],0,2015,1,1,[0,20]],["Brother Night",[12],0,2016,1,1,[0,21,21,0]],["CV99",[31],2,0,19,0,[21]],["De Profundis",[13],0,2011,13,0,[22]],["Haxan",[22],0,2018,25,0,[0]],["Tobacolor",[14],0,2021,14,0,[23]],["Flamenco EDP",[15],0,2017,15,0,[24]],["French Riviera",[16],0,2022,16,0,[13]],["Velvet Fog",[30],0,0,17,0,[25,26]],["House of Ellixirz",[31],2,2021,18,0,[27]],["Fir of the Light",[17],0,0,20,0,[0]],["Fir of the Dark",[17],0,2024,20,0,[0]],["Quintessentially Amber",[18,19],0,2025,21,0,[9]],["Forbidden Flower",[20],0,2024,22,0,[28]],["Ore",[21],0,2009,23,0,[5,29]],["Salted Green Mango",[22],0,2019,24,2,[0]],["Oliver",[22],0,2018,24,2,[0]],["Cigar Rum",[22],0,2017,24,2,[0]],["SM Café",[22],0,2019,24,2,[0]],["Burning Ben",[22],0,2018,24,2,[0]],["Sweet Farewell",[22],0,2022,24,2,[0]],["Gheorghe",[22],0,2018,24,2,[0]],["Sweet Celestials",[22],0,2023,24,2,[0]],["Muscat Jasmine Tea",[22],0,2024,24,2,[0]],["Scotch Peat",[22],0,2019,24,2,[0]],["Sangre Dulce",[22],0,2019,24,2,[0]],["Aroon Sawat",[22],0,2019,24,2,[0]],["Red Lime Soda",[22],0,2024,24,2,[0]],["Sombre",[22],0,2019,24,2,[0]],["Cherry Amaretto",[22],0,2023,24,2,[0]],["Kira Kira",[22],0,2020,24,2,[0]],["Les Mauvais Garçons",[22],0,2019,24,2,[0]],["Comme un Carrousel",[22],0,2020,24,2,[0]],["Caffeine Honey",[22],0,2020,24,2,[0]],["Spring Ambience",[22],0,2023,24,2,[0]],["A Sorta Fairytale in Hyde Park",[22],0,2021,24,2,[0]],["Roasted Coffee Cigarette Whisky Come and Get Your Suede Honey Baby",[22],0,2020,24,2,[0]],["Wicked John",[22],0,2019,24,2,[0]],["Yuzu Soda",[22],0,2021,24,2,[0]],["Yue Tu 月兔",[22],0,2023,24,2,[0]],["Limonsitano",[22],0,2022,24,2,[0]],["Tokiwa",[22],0,2025,24,2,[0]],["Ember",[22],0,2017,24,2,[0]],["Autumn Tea and Yuzu Vanilla",[22],0,2021,24,2,[0]],["Fume Ma Peau",[22],0,2017,24,2,[0]],["Magenta Pop",[22],0,2020,24,2,[0]],["Euphories",[22],0,2021,24,2,[0]],["Summer Peaches by the Tea Room",[22],0,2021,24,2,[0]],["Concrete Forest",[22],0,2023,24,2,[0]],["Iridescent Sky",[22],0,2020,24,2,[0]],["Lumberjack Cologne",[22],0,2019,24,2,[0]],["Rêve du Matin",[22],0,2023,24,2,[0]],["Eternal Summer",[22],0,2020,24,2,[0]],["Pink Clouds",[22],0,2025,24,2,[0]],["Sweet Tani",[22],0,2025,24,2,[0]],["Fleur de Lune",[22],0,2020,24,2,[0]],["Sweet Muskmelon",[22],0,2023,24,2,[0]],["Virginia",[22],0,2018,24,2,[0]],["Chokedee",[22],0,2021,24,2,[0]],["Cigar Rum Intense",[22],0,2019,24,2,[0]],["San Clemente",[22],0,2018,24,2,[0]],["À la folie",[22],0,2023,24,2,[0]],["Cachouli",[22],0,2022,24,2,[0]],["Cigar Rum (2024)",[22],0,2024,24,2,[0]],["Guido",[22],0,2024,24,2,[0]],["Rosa Raimunda",[22],0,2024,24,2,[0]],["So Fetch!",[22],0,2019,24,2,[0]],["Plunge",[22],0,2021,24,2,[0]],["Soleil de Thé",[22],0,2024,24,2,[0]],["Green Lunar",[22],0,2023,24,2,[0]],["Lights upon Orange Tree",[22],0,2021,24,2,[0]],["Lava Rose",[22],0,2019,24,2,[0]],["Câlin d'Été",[22],0,2025,24,2,[0]],["Cornwall Rose",[22],0,2025,24,2,[0]],["Punk #2077",[22],0,2021,24,2,[0]],["Rosso Amaretto",[22],0,2023,24,2,[0]],["Garden of Eden",[22],0,2023,24,2,[0]],["Maia",[22],0,2017,24,2,[0]],["La Malila",[22],0,2017,24,2,[0]],["Lom Hom Khao Hom",[22],0,2023,24,2,[0]],["Nobles '17",[22],0,2021,24,2,[0]],["La Porte",[22],0,2023,24,2,[0]],["Ma Nishtana",[22],0,2019,25,2,[0]],["Nimitr",[22],0,2018,25,2,[0]],["Nesnás Qareen",[22],0,2019,25,2,[0]],["Natsumeku",[22],0,2019,25,2,[0]],["Sahar",[22],0,2024,25,2,[0]],["Mohragot",[22],0,2019,25,2,[0]],["Dunhuang",[22],0,2022,25,2,[0]],["Chetyre",[22],0,0,25,2,[0]],["Tom Yum",[22],0,2019,25,2,[0]],["Mandarava",[22],0,2019,25,2,[0]],["Thichila",[22],0,2019,25,2,[0]],["Akhetaten",[22],0,2024,25,2,[0]],["Lágrima Sagrada",[22],0,2025,25,2,[0]],["Ayutthaya",[22],0,2022,25,2,[0]],["Maruyama 丸山",[22],0,2019,25,2,[0]],["Nefer",[22],0,0,25,2,[0]],["Le Cirque Bleu",[22],0,2017,25,2,[0]],["Savitri สาวิตรี",[22],0,0,25,2,[0]],["Karuna",[22],0,2022,25,2,[0]],["Tirtha",[22],0,2024,25,2,[0]],["Hayra",[22],0,0,25,2,[0]],["Hirun",[22],0,2024,25,2,[0]],["Ronda",[22],0,2024,25,2,[0]],["Emerald Curry",[22],0,2025,25,2,[0]],["Vallée des Roses",[22],0,0,25,2,[0]],["L'Ombre d'Hier",[22],0,2025,25,2,[0]],["Gularb Matana",[22],0,2024,25,2,[0]],["Keerati",[22],0,2025,25,2,[0]],["Apsarah",[22],0,2018,25,2,[0]],["Narasimha Attar",[22],0,2019,25,2,[0]],["Narasimha Extrait de Parfum",[22],0,0,25,2,[0]],["Mriga มฤค",[22],0,0,26,2,[0]],["Saringkarn ศฤงคาร",[22],0,2020,26,2,[0]],["Mandodari มณโฑ",[22],0,2019,26,2,[0]],["Varuek วฤค",[22],0,2021,26,2,[0]],["Nocturnal Poetry",[22],0,2020,26,2,[0]],["Mongolian Mriga",[22],0,2023,26,2,[0]],["Homa",[22],0,2020,26,2,[0]],["Indigo Night",[22],0,2024,26,2,[0]],["Aran",[22],0,2019,26,2,[0]],["Anatolia Anatolia",[22],0,2021,26,2,[0]],["Arsalan",[22],0,2020,26,2,[0]],["Ganja Kasturi",[22],0,2021,26,2,[0]],["Eshu",[22],0,2020,26,2,[0]],["Oqachol",[22],0,2022,26,2,[0]],["Onthamara",[22],0,2022,26,2,[0]],["Rahassanai",[22],0,2022,26,2,[0]],["Burmite Honey",[22],0,2023,26,2,[0]],["Anatolia",[22],0,2019,26,2,[0]],["Mandodari Mandodari",[22],0,2023,26,2,[0]],["Nilmalee",[22],0,2023,26,2,[0]],["Krissana",[22],0,2023,26,2,[0]],["Rattikarn รัตติกาล",[22],0,2023,26,2,[0]],["Fantôme de la Nuit",[22],0,2024,26,2,[0]],["Kheerin คีรินทร์",[22],0,2025,26,2,[0]],["Nisatiruk นิศาทิรุกข์",[22],0,2025,26,2,[0]],["Naruemit",[22],0,2023,26,2,[0]],["Hürrem Sultan",[22],0,2024,26,2,[0]],["0125",[22],0,2025,26,2,[0]],["Saringkarn Saringkarn",[22],0,2025,26,2,[0]],["Loup",[22],0,2023,26,2,[0]],["Ahuizotl",[22],0,2022,26,2,[0]],["Pathavi",[22],0,2025,26,2,[0]],["Nilubol",[22],0,2023,26,2,[0]],["Sgàil",[22],0,2025,26,2,[0]],["Persephone",[22],0,2025,26,2,[0]],["0225 ๐๒๒๕",[22],0,2025,26,2,[0]],["Prajñā",[22],0,2026,26,2,[0]],["Moha",[22],0,2026,26,2,[0]],["Dveṣa",[22],0,2026,26,2,[0]],["Rāga",[22],0,2026,26,2,[0]]],"sources":["Parfumo","ADAR","Scent Split","The Perfumery Barcelona","ScentAdvice","Ça Fleure Bon","Ataraxia Perfumery","Thingtesting","Turin, Luca","WhatScent","OnCosmetics","Sainte Cellier","Noah","Scent Verdict","Stéle","Venba Fragrance","The Scent Base","Scentissime","Tombstone","Pitti Fragranze","The Taste of Aldehydes","Basenotes","Surrender to Chance","Scento","Now Smell This","Profumix Luxury Brands","Spezieri","Fragplace","Fragrance Samples UK","Luckyscent"]};
+const NOTES = {"names":["Bergamot","Lemon","Orange","Citrus","Lime","Blood Orange","Clementine","Grapefruit","Yuzu","Bitter Orange","Petitgrain","Citron","Green Mandarin","Tangerine","Lavender","Mint","Clary Sage","Rosemary","Sage","Chamomile","Juniper Berry","Thyme","Eucalyptus","Myrtle","Shiso","Angelica Root","Artemisia","Basil","Davana","Dittany of Crete","Herbal Notes","Hops","Huang Qi","Kuromoji","Lemon Verbena","Marjoram","Mint-Sandalwood Co-Distillation","Oregano","Wormwood","Yarrow","Hay","Galbanum","Violet Leaf","Poplar Bud","Sweetgrass","Tomato Leaf","Cannabis","Grass","Green Notes","Ivy","Raspberry Leaf","Sugar Cane","Corn Silage","Corn Silk","Crushed Leaves","Fig Leaf","Green Wheat","Pea","Rhubarb","Sweet Vernalgrass","Watercress","Rose","Jasmine","Orris","Lily of the Valley","Neroli","Orange Blossom","Ylang Ylang","Geranium","Osmanthus","Tuberose","Gardenia","Heliotrope","Violet","Carnation","Waterlily","Bluebell","Champaca","Lily","Linden Blossom","Marigold","Mimosa","Tiare Flower","Alpine Sandwort","Azure Bluet","Chrysanthemum","Clear Orchid","Freesia","Goldenrod","Green Tea Flowers","Honeysuckle","Jonquil","Lilac","Magnolia","Mountain Wildflowers","Nectar","Night Blooming Jasmine","Passionflower","Plum Blossom","Pollen","Snowdrops","Tobacco Flower","White Lotus","Yellow Flowers","Cherry","Raspberry","Dried Fruits","Plum","Apple","Apricot","Peach","Pear","Strawberry","Banana","Blackberry","Cranberry","Dates","Green Apple","Litchi","Mango","Passionfruit","Blueberry","Cassis","Fig","Fruity Notes","Goldenberry","Guava","Japanese Plum","Maninka","Quince","Red Berries","Scorched Pineapple","Clove","Saffron","Cinnamon","Ginger","Black Pepper","Nutmeg","Spices","Pink Pepper","Cardamom","Coriander","Turmeric","Allspice","Anise","Cassia","Cumin","Caraway","Chilli","Fenugreek","Paprika","Sichuan Pepper","Wasabi","Water Pepper","Vanilla","Tobacco","Tonka","Honey","Cacao","Chocolate","Beeswax","Almond","Brown Sugar","Caramel","Hazelnut","Milk","Butter","Oat","Wheat","Baked Apple","Black Walnut","Bread","Butterscotch","Chocolate Cake","Cocoa Butter","Coumarin","Molasses","Balsamic Vinegar","Barley","Carob Pods","Chantilly Cream","Cheese","Cocoa Pod","Coconut Milk","Condensed Milk","Cream","Dulce de Leche","Edamame","Halva","Holy Bread","Honeycomb","Icing","Malt","Maple","Murumuru Butter","Pistachio","Popcorn","Potato","Pumpkin","Raisin Cookies","Rice","Seed Cake","Sugar","Toffee","Rum","Coffee","Tea","Whiskey","Cognac","Maté","Amaretto","Green Tea","Lapsang Souchong","Liquor","Absinthe","Cocktail Accord","Cola","Herbal Tea","Jasmine Tea","Masala Chai","Moroccan Tea","Oolong Tea","Root Beer","Soda Bubbles","Sparkling Water","Cedarwood","Sandalwood","Patchouli","Vetiver","Oud","Guaiac Wood","Woody Notes","Cashmeran","Oak","Cypriol","Birch","Amberwood","Amyris","Mahogany","Amber Oud","Bark","Buddhawood","Cabreuva","Edelwood Oil","Iso E Super","Moldy Cedarwood","Muhuhu","Oak Barrel","Papyrus","Petrified Driftwood","Pineboard","Sawdust","Siam Wood","Teak Wood","Willow Bark","Fir","Pine","Pine Needles","Juniper","Cypress","Spruce","Hinoki","Black Hemlock","Cedar Leaf","Hiba","Larch Cones","Nootka","Snoqualmie Forest Evergreens","Tamarack","Amber","Benzoin","Labdanum","Frankincense","Myrrh","Incense","Resins","Opoponax","Peru Balsam","Tolu Balsam","Styrax","Bakhoor","Elemi","Sandarac","Balsam","Bushman Candle Resin","Copaiba Balsam","Copal","Dragon's Blood","Ponderosa Resin","Propolis","Rum Resin","Sawn Resin","Turpentine","Musk","Ambergris","Leather","Castoreum","Civet","Ambrette","Costus","Suede","Animal Notes","Skin","Botanical Musk","Goat Hair","Hyrax","Lanolin","Sheep Wool","Skunk Oil","Oakmoss","Soil","Moss","Mushroom","Cedarmoss","Dust","Lichen","Mineral Accord","Peat","Spikenard","Treemoss","Concrete","Damp Vegetation","Evernyl","Lava","Metallic Notes","Petrichor","Sand","Swamp Water","Wet Stone","Seaweed","Airy Note","Aquatic Notes","Marine Accord","Ozone","Sea Salt","Solar Notes","Aldehydes","Clear Skies","Cold Night Air","Dead Water","Rain Notes","Sea Water","Steam","Smoke","Birch Tar","Cade Oil","Ash","Fire","Gasoline","Palo Santo","Pine Smoke","Pine Tar","Smouldering Logs","Candle Wax","CO2 Extracts","Aged Parchment","Paper","Blush","Decayed Rose","Dried Blood","Dusty Antiques","Dusty Sofa","Eye Pencil","Gold","Instant Film","Lip Gloss","Lipstick","Makeup Palette","Mousse de Saxe","Old Books","Oriental Notes","Porcelain","Powder Accord","Rotten Flesh","Salty Tears","Spinal Fluid","Underground Tunnel","Velvet","Westfarthing Leaf"],"accord":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,13,13,13,13,13,13,13,13,13,13,13,13,13,13,14,14,14,14,14,14,14,14,14,14,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],"accords":[["CIT","Citrus"],["ARO","Aromatic & Herbal"],["GRN","Green"],["FLO","Floral"],["FRU","Fruit"],["SPI","Spice"],["GOU","Gourmand"],["BRW","Brews & Spirits"],["WOO","Woods"],["CON","Conifers"],["RES","Resins & Balsams"],["ANI","Musk, Skin & Animalic"],["EAR","Earth, Moss & Mineral"],["AIR","Water & Air"],["SMK","Smoke & Char"],["IMP","Impressions"]],"of":{"0":[43,3,257,298,54,225],"1":[257,15,225,275,311],"2":[262,265,282,255,226,229],"3":[225,343,233,257,154],"4":[295,273,227,255,221,276,343,257,18,309],"5":[255,311,315,257,310,321],"6":[312,358,295,155,343,250,274,276,225,257,229],"7":[1,258,17,14,20,226,227],"8":[255,262,212,311,274,273],"9":[256,258,0,74,68,19,40,155,255,14,269,228,226,309,227],"10":[257,258,228,23,310,327],"11":[282,268,283,267],"12":[169,256,272,255,138,275,273,225,269,318,294,43],"13":[2,255,256,135,132,293,309,144,228],"14":[307,306,105,14,157,162,269,160,44],"15":[40,157,167,168,164,161,14,47,133],"16":[40,158,154,59,44,171,137,140,318,106,156,309],"17":[109,114,157,289,160,44,40,168,167,228,209,309],"18":[40,167,164,0,14,217,378,201,62,63,157],"19":[160,155,40,193,178,31,317,257,43],"20":[115,137,255,107,132,5],"21":[135,134,132,137,168,176,162,170,165,166,154,191],"22":[115,77,104,105,255,159,28,309,278,61,226,272],"23":[132,204,134,229,164],"24":[8,0,20,49,22,75,88,72,329,225,309],"25":[20,258,341,329,259,312,153,22,294,226],"26":[135,65,0,5,225,17,295,309],"27":[255,0,136,263,226,228,298,311],"28":[117,270,227,226,225],"29":[108,155,255,290,106],"30":[255,260,206,343,19,274,293,14,154,309],"31":[300,295,6,155,294,256,133,120,5,255,226,225,62,102],"32":[205,155,225,227,275,138,272,230,154],"33":[6,258,45,228,226,294],"34":[255,256,11,155,303,228],"35":[225,251,352,243,269,170,238,271],"36":[258,328,293,298,76,315,60,39,256],"37":[259,7,258,266,329,256,225,226],"38":[49,211,15,4,34,75,259,256,225,309,319,313],"39":[4,104,135,204,216,65,9,202,154,137,141,134],"40":[309,83,47,56,66,255,45,84,94],"41":[159,15,227,154,138,275,192,225],"42":[15,119,118,294,122,58,226],"43":[288,257,225,154,112,134,172,160,199],"44":[198,162,228,69,225,226,227,40,310,53,52,229],"45":[355,356,295,155,206,226,225,63,200,298,205,309,234],"46":[155,212,176,157,106],"47":[294,259,154,132,271,255,287,226,293,368],"48":[55,135,333,133,69,316,269,228,275,294],"49":[41,4,42,332,67,65,273,16,228,225,156,295],"50":[90,179,334,157,155,353,239,161,249],"51":[229,62,9,226,294],"52":[113,15,133,70,62,67,155,274,156,297],"53":[293,331,175,154,72,3,66],"54":[139,8,129,214,133,89,104,194,273,156,128],"55":[0,136,257,325,86,316,227,61,269,349,309],"56":[338,272,225,291,311,61,229,273,355,302],"58":[159,344,16,157,294],"59":[231,343,138,3],"60":[333,302,269],"61":[326,275,335,314,231,61],"62":[275,346,343,301,30,310],"63":[310,340,320,48,330,335],"64":[210,189,213,157,353,159,208,161,361,97,174,190,154,155,171,104,314,158,164,166],"65":[157,127,104,180,125,184,155,174,160,100,272,271,158,154,156,269,270,281,273,363,227,116,95,159],"66":[371,366,63,105,223,357,377,353,159,367,365,362,364,273],"67":[273,80,61,234,40,344,329,146,70,342,347,374,348,373,359,375,346,337,76],"68":[159,138,360,148,173,152,99,142,222,182,187,195,369,188,197],"69":[105,139,51,134,133,132,159,67,208,300,157,229,233,295,293,277,156,225,271,154,270,155,226,228],"70":[205,143,273,204,208,155,160,106,23,61,137,64,225,271,275,270,269,296,154,278,277,227,230,156,294,276,226,293],"71":[229,270,293,354],"72":[133,104,158,159,69,62,61,226,154,236],"74":[274,138,63,130,6,133,2,114,106,121,213,107,98,51,203,64,112,273,123,82,134,61,62,255,269,156,154,230,276,296,271,270,253,225,293,227],"75":[1,111,110,139,103,87,163,64,154,293,225,273],"76":[5,7,1,64,50,65,70,93,62,61,232,269,227,156,154,293],"77":[131,155,169,156,228,309,160],"78":[0,66,17,132,234,68,225,227,228,293,271,270,230,237],"79":[277,112,105,206,134,155,108,132,240,61,140,106,133,294,271,219,293,296,229,160,154,156,269,101],"80":[272,354,118,224,116,61,269,293],"81":[162,50,138,204,154,230,72,64,296,156,149,293,272],"82":[218,110,1,0,63,42,62,67,68,70,61,74,71,293,294,226,132,228,154,309,270,297,227,278,156,225,271],"83":[66,12,111,126,135,354,119,220,64,231,105,2,293],"84":[63,135,158,272,140,156,293,226],"85":[351,41,344,15,132,295,42,70,309,305,228,227],"86":[61,63,272,132,146,133,296,227,225,271,276,273],"87":[0,1,65,66,139,140,132,134,26,258,68,16,74,73,14,313,228,227,299,293,270,156,154],"89":[229,274,270,154,269,295,61,143,277,156],"90":[4,2,0,139,145,141,65,132,229,154,156,270,227,226,225],"91":[272,14,0,10,139,294,255,259,227,260,258,16,36,293,229,309,225,228,21,280,15,226,274],"92":[226,299,14,63,61,67,270,154],"93":[0,61,372,161,294,14,175,67,227,226,293,229,309,319,255,271,280],"95":[204,104,207,144,155,227,225,270,278,309,232,242,271,163,300,301,247,233],"96":[113,108,343,272,279,345,285,376,45,124,269,230,228,231,270,69,32,229,160,309,297,296],"98":[158,229,296,150,165,297,261,237,107,62,166,63,230,233,151,226,227,181,154,309,91,269,1,225],"99":[270,109,110,172,15,158,229,228,79,71,77,183,226,227,155],"100":[0,79,62,109,92,211,69,241,226,16,209,244,236,46,270,154,229,293],"101":[120,71,173,66,215,227,226,297,155,158,154,270,293,229],"103":[323,24,68,142,344,158,228,279,324,206,209,154,229,309],"104":[272,117,331,227,296,14,68,295,155,297,293,57,229,225,345,322],"105":[132,71,2,159,226,343,295,186,297,155,185,231,227,207,232],"106":[330,0,4,2,65,64,25,295,66,225,227,133,256,310,228,232,293,309],"107":[210,154,205,225,226,62,196,293,159],"109":[15,64,133,73,63,293],"116":[72,62,81,63,343],"117":[41,0,61,271,63,309,227,293],"118":[15,21,136,292,273,272,62,227,156,226],"119":[15,157,65,62,64,63,78,269,225,228],"120":[254,109,245,137,339],"121":[8,111,135,235,261,317,228,274,343,264,257,309,33,256,225],"122":[350,274,255,271,230,256],"123":[299,252,261,356,140,231],"124":[78,62,63,226],"125":[269,272,309,207,158],"126":[3,24,235,15,256,225,293],"127":[42,75,312,227,310],"128":[286,80,272,343],"129":[177,104,3,165,134,132,136,231,163,343,233],"130":[85,48,73,310,274,107],"131":[14,235,225,255,230,234,226,38,279,257,133,21,17,136,137,147,134,42,155,312,27,35,228,304,329,19,260,259,41,160,299,296,16,18,293,37,232,274,271,227,281,132,62,276],"132":[155,157,343,107,269,370,110,3],"133":[105,108,73,66,61,62,63,225,259,269,256],"134":[1,2,13,135,136,332,82,256,81,228,334,293,269],"135":[65,14,67,63,228,226,157],"136":[1,10,145,61,234,155,295,344,154,163],"137":[260,274,2,1,136,225,248,232,137,18,255,231,309,294],"138":[274,260,136,259,41,225,295,18,255,345,228,309],"139":[3,336,138,61,269,271,270,279,293,227,228,226,154,294],"140":[308,7,46,62,96,226,227,225,270,228,142,154,135,141,4],"141":[233,154,230,277,278,269,246,270,158,227,165,284,238,29,207]}};
 (function () {
   "use strict";
-
-  // a snapshot of the site's houses, the Note Library's accords and every
-  // fragrance on the site with its notes (2026-11-03: every note counted)
-  const DATA = {"houses":[{"id":"pineward","name":"Pineward","from":"United States","founded":"2020","sub":"The House That Smells Like Trees","n":48,"notes":183,"share":{"GRN":26,"CIT":19,"CON":52,"ANI":23,"WOO":57,"ARO":25,"RES":30,"EAR":31,"SMK":5,"GOU":62,"BRW":13,"IMP":5,"FLO":21,"SPI":27,"FRU":19,"AIR":4},"top":"Gourmand"},{"id":"grande-parfums","name":"Grande Parfums","from":"Romania","founded":"2021","sub":"Art Niche Expo 2026","n":15,"notes":111,"share":{"FRU":24,"SPI":20,"GRN":5,"GOU":32,"FLO":38,"BRW":11,"ANI":22,"WOO":34,"RES":31,"ARO":2,"IMP":3,"CIT":11,"CON":1,"EAR":2},"top":"Floral"},{"id":"individual","name":"Individual fragrances","from":"","founded":"","sub":"","n":13,"notes":104,"share":{"GOU":16,"FRU":6,"CIT":12,"SPI":19,"WOO":33,"SMK":4,"FLO":17,"GRN":5,"EAR":4,"RES":21,"ARO":14,"CON":12,"ANI":11,"AIR":4,"IMP":1,"BRW":1},"top":"Woods"},{"id":"adar","name":"ADAR","from":"Romania","founded":"","sub":"The House That You Have Never Heard of","n":11,"notes":71,"share":{"GRN":3,"SPI":6,"AIR":5,"FLO":14,"EAR":5,"RES":9,"WOO":10,"ANI":7,"CIT":5,"ARO":3,"GOU":13,"IMP":2,"FRU":4,"BRW":1,"CON":1,"SMK":2},"top":"Floral"},{"id":"om-parfums","name":"Om Parfums","from":"Taiwan","founded":"2021","sub":"The Olfaction of Om","n":9,"notes":75,"share":{"BRW":5,"FRU":9,"SPI":3,"GOU":17,"WOO":29,"RES":12,"EAR":3,"ANI":9,"SMK":2,"IMP":1,"GRN":2,"FLO":13,"ARO":3,"CON":1,"CIT":2},"top":"Woods"},{"id":"apoteker-tepe","name":"Apoteker Tepe","from":"United States","founded":"2014","sub":"The Apothecary on the Hill","n":8,"notes":43,"share":{"CIT":2,"FRU":1,"SPI":2,"WOO":10,"CON":8,"EAR":5,"RES":7,"SMK":3,"ARO":3,"ANI":2,"IMP":1,"FLO":5,"BRW":1,"GOU":1,"GRN":1},"top":"Woods"},{"id":"lost-tribe","name":"Lost Tribe","from":"United States","founded":"2022","sub":"A House of Notable Quality","n":6,"notes":45,"share":{"WOO":14,"RES":11,"GOU":7,"ANI":6,"FLO":7,"SPI":6,"CIT":6,"ARO":7,"CON":5,"EAR":3,"IMP":1},"top":"Woods"},{"id":"almost-human","name":"Almost Human","from":"Romania","founded":"2025","sub":"Abstraction Done Quite Well","n":5,"notes":20,"share":{"WOO":2,"SMK":3,"SPI":1,"CIT":1,"AIR":5,"ANI":2,"RES":3,"EAR":5,"FLO":1,"ARO":1,"GRN":1},"top":"Water & Air"},{"id":"ataraxia","name":"Ataraxia","from":"","founded":"","sub":"A Gothic Avante Garde House","n":5,"notes":80,"share":{"BRW":5,"GOU":30,"IMP":18,"FLO":9,"FRU":6,"EAR":1,"RES":8,"WOO":2,"GRN":1,"SMK":4,"AIR":3,"SPI":5},"top":"Gourmand"},{"id":"outsider-parfums","name":"Outsider Parfums","from":"","founded":"","sub":"The Sister House of Om","n":5,"notes":53,"share":{"EAR":6,"ARO":3,"FLO":7,"SPI":3,"SMK":3,"GOU":10,"WOO":15,"RES":2,"BRW":5,"FRU":1,"AIR":2,"ANI":9,"GRN":1,"CIT":4,"CON":1},"top":"Woods"},{"id":"tombstone","name":"Tombstone","from":"","founded":"","sub":"A House That Expanded on Death","n":5,"notes":32,"share":{"FLO":12,"SMK":1,"GRN":1,"CIT":1,"RES":5,"EAR":1,"WOO":7,"ANI":1,"ARO":3,"SPI":2,"GOU":2,"FRU":1,"AIR":1},"top":"Floral"},{"id":"les-abstraits","name":"Les Abstraits","from":"","founded":"","sub":"Eugen’s Ideas and Antoine Lie’s Execution","n":4,"notes":45,"share":{"FLO":9,"SPI":10,"GOU":4,"RES":6,"ANI":6,"WOO":7,"SMK":2,"GRN":2,"ARO":4,"EAR":2,"CIT":2,"CON":1},"top":"Spice"},{"id":"qimu-musicians","name":"Qimu & Musicians","from":"","founded":"","sub":"A House of Music and Fragrance","n":4,"notes":6,"share":{"ARO":1,"FLO":3,"SPI":1,"ANI":1},"top":"Floral"},{"id":"tale-parfums","name":"Tale Parfums","from":"United States","founded":"","sub":"","n":4,"notes":0,"share":{},"top":""}],"accords":[{"code":"CIT","name":"Citrus","say":"Peel oils: the brightest, quickest notes, gone first.","notes":[["Bergamot",15],["Lemon",9],["Orange",8],["Citrus",7],["Lime",6],["Blood Orange",4],["Clementine",3],["Grapefruit",3],["Yuzu",3],["Bitter Orange",2],["Petitgrain",2],["Citron",1],["Green Mandarin",1],["Tangerine",1]]},{"code":"ARO","name":"Aromatic & Herbal","say":"Kitchen and hillside herbs: clean, camphorous, bitter-green.","notes":[["Lavender",13],["Mint",12],["Clary Sage",6],["Rosemary",4],["Sage",4],["Chamomile",3],["Juniper Berry",3],["Thyme",3],["Eucalyptus",2],["Myrtle",2],["Shiso",2],["Angelica Root",1],["Artemisia",1],["Basil",1],["Davana",1],["Dittany of Crete",1],["Herbal Notes",1],["Hops",1],["Huang Qi",1],["Kuromoji",1],["Lemon Verbena",1],["Marjoram",1],["Mint-Sandalwood Co-Distillation",1],["Oregano",1],["Wormwood",1],["Yarrow",1]]},{"code":"GRN","name":"Green","say":"Leaves, stems, grass and hay: the smell of plants rather than flowers.","notes":[["Hay",8],["Galbanum",5],["Violet Leaf",5],["Poplar Bud",3],["Sweetgrass",3],["Tomato Leaf",3],["Cannabis",2],["Grass",2],["Green Notes",2],["Ivy",2],["Raspberry Leaf",2],["Sugar Cane",2],["Corn Silage",1],["Corn Silk",1],["Crushed Leaves",1],["Fig Leaf",1],["Green Wheat",1],["Pea",1],["Rhubarb",1],["Sweet Vernalgrass",1],["Watercress",1]]},{"code":"FLO","name":"Floral","say":"Petals and blossoms, real and reconstructed.","notes":[["Rose",20],["Jasmine",18],["Orris",16],["Lily of the Valley",9],["Neroli",9],["Orange Blossom",8],["Ylang Ylang",7],["Geranium",6],["Osmanthus",5],["Tuberose",5],["Gardenia",4],["Heliotrope",4],["Violet",4],["Carnation",3],["Waterlily",3],["Bluebell",2],["Champaca",2],["Lily",2],["Linden Blossom",2],["Marigold",2],["Mimosa",2],["Tiare Flower",2],["Alpine Sandwort",1],["Azure Bluet",1],["Chrysanthemum",1],["Clear Orchid",1],["Freesia",1],["Goldenrod",1],["Green Tea Flowers",1],["Honeysuckle",1],["Jonquil",1],["Lilac",1],["Magnolia",1],["Mountain Wildflowers",1],["Nectar",1],["Night Blooming Jasmine",1],["Passionflower",1],["Plum Blossom",1],["Pollen",1],["Snowdrops",1],["Tobacco Flower",1],["White Lotus",1],["Yellow Flowers",1]]},{"code":"FRU","name":"Fruit","say":"Flesh, juice and jam.","notes":[["Cherry",8],["Raspberry",7],["Dried Fruits",6],["Plum",5],["Apple",4],["Apricot",4],["Peach",4],["Pear",3],["Strawberry",3],["Banana",2],["Blackberry",2],["Cranberry",2],["Dates",2],["Green Apple",2],["Litchi",2],["Mango",2],["Passionfruit",2],["Blueberry",1],["Cassis",1],["Fig",1],["Fruity Notes",1],["Goldenberry",1],["Guava",1],["Japanese Plum",1],["Maninka",1],["Quince",1],["Red Berries",1],["Scorched Pineapple",1]]},{"code":"SPI","name":"Spice","say":"Seeds, barks, roots and peppers: heat, warmth and bite.","notes":[["Clove",16],["Saffron",13],["Cinnamon",10],["Ginger",10],["Black Pepper",8],["Nutmeg",8],["Spices",8],["Pink Pepper",6],["Cardamom",5],["Coriander",3],["Turmeric",3],["Allspice",2],["Anise",2],["Cassia",2],["Cumin",2],["Caraway",1],["Chilli",1],["Fenugreek",1],["Paprika",1],["Sichuan Pepper",1],["Wasabi",1],["Water Pepper",1]]},{"code":"GOU","name":"Gourmand","say":"Things you could eat: sweets, grains, nuts, pastry.","notes":[["Vanilla",34],["Tobacco",25],["Tonka",18],["Honey",13],["Cacao",11],["Chocolate",11],["Beeswax",10],["Almond",4],["Brown Sugar",4],["Caramel",4],["Hazelnut",4],["Milk",4],["Butter",3],["Oat",3],["Wheat",3],["Baked Apple",2],["Black Walnut",2],["Bread",2],["Butterscotch",2],["Chocolate Cake",2],["Cocoa Butter",2],["Coumarin",2],["Molasses",2],["Balsamic Vinegar",1],["Barley",1],["Carob Pods",1],["Chantilly Cream",1],["Cheese",1],["Cocoa Pod",1],["Coconut Milk",1],["Condensed Milk",1],["Cream",1],["Dulce de Leche",1],["Edamame",1],["Halva",1],["Holy Bread",1],["Honeycomb",1],["Icing",1],["Malt",1],["Maple",1],["Murumuru Butter",1],["Pistachio",1],["Popcorn",1],["Potato",1],["Pumpkin",1],["Raisin Cookies",1],["Rice",1],["Seed Cake",1],["Sugar",1],["Toffee",1]]},{"code":"BRW","name":"Brews & Spirits","say":"Teas, coffee and what is poured from a bottle.","notes":[["Rum",5],["Coffee",4],["Tea",4],["Whiskey",4],["Cognac",3],["Maté",3],["Amaretto",2],["Green Tea",2],["Lapsang Souchong",2],["Liquor",2],["Absinthe",1],["Cocktail Accord",1],["Cola",1],["Herbal Tea",1],["Jasmine Tea",1],["Masala Chai",1],["Moroccan Tea",1],["Oolong Tea",1],["Root Beer",1],["Soda Bubbles",1],["Sparkling Water",1]]},{"code":"WOO","name":"Woods","say":"Heartwood, bark and sawdust.","notes":[["Cedarwood",41],["Sandalwood",36],["Patchouli",34],["Vetiver",29],["Oud",20],["Guaiac Wood",10],["Woody Notes",8],["Cashmeran",6],["Oak",6],["Cypriol",5],["Birch",3],["Amberwood",2],["Amyris",2],["Mahogany",2],["Amber Oud",1],["Bark",1],["Buddhawood",1],["Cabreuva",1],["Edelwood Oil",1],["Iso E Super",1],["Moldy Cedarwood",1],["Muhuhu",1],["Oak Barrel",1],["Papyrus",1],["Petrified Driftwood",1],["Pineboard",1],["Sawdust",1],["Siam Wood",1],["Teak Wood",1],["Willow Bark",1]]},{"code":"CON","name":"Conifers","say":"Needles, cones and the trees that carry them.","notes":[["Fir",23],["Pine",14],["Pine Needles",12],["Juniper",9],["Cypress",8],["Spruce",5],["Hinoki",3],["Black Hemlock",2],["Cedar Leaf",1],["Hiba",1],["Larch Cones",1],["Nootka",1],["Snoqualmie Forest Evergreens",1],["Tamarack",1]]},{"code":"RES","name":"Resins & Balsams","say":"What trees weep: incense, amber and balm.","notes":[["Amber",23],["Benzoin",20],["Labdanum",16],["Frankincense",15],["Myrrh",14],["Incense",13],["Resins",8],["Opoponax",6],["Peru Balsam",5],["Tolu Balsam",5],["Styrax",4],["Bakhoor",2],["Elemi",2],["Sandarac",2],["Balsam",1],["Bushman Candle Resin",1],["Copaiba Balsam",1],["Copal",1],["Dragon's Blood",1],["Ponderosa Resin",1],["Propolis",1],["Rum Resin",1],["Sawn Resin",1],["Turpentine",1]]},{"code":"ANI","name":"Musk, Skin & Animalic","say":"Musks, leathers and the warmth of bodies.","notes":[["Musk",32],["Ambergris",16],["Leather",14],["Castoreum",9],["Civet",7],["Ambrette",4],["Costus",4],["Suede",3],["Animal Notes",2],["Skin",2],["Botanical Musk",1],["Goat Hair",1],["Hyrax",1],["Lanolin",1],["Sheep Wool",1],["Skunk Oil",1]]},{"code":"EAR","name":"Earth, Moss & Mineral","say":"Soil, moss, fungus and stone.","notes":[["Oakmoss",28],["Soil",8],["Moss",5],["Mushroom",4],["Cedarmoss",2],["Dust",2],["Lichen",2],["Mineral Accord",2],["Peat",2],["Spikenard",2],["Treemoss",2],["Concrete",1],["Damp Vegetation",1],["Evernyl",1],["Lava",1],["Metallic Notes",1],["Petrichor",1],["Sand",1],["Swamp Water",1],["Wet Stone",1]]},{"code":"AIR","name":"Water & Air","say":"Sea, rain, steam and open sky.","notes":[["Seaweed",5],["Airy Note",2],["Aquatic Notes",2],["Marine Accord",2],["Ozone",2],["Sea Salt",2],["Solar Notes",2],["Aldehydes",1],["Clear Skies",1],["Cold Night Air",1],["Dead Water",1],["Rain Notes",1],["Sea Water",1],["Steam",1]]},{"code":"SMK","name":"Smoke & Char","say":"Fire, tar and what burning leaves behind.","notes":[["Smoke",13],["Birch Tar",5],["Cade Oil",3],["Ash",2],["Fire",1],["Gasoline",1],["Palo Santo",1],["Pine Smoke",1],["Pine Tar",1],["Smouldering Logs",1]]},{"code":"IMP","name":"Impressions","say":"Notes that are not materials: objects, places, feelings, named by a house.","notes":[["Candle Wax",3],["CO2 Extracts",3],["Aged Parchment",2],["Paper",2],["Blush",1],["Decayed Rose",1],["Dried Blood",1],["Dusty Antiques",1],["Dusty Sofa",1],["Eye Pencil",1],["Gold",1],["Instant Film",1],["Lip Gloss",1],["Lipstick",1],["Makeup Palette",1],["Mousse de Saxe",1],["Old Books",1],["Oriental Notes",1],["Porcelain",1],["Powder Accord",1],["Rotten Flesh",1],["Salty Tears",1],["Spinal Fluid",1],["Underground Tunnel",1],["Velvet",1],["Westfarthing Leaf",1]]}],"frags":[["Bindebole",0,2021,[43,3,257,298,54,225],""],["Boreal",0,2020,[257,15,225,275,311],""],["Brokilän",0,2021,[262,265,282,255,226,229],""],["Cotswold",0,2021,[225,343,233,257,154],""],["Eldritch",0,2021,[295,273,227,255,221,276,343,257,18,309],""],["Fanghorn II",0,2021,[255,311,315,257,310,321],""],["Funerie",0,2022,[312,358,295,155,343,250,274,276,225,257,229],""],["Juniperus",0,2024,[1,258,17,14,20,226,227],""],["Murkwood",0,2020,[255,262,212,311,274,273],""],["Nocturnis",0,2022,[256,258,0,74,68,19,40,155,255,14,269,228,226,309,227],""],["Oxylus",0,2021,[257,258,228,23,310,327],""],["Snoqualmie",0,2024,[282,268,283,267],""],["Sturbridge",0,2023,[169,256,272,255,138,275,273,225,269,318,294,43],""],["White Fir",0,2022,[2,255,256,135,132,293,309,144,228],""],["Bucolic",0,2024,[307,306,105,14,157,162,269,160,44],""],["Hayloft",0,2022,[40,157,167,168,164,161,14,47,133],""],["Hayride",0,2022,[40,158,154,59,44,171,137,140,318,106,156,309],""],["Pastoral",0,2022,[109,114,157,289,160,44,40,168,167,228,209,309],""],["Shire",0,2024,[40,167,164,0,14,217,378,201,62,63,157],""],["Steading",0,2020,[160,155,40,193,178,31,317,257,43],""],["Christmas Wine",0,2020,[115,137,255,107,132,5],""],["Gingerbread",0,2023,[135,134,132,137,168,176,162,170,165,166,154,191],""],["Glühwein",0,2021,[115,77,104,105,255,159,28,309,278,61,226,272],""],["Revelries",0,2021,[132,204,134,229,164],""],["Acadian",0,2023,[8,0,20,49,22,75,88,72,329,225,309],""],["Coastal Veil",0,2023,[20,258,341,329,259,312,153,22,294,226],""],["Gingermoss",0,2023,[135,65,0,5,225,17,295,309],""],["Subalpine",0,2025,[255,0,136,263,226,228,298,311],""],["Akero",0,2023,[117,270,227,226,225],""],["Apple Tabac",0,2020,[108,155,255,290,106],""],["Caravansary",0,2023,[255,260,206,343,19,274,293,14,154,309],""],["Clemenpine",0,2023,[300,295,6,155,294,256,133,120,5,255,226,225,62,102],""],["Coffee Tabac",0,2024,[205,155,225,227,275,138,272,230,154],""],["Delfiño",0,2022,[6,258,45,228,226,294],""],["Greymist",0,2023,[255,256,11,155,303,228],""],["Gristmill",0,2022,[225,251,352,243,269,170,238,271],""],["Holy Cross",0,2026,[258,328,293,298,76,315,60,39,256],""],["Icefall",0,2021,[259,7,258,266,329,256,225,226],""],["Ivymoss",0,2023,[49,211,15,4,34,75,259,256,225,309,319,313],""],["Lime Cola",0,2025,[4,104,135,204,216,65,9,202,154,137,141,134],""],["Meadowmoss",0,2023,[309,83,47,56,66,255,45,84,94],""],["Mint Cocoa",0,2024,[159,15,227,154,138,275,192,225],""],["Noki",0,2022,[15,119,118,294,122,58,226],""],["Ponderosa",0,2022,[288,257,225,154,112,134,172,160,199],""],["Pumpkivus",0,2025,[198,162,228,69,225,226,227,40,310,53,52,229],""],["Tome",0,2025,[355,356,295,155,206,226,225,63,200,298,205,309,234],""],["Treacle",0,2021,[155,212,176,157,106],""],["Velvetine",0,2021,[294,259,154,132,271,255,287,226,293,368],""],["Amber Zero",3,0,[55,135,333,133,69,316,269,228,275,294],""],["Aetherialism",3,0,[41,4,42,332,67,65,273,16,228,225,156,295],""],["Incantu",3,0,[90,179,334,157,155,353,239,161,249],""],["Against All Odds",3,2025,[229,62,9,226,294],""],["α11 Alpha11",3,0,[113,15,133,70,62,67,155,274,156,297],""],["Alta Luna",3,2025,[293,331,175,154,72,3,66],""],["ADHD",3,0,[139,8,129,214,133,89,104,194,273,156,128],""],["Root Code",3,0,[0,136,257,325,86,316,227,61,269,349,309],""],["Lignum Dei",3,0,[338,272,225,291,311,61,229,273,355,302],""],["Lithos Diaphanes Λίθος Διαφανές",3,0,[],""],["Tyrian",3,2026,[159,344,16,157,294],""],["Burning Bridges",7,2026,[231,343,138,3],""],["Dear Future",7,2026,[333,302,269],""],["Desert Hope",7,2026,[326,275,335,314,231,61],""],["Ritual Code",7,2026,[275,346,343,301,30,310],""],["Silent Rain",7,2026,[310,340,320,48,330,335],""],["Amaretto Jazz in the Melting Room",8,2024,[210,189,213,157,353,159,208,161,361,97,174,190,154,155,171,104,314,158,164,166],""],["Deity",8,2025,[157,127,104,180,125,184,155,174,160,100,272,271,158,154,156,269,270,281,273,363,227,116,95,159],""],["My Doll’s Makeup",8,0,[371,366,63,105,223,357,377,353,159,367,365,362,364,273],""],["Spinal Fluid",8,2025,[273,80,61,234,40,344,329,146,70,342,347,374,348,373,359,375,346,337,76],""],["Vestibule",8,2024,[159,138,360,148,173,152,99,142,222,182,187,195,369,188,197],""],["5 Years Anniversary",1,0,[105,139,51,134,133,132,159,67,208,300,157,229,233,295,293,277,156,225,271,154,270,155,226,228],""],["Ambresso",1,0,[205,143,273,204,208,155,160,106,23,61,137,64,225,271,275,270,269,296,154,278,277,227,230,156,294,276,226,293],""],["Ancient Oud",1,0,[229,270,293,354],""],["Choco Powder",1,0,[133,104,158,159,69,62,61,226,154,236],""],["Cookie something (?)",1,0,[],""],["Cuore",1,2024,[274,138,63,130,6,133,2,114,106,121,213,107,98,51,203,64,112,273,123,82,134,61,62,255,269,156,154,230,276,296,271,270,253,225,293,227],""],["Dreaming Maldives",1,0,[1,111,110,139,103,87,163,64,154,293,225,273],""],["Giardino di Sorrento",1,0,[5,7,1,64,50,65,70,93,62,61,232,269,227,156,154,293],""],["Hot Stuff",1,0,[131,155,169,156,228,309,160],""],["Intimate Spell",1,0,[0,66,17,132,234,68,225,227,228,293,271,270,230,237],""],["Karak & Shisha",1,0,[277,112,105,206,134,155,108,132,240,61,140,106,133,294,271,219,293,296,229,160,154,156,269,101],""],["Mystical Incense",1,0,[272,354,118,224,116,61,269,293],""],["Vanilla Ash",1,0,[162,50,138,204,154,230,72,64,296,156,149,293,272],""],["Vintage Memoir",1,0,[218,110,1,0,63,42,62,67,68,70,61,74,71,293,294,226,132,228,154,309,270,297,227,278,156,225,271],""],["White Label",1,0,[66,12,111,126,135,354,119,220,64,231,105,2,293],""],["Belle Âme",11,2022,[63,135,158,272,140,156,293,226],""],["Des Cendres",11,2023,[351,41,344,15,132,295,42,70,309,305,228,227],""],["La Douleur Exquise",11,2022,[61,63,272,132,146,133,296,227,225,271,276,273],""],["Philosopher’s Walk",11,2025,[0,1,65,66,139,140,132,134,26,258,68,16,74,73,14,313,228,227,299,293,270,156,154],""],["Kong",6,0,[],""],["Watch King",6,0,[229,274,270,154,269,295,61,143,277,156],""],["Dirty Soda",6,0,[4,2,0,139,145,141,65,132,229,154,156,270,227,226,225],""],["Equatorial",6,0,[272,14,0,10,139,294,255,259,227,260,258,16,36,293,229,309,225,228,21,280,15,226,274],""],["Santal Absolu",6,0,[226,299,14,63,61,67,270,154],""],["Pan’s Labyrinth",6,0,[0,61,372,161,294,14,175,67,227,226,293,229,309,319,255,271,280],""],["Nymphaea Caerulea",4,0,[],""],["Lust",4,2023,[204,104,207,144,155,227,225,270,278,309,232,242,271,163,300,301,247,233],""],["Burnana",4,2024,[113,108,343,272,279,345,285,376,45,124,269,230,228,231,270,69,32,229,160,309,297,296],""],["Cannabis Café",4,0,[],""],["Dark Night of the Soul",4,2024,[158,229,296,150,165,297,261,237,107,62,166,63,230,233,151,226,227,181,154,309,91,269,1,225],""],["This Too Shall Pass",4,0,[270,109,110,172,15,158,229,228,79,71,77,183,226,227,155],""],["When the Linden Blooms",4,2024,[0,79,62,109,92,211,69,241,226,16,209,244,236,46,270,154,229,293],""],["Oud de Pasión",4,0,[120,71,173,66,215,227,226,297,155,158,154,270,293,229],""],["Smoke Oud",4,0,[],""],["Dragon’s Breath",9,2026,[323,24,68,142,344,158,228,279,324,206,209,154,229,309],""],["Draco",9,0,[272,117,331,227,296,14,68,295,155,297,293,57,229,225,345,322],""],["Xocolate Crotch",9,0,[132,71,2,159,226,343,295,186,297,155,185,231,227,207,232],""],["Guilty as Charged",9,0,[330,0,4,2,65,64,25,295,66,225,227,133,256,310,228,232,293,309],""],["Amaretto Coffee",9,0,[210,154,205,225,226,62,196,293,159],""],["Guitarist",12,0,[],""],["Vocal",12,0,[15,64,133,73,63,293],""],["Bassist",12,0,[],""],["Drummer",12,0,[],""],["Bad Lily",13,2024,[],""],["Fleurt",13,0,[],""],["Rouse",13,0,[],""],["Water Me",13,0,[],""],["3 Feet 5",10,2024,[72,62,81,63,343],""],["Evergrow",10,2025,[41,0,61,271,63,309,227,293],""],["No Need to Come By",10,0,[15,21,136,292,273,272,62,227,156,226],""],["Sing at My Funeral",10,0,[15,157,65,62,64,63,78,269,225,228],""],["Sweet Coffin",10,2024,[254,109,245,137,339],""],["Kogen",5,2024,[8,111,135,235,261,317,228,274,343,264,257,309,33,256,225],""],["The Holy Mountain",5,2015,[350,274,255,271,230,256],""],["Karasu",5,2016,[299,252,261,356,140,231],""],["The Peradam",5,2015,[78,62,63,226],""],["Pale Fire",5,2016,[269,272,309,207,158],""],["Anabasis",5,2015,[3,24,235,15,256,225,293],""],["After the Flood",5,2015,[42,75,312,227,310],""],["Brother Night",5,2016,[286,80,272,343],""],["CV99",2,0,[177,104,3,165,134,132,136,231,163,343,233],"Lussur"],["De Profundis",2,2011,[85,48,73,310,274,107],"Serge Lutens"],["Haxan",2,2018,[14,235,225,255,230,234,226,38,279,257,133,21,17,136,137,147,134,42,155,312,27,35,228,304,329,19,260,259,41,160,299,296,16,18,293,37,232,274,271,227,281,132,62,276],"Parfum Prissana"],["Tobacolor",2,2021,[155,157,343,107,269,370,110,3],"Dior"],["Flamenco EDP",2,2017,[105,108,73,66,61,62,63,225,259,269,256],"Ramón Monegal"],["French Riviera",2,2022,[1,2,13,135,136,332,82,256,81,228,334,293,269],"Mancera"],["Velvet Fog",2,0,[65,14,67,63,228,226,157],"Casa Goa"],["House of Ellixirz",2,2021,[1,10,145,61,234,155,295,344,154,163],"Matca"],["Fir of the Light",2,0,[260,274,2,1,136,225,248,232,137,18,255,231,309,294],"JMP Artisan Perfumes"],["Fir of the Dark",2,2024,[274,260,136,259,41,225,295,18,255,345,228,309],"JMP Artisan Perfumes"],["Quintessentially Amber",2,2025,[3,336,138,61,269,271,270,279,293,227,228,226,154,294],"Sultan Pasha Perfumes"],["Forbidden Flower",2,2024,[308,7,46,62,96,226,227,225,270,228,142,154,135,141,4],"Areej Le Doré"],["Ore",2,2009,[233,154,230,277,278,269,246,270,158,227,165,284,238,29,207],"Slumberhouse"]]};
-  // the site's Perfumers ledger, as it stood on 2026-11-06: who made each of
-  // the fragrances above (2026-11-06 — "edit the TESTPAGE2 TO Also
-  // acccomodate the information of oerfumers")
-  const PERFUMERS = {"list":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","sort":"Nilsson","from":"United States","born":"1995","about":"An American perfumer who grew up among the forests of the Rocky Mountains; Parfumo gives 1995 as the year he was born."},{"id":"dan-roxana-adar","name":"Dan & Roxana Adar","sort":"Adar","from":"Romania","born":"","about":"The in-house perfumers of ADAR, a European house with Romanian roots."},{"id":"goran-bajazetov","name":"Goran Bajazetov","sort":"Bajazetov","from":"","born":"","about":"The founder and perfumer of Almost Human."},{"id":"david-lev-jipa-slivinschi","name":"David-Lev Jipa-Slivinschi","sort":"Jipa-Slivinschi","from":"Romania","born":"","about":"Born in Bucharest, of Russian and Ukrainian heritage, he studied film and screenwriting and turned to perfume during the pandemic."},{"id":"sy-truong","name":"Sy Truong","sort":"Truong","from":"","born":"","about":"Named by Ça Fleure Bon as the perfumer of Ataraxia's Deity (2025), made with the house's creative director, Tudor Ristea."},{"id":"antoine-lie","name":"Antoine Lie","sort":"Lie","from":"France","born":"1966","about":"Born in Strasbourg in 1966."},{"id":"michael-nordstrand","name":"Michael Nordstrand","sort":"Nordstrand","from":"","born":"","about":"Named by Parfumo and by Ça Fleure Bon as the perfumer of Tale Parfum's Bad Lily (2024)."},{"id":"chad-hodge","name":"Chad Hodge","sort":"Hodge","from":"United States","born":"","about":"A screenwriter, and co-founder of Tale Parfum with its creative director, Diandra Barsalou."},{"id":"qimu","name":"Qimu","sort":"Qimu","from":"","born":"","about":"WhatScent names Qimu as the perfumer of Drummer, by the house that carries the name, Qimu & Musicians."},{"id":"aichi-liu","name":"Aichi Liu","sort":"Liu","from":"Taiwan","born":"","about":"She founded OM Parfum in 2021 and is based in Taiwan; her perfumes draw on films, places, her own experiences and moods."},{"id":"mathew-schmuelian","name":"Mathew Schmuelian","sort":"Schmuelian","from":"United States","born":"","about":"He founded Lost Tribe in New York City in 2022, after years of collecting all-natural, artisanal perfumes, and went on to source his own raw materials."},{"id":"rajesh-balkrishnan","name":"Rajesh Balkrishnan","sort":"Balkrishnan","from":"","born":"","about":"Named as co-perfumer, with Mathew Schmuelian, of Lost Tribe's Pan's Labyrinth."},{"id":"holladay-penick-saltz","name":"Holladay Penick Saltz","sort":"Saltz","from":"United States","born":"","about":"From the Jackson, Mississippi area, she graduated from the Rhode Island School of Design and specialised in fashion and material culture at Parsons and The New School."},{"id":"christopher-sheldrake","name":"Christopher Sheldrake","sort":"Sheldrake","from":"United Kingdom","born":"1955","about":"Born on 11 April 1955 in Madras, India."},{"id":"francois-demachy","name":"François Demachy","sort":"Demachy","from":"France","born":"","about":"Born in Cannes and raised in Grasse, where his father ran a pharmacy; he studied dentistry before perfume."},{"id":"ramon-monegal","name":"Ramón Monegal","sort":"Monegal","from":"Spain","born":"1951","about":"Born in 1951, of the family behind the Spanish house Myrurgia."},{"id":"pierre-montale","name":"Pierre Montale","sort":"Montale","from":"France","born":"","about":"A self-taught perfumer, trained in materials by a perfumer in Grasse; in 1975 he and his sister founded Comptoir Sud Pacifique, and he later founded Montale Parfums."},{"id":"jakub-pietrynka","name":"Jakub Pietrynka","sort":"Pietrynka","from":"Poland","born":"","about":"The Polish independent perfumer behind JMP Artisan Perfumes."},{"id":"sultan-pasha","name":"Sultan Pasha","sort":"Pasha","from":"","born":"","about":"WhatScent credits Quintessentially Amber (2025) to him, with Christian Carbonnel."},{"id":"christian-carbonnel","name":"Christian Carbonnel","sort":"Carbonnel","from":"","born":"","about":"Credited by WhatScent, with Sultan Pasha, for Quintessentially Amber (2025)."},{"id":"russian-adam","name":"Russian Adam","sort":"Adam","from":"","born":"","about":"Ivan Inkin, called Russian Adam: a distiller who founded Areej Le Doré in Thailand in 2017; the house is now based in Indonesia."},{"id":"josh-lobb","name":"Josh Lobb","sort":"Lobb","from":"United States","born":"","about":"An entirely self-taught perfumer in Portland, Oregon; Slumberhouse began as a collective of artist friends and became his own."},{"id":"prin-lomros","name":"Prin Lomros","sort":"Lomros","from":"Thailand","born":"","about":"A Thai perfumer who first studied film, then began his career at PerfumersWorld, a large Thai fragrance company, before founding Pryn Parfum in 2016 as a self-taught perfumer."},{"id":"not-found","name":"Perfumer not found","sort":"￿","from":"","born":"","about":"These perfumes are written about on this site, but no source found names who made them. When one is found, the perfume moves to its perfumer."}],"frag":[[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[0],0],[[1],1],[[1],1],[[1],1],[[1],1],[[1],1],[[1],1],[[1],1],[[1],1],[[1],1],[[1],1],[[1],0],[[2],0],[[2],0],[[2],0],[[2],0],[[2],0],[[3],0],[[4],0],[[23],2],[[23],2],[[3],0],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[5],0],[[5],0],[[5],0],[[5],0],[[10],1],[[10],1],[[10],1],[[10],1],[[10],1],[[10,11],0],[[9],1],[[9],1],[[9],1],[[9],1],[[9],1],[[9],1],[[9],1],[[9],1],[[9],1],[[9],0],[[9],1],[[9],1],[[9],1],[[9],0],[[23],2],[[23],2],[[23],2],[[8],0],[[6],0],[[23],2],[[23],2],[[7],0],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[23],2],[[12],0],[[12],0],[[12],0],[[12],0],[[12],0],[[12],0],[[12],0],[[23],2],[[13],0],[[22],0],[[14],0],[[15],0],[[16],0],[[23],2],[[23],2],[[17],0],[[17],0],[[18,19],0],[[20],0],[[21],0]]};
-
   const host = document.querySelector(".t2");
   const canvas = document.querySelector(".t2-arc");
   const ctx = canvas.getContext("2d");
@@ -73,85 +61,53 @@
   const TAU = Math.PI * 2;
   const esc = (t) => String(t).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]);
   const clampV = (v, a, b) => Math.max(a, Math.min(b, v));
-  const ACC = {}; DATA.accords.forEach((a, i) => { a.i = i; ACC[a.code] = a; });
-  const houses = DATA.houses;
-  houses.forEach((h, i) => { h.i = i; h.frags = []; h.noteUse = new Map(); });
-  const totalNotes = DATA.accords.reduce((s, a) => s + a.notes.length, 0);
-  const groupName = (h) => (h.id === "individual" ? "Individual fragrances" : h.name);
+  const cmp = (a, b) => String(a).localeCompare(String(b), "en", { sensitivity: "base" });
 
-  // ---- THE NOTES AND THE FRAGRANCES --------------------------------------
-  const NOTES = [];
-  DATA.accords.forEach((a, ai) => {
-    a.refs = a.notes.map(([name, uses], ni) => { const n = { id: NOTES.length, name, uses, ai, ni, frags: [], with: null }; NOTES.push(n); return n; });
-    a.mentions = a.notes.reduce((s, x) => s + x[1], 0);
-  });
-  const FRAGS = DATA.frags.map(([name, gi, year, ids, from], i) => {
-    const f = { i, name, house: houses[gi], year, notes: ids.map((id) => NOTES[id]), from };
-    f.house.frags.push(f);
-    f.notes.forEach((n) => { n.frags.push(f); f.house.noteUse.set(n, (f.house.noteUse.get(n) || 0) + 1); });
-    return f;
-  });
-  // THE PERFUMERS (2026-11-06): who made each fragrance, as the ledger says,
-  // and from that each perfumer's houses, notes and accords
+  // ---- THE PERFUMERS, THEIR HOUSES AND THEIR PERFUMES --------------------
   const CREDIT = ["named by a source", "the house's perfumer", "perfumer not found"];
-  const PERS = PERFUMERS.list.map((p, i) => Object.assign({}, p, { i, frags: [], houses: new Map(), noteUse: new Map(), share: {} }));
-  FRAGS.forEach((f) => {
-    const [who, credit] = PERFUMERS.frag[f.i];
-    f.per = who.map((q) => PERS[q]); f.credit = credit;
-    f.per.forEach((p) => {
-      p.frags.push(f);
-      p.houses.set(f.house, (p.houses.get(f.house) || 0) + 1);
-      f.notes.forEach((n) => { p.noteUse.set(n, (p.noteUse.get(n) || 0) + 1); const c = DATA.accords[n.ai].code; p.share[c] = (p.share[c] || 0) + 1; });
-    });
+  const KIND = ["an individual fragrance written about on the site", "a house perfume written about on the site", "one of Prin Lomros' houses, not written about on the site"];
+  const TONE = [[235, 163, 63], [188, 211, 234], [226, 88, 126]];   // the Perfumers page's gold, blue-white and rose
+  const HOU = DATA.houses.map((h, i) => Object.assign({}, h, { i, list: [], pers: new Map() }));
+  const PER = DATA.perfumers.map((p, i) => Object.assign({}, p, { i, list: [], houses: new Map(), none: p.id === "not-found" }));
+  const PERF = DATA.perfumes.map(([n, who, c, y, h, k, s], i) => {
+    const e = { i, n, who: who.map((q) => PER[q]), c, y, h: HOU[h], k, s, notes: (NOTES.of[i] || []).map((id) => ({ id, name: NOTES.names[id], acc: NOTES.accord[id] })) };
+    e.h.list.push(e);
+    e.who.forEach((p) => { p.list.push(e); p.houses.set(e.h, (p.houses.get(e.h) || 0) + 1); e.h.pers.set(p, (e.h.pers.get(p) || 0) + 1); });
+    return e;
   });
-  houses.forEach((h) => {
-    const m = new Map();
-    h.frags.forEach((f) => f.per.forEach((p) => m.set(p, (m.get(p) || 0) + 1)));
-    h.pers = [...m].sort((a, b) => b[1] - a[1] || a[0].sort.localeCompare(b[0].sort));
-  });
-  PERS.forEach((p) => {
-    const codes = Object.keys(p.share).sort((a, b) => p.share[b] - p.share[a]);
-    p.top = codes.length ? DATA.accords.find((a) => a.code === codes[0]).name : "";
-  });
-  const whoOf = (f) => f.per.map((p) => p.name).join(" & ");
-  // what a note is most often named with, in the same fragrance
-  function withOf(n) {
-    if (n.with) return n.with;
-    const m = new Map();
-    n.frags.forEach((f) => f.notes.forEach((o) => { if (o !== n) m.set(o, (m.get(o) || 0) + 1); }));
-    n.with = [...m].sort((a, b) => b[1] - a[1] || a[0].name.localeCompare(b[0].name));
-    return n.with;
-  }
-  const housesOf = (n) => {
-    const m = new Map();
-    n.frags.forEach((f) => m.set(f.house, (m.get(f.house) || 0) + 1));
-    return [...m].sort((a, b) => b[1] - a[1] || a[0].i - b[0].i);
+  const byYear = (a, b) => (a.y || 9999) - (b.y || 9999) || cmp(a.n, b.n);
+  // the perfumers down the arc, A to Z by surname, Perfumer not found last
+  const ORDER = PER.slice().sort((a, b) => (a.none - b.none) || cmp(a.sort, b.sort));
+  ORDER.forEach((p, k) => (p.k = k));
+  // the houses round the outside, A to Z, each perfume in its house by year
+  const HORDER = HOU.slice().sort((a, b) => cmp(a.name, b.name));
+  HORDER.forEach((h, k) => { h.k = k; h.list.sort(byYear); h.list.forEach((e, j) => (e.j = j)); });
+  const NP = ORDER.length, NH = HORDER.length;
+  const maxN = Math.max(...PER.map((p) => p.list.length));
+  const perName = (p) => (p.none ? "Perfumer not found" : p.name);
+  const whoOf = (e) => e.who.map(perName).join(" & ");
+  const yearsOf = (list) => {
+    const ys = list.map((e) => e.y).filter(Boolean);
+    if (!ys.length) return "—";
+    const a = Math.min(...ys), b = Math.max(...ys);
+    return a === b ? String(a) : a + "–" + String(b).slice(2);
   };
 
-  // the glossary down the left, from the accords themselves — pressed, an accord's panel
-  const gloss = document.querySelector(".t2-gloss");
-  DATA.accords.forEach((a) => {
+  // the perfumers and the houses down the left, A to Z — pointed at, lit;
+  // pressed, their panel
+  const persList = document.querySelector(".t2-pers"), housesList = document.querySelector(".t2-houses");
+  ORDER.forEach((p) => {
     const li = document.createElement("li");
-    li.dataset.code = a.code;
-    li.tabIndex = 0;
-    li.setAttribute("role", "button");
-    li.innerHTML = "<b>" + a.code + "</b><i>" + esc(a.name) + "</i> — " + esc(a.say) + " <span>(" + a.notes.length + ")</span>";
-    gloss.appendChild(li);
+    li.dataset.per = String(p.i); li.tabIndex = 0; li.setAttribute("role", "button");
+    li.innerHTML = "<i>" + esc(perName(p)) + "</i> — " + esc([p.from, [...p.houses.keys()].map((h) => h.name).join(", ")].filter(Boolean).join(" · ")) + " <span>(" + p.list.length + ")</span>";
+    persList.appendChild(li);
   });
-
-  // the perfumers down the left, A to Z, after the accords — pointed at, their
-  // houses and notes lit; pressed, their panel
-  const persList = document.querySelector(".t2-pers");
-  if (persList) {
-    PERS.slice().sort((a, b) => (a.id === "not-found") - (b.id === "not-found") || a.sort.localeCompare(b.sort)).forEach((p) => {
-      const li = document.createElement("li");
-      li.dataset.per = String(p.i);
-      li.tabIndex = 0;
-      li.setAttribute("role", "button");
-      li.innerHTML = "<i>" + esc(p.name) + "</i> — " + esc([...p.houses.keys()].map(groupName).join(", ")) + " <span>(" + p.frags.length + ")</span>";
-      persList.appendChild(li);
-    });
-  }
+  HORDER.forEach((h) => {
+    const li = document.createElement("li");
+    li.dataset.house = String(h.i); li.tabIndex = 0; li.setAttribute("role", "button");
+    li.innerHTML = "<i>" + esc(h.name) + "</i> — " + esc([h.from, h.founded && "founded " + h.founded].filter(Boolean).join(" · ") || "—") + " <span>(" + h.list.length + ")</span>";
+    housesList.appendChild(li);
+  });
 
   // ---- THE LAYOUT -------------------------------------------------------
   let W = 0, H = 0, DPR = 1, narrow = false;
@@ -168,49 +124,42 @@
     canvas.height = still.height = Math.round(H * DPR);
     G.left = narrow ? 0 : 300;
     const room = W - G.left;
-    // the centre far off to the left; the domes' ring passes a third of the
-    // way into the room at the middle, the bands go on past the right edge
     G.rd = narrow ? Math.max(W * 1.15, H * 1.05) : Math.max(room * 1.05, H * 0.9);
     G.cy = H / 2;
-    G.th = Math.asin(Math.min(0.98, (H * 0.43) / G.rd));
-    // on a narrow window the first and last domes stand just inside the left edge
-    G.cx = narrow ? 30 - G.rd * Math.cos(G.th) : G.left + 0.26 * room - G.rd;
-    const spare = narrow ? W * 0.5 : room * 0.6;
+    G.th = Math.asin(Math.min(0.98, (H * 0.45) / G.rd));
+    // on a narrow window the first and last domes stand far enough in for
+    // the perfumers' names to be read beside them, and the rings close up
+    G.cx = narrow ? Math.min(150, W * 0.38) - G.rd * Math.cos(G.th) : G.left + 0.28 * room - G.rd;
+    const spare = narrow ? W * 0.34 : room * 0.58;
     G.rb0 = G.rd + 42;
     G.rb1 = G.rd + spare * 1.45;
-    G.rt = G.rd + spare * 0.5;
-    G.ra = G.rt + spare * 0.36;
-    // the accords' stretch of the arc, as tall as the window lets it
-    G.ta = Math.asin(Math.min(0.98, (H * 0.455) / G.ra));
-    G.dome = Math.max(12, Math.min(34, (G.th * 2 * G.rd) / houses.length * 0.36));
-    // a new size of window: the whole poster again
+    G.rt = G.rd + spare * 0.52;
+    G.ra = G.rt + spare * 0.3;
+    G.ta = Math.asin(Math.min(0.98, (H * 0.46) / G.ra));
+    G.dome = Math.max(6, Math.min(22, ((G.th * 2 * G.rd) / NP) * 0.3));
     if (changed) { Object.assign(cam, { x: W / 2, y: H / 2, z: 1 }); Object.assign(goal, cam); sayZoom(); }
     stillDirty = true;
   }
-  // the angle of each house and each note round the arc
-  const angleOfHouse = (i) => -G.th + (i + 0.5) * (2 * G.th) / houses.length;
+  const angleOfPer = (p) => -G.th + (p.k + 0.5) * (2 * G.th) / NP;
   const span = () => 2 * G.ta;
-  const GAPS = 0.6;   // slots of gap between accords
-  const slots = () => totalNotes + DATA.accords.length * GAPS;
-  function noteAngle(ai, ni) {
-    let k = 0;
-    for (let i = 0; i < ai; i++) k += DATA.accords[i].notes.length + GAPS;
-    k += GAPS / 2 + ni + 0.5;
-    return -span() / 2 + (k / slots()) * span();
-  }
-  const accordMid = (ai) => {
-    const a = DATA.accords[ai];
-    return (noteAngle(ai, 0) + noteAngle(ai, a.notes.length - 1)) / 2;
-  };
-  const tickLen = (n) => 6 + Math.min(34, n.uses * 1.6);
+  // every house a stretch as long as its perfumes, but never shorter than
+  // MIN_W, so that a house of one or two has room for its name
+  const GAPS = 2.2, MIN_W = 7;
+  const widthOf = (h) => Math.max(MIN_W, h.list.length);
+  const HSTART = []; let SLOTS = 0;
+  HORDER.forEach((h) => { HSTART[h.k] = SLOTS; SLOTS += widthOf(h) + GAPS; });
+  const slots = () => SLOTS;
+  const perfAngle = (e) => -span() / 2 + ((HSTART[e.h.k] + GAPS / 2 + (e.j + 0.5) * (widthOf(e.h) / e.h.list.length)) / slots()) * span();
+  const houseFrom = (h) => -span() / 2 + ((HSTART[h.k] + GAPS / 2) / slots()) * span();
+  const houseTo = (h) => -span() / 2 + ((HSTART[h.k] + GAPS / 2 + widthOf(h)) / slots()) * span();
+  const houseMid = (h) => (houseFrom(h) + houseTo(h)) / 2;
+  // a perfume's tick: longer the newer it is (as the Perfumers page's bars)
+  const tickLen = (e) => (e.y ? 8 + ((e.y - 2008) / 18) * 30 : 5);
   const at = (r, a) => [G.cx + Math.cos(a) * r, G.cy + Math.sin(a) * r];
-  // where each accord's name stands: at its stretch's middle, pushed apart
-  // until no two are nearer than a line of type (on the screen, so closer in
-  // they stand nearer their own stretches)
   function placeNames() {
-    const want = DATA.accords.map((a, i) => accordMid(i));
-    const got = want.slice(), gap = ((narrow ? 13 : 17) * Math.pow(cam.z, 0.35)) / (G.ra * cam.z);
-    for (let it = 0; it < 80; it++) {
+    const want = HORDER.map(houseMid);
+    const got = want.slice(), gap = ((narrow ? 12 : 15) * Math.pow(cam.z, 0.35)) / (G.ra * cam.z);
+    for (let it = 0; it < 90; it++) {
       for (let i = 1; i < got.length; i++) {
         const d = got[i] - got[i - 1];
         if (d < gap) { const push = (gap - d) / 2; got[i] += push; got[i - 1] -= push; }
@@ -221,10 +170,6 @@
   }
 
   // ---- THE VIEW: how close, and where ----------------------------------------
-  // The poster is drawn in its own units (the window's pixels at the whole
-  // view) and the view is a centre and a zoom over them: a hairline is a
-  // hairline at every zoom (`lw`), and a word grows only by a root of it
-  // (`fs`), so closer in there is room to name what was too small to.
   const cam = { x: 0, y: 0, z: 1 }, goal = { x: 0, y: 0, z: 1 };
   const ZMAX = 10;
   let moving = false;
@@ -254,8 +199,8 @@
     host.classList.toggle("is-zoomed", goal.z > 1.01);
   }
 
-  // ---- THE STILL PICTURE: bands, ticks, words ----------------------------
-  let stillDirty = true, focus = null, pinned = null;   // focus: { house } or { accord } or { note }
+  // ---- WHAT IS LIT -----------------------------------------------------------
+  let stillDirty = true, focus = null, pinned = null;   // { perfumer } or { house } or { perfume }
   const BANDS = [
     [0.0, [16, 15, 34]], [0.12, [27, 25, 58]], [0.3, [52, 44, 92]], [0.48, [96, 78, 140]],
     [0.66, [150, 126, 182]], [0.82, [204, 186, 222]], [1.0, [246, 242, 250]],
@@ -267,31 +212,29 @@
     }
     return BANDS[BANDS.length - 1][1];
   };
-  // what is lit by what is in focus
-  function litNote(n) {
+  function litPerfume(e) {
     if (!focus) return 0;
-    if (focus.note) return n === focus.note ? 2 : withOf(focus.note).slice(0, 12).some(([o]) => o === n) ? 1 : 0;
-    if (focus.house) return focus.house.noteUse.has(n) ? 2 : 0;
-    if (focus.perfumer) return focus.perfumer.noteUse.has(n) ? 2 : 0;
-    if (focus.accord != null) return n.ai === focus.accord ? 2 : 0;
+    if (focus.perfume) return e === focus.perfume ? 2 : e.h === focus.perfume.h && e.who.some((p) => focus.perfume.who.includes(p)) ? 1 : 0;
+    if (focus.perfumer) return e.who.includes(focus.perfumer) ? 2 : 0;
+    if (focus.house) return e.h === focus.house ? 2 : 0;
     return 0;
   }
-  function litAccord(ai) {
-    if (!focus) return false;
-    if (focus.accord != null) return focus.accord === ai;
-    if (focus.house) return !!focus.house.share[DATA.accords[ai].code];
-    if (focus.perfumer) return !!focus.perfumer.share[DATA.accords[ai].code];
-    if (focus.note) return focus.note.ai === ai;
-    return false;
-  }
   function litHouse(h) {
-    if (!focus) return true;
+    if (!focus) return false;
     if (focus.house) return focus.house === h;
     if (focus.perfumer) return focus.perfumer.houses.has(h);
-    if (focus.accord != null) return !!h.share[DATA.accords[focus.accord].code];
-    if (focus.note) return h.frags.some((f) => f.notes.includes(focus.note));
+    if (focus.perfume) return focus.perfume.h === h;
+    return false;
+  }
+  function litPer(p) {
+    if (!focus) return true;
+    if (focus.perfumer) return focus.perfumer === p;
+    if (focus.house) return focus.house.pers.has(p);
+    if (focus.perfume) return focus.perfume.who.includes(p);
     return true;
   }
+
+  // ---- THE STILL PICTURE: bands, ticks, words ----------------------------
   function drawStill() {
     stillDirty = false;
     const c = sctx, z = cam.z;
@@ -301,82 +244,82 @@
     view(c);
     const [vx0, vy0] = toWorld(-40, -40), [vx1, vy1] = toWorld(W + 40, H + 40);
     const inView = (x, y) => x > vx0 && x < vx1 && y > vy0 && y < vy1;
-    // the bands, outermost first, each a ring
+    // the bands, outermost first
     const n = 34;
     for (let i = n - 1; i >= 0; i--) {
       const t = i / (n - 1);
       const r = G.rb0 + (G.rb1 - G.rb0) * Math.pow(t, 0.85);
-      const col = bandColour(t);
-      c.fillStyle = "rgb(" + col.join(",") + ")";
+      c.fillStyle = "rgb(" + bandColour(t).join(",") + ")";
       c.beginPath(); c.arc(G.cx, G.cy, r, -Math.PI / 2, Math.PI / 2); c.lineTo(G.cx, G.cy); c.closePath(); c.fill();
     }
-    // the night inside the domes' ring
     c.fillStyle = "#0b0b16";
     c.beginPath(); c.arc(G.cx, G.cy, G.rb0 - 1, -Math.PI / 2, Math.PI / 2); c.lineTo(G.cx, G.cy); c.closePath(); c.fill();
-    // hairline rings, as the poster's day-lines
+    // the years' rings the ticks reach to, faint, every fifth a little stronger
     c.lineWidth = lw(0.6);
-    for (let i = 1; i < 12; i++) {
-      const r = G.rb0 + (G.rt - G.rb0) * (i / 12);
-      c.strokeStyle = "rgba(236,233,244," + (0.05 + 0.03 * (i % 3 === 0)) + ")";
-      c.beginPath(); c.arc(G.cx, G.cy, r, -G.th * 1.12, G.th * 1.12); c.stroke();
+    for (let y = 2010; y <= 2026; y += 2) {
+      const r = G.rt - (8 + ((y - 2008) / 18) * 30);
+      c.strokeStyle = "rgba(236,233,244," + (y % 10 === 0 ? 0.12 : 0.05) + ")";
+      c.beginPath(); c.arc(G.cx, G.cy, r, -G.ta * 1.02, G.ta * 1.02); c.stroke();
     }
-    // the ticks, a note each
-    DATA.accords.forEach((a, ai) => {
-      a.refs.forEach((nn) => {
-        const lit = litNote(nn);
-        const ang = noteAngle(ai, nn.ni), len = tickLen(nn);
-        const [x0, y0] = at(G.rt - len, ang), [x1, y1] = at(G.rt, ang);
-        c.globalAlpha = focus && !lit ? 0.25 : 1;
-        c.strokeStyle = lit === 2 ? "rgba(255,226,170,0.95)" : lit === 1 ? "rgba(255,226,170,0.6)" : "rgba(236,232,255,0.42)";
-        c.lineWidth = lw(lit === 2 ? 1.1 : 0.8);
-        c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
-        if (focus && focus.note === nn) {
-          c.fillStyle = "#ffe2aa";
-          const [px, py] = at(G.rt - len - fs(4), ang);
-          c.beginPath(); c.arc(px, py, fs(2.4), 0, TAU); c.fill();
-        }
-      });
-    });
+    c.strokeStyle = "rgba(236,233,244,0.08)";
+    c.beginPath(); c.arc(G.cx, G.cy, G.rt, -G.ta * 1.02, G.ta * 1.02); c.stroke();
+    // the ticks, a perfume each, in the colour of where it is
+    for (const e of PERF) {
+      const lit = litPerfume(e), ang = perfAngle(e), len = tickLen(e);
+      const [x0, y0] = at(G.rt - len, ang), [x1, y1] = at(G.rt, ang);
+      const tone = TONE[e.k];
+      c.globalAlpha = focus && !lit ? 0.22 : 1;
+      c.strokeStyle = lit === 2 ? "rgba(255,226,170,0.97)" : lit === 1 ? "rgba(255,226,170,0.6)"
+        : "rgba(" + tone.join(",") + "," + (e.c === 0 ? 0.75 : e.c === 1 ? 0.5 : 0.3) + ")";
+      c.lineWidth = lw(lit === 2 ? 1.2 : 0.85);
+      if (!e.y) c.setLineDash([lw(1.5), lw(1.5)]);
+      c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
+      if (!e.y) c.setLineDash([]);
+      if (focus && focus.perfume === e) {
+        c.fillStyle = "#ffe2aa";
+        const [px, py] = at(G.rt - len - fs(4), ang);
+        c.beginPath(); c.arc(px, py, fs(2.4), 0, TAU); c.fill();
+      }
+    }
     c.globalAlpha = 1;
-    // the notes' names past their ticks: what is lit first, then the most
-    // named, each only where there is room on the screen for it — so the
-    // closer in, the more are named, and from about three times as close all
-    // of them, each with how many fragrances name it
+    // the perfumes' names past their ticks: what is lit first, then the
+    // newest, each only where there is room — so the closer in, the more are
+    // named, and from about three times as close nearly all, with their year
     const tickPx = 5.2 * Math.pow(z, 0.55), tickFont = tickPx / z;
-    const want = NOTES.map((nn) => ({ nn, lit: litNote(nn), ang: noteAngle(nn.ai, nn.ni) }))
-      .filter((o) => o.lit === 2 || o.nn.uses >= Math.max(1, 12 / Math.pow(z, 1.6)) || (o.lit === 1 && z > 1.5))
-      .sort((p, q) => (q.nn === (focus && focus.note) ? 1 : 0) - (p.nn === (focus && focus.note) ? 1 : 0) || q.lit - p.lit || q.nn.uses - p.nn.uses);
+    const want = PERF.map((e) => ({ e, lit: litPerfume(e), ang: perfAngle(e) }))
+      .filter((o) => o.lit === 2 || z >= 1.7 || (o.lit === 1 && z > 1.4) || (o.e.k !== 2 && z >= 1.25))
+      .sort((p, q) => (q.e === (focus && focus.perfume) ? 1 : 0) - (p.e === (focus && focus.perfume) ? 1 : 0) || q.lit - p.lit || (p.e.k === 2) - (q.e.k === 2) || (q.e.y || 0) - (p.e.y || 0));
     const taken = [], gapA = (tickPx + 1.2) / (G.rt * z);
     c.textBaseline = "middle";
     for (const o of want) {
-      if (!(focus && focus.note === o.nn) && taken.some((a2) => Math.abs(a2 - o.ang) < gapA)) continue;
+      if (!(focus && focus.perfume === o.e) && taken.some((a2) => Math.abs(a2 - o.ang) < gapA)) continue;
       const [tx, ty] = at(G.rt + fs(4), o.ang);
       if (!inView(tx, ty)) continue;
       taken.push(o.ang);
       c.save();
       c.translate(tx, ty); c.rotate(o.ang);
-      const big = focus && focus.note === o.nn;
+      const big = focus && focus.perfume === o.e;
       c.font = (big ? "600 " : "400 ") + (big ? tickFont * 1.5 : tickFont) + 'px "IBM Plex Mono", monospace';
-      c.fillStyle = o.lit ? "rgba(255,236,200," + (o.lit === 2 ? 0.95 : 0.7) + ")" : "rgba(236,232,255," + (focus ? 0.3 : 0.55) + ")";
-      c.fillText(o.nn.name, 0, 0);
+      c.fillStyle = o.lit ? "rgba(255,236,200," + (o.lit === 2 ? 0.95 : 0.7) + ")" : "rgba(36,24,58," + (focus ? 0.3 : 0.62) + ")";
+      c.fillText(o.e.n, 0, 0);
       if (z >= 2.6 || big) {
-        const w = c.measureText(o.nn.name).width;
+        const w = c.measureText(o.e.n).width;
         c.globalAlpha = 0.6;
-        c.fillText(" " + o.nn.uses, w, 0);
+        c.fillText(" " + (o.e.y || "—"), w, 0);
         c.globalAlpha = 1;
       }
       c.restore();
     }
-    // the accords' names round the outside, and a bracket over each stretch
+    // the houses' names round the outside, and a bracket over each stretch
     const names = placeNames();
-    DATA.accords.forEach((a, ai) => {
-      const lit = litAccord(ai);
-      const a0 = noteAngle(ai, 0) - 0.003, a1 = noteAngle(ai, a.notes.length - 1) + 0.003;
+    HORDER.forEach((h, k) => {
+      const lit = litHouse(h);
+      const a0 = houseFrom(h) - 0.002, a1 = houseTo(h) + 0.002;
       const br = G.ra - fs(22, 0.35);
       c.strokeStyle = lit ? "rgba(40,20,60,0.9)" : "rgba(40,32,70,0.45)";
-      c.lineWidth = lw(0.8);
+      c.lineWidth = lw(lit ? 1.2 : 0.8);
       c.beginPath(); c.arc(G.cx, G.cy, br, a0, a1); c.stroke();
-      const mid = accordMid(ai), la = names[ai];
+      const mid = houseMid(h), la = names[k];
       const [m0x, m0y] = at(br, mid), [m1x, m1y] = at(G.ra, la);
       c.strokeStyle = "rgba(36,24,58,0.35)"; c.lineWidth = lw(0.6);
       c.beginPath(); c.moveTo(m0x, m0y); c.lineTo(m1x, m1y); c.stroke();
@@ -384,93 +327,81 @@
       c.save();
       c.translate(mx, my); c.rotate(la);
       c.textBaseline = "middle";
-      c.font = (lit ? "700 " : "600 ") + fs(narrow ? 8.5 : 11, 0.35) + 'px Archivo, sans-serif';
+      c.font = (lit ? "700 " : "600 ") + fs(narrow ? 8 : 10.5, 0.35) + "px Archivo, sans-serif";
       c.fillStyle = lit ? "#24123a" : "rgba(36,24,58," + (focus ? 0.4 : 0.85) + ")";
-      c.fillText(a.name, 0, 0);
-      const w = c.measureText(a.name).width;
-      c.font = '500 ' + fs(7, 0.35) + 'px "IBM Plex Mono", monospace';
+      c.fillText(h.name, 0, 0);
+      const w = c.measureText(h.name).width;
+      c.font = "500 " + fs(7, 0.35) + 'px "IBM Plex Mono", monospace';
       c.fillStyle = "rgba(36,24,58,0.55)";
-      c.fillText(a.code + " · " + a.notes.length, w + fs(6, 0.35), fs(0.5, 0.35));
+      c.fillText((h.from ? h.from.toUpperCase() + " · " : "") + h.list.length, w + fs(6, 0.35), fs(0.5, 0.35));
       c.restore();
-      // a small mark where it begins
       const [px, py] = at(br, a0), s = fs(3, 0.35);
       c.fillStyle = "rgba(36,24,58,0.8)";
       c.fillRect(px - s / 2, py - s / 2, s, s);
     });
-    // the houses' words, beside their domes
-    const u = fs(1, 0.5);
-    houses.forEach((h, i) => {
-      const ang = angleOfHouse(i);
-      const [x, y] = at(G.rd, ang);
-      c.globalAlpha = litHouse(h) ? 1 : 0.3;
+    // the perfumers' words, beside their domes: as many lines as there is
+    // room for between one dome and the next
+    const u = fs(1, 0.5), gapPx = ((2 * G.th * G.rd) / NP) * z;
+    ORDER.forEach((p) => {
+      const [x, y] = at(G.rd, angleOfPer(p));
+      c.globalAlpha = litPer(p) ? 1 : 0.28;
       c.textAlign = "right";
-      c.font = '400 ' + 7 * u + 'px "IBM Plex Mono", monospace';
-      c.fillStyle = "#8f8aa6";
-      const tx = x - G.dome * 1.35 - 8 * u;
-      if (!narrow || W > 600 || z > 1.6) {
-        const who = h.pers.length === 1 ? h.pers[0][0].name : h.pers.length + " perfumers";
-        const where = [h.from, h.founded, who].filter(Boolean).join(" · ");
-        if (where) c.fillText(where.toUpperCase(), tx, y - 20 * u);
-        c.font = '700 ' + 9.5 * u + 'px Archivo, sans-serif'; c.fillStyle = "#ece9f4";
-        c.fillText(groupName(h).toUpperCase(), tx, y - 9 * u);
-        c.font = '400 ' + 7 * u + 'px "IBM Plex Mono", monospace'; c.fillStyle = "#8f8aa6";
-        const rows = [["Fragrances", h.n], ["Notes", h.notes || "—"], ["Top accord", h.top || "—"]];
-        if (focus && focus.note && litHouse(h)) rows.push(["Names " + focus.note.name, h.noteUse.get(focus.note) || 0]);
-        rows.forEach(([k, v], r) => {
-          c.fillText(k, tx - 54 * u, y + (3 + r * 9) * u);
-          c.fillStyle = r === 3 ? "#ffe2aa" : "#ece9f4"; c.fillText(String(v), tx, y + (3 + r * 9) * u); c.fillStyle = "#8f8aa6";
-        });
+      const tx = x - G.dome * 1.45 - 6 * u;
+      c.font = "700 " + 9.5 * u + "px Archivo, sans-serif"; c.fillStyle = focus && focus.perfumer === p ? "#ffe2aa" : "#ece9f4";
+      c.fillText(perName(p).toUpperCase(), tx, y + (gapPx >= 30 ? -3 : 3) * u);
+      c.font = "400 " + 7 * u + 'px "IBM Plex Mono", monospace'; c.fillStyle = "#8f8aa6";
+      if (gapPx >= 30) {
+        const where = [p.from, p.houses.size + (p.houses.size === 1 ? " house" : " houses"), p.list.length + (p.list.length === 1 ? " perfume" : " perfumes")].filter(Boolean).join(" · ");
+        c.fillText(where.toUpperCase(), tx, y + 8 * u);
+      } else {
+        c.textAlign = "left";
+        c.fillText(String(p.list.length), x + G.dome * 1.25 + 3 * u, y + 3 * u);
       }
       c.globalAlpha = 1;
     });
     c.textAlign = "left";
-    // the year's name, faint, along the domes' ring
     c.save();
-    const [yx, yy] = at(G.rd + G.dome * 1.6, G.th + 0.02);
+    const [yx, yy] = at(G.rd + G.dome * 1.8, G.th + 0.02);
     c.translate(yx, yy); c.rotate(G.th + 0.02 + Math.PI / 2);
-    c.font = '500 ' + 7 * u + 'px "IBM Plex Mono", monospace'; c.fillStyle = "#5b5772";
-    c.fillText("HOUSES · " + houses.length, 0, 0);
+    c.font = "500 " + 7 * u + 'px "IBM Plex Mono", monospace'; c.fillStyle = "#5b5772";
+    c.fillText("PERFUMERS · " + (NP - 1) + " · AND THE PERFUMES NO SOURCE CREDITS", 0, 0);
     c.restore();
   }
 
-  // ---- A DOME, live -------------------------------------------------------
-  const TILT = 0.42;    // how far we look down on it
+  // ---- A DOME, live: a perfumer -------------------------------------------
+  const TILT = 0.42;
   function dome(c, x, y, r, h, t, alpha, hi) {
     const ct = Math.cos(TILT), st = Math.sin(TILT);
-    const P = (px, py, pz) => [x + px * r, y - (py * ct - pz * st) * r];   // y up, z toward us
+    const P = (px, py, pz) => [x + px * r, y - (py * ct - pz * st) * r];
     c.globalAlpha = alpha;
-    // the ground ring and its shadow
     c.strokeStyle = hi ? "#f5efff" : "rgba(220,212,246,0.75)";
     c.lineWidth = lw(0.8);
     c.beginPath(); c.ellipse(x, y, r, r * st, 0, 0, TAU); c.stroke();
     c.fillStyle = "rgba(140,120,200,0.08)"; c.fill();
-    // latitude rings
-    for (let k = 1; k <= 3; k++) {
-      const el = (k / 4) * (Math.PI / 2), rr = Math.cos(el), yy = Math.sin(el);
+    for (let k = 1; k <= 2; k++) {
+      const el = (k / 3) * (Math.PI / 2), rr = Math.cos(el), yy = Math.sin(el);
       const [cx2, cy2] = P(0, yy, 0);
       c.strokeStyle = "rgba(200,190,240,0.35)";
       c.beginPath(); c.ellipse(cx2, cy2, rr * r, rr * r * st, 0, 0, TAU); c.stroke();
     }
-    // meridians, turning
     c.strokeStyle = "rgba(210,200,248,0.32)";
-    for (let m = 0; m < 6; m++) {
-      const az = t + (m / 6) * Math.PI;
+    for (let m = 0; m < 4; m++) {
+      const az = t + (m / 4) * Math.PI;
       c.beginPath();
-      for (let k = 0; k <= 12; k++) {
-        const el = (k / 12) * Math.PI;
-        const px = Math.cos(el) * Math.cos(az), pz = Math.cos(el) * Math.sin(az), py = Math.sin(el);
-        const [sx, sy] = P(px, py, pz);
+      for (let k = 0; k <= 10; k++) {
+        const el = (k / 10) * Math.PI;
+        const [sx, sy] = P(Math.cos(el) * Math.cos(az), Math.sin(el), Math.cos(el) * Math.sin(az));
         k ? c.lineTo(sx, sy) : c.moveTo(sx, sy);
       }
       c.stroke();
     }
-    // the path over it, as high as the house has fragrances, and a light on it
+    // the path over it, as high as the perfumer has perfumes, and a light on it
     const peak = 0.25 + 0.7 * h;
     c.strokeStyle = hi ? "#fff" : "rgba(255,250,240,0.85)";
     c.lineWidth = lw(hi ? 1.3 : 1);
     c.beginPath();
-    for (let k = 0; k <= 24; k++) {
-      const s = k / 24, az = -Math.PI * 0.85 + s * Math.PI * 1.7;
+    for (let k = 0; k <= 20; k++) {
+      const s = k / 20, az = -Math.PI * 0.85 + s * Math.PI * 1.7;
       const el = Math.sin(s * Math.PI) * peak * (Math.PI / 2);
       const [sx, sy] = P(Math.cos(el) * Math.cos(az) * 0.98, Math.sin(el), Math.cos(el) * Math.sin(az) * 0.98);
       k ? c.lineTo(sx, sy) : c.moveTo(sx, sy);
@@ -479,24 +410,22 @@
     const s = (t * 0.25) % 1, az = -Math.PI * 0.85 + s * Math.PI * 1.7, el = Math.sin(s * Math.PI) * peak * (Math.PI / 2);
     const [lx, ly] = P(Math.cos(el) * Math.cos(az) * 0.98, Math.sin(el), Math.cos(el) * Math.sin(az) * 0.98);
     c.fillStyle = "#fff";
-    c.beginPath(); c.arc(lx, ly, fs(2.2, 0.3), 0, TAU); c.fill();
-    c.fillStyle = "rgba(255,255,255,0.18)";
-    c.beginPath(); c.arc(lx, ly, fs(6, 0.3), 0, TAU); c.fill();
-    // the pin at its heart
+    c.beginPath(); c.arc(lx, ly, fs(1.8, 0.3), 0, TAU); c.fill();
     c.fillStyle = hi ? "#eba33f" : "rgba(236,233,244,0.9)";
-    c.beginPath(); c.moveTo(x, y - 2 / cam.z); c.arc(x, y - r * 0.32, r * 0.11, Math.PI * 0.75, Math.PI * 2.25); c.closePath(); c.fill();
+    c.beginPath(); c.arc(x, y - r * 0.3, Math.max(r * 0.12, 0.8 / cam.z), 0, TAU); c.fill();
     c.globalAlpha = 1;
   }
 
   // ---- THE FRAME -------------------------------------------------------
-  const maxN = Math.max(...houses.map((h) => h.n));
   const born = performance.now();
   let last = 0;
+  // the curve a line takes from a perfumer's dome out to a tick or a house
+  const curve = (x, y, ex, ey) => [x + (ex - x) * 0.55, y + (ey - y) * 0.15];
+  const along = (x, y, mx, my, ex, ey, s) => [(1 - s) * (1 - s) * x + 2 * (1 - s) * s * mx + s * s * ex, (1 - s) * (1 - s) * y + 2 * (1 - s) * s * my + s * s * ey];
   function frame(now) {
     raf = 0;
     const dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016;
     last = now;
-    // the view eases to where it was sent
     if (moving) {
       const k = STILL ? 1 : 1 - Math.exp(-dt * 11);
       cam.z = Math.exp(Math.log(cam.z) + (Math.log(goal.z) - Math.log(cam.z)) * k);
@@ -511,8 +440,6 @@
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.drawImage(still, 0, 0);
     view(c);
-
-    // the bands breathe: a soft light travelling round them
     if (!STILL) {
       const a = -G.th + ((t * 0.04) % 1) * 2 * G.th * 1.3 - 0.15 * G.th;
       const g = c.createRadialGradient(...at(G.rb0 + (G.rt - G.rb0) * 0.5, a), 0, ...at(G.rb0 + (G.rt - G.rb0) * 0.5, a), H * 0.35);
@@ -520,83 +447,69 @@
       c.fillStyle = g;
       c.beginPath(); c.arc(G.cx, G.cy, G.rt + 4, -Math.PI / 2, Math.PI / 2); c.arc(G.cx, G.cy, G.rb0, Math.PI / 2, -Math.PI / 2, true); c.fill();
     }
-
     const dot = fs(2.4, 0.3);
-    if (focus && focus.note) {
-      // a note chosen: a line from every house that names it, as heavy as how many of its fragrances do
-      const nn = focus.note, ang2 = noteAngle(nn.ai, nn.ni);
-      const [ex, ey] = at(G.rt - tickLen(nn) - fs(4), ang2);
-      houses.forEach((h, i) => {
-        const cnt = h.noteUse.get(nn) || 0;
-        if (!cnt) return;
-        const [x, y] = at(G.rd + G.dome * 1.05, angleOfHouse(i));
-        const mx = x + (ex - x) * 0.55, my = y + (ey - y) * 0.15;
-        c.strokeStyle = "rgba(255,214,150,0.95)";
-        c.globalAlpha = Math.min(1, 0.35 + cnt * 0.12);
-        c.lineWidth = lw(0.9 + Math.min(6, cnt * 0.9));
+    if (focus && focus.perfume) {
+      // a perfume chosen: a line from its perfumer (or each of them) to its tick
+      const e = focus.perfume, ang2 = perfAngle(e);
+      const [ex, ey] = at(G.rt - tickLen(e) - fs(4), ang2);
+      e.who.forEach((p, i) => {
+        const [x, y] = at(G.rd + G.dome * 1.05, angleOfPer(p));
+        const [mx, my] = curve(x, y, ex, ey);
+        c.strokeStyle = "rgba(255,214,150,0.95)"; c.globalAlpha = 0.9; c.lineWidth = lw(1.6);
         c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(mx, my, ex, ey); c.stroke();
         if (!STILL) {
-          const s = (t * 0.35 + i * 0.13) % 1;
-          const qx = (1 - s) * (1 - s) * x + 2 * (1 - s) * s * mx + s * s * ex, qy = (1 - s) * (1 - s) * y + 2 * (1 - s) * s * my + s * s * ey;
-          c.globalAlpha = Math.sin(s * Math.PI);
-          c.fillStyle = "#fff";
+          const s = (t * 0.35 + i * 0.3) % 1, [qx, qy] = along(x, y, mx, my, ex, ey, s);
+          c.globalAlpha = Math.sin(s * Math.PI); c.fillStyle = "#fff";
           c.fillRect(qx - dot / 2, qy - dot / 2, dot, dot);
         }
       });
       c.globalAlpha = 1;
     } else {
-      // the lines from the houses out to the accords
-      houses.forEach((h, i) => {
-        const k = Math.max(0, Math.min(1, intro * 2.2 - i * 0.07));
+      // the lines from the perfumers out to the houses they made perfumes for
+      ORDER.forEach((p) => {
+        const k = Math.max(0, Math.min(1, intro * 2.2 - p.k * 0.035));
         if (k <= 0) return;
-        const ang = angleOfHouse(i);
-        const [x, y] = at(G.rd + G.dome * 1.05, ang);
-        const total = Object.values(h.share).reduce((s, v) => s + v, 0) || 1;
-        const hiH = focus && focus.house === h;
-        for (const code in h.share) {
-          const a = ACC[code], share = h.share[code] / total;
-          const lit = !focus || hiH || (focus.accord === a.i);
-          const ang2 = accordMid(a.i);
+        const [x, y] = at(G.rd + G.dome * 1.05, angleOfPer(p));
+        const hiP = focus && focus.perfumer === p;
+        p.houses.forEach((cnt, h) => {
+          const share = cnt / p.list.length, big = cnt / maxN;
+          const hiH = focus && focus.house === h;
+          const lit = !focus || hiP || hiH;
+          const ang2 = houseMid(h);
           const [ex, ey] = at(G.rt - 44, ang2);
-          const mx = x + (ex - x) * 0.55, my = y + (ey - y) * 0.15;
-          c.strokeStyle = hiH || focus && focus.accord === a.i ? "rgba(255,214,150,0.9)" : "rgba(236,230,255,1)";
-          c.globalAlpha = (hiH || (focus && focus.accord === a.i) ? 0.3 + share * 2.4 : lit ? 0.035 + share * 1.1 : 0.02) * k;
-          c.lineWidth = lw(hiH ? 0.9 + share * 6 : 0.5 + share * 2.4);
+          const [mx, my] = curve(x, y, ex, ey);
+          c.strokeStyle = hiP || hiH ? "rgba(255,214,150,0.9)" : "rgba(236,230,255,1)";
+          c.globalAlpha = (hiP || hiH ? 0.45 + share * 0.5 : lit ? 0.06 + share * 0.22 : 0.025) * k;
+          c.lineWidth = lw(hiP || hiH ? 1 + Math.sqrt(big) * 7 : 0.5 + Math.sqrt(big) * 3);
           c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(mx, my, x + (ex - x) * k, y + (ey - y) * k); c.stroke();
-          // a light running out along it
           if (!STILL && lit && k >= 1) {
-            const s = (t * (0.18 + share) + i * 0.13 + a.i * 0.07) % 1;
-            const qx = (1 - s) * (1 - s) * x + 2 * (1 - s) * s * mx + s * s * ex, qy = (1 - s) * (1 - s) * y + 2 * (1 - s) * s * my + s * s * ey;
-            c.globalAlpha = Math.min(1, 0.15 + share * 3) * Math.sin(s * Math.PI) * (focus ? 1 : 0.7);
+            const s = (t * (0.16 + share * 0.3) + p.k * 0.13 + h.k * 0.07) % 1, [qx, qy] = along(x, y, mx, my, ex, ey, s);
+            c.globalAlpha = Math.min(1, 0.25 + share) * Math.sin(s * Math.PI) * (focus ? 1 : 0.7);
             c.fillStyle = "#fff";
             c.fillRect(qx - dot / 2, qy - dot / 2, dot, dot);
           }
-          // the pill where it lands, for what is pointed at
-          if (hiH) {
+          if (hiP || hiH) {
             c.globalAlpha = 1;
             c.fillStyle = "rgba(255,250,244,0.95)";
-            const pw = fs(26, 0.4), ph = fs(9, 0.4);
+            const pw = fs(20, 0.4), ph = fs(9, 0.4);
             c.save(); c.translate(ex, ey); c.rotate(ang2);
             c.beginPath(); c.roundRect ? c.roundRect(-pw / 2, -ph / 2, pw, ph, ph / 2) : c.rect(-pw / 2, -ph / 2, pw, ph); c.fill();
-            c.fillStyle = "#24123a"; c.font = '500 ' + fs(6, 0.4) + 'px "IBM Plex Mono", monospace'; c.textAlign = "center"; c.textBaseline = "middle";
-            c.fillText(code + " " + h.share[code], 0, fs(0.5, 0.4));
+            c.fillStyle = "#24123a"; c.font = "500 " + fs(6, 0.4) + 'px "IBM Plex Mono", monospace'; c.textAlign = "center"; c.textBaseline = "middle";
+            c.fillText(String(cnt), 0, fs(0.5, 0.4));
             c.restore(); c.textAlign = "left";
           }
-        }
+        });
       });
       c.globalAlpha = 1;
     }
-
-    // the domes
-    houses.forEach((h, i) => {
-      const k = Math.max(0, Math.min(1, intro * 2 - i * 0.06));
+    // the domes, a perfumer each
+    ORDER.forEach((p) => {
+      const k = Math.max(0, Math.min(1, intro * 2 - p.k * 0.03));
       if (k <= 0) return;
-      const ang = angleOfHouse(i);
-      const [x, y] = at(G.rd, ang);
-      const hi = focus && focus.house === h;
-      const dim = focus && !litHouse(h);
+      const [x, y] = at(G.rd, angleOfPer(p));
+      const hi = focus && focus.perfumer === p;
       const e = 1 - Math.pow(1 - k, 3);
-      dome(c, x, y + 6, G.dome * (0.6 + 0.4 * e) * (hi ? 1.12 : 1), h.n / maxN, t * (0.25 + 0.04 * i) + i, (dim ? 0.3 : 1) * e, hi);
+      dome(c, x, y + 3, G.dome * (0.6 + 0.4 * e) * (hi ? 1.15 : 1), p.list.length / maxN, t * (0.25 + 0.03 * p.k) + p.k, (litPer(p) ? 1 : 0.28) * e, hi);
     });
     if ((!STILL && !document.hidden) || moving) kick();
   }
@@ -604,160 +517,105 @@
   function kick() { if (!raf) raf = requestAnimationFrame(frame); }
 
   // ---- WHAT IS UNDER THE HAND ---------------------------------------------
-  // in the poster's own units; closer than a little over twice, a press in
-  // an accord's stretch is a press on the note under it
-  const NOTE_FROM = 2.2;
+  // closer than a little under twice, a press in a house's stretch is a
+  // press on the perfume under it
+  const PERF_FROM = 1.8;
   function pick(sx, sy) {
     const [mx, my] = toWorld(sx, sy), u = fs(1, 0.5);
-    for (let i = 0; i < houses.length; i++) {
-      const [x, y] = at(G.rd, angleOfHouse(i));
-      if (Math.hypot(mx - x, my - y - 4) < G.dome * 1.4 || (mx < x && mx > x - G.dome * 1.4 - 150 * u && Math.abs(my - y) < 22 * u)) return { house: houses[i] };
+    const step = (2 * G.th * G.rd) / NP;
+    for (const p of ORDER) {
+      const [x, y] = at(G.rd, angleOfPer(p));
+      if (Math.abs(my - y) > Math.max(step * 0.5, 4 / cam.z)) continue;
+      if (Math.hypot(mx - x, my - y - 3) < G.dome * 1.5 || (mx < x && mx > x - G.dome * 1.5 - 170 * u)) return { perfumer: p };
     }
     const r = Math.hypot(mx - G.cx, my - G.cy), ang = Math.atan2(my - G.cy, mx - G.cx);
     const onName = r > G.ra - fs(10, 0.35);
-    if (r > G.rt - 46 && r < G.ra + fs(120, 0.35)) {
+    if (r > G.rt - 46 && r < G.ra + fs(160, 0.35)) {
       const names = placeNames();
-      for (let ai = 0; ai < DATA.accords.length; ai++) {
-        if (onName && Math.abs(ang - names[ai]) < fs(narrow ? 6 : 8, 0.35) / G.ra) return { accord: ai };
+      for (let k = 0; k < NH; k++) {
+        if (onName && Math.abs(ang - names[k]) < fs(narrow ? 6 : 7.5, 0.35) / G.ra) return { house: HORDER[k] };
       }
       if (onName) return null;
-      // the note nearest the hand, by its angle; within a slot and a half of it
       const slot = span() / slots();
       let best = null, bd = Infinity;
-      for (const nn of NOTES) { const d = Math.abs(noteAngle(nn.ai, nn.ni) - ang); if (d < bd) { bd = d; best = nn; } }
+      for (const e of PERF) { const d = Math.abs(perfAngle(e) - ang); if (d < bd) { bd = d; best = e; } }
       if (!best || bd > slot * 1.5) return null;
       const nearTicks = r < G.rt + fs(70);
-      if (cam.z >= NOTE_FROM && nearTicks) return { note: best };
-      return { accord: best.ai, near: nearTicks ? best : null };
+      if (cam.z >= PERF_FROM && nearTicks) return { perfume: best };
+      return { house: best.h, near: nearTicks ? best : null };
     }
     return null;
   }
-  function same(a, b) { return (!a && !b) || (a && b && a.house === b.house && a.accord === b.accord && a.note === b.note && a.perfumer === b.perfumer); }
+  function same(a, b) { return (!a && !b) || (a && b && a.house === b.house && a.perfume === b.perfume && a.perfumer === b.perfumer); }
   function setFocus(f) {
     if (same(f, focus)) return;
     focus = f; stillDirty = true; kick();
-    gloss.querySelectorAll("li").forEach((li) => li.classList.toggle("is-lit", !!f && litAccord(ACC[li.dataset.code].i)));
-    if (persList) persList.querySelectorAll("li").forEach((li) => {
-      const p = PERS[+li.dataset.per];
-      li.classList.toggle("is-lit", !!f && (f.perfumer === p || (f.house && p.houses.has(f.house)) || (f.note && p.noteUse.has(f.note))));
-    });
+    persList.querySelectorAll("li").forEach((li) => { const p = PER[+li.dataset.per]; li.classList.toggle("is-lit", !!f && litPer(p)); });
+    housesList.querySelectorAll("li").forEach((li) => li.classList.toggle("is-lit", !!f && litHouse(HOU[+li.dataset.house])));
   }
-  const focusOf = (f) => f && (f.house ? { house: f.house } : f.perfumer ? { perfumer: f.perfumer } : f.note ? { note: f.note } : { accord: f.accord });
+  const focusOf = (f) => f && (f.perfumer ? { perfumer: f.perfumer } : f.perfume ? { perfume: f.perfume } : { house: f.house });
 
-  // ---- THE PANEL: what it is, every name in it a way on to its own -----------
+  // ---- THE PANEL: who, for whom, what — every name in it a way on --------------
   const hist = [];
   let current = null;
   const row = (go, label, n, of, extra) =>
     '<button type="button" class="t2-row" data-go="' + go + '"><span class="t2-row-name">' + label + '</span><span class="t2-row-bar"><i style="width:' + Math.max(2, Math.round((n / (of || 1)) * 100)) + '%"></i></span><span class="t2-row-n">' + n + (extra || "") + "</span></button>";
-  const chip = (nn, n) => '<button type="button" class="t2-chip" data-go="note:' + nn.id + '">' + esc(nn.name) + (n != null ? " <span>" + n + "</span>" : "") + "</button>";
   const stat = (k, v) => "<div><dt>" + k + "</dt><dd>" + v + "</dd></div>";
+  const perfRow = (e, say) => '<li><button type="button" class="t2-link" data-go="perfume:' + e.i + '">' + esc(e.n) + "</button><small>" + esc(say) + "</small></li>";
+  const sources = (s) => '<ol class="t2-bio-src">' + s.map(([c2, u2]) => "<li>" + esc(c2).replace(/\*(.+?)\*/g, "<cite>$1</cite>") + ' <a href="' + esc(u2) + '" target="_blank" rel="noopener">' + esc(u2.replace(/^https?:\/\//, "").replace(/\/$/, "")) + "</a></li>").join("") + "</ol>";
   const RENDER = {
-    house(h) {
-      const named = h.frags.reduce((s, f) => s + f.notes.length, 0);
-      const codes = Object.keys(h.share).sort((a, b) => h.share[b] - h.share[a]);
-      const top = [...h.noteUse].sort((a, b) => b[1] - a[1] || a[0].name.localeCompare(b[0].name)).slice(0, 14);
-      const maxS = codes.length ? h.share[codes[0]] : 1;
-      let s = '<p class="t2-k">' + (h.id === "individual" ? "A group · no house of its own here" : "House") + "</p>";
-      s += '<h2 class="t2-n">' + esc(groupName(h)) + "</h2>";
-      if (h.sub) s += '<p class="t2-s">' + esc(h.sub) + "</p>";
-      const where = [h.from, h.founded && "founded " + h.founded].filter(Boolean).join(" · ");
+    perfumer(p) {
+      const hs = [...p.houses].sort((a, b) => b[1] - a[1] || cmp(a[0].name, b[0].name));
+      const by = [0, 0, 0]; p.list.forEach((e) => by[e.c]++);
+      let s = '<p class="t2-k">Perfumer</p>';
+      s += '<h2 class="t2-n">' + esc(perName(p)) + "</h2>";
+      const where = [p.from, p.born && "born " + p.born].filter(Boolean).join(" · ");
       if (where) s += '<p class="t2-where">' + esc(where) + "</p>";
-      s += '<dl class="t2-stats">' + stat("Fragrances", h.n) + stat("Notes named", named || "—") + stat("Different notes", h.notes || "—") + stat("Most in", h.top ? esc(h.top) : "—") + "</dl>";
-      if (!named) s += '<p class="t2-none">No notes have been found for its fragrances yet.</p>';
-      if (h.pers.length) {
-        s += "<h3>Its perfumers <span>fragrances by each</span></h3><div class=\"t2-rows\">";
-        h.pers.forEach(([p, n]) => { s += row("perfumer:" + p.i, esc(p.name), n, h.n, '<small> of ' + h.n + "</small>"); });
-        s += "</div>";
-      }
-      if (codes.length) {
-        s += "<h3>Its accords <span>notes named in each</span></h3><div class=\"t2-rows\">";
-        codes.forEach((code) => { s += row("accord:" + code, '<b class="t2-code">' + code + "</b>" + esc(ACC[code].name), h.share[code], maxS); });
-        s += "</div>";
-      }
-      if (top.length) {
-        s += "<h3>Its most named notes <span>in how many of its " + h.n + "</span></h3><div class=\"t2-rows\">";
-        top.forEach(([nn, n]) => { s += row("note:" + nn.id, esc(nn.name), n, h.n); });
-        s += "</div>";
-      }
-      s += "<h3>Its fragrances <span>" + h.frags.length + "</span></h3><div class=\"t2-frags\">";
-      h.frags.slice().sort((a, b) => a.name.localeCompare(b.name)).forEach((f) => {
-        const meta = [whoOf(f), f.from && "from " + f.from, f.year || null, f.notes.length ? f.notes.length + " notes" : "no notes found"].filter(Boolean).join(" · ");
-        s += '<details class="t2-frag"><summary><span>' + esc(f.name) + '</span><small>' + esc(meta) + "</small></summary>";
-        s += f.notes.length ? '<div class="t2-chips">' + f.notes.map((nn) => chip(nn)).join("") + "</div>" : '<p class="t2-none">No notes found for it yet.</p>';
-        s += "</details>";
+      s += '<dl class="t2-stats">' + stat("Perfumes", p.list.length) + stat("Houses", hs.length) + stat("Years", yearsOf(p.list)) + stat("Named by a source", by[0] + " of " + p.list.length) + "</dl>";
+      if (p.bio) {
+        s += '<div class="t2-bio">' + p.bio.t.map((t2, i) => (i === 0 ? "<p>" + esc(t2) + "</p>" : "")).join("") + "</div>";
+        if (p.bio.t.length > 1) s += '<details class="t2-bio-more"><summary>More about ' + esc(p.name) + "</summary>" + p.bio.t.slice(1).map((t2) => "<p>" + esc(t2) + "</p>").join("") + "</details>";
+        s += '<h3>Sources <span>for what is said of them</span></h3>' + sources(p.bio.s);
+      } else if (p.none) s += '<p class="t2-s">The perfumes on the site no source credits to anyone, gathered here rather than guessed at.</p>';
+      s += "<h3>Their houses <span>perfumes made for each</span></h3><div class=\"t2-rows\">";
+      hs.forEach(([h, n]) => { s += row("house:" + h.i, esc(h.name), n, Math.max(...hs.map((x) => x[1])), "<small> of " + h.list.length + "</small>"); });
+      s += "</div>";
+      hs.forEach(([h]) => {
+        const mine = p.list.filter((e) => e.h === h).sort(byYear);
+        s += "<h3>For " + esc(h.name) + " <span>" + mine.length + "</span></h3><ul class=\"t2-list\">" + mine.map((e) => perfRow(e, [e.y || "year not found", CREDIT[e.c]].join(" · "))).join("") + "</ul>";
       });
-      return s + "</div>";
-    },
-    accord(ai) {
-      const a = DATA.accords[ai];
-      const hs = houses.filter((h) => h.share[a.code]).sort((p, q) => q.share[a.code] - p.share[a.code]);
-      const notes = a.refs.slice().sort((p, q) => q.uses - p.uses || p.name.localeCompare(q.name));
-      let s = '<p class="t2-k">Accord · ' + a.code + "</p>";
-      s += '<h2 class="t2-n">' + esc(a.name) + "</h2>";
-      s += '<p class="t2-s">' + esc(a.say) + "</p>";
-      s += '<dl class="t2-stats">' + stat("Notes", a.notes.length) + stat("Times named", a.mentions) + stat("Houses", hs.length) + stat("Most named", esc(notes[0].name)) + "</dl>";
-      s += "<h3>In the houses <span>notes named from it</span></h3><div class=\"t2-rows\">";
-      hs.forEach((h) => { s += row("house:" + h.i, esc(groupName(h)), h.share[a.code], hs[0].share[a.code]); });
-      s += "</div><h3>Its notes <span>fragrances naming each</span></h3><div class=\"t2-rows\">";
-      notes.forEach((nn) => { s += row("note:" + nn.id, esc(nn.name), nn.uses, notes[0].uses); });
-      return s + "</div>";
-    },
-    note(nn) {
-      const a = DATA.accords[nn.ai];
-      const hs = housesOf(nn), w = withOf(nn).slice(0, 12);
-      const rank = a.refs.slice().sort((p, q) => q.uses - p.uses).indexOf(nn) + 1;
-      let s = '<p class="t2-k">Note · <button type="button" class="t2-link" data-go="accord:' + a.code + '">' + esc(a.name) + "</button></p>";
-      s += '<h2 class="t2-n">' + esc(nn.name) + "</h2>";
-      s += '<p class="t2-s">Named by ' + nn.uses + " of the " + FRAGS.length + " fragrances on the site.</p>";
-      s += '<dl class="t2-stats">' + stat("Fragrances", nn.uses) + stat("Houses", hs.length) + stat("In its accord", "#" + rank + " of " + a.notes.length) + stat("Of all notes", "#" + (NOTES.slice().sort((p, q) => q.uses - p.uses).indexOf(nn) + 1) + " of " + NOTES.length) + "</dl>";
-      s += "<h3>In the houses <span>fragrances naming it</span></h3><div class=\"t2-rows\">";
-      hs.forEach(([h, n]) => { s += row("house:" + h.i, esc(groupName(h)), n, h.n, '<small> of ' + h.n + "</small>"); });
-      s += "</div><h3>The fragrances <span>" + nn.frags.length + "</span></h3><ul class=\"t2-list\">";
-      nn.frags.slice().sort((p, q) => p.name.localeCompare(q.name)).forEach((f) => {
-        s += '<li><button type="button" class="t2-link" data-go="house:' + f.house.i + '">' + esc(f.name) + "</button><small>" + esc([f.house.id === "individual" ? "from " + f.from : f.house.name, whoOf(f), f.year || null].filter(Boolean).join(" · ")) + "</small></li>";
-      });
-      s += "</ul>";
-      if (w.length) s += '<h3>Most often with <span>in the same fragrance</span></h3><div class="t2-chips">' + w.map(([o, n]) => chip(o, n)).join("") + "</div>";
       return s;
     },
-  };
-  // a perfumer: where they are from, their houses on the poster, the accords
-  // and notes their fragrances name, and the fragrances themselves
-  RENDER.perfumer = (p) => {
-    const named = p.frags.reduce((s2, f) => s2 + f.notes.length, 0);
-    const codes = Object.keys(p.share).sort((a, b) => p.share[b] - p.share[a]);
-    const top = [...p.noteUse].sort((a, b) => b[1] - a[1] || a[0].name.localeCompare(b[0].name)).slice(0, 14);
-    const hs = [...p.houses].sort((a, b) => b[1] - a[1] || a[0].i - b[0].i);
-    const by = [0, 0, 0]; p.frags.forEach((f) => by[f.credit]++);
-    let s = '<p class="t2-k">Perfumer</p>';
-    s += '<h2 class="t2-n">' + esc(p.name) + "</h2>";
-    const where = [p.from, p.born && "born " + p.born].filter(Boolean).join(" · ");
-    if (where) s += '<p class="t2-where">' + esc(where) + "</p>";
-    if (p.about) s += '<p class="t2-s">' + esc(p.about) + "</p>";
-    s += '<dl class="t2-stats">' + stat("Fragrances", p.frags.length) + stat("Houses", hs.length) + stat("Notes named", named || "—") + stat("Most in", p.top ? esc(p.top) : "—") + "</dl>";
-    s += '<p class="t2-where">' + CREDIT.map((c, k) => by[k] ? by[k] + " " + c : "").filter(Boolean).join(" · ") + "</p>";
-    s += "<h3>Its houses <span>fragrances made for each</span></h3><div class=\"t2-rows\">";
-    hs.forEach(([h, n]) => { s += row("house:" + h.i, esc(groupName(h)), n, h.n, '<small> of ' + h.n + "</small>"); });
-    s += "</div>";
-    if (codes.length) {
-      const maxS = p.share[codes[0]];
-      s += "<h3>The accords of their fragrances <span>notes named in each</span></h3><div class=\"t2-rows\">";
-      codes.forEach((code) => { s += row("accord:" + code, '<b class="t2-code">' + code + "</b>" + esc(ACC[code].name), p.share[code], maxS); });
+    house(h) {
+      const ps = [...h.pers].sort((a, b) => b[1] - a[1] || cmp(a[0].sort, b[0].sort));
+      let s = '<p class="t2-k">House</p>';
+      s += '<h2 class="t2-n">' + esc(h.name) + "</h2>";
+      const where = [h.from, h.founded && "founded " + h.founded].filter(Boolean).join(" · ");
+      if (where) s += '<p class="t2-where">' + esc(where) + "</p>";
+      if (h.about) s += '<p class="t2-s">' + esc(h.about) + "</p>";
+      s += '<dl class="t2-stats">' + stat("Perfumes", h.list.length) + stat("Perfumers", ps.filter(([p]) => !p.none).length) + stat("Years", yearsOf(h.list)) + stat("On the site", h.site ? "yes" : "no") + "</dl>";
+      s += "<h3>Its perfumers <span>perfumes by each</span></h3><div class=\"t2-rows\">";
+      ps.forEach(([p, n]) => { s += row("perfumer:" + p.i, esc(perName(p)), n, h.list.length, "<small> of " + h.list.length + "</small>"); });
+      s += "</div><h3>Its perfumes <span>by year · " + h.list.length + "</span></h3><ul class=\"t2-list\">";
+      h.list.forEach((e) => { s += perfRow(e, [e.y || "year not found", whoOf(e)].join(" · ")); });
+      return s + "</ul>";
+    },
+    perfume(e) {
+      let s = '<p class="t2-k">Perfume · <button type="button" class="t2-link" data-go="house:' + e.h.i + '">' + esc(e.h.name) + "</button></p>";
+      s += '<h2 class="t2-n">' + esc(e.n) + "</h2>";
+      s += '<p class="t2-where">' + esc(KIND[e.k]) + "</p>";
+      s += '<dl class="t2-stats">' + stat("Year", e.y || "not found") + stat("Credit", CREDIT[e.c]) + stat("Perfumers", e.who.length) + stat("Notes", e.notes.length || "—") + "</dl>";
+      s += "<h3>Made by <span>as the sources say</span></h3><div class=\"t2-rows\">";
+      e.who.forEach((p) => { s += row("perfumer:" + p.i, esc(perName(p)), p.list.length, maxN, " <small>perfumes</small>"); });
       s += "</div>";
-    }
-    if (top.length) {
-      s += "<h3>The notes they name most <span>in how many of their " + p.frags.length + "</span></h3><div class=\"t2-rows\">";
-      top.forEach(([nn, n]) => { s += row("note:" + nn.id, esc(nn.name), n, p.frags.length); });
-      s += "</div>";
-    }
-    s += "<h3>Their fragrances <span>" + p.frags.length + "</span></h3><div class=\"t2-frags\">";
-    p.frags.slice().sort((a, b) => a.name.localeCompare(b.name)).forEach((f) => {
-      const meta = [groupName(f.house), f.from && "from " + f.from, f.year || null, CREDIT[f.credit]].filter(Boolean).join(" · ");
-      s += '<details class="t2-frag"><summary><span>' + esc(f.name) + '</span><small>' + esc(meta) + "</small></summary>";
-      s += f.notes.length ? '<div class="t2-chips">' + f.notes.map((nn) => chip(nn)).join("") + "</div>" : '<p class="t2-none">No notes found for it yet.</p>';
-      s += "</details>";
-    });
-    return s + "</div>";
+      if (e.notes.length) {
+        s += '<h3>Its notes <span>as the Note Library files them</span></h3><div class="t2-chips">' + e.notes.map((nn) => '<span class="t2-chip"><b class="t2-code">' + NOTES.accords[nn.acc][0] + "</b>" + esc(nn.name) + "</span>").join("") + "</div>";
+      } else if (e.k !== 2) s += '<p class="t2-none">No notes have been found for it yet.</p>';
+      const sib = e.h.list.filter((x) => x !== e && x.who.some((p) => e.who.includes(p)));
+      if (sib.length) s += "<h3>By the same hand, for " + esc(e.h.name) + " <span>" + sib.length + "</span></h3><ul class=\"t2-list\">" + sib.map((x) => perfRow(x, String(x.y || "year not found"))).join("") + "</ul>";
+      if (e.s.length) s += '<h3>Sources</h3><p class="t2-where">' + [...new Set(e.s.map((i) => DATA.sources[i]))].map(esc).join(" · ") + "</p>";
+      return s;
+    },
   };
   function openInfo(kind, obj, push = true) {
     if (push && current && !(current.kind === kind && current.obj === obj)) hist.push(current);
@@ -767,7 +625,7 @@
     info.dataset.kind = kind;
     infoBody.scrollTop = 0; info.scrollTop = 0;
     infoBack.hidden = !hist.length;
-    pinned = kind === "house" ? { house: obj } : kind === "perfumer" ? { perfumer: obj } : kind === "note" ? { note: obj } : { accord: obj };
+    pinned = kind === "house" ? { house: obj } : kind === "perfumer" ? { perfumer: obj } : { perfume: obj };
     setFocus(pinned);
     tip.hidden = true;
   }
@@ -777,33 +635,26 @@
   }
   function goTo(spec) {
     const [kind, id] = spec.split(":");
-    if (kind === "house") openInfo("house", houses[+id]);
-    else if (kind === "perfumer") openInfo("perfumer", PERS[+id]);
-    else if (kind === "accord") openInfo("accord", ACC[id].i);
-    else if (kind === "note") openInfo("note", NOTES[+id]);
+    if (kind === "house") openInfo("house", HOU[+id]);
+    else if (kind === "perfumer") openInfo("perfumer", PER[+id]);
+    else if (kind === "perfume") openInfo("perfume", PERF[+id]);
   }
-  // where a thing stands on the poster: a box round it in the poster's own
-  // units, framed in what the panel leaves of the window (beside it on a wide
-  // one, above it on a phone), no closer than it is worth
+  // where a thing stands on the poster, framed in what the panel leaves
   function boxOf(kind, obj) {
     const pts = [];
+    const domeBox = (p) => { const [x, y] = at(G.rd, angleOfPer(p)); pts.push([x - G.dome * 1.5 - 170, y - 30], [x + G.dome * 2.5, y + 30]); };
     if (kind === "perfumer") {
-      // round all its houses' domes
-      obj.houses.forEach((n, h) => { const [x, y] = at(G.rd, angleOfHouse(h.i)); pts.push([x - G.dome * 1.4 - 160, y - 50], [x + G.dome * 2.5, y + 50]); });
+      domeBox(obj);
+      obj.houses.forEach((n, h) => { pts.push(at(G.rt - 46, houseMid(h)), at(G.ra + 60, houseMid(h))); });
       return { pts, most: 3 };
     }
     if (kind === "house") {
-      const [x, y] = at(G.rd, angleOfHouse(obj.i));
-      pts.push([x - G.dome * 1.4 - 160, y - 50], [x + G.dome * 2.5, y + 50]);
-      return { pts, most: 3 };
-    }
-    if (kind === "accord") {
-      const a0 = noteAngle(obj, 0), a1 = noteAngle(obj, DATA.accords[obj].notes.length - 1);
+      const a0 = houseFrom(obj), a1 = houseTo(obj);
       for (let k = 0; k <= 6; k++) { const ang = a0 + ((a1 - a0) * k) / 6; pts.push(at(G.rt - 46, ang), at(G.ra + 90, ang)); }
       return { pts, most: 6 };
     }
-    const ang = noteAngle(obj.ai, obj.ni);
-    pts.push(at(G.rt - tickLen(obj) - 8, ang - 0.004), at(G.rt + 90, ang + 0.004));
+    const ang = perfAngle(obj);
+    pts.push(at(G.rt - tickLen(obj) - 8, ang - 0.004), at(G.rt + 110, ang + 0.004));
     return { pts, most: 5 };
   }
   function showOn(kind, obj) {
@@ -826,20 +677,20 @@
   infoClose.addEventListener("click", closeInfo);
   infoShow.addEventListener("click", () => { if (current) showOn(current.kind, current.obj); });
 
-  // ---- THE SEARCH ------------------------------------------------------------
+  // ---- THE SEARCH: a perfumer, a house or a perfume -----------------------------
   const plain = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   const ITEMS = [
-    ...houses.map((h) => ({ kind: "house", obj: h, name: groupName(h), say: h.id === "individual" ? "Group · " + h.n + " fragrances" : "House · " + h.n + " fragrances" })),
-    ...PERS.map((p) => ({ kind: "perfumer", obj: p, name: p.name, say: "Perfumer · " + p.frags.length + (p.frags.length === 1 ? " fragrance · " : " fragrances · ") + [...p.houses.keys()].map(groupName).join(", ") })),
-    ...DATA.accords.map((a) => ({ kind: "accord", obj: a.i, name: a.name, say: "Accord · " + a.code + " · " + a.notes.length + " notes" })),
-    ...NOTES.map((nn) => ({ kind: "note", obj: nn, name: nn.name, say: "Note · " + DATA.accords[nn.ai].name + " · in " + nn.uses })),
+    ...ORDER.map((p) => ({ kind: "perfumer", obj: p, name: perName(p), say: "Perfumer · " + p.list.length + (p.list.length === 1 ? " perfume · " : " perfumes · ") + [...p.houses.keys()].map((h) => h.name).join(", ") })),
+    ...HORDER.map((h) => ({ kind: "house", obj: h, name: h.name, say: "House · " + h.list.length + " perfumes" + (h.from ? " · " + h.from : "") })),
+    ...PERF.map((e) => ({ kind: "perfume", obj: e, name: e.n, say: "Perfume · " + e.h.name + " · " + whoOf(e) + (e.y ? " · " + e.y : "") })),
   ].map((it) => Object.assign(it, { key: plain(it.name) }));
+  const KORDER = ["perfumer", "house", "perfume"];
   let results = [];
   function search() {
     const q = plain(findIn.value.trim());
     if (!q) { found.hidden = true; results = []; return; }
-    results = ITEMS.filter((it) => it.key.includes(q) || (it.kind === "accord" && plain(DATA.accords[it.obj].code) === q))
-      .sort((p, q2) => (q2.key.startsWith(q) ? 1 : 0) - (p.key.startsWith(q) ? 1 : 0) || ["house", "perfumer", "accord", "note"].indexOf(p.kind) - ["house", "perfumer", "accord", "note"].indexOf(q2.kind) || (q2.obj.uses || 0) - (p.obj.uses || 0))
+    results = ITEMS.filter((it) => it.key.includes(q))
+      .sort((p, q2) => (q2.key.startsWith(q) ? 1 : 0) - (p.key.startsWith(q) ? 1 : 0) || KORDER.indexOf(p.kind) - KORDER.indexOf(q2.kind) || cmp(p.name, q2.name))
       .slice(0, 8);
     found.innerHTML = results.length
       ? results.map((it, i) => '<li><button type="button" data-r="' + i + '"><span>' + esc(it.name) + "</span><small>" + esc(it.say) + "</small></button></li>").join("")
@@ -871,16 +722,15 @@
     canvas.style.cursor = f ? "pointer" : goal.z > 1.01 ? "grab" : "default";
     if (!f || e.pointerType === "touch") { tip.hidden = true; return; }
     let html;
-    if (f.house) {
-      const h = f.house;
-      html = "<b>" + esc(groupName(h)) + "</b>" + (h.sub ? esc(h.sub) + "<br>" : "") + h.n + " fragrances · " + (h.notes ? h.notes + " notes" : "no notes found yet") + (h.top ? "<br>most in " + esc(h.top) : "");
-    } else if (f.note) {
-      const nn = f.note;
-      html = "<b>" + esc(nn.name) + "</b>" + esc(DATA.accords[nn.ai].name) + " · named by " + nn.uses + "<br>in " + housesOf(nn).length + " houses";
+    if (f.perfumer) {
+      const p = f.perfumer;
+      html = "<b>" + esc(perName(p)) + "</b>" + esc([p.from, p.born && "born " + p.born].filter(Boolean).join(" · ")) + (p.from || p.born ? "<br>" : "") + p.list.length + (p.list.length === 1 ? " perfume" : " perfumes") + " · " + p.houses.size + (p.houses.size === 1 ? " house" : " houses");
+    } else if (f.perfume) {
+      const x = f.perfume;
+      html = "<b>" + esc(x.n) + "</b>" + esc(x.h.name) + " · " + (x.y || "year not found") + "<br>" + esc(whoOf(x)) + " — " + CREDIT[x.c];
     } else {
-      const a = DATA.accords[f.accord];
-      const users = houses.filter((h) => h.share[a.code]).length;
-      html = "<b>" + esc(a.name) + "</b>" + esc(a.say) + "<br>" + a.notes.length + " notes · in " + users + " houses" + (f.near ? "<br>" + esc(f.near.name) + " · named by " + f.near.uses : "") + (f.near ? "<br><i>closer in, each note can be pressed</i>" : "");
+      const h = f.house;
+      html = "<b>" + esc(h.name) + "</b>" + esc([h.from, h.founded && "founded " + h.founded].filter(Boolean).join(" · ")) + "<br>" + h.list.length + " perfumes · " + [...h.pers.keys()].map(perName).join(", ") + (f.near ? "<br>" + esc(f.near.n) + " · " + (f.near.y || "year not found") + "<br><i>closer in, each perfume can be pressed</i>" : "");
     }
     tip.innerHTML = html + "<em>Press for more</em>";
     tip.hidden = false;
@@ -932,16 +782,15 @@
     const f = pick(sx, sy);
     if (!f) { closeInfo(); return; }
     hist.length = 0; current = null;
-    if (f.house) openInfo("house", f.house);
-    else if (f.note) openInfo("note", f.note);
-    else openInfo("accord", f.accord);
+    if (f.perfumer) openInfo("perfumer", f.perfumer);
+    else if (f.perfume) openInfo("perfume", f.perfume);
+    else openInfo("house", f.house);
   }
   canvas.addEventListener("pointerup", lift);
   canvas.addEventListener("pointercancel", lift);
   canvas.addEventListener("pointerleave", (e) => { if (e.pointerType !== "touch") { if (!pinned) setFocus(null); tip.hidden = true; } });
   canvas.addEventListener("dblclick", (e) => { const [sx, sy] = local(e); zoomAt(sx, sy, 2.4); });
   canvas.addEventListener("wheel", (e) => {
-    // on a narrow window the page scrolls under a plain wheel until the poster is closer in
     if (narrow && !e.ctrlKey && goal.z <= 1.01) return;
     e.preventDefault();
     const [sx, sy] = local(e);
@@ -966,34 +815,23 @@
       e.preventDefault();
     }
   });
-  gloss.addEventListener("pointerover", (e) => {
-    const li = e.target.closest("li"); if (!li || pinned) return;
-    setFocus({ accord: ACC[li.dataset.code].i });
-  });
-  gloss.addEventListener("pointerleave", () => { if (!pinned) setFocus(null); });
-  gloss.addEventListener("click", (e) => {
-    const li = e.target.closest("li"); if (!li) return;
-    hist.length = 0; current = null;
-    const ai = ACC[li.dataset.code].i;
-    openInfo("accord", ai);
-    showOn("accord", ai);
-  });
-  gloss.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.closest("li")) { e.preventDefault(); e.target.click(); } });
-  if (persList) {
-    persList.addEventListener("pointerover", (e) => {
+  // the two lists down the left
+  [[persList, (li) => ["perfumer", PER[+li.dataset.per]]], [housesList, (li) => ["house", HOU[+li.dataset.house]]]].forEach(([list, of]) => {
+    list.addEventListener("pointerover", (e) => {
       const li = e.target.closest("li"); if (!li || pinned) return;
-      setFocus({ perfumer: PERS[+li.dataset.per] });
+      const [kind, obj] = of(li);
+      setFocus(kind === "perfumer" ? { perfumer: obj } : { house: obj });
     });
-    persList.addEventListener("pointerleave", () => { if (!pinned) setFocus(null); });
-    persList.addEventListener("click", (e) => {
+    list.addEventListener("pointerleave", () => { if (!pinned) setFocus(null); });
+    list.addEventListener("click", (e) => {
       const li = e.target.closest("li"); if (!li) return;
       hist.length = 0; current = null;
-      const p = PERS[+li.dataset.per];
-      openInfo("perfumer", p);
-      showOn("perfumer", p);
+      const [kind, obj] = of(li);
+      openInfo(kind, obj);
+      showOn(kind, obj);
     });
-    persList.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.closest("li")) { e.preventDefault(); e.target.click(); } });
-  }
+    list.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.closest("li")) { e.preventDefault(); e.target.click(); } });
+  });
 
   addEventListener("resize", () => { layout(); kick(); });
   document.addEventListener("visibilitychange", kick);
@@ -1003,18 +841,16 @@
 
   // for the tests: where a thing stands on the screen, and what is shown
   window.TestPage2 = {
-    focus: () => focus && (focus.house ? focus.house.id : focus.note ? "note:" + focus.note.name : DATA.accords[focus.accord].code),
-    houses: houses.length, accords: DATA.accords.length, notes: NOTES.length, fragrances: FRAGS.length,
+    focus: () => focus && (focus.perfumer ? "perfumer:" + focus.perfumer.id : focus.house ? "house:" + focus.house.id : "perfume:" + focus.perfume.n),
+    perfumers: NP, houses: NH, perfumes: PERF.length,
     zoom: () => cam.z, goal: () => goal.z, moving: () => moving,
-    perfumers: PERS.length,
-    focusPerfumer: () => (focus && focus.perfumer ? focus.perfumer.id : null),
-    info: () => (current ? { kind: current.kind, name: current.kind === "accord" ? DATA.accords[current.obj].name : current.kind === "house" ? groupName(current.obj) : current.obj.name } : null),
+    info: () => (current ? { kind: current.kind, name: current.kind === "perfumer" ? perName(current.obj) : current.kind === "house" ? current.obj.name : current.obj.n } : null),
     at(kind, name) {
       const b = canvas.getBoundingClientRect();
       let w;
-      if (kind === "house") { const h = houses.find((x) => groupName(x) === name || x.name === name); w = at(G.rd, angleOfHouse(h.i)); }
-      else if (kind === "note") { const nn = NOTES.find((x) => x.name === name); w = at(G.rt - 3, noteAngle(nn.ai, nn.ni)); }
-      else { const a = DATA.accords.find((x) => x.name === name); w = at(G.ra + fs(14, 0.35), placeNames()[a.i]); }
+      if (kind === "perfumer") { const p = PER.find((x) => perName(x) === name || x.id === name); w = at(G.rd, angleOfPer(p)); }
+      else if (kind === "perfume") { const e = PERF.find((x) => x.n === name); w = at(G.rt - 3, perfAngle(e)); }
+      else { const h = HOU.find((x) => x.name === name || x.id === name); w = at(G.ra + fs(14, 0.35), placeNames()[h.k]); }
       const [sx, sy] = toScreen(w[0], w[1]);
       return [b.left + sx, b.top + sy];
     },

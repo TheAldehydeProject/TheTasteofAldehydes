@@ -10,6 +10,11 @@ architect draws it, with three rings in series round it — perfumer, house, per
 and the wheel going through the perfumes of what is chosen:** [its section](#2026-11-06--the-earth-three-rings-in-series-a-fixed-zoom-and-the-wheel-through-the-perfumes),
 at the foot; the globe of specks, its gold haze and the spokes' dashes described below are gone.)
 
+(**2026-11-07**: the stage taller than the window so the circle is whole, the Earth's cross gone, the
+list folding with its search, the intro, legend, terms and disclaimer under the chart, 26 perfumes'
+perfumers found, a biography for every perfumer, and the page measured and made quicker —
+[its section](#2026-11-07--taller-no-cross-the-list-folding-the-notes-under-it-perfumers-found-and-quicker).)
+
 ## What changed
 
 A new page, **Perfumers**, at `/perfumers/`, in Photography's place in the Menu. The owner: "add
@@ -437,3 +442,123 @@ Lomros, scroll through all 139, drag the scrubber; choose Aichi Liu and see the 
   `from` to their blocks in the ledger draws them.
 - The Earth's coast is Natural Earth's coarsest; small islands under about a square degree are left
   out.
+
+## 2026-11-07 — taller, no cross, the list folding, the notes under it, perfumers found, and quicker
+
+The owner: "please make sure that it extends a little more down ... remove the crosshairs in the
+cardinal directions, and the cross going through the center of the world. make the table on the right
+collapsible, and make the introduction below the sphere. I want it to be such that below the main
+perfumers thing (the planet), i want you to put: Intro, legend, terms and disclaimer, below that the
+index and below that the credits. I also want you to look at the perfumes that do not have a
+perfumer ... FINALLY; AND MAYBE MOST IMPORTANTLY, I WANT YOU TO OPTIMIZE THIS PAGE AS MUCH AS YOU
+CAN!" — and the search and the table on the right fold together (the owner's answer to the question
+put to them).
+
+**What changed**
+
+- **The stage a little taller than the window** on a wide one (`measure()`, `R.out`, `VH`): the chart
+  is sized by the window, as it was, and the stage is made as tall as its farthest faint lines need
+  (`R.out`, 990 world units), the chart centred in it — so the circle is whole, where its foot was cut
+  at the window's edge. Everything that stands over the chart is placed by the window rather than the
+  stage (`--pf-vh` on the stage): the list, the scrubber, *The whole chart*, the hint. A close look is
+  framed in the window too (`L.zy`, `L.zoomH`). On a phone the stage is the window, as it was.
+- **No cross through the Earth and no cross-hairs** at its four ends: `drawCross` is out of the code,
+  and a test reads the file for it.
+- **The list folds away**, its search with it (`.pf-nav-fold`, `setFold`, `is-folded`): the list's name
+  and count and the fold left standing, the chart moving over into the room on the camera's springs;
+  remembered for the next visit (`localStorage` `pf-nav-folded`). Not on a phone, where the list is the
+  drawer it was.
+- **Under the chart, in the owner's order**: the intro, and beside it the legend, the terms and the
+  disclaimer (`.pf-notes`, a grid, one column under 900px); then the index; then the sources. The intro
+  stood over the stage's lower left beside the circle until then, and the three dropdowns in the foot.
+- **The counts the page says before its script runs** are written by `build.py` (the index's, the
+  legend's, the sources'): they had stood at 23 perfumers and 83 sources since the page was made.
+- **Perfumers found** for 26 perfumes that had none named (see *the ledger* below), and a **biography**
+  for every perfumer, `tools/perfumers/BIOS.md` — each from the three sources, of up to six read, that
+  describe them most fully. The test pages show them (Learn more, Information, the panel); this page's
+  windows keep their `about` lines.
+
+**Optimised, and measured** (the owner: "run several different tests to see what is slowing it down ...
+After you reduce it the first time, rerun tests, and then optimize again"). Measured with a CPU profile,
+a trace of every thread and the frame times through a flight, against the commit before:
+
+1. *What it was*: at rest the script was only 40 ms a second; the rest was the browser copying the
+   live layer — the whole window, at the screen's full sharpness — into the page **every frame**, and
+   compositing it; close in, the swayed chart and its out-of-focus copy. A flight drew the whole chart
+   every frame at full size on a plain screen.
+2. **The names on the rings at rest are the rotor's own picture** (`.pf-turn-names`, `namesRotor`,
+   `flipRot`): drawn into a canvas in the rotor a few times a second (whenever the chart has turned
+   0.003 of a radian, or what is lit changes) and turned with the chart by the browser in between. They
+   were drawn into the live layer every frame, which is what made it heavy.
+3. **About thirty frames a second at rest** (`CALM_FPS`, `CALM_AFTER`, `calm`): while nothing moves but
+   the slow things — the turn, the dust, the lights, the sway — and the hand has been still 0.6 s, every
+   other frame is let go; anything the hand does and every flight has every frame. The turn moves a
+   sixth of a pixel a frame at sixty, so nothing is seen of it. Sharpness still counts every frame.
+4. **A flight at three quarters of a plain screen's pixels** (`FLY_K`): it was at the whole of them below
+   a sharpness of 1.25 (at 0.6 above, as before).
+5. **The chart in perspective drawn only as tall as the window**, not the taller stage: anything chosen
+   holds the page at its top.
+6. **The live layer at a plain screen's pixel at rest** (`liveRes`, `LIVE_HI_MS`): at rest it holds only
+   the dust, the far field, the lights and the Earth's lines, which read the same at one pixel a point —
+   a quarter of the work on a Retina screen — and it is drawn sharp again the moment the hand is on
+   something, something is chosen or anything moves, staying sharp 1.5 s after.
+7. **Not drawn while all but a sliver of it is scrolled away** (the observer's threshold, 6%).
+
+Results, headless at 1440×900: the main thread at rest **309 → 200 ms a second** at one pixel a point and
+**617 → 423** at two; flights with **18 frames over 25 ms instead of 30** (Prin Lomros) and **11 instead
+of 23** (Nicholas Nilsson); arranging by year 1 instead of 8. Close in, the headless browser's software
+compositor is the limit either way (it composites the swayed layers at about thirty frames a second
+before and after); on a machine with a graphics card that compositing is nearly free, so the page was
+left there rather than taking the sway or the out-of-focus copy away, which would have been a
+compromise. What is left is the browser's own copying of the canvases that do change.
+
+**How to test it**: `tests/perfumers.spec.js` — the stage taller than the window with the circle in it
+(and the window on a phone); no `drawCross`; the list and its search folding, the chart taking the room,
+remembered; the legend, terms and disclaimer under the chart (`.pf-notes`), the index under them and the
+sources under it; at rest the names drawn a few times a second and the live layer about thirty.
+
+**Known issues / TODO**: on an iPad held upright the chart is small beside the list (the list's room);
+folding the list gives it the width. Twenty-two perfumes still have no perfumer a source names — see
+the ledger's report below.
+
+### The ledger: perfumers found for perfumes that had none (2026-11-07)
+
+"look at the perfumes that do not have a perfumer. you can use other sources, and you can use
+fragrantica too. just credit them ... check at least 5 sources for each perfume until you confirm the
+perfumer for each of those perfumes. In case you absolutely cannot, come to me and ill do it manually"
+— and, asked, both groups: the perfumes with no perfumer and those credited to the house's.
+
+Fragrantica, Parfumo, Basenotes and Scent Verdict refuse a program that reads them, so the houses' own
+pages (their shops' product data), the shops that carry them (Sainte Cellier, Scentissime, Profumix,
+Scent Split) and search results were read instead, a perfume at a time, five sources or more where
+there were five. **26 perfumes are credited now**, every one with its source in the ledger (S84–S107):
+
+- **ADAR**, from the house's own pages, which name the nose: Amber Zero, Root Code and Lignum Dei to
+  **Dan Adar**; Aetherialism, Incantu, ADHD and Tyrian to **Roxana Adar** (Rox Adar); Alpha 11 and Alta
+  Luna to **Miguel Matos**. Against All Odds and Lithos Diaphanes stay the house's pair (their pages
+  name no nose).
+- **Ataraxia**, from its own pages: My Doll's Makeup and Spinal Fluid to **Sy Truong**.
+- **Tombstone**, from its own pages and Scentissime: 3 Feet 5 and Sweet Coffin to **Lan Xiao**, No Need
+  to Come By to **Tan Shuai**, Sing at My Funeral to **Yenchi Lin**. Evergrow names none (a remaking of
+  His Lordship's Backyard Roses).
+- **Tale Parfum**, from Sainte Cellier: Fleurt to **Chad Hodge** (2024), Rouse to **Diandra Barsalou**.
+- **Om Parfums**: Lust, Burnana, Dark Night of the Soul, When the Linden Blooms and This Too Shall Pass
+  to **Aichi Liu** (Parfumo, The Scent Base).
+- **Casa Goa**: Velvet Fog to **Vera Nicchia** (Profumix).
+
+Eight perfumers are new to the ledger (Dan Adar, Roxana Adar, Miguel Matos, Lan Xiao, Tan Shuai, Yenchi
+Lin, Diandra Barsalou, Vera Nicchia): **31 perfumers** now, and of the 280 perfumes 244 named, 14 the
+house's and 22 none.
+
+**Still not found — for the owner to fill in** (no source read names a nose): Grande Parfums' fifteen
+(5 Years Anniversary, Ambresso, Ancient Oud, Choco Powder, Cookie something (?), Cuore, Dreaming
+Maldives, Giardino di Sorrento, Hot Stuff, Intimate Spell, Karak & Shisha, Mystical Incense, Vanilla
+Ash, Vintage Memoir, White Label — Grande Perfumes S.R.L. of Bucharest names no perfumer anywhere);
+Qimu & Musicians' Guitarist, Vocal and Bassist; Tombstone's Evergrow; Apoteker Tepe's Kogen; Lussur's
+CV99; and Matca's House of Ellixirz. Still the house's: Lost Tribe's five (to Mathew Schmuelian), Om's
+four and Outsider's three (to Aichi Liu), and ADAR's two.
+
+**The biographies**, `tools/perfumers/BIOS.md`: one block for each perfumer — paragraphs (`text:`) and
+up to three sources in MLA 8 (`source:`), every sentence from its own sources, and where they say
+little the block says so. The test pages carry a copy of it; this page does not show it yet.
+
