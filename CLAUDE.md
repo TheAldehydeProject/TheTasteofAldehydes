@@ -76,7 +76,11 @@ HTML, one shared
 stylesheet, plain browser JS. No build step, no package manager, no local dependencies:
 Three.js r128 comes from a CDN in `index.html` and the Note Library alone, fonts from Google Fonts. Deployed
 via GitHub Pages from the repo root, so the default branch is the live site — at the site's own
-domain, **thetasteofaldehydes.com** (`CNAME`, since 2026-09-26). The repository is
+domain, **thetasteofaldehydes.com** (`CNAME`, since 2026-09-26). **A push to `main` is published by
+GitHub's own "pages build and deployment" run** (in the repository's Actions); if its deploy step
+fails on GitHub's side (a server error, 500) and a re-run sticks in the queue — GitHub then hides
+the Re-run button and refuses another ("already running") — the next push to `main` publishes
+afresh (2026-11-06). The repository is
 **TheAldehydeProject/TheTasteofAldehydes**; it was `danielyeet/whatdoesatreesmelllike`, which GitHub
 still forwards. Every link inside the site is relative, so the address matters only to what is
 written for search engines (see [the report](docs/features/2026-09-26-search-engines-and-the-address.md)).
