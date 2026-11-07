@@ -125,7 +125,7 @@
   .t1-list-rows { margin: 0; padding: 0 4px 0 0; list-style: none; overflow-y: auto; flex: 0 1 auto; min-height: 0; scrollbar-width: thin; scrollbar-color: rgba(28, 29, 34, 0.25) transparent;
     mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent); -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent); padding-bottom: 20px; }
   .t1-list-rows button { position: relative; width: 100%; display: grid; grid-template-columns: 2.6em 1fr auto; align-items: baseline; gap: 0 8px; padding: 7px 4px 8px 2px; background: none; border: 0; border-bottom: 1px solid rgba(28, 29, 34, 0.12); text-align: left; cursor: pointer; color: var(--ink); font: 400 13px/1.25 var(--sans); }
-  .t1-list-rows button:hover, .t1-list-rows button:focus-visible, .t1-list-rows button.is-pinned { background: rgba(255, 255, 255, 0.45); }
+  .t1-list-rows button:hover, .t1-list-rows button:focus-visible, .t1-list-rows button.is-pinned, .t1-list-rows button.is-lit { background: rgba(255, 255, 255, 0.45); }
   .t1-list-rows button:focus-visible { outline: 1px solid var(--ink); outline-offset: -1px; }
   .t1-li-no { font: 500 10px var(--mono); color: var(--muted); letter-spacing: 0.06em; }
   .t1-li-name { min-width: 0; overflow-wrap: anywhere; }
@@ -293,6 +293,8 @@
     /* the readings and the list stand up out of the search's way */
     .t1-hud { bottom: 116px; }
     .t1-list { bottom: 268px; }
+    /* the houses named under their count: the list just above names them */
+    .t1-hud [data-v=houses-sub] { display: none; }
     body.is-world .t1-find { top: auto; bottom: 64px; }
     .t1-find input { font-size: 16px; padding-left: 24px; background: rgba(10, 10, 12, 0.7); }
     body.is-world .t1-find input { background: rgba(250, 251, 250, 0.85); }
@@ -325,7 +327,7 @@
 
   <div class="t1-world-ui">
     <header class="t1-head">
-      <h2>Perfumer Worlds <span>· <span class="t1-head-name"></span> and their houses</span></h2>
+      <h2>Perfumer Worlds <span>· <span class="t1-head-name"></span></span></h2>
       <span class="t1-date">2026 11 07</span>
     </header>
     <p class="t1-hint">A house pressed, or its row: what was made for it</p>
@@ -384,6 +386,6 @@
     <ol class="t1-more-sources"></ol>
   </div>
 </section>
-<script src="page.js?v=28372cf33f"></script>
+<script src="page.js?v=c8b1e65777"></script>
 </body>
 </html>

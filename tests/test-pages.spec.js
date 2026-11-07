@@ -370,6 +370,46 @@ test("test page 1: a perfumer pressed gathers into the point and opens from it; 
   expect(errors).toEqual([]);
 });
 
+/* Test page 1, 2026-11-07, last — "Remove the names of the houses from the
+   blobs in TP1. I dont want them there": no house is written under its
+   sphere or beside a perfumer's lobes; a house's years and the way back to
+   the perfumer still are. The sphere under the hand lights its row in the
+   list and says its name in the small note by the hand. */
+test("page 1: no house is named on the blobs; the sphere under the hand lights its row", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await serveDependenciesLocally(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/test-pages/1/#prin-lomros");
+  await expect(page.locator("body")).toHaveClass(/is-ready/, { timeout: 5000 });
+  await page.waitForTimeout(2200);
+  const houses = (await page.evaluate(() => window.TestPage1.list())).map((n) => n.toUpperCase());
+  expect(houses).toEqual(["PARFUM PRISSANA", "PRIN", "STRANGERS PARFUMERIE"]);
+  const named = () => page.evaluate(() => window.TestPage1.named());
+  expect((await named()).filter((n) => houses.includes(n)), "no house under its sphere").toEqual([]);
+  // a house lit from the list: no name comes out of the blob's lobe
+  await page.locator('.t1-list-rows button[data-row="1"]').hover();
+  await page.waitForTimeout(400);
+  expect((await named()).filter((n) => houses.includes(n)), "nor beside its lobe").toEqual([]);
+  // a sphere under the hand: its row lights, and the note by the hand names it
+  const at = await page.evaluate(() => window.TestPage1.houseAt("prin"));
+  await page.mouse.move(at.x, at.y);
+  await expect(page.locator(".t1-list-rows button.is-lit")).toHaveCount(1);
+  await expect(page.locator(".t1-list-rows button.is-lit")).toContainText("PRIN");
+  await expect(page.locator(".t1-tip")).toContainText("Press to see what Prin Lomros made for it");
+  await page.mouse.move(5, 890);
+  await expect(page.locator(".t1-list-rows button.is-lit")).toHaveCount(0);
+  await expect(page.locator(".t1-tip")).toBeHidden();
+  // in a house's world: its years and the way back, and no other house named
+  await page.evaluate(() => window.TestPage1.open("prin-lomros", "parfum-prissana"));
+  await page.waitForTimeout(1800);
+  const inHouse = await named();
+  expect(inHouse).toContain("↩ PRIN LOMROS");
+  expect(inHouse.some((n) => /^\d{4}$/.test(n)), "the years by the lobes").toBe(true);
+  expect(inHouse.filter((n) => houses.includes(n))).toEqual([]);
+  await expect(page.locator(".t1-head-name")).toHaveText("Parfum Prissana, and what Prin Lomros made for it");
+  expect(errors).toEqual([]);
+});
+
 test("test page 1: the spheres keep leaning to the hand while it is over the list", async ({ page }) => {
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });

@@ -661,7 +661,9 @@ not found*, the 26 perfumes newly credited, and **each perfumer's biography** fr
   button on their right; pressed, the perfumer's biography on a sheet under the poster, the page scrolled
   down to it, its three sources at its foot, *Back to the world* scrolling back up. Only a perfumer's.
 - **No numbers by the lobes**: a house's lobes are named by their years, a perfumer's lobes only when
-  one is lit (its sphere is named beside the blob already). **No bar** under a house in the list.
+  one is lit (its sphere is named beside the blob already) — and since the same day's last round, a
+  perfumer's lobes not at all, nor a house's sphere (see *no house's name on the blobs*, below). **No
+  bar** under a house in the list.
 - **Softer transitions**: the world opening out of the rays through a **feathered circle** (the world
   drawn apart and laid over the rays through a soft radial edge) on a smootherstep, 1.5 s (1.1 s on a
   cubic, hard-edged, before); its words fading in and out with it (`--reveal`); a change of perfumer or
@@ -730,3 +732,23 @@ perfumer. Also please animate it so its nice. I want a slightly thematic animati
 
 **How to test it**: `tests/test-pages.spec.js`, "a perfumer pressed gathers into the point and opens from
 it; the search takes you to the perfumer".
+
+### 2026-11-07, last — page 1: no house's name on the blobs
+
+The owner: "Remove the names of the houses from the blobs in TP1. I dont want them there".
+
+- **No house named on the poster**: the name that stood under each house's sphere is gone, and so is the
+  house's name that came out on a hairline from a perfumer's blob when its lobe was lit (`drawWorldView`
+  skips a house's sphere; `drawLobeNames` names only a house's years). What is still written there: a
+  house's lobes by their years, and **↩ the perfumer** under its sphere in a house's world — the way
+  back, not a house.
+- **Which sphere is which**, without a name on it: under the hand, its row in the list on the right lights
+  (`lightRow`, `.is-lit`, the hover's own ground) and a small note by the hand says its name and *Press to
+  see what … made for it*, gone as the hand leaves it. The list names the houses as before.
+- **The head** says *Parfum Prissana, and what Prin Lomros made for it* in a house's world; it said
+  *Parfum Prissana and their houses*, the perfumer's wording, until then.
+- **On a phone** the houses' names under their count (*Om Parfums, Outsider Parfums*) are left out of
+  the readings — the list just above names them — so the list no longer runs 16px under *Perfumer*.
+
+**How to test it**: `tests/test-pages.spec.js`, "page 1: no house is named on the blobs; the sphere under
+the hand lights its row".

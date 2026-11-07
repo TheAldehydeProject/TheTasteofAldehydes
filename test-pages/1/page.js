@@ -612,10 +612,10 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
       const x0 = x + (o.x + Math.cos(da) * q) * u, y0 = y + (o.y + Math.sin(da) * q) * u;
       const len = (phone ? 16 : 26) + (lit ? 6 : 0);
       // no numbers by the lobes (2026-11-07 — "remove the random numbers,
-      // like with prin lomoros (01 02 and 03)"): a house's years are named
-      // by them; a perfumer's houses only when one is lit, its sphere being
-      // named beside the blob already
-      const say = w.kind === "house" || lit ? o.part.say.toUpperCase() : "";
+      // like with prin lomoros (01 02 and 03)"), and no house's name on a
+      // perfumer's (the same day — "Remove the names of the houses from the
+      // blobs"): a house's years are named by them, and nothing else
+      const say = w.kind === "house" ? o.part.say.toUpperCase() : "";
       if (!say) return;
       items.push({ x0, y0, x1: x0 + Math.cos(da) * len, y1: y0 + Math.sin(da) * len, right: Math.cos(da) >= 0, lit, say });
     });
@@ -641,6 +641,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
       c.beginPath(); c.arc(it.x0, it.y0, it.lit ? 2.2 : 1.5, 0, TAU); c.fill();
       c.textAlign = it.right ? "left" : "right";
       c.fillText(it.say, x2 + (it.right ? 4 : -4), it.y1);
+      drawnNames.push(it.say);
     }
     c.restore();
   }
@@ -787,7 +788,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     set("[data-v=no]", String(p.k + 1).padStart(2, "0") + " / " + NP);
     const pick = el(".t1-pick");
     if (+pick.value !== p.i) pick.value = String(p.i);
-    set(".t1-head-name", house ? HOU[cur.h].name : p.none ? "Perfumer not found" : p.name);
+    set(".t1-head-name", house ? HOU[cur.h].name + ", and what " + (p.none ? "they" : p.name) + " made for it" : (p.none ? "Perfumer not found" : p.name) + " and their houses");
     el(".t1-hud").setAttribute("aria-label", (house ? "The house " : "The perfumer ") + (house ? HOU[cur.h].name : p.name));
   }
 
@@ -918,12 +919,26 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
       cv.style.cursor = d ? "pointer" : "default";
       return;
     }
+    const was = aim;
     aim = blobUnder(hand.x, hand.y);
     listLit = aim && aim.kind === "house" && cur.kind === "per" ? partsOf(cur).findIndex((x) => x.h === aim.h) : -1;
     cv.style.cursor = aim ? "pointer" : "default";
+    // a house's sphere is not named on the page: under the hand, its row in
+    // the list lights, and a small note by the hand says which it is
+    if (aim !== was) lightRow();
+    if (!pinned) {
+      if (aim && aim.kind === "house") showTip({ html: "<b>" + esc(HOU[aim.h].name) + "</b><span>Press to see what " + esc(cur.p.none ? "they" : cur.p.name) + " made for it</span>", x: hand.x, y: hand.y });
+      else if (was && was.kind === "house") showTip(null);
+    }
   });
+  function lightRow() {
+    listBox.querySelectorAll("[data-row]").forEach((b) => {
+      const r = listRows[+b.dataset.row];
+      b.classList.toggle("is-lit", !!(aim && aim.kind === "house" && r && r.kind === "house" && r.h === aim.h));
+    });
+  }
   cv.addEventListener("pointerleave", () => {
-    aim = null; overDot = null; listLit = -1;
+    aim = null; overDot = null; listLit = -1; lightRow();
     if (!pinned) showTip(null);
     kick();
   });
@@ -939,7 +954,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
       pinned = null; showTip(null);
       if (b.kind === "house") show({ kind: "house", p: cur.p, h: b.h });
       else show({ kind: "per", p: b.p, h: null });
-      aim = null; listLit = -1;
+      aim = null; listLit = -1; lightRow();
       return;
     }
     if (pinned) { pinned = null; showTip(null); listBox.querySelectorAll(".is-pinned").forEach((x) => x.classList.remove("is-pinned")); }
@@ -1230,8 +1245,11 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     ctx.globalAlpha = 1;
   }
 
+  // what is written on the poster this frame, for the tests
+  let drawnNames = [];
   // the world: the poster, its spheres out of focus, the blob at the middle
   function drawWorldView(now, t, dt) {
+    drawnNames = [];
     if (!ground) ground = drawGround();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.drawImage(ground, 0, 0);
@@ -1255,12 +1273,16 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
       const a = ease(clamp(b.in, 0, 1));
       ctx.globalAlpha = a * (lit ? 1 : 0.94);
       ctx.drawImage(b.img.c, b.x + b.dx - s / 2, b.y + b.dy - s / 2, s, s);
-      // its name, small, under it
+      // no house's name by its sphere (2026-11-07 — "Remove the names of the
+      // houses from the blobs in TP1. I dont want them there"): the list on
+      // the right names them, and lights the one under the hand; only the
+      // way back to the perfumer is named
+      if (b.kind === "house") continue;
       ctx.globalAlpha = a * (lit ? 0.95 : 0.5);
       ctx.fillStyle = "#26282d";
       // under it — or, where a lobe's name stands there, over it if there is
       // room under the head, else beside it, on the side away from the middle
-      const say = (b.kind === "house" ? HOU[b.h].name : "↩ " + (b.p.none ? "Not found" : b.p.name)).toUpperCase();
+      const say = ("↩ " + (b.p.none ? "Not found" : b.p.name)).toUpperCase();
       const nx = b.x + b.dx, ny = b.y + b.dy, half = ctx.measureText(say).width / 2 + 4;
       const clear = (xx, yy) => xx - half > F.x0 - 24 && xx + half < F.x1 + 24 &&
         !lobeBoxes.some((o) => xx + half > o.x0 && xx - half < o.x1 && yy + 3 > o.y0 && yy - 11 < o.y1);
@@ -1273,6 +1295,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
       const fl = STILL ? 1 : Math.min(1, dt * 6);
       b.ox += (ox - b.ox) * fl; b.oy += (oy - b.oy) * fl;
       ctx.fillText(say, nx + b.ox, below + b.oy);
+      drawnNames.push(say);
     }
     ctx.globalAlpha = 1;
     // the one before going out as this comes in
@@ -1423,6 +1446,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     lobes: () => (cur ? cur.lobes.filter((o) => o.part).map((o) => o.part.say) : []),
     list: () => listRows.map((r) => (r.kind === "house" ? HOU[r.h].name : r.e.n)),
     spheres: () => blobs.length,
+    named: () => drawnNames.slice(),
     look: () => LOOK,
     // the colour where the blob's edge begins, walking in from its upper left
     // and from its lower right (the picture's own colour, before the poster)
