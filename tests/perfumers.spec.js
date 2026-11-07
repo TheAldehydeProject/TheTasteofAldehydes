@@ -65,7 +65,7 @@ test("with motion reduced, nothing turns and nothing is drawn at rest", async ({
   await context.close();
 });
 
-test("the list of perfumers stands in the legend's place, A to Z, and the legend is at the foot", async ({ page }) => {
+test("the list of perfumers stands in the legend's place, A to Z, and the legend is under the chart", async ({ page }) => {
   await page.goto(PAGE);
   const nav = page.locator(".pf-stage .pf-nav");
   await expect(nav).toBeVisible();
@@ -78,9 +78,11 @@ test("the list of perfumers stands in the legend's place, A to Z, and the legend
   expect(names[names.length - 1]).toBe("Perfumer not found");
   // the list scrolls in its own box
   expect(await nav.locator(".pf-nav-scroll").evaluate((el) => getComputedStyle(el).overflowY)).toBe("auto");
-  // no legend over the stage; it is at the foot
-  await expect(page.locator(".pf-stage .pf-legend, .pf-notes .pf-legend")).toHaveCount(0);
-  await expect(page.locator(".pf-foot .pf-legend")).toHaveCount(1);
+  // no legend over the stage; it is under the chart, beside the intro
+  // (2026-11-07 — "below the main perfumers thing (the planet) ... Intro,
+  // legend, terms and disclaimer, below that the index and below that the credits")
+  await expect(page.locator(".pf-stage .pf-legend")).toHaveCount(0);
+  await expect(page.locator(".pf-notes .pf-legend")).toHaveCount(1);
 });
 
 test("a perfumer chosen shows its houses, a house its perfumes, a perfume its window", async ({ page }) => {
@@ -211,7 +213,9 @@ test("the list has a search at its top right: a perfumer, a house or a perfume",
   const find = page.locator(".pf-nav-find");
   const head = await page.locator(".pf-nav-head").boundingBox();
   const fb = await find.boundingBox();
-  expect(fb.x + fb.width).toBeGreaterThan(head.x + head.width - 4);
+  // at the right of the head, beside the fold (2026-11-07)
+  expect(fb.x + fb.width).toBeGreaterThan(head.x + head.width - 44);
+  expect(fb.x).toBeGreaterThan(head.x + head.width / 2);
   await find.click();
   const q = page.locator(".pf-nav-query");
   await expect(q).toBeFocused();
@@ -235,13 +239,13 @@ test("the list has a search at its top right: a perfumer, a house or a perfume",
   expect((await state(page)).chosen.e).toBe("Burnana");
 });
 
-test("the legend, the terms and the disclaimer are shut dropdowns at the foot, the title's asterisk opening the disclaimer", async ({ page }) => {
+test("the legend, the terms and the disclaimer are shut dropdowns under the chart, the title's asterisk opening the disclaimer", async ({ page }) => {
   await page.goto(PAGE);
   for (const sel of [".pf-legend-box", ".pf-terms", ".pf-disclaimer"]) {
     const d = page.locator(sel);
     await expect(d).toHaveJSProperty("tagName", "DETAILS");
     expect(await d.evaluate((el) => el.open)).toBe(false);
-    expect(await d.evaluate((el) => !!el.closest(".pf-foot"))).toBe(true);
+    expect(await d.evaluate((el) => !!el.closest(".pf-notes"))).toBe(true);
   }
   await expect(page.locator(".pf-notes-left")).not.toContainText("Disclaimer");
   await expect(page.locator(".pf-counts")).toContainText("written about on The Taste of Aldehydes");
@@ -402,10 +406,12 @@ test("the index is one big button, shut until it is pressed", async ({ page }) =
   await expect(page.locator(".pf-entry").first()).toBeVisible();
   const perfumers = await page.evaluate(() => window.PERFUMERS_DATA.perfumers.length);
   await expect(page.locator(".pf-entry")).toHaveCount(perfumers);
-  // it stands a way down from the chart
-  const gap = await page.evaluate(() => document.querySelector(".pf-index").getBoundingClientRect().top -
-    document.querySelector(".pf-foot").getBoundingClientRect().top);
-  expect(gap).toBeGreaterThan(80);
+  // it stands a way down from the chart: under the intro, the legend, the
+  // terms and the disclaimer, and over the sources (2026-11-07)
+  const at = await page.evaluate(() => ["pf-stage", "pf-notes", "pf-index", "pf-sources"].map((c) => document.querySelector("." + c).getBoundingClientRect().top + scrollY));
+  expect(at[1]).toBeGreaterThan(at[0]);
+  expect(at[2]).toBeGreaterThan(at[1] + 80);
+  expect(at[3]).toBeGreaterThan(at[2]);
   await page.locator(".pf-index .pf-index-open").click();
   await expect(index).not.toHaveAttribute("open", "");
 });
@@ -508,3 +514,84 @@ test.describe("on a phone", () => {
     await expect(page.locator(".pf-nav-path")).toHaveText("Goran Bajazetov");
   });
 });
+
+// 2026-11-07 — "make sure that it extends a little more down": the stage a
+// little taller than the window on a wide one, the chart sized by the window
+// and centred in the stage, so its circle is whole
+test("the stage stands a little taller than the window, the whole circle in it", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(PAGE);
+  await atRest(page, "turn");
+  const st = await page.evaluate(() => {
+    const b = document.querySelector(".pf-stage").getBoundingClientRect();
+    return { h: b.height, chart: PerfumersChart.state().cam };
+  });
+  expect(st.h).toBeGreaterThan(900);
+  expect(st.h).toBeLessThan(900 * 1.4);
+  // the chart's middle stands in the middle of the stage, not of the window
+  expect(Math.abs(st.chart.cy * st.h - st.h / 2)).toBeLessThan(4);
+  // on a phone the stage is the window
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.waitForTimeout(400);
+  const ph = await page.evaluate(() => document.querySelector(".pf-stage").getBoundingClientRect().height);
+  expect(ph).toBeLessThanOrEqual(844 + 1);
+});
+
+// 2026-11-07 — "remove the crosshairs in the cardinal directions, and the
+// cross going through the center of the world"
+test("no cross through the Earth and no cross-hairs at the chart's edges", async () => {
+  const fs = require("fs");
+  const src = fs.readFileSync(require("path").join(__dirname, "..", "perfumers.js"), "utf8");
+  expect(src).not.toMatch(/function drawCross/);
+  expect(src).not.toMatch(/drawCross\(/);
+});
+
+// 2026-11-07 — "the table on the right should be collapsible": the list and
+// its search fold away together, the chart moving over into the room
+test("the list and its search fold away together, and the chart takes the room", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(PAGE);
+  await page.evaluate(() => { try { localStorage.removeItem("pf-nav-folded"); } catch (e) {} });
+  await page.reload();
+  await atRest(page, "turn");
+  const fold = page.locator(".pf-nav-fold");
+  await expect(fold).toBeVisible();
+  await expect(fold).toHaveAttribute("aria-expanded", "true");
+  const cx0 = await page.evaluate(() => PerfumersChart.state().cam.cx);
+  await page.locator(".pf-nav-find").click();
+  await expect(page.locator(".pf-nav-query")).toBeVisible();
+  await fold.click();
+  await expect(fold).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator(".pf-nav-scroll")).toBeHidden();
+  await expect(page.locator(".pf-nav-query")).toBeHidden();
+  await expect(page.locator(".pf-nav-find")).toBeHidden();
+  await expect(page.locator(".pf-nav-title")).toBeVisible();
+  await page.waitForTimeout(2500);
+  const cx1 = await page.evaluate(() => PerfumersChart.state().cam.cx);
+  expect(cx1).toBeGreaterThan(cx0 + 0.02);
+  // kept for the next visit
+  await page.reload();
+  await expect(page.locator(".pf-nav")).toHaveClass(/is-folded/);
+  await page.locator(".pf-nav-fold").click();
+  await expect(page.locator(".pf-nav-scroll")).toBeVisible();
+  await page.evaluate(() => { try { localStorage.removeItem("pf-nav-folded"); } catch (e) {} });
+});
+
+// 2026-11-07 — "optimize this page as much as you can": the names on the
+// rings at rest are the rotor's own picture, drawn a few times a second, not
+// every frame; and the page draws about thirty frames a second at rest
+test("at rest the names are drawn a few times a second, and the live layer about thirty", async ({ page }) => {
+  await page.goto(PAGE);
+  await atRest(page, "turn");
+  await page.mouse.move(5, 880);
+  await page.waitForTimeout(1200);
+  const a = await page.evaluate(() => PerfumersChart.stats());
+  await page.waitForTimeout(2000);
+  const b = await page.evaluate(() => PerfumersChart.stats());
+  const names = (b.names - a.names) / 2, live = (b.live - a.live) / 2;
+  expect(names).toBeGreaterThan(0);
+  expect(names).toBeLessThan(15);
+  expect(live).toBeLessThan(40);
+  expect(live).toBeGreaterThan(5);
+});
+

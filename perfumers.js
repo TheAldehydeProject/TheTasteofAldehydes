@@ -25,9 +25,11 @@
 //   THE EARTH     in the middle, upright, turning slowly on its axis: drawn
 //                 as an architect's sketch — its coastlines in a hairline
 //                 with two waterlines off them, the land hatched, the
-//                 graticule every fifteen degrees, the equator and the
-//                 meridian facing you run out across the whole chart to a
-//                 cross-hair at each end, the latitudes named down its left.
+//                 graticule every fifteen degrees, the latitudes named down
+//                 its left. (The cross through its middle, run out to a
+//                 cross-hair at each end, went on 2026-11-07: "remove the
+//                 crosshairs in the cardinal directions, and the cross going
+//                 through the center of the world".)
 //                 A square marks every country a house is from, a ring every
 //                 country a perfumer is from (the ledger's countries: a pin
 //                 is the country, never a town), and from each house's
@@ -119,6 +121,16 @@
   swayBox.insertBefore(cvFly, cvChart);
   const fctx = cvFly.getContext("2d");
   let FLY_K = 1, flying = false;
+  // THE NAMES ON THE RINGS AT REST, a picture of their own in the rotor
+  // (2026-11-07 — "optimize this page as much as you can"): drawn into it a
+  // few times a second and turned with the chart by the browser in between,
+  // where until then they were drawn into the live layer — the whole window,
+  // at the screen's full sharpness — every frame.
+  const cvNames = document.createElement("canvas");
+  cvNames.className = "pf-turn-names";
+  rotor.appendChild(cvNames);
+  const nctx = cvNames.getContext("2d");
+  let namesRot = 0, namesKey = "";
   const mctx = document.createElement("canvas").getContext("2d");
   const title = stage.querySelector(".pf-title");
   const tip = stage.querySelector(".pf-tip");
@@ -151,6 +163,7 @@
     label: 806,                // the names past the rim
     dust0: 790, dust1: 1150,
     fit: 890,                  // what the whole chart is fitted to
+    out: 990,                  // the farthest of the faint lines past the rim: the stage is made as tall as this
     look: 740,                 // the radius a close look is centred on
   };
   R.perMid = (R.perCell + R.per1) / 2 + 0.5;
@@ -398,7 +411,7 @@
   }
 
   // ---- THE LAYOUT -------------------------------------------------------
-  let W = 0, H = 0, DPR = 1, OV = 0, S = 0, fitZ = 0.3, phone = false;
+  let W = 0, H = 0, VH = 800, DPR = 1, OV = 0, S = 0, fitZ = 0.3, phone = false;
   const L = { ocx: 0.5, ocy: 0.5, oz: 0.3, zx: 0.4, zy: 0.56, zoomH: 600, free: { x0: 0, y0: 0, x1: 0, y1: 0 } };
   let navOpen = false;
   let rotorDirty = true, chartDirty = true;
@@ -407,13 +420,29 @@
     : null;
 
   function measure() {
-    W = stage.clientWidth; H = stage.clientHeight;
     phone = PHONE.matches;
+    // THE STAGE A LITTLE TALLER THAN THE WINDOW (2026-11-07 — "make sure that
+    // it extends a little more down"): the chart is sized by the window, as it
+    // was, and the stage made as tall as its farthest faint lines need, so
+    // the circle is whole — it was cut at the window's foot. Everything that
+    // stands over the chart is placed by the window (--pf-vh), not the stage.
+    VH = Math.max(320, window.innerHeight || 0);
+    stage.style.setProperty("--pf-vh", VH + "px");
+    W = stage.clientWidth;
+    if (phone) { if (stage.style.height) stage.style.height = ""; }
+    else {
+      const navW = nav.hidden || nav.classList.contains("is-folded") ? 0 : nav.getBoundingClientRect().width;
+      const roomX = W - (navW ? navW + 30 + 14 : 0);
+      const z0 = Math.max(140, Math.min(roomX, VH - 12)) / (2 * R.fit);
+      const want = Math.max(VH, Math.ceil(2 * R.out * z0 + 24));
+      if (stage.style.height !== want + "px") stage.style.height = want + "px";
+    }
+    H = stage.clientHeight;
     DPR = sharp ? sharp.ratio : Math.min(window.devicePixelRatio || 1, 2);
     OV = Math.ceil(Math.max(W, H) * (phone ? 0.05 : 0.06));
     const sb = stage.getBoundingClientRect();
     let x0 = 0, x1 = W, y0 = 0, y1 = H;
-    if (!phone && !nav.hidden) {
+    if (!phone && !nav.hidden && !nav.classList.contains("is-folded")) {
       const b = nav.getBoundingClientRect();
       if (b.width) x1 = b.left - sb.left - 14;
     }
@@ -436,6 +465,8 @@
       box(title.querySelector(".pf-title-years"));
       y0 = 6; y1 = H - 6;
     }
+    // the chart's size is the window's room, never the taller stage's
+    const roomY = phone ? y1 - y0 : Math.min(y1 - y0, VH - 12);
     L.free = { x0, y0, x1, y1 };
     // the chart as big as the stage's height lets it be ("I want this to
     // occupy the majority of the page"), moved right as far as it takes to
@@ -445,7 +476,7 @@
       const dx = Math.max(b.x0 - cx, 0, cx - b.x1), dy = Math.max(b.y0 - cy, 0, cy - b.y1);
       return dx * dx + dy * dy < rr * rr;
     });
-    let room = Math.max(140, Math.min(x1 - x0, y1 - y0));
+    let room = Math.max(140, Math.min(x1 - x0, roomY));
     let cx = (x0 + x1) / 2;
     const cy = (y0 + y1) / 2;
     for (let tries = 0; tries < 16; tries++) {
@@ -468,25 +499,32 @@
     // a close look stands left of the middle of its room, the names
     // reading out to its right; on a phone, above the list when it is up
     L.zx = phone ? 0.25 : (0.4 * x1) / W;
-    L.zy = phone ? (navOpen ? 0.26 : 0.46) : 0.56;
-    L.zoomH = phone ? H * (navOpen ? 0.36 : 0.56) : H * 0.8;
+    L.zy = phone ? (navOpen ? 0.26 : 0.46) : (0.56 * Math.min(H, VH)) / H;
+    L.zoomH = phone ? H * (navOpen ? 0.36 : 0.56) : Math.min(H, VH) * 0.8;
     S = Math.ceil(2 * R.fit * fitZ) + 4;
     stage.style.setProperty("--chart-x", Math.round(L.ocx * W) + "px");
   }
   function sizeCanvases() {
     if (sharp) DPR = sharp.ratio;
     const k = DPR;
-    const cw = W + 2 * OV, ch = H + 2 * OV;
+    // the chart in perspective is only ever drawn with the page at its top
+    // (anything chosen holds it there), so it is drawn only as tall as the
+    // window, not the taller stage (2026-11-07)
+    const cw = W + 2 * OV, ch = Math.min(H, VH) + 2 * OV;
     cvChart.width = Math.round(cw * k); cvChart.height = Math.round(ch * k);
     cvDof.width = Math.round(cw * k * 0.5); cvDof.height = Math.round(ch * k * 0.5);
-    FLY_K = k > 1.25 ? Math.max(1, k * 0.6) : k;
+    // (on a plain screen too since 2026-11-07: three quarters of its pixels while it moves)
+    FLY_K = k > 1.25 ? Math.max(1, k * 0.6) : k * 0.75;
     cvFly.width = FLY_K < k ? Math.round(cw * FLY_K) : 1; cvFly.height = FLY_K < k ? Math.round(ch * FLY_K) : 1;
     [cvChart, cvDof, cvFly].forEach((c) => {
       c.style.left = -OV + "px"; c.style.top = -OV + "px";
       c.style.width = cw + "px"; c.style.height = ch + "px";
     });
-    cvLive.width = Math.round(W * k); cvLive.height = Math.round(H * k);
+    liveK = 0; liveHiUntil = performance.now() + LIVE_HI_MS;
+    liveRes(performance.now());
     cvTurn.width = Math.round(S * k); cvTurn.height = Math.round(S * k);
+    cvNames.width = cvTurn.width; cvNames.height = cvTurn.height;
+    namesKey = "";
     rotor.style.width = S + "px"; rotor.style.height = S + "px";
     lastRotor = "";
   }
@@ -571,9 +609,12 @@
   // letters spaced round an arc, upright at the top and at the bottom — and
   // turned over across the sides by a crossfade, never a jump, as the chart
   // turns them round
+  // the turn a name's reading way is decided by: the camera's own, or — for
+  // the names drawn into the rotor, unturned — the turn the rotor stands at
+  let flipRot = null;
   function arcText(c, txt, r, mid, size, font, track, alpha) {
     if (alpha <= 0.003) return;
-    const wb = smooth((Math.sin(mid + V.rot) + FLIP) / (2 * FLIP));
+    const wb = smooth((Math.sin(mid + (flipRot === null ? V.rot : flipRot)) + FLIP) / (2 * FLIP));
     if (wb < 0.999) { c.globalAlpha = alpha * (1 - wb); arcRun(c, txt, r, mid, size, font, track, 1); }
     if (wb > 0.001) { c.globalAlpha = alpha * wb; arcRun(c, txt, r, mid, size, font, track, -1); }
   }
@@ -923,34 +964,6 @@
     }
     c.globalAlpha = 1;
   }
-  // a cross through the Earth's middle, run out across the whole chart to a
-  // cross-hair at each end, as the picture's is
-  function drawCross(c, alpha) {
-    if (alpha <= 0.01) return;
-    const ends = [[-1, 0], [1, 0], [0, -1], [0, 1]];
-    const reach = R.tick1 / R.earth + 0.05;
-    c.strokeStyle = SOLID.ink; c.lineWidth = 0.6;
-    c.globalAlpha = 0.14 * alpha;
-    c.beginPath();
-    for (const [ax, ay] of [[1, 0], [0, 1]]) {
-      emap(-ax * reach, -ay * reach, T0);
-      emap(ax * reach, ay * reach, T1);
-      if (T0.ok && T1.ok) { c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); }
-    }
-    c.stroke();
-    const z = EM.flat ? EM.r / R.earth : V.z;
-    const rr = clamp(9 * z, 5, 12);
-    c.globalAlpha = 0.4 * alpha;
-    c.beginPath();
-    for (const [ax, ay] of ends) {
-      emap(ax * reach, ay * reach, T0); if (!T0.ok) continue;
-      c.moveTo(T0.x + rr, T0.y); c.arc(T0.x, T0.y, rr, 0, TAU);
-      c.moveTo(T0.x - rr * 1.6, T0.y); c.lineTo(T0.x + rr * 1.6, T0.y);
-      c.moveTo(T0.x, T0.y - rr * 1.6); c.lineTo(T0.x, T0.y + rr * 1.6);
-    }
-    c.stroke();
-    c.globalAlpha = 1;
-  }
   // the latitudes named off the Earth's left, and the longitudes along its
   // equator as they come round — in its own frame, upright
   function drawDegrees(c, alpha, which) {
@@ -1269,7 +1282,6 @@
       drawEarth(c, clamp(intro * 2, 0, 1), !flyingNow);
       drawFans(c, fade);
       drawPins(c, clamp(intro * 2, 0, 1));
-      drawCross(c, fade);
       drawDegrees(c, fade);
       base();
       c.textBaseline = "middle"; c.textAlign = "left";
@@ -1606,6 +1618,36 @@
     // (the Earth is not in it: the rotor turns, and the Earth stands upright)
     drawScene(false, false);
   }
+  function namesRotor() {
+    const key = [sel.pid, sel.hid, mode, labelsOn().toFixed(3), focus ? 1 : 0, S, DPR].join("|");
+    if (key === namesKey && Math.abs(cam.rot - namesRot) < 0.003) return;
+    namesKey = key; namesRot = cam.rot;
+    stats.names = (stats.names || 0) + 1;
+    const k = DPR;
+    nctx.setTransform(1, 0, 0, 1, 0, 0);
+    nctx.clearRect(0, 0, cvNames.width, cvNames.height);
+    surface(nctx, k, 0, 0, k, 0, 0, 0, 0, S, S);
+    view(0, 0, fitZ, 0, 0, S / 2, S / 2);
+    flipRot = cam.rot;
+    drawNames(nctx, 1);
+    flipRot = null;
+    nctx.globalAlpha = 1;
+  }
+  // THE LIVE LAYER'S SHARPNESS (2026-11-07 — "optimize"): at rest it holds
+  // only the dust, the far field, the lights and the Earth's lines, which
+  // read the same at a plain screen's pixel, so on a sharper screen it is
+  // drawn at one pixel a point — a quarter of the work on a Retina screen —
+  // and at the screen's own the moment the hand is on something, something
+  // is chosen or anything moves, staying sharp a moment after.
+  const LIVE_HI_MS = 1500;
+  let liveK = 0, liveHiUntil = 0;
+  function liveRes(now) {
+    if (hover || sel.kind || callE || !calm) liveHiUntil = now + LIVE_HI_MS;
+    const want = now < liveHiUntil ? DPR : Math.min(DPR, 1);
+    if (want === liveK && cvLive.width === Math.round(W * want)) return;
+    liveK = want;
+    cvLive.width = Math.round(W * want); cvLive.height = Math.round(H * want);
+  }
   function placeRotor() {
     const x = cam.cx * W - S / 2, y = cam.cy * H - S / 2;
     const sc = Math.exp(cam.lz) / fitZ;
@@ -1624,7 +1666,7 @@
     const k = lo ? FLY_K : DPR, c = lo ? fctx : ctx, cv = lo ? cvFly : cvChart;
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.clearRect(0, 0, cv.width, cv.height);
-    surface(c, k, 0, 0, k, k * OV, k * OV, -OV, -OV, W + OV, H + OV);
+    surface(c, k, 0, 0, k, k * OV, k * OV, -OV, -OV, W + OV, Math.min(H, VH) + OV);
     viewCam();
     flyingNow = moving;
     drawScene(true, true);
@@ -1734,7 +1776,7 @@
   }
   function drawLive() {
     stats.live++;
-    const c = lctx, k = DPR;
+    const c = lctx, k = liveK;
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.clearRect(0, 0, cvLive.width, cvLive.height);
     surface(c, k * M.a, k * M.b, k * M.c, k * M.d, k * M.e, k * M.f, -50, -50, W + 50, H + 50);
@@ -1765,7 +1807,7 @@
     }
 
     // THE EARTH, on the whole chart: its picture, laid down; its lines out
-    // to the rings and its cross-hairs, drawn on it — close in it is part of
+    // to the rings, drawn on it — close in it is part of
     // the chart's own drawing, and only the lights are drawn here
     if (viewNow === "turn") {
       proj(0, 0, T0);
@@ -1779,7 +1821,6 @@
       base();
       EM.flat = true; EM.cx = ox; EM.cy = oy; EM.r = er;
       drawFans(c, fade);
-      drawCross(c, fade);
     } else {
       viewCam();
       earthUpright();
@@ -1802,9 +1843,8 @@
     // the lights, from a house's country through the three rings
     drawPulses(c, t);
 
-    // the names on the rings, while the chart turns — here so that they turn
-    // over as they come round, rather than stand upside down
-    if (viewNow === "turn") drawNames(c, 1);
+    // (the names on the rings, while the chart turns, are the rotor's own
+    // picture since 2026-11-07: namesRotor)
 
     // what is chosen, lit, while it is seen on the whole chart (close in its
     // names are written instead)
@@ -2019,6 +2059,8 @@
   // ---- THE CLOCK -------------------------------------------------------
   let raf = 0, last = 0, viewNow = "", seen = true;
   function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+  const CALM_FPS = 30, CALM_AFTER = 600;
+  let calm = false, lastHand = 0, lastDrawn = 0;
   function setView(v) {
     viewNow = v;
     stage.dataset.view = v;
@@ -2027,6 +2069,13 @@
     raf = 0;
     if (!W) return;
     if (sharp) sharp.frame(now);
+    // AT REST, ABOUT THIRTY FRAMES A SECOND (2026-11-07 — "optimize this
+    // page as much as you can"): while nothing is moving but the slow things
+    // — the chart's turn, the dust, the lights, the sway — and the hand has
+    // been still a moment, every other frame is let go; anything the hand
+    // does, and every flight, has every frame.
+    if (calm && now - lastHand > CALM_AFTER && now - lastDrawn < 1000 / CALM_FPS - 4) { kick(); return; }
+    lastDrawn = now;
     const dt = last ? Math.min(0.064, (now - last) / 1000) : 1 / 60;
     last = now;
     const running = !STILL && seen && !document.hidden;
@@ -2095,14 +2144,16 @@
     if (callE) placeCall();
 
     if (v === "live") { drawChart(moving); rotorDirty = true; }
-    else if (v === "turn") { if (rotorDirty) renderRotor(); placeRotor(); setFlying(false); }
+    else if (v === "turn") { if (rotorDirty) renderRotor(); namesRotor(); placeRotor(); setFlying(false); }
     else {
       if (chartDirty) { drawChart(); dofOff(); stillSince = now; }
       if (!dofDone && now - stillSince > 240) renderDof();
     }
     tendPulses();
+    liveRes(now);
     drawLive();
 
+    calm = !settling && !hover && !callWait && !down && !STILL;
     const idle = running && card.hidden && !menuOpen;
     if (settling || idle || callWait || swayAmt > 0 && running || (v === "still" && !dofDone)) kick();
     else last = 0;
@@ -2215,6 +2266,7 @@
     down = { x: p.x, y: p.y, ly: p.y, lx: p.x, swiped: false };
   });
   stage.addEventListener("pointermove", (ev) => {
+    lastHand = performance.now();
     if (ev.pointerType === "touch") {
       // a finger close in goes through the perfumes of what is chosen, as
       // the wheel does: up for the next, down for the one before
@@ -2545,6 +2597,29 @@
   // right of the perfumers list"): a perfumer, a house or a perfume, found
   // as it is typed, the list standing aside while it is; one chosen is
   // chosen on the chart as from the list, and the list comes back to it.
+  // THE FOLD (2026-11-07 — "the table on the right should be collapsible"):
+  // the list and its search fold away together, leaving the list's name and
+  // count, and the chart moves over into the room they leave; kept for the
+  // next visit in this browser. Not on a phone, where the list is a drawer.
+  const foldBtn = nav.querySelector(".pf-nav-fold");
+  let folded = false;
+  try { folded = localStorage.getItem("pf-nav-folded") === "1"; } catch (e) { /* storage refused */ }
+  function setFold(on, quiet) {
+    folded = !!on;
+    nav.classList.toggle("is-folded", folded);
+    foldBtn.setAttribute("aria-expanded", folded ? "false" : "true");
+    foldBtn.setAttribute("aria-label", folded ? "Unfold the list" : "Fold the list away");
+    if (folded && !findBox.hidden) openFind(false);
+    try { localStorage.setItem("pf-nav-folded", folded ? "1" : "0"); } catch (e) { /* storage refused */ }
+    if (quiet) return;
+    // the chart into its new room, on the camera's springs rather than at once
+    measure();
+    rotorDirty = chartDirty = true;
+    dofOff();
+    setGoal(poseFor(), false);
+    syncScrub();
+  }
+  foldBtn.addEventListener("click", () => setFold(!folded));
   const findBtn = nav.querySelector(".pf-nav-find");
   const findBox = nav.querySelector(".pf-nav-search");
   const query = nav.querySelector(".pf-nav-query");
@@ -3162,10 +3237,13 @@
 
   // ---- NOTHING DRAWN THAT CANNOT BE SEEN -----------------------------------
   if ("IntersectionObserver" in window) {
+    // (and not while all but a sliver of it is scrolled away, reading the
+    // index under it — 2026-11-07)
     new IntersectionObserver((list) => {
-      seen = list[list.length - 1].isIntersecting;
+      const en = list[list.length - 1];
+      seen = en.isIntersecting && en.intersectionRatio > 0.06;
       if (seen) { last = 0; kick(); }
-    }).observe(stage);
+    }, { threshold: [0, 0.06, 0.12] }).observe(stage);
   }
   document.addEventListener("visibilitychange", () => { if (!document.hidden) { last = 0; kick(); } });
   // nor under the site's Menu, which stands over the page
@@ -3183,6 +3261,7 @@
   // ---- BEGIN -------------------------------------------------------------
   pressSort(mode);
   buildNav();
+  if (folded) setFold(true, true);
   let resizeQ = 0;
   window.addEventListener("resize", () => {
     if (resizeQ) return;

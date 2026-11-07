@@ -30,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=483fcb0924">
+<link rel="stylesheet" href="../style.css?v=c1a55cec1d">
 </head>
 <!--
   PERFUMERS — what took the Photography page's place in the Menu
@@ -109,11 +109,18 @@
         <button type="button" class="pf-nav-find" aria-expanded="false" aria-controls="pf-nav-search" aria-label="Search the list">
           <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.6" cy="6.6" r="4.6"/><path d="M10 10l4.4 4.4"/></svg>
         </button>
+        <!-- the fold (2026-11-07 — "the table on the right should be
+             collapsible"): the list and its search fold away together, the
+             chart taking the room; remembered for the next visit -->
+        <button type="button" class="pf-nav-fold" aria-expanded="true" aria-controls="pf-nav-body" aria-label="Fold the list away">
+          <span class="pf-nav-fold-mark" aria-hidden="true"></span>
+        </button>
         <button type="button" class="pf-nav-toggle" aria-expanded="false">
           <span class="pf-nav-path">Choose a perfumer</span>
           <span class="pf-nav-chev" aria-hidden="true"></span>
         </button>
       </div>
+      <div class="pf-nav-body" id="pf-nav-body">
       <div class="pf-nav-search" id="pf-nav-search" hidden>
         <input type="search" class="pf-nav-query" placeholder="A perfumer, a house, a perfume" aria-label="Search the perfumers, their houses and their perfumes" autocomplete="off" spellcheck="false">
         <span class="pf-nav-count" aria-live="polite"></span>
@@ -121,6 +128,7 @@
       <div class="pf-nav-scroll">
         <ul class="pf-nav-list"></ul>
         <ul class="pf-nav-found" hidden></ul>
+      </div>
       </div>
     </nav>
 
@@ -132,6 +140,11 @@
     <div class="pf-tip" aria-hidden="true" hidden></div>
   </section>
 
+  <!-- UNDER THE CHART (2026-11-07 — the owner: "below the main perfumers
+       thing (the planet), i want you to put: Intro, legend, terms and
+       disclaimer, below that the index and below that the credits"): the
+       intro, and beside it the legend, the terms and the disclaimer; the
+       index and the sources follow in the foot. -->
   <section class="pf-notes" aria-label="About the chart">
     <div class="pf-notes-col pf-notes-left">
       <h2 class="pf-notes-head">Intro</h2>
@@ -141,6 +154,56 @@
         <strong>its perfumer, its house, and the perfume itself</strong> — a bar out to its year, the further
         out, the more recent. Choose a perfumer — on the circle or in the list — and their houses appear;
         scroll, and go through their perfumes.</p>
+    </div>
+
+    <!-- THE LEGEND, THE TERMS AND THE DISCLAIMER (2026-11-03 — the owner: "The
+         legend, and the terms should be drop downs too, and should be subtle";
+         and of the disclaimer, "on the left at the bottom ... drop down, like
+         the terms and legend, and should be demarcated by an asterisk that is
+         also present on the title"): three quiet <details>, a hairline and a
+         word each, shut until pressed; the title's asterisk opens the last. -->
+    <div class="pf-drops">
+      <details class="pf-drop pf-legend-box">
+        <summary><span class="pf-drop-word">Legend</span><span class="pf-drop-say">what the marks mean</span><span class="pf-drop-mark" aria-hidden="true"></span></summary>
+        <div class="pf-drop-body">
+        <ul class="pf-legend">
+          <li><span class="pf-key pf-key-earth" aria-hidden="true"></span><b>The Earth</b> — in the middle, turning to what is chosen</li>
+          <li><span class="pf-key pf-key-pin" aria-hidden="true"></span><b>A house's country</b> — the country the ledger gives, never a town</li>
+          <li><span class="pf-key pf-key-from" aria-hidden="true"></span><b>A perfumer's country</b></li>
+          <li><span class="pf-key pf-key-line pf-key-faint" aria-hidden="true"></span><b>A line</b> from a house's country to each of its perfumes on the rings</li>
+          <li><span class="pf-key pf-key-cell" aria-hidden="true"></span><b>Ring 1, the perfumer</b> — named by a source</li>
+          <li><span class="pf-key pf-key-cell pf-key-half" aria-hidden="true"></span><b>The house's perfumer</b> — no nose named for this one</li>
+          <li><span class="pf-key pf-key-cell pf-key-empty" aria-hidden="true"></span><b>Perfumer not found</b></li>
+          <li><span class="pf-key pf-key-cell pf-key-gold" aria-hidden="true"></span><b>Ring 2, the house</b> — an individual fragrance written about here</li>
+          <li><span class="pf-key pf-key-cell pf-key-blue" aria-hidden="true"></span>a house perfume written about here</li>
+          <li><span class="pf-key pf-key-cell pf-key-rose" aria-hidden="true"></span>Prin Lomros' houses, not written about here</li>
+          <li><span class="pf-key pf-key-bar" aria-hidden="true"></span><b>Ring 3, the perfume</b> — a bar as long as its year, 2009 shortest to 2026</li>
+          <li><span class="pf-key pf-key-dot pf-key-hollow" aria-hidden="true"></span><b>Year not found</b> — on the dashed ring</li>
+        </ul>
+        <p class="pf-counts" data-counts>280 perfumes · 142 written about on The Taste of Aldehydes · 31 perfumers · 27 houses</p>
+        </div>
+      </details>
+      <details class="pf-drop pf-terms">
+        <summary><span class="pf-drop-word">Terms</span><span class="pf-drop-say">the words the chart uses</span><span class="pf-drop-mark" aria-hidden="true"></span></summary>
+        <div class="pf-drop-body">
+        <dl>
+          <dt>Perfumer</dt><dd>The person who composes a perfume; also called its nose.</dd>
+          <dt>House</dt><dd>The name a perfume is made and sold under.</dd>
+          <dt>Named</dt><dd>A source names this perfumer as the maker of this perfume.</dd>
+          <dt>The house's perfumer</dt><dd>A source names this person as the house's own, or only, perfumer — but none names the nose of this one perfume.</dd>
+          <dt>Not found</dt><dd>No source found says. The chart leaves it empty rather than guess.</dd>
+          <dt>Year</dt><dd>The year a source gives for a perfume's first release; a later version is noted beside it.</dd>
+        </dl>
+        </div>
+      </details>
+      <details class="pf-drop pf-disclaimer" id="disclaimer">
+        <summary><span class="pf-drop-word"><span class="pf-drop-star" aria-hidden="true">*</span>Disclaimer</span><span class="pf-drop-say">where the chart's facts come from</span><span class="pf-drop-mark" aria-hidden="true"></span></summary>
+        <div class="pf-drop-body">
+          <p>Who made a perfume, and when, is taken only from the sources at the foot of this page. Where none
+            could be found the chart says so rather than guess — a hollow mark has no year, and the perfumes no
+            source credits stand together under <em>Perfumer not found</em>.</p>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -152,7 +215,7 @@
       <summary class="pf-index-open">
         <span class="pf-index-mark" aria-hidden="true"></span>
         <h2 class="pf-index-word">Index</h2>
-        <span class="pf-index-say">Every perfumer, their houses and their perfumes<span class="pf-index-counts" data-index-counts>23 perfumers · 27 houses · 280 perfumes</span></span>
+        <span class="pf-index-say">Every perfumer, their houses and their perfumes<span class="pf-index-counts" data-index-counts>31 perfumers · 27 houses · 280 perfumes</span></span>
         <span class="pf-index-cue" aria-hidden="true"><span class="pf-index-cue-open">Open</span><span class="pf-index-cue-shut">Close</span></span>
       </summary>
       <div class="pf-index-cols">
@@ -659,56 +722,6 @@
       </div>
     </details>
 
-    <!-- THE LEGEND, THE TERMS AND THE DISCLAIMER (2026-11-03 — the owner: "The
-         legend, and the terms should be drop downs too, and should be subtle";
-         and of the disclaimer, "on the left at the bottom ... drop down, like
-         the terms and legend, and should be demarcated by an asterisk that is
-         also present on the title"): three quiet <details>, a hairline and a
-         word each, shut until pressed; the title's asterisk opens the last. -->
-    <div class="pf-drops">
-      <details class="pf-drop pf-legend-box">
-        <summary><span class="pf-drop-word">Legend</span><span class="pf-drop-say">what the marks mean</span><span class="pf-drop-mark" aria-hidden="true"></span></summary>
-        <div class="pf-drop-body">
-        <ul class="pf-legend">
-          <li><span class="pf-key pf-key-earth" aria-hidden="true"></span><b>The Earth</b> — in the middle, turning to what is chosen</li>
-          <li><span class="pf-key pf-key-pin" aria-hidden="true"></span><b>A house's country</b> — the country the ledger gives, never a town</li>
-          <li><span class="pf-key pf-key-from" aria-hidden="true"></span><b>A perfumer's country</b></li>
-          <li><span class="pf-key pf-key-line pf-key-faint" aria-hidden="true"></span><b>A line</b> from a house's country to each of its perfumes on the rings</li>
-          <li><span class="pf-key pf-key-cell" aria-hidden="true"></span><b>Ring 1, the perfumer</b> — named by a source</li>
-          <li><span class="pf-key pf-key-cell pf-key-half" aria-hidden="true"></span><b>The house's perfumer</b> — no nose named for this one</li>
-          <li><span class="pf-key pf-key-cell pf-key-empty" aria-hidden="true"></span><b>Perfumer not found</b></li>
-          <li><span class="pf-key pf-key-cell pf-key-gold" aria-hidden="true"></span><b>Ring 2, the house</b> — an individual fragrance written about here</li>
-          <li><span class="pf-key pf-key-cell pf-key-blue" aria-hidden="true"></span>a house perfume written about here</li>
-          <li><span class="pf-key pf-key-cell pf-key-rose" aria-hidden="true"></span>Prin Lomros' houses, not written about here</li>
-          <li><span class="pf-key pf-key-bar" aria-hidden="true"></span><b>Ring 3, the perfume</b> — a bar as long as its year, 2009 shortest to 2026</li>
-          <li><span class="pf-key pf-key-dot pf-key-hollow" aria-hidden="true"></span><b>Year not found</b> — on the dashed ring</li>
-        </ul>
-        <p class="pf-counts" data-counts>280 perfumes · 142 written about on The Taste of Aldehydes · 23 perfumers · 27 houses</p>
-        </div>
-      </details>
-      <details class="pf-drop pf-terms">
-        <summary><span class="pf-drop-word">Terms</span><span class="pf-drop-say">the words the chart uses</span><span class="pf-drop-mark" aria-hidden="true"></span></summary>
-        <div class="pf-drop-body">
-        <dl>
-          <dt>Perfumer</dt><dd>The person who composes a perfume; also called its nose.</dd>
-          <dt>House</dt><dd>The name a perfume is made and sold under.</dd>
-          <dt>Named</dt><dd>A source names this perfumer as the maker of this perfume.</dd>
-          <dt>The house's perfumer</dt><dd>A source names this person as the house's own, or only, perfumer — but none names the nose of this one perfume.</dd>
-          <dt>Not found</dt><dd>No source found says. The chart leaves it empty rather than guess.</dd>
-          <dt>Year</dt><dd>The year a source gives for a perfume's first release; a later version is noted beside it.</dd>
-        </dl>
-        </div>
-      </details>
-      <details class="pf-drop pf-disclaimer" id="disclaimer">
-        <summary><span class="pf-drop-word"><span class="pf-drop-star" aria-hidden="true">*</span>Disclaimer</span><span class="pf-drop-say">where the chart's facts come from</span><span class="pf-drop-mark" aria-hidden="true"></span></summary>
-        <div class="pf-drop-body">
-          <p>Who made a perfume, and when, is taken only from the sources at the foot of this page. Where none
-            could be found the chart says so rather than guess — a hollow mark has no year, and the perfumes no
-            source credits stand together under <em>Perfumer not found</em>.</p>
-        </div>
-      </details>
-    </div>
-
     <!-- THE SOURCES, behind a button of their own (2026-11-03 — the owner:
          "make the perfumers page sources also collapsible"): a <details> as
          the index is, shut until pressed, and open without the script too;
@@ -717,7 +730,7 @@
       <summary class="pf-index-open pf-sources-open">
         <span class="pf-index-mark" aria-hidden="true"></span>
         <h2 class="pf-index-word">Sources</h2>
-        <span class="pf-index-say">Where every perfumer, house and year on the chart comes from, in MLA 8<span class="pf-index-counts" data-source-count>83 sources</span></span>
+        <span class="pf-index-say">Where every perfumer, house and year on the chart comes from, in MLA 8<span class="pf-index-counts" data-source-count>107 sources</span></span>
         <span class="pf-index-cue" aria-hidden="true"><span class="pf-index-cue-open">Open</span><span class="pf-index-cue-shut">Close</span></span>
       </summary>
       <ol class="pf-source-list">
@@ -850,7 +863,7 @@
 <script>window.SITE_ROOT = "../";</script>
 <script src="../nav.js?v=ddedcc2da4"></script>
 <script src="../perfumers-earth.js?v=7ab61e7ee6"></script>
-<script src="../perfumers-data.js?v=0e2308a91c"></script>
-<script src="../perfumers.js?v=967e60a82f"></script>
+<script src="../perfumers-data.js?v=d371805173"></script>
+<script src="../perfumers.js?v=5cc0f80983"></script>
 </body>
 </html>

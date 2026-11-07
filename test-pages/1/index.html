@@ -77,6 +77,10 @@
   .t1-rays-ui { transition: opacity 0.5s; }
   body.is-rays .t1-world-ui { opacity: 0; visibility: hidden; }
   body.is-world .t1-rays-ui { opacity: 0; visibility: hidden; }
+  /* the world's words come in with the world as it opens out of the rays,
+     and go with it (2026-11-07 — "make the transitions smoother") */
+  body.is-world .t1-world-ui { opacity: var(--reveal, 1); }
+  body.is-revealing .t1-world-ui { transition: none; }
 
   /* THE RAYS' WORDS: white on the black */
   .t1-rays-head { position: absolute; top: 34px; left: 48px; right: 48px; display: flex; justify-content: space-between; align-items: baseline; color: #f3f3f1; }
@@ -137,6 +141,45 @@
   .t1-lines { position: absolute; left: calc(54% - 12vw); bottom: 74px; width: min(470px, 42vw); margin: 0; padding: 0; list-style: none; font: 400 12px/1.55 var(--sans); color: #2c2e33; }
   .t1-lines li { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
+  /* LEARN MORE (2026-11-07): the button on the three lines' right, and the
+     sheet it opens under the poster, which the page scrolls down to */
+  .t1-more-open { position: absolute; bottom: 82px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px 9px; font: 500 10.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); background: rgba(250, 251, 250, 0.55); border: 1px solid rgba(28, 29, 34, 0.3); cursor: pointer; transition: border-color 0.3s, background 0.3s; }
+  .t1-more-open:hover, .t1-more-open:focus-visible, .t1-more-open[aria-expanded="true"] { border-color: var(--ink); background: rgba(250, 251, 250, 0.9); }
+  .t1-more-open[hidden] { display: none; }
+  body.is-more { overflow-y: auto; }
+  .t1-more { position: relative; z-index: 5; margin-top: 100vh; min-height: 100vh; background: var(--ground); border-top: 3px solid #2a1d22; box-shadow: 0 -30px 60px rgba(40, 45, 50, 0.12); }
+  .t1-more[hidden] { display: none; }
+  .t1-more-in { max-width: 760px; margin: 0 auto; padding: 46px 48px 90px; color: #2c2e33; animation: t1-up 0.9s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes t1-up { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+  .t1-more-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid #2a2c31; }
+  .t1-more-kicker { margin: 0; font: 500 10px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .t1-more-close { font: 500 10.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); background: none; border: 1px solid rgba(28, 29, 34, 0.3); padding: 6px 11px 7px; cursor: pointer; }
+  .t1-more-close:hover { border-color: var(--ink); }
+  .t1-more-name { margin: 34px 0 6px; font: 300 44px/1.05 var(--sans); letter-spacing: -0.01em; color: var(--ink); }
+  .t1-more-sub { margin: 0 0 30px; font: 400 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.02em; }
+  .t1-more-text p { margin: 0 0 16px; font: 400 15px/1.7 var(--sans); }
+  .t1-more-src-head { margin: 40px 0 10px; padding-top: 14px; border-top: 1px solid rgba(28, 29, 34, 0.18); font: 500 10px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .t1-more-sources { margin: 0; padding: 0 0 0 1.6em; font: 400 11.5px/1.6 var(--sans); color: #3c3f45; }
+  .t1-more-sources li { margin-bottom: 8px; padding-left: 4px; }
+  .t1-more-sources cite { font-style: italic; }
+  .t1-more-sources a { color: var(--blue); text-decoration: none; overflow-wrap: anywhere; font: 400 10.5px var(--mono); }
+  .t1-more-sources a:hover { text-decoration: underline; }
+  /* the readings come in softly when they change (2026-11-07) */
+  .is-fresh { animation: t1-fresh 0.7s ease both; }
+  @keyframes t1-fresh { from { opacity: 0.12; } to { opacity: 1; } }
+  .t1-list.is-fresh .t1-list-rows li { animation: t1-row 0.6s cubic-bezier(.2,.7,.2,1) both; }
+  .t1-list.is-fresh .t1-list-rows li:nth-child(2) { animation-delay: 0.05s; }
+  .t1-list.is-fresh .t1-list-rows li:nth-child(3) { animation-delay: 0.1s; }
+  .t1-list.is-fresh .t1-list-rows li:nth-child(n+4) { animation-delay: 0.14s; }
+  @keyframes t1-row { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  /* coming in (2026-11-07 — "make the loading of it smoother"): the words
+     over the rays come up after the rays have begun, and nothing can be
+     pressed until the page is ready */
+  .t1-rays-ui { animation: t1-in 1.2s ease 0.5s both; }
+  @keyframes t1-in { from { opacity: 0; } to { opacity: 1; } }
+  body:not(.is-ready) .t1 a, body:not(.is-ready) .t1 button, body:not(.is-ready) .t1 select, body:not(.is-ready) .t1-list { pointer-events: none; }
+  body:not(.is-ready) .t1-ways { opacity: 0.45; }
+  .t1-ways { transition: opacity 0.6s; }
   /* the tip a perfume brings */
   .t1-tip { position: absolute; left: 0; top: 0; max-width: 290px; padding: 9px 11px 10px; background: rgba(250, 251, 250, 0.95); border: 1px solid rgba(28, 29, 34, 0.14); box-shadow: 0 10px 30px rgba(30, 35, 40, 0.12); font: 400 11px/1.45 var(--sans); color: #34363b; pointer-events: none; }
   body.is-rays .t1-tip { background: rgba(14, 14, 14, 0.92); border-color: rgba(255, 255, 255, 0.18); color: #d9d9d6; box-shadow: none; }
@@ -206,8 +249,14 @@
     .t1-lines { display: none; }
     .t1-list { bottom: 64px; }
   }
+  @media (max-width: 760px) {
+    .t1-more-open { left: auto !important; right: 16px; bottom: auto; top: 52px; padding: 5px 9px 6px; }
+    .t1-more-in { padding: 34px 20px 70px; }
+    .t1-more-name { font-size: 34px; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .t1-grain { animation: none; }
+    .is-fresh, .t1-list.is-fresh .t1-list-rows li, .t1-rays-ui, .t1-more-in { animation: none; }
     .t1-bar i, .t1-gauge .t1-gauge-arc, .t1-gauge .t1-gauge-arc2 { transition: none; }
   }
 </style>
@@ -227,7 +276,7 @@
   <div class="t1-world-ui">
     <header class="t1-head">
       <h2>Perfumer Worlds <span>· <span class="t1-head-name"></span> and their houses</span></h2>
-      <span class="t1-date">2026 11 06</span>
+      <span class="t1-date">2026 11 07</span>
     </header>
     <p class="t1-hint">A house pressed, or its row: what was made for it</p>
 
@@ -244,19 +293,6 @@
         <dt><span data-v="houses-say">Houses</span><span class="t1-bar"></span></dt>
         <dd><span data-v="houses"></span><span class="t1-sub" data-v="houses-sub"></span></dd>
       </dl>
-      <dl class="t1-read t1-read-years">
-        <dt>Years<span class="t1-bar"></span></dt>
-        <dd><span data-v="years"></span><span class="t1-sub" data-v="years-sub"></span></dd>
-      </dl>
-      <dl class="t1-read t1-credit">
-        <dt>Who made them, as the sources say<span class="t1-bar"></span></dt>
-        <dd>
-          <div class="t1-gaugebox">
-            <svg class="t1-gauge" viewBox="0 0 36 36" role="img" aria-label=""><circle class="t1-gauge-bed" cx="18" cy="18" r="15.9" pathLength="100"/><circle class="t1-gauge-arc" cx="18" cy="18" r="15.9" pathLength="100"/><circle class="t1-gauge-arc2" cx="18" cy="18" r="15.9" pathLength="100"/></svg>
-            <div class="t1-shares"><p><b data-v="c1"></b>named</p><p><b data-v="c2"></b>the house's</p><p><b data-v="c3"></b>not found</p></div>
-          </div>
-        </dd>
-      </dl>
     </section>
 
     <section class="t1-list" aria-label="What is in the world">
@@ -265,6 +301,7 @@
       <ol class="t1-list-rows"></ol>
     </section>
     <ul class="t1-lines" aria-label="What the ledger says"></ul>
+    <button type="button" class="t1-more-open" aria-expanded="false" aria-controls="t1-more" hidden>Learn more <span aria-hidden="true">↓</span></button>
     <button type="button" class="t1-return" hidden>↩ Return</button>
   </div>
   <div class="t1-tip" role="tooltip" hidden></div>
@@ -277,6 +314,20 @@
     <select class="t1-pick" aria-label="Every perfumer"></select>
   </nav>
 </main>
-<script src="page.js?v=5729d210fc"></script>
+<!-- LEARN MORE: the perfumer's biography, on a sheet under the poster -->
+<section class="t1-more" id="t1-more" aria-label="About the perfumer" hidden>
+  <div class="t1-more-in">
+    <header class="t1-more-head">
+      <p class="t1-more-kicker">About the perfumer</p>
+      <button type="button" class="t1-more-close">Back to the world <span aria-hidden="true">↑</span></button>
+    </header>
+    <h2 class="t1-more-name" data-v="more-name"></h2>
+    <p class="t1-more-sub" data-v="more-sub"></p>
+    <div class="t1-more-text"></div>
+    <h3 class="t1-more-src-head">Sources</h3>
+    <ol class="t1-more-sources"></ol>
+  </div>
+</section>
+<script src="page.js?v=ad34e43272"></script>
 </body>
 </html>

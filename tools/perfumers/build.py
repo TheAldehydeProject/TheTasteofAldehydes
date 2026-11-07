@@ -269,8 +269,18 @@ def write_page(perfumers, houses, perfumes, sources):
             return
         i = page.index("-->", i) + 3
         page = page[:i] + "\n" + body + "\n      " + page[j:]
+    # the counts the page says before its script has run (the script says
+    # them again from the data): the index's, the legend's and the sources'
+    c = {"perfumes": len(perfumes), "onSite": sum(1 for p in perfumes if p["at"]),
+         "perfumers": len(perfumers) - 1, "houses": len(houses)}
+    page = re.sub(r"(data-index-counts>)[^<]*(<)",
+                  r"\g<1>%(perfumers)d perfumers · %(houses)d houses · %(perfumes)d perfumes\g<2>" % c, page)
+    page = re.sub(r"(data-counts>)[^<]*(<)",
+                  r"\g<1>%(perfumes)d perfumes · %(onSite)d written about on The Taste of Aldehydes · "
+                  r"%(perfumers)d perfumers · %(houses)d houses\g<2>" % c, page)
+    page = re.sub(r"(data-source-count>)[^<]*(<)", r"\g<1>%d sources\g<2>" % len(sources), page)
     open(PAGE, "w", encoding="utf-8").write(page)
-    print("wrote the index and the sources into perfumers/index.html")
+    print("wrote the index, the sources and the counts into perfumers/index.html")
 
 
 if __name__ == "__main__":
