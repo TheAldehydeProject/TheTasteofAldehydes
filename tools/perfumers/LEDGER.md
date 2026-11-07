@@ -78,17 +78,17 @@ Change something here, then run `python3 tools/perfumers/build.py` and `python3 
 | Tome | Nicholas Nilsson | named | 2025 | Pineward | houses/pineward.html#part-46 | S01 |  |
 | Treacle | Nicholas Nilsson | named | 2021 | Pineward | houses/pineward.html#part-47 | S01 |  |
 | Velvetine | Nicholas Nilsson | named | 2021 | Pineward | houses/pineward.html#part-48 | S01 | A 2025 version also exists. |
-| Amber Zero | Dan & Roxana Adar | house |  | ADAR | houses/adar.html#part-01 | S10, S11 | Credited to the house's own perfumers; ADAR does not name a nose for it. |
-| Aetherialism | Dan & Roxana Adar | house |  | ADAR | houses/adar.html#part-02 | S10, S11 | Credited to the house's own perfumers; ADAR does not name a nose for it. |
-| Incantu | Dan & Roxana Adar | house |  | ADAR | houses/adar.html#part-03 | S10, S11 | Credited to the house's own perfumers; ADAR does not name a nose for it. |
-| Against All Odds | Dan & Roxana Adar | house | 2025 | ADAR | houses/adar.html#part-04 | S10, S11, S13 | Credited to the house's own perfumers; ADAR does not name a nose for it. |
-| α11 Alpha11 | Dan & Roxana Adar | house |  | ADAR | houses/adar.html#part-05 | S10, S11 | Credited to the house's own perfumers; ADAR does not name a nose for it. |
-| Alta Luna | Dan & Roxana Adar | house | 2025 | ADAR | houses/adar.html#part-06 | S10, S11, S14 | Credited to the house's own perfumers; ADAR does not name a nose for it. |
-| ADHD | Dan & Roxana Adar | house |  | ADAR | houses/adar.html#part-07 | S10, S11 | Credited to the house's own perfumers; ADAR does not name a nose for it. |
-| Root Code | Dan & Roxana Adar | house |  | ADAR | houses/adar.html#part-08 | S10, S11 | Credited to the house's own perfumers; ADAR does not name a nose for it. |
-| Lignum Dei | Dan & Roxana Adar | house |  | ADAR | houses/adar.html#part-09 | S10, S11 | Credited to the house's own perfumers; ADAR does not name a nose for it. |
-| Lithos Diaphanes Λίθος Διαφανές | Dan & Roxana Adar | house |  | ADAR | houses/adar.html#part-10 | S10, S11 | Credited to the house's own perfumers; ADAR does not name a nose for it. |
-| Tyrian | Dan & Roxana Adar | named | 2026 | ADAR | houses/adar.html#part-11 | S12, S10 | The nose named is Rox (Roxana) Adar. |
+| Amber Zero | Dan Adar | named |  | ADAR | houses/adar.html#part-01 | S84, S10, S11 | The house names its nose as Dan Adar. |
+| Aetherialism | Roxana Adar | named |  | ADAR | houses/adar.html#part-02 | S85, S10, S11 | The house names its nose as Rox (Roxana) Adar. |
+| Incantu | Roxana Adar | named |  | ADAR | houses/adar.html#part-03 | S86, S10, S11 | The house names its nose as Rox (Roxana) Adar. |
+| Against All Odds | Dan & Roxana Adar | house | 2025 | ADAR | houses/adar.html#part-04 | S87, S10, S11, S13 | The house gives only "Adar artistic concept & olfactory architecture". |
+| α11 Alpha11 | Miguel Matos | named |  | ADAR | houses/adar.html#part-05 | S88, S10, S11 | The house names its nose as Miguel Matos. |
+| Alta Luna | Miguel Matos | named | 2025 | ADAR | houses/adar.html#part-06 | S89, S10, S11, S14 | The house names its nose as Miguel Matos. |
+| ADHD | Roxana Adar | named |  | ADAR | houses/adar.html#part-07 | S90, S10, S11 | The house names its nose as Rox (Roxana) Adar. |
+| Root Code | Dan Adar | named |  | ADAR | houses/adar.html#part-08 | S91, S10, S11 | The house names its nose as Dan Adar. |
+| Lignum Dei | Dan Adar | named |  | ADAR | houses/adar.html#part-09 | S92, S10, S11 | The house names its nose as Dan Adar. |
+| Lithos Diaphanes Λίθος Διαφανές | Dan & Roxana Adar | house |  | ADAR | houses/adar.html#part-10 | S93, S10, S11 | A single bottle; the house names no nose. |
+| Tyrian | Roxana Adar | named | 2026 | ADAR | houses/adar.html#part-11 | S12, S10 | The nose named is Rox (Roxana) Adar. |
 | Burning Bridges | Goran Bajazetov | named | 2026 | Almost Human | houses/almost-human.html#part-01 | S15 |  |
 | Dear Future | Goran Bajazetov | named | 2026 | Almost Human | houses/almost-human.html#part-02 | S15 |  |
 | Desert Hope | Goran Bajazetov | named | 2026 | Almost Human | houses/almost-human.html#part-03 | S15 |  |
@@ -96,8 +96,8 @@ Change something here, then run `python3 tools/perfumers/build.py` and `python3 
 | Silent Rain | Goran Bajazetov | named | 2026 | Almost Human | houses/almost-human.html#part-05 | S15 |  |
 | Amaretto Jazz in the Melting Room | David-Lev Jipa-Slivinschi | named | 2024 | Ataraxia | houses/ataraxia.html#part-01 | S18 |  |
 | Deity | Sy Truong | named | 2025 | Ataraxia | houses/ataraxia.html#part-02 | S20 | Made with the house's creative director, Tudor Ristea. |
-| My Doll’s Makeup |  | none |  | Ataraxia | houses/ataraxia.html#part-03 | S78 |  |
-| Spinal Fluid |  | none | 2025 | Ataraxia | houses/ataraxia.html#part-04 | S21, S22 |  |
+| My Doll’s Makeup | Sy Truong | named |  | Ataraxia | houses/ataraxia.html#part-03 | S94, S78 | "Formula by award winner Sy Truong." |
+| Spinal Fluid | Sy Truong | named | 2025 | Ataraxia | houses/ataraxia.html#part-04 | S95, S21, S22 |  |
 | Vestibule | David-Lev Jipa-Slivinschi | named | 2024 | Ataraxia | houses/ataraxia.html#part-05 | S19 |  |
 | 5 Years Anniversary |  | none |  | Grande Parfums | houses/grande-parfums.html#part-01 | S25 |  |
 | Ambresso |  | none |  | Grande Parfums | houses/grande-parfums.html#part-02 | S25 |  |
@@ -125,12 +125,12 @@ Change something here, then run `python3 tools/perfumers/build.py` and `python3 
 | Santal Absolu | Mathew Schmuelian | house |  | Lost Tribe | houses/lost-tribe.html#part-06 | S46, S48 | Credited to the house's founder and perfumer; no source names a nose for this one. |
 | Pan’s Labyrinth | Mathew Schmuelian; Rajesh Balkrishnan | named |  | Lost Tribe | houses/lost-tribe.html#part-03 | S47 |  |
 | Nymphaea Caerulea | Aichi Liu | house |  | Om Parfums | houses/om-parfums.html#part-01 | S42, S43 | Credited to the house's only perfumer. |
-| Lust | Aichi Liu | house | 2023 | Om Parfums | houses/om-parfums.html#part-02 | S42, S43 | Credited to the house's only perfumer. |
-| Burnana | Aichi Liu | house | 2024 | Om Parfums | houses/om-parfums.html#part-03 | S42, S43 | Credited to the house's only perfumer. |
+| Lust | Aichi Liu | named | 2023 | Om Parfums | houses/om-parfums.html#part-02 | S106, S105, S42, S43 | Credited to the house's only perfumer. |
+| Burnana | Aichi Liu | named | 2024 | Om Parfums | houses/om-parfums.html#part-03 | S106, S105, S42, S43 | Credited to the house's only perfumer. |
 | Cannabis Café | Aichi Liu | house |  | Om Parfums | houses/om-parfums.html#part-04 | S42, S43 | Credited to the house's only perfumer. |
-| Dark Night of the Soul | Aichi Liu | house | 2024 | Om Parfums | houses/om-parfums.html#part-05 | S42, S43 | Credited to the house's only perfumer. |
-| This Too Shall Pass | Aichi Liu | house |  | Om Parfums | houses/om-parfums.html#part-06 | S42, S43 | Credited to the house's only perfumer. |
-| When the Linden Blooms | Aichi Liu | house | 2024 | Om Parfums | houses/om-parfums.html#part-07 | S42, S43 | Credited to the house's only perfumer. |
+| Dark Night of the Soul | Aichi Liu | named | 2024 | Om Parfums | houses/om-parfums.html#part-05 | S106, S105, S42, S43 | Credited to the house's only perfumer. |
+| This Too Shall Pass | Aichi Liu | named |  | Om Parfums | houses/om-parfums.html#part-06 | S106, S42, S43 | Credited to the house's only perfumer. |
+| When the Linden Blooms | Aichi Liu | named | 2024 | Om Parfums | houses/om-parfums.html#part-07 | S106, S105, S42, S43 | Credited to the house's only perfumer. |
 | Oud de Pasión | Aichi Liu | house |  | Om Parfums | houses/om-parfums.html#part-08 | S42, S43 | Credited to the house's only perfumer. |
 | Smoke Oud | Aichi Liu | house |  | Om Parfums | houses/om-parfums.html#part-09 | S42, S43 | Credited to the house's only perfumer. |
 | Dragon’s Breath | Aichi Liu | named | 2026 | Outsider Parfums | houses/outsider-parfums.html#part-01 | S44 |  |
@@ -143,14 +143,14 @@ Change something here, then run `python3 tools/perfumers/build.py` and `python3 
 | Bassist |  | none |  | Qimu & Musicians | houses/qimu-and-musicians.html#part-03 | S41 |  |
 | Drummer | Qimu | named |  | Qimu & Musicians | houses/qimu-and-musicians.html#part-04 | S41 |  |
 | Bad Lily | Michael Nordstrand | named | 2024 | Tale Parfums | houses/tale-parfums.html#part-01 | S35, S34 |  |
-| Fleurt |  | none |  | Tale Parfums | houses/tale-parfums.html#part-02 | S36 |  |
-| Rouse |  | none |  | Tale Parfums | houses/tale-parfums.html#part-03 | S36 |  |
+| Fleurt | Chad Hodge | named | 2024 | Tale Parfums | houses/tale-parfums.html#part-02 | S103, S36 |  |
+| Rouse | Diandra Barsalou | named |  | Tale Parfums | houses/tale-parfums.html#part-03 | S104, S36 |  |
 | Water Me | Chad Hodge | named |  | Tale Parfums | houses/tale-parfums.html#part-04 | S34 |  |
-| 3 Feet 5 |  | none | 2024 | Tombstone | houses/tombstone.html#part-01 | S38 |  |
-| Evergrow |  | none | 2025 | Tombstone | houses/tombstone.html#part-02 | S39 | A reworking of His Lordship's Backyard Roses, released under this name in 2025. |
-| No Need to Come By |  | none |  | Tombstone | houses/tombstone.html#part-03 | S40 |  |
-| Sing at My Funeral |  | none |  | Tombstone | houses/tombstone.html#part-04 | S40 |  |
-| Sweet Coffin |  | none | 2024 | Tombstone | houses/tombstone.html#part-05 | S37 |  |
+| 3 Feet 5 | Lan Xiao | named | 2024 | Tombstone | houses/tombstone.html#part-01 | S96, S38 |  |
+| Evergrow |  | none | 2025 | Tombstone | houses/tombstone.html#part-02 | S97, S39 | Not named on the house's page, Parfumo, Scentissime or ScentAdvice; a reformulation of His Lordship's Backyard Roses (2024). |
+| No Need to Come By | Tan Shuai | named |  | Tombstone | houses/tombstone.html#part-03 | S98, S40 |  |
+| Sing at My Funeral | Yenchi Lin | named |  | Tombstone | houses/tombstone.html#part-04 | S100, S99, S40 |  |
+| Sweet Coffin | Lan Xiao | named | 2024 | Tombstone | houses/tombstone.html#part-05 | S102, S101, S37 | The house writes her name Xiao Lan. |
 | Kogen |  | none | 2024 | Apoteker Tepe | houses/apoteker-tepe.html#part-01 | S07, S05 | Made after Pineward took over the line; no perfumer is named for it. |
 | The Holy Mountain | Holladay Penick Saltz | named | 2015 | Apoteker Tepe | houses/apoteker-tepe.html#part-02 | S06, S09 |  |
 | Karasu | Holladay Penick Saltz | named | 2016 | Apoteker Tepe | houses/apoteker-tepe.html#part-04 | S06, S09 |  |
@@ -165,7 +165,7 @@ Change something here, then run `python3 tools/perfumers/build.py` and `python3 
 | Tobacolor | François Demachy | named | 2021 | Dior | individual-fragrances/individual-fragrances.html#part-04 | S52 |  |
 | Flamenco EDP | Ramón Monegal | named | 2017 | Ramón Monegal | individual-fragrances/individual-fragrances.html#part-05 | S55 |  |
 | French Riviera | Pierre Montale | named | 2022 | Mancera | individual-fragrances/individual-fragrances.html#part-06 | S58 |  |
-| Velvet Fog |  | none |  | Casa Goa | individual-fragrances/individual-fragrances.html#part-07 | S62 |  |
+| Velvet Fog | Vera Nicchia | named |  | Casa Goa | individual-fragrances/individual-fragrances.html#part-07 | S107, S62 |  |
 | House of Ellixirz |  | none | 2021 | Matca | individual-fragrances/individual-fragrances.html#part-08 | S63 |  |
 | Fir of the Light | Jakub Pietrynka | named |  | JMP Artisan Perfumes | individual-fragrances/individual-fragrances.html#part-09 | S64 |  |
 | Fir of the Dark | Jakub Pietrynka | named | 2024 | JMP Artisan Perfumes | individual-fragrances/individual-fragrances.html#part-10 | S64 |  |
@@ -332,7 +332,7 @@ One block each: the name as the chart shows it, then `sort:` (what A–Z sorts b
 - about: The in-house perfumers of ADAR, a European house with Romanian roots. [S10]
 - about: ADAR made its perfumes only on private commission until a public collection came out in 2025. [S10]
 - about: The house also works with outside perfumers — Antoine Lie, Miguel Matos and Manuel Attardi — and does not say which of them made which perfume; here every ADAR perfume is credited to the house's own pair unless a source names its nose. [S11]
-- about: The one that is named is Tyrian (2026), whose nose is given as Rox Adar. [S12]
+- about: Where the house names the nose — Dan Adar, Rox (Roxana) Adar or Miguel Matos — the perfume is credited to that perfumer instead; what is left here is the house's pair. [S12, S84, S88]
 
 ### Goran Bajazetov
 - sort: Bajazetov
@@ -468,6 +468,48 @@ One block each: the name as the chart shows it, then `sort:` (what A–Z sorts b
 - about: Three lines came of it: Strangers Parfumerie (2017), the one closest to his own life; Parfum Prissana (2018), named after his sister, joining classic structures with an East Asian style; and PRIN (2019), the most personal of the three. [S72]
 - about: Several of his perfumes were finalists in the Art and Olfaction Awards — Rosuerrier in 2017, Cigar Rum and Morah in 2018 — and he has made perfumes for Zoologist. [S72]
 - about: He also teaches filmmaking at a university in Bangkok. [S74]
+
+### Dan Adar
+- sort: Adar, Dan
+- from: Romania
+- about: One of the two in-house perfumers of ADAR, a European house with Romanian roots. [S10]
+- about: The house's own pages give him as the nose of Amber Zero, Root Code and Lignum Dei, with Rox Adar as their artistic vision. [S84, S91, S92]
+
+### Roxana Adar
+- sort: Adar, Roxana
+- from: Romania
+- about: One of the two in-house perfumers of ADAR, written Rox Adar on the house's own pages. [S10, S12]
+- about: The house gives her as the nose of Tyrian, Aetherialism, Incantu and ADHD. [S12, S85, S86, S90]
+
+### Miguel Matos
+- sort: Matos
+- about: One of the outside perfumers ADAR works with. [S11]
+- about: The house's own pages give him as the nose of Alta Luna and Alpha 11, two of its Elixirs Absolus, with ADAR as their artistic vision. [S88, S89]
+
+### Lan Xiao
+- sort: Xiao
+- about: An independent perfumer and the founder of Tombstone, who, in Scentissime's words, explores the beauty of life through the awareness of death. [S96, S102]
+- about: Her perfumes for the house are earthy, smoky and gourmand; Tombstone gives her Sweet Coffin, which she meant as the sweet coffin she wishes to return to, and Scentissime 3 Feet 5. [S101, S96]
+
+### Tan Shuai
+- sort: Tan
+- about: Named by Tombstone as the perfumer of No Need to Come by, a gourmand-leather perfume he made of soft, warm notes set against hard, cool ones. [S98]
+
+### Yenchi Lin
+- sort: Lin
+- from: Taiwan
+- about: A Taiwanese perfumer trained in Grasse, who composes perfumes as one writes intimate narratives, drawing on her childhood in Kaohsiung. [S100]
+- about: Tombstone gives her Sing at My Funeral, a funeral pictured with a light spirit. [S99, S100]
+
+### Diandra Barsalou
+- sort: Barsalou
+- from: United States
+- about: Creative director and co-founder of Tale Parfum. [S34]
+- about: Named by Sainte Cellier as the perfumer of Rouse. [S104]
+
+### Vera Nicchia
+- sort: Nicchia
+- about: Named by Profumix as the nose of Casa Goa's Velvet Fog. [S107]
 
 ## Houses
 
@@ -687,3 +729,27 @@ MLA 8, the site's format. One line each: its number, then the citation, then `|`
 - S81: “François Demachy.” *The Fragrance Foundation UK*, fragrancefoundation.org.uk. Accessed 2 Nov. 2026. | https://fragrancefoundation.org.uk/francois-demanchy
 - S82: “Brother Night by Apoteker Tepe.” *Basenotes*, basenotes.com. Accessed 2 Nov. 2026. | https://basenotes.com/fragrances/brother-night-by-apoteker-tepe.26191067
 - S83: “Brother Night by Apoteker Tepe.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026. | https://www.parfumo.com/Perfumes/Apoteker_Tepe/brother-night
+- S84: “Amber Zero – Essence of Depths.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026. | https://adarperfumes.com/products/amber-zero-essence-of-dephts
+- S85: “Aetherialism – Storm Breath.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026. | https://adarperfumes.com/products/aetherialism-storm-breath
+- S86: “Incantu – Drops of Styx.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026. | https://adarperfumes.com/products/incantu-drops-of-styx
+- S87: “Against All Odds – Elixir Absolu.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026. | https://adarperfumes.com/products/against-all-odds
+- S88: “Alpha 11 – Elixir Absolu.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026. | https://adarperfumes.com/products/alpha11-elixir-absolu
+- S89: “Alta Luna – Elixir Absolu.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026. | https://adarperfumes.com/products/alta-luna-elixir-absolu
+- S90: “ADHD – Artistic Functional Neuro Elixir.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026. | https://adarperfumes.com/products/adhd-neuro-elixir
+- S91: “Root Code – Extrait of Heritage.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026. | https://adarperfumes.com/products/root-code
+- S92: “Lignum Dei – The Wood of God.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026. | https://adarperfumes.com/products/lignum-dei-the-wood-of-god
+- S93: “Lithos Diaphanes.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026. | https://adarperfumes.com/products/lithos-diaphanes-λίθος-διαφανές
+- S94: “My Doll’s Makeup.” *Ataraxia Perfumery*, ataraxiaperfumery.com. Accessed 7 Nov. 2026. | https://ataraxiaperfumery.com/products/my-dolls-makeup
+- S95: “Spinal Fluid.” *Ataraxia Perfumery*, ataraxiaperfumery.com. Accessed 7 Nov. 2026. | https://ataraxiaperfumery.com/products/spinal-fluid
+- S96: “3 Feet 5, TOMBSTONE Extrait de Parfum.” *Scentissime*, scentissime.com. Accessed 7 Nov. 2026. | https://www.scentissime.com/en/gourmand-perfumes/1224-3-feet-5-3760302981205.html
+- S97: “Evergrow.” *Tombstone*, tombstonefragrances.shop. Accessed 7 Nov. 2026. | https://tombstonefragrances.shop/products/evergrow
+- S98: “No Need to Come by.” *Tombstone*, tombstonefragrances.shop. Accessed 7 Nov. 2026. | https://tombstonefragrances.shop/products/no-need-to-come-by-1
+- S99: “Sing at My Funeral.” *Tombstone*, tombstonefragrances.shop. Accessed 7 Nov. 2026. | https://tombstonefragrances.shop/products/sing-at-my-funeral-1
+- S100: “Sing at My Funeral, TOMBSTONE Extrait de Parfum.” *Scentissime*, scentissime.com. Accessed 7 Nov. 2026. | https://www.scentissime.com/en/1225-sing-at-my-funeral-3760302981229.html
+- S101: “Sweet Coffin.” *Tombstone*, tombstonefragrances.shop. Accessed 7 Nov. 2026. | https://tombstonefragrances.shop/products/product_96dfccf6-9558-1964-5d89-1505be7abf53
+- S102: “Sweet Coffin, TOMBSTONE Extrait de Parfum.” *Scentissime*, scentissime.com. Accessed 7 Nov. 2026. | https://www.scentissime.com/en/1223-sweet-coffin-3760302981212.html
+- S103: “Fleurt.” *Sainte Cellier*, saintecellier.com. Accessed 7 Nov. 2026. | https://saintecellier.com/products/fleurt
+- S104: “Rouse.” *Sainte Cellier*, saintecellier.com. Accessed 7 Nov. 2026. | https://saintecellier.com/products/rouse
+- S105: “Aichi Liu.” *Parfumo*, parfumo.com. Accessed 7 Nov. 2026. | https://www.parfumo.com/Perfumers/aichi-liu
+- S106: “Aichi Liu.” *The Scent Base*, thescentbase.com. Accessed 7 Nov. 2026. | https://thescentbase.com/perfumer/aichi-liu
+- S107: “Home Goa Velvet Fog 50ml Eau de Parfum.” *Profumix Luxury Brands*, profumixluxurybrands.it. Accessed 7 Nov. 2026. | https://www.profumixluxurybrands.it/en/?p=103693
