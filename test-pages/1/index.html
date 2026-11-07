@@ -72,7 +72,7 @@
     50% { transform: translate(-3%, 7%); } 67% { transform: translate(7%, 2%); } 83% { transform: translate(-5%, -5%); } 100% { transform: translate(0, 0); }
   }
   .t1 { position: fixed; inset: 0; pointer-events: none; }
-  .t1 a, .t1 button, .t1 select { pointer-events: auto; }
+  .t1 a, .t1 button, .t1 select, .t1 input, .t1-found { pointer-events: auto; }
   .t1-world-ui { transition: opacity 0.5s; }
   .t1-rays-ui { transition: opacity 0.5s; }
   body.is-rays .t1-world-ui { opacity: 0; visibility: hidden; }
@@ -177,9 +177,48 @@
      pressed until the page is ready */
   .t1-rays-ui { animation: t1-in 1.2s ease 0.5s both; }
   @keyframes t1-in { from { opacity: 0; } to { opacity: 1; } }
-  body:not(.is-ready) .t1 a, body:not(.is-ready) .t1 button, body:not(.is-ready) .t1 select, body:not(.is-ready) .t1-list { pointer-events: none; }
+  body:not(.is-ready) .t1 a, body:not(.is-ready) .t1 button, body:not(.is-ready) .t1 select, body:not(.is-ready) .t1 input, body:not(.is-ready) .t1-list { pointer-events: none; }
   body:not(.is-ready) .t1-ways { opacity: 0.45; }
   .t1-ways { transition: opacity 0.6s; }
+  /* THE SEARCH (2026-11-07): at the top right, on the rays and in the worlds —
+     a field over a hairline that runs blue into gold as it is used, its
+     answers coming down one after another, each saying what it is */
+  .t1-find { position: absolute; top: 24px; right: 48px; width: 250px; z-index: 6; transition: width 0.5s cubic-bezier(.2,.7,.2,1); }
+  .t1-find.is-open { width: 320px; }
+  body.is-world .t1-find { right: 168px; top: 26px; }
+  .t1-rays-head p { display: none; }
+  .t1-find-mark { position: absolute; left: 0; top: 9px; width: 11px; height: 11px; border: 1.3px solid currentColor; border-radius: 50%; cursor: pointer; color: rgba(243, 243, 241, 0.7); }
+  .t1-find-mark::after { content: ""; position: absolute; left: 9px; top: 9px; width: 5px; height: 1.3px; background: currentColor; transform: rotate(45deg); transform-origin: 0 0; }
+  body.is-world .t1-find-mark { color: var(--muted); }
+  .t1-find input { width: 100%; box-sizing: border-box; padding: 6px 4px 7px 22px; font: 400 11px var(--mono); letter-spacing: 0.03em; color: #f3f3f1; background: transparent; border: 0; border-bottom: 1px solid rgba(243, 243, 241, 0.25); outline: none; border-radius: 0; }
+  .t1-find input::placeholder { color: rgba(243, 243, 241, 0.45); }
+  .t1-find input::-webkit-search-cancel-button { -webkit-appearance: none; }
+  body.is-world .t1-find input { color: var(--ink); border-bottom-color: rgba(28, 29, 34, 0.3); }
+  body.is-world .t1-find input::placeholder { color: var(--muted); }
+  /* the lens's colours drawn along under it as it is used */
+  .t1-find::after { content: ""; position: absolute; left: 0; right: 0; top: 30px; height: 1px; background: linear-gradient(90deg, #4a5cff, #b48cff 40%, #ffc450 75%, #ff5c40); transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.7s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
+  .t1-find.is-open::after { transform: scaleX(1); }
+  .t1-found { position: absolute; left: 0; right: 0; top: calc(100% + 8px); margin: 0; padding: 4px 0; list-style: none; background: rgba(10, 10, 12, 0.94); border: 1px solid rgba(255, 255, 255, 0.14); max-height: min(60vh, 420px); overflow-y: auto; }
+  body.is-world .t1-found { background: rgba(250, 251, 250, 0.96); border-color: rgba(28, 29, 34, 0.16); box-shadow: 0 14px 34px rgba(30, 35, 40, 0.14); }
+  .t1-found[hidden] { display: none; }
+  .t1-found li { animation: t1-found-in 0.42s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 0.04s); }
+  @keyframes t1-found-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  .t1-found button { display: grid; grid-template-columns: 74px 1fr; gap: 1px 8px; width: 100%; padding: 7px 10px 8px; text-align: left; background: none; border: 0; cursor: pointer; color: #f3f3f1; }
+  body.is-world .t1-found button { color: var(--ink); }
+  .t1-found button b { grid-row: 1 / 3; font: 500 9px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: rgba(243, 243, 241, 0.5); padding-top: 3px; }
+  body.is-world .t1-found button b { color: var(--muted); }
+  .t1-found button span { font: 400 13px/1.25 var(--sans); }
+  .t1-found button small { font: 400 10px var(--mono); color: rgba(243, 243, 241, 0.5); letter-spacing: 0.02em; }
+  body.is-world .t1-found button small { color: var(--muted); }
+  .t1-found button:hover, .t1-found button.is-at { background: rgba(255, 255, 255, 0.08); }
+  body.is-world .t1-found button:hover, body.is-world .t1-found button.is-at { background: rgba(28, 29, 34, 0.06); }
+  .t1-found button.is-at b { color: #ffc450; }
+  body.is-world .t1-found button.is-at b { color: #b07a14; }
+  .t1-found-none { padding: 9px 12px; font: 400 11px var(--mono); color: rgba(243, 243, 241, 0.55); }
+  body.is-world .t1-found-none { color: var(--muted); }
+  /* a house asked for, lit in the list a moment */
+  .t1-list-rows button.is-found { animation: t1-lit 3.2s ease both; }
+  @keyframes t1-lit { 0% { background: rgba(255, 196, 80, 0); } 15% { background: rgba(255, 196, 80, 0.32); } 100% { background: rgba(255, 196, 80, 0); } }
   /* the tip a perfume brings */
   .t1-tip { position: absolute; left: 0; top: 0; max-width: 290px; padding: 9px 11px 10px; background: rgba(250, 251, 250, 0.95); border: 1px solid rgba(28, 29, 34, 0.14); box-shadow: 0 10px 30px rgba(30, 35, 40, 0.12); font: 400 11px/1.45 var(--sans); color: #34363b; pointer-events: none; }
   body.is-rays .t1-tip { background: rgba(14, 14, 14, 0.92); border-color: rgba(255, 255, 255, 0.18); color: #d9d9d6; box-shadow: none; }
@@ -250,13 +289,24 @@
     .t1-list { bottom: 64px; }
   }
   @media (max-width: 760px) {
+    .t1-find, .t1-find.is-open { left: 16px; right: 16px !important; width: auto; top: auto; bottom: 64px; }
+    /* the readings and the list stand up out of the search's way */
+    .t1-hud { bottom: 116px; }
+    .t1-list { bottom: 268px; }
+    body.is-world .t1-find { top: auto; bottom: 64px; }
+    .t1-find input { font-size: 16px; padding-left: 24px; background: rgba(10, 10, 12, 0.7); }
+    body.is-world .t1-find input { background: rgba(250, 251, 250, 0.85); }
+    .t1-find-mark { top: 12px; left: 6px; }
+    .t1-find::after { top: auto; bottom: 0; }
+    .t1-found { top: auto; bottom: calc(100% + 8px); max-height: 46vh; }
     .t1-more-open { left: auto !important; right: 16px; bottom: auto; top: 52px; padding: 5px 9px 6px; }
     .t1-more-in { padding: 34px 20px 70px; }
     .t1-more-name { font-size: 34px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .t1-grain { animation: none; }
-    .is-fresh, .t1-list.is-fresh .t1-list-rows li, .t1-rays-ui, .t1-more-in { animation: none; }
+    .is-fresh, .t1-list.is-fresh .t1-list-rows li, .t1-rays-ui, .t1-more-in, .t1-found li, .t1-list-rows button.is-found { animation: none; }
+    .t1-find, .t1-find::after { transition: none; }
     .t1-bar i, .t1-gauge .t1-gauge-arc, .t1-gauge .t1-gauge-arc2 { transition: none; }
   }
 </style>
@@ -270,7 +320,7 @@
       <h1>Perfumer Worlds <span>· every perfume on The Taste of Aldehydes, and Prin Lomros' houses, back to who made it</span></h1>
       <p>A dot a perfume · a block a perfumer</p>
     </header>
-    <p class="t1-rays-say">Point at a dot · press it to open its perfumer's world</p>
+    <p class="t1-rays-say">A dot a perfume · a block a perfumer · press a dot to open its perfumer's world</p>
   </div>
 
   <div class="t1-world-ui">
@@ -305,6 +355,12 @@
     <button type="button" class="t1-return" hidden>↩ Return</button>
   </div>
   <div class="t1-tip" role="tooltip" hidden></div>
+  <!-- THE SEARCH (2026-11-07): a perfumer, a house or a perfume, and on to the perfumer's world -->
+  <div class="t1-find" role="search">
+    <span class="t1-find-mark" aria-hidden="true"></span>
+    <input type="search" placeholder="Find a perfumer, a house or a perfume" aria-label="Find a perfumer, a house or a perfume" autocomplete="off" spellcheck="false">
+    <ul class="t1-found" hidden></ul>
+  </div>
 
   <a class="t1-back" href="../../contact/">← Back</a>
   <nav class="t1-ways" aria-label="The perfumers">
@@ -328,6 +384,6 @@
     <ol class="t1-more-sources"></ol>
   </div>
 </section>
-<script src="page.js?v=ad34e43272"></script>
+<script src="page.js?v=28372cf33f"></script>
 </body>
 </html>

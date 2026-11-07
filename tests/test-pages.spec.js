@@ -318,6 +318,58 @@ test("test page 1: nothing answers until it is ready, the readings trimmed, Lear
    clickable, the movement of the position of the objects that can move on
    the page (and follow the mouse) snaps back to their original and defualt
    position": the spheres lean to the hand over the list too. */
+/* Test page 1, 2026-11-07, later — "Please animate test page one when you
+   clik on any perfumer; and add a search. That search should work by
+   searching anything (perfume, perfume) and then taking you to the perfumer.
+   Also please animate it so its nice. I want a slightly thematic animation."
+   A perfumer pressed: its dots run in along their rays to the point (the
+   gathering), then its world opens out of that point through the lens; the
+   search finds a perfumer, a house or a perfume and takes you to the
+   perfumer, a house or a perfume asked for lit there. */
+test("test page 1: a perfumer pressed gathers into the point and opens from it; the search takes you to the perfumer", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await serveDependenciesLocally(page);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/test-pages/1/");
+  await expect(page.locator("body")).toHaveClass(/is-ready/, { timeout: 5000 });
+  const d = await page.evaluate(() => window.TestPage1.dotOf("antoine-lie"));
+  await page.mouse.click(d.x, d.y);
+  // still the rays while it gathers, the world after
+  await page.waitForTimeout(250);
+  expect(await page.evaluate(() => window.TestPage1.view())).toBe("rays");
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 4000 }).toBe("world");
+  await page.waitForTimeout(1800);
+  expect(await page.evaluate(() => window.TestPage1.now())).toEqual({ kind: "per", perfumer: "antoine-lie", house: null, count: 4 });
+  // the search: a perfume, on to its perfumer, its house lit in the list
+  const find = page.locator(".t1-find input");
+  await find.click();
+  await find.pressSequentially("haxan", { delay: 20 });
+  const first = page.locator(".t1-found button").first();
+  await expect(first).toContainText("Perfume");
+  await expect(first).toContainText("Haxan");
+  await find.press("Enter");
+  await expect.poll(() => page.evaluate(() => window.TestPage1.now().perfumer)).toBe("prin-lomros");
+  await expect(page.locator(".t1-list-rows button.is-found")).toHaveCount(1, { timeout: 4000 });
+  await expect(page.locator(".t1-list-rows button.is-found")).toContainText("Parfum Prissana");
+  await expect(page.locator(".t1-tip")).toContainText("Haxan");
+  // a house names every perfumer it has; from the rays a perfumer gathers in
+  await page.keyboard.press("Escape");
+  await page.evaluate(() => window.TestPage1.ret());
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 4000 }).toBe("rays");
+  await page.waitForTimeout(600);
+  await find.click();
+  await find.pressSequentially("lost tribe", { delay: 20 });
+  await expect(page.locator(".t1-found button")).toHaveCount(2);
+  await find.fill("ivan");
+  await expect(page.locator(".t1-found button")).toHaveCount(0);
+  await find.fill("russian");
+  await expect(page.locator(".t1-found button").first()).toContainText("Perfumer");
+  await page.locator(".t1-found button").first().click();
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 4000 }).toBe("world");
+  expect((await page.evaluate(() => window.TestPage1.now())).perfumer).toBe("russian-adam");
+  expect(errors).toEqual([]);
+});
+
 test("test page 1: the spheres keep leaning to the hand while it is over the list", async ({ page }) => {
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });

@@ -649,20 +649,43 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
   // (longer, and softer at both ends, since 2026-11-07 — "make the
   // transitions smoother")
   const reveal = { on: false, t0: 0, dir: 1, x: 0, y: 0, ms: 1500 };
+  // THE GATHERING (2026-11-07 — "animate test page one when you clik on any
+  // perfumer ... I want a slightly thematic animation"): a perfumer chosen on
+  // the rays, its dots light and run in along their rays to the point they
+  // all go to, drawn through the lens more strongly as they go; and the
+  // world opens out of that point, its edge fringed blue and gold as the
+  // lens fringes the blob. A change from one world to another sends a
+  // ripple of the lens's colours out from the middle (`ripple`).
+  const gather = { on: false, t0: 0, p: null, ms: 820 };
+  const ripple = { t0: -1 };
   function openWorld(p, h, from) {
     layLater();
     show({ kind: h == null ? "per" : "house", p, h: h == null ? null : h }, true);
     if (view === "rays") {
-      reveal.on = !STILL; reveal.t0 = performance.now(); reveal.dir = 1;
-      reveal.x = from ? from.x : W / 2; reveal.y = from ? from.y : H / 2;
-      view = "world";
-      setBody();
+      if (!STILL && !gather.on && !reveal.on) {
+        gather.on = true; gather.t0 = performance.now(); gather.p = p;
+        overDot = null; showTip(null);
+      } else {
+        reveal.on = !STILL; reveal.t0 = performance.now(); reveal.dir = 1;
+        reveal.x = from ? from.x : W / 2; reveal.y = from ? from.y : H / 2;
+        view = "world";
+        setBody();
+      }
     }
     kick();
+  }
+  // the gathering done: the world opens out of the point the rays go to
+  function gathered() {
+    gather.on = false;
+    reveal.on = true; reveal.t0 = performance.now(); reveal.dir = 1;
+    reveal.x = map.hub.x; reveal.y = map.hub.y;
+    view = "world";
+    setBody();
   }
   function show(next, quick) {
     if (cur && cur.p === next.p && cur.kind === next.kind && cur.h === next.h) return;
     prev = cur && !quick && view === "world" ? cur : null;
+    if (prev && prev.p !== next.p && !STILL) ripple.t0 = performance.now();
     cur = next;
     changeT0 = STILL || quick ? -1 : performance.now();
     layWorld();
@@ -884,7 +907,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     hand.x = ev.clientX; hand.y = ev.clientY; hand.on = true;
     // nothing answers the hand until the page has come in whole (2026-11-07 —
     // "i want you to be able to hover it only when it is fully loaded")
-    if (reveal.on || !ready) { cv.style.cursor = "default"; return; }
+    if (reveal.on || gather.on || !ready) { cv.style.cursor = "default"; return; }
     if (view === "rays") {
       const d = dotUnder(hand.x, hand.y);
       if (d !== overDot) {
@@ -905,7 +928,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     kick();
   });
   cv.addEventListener("click", (ev) => {
-    if (reveal.on || !ready) return;
+    if (reveal.on || gather.on || !ready) return;
     if (view === "rays") {
       const d = dotUnder(ev.clientX, ev.clientY);
       if (d) { showTip(null); overDot = null; openWorld(d.p, null, d); }
@@ -944,6 +967,87 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     if (view === "rays") { const b = map.blocks.find((x) => x.p === p); openWorld(p, null, b ? { x: (b.x0 + b.x1) / 2, y: (b.y0 + b.y1) / 2 } : null); }
     else show({ kind: "per", p, h: null });
   });
+  // ---- THE SEARCH (2026-11-07 — "add a search. That search should work by
+  // searching anything (perfume, perfume) and then taking you to the
+  // perfumer. Also please animate it so its nice"): one field at the top
+  // right, on the rays and in the worlds; a perfumer, a house or a perfume,
+  // found as it is typed, each answer saying which and whose; pressed (or
+  // Enter), the perfumer's world opens — gathering out of the rays, or
+  // rippling from the world before — and a house or a perfume asked for is
+  // lit in it: its sphere, its row, and a perfume's tip beside the row.
+  const findBox = el(".t1-find"), findIn = el(".t1-find input"), findOut = el(".t1-found");
+  const plainOf = (t) => String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const perName = (p) => (p.none ? "Perfumer not found" : p.name);
+  const FIND = [];
+  ORDER.forEach((p) => FIND.push({ kind: "Perfumer", name: perName(p), say: [p.from, p.list.length + (p.list.length === 1 ? " perfume" : " perfumes")].filter(Boolean).join(" · "), p }));
+  HOU.forEach((h, hi) => ORDER.forEach((p) => { if (p.houses.has(hi)) FIND.push({ kind: "House", name: h.name, say: "by " + perName(p) + " · " + p.houses.get(hi).length, p, h: hi }); }));
+  ORDER.forEach((p) => p.list.forEach((e) => FIND.push({ kind: "Perfume", name: e.n, say: HOU[e.h].name + " · by " + perName(p) + (e.y ? " · " + e.y : ""), p, h: e.h, e })));
+  FIND.forEach((it) => (it.key = plainOf(it.name)));
+  const KINDS = ["Perfumer", "House", "Perfume"];
+  let found = [], foundAt = -1;
+  function findNow() {
+    const q = plainOf(findIn.value.trim());
+    if (!q) { findOut.hidden = true; findBox.classList.remove("has-found"); found = []; return; }
+    const scoreOf = (k) => (k.startsWith(q) ? 3 : k.split(/[^a-z0-9]+/).some((w) => w.startsWith(q)) ? 2.5 : k.indexOf(q) >= 0 ? 2 : 0);
+    found = FIND.map((it) => ({ it, s: scoreOf(it.key) })).filter((x) => x.s > 0)
+      .sort((a, b) => b.s - a.s || KINDS.indexOf(a.it.kind) - KINDS.indexOf(b.it.kind) || cmp(a.it.name, b.it.name))
+      .slice(0, 8).map((x) => x.it);
+    foundAt = found.length ? 0 : -1;
+    findOut.innerHTML = found.length
+      ? found.map((it, i) => '<li style="--i:' + i + '"><button type="button" data-f="' + i + '"' + (i === 0 ? ' class="is-at"' : "") + "><b>" + it.kind + "</b><span>" + esc(it.name) + "</span><small>" + esc(it.say) + "</small></button></li>").join("")
+      : '<li class="t1-found-none">Nothing by that name on the chart.</li>';
+    findOut.hidden = false;
+    findBox.classList.add("has-found");
+  }
+  function findAt(i) {
+    if (!found.length) return;
+    foundAt = (i + found.length) % found.length;
+    findOut.querySelectorAll("button").forEach((b, k) => b.classList.toggle("is-at", k === foundAt));
+  }
+  function findGo(it) {
+    findIn.value = ""; findOut.hidden = true; findBox.classList.remove("has-found"); found = [];
+    findIn.blur();
+    const p = it.p;
+    let wait = 0;
+    if (view === "rays" && !gather.on && !reveal.on) {
+      const b = map.blocks.find((x) => x.p === p);
+      openWorld(p, null, b ? { x: (b.x0 + b.x1) / 2, y: (b.y0 + b.y1) / 2 } : null);
+      wait = STILL ? 0 : gather.ms + reveal.ms * 0.8;
+    } else if (view === "world") {
+      pinned = null; showTip(null);
+      if (cur.p !== p || cur.kind !== "per") show({ kind: "per", p, h: null });
+      wait = STILL ? 0 : 700;
+    } else return;
+    if (it.h == null) return;
+    // the house (and a perfume's house) lit once the world has come
+    setTimeout(() => {
+      if (view !== "world" || !cur || cur.p !== p) return;
+      const b = blobs.find((x) => x.kind === "house" && x.h === it.h);
+      aim = b || null;
+      const k = partsOf(cur).findIndex((x) => x.h === it.h);
+      listLit = k;
+      const row = listBox.querySelector('[data-row="' + k + '"]');
+      if (row) {
+        row.classList.add("is-found");
+        if (it.e) { pinned = { kind: "house", h: it.h }; tipBeside(row, perfumeTip(it.e, true)); }
+        setTimeout(() => { row.classList.remove("is-found"); if (aim === b) aim = null; if (listLit === k) listLit = -1; kick(); }, 3200);
+      }
+      kick();
+    }, wait);
+  }
+  findIn.addEventListener("input", findNow);
+  findIn.addEventListener("focus", () => { findBox.classList.add("is-open"); if (findIn.value) findNow(); });
+  findIn.addEventListener("blur", () => setTimeout(() => { if (document.activeElement !== findIn) { findBox.classList.remove("is-open"); findOut.hidden = true; findBox.classList.remove("has-found"); } }, 160));
+  findIn.addEventListener("keydown", (ev) => {
+    ev.stopPropagation();
+    if (ev.key === "ArrowDown") { ev.preventDefault(); findAt(foundAt + 1); }
+    else if (ev.key === "ArrowUp") { ev.preventDefault(); findAt(foundAt - 1); }
+    else if (ev.key === "Enter") { ev.preventDefault(); if (found[foundAt]) findGo(found[foundAt]); }
+    else if (ev.key === "Escape") { findIn.value = ""; findNow(); findIn.blur(); }
+  });
+  findOut.addEventListener("pointerdown", (ev) => ev.preventDefault());
+  findOut.addEventListener("click", (ev) => { const b = ev.target.closest("[data-f]"); if (b) findGo(found[+b.dataset.f]); });
+  el(".t1-find-mark").addEventListener("click", () => findIn.focus());
   // ---- DRAWING ------------------------------------------------------------
   function resize() {
     W = window.innerWidth; H = window.innerHeight;
@@ -1014,6 +1118,51 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
   if (document.fonts) document.fonts.ready.then(() => { fontsIn = true; kick(); });
   let lightNext = 0, mapT0 = -1;
   const RAYS_IN = 1800;
+  // a perfumer's dots running in along their rays to the point (the gathering)
+  function drawGather(u) {
+    const p = gather.p, hub = map.hub;
+    const b = map.blocks.find((x) => x.p === p);
+    // the rest step back into the dark
+    ctx.fillStyle = "#050505"; ctx.globalAlpha = 0.6 * smooth(u * 1.8);
+    ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+    const dots = b ? b.dots : [];
+    let arrived = 0;
+    ctx.lineCap = "round";
+    lensed(ctx, (col) => {
+      ctx.strokeStyle = col; ctx.lineWidth = 0.9;
+      ctx.globalAlpha = 0.85 * (1 - smooth((u - 0.55) / 0.45));
+      ctx.beginPath();
+      for (const d of dots) { ctx.moveTo(hub.x, hub.y); ctx.lineTo(d.x, d.y); }
+      ctx.stroke();
+      ctx.fillStyle = col; ctx.lineWidth = 1.7;
+      arrived = 0;
+      for (const d of dots) {
+        const k = ease(clamp(u * 1.45 - d.ph * 0.45, 0, 1));
+        if (k >= 1) { arrived++; continue; }
+        const x = lerp(d.x, hub.x, k), y = lerp(d.y, hub.y, k), k0 = Math.max(0, k - 0.16);
+        ctx.globalAlpha = 0.9;
+        ctx.beginPath(); ctx.moveTo(lerp(d.x, hub.x, k0), lerp(d.y, hub.y, k0)); ctx.lineTo(x, y); ctx.stroke();
+        ctx.beginPath(); ctx.arc(x, y, 2.3, 0, TAU); ctx.fill();
+      }
+      // the point swelling as they arrive
+      const a = dots.length ? arrived / dots.length : 1;
+      ctx.globalAlpha = 0.95; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(hub.x, hub.y, 4 + 16 * ease(a) + 6 * smooth((u - 0.8) / 0.2), 0, TAU); ctx.stroke();
+      ctx.globalAlpha = 0.35 * a;
+      ctx.beginPath(); ctx.arc(hub.x, hub.y, 10 + 40 * ease(a), 0, TAU); ctx.stroke();
+    }, 1.6 + 3.2 * smooth(u));
+    ctx.lineCap = "butt";
+    // its name over its block, as when it is pointed at
+    if (b) {
+      ctx.font = "500 " + (phone ? 8.5 : 10) + 'px "IBM Plex Mono", ui-monospace, monospace';
+      ctx.globalAlpha = 1 - smooth((u - 0.6) / 0.4);
+      ctx.fillStyle = "#050505";
+      ctx.fillRect(b.lx0 - 2, b.y0 - map.cell * 0.55 - 11, b.lx1 - b.lx0 + 4, 14);
+      ctx.fillStyle = "#fff";
+      blockLabel(ctx, b);
+      ctx.globalAlpha = 1;
+    }
+  }
   function drawRays(now, t) {
     const intro = STILL ? 1 : clamp((now - mapT0) / RAYS_IN, 0, 1);
     const { hub } = map;
@@ -1135,6 +1284,18 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     const sIn = 0.72 + 0.28 * kin;
     drawCur(ctx, cur, P.x, P.y, P.r * sIn, t, kin);
     drawLobeNames(ctx, cur, P.x, P.y, P.r * sIn, kin * kin);
+    // a change of perfumer: a ripple of the lens's colours out from the middle
+    if (ripple.t0 >= 0) {
+      const u = clamp((now - ripple.t0) / 1250, 0, 1);
+      if (u >= 1) ripple.t0 = -1;
+      else {
+        const rr = P.r * (0.55 + 2.3 * ease(u)), a = 0.5 * (1 - u) * smooth(u * 8);
+        [["rgba(70,92,255,", -6, 2.4], ["rgba(255,196,80,", 4, 2], ["rgba(255,92,64,", 9, 1.3]].forEach(([c, o, w]) => {
+          ctx.strokeStyle = c + a.toFixed(3) + ")"; ctx.lineWidth = w;
+          ctx.beginPath(); ctx.arc(P.x, P.y, Math.max(1, rr + o), 0, TAU); ctx.stroke();
+        });
+      }
+    }
     // the double circle, as the poster's: round the middle at rest, on a
     // sphere under the hand
     if (aim) { ret.tx = aim.x + aim.dx; ret.ty = aim.y + aim.dy; ret.tr = aim.r * 1.3; }
@@ -1160,7 +1321,12 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     const t = clock;
     if (mapT0 < 0) mapT0 = now;
     if (!ready && fontsIn && now - mapT0 >= RAYS_IN + 120) { ready = true; document.body.classList.add("is-ready"); }
-    if (reveal.on) {
+    if (gather.on) {
+      const u = clamp((now - gather.t0) / gather.ms, 0, 1);
+      drawRays(now, t);
+      drawGather(u);
+      if (u >= 1) gathered();
+    } else if (reveal.on) {
       const u = clamp((now - reveal.t0) / reveal.ms, 0, 1);
       // THE WORLD OPENING OUT OF THE RAYS (softer since 2026-11-07 — "make
       // the transitions smoother"): on a smootherstep rather than a cubic,
@@ -1186,6 +1352,16 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
       ctx.drawImage(wcv, 0, 0);
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      // the edge fringed as the lens fringes: blue-violet inside, gold and
+      // then red outside, going as the world settles
+      const fr = (1 - smooth((u - 0.55) / 0.45)) * smooth(u * 6);
+      if (fr > 0.01 && rr > 2) {
+        const edge = rr - fe * 0.5;
+        [["rgba(70,92,255,", -7, 2.6], ["rgba(255,196,80,", 5, 2.2], ["rgba(255,92,64,", 10, 1.4]].forEach(([c, o, w]) => {
+          ctx.strokeStyle = c + (0.55 * fr).toFixed(3) + ")"; ctx.lineWidth = w;
+          ctx.beginPath(); ctx.arc(reveal.x, reveal.y, Math.max(1, edge + o), 0, TAU); ctx.stroke();
+        });
+      }
       document.body.style.setProperty("--reveal", smooth((k - 0.25) / 0.6).toFixed(3));
       document.body.classList.add("is-revealing");
       if (u >= 1) {

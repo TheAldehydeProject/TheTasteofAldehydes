@@ -703,3 +703,30 @@ fringes either side of a dot, the trimmed readings, Learn more scrolled to with 
 the spheres leaning to the hand over the list; page 2's domes, houses and ticks, the panel with its
 biography, a house, a perfume and Back, the zoom and the search; page 4's lock to the level, Information,
 the fold.
+
+### 2026-11-07, later — page 1: the gathering, and a search
+
+The owner, shown the round: "Please animate test page one when you clik on any perfumer; and add a
+search. That search should work by searching anything (perfume, perfume) and then taking you to the
+perfumer. Also please animate it so its nice. I want a slightly thematic animation."
+
+- **The gathering** (`gather`, `drawGather`, `gathered` in page 1's script): a perfumer pressed on the
+  rays — a dot, the list, the arrows, the search — first lights its own rays and runs its dots in along
+  them to the point they all go to, each dot at a moment of its own with a short trail, drawn through
+  the lens more strongly as they go (`lensed` with a growing spread), the other rays stepping back into
+  the dark and its name over its block; the point swells as they arrive (0.82 s). Then **the world opens
+  out of that point** — the reveal centred on it, not on the dot — its feathered edge **fringed as the
+  lens fringes**: a blue-violet ring inside, gold and red outside, going as the world settles.
+- **A ripple between worlds** (`ripple`): from one perfumer to another, three rings of the lens's colours
+  run out from the middle as the one blob gives way to the next.
+- **The search** (`.t1-find`, the page's `find` part): at the top right on the rays (the line that said *A
+  dot a perfume · a block a perfumer* moved into the line at the foot) and left of the date in a world; at
+  the foot on a phone. A perfumer, a house or a perfume, found as it is typed — those that begin with it
+  first — each answer saying what it is and whose (a house once for each of its perfumers, a perfume once
+  for each of its makers); the arrows and Enter, or a press. It takes you **to the perfumer**: from the
+  rays by the gathering, from a world by the ripple; and a house or a perfume asked for is **lit there** —
+  its sphere ringed, its row glowing a moment, and for a perfume its tip beside the row. A hairline in the
+  lens's colours runs along under the field as it is used, and the answers come down one after another.
+
+**How to test it**: `tests/test-pages.spec.js`, "a perfumer pressed gathers into the point and opens from
+it; the search takes you to the perfumer".
