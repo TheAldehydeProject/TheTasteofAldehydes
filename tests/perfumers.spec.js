@@ -75,7 +75,8 @@ test("the list of perfumers stands in the legend's place, A to Z, and the legend
     .sort((x, y) => String(x.sort || x.name).localeCompare(String(y.sort || y.name), "en", { sensitivity: "base" }))
     .map((p) => p.name);
   expect(names.slice(0, -1)).toEqual(expected);
-  expect(names[names.length - 1]).toBe("Perfumer not found");
+  // (named "Not publicly available" since 2026-11-08, at the owner's word)
+  expect(names[names.length - 1]).toBe("Not publicly available");
   // the list scrolls in its own box
   expect(await nav.locator(".pf-nav-scroll").evaluate((el) => getComputedStyle(el).overflowY)).toBe("auto");
   // no legend over the stage; it is under the chart, beside the intro

@@ -110,6 +110,7 @@ N = {
   src=["fr_cinnamon", "sc_cinnamon", "fr_cinnamonnews"],
   vars={
    "Cinnamon (Ceylon)": dict(say="True cinnamon, from Sri Lanka (once Ceylon), rather than cassia. It has less cinnamaldehyde than cassia but smells finer: smoother, sweeter and more complex, with fruity top notes, where cassia is harsher and hotter.", src=["sc_cinnamon", "st_cinnamald", "la_walk"]),
+   "Ceylon Cinnamon": dict(say="Cinnamon (Ceylon), written the other way round: true cinnamon, from Sri Lanka, rather than cassia. It has less cinnamaldehyde than cassia but smells finer: smoother, sweeter and more complex, with fruity top notes, where cassia is harsher and hotter.", src=["sc_cinnamon", "st_cinnamald", "la_walk"]),
    "Cinnamon Attar": dict(say="Cinnamon made as an attar, the old Indian way: distilled with water in a copper still into a vessel of sandalwood oil and left to age. So the spice comes on a soft, creamy woody base, rounder and longer-lasting than cinnamon oil alone.", src=["wp_attar", "fw_attars", "pw_list"]),
   }),
  "note-clove": dict(

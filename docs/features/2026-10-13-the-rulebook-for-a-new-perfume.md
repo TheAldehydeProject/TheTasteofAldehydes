@@ -150,3 +150,15 @@ library is **379 notes**. The checker is clean, and `rulebook.spec.js` finds the
 (After the Flood) in the library. One thing the checker could not see: *Water Lily* was asked about as a
 new note, and turned out to be the library's *Waterlily* written with a space — filed as a spelling. See
 [Apoteker Tepe's report](2026-10-20-apoteker-tepe.md#the-note-library).
+
+## 2026-11-08 — Cookie (Grande Parfums), filed
+
+Cookie's notes, read off the owner's screenshot of its Fragrantica page (Fragrantica turns this
+site's tools away): Blackcurrant and Blood Orange; Ylang Ylang, Cacao, Tonka, Ceylon Cinnamon, Milk
+and Cake; Siam Benzoin, Castoreum, Propolis, Peru Balsam, Myrrh, Labdanum, Sandalwood and Vanilla.
+Rule 12 put three questions to the owner, and their answers: **Blackcurrant a new note** in Fruit,
+beside Cassis (the bud), researched from three sources (`research/NEW6.py`) and given a figure, a strig
+of berries; **Ceylon Cinnamon** the Ceylon variation of Cinnamon written the other way round; **Cake a
+new note** in Gourmand — and then, at the owner's word, **Chocolate Cake a variation of Cake**, with its
+own two (Amandină and Lava Cake) under Cake now too. The Note Library holds 380 notes. The name is
+**Cookie** at the owner's word (it was *Cookie something (?)*), and its perfumer Alexandru Marian.

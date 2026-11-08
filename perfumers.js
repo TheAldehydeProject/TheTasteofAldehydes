@@ -1020,67 +1020,6 @@
     }
     c.globalAlpha = 1;
   }
-  // the lines from a house's country to its perfumes' places on the rings —
-  // the picture's lines from its cities; faded as the country turns away
-  function drawFans(c, alpha) {
-    if (alpha <= 0.02) return;
-    const paths = [];
-    for (const e of entries) {
-      const p = e.pin;
-      if (!p || p.z < 0.02 || growth(e) < 0.6) continue;
-      emap(p.x, p.y, T0); if (!T0.ok) continue;
-      proj(Math.cos(e.a) * R.frame1, Math.sin(e.a) * R.frame1, T1); if (!T1.ok) continue;
-      const lv = level(e.em * smooth(p.z / 0.35));
-      if (!lv) continue;
-      const q = paths[lv] || (paths[lv] = new Path2D());
-      q.moveTo(T0.x, T0.y); q.lineTo(T1.x, T1.y);
-    }
-    c.lineWidth = 0.6;
-    for (let lv = 1; lv <= LV; lv++) {
-      if (!paths[lv]) continue;
-      const k = lv / LV;
-      c.strokeStyle = k > 0.9 && focus ? SOLID.gold : SOLID.ink;
-      c.globalAlpha = alpha * (focus ? 0.05 + 0.3 * k * k : 0.13 * k);
-      c.stroke(paths[lv]);
-    }
-    c.globalAlpha = 1;
-  }
-  // the latitudes named off the Earth's left, and the longitudes along its
-  // equator as they come round — in its own frame, upright
-  function drawDegrees(c, alpha, which) {
-    if (alpha <= 0.01) return;
-    const z = EM.flat ? EM.r / R.earth : V.z;
-    const fs = clamp(7.5 * z * 1.3, 7, 10);
-    c.font = "400 " + fs.toFixed(1) + 'px "IBM Plex Mono", ui-monospace, monospace';
-    c.fillStyle = SOLID.ink;
-    c.textBaseline = "middle";
-    // latitude: just inside the Earth's rim on the left, level with where
-    // its parallel meets it
-    c.textAlign = "left";
-    if (which !== "lon") for (let la = -60; la <= 75; la += 15) {
-      const y = cT * Math.sin(la * DEG);
-      const x = -Math.sqrt(Math.max(0, 1 - y * y));
-      emap(x + 0.03, y, T0); if (!T0.ok) continue;
-      c.globalAlpha = 0.34 * alpha;
-      c.fillText(la === 0 ? "0°" : Math.abs(la) + "° " + (la > 0 ? "N" : "S"), T0.x, T0.y);
-    }
-    if (which === "lat") { c.globalAlpha = 1; return; }
-    // longitude, along the equator, where it faces you
-    c.textAlign = "center";
-    for (let lo = -165; lo <= 180; lo += 30) {
-      onEarth(lo * DEG, 1, 0, E3);
-      if (E3.z < 0.3) continue;
-      emap(E3.x, E3.y - 0.028, T0); if (!T0.ok) continue;
-      c.globalAlpha = 0.3 * alpha * smooth((E3.z - 0.3) / 0.3);
-      c.fillText(lo === 180 ? "180°" : Math.abs(lo) + "° " + (lo < 0 ? "W" : "E"), T0.x, T0.y);
-    }
-    onEarth(0, Math.cos(66 * DEG), Math.sin(66 * DEG), E3);
-    if (E3.z > 0.25) {
-      emap(E3.x + 0.012, E3.y, T0);
-      if (T0.ok) { c.textAlign = "left"; c.globalAlpha = 0.42 * alpha * smooth((E3.z - 0.25) / 0.3); c.fillText("Greenwich", T0.x, T0.y); }
-    }
-    c.globalAlpha = 1;
-  }
   // The Earth's picture on the whole chart: its back and its front drawn
   // once for its size, its land and meridians again only when it has turned
   // by half a pixel, and the whole laid down every frame
@@ -1109,7 +1048,6 @@
         x.setTransform(px / size, 0, 0, px / size, 0, 0);
         EM.flat = true; EM.cx = size / 2; EM.cy = size / 2; EM.r = r;
         drawEarth(x, alpha, true, part);
-        if (part === "front") drawDegrees(x, alpha, "lat");
       }
     }
     const key = [sk, Math.round(spin * r * 1.6), PINS.map((p) => (p.lit ? 1 : 0)).join("")].join("|");
@@ -1129,7 +1067,6 @@
     ectx.drawImage(frontCv, 0, 0);
     ectx.setTransform(k, 0, 0, k, 0, 0);
     drawPins(ectx, alpha);
-    drawDegrees(ectx, alpha, "lon");
   }
 
   // ---- THE CAMERA, on two springs -----------------------------------------
@@ -1364,10 +1301,10 @@
       earthUpright();
       placePins();
       drawEarth(c, clamp(intro * 2, 0, 1), !flyingNow);
-      drawFans(c, fade);
       drawPins(c, clamp(intro * 2, 0, 1));
-      // (the degrees written only once it has landed, 2026-11-08)
-      if (!flyingNow) drawDegrees(c, fade);
+      // (no degrees written on it and no lines from the countries across it
+      // since 2026-11-08 — "please remove these numbers, and any extra random
+      // lines from the globe": drawDegrees and drawFans are out of the code)
       base();
       c.textBaseline = "middle"; c.textAlign = "left";
     }
@@ -1913,7 +1850,6 @@
       if (css !== lastEarthCss) { earthCv.style.transform = css; lastEarthCss = css; }
       base();
       EM.flat = true; EM.cx = ox; EM.cy = oy; EM.r = er;
-      drawFans(c, fade);
       drawSillage(c, t, fade);
     } else {
       viewCam();
@@ -1934,7 +1870,7 @@
       c.lineCap = "butt";
     }
 
-    // the lights, from a house's country through the three rings
+    // the lights, out from the Earth's frame through the three rings
     drawPulses(c, t);
 
     // (the names on the rings, while the chart turns, are the rotor's own
@@ -1991,9 +1927,10 @@
     }
     c.globalAlpha = 1;
   }
-  // A light runs from the perfume's house's country (when it faces you) to
-  // its place on the Earth's frame, and on out through the three rings —
-  // the perfumer, the house — to its dot, which flares as it arrives.
+  // A light runs from the Earth's frame (since 2026-11-08; from the perfume's
+  // house's country across the Earth's face until then) on out through the
+  // three rings — the perfumer, the house — to its dot, which flares as it
+  // arrives.
   function drawPulses(c, t) {
     if (!pulses.length) return;
     const z = V.z;
@@ -2004,25 +1941,12 @@
       const ca = Math.cos(e.a), sa = Math.sin(e.a);
       c.strokeStyle = SOLID[e.tone]; c.fillStyle = SOLID[e.tone];
       const em = 0.35 + 0.65 * e.em;
-      const pin = e.pin && e.pin.z > 0.08 ? e.pin : null;
-      const split = pin ? 0.42 : 0;
+      // (from the Earth's frame out since 2026-11-08: nothing runs across
+      // its face — "any extra random lines from the globe")
       if (u < 1) {
         const a = Math.sin(Math.PI * u);
         c.lineWidth = clamp(1.6 * z, 1, 3);
-        if (u < split) {
-          // across the Earth, from the country
-          const k = ease(u / split), k0 = Math.max(0, k - 0.16);
-          emap(pin.x, pin.y, T2); if (!T2.ok) continue;
-          proj(ca * R.frame1, sa * R.frame1, T1); if (!T1.ok) continue;
-          const x0 = lerp(T2.x, T1.x, k0), y0 = lerp(T2.y, T1.y, k0), x1 = lerp(T2.x, T1.x, k), y1 = lerp(T2.y, T1.y, k);
-          if (!inView(x1, y1, 20)) continue;
-          c.globalAlpha = 0.7 * a * em;
-          c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
-          c.globalAlpha = 0.9 * a * em;
-          c.beginPath(); c.arc(x1, y1, clamp(1.8 * z, 1.1, 3.4), 0, TAU); c.fill();
-          continue;
-        }
-        const k = ease((u - split) / (1 - split)), r = R.frame1 + (e.rDot - R.frame1) * k;
+        const k = ease(u), r = R.frame1 + (e.rDot - R.frame1) * k;
         const tail = Math.min(46, r - R.frame1);
         proj(ca * (r - tail), sa * (r - tail), T0); proj(ca * r, sa * r, T1);
         if (!T0.ok || !T1.ok || (!inView(T0.x, T0.y, 20) && !inView(T1.x, T1.y, 20))) continue;
@@ -2193,6 +2117,15 @@
   let raf = 0, last = 0, viewNow = "", seen = true;
   function kick() { if (!raf) raf = requestAnimationFrame(frame); }
   const CALM_FPS = 30, CALM_AFTER = 600;
+  // SCROLLING THROUGH WHAT IS CHOSEN, SMOOTHLY (2026-11-08 — "make sure that it
+  // runs smoothly when scrolling (after selectinng a perfumer)"): while the
+  // wheel, a swipe or the keys are going through the perfumes, the chart stays
+  // as it is drawn on the move — nothing drawn again while it waits between
+  // two turns of the wheel, no sharp drawing, out-of-focus copy or sway coming
+  // in and going again at every pause — and only once the scrolling has
+  // rested this long is it drawn sharp and let settle
+  const SCROLL_REST = 420;
+  let lastScrollT = -1e9;
   let calm = false, lastHand = 0, lastDrawn = 0;
   function setView(v) {
     viewNow = v;
@@ -2255,7 +2188,8 @@
     // rotor's to carry; anything else is drawn as it goes
     const flat = !zoomed() && cam.tilt < 1e-4 && Math.abs(cam.fx) < 0.01 && Math.abs(cam.fy) < 0.01;
     const settling = moving || sorting || fading || intro < 1 || (earthTurning && zoomed());
-    const v = settling && !(flat && !sorting && !fading && intro >= 1) ? "live" : zoomed() ? "still" : "turn";
+    const scrolling = now - lastScrollT < SCROLL_REST;
+    const v = settling && !(flat && !sorting && !fading && intro >= 1) ? "live" : zoomed() ? (scrolling ? "live" : "still") : "turn";
     if (v !== viewNow) {
       if (v === "turn") { if (rotorDirty) renderRotor(); dofOff(); }
       if (v === "live") dofOff();
@@ -2276,11 +2210,15 @@
     }
     if (callE) placeCall();
 
-    if (v === "live") { drawChart(moving); rotorDirty = true; }
+    if (v === "live") {
+      // (between two turns of the wheel, with nothing moving, nothing drawn)
+      if (moving || sorting || fading || intro < 1 || earthTurning || !flying) drawChart(moving || scrolling);
+      rotorDirty = true;
+    }
     else if (v === "turn") { if (rotorDirty) renderRotor(); namesRotor(); placeRotor(); setFlying(false); }
     else {
       if (chartDirty) { drawChart(); dofOff(); stillSince = now; }
-      if (!dofDone && now - stillSince > 240) renderDof();
+      if (!dofDone && now - stillSince > 240 && now - lastScrollT > SCROLL_REST + 300) renderDof();
     }
     tendPulses();
     liveRes(now);
@@ -2762,7 +2700,7 @@
   const findables = [];
   PERFUMERS.forEach((p) => { if (p.id !== "not-found") findables.push({ kind: "perfumer", pid: p.id, name: p.name, sub: entriesOf(p.id).length + " perfumes" }); });
   const pairs = new Map();
-  entries.forEach((e) => { const k = e.pid + "|" + e.p.h; if (!pairs.has(k)) pairs.set(k, { kind: "house", pid: e.pid, hid: e.p.h, name: HOU[e.p.h].name, sub: e.pid === "not-found" ? "perfumer not found" : PER[e.pid].name }); });
+  entries.forEach((e) => { const k = e.pid + "|" + e.p.h; if (!pairs.has(k)) pairs.set(k, { kind: "house", pid: e.pid, hid: e.p.h, name: HOU[e.p.h].name, sub: e.pid === "not-found" ? "not publicly available" : PER[e.pid].name }); });
   pairs.forEach((v) => findables.push(v));
   entries.forEach((e) => findables.push({ kind: "perfume", e, name: e.p.n, sub: HOU[e.p.h].name + " · " + (e.p.y || "year not found") }));
   findables.forEach((f) => { f.key = fold(f.name); f.subKey = fold(f.sub); });
@@ -2893,6 +2831,7 @@
     const next = clamp(s, 0, n - 1);
     if (Math.abs(next - scrollS) < 1e-4) return;
     scrollS = next;
+    lastScrollT = performance.now();
     hover = null; hideTip();
     setGoal(poseFor());
     syncScrub();
@@ -3045,7 +2984,7 @@
     return '<table class="pf-card-table"><thead><tr><th scope="col">Perfume</th><th scope="col">' + (other === "house" ? "House" : "Perfumer") +
       '</th><th scope="col">Year</th></tr></thead><tbody>' + rows.map((e) =>
         "<tr><td>" + '<button type="button" class="pf-card-row' + (e.p.at ? " is-here" : "") + '" data-entry="' + entries.indexOf(e) + '">' + esc(e.p.n) + "</button></td>" +
-        "<td>" + (other === "house" ? houseButton(e.p.h) : e.pid === "not-found" ? '<span class="pf-card-none">Not found</span>' : perfumerButton(e.pid)) + "</td>" +
+        "<td>" + (other === "house" ? houseButton(e.p.h) : e.pid === "not-found" ? '<span class="pf-card-none">Not publicly available</span>' : perfumerButton(e.pid)) + "</td>" +
         "<td>" + (e.p.y || '<span class="pf-card-none">—</span>') + "</td></tr>").join("") + "</tbody></table>";
   }
   const perfumerButton = (id) => '<button type="button" class="pf-card-link" data-perfumer="' + esc(id) + '">' + esc(PER[id].name) + "</button>";
@@ -3062,7 +3001,7 @@
     if (p.born) meta.push("Born <b>" + esc(p.born) + "</b>");
     if (p.from) meta.push(esc(p.from));
     const aboutTxt = (p.about || []).map((a) => esc(a.t) + S2.ref(a.s)).join(" ");
-    let h = '<p class="pf-card-kicker">' + (id === "not-found" ? "Not found" : "Perfumer · " + String(idx + 1).padStart(2, "0") + " of " + named.length) + "</p>";
+    let h = '<p class="pf-card-kicker">' + (id === "not-found" ? "Not publicly available" : "Perfumer · " + String(idx + 1).padStart(2, "0") + " of " + named.length) + "</p>";
     h += '<h2 class="pf-card-name" id="pf-card-name">' + esc(p.name) + "</h2>";
     if (meta.length) h += '<p class="pf-card-meta">' + meta.join(" · ") + "</p>";
     if (aboutTxt) h += '<div class="pf-card-about"><p>' + aboutTxt + "</p></div>";
@@ -3187,7 +3126,7 @@
   }
   function renderCall(e) {
     const p = e.p, srcs = p.s || [];
-    const who = p.p.map((id) => id === "not-found" ? '<span class="pf-call-none">Not found</span>'
+    const who = p.p.map((id) => id === "not-found" ? '<span class="pf-call-none">Not publicly available</span>'
       : '<button type="button" class="pf-call-link" data-perfumer="' + esc(id) + '">' + esc(PER[id].name) + "</button>").join('<span class="pf-call-and"> &amp; </span>');
     // written about on the site: its name is the way to it, the arrow kept
     // on the line of its last word

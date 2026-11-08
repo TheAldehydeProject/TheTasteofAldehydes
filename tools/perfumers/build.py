@@ -117,9 +117,11 @@ def main():
                 p[k] = v
         perfumers.append(p)
         by_name[b["name"]] = p
-    perfumers.append({"id": NONE_ID, "name": "Perfumer not found", "sort": "￿", "about": [
-        {"t": "These perfumes are written about on this site, but no source found names who made them. "
-              "When one is found, the perfume moves to its perfumer.", "s": []}]})
+    # (named "Not publicly available" since 2026-11-08, at the owner's word —
+    # "use that instead of no perfumer"; it was "Perfumer not found")
+    perfumers.append({"id": NONE_ID, "name": "Not publicly available", "sort": "￿", "about": [
+        {"t": "These perfumes are written about on this site, but who made them is not publicly available. "
+              "When it is, the perfume moves to its perfumer.", "s": []}]})
 
     # ---- houses --------------------------------------------------------
     houses = []

@@ -709,6 +709,8 @@
     "Blackberry": () => join(many(26, () => ball({ r: 0.13, n: 22 }), (k) => { const t = (k + 0.5) / 26, y = 1 - 2 * t, rr = Math.sqrt(1 - y * y), a = k * 2.39996; return { x: Math.cos(a) * rr * 0.36, y: y * 0.5 - 0.1, z: Math.sin(a) * rr * 0.36 }; }), at(star(5, 0.3, 0.1), { y: 0.43 }), path([[0, 0.43, 0], [0.08, 0.95, 0]], 0.04), at(leaf({ len: 0.55, w: 0.24, shape: "oval", teeth: 10, veins: 3 }), { x: 0.1, y: 0.78, rz: -1.2 })),
     "Blueberry": () => heap(5, () => berry(0.26, { crown: true }), 0.55, { flat: true }),
     "Cassis": () => join(path(bez([-0.2, 1, 0], [0.1, 0.6, 0], [0.2, 0, 0], [0.15, -0.8, 0], 14), 0.05), many(8, () => berry(0.13), (k) => ({ x: 0.2 + (k % 2 ? 0.16 : -0.14), y: 0.6 - k * 0.18, z: jit(0.1) }))),
+    // a strig of blackcurrants hanging off its stalk, the fruit and not the bud (2026-11-08)
+    "Blackcurrant": () => join(path(bez([0, 1, 0], [0.05, 0.55, 0], [-0.05, 0.1, 0], [0, -0.75, 0], 14), 0.045), many(9, () => berry(0.15), (k) => ({ x: (k % 2 ? 0.17 : -0.17) + jit(0.04), y: 0.45 - k * 0.15, z: jit(0.12) }))),
     "Cherry": () => join(at(ball({ r: 0.4, n: 160, dent: 0.25 }), { x: -0.45, y: -0.5 }), at(ball({ r: 0.4, n: 160, dent: 0.25 }), { x: 0.4, y: -0.6, z: 0.2 }), path(bez([-0.45, -0.1, 0], [-0.4, 0.4, 0], [-0.1, 0.8, 0], [0, 0.9, 0], 12), 0.04), path(bez([0.4, -0.2, 0.2], [0.3, 0.3, 0.1], [0.1, 0.8, 0], [0, 0.9, 0], 12), 0.04), at(leaf({ len: 0.45, w: 0.18, shape: "oval" }), { y: 0.9, rz: -1 })),
     "Cranberry": () => join(at(wave(2.3, 1.4, { amp: 0.035, nx: 28, nz: 10 }), { y: -0.35 }), many(5, () => join(ball({ r: 0.22, sy: 0.92, n: 90 }), at(star(5, 0.06, 0.025), { y: 0.2 })), (k) => ({ x: -0.72 + k * 0.36, y: -0.22 + (k % 2) * 0.03, z: (k % 2 ? 0.28 : -0.12) }))),
     "Dates": () => many(3, () => ball({ r: 0.22, sy: 2.2, n: 90, rough: 0.05, bumps: 16 }), (k) => ({ x: (k - 1) * 0.5, rz: 1.3 + (k - 1) * 0.15, y: (k % 2) * 0.1 })),
@@ -767,7 +769,8 @@
     "Carob Pods": () => many(2, () => pod({ len: 1.9, r: 0.16, flat: 0.35, bend: 0.3, bumps: 8 }), (k) => ({ y: k * 0.4 - 0.2, rx: k * 0.5, rz: (k - 0.5) * 0.2 })),
     "Chantilly Cream": () => many(5, (k) => path(curve((t) => { const a = t * 4 * TAU + k * (TAU / 5), r = 0.55 * (1 - t); return [Math.cos(a) * r, t * 1.1 - 0.5, Math.sin(a) * r]; }, 90), 0.045), () => ({})),
     "Chocolate": () => join(box(1.6, 0.14, 1, { step: 0.06 }), many(3, (k) => path([[-0.8, 0.075, (k - 1) * 0.33 + 0.165 - 0.165], [0.8, 0.075, (k - 1) * 0.33 + 0.165 - 0.165]], 0.07, 0.7), () => ({})), many(3, (k) => path([[(k - 1) * 0.4, 0.075, -0.5], [(k - 1) * 0.4, 0.075, 0.5]], 0.07, 0.7), () => ({}))),
-    "Chocolate Cake": () => join(box(1.2, 0.9, 0.9, { step: 0.07 }), many(2, (k) => path([[-0.6, -0.15 + k * 0.3, 0.451], [0.6, -0.15 + k * 0.3, 0.451]], 0.05), () => ({})), at(ball({ r: 0.15, n: 30, lines: false }), { y: 0.55 })),
+    // (Cake since 2026-11-08 — Chocolate Cake its variation, at the owner's word)
+    "Cake": () => join(box(1.2, 0.9, 0.9, { step: 0.07 }), many(2, (k) => path([[-0.6, -0.15 + k * 0.3, 0.451], [0.6, -0.15 + k * 0.3, 0.451]], 0.05), () => ({})), at(ball({ r: 0.15, n: 30, lines: false }), { y: 0.55 })),
     "Cocoa Butter": () => join(turned([[0, -0.15], [0.7, -0.15], [0.7, 0.15], [0, 0.15]], { seg: 26, mer: 0, rings: true }), at(star(6, 0.35, 0.2), { y: 0.16 })),
     "Cocoa Pod": () => ball({ r: 0.55, sy: 1.7, n: 320, ribs: 10, ribDepth: 0.08, tip: 0.6 }),
     "Condensed Milk": () => join(turned([[0, -0.7], [0.5, -0.7], [0.5, 0.5], [0, 0.5]], { seg: 22, mer: 6, rings: true }), at(path(bez([0.4, 0.5, 0], [0.8, 0.6, 0], [0.9, 0.2, 0], [0.9, -0.6, 0], 12), 0.04), {}), at(drop(0.1), { x: 0.9, y: -0.8 })),

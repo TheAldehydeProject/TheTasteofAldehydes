@@ -126,10 +126,11 @@ N = {
    "White Chocolate": dict(say="Hardly cocoa at all: milk, vanilla and cocoa butter, pale, creamy and soft, like condensed milk and custard, sometimes with a nutty or coconut halo, where dark chocolate is roasted and bitter.", src=["fr_whitechoc", "ps_choc"]),
    "Chocolate Bar": dict(same="No change: chocolate, as a bar."),
   }),
- "note-chocolate-cake": dict(
-  say="A baked chocolate cake: cocoa and chocolate with the warm, buttery, flour-and-sugar smell of sponge, sometimes with cream or icing. It is gourmand at its most homely.",
-  src=["ps_choc", "fr_vestibule"],
+ # (Chocolate Cake a variation of Cake since 2026-11-08, at the owner's word;
+ # what Cake itself is, is in NEW6.py)
+ "note-cake": dict(
   vars={
+   "Chocolate Cake": dict(say="Cake with chocolate in it: cocoa and chocolate over the warm, buttery, flour-and-sugar smell of the sponge, sometimes with cream or icing, so it is darker and more bitter-sweet than plain cake. It is gourmand at its most homely.", src=["ps_choc", "fr_vestibule"]),
    "Chocolate Cake (Amandină)": dict(say="A particular cake: the Romanian amandină, layers of chocolate sponge soaked in rum-flavoured caramel syrup, filled with chocolate buttercream and glazed with chocolate fondant. So it is chocolate cake with rum, caramel and a hint of almond.", src=["wp_amandine", "fr_vestibule"]),
   }),
 }

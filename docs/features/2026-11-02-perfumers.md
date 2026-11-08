@@ -625,3 +625,37 @@ buttons smaller, and the layers drawn sharp" — the two colours, more than eigh
 the two buttons' words at most 36 and 26px, and on a screen at two the live layer at more than 1.4 pixels
 a point at rest. The rest of the file still passes: the chart drawn no more often than it was at rest, the
 names a few times a second, a flight at a lower resolution than the landing.
+
+### 2026-11-08, later — the globe without numbers or stray lines, scrolling held smooth, and the owner's perfumers
+
+The owner: "please remove these numbers, and any extra random lines from the globe. also please just make
+sure that it runs smoothly when scrolling (after selectinng a perfumer)" — and a list of perfumers for
+the perfumes that had none.
+
+- **No numbers on the globe**: the latitudes and longitudes and *Greenwich* written on and round the
+  Earth are out of the code (`drawDegrees`). Its graticule, coastlines, hatching and pins stay.
+- **No stray lines across it**: the lines from each house's country out to its perfumes' places on the
+  rings (`drawFans`) are out of the code, and **the lights now start at the Earth's frame** and run out
+  through the rings, where they crossed the Earth's face from the country first.
+- **Scrolling held smooth** (`SCROLL_REST`, `lastScrollT`): while the wheel, a swipe or the keys go
+  through a chosen perfumer's perfumes, the chart stays drawn as it is on the move — nothing drawn again
+  while it waits between two turns of the wheel, and no sharp drawing, out-of-focus copy or sway coming
+  in and going again at every pause, which made each pause a hitch and a pop. 0.42 s after the last
+  turn it is drawn sharp, and the out-of-focus copy comes 0.3 s after that.
+- **The owner's perfumers** (the ledger, source S108, *as the owner gave them*): Grande Parfums' ten to
+  **Marius Pana**, Choco Powder and Hot Stuff to **Lorenzo Orlandi Berti** (one person, the owner said),
+  Cookie to **Alexandru Marian**, Intimate Spell to **Jakub Pietrynka**; Qimu & Musicians' Guitarist,
+  Vocal and Bassist to **Qimu**, from Shanghai, China; Evergrow to **Lan Xiao** (who the house writes
+  Xiao Lan), and on Tombstone the owner's nuance that more people could have been involved but no public
+  record of who exists; Matca's House of Ellixirz to **Georgiana Ștefănoaei**. Dreaming Maldives, Kogen
+  and CV99 are **not publicly available** — and the group that was *Perfumer not found* is called **Not
+  publicly available** now, in the list, the legend, the terms, the disclaimer and the windows (the
+  terms keep *Not found* for a year no source gives). 35 perfumers; of the 280 perfumes 263 are named,
+  14 the house's and 3 not publicly available.
+- **Cookie** is named so (it was *Cookie something (?)*), on its house's page and in the ledger, and its
+  notes are filed from the owner's screenshot of its Fragrantica page — see the rulebook's report.
+
+The test pages keep their snapshot of the ledger, as they always do.
+
+**How to test it**: `tests/perfumers.spec.js` — the list ends in *Not publicly available*; the rest as
+before. `node tools/note-library/rulebook.js` keeps every rule for Cookie.

@@ -13,12 +13,13 @@ Change something here, then run `python3 tools/perfumers/build.py` and `python3 
 ## How to read and edit it
 
 - **Perfumer(s)**: as the source names them; two or more are separated by `;`. Empty when no
-  source found names one — the page files those under *Perfumer not found*.
+  source found names one, or its perfumer is not publicly available — the page files those under
+  *Not publicly available* (*Perfumer not found* until 2026-11-08).
 - **Credit** says how sure the line is:
   - `named` — a source names this perfumer for *this* perfume;
   - `house` — a source names this person as the house's own (or only) perfumer, but none names
     the nose of this particular perfume;
-  - `none` — no source found names a perfumer.
+  - `none` — no source found names a perfumer: not publicly available.
 - **Year**: the year the source gives for its first release. Empty when no source gave one.
 - **On site**: where the perfume is written about on this site (`page#part-NN`), or `—`.
   The build checks every one of these against the page.
@@ -99,21 +100,21 @@ Change something here, then run `python3 tools/perfumers/build.py` and `python3 
 | My Doll’s Makeup | Sy Truong | named |  | Ataraxia | houses/ataraxia.html#part-03 | S94, S78 | "Formula by award winner Sy Truong." |
 | Spinal Fluid | Sy Truong | named | 2025 | Ataraxia | houses/ataraxia.html#part-04 | S95, S21, S22 |  |
 | Vestibule | David-Lev Jipa-Slivinschi | named | 2024 | Ataraxia | houses/ataraxia.html#part-05 | S19 |  |
-| 5 Years Anniversary |  | none |  | Grande Parfums | houses/grande-parfums.html#part-01 | S25 |  |
-| Ambresso |  | none |  | Grande Parfums | houses/grande-parfums.html#part-02 | S25 |  |
-| Ancient Oud |  | none |  | Grande Parfums | houses/grande-parfums.html#part-03 | S25 |  |
-| Choco Powder |  | none |  | Grande Parfums | houses/grande-parfums.html#part-04 | S25 |  |
-| Cookie something (?) |  | none |  | Grande Parfums | houses/grande-parfums.html#part-05 | S25 |  |
-| Cuore |  | none | 2024 | Grande Parfums | houses/grande-parfums.html#part-06 | S26, S25 |  |
-| Dreaming Maldives |  | none |  | Grande Parfums | houses/grande-parfums.html#part-07 | S25 |  |
-| Giardino di Sorrento |  | none |  | Grande Parfums | houses/grande-parfums.html#part-08 | S25 |  |
-| Hot Stuff |  | none |  | Grande Parfums | houses/grande-parfums.html#part-09 | S25 |  |
-| Intimate Spell |  | none |  | Grande Parfums | houses/grande-parfums.html#part-10 | S25 |  |
-| Karak & Shisha |  | none |  | Grande Parfums | houses/grande-parfums.html#part-11 | S25 |  |
-| Mystical Incense |  | none |  | Grande Parfums | houses/grande-parfums.html#part-12 | S25 |  |
-| Vanilla Ash |  | none |  | Grande Parfums | houses/grande-parfums.html#part-13 | S25 |  |
-| Vintage Memoir |  | none |  | Grande Parfums | houses/grande-parfums.html#part-14 | S25 |  |
-| White Label |  | none |  | Grande Parfums | houses/grande-parfums.html#part-15 | S25 |  |
+| 5 Years Anniversary | Marius Pana | named |  | Grande Parfums | houses/grande-parfums.html#part-01 | S108, S25 |  |
+| Ambresso | Marius Pana | named |  | Grande Parfums | houses/grande-parfums.html#part-02 | S108, S25 |  |
+| Ancient Oud | Marius Pana | named |  | Grande Parfums | houses/grande-parfums.html#part-03 | S108, S25 |  |
+| Choco Powder | Lorenzo Orlandi Berti | named |  | Grande Parfums | houses/grande-parfums.html#part-04 | S108, S25 |  |
+| Cookie | Alexandru Marian | named |  | Grande Parfums | houses/grande-parfums.html#part-05 | S108, S25 |  |
+| Cuore | Marius Pana | named | 2024 | Grande Parfums | houses/grande-parfums.html#part-06 | S108, S26, S25 |  |
+| Dreaming Maldives |  | none |  | Grande Parfums | houses/grande-parfums.html#part-07 | S108, S25 | Its perfumer is not publicly available. |
+| Giardino di Sorrento | Marius Pana | named |  | Grande Parfums | houses/grande-parfums.html#part-08 | S108, S25 |  |
+| Hot Stuff | Lorenzo Orlandi Berti | named |  | Grande Parfums | houses/grande-parfums.html#part-09 | S108, S25 |  |
+| Intimate Spell | Jakub Pietrynka | named |  | Grande Parfums | houses/grande-parfums.html#part-10 | S108, S25 |  |
+| Karak & Shisha | Marius Pana | named |  | Grande Parfums | houses/grande-parfums.html#part-11 | S108, S25 |  |
+| Mystical Incense | Marius Pana | named |  | Grande Parfums | houses/grande-parfums.html#part-12 | S108, S25 |  |
+| Vanilla Ash | Marius Pana | named |  | Grande Parfums | houses/grande-parfums.html#part-13 | S108, S25 |  |
+| Vintage Memoir | Marius Pana | named |  | Grande Parfums | houses/grande-parfums.html#part-14 | S108, S25 |  |
+| White Label | Marius Pana | named |  | Grande Parfums | houses/grande-parfums.html#part-15 | S108, S25 |  |
 | Belle Âme | Antoine Lie | named | 2022 | Les Abstraits | houses/les-abstraits.html#part-01 | S28, S27 |  |
 | Des Cendres | Antoine Lie | named | 2023 | Les Abstraits | houses/les-abstraits.html#part-02 | S29, S27 |  |
 | La Douleur Exquise | Antoine Lie | named | 2022 | Les Abstraits | houses/les-abstraits.html#part-03 | S31, S27 |  |
@@ -138,20 +139,20 @@ Change something here, then run `python3 tools/perfumers/build.py` and `python3 
 | Xocolate Crotch | Aichi Liu | house |  | Outsider Parfums | houses/outsider-parfums.html#part-03 | S44, S43 | Credited to the perfumer of Om Parfums, which makes and sells Outsider. |
 | Guilty as Charged | Aichi Liu | house |  | Outsider Parfums | houses/outsider-parfums.html#part-04 | S44, S43 | Credited to the perfumer of Om Parfums, which makes and sells Outsider. |
 | Amaretto Coffee | Aichi Liu | named |  | Outsider Parfums | houses/outsider-parfums.html#part-05 | S45 |  |
-| Guitarist |  | none |  | Qimu & Musicians | houses/qimu-and-musicians.html#part-01 | S41 |  |
-| Vocal |  | none |  | Qimu & Musicians | houses/qimu-and-musicians.html#part-02 | S41 |  |
-| Bassist |  | none |  | Qimu & Musicians | houses/qimu-and-musicians.html#part-03 | S41 |  |
+| Guitarist | Qimu | named |  | Qimu & Musicians | houses/qimu-and-musicians.html#part-01 | S108, S41 |  |
+| Vocal | Qimu | named |  | Qimu & Musicians | houses/qimu-and-musicians.html#part-02 | S108, S41 |  |
+| Bassist | Qimu | named |  | Qimu & Musicians | houses/qimu-and-musicians.html#part-03 | S108, S41 |  |
 | Drummer | Qimu | named |  | Qimu & Musicians | houses/qimu-and-musicians.html#part-04 | S41 |  |
 | Bad Lily | Michael Nordstrand | named | 2024 | Tale Parfums | houses/tale-parfums.html#part-01 | S35, S34 |  |
 | Fleurt | Chad Hodge | named | 2024 | Tale Parfums | houses/tale-parfums.html#part-02 | S103, S36 |  |
 | Rouse | Diandra Barsalou | named |  | Tale Parfums | houses/tale-parfums.html#part-03 | S104, S36 |  |
 | Water Me | Chad Hodge | named |  | Tale Parfums | houses/tale-parfums.html#part-04 | S34 |  |
 | 3 Feet 5 | Lan Xiao | named | 2024 | Tombstone | houses/tombstone.html#part-01 | S96, S38 |  |
-| Evergrow |  | none | 2025 | Tombstone | houses/tombstone.html#part-02 | S97, S39 | Not named on the house's page, Parfumo, Scentissime or ScentAdvice; a reformulation of His Lordship's Backyard Roses (2024). |
+| Evergrow | Lan Xiao | named | 2025 | Tombstone | houses/tombstone.html#part-02 | S108, S97, S39 | Named by the owner (the house writes her name Xiao Lan); not on the house's page, Parfumo, Scentissime or ScentAdvice. A reformulation of His Lordship's Backyard Roses (2024). |
 | No Need to Come By | Tan Shuai | named |  | Tombstone | houses/tombstone.html#part-03 | S98, S40 |  |
 | Sing at My Funeral | Yenchi Lin | named |  | Tombstone | houses/tombstone.html#part-04 | S100, S99, S40 |  |
 | Sweet Coffin | Lan Xiao | named | 2024 | Tombstone | houses/tombstone.html#part-05 | S102, S101, S37 | The house writes her name Xiao Lan. |
-| Kogen |  | none | 2024 | Apoteker Tepe | houses/apoteker-tepe.html#part-01 | S07, S05 | Made after Pineward took over the line; no perfumer is named for it. |
+| Kogen |  | none | 2024 | Apoteker Tepe | houses/apoteker-tepe.html#part-01 | S108, S07, S05 | Made after Pineward took over the line; its perfumer is not publicly available. |
 | The Holy Mountain | Holladay Penick Saltz | named | 2015 | Apoteker Tepe | houses/apoteker-tepe.html#part-02 | S06, S09 |  |
 | Karasu | Holladay Penick Saltz | named | 2016 | Apoteker Tepe | houses/apoteker-tepe.html#part-04 | S06, S09 |  |
 | The Peradam | Holladay Penick Saltz | named | 2015 | Apoteker Tepe | houses/apoteker-tepe.html#part-05 | S06, S09 |  |
@@ -159,14 +160,14 @@ Change something here, then run `python3 tools/perfumers/build.py` and `python3 
 | Anabasis | Holladay Penick Saltz | named | 2015 | Apoteker Tepe | houses/apoteker-tepe.html#part-07 | S06, S09 |  |
 | After the Flood | Holladay Penick Saltz | named | 2015 | Apoteker Tepe | houses/apoteker-tepe.html#part-08 | S06, S09 |  |
 | Brother Night | Holladay Penick Saltz | named | 2016 | Apoteker Tepe | houses/apoteker-tepe.html#part-03 | S06, S08, S82, S83 | Its first version: made in 2016 as a boutique-only release, sold only at the Neon Heart shop in New Orleans; Pineward brought it back in 2022, the year Parfumo and this site's own page give. |
-| CV99 |  | none |  | Lussur | individual-fragrances/individual-fragrances.html#part-01 | S61 |  |
+| CV99 |  | none |  | Lussur | individual-fragrances/individual-fragrances.html#part-01 | S108, S61 | Its perfumer is not publicly available. |
 | De Profundis | Christopher Sheldrake | named | 2011 | Serge Lutens | individual-fragrances/individual-fragrances.html#part-02 | S49 |  |
 | Haxan | Prin Lomros | named | 2018 | Parfum Prissana | individual-fragrances/individual-fragrances.html#part-03 | S72 |  |
 | Tobacolor | François Demachy | named | 2021 | Dior | individual-fragrances/individual-fragrances.html#part-04 | S52 |  |
 | Flamenco EDP | Ramón Monegal | named | 2017 | Ramón Monegal | individual-fragrances/individual-fragrances.html#part-05 | S55 |  |
 | French Riviera | Pierre Montale | named | 2022 | Mancera | individual-fragrances/individual-fragrances.html#part-06 | S58 |  |
 | Velvet Fog | Vera Nicchia | named |  | Casa Goa | individual-fragrances/individual-fragrances.html#part-07 | S107, S62 |  |
-| House of Ellixirz |  | none | 2021 | Matca | individual-fragrances/individual-fragrances.html#part-08 | S63 |  |
+| House of Ellixirz | Georgiana Ștefănoaei | named | 2021 | Matca | individual-fragrances/individual-fragrances.html#part-08 | S108, S63 |  |
 | Fir of the Light | Jakub Pietrynka | named |  | JMP Artisan Perfumes | individual-fragrances/individual-fragrances.html#part-09 | S64 |  |
 | Fir of the Dark | Jakub Pietrynka | named | 2024 | JMP Artisan Perfumes | individual-fragrances/individual-fragrances.html#part-10 | S64 |  |
 | Quintessentially Amber | Sultan Pasha; Christian Carbonnel | named | 2025 | Sultan Pasha Perfumes | individual-fragrances/individual-fragrances.html#part-11 | S66 |  |
@@ -375,8 +376,9 @@ One block each: the name as the chart shows it, then `sort:` (what A–Z sorts b
 
 ### Qimu
 - sort: Qimu
+- from: China
 - about: WhatScent names Qimu as the perfumer of Drummer, by the house that carries the name, Qimu & Musicians. [S41]
-- about: No source found says who made Guitarist, Vocal or Bassist, so those stand under Perfumer not found.
+- about: The owner names him as the perfumer of Guitarist, Vocal and Bassist too, and gives Shanghai, China, as where he is from. [S108]
 
 ### Aichi Liu
 - sort: Liu
@@ -438,6 +440,7 @@ One block each: the name as the chart shows it, then `sort:` (what A–Z sorts b
 - from: Poland
 - about: The Polish independent perfumer behind JMP Artisan Perfumes. [S65]
 - about: Parfumo knows fifty-five perfumes by him. [S64]
+- about: The owner names him as the perfumer of Grande Parfums' Intimate Spell. [S108]
 
 ### Sultan Pasha
 - sort: Pasha
@@ -490,6 +493,7 @@ One block each: the name as the chart shows it, then `sort:` (what A–Z sorts b
 - sort: Xiao
 - about: An independent perfumer and the founder of Tombstone, who, in Scentissime's words, explores the beauty of life through the awareness of death. [S96, S102]
 - about: Her perfumes for the house are earthy, smoky and gourmand; Tombstone gives her Sweet Coffin, which she meant as the sweet coffin she wishes to return to, and Scentissime 3 Feet 5. [S101, S96]
+- about: The owner names her as the perfumer of Evergrow too; the house writes her name Xiao Lan. [S108]
 
 ### Tan Shuai
 - sort: Tan
@@ -510,6 +514,22 @@ One block each: the name as the chart shows it, then `sort:` (what A–Z sorts b
 ### Vera Nicchia
 - sort: Nicchia
 - about: Named by Profumix as the nose of Casa Goa's Velvet Fog. [S107]
+
+### Marius Pana
+- sort: Pana
+- about: The owner names him as the perfumer of ten of Grande Parfums' perfumes: 5 Years Anniversary, Ambresso, Ancient Oud, Cuore, Giardino di Sorrento, Karak & Shisha, Mystical Incense, Vanilla Ash, Vintage Memoir and White Label. [S108]
+
+### Lorenzo Orlandi Berti
+- sort: Orlandi Berti
+- about: The owner names him as the perfumer of Grande Parfums' Choco Powder and Hot Stuff. [S108]
+
+### Alexandru Marian
+- sort: Marian
+- about: The owner names him as the perfumer of Grande Parfums' Cookie. [S108]
+
+### Georgiana Ștefănoaei
+- sort: Ștefănoaei
+- about: The owner names her as the perfumer of Matca's House of Ellixirz. [S108]
 
 ## Houses
 
@@ -546,7 +566,8 @@ One block each: `page:` (where it lives on the site, if it does), `founded:`, `f
 - page: houses/grande-parfums.html
 - founded: 2021
 - from: Romania
-- about: Grande Perfumes, of Bucharest, created in 2021 by Alex Marian. No source found names the perfumer of its perfumes. [S25]
+- about: Grande Perfumes, of Bucharest, created in 2021 by Alex Marian. [S25]
+- about: The owner names its perfumers: Marius Pana for most of them, Lorenzo Orlandi Berti, Alexandru Marian and Jakub Pietrynka; Dreaming Maldives' is not publicly available. [S108]
 
 ### Les Abstraits
 - page: houses/les-abstraits.html
@@ -559,11 +580,13 @@ One block each: `page:` (where it lives on the site, if it does), `founded:`, `f
 
 ### Tombstone
 - page: houses/tombstone.html
-- about: A house about death and living, each bottle shaped as a tombstone; marketed by Wonder Senses. No source found names its perfumer. [S40, S37]
+- about: A house about death and living, each bottle shaped as a tombstone; marketed by Wonder Senses. [S40, S37]
+- about: Its perfumes are credited to Lan Xiao, Tan Shuai and Yenchi Lin, but more people could have been involved in them: no public record of who exactly was involved exists. [S108]
 
 ### Qimu & Musicians
 - page: houses/qimu-and-musicians.html
 - about: A perfume for each player in a band. WhatScent names Qimu as the perfumer of Drummer. [S41]
+- about: The owner names Qimu, from Shanghai, as the perfumer of all four. [S108]
 
 ### Om Parfums
 - page: houses/om-parfums.html
@@ -605,11 +628,11 @@ One block each: `page:` (where it lives on the site, if it does), `founded:`, `f
 - about: No source found names who makes its perfumes. [S62]
 
 ### Matca
-- about: No source found names who makes its perfumes. [S63]
+- about: The owner names Georgiana Ștefănoaei as the perfumer of House of Ellixirz. [S108]
 
 ### Lussur
 - from: Italy
-- about: An Italian house from Modena, founded by Lucas Chemelli. No source found names the perfumer of CV99. [S61]
+- about: An Italian house from Modena, founded by Lucas Chemelli. The perfumer of CV99 is not publicly available. [S61, S108]
 
 ### JMP Artisan Perfumes
 - from: Poland
@@ -753,3 +776,4 @@ MLA 8, the site's format. One line each: its number, then the citation, then `|`
 - S105: “Aichi Liu.” *Parfumo*, parfumo.com. Accessed 7 Nov. 2026. | https://www.parfumo.com/Perfumers/aichi-liu
 - S106: “Aichi Liu.” *The Scent Base*, thescentbase.com. Accessed 7 Nov. 2026. | https://thescentbase.com/perfumer/aichi-liu
 - S107: “Home Goa Velvet Fog 50ml Eau de Parfum.” *Profumix Luxury Brands*, profumixluxurybrands.it. Accessed 7 Nov. 2026. | https://www.profumixluxurybrands.it/en/?p=103693
+- S108: The Taste of Aldehydes. “The perfumers of Grande Parfums, Qimu & Musicians, Tombstone and Matca, and the perfumes whose perfumer is not publicly available, as the owner gave them, 8 Nov. 2026.” *The Taste of Aldehydes*. | SITE:perfumers/index.html

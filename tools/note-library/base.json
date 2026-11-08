@@ -809,6 +809,12 @@
      "old": "A dark, tart berry, jammy when cooked."
     },
     {
+     "id": "note-blackcurrant",
+     "name": "Blackcurrant",
+     "aka": [],
+     "old": "The blackcurrant berry itself: dark, tart and jammy."
+    },
+    {
      "id": "note-blueberry",
      "name": "Blueberry",
      "aka": [],
@@ -1030,6 +1036,7 @@
      "name": "Cinnamon",
      "aka": [
       "Cinnamon (Ceylon)",
+      "Ceylon Cinnamon",
       "Cinnamon Attar"
      ],
      "old": "Warm, sweet bark spice. Ceylon cinnamon is the lighter, more delicate kind."
@@ -1225,6 +1232,16 @@
      "old": "The bean before it is chocolate: dry, bitter, earthy and powdery."
     },
     {
+     "id": "note-cake",
+     "name": "Cake",
+     "aka": [
+      "Chocolate Cake",
+      "Chocolate Cake (Amandină)",
+      "Lava Cake"
+     ],
+     "old": "Freshly baked sponge: vanilla, butter, sugar and a little egg."
+    },
+    {
      "id": "note-caramel",
      "name": "Caramel",
      "aka": [
@@ -1261,15 +1278,6 @@
       "Dirty Chocolate"
      ],
      "old": "Cocoa made into chocolate: bitter-sweet, creamy and rich. White chocolate is the cocoa butter with milk and sugar and no cocoa solids."
-    },
-    {
-     "id": "note-chocolate-cake",
-     "name": "Chocolate Cake",
-     "aka": [
-      "Chocolate Cake (Amandină)",
-      "Lava Cake"
-     ],
-     "old": "Amandină is the Romanian one: a chocolate sponge soaked in chocolate syrup, layered with chocolate buttercream and glazed. Dark, sweet, moist and a little boozy."
     },
     {
      "id": "note-cocoa-butter",

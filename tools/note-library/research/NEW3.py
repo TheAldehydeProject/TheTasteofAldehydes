@@ -256,7 +256,7 @@ N = {
  "note-caramel": dict(vars={
    "Burnt Sugar": dict(say="Caramel taken a step too far: sugar heated until it starts to char. It is sweet but darker and more bitter than caramel, toasted and a little smoky, deepening into molasses as it dries down. Like caramel it is built by the perfumer, from maltol and its relatives.", src=["sv_burntsugar", "ag_carsugar", "pp_caramel"]),
   }),
- "note-chocolate-cake": dict(vars={
+ "note-cake": dict(vars={
    "Lava Cake": dict(say="A particular chocolate cake: the molten chocolate cake, or lava cake, a small French cake baked so that its middle stays liquid. So it is chocolate cake at its richest and least cakey: warm, melting dark chocolate more than sponge, with a little butter and sugar around it.", src=["wp_moltencake", "pm_chococake"]),
   }),
  "note-milk": dict(vars={

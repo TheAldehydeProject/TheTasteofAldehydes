@@ -474,7 +474,12 @@ window.FRAGRANCE_NOTES = {
   // GRANDE PARFUMS — houses/grande-parfums.html
   // ============================================================
   "grande:05": {
-    missing: "I could not find this fragrance online.",
+    top: ["Blackcurrant", "Blood Orange"],
+    mid: ["Ylang Ylang", "Cacao", "Tonka", "Ceylon Cinnamon", "Milk", "Cake"],
+    base: ["Siam Benzoin", "Castoreum", "Propolis", "Peru Balsam", "Myrrh", "Labdanum", "Sandalwood", "Vanilla"],
+    // (read off the owner's screenshot of the page, 2026-11-08 — Fragrantica
+    // turns this site's tools away, as it did for Haxan's lower list)
+    source: { name: "Fragrantica", url: "https://www.fragrantica.com/perfume/Grande/Cookie-Extrait-de-Parfum-143511.html" },
   },
   "grande:09": {
     top: ["Scorched Pineapple", "Soft Tobacco Leaf"],
