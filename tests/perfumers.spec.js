@@ -595,3 +595,34 @@ test("at rest the names are drawn a few times a second, and the live layer about
   expect(live).toBeGreaterThan(5);
 });
 
+
+// 2026-11-08 — "make the actual perfumers page more thematic, make the index
+// button smaller, and the sources too, and again, make it less laggy, and
+// more HD" (the theme the owner chose: perfume and aldehydes): the house
+// perfumes in the aldehyde's violet, the individual ones in its gold; the
+// sillage rising off the houses' countries; the two buttons at the foot a
+// size or two down; and on a sharp screen the live layer at its sharpness at
+// rest, the flights at three quarters of it, not a plain screen's pixel.
+test("the aldehyde's gold and violet, the sillage rising, the buttons smaller, and the layers drawn sharp", async ({ page, browser }) => {
+  await page.goto(PAGE);
+  await atRest(page, "turn");
+  const v = await page.evaluate(() => { const s = getComputedStyle(document.body); return [s.getPropertyValue("--pf-gold").trim(), s.getPropertyValue("--pf-blue").trim()]; });
+  expect(v).toEqual(["#e0b252", "#b9a0e8"]);
+  await page.mouse.move(5, 880);
+  await expect.poll(() => stats(page).then((s) => s.sill || 0), { timeout: 8000 }).toBeGreaterThan(8);
+  const sizes = await page.evaluate(() => [".pf-index .pf-index-word", ".pf-sources .pf-index-word"].map((s) => parseFloat(getComputedStyle(document.querySelector(s)).fontSize)));
+  expect(sizes[0], "the index's word").toBeLessThanOrEqual(36);
+  expect(sizes[1], "the sources' word").toBeLessThanOrEqual(26);
+  expect(sizes[1]).toBeLessThan(sizes[0]);
+  // a sharp screen: the live layer at its own sharpness at rest
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 2 });
+  const p2 = await ctx.newPage();
+  await serveDependenciesLocally(p2);
+  await p2.goto(PAGE);
+  await atRest(p2, "turn");
+  await p2.mouse.move(5, 780);
+  await p2.waitForTimeout(2200);
+  const k = await p2.evaluate(() => { const c = document.querySelector(".pf-live"); return c.width / innerWidth; });
+  expect(k, "the live layer at the screen's sharpness at rest").toBeGreaterThan(1.4);
+  await ctx.close();
+});

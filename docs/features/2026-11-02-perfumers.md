@@ -562,3 +562,66 @@ four and Outsider's three (to Aichi Liu), and ADAR's two.
 up to three sources in MLA 8 (`source:`), every sentence from its own sources, and where they say
 little the block says so. The test pages carry a copy of it; this page does not show it yet.
 
+
+## 2026-11-08 — the aldehyde's colours and its sillage, the buttons smaller, sharper, and less to draw
+
+Files touched: `perfumers.js`, `style.css`, `tests/perfumers.spec.js`.
+
+The owner: "also please, make the actual perfumers page more thematic, make the index button smaller,
+and the sources too, and again, make it less laggy, and more HD." Asked what theme, they chose **perfume
+and aldehydes**: the home page aldehyde's gold and violet, and the idle movement as scent.
+
+**What changed**
+
+- **The aldehyde's colours** (`RGB`, `--pf-gold`, `--pf-blue`): the individual fragrances in the home
+  page aldehyde's gold (`#e0b252`, it was an orange gold `#eba33f`) and **the house perfumes in its
+  violet** (`#b9a0e8`, they were a blue-white `#bcd3ea`) — on the chart, the lights, the legend's
+  swatches and every gold of the page's chrome; Prin Lomros' rose kept, so the three still read apart.
+  The hairlines over the index's button and the window run gold into violet (they ran gold into rose).
+- **The dust in the aldehyde's colours**: most of the specks drifting past the rim its warm grey, the
+  rest its gold and violet, a colour set once for each third (`SOLID.grey`).
+- **The sillage** (`drawSillage`): as a perfume leaves a trail in the air, specks come off every country a
+  house is from while it faces you, in gold, violet and warm grey, and rise and drift out, curling,
+  thinning and fading — a few at a time, on the whole chart at rest, drawn in the Earth's frame so they
+  turn and scale with it. None with motion reduced. `PerfumersChart.stats().sill` counts them.
+- **The index's and the sources' buttons smaller**: INDEX at 22–34px (it was 40–92), SOURCES at 17–24px
+  (30–60), their padding, rings and corner ticks with them.
+- **Sharper** ("more HD"):
+  - the live layer — the dust, the far field, the lights, the sillage, the Earth's lines — is always at
+    the screen's own sharpness. It went down to a plain screen's pixel at rest for a day (2026-11-07);
+  - a flight is drawn at the whole of a plain screen's pixels (three quarters until now), and on a
+    sharp screen at three quarters of its own, never under 1.25 (it was three fifths, never under 1);
+  - the chart at rest (the rotor and its names) is drawn half as fine again as a plain screen's pixel,
+    so the browser's turning of it stays sharp there (`ROT_K`).
+- **Less to draw while it moves** ("less laggy"):
+  - **a name round its arc is one picture** (`arcSprite`, `makeArcSprite`): the perfumers' names round
+    ring 1 and a chosen perfumer's houses round ring 2 were placed and drawn a letter at a time, every
+    frame of every flight — three projections, a transform and a drawing per letter. Each name is set
+    round its arc once, flat, into a small canvas at as many pixels a unit as the screen needs, in steps
+    of the square root of two, and laid down where it stands with the projection there. While the
+    camera flies, a picture already made a step or two finer serves rather than a new one every step of
+    the zoom. A name too large for a picture is drawn letter by letter as before;
+  - a letter drawn letter by letter is given its width rather than looking it up again;
+  - while flying, the rings are walked in coarser steps (8px, 5 at rest), half the dust is drawn (each
+    speck a little larger), and the Earth's degrees are written only once it lands.
+
+**Why / key decisions**
+
+- **The sharpness and the speed pull against each other**, and the day before it was the sharpness that
+  gave way. This time the work each frame was cut — the letters, the rings, the dust while moving — and
+  the sharpness put back; on a sharp screen the page still lets itself down a step at a time if a
+  machine cannot keep up (`window.Sharpness`, never under 1.5 there), and back up when it can.
+- **Measured how far it could be**: the machine the work was done on draws without a graphics card, so
+  its frame times are its software drawing, not this page — before and after alike. What could be
+  measured is the script's own work a frame: going through the perfumes close in, 4.15 → 3.6 ms; coming
+  back out to the whole chart, 4.5 → 3.8 ms; at rest unchanged (about 1.2 ms). The drawing the browser
+  does with what the script hands it is less too (fewer letters, ring points and specks while moving),
+  but only a machine with a graphics card can say by how much.
+- **The house perfumes went violet, not the rose**: violet is the aldehyde's other colour, and the rose
+  is Prin Lomros' whole catalogue, the one group not written about on the site — kept apart from both.
+
+**How to test it**: `tests/perfumers.spec.js`, "the aldehyde's gold and violet, the sillage rising, the
+buttons smaller, and the layers drawn sharp" — the two colours, more than eight specks of sillage at rest,
+the two buttons' words at most 36 and 26px, and on a screen at two the live layer at more than 1.4 pixels
+a point at rest. The rest of the file still passes: the chart drawn no more often than it was at rest, the
+names a few times a second, a flight at a lower resolution than the landing.

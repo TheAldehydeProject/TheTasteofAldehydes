@@ -200,7 +200,12 @@
   // the sway close in: a slow roll about the point looked at, a breath of
   // scale, a drift of a few pixels — the browser's to draw (`swayBox`)
   const SWAY = { roll: 0.03, roll2: 0.011, breath: 0.011, dx: 7, dy: 4, rollHz: 1 / 27, roll2Hz: 1 / 11.5, breathHz: 1 / 19, driftHz: 1 / 23 };
-  const RGB = { gold: "235,163,63", blue: "188,211,234", rose: "226,88,126", ink: "235,232,226", muted: "141,143,146", sea: "15,17,20", land: "36,38,43" };
+  // THE ALDEHYDE'S COLOURS (2026-11-08 — "make the actual perfumers page
+  // more thematic"; the owner chose perfume and aldehydes): the home page's
+  // gold for the individual fragrances and its violet for the house perfumes
+  // (they were an orange gold and a blue-white), Prin Lomros' rose kept, and
+  // the dust in the aldehyde's gold, violet and warm grey
+  const RGB = { gold: "224,178,82", blue: "185,160,232", rose: "226,88,126", ink: "235,232,226", muted: "141,143,146", sea: "15,17,20", land: "36,38,43", grey: "154,148,140" };
   const SOLID = {}; Object.keys(RGB).forEach((k) => (SOLID[k] = "rgb(" + RGB[k] + ")"));
   const GROUND = "#0b0c0d";
   const F = {
@@ -514,7 +519,9 @@
     cvChart.width = Math.round(cw * k); cvChart.height = Math.round(ch * k);
     cvDof.width = Math.round(cw * k * 0.5); cvDof.height = Math.round(ch * k * 0.5);
     // (on a plain screen too since 2026-11-07: three quarters of its pixels while it moves)
-    FLY_K = k > 1.25 ? Math.max(1, k * 0.6) : k * 0.75;
+    // (sharper since 2026-11-08 — "more HD": a plain screen's whole pixel,
+    // and three quarters of a sharp one's, never under 1.25)
+    FLY_K = k > 1.25 ? Math.max(1.25, k * 0.75) : k;
     cvFly.width = FLY_K < k ? Math.round(cw * FLY_K) : 1; cvFly.height = FLY_K < k ? Math.round(ch * FLY_K) : 1;
     [cvChart, cvDof, cvFly].forEach((c) => {
       c.style.left = -OV + "px"; c.style.top = -OV + "px";
@@ -522,7 +529,10 @@
     });
     liveK = 0; liveHiUntil = performance.now() + LIVE_HI_MS;
     liveRes(performance.now());
-    cvTurn.width = Math.round(S * k); cvTurn.height = Math.round(S * k);
+    // the rotor drawn finer than a plain screen's pixel, so the browser's
+    // turning of it stays sharp (2026-11-08 — "more HD")
+    ROT_K = (window.devicePixelRatio || 1) > 1 ? k : 1.5;
+    cvTurn.width = Math.round(S * ROT_K); cvTurn.height = Math.round(S * ROT_K);
     cvNames.width = cvTurn.width; cvNames.height = cvTurn.height;
     namesKey = "";
     rotor.style.width = S + "px"; rotor.style.height = S + "px";
@@ -589,14 +599,14 @@
 
   // Draw txt with its start (or centre) at world (x, y), reading along world
   // angle `ang`, `size` world units tall. Too small or off the surface: not drawn.
-  function textAt(c, x, y, ang, txt, size, align, font) {
+  function textAt(c, x, y, ang, txt, size, align, font, wPre) {
     const ux = Math.cos(ang), uy = Math.sin(ang);
     proj(x, y, T0); if (!T0.ok) return false;
     proj(x + ux, y + uy, T1); if (!T1.ok) return false;
     proj(x - uy, y + ux, T2); if (!T2.ok) return false;
     const jux = T1.x - T0.x, juy = T1.y - T0.y, jvx = T2.x - T0.x, jvy = T2.y - T0.y;
     if (Math.hypot(jvx, jvy) * size < 1.6) return false;
-    const wWorld = (wOf(font, txt) * size) / FPX;
+    const wWorld = ((wPre === undefined ? wOf(font, txt) : wPre) * size) / FPX;
     let sx = T0.x, sy = T0.y;
     if (align === "center") { sx -= (jux * wWorld) / 2; sy -= (juy * wWorld) / 2; }
     const ex = sx + jux * wWorld, ey = sy + juy * wWorld;
@@ -615,8 +625,79 @@
   function arcText(c, txt, r, mid, size, font, track, alpha) {
     if (alpha <= 0.003) return;
     const wb = smooth((Math.sin(mid + (flipRot === null ? V.rot : flipRot)) + FLIP) / (2 * FLIP));
-    if (wb < 0.999) { c.globalAlpha = alpha * (1 - wb); arcRun(c, txt, r, mid, size, font, track, 1); }
-    if (wb > 0.001) { c.globalAlpha = alpha * wb; arcRun(c, txt, r, mid, size, font, track, -1); }
+    if (wb < 0.999) { c.globalAlpha = alpha * (1 - wb); arcSprite(c, txt, r, mid, size, font, track, 1) || arcRun(c, txt, r, mid, size, font, track, 1); }
+    if (wb > 0.001) { c.globalAlpha = alpha * wb; arcSprite(c, txt, r, mid, size, font, track, -1) || arcRun(c, txt, r, mid, size, font, track, -1); }
+  }
+  // A NAME ROUND ITS ARC, AS A PICTURE (2026-11-08 — "make it less laggy, and
+  // more HD"): its letters set round the arc once, flat, into a small canvas
+  // of their own, at as many pixels a unit as the screen needs (in steps of
+  // the square root of two), and laid down where the name stands with the
+  // projection there — one picture for the whole name where every letter was
+  // a placing and a drawing of its own, every frame of every flight.
+  const sprites = new Map();
+  function arcSprite(c, txt, r, mid, size, font, track, dir) {
+    const cx = Math.cos(mid) * r, cy = Math.sin(mid) * r;
+    proj(cx, cy, T0); if (!T0.ok) return true;
+    proj(cx + 1, cy, T1); if (!T1.ok) return true;
+    proj(cx, cy + 1, T2); if (!T2.ok) return true;
+    const c1x = T1.x - T0.x, c1y = T1.y - T0.y, c2x = T2.x - T0.x, c2y = T2.y - T0.y;
+    const scr = Math.max(Math.hypot(c1x, c1y), Math.hypot(c2x, c2y));
+    if (scr * size < 1.6) return true;
+    const dev = scr * Math.hypot(SF.a, SF.b);
+    const sc = Math.pow(2, Math.ceil(Math.log2(Math.max(0.5, dev)) * 2) / 2);
+    if (sc > 24) return false;
+    const fill = c.fillStyle;
+    const stem = txt + "|" + font + "|" + size + "|" + r + "|" + dir + "|" + track + "|" + fill + "|";
+    const key = stem + sc;
+    let sp = sprites.get(key);
+    // while the camera flies, a picture already made a step or two finer
+    // serves, rather than one made new every step of the zoom
+    if (!sp && flyingNow) for (const f of [Math.SQRT2, 2]) { const q = sprites.get(stem + sc * f); if (q) { sp = q; break; } }
+    if (!sp) {
+      if (sprites.size > 360) sprites.clear();
+      sp = makeArcSprite(txt, r, size, font, track, dir, sc, fill);
+      sprites.set(key, sp);
+    }
+    const ssc = sp ? sp.sc : sc;
+    if (!sp) return false;
+    // the projection at the name's middle, turned from the picture's frame
+    // (its arc's middle at the top) to where it stands
+    const th = mid + Math.PI / 2, ct = Math.cos(th), st = Math.sin(th);
+    const ja = c1x * ct + c2x * st, jb = c1y * ct + c2y * st, jc = -c1x * st + c2x * ct, jd = -c1y * st + c2y * ct;
+    const ox = sp.x0, oy = sp.y0 + r;
+    const reach = scr * (sp.x1 - sp.x0) * 0.6 + 20;
+    if (T0.x < SF.x0 - reach || T0.x > SF.x1 + reach || T0.y < SF.y0 - reach || T0.y > SF.y1 + reach) return true;
+    local(ja / ssc, jb / ssc, jc / ssc, jd / ssc, T0.x + ja * ox + jc * oy, T0.y + jb * ox + jd * oy);
+    c.drawImage(sp.cv, 0, 0);
+    return true;
+  }
+  function makeArcSprite(txt, r, size, font, track, dir, sc, fill) {
+    const m = charsOf(font, txt);
+    const k = size / FPX, gap = size * track;
+    let total = gap * (m.chars.length - 1);
+    for (const w of m.ws) total += w * k;
+    const half = total / (2 * r);
+    if (half > 1.4) return null;
+    const pad = size * 0.9;
+    const x0 = -r * Math.sin(half) - pad, x1 = r * Math.sin(half) + pad;
+    const y0 = -r - pad, y1 = -r * Math.cos(half) + pad;
+    const W2 = Math.ceil((x1 - x0) * sc), H2 = Math.ceil((y1 - y0) * sc);
+    if (W2 < 1 || H2 < 1 || W2 * H2 > 4e6) return null;
+    const cv = document.createElement("canvas");
+    cv.width = W2; cv.height = H2;
+    const x = cv.getContext("2d");
+    x.font = font; x.fillStyle = fill; x.textBaseline = "middle"; x.textAlign = "left";
+    let a = -Math.PI / 2 - (dir * total) / (2 * r);
+    for (let i = 0; i < m.chars.length; i++) {
+      const w = m.ws[i] * k;
+      const ac = a + (dir * w) / (2 * r);
+      const ang = ac + (dir * Math.PI) / 2, ux = Math.cos(ang), uy = Math.sin(ang);
+      const px = Math.cos(ac) * r - (ux * w) / 2, py = Math.sin(ac) * r - (uy * w) / 2;
+      x.setTransform(sc * ux * k, sc * uy * k, -sc * uy * k, sc * ux * k, sc * (px - x0), sc * (py - y0));
+      x.fillText(m.chars[i], 0, 0);
+      a += (dir * (w + gap)) / r;
+    }
+    return { cv, x0, y0, x1, sc };
   }
   function arcRun(c, txt, r, mid, size, font, track, dir) {
     const m = charsOf(font, txt);
@@ -627,7 +708,7 @@
     for (let i = 0; i < m.chars.length; i++) {
       const w = m.ws[i] * k;
       const ac = a + (dir * w) / (2 * r);
-      textAt(c, Math.cos(ac) * r, Math.sin(ac) * r, ac + (dir * Math.PI) / 2, m.chars[i], size, "center", font);
+      textAt(c, Math.cos(ac) * r, Math.sin(ac) * r, ac + (dir * Math.PI) / 2, m.chars[i], size, "center", font, m.ws[i]);
       a += (dir * (w + gap)) / r;
     }
   }
@@ -1216,7 +1297,7 @@
     }
   }
   function ringWalk(c, r, a0, a1) {
-    const step = clamp(5 / (r * V.z), 0.004, 0.06);
+    const step = clamp((flyingNow ? 8 : 5) / (r * V.z), 0.004, 0.06);
     let pen = false;
     for (let a = a0; a <= a1 + 1e-9; a += step) {
       proj(Math.cos(a) * r, Math.sin(a) * r, T0);
@@ -1228,12 +1309,15 @@
     if (mul <= 0) return;
     c.fillStyle = col;
     const z = V.z, x0 = SF.x0 - 4, x1 = SF.x1 + 4, y0 = SF.y0 - 4, y1 = SF.y1 + 4;
-    for (let i = 0; i < arr.length; i += 4) {
+    // (half of it while the camera flies, each a little larger — the same
+    // haze for half the drawing, 2026-11-08)
+    const by = flyingNow ? 8 : 4, grow = flyingNow ? 1.3 : 1;
+    for (let i = 0; i < arr.length; i += by) {
       proj(arr[i], arr[i + 1], T0);
       if (!T0.ok) continue;
       const X = T0.x, Y = T0.y;
       if (X < x0 || X > x1 || Y < y0 || Y > y1) continue;
-      const s = Math.max(0.55, arr[i + 2] * z * T0.k * 1.4);
+      const s = Math.max(0.55, arr[i + 2] * z * T0.k * 1.4 * grow);
       c.globalAlpha = arr[i + 3] * mul;
       c.fillRect(X - s / 2, Y - s / 2, s, s);
     }
@@ -1282,7 +1366,8 @@
       drawEarth(c, clamp(intro * 2, 0, 1), !flyingNow);
       drawFans(c, fade);
       drawPins(c, clamp(intro * 2, 0, 1));
-      drawDegrees(c, fade);
+      // (the degrees written only once it has landed, 2026-11-08)
+      if (!flyingNow) drawDegrees(c, fade);
       base();
       c.textBaseline = "middle"; c.textAlign = "left";
     }
@@ -1607,10 +1692,11 @@
   // ---- THE ROTOR: the chart at rest, drawn once, turned by the browser -----
   let lastRotor = "";
   const stats = { rotor: 0, chart: 0, live: 0, dof: 0 };
+  let ROT_K = 1;
   function renderRotor() {
     rotorDirty = false;
     stats.rotor++;
-    const k = DPR;
+    const k = ROT_K;
     tctx.setTransform(1, 0, 0, 1, 0, 0);
     tctx.clearRect(0, 0, cvTurn.width, cvTurn.height);
     surface(tctx, k, 0, 0, k, 0, 0, 0, 0, S, S);
@@ -1619,11 +1705,11 @@
     drawScene(false, false);
   }
   function namesRotor() {
-    const key = [sel.pid, sel.hid, mode, labelsOn().toFixed(3), focus ? 1 : 0, S, DPR].join("|");
+    const key = [sel.pid, sel.hid, mode, labelsOn().toFixed(3), focus ? 1 : 0, S, ROT_K].join("|");
     if (key === namesKey && Math.abs(cam.rot - namesRot) < 0.003) return;
     namesKey = key; namesRot = cam.rot;
     stats.names = (stats.names || 0) + 1;
-    const k = DPR;
+    const k = ROT_K;
     nctx.setTransform(1, 0, 0, 1, 0, 0);
     nctx.clearRect(0, 0, cvNames.width, cvNames.height);
     surface(nctx, k, 0, 0, k, 0, 0, 0, 0, S, S);
@@ -1642,8 +1728,9 @@
   const LIVE_HI_MS = 1500;
   let liveK = 0, liveHiUntil = 0;
   function liveRes(now) {
-    if (hover || sel.kind || callE || !calm) liveHiUntil = now + LIVE_HI_MS;
-    const want = now < liveHiUntil ? DPR : Math.min(DPR, 1);
+    // at the screen's own sharpness always since 2026-11-08 ("more HD"): it
+    // went down to a plain screen's pixel at rest for a day
+    const want = DPR;
     if (want === liveK && cvLive.width === Math.round(W * want)) return;
     liveK = want;
     cvLive.width = Math.round(W * want); cvLive.height = Math.round(H * want);
@@ -1797,13 +1884,19 @@
       c.globalAlpha = sky[o + 3] * (0.6 + 0.4 * Math.sin(sky[o + 6] * t + sky[o + 5])) * fade * quietAt(T0.x, T0.y, q);
       c.fillRect(T0.x - s / 2, T0.y - s / 2, s, s);
     }
-    for (let i = 0; i < DRIFT; i++) {
-      const o = i * 8, a = drift[o + 1] + drift[o + 4] * t, r = drift[o] + drift[o + 5] * Math.sin(drift[o + 7] * t + drift[o + 6]);
-      proj(Math.cos(a) * r, Math.sin(a) * r, T0);
-      if (!T0.ok || !inView(T0.x, T0.y, 4)) continue;
-      const s = Math.max(0.55, drift[o + 2] * z * T0.k * 1.3);
-      c.globalAlpha = drift[o + 3] * (0.55 + 0.45 * Math.sin(drift[o + 7] * 2.3 * t + drift[o + 6] * 1.7)) * fade * quietAt(T0.x, T0.y, q);
-      c.fillRect(T0.x - s / 2, T0.y - s / 2, s, s);
+    // (the dust in the aldehyde's colours since 2026-11-08: most of it its
+    // warm grey, some gold, some violet — a colour set once for each third)
+    for (let tone = 0; tone < 3; tone++) {
+      c.fillStyle = tone === 0 ? SOLID.grey : tone === 1 ? SOLID.gold : SOLID.blue;
+      const lift = tone === 0 ? 1.15 : 0.9;
+      for (let i = tone; i < DRIFT; i += tone === 0 ? 3 : 3) {
+        const o = i * 8, a = drift[o + 1] + drift[o + 4] * t, r = drift[o] + drift[o + 5] * Math.sin(drift[o + 7] * t + drift[o + 6]);
+        proj(Math.cos(a) * r, Math.sin(a) * r, T0);
+        if (!T0.ok || !inView(T0.x, T0.y, 4)) continue;
+        const s = Math.max(0.55, drift[o + 2] * z * T0.k * 1.3);
+        c.globalAlpha = lift * drift[o + 3] * (0.55 + 0.45 * Math.sin(drift[o + 7] * 2.3 * t + drift[o + 6] * 1.7)) * fade * quietAt(T0.x, T0.y, q);
+        c.fillRect(T0.x - s / 2, T0.y - s / 2, s, s);
+      }
     }
 
     // THE EARTH, on the whole chart: its picture, laid down; its lines out
@@ -1821,6 +1914,7 @@
       base();
       EM.flat = true; EM.cx = ox; EM.cy = oy; EM.r = er;
       drawFans(c, fade);
+      drawSillage(c, t, fade);
     } else {
       viewCam();
       earthUpright();
@@ -1856,6 +1950,45 @@
     if (sel.e) { markEntry(c, sel.e); markLit(c, sel.e); }
     if (callE && callAt.ok) drawCallLine(c);
     if (hover) drawHover(c);
+    c.globalAlpha = 1;
+  }
+  // THE SILLAGE (2026-11-08 — "make the actual perfumers page more
+  // thematic"; the owner chose perfume and aldehydes): as a perfume leaves a
+  // trail in the air, specks come off every country a house is from while it
+  // faces you — in the aldehyde's gold, violet and warm grey — and rise and
+  // drift out, curling, thinning and fading, a few at a time. On the whole
+  // chart at rest; drawn in the Earth's own frame, so they turn and scale
+  // with it, and let go of it as they rise.
+  const sill = [];
+  let sillNext = 0;
+  function drawSillage(c, t, fade) {
+    if (STILL || intro < 1 || !EM.flat) { sill.length = 0; return; }
+    if (t > sillNext && sill.length < 140) {
+      const from = PINS.filter((p) => p.houses.length && p.z > 0.2);
+      if (from.length) {
+        const p = from[Math.floor(Math.random() * from.length)];
+        const out = Math.atan2(p.y, p.x);
+        sill.push({ x: p.x, y: p.y, t0: t, life: 3.6 + Math.random() * 2.6, dir: out + (Math.random() - 0.5) * 0.9, far: 0.45 + Math.random() * 0.55, rise: 0.3 + Math.random() * 0.4, ph: Math.random() * TAU, tone: Math.random() < 0.4 ? 0 : Math.random() < 0.55 ? 1 : 2, sz: 0.9 + Math.random() * 1.2 });
+      }
+      sillNext = t + 0.05 + Math.random() * 0.08;
+    }
+    for (let i = sill.length - 1; i >= 0; i--) if (t - sill[i].t0 > sill[i].life) sill.splice(i, 1);
+    stats.sill = sill.length;
+    const r = EM.r;
+    for (let tone = 0; tone < 3; tone++) {
+      c.fillStyle = tone === 0 ? SOLID.grey : tone === 1 ? SOLID.gold : SOLID.blue;
+      for (const s of sill) {
+        if (s.tone !== tone) continue;
+        const u = (t - s.t0) / s.life, e = 1 - Math.pow(1 - u, 1.6);
+        const curl = Math.sin(t * 0.9 + s.ph) * 0.06 * e;
+        const d = s.far * e;
+        const x = EM.cx + r * (s.x + Math.cos(s.dir + curl * 4) * d + curl);
+        const y = EM.cy - r * (s.y + Math.sin(s.dir + curl * 4) * d * 0.6 + s.rise * e);
+        const sz = s.sz * (1 + 0.6 * e);
+        c.globalAlpha = fade * smooth(u / 0.12) * (1 - smooth((u - 0.45) / 0.55)) * (tone === 0 ? 0.7 : 0.95);
+        c.fillRect(x - sz / 2, y - sz / 2, sz, sz);
+      }
+    }
     c.globalAlpha = 1;
   }
   // A light runs from the perfume's house's country (when it faces you) to
