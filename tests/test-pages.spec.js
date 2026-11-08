@@ -153,82 +153,132 @@ for (const n of PAGES) {
 }
 
 /* 2026-11-06 — "change test page 1 to make it more into a perfumer oriented
-   page ... you initially start with a diagram like this (image 2), and each
-   dot or node on that when clicked will take you to a sphere ... The central
-   sphere node should be of the perfumer, and sphere nodes around it should be
-   of the houses. You can click those and view the fragrances that were made by
-   the perfumer for that house ... a return button." And then: "remove the
-   earth actually, make it way more abstract and blobby like in the image i
-   referenced ... No need to make 139 tiny nodes for prin lomoros." */
-test("test page 1: the rays first, a dot opening its perfumer's world, a house its perfumes, and Return going back", async ({ page }) => {
+   page ... each dot or node on that when clicked will take you to a sphere
+   ... The central sphere node should be of the perfumer, and sphere nodes
+   around it should be of the houses ... a return button." And 2026-11-08 —
+   "i want the dots not to be perfumes/fragrances, but houses. so prin lomoros
+   should be 3 dots"; "when you click on one of the houses, it takes you to a
+   blob of the house, and then the surrounding blobs should be blobs of
+   PERFUMERS that worked for that house"; "please distinguish the houses blobs
+   and the perfumer blobs"; "make the return button just go back to the black
+   nodes page". */
+test("test page 1: the strings first, a dot a house; a block opens its perfumer's world, a house its world of perfumers, Return the strings", async ({ page }) => {
   const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/test-pages/1/");
-  await page.waitForTimeout(2200);
-  // the rays: a dot for every perfume, every perfumer in the list
+  await expect(page.locator("body")).toHaveClass(/is-ready/, { timeout: 5000 });
+  // the strings: a dot for every house a perfumer made for — 40 of them
   expect(await page.evaluate(() => window.TestPage1.view())).toBe("rays");
-  expect(await page.evaluate(() => window.TestPage1.dots())).toBe(282);
+  expect(await page.evaluate(() => window.TestPage1.dots())).toBe(40);
   expect(await page.evaluate(() => window.TestPage1.perfumers)).toBe(32);
+  expect((await page.evaluate(() => window.TestPage1.blockOf("prin-lomros"))).dots).toBe(3);
+  expect((await page.evaluate(() => window.TestPage1.blockOf("aichi-liu"))).dots).toBe(2);
   await expect(page.locator(".t1-return")).toBeHidden();
-  // a dot pressed: its perfumer's world, the perfumer in the middle
-  const d = await page.evaluate(() => window.TestPage1.dotOf("aichi-liu"));
-  await page.mouse.click(d.x, d.y);
-  await expect.poll(() => page.evaluate(() => window.TestPage1.view())).toBe("world");
+  await expect(page.locator(".t1-rays-say")).toHaveCount(0);
+  // a block pressed: its perfumer's world, round, its houses round it, cut
+  const b = await page.evaluate(() => window.TestPage1.blockOf("aichi-liu"));
+  await page.mouse.click((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 5000 }).toBe("world");
   expect(await page.evaluate(() => window.TestPage1.now())).toEqual({ kind: "per", perfumer: "aichi-liu", house: null, count: 14 });
   await expect(page.locator("[data-v=name]")).toHaveText("Aichi Liu");
   await expect(page.locator("[data-v=houses]")).toHaveText("2");
+  await expect(page.locator(".t1-head-name")).toHaveText("The World of Aichi Liu");
   await expect(page.locator(".t1-return")).toBeVisible();
-  // no Earth and no ring of perfumes: one blob, a lobe for each of her
-  // houses, the houses round it, and the houses listed beside it
-  expect(await page.evaluate(() => typeof window.TestPage1.spin)).toBe("undefined");
   expect(await page.evaluate(() => window.TestPage1.lobes())).toEqual(["Om Parfums", "Outsider Parfums"]);
-  expect(await page.evaluate(() => window.TestPage1.spheres())).toBe(2);
+  expect(await page.evaluate(() => window.TestPage1.shape())).toBe("round");
+  expect(await page.evaluate(() => window.TestPage1.sphereKinds())).toEqual(["house:cut", "house:cut"]);
   await expect(page.locator(".t1-list-rows button")).toHaveCount(2);
-  // a house round it pressed (once the world has opened): the perfumes she
-  // made for it
-  await page.waitForTimeout(2000);
+  // a house round it pressed: the house in the middle, cut, and its
+  // perfumers round it — the perfumer it came from among them
+  await page.waitForTimeout(900);
   const h = await page.evaluate(() => window.TestPage1.houseAt("om-parfums"));
   await page.mouse.click(h.x, h.y);
-  expect(await page.evaluate(() => window.TestPage1.now())).toEqual({ kind: "house", perfumer: "aichi-liu", house: "om-parfums", count: 9 });
+  expect(await page.evaluate(() => window.TestPage1.busy())).toBe("change");
+  await expect.poll(() => page.evaluate(() => window.TestPage1.busy())).toBe(null);
+  expect(await page.evaluate(() => window.TestPage1.now())).toEqual({ kind: "house", perfumer: null, house: "om-parfums", count: 9 });
   await expect(page.locator("[data-v=name]")).toHaveText("Om Parfums");
-  await expect(page.locator(".t1-list-rows button")).toHaveCount(9);
-  // the house in the middle: a lobe for every year its perfumes were made in
-  const years = await page.evaluate(() => window.TestPage1.lobes());
-  expect(years.slice().sort()).toEqual(["2023", "2024", "no year"]);
-  // a perfume in the list pressed says who made it
-  await page.locator(".t1-list-rows button").first().click();
-  await expect(page.locator(".t1-tip")).toBeVisible();
-  await expect(page.locator(".t1-tip")).toContainText("Aichi Liu");
-  // Return: back to the perfumer, then to the rays; Esc the same
+  await expect(page.locator("[data-v=kicker]")).toHaveText("House");
+  await expect(page.locator("[data-v=houses-say]")).toHaveText("Perfumers");
+  await expect(page.locator(".t1-head-name")).toHaveText("The World of Om Parfums");
+  expect(await page.evaluate(() => window.TestPage1.shape())).toBe("cut");
+  expect(await page.evaluate(() => window.TestPage1.sphereKinds())).toEqual(["per:round"]);
+  expect(await page.evaluate(() => window.TestPage1.list())).toEqual(["Aichi Liu"]);
+  // its perfumer pressed: back in her world
+  const a = await page.evaluate(() => window.TestPage1.perfumerAt("aichi-liu"));
+  await page.mouse.click(a.x, a.y);
+  await expect.poll(() => page.evaluate(() => window.TestPage1.busy())).toBe(null);
+  expect((await page.evaluate(() => window.TestPage1.now())).perfumer).toBe("aichi-liu");
+  // a house from the list, and Return from it: straight to the strings
+  await page.locator(".t1-list-rows button", { hasText: "Outsider Parfums" }).click();
+  await expect.poll(() => page.evaluate(() => window.TestPage1.now().house)).toBe("outsider-parfums");
+  await expect.poll(() => page.evaluate(() => window.TestPage1.busy())).toBe(null);
   await page.locator(".t1-return").click();
-  expect((await page.evaluate(() => window.TestPage1.now())).kind).toBe("per");
-  await page.locator(".t1-return").click();
-  await expect.poll(() => page.evaluate(() => window.TestPage1.view())).toBe("rays");
-  // from the list, and Esc back: Prin Lomros' 139 perfumes in three lobes,
-  // and a row of the list taking you into a house
-  await page.locator(".t1-pick").selectOption({ label: "Prin Lomros · 139" });
-  await expect.poll(() => page.evaluate(() => window.TestPage1.view())).toBe("world");
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 4000 }).toBe("rays");
+  // from the list of every perfumer, and Esc back: Prin Lomros' three houses
+  await page.locator(".t1-pick").selectOption({ label: "Prin Lomros" });
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 5000 }).toBe("world");
   expect((await page.evaluate(() => window.TestPage1.now())).count).toBe(139);
   expect(await page.evaluate(() => window.TestPage1.lobes())).toHaveLength(3);
   await page.locator(".t1-list-rows button", { hasText: "PRIN" }).first().click();
-  expect(await page.evaluate(() => window.TestPage1.now())).toEqual({ kind: "house", perfumer: "prin-lomros", house: "prin", count: 40 });
-  await expect(page.locator(".t1-list-rows button")).toHaveCount(40);
+  await expect.poll(() => page.evaluate(() => window.TestPage1.now())).toEqual({ kind: "house", perfumer: null, house: "prin", count: 40 });
+  await expect.poll(() => page.evaluate(() => window.TestPage1.busy())).toBe(null);
   await page.keyboard.press("Escape");
-  await page.waitForTimeout(1300);
-  await page.keyboard.press("Escape");
-  await expect.poll(() => page.evaluate(() => window.TestPage1.view())).toBe("rays");
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 4000 }).toBe("rays");
+  // an address can name a house
+  await page.goto("/test-pages/1/#house-adar");
+  await page.waitForTimeout(900);
+  expect(await page.evaluate(() => window.TestPage1.now())).toEqual({ kind: "house", perfumer: null, house: "adar", count: 11 });
+  expect(await page.evaluate(() => window.TestPage1.spheres())).toBe(4);
+  expect(errors).toEqual([]);
+});
+
+/* 2026-11-08 — "make the lines that connect to the node in the bottom center
+   like strings, that get taught when you interact with them"; "when you hover
+   the dots ... the entire block and all the dots get highlighted. also not
+   all this information should be highlighted ... just show the perfumer's
+   name, and number of houses". */
+test("test page 1: the strings hang slack, pull taut under the hand, ring when plucked; the block lit whole, its note short", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await serveDependenciesLocally(page);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/test-pages/1/");
+  await expect(page.locator("body")).toHaveClass(/is-ready/, { timeout: 5000 });
+  await page.mouse.move(640, 20);
+  await page.waitForTimeout(500);
+  expect(await page.evaluate(() => window.TestPage1.slack("prin-lomros")), "slack at rest").toBeGreaterThan(0.8);
+  expect(await page.evaluate(() => window.TestPage1.sag("prin-lomros")), "hanging").toBeGreaterThan(8);
+  const b = await page.evaluate(() => window.TestPage1.blockOf("prin-lomros"));
+  await page.mouse.move((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2, { steps: 4 });
+  await page.waitForTimeout(900);
+  expect(await page.evaluate(() => window.TestPage1.slack("prin-lomros")), "pulled taut").toBeLessThan(0.15);
+  expect(await page.evaluate(() => window.TestPage1.sag("prin-lomros")), "straight").toBeLessThan(4);
+  expect((await page.evaluate(() => window.TestPage1.blockOf("prin-lomros"))).lit, "the block lit whole").toBeGreaterThan(0.8);
+  await expect(page.locator(".t1-tip b")).toHaveText("Prin Lomros");
+  await expect(page.locator(".t1-tip span")).toHaveText("3 houses");
+  await expect(page.locator(".t1-tip")).toHaveText("Prin Lomros3 houses");
+  // the hand gone: slack again
+  await page.mouse.move(640, 20, { steps: 3 });
+  await page.waitForTimeout(1400);
+  expect(await page.evaluate(() => window.TestPage1.slack("prin-lomros"))).toBeGreaterThan(0.8);
+  await expect(page.locator(".t1-tip")).toBeHidden();
+  // the hand drawn across the strings near the point plucks them
+  await page.waitForTimeout(1500);
+  const hub = await page.evaluate(() => ({ y: innerHeight * 0.84 - 60, x: innerWidth / 2 }));
+  await page.mouse.move(hub.x - 200, hub.y);
+  await page.mouse.move(hub.x + 200, hub.y, { steps: 10 });
+  expect(await page.evaluate(() => window.TestPage1.ringing()), "ringing").toBeGreaterThan(5);
   expect(errors).toEqual([]);
 });
 
 /* Test page 1's blob, the owner (2026-11-06, the very last round): "Maybe
-   experiment with chromattic abberation to achieve that colour. I think in my
-   reference there is blue/orange colour average that gives it that vibe" —
-   the lens: no colour painted, the blob's red, green and blue each seeing it
-   a little apart, so its edge is blue where it begins on the upper left and
-   gold on the lower right. The lens's split before it is ?look=split, and the
-   version the owner asked to keep, "TP1 backup", ?look=backup. */
-test("test page 1: the lens by default — blue above, gold below — the split and TP1 backup on the address", async ({ page }) => {
+   experiment with chromattic abberation to achieve that colour ..." — the
+   lens: no colour painted, the blob's red, green and blue each seeing it a
+   little apart, so its edge is blue where it begins on the upper left and
+   gold on the lower right. A perfumer's dark a plum, a house's a cold ink
+   (2026-11-08). The lens's split before it is ?look=split, and the version
+   the owner asked to keep, "TP1 backup", ?look=backup. */
+test("test page 1: the lens by default — blue above, gold below, plum or ink — the split and TP1 backup on the address", async ({ page }) => {
   const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
@@ -237,9 +287,17 @@ test("test page 1: the lens by default — blue above, gold below — the split 
   expect(await page.evaluate(() => window.TestPage1.look())).toBe("lens");
   expect(await page.evaluate(() => window.TestPage1.lobes())).toHaveLength(3);
   const rim = await page.evaluate(() => window.TestPage1.rim());
-  // where the edge begins: blue on the upper left, warm on the lower right
   expect(rim.upLeft[2]).toBeGreaterThan(rim.upLeft[0] + 100);
   expect(rim.downRight[0]).toBeGreaterThan(rim.downRight[2] + 100);
+  const plum = await page.evaluate(() => window.TestPage1.core());
+  expect(plum[0], "a perfumer's dark is warm").toBeGreaterThan(plum[2]);
+  // the spheres painted at the screen's own sharpness, not blown up
+  await expect.poll(() => page.evaluate(() => window.TestPage1.sharpness().length)).toBe(3);
+  for (const k of await page.evaluate(() => window.TestPage1.sharpness())) expect(k).toBeGreaterThan(0.5);
+  await page.goto("/test-pages/1/#house-prin");
+  await page.waitForTimeout(1500);
+  const ink = await page.evaluate(() => window.TestPage1.core());
+  expect(ink[2], "a house's dark is cold").toBeGreaterThan(ink[0]);
   for (const look of ["split", "backup"]) {
     await page.goto(`/test-pages/1/?look=${look}#prin-lomros`);
     await page.waitForTimeout(1500);
@@ -250,14 +308,13 @@ test("test page 1: the lens by default — blue above, gold below — the split 
   expect(errors).toEqual([]);
 });
 
-/* Test page 1, 2026-11-07 — "make the loading of it smoother, and i want you
-   to be able to hover it only when it is fully loaded. also add chromatic
-   abberation ... to the first basic test page 1. then when you click on a
-   house, from all the information present on image 2, only keep whats on
-   image 3 ... (but remove 'the most 139') ... fix a hovering problem ... a
-   button to learn more ... also remove the random numbers ... remove that
-   random blue bar that sits below each hosue named". */
-test("test page 1: nothing answers until it is ready, the readings trimmed, Learn more, and no numbers or bars", async ({ page }) => {
+/* Test page 1, 2026-11-07 and 2026-11-08 — "i want you to be able to hover it
+   only when it is fully loaded"; "remove the 'the most ___'"; "under the
+   houses on the left, you should ommit the informatio of the houses"; "below
+   the blobs, i want you to remove that paragraph, and then move it to the
+   bottom of the scrolled page ... make the button say 'Learn More about
+   ________'"; the hint, the date, and the line along the strings' foot gone. */
+test("test page 1: nothing answers until it is ready; the readings trimmed; Learn More about it at the foot", async ({ page }) => {
   const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
@@ -271,7 +328,7 @@ test("test page 1: nothing answers until it is ready, the readings trimmed, Lear
   await expect(page.locator("body")).toHaveClass(/is-ready/, { timeout: 5000 });
   await page.mouse.move(d.x + 1, d.y);
   await expect(page.locator(".t1-tip")).toBeVisible();
-  // the rays through the lens: a red and a blue fringe either side of white
+  // the strings through the lens: a blue and a warm fringe either side of white
   const fr = await page.evaluate(([x, y]) => {
     const c = document.querySelector(".t1-scene"), k = c.width / innerWidth;
     const g = c.getContext("2d").getImageData(Math.round((x - 6) * k), Math.round((y - 6) * k), Math.round(12 * k), Math.round(12 * k)).data;
@@ -281,64 +338,70 @@ test("test page 1: nothing answers until it is ready, the readings trimmed, Lear
   }, [d.x, d.y]);
   expect(fr.blue, "a blue fringe").toBeGreaterThan(0);
   expect(fr.red, "a warm fringe").toBeGreaterThan(0);
-  // a perfumer's readings: who, where, perfumes against the most, houses — no years, no shares
-  await page.evaluate(() => window.TestPage1.open("antoine-lie"));
-  await page.waitForTimeout(1800);
+  // gone: the most, the bars, the houses under their count, the three lines,
+  // the hint, the date
+  await expect(page.locator("[data-v=most], .t1-bar i, [data-v=houses-sub], .t1-lines, .t1-hint, .t1-date, .t1-li-name small")).toHaveCount(0);
+  await page.evaluate(() => window.TestPage1.open("antoine-lie", true));
+  await page.waitForTimeout(600);
   await expect(page.locator("[data-v=sub]")).toHaveText("France");
-  await expect(page.locator("[data-v=most]")).toHaveText("the most, 139");
-  await expect(page.locator("[data-v=years], .t1-credit, .t1-gauge")).toHaveCount(0);
-  await expect(page.locator(".t1-li-bar")).toHaveCount(0);
-  // a house's: who for, perfumes, founded — and not "the most"
-  await page.evaluate(() => window.TestPage1.open("antoine-lie", "les-abstraits"));
-  await page.waitForTimeout(800);
-  await expect(page.locator("[data-v=sub]")).toHaveText("by Antoine Lie");
-  await expect(page.locator("[data-v=most]")).toHaveText("");
-  await expect(page.locator("[data-v=houses-say]")).toHaveText("Founded");
-  await expect(page.locator(".t1-more-open"), "Learn more is a perfumer's").toBeHidden();
-  // Learn more: the biography under the poster, scrolled to, its three sources at its foot
-  await page.evaluate(() => window.TestPage1.open("antoine-lie"));
-  await page.waitForTimeout(1600);
+  await expect(page.locator("[data-v=houses-say]")).toHaveText("Houses");
+  // Learn More about him: the paragraph, his biography and its three sources
   const more = page.locator(".t1-more-open");
   await expect(more).toBeVisible();
-  const lines = await page.locator(".t1-lines").boundingBox(), mb = await more.boundingBox();
-  expect(mb.x, "to the right of the three lines").toBeGreaterThan(lines.x + lines.width);
+  await expect(more).toHaveText(/^Learn More about Antoine Lie/);
   await more.click();
   await expect(page.locator(".t1-more")).toBeVisible();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(400);
   await expect(page.locator("[data-v=more-name]")).toHaveText("Antoine Lie");
+  await expect(page.locator(".t1-more-lead p")).not.toHaveCount(0);
   await expect(page.locator(".t1-more-text p")).not.toHaveCount(0);
   await expect(page.locator(".t1-more-sources li")).toHaveCount(3);
   await page.locator(".t1-more-close").click();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(2);
   await expect(page.locator(".t1-more")).toBeHidden();
+  // a house's: what each of its perfumers made for it
+  await page.evaluate(() => window.TestPage1.ret());
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 4000 }).toBe("rays");
+  await page.evaluate(() => window.TestPage1.openHouse("tale-parfums", true));
+  await page.waitForTimeout(500);
+  await expect(more).toHaveText(/^Learn More about Tale Parfums/);
+  await more.click();
+  await expect(page.locator("[data-v=more-kicker]")).toHaveText("About the house");
+  await expect(page.locator(".t1-more-group")).toHaveCount(3);
+  await expect(page.locator(".t1-more-group li")).toHaveCount(4);
   expect(errors).toEqual([]);
 });
 
-/* 2026-11-07 — "fix a hovering problem. whenever you hover anything that is
-   clickable, the movement of the position of the objects that can move on
-   the page (and follow the mouse) snaps back to their original and defualt
-   position": the spheres lean to the hand over the list too. */
-/* Test page 1, 2026-11-07, later — "Please animate test page one when you
-   clik on any perfumer; and add a search. That search should work by
-   searching anything (perfume, perfume) and then taking you to the perfumer.
-   Also please animate it so its nice. I want a slightly thematic animation."
-   A perfumer pressed: its dots run in along their rays to the point (the
-   gathering), then its world opens out of that point through the lens; the
-   search finds a perfumer, a house or a perfume and takes you to the
-   perfumer, a house or a perfume asked for lit there. */
-test("test page 1: a perfumer pressed gathers into the point and opens from it; the search takes you to the perfumer", async ({ page }) => {
+/* Test page 1, 2026-11-08 — "when you click on it, make the animation better,
+   make it revolve around chromatic abberation": the block's dots reel in to
+   the point, and the world opens out of it through three discs, a colour
+   each, a little apart — a band only one colour has reached (blue) is seen
+   on the way. The search: a perfumer, a house (its own world now) or a
+   perfume (its perfumer's world, its house lit). */
+test("test page 1: the opening comes apart into its colours; the search takes you to a perfumer or a house", async ({ page }) => {
   const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/test-pages/1/");
   await expect(page.locator("body")).toHaveClass(/is-ready/, { timeout: 5000 });
-  const d = await page.evaluate(() => window.TestPage1.dotOf("antoine-lie"));
-  await page.mouse.click(d.x, d.y);
-  // still the rays while it gathers, the world after
-  await page.waitForTimeout(250);
+  const b = await page.evaluate(() => window.TestPage1.blockOf("antoine-lie"));
+  await page.mouse.click((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);
+  expect(await page.evaluate(() => window.TestPage1.busy())).toBe("open");
   expect(await page.evaluate(() => window.TestPage1.view())).toBe("rays");
-  await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 4000 }).toBe("world");
-  await page.waitForTimeout(1800);
+  // a pure blue band, where only the blue disc has passed
+  let blue = 0;
+  for (let i = 0; i < 40 && !blue; i++) {
+    blue = await page.evaluate(() => {
+      if (window.TestPage1.busy() !== "open") return -1;
+      const c = document.querySelector(".t1-scene"), g = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+      let n = 0;
+      for (let k = 0; k < g.length; k += 16) if (g[k + 2] > 170 && g[k] < 70 && g[k + 1] < 120) n++;
+      return n > 60 ? n : 0;
+    });
+    if (blue < 0) break;
+  }
+  expect(blue, "a band of blue alone as the world opens").toBeGreaterThan(0);
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 5000 }).toBe("world");
   expect(await page.evaluate(() => window.TestPage1.now())).toEqual({ kind: "per", perfumer: "antoine-lie", house: null, count: 4 });
   // the search: a perfume, on to its perfumer, its house lit in the list
   const find = page.locator(".t1-find input");
@@ -352,35 +415,35 @@ test("test page 1: a perfumer pressed gathers into the point and opens from it; 
   await expect(page.locator(".t1-list-rows button.is-found")).toHaveCount(1, { timeout: 4000 });
   await expect(page.locator(".t1-list-rows button.is-found")).toContainText("Parfum Prissana");
   await expect(page.locator(".t1-tip")).toContainText("Haxan");
-  // a house names every perfumer it has; from the rays a perfumer gathers in
+  // a house, once, to its own world; a perfumer from the strings
   await page.keyboard.press("Escape");
-  await page.evaluate(() => window.TestPage1.ret());
   await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 4000 }).toBe("rays");
-  await page.waitForTimeout(600);
   await find.click();
   await find.pressSequentially("lost tribe", { delay: 20 });
-  await expect(page.locator(".t1-found button")).toHaveCount(2);
+  await expect(page.locator(".t1-found button")).toHaveCount(1);
+  await expect(page.locator(".t1-found button").first()).toContainText("House");
+  await find.press("Enter");
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 5000 }).toBe("world");
+  expect(await page.evaluate(() => window.TestPage1.now())).toEqual({ kind: "house", perfumer: null, house: "lost-tribe", count: 6 });
+  await find.click();
   await find.fill("ivan");
   await expect(page.locator(".t1-found button")).toHaveCount(0);
   await find.fill("russian");
   await expect(page.locator(".t1-found button").first()).toContainText("Perfumer");
   await page.locator(".t1-found button").first().click();
-  await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 4000 }).toBe("world");
-  expect((await page.evaluate(() => window.TestPage1.now())).perfumer).toBe("russian-adam");
+  await expect.poll(() => page.evaluate(() => window.TestPage1.now().perfumer), { timeout: 5000 }).toBe("russian-adam");
   expect(errors).toEqual([]);
 });
 
 /* Test page 1, 2026-11-07, last — "Remove the names of the houses from the
-   blobs in TP1. I dont want them there", and then "remove the numbers that
-   surround the main nodes. the years ... remove all tthose little texts
-   around the middle nodes": nothing is written on the poster at all — no
-   house under its sphere or by a lobe, no year, no way back named. A sphere
-   under the hand lights its row in the list and says what it is in the small
-   note by the hand, the perfumer's that it is the way back. */
-test("page 1: nothing is written round the blobs; a sphere under the hand lights its row and says what it is", async ({ page }) => {
+   blobs", and then "remove all tthose little texts around the middle nodes":
+   nothing is written on the poster at all. A sphere under the hand lights its
+   row and says what it is in the small note by the hand — and, since
+   2026-11-08 ("make it also stay there, unless you hover over another blob"),
+   the double circle and the row stay on it after the hand has gone. */
+test("page 1: nothing is written round the blobs; the sphere under the hand lights its row, and the circle stays on it", async ({ page }) => {
   const errors = collectPageErrors(page);
   await serveDependenciesLocally(page);
-  // every word a canvas writes, once asked to listen
   await page.addInitScript(() => {
     window.__written = null;
     const fill = CanvasRenderingContext2D.prototype.fillText;
@@ -397,30 +460,48 @@ test("page 1: nothing is written round the blobs; a sphere under the hand lights
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/test-pages/1/#prin-lomros");
   await expect(page.locator("body")).toHaveClass(/is-ready/, { timeout: 5000 });
-  await page.waitForTimeout(2200);
+  await page.waitForTimeout(1600);
   await page.mouse.move(5, 890);
   expect(await written(), "a perfumer's world: nothing written").toEqual([]);
-  // a house lit from the list: still nothing comes out of the blob
   await page.locator('.t1-list-rows button[data-row="1"]').hover();
   expect(await written(), "nor beside a lobe").toEqual([]);
-  // a sphere under the hand: its row lights, and the note by the hand names it
+  await page.mouse.move(5, 890);
+  // a sphere under the hand: its row lights, the note names it
   const at = await page.evaluate(() => window.TestPage1.houseAt("prin"));
-  await page.mouse.move(at.x, at.y);
+  await page.mouse.move(at.x, at.y, { steps: 4 });
   await expect(page.locator(".t1-list-rows button.is-lit")).toHaveCount(1);
   await expect(page.locator(".t1-list-rows button.is-lit")).toContainText("PRIN");
-  await expect(page.locator(".t1-tip")).toContainText("Press to see what Prin Lomros made for it");
-  await page.mouse.move(5, 890);
-  await expect(page.locator(".t1-list-rows button.is-lit")).toHaveCount(0);
+  await expect(page.locator(".t1-tip")).toContainText("PRIN");
+  await expect(page.locator(".t1-tip")).toContainText("press to open its world");
+  // the hand gone: the note goes, the circle and the row stay
+  await page.mouse.move(5, 890, { steps: 4 });
   await expect(page.locator(".t1-tip")).toBeHidden();
-  // a house's world: no years, no way back named — the note says it instead
-  await page.evaluate(() => window.TestPage1.open("prin-lomros", "parfum-prissana"));
-  await page.waitForTimeout(1800);
+  await page.waitForTimeout(900);
+  expect((await page.evaluate(() => window.TestPage1.circle())).on).toBe("prin");
+  await expect(page.locator(".t1-list-rows button.is-lit")).toContainText("PRIN");
+  const c = await page.evaluate(() => window.TestPage1.circle());
+  const p = await page.evaluate(() => window.TestPage1.houseAt("prin"));
+  expect(Math.hypot(c.x - p.x, c.y - p.y), "round the sphere").toBeLessThan(12);
+  // another sphere takes it; the middle gives it back
+  const q = await page.evaluate(() => window.TestPage1.houseAt("parfum-prissana"));
+  await page.mouse.move(q.x, q.y, { steps: 4 });
+  await page.waitForTimeout(200);
+  expect((await page.evaluate(() => window.TestPage1.circle())).on).toBe("parfum-prissana");
+  const mid = await page.evaluate(() => window.TestPage1.middle());
+  await page.mouse.move(mid.x, mid.y, { steps: 4 });
+  await page.waitForTimeout(200);
+  expect((await page.evaluate(() => window.TestPage1.circle())).on, "the middle takes it back").toBe(null);
+  // a house's world: nothing written; its perfumer's sphere says what it is
+  await page.evaluate(() => window.TestPage1.ret());
+  await expect.poll(() => page.evaluate(() => window.TestPage1.view()), { timeout: 4000 }).toBe("rays");
+  await page.evaluate(() => window.TestPage1.openHouse("parfum-prissana", true));
+  await page.waitForTimeout(1200);
   expect(await written(), "a house's world: nothing written").toEqual([]);
-  const back = await page.evaluate(() => window.TestPage1.backAt());
-  await page.mouse.move(back.x, back.y);
-  await expect(page.locator(".t1-tip")).toContainText("↩ Prin Lomros");
-  await expect(page.locator(".t1-tip")).toContainText("Press to go back to their world");
-  await expect(page.locator(".t1-head-name")).toHaveText("Parfum Prissana, and what Prin Lomros made for it");
+  const back = await page.evaluate(() => window.TestPage1.perfumerAt("prin-lomros"));
+  await page.mouse.move(back.x, back.y, { steps: 3 });
+  await expect(page.locator(".t1-tip")).toContainText("Prin Lomros");
+  await expect(page.locator(".t1-tip")).toContainText("press to open their world");
+  await expect(page.locator(".t1-head-name")).toHaveText("The World of Parfum Prissana");
   expect(errors).toEqual([]);
 });
 
@@ -437,8 +518,6 @@ test("test page 1: the spheres keep leaning to the hand while it is over the lis
   await page.mouse.move(row.x + row.width / 2, row.y + row.height / 2, { steps: 8 });
   await page.waitForTimeout(1800);
   const over = await at();
-  // the hand far to the right: the spheres are pushed left of where they
-  // stood with the hand in the middle, not back to their rest
   expect(over.x, "leaning, not snapped back").toBeLessThan(middle.x - 3);
 });
 

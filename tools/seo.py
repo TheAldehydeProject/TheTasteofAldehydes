@@ -98,7 +98,7 @@ P = {
  # nofollow, the only pages here that say nofollow. Not in robots.txt on
  # purpose: a page a crawler is barred from is a page whose noindex it
  # never reads.
- "test-pages/1/index.html": dict(desc="A test page, not a part of the site: Perfumer Worlds — every perfume a ray to the middle, every perfumer a dark blob of their houses, out of focus.", noindex=True, nofollow=True),
+ "test-pages/1/index.html": dict(desc="A test page, not a part of the site: Perfumer Worlds — every perfumer a string to each of their houses, and a world of dark blobs for every perfumer and every house.", noindex=True, nofollow=True),
  "test-pages/2/index.html": dict(desc="A test page, not a part of the site: Perfumer Spectrums 2026 — every perfumer a dome, their houses round the outside and every perfume a tick.", noindex=True, nofollow=True),
  "test-pages/3/index.html": dict(desc="A test page, not a part of the site: A Portrait of the Perfumers — a thread for every perfume, rising from its perfumer to its house.", noindex=True, nofollow=True),
  "test-pages/4/index.html": dict(desc="A test page, not a part of the site: The Perfumers' Graph — every perfumer, house, perfume, letter and note a node, in clouds, chosen from a table.", noindex=True, nofollow=True),

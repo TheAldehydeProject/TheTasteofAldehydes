@@ -770,3 +770,124 @@ am talking about the semi-transparent layer around tound the actual black mass."
 the hand lights its row and says what it is" — it listens to every word a canvas writes and finds none in a
 perfumer's world or a house's; and "the lens by default — blue above, gold below" still reads the fringes
 where the edge begins.
+
+## 2026-11-08 — page 1: the Strings and the World — a dot a house, strings pulled taut, a house's own world, and the opening through three discs
+
+Files touched: `test-pages/1/index.html`, `test-pages/1/page.js`, `tests/test-pages.spec.js`.
+
+The owner, of page 1: "i want when you hover the dots of the main part (black dots page) of the TP1,
+the entire block and all the dots get highlighted. also not all this information should be highlighted
+... just show the perfumer's name, and number of houses. additionally, i want the dots not to be
+perfumes/fragrances, but houses. so prin lomoros should be 3 dots. make the lines that connect to the
+node in the bottom center like strings, that get taught when you interact with them. when you click on
+it, make the animation better, make it revolve around chromatic abberation. then in the blob page ...
+(make it an official name), remove the 'the most ___' ... under the houses on the left, you should
+ommit the informatio of the houses. below the blobs, i want you to remove that paragraph, and then move
+it to the bottom of the scrolled page ... make the button say 'Learn More about ________' ... remove the
+thing in image 3 [the hint] ... the tiny spheres feel pixelated ... when you hover the blobs that are not
+the main blobs, make the highlighting circle smoother. make it also stay there, unless you hover over
+another blob. make it so taht when you click on one of the houses, it takes you to a blob of the house,
+and then the surrounding blobs should be blobs of PERFUMERS that worked for that house ... please
+distinguish the houses blobs and the perfumer blobs somehow ... also remove the date on the top right.
+make the return button just go back to the black nodes page. remove the thing shown in image 4 [the line
+along the foot] ... please smooth out the animations and make them page-specific."
+
+### What changed
+
+- **The two views have names of their own**: **the Strings** (the black page, *the rays* until now) and
+  **the World** (the blob page). The heads say so — *Perfumer Worlds · The Strings · …* and *Perfumer
+  Worlds · The World of Prin Lomros* (*The World of PRIN* for a house).
+- **The Strings: a dot for every house a perfumer made for** — 40 dots, not 282: Prin Lomros' block is
+  three, Aichi Liu's two, most one, *Perfumer not found*'s six. Each perfumer a block, named over it, A to Z
+  down three lanes a side (two below 1100px, one on a phone), the lanes a little off each other.
+- **The lines are strings** (`stepStrings`): slack at rest, each hanging under its own weight (`SAG`, 7%
+  of its length) and swaying a little; **pulled taut** when its perfumer is pointed at, on a spring a
+  little under damped (`SPRING`, `DAMP`) so it overshoots and twangs; and **plucked** by the hand drawn
+  across it (`pluck`) — it rings in its two shapes, the whole and the halves, dying away, and is held
+  taut a moment. Drawn as eighteen pieces through the lens, every frame (there is no still picture of
+  the strings now).
+- **A block pointed at is lit whole**: every dot larger and brighter, its strings taut and bright, its
+  name white, a registration bracket at each corner, everything else dimmed — eased in and out. The note
+  by the hand says **only its name and how many houses** (*Prin Lomros · 3 houses*). The line along the
+  foot (*A dot a perfume · a block a perfumer · …*) is gone.
+- **The opening** (`openWorld`, `drawDiscs`): the block's strings snap taut and **reel its dots in** to
+  the point, each string shortening behind its dot, while every other string falls slack and fades and
+  the whole lens comes apart into red, green and blue; then **three discs, one a colour, burst out of the
+  point**, a little apart — blue's thrown up and to the left and a little larger, red's down and to the
+  right — each colour seeing the world inside its disc and the strings outside it. So the world is whole
+  only where all three have passed, its opening edge **blue and cyan above, red and gold below**,
+  feathered, and its blob comes out of a wide aberration (`boost`) into its own as the discs reach the
+  corners. The search's house opens the same way, every one of its dots reeling in.
+- **A house has a world of its own**: pressed, a house sphere comes to the middle — **a lobe for every
+  perfumer who made for it**, as big as what they made — and **its perfumers** stand round it as
+  spheres; a perfumer sphere pressed is their world again. The list beside it names them; the readings
+  are its country and founding, its perfumes and its perfumers. **A change between worlds**
+  (`change`, `drawTraveller`) is its own movement: the sphere pressed travels in and unfolds into the
+  middle's blob, the middle folds into a sphere and goes to its place round the new one (a perfumer
+  stands round each of their houses), the aberration widening half way and settling as they land; the
+  old spheres go where they stand, the new ones come in one after another.
+- **Houses are cut, perfumers round** (`fieldOf`): a house's lobes are hexagons — its field the distance
+  from the nearest of three pairs of sides, a little of the circle left in so the corners are cut — so a
+  house is faceted like a cut stone, a perfumer a soft drop; and **a house's dark is a cold ink**
+  (`LENS_INK`) where a perfumer's is the plum. The spheres round a world are cut or round by what they
+  are.
+- **Return goes back to the Strings** from any world, and Esc; the strings come back taut and fall slack
+  with a bounce as the discs close on the point, the perfumer's block lit a moment.
+- **The readings** lose *the most, 139* and its blue bar, and the houses' names under their count; the
+  list loses each house's country and founding under its name (both readings of "under the houses on
+  the left"). The hint (*A house pressed, or its row …*) and the date on the right of the head are gone.
+- **Learn More about Prin Lomros** stands under the world (*Learn More about the perfumes without a
+  perfumer*, *Learn More about PRIN*); the three lines that stood under the blob are **the opening of the
+  sheet under the poster** now, the page scrolled down to it — a perfumer's biography and its three
+  sources after them; a house's line, then **what each of its perfumers made for it**, every perfume and
+  its year, and the ledger's sources for them.
+- **The spheres are sharp** (`paintSphere`): painted at about the screen's own pixels (they were 24 to 70
+  pixels across, blown up three to six times), one a frame, nearest first, so no frame waits for all of
+  them; the middle blob a little finer too (176, it was 156).
+- **The double circle stays** on the last sphere the hand was on — and its row stays lit — until the hand
+  is on another, or on the middle; it travels between them on a critically damped spring (`ret`).
+- **Smoother**: the readings come in drawing up from nothing (`is-fresh`), the note by the hand fades in,
+  a sphere under the hand swells on an ease, a block lights and dims on one.
+- An address names a world: `#prin-lomros`, and `#house-adar` for a house; changing it opens that world.
+
+### Why / key decisions
+
+- **"Page-specific" was read as every change its own**: the Strings into a World (the discs), a World
+  into another (the travellers), a World back to the Strings (the discs closing) — not one fade shared by
+  all three.
+- **The discs are channels, not tints.** The world is drawn a little under the screen's sharpness
+  (`ts` ≤ 1.25) and split into its red, green and blue by multiplying; the strings are drawn one colour at
+  a time already (`lensed`'s `only`), so each colour's disc lays that colour of the world inside it and
+  that colour of the strings outside, all added together. Nothing is painted in blue: a blue band is
+  simply where only the blue disc has passed. Six draws and three splits a frame, for a second and a half.
+- **Both readings of "under the houses on the left"** were done — the names under the count on the left,
+  and the country and founding under each house in the list — since either was asked for and the list
+  names the houses and the sheet says where they are from.
+- **A house's perfumes live in its sheet** now that a house's world shows its perfumers: the list beside a
+  world names what stands round it, a perfumer's houses or a house's perfumers, and *Learn More about
+  PRIN* lists all forty with their years.
+- **The opening reels in the perfumer's own dots** (a house's every dot from the search), so it starts
+  where the hand was.
+- **A house's count of perfumers leaves out "Perfumer not found"** in the readings and the list's head;
+  the not-found sphere still stands round it, a world of its own.
+
+### How to test it
+
+`tests/test-pages.spec.js`, the page 1 tests: "the strings first, a dot a house …" (40 dots, Prin Lomros'
+three, a block opening its perfumer's world, round and plum with cut houses round it, a house's world of
+perfumers, back, Return from a house straight to the strings, `#house-adar`); "the strings hang slack,
+pull taut under the hand, ring when plucked …" (slack and sag at rest, taut and straight under the hand,
+the block lit, the note only its name and *3 houses*, plucked strings ringing); "the lens by default …"
+(the fringes, a perfumer's plum against a house's ink, the spheres painted at more than half the screen's
+pixels); "nothing answers until it is ready; the readings trimmed; Learn More …" (none of *the most*, the
+bars, the houses' names, the three lines, the hint or the date; the sheet for a perfumer and a house);
+"the opening comes apart into its colours; the search …" (a band of blue alone while the world opens; a
+house once in the search, to its own world); "nothing is written round the blobs … the circle stays on it"
+(nothing written; the circle and the row stay on the sphere after the hand has gone, another sphere takes
+it, the middle gives it back). `TestPage1.slack()`, `sag()`, `ringing()`, `circle()`, `shape()`,
+`sphereKinds()`, `sharpness()` and `core()` are there for them.
+
+### Known issues / TODO
+
+- The opening's middle frames are drawn a little under the screen's sharpness (a quarter less on a
+  laptop's screen at two) for the second and a half they run; the world is drawn sharp the frame it lands.

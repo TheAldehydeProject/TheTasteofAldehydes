@@ -7,64 +7,71 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
 
    The owner: "change test page 1 to make it more into a perfumer oriented
    page ... you initially start with a diagram like this (image 2), and each
-   dot or node on that when clicked will take you to a sphere (a menu
-   identical to the one that currently occupies test pages 1). The central
+   dot or node on that when clicked will take you to a sphere ... The central
    sphere node should be of the perfumer, and sphere nodes around it should
-   be of the houses. You can click those and view the fragrances that were
-   made by the perfumer for that house ... Make sure to have a return
-   button." And then, seeing it: "remove the earth actually, make it way
-   more abstract and blobby like in the image i referenced (image 4) ... Add
-   feathered borders, chromatic abberation and some other effects to
-   actually try and recreate it as best as possible. No need to make 139
-   tiny nodes for prin lomoros. I want you to make the page look good."
+   be of the houses ... Make sure to have a return button." And then, seeing
+   it: "remove the earth actually, make it way more abstract and blobby like
+   in the image i referenced (image 4) ... Add feathered borders, chromatic
+   abberation and some other effects ... I want you to make the page look
+   good."
 
-   TWO VIEWS:
-   THE RAYS (first)   image 2: on black, every perfume a dot, the dots of
-                      each perfumer packed in a block of their own down the
-                      two sides, A to Z, and from every dot a ray to one point
-                      low in the middle. Pointed at, a perfumer's rays light;
-                      pressed, a dot opens its world, a circle opening out of
-                      it onto the pale poster.
+   TWO VIEWS, each with its own name since 2026-11-08 ("in the blob page ...
+   (make it an official name)"):
+   THE STRINGS (first; "the rays" until 2026-11-08)  image 2: on black, A DOT
+                      FOR EVERY HOUSE A PERFUMER MADE FOR ("i want the dots not
+                      to be perfumes/fragrances, but houses. so prin lomoros
+                      should be 3 dots"), each perfumer's dots a block of
+                      their own with their name over it, down the two sides,
+                      A to Z; and from every dot A STRING to one point low in
+                      the middle — slack, hanging and swaying a little at
+                      rest, PULLED TAUT when its perfumer is pointed at, and
+                      plucked by the hand crossing it ("make the lines that
+                      connect to the node in the bottom center like strings,
+                      that get taught when you interact with them"). Pointed
+                      at, the whole block lights, and a note by the hand says
+                      only who it is and how many houses. Pressed, THE
+                      OPENING: the block's strings snap taut and reel its dots
+                      in to the point while everything else falls slack and
+                      comes apart into its red, green and blue; then the
+                      world opens out of the point through three discs, one
+                      for each colour, a little apart — blue leading on the
+                      upper left, red and gold on the lower right — the world
+                      only whole where all three have passed, and its blob
+                      settling out of a wide aberration into its own.
    THE WORLD          image 4: a pale poster under a title and a heavy rule,
-                      grain over all of it. In the middle THE PERFUMER, one
-                      dark abstract blob — A LOBE FOR EVERY ONE OF ITS HOUSES,
-                      as big as what it made for it, drifting and melting into
-                      the others — its edges feathered, a blue fringe above
-                      and a gold one below (the chromatic aberration), a
-                      lavender haze where it fades, a thin double circle and a
-                      small cross over it; ITS HOUSES round it as spheres out
-                      of focus, the further the softer, the double circle
-                      finding one under the hand; its three lines under it,
-                      its houses listed beside it. A house pressed comes into
-                      the middle — A LOBE FOR EVERY YEAR its perfumes were made
-                      in — and THE PERFUMES THE PERFUMER MADE FOR IT are listed
-                      beside it, each saying who made it and where it is from.
-                      RETURN goes back a level (the house, the perfumer, the
-                      rays); so does Esc.
+                      grain over all of it. In the middle a dark abstract blob
+                      — A PERFUMER, a lobe for every one of their houses, as
+                      big as what they made for it; or, since 2026-11-08, A
+                      HOUSE, a lobe for every perfumer who made for it — seen
+                      through THE LENS; round it, out of focus, ITS HOUSES (a
+                      perfumer's) or ITS PERFUMERS (a house's) as spheres,
+                      and pressing one makes it the middle: it travels in and
+                      unfolds into its blob while the one before folds into a
+                      sphere and takes its place round it, the aberration
+                      widening as they go and settling as they land.
+                      PERFUMERS ARE ROUND AND PLUM, HOUSES ARE CUT AND INK
+                      ("please distinguish the houses blobs and the perfumer
+                      blobs somehow"): a house's lobes are hexagons, faceted
+                      like a cut stone, its dark a cold blue-black where a
+                      perfumer's is a warm plum. The double circle stays on
+                      the last sphere the hand was on. Learn More about it at
+                      the foot: the paragraph and the biography on a sheet
+                      under the poster, the page scrolled to it. RETURN goes
+                      back to the strings; so does Esc.
    The readings down the left are the perfumer's (or the house's).
 
-   ITS COLOURS since the last round of 2026-11-06 ("emphasize the chromattic
-   abberation ... decreasing the colours a little (in size) ... the transition
-   brtween the black blob and the colour to be gradual and featgered"): the
-   blob drawn as a lens that does not bring the three colours to one place,
-   its red and green thrown a little up and to the left, its blue down and to
-   the right, each feathered — a thin blue above, a thin gold below, coming
-   gradually out of the black. The painter before it is kept whole: TP1
-   BACKUP, on the address as ?look=backup ("save this version. I like it").
-   And since the very last round ("experiment with chromattic abberation to
-   achieve that colour ... blue/orange colour average"), THE LENS: nothing
+   ITS COLOURS since the last round of 2026-11-06: THE LENS — nothing
    painted, the blob one dark shape that each of the three colours sees a
    little apart — the red up and to the left, the blue down and to the right,
-   the green between and out of focus further out — so its edge is blue-violet
-   above, gold going orange below, its haze lavender (the blue and the orange
-   averaged) and its middle plum. The split before it is ?look=split.
-   HOW IT IS DRAWN: a blob is a field of soft lobes, f = Σ r²/d², worked out
-   a pixel at a time in a small picture — the core where the field is
-   strong, the blue fringe where it is strong a little up and to the left of
-   the pixel, the gold a little down and to the right, the haze where it
-   fades — and laid down large, which feathers every edge. The middle one is
-   worked out again a frame in two as its lobes drift; the spheres round it
-   once each, and moved by their transforms.
+   the green between — so its edge is blue-violet above and gold going orange
+   below and its middle plum. The split before it is ?look=split, and TP1
+   BACKUP ?look=backup ("save this version. I like it").
+   HOW IT IS DRAWN: a blob is a field of soft lobes, f = Σ e^(1 − q), worked
+   out a pixel at a time in a small picture and laid down large, which
+   feathers every edge; q is a lobe's distance squared over its radius
+   squared — or, for a house's, its distance from a hexagon's sides. The
+   middle one is worked out again 24 times a second as its lobes drift; the
+   spheres round it once each, at the screen's own sharpness, one a frame.
 
    A snapshot of the site's Perfumers ledger, written in above: nothing on
    the site reads this page, and it reads nothing of the site.
@@ -78,6 +85,8 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
   const lerp = (a, b, t) => a + (b - a) * t;
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const smooth = (t) => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
+  // smootherstep: at rest at both ends, and gentler there than smooth
+  const soft = (t) => { t = clamp(t, 0, 1); return t * t * t * (t * (t * 6 - 15) + 10); };
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
   const hash = (t) => { let h = 2166136261; for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
@@ -90,167 +99,220 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
   const KIND = ["an individual fragrance written about here", "a house perfume written about here", "one of Prin Lomros' houses, not written about here"];
   const HOU = D.houses;
   const PER = D.perfumers.map((p, i) => Object.assign({}, p, { i, list: [], houses: new Map() }));
-  D.perfumes.forEach((r) => r[1].forEach((q) => {
-    const e = { n: r[0], q, c: r[2], y: r[3], h: r[4], k: r[5], s: r[6], who: r[1] };
-    PER[q].list.push(e);
-  }));
+  // A HOUSE as a world of its own (2026-11-08 — "when you click on one of the
+  // houses, it takes you to a blob of the house, and then the surrounding
+  // blobs should be blobs of PERFUMERS that worked for that house"): its
+  // perfumes, once each, and who made what for it
+  const HOS = HOU.map((h, i) => Object.assign({}, h, { i, list: [], pers: new Map(), seed: hash("house:" + h.id) }));
+  D.perfumes.forEach((r) => {
+    const e = { n: r[0], c: r[2], y: r[3], h: r[4], k: r[5], s: r[6], who: r[1] };
+    HOS[r[4]].list.push(e);
+    r[1].forEach((q) => PER[q].list.push(Object.assign({ q }, e)));
+  });
   PER.forEach((p) => {
     p.list.sort((a, b) => cmp(HOU[a.h].name, HOU[b.h].name) || cmp(a.n, b.n));
     p.list.forEach((e) => { if (!p.houses.has(e.h)) p.houses.set(e.h, []); p.houses.get(e.h).push(e); });
-    const ys = p.list.map((e) => e.y).filter(Boolean);
-    p.y0 = ys.length ? Math.min(...ys) : 0; p.y1 = ys.length ? Math.max(...ys) : 0;
     p.none = p.id === "not-found";
     p.seed = hash(p.id);
+    p.houses.forEach((l, h) => HOS[h].pers.set(p.i, l));
   });
+  HOS.forEach((ho) => ho.list.sort((a, b) => (a.y || 9999) - (b.y || 9999) || cmp(a.n, b.n)));
   const ORDER = PER.slice().sort((a, b) => (a.none - b.none) || cmp(a.sort, b.sort));
   ORDER.forEach((p, k) => (p.k = k));
   const NP = ORDER.length;
-  const MOST = Math.max(...PER.map((p) => p.list.length));
-  const ALL = PER.reduce((n, p) => n + p.list.length, 0);
-  // a colour for every house, leaning to the poster's: maroon, plum, violet,
-  // rose, and the site's gold for the individual fragrances' houses
-  const HUES = [[226, 85, 143], [118, 62, 104], [112, 98, 205], [140, 48, 92], [196, 128, 70], [190, 74, 50], [86, 108, 140], [150, 62, 48]];
-  const hueOf = (h) => HUES[hash(HOU[h].id) % HUES.length];
+  const perName = (p) => (p.none ? "Perfumer not found" : p.name);
+  // a world's own name, and what it holds: a perfumer's perfumes or a house's
+  const nameOf = (w) => (w.kind === "per" ? perName(w.p) : w.ho.name);
+  const listOf = (w) => (w.kind === "per" ? w.p.list : w.ho.list);
+  const keyOf = (w) => (w ? w.kind + ":" + (w.kind === "per" ? w.p.id : w.ho.id) : "");
+  const same = (a, b) => !!a && !!b && keyOf(a) === keyOf(b);
 
   // ---- THE PAGE ------------------------------------------------------------
   const cv = document.querySelector(".t1-scene");
-  let ctx = cv.getContext("2d");
-  const ctx0 = ctx;
-  // the world drawn apart while it opens out of the rays, its edge feathered
-  let wcv = null, wctx = null;
+  const ctx0 = cv.getContext("2d");
   const tip = el(".t1-tip");
   let W = 0, H = 0, DPR = 1, phone = false;
   const P = { x: 0, y: 0, r: 100 };
 
-  // ---- THE RAYS: every perfume a dot, a block a perfumer, a ray each to
-  // the one point low in the middle (image 2) -------------------------------
-  const map = { dots: [], blocks: [], hub: { x: 0, y: 0 }, img: null, cell: 8 };
+  // ---- THE STRINGS (2026-11-08; "the rays" until then): a dot for every
+  // house a perfumer made for, a block a perfumer, a string from each dot to
+  // the one point low in the middle (image 2) ---------------------------------
+  const map = { dots: [], blocks: [], strings: [], hub: { x: 0, y: 0 }, cell: 14, r: 2.8 };
+  const SEG = 18;                 // the pieces a string is drawn in
+  const SAG = 0.07;               // how far a slack string hangs, of its length
   function layMap() {
-    // the blocks in lanes down the two sides, A to Z from the left edge to
-    // the right — each lane about as full as the next, so the dots stand
-    // down the whole height on both sides, as the picture's
-    const top = phone ? H * 0.12 : H * 0.15, bottom = phone ? H * 0.86 : H * 0.92;
-    map.hub = { x: W / 2, y: phone ? H * 0.94 : H * 0.8 };
-    const perSide = phone ? 2 : W < 1100 ? 3 : 4, lanes = perSide * 2;
-    const LW = phone ? 4 : 5;                    // a lane's width, in cells
-    const inner = phone ? 0.035 : 0.075, outer = phone ? 0.03 : 0.045;
-    const sideW = W * (0.5 - inner - outer);
-    const blocks = ORDER.map((p) => { const n = p.list.length, bw = Math.min(LW, Math.max(1, Math.ceil(Math.sqrt(n * 0.8)))); return { p, n, bw, rows: Math.ceil(n / bw) }; });
-    const GAPR = 2.4;                            // rows between two blocks, its name in them
-    const total = blocks.reduce((t, b) => t + b.rows + GAPR, 0);
-    // lanes filled in order, each to about its share
-    const lane = [];
-    let at = 0, used = 0, done = 0;
-    blocks.forEach((b) => {
-      // the share of what is left that each lane still to fill should take
-      const target = (total - done) / (lanes - at);
-      if (used > 0 && at < lanes - 1 && used + (b.rows + GAPR) / 2 > target) { at++; done += used; used = 0; }
-      (lane[at] = lane[at] || []).push(b);
-      used += b.rows + GAPR;
-    });
-    const tallest = Math.max(...lane.map((l) => l.reduce((t, b) => t + b.rows + GAPR, 0)));
-    const laneW = sideW / perSide;
-    const cell = Math.max(3, Math.min(laneW / (LW + 1.4), (bottom - top) / tallest));
-    map.cell = cell;
-    map.dots = []; map.blocks = [];
-    lane.forEach((l, li) => {
+    // (on a phone the point stands clear of the search at the foot)
+    const top = phone ? H * 0.12 : H * 0.17, bottom = phone ? H * 0.71 : H * 0.76;
+    map.hub = { x: W / 2, y: phone ? H * 0.79 : H * 0.84 };
+    const perSide = phone ? 1 : W < 1100 ? 2 : 3, lanes = perSide * 2;
+    const inner = phone ? 0.06 : 0.085, outer = phone ? 0.05 : 0.05;
+    const laneW = (W * (0.5 - inner - outer)) / perSide;
+    const cell = (map.cell = phone ? 11 : 14);
+    map.r = phone ? 2.2 : 2.8;
+    const ctxM = ctx0;
+    ctxM.font = "400 " + (phone ? 8.5 : 9.5) + 'px "IBM Plex Mono", ui-monospace, monospace';
+    map.dots = []; map.blocks = []; map.strings = [];
+    // the perfumers shared out among the lanes in order, A to Z from the left
+    const per = Math.floor(NP / lanes), extra = NP % lanes;
+    let at = 0;
+    for (let li = 0; li < lanes; li++) {
+      const m = per + (li < extra ? 1 : 0);
       const side = li < perSide ? 0 : 1;
-      const lx = side === 0 ? W * outer + li * laneW : W * (0.5 + inner) + (li - perSide) * laneW;
-      let y = top + (bottom - top - l.reduce((t, b) => t + b.rows + GAPR, 0) * cell) * (side === 0 ? 0.1 : 0.1);
-      l.forEach((bk) => {
-        y += GAPR * cell * 0.62;
-        const b = { p: bk.p, side, dots: [], bw: bk.bw, laneW };
-        bk.p.list.forEach((e, j) => {
-          const col = j % bk.bw, row = Math.floor(j / bk.bw);
-          const x = side === 0 ? lx + col * cell + cell / 2 : lx + laneW - (LW - (LW - bk.bw) - col) * cell + cell / 2 - cell * 0.4;
-          const d = { x: side === 0 ? x : lx + laneW - cell * 1.4 - (bk.bw - 1 - col) * cell, y: y + row * cell + cell / 2, e, p: bk.p, b };
+      const lx0 = side === 0 ? W * outer + li * laneW : W * (0.5 + inner) + (li - perSide) * laneW;
+      const lx1 = lx0 + laneW - (phone ? 6 : 14);
+      const step = (bottom - top) / Math.max(1, m);
+      // each lane a little off the next, so the blocks are not a grid
+      const off = (((li * 0.618) % 1) - 0.5) * step * 0.45;
+      for (let j = 0; j < m; j++) {
+        const p = ORDER[at++];
+        const hs = Array.from(p.houses.keys()).sort((a, b) => cmp(HOU[a].name, HOU[b].name));
+        const wrap = 4, rows = Math.ceil(hs.length / wrap);
+        const y = clamp(top + step * (j + 0.5) + off, top, bottom - (rows - 1) * cell);
+        const b = { p, side, dots: [], lx0, lx1, ly: y - cell * 0.95, g: 0 };
+        hs.forEach((h, k) => {
+          const col = k % wrap, row = Math.floor(k / wrap);
+          const x = side === 0 ? lx0 + cell * 0.5 + col * cell : lx1 - cell * 0.5 - col * cell;
+          const d = { x, y: y + row * cell, p, h, b, ph: (hash(p.id + HOU[h].id) % 1000) / 1000 };
           b.dots.push(d); map.dots.push(d);
         });
-        y += bk.rows * cell + GAPR * cell * 0.38;
+        // its name over it, cut to its lane
+        const name = perName(p).toUpperCase();
+        let t = name;
+        while (t.length > 3 && ctxM.measureText(t).width > lx1 - lx0) t = t.slice(0, -2);
+        b.label = t === name ? name : t.replace(/\s+$/, "") + "…";
+        const lw = ctxM.measureText(b.label).width;
         const xs = b.dots.map((d) => d.x), ys = b.dots.map((d) => d.y);
-        b.x0 = Math.min(...xs) - cell / 2; b.x1 = Math.max(...xs) + cell / 2;
-        b.y0 = Math.min(...ys) - cell / 2; b.y1 = Math.max(...ys) + cell / 2;
-        b.lx0 = lx; b.lx1 = lx + laneW - cell * 0.6;
+        b.x0 = Math.min(side === 0 ? lx0 : lx1 - lw, Math.min(...xs) - cell / 2);
+        b.x1 = Math.max(side === 0 ? lx0 + lw : lx1, Math.max(...xs) + cell / 2);
+        b.y0 = b.ly - 10; b.y1 = Math.max(...ys) + cell / 2;
         map.blocks.push(b);
-      });
+      }
+    }
+    // a string for every dot
+    const { hub } = map;
+    map.dots.forEach((d, i) => {
+      d.i = i;
+      const R = rng(hash(d.p.id + ":" + d.h));
+      const L = Math.hypot(hub.x - d.x, hub.y - d.y);
+      const s = { d, L, k: 1, kv: 0, a1: 0, a2: 0, p1: 0, p2: 0, sp: 0.35 + R() * 0.45, ph: R() * TAU, touch: 0, pts: new Float32Array(2 * (SEG + 1)) };
+      d.s = s; map.strings.push(s);
     });
-    map.dots.forEach((d, i) => { d.i = i; d.ph = (hash(d.e.n + d.p.id) % 1000) / 1000; });
-    map.img = null;
   }
-  // a perfumer's name over its block, cut to its lane
-  function blockLabel(x, b, size) {
-    const name = (b.p.none ? "Perfumer not found" : b.p.name).toUpperCase();
-    const room = b.lx1 - b.lx0;
-    let t = name;
-    while (t.length > 3 && x.measureText(t).width > room) t = t.slice(0, -2);
-    if (t !== name) t = t.replace(/\s+$/, "") + "…";
-    x.textAlign = b.side === 0 ? "left" : "right";
-    x.fillText(t, b.side === 0 ? b.x0 : b.x1, b.y0 - map.cell * 0.55);
+  // A STRING: slack, it hangs (gravity) and sways a little; taut, it is
+  // straight; plucked, it rings — two of a string's own shapes, the whole of
+  // it and its halves, dying away. Its slack is on a spring a little under
+  // damped, so a string pulled taut overshoots and twangs.
+  const SPRING = 150, DAMP = 13;
+  function stepStrings(dt, now, t, tautOf) {
+    const { hub } = map;
+    for (const s of map.strings) {
+      const tgt = tautOf(s);
+      s.kv += (-SPRING * (s.k - tgt) - DAMP * s.kv) * dt;
+      s.k += s.kv * dt;
+      if (s.k < -0.3) { s.k = -0.3; s.kv = 0; }
+      const taut = clamp(1 - s.k, 0, 1);
+      const w1 = (11 + 13 * taut) * Math.sqrt(420 / Math.max(80, s.L));
+      s.p1 += w1 * dt; s.p2 += w1 * 2.1 * dt;
+      const die = Math.exp(-dt * (1.5 + (1 - taut) * 2));
+      s.a1 *= die; s.a2 *= die * die;
+      if (Math.abs(s.a1) < 0.02) s.a1 = 0;
+      if (Math.abs(s.a2) < 0.02) s.a2 = 0;
+      const d = s.d, dx = hub.x - d.x, dy = hub.y - d.y, L = s.L || 1;
+      const nx = -dy / L, ny = dx / L;
+      const sag = s.k * L * SAG;
+      const sway = STILL || s.k <= 0 ? 0 : s.k * Math.sin(t * s.sp + s.ph) * L * 0.014;
+      const c1 = Math.cos(s.p1) * s.a1, c2 = Math.cos(s.p2) * s.a2;
+      const pts = s.pts;
+      for (let i = 0; i <= SEG; i++) {
+        const q = i / SEG, bow = 4 * q * (1 - q);
+        const o = sway * bow + c1 * Math.sin(Math.PI * q) + c2 * Math.sin(TAU * q);
+        pts[2 * i] = d.x + dx * q + nx * o;
+        pts[2 * i + 1] = d.y + dy * q + ny * o + sag * bow;
+      }
+    }
   }
-  // THE RAYS THROUGH THE LENS (2026-11-07 — "add chromatic abberation
-  // similar to that when you click into the second menu to the first basic
-  // test page 1"): every ray, dot and light drawn three times, in pure red,
-  // green and blue, added together — the blue a little up and to the left,
-  // the red down and to the right, the green between — so where the three
-  // meet they are white as before, and every edge is fringed as the world's
-  // blob is: blue-violet above and to the left, gold going red below and to
-  // the right. The names over the blocks stay white and sharp.
-  const LENS_RAYS = [["#0000ff", -1, -0.7], ["#00ff00", 0.32, 0.22], ["#ff0000", 1, 0.7]];
-  function lensed(x, fn, d) {
+  // a point along a string, q from its dot (0) to the point (1)
+  function along(s, q) {
+    const f = clamp(q, 0, 1) * SEG, i = Math.min(SEG - 1, Math.floor(f)), u = f - i, p = s.pts;
+    return [lerp(p[2 * i], p[2 * i + 2], u), lerp(p[2 * i + 1], p[2 * i + 3], u)];
+  }
+  // a string drawn from q0 to q1 into the path being made
+  function tracePart(x, s, q0, q1) {
+    if (q1 <= q0) return;
+    const p = s.pts;
+    let [ax, ay] = along(s, q0);
+    x.moveTo(ax, ay);
+    for (let i = Math.ceil(q0 * SEG + 1e-6); i < q1 * SEG; i++) x.lineTo(p[2 * i], p[2 * i + 1]);
+    [ax, ay] = along(s, q1);
+    x.lineTo(ax, ay);
+  }
+  // THE LENS ON THE STRINGS (2026-11-07): every string, dot and light drawn
+  // three times, in pure red, green and blue, added together — the blue a
+  // little up and to the left, the red down and to the right — so where the
+  // three meet they are white, and every edge is fringed blue above, gold
+  // below. `only` draws one colour of the three, for the opening's discs.
+  const LENS_RAYS = [["#ff0000", 1, 0.7, 0], ["#00ff00", 0.32, 0.22, 1], ["#0000ff", -1, -0.7, 2]];
+  function lensed(x, fn, d, only) {
     if (d === undefined) d = phone ? 1.1 : 1.6;
     const op = x.globalCompositeOperation;
     x.globalCompositeOperation = "lighter";
-    for (const [col, kx, ky] of LENS_RAYS) { x.save(); x.translate(kx * d, ky * d); fn(col); x.restore(); }
+    for (const [col, kx, ky, c] of LENS_RAYS) {
+      if (only != null && only !== c) continue;
+      x.save(); x.translate(kx * d, ky * d); fn(col, c); x.restore();
+    }
     x.globalCompositeOperation = op;
   }
-  function raysAndDots(x, k, col, la, da) {
-    const { hub } = map, r = clamp(map.cell * 0.17, 1.2, 2.4);
-    x.strokeStyle = col; x.lineWidth = 0.6; x.globalAlpha = la;
-    x.beginPath();
-    for (const d of map.dots) {
-      const u = k >= 1 ? 1 : ease(clamp(k * 1.6 - d.ph * 0.6, 0, 1));
-      if (u <= 0) continue;
-      x.moveTo(hub.x, hub.y); x.lineTo(lerp(hub.x, d.x, u), lerp(hub.y, d.y, u));
-    }
-    x.stroke();
-    x.globalAlpha = da; x.fillStyle = col;
-    x.beginPath();
-    for (const d of map.dots) if (k >= 1 || k * 1.6 - d.ph * 0.6 >= 1) { x.moveTo(d.x + r, d.y); x.arc(d.x, d.y, r, 0, TAU); }
-    x.fill();
-    x.globalAlpha = 1;
-  }
-  function drawMapImage() {
-    const c = document.createElement("canvas");
-    c.width = cv.width; c.height = cv.height;
-    const x = c.getContext("2d");
-    x.scale(DPR, DPR);
-    x.fillStyle = "#050505"; x.fillRect(0, 0, W, H);
-    lensed(x, (col) => raysAndDots(x, 1, col, 0.2, 0.92));
-    // each block's perfumer, small, over it
-    x.font = "400 " + (phone ? 8 : 9.5) + 'px "IBM Plex Mono", ui-monospace, monospace';
-    x.textBaseline = "alphabetic";
-    x.globalAlpha = 0.42;
-    for (const b of map.blocks) blockLabel(x, b);
-    return c;
-  }
-
   // ---- THE BLOBS, as image 4's --------------------------------------------
-  // lobes: [{ x, y, r }] in the blob's own units (the whole about 1 across
-  // its middle); drawn into `cv2` (a canvas `n` pixels square covering
-  // ±EXT), `ca` how far the fringes are thrown, in the same units, `soft`
-  // how wide every edge is feathered
+  // lobes: [{ x, y, r, sides, rot }] in the blob's own units (the whole about
+  // 1 across its middle); drawn into `cv2` (a canvas `n` pixels square
+  // covering ±EXT), `ca` how far the fringes are thrown, in the same units,
+  // `soft` how wide every edge is feathered
   const EXT = 1.75;
   const COL = {
     haze: [204, 194, 238], blue: [52, 84, 255], cyan: [120, 210, 255], gold: [255, 210, 36], rose: [255, 130, 120],
     edge: [74, 34, 112], deep: [26, 3, 14],
   };
   // a lobe's field: high in its middle, 1 at its edge, gone a little past
-  // twice its radius — so lobes join with soft necks and stay lumps
+  // twice its radius — so lobes join with soft necks and stay lumps. A
+  // house's lobes are hexagons (2026-11-08 — "please distinguish the houses
+  // blobs and the perfumer blobs somehow"): q is its distance from the
+  // nearest of its three pairs of sides, with a little of the circle's left
+  // in it so its corners are cut, not sharp — a cut stone where a perfumer's
+  // is a drop
   const K = 1.0;
-  function fieldAt(lobes, x, y) {
-    let f = 0;
-    for (const o of lobes) { const q = ((x - o.x) * (x - o.x) + (y - o.y) * (y - o.y)) / (o.r * o.r); if (q < 6) f += Math.exp(K * (1 - q)); }
-    return f;
+  function fieldOf(lobes, n) {
+    const step = (2 * EXT) / n;
+    const L = lobes.length;
+    const lx = new Float32Array(L), ly = new Float32Array(L), ir = new Float32Array(L), ia = new Float32Array(L);
+    const hex = new Uint8Array(L), cs = new Float32Array(L * 6);
+    lobes.forEach((o, i) => {
+      lx[i] = o.x; ly[i] = o.y; ir[i] = 1 / (o.r * o.r);
+      if (o.sides) {
+        hex[i] = 1; const a = o.r * 0.92; ia[i] = 1 / (a * a);
+        for (let j = 0; j < 3; j++) { cs[i * 6 + j * 2] = Math.cos((o.rot || 0) + j * 60 * DEG); cs[i * 6 + j * 2 + 1] = Math.sin((o.rot || 0) + j * 60 * DEG); }
+      }
+    });
+    const fld = new Float32Array(n * n);
+    for (let j = 0; j < n; j++) {
+      const y = -EXT + (j + 0.5) * step;
+      for (let i = 0; i < n; i++) {
+        const x = -EXT + (i + 0.5) * step;
+        let f = 0;
+        for (let k = 0; k < L; k++) {
+          const dx = x - lx[k], dy = y - ly[k], qc = (dx * dx + dy * dy) * ir[k];
+          if (qc > 7) continue;
+          let q = qc;
+          if (hex[k]) {
+            const o = k * 6;
+            const m = Math.max(Math.abs(dx * cs[o] + dy * cs[o + 1]), Math.abs(dx * cs[o + 2] + dy * cs[o + 3]), Math.abs(dx * cs[o + 4] + dy * cs[o + 5]));
+            q = 0.84 * m * m * ia[k] + 0.16 * qc;
+          }
+          if (q < 6) f += Math.exp(K * (1 - q));
+        }
+        fld[j * n + i] = f;
+      }
+    }
+    return fld;
   }
   // `shade` lights the core a little towards its upper left, as a sphere is
   function paintBlob(cv2, n, lobes, ca, soft, shade) {
@@ -258,25 +320,10 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     const x2 = cv2.getContext("2d");
     const img = x2.createImageData(n, n), d = img.data;
     const step = (2 * EXT) / n;
-    const L = lobes.length, lx = new Float32Array(L), ly = new Float32Array(L), ir = new Float32Array(L);
-    lobes.forEach((o, i) => { lx[i] = o.x; ly[i] = o.y; ir[i] = 1 / (o.r * o.r); });
-    // the field once, a value a pixel
-    const fld = new Float32Array(n * n);
-    for (let j = 0; j < n; j++) {
-      const y = -EXT + (j + 0.5) * step;
-      for (let i = 0; i < n; i++) {
-        const x = -EXT + (i + 0.5) * step;
-        let f = 0;
-        for (let k = 0; k < L; k++) { const dx = x - lx[k], dy = y - ly[k], q = (dx * dx + dy * dy) * ir[k]; if (q < 6) f += Math.exp(K * (1 - q)); }
-        fld[j * n + i] = f;
-      }
-    }
+    const fld = fieldOf(lobes, n);
     const at = (i, j) => (i < 0 || j < 0 || i >= n || j >= n ? 0 : fld[j * n + i]);
     const sm = (a, b, v) => { const t = (v - a) / (b - a); return t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t); };
     const w = soft || 1, sh = shade || 0;
-    // the fringes: the field a little down and to the right of the pixel —
-    // so blue shows on the upper left — and a little further (a breath of
-    // cyan); up and to the left for the gold, on the lower right, and rose
     const ox = Math.max(1, Math.round(ca / step)), oy = Math.max(1, Math.round((ca * 1.25) / step));
     const ox2 = Math.round(ox * 1.9), oy2 = Math.round(oy * 1.9);
     let r = 0, g = 0, b = 0, a = 0;
@@ -290,7 +337,6 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
         const most = Math.max(fc, fb, fy);
         if (most < 0.04) continue;
         const x = -EXT + (i + 0.5) * step;
-        // nothing reaches the picture's own edge
         const win = 1 - sm(EXT * 0.6, EXT * 0.97, Math.sqrt(x * x + y * y));
         if (win <= 0) continue;
         const core = sm(1 - 0.22 * w, 1 + 0.34 * w, fc);
@@ -317,66 +363,34 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     }
     x2.putImageData(img, 0, 0);
   }
-  // ---- THE LENS'S SPLIT (since the last round of 2026-11-06 — "emphasize the
-  // chromattic abberation ... after decreasing the colours a little (in size,
-  // so they dont stick out as much as they do currently) (i want the
-  // transition brtween the black blob and the colour to be gradual and
-  // featgered as well)"): the blob as a lens that does not bring the three
-  // colours to one place draws it — its red and green a little up and to the
-  // left of where it is, its blue a little down and to the right, each of the
-  // three a mask as feathered as the blob's own edge. Where only the red and
-  // green are dark the poster shows blue, above; where only the blue is, gold,
-  // below; a breath of cyan and of red at their edges — thin, and going out of
-  // the black gradually. The painter before it, kept whole: TP1 BACKUP, shown
-  // by ?look=backup on the page's address.
-  //
   // ---- THE LENS (the very last round of 2026-11-06 — "Maybe experiment with
   // chromattic abberation to achieve that colour. I think in my reference there
   // is blue/orange colour average that gives it that vibe"): no colour is
   // painted at all. The blob is one dark shape, and each of the poster's three
-  // colours sees it a little apart, as a lens that does not bring them to one
-  // place does — the red thrown up and to the left, the blue down and to the
-  // right, the green between them and a little softer, out of focus further
-  // out. Where only the blue is still light the poster shows blue, above; where
+  // colours sees it a little apart — the red thrown up and to the left, the
+  // blue down and to the right, the green between them and a little softer.
+  // Where only the blue is still light the poster shows blue, above; where
   // only the red and green are, orange and gold, below; and in the edge's own
   // falloff, where the green goes a little before the others, the faintest
-  // lavender — the blue and the orange averaged. Nothing lies round the edge
-  // but its fringes (2026-11-07, last — "make it so that the chromatic
-  // abberation feels like that and not an extra layer ... the semi-transparent
-  // layer around tound the actual black mass"): the haze that reached out past
-  // it and the faint larger copy laid behind it are gone. Its core is not
-  // quite black either: the red is let a little lighter than the rest, the
-  // plum of the picture. The lens's split, before
-  // it, is ?look=split; TP1 BACKUP is ?look=backup.
+  // lavender. Nothing lies round the edge but its fringes (2026-11-07, last —
+  // "not an extra layer"). Its core is not quite black either: a perfumer's
+  // a plum, the red let a little lighter than the rest; a house's (since
+  // 2026-11-08) a cold ink, the blue and green let lighter than the red.
+  // The lens's split, before it, is ?look=split; TP1 BACKUP is ?look=backup.
   const LOOK = (() => { const v = new URLSearchParams(location.search).get("look"); return v === "backup" || v === "split" ? v : "lens"; })();
   const GROUND = [226, 234, 230];                   // the poster, about the blob
-  // how dark each colour goes in the blob's middle (red, green, blue): the plum
-  const LENS_DEEP = [0.84, 0.965, 0.92];
-  // where each colour sees the blob, as a share of the throw: red up and left,
-  // blue down and right, green between, nearer the red
+  // how dark each colour goes in the blob's middle (red, green, blue)
+  const LENS_DEEP = [0.84, 0.965, 0.92];            // a perfumer's: the plum
+  const LENS_INK = [0.985, 0.935, 0.885];           // a house's: a cold ink
   const LENS_AT = [1, 0.3, -1];
-  // how much further out each colour's edge begins to darken than the blob's
-  // own: the green's a little further, so the very edge goes lavender and the
-  // green is never lighter than the other two inside (1.55 while there was a
-  // haze, which threw it far out)
   const LENS_SOFT = [1, 1.12, 1];
-  function paintLens(cv2, n, lobes, shift, soft, shade) {
+  function paintLens(cv2, n, lobes, shift, soft, shade, deep) {
     if (cv2.width !== n) { cv2.width = cv2.height = n; }
     const x2 = cv2.getContext("2d");
     const img = x2.createImageData(n, n), d = img.data;
     const step = (2 * EXT) / n;
-    const L = lobes.length, lx = new Float32Array(L), ly = new Float32Array(L), ir = new Float32Array(L);
-    lobes.forEach((o, i) => { lx[i] = o.x; ly[i] = o.y; ir[i] = 1 / (o.r * o.r); });
-    const fld = new Float32Array(n * n);
-    for (let j = 0; j < n; j++) {
-      const y = -EXT + (j + 0.5) * step;
-      for (let i = 0; i < n; i++) {
-        const x = -EXT + (i + 0.5) * step;
-        let f = 0;
-        for (let k = 0; k < L; k++) { const dx = x - lx[k], dy = y - ly[k], q = (dx * dx + dy * dy) * ir[k]; if (q < 6) f += Math.exp(K * (1 - q)); }
-        fld[j * n + i] = f;
-      }
-    }
+    const fld = fieldOf(lobes, n);
+    const DEEP = deep || LENS_DEEP;
     const at = (fx, fy) => {
       if (fx < 0 || fy < 0 || fx > n - 1 || fy > n - 1) return 0;
       const i = fx | 0, j = fy | 0, u = fx - i, v = fy - j, i1 = Math.min(n - 1, i + 1), j1 = Math.min(n - 1, j + 1);
@@ -395,17 +409,14 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
         const x = -EXT + (i + 0.5) * step;
         const win = 1 - sm(EXT * 0.6, EXT * 0.97, Math.sqrt(x * x + y * y));
         if (win <= 0) continue;
-        // a little light on the upper left, where a sphere is lit: the red and
-        // the blue let up more than the green, so it is violet
         const lt = sh ? sh * clamp(0.6 - (x * 0.55 + y * 0.75), 0, 1) * (1 - sm(1.6, 3.2, (f[0] + f[2]) / 2) * 0.4) : 0;
         let a = 0;
         for (let c = 0; c < 3; c++) {
-          const body = sm(1 - 0.24 * w * LENS_SOFT[c], 1 + 0.36 * w, f[c]) * LENS_DEEP[c] * (1 - lt * (c === 1 ? 0.06 : c === 0 ? 0.22 : 0.3));
+          const body = sm(1 - 0.24 * w * LENS_SOFT[c], 1 + 0.36 * w, f[c]) * DEEP[c] * (1 - lt * (c === 1 ? 0.06 : c === 0 ? 0.22 : 0.3));
           dk[c] = body;
           if (dk[c] > a) a = dk[c];
         }
         if (a <= 0.002) continue;
-        // what, laid over the poster at a, darkens each colour by its own amount
         const o = (j * n + i) * 4;
         d[o] = GROUND[0] * (a - dk[0]) / a;
         d[o + 1] = GROUND[1] * (a - dk[1]) / a;
@@ -420,19 +431,7 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     const x2 = cv2.getContext("2d");
     const img = x2.createImageData(n, n), d = img.data;
     const step = (2 * EXT) / n;
-    const L = lobes.length, lx = new Float32Array(L), ly = new Float32Array(L), ir = new Float32Array(L);
-    lobes.forEach((o, i) => { lx[i] = o.x; ly[i] = o.y; ir[i] = 1 / (o.r * o.r); });
-    const fld = new Float32Array(n * n);
-    for (let j = 0; j < n; j++) {
-      const y = -EXT + (j + 0.5) * step;
-      for (let i = 0; i < n; i++) {
-        const x = -EXT + (i + 0.5) * step;
-        let f = 0;
-        for (let k = 0; k < L; k++) { const dx = x - lx[k], dy = y - ly[k], q = (dx * dx + dy * dy) * ir[k]; if (q < 6) f += Math.exp(K * (1 - q)); }
-        fld[j * n + i] = f;
-      }
-    }
-    // the field between its pixels, so a shift can be less than one
+    const fld = fieldOf(lobes, n);
     const at = (fx, fy) => {
       if (fx < 0 || fy < 0 || fx > n - 1 || fy > n - 1) return 0;
       const i = fx | 0, j = fy | 0, u = fx - i, v = fy - j, i1 = Math.min(n - 1, i + 1), j1 = Math.min(n - 1, j + 1);
@@ -441,7 +440,6 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     const sm = (a, b, v) => { const t = (v - a) / (b - a); return t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t); };
     const w = soft || 1, sh = shade || 0;
     const lo = 1 - 0.24 * w, hi = 1 + 0.36 * w;
-    // how far each colour's mask is thrown, in pixels of the picture
     const px = shift / step, ax = px * 0.8, ay = px;
     const H0 = COL.haze, E0 = COL.edge, D0 = COL.deep;
     for (let j = 0; j < n; j++) {
@@ -455,18 +453,13 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
         if (win <= 0) continue;
         const mR = sm(lo, hi, fR), mG = sm(lo, hi, fG), mB = sm(lo, hi, fB);
         const hz = sm(0.035, 1.0, most) * 0.55;
-        // the core's own colour: violet at its edge, near black deep in it,
-        // a little light on its upper left where a sphere is lit
         const fc = (fR + fB) / 2;
         const k = sm(1.0, 2.1, fc);
         const lt = sh ? sh * clamp(0.6 - (x * 0.55 + y * 0.75), 0, 1) * (1 - sm(1.6, 3.2, fc) * 0.4) : 0;
         const dR = lerp(E0[0], lerp(D0[0], 78, lt), k), dG = lerp(E0[1], lerp(D0[1], 34, lt), k), dB = lerp(E0[2], lerp(D0[2], 96, lt), k);
-        // the haze over the poster, and the three masks over that
         const hR = lerp(GROUND[0], H0[0], hz), hG = lerp(GROUND[1], H0[1], hz), hB = lerp(GROUND[2], H0[2], hz);
         const oR = hR * (1 - mR) + dR * mR, oB = hB * (1 - mB) + dB * mB;
-        // where only the blue has gone dark, a warmer gold than the lens's lemon
         const oG = hG * (1 - mG) + dG * mG - Math.max(0, mB - mG) * 52;
-        // what laid over the poster gives that
         const a = Math.max(hz, mR, mG, mB);
         if (a <= 0.002) continue;
         const o = (j * n + i) * 4;
@@ -478,17 +471,22 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     }
     x2.putImageData(img, 0, 0);
   }
+  // one painter for every look; `kind` the world's ("per" or "house")
+  function paintAny(cv2, n, lobes, shift, soft, shade, kind) {
+    if (LOOK === "backup") paintBlob(cv2, n, lobes, shift, soft * 1.7, shade);
+    else if (LOOK === "split") paintSplit(cv2, n, lobes, shift * 1.25, soft * 1.25, shade);
+    else paintLens(cv2, n, lobes, shift, soft, shade, kind === "house" ? LENS_INK : LENS_DEEP);
+  }
   // the lobes of a world: a perfumer's, one for every house, as big as what
-  // it made for it; a house's, one for every year its perfumes were made in.
-  // Each real lobe keeps which part of the list it is (o.i)
+  // they made for it; a house's, one for every perfumer who made for it.
+  // Each real lobe keeps which part of the list it is (o.part)
   function partsOf(w) {
-    if (w.kind === "per") return Array.from(w.p.houses.entries()).map(([h, l]) => ({ n: l.length, say: HOU[h].name, h }));
-    const ys = new Map();
-    w.p.houses.get(w.h).forEach((e) => ys.set(e.y || 0, (ys.get(e.y || 0) || 0) + 1));
-    return Array.from(ys.entries()).sort((a, b) => (a[0] || 9999) - (b[0] || 9999)).map(([y, n]) => ({ n, say: y ? String(y) : "no year", y }));
+    if (w.kind === "per") return Array.from(w.p.houses.entries()).map(([h, l]) => ({ n: l.length, say: HOU[h].name, h })).sort((a, b) => cmp(a.say, b.say));
+    return Array.from(w.ho.pers.entries()).map(([q, l]) => ({ n: l.length, say: perName(PER[q]), q })).sort((a, b) => PER[a.q].k - PER[b.q].k);
   }
   function lobesOf(w) {
-    const R = rng(w.p.seed ^ (w.h != null ? 0x9e37 * (w.h + 1) : 0));
+    const cut = w.kind === "house";
+    const R = rng((cut ? w.ho.seed : w.p.seed) ^ 0x5bd1);
     const parts = partsOf(w).map((x, i) => Object.assign({ i }, x));
     const total = parts.reduce((s, x) => s + x.n, 0);
     // a blob is never quite a circle: small lobes more for a world of one or two
@@ -496,22 +494,19 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     const big = parts.slice().sort((a, b) => b.n - a.n);
     const most = big[0].n;
     const lobes = [];
-    const lobe = (part, a, d, r, amp) => lobes.push({ part, a, hx: Math.cos(a) * d, hy: Math.sin(a) * d * 1.15, r, x: 0, y: 0, ph: R() * TAU, sp: 0.08 + R() * 0.14, amp });
+    const lobe = (part, a, d, r, amp) => lobes.push({ part, a, hx: Math.cos(a) * d, hy: Math.sin(a) * d * 1.15, r, x: 0, y: 0, ph: R() * TAU, sp: 0.08 + R() * 0.14, amp, sides: cut ? 6 : 0, rot: R() * TAU });
     big.forEach((x, k) => {
       const r = 0.26 + 0.36 * Math.sqrt(x.n / most) * (k ? 0.9 : 1);
       const a = k ? -2.3 + k * 2.39996 + (R() - 0.5) * 0.7 : -1.9 + (R() - 0.5) * 0.4;
       const d = k ? 0.36 + 0.26 * R() + (1 - x.n / most) * 0.2 : 0.22;
       lobe(x.i >= 0 ? x : null, a, d, r, 0.03 + R() * 0.04);
-      // and buds off it, so no part of it is ever quite round
       const buds = 1 + Math.floor(R() * 2.4);
       for (let j = 0; j < buds; j++) {
         const ba = a + (R() - 0.5) * 2.6, bd = d + r * (0.55 + R() * 0.4);
         lobe(null, ba, Math.min(bd, 0.95), r * (0.32 + R() * 0.26), 0.04 + R() * 0.05);
       }
     });
-    // a body under the head, as the poster's figure has
     lobe(null, 1.4 + (R() - 0.5) * 0.6, 0.32 + R() * 0.12, 0.34 + R() * 0.1, 0.03);
-    // fitted inside its picture
     let ext = 0;
     lobes.forEach((o) => (ext = Math.max(ext, Math.hypot(o.hx, o.hy) + o.r)));
     const k = Math.min(1, 1.05 / ext);
@@ -523,163 +518,263 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     lobes.forEach((o) => {
       o.x = o.hx + (STILL ? 0 : Math.sin(t * o.sp + o.ph) * o.amp);
       o.y = o.hy + (STILL ? 0 : Math.cos(t * o.sp * 0.83 + o.ph * 1.3) * o.amp);
+      if (o.sides && !STILL) o.rot = (o.rot0 == null ? (o.rot0 = o.rot) : o.rot0) + Math.sin(t * o.sp * 0.6 + o.ph) * 0.12;
     });
   }
-  // a sphere round it: two lobes, a little off round, painted once — the
-  // further it is (the less `focus`), the smaller, the softer, the wider its fringes
-  function sphereOf(r, focus, seed) {
+  // A SPHERE round it: a perfumer two round lobes, a house two hexagons, a
+  // little off round — the further it is (the less `focus`), the smaller,
+  // the softer, the wider its fringes. Painted at the screen's own sharpness
+  // (2026-11-08 — "the tiny spheres feel pixelated"; they were 24 to 70
+  // pixels across, laid down three to six times as large)
+  const SPH = (focus) => ({ shift: 0.05 + (1 - focus) * 0.045, soft: 1.4 - focus * 0.4 });
+  function sphereLobes(kind, seed) {
     const R = rng(seed);
+    if (kind === "house") return [{ x: 0, y: 0, r: 0.84, sides: 6, rot: R() * TAU }, { x: (R() - 0.5) * 0.24, y: (R() - 0.5) * 0.24, r: 0.48 + R() * 0.12, sides: 6, rot: R() * TAU }];
+    return [{ x: 0, y: 0, r: 0.86 }, { x: (R() - 0.5) * 0.22, y: (R() - 0.5) * 0.22, r: 0.5 + R() * 0.12 }];
+  }
+  const sizeOf = (r) => (r * 2 * EXT) / 1.1;
+  function paintSphere(b) {
     const c = document.createElement("canvas");
-    const n = Math.round(24 + focus * 46);
-    const lobes = [{ x: 0, y: 0, r: 0.86 }, { x: (R() - 0.5) * 0.22, y: (R() - 0.5) * 0.22, r: 0.5 + R() * 0.12 }];
-    if (LOOK === "backup") paintBlob(c, n, lobes, 0.045 + (1 - focus) * 0.04, 1.6 - focus * 0.8, 0.9);
-    else if (LOOK === "split") paintSplit(c, n, lobes, 0.054 + (1 - focus) * 0.045, 1.5 - focus * 0.4, 0.9);
-    else paintLens(c, n, lobes, 0.05 + (1 - focus) * 0.045, 1.4 - focus * 0.4, 0.9);
-    return { c, s: (r * 2 * EXT) / 1.1 };
+    const n = clamp(Math.round(sizeOf(b.r) * DPR * 0.62), 40, 240);
+    const { shift, soft } = SPH(b.focus);
+    paintAny(c, n, b.lobes, shift, soft, 0.9, b.kind);
+    b.img = { c, s: sizeOf(b.r) };
   }
 
-  // ---- A WORLD: the perfumer, or one of its houses ---------------------------
-  // what is in focus: { kind: "per"|"house", p, h }
-  let cur = null, prev = null, changeT0 = -1;
-  const CHANGE_MS = 1350;
+  // ---- A WORLD: a perfumer, or a house ----------------------------------------
+  // what is in focus: { kind: "per", p } or { kind: "house", ho }
+  let cur = null;
   let blobs = [];
   // the room the world has: between the readings and the list
   const F = { x0: 0, x1: 0, y0: 0, y1: 0 };
   // where the spheres stand round it, as image 4's — an angle, how far out
   // (of the room there is), and how near it is (its focus)
   const SPOTS = [[-2.55, 0.92, 0.9], [2.5, 0.86, 0.72], [-1.6, 0.9, 0.38], [0.72, 0.95, 0.95], [-0.62, 0.88, 0.52], [1.62, 0.92, 0.5], [3.12, 0.96, 0.62], [0.05, 0.94, 0.42], [-1.1, 0.7, 0.3], [2.05, 0.7, 0.32]];
+  // round a perfumer, its houses; round a house, its perfumers
+  function aroundOf(w) {
+    if (w.kind === "per") return partsOf(w).map((x) => ({ kind: "house", ho: HOS[x.h], n: x.n }));
+    return partsOf(w).map((x) => ({ kind: "per", p: PER[x.q], n: x.n }));
+  }
   function layWorld() {
     if (!cur) return;
-    const p = cur.p, R = rng(p.seed ^ (cur.h != null ? cur.h * 977 : 0));
-    // round it: the perfumer's houses — and, with a house in the middle,
-    // the perfumer too, to go back to
-    const around = [];
-    if (cur.kind === "house") around.push({ kind: "per", p, n: p.list.length });
-    p.houses.forEach((list, h) => { if (cur.kind !== "house" || h !== cur.h) around.push({ kind: "house", p, h, n: list.length }); });
+    const R = rng((cur.kind === "per" ? cur.p.seed : cur.ho.seed) ^ 0x2f17);
+    const around = aroundOf(cur);
     const Dx = Math.max(P.r * 1.25, (F.x1 - F.x0) / 2), Dy = Math.max(P.r * 1.05, (F.y1 - F.y0) / 2);
     const turn = (R() - 0.5) * 0.5;
     blobs = around.slice(0, SPOTS.length).map((a, i) => {
       const [an, far, focus] = SPOTS[i];
       const r = ((phone ? 15 : 30) + Math.min(1, Math.sqrt(a.n / 40)) * (phone ? 14 : 34)) * (0.68 + focus * 0.42);
       const x = P.x + Math.cos(an + turn) * Dx * far, y = P.y + Math.sin(an + turn) * Dy * far;
+      const seed = hash(keyOf(a));
       return Object.assign(a, {
         r, focus, x: clamp(x, F.x0 + r * 0.6, F.x1 - r * 0.6), y: clamp(y, F.y0 + r * 0.6, F.y1 - r * 1.2), dx: 0, dy: 0,
-        ph: R() * TAU, sp: 0.1 + R() * 0.16, img: sphereOf(r, focus, hash(a.kind + (a.h != null ? HOU[a.h].id : a.p.id))), in: 0,
+        ph: R() * TAU, sp: 0.1 + R() * 0.16, lobes: sphereLobes(a.kind, seed), img: null, in: 0, lift: 0, wait: i * 0.05,
       });
     }).sort((a, b) => a.focus - b.focus);
     cur.lobes = lobesOf(cur);
     cur.paint = null;
-    writeList();
   }
-  // the middle blob's own picture, worked out again a frame in two as its
-  // lobes drift (a fixed number of times a second, whatever the screen)
-  function paintCur(w, t, force) {
-    if (!w.paint) { w.paint = document.createElement("canvas"); w.tick = -1; }
+  // the middle blob's own picture, worked out again 24 times a second as its
+  // lobes drift, whatever the screen; `boost` widens its aberration (the
+  // opening, a change)
+  function paintCur(w, t, force, boost) {
+    if (!w.paint) { w.paint = document.createElement("canvas"); w.tick = -1; w.boost = 1; }
     const tick = STILL ? 0 : Math.floor(t * 24);
-    if (!force && tick === w.tick) return;
-    w.tick = tick;
+    const b = boost || 1;
+    if (!force && tick === w.tick && Math.abs(b - w.boost) < 0.02) return;
+    w.tick = tick; w.boost = b;
     driftLobes(w.lobes, t);
-    if (LOOK === "backup") paintBlob(w.paint, phone ? 120 : 156, w.lobes, 0.05, 1.7, 0.45);
-    else if (LOOK === "split") paintSplit(w.paint, phone ? 120 : 156, w.lobes, 0.064, 1.2, 0.45);
-    else paintLens(w.paint, phone ? 120 : 156, w.lobes, 0.05, 0.95, 0.45);
+    paintAny(w.paint, phone ? 132 : 176, w.lobes, 0.05 * b, 0.95 + (b - 1) * 0.2, 0.45, w.kind);
   }
-  function drawCur(c, w, x, y, r, t, alpha) {
+  function drawCur(c, w, x, y, r, t, alpha, boost) {
     if (alpha <= 0.003) return;
-    paintCur(w, t);
-    const s = (r * 2 * EXT) / 1.1;
+    paintCur(w, t, false, boost);
+    const s = sizeOf(r);
     c.save();
     c.imageSmoothingQuality = "high";
     c.globalAlpha = alpha;
     c.drawImage(w.paint, x - s / 2, y - s / 2, s, s);
     c.restore();
   }
-  // ---- WHAT IS IN FOCUS -----------------------------------------------------
-  let view = "rays";                  // "rays" or "world"
-  // (longer, and softer at both ends, since 2026-11-07 — "make the
-  // transitions smoother")
-  const reveal = { on: false, t0: 0, dir: 1, x: 0, y: 0, ms: 1500 };
-  // THE GATHERING (2026-11-07 — "animate test page one when you clik on any
-  // perfumer ... I want a slightly thematic animation"): a perfumer chosen on
-  // the rays, its dots light and run in along their rays to the point they
-  // all go to, drawn through the lens more strongly as they go; and the
-  // world opens out of that point, its edge fringed blue and gold as the
-  // lens fringes the blob. A change from one world to another sends a
-  // ripple of the lens's colours out from the middle (`ripple`).
-  const gather = { on: false, t0: 0, p: null, ms: 820 };
-  const ripple = { t0: -1 };
-  function openWorld(p, h, from) {
-    layLater();
-    show({ kind: h == null ? "per" : "house", p, h: h == null ? null : h }, true);
-    if (view === "rays") {
-      if (!STILL && !gather.on && !reveal.on) {
-        gather.on = true; gather.t0 = performance.now(); gather.p = p;
-        overDot = null; showTip(null);
-      } else {
-        reveal.on = !STILL; reveal.t0 = performance.now(); reveal.dir = 1;
-        reveal.x = from ? from.x : W / 2; reveal.y = from ? from.y : H / 2;
-        view = "world";
-        setBody();
-      }
+  // A TRAVELLER (2026-11-08): a body on its way between a sphere and the
+  // middle — its lobes melting from the one's into the other's as it goes,
+  // painted afresh 24 times a second, the aberration widest half way
+  function mixLobes(A, B, g) {
+    const out = [], ga = soft(g);
+    for (const o of A) { const r = o.r * Math.pow(1 - ga, 1.3); if (r > 0.015) out.push({ x: o.x * (1 - 0.3 * ga), y: o.y * (1 - 0.3 * ga), r, sides: o.sides, rot: o.rot }); }
+    for (const o of B) { const r = o.r * Math.sqrt(ga); if (r > 0.015) out.push({ x: o.x * ga, y: o.y * ga, r, sides: o.sides, rot: o.rot }); }
+    return out.length ? out : [{ x: 0, y: 0, r: 0.5 }];
+  }
+  function drawTraveller(c, tr, g, t, alpha) {
+    if (alpha <= 0.003) return;
+    if (!tr.paint) { tr.paint = document.createElement("canvas"); tr.tick = -1; }
+    const e = ease(g);
+    const x = lerp(tr.x0, tr.x1, e), y = lerp(tr.y0, tr.y1, e), r = lerp(tr.r0, tr.r1, e);
+    const tick = STILL ? 0 : Math.floor(t * 24);
+    if (tick !== tr.tick) {
+      tr.tick = tick;
+      if (tr.liveTo) driftLobes(tr.to, t);
+      if (tr.liveFrom) driftLobes(tr.from, t);
+      const lb = mixLobes(tr.from, tr.to, g);
+      const spike = 1 + 1.7 * Math.sin(Math.PI * clamp(g, 0, 1));
+      const n = clamp(Math.round(sizeOf(r) * DPR * 0.36), 56, phone ? 132 : 176);
+      paintAny(tr.paint, n, lb, lerp(tr.sh0, tr.sh1, g) * spike, lerp(tr.so0, tr.so1, g) + (spike - 1) * 0.15, lerp(0.9, 0.45, g), tr.kind);
     }
+    const s = sizeOf(r);
+    c.save();
+    c.imageSmoothingQuality = "high";
+    c.globalAlpha = alpha;
+    c.drawImage(tr.paint, x - s / 2, y - s / 2, s, s);
+    c.restore();
+  }
+
+  // ---- WHAT IS IN FOCUS, AND HOW IT CHANGES --------------------------------
+  let view = "rays";                  // "rays" (the strings) or "world"
+  // EVERY CHANGE ITS OWN (2026-11-08 — "please smooth out the animations and
+  // make them page-specific"): one transition at a time, and each of the
+  // three made for what it joins —
+  //   "open"   the strings into a world: the block's strings snap taut and
+  //            reel its dots in to the point while the rest fall slack and
+  //            come apart into red, green and blue; then three discs, one a
+  //            colour, open out of the point a little apart, the world whole
+  //            only inside all three, its blob settling out of a wide
+  //            aberration ("make the animation better, make it revolve
+  //            around chromatic abberation")
+  //   "change" a world into another: the sphere pressed travels in and
+  //            unfolds into the middle's blob, the middle folds into a sphere
+  //            and goes to its place round it, the aberration widest half way
+  //   "close"  a world back to the strings: the three discs close on the
+  //            point, the world coming apart into its colours, and the
+  //            strings fall from taut to slack with a bounce
+  const TR = { kind: null, t0: 0, ms: 0, from: null, chosen: null, cameFrom: null, litT: 0 };
+  const OPEN_MS = 1900, DISC_FROM = 0.27, CLOSE_MS = 1300, CHANGE_MS = 1300;
+  let lastPer = null;                 // the perfumer last in the middle, for ‹ ›
+  function busy() { return TR.kind !== null; }
+  function openWorld(w, quick) {
+    if (busy()) return;
+    layLater();
+    showTip(null); overBlock = null;
+    cur = w; if (w.kind === "per") lastPer = w.p;
+    stick = null; aim = null;
+    layWorld(); writeHud(); writeList();
+    if (STILL || quick) { view = "world"; setBody(); kick(); return; }
+    // what gathers: the perfumer's own dots, or every dot of a house
+    TR.chosen = new Set(map.dots.filter((d) => (w.kind === "per" ? d.p === w.p : d.h === w.ho.i)));
+    for (const d of TR.chosen) { d.s.touch = 0; d.s.a1 += 2.5 + d.ph * 3; }
+    TR.kind = "open"; TR.t0 = performance.now(); TR.ms = OPEN_MS;
+    document.body.classList.add("is-revealing");
     kick();
   }
-  // the gathering done: the world opens out of the point the rays go to
-  function gathered() {
-    gather.on = false;
-    reveal.on = true; reveal.t0 = performance.now(); reveal.dir = 1;
-    reveal.x = map.hub.x; reveal.y = map.hub.y;
+  function opened() {
+    TR.kind = null; TR.chosen = null;
     view = "world";
+    document.body.classList.remove("is-revealing");
+    document.body.style.removeProperty("--reveal");
     setBody();
   }
-  function show(next, quick) {
-    if (cur && cur.p === next.p && cur.kind === next.kind && cur.h === next.h) return;
-    prev = cur && !quick && view === "world" ? cur : null;
-    if (prev && prev.p !== next.p && !STILL) ripple.t0 = performance.now();
-    cur = next;
-    changeT0 = STILL || quick ? -1 : performance.now();
+  function change(next) {
+    if (busy() || !cur || same(cur, next)) return;
+    if (view !== "world") { openWorld(next); return; }
+    pinned = null; showTip(null);
+    const was = cur, wasBlobs = blobs;
+    const hit = wasBlobs.find((b) => same(b, next));
+    cur = next; if (next.kind === "per") lastPer = next.p;
+    stick = null; aim = null; lightRow();
     layWorld();
-    writeHud();
+    const back = blobs.find((b) => same(b, was));
+    if (STILL) { writeHud(); writeList(); kick(); return; }
+    // the sphere pressed comes in; the middle goes out to its place
+    const shIn = hit ? SPH(hit.focus) : SPH(0.6);
+    TR.inT = { kind: next.kind, from: hit ? hit.lobes : sphereLobes(next.kind, hash(keyOf(next))), to: cur.lobes, liveTo: true,
+      x0: hit ? hit.x + hit.dx : P.x, y0: hit ? hit.y + hit.dy : P.y, r0: hit ? hit.r : P.r * 0.3, x1: P.x, y1: P.y, r1: P.r,
+      sh0: shIn.shift, sh1: 0.05, so0: shIn.soft, so1: 0.95 };
+    const shOut = back ? SPH(back.focus) : SPH(0.5);
+    TR.outT = { kind: was.kind, from: was.lobes, to: back ? back.lobes : [{ x: 0, y: 0, r: 0.3 }], liveFrom: true,
+      x0: P.x, y0: P.y, r0: P.r, x1: back ? back.x : P.x, y1: back ? back.y : P.y, r1: back ? back.r : P.r * 0.2,
+      sh0: 0.05, sh1: shOut.shift, so0: 0.95, so1: shOut.soft, gone: !back };
+    TR.back = back || null;
+    TR.old = wasBlobs.filter((b) => b !== hit);
+    // the sphere the middle becomes is painted first, so it is there when it lands
+    if (back) paintSphere(back);
+    TR.kind = "change"; TR.t0 = performance.now(); TR.ms = CHANGE_MS;
+    writeHud(); writeList();
     kick();
   }
+  function changed() { TR.kind = null; TR.inT = TR.outT = TR.back = null; TR.old = null; if (cur) cur.paint = null; }
+  // RETURN, always to the strings (2026-11-08 — "make the return button just
+  // go back to the black nodes page"); Esc the same
   function returnUp() {
     pinned = null; showTip(null);
-    if (view !== "world") return;
-    if (cur.kind === "house") { show({ kind: "per", p: cur.p, h: null }); return; }
-    // back to the rays, closing on the perfumer's block
-    const b = map.blocks.find((x) => x.p === cur.p);
-    reveal.on = !STILL; reveal.t0 = performance.now(); reveal.dir = -1;
-    reveal.x = b ? (b.x0 + b.x1) / 2 : W / 2; reveal.y = b ? (b.y0 + b.y1) / 2 : H / 2;
-    if (STILL) { view = "rays"; setBody(); }
+    if (view !== "world" || busy()) return;
+    closeMore(true);
+    if (STILL) { view = "rays"; setBody(); kick(); return; }
+    // the strings come back taut and fall slack as the world closes
+    for (const s of map.strings) { s.k = 0; s.kv = 0; s.touch = performance.now() + CLOSE_MS * 0.42; }
+    TR.cameFrom = cur.kind === "per" ? map.blocks.find((b) => b.p === cur.p) : null;
+    TR.kind = "close"; TR.t0 = performance.now(); TR.ms = CLOSE_MS;
+    document.body.classList.add("is-revealing");
     kick();
+  }
+  function closed() {
+    TR.kind = null; view = "rays";
+    TR.litT = performance.now();
+    document.body.classList.remove("is-revealing");
+    document.body.style.removeProperty("--reveal");
+    setBody();
   }
   function setBody() {
     if (view !== "world") closeMore(true);
     document.body.classList.toggle("is-rays", view === "rays");
     document.body.classList.toggle("is-world", view === "world");
     el(".t1-return").hidden = view !== "world";
+    el(".t1-more-open").hidden = view !== "world";
   }
-  // LEARN MORE (2026-11-07 — "below information at the bottom of the page
-  // with every perfumer ... move that text to the left a little, and then on
-  // the right of it, a button to learn more ... I wanat this text to appear
-  // below the paragraph ... and i want there to be an auto scroll when you
-  // press the button"): the perfumer's biography, from the site's
-  // tools/perfumers/BIOS.md, on a sheet under the poster that the page
-  // scrolls down to, its three sources at its foot
+  // LEARN MORE (2026-11-07; and since 2026-11-08 — "below the blobs, i want
+  // you to remove that paragraph, and then move it to the bottom of the
+  // scrolled page ... make the button say 'Learn More about ________'"): the
+  // paragraph that stood under the blob is the sheet's opening now, under the
+  // poster, and the page scrolls down to it — a perfumer's biography and its
+  // three sources after it, or a house's perfumers and what each made for it
   const more = el(".t1-more"), moreBtn = el(".t1-more-open");
-  let moreFor = null;
-  function writeMore(p) {
-    moreFor = p && p.bio ? p : null;
-    moreBtn.hidden = !moreFor;
-    if (!moreFor) { closeMore(true); return; }
-    if (!more.hidden && more.dataset.who !== p.id) closeMore(true);
-    more.dataset.who = p.id;
-    el("[data-v=more-name]").textContent = p.name;
-    el("[data-v=more-sub]").textContent = [p.from, p.born ? "born " + p.born : "", p.list.length + (p.list.length === 1 ? " perfume" : " perfumes") + " on the chart"].filter(Boolean).join(" · ");
-    el(".t1-more-text").innerHTML = p.bio.t.map((t) => "<p>" + esc(t) + "</p>").join("");
-    el(".t1-more-sources").innerHTML = p.bio.s.map(([c, u]) => "<li>" + esc(c).replace(/\*(.+?)\*/g, "<cite>$1</cite>") + ' <a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u.replace(/^https?:\/\//, "").replace(/\/$/, "")) + "</a></li>").join("");
+  function writeMore(w) {
+    const say = moreBtn.querySelector("[data-v=more-who]");
+    if (w.kind === "per" && w.p.none) say.textContent = "the perfumes without a perfumer";
+    else say.textContent = nameOf(w);
+    more.dataset.who = keyOf(w);
+    const set = (s, v) => { const e = el(s); if (e) e.textContent = v; };
+    const lead = el(".t1-more-lead"), text = el(".t1-more-text"), src = el(".t1-more-sources"), srcHead = el(".t1-more-src-head");
+    const made = el(".t1-more-made");
+    if (w.kind === "per") {
+      const p = w.p;
+      set("[data-v=more-kicker]", p.none ? "About these perfumes" : "About the perfumer");
+      set("[data-v=more-name]", perName(p));
+      set("[data-v=more-sub]", [p.from, p.born ? "born " + p.born : "", p.houses.size + (p.houses.size === 1 ? " house" : " houses")].filter(Boolean).join(" · "));
+      const lines = p.about && p.about.length ? p.about : [p.none ? "The perfumes no source found credits to anyone." : p.name + "."];
+      lead.innerHTML = lines.map((l) => "<p>" + esc(l) + "</p>").join("");
+      text.innerHTML = p.bio ? '<h3 class="t1-more-h">Biography</h3>' + p.bio.t.map((t) => "<p>" + esc(t) + "</p>").join("") : "";
+      made.innerHTML = p.none ? madeHtml(Array.from(p.houses.entries()).map(([h, l]) => [HOU[h].name, l]), "By house") : "";
+      src.innerHTML = p.bio ? p.bio.s.map(([c, u]) => "<li>" + esc(c).replace(/\*(.+?)\*/g, "<cite>$1</cite>") + ' <a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u.replace(/^https?:\/\//, "").replace(/\/$/, "")) + "</a></li>").join("") : "";
+    } else {
+      const ho = w.ho;
+      set("[data-v=more-kicker]", "About the house");
+      set("[data-v=more-name]", ho.name);
+      set("[data-v=more-sub]", [ho.from, ho.founded ? "founded " + ho.founded : "", ho.list.length + (ho.list.length === 1 ? " perfume" : " perfumes")].filter(Boolean).join(" · "));
+      lead.innerHTML = "<p>" + esc(ho.about || ho.name + ".") + "</p>";
+      text.innerHTML = "";
+      made.innerHTML = madeHtml(partsOf(w).map((x) => [perName(PER[x.q]), ho.pers.get(x.q)]), "What was made for it");
+      const used = new Set();
+      ho.list.forEach((e) => e.s.forEach((i) => used.add(i)));
+      src.innerHTML = Array.from(used).map((i) => "<li>" + esc(D.sources[i]) + "</li>").join("");
+    }
+    srcHead.hidden = !src.innerHTML;
+  }
+  function madeHtml(groups, head) {
+    return '<h3 class="t1-more-h">' + esc(head) + "</h3>" + groups.map(([who, l]) =>
+      '<div class="t1-more-group"><p class="t1-more-who">' + esc(who) + " <span>" + l.length + "</span></p><ul>" +
+      l.slice().sort((a, b) => (a.y || 9999) - (b.y || 9999) || cmp(a.n, b.n)).map((e) => "<li>" + esc(e.n) + "<span>" + (e.y || "—") + "</span></li>").join("") + "</ul></div>").join("");
   }
   function openMore() {
-    if (!moreFor) return;
+    if (!cur) return;
     more.hidden = false;
     document.body.classList.add("is-more");
     moreBtn.setAttribute("aria-expanded", "true");
@@ -700,122 +795,86 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
   }
   moreBtn.addEventListener("click", () => (more.hidden ? openMore() : closeMore()));
   el(".t1-more-close").addEventListener("click", () => closeMore());
+  // THE READINGS, as few as the owner's pictures keep — and fewer since
+  // 2026-11-08 ("remove the 'the most ___'"; "under the houses on the left,
+  // you should ommit the informatio of the houses"): a perfumer's kicker,
+  // name, country, perfumes and houses; a house's kicker, name, country and
+  // founding, perfumes and perfumers
   function writeHud() {
     const set = (s, v) => { const e = el(s); if (e) e.textContent = v; };
-    const p = cur.p, house = cur.kind === "house";
-    const list = house ? p.houses.get(cur.h) : p.list;
+    const house = cur.kind === "house";
     set("[data-v=kicker]", house ? "House" : "Perfumer");
-    set("[data-v=name]", house ? HOU[cur.h].name : p.none ? "Perfumer not found" : p.name);
-    // THE READINGS, as few as the owner's pictures keep (2026-11-07 — of a
-    // perfumer "only keep whats on image 3": the kicker, the name, the
-    // country, the perfumes against the most, the houses; of a house "what is
-    // shown in image 5 (but remove 'the most 139')": the kicker, the name,
-    // who for, the perfumes, when it was founded). The years and the shares
-    // of who is credited went.
-    set("[data-v=sub]", house ? (p.none ? "perfumer not found" : "by " + p.name)
-      : p.from || (p.none ? "no source names them" : "country not given"));
-    set("[data-v=count]", String(list.length));
-    set("[data-v=most]", house ? "" : "the most, " + MOST);
-    el(".t1-bar-count i").style.width = house ? "0%" : Math.round((list.length / MOST) * 100) + "%";
-    set("[data-v=houses-say]", house ? "Founded" : "Houses");
-    set("[data-v=houses]", house ? HOU[cur.h].founded || "—" : String(p.houses.size));
-    set("[data-v=houses-sub]", house ? "" : Array.from(p.houses.keys()).map((h) => HOU[h].name).join(", "));
-    // the three lines: what the ledger says of it
-    let lines = [];
-    if (house) {
-      const ho = HOU[cur.h];
-      if (ho.about) lines.push(ho.about);
-      lines.push(list.length + (list.length === 1 ? " perfume" : " perfumes") + " by " + (p.none ? "a perfumer no source names" : p.name) + " for it.");
-    } else lines = p.about.slice();
-    if (!lines.length) lines = [p.none ? "The perfumes no source found credits to anyone." : p.name + "."];
-    el(".t1-lines").innerHTML = lines.slice(0, 3).map((l) => "<li>" + esc(l) + "</li>").join("");
-    writeMore(house ? null : p);
-    // the readings come in again, softly, rather than change under the eye
-    // (2026-11-07 — "make the transitions smoother")
-    if (!STILL) [".t1-hud", ".t1-list", ".t1-lines"].forEach((s) => { const e = el(s); e.classList.remove("is-fresh"); void e.offsetWidth; e.classList.add("is-fresh"); });
+    set("[data-v=name]", nameOf(cur));
+    if (house) set("[data-v=sub]", [cur.ho.from, cur.ho.founded ? "founded " + cur.ho.founded : ""].filter(Boolean).join(" · ") || "country not given");
+    else set("[data-v=sub]", cur.p.from || (cur.p.none ? "no source names them" : "country not given"));
+    set("[data-v=count]", String(listOf(cur).length));
+    set("[data-v=houses-say]", house ? "Perfumers" : "Houses");
+    set("[data-v=houses]", String(house ? Array.from(cur.ho.pers.keys()).filter((q) => !PER[q].none).length : cur.p.houses.size));
+    writeMore(cur);
+    if (!STILL) [".t1-hud", ".t1-list"].forEach((s) => { const e = el(s); e.classList.remove("is-fresh"); void e.offsetWidth; e.classList.add("is-fresh"); });
+    const p = lastPer || ORDER[0];
     set("[data-v=no]", String(p.k + 1).padStart(2, "0") + " / " + NP);
     const pick = el(".t1-pick");
     if (+pick.value !== p.i) pick.value = String(p.i);
-    set(".t1-head-name", house ? HOU[cur.h].name + ", and what " + (p.none ? "they" : p.name) + " made for it" : (p.none ? "Perfumer not found" : p.name) + " and their houses");
-    el(".t1-hud").setAttribute("aria-label", (house ? "The house " : "The perfumer ") + (house ? HOU[cur.h].name : p.name));
+    // the page's official names (2026-11-08): the World of whoever is in it
+    set(".t1-head-name", cur.kind === "per" && cur.p.none ? "The perfumes no source credits" : "The World of " + nameOf(cur));
+    el(".t1-hud").setAttribute("aria-label", (house ? "The house " : "The perfumer ") + nameOf(cur));
   }
 
-  // ---- THE LIST, beside the world: its houses, or the perfumes the perfumer
-  // made for the house in the middle --------------------------------------
+  // ---- THE LIST, beside the world: a perfumer's houses, or a house's
+  // perfumers — names only, and what they made between them ------------------
   const listBox = el(".t1-list");
   let listRows = [];
   function writeList() {
     if (!cur) return;
-    const p = cur.p, house = cur.kind === "house";
-    const parts = partsOf(cur);
-    let rows;
-    if (!house) {
-      listRows = parts.map((x) => ({ kind: "house", h: x.h, part: x }));
-      // (no bar under a house since 2026-11-07 — "remove that random blue bar
-      // that sits below each house named")
-      rows = listRows.map((r, i) => '<li><button type="button" data-row="' + i + '"><span class="t1-li-no">' + String(i + 1).padStart(2, "0") + '</span><span class="t1-li-name">' + esc(HOU[r.h].name) + "<small>" + esc([HOU[r.h].from, HOU[r.h].founded ? "founded " + HOU[r.h].founded : ""].filter(Boolean).join(" · ") || "—") + '</small></span><span class="t1-li-n">' + r.part.n + "</span></button></li>").join("");
-    } else {
-      const list = p.houses.get(cur.h);
-      const byYear = parts.map((x) => x.y || 0);
-      listRows = list.slice().sort((a, b) => (a.y || 9999) - (b.y || 9999) || cmp(a.n, b.n)).map((e) => ({ kind: "perfume", e, part: byYear.indexOf(e.y || 0) }));
-      rows = listRows.map((r, i) => '<li><button type="button" data-row="' + i + '"><span class="t1-li-no">' + String(i + 1).padStart(2, "0") + '</span><span class="t1-li-name">' + esc(r.e.n) + "<small>" + esc(CREDIT[r.e.c]) + '</small></span><span class="t1-li-n">' + (r.e.y || "—") + '</span><b class="t1-li-mark t1-c' + r.e.c + '" aria-hidden="true"></b></button></li>').join("");
-    }
-    el("[data-v=list-say]").textContent = house ? "Made for " + HOU[cur.h].name : "Its houses";
-    el("[data-v=list-n]").textContent = house ? listRows.length + (listRows.length === 1 ? " perfume" : " perfumes") : listRows.length + (listRows.length === 1 ? " house" : " houses");
-    el("[data-v=list-how]").textContent = house ? "by the year it was made" : "press one to see what they made for it";
-    el(".t1-list-rows").innerHTML = rows;
+    const house = cur.kind === "house";
+    listRows = partsOf(cur).map((x) => (house ? { kind: "per", p: PER[x.q], n: x.n } : { kind: "house", ho: HOS[x.h], n: x.n }));
+    el(".t1-list-rows").innerHTML = listRows.map((r, i) => '<li><button type="button" data-row="' + i + '"><span class="t1-li-no">' + String(i + 1).padStart(2, "0") + '</span><span class="t1-li-name">' + esc(nameOf(r)) + '</span><span class="t1-li-n">' + r.n + "</span></button></li>").join("");
+    el("[data-v=list-say]").textContent = house ? "Its perfumers" : "Its houses";
+    // a house's perfumers counted as its readings count them: "Perfumer not
+    // found" is a row of its own, and no perfumer
+    const n = house ? listRows.filter((r) => !r.p.none).length : listRows.length;
+    el("[data-v=list-n]").textContent = n + (house ? (n === 1 ? " perfumer" : " perfumers") : (n === 1 ? " house" : " houses"));
+    el("[data-v=list-how]").textContent = house ? "press one to open their world" : "press one to open its world";
     el(".t1-list-rows").scrollTop = 0;
   }
   function rowOf(ev) { const b = ev.target.closest && ev.target.closest("[data-row]"); return b ? { b, r: listRows[+b.dataset.row] } : null; }
-  function tipBeside(b, html) {
-    tip.innerHTML = html;
-    tip.hidden = false;
-    const rc = b.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight;
-    let px, py;
-    if (phone) { px = clamp(rc.left + 8, 8, W - tw - 8); py = rc.top - th - 6; if (py < 8) py = rc.bottom + 6; }
-    else { px = rc.left - tw - 14; py = clamp(rc.top - 6, 8, H - th - 8); if (px < 8) px = rc.right + 14; }
-    tip.style.transform = "translate(" + Math.round(px) + "px," + Math.round(py) + "px)";
-  }
+  const sphereOf = (r) => blobs.find((x) => same(x, r)) || null;
   listBox.addEventListener("pointerover", (ev) => {
     const o = rowOf(ev);
-    if (!o || !ready) return;
-    if (o.r.kind === "house") aim = blobs.find((x) => x.kind === "house" && x.h === o.r.h) || null;
-    else if (!pinned) tipBeside(o.b, perfumeTip(o.r.e));
-    kick();
+    if (!o || !ready || busy()) return;
+    aim = sphereOf(o.r); if (aim) stick = aim;
+    lightRow(); kick();
   });
-  listBox.addEventListener("pointerleave", () => { aim = null; if (!pinned) showTip(null); kick(); });
+  listBox.addEventListener("pointerleave", () => { aim = null; kick(); });
   listBox.addEventListener("click", (ev) => {
     const o = rowOf(ev);
     if (!o) return;
-    if (o.r.kind === "house") { aim = null; showTip(null); show({ kind: "house", p: cur.p, h: o.r.h }); return; }
-    if (pinned === o.r) { pinned = null; showTip(null); o.b.classList.remove("is-pinned"); return; }
-    listBox.querySelectorAll(".is-pinned").forEach((x) => x.classList.remove("is-pinned"));
-    pinned = o.r; o.b.classList.add("is-pinned");
-    tipBeside(o.b, perfumeTip(o.r.e, true));
+    aim = null; showTip(null);
+    change(o.r.kind === "per" ? { kind: "per", p: o.r.p } : { kind: "house", ho: o.r.ho });
   });
-  listBox.addEventListener("focusin", (ev) => { const o = rowOf(ev); if (o && o.r.kind === "house") { aim = blobs.find((x) => x.kind === "house" && x.h === o.r.h) || null; kick(); } });
+  listBox.addEventListener("focusin", (ev) => { const o = rowOf(ev); if (o) { aim = sphereOf(o.r); if (aim) stick = aim; lightRow(); kick(); } });
 
   // ---- THE HAND --------------------------------------------------------------
-  const hand = { x: -1, y: -1, on: false };
-  // where the spheres lean to: the hand, followed a little behind, so that
-  // nothing jumps when the hand comes in or goes
+  const hand = { x: -1, y: -1, on: false, lx: -1, ly: -1, lt: 0 };
+  // where the spheres lean to: the hand, followed a little behind
   const handS = { x: 0, y: 0 };
-  let aim = null, pinned = null, overDot = null;
-  const ret = { x: 0, y: 0, r: 0, tx: 0, ty: 0, tr: 0 };
+  // `aim` the sphere under the hand now; `stick` the last one it was on — the
+  // double circle stays there until the hand is on another (2026-11-08 —
+  // "make it also stay there, unless you hover over another blob")
+  let aim = null, stick = null, pinned = null, overBlock = null;
+  const ret = { x: 0, y: 0, r: 0, vx: 0, vy: 0, vr: 0 };
   function blobUnder(x, y) {
-    for (let i = blobs.length - 1; i >= 0; i--) { const b = blobs[i]; if (Math.hypot(x - (b.x + b.dx), y - (b.y + b.dy)) < b.r * 1.15) return b; }
+    for (let i = blobs.length - 1; i >= 0; i--) { const b = blobs[i]; if (b.img && Math.hypot(x - (b.x + b.dx), y - (b.y + b.dy)) < b.r * 1.15) return b; }
     return null;
   }
-  function dotUnder(x, y) {
-    let best = null, bd = Math.max(8, map.cell * 0.75);
-    for (const d of map.dots) { const dd = Math.hypot(x - d.x, y - d.y); if (dd < bd) { bd = dd; best = d; } }
+  const onMiddle = (x, y) => Math.hypot(x - P.x, y - P.y) < P.r * 0.95;
+  // a block of the strings: its dots, or anywhere in its box
+  function blockUnder(x, y) {
+    let best = null, bd = Math.max(9, map.cell * 0.8);
+    for (const d of map.dots) { const dd = Math.hypot(x - d.x, y - d.y); if (dd < bd) { bd = dd; best = d.b; } }
     if (best) return best;
-    // or anywhere in a block
-    for (const b of map.blocks) if (x >= b.x0 - 2 && x <= b.x1 + 2 && y >= b.y0 - map.cell && y <= b.y1 + 2) {
-      let nd = null, nb = Infinity;
-      for (const d of b.dots) { const dd = Math.hypot(x - d.x, y - d.y); if (dd < nb) { nb = dd; nd = d; } }
-      return nd;
-    }
+    for (const b of map.blocks) if (x >= b.x0 - 4 && x <= b.x1 + 4 && y >= b.y0 - 4 && y <= b.y1 + 4) return b;
     return null;
   }
   function placeTip(x, y) {
@@ -825,89 +884,101 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     if (py + th > H - 10) py = y - th - 14;
     tip.style.transform = "translate(" + Math.round(Math.max(8, px)) + "px," + Math.round(Math.max(8, py)) + "px)";
   }
-  function perfumeTip(e, full) {
-    const who = e.who.map((q) => (PER[q].none ? "perfumer not found" : PER[q].name)).join(" & ");
-    let h = "<b>" + esc(e.n) + "</b><span>" + esc(HOU[e.h].name) + " · " + (e.y || "year not found") + "</span><em>" + esc(who) + " — " + CREDIT[e.c] + "</em>";
-    if (full) h += "<span>" + esc(KIND[e.k]) + "</span>" + (e.s.length ? "<span>Sources: " + e.s.map((i) => esc(D.sources[i])).join(", ") + "</span>" : "");
-    return h;
-  }
   function showTip(h) {
     if (!h) { tip.hidden = true; return; }
     tip.innerHTML = h.html;
     tip.hidden = false;
     placeTip(h.x, h.y);
   }
-  // THE HAND FOLLOWED EVERYWHERE (2026-11-07 — "whenever you hover anything
-  // that is clickable, the movement of the position of the objects that can
-  // move on the page (and follow the mouse) snaps back to their original and
-  // defualt position"): where it is is read off the whole window, so a
-  // button, the list or the tip passing under it no longer lets go of the
-  // spheres; only leaving the window does
+  // what a block says (2026-11-08 — "just show the perfumer's name, and
+  // number of houses")
+  const blockTip = (b) => "<b>" + esc(perName(b.p)) + "</b><span>" + b.p.houses.size + (b.p.houses.size === 1 ? " house" : " houses") + "</span>";
+  const sphereTip = (b) => "<b>" + esc(nameOf(b)) + "</b><span>" + (b.kind === "house" ? "House · press to open its world" : "Perfumer · press to open their world") + "</span>";
+  // the hand pulled across a string plucks it, and pulls it taut a moment
+  function pluck(x0, y0, x1, y1, now) {
+    const sp = Math.hypot(x1 - x0, y1 - y0);
+    if (sp < 1.5 || sp > 400) return;
+    for (const s of map.strings) {
+      if (now - (s.plucked || 0) < 140) continue;
+      const p = s.pts;
+      for (let i = 0; i < SEG; i += 3) {
+        const j = Math.min(SEG, i + 3);
+        const ax = p[2 * i], ay = p[2 * i + 1], bx = p[2 * j], by = p[2 * j + 1];
+        const d1 = (x1 - x0) * (ay - y0) - (y1 - y0) * (ax - x0), d2 = (x1 - x0) * (by - y0) - (y1 - y0) * (bx - x0);
+        const d3 = (bx - ax) * (y0 - ay) - (by - ay) * (x0 - ax), d4 = (bx - ax) * (y1 - ay) - (by - ay) * (x1 - ax);
+        if (d1 * d2 < 0 && d3 * d4 < 0) {
+          const dir = d3 < 0 ? 1 : -1;
+          const was = Math.abs(s.a1) < 0.3;
+          s.a1 += dir * clamp(sp * 0.3, 1.6, 7); s.a2 += dir * clamp(sp * 0.1, 0.4, 2.2);
+          if (was) { s.p1 = -Math.PI / 2; s.p2 = -Math.PI / 2; }
+          s.touch = now + 650; s.plucked = now;
+          break;
+        }
+      }
+    }
+  }
   window.addEventListener("pointermove", (ev) => { hand.x = ev.clientX; hand.y = ev.clientY; hand.on = true; }, { passive: true });
   document.addEventListener("pointerout", (ev) => { if (!ev.relatedTarget) { hand.on = false; kick(); } });
   cv.addEventListener("pointermove", (ev) => {
-    hand.x = ev.clientX; hand.y = ev.clientY; hand.on = true;
-    // nothing answers the hand until the page has come in whole (2026-11-07 —
-    // "i want you to be able to hover it only when it is fully loaded")
-    if (reveal.on || gather.on || !ready) { cv.style.cursor = "default"; return; }
+    const now = performance.now();
+    const x = ev.clientX, y = ev.clientY;
+    if (view === "rays" && ready && !busy() && hand.lx >= 0 && now - hand.lt < 120) pluck(hand.lx, hand.ly, x, y, now);
+    hand.lx = x; hand.ly = y; hand.lt = now;
+    hand.x = x; hand.y = y; hand.on = true;
+    // nothing answers the hand until the page has come in whole
+    if (busy() || !ready) { cv.style.cursor = "default"; return; }
     if (view === "rays") {
-      const d = dotUnder(hand.x, hand.y);
-      if (d !== overDot) {
-        overDot = d;
-        showTip(d ? { html: perfumeTip(d.e) + "<span>Press to open " + esc(d.p.none ? "these" : d.p.name + "'s world") + "</span>", x: hand.x, y: hand.y } : null);
+      const b = blockUnder(x, y);
+      if (b !== overBlock) {
+        // its strings twang as they are pulled taut
+        if (b) for (const d of b.dots) d.s.a1 += (d.s.a1 >= 0 ? 1 : -1) * (1.4 + d.ph * 1.6);
+        overBlock = b;
+        showTip(b ? { html: blockTip(b), x, y } : null);
         kick();
-      } else if (d) placeTip(hand.x, hand.y);
-      cv.style.cursor = d ? "pointer" : "default";
+      } else if (b) placeTip(x, y);
+      cv.style.cursor = b ? "pointer" : "default";
       return;
     }
     const was = aim;
-    aim = blobUnder(hand.x, hand.y);
+    aim = blobUnder(x, y);
+    if (aim) stick = aim;
+    else if (onMiddle(x, y)) stick = null;
     cv.style.cursor = aim ? "pointer" : "default";
-    // no sphere is named on the page: under the hand, a house's row in the
-    // list lights, and a small note by the hand says which it is — or, for
-    // the perfumer's, that it is the way back
     if (aim !== was) lightRow();
     if (!pinned) {
-      if (aim && aim.kind === "house") showTip({ html: "<b>" + esc(HOU[aim.h].name) + "</b><span>Press to see what " + esc(cur.p.none ? "they" : cur.p.name) + " made for it</span>", x: hand.x, y: hand.y });
-      else if (aim) showTip({ html: "<b>↩ " + esc(aim.p.none ? "Perfumer not found" : aim.p.name) + "</b><span>Press to go back to " + (aim.p.none ? "them" : "their world") + "</span>", x: hand.x, y: hand.y });
+      if (aim) showTip({ html: sphereTip(aim), x, y });
       else if (was) showTip(null);
     }
   });
   function lightRow() {
+    const lit = aim || stick;
     listBox.querySelectorAll("[data-row]").forEach((b) => {
       const r = listRows[+b.dataset.row];
-      b.classList.toggle("is-lit", !!(aim && aim.kind === "house" && r && r.kind === "house" && r.h === aim.h));
+      b.classList.toggle("is-lit", !!(lit && r && same(r, lit)));
     });
   }
   cv.addEventListener("pointerleave", () => {
-    aim = null; overDot = null; lightRow();
+    aim = null; overBlock = null; lightRow();
     if (!pinned) showTip(null);
     kick();
   });
   cv.addEventListener("click", (ev) => {
-    if (reveal.on || gather.on || !ready) return;
+    if (busy() || !ready) return;
     if (view === "rays") {
-      const d = dotUnder(ev.clientX, ev.clientY);
-      if (d) { showTip(null); overDot = null; openWorld(d.p, null, d); }
+      const b = blockUnder(ev.clientX, ev.clientY);
+      if (b) openWorld({ kind: "per", p: b.p });
       return;
     }
     const b = blobUnder(ev.clientX, ev.clientY);
-    if (b) {
-      pinned = null; showTip(null);
-      if (b.kind === "house") show({ kind: "house", p: cur.p, h: b.h });
-      else show({ kind: "per", p: b.p, h: null });
-      aim = null; lightRow();
-      return;
-    }
-    if (pinned) { pinned = null; showTip(null); listBox.querySelectorAll(".is-pinned").forEach((x) => x.classList.remove("is-pinned")); }
+    if (b) { aim = null; change(b.kind === "per" ? { kind: "per", p: b.p } : { kind: "house", ho: b.ho }); }
   });
   el(".t1-return").addEventListener("click", returnUp);
   const step = (d) => {
-    if (!ready) return;
-    const p = cur ? cur.p : ORDER[0];
+    if (!ready || busy()) return;
+    const p = lastPer || ORDER[NP - 1];
     const q = ORDER[(p.k + d + NP) % NP];
-    if (view === "rays") { const b = map.blocks.find((x) => x.p === q); openWorld(q, null, b ? { x: (b.x0 + b.x1) / 2, y: (b.y0 + b.y1) / 2 } : null); }
-    else show({ kind: "per", p: q, h: null });
+    if (view === "rays") openWorld({ kind: "per", p: q });
+    else change({ kind: "per", p: q });
   };
   el(".t1-prev").addEventListener("click", () => step(-1));
   el(".t1-next").addEventListener("click", () => step(1));
@@ -918,27 +989,23 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     else if (view === "world" && ev.key === "ArrowLeft") { ev.preventDefault(); step(-1); }
   });
   const pick = el(".t1-pick");
-  pick.innerHTML = ORDER.map((p) => '<option value="' + p.i + '">' + esc(p.none ? "Perfumer not found" : p.name) + " · " + p.list.length + "</option>").join("");
+  pick.innerHTML = ORDER.map((p) => '<option value="' + p.i + '">' + esc(perName(p)) + "</option>").join("");
   pick.addEventListener("change", () => {
     const p = PER[+pick.value];
-    if (view === "rays") { const b = map.blocks.find((x) => x.p === p); openWorld(p, null, b ? { x: (b.x0 + b.x1) / 2, y: (b.y0 + b.y1) / 2 } : null); }
-    else show({ kind: "per", p, h: null });
+    if (view === "rays") openWorld({ kind: "per", p });
+    else change({ kind: "per", p });
   });
-  // ---- THE SEARCH (2026-11-07 — "add a search. That search should work by
-  // searching anything (perfume, perfume) and then taking you to the
-  // perfumer. Also please animate it so its nice"): one field at the top
-  // right, on the rays and in the worlds; a perfumer, a house or a perfume,
-  // found as it is typed, each answer saying which and whose; pressed (or
-  // Enter), the perfumer's world opens — gathering out of the rays, or
-  // rippling from the world before — and a house or a perfume asked for is
-  // lit in it: its sphere, its row, and a perfume's tip beside the row.
+  // ---- THE SEARCH (2026-11-07): one field at the top right, on the strings
+  // and in the worlds; a perfumer, a house or a perfume, found as it is
+  // typed, each answer saying which. Pressed (or Enter): a perfumer's world,
+  // or — since 2026-11-08, when a house has a world of its own — a house's;
+  // a perfume opens its perfumer's, its house lit there.
   const findBox = el(".t1-find"), findIn = el(".t1-find input"), findOut = el(".t1-found");
   const plainOf = (t) => String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-  const perName = (p) => (p.none ? "Perfumer not found" : p.name);
   const FIND = [];
-  ORDER.forEach((p) => FIND.push({ kind: "Perfumer", name: perName(p), say: [p.from, p.list.length + (p.list.length === 1 ? " perfume" : " perfumes")].filter(Boolean).join(" · "), p }));
-  HOU.forEach((h, hi) => ORDER.forEach((p) => { if (p.houses.has(hi)) FIND.push({ kind: "House", name: h.name, say: "by " + perName(p) + " · " + p.houses.get(hi).length, p, h: hi }); }));
-  ORDER.forEach((p) => p.list.forEach((e) => FIND.push({ kind: "Perfume", name: e.n, say: HOU[e.h].name + " · by " + perName(p) + (e.y ? " · " + e.y : ""), p, h: e.h, e })));
+  ORDER.forEach((p) => FIND.push({ kind: "Perfumer", name: perName(p), say: [p.from, p.houses.size + (p.houses.size === 1 ? " house" : " houses")].filter(Boolean).join(" · "), w: { kind: "per", p } }));
+  HOS.slice().sort((a, b) => cmp(a.name, b.name)).forEach((ho) => FIND.push({ kind: "House", name: ho.name, say: [ho.from, ho.list.length + (ho.list.length === 1 ? " perfume" : " perfumes")].filter(Boolean).join(" · "), w: { kind: "house", ho } }));
+  ORDER.forEach((p) => p.list.forEach((e) => FIND.push({ kind: "Perfume", name: e.n, say: HOU[e.h].name + " · by " + perName(p) + (e.y ? " · " + e.y : ""), w: { kind: "per", p }, h: e.h, e })));
   FIND.forEach((it) => (it.key = plainOf(it.name)));
   const KINDS = ["Perfumer", "House", "Perfume"];
   let found = [], foundAt = -1;
@@ -964,33 +1031,43 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
   function findGo(it) {
     findIn.value = ""; findOut.hidden = true; findBox.classList.remove("has-found"); found = [];
     findIn.blur();
-    const p = it.p;
+    if (busy()) return;
     let wait = 0;
-    if (view === "rays" && !gather.on && !reveal.on) {
-      const b = map.blocks.find((x) => x.p === p);
-      openWorld(p, null, b ? { x: (b.x0 + b.x1) / 2, y: (b.y0 + b.y1) / 2 } : null);
-      wait = STILL ? 0 : gather.ms + reveal.ms * 0.8;
-    } else if (view === "world") {
-      pinned = null; showTip(null);
-      if (cur.p !== p || cur.kind !== "per") show({ kind: "per", p, h: null });
-      wait = STILL ? 0 : 700;
-    } else return;
+    if (view === "rays") { openWorld(it.w); wait = STILL ? 0 : OPEN_MS + 150; }
+    else if (!same(cur, it.w)) { change(it.w); wait = STILL ? 0 : CHANGE_MS + 100; }
     if (it.h == null) return;
-    // the house (and a perfume's house) lit once the world has come
+    // a perfume's house lit once the world has come: its sphere, its row, and
+    // the perfume by the row
     setTimeout(() => {
-      if (view !== "world" || !cur || cur.p !== p) return;
-      const b = blobs.find((x) => x.kind === "house" && x.h === it.h);
-      aim = b || null;
-      const k = partsOf(cur).findIndex((x) => x.h === it.h);
+      if (view !== "world" || !cur || !same(cur, it.w)) return;
+      const ho = { kind: "house", ho: HOS[it.h] };
+      const b = blobs.find((x) => same(x, ho));
+      if (b) { stick = b; lightRow(); }
+      const k = listRows.findIndex((r) => same(r, ho));
       const row = listBox.querySelector('[data-row="' + k + '"]');
       if (row) {
         row.classList.add("is-found");
-        if (it.e) { pinned = { kind: "house", h: it.h }; tipBeside(row, perfumeTip(it.e, true)); }
-        setTimeout(() => { row.classList.remove("is-found"); if (aim === b) aim = null; kick(); }, 3200);
+        if (it.e) { pinned = ho; tipBeside(row, perfumeTip(it.e)); }
+        setTimeout(() => { row.classList.remove("is-found"); kick(); }, 3200);
       }
       kick();
     }, wait);
   }
+  function perfumeTip(e) {
+    const who = e.who.map((q) => perName(PER[q])).join(" & ");
+    return "<b>" + esc(e.n) + "</b><span>" + esc(HOU[e.h].name) + " · " + (e.y || "year not found") + "</span><em>" + esc(who) + " — " + CREDIT[e.c] + "</em>";
+  }
+  function tipBeside(b, html) {
+    tip.innerHTML = html;
+    tip.hidden = false;
+    const rc = b.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight;
+    let px, py;
+    if (phone) { px = clamp(rc.left + 8, 8, W - tw - 8); py = rc.top - th - 6; if (py < 8) py = rc.bottom + 6; }
+    else { px = rc.left - tw - 14; py = clamp(rc.top - 6, 8, H - th - 8); if (px < 8) px = rc.right + 14; }
+    tip.style.transform = "translate(" + Math.round(px) + "px," + Math.round(py) + "px)";
+  }
+  // a pinned perfume's note goes with the next press anywhere
+  document.addEventListener("pointerdown", (ev) => { if (pinned && !(ev.target.closest && ev.target.closest(".t1-find"))) { pinned = null; showTip(null); } });
   findIn.addEventListener("input", findNow);
   findIn.addEventListener("focus", () => { findBox.classList.add("is-open"); if (findIn.value) findNow(); });
   findIn.addEventListener("blur", () => setTimeout(() => { if (document.activeElement !== findIn) { findBox.classList.remove("is-open"); findOut.hidden = true; findBox.classList.remove("has-found"); } }, 160));
@@ -1012,34 +1089,26 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
     cv.style.width = W + "px"; cv.style.height = H + "px";
     // the room the world has: between the readings on the left and the list
-    // on the right, under the head and over the three lines; on a phone the
-    // top of the window, over the list and the readings
+    // on the right, under the head and over Learn More; on a phone the top
+    // of the window, over the list and the readings
     if (phone) {
-      F.x0 = 10; F.x1 = W - 10; F.y0 = 84; F.y1 = Math.round(H * 0.45);
+      F.x0 = 10; F.x1 = W - 10; F.y0 = 92; F.y1 = Math.round(H * 0.45);
       P.r = Math.min((F.y1 - F.y0) * 0.34, W * 0.25);
     } else {
       const edge = W < 1100 ? 32 : 48;
       const hud = el(".t1-hud").getBoundingClientRect(), list = listBox.getBoundingClientRect();
       F.x0 = (hud.right > 0 ? hud.right : edge + 250) + 16;
       F.x1 = (list.left > 0 ? list.left : W - edge - 280) - 16;
-      // over the three lines (as many as six of type at the foot)
-      F.y0 = 112; F.y1 = H - (H < 640 ? 50 : 196);
+      F.y0 = 112; F.y1 = H - (H < 640 ? 70 : 130);
       P.r = Math.min((F.y1 - F.y0) * 0.33, (F.x1 - F.x0) * 0.24);
     }
     P.x = (F.x0 + F.x1) / 2; P.y = (F.y0 + F.y1) / 2;
-    // the three lines a little left of the middle, and Learn more on their
-    // right (2026-11-07 — "move that text to the left a little, and then on
-    // the right of it, a button to learn more")
-    const lines = el(".t1-lines"), btnW = phone ? 0 : 128;
-    const lw = Math.min(440, F.x1 - F.x0 - btnW - 24);
-    const lx = phone ? Math.round(P.x - lw / 2) : Math.round(Math.max(F.x0, P.x - (lw + 24 + btnW) / 2 - 40));
-    lines.style.width = lw + "px";
-    lines.style.left = lx + "px";
-    if (!phone) el(".t1-more-open").style.left = lx + lw + 28 + "px";
-    else el(".t1-more-open").style.left = "";
+    // Learn More under the world, in the middle of its room
+    const btn = el(".t1-more-open");
+    if (!phone) btn.style.left = Math.round(P.x) + "px"; else btn.style.left = "";
     ground = null;
     layMap();
-    layWorld();
+    if (cur) layWorld();
   }
   // the poster: pale, a light behind the world, its corners a little darker
   let ground = null;
@@ -1055,7 +1124,6 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     g = x.createRadialGradient(P.x, P.y, P.r * 0.6, P.x, P.y, big * 0.8);
     g.addColorStop(0, "rgba(255,255,255,0.55)"); g.addColorStop(0.45, "rgba(255,255,255,0.12)"); g.addColorStop(1, "rgba(120,140,135,0.22)");
     x.fillStyle = g; x.fillRect(0, 0, W, H);
-    // a faint violet bloom where the world stands, and a warm one under it
     g = x.createRadialGradient(P.x - P.r * 0.2, P.y - P.r * 0.1, 0, P.x, P.y, P.r * 2.2);
     g.addColorStop(0, "rgba(200,190,240,0.22)"); g.addColorStop(1, "rgba(200,190,240,0)");
     x.fillStyle = g; x.fillRect(0, 0, W, H);
@@ -1064,193 +1132,314 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     x.fillStyle = g; x.fillRect(0, 0, W, H);
     return c;
   }
-  // the rays, live: drawn out from the point as the page opens; the
-  // perfumer pointed at lit; now and then a light running in along a ray
-  const lights = [];
-  // READY (2026-11-07 — "i want you to be able to hover it only when it is
-  // fully loaded"): nothing answers the hand until the rays are all out and
-  // the type has come in; then the page says so (is-ready on the body)
+  // READY (2026-11-07): nothing answers the hand until the strings are all
+  // out and the type has come in; then the page says so (is-ready)
   let ready = STILL, fontsIn = !document.fonts;
-  if (document.fonts) document.fonts.ready.then(() => { fontsIn = true; kick(); });
+  if (document.fonts) document.fonts.ready.then(() => { fontsIn = true; layMap(); kick(); });
   let lightNext = 0, mapT0 = -1;
   const RAYS_IN = 1800;
-  // a perfumer's dots running in along their rays to the point (the gathering)
-  function drawGather(u) {
-    const p = gather.p, hub = map.hub;
-    const b = map.blocks.find((x) => x.p === p);
-    // the rest step back into the dark
-    ctx.fillStyle = "#050505"; ctx.globalAlpha = 0.6 * smooth(u * 1.8);
-    ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
-    const dots = b ? b.dots : [];
-    let arrived = 0;
-    ctx.lineCap = "round";
-    lensed(ctx, (col) => {
-      ctx.strokeStyle = col; ctx.lineWidth = 0.9;
-      ctx.globalAlpha = 0.85 * (1 - smooth((u - 0.55) / 0.45));
-      ctx.beginPath();
-      for (const d of dots) { ctx.moveTo(hub.x, hub.y); ctx.lineTo(d.x, d.y); }
-      ctx.stroke();
-      ctx.fillStyle = col; ctx.lineWidth = 1.7;
-      arrived = 0;
-      for (const d of dots) {
-        const k = ease(clamp(u * 1.45 - d.ph * 0.45, 0, 1));
-        if (k >= 1) { arrived++; continue; }
-        const x = lerp(d.x, hub.x, k), y = lerp(d.y, hub.y, k), k0 = Math.max(0, k - 0.16);
-        ctx.globalAlpha = 0.9;
-        ctx.beginPath(); ctx.moveTo(lerp(d.x, hub.x, k0), lerp(d.y, hub.y, k0)); ctx.lineTo(x, y); ctx.stroke();
-        ctx.beginPath(); ctx.arc(x, y, 2.3, 0, TAU); ctx.fill();
-      }
-      // the point swelling as they arrive
-      const a = dots.length ? arrived / dots.length : 1;
-      ctx.globalAlpha = 0.95; ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.arc(hub.x, hub.y, 4 + 16 * ease(a) + 6 * smooth((u - 0.8) / 0.2), 0, TAU); ctx.stroke();
-      ctx.globalAlpha = 0.35 * a;
-      ctx.beginPath(); ctx.arc(hub.x, hub.y, 10 + 40 * ease(a), 0, TAU); ctx.stroke();
-    }, 1.6 + 3.2 * smooth(u));
-    ctx.lineCap = "butt";
-    // its name over its block, as when it is pointed at
-    if (b) {
-      ctx.font = "500 " + (phone ? 8.5 : 10) + 'px "IBM Plex Mono", ui-monospace, monospace';
-      ctx.globalAlpha = 1 - smooth((u - 0.6) / 0.4);
-      ctx.fillStyle = "#050505";
-      ctx.fillRect(b.lx0 - 2, b.y0 - map.cell * 0.55 - 11, b.lx1 - b.lx0 + 4, 14);
-      ctx.fillStyle = "#fff";
-      blockLabel(ctx, b);
-      ctx.globalAlpha = 1;
-    }
+  const lights = [];
+  // what the strings are doing this frame, worked out once and drawn as
+  // often as the lens (or the opening's discs) needs
+  const RS = { intro: 1, dim: 0, lens: 1.6, open: -1, close: -1, gone: 0 };
+  // the strings' slack this frame: taut while their perfumer is pointed at,
+  // a moment after the hand has plucked them, and while they reel in
+  function tautOf(s) {
+    const now = performance.now();
+    if (TR.kind === "open") return TR.chosen.has(s.d) ? 0 : 1.5;
+    if (now < s.touch) return 0;
+    if (overBlock && overBlock === s.d.b && !busy()) return 0;
+    return 1;
   }
-  function drawRays(now, t) {
-    const intro = STILL ? 1 : clamp((now - mapT0) / RAYS_IN, 0, 1);
-    const { hub } = map;
-    if (intro >= 1) {
-      if (!map.img) map.img = drawMapImage();
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.drawImage(map.img, 0, 0);
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    } else {
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      ctx.fillStyle = "#050505"; ctx.fillRect(0, 0, W, H);
-      lensed(ctx, (col) => raysAndDots(ctx, intro, col, 0.2, 0.92));
-      // the names over the blocks come up as the rays reach them
-      ctx.font = "400 " + (phone ? 8 : 9.5) + 'px "IBM Plex Mono", ui-monospace, monospace';
-      ctx.textBaseline = "alphabetic"; ctx.fillStyle = "#fff";
-      ctx.globalAlpha = 0.42 * smooth((intro - 0.55) / 0.45);
-      if (ctx.globalAlpha > 0.01) for (const b of map.blocks) blockLabel(ctx, b);
-      ctx.globalAlpha = 1;
+  function stepRays(now, t, dt) {
+    RS.intro = STILL ? 1 : clamp((now - mapT0) / RAYS_IN, 0, 1);
+    stepStrings(dt, now, t, tautOf);
+    const f = 1 - Math.exp(-dt * 7);
+    for (const b of map.blocks) {
+      let g = overBlock === b && !busy() ? 1 : 0;
+      // the perfumer the world closed on, lit a moment on the way back
+      if (TR.cameFrom === b) g = Math.max(g, TR.kind === "close" ? 1 : 1 - clamp((now - TR.litT) / 1600, 0, 1));
+      b.g += (g - b.g) * f;
+    }
+    RS.dim += ((overBlock && !busy() ? 1 : 0) - RS.dim) * f;
+    RS.open = TR.kind === "open" ? clamp((now - TR.t0) / TR.ms, 0, 1) : -1;
+    // the lens coming apart as the opening gathers, together as the strings come back
+    RS.lens = (phone ? 1.1 : 1.6) * (RS.open >= 0 ? 1 + 2.8 * smooth(RS.open / DISC_FROM) : TR.kind === "close" ? 1 + 2.4 * (1 - smooth((now - TR.t0) / TR.ms)) : 1);
+    // the lights running in, now and then
+    if (!STILL && RS.intro >= 1 && !busy()) {
+      if (t > lightNext && lights.length < 9) { lights.push({ s: map.strings[Math.floor(Math.random() * map.strings.length)], t0: t, dur: 1.5 + Math.random() * 1.3 }); lightNext = t + 0.25 + Math.random() * 0.45; }
+    }
+    for (let i = lights.length - 1; i >= 0; i--) if ((t - lights[i].t0) / lights[i].dur >= 1) lights.splice(i, 1);
+  }
+  // ONE COLOUR OF THE STRINGS (col its pure colour, c which of the three):
+  // the strings, the dots, the point, the lights and what is reeling in
+  function raysPass(x, col, t) {
+    const { hub } = map, open = RS.open;
+    const intro = RS.intro, gone = open >= 0 ? smooth(open / (DISC_FROM * 0.9)) : 0;
+    x.strokeStyle = col; x.fillStyle = col;
+    x.lineCap = "round";
+    // every block's strings at its own strength: lit, dimmed, or falling away
+    for (const b of map.blocks) {
+      let a = (0.22 + 0.63 * b.g) * (1 - 0.6 * RS.dim * (1 - b.g));
+      if (open >= 0) a = 0.22 * (1 - 0.8 * gone);
+      if (a < 0.01) continue;
+      x.globalAlpha = a; x.lineWidth = 0.65 + 0.45 * b.g;
+      x.beginPath();
+      for (const d of b.dots) {
+        const s = d.s;
+        if (open >= 0 && TR.chosen.has(d)) continue;     // drawn reeling in, below
+        const u = intro >= 1 ? 1 : ease(clamp(intro * 1.6 - d.ph * 0.6, 0, 1));
+        if (u <= 0) continue;
+        tracePart(x, s, 1 - u, 1);
+      }
+      x.stroke();
+      // its dots
+      const r = map.r * (1 + 0.5 * b.g);
+      x.globalAlpha = (0.9 * (1 - 0.55 * RS.dim * (1 - b.g)) + 0.1 * b.g) * (open >= 0 ? 1 - 0.8 * gone : 1);
+      x.beginPath();
+      for (const d of b.dots) {
+        if (open >= 0 && TR.chosen.has(d)) continue;
+        if (intro >= 1 || intro * 1.6 - d.ph * 0.6 >= 1) { x.moveTo(d.x + r, d.y); x.arc(d.x, d.y, r, 0, TAU); }
+      }
+      x.fill();
+    }
+    // the chosen: their strings taut, their dots reeling in along them to the
+    // point, each string shortening behind its dot
+    if (open >= 0) {
+      let arrived = 0, n = 0;
+      x.lineWidth = 1.1;
+      for (const d of TR.chosen) {
+        n++;
+        const q = ease(clamp(open / (DISC_FROM * 0.95) * 1.15 - d.ph * 0.15, 0, 1));
+        if (q >= 1) { arrived++; continue; }
+        x.globalAlpha = 0.9;
+        x.beginPath(); tracePart(x, d.s, q, 1); x.stroke();
+        const [px, py] = along(d.s, q);
+        x.globalAlpha = 1;
+        x.beginPath(); x.arc(px, py, map.r * 1.5, 0, TAU); x.fill();
+      }
+      const a = n ? arrived / n : 1;
+      // the point swelling as they arrive
+      x.globalAlpha = 0.95; x.lineWidth = 1.2;
+      x.beginPath(); x.arc(hub.x, hub.y, 4 + 14 * ease(a), 0, TAU); x.stroke();
+      x.globalAlpha = 0.35 * a;
+      x.beginPath(); x.arc(hub.x, hub.y, 10 + 34 * ease(a), 0, TAU); x.stroke();
     }
     // the point they all go to
     const br = 3 + (STILL ? 0 : Math.sin(t * 1.6) * 0.8);
-    lensed(ctx, (col) => {
-      ctx.strokeStyle = col; ctx.globalAlpha = 0.9 * smooth(intro * 3); ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.arc(hub.x, hub.y, br, 0, TAU); ctx.stroke();
-      ctx.globalAlpha = 0.3 * smooth(intro * 3);
-      ctx.beginPath(); ctx.arc(hub.x, hub.y, br * 3.4, 0, TAU); ctx.stroke();
-    }, 1);
-    // the lights running in
-    if (!STILL && intro >= 1) {
-      if (t > lightNext && lights.length < 14) { lights.push({ d: map.dots[Math.floor(Math.random() * map.dots.length)], t0: t, dur: 1.4 + Math.random() * 1.2 }); lightNext = t + 0.12 + Math.random() * 0.3; }
-      for (let i = lights.length - 1; i >= 0; i--) if ((t - lights[i].t0) / lights[i].dur >= 1) lights.splice(i, 1);
-      ctx.lineCap = "round"; ctx.lineWidth = 1.4;
-      lensed(ctx, (col) => {
-        ctx.strokeStyle = col;
-        for (const L of lights) {
-          const u = (t - L.t0) / L.dur, k = ease(u), k0 = Math.max(0, k - 0.12);
-          ctx.globalAlpha = Math.sin(Math.PI * u) * 0.9;
-          ctx.beginPath(); ctx.moveTo(lerp(L.d.x, hub.x, k0), lerp(L.d.y, hub.y, k0)); ctx.lineTo(lerp(L.d.x, hub.x, k), lerp(L.d.y, hub.y, k)); ctx.stroke();
-        }
-      });
-      ctx.lineCap = "butt";
+    x.lineWidth = 1; x.globalAlpha = 0.9 * smooth(intro * 3);
+    x.beginPath(); x.arc(hub.x, hub.y, br, 0, TAU); x.stroke();
+    x.globalAlpha = 0.3 * smooth(intro * 3);
+    x.beginPath(); x.arc(hub.x, hub.y, br * 3.4, 0, TAU); x.stroke();
+    // the lights running in along the strings
+    if (lights.length) {
+      x.lineWidth = 1.4;
+      for (const L of lights) {
+        const u = (t - L.t0) / L.dur, k = ease(clamp(u, 0, 1));
+        x.globalAlpha = Math.sin(Math.PI * clamp(u, 0, 1)) * 0.85;
+        x.beginPath(); tracePart(x, L.s, Math.max(0, k - 0.1), k); x.stroke();
+      }
     }
-    // the perfumer pointed at: its rays and its dots lit, its name over it
-    if (overDot) {
-      const b = overDot.b;
-      const r = clamp(map.cell * 0.26, 1.8, 3.6);
-      lensed(ctx, (col) => {
-        ctx.globalAlpha = 0.8; ctx.lineWidth = 0.9; ctx.strokeStyle = col;
-        ctx.beginPath();
-        for (const d of b.dots) { ctx.moveTo(hub.x, hub.y); ctx.lineTo(d.x, d.y); }
-        ctx.stroke();
-        ctx.globalAlpha = 1; ctx.fillStyle = col;
-        ctx.beginPath();
-        for (const d of b.dots) { ctx.moveTo(d.x + r, d.y); ctx.arc(d.x, d.y, r, 0, TAU); }
-        ctx.fill();
-        ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.arc(overDot.x, overDot.y, r * 2.4, 0, TAU); ctx.stroke();
-      });
-      ctx.font = "500 " + (phone ? 8.5 : 10) + 'px "IBM Plex Mono", ui-monospace, monospace';
-      ctx.fillStyle = "#050505"; ctx.globalAlpha = 1;
-      ctx.fillRect(b.lx0 - 2, b.y0 - map.cell * 0.55 - 11, b.lx1 - b.lx0 + 4, 14);
-      ctx.fillStyle = "#fff";
-      blockLabel(ctx, b);
+    x.globalAlpha = 1; x.lineCap = "butt";
+  }
+  // the names over the blocks, and round the one pointed at, its corners
+  function raysWords(x, col) {
+    x.font = "400 " + (phone ? 8.5 : 9.5) + 'px "IBM Plex Mono", ui-monospace, monospace';
+    x.textBaseline = "alphabetic";
+    x.fillStyle = col; x.strokeStyle = col;
+    const open = RS.open, gone = open >= 0 ? smooth(open / (DISC_FROM * 0.7)) : 0;
+    const come = smooth((RS.intro - 0.55) / 0.45);
+    for (const b of map.blocks) {
+      const a = (0.42 + 0.58 * b.g) * (1 - 0.55 * RS.dim * (1 - b.g)) * come * (1 - gone);
+      if (a < 0.01) continue;
+      x.globalAlpha = a;
+      x.textAlign = b.side === 0 ? "left" : "right";
+      x.fillText(b.label, b.side === 0 ? b.lx0 : b.lx1, b.ly);
+      // the block lit whole (2026-11-08 — "the entire block and all the dots
+      // get highlighted"): a registration bracket at each of its corners
+      if (b.g > 0.02) {
+        const m = 7 + 3 * (1 - b.g), x0 = b.x0 - m, x1 = b.x1 + m, y0 = b.y0 - m, y1 = b.y1 + m, l = 6;
+        x.globalAlpha = 0.85 * b.g * (1 - gone); x.lineWidth = 1;
+        x.beginPath();
+        x.moveTo(x0, y0 + l); x.lineTo(x0, y0); x.lineTo(x0 + l, y0);
+        x.moveTo(x1 - l, y0); x.lineTo(x1, y0); x.lineTo(x1, y0 + l);
+        x.moveTo(x1, y1 - l); x.lineTo(x1, y1); x.lineTo(x1 - l, y1);
+        x.moveTo(x0 + l, y1); x.lineTo(x0, y1); x.lineTo(x0, y1 - l);
+        x.stroke();
+      }
     }
-    ctx.globalAlpha = 1;
+    x.globalAlpha = 1;
+  }
+  // the strings whole: through the lens, the names white over them
+  function drawRays(x, t) {
+    x.setTransform(DPR, 0, 0, DPR, 0, 0);
+    x.globalCompositeOperation = "source-over"; x.globalAlpha = 1;
+    x.fillStyle = "#050505"; x.fillRect(0, 0, W, H);
+    lensed(x, (col) => raysPass(x, col, t), RS.lens);
+    raysWords(x, "#ffffff");
+  }
+  // one colour of the strings alone, for the discs: their ground, the
+  // strings in that colour where the lens throws it, the names in it too
+  const PURE = ["#ff0000", "#00ff00", "#0000ff"], DARK = ["#050000", "#000500", "#000005"];
+  function drawRaysOne(x, c, t) {
+    const op = x.globalCompositeOperation;
+    x.fillStyle = DARK[c]; x.fillRect(0, 0, W, H);
+    lensed(x, (col) => raysPass(x, col, t), RS.lens, c);
+    x.globalCompositeOperation = "lighter";
+    raysWords(x, PURE[c]);
+    x.globalCompositeOperation = op;
   }
 
-  // the world: the poster, its spheres out of focus, the blob at the middle
-  function drawWorldView(now, t, dt) {
+  // THE WORLD: the poster, its spheres out of focus, the blob at the middle.
+  // `c` is drawn into at `sc` pixels a point (the screen's own, or the
+  // opening's smaller picture); `boost` widens the middle's aberration
+  function drawWorldView(c, sc, now, t, dt, boost) {
     if (!ground) ground = drawGround();
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.drawImage(ground, 0, 0);
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    const k = changeT0 < 0 ? 1 : clamp((now - changeT0) / CHANGE_MS, 0, 1);
-    if (k >= 1) { changeT0 = -1; prev = null; }
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.globalCompositeOperation = "source-over"; c.globalAlpha = 1;
+    c.imageSmoothingQuality = "high";
+    c.drawImage(ground, 0, 0, c.canvas.width, c.canvas.height);
+    c.setTransform(sc, 0, 0, sc, 0, 0);
+    const ch = TR.kind === "change" ? clamp((now - TR.t0) / TR.ms, 0, 1) : -1;
     // the spheres round it, drifting, the nearer moving more with the hand
     const fh = STILL ? 1 : 1 - Math.exp(-dt * 3.2);
     handS.x += ((hand.on ? hand.x / W - 0.5 : 0) - handS.x) * fh;
     handS.y += ((hand.on ? hand.y / H - 0.5 : 0) - handS.y) * fh;
     const px = handS.x, py = handS.y;
-    for (const b of blobs) {
-      b.in = Math.min(1, b.in + dt * 1.1);
+    const lean = (b) => {
       const depth = 0.4 + b.focus;
       b.dx = (STILL ? 0 : Math.sin(t * b.sp + b.ph) * 9) - px * 18 * depth;
       b.dy = (STILL ? 0 : Math.cos(t * b.sp * 0.8 + b.ph) * 7) - py * 14 * depth;
-      const lit = aim === b;
-      const s = b.img.s * (lit ? 1.07 : 1);
-      const a = ease(clamp(b.in, 0, 1));
-      ctx.globalAlpha = a * (lit ? 1 : 0.94);
-      ctx.drawImage(b.img.c, b.x + b.dx - s / 2, b.y + b.dy - s / 2, s, s);
-      // nothing written by it (2026-11-07, last — "Remove the names of the
-      // houses from the blobs", then "remove all tthose little texts around
-      // the middle nodes"): the list names the houses and lights the one under
-      // the hand, and a small note by the hand says which it is, the way back
-      // to the perfumer too
-    }
-    ctx.globalAlpha = 1;
-    // the one before going out as this comes in
-    if (prev) {
-      const a = 1 - ease(clamp(k * 1.6, 0, 1)), s = 1 + 0.25 * ease(k);
-      drawCur(ctx, prev, P.x, P.y, P.r * s, t, a);
-    }
-    const kin = prev ? ease(clamp(k * 1.4 - 0.3, 0, 1)) : changeT0 < 0 ? 1 : ease(k);
-    const sIn = 0.72 + 0.28 * kin;
-    drawCur(ctx, cur, P.x, P.y, P.r * sIn, t, kin);
-    // a change of perfumer: a ripple of the lens's colours out from the middle
-    if (ripple.t0 >= 0) {
-      const u = clamp((now - ripple.t0) / 1250, 0, 1);
-      if (u >= 1) ripple.t0 = -1;
-      else {
-        const rr = P.r * (0.55 + 2.3 * ease(u)), a = 0.5 * (1 - u) * smooth(u * 8);
-        [["rgba(70,92,255,", -6, 2.4], ["rgba(255,196,80,", 4, 2], ["rgba(255,92,64,", 9, 1.3]].forEach(([c, o, w]) => {
-          ctx.strokeStyle = c + a.toFixed(3) + ")"; ctx.lineWidth = w;
-          ctx.beginPath(); ctx.arc(P.x, P.y, Math.max(1, rr + o), 0, TAU); ctx.stroke();
-        });
+    };
+    // the spheres of the world before, going where they stand
+    if (ch >= 0 && TR.old) {
+      const a = 1 - soft(ch * 1.7);
+      for (const b of TR.old) {
+        if (!b.img || a <= 0.01) continue;
+        lean(b);
+        const s = b.img.s * (1 - 0.12 * soft(ch * 1.7));
+        c.globalAlpha = a * 0.94;
+        c.drawImage(b.img.c, b.x + b.dx - s / 2, b.y + b.dy - s / 2, s, s);
       }
     }
-    // the double circle, as the poster's: round the middle at rest, on a
-    // sphere under the hand
-    if (aim) { ret.tx = aim.x + aim.dx; ret.ty = aim.y + aim.dy; ret.tr = aim.r * 1.3; }
-    else { ret.tx = P.x - P.r * 0.04; ret.ty = P.y - P.r * 0.06; ret.tr = P.r * 0.8; }
-    if (!ret.r) { ret.x = ret.tx; ret.y = ret.ty; ret.r = ret.tr; }
-    const f = STILL ? 1 : 1 - Math.exp(-dt * 7);
-    ret.x += (ret.tx - ret.x) * f; ret.y += (ret.ty - ret.y) * f; ret.r += (ret.tr - ret.r) * f;
-    ctx.strokeStyle = "rgba(255,255,255,0.9)"; ctx.lineWidth = 1;
+    const fl = STILL ? 1 : 1 - Math.exp(-dt * 6);
+    for (const b of blobs) {
+      lean(b);
+      // the one the middle becomes is the traveller until it lands
+      if (ch >= 0 && b === TR.back) continue;
+      if (!b.img) continue;
+      // coming in one after another (after the change has turned)
+      const startAt = ch >= 0 ? 0.42 : 0;
+      if (ch < 0 || ch > startAt) b.in = Math.min(1, b.in + dt * (STILL ? 99 : 1.3));
+      b.lift += ((stick === b || aim === b ? 1 : 0) - b.lift) * fl;
+      const k = soft(clamp(b.in * 1.15 - b.wait, 0, 1));
+      if (k <= 0) continue;
+      const s = b.img.s * (0.84 + 0.16 * k) * (1 + 0.06 * b.lift);
+      c.globalAlpha = k * (0.94 + 0.06 * b.lift);
+      c.drawImage(b.img.c, b.x + b.dx - s / 2, b.y + b.dy - s / 2, s, s);
+      // nothing written by it (2026-11-07, last): the list names it and
+      // lights it, and a small note by the hand says which it is
+    }
+    c.globalAlpha = 1;
+    if (ch >= 0) {
+      // A CHANGE: the middle going out to its place, the one pressed coming in
+      if (TR.back) { TR.outT.x1 = TR.back.x + TR.back.dx; TR.outT.y1 = TR.back.y + TR.back.dy; }
+      drawTraveller(c, TR.outT, ch, t, TR.outT.gone ? 1 - soft((ch - 0.5) / 0.5) : 1);
+      drawTraveller(c, TR.inT, ch, t, 1);
+      if (ch >= 1) {
+        if (TR.back) { TR.back.in = 1; }
+        changed();
+      }
+    } else drawCur(c, cur, P.x, P.y, P.r, t, 1, boost || 1);
+    // THE DOUBLE CIRCLE, as the poster's: round the middle at rest, and on
+    // the last sphere the hand was on until it is on another — on a spring,
+    // so it travels between them and settles rather than jumps (2026-11-08 —
+    // "make the highlighting circle smoother")
+    const on = stick && blobs.includes(stick) && stick.img && ch < 0 ? stick : null;
+    const tx = on ? on.x + on.dx : P.x - P.r * 0.04, ty = on ? on.y + on.dy : P.y - P.r * 0.06, tr = on ? on.r * 1.3 : P.r * 0.8;
+    if (!ret.r) { ret.x = tx; ret.y = ty; ret.r = tr; }
+    if (STILL) { ret.x = tx; ret.y = ty; ret.r = tr; }
+    else {
+      const w = 8.5, h = Math.min(dt, 1 / 30);
+      ret.vx += (w * w * (tx - ret.x) - 2 * w * ret.vx) * h; ret.x += ret.vx * h;
+      ret.vy += (w * w * (ty - ret.y) - 2 * w * ret.vy) * h; ret.y += ret.vy * h;
+      ret.vr += (w * w * (tr - ret.r) - 2 * w * ret.vr) * h; ret.r += ret.vr * h;
+    }
+    c.strokeStyle = "rgba(255,255,255,0.88)"; c.lineWidth = 1;
     const wob = STILL ? 0 : Math.sin(t * 0.7) * 0.04;
-    ctx.beginPath(); ctx.arc(ret.x, ret.y, ret.r, 0, TAU); ctx.stroke();
-    ctx.beginPath(); ctx.arc(ret.x + ret.r * (0.03 + wob * 0.3), ret.y - ret.r * (0.055 - wob * 0.2), ret.r * 0.965, 0, TAU); ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(ret.x - 3.5, ret.y - 3.5); ctx.lineTo(ret.x - 1.2, ret.y - 1.2); ctx.moveTo(ret.x + 3.5, ret.y - 3.5); ctx.lineTo(ret.x + 1.2, ret.y - 1.2);
-    ctx.moveTo(ret.x - 3.5, ret.y + 3.5); ctx.lineTo(ret.x - 1.2, ret.y + 1.2); ctx.moveTo(ret.x + 3.5, ret.y + 3.5); ctx.lineTo(ret.x + 1.2, ret.y + 1.2);
-    ctx.stroke();
+    c.beginPath(); c.arc(ret.x, ret.y, Math.max(1, ret.r), 0, TAU); c.stroke();
+    c.beginPath(); c.arc(ret.x + ret.r * (0.03 + wob * 0.3), ret.y - ret.r * (0.055 - wob * 0.2), Math.max(1, ret.r * 0.965), 0, TAU); c.stroke();
+    c.beginPath();
+    c.moveTo(ret.x - 3.5, ret.y - 3.5); c.lineTo(ret.x - 1.2, ret.y - 1.2); c.moveTo(ret.x + 3.5, ret.y - 3.5); c.lineTo(ret.x + 1.2, ret.y - 1.2);
+    c.moveTo(ret.x - 3.5, ret.y + 3.5); c.lineTo(ret.x - 1.2, ret.y + 1.2); c.moveTo(ret.x + 3.5, ret.y + 3.5); c.lineTo(ret.x + 1.2, ret.y + 1.2);
+    c.stroke();
+  }
+  // ---- THE DISCS (2026-11-08): the world opening out of the point, or
+  // closing on it, one colour at a time. Each of red, green and blue sees
+  // the world inside a disc of its own and the strings outside it — the
+  // three discs a little apart, as a lens throws the colours: blue's out to
+  // the upper left and leading, red's to the lower right — so the world is
+  // whole only where all three have passed, its edge blue and cyan above,
+  // red and gold below, each edge feathered.
+  let wcv = null, wch = null;
+  const DISC_AT = [1, 0.3, -1], DISC_R = [0.99, 1, 1.01];
+  // as far as the farthest corner, and the feather and the throw past it
+  const farthest = () => Math.max(Math.hypot(map.hub.x, map.hub.y), Math.hypot(W - map.hub.x, map.hub.y), Math.hypot(map.hub.x, H - map.hub.y), Math.hypot(W - map.hub.x, H - map.hub.y));
+  function disc(c, v) {
+    const R = v * (farthest() * 1.12 + 70), o = (6 + R * 0.04) * Math.sin(Math.PI * Math.min(1, v * 1.1)) + R * 0.01;
+    return { x: map.hub.x + DISC_AT[c] * o * 0.8, y: map.hub.y + DISC_AT[c] * o, r: Math.max(0, R * DISC_R[c]), f: 8 + R * 0.05 };
+  }
+  function drawDiscs(now, t, dt, v, boost) {
+    // the world drawn a little smaller than the screen while it opens, and
+    // taken apart into its three colours
+    const ts = Math.min(DPR, 1.25), tw = Math.round(W * ts), th = Math.round(H * ts);
+    if (!wcv || wcv.width !== tw || wcv.height !== th) {
+      wcv = document.createElement("canvas"); wcv.width = tw; wcv.height = th;
+      wch = [0, 1, 2].map(() => { const c = document.createElement("canvas"); c.width = tw; c.height = th; return c; });
+    }
+    const wx = wcv.getContext("2d");
+    drawWorldView(wx, ts, now, t, dt, boost);
+    for (let c = 0; c < 3; c++) {
+      const x = wch[c].getContext("2d");
+      x.globalCompositeOperation = "source-over"; x.drawImage(wcv, 0, 0);
+      x.globalCompositeOperation = "multiply"; x.fillStyle = PURE[c]; x.fillRect(0, 0, tw, th);
+      x.globalCompositeOperation = "source-over";
+    }
+    const x = ctx0;
+    x.setTransform(1, 0, 0, 1, 0, 0);
+    x.globalCompositeOperation = "source-over"; x.globalAlpha = 1;
+    x.fillStyle = "#000"; x.fillRect(0, 0, cv.width, cv.height);
+    x.globalCompositeOperation = "lighter";
+    x.setTransform(DPR, 0, 0, DPR, 0, 0);
+    for (let c = 0; c < 3; c++) {
+      const d = disc(c, v), r0 = Math.max(0, d.r - d.f), r1 = d.r;
+      // the strings outside, half in the feather
+      x.save(); x.beginPath(); x.rect(-10, -10, W + 20, H + 20); x.arc(d.x, d.y, r1, 0, TAU, true); x.clip("evenodd");
+      drawRaysOne(x, c, t); x.restore();
+      if (r1 > 0.5) {
+        x.save(); x.beginPath(); x.arc(d.x, d.y, r1, 0, TAU); if (r0 > 0) x.arc(d.x, d.y, r0, 0, TAU, true); x.clip("evenodd");
+        drawRaysOne(x, c, t);
+        x.globalAlpha = 0.5;
+        x.setTransform(1, 0, 0, 1, 0, 0); x.drawImage(wch[c], 0, 0, cv.width, cv.height); x.setTransform(DPR, 0, 0, DPR, 0, 0);
+        x.globalAlpha = 1; x.restore();
+      }
+      // the world inside
+      if (r0 > 0.5) {
+        x.save(); x.beginPath(); x.arc(d.x, d.y, r0, 0, TAU); x.clip();
+        x.setTransform(1, 0, 0, 1, 0, 0); x.drawImage(wch[c], 0, 0, cv.width, cv.height);
+        x.restore();
+      }
+    }
+    x.globalCompositeOperation = "source-over";
+    x.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  // the spheres painted one a frame, the nearest first, so no frame waits
+  // for all of them
+  function paintSome() {
+    let n = STILL ? 99 : 1;
+    const todo = blobs.filter((b) => !b.img).sort((a, b) => b.focus - a.focus);
+    for (const b of todo) { if (n-- <= 0) break; paintSphere(b); }
+    return todo.length > 0;
   }
   let clock = 0, last = 0, raf = 0;
   function frame(now) {
@@ -1261,62 +1450,34 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     const t = clock;
     if (mapT0 < 0) mapT0 = now;
     if (!ready && fontsIn && now - mapT0 >= RAYS_IN + 120) { ready = true; document.body.classList.add("is-ready"); }
-    if (gather.on) {
-      const u = clamp((now - gather.t0) / gather.ms, 0, 1);
-      drawRays(now, t);
-      drawGather(u);
-      if (u >= 1) gathered();
-    } else if (reveal.on) {
-      const u = clamp((now - reveal.t0) / reveal.ms, 0, 1);
-      // THE WORLD OPENING OUT OF THE RAYS (softer since 2026-11-07 — "make
-      // the transitions smoother"): on a smootherstep rather than a cubic,
-      // and through a feathered circle rather than a hard one — the world
-      // drawn apart and laid over the rays through a soft edge
-      const soft = (x) => x * x * x * (x * (x * 6 - 15) + 10);
-      const k = reveal.dir > 0 ? soft(u) : 1 - soft(u);
-      drawRays(now, t);
-      if (!wcv || wcv.width !== cv.width || wcv.height !== cv.height) {
-        wcv = document.createElement("canvas"); wcv.width = cv.width; wcv.height = cv.height; wctx = wcv.getContext("2d");
-      }
-      ctx = wctx;
-      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1;
-      ctx.clearRect(0, 0, wcv.width, wcv.height);
-      drawWorldView(now, t, dt);
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      const rr = Math.max(0.5, k * Math.hypot(W, H) * 1.08), fe = Math.min(220, 40 + rr * 0.3);
-      const g = ctx.createRadialGradient(reveal.x, reveal.y, Math.max(0, rr - fe), reveal.x, reveal.y, rr);
-      g.addColorStop(0, "rgba(0,0,0,1)"); g.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.globalCompositeOperation = "destination-in"; ctx.globalAlpha = 1; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      ctx.globalCompositeOperation = "source-over";
-      ctx = ctx0;
-      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
-      ctx.drawImage(wcv, 0, 0);
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      // the edge fringed as the lens fringes: blue-violet inside, gold and
-      // then red outside, going as the world settles
-      const fr = (1 - smooth((u - 0.55) / 0.45)) * smooth(u * 6);
-      if (fr > 0.01 && rr > 2) {
-        const edge = rr - fe * 0.5;
-        [["rgba(70,92,255,", -7, 2.6], ["rgba(255,196,80,", 5, 2.2], ["rgba(255,92,64,", 10, 1.4]].forEach(([c, o, w]) => {
-          ctx.strokeStyle = c + (0.55 * fr).toFixed(3) + ")"; ctx.lineWidth = w;
-          ctx.beginPath(); ctx.arc(reveal.x, reveal.y, Math.max(1, edge + o), 0, TAU); ctx.stroke();
-        });
-      }
-      document.body.style.setProperty("--reveal", smooth((k - 0.25) / 0.6).toFixed(3));
-      document.body.classList.add("is-revealing");
-      if (u >= 1) {
-        reveal.on = false;
-        document.body.classList.remove("is-revealing");
-        if (reveal.dir < 0) { view = "rays"; setBody(); }
-        document.body.style.removeProperty("--reveal");
-      }
-    } else if (view === "rays") drawRays(now, t);
-    else drawWorldView(now, t, dt);
+    if (cur && laid) paintSome();
+    const raysOn = view === "rays" || TR.kind === "open" || TR.kind === "close";
+    if (raysOn) stepRays(now, t, dt);
+    if (TR.kind === "open") {
+      const u = clamp((now - TR.t0) / TR.ms, 0, 1);
+      // out of the point quickly, as a lens let go, and slowing to rest as it
+      // reaches the corners
+      const xo = clamp((u - DISC_FROM) / (1 - DISC_FROM), 0, 1);
+      const v = 1 - Math.pow(1 - xo, 2.6);
+      // the blob comes out of a wide aberration into its own
+      const boost = 1 + 2.4 * (1 - smooth((v - 0.25) / 0.75));
+      if (u < DISC_FROM) drawRays(ctx0, t);
+      else drawDiscs(now, t, dt, v, boost);
+      document.body.style.setProperty("--reveal", smooth((v - 0.5) / 0.45).toFixed(3));
+      if (u >= 1) opened();
+    } else if (TR.kind === "close") {
+      const u = clamp((now - TR.t0) / TR.ms, 0, 1);
+      // gently from the corners, quicker as it closes on the point
+      const v = 1 - Math.pow(soft(u), 0.8);
+      drawDiscs(now, t, dt, v, 1 + 2.4 * smooth(u * 1.4));
+      document.body.style.setProperty("--reveal", (1 - smooth(u / 0.35)).toFixed(3));
+      if (u >= 1) closed();
+    } else if (view === "rays") drawRays(ctx0, t);
+    else drawWorldView(ctx0, DPR, now, t, dt, 1);
     if (!STILL && !document.hidden) raf = requestAnimationFrame(frame);
     else last = 0;
   }
   function kick() { if (!raf) raf = requestAnimationFrame(frame); }
-
   // ---- THE GRAIN, as the poster's: a picture of noise jumped about by its
   // transform, never drawn again ---------------------------------------------
   (function grain() {
@@ -1328,22 +1489,31 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     el(".t1-grain").style.backgroundImage = "url(" + g.toDataURL() + ")";
   })();
 
+
   // ---- BEGIN -----------------------------------------------------------------
-  resize();
-  cur = { kind: "per", p: ORDER[0], h: null };
-  // the world is not drawn before the rays have begun (2026-11-07 — "make the
-  // loading of it smoother"): its pictures are painted once the first frames
-  // are out, and the rays' finished picture is made a little before they
-  // reach their dots, so neither holds a frame up
+  // the world is not laid before the strings have begun (2026-11-07 — "make
+  // the loading of it smoother"): its pictures are painted once the first
+  // frames are out
   let laid = false;
-  const layLater = () => { if (!laid) { laid = true; layWorld(); writeHud(); } };
+  const layLater = () => { if (!laid) { laid = true; if (!cur) cur = { kind: "per", p: ORDER[0] }; layWorld(); writeHud(); writeList(); } };
+  resize();
   setBody();
-  // an address naming a perfumer opens its world
-  const hsh = decodeURIComponent(location.hash.slice(1));
-  if (hsh) { const p = PER.find((q) => q.id === hsh); if (p) { view = "world"; cur = { kind: "per", p, h: null }; layLater(); setBody(); } }
+  // an address naming a perfumer opens their world; "house-" and a house's
+  // name, the house's
+  function fromAddress() {
+    const hsh = decodeURIComponent(location.hash.slice(1));
+    if (!hsh || busy()) return;
+    const p = PER.find((q) => q.id === hsh);
+    const ho = !p && hsh.startsWith("house-") ? HOS.find((h) => h.id === hsh.slice(6)) : null;
+    if (!p && !ho) return;
+    cur = p ? { kind: "per", p } : { kind: "house", ho }; if (p) lastPer = p;
+    laid = true; stick = null; aim = null; closeMore(true);
+    layWorld(); writeHud(); writeList(); view = "world"; setBody(); kick();
+  }
+  fromAddress();
+  window.addEventListener("hashchange", fromAddress);
   const idle = window.requestIdleCallback || ((f) => setTimeout(f, 60));
   setTimeout(() => idle(layLater, { timeout: 600 }), 320);
-  setTimeout(() => idle(() => { if (!map.img && view === "rays") map.img = drawMapImage(); }, { timeout: 500 }), Math.max(400, RAYS_IN - 700));
   window.addEventListener("resize", () => { resize(); kick(); });
   document.addEventListener("visibilitychange", () => { if (!document.hidden) { last = 0; kick(); } });
   if (STILL) {
@@ -1351,19 +1521,37 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
     ["click", "keydown", "change", "pointermove"].forEach((e) => document.addEventListener(e, again));
   }
   kick();
+  const findBody = (id) => blobs.find((x) => (x.kind === "house" ? x.ho.id : x.p.id) === id);
   window.TestPage1 = {
     view: () => view,
-    now: () => (cur ? { kind: cur.kind, perfumer: cur.p.id, house: cur.h != null ? HOU[cur.h].id : null, count: (cur.kind === "house" ? cur.p.houses.get(cur.h) : cur.p.list).length } : null),
+    busy: () => TR.kind,
+    now: () => (cur ? { kind: cur.kind, perfumer: cur.kind === "per" ? cur.p.id : null, house: cur.kind === "house" ? cur.ho.id : null, count: listOf(cur).length } : null),
     dots: () => map.dots.length,
     perfumers: NP,
+    // a perfumer's dots: where the first stands, and how many
     dotOf: (id) => { const d = map.dots.find((x) => x.p.id === id); return d ? { x: d.x, y: d.y } : null; },
-    houseAt: (id) => { const b = blobs.find((x) => x.kind === "house" && HOU[x.h].id === id); return b ? { x: b.x + b.dx, y: b.y + b.dy } : null; },
-    backAt: () => { const b = blobs.find((x) => x.kind === "per"); return b ? { x: b.x + b.dx, y: b.y + b.dy } : null; },
-    open: (id, house) => { const p = PER.find((q) => q.id === id); if (!p) return; const h = house ? HOU.findIndex((x) => x.id === house) : -1; openWorld(p, null); if (h >= 0) show({ kind: "house", p, h }, true); },
+    blockOf: (id) => { const b = map.blocks.find((x) => x.p.id === id); return b ? { dots: b.dots.length, x0: b.x0, x1: b.x1, y0: b.y0, y1: b.y1, lit: +b.g.toFixed(2) } : null; },
+    // how slack a perfumer's strings are: 1 hanging, 0 taut
+    slack: (id) => { const ds = map.dots.filter((x) => x.p.id === id); return ds.length ? +(ds.reduce((s, d) => s + d.s.k, 0) / ds.length).toFixed(2) : null; },
+    // how far the middle of a perfumer's first string hangs off the straight
+    sag: (id) => { const d = map.dots.find((x) => x.p.id === id); if (!d) return null; const [mx, my] = along(d.s, 0.5); return +Math.hypot(mx - (d.x + map.hub.x) / 2, my - (d.y + map.hub.y) / 2).toFixed(1); },
+    // how many strings are ringing (plucked, or twanging as they pull taut)
+    ringing: () => map.strings.filter((s) => Math.abs(s.a1) > 0.5).length,
+    houseAt: (id) => { const b = blobs.find((x) => x.kind === "house" && x.ho.id === id); return b ? { x: b.x + b.dx, y: b.y + b.dy } : null; },
+    perfumerAt: (id) => { const b = blobs.find((x) => x.kind === "per" && x.p.id === id); return b ? { x: b.x + b.dx, y: b.y + b.dy } : null; },
+    middle: () => ({ x: P.x, y: P.y }),
+    circle: () => ({ x: +ret.x.toFixed(1), y: +ret.y.toFixed(1), r: +ret.r.toFixed(1), on: stick ? (stick.kind === "house" ? stick.ho.id : stick.p.id) : null }),
+    open: (id, quick) => { const p = PER.find((q) => q.id === id); if (p) openWorld({ kind: "per", p }, quick); },
+    openHouse: (id, quick) => { const ho = HOS.find((q) => q.id === id); if (ho) openWorld({ kind: "house", ho }, quick); },
+    go: (id) => { const b = findBody(id); if (b) change(b.kind === "per" ? { kind: "per", p: b.p } : { kind: "house", ho: b.ho }); },
     ret: returnUp,
-    lobes: () => (cur ? cur.lobes.filter((o) => o.part).map((o) => o.part.say) : []),
-    list: () => listRows.map((r) => (r.kind === "house" ? HOU[r.h].name : r.e.n)),
+    lobes: () => (cur && cur.lobes ? cur.lobes.filter((o) => o.part).map((o) => o.part.say) : []),
+    shape: () => (cur && cur.lobes ? (cur.lobes.every((o) => o.sides === 6) ? "cut" : cur.lobes.every((o) => !o.sides) ? "round" : "mixed") : null),
+    list: () => listRows.map((r) => nameOf(r)),
     spheres: () => blobs.length,
+    sphereKinds: () => blobs.map((b) => b.kind + (b.lobes.every((o) => o.sides === 6) ? ":cut" : ":round")),
+    // how sharp a sphere is painted, against the screen's pixels it covers
+    sharpness: () => blobs.filter((b) => b.img).map((b) => +(b.img.c.width / (b.img.s * DPR)).toFixed(2)),
     look: () => LOOK,
     // the colour where the blob's edge begins, walking in from its upper left
     // and from its lower right (the picture's own colour, before the poster)
@@ -1378,6 +1566,14 @@ const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","s
         return null;
       };
       return { upLeft: walk(-1), downRight: walk(1) };
+    },
+    // the middle's darkest colour: a perfumer's plum, a house's ink
+    core: () => {
+      if (!cur || !cur.paint) return null;
+      const c = cur.paint, n = c.width, d = c.getContext("2d").getImageData(0, 0, n, n).data;
+      let best = null, lum = 1e9;
+      for (let o = 0; o < d.length; o += 4) if (d[o + 3] > 240) { const l = d[o] + d[o + 1] + d[o + 2]; if (l < lum) { lum = l; best = [d[o], d[o + 1], d[o + 2]]; } }
+      return best;
     },
   };
 })();
