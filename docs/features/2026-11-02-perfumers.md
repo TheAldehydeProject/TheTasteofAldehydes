@@ -659,3 +659,16 @@ The test pages keep their snapshot of the ledger, as they always do.
 
 **How to test it**: `tests/perfumers.spec.js` — the list ends in *Not publicly available*; the rest as
 before. `node tools/note-library/rulebook.js` keeps every rule for Cookie.
+
+## 2026-11-10 — swapped with test page 1, and the plane close in
+
+**This page is Perfumer Worlds now**, and the radial poster this report is about is **test page 1**
+(the owner: "also replace perfumers apge with test page 1, and vice versa"; asked, the two swapped
+whole). Its markup, its styles (out of `style.css`) and its script (`perfumers.js`, with
+`perfumers-earth.js` and a copy of the ledger as of 2026-11-10) are `test-pages/1/` now, linking
+nowhere but back to Contact. Before it went, it was made smooth close in — **the plane**: settled on
+what is chosen, the chart drawn once onto tiles of its own plane, which the browser lays down tipped
+and turned in perspective every frame, so going through Prin Lomros' perfumes draws nothing of it
+again, at the screen's full sharpness ("It does not work smoothly, especially when you open up prin
+lomoros and scroll. it is also low quality"). Both are in [Perfumer Worlds, the Perfumers
+page](2026-11-10-perfumer-worlds-the-perfumers-page.md); its tests are `tests/poster.spec.js`.

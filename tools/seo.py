@@ -59,7 +59,7 @@ P = {
  "favourites/index.html": dict(desc="Favourites — things I like, no other criteria than that: fragrances in chapters, among them Des Cendres, Haxan and De Profundis.", crumbs=[HOME]),
  "explorations-and-researches/index.html": dict(desc="Explorations & Researches. Here you will find my researches and my explorations: a guide to perfume, dupes, designers and niches, resins in perfumery, and more.", crumbs=[HOME]),
  "note-library/index.html": dict(desc="The Note Library: every note named in a fragrance on this site, as a network in three dimensions — what each is, its variations, and its sources.", crumbs=[HOME]),
- "perfumers/index.html": dict(desc="Perfumers: every perfumer behind a perfume on this site, and Prin Lomros’ houses — their houses, their perfumes and the years, on one circle, with sources.", crumbs=[HOME]),
+ "perfumers/index.html": dict(desc="Perfumers: every perfumer behind a perfume on this site — a string from each of their houses, and a world for every perfumer and house, with their stories and sources.", crumbs=[HOME]),
  "houses/pineward.html": dict(type="article", desc="Pineward, the house that smells like trees: forty-eight fragrances described with their notes and photographs — Murkwood, Snoqualmie, White Fir and more.", crumbs=[HOME, SD]),
  "houses/adar.html": dict(type="article", desc="ADAR, the house that you have never heard of: eleven fragrances described with their notes — Amber Zero, Aetherialism, Incantu, Lignum Dei, Tyrian and more.", crumbs=[HOME, SD]),
  "houses/almost-human.html": dict(type="article", desc="Almost Human, abstraction done quite well: Burning Bridges, Dear Future, Desert Hope, Ritual Code and Silent Rain, described with their olfactory landscapes.", crumbs=[HOME, SD]),
@@ -98,7 +98,7 @@ P = {
  # nofollow, the only pages here that say nofollow. Not in robots.txt on
  # purpose: a page a crawler is barred from is a page whose noindex it
  # never reads.
- "test-pages/1/index.html": dict(desc="A test page, not a part of the site: Perfumer Worlds — every perfumer a string to each of their houses, and a world of dark blobs for every perfumer and every house.", noindex=True, nofollow=True),
+ "test-pages/1/index.html": dict(desc="A test page, not a part of the site: the radial poster that was the Perfumers page — every perfume round the Earth, its perfumer, its house and its year.", noindex=True, nofollow=True),
  "test-pages/2/index.html": dict(desc="A test page, not a part of the site: Perfumer Spectrums 2026 — every perfumer a dome, their houses round the outside and every perfume a tick.", noindex=True, nofollow=True),
  "test-pages/3/index.html": dict(desc="A test page, not a part of the site: A Portrait of the Perfumers — a thread for every perfume, rising from its perfumer to its house.", noindex=True, nofollow=True),
  "test-pages/4/index.html": dict(desc="A test page, not a part of the site: The Perfumers' Graph — every perfumer, house, perfume, letter and note a node, in clouds, chosen from a table.", noindex=True, nofollow=True),
@@ -142,8 +142,8 @@ THEME = {
  "houses/tale-parfums.html": "#fbf8f0",
  "houses/tombstone.html": "#ecebe8",
  "search/index.html": "#191c21",
- "perfumers/index.html": "#0b0c0d",
- "test-pages/1/index.html": "#050505", "test-pages/2/index.html": "#0b0b16",
+ "perfumers/index.html": "#050505",
+ "test-pages/1/index.html": "#0b0c0d", "test-pages/2/index.html": "#0b0b16",
  "test-pages/3/index.html": "#262628", "test-pages/4/index.html": "#c9cbce",
 }
 for essay in ["theory-01", "theory-02", "theory-03", "resins-in-perfumery", "skin",

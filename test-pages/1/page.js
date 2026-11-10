@@ -1,1579 +1,3650 @@
-/* The site's Perfumers ledger, as it stood on 2026-11-07, with the perfumers'
-   biographies (tools/perfumers/BIOS.md). A snapshot: nothing on the site
+/* TEST PAGE 1 — THE RADIAL POSTER: its Earth (Natural Earth's coastlines,
+   tools/perfumers/earth.py), the site's Perfumers ledger as it stood on
+   2026-11-10, and the poster's own script. A snapshot: nothing on the site
    reads this page, and it reads nothing of the site. */
-const DATA = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","sort":"Nilsson","from":"United States","born":"1995","about":["An American perfumer who grew up among the forests of the Rocky Mountains; Parfumo gives 1995 as the year he was born.","Self-taught, he founded Pineward in Colorado in 2020, at twenty-five, meaning it to be a line of pine and fir perfumes.","The money to start it came from donating plasma after he recovered from COVID-19 in June 2020.","In 2022 he acquired Apoteker Tepe and brought its perfumes back, working with its founder, Holladay Saltz.","Parfumo knows sixty-two perfumes by him, every one of them for Pineward."],"bio":{"t":["Nicholas Nilsson is an American perfumer, born in 1995, who grew up among the forests of the Rocky Mountains. He founded Pineward in 2020, at twenty-five, meaning it to be a line of perfumes of pine and fir.","He taught himself, and every perfume he is known for is Pineward's own. Parfumo knows sixty-two by him, rated 7.3 out of ten on average, and WhatScent, too, files him as his house's one perfumer."],"s":[["“Nicholas Nilsson.” *Parfumo*, parfumo.com. Accessed 7 Nov. 2026.","https://www.parfumo.com/Perfumers/nicholas-nilsson"],["“Pineward: Info and Facts.” *Parfumo*, parfumo.net. Accessed 7 Nov. 2026.","https://www.parfumo.net/PerfumeBrand/pineward"],["“Nicholas Nilsson.” *WhatScent*, whatscent.app. Accessed 7 Nov. 2026.","https://whatscent.app/perfumers/nicholas-nilsson"]]}},{"id":"dan-roxana-adar","name":"Dan & Roxana Adar","sort":"Adar","from":"Romania","about":["The in-house perfumers of ADAR, a European house with Romanian roots.","ADAR made its perfumes only on private commission until a public collection came out in 2025.","The house also works with outside perfumers — Antoine Lie, Miguel Matos and Manuel Attardi — and does not say which of them made which perfume; here every ADAR perfume is credited to the house's own pair unless a source names its nose.","Where the house names the nose — Dan Adar, Rox (Roxana) Adar or Miguel Matos — the perfume is credited to that perfumer instead; what is left here is the house's pair."],"bio":{"t":["Dan and Roxana Adar are the two in-house perfumers of ADAR, a European house with Romanian roots. The house says it came out of a long dialogue between two creators who work as The Light and The Dark — one drawn to the luminous and ethereal, the other to depth, shadow and intensity.","For many years its perfumes went only to a small circle of private collectors, as commissions; it has been public since 2025. Every core formula is developed in-house by the two of them, each bottle is made by hand from marble, stone, wood, resin or metal, and each perfume is made in numbered micro-batches with one note left undisclosed. The house also works with a few outside perfumers, Antoine Lie, Miguel Matos and Manuel Attardi among them."],"s":[["“The House.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","https://adarperfumes.com/pages/about"],["“Adar.” *Scent Split*, scentsplit.com. Accessed 7 Nov. 2026.","https://www.scentsplit.com/collections/adar"],["“Adar – Tyrian.” *The Perfumery Barcelona*, theperfumerybarcelona.com. Accessed 2 Nov. 2026.","https://www.theperfumerybarcelona.com/en/?p=27314"]]}},{"id":"goran-bajazetov","name":"Goran Bajazetov","sort":"Bajazetov","about":["The founder and perfumer of Almost Human.","Before perfume he spent more than twenty years in design, visual design, storytelling and the development of technology products; Parfumo lists the house as a Romanian brand he founded in 2025.","Its first collection, First Signal, came out in 2026: five perfumes that do without a pyramid of notes and are described instead by how they change on the skin."],"bio":{"t":["Goran Bajazetov is the founder, perfumer and creative director of Almost Human. Before perfume he spent more than twenty years in design, visual design, storytelling and the making of technology products.","He founded the house in 2025. Its perfumes draw on science fiction, on esoteric ideas and on work across disciplines, and they are told not by a pyramid of notes but by how they change on the skin. The first collection, First Signal, came out in 2026: Burning Bridges, Dear Future, Desert Hope, Ritual Code and Silent Rain. Parfumo and Pitti Immagine give the house as Romanian; Scent Verdict places it in Novi Sad, in Serbia."],"s":[["“Almost Human.” *Pitti Immagine Fragranze*, fragranze.pittimmagine.com. Accessed 7 Nov. 2026.","https://fragranze.pittimmagine.com/en/exhibitors/A/almost-human"],["“Almost Human: All Perfumes & Information.” *Parfumo*, parfumo.com. Accessed 7 Nov. 2026.","https://www.parfumo.com/Perfumes/almost-human?o=y_desc"],["“Goran Bajazetov.” *Scent Verdict*, scentverdict.com. Accessed 7 Nov. 2026.","https://scentverdict.com/perfumer/goran-bajazetov"]]}},{"id":"david-lev-jipa-slivinschi","name":"David-Lev Jipa-Slivinschi","sort":"Jipa-Slivinschi","from":"Romania","about":["Born in Bucharest, of Russian and Ukrainian heritage, he studied film and screenwriting and turned to perfume during the pandemic.","Self-taught, he founded his own house, Toskovat', in Bucharest in 2022.","For Ataraxia he is credited with Vestibule and Amaretto Jazz in the Melting Room, both from 2024."],"bio":{"t":["David-Lev Jipa-Slivinschi was born in Bucharest, of Russian and Ukrainian heritage. He studied film and screenwriting, and came to perfume during the pandemic.","Self-taught, he founded his own house, Toskovat', in Bucharest in 2022. He calls its perfumes extraits de mémoire, each meant to set off one feeling or one memory, and he has said that the story side of a perfume is what matters most to him. For Ataraxia he made Vestibule and Amaretto Jazz in the Melting Room."],"s":[["“Toskovat.” *Parfinity*, parfinity.com. Accessed 2 Nov. 2026.","https://www.parfinity.com/en/brand/toskovat"],["“Toskovat'.” *Scento*, scento.com. Accessed 2 Nov. 2026.","https://www.scento.com/brand/toskovat"],["“The Cult Brand Making Perfume That Smells Like Gasoline, Holy Water and Money.” *Vogue Philippines*, vogue.ph. Accessed 7 Nov. 2026.","https://vogue.ph/beauty/the-cult-brand-making-perfume-that-smells-like-gasoline-holy-water-and-money/"]]}},{"id":"sy-truong","name":"Sy Truong","sort":"Truong","about":["Named by Ça Fleure Bon as the perfumer of Ataraxia's Deity (2025), made with the house's creative director, Tudor Ristea.","Deity was a finalist in the Art and Olfaction Awards."],"bio":{"t":["Sy Truong, also written Sy Trong (Trương Chiêu Sỹ), is an independent perfumer in Vietnam, who founded Sylhouette Parfums with Nhan Ngoc Bao Tran. He began studying perfume, teaching himself, in 2018, after a book on perfume changed his life.","His perfumes are dark and romantic — Poème Noir, Desir Noir and La Lune Errante among them — and Sylhouette's Molotov Cocktail won an Art and Olfaction Award in 2024. For Ataraxia he made Deity, with the house's creative director, Tudor Ristea."],"s":[["“Three Sylhouette Parfums You Should Be Wearing (Sy Trong / Truong Chieu Sy).” *Ça Fleure Bon*, cafleurebon.com. Accessed 7 Nov. 2026.","https://cafleurebon.com/three-sylhouette-parfums-you-should-be-wearing-sy-trong-truong-chieu-sy-plus-desir-noir-giveaway/"],["“Sylhouette Parfums.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/brand/1000/sylhouette-parfums"],["Vernon, Emma, host. “198. Sy Truong [Sylhouette] ~ The Man With the Paracresol Tattoo.” *Perfume Room*, Pocket Casts. Accessed 7 Nov. 2026.","https://pocketcasts.com/podcast/perfume-room/5ea88330-89c8-0139-34e7-0acc26574db2/198-sy-truong-sylhouette-the-man-with-the-paracresol-tattoo/9c686769-393a-487b-879b-5e921b04685e"]]}},{"id":"antoine-lie","name":"Antoine Lie","sort":"Lie","from":"France","born":"1966","about":["Born in Strasbourg in 1966.","He studied chemistry before moving to Grasse to train as a perfumer.","He has made perfumes for ERIS Parfums, État Libre d'Orange, Comme des Garçons, Houbigant and Les Indémodables.","Every Les Abstraits perfume is his, made with the house's founder, the fragrance critic and YouTuber Eugen Nizic."],"bio":{"t":["Antoine Lie is a French perfumer, raised in Strasbourg, who studied chemistry before moving to Grasse to study perfume, and was apprenticed to the teacher Jean Guichard. He worked in France and in the United States, where he took part in Armani Code, Versace Crystal Noir and Ralph Lauren Romance for Men, at Givaudan, at IFF and, from 2011, at Takasago.","Wanting more freedom, he left the large companies for niche houses, and since 2018 has been independent, with a studio of his own in Paris, ALOE — Antoine Lie Olfactive Experience. He calls himself an abstract perfumer. He has made perfumes for ERIS, Houbigant, Les Indémodables and Zoologist, Trudon's Absolu, Comme des Garçons' Wonderwood and État Libre d'Orange's Rien — and every perfume of Les Abstraits, with its founder, Eugen Nizic."],"s":[["“Antoine Lie.” *Nose Paris*, noseparis.com. Accessed 7 Nov. 2026.","https://noseparis.com/fr/nez/antoine-lie-nez/"],["“Antoine Lie.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/antoine-lie"],["“Antoine Lie.” *The Fragrance Foundation UK*, fragrancefoundation.org.uk. Accessed 7 Nov. 2026.","https://fragrancefoundation.org.uk/antoine-lie"]]}},{"id":"michael-nordstrand","name":"Michael Nordstrand","sort":"Nordstrand","about":["Named by Parfumo and by Ça Fleure Bon as the perfumer of Tale Parfum's Bad Lily (2024).","Nothing more about him has been filed here yet."],"bio":{"t":["Michael Nordstrand is an independent perfumer, teacher and artist, with a small studio of his own, Mythologist Studio. He trained at Givaudan, ISIPCA, the Grasse Institute of Perfumery and Cinquième Sens.","For the Getty Villa he made, in 2025, a perfume in two scents after ancient Pylos. He has worked with Epichron, Future Society and House of Mammoth, and for Tale Parfum he made Bad Lily."],"s":[["“Dab a Little 3,000-Year-Old Greek Civilization on Your Wrist.” *Getty News*, getty.edu. Accessed 7 Nov. 2026.","https://www.getty.edu/news/pylos-perfume-michael-nordstrand-q-and-a"],["“Michael Nordstrand.” *Scent Verdict*, scentverdict.com. Accessed 7 Nov. 2026.","https://scentverdict.com/perfumer/michael-nordstrand"],["“Michael Nordstrand.” *WhatScent*, whatscent.app. Accessed 7 Nov. 2026.","https://whatscent.app/perfumers/michael-nordstrand"]]}},{"id":"chad-hodge","name":"Chad Hodge","sort":"Hodge","from":"United States","about":["A screenwriter, and co-founder of Tale Parfum with its creative director, Diandra Barsalou.","Ça Fleure Bon credits Water Me to him.","Tale Parfum was founded in Los Angeles."],"bio":{"t":["Chad Hodge is an American writer and producer, born in 1977 in Kansas City, Missouri, and raised in Highland Park, Illinois; he studied at Northwestern University. He created the television series Runaway, The Playboy Club, Wayward Pines and Good Behavior, and wrote the Broadway Holiday Inn and the film The Darkest Minds.","With the creative director Diandra Barsalou he founded Tale Parfum, a house with, in Sainte Cellier's words, a cinematic instinct for character and transformation, which composes each perfume as a chapter in an evolving story. Ça Fleure Bon credits Water Me to him."],"s":[["“Chad Hodge.” *Wikipedia*, en.wikipedia.org. Accessed 7 Nov. 2026.","https://en.wikipedia.org/wiki/Chad_Hodge"],["“Tale Parfum.” *Sainte Cellier*, saintecellier.com. Accessed 7 Nov. 2026.","https://saintecellier.com/collections/tale-parfum"],["“Tale Parfum Bad Lily (Michael Nordstrand) 2024.” *Ça Fleure Bon*, cafleurebon.com. Accessed 2 Nov. 2026.","https://cafleurebon.com/tale-parfum-bad-lily-michael-nordstrand-2024-plus-surreal-muget-giveaway/"]]}},{"id":"qimu","name":"Qimu","sort":"Qimu","about":["WhatScent names Qimu as the perfumer of Drummer, by the house that carries the name, Qimu & Musicians.","No source found says who made Guitarist, Vocal or Bassist, so those stand under Perfumer not found."],"bio":{"t":["Qimu is the name WhatScent gives as the perfumer of Drummer, by the house that carries the name, Qimu & Musicians. Essencional reports that Lan, the founder of Tombstone, shows Qimu and Musicians at Esxence beside Tombstone, with Bu Feng and Scented Vision.","No source found says who Qimu is, or who made Guitarist, Vocal or Bassist."],"s":[["“Qimu & Musicians Drummer.” *WhatScent*, whatscent.app. Accessed 2 Nov. 2026.","https://whatscent.app/perfume/drummer-1783425703668"],["“Fragrance Creators from China Softly Whisper and Steadily Conquer.” *Essencional*, essencional.com. Accessed 7 Nov. 2026.","https://essencional.com/en/posts/fragrance-creators-from-china-softly-whisper-and-steadily-conquer/"]]}},{"id":"aichi-liu","name":"Aichi Liu","sort":"Liu","from":"Taiwan","about":["She founded OM Parfum in 2021 and is based in Taiwan; her perfumes draw on films, places, her own experiences and moods.","Parfumo names her as the house's only perfumer.","She also makes the perfumes of Outsider Parfum, which OM Parfum markets."],"bio":{"t":["Aichi Liu, called Archie by her friends, is a perfumer in Taiwan who founded OM Parfum in 2021. She came to it as a collector: it struck her one day that the many perfumes she had smelled and collected all seemed to be the same.","Her perfumes draw on films, places, her own experiences and moods. Parfumo names her as the only perfumer of OM Parfum and knows about fifty perfumes by her, rated 7.8 out of ten on average. She also makes the perfumes of Outsider Parfum, which OM Parfum markets."],"s":[["“From Taiwan to the World: Aichi Liu's Scented Journey with OM Parfum.” *Parfumo*, parfumo.com, June 2024. Accessed 7 Nov. 2026.","https://www.parfumo.com/Users/Chizza/Blog/Article/from-taiwan-to-the-world-aichi-liu-s-scented-journey-with-om-parfum"],["“Aichi Liu.” *Parfumo*, parfumo.com. Accessed 7 Nov. 2026.","https://www.parfumo.com/Perfumers/aichi-liu"],["“Dragon's Breath.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","https://www.parfumo.com/Perfumes/outsider-parfum/dragon-s-breath"]]}},{"id":"mathew-schmuelian","name":"Mathew Schmuelian","sort":"Schmuelian","from":"United States","about":["He founded Lost Tribe in New York City in 2022, after years of collecting all-natural, artisanal perfumes, and went on to source his own raw materials.","Lost Tribe works almost entirely with natural materials, and names him as its perfumer.","Pan's Labyrinth he composed with the perfumer Rajesh Balkrishnan."],"bio":{"t":["Mathew Schmuelian is the perfumer and founder of Lost Tribe, a house of natural perfume he started in New York City in 2022. Before it he spent several years collecting artisanal natural perfumes, which led him to source his own raw materials and to macerate animalic ones himself.","Lost Tribe is all natural and handmade in New York. Its perfumes are dense, with prominent animalic notes — musk, oud and ambergris — and an unapologetically intense style; he has described its aim as drawing attention to a niche corner of perfumery and teaching people about all-natural perfume. Pan's Labyrinth he made with the perfumer Rajesh Balkrishnan."],"s":[["“Lost Tribe.” *Scent Verdict*, scentverdict.com. Accessed 2 Nov. 2026.","https://scentverdict.com/brand/lost-tribe"],["“Lost Tribe.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/brands/lost-tribe"],["“Lost Tribe Pan's Labyrinth v2 Extrait.” *Venba Fragrance*, venbafragrance.com. Accessed 2 Nov. 2026.","https://www.venbafragrance.com/products/lost-tribe-pans-labyrinth-v2-extrait"]]}},{"id":"rajesh-balkrishnan","name":"Rajesh Balkrishnan","sort":"Balkrishnan","about":["Named as co-perfumer, with Mathew Schmuelian, of Lost Tribe's Pan's Labyrinth.","Nothing more about him has been filed here yet."],"bio":{"t":["Rajesh Balkrishnan is an independent perfumer who is also an academic, a professor of public health at the University of Virginia School of Medicine, in Charlottesville. He came to perfume from medical research, and learned it mostly by himself and by working with others.","His perfumes are dense and woody, often animalic, and often drawn from Indian culture and nature. Among them are Sayat Nova, made with Dmitry Bortnikoff after the eighteenth-century Armenian poet, and Aranyaka, made with Prin Lomros. Parfumo knows twenty-two perfumes by him; for Lost Tribe he made Pan's Labyrinth, with Mathew Schmuelian."],"s":[["“Rajesh Balkrishnan: Academic Turned Fragrance Visionary.” *Parfinity*, parfinity.com. Accessed 7 Nov. 2026.","https://next.parfinity.com/en/perfumer/rajesh-balkrishnan"],["“Rajesh Balkrishnan.” *Parfumo*, parfumo.com. Accessed 7 Nov. 2026.","https://www.parfumo.com/Perfumers/rajesh-balkrishnan"],["“Lost Tribe Pan's Labyrinth v2 Extrait.” *Venba Fragrance*, venbafragrance.com. Accessed 2 Nov. 2026.","https://www.venbafragrance.com/products/lost-tribe-pans-labyrinth-v2-extrait"]]}},{"id":"holladay-penick-saltz","name":"Holladay Penick Saltz","sort":"Saltz","from":"United States","about":["From the Jackson, Mississippi area, she graduated from the Rhode Island School of Design and specialised in fashion and material culture at Parsons and The New School.","After studying fragrance formulation and production at Le Labo in New York, she founded Apoteker Tepe in 2014, and ran it until 2018.","In 2022 Nicholas Nilsson of Pineward acquired the line and brought it back with her help."],"bio":{"t":["Holladay Penick Saltz is from the area of Jackson, Mississippi. She graduated from the Rhode Island School of Design and studied fashion and material culture at Parsons and The New School, then studied the formulation and making of perfume at Le Labo in New York.","She founded Apoteker Tepe in 2014 and ran it as a one-woman house, making and batching the line herself in her studio. Ça Fleure Bon wrote of her understanding of perfume as a symbol, and of the weight she gives to history. In 2022 Nicholas Nilsson of Pineward took the line over and brought it back with her help."],"s":[["“Holladay Saltz.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","https://www.parfumo.com/Perfumers/Holladay_Saltz"],["“In the Studio with Apoteker Tepe.” *Catbird*, catbirdnyc.blogspot.com, July 2015. Accessed 7 Nov. 2026.","https://catbirdnyc.blogspot.com/2015/07/in-studio-with-apoteker-tepe.html"],["“ÇaFleureBon Profiles in American Perfumery: Holladay Saltz of Apoteker Tepe.” *Ça Fleure Bon*, cafleurebon.com. Accessed 7 Nov. 2026.","https://cafleurebon.com/cafleurebon-profiles-in-american-perfumery-holladay-saltz-of-apoteker-tepe-transcendence-through-art-draw/"]]}},{"id":"christopher-sheldrake","name":"Christopher Sheldrake","sort":"Sheldrake","from":"United Kingdom","born":"1955","about":["Born on 11 April 1955 in Madras, India.","The perfumer Georges Cœur took him on as an apprentice in 1974; he worked at Robertet and at Chanel before meeting Serge Lutens in 1989.","He went on to make Féminité du Bois (1992), Ambre Sultan (1993) and nearly all of the Serge Lutens line.","In 2005 he returned to Chanel as perfumer and director of research and development, beside Jacques and later Olivier Polge."],"bio":{"t":["Christopher Sheldrake is a British perfumer, born on 11 April 1955 in Madras, India. Training as an architect, he went to France to improve his French and found himself in Grasse, and in perfume; the perfumer Georges Cœur took him on as an apprentice in 1974, and he worked at Chanel and for many years at Quest International.","In 1989 he met Serge Lutens, then Shiseido's artistic director. The Salons du Palais-Royal line opened in 1992 with his Féminité du Bois, and nearly the whole of the Serge Lutens line is his, Ambre Sultan and Chergui among it. In 2005 he returned to Chanel as perfumer and director of research and development, where Coco Noir is his; he has made perfumes for Rochas, Avon and Space NK as well."],"s":[["“Christopher Sheldrake.” *The Fragrance Foundation UK*, fragrancefoundation.org.uk. Accessed 2 Nov. 2026.","https://www.fragrancefoundation.org.uk/christopher-sheldrake"],["“Christopher Sheldrake.” *Wikipedia*, en.wikipedia.org. Accessed 7 Nov. 2026.","https://en.wikipedia.org/wiki/Christopher_Sheldrake"],["“Christopher Sheldrake.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/christopher-sheldrake"]]}},{"id":"francois-demachy","name":"François Demachy","sort":"Demachy","from":"France","about":["Born in Cannes and raised in Grasse, where his father ran a pharmacy; he studied dentistry before perfume.","He was Dior's perfumer-creator from 2006.","Francis Kurkdjian succeeded him as Dior's chief perfumer in October 2021."],"bio":{"t":["François Demachy is a French perfumer, born in Cannes and raised in Grasse, where his father ran a pharmacy. He studied dentistry and physiotherapy, worked at Mane, and then trained for five years at the perfumery school of Charabot.","At Chanel he became director of research and development, working at the same time on the perfumes of Chanel, Ungaro, Bourjois and Tiffany. In 2006 Dior made him its perfumer-creator and director of development for the perfumes and cosmetics of LVMH, where he also worked for Fendi and Acqua di Parma, and remade Miss Dior and the Eau Sauvage and Dior Homme lines. Francis Kurkdjian succeeded him at Dior in 2021, and he stayed on as a perfumer within LVMH."],"s":[["“François Demachy.” *Wikipedia*, en.wikipedia.org. Accessed 7 Nov. 2026.","https://en.wikipedia.org/wiki/Fran%C3%A7ois_Demachy"],["“Lifetime Achievement Perfumer: François Demachy.” *The Fragrance Foundation*, fragrance.org. Accessed 7 Nov. 2026.","https://fragrance.org/honoree/lifetime-achievement-perfumer-6/"],["“François Demachy.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","https://www.parfumo.com/Perfumers/Franois_Demachy"]]}},{"id":"ramon-monegal","name":"Ramón Monegal","sort":"Monegal","from":"Spain","born":"1951","about":["Born in 1951, of the family behind the Spanish house Myrurgia.","When Puig stopped producing Myrurgia's perfumes in 2008 he left, and after a year off, in which he wrote a book on perfume, founded the house under his own name in 2009."],"bio":{"t":["Ramón Monegal, born in Barcelona in 1951, is the fourth generation of a family of perfumers: his great-grandfather, Esteve Monegal i Prat, opened the drugstore that became Myrurgia in 1916, the house that supplied the Spanish royal family.","He studied architecture first, and began training as a perfumer in 1972 at the family company, and then in Geneva with Artur Jordi Pey, in Grasse with Marcel Carles and in Paris with Pierre Bourdon. For more than thirty years he made perfumes at Myrurgia, many of them best-sellers in Spain, and colognes for Adolfo Domínguez, Antonio Miró and Massimo Dutti. After Puig took Myrurgia over he stepped away, and in 2009 he founded his own house, Monegal, in Barcelona; his book La Perfumista came out in 2012."],"s":[["“Ramon Monegal.” *Wikipedia*, en.wikipedia.org. Accessed 7 Nov. 2026.","https://en.wikipedia.org/wiki/Ramon_Monegal"],["“Ramon Monegal.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/ramon-monegal"],["“Myrurgia.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","https://www.parfumo.com/PerfumeBrand/Myrurgia"]]}},{"id":"pierre-montale","name":"Pierre Montale","sort":"Montale","from":"France","about":["A self-taught perfumer, trained in materials by a perfumer in Grasse; in 1975 he and his sister founded Comptoir Sud Pacifique, and he later founded Montale Parfums.","He founded Mancera in 2008; his daughter Amélie became its artistic director in 2017."],"bio":{"t":["Pierre Montale is a French perfumer of whom, in Luckyscent's words, there are no photographs, no interviews and no profiles. He spent several decades as the in-house perfumer of a Middle Eastern royal family that has never been named, and helped to begin Comptoir Sud Pacifique.","He then launched the line under his own name, Montale, whose perfumes carry the tastes of Middle Eastern perfumery — oud, spice, rose, plum and coffee. In 2008 he founded Mancera with his daughter, Amélie, who became its artistic director in 2017; he is still its perfumer."],"s":[["“Pierre Montale.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/pierre-montale"],["“History.” *Mancera*, manceraparfums.com. Accessed 7 Nov. 2026.","https://manceraparfums.com/en/history"],["“Mancera.” *Pamco*, pamcogrp.com. Accessed 2 Nov. 2026.","https://www.pamcogrp.com/catalogues/perfume/MANCERA.pdf"]]}},{"id":"jakub-pietrynka","name":"Jakub Pietrynka","sort":"Pietrynka","from":"Poland","about":["The Polish independent perfumer behind JMP Artisan Perfumes.","Parfumo knows fifty-five perfumes by him."],"bio":{"t":["Jakub Pietrynka is an independent Polish perfumer, self-taught, who has been drawn to smells since he was a child. He comes from Zamość and has lived for more than a decade in Kraków, where he makes his perfumes; he left a career in tourism to do it.","He founded JMP Artisan Perfumes in 2019, its compositions minimal and classic and treated as art in a bottle. The line was soon known in Poland and across Europe, and Delusion and Eccentricity were also acclaimed in the United States. Parfumo knows fifty-five perfumes by him, rated 8.1 out of ten on average, Kraków (2023) among them."],"s":[["“JMP Artisan Perfumes.” *Fragrances & Art*, fragrancesandart.com. Accessed 7 Nov. 2026.","https://fragrancesandart.com/en/brands/jmp-artisan-perfumes/"],["“JMP Artisan Perfumes.” *Luckyscent*, luckyscent.com. Accessed 2 Nov. 2026.","https://www.luckyscent.com/brand/871/jmp-artisan-perfumes?section=1"],["“Jakub Pietrynka.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","https://www.parfumo.com/Perfumers/jakub-pietrynka"]]}},{"id":"sultan-pasha","name":"Sultan Pasha","sort":"Pasha","about":["WhatScent credits Quintessentially Amber (2025) to him, with Christian Carbonnel.","His house describes it as an amber meant to use every facet of the genre together."],"bio":{"t":["Sultan Pasha is an independent perfumer and maker of attars in London, who grew up between Dhaka and London and has a background in chemistry. Before making perfume he collected and sold rare vintage perfumes.","His paternal grandparents, who settled in Britain in the 1950s, travelled the Middle East to its holy shrines and brought back many attars, and it was to attars that he turned, as the truest way, he has said, to convey what is in him; his first, Shadee, is from 2012. His style draws on French perfumery before the 1960s, with heavy use of rare natural materials. For Zoologist he made Sacred Scarab (2023), and with Christian Carbonnel, Quintessentially Amber (2025)."],"s":[["“An Interview with Sultan Pasha, the Perfumer of Zoologist Sacred Scarab.” *Zoologist Perfumes*, zoologistperfumes.com. Accessed 7 Nov. 2026.","https://www.zoologistperfumes.com/blogs/news/an-interview-with-sultan-pasha-the-perfumer-of-zoologist-sacred-scarab"],["Turin, Luca. “Sultan Pasha Attars.” *Luca Turin*, lucaturin.substack.com. Accessed 7 Nov. 2026.","https://lucaturin.substack.com/p/sultan-pasha-attars"],["“Quintessentially Amber.” *WhatScent*, whatscent.app. Accessed 2 Nov. 2026.","https://whatscent.app/perfume/quintessentially-amber-1784060250942"]]}},{"id":"christian-carbonnel","name":"Christian Carbonnel","sort":"Carbonnel","about":["Credited by WhatScent, with Sultan Pasha, for Quintessentially Amber (2025).","Nothing more about him has been filed here yet."],"bio":{"t":["Christian Carbonnel, called Chris Maurice by some of the houses he works for — both are his real names, his full name being Christian Maurice Carbonnel — is the third generation of a Spanish family of perfumers. His grandfather, the French perfumer Maurice Carbonnel, founded Carbonnel S.A. in Spain in 1925.","He is a perfumer of the family company and its ambassador, and he has made perfumes for houses across Europe and the Middle East, Xerjoff, Amouage, Sospiro and Arabian Oud among them; he founded C De La Niche. He was the mentor of Miguel Matos, taking him into his laboratory. With Sultan Pasha he made Quintessentially Amber (2025)."],"s":[["“Christian Carbonnel a.k.a. Chris Maurice.” *Parfinity*, parfinity.com. Accessed 7 Nov. 2026.","https://www.parfinity.com/en/perfumer/christian-carbonnel-a-k-a-chris-maurice"],["“Chris Maurice.” *La Parfumerie*, laparfumerie.org. Accessed 7 Nov. 2026.","https://www.laparfumerie.org/parfumedia/article/39336-chris-maurice"],["“Miguel Matos: From Art Critic to Perfumer.” *Parfinity*, parfinity.com. Accessed 7 Nov. 2026.","https://www.parfinity.com/en/perfumer/miguel-matos"]]}},{"id":"russian-adam","name":"Russian Adam","sort":"Adam","about":["Ivan Inkin, called Russian Adam: a distiller who founded Areej Le Doré in Thailand in 2017; the house is now based in Indonesia.","Areej Le Doré specialises in natural oud and sandalwood oils it distils itself.","Forbidden Flower is from 2024."],"bio":{"t":["Ivan Inkin, known as Russian Adam, is a distiller and perfumer who founded Areej Le Doré in Thailand in 2017; the house is now based in Indonesia, and it specialises in natural oud and sandalwood oils it distils itself.","He makes his own distillations so that he has full control of the oils he puts into his perfumes — the Mysore sandalwood in Koh-i-Noor among them — and the Choco Borai oud at the head of his Russian Oud is Thai agarwood he co-distilled himself."],"s":[["“Areej Le Doré: Interesting Facts.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","https://www.parfumo.com/Perfumes/Areej_Le_Dore?col_id=2278"],["“Areej Le Dore – Koh-i-Noor.” *Luckyscent Videos*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/videos/detail/249/areej-le-dore-koh-i-noor"],["“Areej Le Doré Russian Oud: Willy Wonka's Oud.” *Kafkaesque*, kafkaesqueblog.com, 11 Feb. 2018. Accessed 7 Nov. 2026.","https://kafkaesqueblog.com/2018/02/11/areej-le-dore-russian-oud-willy-wonkas-oud/"]]}},{"id":"josh-lobb","name":"Josh Lobb","sort":"Lobb","from":"United States","about":["An entirely self-taught perfumer in Portland, Oregon; Slumberhouse began as a collective of artist friends and became his own.","Ore was one of his first perfumes, in 2009; he remade it as an extrait, and again in 2022."],"bio":{"t":["Josh Lobb is an entirely self-taught perfumer in Portland, Oregon. Slumberhouse began there as a collective among artist friends, he making the perfumes and they the art, clothing and the rest; his perfumes, sold one at a time on Etsy, took off, and it became his own house.","Though some take him for a natural perfumer, he rejects the name, and works with whatever material fits the idea, synthetic or natural. Slumberhouse's heavy, often difficult style and its sporadic production have given it a cult following. Ore was one of his first perfumes, in 2009, and he has remade it since."],"s":[["“Josh Lobb.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/49/josh-lobb"],["“The Best Perfumes in Portland.” *Portland Monthly*, pdxmonthly.com. Accessed 7 Nov. 2026.","https://www.pdxmonthly.com/articles/best-perfumes-portland"],["“Niche Fragrance Review: slumberhouse Ore.” *Ça Fleure Bon*, cafleurebon.com. Accessed 2 Nov. 2026.","https://cafleurebon.com/niche-fragrance-review-slumberhouse-ore-better-the-second-time-draw/"]]}},{"id":"prin-lomros","name":"Prin Lomros","sort":"Lomros","from":"Thailand","about":["A Thai perfumer who first studied film, then began his career at PerfumersWorld, a large Thai fragrance company, before founding Pryn Parfum in 2016 as a self-taught perfumer.","Three lines came of it: Strangers Parfumerie (2017), the one closest to his own life; Parfum Prissana (2018), named after his sister, joining classic structures with an East Asian style; and PRIN (2019), the most personal of the three.","Several of his perfumes were finalists in the Art and Olfaction Awards — Rosuerrier in 2017, Cigar Rum and Morah in 2018 — and he has made perfumes for Zoologist.","He also teaches filmmaking at a university in Bangkok."],"bio":{"t":["Prin Lomros is a Thai perfumer and filmmaker from the south of Thailand. He studied film; a visit to Grasse woke the wish to make perfume, and he trained at The Perfumer's World in Bangkok, otherwise teaching himself.","He founded Pryn Parfum, and from it three lines — Strangers Parfumerie (2017), Parfum Prissana and PRIN — since brought together under the one name, PRIN. His perfumes were recognised by the Art and Olfaction Awards in 2017 and 2018, and for Zoologist he made Bat and Sloth. He also teaches filmmaking at a university in Bangkok."],"s":[["“Prin Lomros.” *Parfinity*, parfinity.com. Accessed 7 Nov. 2026.","https://parfinity.com/en/perfumer/prin-lomros"],["“Prin Lomros.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/prin-lomros"],["“Strangers Parfumerie.” *Bloom Perfumery*, bloomperfume.com. Accessed 7 Nov. 2026.","https://bloomperfume.com/collections/strangers-parfumerie"]]}},{"id":"dan-adar","name":"Dan Adar","sort":"Adar, Dan","from":"Romania","about":["One of the two in-house perfumers of ADAR, a European house with Romanian roots.","The house's own pages give him as the nose of Amber Zero, Root Code and Lignum Dei, with Rox Adar as their artistic vision."],"bio":{"t":["Dan Adar is one of the two in-house perfumers of ADAR, a European house with Romanian roots, which he and Roxana Adar work in as two creators called The Light and The Dark. Every core formula of the house is developed by the two of them; for many years its perfumes went only to private collectors, and it has been public since 2025.","The house's own pages give him as the nose of Amber Zero, with Rox Adar as its artistic vision."],"s":[["“The House.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","https://adarperfumes.com/pages/about"],["“Amber Zero – Essence of Depths.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","https://adarperfumes.com/products/amber-zero-essence-of-dephts"],["“Adar.” *Scent Split*, scentsplit.com. Accessed 7 Nov. 2026.","https://www.scentsplit.com/collections/adar"]]}},{"id":"roxana-adar","name":"Roxana Adar","sort":"Adar, Roxana","from":"Romania","about":["One of the two in-house perfumers of ADAR, written Rox Adar on the house's own pages.","The house gives her as the nose of Tyrian, Aetherialism, Incantu and ADHD."],"bio":{"t":["Roxana Adar — Rox Adar on the house's own pages — is one of the two in-house perfumers of ADAR, a European house with Romanian roots, which she and Dan Adar work in as two creators called The Light and The Dark. Every core formula of the house is developed by the two of them; for many years its perfumes went only to private collectors, and it has been public since 2025.","The house gives her as the nose of Tyrian."],"s":[["“The House.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","https://adarperfumes.com/pages/about"],["“Adar – Tyrian.” *The Perfumery Barcelona*, theperfumerybarcelona.com. Accessed 2 Nov. 2026.","https://www.theperfumerybarcelona.com/en/?p=27314"],["“Adar.” *Scent Split*, scentsplit.com. Accessed 7 Nov. 2026.","https://www.scentsplit.com/collections/adar"]]}},{"id":"miguel-matos","name":"Miguel Matos","sort":"Matos","about":["One of the outside perfumers ADAR works with.","The house's own pages give him as the nose of Alta Luna and Alpha 11, two of its Elixirs Absolus, with ADAR as their artistic vision."],"bio":{"t":["Miguel Matos is a Portuguese perfumer who works from a small laboratory and showroom of his own in Almada, near Lisbon. For about twenty years he was a journalist of the arts — an editor at Time Out Portugal, a co-founder of the culture magazine Umbigo, a writer for Vogue Portugal — and he is a scent critic and a curator of scent art as well.","He taught himself perfumery from books until the perfumer Christian Carbonnel took him into his laboratory and became his mentor. His own label, Miguel Matos Perfumes, began in 2018. He has made perfumes for Nishane, Sarah Baker (Jungle Jezebel), Astrophil & Stella (Sweet Pulp), CALAJ and Ricardo Ramos, and he is creative director and in-house perfumer of Bruno Acampora. The Fragrance Foundation, the Perfumed Plume Awards and the Art and Olfaction Awards have all recognised his work."],"s":[["“Miguel Matos: From Art Critic to Perfumer.” *Parfinity*, parfinity.com. Accessed 7 Nov. 2026.","https://www.parfinity.com/en/perfumer/miguel-matos"],["“Miguel Matos.” *Luckyscent*, luckyscent.com. Accessed 7 Nov. 2026.","https://www.luckyscent.com/perfumers/miguel-matos"],["“Miguel Matos.” *WhatScent*, whatscent.app. Accessed 7 Nov. 2026.","https://whatscent.app/perfumers/miguel-matos"]]}},{"id":"lan-xiao","name":"Lan Xiao","sort":"Xiao","about":["An independent perfumer and the founder of Tombstone, who, in Scentissime's words, explores the beauty of life through the awareness of death.","Her perfumes for the house are earthy, smoky and gourmand; Tombstone gives her Sweet Coffin, which she meant as the sweet coffin she wishes to return to, and Scentissime 3 Feet 5."],"bio":{"t":["Lan Xiao is a Chinese-American perfumer, trained in the United States and at the Grasse Institute of Perfumery, who founded Tombstone in 2024. The house breaks the taboos and fears that surround death, making the putting on of perfume a philosophical and artistic gesture; its perfumes are made by independent perfumers given complete freedom.","In Scentissime's words, she explores the beauty of life through the awareness of death. At Esxence, Tombstone's stand was one of the most popular of the fair, and beside it she showed her other brands, Bu Feng, Scented Vision and Qimu and Musicians. For Tombstone she made Sweet Coffin, which she meant as the sweet coffin she wishes to return to."],"s":[["“Fragrance Creators from China Softly Whisper and Steadily Conquer.” *Essencional*, essencional.com. Accessed 7 Nov. 2026.","https://essencional.com/en/posts/fragrance-creators-from-china-softly-whisper-and-steadily-conquer/"],["“Tombstone.” *Pitti Immagine Fragranze*, fragranze.pittimmagine.com. Accessed 7 Nov. 2026.","https://fragranze.pittimmagine.com/en/exhibitors/T/tombstone"],["“Sweet Coffin, TOMBSTONE Extrait de Parfum.” *Scentissime*, scentissime.com. Accessed 7 Nov. 2026.","https://www.scentissime.com/en/1223-sweet-coffin-3760302981212.html"]]}},{"id":"tan-shuai","name":"Tan Shuai","sort":"Tan","about":["Named by Tombstone as the perfumer of No Need to Come by, a gourmand-leather perfume he made of soft, warm notes set against hard, cool ones."],"bio":{"t":["Tan Shuai is named by Tombstone as the perfumer of No Need to Come By. Tan Shuai sees death, the house says, as a one-way adventure with no return, embracing solitude without the need for visits or tributes, and he composed the perfume, a gourmand leather, by setting soft, warm notes against hard, cool ones — mint, thyme, pepper and turpentine over myrrh, frankincense and jasmine, on patchouli, tonka and sandalwood.","Nothing more about him was found in the sources read."],"s":[["“No Need to Come by.” *Tombstone*, tombstonefragrances.shop. Accessed 7 Nov. 2026.","https://tombstonefragrances.shop/products/no-need-to-come-by-1"],["“No Need to Come By (2024), Tombstone.” *ScentAdvice*, scentadvice.com. Accessed 7 Nov. 2026.","https://scentadvice.com/no-need-to-come-by-2024-tombstone/"]]}},{"id":"yenchi-lin","name":"Yenchi Lin","sort":"Lin","from":"Taiwan","about":["A Taiwanese perfumer trained in Grasse, who composes perfumes as one writes intimate narratives, drawing on her childhood in Kaohsiung.","Tombstone gives her Sing at My Funeral, a funeral pictured with a light spirit."],"bio":{"t":["Yenchi Lin is a Taiwanese perfumer trained in Grasse, who composes perfumes as one writes intimate narratives, drawing on her childhood in Kaohsiung. Her The Hometown in Me, after the house she grew up in there, won the mAPA award for artistic perfume in 2023.","For Tombstone she made Sing at My Funeral: in her imagination, the house says, her funeral has a light spirit and a joyful air."],"s":[["“Sing at My Funeral, TOMBSTONE Extrait de Parfum.” *Scentissime*, scentissime.com. Accessed 7 Nov. 2026.","https://www.scentissime.com/en/1225-sing-at-my-funeral-3760302981229.html"],["“Sing at My Funeral.” *Tombstone*, tombstonefragrances.shop. Accessed 7 Nov. 2026.","https://tombstonefragrances.shop/products/sing-at-my-funeral-1"],["“The Hometown in Me.” *Fraganty*, fraganty.ai. Accessed 7 Nov. 2026.","https://fraganty.ai/perfume/the-hometown-in-me"]]}},{"id":"diandra-barsalou","name":"Diandra Barsalou","sort":"Barsalou","from":"United States","about":["Creative director and co-founder of Tale Parfum.","Named by Sainte Cellier as the perfumer of Rouse."],"bio":{"t":["Diandra Barsalou is the creative director of Tale Parfum, which she founded with the screenwriter and perfumer Chad Hodge. The house composes each perfume as a chapter in an evolving story.","Sainte Cellier names her as the perfumer of Rouse. Nothing more about her was found in the sources read."],"s":[["“Tale Parfum.” *Sainte Cellier*, saintecellier.com. Accessed 7 Nov. 2026.","https://saintecellier.com/collections/tale-parfum"],["“Rouse.” *Sainte Cellier*, saintecellier.com. Accessed 7 Nov. 2026.","https://saintecellier.com/products/rouse"],["“Tale Parfum Bad Lily (Michael Nordstrand) 2024.” *Ça Fleure Bon*, cafleurebon.com. Accessed 2 Nov. 2026.","https://cafleurebon.com/tale-parfum-bad-lily-michael-nordstrand-2024-plus-surreal-muget-giveaway/"]]}},{"id":"vera-nicchia","name":"Vera Nicchia","sort":"Nicchia","about":["Named by Profumix as the nose of Casa Goa's Velvet Fog."],"bio":{"t":["Vera Nicchia is named by Profumix as the nose of Casa Goa's Velvet Fog, which the retailer calls the perfume that paved the way for the house's others.","Nothing more about her was found in the sources read."],"s":[["“Home Goa Velvet Fog 50ml Eau de Parfum.” *Profumix Luxury Brands*, profumixluxurybrands.it. Accessed 7 Nov. 2026.","https://www.profumixluxurybrands.it/en/?p=103693"],["“Velvet Fog – 50ml.” *Spezieri*, spezieri.com. Accessed 2 Nov. 2026.","https://spezieri.com/en/velvet-fog-50-ml-casa-goa"]]}},{"id":"not-found","name":"Perfumer not found","sort":"￿","about":["These perfumes are written about on this site, but no source found names who made them. When one is found, the perfume moves to its perfumer."]}],"houses":[{"id":"pineward","name":"Pineward","from":"United States","founded":"2020","about":"Founded in Colorado in 2020 by the self-taught perfumer Nicholas Nilsson.","site":1},{"id":"apoteker-tepe","name":"Apoteker Tepe","from":"United States","founded":"2014","about":"Founded in 2014 by Holladay Penick Saltz, who ran it until 2018; acquired in 2022 by Nicholas Nilsson of Pineward, who revived it.","site":1},{"id":"adar","name":"ADAR","from":"Romania","about":"A European house with Romanian roots whose own perfumers are Dan and Roxana Adar; its first public collection came out in 2025.","site":1},{"id":"almost-human","name":"Almost Human","from":"Romania","founded":"2025","about":"Founded in 2025 by its perfumer and creative director, Goran Bajazetov; its first collection came out in 2026.","site":1},{"id":"ataraxia","name":"Ataraxia","about":"A house of gothic, avant-garde scents; Tudor Ristea is its creative director.","site":1},{"id":"grande-parfums","name":"Grande Parfums","from":"Romania","founded":"2021","about":"Grande Perfumes, of Bucharest, created in 2021 by Alex Marian. No source found names the perfumer of its perfumes.","site":1},{"id":"les-abstraits","name":"Les Abstraits","about":"Founded by the fragrance critic and YouTuber Eugen Nizic; every one of its perfumes is made with Antoine Lie.","site":1},{"id":"tale-parfums","name":"Tale Parfums","from":"United States","about":"Founded in Los Angeles by the screenwriter Chad Hodge and the creative director Diandra Barsalou.","site":1},{"id":"tombstone","name":"Tombstone","about":"A house about death and living, each bottle shaped as a tombstone; marketed by Wonder Senses. No source found names its perfumer.","site":1},{"id":"qimu-musicians","name":"Qimu & Musicians","about":"A perfume for each player in a band. WhatScent names Qimu as the perfumer of Drummer.","site":1},{"id":"om-parfums","name":"Om Parfums","from":"Taiwan","founded":"2021","about":"OM Parfum, founded in 2021 by Aichi Liu, its only perfumer.","site":1},{"id":"outsider-parfums","name":"Outsider Parfums","about":"Outsider Parfum, made by Aichi Liu and marketed by OM Parfum.","site":1},{"id":"lost-tribe","name":"Lost Tribe","from":"United States","founded":"2022","about":"Founded in New York City in 2022 by Mathew Schmuelian; all-natural perfumes, made by hand.","site":1},{"id":"serge-lutens","name":"Serge Lutens","from":"France","founded":"2000","about":"Parfums-Beauté Serge Lutens, his own house since 2000, its perfumes made with Christopher Sheldrake.","site":0},{"id":"dior","name":"Dior","from":"France","founded":"1947","about":"Christian Dior's first perfume, Miss Dior, came out with his first collection in 1947.","site":0},{"id":"ramon-monegal","name":"Ramón Monegal","from":"Spain","founded":"2009","about":"Founded in 2009 by Ramón Monegal, under his own name.","site":0},{"id":"mancera","name":"Mancera","from":"France","founded":"2008","about":"Founded in 2008 by Pierre Montale, with his daughter Amélie as its artistic director since 2017.","site":0},{"id":"casa-goa","name":"Casa Goa","about":"No source found names who makes its perfumes.","site":0},{"id":"matca","name":"Matca","about":"No source found names who makes its perfumes.","site":0},{"id":"lussur","name":"Lussur","from":"Italy","about":"An Italian house from Modena, founded by Lucas Chemelli. No source found names the perfumer of CV99.","site":0},{"id":"jmp-artisan-perfumes","name":"JMP Artisan Perfumes","from":"Poland","about":"The house of the Polish independent perfumer Jakub Pietrynka.","site":0},{"id":"sultan-pasha-perfumes","name":"Sultan Pasha Perfumes","about":"The house of the perfumer Sultan Pasha.","site":0},{"id":"areej-le-dore","name":"Areej Le Doré","from":"Indonesia","founded":"2017","about":"Founded in Thailand in 2017 by the distiller Russian Adam; now based in Indonesia.","site":0},{"id":"slumberhouse","name":"Slumberhouse","from":"United States","about":"Josh Lobb's house, in Portland, Oregon.","site":0},{"id":"strangers-parfumerie","name":"Strangers Parfumerie","from":"Thailand","founded":"2017","about":"Founded in 2017 by Prin Lomros; the line closest to his own life.","site":0},{"id":"parfum-prissana","name":"Parfum Prissana","from":"Thailand","founded":"2018","about":"Founded in 2018 by Prin Lomros and named after his sister; Asian history, cuisine and myth in classic structures.","site":0},{"id":"prin","name":"PRIN","from":"Thailand","founded":"2019","about":"Founded in 2019 by Prin Lomros; his signature line.","site":0}],"perfumes":[["Bindebole",[0],0,2021,0,1,[0]],["Boreal",[0],0,2020,0,1,[0]],["Brokilän",[0],0,2021,0,1,[0]],["Cotswold",[0],0,2021,0,1,[0]],["Eldritch",[0],0,2021,0,1,[0]],["Fanghorn II",[0],0,2021,0,1,[0]],["Funerie",[0],0,2022,0,1,[0]],["Juniperus",[0],0,2024,0,1,[0]],["Murkwood",[0],0,2020,0,1,[0]],["Nocturnis",[0],0,2022,0,1,[0]],["Oxylus",[0],0,2021,0,1,[0]],["Snoqualmie",[0],0,2024,0,1,[0]],["Sturbridge",[0],0,2023,0,1,[0]],["White Fir",[0],0,2022,0,1,[0]],["Bucolic",[0],0,2024,0,1,[0]],["Hayloft",[0],0,2022,0,1,[0]],["Hayride",[0],0,2022,0,1,[0]],["Pastoral",[0],0,2022,0,1,[0]],["Shire",[0],0,2024,0,1,[0]],["Steading",[0],0,2020,0,1,[0]],["Christmas Wine",[0],0,2020,0,1,[0]],["Gingerbread",[0],0,2023,0,1,[0]],["Glühwein",[0],0,2021,0,1,[0]],["Revelries",[0],0,2021,0,1,[0]],["Acadian",[0],0,2023,0,1,[0]],["Coastal Veil",[0],0,2023,0,1,[0]],["Gingermoss",[0],0,2023,0,1,[0]],["Subalpine",[0],0,2025,0,1,[0]],["Akero",[0],0,2023,0,1,[0]],["Apple Tabac",[0],0,2020,0,1,[0]],["Caravansary",[0],0,2023,0,1,[0]],["Clemenpine",[0],0,2023,0,1,[0]],["Coffee Tabac",[0],0,2024,0,1,[0]],["Delfiño",[0],0,2022,0,1,[0]],["Greymist",[0],0,2023,0,1,[0]],["Gristmill",[0],0,2022,0,1,[0]],["Holy Cross",[0],0,2026,0,1,[0]],["Icefall",[0],0,2021,0,1,[0]],["Ivymoss",[0],0,2023,0,1,[0]],["Lime Cola",[0],0,2025,0,1,[0]],["Meadowmoss",[0],0,2023,0,1,[0]],["Mint Cocoa",[0],0,2024,0,1,[0]],["Noki",[0],0,2022,0,1,[0]],["Ponderosa",[0],0,2022,0,1,[0]],["Pumpkivus",[0],0,2025,0,1,[0]],["Tome",[0],0,2025,0,1,[0]],["Treacle",[0],0,2021,0,1,[0]],["Velvetine",[0],0,2021,0,1,[0]],["Amber Zero",[23],0,0,2,1,[1,2,2]],["Aetherialism",[24],0,0,2,1,[1,2,2]],["Incantu",[24],0,0,2,1,[1,2,2]],["Against All Odds",[1],1,2025,2,1,[1,2,2,0]],["α11 Alpha11",[25],0,0,2,1,[1,2,2]],["Alta Luna",[25],0,2025,2,1,[1,2,2,2]],["ADHD",[24],0,0,2,1,[1,2,2]],["Root Code",[23],0,0,2,1,[1,2,2]],["Lignum Dei",[23],0,0,2,1,[1,2,2]],["Lithos Diaphanes Λίθος Διαφανές",[1],1,0,2,1,[1,2,2]],["Tyrian",[24],0,2026,2,1,[3,2]],["Burning Bridges",[2],0,2026,3,1,[0]],["Dear Future",[2],0,2026,3,1,[0]],["Desert Hope",[2],0,2026,3,1,[0]],["Ritual Code",[2],0,2026,3,1,[0,3]],["Silent Rain",[2],0,2026,3,1,[0]],["Amaretto Jazz in the Melting Room",[3],0,2024,4,1,[4]],["Deity",[4],0,2025,4,1,[5]],["My Doll’s Makeup",[4],0,0,4,1,[6,7]],["Spinal Fluid",[4],0,2025,4,1,[6,0,8]],["Vestibule",[3],0,2024,4,1,[9]],["5 Years Anniversary",[31],2,0,5,1,[10]],["Ambresso",[31],2,0,5,1,[10]],["Ancient Oud",[31],2,0,5,1,[10]],["Choco Powder",[31],2,0,5,1,[10]],["Cookie something (?)",[31],2,0,5,1,[10]],["Cuore",[31],2,2024,5,1,[0,10]],["Dreaming Maldives",[31],2,0,5,1,[10]],["Giardino di Sorrento",[31],2,0,5,1,[10]],["Hot Stuff",[31],2,0,5,1,[10]],["Intimate Spell",[31],2,0,5,1,[10]],["Karak & Shisha",[31],2,0,5,1,[10]],["Mystical Incense",[31],2,0,5,1,[10]],["Vanilla Ash",[31],2,0,5,1,[10]],["Vintage Memoir",[31],2,0,5,1,[10]],["White Label",[31],2,0,5,1,[10]],["Belle Âme",[5],0,2022,6,1,[11,11]],["Des Cendres",[5],0,2023,6,1,[11,11]],["La Douleur Exquise",[5],0,2022,6,1,[12,11]],["Philosopher’s Walk",[5],0,2025,6,1,[11,11]],["Kong",[10],1,0,12,1,[13,14]],["Watch King",[10],1,0,12,1,[13,14]],["Dirty Soda",[10],1,0,12,1,[13,14]],["Equatorial",[10],1,0,12,1,[13,14]],["Santal Absolu",[10],1,0,12,1,[13,14]],["Pan’s Labyrinth",[10,11],0,0,12,1,[15]],["Nymphaea Caerulea",[9],1,0,10,1,[0,0]],["Lust",[9],0,2023,10,1,[16,0,0,0]],["Burnana",[9],0,2024,10,1,[16,0,0,0]],["Cannabis Café",[9],1,0,10,1,[0,0]],["Dark Night of the Soul",[9],0,2024,10,1,[16,0,0,0]],["This Too Shall Pass",[9],0,0,10,1,[16,0,0]],["When the Linden Blooms",[9],0,2024,10,1,[16,0,0,0]],["Oud de Pasión",[9],1,0,10,1,[0,0]],["Smoke Oud",[9],1,0,10,1,[0,0]],["Dragon’s Breath",[9],0,2026,11,1,[0]],["Draco",[9],1,0,11,1,[0,0]],["Xocolate Crotch",[9],1,0,11,1,[0,0]],["Guilty as Charged",[9],1,0,11,1,[0,0]],["Amaretto Coffee",[9],0,0,11,1,[0]],["Guitarist",[31],2,0,9,1,[9]],["Vocal",[31],2,0,9,1,[9]],["Bassist",[31],2,0,9,1,[9]],["Drummer",[8],0,0,9,1,[9]],["Bad Lily",[6],0,2024,7,1,[0,5]],["Fleurt",[7],0,2024,7,1,[11,14]],["Rouse",[29],0,0,7,1,[11,14]],["Water Me",[7],0,0,7,1,[5]],["3 Feet 5",[26],0,2024,8,1,[17,0]],["Evergrow",[31],2,2025,8,1,[18,0]],["No Need to Come By",[27],0,0,8,1,[18,19]],["Sing at My Funeral",[28],0,0,8,1,[17,18,19]],["Sweet Coffin",[26],0,2024,8,1,[17,18,0]],["Kogen",[31],2,2024,1,1,[0,0]],["The Holy Mountain",[12],0,2015,1,1,[0,20]],["Karasu",[12],0,2016,1,1,[0,20]],["The Peradam",[12],0,2015,1,1,[0,20]],["Pale Fire",[12],0,2016,1,1,[0,20]],["Anabasis",[12],0,2015,1,1,[0,20]],["After the Flood",[12],0,2015,1,1,[0,20]],["Brother Night",[12],0,2016,1,1,[0,21,21,0]],["CV99",[31],2,0,19,0,[21]],["De Profundis",[13],0,2011,13,0,[22]],["Haxan",[22],0,2018,25,0,[0]],["Tobacolor",[14],0,2021,14,0,[23]],["Flamenco EDP",[15],0,2017,15,0,[24]],["French Riviera",[16],0,2022,16,0,[13]],["Velvet Fog",[30],0,0,17,0,[25,26]],["House of Ellixirz",[31],2,2021,18,0,[27]],["Fir of the Light",[17],0,0,20,0,[0]],["Fir of the Dark",[17],0,2024,20,0,[0]],["Quintessentially Amber",[18,19],0,2025,21,0,[9]],["Forbidden Flower",[20],0,2024,22,0,[28]],["Ore",[21],0,2009,23,0,[5,29]],["Salted Green Mango",[22],0,2019,24,2,[0]],["Oliver",[22],0,2018,24,2,[0]],["Cigar Rum",[22],0,2017,24,2,[0]],["SM Café",[22],0,2019,24,2,[0]],["Burning Ben",[22],0,2018,24,2,[0]],["Sweet Farewell",[22],0,2022,24,2,[0]],["Gheorghe",[22],0,2018,24,2,[0]],["Sweet Celestials",[22],0,2023,24,2,[0]],["Muscat Jasmine Tea",[22],0,2024,24,2,[0]],["Scotch Peat",[22],0,2019,24,2,[0]],["Sangre Dulce",[22],0,2019,24,2,[0]],["Aroon Sawat",[22],0,2019,24,2,[0]],["Red Lime Soda",[22],0,2024,24,2,[0]],["Sombre",[22],0,2019,24,2,[0]],["Cherry Amaretto",[22],0,2023,24,2,[0]],["Kira Kira",[22],0,2020,24,2,[0]],["Les Mauvais Garçons",[22],0,2019,24,2,[0]],["Comme un Carrousel",[22],0,2020,24,2,[0]],["Caffeine Honey",[22],0,2020,24,2,[0]],["Spring Ambience",[22],0,2023,24,2,[0]],["A Sorta Fairytale in Hyde Park",[22],0,2021,24,2,[0]],["Roasted Coffee Cigarette Whisky Come and Get Your Suede Honey Baby",[22],0,2020,24,2,[0]],["Wicked John",[22],0,2019,24,2,[0]],["Yuzu Soda",[22],0,2021,24,2,[0]],["Yue Tu 月兔",[22],0,2023,24,2,[0]],["Limonsitano",[22],0,2022,24,2,[0]],["Tokiwa",[22],0,2025,24,2,[0]],["Ember",[22],0,2017,24,2,[0]],["Autumn Tea and Yuzu Vanilla",[22],0,2021,24,2,[0]],["Fume Ma Peau",[22],0,2017,24,2,[0]],["Magenta Pop",[22],0,2020,24,2,[0]],["Euphories",[22],0,2021,24,2,[0]],["Summer Peaches by the Tea Room",[22],0,2021,24,2,[0]],["Concrete Forest",[22],0,2023,24,2,[0]],["Iridescent Sky",[22],0,2020,24,2,[0]],["Lumberjack Cologne",[22],0,2019,24,2,[0]],["Rêve du Matin",[22],0,2023,24,2,[0]],["Eternal Summer",[22],0,2020,24,2,[0]],["Pink Clouds",[22],0,2025,24,2,[0]],["Sweet Tani",[22],0,2025,24,2,[0]],["Fleur de Lune",[22],0,2020,24,2,[0]],["Sweet Muskmelon",[22],0,2023,24,2,[0]],["Virginia",[22],0,2018,24,2,[0]],["Chokedee",[22],0,2021,24,2,[0]],["Cigar Rum Intense",[22],0,2019,24,2,[0]],["San Clemente",[22],0,2018,24,2,[0]],["À la folie",[22],0,2023,24,2,[0]],["Cachouli",[22],0,2022,24,2,[0]],["Cigar Rum (2024)",[22],0,2024,24,2,[0]],["Guido",[22],0,2024,24,2,[0]],["Rosa Raimunda",[22],0,2024,24,2,[0]],["So Fetch!",[22],0,2019,24,2,[0]],["Plunge",[22],0,2021,24,2,[0]],["Soleil de Thé",[22],0,2024,24,2,[0]],["Green Lunar",[22],0,2023,24,2,[0]],["Lights upon Orange Tree",[22],0,2021,24,2,[0]],["Lava Rose",[22],0,2019,24,2,[0]],["Câlin d'Été",[22],0,2025,24,2,[0]],["Cornwall Rose",[22],0,2025,24,2,[0]],["Punk #2077",[22],0,2021,24,2,[0]],["Rosso Amaretto",[22],0,2023,24,2,[0]],["Garden of Eden",[22],0,2023,24,2,[0]],["Maia",[22],0,2017,24,2,[0]],["La Malila",[22],0,2017,24,2,[0]],["Lom Hom Khao Hom",[22],0,2023,24,2,[0]],["Nobles '17",[22],0,2021,24,2,[0]],["La Porte",[22],0,2023,24,2,[0]],["Ma Nishtana",[22],0,2019,25,2,[0]],["Nimitr",[22],0,2018,25,2,[0]],["Nesnás Qareen",[22],0,2019,25,2,[0]],["Natsumeku",[22],0,2019,25,2,[0]],["Sahar",[22],0,2024,25,2,[0]],["Mohragot",[22],0,2019,25,2,[0]],["Dunhuang",[22],0,2022,25,2,[0]],["Chetyre",[22],0,0,25,2,[0]],["Tom Yum",[22],0,2019,25,2,[0]],["Mandarava",[22],0,2019,25,2,[0]],["Thichila",[22],0,2019,25,2,[0]],["Akhetaten",[22],0,2024,25,2,[0]],["Lágrima Sagrada",[22],0,2025,25,2,[0]],["Ayutthaya",[22],0,2022,25,2,[0]],["Maruyama 丸山",[22],0,2019,25,2,[0]],["Nefer",[22],0,0,25,2,[0]],["Le Cirque Bleu",[22],0,2017,25,2,[0]],["Savitri สาวิตรี",[22],0,0,25,2,[0]],["Karuna",[22],0,2022,25,2,[0]],["Tirtha",[22],0,2024,25,2,[0]],["Hayra",[22],0,0,25,2,[0]],["Hirun",[22],0,2024,25,2,[0]],["Ronda",[22],0,2024,25,2,[0]],["Emerald Curry",[22],0,2025,25,2,[0]],["Vallée des Roses",[22],0,0,25,2,[0]],["L'Ombre d'Hier",[22],0,2025,25,2,[0]],["Gularb Matana",[22],0,2024,25,2,[0]],["Keerati",[22],0,2025,25,2,[0]],["Apsarah",[22],0,2018,25,2,[0]],["Narasimha Attar",[22],0,2019,25,2,[0]],["Narasimha Extrait de Parfum",[22],0,0,25,2,[0]],["Mriga มฤค",[22],0,0,26,2,[0]],["Saringkarn ศฤงคาร",[22],0,2020,26,2,[0]],["Mandodari มณโฑ",[22],0,2019,26,2,[0]],["Varuek วฤค",[22],0,2021,26,2,[0]],["Nocturnal Poetry",[22],0,2020,26,2,[0]],["Mongolian Mriga",[22],0,2023,26,2,[0]],["Homa",[22],0,2020,26,2,[0]],["Indigo Night",[22],0,2024,26,2,[0]],["Aran",[22],0,2019,26,2,[0]],["Anatolia Anatolia",[22],0,2021,26,2,[0]],["Arsalan",[22],0,2020,26,2,[0]],["Ganja Kasturi",[22],0,2021,26,2,[0]],["Eshu",[22],0,2020,26,2,[0]],["Oqachol",[22],0,2022,26,2,[0]],["Onthamara",[22],0,2022,26,2,[0]],["Rahassanai",[22],0,2022,26,2,[0]],["Burmite Honey",[22],0,2023,26,2,[0]],["Anatolia",[22],0,2019,26,2,[0]],["Mandodari Mandodari",[22],0,2023,26,2,[0]],["Nilmalee",[22],0,2023,26,2,[0]],["Krissana",[22],0,2023,26,2,[0]],["Rattikarn รัตติกาล",[22],0,2023,26,2,[0]],["Fantôme de la Nuit",[22],0,2024,26,2,[0]],["Kheerin คีรินทร์",[22],0,2025,26,2,[0]],["Nisatiruk นิศาทิรุกข์",[22],0,2025,26,2,[0]],["Naruemit",[22],0,2023,26,2,[0]],["Hürrem Sultan",[22],0,2024,26,2,[0]],["0125",[22],0,2025,26,2,[0]],["Saringkarn Saringkarn",[22],0,2025,26,2,[0]],["Loup",[22],0,2023,26,2,[0]],["Ahuizotl",[22],0,2022,26,2,[0]],["Pathavi",[22],0,2025,26,2,[0]],["Nilubol",[22],0,2023,26,2,[0]],["Sgàil",[22],0,2025,26,2,[0]],["Persephone",[22],0,2025,26,2,[0]],["0225 ๐๒๒๕",[22],0,2025,26,2,[0]],["Prajñā",[22],0,2026,26,2,[0]],["Moha",[22],0,2026,26,2,[0]],["Dveṣa",[22],0,2026,26,2,[0]],["Rāga",[22],0,2026,26,2,[0]]],"sources":["Parfumo","ADAR","Scent Split","The Perfumery Barcelona","ScentAdvice","Ça Fleure Bon","Ataraxia Perfumery","Thingtesting","Turin, Luca","WhatScent","OnCosmetics","Sainte Cellier","Noah","Scent Verdict","Stéle","Venba Fragrance","The Scent Base","Scentissime","Tombstone","Pitti Fragranze","The Taste of Aldehydes","Basenotes","Surrender to Chance","Scento","Now Smell This","Profumix Luxury Brands","Spezieri","Fragplace","Fragrance Samples UK","Luckyscent"]};
-/* ============================================================
-   TEST PAGE 1 — PERFUMER WORLDS (2026-11-06, in place of "Worlds").
+// THE EARTH ON THE PERFUMERS PAGE — written by tools/perfumers/earth.py from
+// Natural Earth's land at 1:110m (public domain), through world-atlas 2.0.2.
+// Every ring a flat list of longitude, latitude, in degrees. Never edit
+// this by hand: run the tool (then tools/versions.py).
+const EARTH_SNAPSHOT = [[-59.6,-80.0,-60.2,-81.0,-64.5,-80.9,-66.3,-80.3,-61.9,-80.4,-60.6,-79.6,-59.6,-80.0],[-159.2,-79.5,-161.1,-79.6,-163.7,-78.6,-163.1,-78.2,-161.2,-78.4,-159.5,-79.0,-159.2,-79.5],[-45.2,-78.0,-43.9,-78.5,-43.5,-79.1,-43.3,-80.0,-50.5,-81.0,-52.9,-81.0,-54.2,-80.6,-54.0,-80.2,-51.0,-79.6,-48.7,-78.0,-46.7,-77.8,-45.2,-78.0],[-121.2,-73.5,-118.7,-73.5,-120.2,-74.1,-122.6,-73.7,-122.4,-73.3,-121.2,-73.5],[-99.0,-71.9,-96.8,-72.0,-96.2,-72.5,-100.8,-72.5,-101.8,-72.3,-102.3,-71.9,-101.7,-71.7,-99.0,-71.9],[-68.5,-71.0,-68.3,-71.4,-68.8,-72.2,-71.1,-72.5,-72.4,-72.5,-71.9,-72.1,-74.2,-72.4,-75.0,-72.1,-75.0,-71.7,-73.2,-71.2,-72.1,-71.2,-71.8,-70.7,-71.7,-69.5,-71.2,-69.0,-70.3,-68.9,-68.5,-71.0],[-180.0,-84.7,-179.1,-84.1,-177.3,-84.5,-175.9,-84.1,-174.4,-84.5,-172.9,-84.1,-170.0,-83.9,-167.0,-84.6,-158.1,-85.4,-155.2,-85.1,-148.5,-85.6,-143.1,-85.0,-142.9,-84.6,-150.1,-84.3,-150.9,-83.9,-153.6,-83.7,-152.7,-82.5,-152.9,-82.0,-156.8,-81.1,-152.1,-81.0,-150.6,-81.3,-146.4,-80.3,-146.8,-79.9,-149.5,-79.4,-155.3,-79.1,-158.1,-78.0,-158.4,-76.9,-157.0,-77.3,-153.7,-77.1,-152.9,-77.5,-151.3,-77.4,-146.1,-76.5,-146.5,-75.7,-146.2,-75.4,-144.9,-75.2,-144.3,-75.5,-135.2,-74.3,-119.7,-74.5,-117.5,-74.0,-116.2,-74.2,-113.9,-73.7,-112.3,-74.7,-111.3,-74.4,-107.6,-75.2,-104.9,-74.9,-100.6,-75.3,-100.1,-74.9,-101.3,-74.2,-102.5,-74.1,-103.1,-73.7,-103.7,-72.6,-99.1,-72.9,-97.7,-73.6,-96.3,-73.6,-92.4,-73.2,-90.1,-73.3,-89.2,-72.6,-88.4,-73.0,-86.0,-73.1,-85.2,-73.5,-81.5,-73.9,-80.3,-73.1,-79.3,-73.5,-77.9,-73.4,-76.2,-74.0,-68.9,-73.0,-68.0,-72.8,-67.1,-72.0,-68.5,-69.7,-67.6,-68.5,-67.4,-68.2,-67.7,-67.3,-67.3,-66.9,-63.0,-64.6,-62.0,-64.6,-57.8,-63.3,-57.2,-63.5,-57.6,-63.9,-59.0,-64.4,-60.6,-64.3,-62.0,-64.8,-62.6,-65.5,-62.1,-66.2,-63.7,-66.5,-65.5,-67.6,-65.7,-68.0,-64.8,-68.7,-63.2,-69.2,-61.8,-70.7,-60.7,-73.2,-60.8,-73.7,-62.0,-74.4,-63.3,-74.6,-64.4,-75.3,-69.8,-76.2,-70.6,-76.6,-77.2,-76.7,-76.9,-77.1,-74.3,-77.6,-73.7,-77.9,-74.8,-78.2,-76.5,-78.1,-77.9,-78.4,-78.0,-79.2,-75.4,-80.3,-59.7,-82.4,-58.2,-83.2,-49.8,-81.7,-42.8,-82.1,-42.2,-81.7,-40.8,-81.4,-38.2,-81.3,-28.6,-80.3,-29.7,-79.6,-29.7,-79.3,-35.6,-79.5,-35.9,-79.1,-35.8,-78.3,-35.3,-78.1,-32.2,-77.7,-28.9,-76.7,-22.5,-76.1,-17.5,-75.1,-15.7,-74.5,-15.4,-74.1,-16.5,-73.9,-15.4,-73.1,-12.3,-72.4,-10.3,-71.3,-7.4,-71.7,-7.4,-71.3,-6.9,-70.9,-5.8,-71.0,-5.5,-71.4,-4.3,-71.5,-0.7,-71.2,-0.2,-71.6,6.3,-70.5,7.7,-69.9,8.5,-70.1,9.5,-70.0,10.8,-70.8,13.4,-70.0,14.7,-70.0,15.1,-70.4,15.9,-70.0,19.3,-69.9,21.5,-70.1,22.6,-70.7,27.1,-70.5,32.0,-69.7,33.9,-68.5,36.2,-69.2,37.2,-69.2,38.6,-69.8,42.0,-68.6,46.5,-67.6,47.4,-67.7,49.0,-67.1,50.8,-66.9,50.9,-66.5,51.8,-66.2,54.5,-65.8,56.4,-66.0,57.2,-66.2,57.3,-66.7,58.7,-67.3,61.4,-68.0,62.4,-68.0,64.1,-67.4,68.9,-67.9,69.7,-69.2,69.6,-69.7,67.8,-70.3,67.9,-70.7,69.1,-70.7,67.9,-71.9,69.9,-72.3,71.0,-72.1,73.1,-70.7,73.9,-69.9,77.6,-69.5,79.1,-68.3,82.8,-67.2,86.8,-67.1,87.5,-66.9,88.0,-66.2,88.8,-67.0,89.7,-67.1,94.2,-67.1,95.8,-67.4,99.7,-67.2,102.8,-65.6,106.2,-66.9,110.2,-66.7,111.7,-66.1,113.6,-65.9,115.6,-66.7,116.7,-66.7,119.8,-67.3,123.2,-66.5,128.8,-66.8,134.8,-66.2,135.1,-65.3,135.7,-65.6,136.6,-66.8,137.5,-67.0,145.5,-66.9,146.2,-67.2,146.0,-67.6,146.6,-67.9,148.8,-68.4,152.5,-68.9,153.6,-68.9,154.3,-68.6,156.8,-69.4,159.2,-69.6,161.6,-70.6,167.3,-70.8,171.2,-71.7,171.1,-72.1,169.3,-73.7,166.1,-74.4,164.2,-75.5,163.6,-76.2,163.5,-77.1,164.7,-78.2,166.6,-78.3,167.0,-78.8,161.8,-79.2,159.8,-80.9,163.7,-82.4,168.9,-83.3,169.4,-83.8,172.3,-84.0,173.2,-84.4,176.0,-84.2,178.3,-84.5,-180.0,-84.7],[-67.8,-53.8,-66.5,-54.5,-65.1,-54.7,-65.5,-55.2,-66.5,-55.2,-67.0,-54.9,-68.1,-55.6,-69.2,-55.5,-72.3,-54.5,-74.7,-52.8,-71.1,-54.1,-70.3,-52.9,-69.3,-52.5,-68.6,-52.6,-67.8,-53.8],[-58.5,-51.1,-57.7,-51.5,-58.0,-51.9,-59.4,-52.2,-59.8,-51.8,-60.7,-52.3,-61.2,-51.8,-60.0,-51.3,-59.2,-51.5,-58.5,-51.1],[70.3,-49.7,68.7,-49.8,68.9,-48.6,70.5,-49.1,70.3,-49.7],[145.4,-40.8,146.4,-41.1,148.3,-40.9,148.4,-42.1,148.0,-42.4,147.9,-43.2,147.6,-42.9,146.9,-43.6,146.0,-43.5,144.7,-41.2,144.7,-40.7,145.4,-40.8],[173.0,-40.9,173.2,-41.3,174.0,-40.9,174.2,-41.3,174.2,-41.8,172.7,-43.4,173.1,-43.9,171.5,-44.2,170.6,-45.9,169.3,-46.6,166.7,-46.2,166.5,-45.9,167.0,-45.1,168.3,-44.1,170.5,-43.0,172.0,-41.5,172.1,-41.0,172.8,-40.5,173.0,-40.9],[174.6,-36.2,175.3,-37.2,175.4,-36.5,175.8,-36.8,176.0,-37.6,176.8,-37.9,178.5,-37.7,178.0,-39.2,177.2,-39.1,176.9,-39.4,177.0,-39.9,176.0,-41.3,175.2,-41.7,174.7,-41.3,175.2,-40.5,174.9,-39.9,173.8,-39.5,173.9,-39.1,174.6,-38.8,174.7,-37.4,174.3,-36.5,172.6,-34.5,173.0,-34.5,173.6,-35.0,174.3,-35.3,174.6,-36.2],[167.1,-22.2,166.7,-22.4,165.5,-21.7,164.0,-20.1,165.0,-20.5,167.1,-22.2],[178.4,-17.3,178.7,-17.6,178.6,-18.2,177.4,-18.2,177.3,-17.7,177.7,-17.4,178.4,-17.3],[-180.0,-16.6,179.4,-16.8,178.7,-17.0,178.6,-16.6,179.4,-16.4,-179.8,-16.0,-180.0,-16.6],[50.1,-13.6,50.4,-15.7,50.2,-16.0,49.9,-15.4,49.7,-15.7,49.8,-16.9,49.5,-17.1,49.4,-18.0,47.1,-24.9,45.4,-25.6,44.0,-25.0,43.3,-22.1,43.4,-21.3,43.9,-21.2,44.4,-20.1,44.5,-19.4,44.0,-17.4,44.4,-16.2,46.3,-15.8,47.7,-14.6,48.0,-14.1,47.9,-13.7,48.3,-13.8,49.2,-12.0,50.1,-13.6],[143.6,-13.8,143.9,-14.5,144.6,-14.2,145.4,-15.0,145.5,-16.3,145.9,-16.9,146.4,-19.0,148.8,-20.4,148.7,-20.6,149.3,-21.3,149.7,-22.3,150.1,-22.1,150.5,-22.6,150.7,-22.4,150.9,-23.5,152.9,-25.3,153.1,-26.1,153.1,-27.3,153.6,-28.1,153.1,-30.9,152.4,-32.6,151.7,-33.0,150.3,-35.7,150.0,-37.4,149.4,-37.8,148.3,-37.8,146.3,-39.0,144.9,-38.4,145.0,-37.9,143.6,-38.8,140.6,-38.0,140.0,-37.4,139.6,-36.1,139.1,-35.7,138.1,-35.6,138.4,-35.1,138.2,-34.4,137.7,-35.1,136.8,-35.3,137.9,-33.6,137.8,-32.9,136.4,-34.1,136.0,-34.9,135.2,-34.5,135.2,-33.9,134.1,-32.8,134.3,-32.6,131.3,-31.5,129.5,-31.6,127.1,-32.3,126.1,-32.2,124.2,-33.0,123.7,-33.9,119.9,-34.0,118.0,-35.1,116.6,-35.0,115.0,-34.2,115.0,-33.6,115.7,-33.3,115.7,-31.6,115.2,-30.6,115.0,-29.5,113.3,-26.1,113.8,-26.5,113.4,-25.6,114.2,-26.3,114.2,-25.8,113.4,-24.4,113.8,-23.1,113.7,-22.5,114.1,-21.8,114.2,-22.5,114.6,-21.8,116.7,-20.7,117.4,-20.7,119.3,-20.0,120.9,-19.7,122.2,-18.2,122.3,-17.3,123.0,-16.4,123.4,-17.3,123.9,-17.1,123.5,-16.6,123.8,-16.1,124.3,-16.3,124.4,-15.6,125.2,-14.7,125.7,-14.5,125.7,-14.2,126.1,-14.3,126.1,-14.1,127.1,-13.8,128.4,-14.9,129.6,-15.0,129.4,-14.4,130.3,-13.4,130.2,-13.1,130.6,-12.5,131.2,-12.2,132.6,-12.1,132.6,-11.6,131.8,-11.3,132.4,-11.1,133.6,-11.8,135.3,-12.2,136.5,-11.9,137.0,-12.4,136.3,-13.3,136.0,-13.3,136.1,-13.7,135.4,-14.7,135.5,-15.0,139.3,-17.4,140.2,-17.7,140.9,-17.4,141.7,-15.0,141.5,-13.7,142.1,-11.0,142.5,-10.7,142.8,-11.2,142.9,-11.8,143.5,-12.8,143.6,-13.8],[124.4,-10.1,123.5,-10.2,124.0,-9.3,125.1,-8.7,127.3,-8.4,125.1,-9.4,124.4,-10.1],[117.9,-8.1,118.3,-8.4,118.9,-8.3,119.1,-8.7,116.7,-9.0,117.1,-8.5,117.6,-8.4,117.9,-8.1],[122.9,-8.1,122.8,-8.7,121.3,-8.9,119.9,-8.8,119.9,-8.4,120.7,-8.2,121.3,-8.5,122.9,-8.1],[108.6,-6.8,110.5,-6.9,110.8,-6.5,112.6,-6.9,113.0,-7.6,114.5,-7.8,115.7,-8.4,114.6,-8.8,113.5,-8.3,108.3,-7.8,106.5,-7.4,106.3,-6.9,105.4,-6.9,106.1,-5.9,107.3,-6.0,108.5,-6.4,108.6,-6.8],[155.9,-6.8,155.6,-6.9,155.2,-6.5,154.5,-5.1,156.0,-6.5,155.9,-6.8],[152.0,-5.5,150.2,-6.3,148.3,-5.7,148.4,-5.4,149.8,-5.5,150.1,-5.0,150.2,-5.5,150.8,-5.5,151.6,-4.8,151.5,-4.2,152.3,-4.3,152.0,-5.5],[130.5,-3.1,130.8,-3.9,130.0,-3.4,127.9,-3.4,128.1,-2.8,130.5,-3.1],[153.1,-4.5,152.8,-4.8,152.4,-3.8,150.7,-2.7,150.9,-2.5,152.2,-3.2,153.0,-4.0,153.1,-4.5],[134.1,-1.2,134.4,-2.8,135.5,-3.4,136.3,-2.3,137.4,-1.7,138.3,-1.7,144.6,-3.9,145.8,-4.9,146.0,-5.5,147.6,-6.1,147.9,-6.6,147.0,-6.7,147.2,-7.4,148.1,-8.0,148.7,-9.1,149.3,-9.1,149.3,-9.5,150.0,-9.7,149.7,-9.9,150.8,-10.3,150.7,-10.6,147.9,-10.1,146.6,-8.9,146.0,-8.1,144.7,-7.6,143.3,-8.2,143.4,-9.0,142.6,-9.3,141.0,-9.1,140.1,-8.3,139.1,-8.1,138.9,-8.4,137.6,-8.4,138.0,-7.6,138.7,-7.3,137.9,-5.4,136.0,-4.5,135.2,-4.5,133.7,-3.5,133.4,-4.0,133.0,-4.1,132.8,-3.3,132.0,-2.8,133.8,-2.5,133.7,-2.2,132.2,-2.2,131.8,-1.6,130.9,-1.4,130.5,-0.9,132.4,-0.4,134.0,-0.8,134.1,-1.2],[125.2,1.4,124.4,0.4,123.7,0.2,122.7,0.4,120.2,0.2,120.0,-0.5,120.9,-1.4,121.5,-1.0,123.3,-0.6,123.3,-1.1,122.8,-0.9,122.4,-1.5,121.5,-1.9,122.5,-3.2,122.3,-3.5,123.2,-4.7,123.2,-5.3,122.6,-5.6,122.2,-5.3,122.7,-4.5,121.7,-4.9,121.5,-4.6,121.6,-4.2,120.9,-3.6,121.0,-2.6,120.3,-2.9,120.4,-5.5,119.8,-5.7,119.4,-5.4,119.7,-4.5,119.5,-3.5,119.1,-3.5,118.8,-2.8,120.0,0.6,120.9,1.3,122.9,0.9,124.1,0.9,125.1,1.6,125.2,1.4],[128.7,1.1,128.6,0.3,128.1,0.4,128.0,-0.3,128.4,-0.8,128.1,-0.9,127.4,1.0,127.6,1.8,127.9,2.2,128.0,1.6,128.6,1.5,128.7,1.1],[105.8,-5.9,104.7,-5.9,102.6,-4.2,100.1,-0.7,99.3,0.2,98.6,1.8,95.4,5.0,95.3,5.5,97.5,5.2,100.6,2.1,101.7,2.1,103.8,0.1,103.4,-0.7,104.4,-1.1,104.9,-2.3,105.6,-2.4,106.1,-3.1,105.8,-5.9],[117.9,1.8,119.0,0.9,117.8,0.8,117.5,0.1,117.5,-0.8,116.6,-1.5,116.1,-4.0,116.0,-3.7,114.9,-4.1,114.5,-3.5,113.3,-3.1,112.1,-3.5,111.7,-3.0,110.2,-2.9,110.1,-1.6,109.6,-1.3,109.1,-0.5,109.1,1.3,109.7,2.0,110.4,1.7,111.2,1.9,111.4,2.7,113.0,3.1,114.6,4.9,116.2,6.1,116.7,6.9,117.1,6.9,117.6,6.4,117.7,6.0,119.2,5.4,119.1,5.0,118.4,5.0,118.6,4.5,117.9,4.1,117.3,3.2,118.0,2.3,117.9,1.8],[126.4,8.4,126.5,7.2,126.2,6.3,125.8,7.3,125.4,6.8,125.7,6.0,125.4,5.6,124.2,6.2,123.9,6.9,124.2,7.4,123.6,7.8,123.3,7.4,122.8,7.5,122.1,6.9,121.9,7.2,122.3,8.0,123.5,8.7,123.8,8.2,124.6,8.5,124.8,9.0,125.5,9.0,125.4,9.8,126.2,9.3,126.4,8.4],[81.2,6.2,80.3,6.0,79.9,6.8,79.7,8.2,80.1,9.8,80.8,9.3,81.8,7.5,81.6,6.5,81.2,6.2],[124.0,10.3,123.0,9.0,122.4,9.7,122.9,10.9,123.5,10.9,123.3,10.3,124.1,11.2,124.0,10.3],[118.5,9.3,117.2,8.4,119.0,10.4,119.5,11.4,119.7,10.6,118.5,9.3],[121.9,11.9,123.1,11.6,123.1,11.2,122.0,10.4,121.9,11.9],[125.5,12.2,125.8,11.0,125.0,11.3,125.3,10.4,124.8,10.1,124.8,10.8,124.5,10.9,124.3,11.5,124.9,11.4,124.9,11.8,124.3,12.6,125.2,12.5,125.5,12.2],[121.3,18.5,121.9,18.2,122.2,18.5,122.2,17.8,122.5,17.1,122.3,16.3,121.7,15.9,121.5,15.1,121.7,14.3,122.7,14.3,124.0,13.8,124.1,12.5,122.9,13.6,122.7,13.2,122.0,13.8,121.1,13.6,120.6,13.9,121.0,14.5,120.7,14.8,120.6,14.4,120.1,15.0,119.9,16.4,120.3,16.0,120.7,18.5,121.3,18.5],[-76.9,17.9,-77.2,17.7,-78.3,18.2,-77.8,18.5,-76.9,18.4,-76.2,17.9,-76.9,17.9],[-72.6,19.9,-70.0,19.6,-69.8,19.3,-69.2,19.3,-69.3,19.0,-68.3,18.6,-68.7,18.2,-70.0,18.4,-70.5,18.2,-70.7,18.4,-71.4,17.6,-71.7,18.0,-72.4,18.2,-73.9,18.0,-74.5,18.3,-74.4,18.7,-72.7,18.4,-72.3,18.7,-72.8,19.1,-72.8,19.5,-73.4,19.6,-73.2,19.9,-72.6,19.9],[110.3,18.7,109.5,18.2,108.7,18.5,108.6,19.4,109.1,19.8,110.8,20.1,111.0,19.7,110.3,18.7],[-155.5,19.1,-155.9,19.1,-155.9,20.3,-154.8,19.5,-155.5,19.1],[-79.7,22.8,-79.3,22.4,-78.3,22.5,-76.5,21.2,-75.6,21.0,-75.7,20.7,-74.2,20.3,-75.0,19.9,-77.8,19.9,-77.1,20.4,-78.1,20.7,-78.7,21.6,-81.8,22.2,-82.2,22.4,-81.8,22.6,-82.8,22.7,-84.1,21.9,-85.0,21.9,-83.8,22.8,-82.3,23.2,-80.6,23.1,-79.7,22.8],[121.2,22.8,120.7,22.0,120.1,23.6,121.5,25.3,122.0,25.0,121.2,22.8],[134.6,34.1,134.8,33.8,134.2,33.2,133.8,33.5,133.3,33.3,133.0,32.7,132.4,33.0,132.4,33.5,132.9,34.1,133.5,33.9,133.9,34.4,134.6,34.1],[34.6,35.7,33.9,35.2,34.0,35.0,33.0,34.6,32.5,34.7,32.3,35.1,34.6,35.7],[23.7,35.7,24.2,35.4,26.3,35.3,26.2,35.0,24.7,34.9,23.5,35.3,23.7,35.7],[15.5,38.2,15.1,36.6,12.4,37.6,12.6,38.1,15.5,38.2],[9.2,41.2,9.8,40.5,9.7,39.2,9.2,39.2,8.8,38.9,8.4,39.2,8.2,41.0,8.7,40.9,9.2,41.2],[141.0,37.1,140.6,36.3,140.8,35.8,140.3,35.1,139.0,34.7,137.2,34.6,135.8,33.5,135.1,33.8,135.1,34.6,133.3,34.4,132.2,33.9,131.0,33.9,132.0,33.1,131.3,31.5,130.7,31.0,130.2,31.4,130.4,32.3,129.8,32.6,129.4,33.3,130.4,33.6,132.6,35.4,134.6,35.7,135.7,35.5,136.7,37.3,137.4,36.8,139.4,38.2,140.1,39.4,139.9,40.6,140.3,41.2,141.4,41.4,141.9,40.0,141.9,39.2,141.0,38.2,141.0,37.1],[9.6,42.2,9.2,41.4,8.8,41.6,8.5,42.3,9.4,43.0,9.6,42.2],[143.9,44.2,144.6,44.0,145.3,44.4,145.5,43.3,144.1,43.0,143.2,42.0,141.6,42.7,141.1,41.6,140.0,41.6,139.8,42.6,140.3,43.3,141.4,43.4,142.0,45.6,143.9,44.2],[-61.8,49.1,-63.6,49.4,-64.5,49.9,-62.9,49.7,-61.8,49.1],[-123.5,48.5,-124.0,48.4,-125.7,48.8,-127.0,49.8,-128.1,50.0,-128.4,50.8,-125.8,50.3,-123.5,48.5],[-56.1,50.7,-56.8,49.8,-56.1,50.1,-55.5,49.9,-55.8,49.6,-53.5,49.2,-53.8,48.5,-53.1,48.7,-52.6,47.5,-53.1,46.7,-54.2,46.8,-54.0,47.6,-54.2,47.8,-55.4,46.9,-56.0,46.9,-55.3,47.4,-56.3,47.6,-59.3,47.6,-59.4,47.9,-58.8,48.3,-59.2,48.5,-58.4,49.1,-57.4,50.7,-55.9,51.6,-55.4,51.6,-56.1,50.7],[-132.7,54.0,-131.7,54.1,-132.1,53.0,-131.2,52.2,-131.6,52.2,-133.1,53.4,-133.2,54.2,-132.7,54.0],[143.6,50.7,144.7,49.0,143.2,49.3,142.6,47.9,143.5,46.8,143.5,46.1,142.7,46.7,142.1,46.0,141.9,48.9,142.2,51.0,141.6,51.9,141.7,53.3,142.6,53.8,142.2,54.2,142.7,54.4,143.6,50.7],[-6.8,52.3,-8.6,51.7,-10.0,51.8,-9.2,52.9,-9.7,53.9,-7.6,55.1,-6.7,55.2,-5.7,54.6,-6.2,53.9,-6.0,53.2,-6.8,52.3],[12.7,55.6,12.1,54.8,11.0,55.4,10.9,55.8,12.4,56.1,12.7,55.6],[-153.0,57.1,-154.0,56.7,-154.5,57.0,-154.7,57.5,-153.2,58.0,-152.6,57.9,-152.1,57.6,-153.0,57.1],[-3.0,58.6,-4.1,57.6,-2.0,57.7,-2.2,56.9,-3.1,56.0,-2.1,55.9,-1.1,54.6,-0.4,54.5,0.5,52.9,1.7,52.7,1.6,52.1,1.0,51.8,1.4,51.3,0.5,50.8,-2.5,50.5,-3.0,50.7,-3.6,50.2,-4.5,50.3,-5.2,50.0,-5.8,50.2,-4.3,51.2,-3.4,51.4,-5.0,51.6,-5.3,52.0,-4.2,52.3,-4.8,52.8,-4.6,53.5,-3.1,53.4,-2.9,54.0,-3.6,54.6,-4.8,54.8,-5.1,55.1,-4.7,55.5,-5.0,55.8,-5.6,55.3,-5.6,56.3,-6.2,56.8,-5.8,57.8,-5.0,58.6,-3.0,58.6],[-81.9,62.7,-83.1,62.2,-83.8,62.2,-84.0,62.5,-83.2,62.9,-81.9,62.9,-81.9,62.7],[-171.7,63.8,-168.7,63.3,-169.5,63.0,-170.7,63.4,-171.6,63.3,-171.8,63.4,-171.7,63.8],[-85.2,65.7,-85.0,65.2,-84.5,65.4,-81.6,64.5,-81.6,64.0,-80.8,64.1,-80.1,63.7,-81.0,63.4,-82.5,63.7,-83.1,64.1,-85.5,63.1,-85.9,63.6,-87.2,63.5,-86.4,64.0,-85.9,65.7,-85.2,65.7],[-14.5,66.5,-14.7,65.8,-13.6,65.1,-14.9,64.4,-18.7,63.5,-22.8,64.0,-21.8,64.4,-24.0,64.9,-22.2,65.1,-22.2,65.4,-24.3,65.6,-23.7,66.3,-22.1,66.4,-20.6,65.7,-19.1,66.3,-17.8,66.0,-16.2,66.5,-14.5,66.5],[-75.9,67.1,-77.0,67.1,-77.2,67.6,-76.8,68.1,-75.9,68.3,-75.1,68.0,-75.2,67.4,-75.9,67.1],[-180.0,69.0,-174.9,67.2,-175.0,66.6,-174.3,66.3,-174.6,67.1,-171.9,66.9,-169.9,66.0,-170.9,65.5,-172.5,65.4,-172.6,64.5,-173.0,64.3,-176.0,64.9,-176.2,65.4,-178.4,65.4,-178.9,65.7,-178.7,66.1,-179.9,65.9,-179.4,65.4,-180.0,65.0,180.0,65.0,178.7,64.5,177.4,64.6,179.4,63.0,179.5,62.6,179.2,62.3,177.4,62.5,173.7,61.7,170.7,60.3,170.3,59.9,168.9,60.6,166.3,59.8,165.8,60.2,164.9,59.7,163.5,59.9,163.2,59.2,162.0,58.2,162.1,57.8,163.2,57.6,163.1,56.2,162.1,56.1,161.7,55.3,162.1,54.9,160.4,54.3,160.0,53.2,158.5,53.0,158.2,51.9,156.8,51.0,155.4,55.4,155.9,56.8,156.8,57.4,156.8,57.8,158.4,58.1,161.9,60.3,163.7,61.1,164.5,62.6,163.3,62.5,162.7,61.6,160.1,60.5,159.3,61.8,156.7,61.4,154.2,59.8,155.0,59.1,151.3,58.8,151.3,59.5,149.8,59.7,148.5,59.2,145.5,59.3,142.2,59.0,135.1,54.7,136.7,54.6,137.2,54.0,138.2,53.8,138.8,54.3,139.9,54.2,141.3,53.1,141.4,52.2,140.6,51.2,140.1,48.4,138.6,47.0,138.2,46.3,134.9,43.4,133.5,42.8,132.9,42.8,132.3,43.3,130.0,41.9,129.7,41.6,129.7,40.9,127.5,39.8,127.4,39.2,128.4,38.6,129.5,36.8,129.5,35.6,129.1,35.1,126.5,34.4,126.6,35.7,126.1,36.7,126.9,36.9,126.2,37.7,125.7,37.9,125.3,37.7,124.7,38.1,125.2,38.7,125.3,39.6,124.3,39.9,121.1,38.9,121.6,39.4,121.4,39.8,122.2,40.4,121.6,40.9,119.6,39.9,119.0,39.3,118.0,39.2,117.5,38.7,118.1,38.1,118.9,37.9,118.9,37.4,119.7,37.2,120.8,37.9,122.4,37.5,122.5,36.9,121.1,36.7,119.7,35.6,119.2,34.9,120.2,34.4,120.6,33.4,121.9,31.7,121.9,30.9,121.3,30.7,121.5,30.1,122.1,29.8,121.7,28.2,121.1,28.1,118.7,24.5,115.9,22.8,114.8,22.7,114.2,22.2,113.8,22.5,113.2,22.1,110.8,21.4,110.4,20.3,109.9,20.3,109.6,21.0,109.9,21.4,108.5,21.7,106.7,20.7,105.9,19.8,105.7,19.1,107.4,16.7,108.9,15.3,109.3,13.4,109.2,11.7,105.2,8.6,104.8,9.2,105.1,9.9,104.3,10.5,103.5,10.6,102.6,12.2,101.7,12.6,100.8,12.6,101.0,13.4,100.1,13.4,100.0,12.3,99.2,10.0,99.2,9.2,99.9,9.2,100.5,7.4,103.0,5.5,103.4,4.9,103.5,2.8,103.9,2.5,104.2,1.3,103.5,1.2,101.4,2.8,100.2,5.3,100.1,6.5,98.5,8.4,98.3,7.8,98.1,8.3,98.8,11.4,98.4,12.0,98.5,13.1,98.1,13.6,97.6,16.1,97.2,16.9,95.4,15.7,94.2,16.0,94.5,17.3,94.3,18.2,93.5,19.4,93.7,19.7,93.1,19.9,92.4,20.7,91.4,22.8,90.5,22.8,90.6,22.4,90.3,21.8,89.0,22.1,88.9,21.7,87.0,21.5,87.0,20.7,86.5,20.2,85.1,19.5,82.2,17.0,82.2,16.6,80.3,15.9,80.0,15.1,80.3,13.0,79.9,12.1,79.9,10.4,79.3,10.3,78.9,9.5,79.2,9.2,78.3,8.9,77.5,8.0,76.6,8.9,75.7,11.3,74.9,12.7,74.4,14.6,73.5,16.0,72.6,21.4,71.2,20.8,70.5,20.9,69.2,22.1,69.6,22.5,69.3,22.8,67.4,23.9,67.1,24.7,66.4,25.4,61.5,25.1,57.4,25.7,57.0,27.0,56.5,27.1,54.7,26.5,53.5,26.8,52.5,27.6,51.5,27.9,50.1,30.1,49.6,30.0,48.9,30.3,48.6,29.9,48.0,30.0,48.8,27.7,50.2,26.7,50.1,25.9,50.8,24.8,50.7,25.5,51.0,26.0,51.3,26.1,51.6,25.8,51.4,24.6,51.8,24.0,54.0,24.1,56.4,26.4,56.4,24.9,56.8,24.2,58.7,23.6,59.8,22.3,58.5,20.4,57.8,20.2,57.7,18.9,56.6,18.6,56.3,17.9,55.3,17.6,55.3,17.2,52.4,16.4,52.2,15.6,49.6,14.7,48.7,14.0,45.6,13.3,45.0,12.7,43.5,12.6,42.6,15.2,42.8,15.3,42.7,16.8,41.2,18.7,40.9,19.5,39.8,20.3,39.1,21.3,39.1,22.6,38.5,23.7,37.5,24.3,36.9,25.6,35.1,28.1,34.6,28.1,34.9,29.5,33.9,27.6,33.1,28.4,32.4,29.9,32.7,28.7,34.1,26.1,35.7,23.9,35.5,23.1,36.9,22.0,37.5,18.6,38.4,18.0,39.3,15.9,43.3,12.4,43.3,12.0,42.7,11.7,44.1,10.4,44.6,10.4,51.1,12.0,51.0,10.6,49.5,6.8,47.7,4.2,46.6,2.9,43.1,0.3,41.6,-1.7,40.3,-2.6,39.6,-4.3,39.2,-4.7,38.7,-5.9,38.8,-6.5,39.4,-6.8,39.2,-8.5,40.5,-10.8,40.8,-14.7,40.1,-16.1,39.5,-16.7,37.4,-17.6,34.8,-19.8,34.7,-20.5,35.6,-22.1,35.5,-24.1,32.6,-25.7,32.9,-26.2,32.2,-28.8,28.2,-32.8,25.9,-33.7,25.8,-33.9,22.6,-33.9,19.6,-34.8,18.2,-33.9,17.9,-32.6,18.2,-32.4,18.2,-31.7,15.2,-27.1,14.3,-22.1,13.4,-20.9,12.6,-19.0,11.8,-18.1,11.8,-15.8,12.5,-13.5,13.6,-12.0,13.7,-10.7,12.9,-9.2,13.2,-8.6,11.9,-5.0,8.8,-1.1,9.5,1.0,9.3,1.2,9.8,3.1,9.4,3.7,8.9,3.9,8.5,4.8,5.9,4.3,4.3,6.3,1.9,6.1,-2.0,4.7,-4.6,5.2,-7.5,4.3,-9.0,4.8,-11.4,6.8,-12.4,7.3,-12.9,7.8,-13.2,8.9,-14.6,10.2,-14.8,10.9,-16.1,11.5,-16.6,12.2,-16.7,13.6,-17.6,14.7,-17.2,14.9,-16.5,16.1,-16.1,18.1,-16.3,20.1,-17.1,21.0,-17.0,21.9,-16.3,22.7,-16.0,23.7,-15.1,24.5,-14.4,26.3,-13.8,26.6,-12.6,28.0,-11.7,28.1,-9.6,29.9,-9.8,31.2,-9.3,32.6,-8.7,33.2,-6.9,34.1,-5.9,35.8,-5.2,35.8,-4.6,35.3,-2.2,35.2,1.5,36.6,5.3,36.7,6.3,37.1,8.4,36.9,9.5,37.4,10.2,37.2,10.2,36.7,11.0,37.1,11.1,36.9,10.6,36.4,10.6,35.9,10.9,35.7,10.8,34.8,10.2,34.3,10.3,33.8,10.9,33.8,11.5,33.1,15.2,32.3,15.7,31.4,19.1,30.3,20.1,31.0,19.8,31.8,20.1,32.2,21.5,32.8,22.9,32.6,23.2,32.2,24.9,31.9,25.2,31.6,26.5,31.6,28.9,30.9,30.1,31.5,31.0,31.6,31.7,31.4,32.0,30.9,32.2,31.3,33.8,31.0,34.6,31.5,36.0,34.6,35.9,35.4,36.1,35.8,35.8,36.3,36.2,36.7,34.7,36.8,34.0,36.2,32.5,36.1,31.7,36.6,30.6,36.7,30.4,36.3,29.7,36.1,28.7,36.7,27.6,36.7,27.0,37.7,26.3,38.2,26.8,39.0,26.2,39.5,27.3,40.4,28.8,40.5,29.2,41.2,31.1,41.1,33.5,42.0,35.2,42.0,38.3,40.9,40.4,41.0,41.6,41.5,41.7,42.0,41.5,42.6,36.7,45.2,37.4,45.4,38.2,46.2,37.7,46.6,39.1,47.0,39.1,47.3,35.0,46.3,35.0,45.7,35.5,45.4,36.5,45.5,36.3,45.1,33.9,44.4,33.3,44.6,33.5,45.0,32.5,45.3,33.6,45.9,33.3,46.1,31.7,46.3,31.7,46.7,30.7,46.6,29.6,45.0,28.8,44.9,28.6,43.7,27.7,42.6,28.1,41.6,29.0,41.3,28.8,41.1,27.6,41.0,26.4,40.2,26.1,40.8,24.9,40.9,23.7,40.7,24.4,40.1,23.9,40.0,23.3,40.0,22.8,40.5,22.6,40.3,23.4,39.2,23.0,39.0,24.0,38.2,24.0,37.7,23.1,37.9,23.4,37.4,22.8,37.3,23.2,36.4,22.5,36.4,21.7,36.8,21.1,38.3,20.0,39.9,19.4,40.3,19.5,41.7,18.9,42.3,16.0,43.5,15.2,44.2,15.4,44.3,14.9,45.1,14.3,45.2,14.0,44.8,13.7,45.1,13.9,45.6,13.1,45.7,12.3,45.4,12.3,44.6,12.6,44.1,13.5,43.6,14.0,42.8,15.1,42.0,15.9,42.0,16.2,41.7,15.9,41.5,18.5,40.2,18.3,39.8,17.7,40.3,16.9,40.4,16.5,39.8,17.2,39.4,17.1,38.9,16.6,38.8,16.1,38.0,15.7,37.9,16.1,39.0,15.4,40.0,13.6,41.2,12.1,41.7,10.5,42.9,10.2,43.9,8.9,44.4,6.5,43.1,4.6,43.4,3.1,43.1,3.0,41.9,2.1,41.2,0.8,41.0,-0.3,39.3,0.1,38.7,-0.5,38.3,-0.7,37.6,-1.4,37.4,-2.1,36.7,-4.4,36.7,-5.4,35.9,-5.9,36.0,-6.5,36.9,-7.5,37.1,-7.9,36.8,-8.9,36.9,-8.8,38.3,-9.5,38.7,-8.8,40.8,-9.0,42.6,-9.4,43.0,-8.0,43.7,-1.9,43.4,-1.4,44.0,-1.2,46.0,-3.0,47.6,-4.5,48.0,-4.6,48.7,-3.3,48.9,-1.6,48.6,-1.9,49.8,-1.0,49.3,1.3,50.1,1.6,50.9,3.8,51.6,4.7,53.1,7.1,53.7,7.9,53.7,8.1,53.5,8.8,54.0,8.1,55.5,8.1,56.5,8.5,57.1,9.4,57.2,10.6,57.7,10.3,56.9,10.9,56.5,9.6,55.5,9.9,54.6,10.9,54.4,10.9,54.0,12.5,54.5,14.1,53.8,17.6,54.9,18.6,54.7,18.7,54.4,19.7,54.4,19.9,54.9,21.3,55.2,21.1,56.8,21.6,57.4,22.5,57.8,23.3,57.0,24.1,57.0,24.4,58.4,24.1,58.3,23.4,58.6,23.3,59.2,25.9,59.6,28.0,59.5,29.1,60.0,28.1,60.5,22.9,59.8,22.3,60.4,21.3,60.7,21.5,61.7,21.1,62.6,21.5,63.2,25.4,65.1,25.3,65.5,23.9,66.0,22.2,65.7,21.2,65.0,21.4,64.4,17.8,62.7,17.1,61.3,18.8,60.1,17.9,59.0,16.8,58.7,16.4,57.0,15.9,56.1,14.7,56.2,14.1,55.4,12.9,55.4,11.0,58.9,10.4,59.5,8.4,58.3,7.1,58.1,5.7,58.6,5.0,62.0,5.9,62.6,8.6,63.5,10.5,64.5,14.8,67.8,19.2,69.8,21.4,70.3,23.0,70.2,24.5,71.0,28.2,71.2,31.3,70.5,30.0,70.2,31.1,69.6,32.1,69.9,33.8,69.3,36.5,69.1,40.3,67.9,41.1,67.5,41.1,66.8,40.0,66.3,38.4,66.0,33.9,66.8,33.2,66.6,34.8,65.9,34.9,64.4,37.0,63.9,37.1,64.3,36.5,64.8,37.2,65.1,39.6,64.5,40.4,64.8,39.8,65.5,42.1,66.5,44.0,66.1,44.5,66.8,43.7,67.4,44.2,68.0,43.5,68.6,46.3,68.2,46.8,67.7,45.6,67.6,45.6,67.0,46.3,66.7,47.9,66.9,48.1,67.5,53.7,68.9,54.5,68.8,53.5,68.2,54.7,68.1,55.4,68.4,57.3,68.5,58.8,68.9,59.9,68.3,61.1,68.9,60.0,69.5,60.6,69.9,63.5,69.5,68.5,68.1,69.2,68.6,68.1,69.4,66.9,69.5,67.3,69.9,66.7,71.0,68.5,71.9,69.2,72.8,69.9,73.0,72.6,72.8,72.8,72.2,71.8,71.4,72.5,71.1,72.8,70.4,72.6,69.0,73.7,68.4,73.2,67.7,71.3,66.3,72.4,66.2,72.8,66.5,73.9,66.8,74.2,67.3,75.1,67.8,74.5,68.3,74.9,69.0,73.8,69.1,73.6,69.6,74.4,70.6,73.1,71.4,74.9,72.1,74.7,72.8,75.2,72.9,75.7,72.3,75.3,71.3,76.4,71.2,75.9,71.9,77.6,72.3,79.7,72.3,81.5,71.7,80.6,72.6,80.5,73.6,86.8,73.9,86.0,74.5,87.2,75.1,92.9,75.8,93.2,76.0,95.9,76.1,96.7,75.9,98.9,76.4,100.8,76.4,101.0,76.9,102.0,77.3,104.4,77.7,106.1,77.4,104.7,77.1,107.0,77.0,107.2,76.5,108.2,76.7,111.1,76.7,114.1,75.8,113.9,75.3,109.4,74.2,112.1,73.8,113.0,74.0,113.5,73.3,115.6,73.8,118.8,73.6,119.0,73.1,123.2,73.0,123.3,73.7,127.0,73.6,128.6,73.0,129.1,72.4,128.5,72.0,129.7,71.2,131.3,70.8,132.3,71.8,133.9,71.4,135.6,71.7,137.5,71.3,138.2,71.6,139.9,71.5,139.1,72.4,140.5,72.8,149.5,72.2,150.4,71.6,153.0,70.8,159.0,70.9,159.8,70.5,159.7,69.7,160.9,69.4,167.8,69.6,169.6,68.7,170.8,69.0,170.0,69.7,170.5,70.1,175.7,69.9,178.6,69.4,-180.0,69.0],[49.1,41.3,49.6,40.6,50.4,40.3,49.6,40.2,49.2,39.0,48.9,38.8,49.2,37.6,50.1,37.4,50.8,36.9,52.3,36.7,53.8,37.0,53.9,39.0,53.1,39.3,53.4,40.0,52.7,40.0,52.9,40.9,53.9,40.6,54.7,41.0,53.7,42.1,52.9,41.9,52.8,41.1,52.4,42.0,52.7,42.4,52.5,42.8,51.3,43.1,50.3,44.6,51.3,44.5,51.3,45.2,53.0,45.3,53.2,46.2,53.0,46.9,51.2,47.0,49.1,46.4,48.6,45.8,47.7,45.6,46.7,44.6,47.6,43.7,47.5,43.0,49.1,41.3],[-95.6,69.1,-96.3,68.8,-97.6,69.1,-98.4,69.0,-99.8,69.4,-98.2,70.1,-96.6,69.7,-95.6,69.1],[-180.0,71.5,180.0,70.8,178.9,70.8,178.7,71.1,-180.0,71.5],[-180.0,71.5,-177.6,71.3,-180.0,70.8,-180.0,71.5],[-90.5,69.5,-90.5,68.5,-89.2,69.3,-88.0,68.6,-88.3,67.9,-87.3,67.2,-85.6,68.8,-85.5,69.9,-82.6,69.7,-81.3,69.2,-81.2,68.7,-82.0,68.1,-81.3,67.6,-81.4,67.1,-83.3,66.4,-84.7,66.3,-85.8,66.6,-87.3,64.8,-88.5,64.1,-89.9,64.0,-90.7,63.6,-90.8,63.0,-91.9,62.8,-93.2,62.0,-94.2,60.9,-94.6,60.1,-94.7,58.9,-93.2,58.8,-92.3,57.1,-90.9,57.3,-89.0,56.9,-87.3,56.0,-85.0,55.3,-82.3,55.1,-82.4,54.3,-82.1,53.3,-81.4,52.2,-79.9,51.2,-79.1,51.5,-78.6,52.6,-79.1,54.1,-79.8,54.7,-78.2,55.1,-77.1,55.8,-76.5,56.5,-76.6,57.2,-77.3,58.1,-78.5,58.8,-77.3,59.9,-78.1,62.3,-77.4,62.6,-74.7,62.2,-73.8,62.4,-71.7,61.5,-71.4,61.1,-69.6,61.1,-69.3,59.0,-68.4,58.8,-67.7,58.2,-66.2,58.8,-64.6,60.3,-61.4,57.0,-61.8,56.3,-59.6,55.2,-57.3,54.6,-56.9,53.8,-56.2,53.6,-55.8,53.3,-55.7,52.1,-57.1,51.4,-58.8,51.1,-60.0,50.2,-66.4,50.2,-67.2,49.5,-68.5,49.1,-71.1,46.8,-70.3,47.0,-68.7,48.3,-66.6,49.1,-65.1,49.2,-64.2,48.7,-65.1,48.1,-64.5,46.2,-63.2,45.7,-61.5,45.9,-60.5,47.0,-60.5,46.3,-59.8,45.9,-61.0,45.3,-64.2,44.3,-65.4,43.5,-66.1,43.6,-66.2,44.5,-64.4,45.3,-67.1,45.1,-67.0,44.8,-70.1,43.7,-70.7,43.0,-70.8,42.3,-70.5,41.8,-70.1,41.8,-70.2,42.1,-69.9,41.9,-70.0,41.6,-73.7,40.9,-72.2,41.1,-71.9,40.9,-74.0,40.8,-74.3,40.5,-74.0,40.4,-74.2,39.7,-74.9,38.9,-75.5,39.5,-75.1,38.4,-75.9,37.2,-75.7,37.9,-76.2,38.3,-76.4,39.1,-76.5,38.7,-76.3,38.1,-77.0,38.2,-76.3,37.9,-76.3,37.0,-76.0,36.9,-75.7,35.6,-76.4,34.8,-77.4,34.5,-79.1,33.5,-81.3,31.4,-81.3,30.0,-80.1,26.9,-80.4,25.2,-81.2,25.2,-81.7,25.9,-82.9,27.9,-82.7,28.6,-82.9,29.1,-84.1,30.1,-85.1,29.6,-86.4,30.4,-89.2,30.3,-89.6,30.2,-89.2,29.3,-90.2,29.1,-90.9,29.1,-91.6,29.7,-93.8,29.7,-96.6,28.3,-97.4,27.4,-97.1,25.9,-97.7,24.3,-97.9,22.4,-97.2,20.6,-96.3,19.3,-95.9,18.8,-94.8,18.6,-94.4,18.1,-92.0,18.7,-90.8,19.3,-90.3,21.0,-88.5,21.5,-87.1,21.5,-86.8,20.8,-87.6,19.6,-87.4,19.5,-87.8,18.3,-88.3,18.5,-88.1,18.3,-88.4,16.5,-88.9,15.9,-88.1,15.7,-85.0,16.0,-83.4,15.3,-83.1,15.0,-83.2,14.3,-83.5,13.6,-83.5,12.4,-83.8,11.1,-82.2,9.0,-81.4,8.8,-79.6,9.6,-76.8,8.6,-75.7,9.4,-75.5,10.6,-74.9,11.1,-73.4,11.2,-71.8,12.4,-71.1,12.1,-71.4,11.5,-71.9,11.4,-71.6,10.4,-72.1,9.9,-71.7,9.1,-71.3,9.1,-71.0,9.9,-71.4,10.2,-71.4,11.0,-70.2,11.4,-70.3,11.8,-69.9,12.2,-69.6,11.5,-68.9,11.4,-68.2,10.6,-66.2,10.6,-65.7,10.2,-64.9,10.1,-64.3,10.6,-61.9,10.7,-62.7,10.4,-62.4,9.9,-61.6,9.9,-60.8,9.4,-60.7,8.6,-60.2,8.6,-59.1,8.0,-58.5,7.3,-58.5,6.8,-58.1,6.8,-57.1,6.0,-55.9,5.8,-55.0,6.0,-54.0,5.8,-52.9,5.4,-51.7,4.2,-51.3,4.2,-50.5,1.9,-50.0,1.7,-49.9,1.0,-50.7,0.2,-50.4,-0.1,-48.6,-0.2,-48.6,-1.2,-47.8,-0.6,-44.9,-1.6,-44.4,-2.1,-44.6,-2.7,-43.4,-2.4,-41.5,-2.9,-40.0,-2.9,-37.2,-4.8,-35.6,-5.1,-35.2,-5.5,-34.7,-7.3,-35.1,-9.0,-38.7,-13.1,-39.0,-13.8,-38.9,-15.7,-39.3,-17.9,-39.6,-18.3,-39.8,-19.6,-40.8,-20.9,-40.9,-21.9,-41.8,-22.4,-42.0,-23.0,-44.6,-23.4,-47.6,-24.9,-48.5,-25.9,-48.5,-27.2,-48.9,-28.7,-49.6,-29.2,-50.7,-31.0,-52.3,-32.2,-52.7,-33.2,-53.8,-34.4,-54.9,-35.0,-56.2,-34.9,-57.1,-34.4,-57.8,-34.5,-58.4,-33.9,-58.5,-34.4,-57.2,-35.3,-57.4,-36.0,-56.7,-36.4,-56.8,-36.9,-57.7,-38.2,-59.2,-38.7,-62.3,-38.8,-62.1,-40.7,-62.7,-41.0,-63.8,-41.2,-64.7,-40.8,-65.1,-41.1,-65.0,-42.1,-64.3,-42.4,-63.8,-42.0,-63.5,-42.6,-65.2,-43.5,-65.6,-45.0,-66.5,-45.0,-67.3,-45.6,-67.6,-46.3,-66.6,-47.0,-65.6,-47.2,-66.0,-48.1,-67.2,-48.7,-67.8,-49.9,-69.1,-50.7,-68.8,-51.8,-68.2,-52.4,-69.5,-52.3,-70.8,-52.9,-71.0,-53.8,-72.6,-53.5,-74.9,-52.3,-75.3,-51.6,-75.0,-51.0,-75.5,-50.4,-75.6,-48.7,-75.2,-47.7,-74.1,-46.9,-75.6,-46.6,-74.7,-45.8,-74.4,-44.1,-73.2,-44.5,-72.7,-42.4,-73.4,-42.1,-73.7,-43.4,-74.3,-43.2,-73.7,-39.9,-73.2,-39.3,-73.6,-37.2,-73.2,-37.1,-71.4,-32.4,-71.7,-30.9,-71.4,-30.1,-71.5,-28.9,-70.9,-27.6,-70.1,-21.4,-70.2,-19.8,-70.4,-18.3,-71.4,-17.8,-71.5,-17.4,-76.0,-14.6,-76.4,-13.8,-76.3,-13.5,-79.8,-7.2,-81.3,-6.1,-80.9,-5.7,-81.4,-4.7,-81.1,-4.0,-79.8,-2.7,-80.0,-2.2,-80.4,-2.7,-81.0,-2.2,-80.8,-2.0,-80.9,-1.1,-80.6,-0.9,-80.0,0.4,-80.1,0.8,-78.9,1.4,-79.0,1.7,-78.6,1.8,-78.4,2.6,-77.9,2.7,-77.1,3.8,-77.5,4.1,-77.3,4.7,-77.5,6.7,-78.2,7.5,-78.4,8.1,-78.2,8.3,-79.1,9.0,-79.6,8.9,-80.5,8.1,-80.0,7.5,-80.9,7.2,-81.1,7.8,-81.5,7.7,-81.7,8.1,-82.8,8.3,-82.8,8.1,-83.5,8.4,-83.6,9.1,-85.0,10.1,-85.1,9.6,-85.7,9.9,-85.7,10.8,-85.9,10.9,-85.7,11.1,-87.7,12.9,-87.3,13.0,-87.5,13.3,-88.5,13.2,-91.2,13.9,-93.4,15.6,-94.7,16.2,-96.6,15.7,-100.8,17.2,-101.9,17.9,-103.5,18.3,-105.5,19.9,-105.7,20.4,-105.4,20.5,-105.3,21.4,-106.0,22.8,-108.4,25.2,-109.3,25.6,-109.3,26.4,-110.4,27.2,-110.6,27.9,-111.2,27.9,-112.2,29.0,-113.1,31.2,-113.9,31.6,-114.8,31.8,-114.9,31.4,-114.7,30.2,-111.6,26.7,-110.7,24.3,-110.2,24.3,-109.4,23.4,-110.0,22.8,-110.3,23.4,-112.2,24.7,-112.3,26.0,-114.5,27.1,-115.1,27.7,-114.6,27.7,-114.2,28.6,-115.5,29.6,-117.3,33.0,-118.5,34.0,-120.6,34.6,-120.7,35.2,-121.7,36.2,-122.5,37.8,-123.7,39.0,-123.9,39.8,-124.4,40.3,-124.2,42.0,-124.5,42.8,-123.9,45.5,-124.1,46.9,-124.7,48.2,-124.6,48.4,-123.1,48.0,-122.6,47.1,-122.3,47.4,-122.8,49.0,-125.6,50.4,-127.4,50.8,-128.0,51.7,-127.8,52.3,-129.1,52.8,-129.3,53.6,-130.5,54.3,-130.5,54.8,-132.0,55.5,-132.2,56.4,-133.5,57.2,-134.1,58.1,-136.6,58.2,-139.9,59.5,-142.6,60.1,-144.0,60.0,-147.1,60.9,-148.2,60.7,-148.0,60.0,-151.7,59.2,-151.9,59.7,-151.4,60.7,-150.3,61.0,-150.6,61.3,-154.0,59.4,-153.3,58.9,-154.2,58.1,-156.3,57.4,-156.6,57.0,-158.1,56.5,-158.4,56.0,-164.8,54.4,-164.9,54.6,-161.8,55.9,-160.6,56.0,-157.7,57.6,-157.6,58.3,-157.0,58.9,-158.2,58.6,-158.5,58.8,-159.1,58.4,-159.7,58.9,-160.0,58.6,-160.4,59.1,-162.0,58.7,-161.9,59.6,-162.5,60.0,-163.8,59.8,-165.3,60.5,-165.4,61.1,-166.1,61.5,-164.6,63.1,-163.1,63.1,-162.3,63.5,-161.5,63.5,-160.8,63.8,-161.0,64.2,-161.5,64.4,-160.8,64.8,-162.8,64.3,-163.5,64.6,-165.0,64.4,-166.4,64.7,-168.1,65.7,-164.5,66.6,-163.7,66.6,-163.8,66.1,-161.7,66.1,-165.4,68.0,-166.8,68.4,-166.2,68.9,-164.4,68.9,-163.2,69.4,-162.9,69.9,-161.9,70.3,-159.0,70.9,-158.1,70.8,-156.6,71.4,-155.1,71.1,-154.3,70.7,-152.2,70.8,-152.3,70.6,-150.7,70.4,-144.9,70.0,-143.6,70.2,-136.5,68.9,-134.4,69.6,-132.9,69.5,-129.8,70.2,-129.1,69.8,-128.4,70.0,-128.1,70.5,-125.8,69.5,-124.4,70.2,-124.3,69.4,-122.7,69.9,-121.5,69.8,-117.6,69.0,-115.2,68.9,-113.9,68.4,-115.3,67.9,-113.5,67.7,-109.9,68.0,-108.9,67.4,-107.8,67.9,-108.8,68.3,-108.2,68.7,-106.1,68.8,-104.3,68.0,-103.2,68.1,-101.5,67.6,-98.4,67.8,-98.6,68.4,-97.7,68.6,-96.1,68.2,-96.1,67.3,-95.5,68.1,-94.7,68.1,-94.2,69.1,-96.5,70.1,-96.4,71.2,-95.2,71.9,-92.9,71.3,-91.5,70.2,-92.4,69.7,-90.5,69.5],[-114.2,73.1,-114.7,72.7,-112.4,73.0,-111.1,72.5,-109.9,73.0,-109.0,72.6,-108.2,71.7,-107.7,72.1,-108.4,73.1,-106.5,73.1,-105.4,72.7,-104.5,71.0,-101.0,70.0,-101.1,69.6,-102.7,69.5,-102.1,69.1,-102.4,68.8,-106.0,69.2,-113.3,68.5,-113.9,69.0,-116.1,69.2,-117.3,70.0,-112.4,70.4,-117.9,70.5,-118.4,70.9,-116.1,71.3,-119.4,71.6,-117.9,72.7,-115.2,73.3,-114.2,73.1],[-104.5,73.4,-105.4,72.8,-106.9,73.5,-105.3,73.6,-104.5,73.4],[-76.3,73.1,-76.3,72.8,-79.5,72.7,-80.9,73.3,-80.8,73.7,-80.4,73.8,-78.1,73.7,-76.3,73.1],[-86.6,73.2,-85.8,72.5,-84.9,73.3,-82.3,73.8,-80.6,72.7,-80.8,72.1,-77.8,72.8,-74.2,71.8,-74.1,71.3,-72.2,71.6,-71.2,70.9,-68.8,70.5,-67.9,70.1,-67.0,69.2,-68.8,68.7,-64.9,67.8,-63.4,66.9,-61.9,66.9,-62.2,66.2,-63.9,65.0,-66.7,66.4,-68.0,66.3,-68.1,65.7,-65.3,64.4,-64.7,63.4,-65.0,62.7,-68.8,63.7,-66.3,62.3,-66.2,61.9,-71.0,62.9,-72.2,63.4,-71.9,63.7,-74.8,64.7,-74.8,64.4,-77.7,64.2,-78.6,64.6,-77.9,65.3,-74.0,65.5,-74.3,65.8,-72.7,67.3,-72.9,67.7,-74.8,68.6,-76.9,68.9,-76.2,69.1,-77.3,69.8,-79.0,70.2,-79.5,69.9,-81.3,69.7,-88.7,70.4,-89.5,70.8,-88.5,71.2,-89.9,71.2,-90.2,72.2,-89.4,73.1,-88.4,73.5,-85.8,73.8,-86.6,73.2],[-100.4,73.8,-97.4,73.8,-97.1,73.5,-98.1,73.0,-96.5,72.6,-96.7,71.7,-98.4,71.3,-99.3,71.4,-102.5,72.5,-102.5,72.8,-100.4,72.7,-101.5,73.4,-100.4,73.8],[143.6,73.2,139.9,73.4,140.8,73.8,142.1,73.9,143.5,73.5,143.6,73.2],[-93.2,72.8,-94.3,72.0,-95.4,72.1,-96.0,72.9,-96.0,73.4,-94.5,74.1,-90.5,73.9,-92.0,73.0,-93.2,72.8],[-120.5,71.4,-123.1,70.9,-123.6,71.3,-125.9,71.9,-123.9,73.7,-124.9,74.3,-121.5,74.4,-117.6,74.2,-115.5,73.5,-119.2,72.5,-120.5,71.8,-120.5,71.4],[150.7,75.1,149.6,74.7,146.1,75.2,146.4,75.5,150.7,75.1],[-93.6,75.0,-94.2,74.6,-96.8,74.9,-96.3,75.4,-94.9,75.6,-93.6,75.0],[145.1,75.6,144.3,74.8,139.0,74.6,137.0,75.3,137.5,75.9,138.8,76.1,141.5,76.1,145.1,75.6],[-98.5,76.7,-97.7,76.3,-97.7,75.7,-98.2,75.0,-99.8,74.9,-100.9,75.1,-100.9,75.6,-102.5,75.6,-102.6,76.3,-98.5,76.7],[-108.2,76.2,-107.8,75.8,-105.9,76.0,-105.7,75.5,-106.3,75.0,-113.7,74.4,-113.9,74.7,-111.8,75.2,-117.7,75.2,-116.3,76.2,-115.4,76.5,-112.6,76.1,-110.8,75.5,-109.1,75.5,-110.5,76.4,-109.6,76.8,-108.6,76.7,-108.2,76.2],[57.5,70.7,53.7,70.8,53.4,71.2,51.6,71.5,51.5,72.0,52.5,72.2,52.4,72.8,54.4,73.6,53.5,73.8,55.9,74.6,55.6,75.1,61.2,76.3,64.5,76.4,66.2,76.8,68.2,76.9,68.9,76.5,68.2,76.2,61.6,75.3,58.5,74.3,55.4,72.4,55.6,71.5,57.5,70.7],[-94.7,77.1,-93.6,76.8,-91.6,76.8,-90.7,76.5,-91.0,76.1,-89.2,75.6,-81.1,75.7,-80.1,75.3,-79.8,74.9,-81.9,74.4,-88.1,74.4,-92.4,74.8,-92.9,75.9,-93.9,76.3,-97.1,76.8,-96.7,77.2,-94.7,77.1],[-116.2,77.6,-116.3,76.9,-117.1,76.5,-121.5,75.9,-122.9,76.1,-119.1,77.5,-116.2,77.6],[-110.2,77.7,-112.1,77.4,-113.5,77.7,-111.3,78.2,-109.9,78.0,-110.2,77.7],[24.7,77.9,22.5,77.4,20.7,77.7,21.4,77.9,20.8,78.3,22.9,78.5,23.3,78.1,24.7,77.9],[-95.8,78.1,-97.3,77.8,-98.1,78.1,-98.6,78.9,-95.6,78.4,-95.8,78.1],[-100.1,78.3,-99.7,77.9,-105.2,78.4,-104.2,78.7,-105.4,78.9,-105.5,79.3,-100.8,78.8,-100.1,78.3],[105.1,78.3,99.4,77.9,101.3,79.2,102.1,79.3,105.4,78.7,105.1,78.3],[18.3,79.7,21.5,79.0,19.0,78.6,18.5,77.8,17.6,77.6,17.1,76.8,15.9,76.8,13.8,77.4,14.7,77.7,13.2,78.0,11.2,78.9,10.4,79.7,13.2,80.0,13.7,79.7,15.1,79.7,15.5,80.0,17.0,80.1,18.3,79.7],[25.4,80.4,27.4,80.1,25.9,79.5,23.0,79.4,20.1,79.6,19.9,79.8,18.5,79.9,17.4,80.3,20.5,80.6,21.9,80.4,22.9,80.7,25.4,80.4],[51.1,80.5,47.6,80.0,46.5,80.2,47.1,80.6,44.8,80.6,48.3,80.8,48.5,80.5,50.0,80.9,51.5,80.7,51.1,80.5],[99.9,78.9,97.8,78.8,95.0,79.0,93.3,79.4,92.5,80.1,91.2,80.3,93.8,81.0,95.9,81.3,100.2,79.8,99.9,78.9],[-87.0,79.7,-85.8,79.3,-89.0,78.3,-90.8,78.2,-92.9,78.3,-94.0,78.8,-93.9,79.1,-93.1,79.4,-95.0,79.4,-96.7,80.2,-95.3,80.9,-94.3,81.0,-94.7,81.2,-92.4,81.3,-91.1,80.7,-87.8,80.3,-87.0,79.7],[-68.5,83.1,-63.7,82.9,-61.9,82.6,-61.9,82.4,-67.7,81.5,-65.5,81.5,-69.5,80.6,-71.2,79.8,-76.9,79.3,-75.5,79.2,-76.2,79.0,-75.4,78.5,-79.8,77.2,-79.6,77.0,-77.9,77.0,-77.9,76.8,-80.6,76.2,-83.2,76.5,-89.5,76.5,-89.6,77.0,-87.8,77.2,-88.3,77.9,-85.0,77.5,-86.3,78.2,-88.0,78.4,-87.2,78.8,-85.4,79.0,-85.1,79.3,-86.5,79.7,-86.9,80.3,-83.4,80.1,-81.8,80.5,-87.6,80.5,-89.4,80.9,-91.4,81.6,-91.6,81.9,-87.0,82.3,-85.5,82.7,-83.2,82.3,-82.4,82.9,-79.3,83.1,-68.5,83.1],[-27.1,83.5,-20.8,82.7,-22.7,82.3,-31.9,82.2,-31.4,82.0,-27.9,82.1,-24.8,81.8,-22.9,82.1,-22.1,81.7,-23.2,81.2,-15.8,81.9,-12.8,81.7,-12.2,81.3,-16.8,80.3,-20.0,80.2,-17.7,80.1,-19.7,78.8,-19.7,77.6,-18.5,77.0,-21.7,76.6,-19.8,76.1,-19.6,75.2,-20.7,75.2,-19.4,74.3,-21.6,74.2,-20.4,73.8,-20.8,73.5,-23.6,73.3,-22.3,72.6,-22.3,72.2,-24.3,72.6,-24.8,72.3,-22.1,71.5,-21.8,70.7,-23.5,70.5,-25.5,71.4,-25.2,70.8,-26.4,70.2,-22.3,70.1,-27.7,68.5,-31.8,68.1,-32.8,67.7,-34.2,66.7,-36.4,66.0,-39.8,65.5,-40.7,64.8,-40.7,64.1,-41.2,63.5,-42.8,62.7,-42.4,61.9,-43.4,60.1,-44.8,60.0,-46.3,60.9,-48.3,60.9,-49.2,61.4,-49.9,62.4,-51.6,63.6,-52.1,64.3,-52.3,65.2,-53.7,66.1,-53.3,66.8,-54.0,67.2,-53.0,68.4,-51.5,68.7,-50.9,69.9,-53.5,69.3,-54.7,69.6,-54.8,70.3,-54.4,70.8,-51.4,70.6,-54.0,71.5,-55.0,71.4,-55.8,71.7,-54.7,72.6,-57.3,74.7,-58.6,75.1,-58.6,75.5,-61.3,76.1,-68.5,76.1,-71.4,77.0,-66.8,77.4,-73.3,78.0,-73.2,78.4,-65.7,79.4,-65.3,79.8,-68.0,80.1,-67.1,80.5,-62.2,81.3,-62.6,81.8,-57.2,82.2,-54.1,82.2,-53.0,81.9,-50.4,82.4,-44.5,81.7,-46.9,82.2,-46.8,82.6,-43.4,83.2,-39.9,83.2,-38.6,83.5,-35.1,83.6,-27.1,83.5]];
 
-   The owner: "change test page 1 to make it more into a perfumer oriented
-   page ... you initially start with a diagram like this (image 2), and each
-   dot or node on that when clicked will take you to a sphere ... The central
-   sphere node should be of the perfumer, and sphere nodes around it should
-   be of the houses ... Make sure to have a return button." And then, seeing
-   it: "remove the earth actually, make it way more abstract and blobby like
-   in the image i referenced (image 4) ... Add feathered borders, chromatic
-   abberation and some other effects ... I want you to make the page look
-   good."
+const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas Nilsson","sort":"Nilsson","about":[{"t":"An American perfumer who grew up among the forests of the Rocky Mountains; Parfumo gives 1995 as the year he was born.","s":["S02"]},{"t":"Self-taught, he founded Pineward in Colorado in 2020, at twenty-five, meaning it to be a line of pine and fir perfumes.","s":["S03","S77"]},{"t":"The money to start it came from donating plasma after he recovered from COVID-19 in June 2020.","s":["S04"]},{"t":"In 2022 he acquired Apoteker Tepe and brought its perfumes back, working with its founder, Holladay Saltz.","s":["S05"]},{"t":"Parfumo knows sixty-two perfumes by him, every one of them for Pineward.","s":["S01"]}],"born":"1995","from":"United States"},{"id":"dan-roxana-adar","name":"Dan & Roxana Adar","sort":"Adar","about":[{"t":"The in-house perfumers of ADAR, a European house with Romanian roots.","s":["S10"]},{"t":"ADAR made its perfumes only on private commission until a public collection came out in 2025.","s":["S10"]},{"t":"The house also works with outside perfumers — Antoine Lie, Miguel Matos and Manuel Attardi — and does not say which of them made which perfume; here every ADAR perfume is credited to the house's own pair unless a source names its nose.","s":["S11"]},{"t":"Where the house names the nose — Dan Adar, Rox (Roxana) Adar or Miguel Matos — the perfume is credited to that perfumer instead; what is left here is the house's pair.","s":["S12","S84","S88"]}],"from":"Romania"},{"id":"goran-bajazetov","name":"Goran Bajazetov","sort":"Bajazetov","about":[{"t":"The founder and perfumer of Almost Human.","s":["S16"]},{"t":"Before perfume he spent more than twenty years in design, visual design, storytelling and the development of technology products; Parfumo lists the house as a Romanian brand he founded in 2025.","s":["S15"]},{"t":"Its first collection, First Signal, came out in 2026: five perfumes that do without a pyramid of notes and are described instead by how they change on the skin.","s":["S15"]}]},{"id":"david-lev-jipa-slivinschi","name":"David-Lev Jipa-Slivinschi","sort":"Jipa-Slivinschi","about":[{"t":"Born in Bucharest, of Russian and Ukrainian heritage, he studied film and screenwriting and turned to perfume during the pandemic.","s":["S24"]},{"t":"Self-taught, he founded his own house, Toskovat', in Bucharest in 2022.","s":["S23"]},{"t":"For Ataraxia he is credited with Vestibule and Amaretto Jazz in the Melting Room, both from 2024.","s":["S19","S18"]}],"from":"Romania"},{"id":"sy-truong","name":"Sy Truong","sort":"Truong","about":[{"t":"Named by Ça Fleure Bon as the perfumer of Ataraxia's Deity (2025), made with the house's creative director, Tudor Ristea.","s":["S20"]},{"t":"Deity was a finalist in the Art and Olfaction Awards.","s":["S22"]}]},{"id":"antoine-lie","name":"Antoine Lie","sort":"Lie","about":[{"t":"Born in Strasbourg in 1966.","s":["S32"]},{"t":"He studied chemistry before moving to Grasse to train as a perfumer.","s":["S33"]},{"t":"He has made perfumes for ERIS Parfums, État Libre d'Orange, Comme des Garçons, Houbigant and Les Indémodables.","s":["S27"]},{"t":"Every Les Abstraits perfume is his, made with the house's founder, the fragrance critic and YouTuber Eugen Nizic.","s":["S27"]}],"born":"1966","from":"France"},{"id":"michael-nordstrand","name":"Michael Nordstrand","sort":"Nordstrand","about":[{"t":"Named by Parfumo and by Ça Fleure Bon as the perfumer of Tale Parfum's Bad Lily (2024).","s":["S35","S34"]},{"t":"Nothing more about him has been filed here yet.","s":[]}]},{"id":"chad-hodge","name":"Chad Hodge","sort":"Hodge","about":[{"t":"A screenwriter, and co-founder of Tale Parfum with its creative director, Diandra Barsalou.","s":["S34"]},{"t":"Ça Fleure Bon credits Water Me to him.","s":["S34"]},{"t":"Tale Parfum was founded in Los Angeles.","s":["S36"]}],"from":"United States"},{"id":"qimu","name":"Qimu","sort":"Qimu","about":[{"t":"WhatScent names Qimu as the perfumer of Drummer, by the house that carries the name, Qimu & Musicians.","s":["S41"]},{"t":"The owner names him as the perfumer of Guitarist, Vocal and Bassist too, and gives Shanghai, China, as where he is from.","s":["S108"]}],"from":"China"},{"id":"aichi-liu","name":"Aichi Liu","sort":"Liu","about":[{"t":"She founded OM Parfum in 2021 and is based in Taiwan; her perfumes draw on films, places, her own experiences and moods.","s":["S42"]},{"t":"Parfumo names her as the house's only perfumer.","s":["S43"]},{"t":"She also makes the perfumes of Outsider Parfum, which OM Parfum markets.","s":["S44","S45"]}],"from":"Taiwan"},{"id":"mathew-schmuelian","name":"Mathew Schmuelian","sort":"Schmuelian","about":[{"t":"He founded Lost Tribe in New York City in 2022, after years of collecting all-natural, artisanal perfumes, and went on to source his own raw materials.","s":["S46"]},{"t":"Lost Tribe works almost entirely with natural materials, and names him as its perfumer.","s":["S48","S47"]},{"t":"Pan's Labyrinth he composed with the perfumer Rajesh Balkrishnan.","s":["S47"]}],"from":"United States"},{"id":"rajesh-balkrishnan","name":"Rajesh Balkrishnan","sort":"Balkrishnan","about":[{"t":"Named as co-perfumer, with Mathew Schmuelian, of Lost Tribe's Pan's Labyrinth.","s":["S47"]},{"t":"Nothing more about him has been filed here yet.","s":[]}]},{"id":"holladay-penick-saltz","name":"Holladay Penick Saltz","sort":"Saltz","about":[{"t":"From the Jackson, Mississippi area, she graduated from the Rhode Island School of Design and specialised in fashion and material culture at Parsons and The New School.","s":["S06"]},{"t":"After studying fragrance formulation and production at Le Labo in New York, she founded Apoteker Tepe in 2014, and ran it until 2018.","s":["S06"]},{"t":"In 2022 Nicholas Nilsson of Pineward acquired the line and brought it back with her help.","s":["S05"]}],"from":"United States"},{"id":"christopher-sheldrake","name":"Christopher Sheldrake","sort":"Sheldrake","about":[{"t":"Born on 11 April 1955 in Madras, India.","s":["S50"]},{"t":"The perfumer Georges Cœur took him on as an apprentice in 1974; he worked at Robertet and at Chanel before meeting Serge Lutens in 1989.","s":["S51"]},{"t":"He went on to make Féminité du Bois (1992), Ambre Sultan (1993) and nearly all of the Serge Lutens line.","s":["S51"]},{"t":"In 2005 he returned to Chanel as perfumer and director of research and development, beside Jacques and later Olivier Polge.","s":["S51","S50"]}],"born":"1955","from":"United Kingdom"},{"id":"francois-demachy","name":"François Demachy","sort":"Demachy","about":[{"t":"Born in Cannes and raised in Grasse, where his father ran a pharmacy; he studied dentistry before perfume.","s":["S53"]},{"t":"He was Dior's perfumer-creator from 2006.","s":["S81"]},{"t":"Francis Kurkdjian succeeded him as Dior's chief perfumer in October 2021.","s":["S54"]}],"from":"France"},{"id":"ramon-monegal","name":"Ramón Monegal","sort":"Monegal","about":[{"t":"Born in 1951, of the family behind the Spanish house Myrurgia.","s":["S56","S57"]},{"t":"When Puig stopped producing Myrurgia's perfumes in 2008 he left, and after a year off, in which he wrote a book on perfume, founded the house under his own name in 2009.","s":["S57"]}],"born":"1951","from":"Spain"},{"id":"pierre-montale","name":"Pierre Montale","sort":"Montale","about":[{"t":"A self-taught perfumer, trained in materials by a perfumer in Grasse; in 1975 he and his sister founded Comptoir Sud Pacifique, and he later founded Montale Parfums.","s":["S60"]},{"t":"He founded Mancera in 2008; his daughter Amélie became its artistic director in 2017.","s":["S59"]}],"from":"France"},{"id":"jakub-pietrynka","name":"Jakub Pietrynka","sort":"Pietrynka","about":[{"t":"The Polish independent perfumer behind JMP Artisan Perfumes.","s":["S65"]},{"t":"Parfumo knows fifty-five perfumes by him.","s":["S64"]},{"t":"The owner names him as the perfumer of Grande Parfums' Intimate Spell.","s":["S108"]}],"from":"Poland"},{"id":"sultan-pasha","name":"Sultan Pasha","sort":"Pasha","about":[{"t":"WhatScent credits Quintessentially Amber (2025) to him, with Christian Carbonnel.","s":["S66"]},{"t":"His house describes it as an amber meant to use every facet of the genre together.","s":["S67"]}]},{"id":"christian-carbonnel","name":"Christian Carbonnel","sort":"Carbonnel","about":[{"t":"Credited by WhatScent, with Sultan Pasha, for Quintessentially Amber (2025).","s":["S66"]},{"t":"Nothing more about him has been filed here yet.","s":[]}]},{"id":"russian-adam","name":"Russian Adam","sort":"Adam","about":[{"t":"Ivan Inkin, called Russian Adam: a distiller who founded Areej Le Doré in Thailand in 2017; the house is now based in Indonesia.","s":["S69"]},{"t":"Areej Le Doré specialises in natural oud and sandalwood oils it distils itself.","s":["S69"]},{"t":"Forbidden Flower is from 2024.","s":["S68"]}]},{"id":"josh-lobb","name":"Josh Lobb","sort":"Lobb","about":[{"t":"An entirely self-taught perfumer in Portland, Oregon; Slumberhouse began as a collective of artist friends and became his own.","s":["S71"]},{"t":"Ore was one of his first perfumes, in 2009; he remade it as an extrait, and again in 2022.","s":["S70","S71"]}],"from":"United States"},{"id":"prin-lomros","name":"Prin Lomros","sort":"Lomros","about":[{"t":"A Thai perfumer who first studied film, then began his career at PerfumersWorld, a large Thai fragrance company, before founding Pryn Parfum in 2016 as a self-taught perfumer.","s":["S72"]},{"t":"Three lines came of it: Strangers Parfumerie (2017), the one closest to his own life; Parfum Prissana (2018), named after his sister, joining classic structures with an East Asian style; and PRIN (2019), the most personal of the three.","s":["S72"]},{"t":"Several of his perfumes were finalists in the Art and Olfaction Awards — Rosuerrier in 2017, Cigar Rum and Morah in 2018 — and he has made perfumes for Zoologist.","s":["S72"]},{"t":"He also teaches filmmaking at a university in Bangkok.","s":["S74"]}],"from":"Thailand"},{"id":"dan-adar","name":"Dan Adar","sort":"Adar, Dan","about":[{"t":"One of the two in-house perfumers of ADAR, a European house with Romanian roots.","s":["S10"]},{"t":"The house's own pages give him as the nose of Amber Zero, Root Code and Lignum Dei, with Rox Adar as their artistic vision.","s":["S84","S91","S92"]}],"from":"Romania"},{"id":"roxana-adar","name":"Roxana Adar","sort":"Adar, Roxana","about":[{"t":"One of the two in-house perfumers of ADAR, written Rox Adar on the house's own pages.","s":["S10","S12"]},{"t":"The house gives her as the nose of Tyrian, Aetherialism, Incantu and ADHD.","s":["S12","S85","S86","S90"]}],"from":"Romania"},{"id":"miguel-matos","name":"Miguel Matos","sort":"Matos","about":[{"t":"One of the outside perfumers ADAR works with.","s":["S11"]},{"t":"The house's own pages give him as the nose of Alta Luna and Alpha 11, two of its Elixirs Absolus, with ADAR as their artistic vision.","s":["S88","S89"]}]},{"id":"lan-xiao","name":"Lan Xiao","sort":"Xiao","about":[{"t":"An independent perfumer and the founder of Tombstone, who, in Scentissime's words, explores the beauty of life through the awareness of death.","s":["S96","S102"]},{"t":"Her perfumes for the house are earthy, smoky and gourmand; Tombstone gives her Sweet Coffin, which she meant as the sweet coffin she wishes to return to, and Scentissime 3 Feet 5.","s":["S101","S96"]},{"t":"The owner names her as the perfumer of Evergrow too; the house writes her name Xiao Lan.","s":["S108"]}]},{"id":"tan-shuai","name":"Tan Shuai","sort":"Tan","about":[{"t":"Named by Tombstone as the perfumer of No Need to Come by, a gourmand-leather perfume he made of soft, warm notes set against hard, cool ones.","s":["S98"]}]},{"id":"yenchi-lin","name":"Yenchi Lin","sort":"Lin","about":[{"t":"A Taiwanese perfumer trained in Grasse, who composes perfumes as one writes intimate narratives, drawing on her childhood in Kaohsiung.","s":["S100"]},{"t":"Tombstone gives her Sing at My Funeral, a funeral pictured with a light spirit.","s":["S99","S100"]}],"from":"Taiwan"},{"id":"diandra-barsalou","name":"Diandra Barsalou","sort":"Barsalou","about":[{"t":"Creative director and co-founder of Tale Parfum.","s":["S34"]},{"t":"Named by Sainte Cellier as the perfumer of Rouse.","s":["S104"]}],"from":"United States"},{"id":"vera-nicchia","name":"Vera Nicchia","sort":"Nicchia","about":[{"t":"Named by Profumix as the nose of Casa Goa's Velvet Fog.","s":["S107"]}]},{"id":"marius-pana","name":"Marius Pana","sort":"Pana","about":[{"t":"The owner names him as the perfumer of ten of Grande Parfums' perfumes: 5 Years Anniversary, Ambresso, Ancient Oud, Cuore, Giardino di Sorrento, Karak & Shisha, Mystical Incense, Vanilla Ash, Vintage Memoir and White Label.","s":["S108"]}]},{"id":"lorenzo-orlandi-berti","name":"Lorenzo Orlandi Berti","sort":"Orlandi Berti","about":[{"t":"The owner names him as the perfumer of Grande Parfums' Choco Powder and Hot Stuff.","s":["S108"]}]},{"id":"alexandru-marian","name":"Alexandru Marian","sort":"Marian","about":[{"t":"The owner names him as the perfumer of Grande Parfums' Cookie.","s":["S108"]}]},{"id":"georgiana-stefanoaei","name":"Georgiana Ștefănoaei","sort":"Ștefănoaei","about":[{"t":"The owner names her as the perfumer of Matca's House of Ellixirz.","s":["S108"]}]},{"id":"not-found","name":"Not publicly available","sort":"￿","about":[{"t":"These perfumes are written about on this site, but who made them is not publicly available. When it is, the perfume moves to its perfumer.","s":[]}]}],"houses":[{"id":"pineward","name":"Pineward","page":"houses/pineward.html","founded":"2020","from":"United States","about":"Founded in Colorado in 2020 by the self-taught perfumer Nicholas Nilsson.","s":["S03"]},{"id":"apoteker-tepe","name":"Apoteker Tepe","page":"houses/apoteker-tepe.html","founded":"2014","from":"United States","about":"Founded in 2014 by Holladay Penick Saltz, who ran it until 2018; acquired in 2022 by Nicholas Nilsson of Pineward, who revived it.","s":["S05","S06"]},{"id":"adar","name":"ADAR","page":"houses/adar.html","from":"Romania","about":"A European house with Romanian roots whose own perfumers are Dan and Roxana Adar; its first public collection came out in 2025.","s":["S10"]},{"id":"almost-human","name":"Almost Human","page":"houses/almost-human.html","founded":"2025","from":"Romania","about":"Founded in 2025 by its perfumer and creative director, Goran Bajazetov; its first collection came out in 2026.","s":["S15","S16"]},{"id":"ataraxia","name":"Ataraxia","page":"houses/ataraxia.html","about":"A house of gothic, avant-garde scents; Tudor Ristea is its creative director.","s":["S78","S22"]},{"id":"grande-parfums","name":"Grande Parfums","page":"houses/grande-parfums.html","founded":"2021","from":"Romania","about":"The owner names its perfumers: Marius Pana for most of them, Lorenzo Orlandi Berti, Alexandru Marian and Jakub Pietrynka; Dreaming Maldives' is not publicly available.","s":["S108"]},{"id":"les-abstraits","name":"Les Abstraits","page":"houses/les-abstraits.html","about":"Founded by the fragrance critic and YouTuber Eugen Nizic; every one of its perfumes is made with Antoine Lie.","s":["S27"]},{"id":"tale-parfums","name":"Tale Parfums","page":"houses/tale-parfums.html","from":"United States","about":"Founded in Los Angeles by the screenwriter Chad Hodge and the creative director Diandra Barsalou.","s":["S36","S34"]},{"id":"tombstone","name":"Tombstone","page":"houses/tombstone.html","about":"Its perfumes are credited to Lan Xiao, Tan Shuai and Yenchi Lin, but more people could have been involved in them: no public record of who exactly was involved exists.","s":["S108"]},{"id":"qimu-musicians","name":"Qimu & Musicians","page":"houses/qimu-and-musicians.html","about":"The owner names Qimu, from Shanghai, as the perfumer of all four.","s":["S108"]},{"id":"om-parfums","name":"Om Parfums","page":"houses/om-parfums.html","founded":"2021","from":"Taiwan","about":"OM Parfum, founded in 2021 by Aichi Liu, its only perfumer.","s":["S42","S43"]},{"id":"outsider-parfums","name":"Outsider Parfums","page":"houses/outsider-parfums.html","about":"Outsider Parfum, made by Aichi Liu and marketed by OM Parfum.","s":["S44"]},{"id":"lost-tribe","name":"Lost Tribe","page":"houses/lost-tribe.html","founded":"2022","from":"United States","about":"Founded in New York City in 2022 by Mathew Schmuelian; all-natural perfumes, made by hand.","s":["S46"]},{"id":"serge-lutens","name":"Serge Lutens","founded":"2000","from":"France","about":"Parfums-Beauté Serge Lutens, his own house since 2000, its perfumes made with Christopher Sheldrake.","s":["S79"]},{"id":"dior","name":"Dior","founded":"1947","from":"France","about":"Christian Dior's first perfume, Miss Dior, came out with his first collection in 1947.","s":["S80"]},{"id":"ramon-monegal","name":"Ramón Monegal","founded":"2009","from":"Spain","about":"Founded in 2009 by Ramón Monegal, under his own name.","s":["S57"]},{"id":"mancera","name":"Mancera","founded":"2008","from":"France","about":"Founded in 2008 by Pierre Montale, with his daughter Amélie as its artistic director since 2017.","s":["S59"]},{"id":"casa-goa","name":"Casa Goa","about":"No source found names who makes its perfumes.","s":["S62"]},{"id":"matca","name":"Matca","about":"The owner names Georgiana Ștefănoaei as the perfumer of House of Ellixirz.","s":["S108"]},{"id":"lussur","name":"Lussur","from":"Italy","about":"An Italian house from Modena, founded by Lucas Chemelli. The perfumer of CV99 is not publicly available.","s":["S61","S108"]},{"id":"jmp-artisan-perfumes","name":"JMP Artisan Perfumes","from":"Poland","about":"The house of the Polish independent perfumer Jakub Pietrynka.","s":["S65"]},{"id":"sultan-pasha-perfumes","name":"Sultan Pasha Perfumes","about":"The house of the perfumer Sultan Pasha.","s":["S67"]},{"id":"areej-le-dore","name":"Areej Le Doré","founded":"2017","from":"Indonesia","about":"Founded in Thailand in 2017 by the distiller Russian Adam; now based in Indonesia.","s":["S69"]},{"id":"slumberhouse","name":"Slumberhouse","from":"United States","about":"Josh Lobb's house, in Portland, Oregon.","s":["S71"]},{"id":"strangers-parfumerie","name":"Strangers Parfumerie","founded":"2017","from":"Thailand","about":"Founded in 2017 by Prin Lomros; the line closest to his own life.","s":["S73","S72"]},{"id":"parfum-prissana","name":"Parfum Prissana","founded":"2018","from":"Thailand","about":"Founded in 2018 by Prin Lomros and named after his sister; Asian history, cuisine and myth in classic structures.","s":["S72","S75"]},{"id":"prin","name":"PRIN","founded":"2019","from":"Thailand","about":"Founded in 2019 by Prin Lomros; his signature line.","s":["S72","S76"]}],"perfumes":[{"n":"Bindebole","p":["nicholas-nilsson"],"c":"named","y":2021,"h":"pineward","at":"houses/pineward.html#part-01","k":"house","s":["S01"],"note":""},{"n":"Boreal","p":["nicholas-nilsson"],"c":"named","y":2020,"h":"pineward","at":"houses/pineward.html#part-02","k":"house","s":["S01"],"note":""},{"n":"Brokilän","p":["nicholas-nilsson"],"c":"named","y":2021,"h":"pineward","at":"houses/pineward.html#part-03","k":"house","s":["S01"],"note":""},{"n":"Cotswold","p":["nicholas-nilsson"],"c":"named","y":2021,"h":"pineward","at":"houses/pineward.html#part-04","k":"house","s":["S01"],"note":"A 2025 version also exists."},{"n":"Eldritch","p":["nicholas-nilsson"],"c":"named","y":2021,"h":"pineward","at":"houses/pineward.html#part-05","k":"house","s":["S01"],"note":"A 2026 version also exists."},{"n":"Fanghorn II","p":["nicholas-nilsson"],"c":"named","y":2021,"h":"pineward","at":"houses/pineward.html#part-06","k":"house","s":["S01"],"note":""},{"n":"Funerie","p":["nicholas-nilsson"],"c":"named","y":2022,"h":"pineward","at":"houses/pineward.html#part-07","k":"house","s":["S01"],"note":""},{"n":"Juniperus","p":["nicholas-nilsson"],"c":"named","y":2024,"h":"pineward","at":"houses/pineward.html#part-08","k":"house","s":["S01"],"note":""},{"n":"Murkwood","p":["nicholas-nilsson"],"c":"named","y":2020,"h":"pineward","at":"houses/pineward.html#part-09","k":"house","s":["S01"],"note":""},{"n":"Nocturnis","p":["nicholas-nilsson"],"c":"named","y":2022,"h":"pineward","at":"houses/pineward.html#part-10","k":"house","s":["S01"],"note":""},{"n":"Oxylus","p":["nicholas-nilsson"],"c":"named","y":2021,"h":"pineward","at":"houses/pineward.html#part-11","k":"house","s":["S01"],"note":""},{"n":"Snoqualmie","p":["nicholas-nilsson"],"c":"named","y":2024,"h":"pineward","at":"houses/pineward.html#part-12","k":"house","s":["S01"],"note":""},{"n":"Sturbridge","p":["nicholas-nilsson"],"c":"named","y":2023,"h":"pineward","at":"houses/pineward.html#part-13","k":"house","s":["S01"],"note":""},{"n":"White Fir","p":["nicholas-nilsson"],"c":"named","y":2022,"h":"pineward","at":"houses/pineward.html#part-14","k":"house","s":["S01"],"note":"A 2025 version also exists."},{"n":"Bucolic","p":["nicholas-nilsson"],"c":"named","y":2024,"h":"pineward","at":"houses/pineward.html#part-15","k":"house","s":["S01"],"note":""},{"n":"Hayloft","p":["nicholas-nilsson"],"c":"named","y":2022,"h":"pineward","at":"houses/pineward.html#part-16","k":"house","s":["S01"],"note":""},{"n":"Hayride","p":["nicholas-nilsson"],"c":"named","y":2022,"h":"pineward","at":"houses/pineward.html#part-17","k":"house","s":["S01"],"note":""},{"n":"Pastoral","p":["nicholas-nilsson"],"c":"named","y":2022,"h":"pineward","at":"houses/pineward.html#part-18","k":"house","s":["S01"],"note":""},{"n":"Shire","p":["nicholas-nilsson"],"c":"named","y":2024,"h":"pineward","at":"houses/pineward.html#part-19","k":"house","s":["S01"],"note":""},{"n":"Steading","p":["nicholas-nilsson"],"c":"named","y":2020,"h":"pineward","at":"houses/pineward.html#part-20","k":"house","s":["S01"],"note":""},{"n":"Christmas Wine","p":["nicholas-nilsson"],"c":"named","y":2020,"h":"pineward","at":"houses/pineward.html#part-21","k":"house","s":["S01"],"note":"A 2025 version also exists."},{"n":"Gingerbread","p":["nicholas-nilsson"],"c":"named","y":2023,"h":"pineward","at":"houses/pineward.html#part-22","k":"house","s":["S01"],"note":"A 2025 version also exists."},{"n":"Glühwein","p":["nicholas-nilsson"],"c":"named","y":2021,"h":"pineward","at":"houses/pineward.html#part-23","k":"house","s":["S01"],"note":"A 2025 version also exists."},{"n":"Revelries","p":["nicholas-nilsson"],"c":"named","y":2021,"h":"pineward","at":"houses/pineward.html#part-24","k":"house","s":["S01"],"note":""},{"n":"Acadian","p":["nicholas-nilsson"],"c":"named","y":2023,"h":"pineward","at":"houses/pineward.html#part-25","k":"house","s":["S01"],"note":""},{"n":"Coastal Veil","p":["nicholas-nilsson"],"c":"named","y":2023,"h":"pineward","at":"houses/pineward.html#part-26","k":"house","s":["S01"],"note":""},{"n":"Gingermoss","p":["nicholas-nilsson"],"c":"named","y":2023,"h":"pineward","at":"houses/pineward.html#part-27","k":"house","s":["S01"],"note":""},{"n":"Subalpine","p":["nicholas-nilsson"],"c":"named","y":2025,"h":"pineward","at":"houses/pineward.html#part-28","k":"house","s":["S01"],"note":""},{"n":"Akero","p":["nicholas-nilsson"],"c":"named","y":2023,"h":"pineward","at":"houses/pineward.html#part-29","k":"house","s":["S01"],"note":""},{"n":"Apple Tabac","p":["nicholas-nilsson"],"c":"named","y":2020,"h":"pineward","at":"houses/pineward.html#part-30","k":"house","s":["S01"],"note":""},{"n":"Caravansary","p":["nicholas-nilsson"],"c":"named","y":2023,"h":"pineward","at":"houses/pineward.html#part-31","k":"house","s":["S01"],"note":""},{"n":"Clemenpine","p":["nicholas-nilsson"],"c":"named","y":2023,"h":"pineward","at":"houses/pineward.html#part-32","k":"house","s":["S01"],"note":""},{"n":"Coffee Tabac","p":["nicholas-nilsson"],"c":"named","y":2024,"h":"pineward","at":"houses/pineward.html#part-33","k":"house","s":["S01"],"note":""},{"n":"Delfiño","p":["nicholas-nilsson"],"c":"named","y":2022,"h":"pineward","at":"houses/pineward.html#part-34","k":"house","s":["S01"],"note":""},{"n":"Greymist","p":["nicholas-nilsson"],"c":"named","y":2023,"h":"pineward","at":"houses/pineward.html#part-35","k":"house","s":["S01"],"note":""},{"n":"Gristmill","p":["nicholas-nilsson"],"c":"named","y":2022,"h":"pineward","at":"houses/pineward.html#part-36","k":"house","s":["S01"],"note":""},{"n":"Holy Cross","p":["nicholas-nilsson"],"c":"named","y":2026,"h":"pineward","at":"houses/pineward.html#part-37","k":"house","s":["S01"],"note":""},{"n":"Icefall","p":["nicholas-nilsson"],"c":"named","y":2021,"h":"pineward","at":"houses/pineward.html#part-38","k":"house","s":["S01"],"note":""},{"n":"Ivymoss","p":["nicholas-nilsson"],"c":"named","y":2023,"h":"pineward","at":"houses/pineward.html#part-39","k":"house","s":["S01"],"note":""},{"n":"Lime Cola","p":["nicholas-nilsson"],"c":"named","y":2025,"h":"pineward","at":"houses/pineward.html#part-40","k":"house","s":["S01"],"note":""},{"n":"Meadowmoss","p":["nicholas-nilsson"],"c":"named","y":2023,"h":"pineward","at":"houses/pineward.html#part-41","k":"house","s":["S01"],"note":""},{"n":"Mint Cocoa","p":["nicholas-nilsson"],"c":"named","y":2024,"h":"pineward","at":"houses/pineward.html#part-42","k":"house","s":["S01"],"note":""},{"n":"Noki","p":["nicholas-nilsson"],"c":"named","y":2022,"h":"pineward","at":"houses/pineward.html#part-43","k":"house","s":["S01"],"note":""},{"n":"Ponderosa","p":["nicholas-nilsson"],"c":"named","y":2022,"h":"pineward","at":"houses/pineward.html#part-44","k":"house","s":["S01"],"note":""},{"n":"Pumpkivus","p":["nicholas-nilsson"],"c":"named","y":2025,"h":"pineward","at":"houses/pineward.html#part-45","k":"house","s":["S01"],"note":""},{"n":"Tome","p":["nicholas-nilsson"],"c":"named","y":2025,"h":"pineward","at":"houses/pineward.html#part-46","k":"house","s":["S01"],"note":""},{"n":"Treacle","p":["nicholas-nilsson"],"c":"named","y":2021,"h":"pineward","at":"houses/pineward.html#part-47","k":"house","s":["S01"],"note":""},{"n":"Velvetine","p":["nicholas-nilsson"],"c":"named","y":2021,"h":"pineward","at":"houses/pineward.html#part-48","k":"house","s":["S01"],"note":"A 2025 version also exists."},{"n":"Amber Zero","p":["dan-adar"],"c":"named","y":null,"h":"adar","at":"houses/adar.html#part-01","k":"house","s":["S84","S10","S11"],"note":"The house names its nose as Dan Adar."},{"n":"Aetherialism","p":["roxana-adar"],"c":"named","y":null,"h":"adar","at":"houses/adar.html#part-02","k":"house","s":["S85","S10","S11"],"note":"The house names its nose as Rox (Roxana) Adar."},{"n":"Incantu","p":["roxana-adar"],"c":"named","y":null,"h":"adar","at":"houses/adar.html#part-03","k":"house","s":["S86","S10","S11"],"note":"The house names its nose as Rox (Roxana) Adar."},{"n":"Against All Odds","p":["dan-roxana-adar"],"c":"house","y":2025,"h":"adar","at":"houses/adar.html#part-04","k":"house","s":["S87","S10","S11","S13"],"note":"The house gives only \"Adar artistic concept & olfactory architecture\"."},{"n":"α11 Alpha11","p":["miguel-matos"],"c":"named","y":null,"h":"adar","at":"houses/adar.html#part-05","k":"house","s":["S88","S10","S11"],"note":"The house names its nose as Miguel Matos."},{"n":"Alta Luna","p":["miguel-matos"],"c":"named","y":2025,"h":"adar","at":"houses/adar.html#part-06","k":"house","s":["S89","S10","S11","S14"],"note":"The house names its nose as Miguel Matos."},{"n":"ADHD","p":["roxana-adar"],"c":"named","y":null,"h":"adar","at":"houses/adar.html#part-07","k":"house","s":["S90","S10","S11"],"note":"The house names its nose as Rox (Roxana) Adar."},{"n":"Root Code","p":["dan-adar"],"c":"named","y":null,"h":"adar","at":"houses/adar.html#part-08","k":"house","s":["S91","S10","S11"],"note":"The house names its nose as Dan Adar."},{"n":"Lignum Dei","p":["dan-adar"],"c":"named","y":null,"h":"adar","at":"houses/adar.html#part-09","k":"house","s":["S92","S10","S11"],"note":"The house names its nose as Dan Adar."},{"n":"Lithos Diaphanes Λίθος Διαφανές","p":["dan-roxana-adar"],"c":"house","y":null,"h":"adar","at":"houses/adar.html#part-10","k":"house","s":["S93","S10","S11"],"note":"A single bottle; the house names no nose."},{"n":"Tyrian","p":["roxana-adar"],"c":"named","y":2026,"h":"adar","at":"houses/adar.html#part-11","k":"house","s":["S12","S10"],"note":"The nose named is Rox (Roxana) Adar."},{"n":"Burning Bridges","p":["goran-bajazetov"],"c":"named","y":2026,"h":"almost-human","at":"houses/almost-human.html#part-01","k":"house","s":["S15"],"note":""},{"n":"Dear Future","p":["goran-bajazetov"],"c":"named","y":2026,"h":"almost-human","at":"houses/almost-human.html#part-02","k":"house","s":["S15"],"note":""},{"n":"Desert Hope","p":["goran-bajazetov"],"c":"named","y":2026,"h":"almost-human","at":"houses/almost-human.html#part-03","k":"house","s":["S15"],"note":""},{"n":"Ritual Code","p":["goran-bajazetov"],"c":"named","y":2026,"h":"almost-human","at":"houses/almost-human.html#part-04","k":"house","s":["S15","S17"],"note":""},{"n":"Silent Rain","p":["goran-bajazetov"],"c":"named","y":2026,"h":"almost-human","at":"houses/almost-human.html#part-05","k":"house","s":["S15"],"note":""},{"n":"Amaretto Jazz in the Melting Room","p":["david-lev-jipa-slivinschi"],"c":"named","y":2024,"h":"ataraxia","at":"houses/ataraxia.html#part-01","k":"house","s":["S18"],"note":""},{"n":"Deity","p":["sy-truong"],"c":"named","y":2025,"h":"ataraxia","at":"houses/ataraxia.html#part-02","k":"house","s":["S20"],"note":"Made with the house's creative director, Tudor Ristea."},{"n":"My Doll’s Makeup","p":["sy-truong"],"c":"named","y":null,"h":"ataraxia","at":"houses/ataraxia.html#part-03","k":"house","s":["S94","S78"],"note":"\"Formula by award winner Sy Truong.\""},{"n":"Spinal Fluid","p":["sy-truong"],"c":"named","y":2025,"h":"ataraxia","at":"houses/ataraxia.html#part-04","k":"house","s":["S95","S21","S22"],"note":""},{"n":"Vestibule","p":["david-lev-jipa-slivinschi"],"c":"named","y":2024,"h":"ataraxia","at":"houses/ataraxia.html#part-05","k":"house","s":["S19"],"note":""},{"n":"5 Years Anniversary","p":["marius-pana"],"c":"named","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-01","k":"house","s":["S108","S25"],"note":""},{"n":"Ambresso","p":["marius-pana"],"c":"named","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-02","k":"house","s":["S108","S25"],"note":""},{"n":"Ancient Oud","p":["marius-pana"],"c":"named","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-03","k":"house","s":["S108","S25"],"note":""},{"n":"Choco Powder","p":["lorenzo-orlandi-berti"],"c":"named","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-04","k":"house","s":["S108","S25"],"note":""},{"n":"Cookie","p":["alexandru-marian"],"c":"named","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-05","k":"house","s":["S108","S25"],"note":""},{"n":"Cuore","p":["marius-pana"],"c":"named","y":2024,"h":"grande-parfums","at":"houses/grande-parfums.html#part-06","k":"house","s":["S108","S26","S25"],"note":""},{"n":"Dreaming Maldives","p":["not-found"],"c":"none","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-07","k":"house","s":["S108","S25"],"note":"Its perfumer is not publicly available."},{"n":"Giardino di Sorrento","p":["marius-pana"],"c":"named","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-08","k":"house","s":["S108","S25"],"note":""},{"n":"Hot Stuff","p":["lorenzo-orlandi-berti"],"c":"named","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-09","k":"house","s":["S108","S25"],"note":""},{"n":"Intimate Spell","p":["jakub-pietrynka"],"c":"named","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-10","k":"house","s":["S108","S25"],"note":""},{"n":"Karak & Shisha","p":["marius-pana"],"c":"named","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-11","k":"house","s":["S108","S25"],"note":""},{"n":"Mystical Incense","p":["marius-pana"],"c":"named","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-12","k":"house","s":["S108","S25"],"note":""},{"n":"Vanilla Ash","p":["marius-pana"],"c":"named","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-13","k":"house","s":["S108","S25"],"note":""},{"n":"Vintage Memoir","p":["marius-pana"],"c":"named","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-14","k":"house","s":["S108","S25"],"note":""},{"n":"White Label","p":["marius-pana"],"c":"named","y":null,"h":"grande-parfums","at":"houses/grande-parfums.html#part-15","k":"house","s":["S108","S25"],"note":""},{"n":"Belle Âme","p":["antoine-lie"],"c":"named","y":2022,"h":"les-abstraits","at":"houses/les-abstraits.html#part-01","k":"house","s":["S28","S27"],"note":""},{"n":"Des Cendres","p":["antoine-lie"],"c":"named","y":2023,"h":"les-abstraits","at":"houses/les-abstraits.html#part-02","k":"house","s":["S29","S27"],"note":""},{"n":"La Douleur Exquise","p":["antoine-lie"],"c":"named","y":2022,"h":"les-abstraits","at":"houses/les-abstraits.html#part-03","k":"house","s":["S31","S27"],"note":""},{"n":"Philosopher’s Walk","p":["antoine-lie"],"c":"named","y":2025,"h":"les-abstraits","at":"houses/les-abstraits.html#part-04","k":"house","s":["S30","S27"],"note":""},{"n":"Kong","p":["mathew-schmuelian"],"c":"house","y":null,"h":"lost-tribe","at":"houses/lost-tribe.html#part-01","k":"house","s":["S46","S48"],"note":"Credited to the house's founder and perfumer; no source names a nose for this one."},{"n":"Watch King","p":["mathew-schmuelian"],"c":"house","y":null,"h":"lost-tribe","at":"houses/lost-tribe.html#part-02","k":"house","s":["S46","S48"],"note":"Credited to the house's founder and perfumer; no source names a nose for this one."},{"n":"Dirty Soda","p":["mathew-schmuelian"],"c":"house","y":null,"h":"lost-tribe","at":"houses/lost-tribe.html#part-04","k":"house","s":["S46","S48"],"note":"Credited to the house's founder and perfumer; no source names a nose for this one."},{"n":"Equatorial","p":["mathew-schmuelian"],"c":"house","y":null,"h":"lost-tribe","at":"houses/lost-tribe.html#part-05","k":"house","s":["S46","S48"],"note":"Credited to the house's founder and perfumer; no source names a nose for this one."},{"n":"Santal Absolu","p":["mathew-schmuelian"],"c":"house","y":null,"h":"lost-tribe","at":"houses/lost-tribe.html#part-06","k":"house","s":["S46","S48"],"note":"Credited to the house's founder and perfumer; no source names a nose for this one."},{"n":"Pan’s Labyrinth","p":["mathew-schmuelian","rajesh-balkrishnan"],"c":"named","y":null,"h":"lost-tribe","at":"houses/lost-tribe.html#part-03","k":"house","s":["S47"],"note":""},{"n":"Nymphaea Caerulea","p":["aichi-liu"],"c":"house","y":null,"h":"om-parfums","at":"houses/om-parfums.html#part-01","k":"house","s":["S42","S43"],"note":"Credited to the house's only perfumer."},{"n":"Lust","p":["aichi-liu"],"c":"named","y":2023,"h":"om-parfums","at":"houses/om-parfums.html#part-02","k":"house","s":["S106","S105","S42","S43"],"note":"Credited to the house's only perfumer."},{"n":"Burnana","p":["aichi-liu"],"c":"named","y":2024,"h":"om-parfums","at":"houses/om-parfums.html#part-03","k":"house","s":["S106","S105","S42","S43"],"note":"Credited to the house's only perfumer."},{"n":"Cannabis Café","p":["aichi-liu"],"c":"house","y":null,"h":"om-parfums","at":"houses/om-parfums.html#part-04","k":"house","s":["S42","S43"],"note":"Credited to the house's only perfumer."},{"n":"Dark Night of the Soul","p":["aichi-liu"],"c":"named","y":2024,"h":"om-parfums","at":"houses/om-parfums.html#part-05","k":"house","s":["S106","S105","S42","S43"],"note":"Credited to the house's only perfumer."},{"n":"This Too Shall Pass","p":["aichi-liu"],"c":"named","y":null,"h":"om-parfums","at":"houses/om-parfums.html#part-06","k":"house","s":["S106","S42","S43"],"note":"Credited to the house's only perfumer."},{"n":"When the Linden Blooms","p":["aichi-liu"],"c":"named","y":2024,"h":"om-parfums","at":"houses/om-parfums.html#part-07","k":"house","s":["S106","S105","S42","S43"],"note":"Credited to the house's only perfumer."},{"n":"Oud de Pasión","p":["aichi-liu"],"c":"house","y":null,"h":"om-parfums","at":"houses/om-parfums.html#part-08","k":"house","s":["S42","S43"],"note":"Credited to the house's only perfumer."},{"n":"Smoke Oud","p":["aichi-liu"],"c":"house","y":null,"h":"om-parfums","at":"houses/om-parfums.html#part-09","k":"house","s":["S42","S43"],"note":"Credited to the house's only perfumer."},{"n":"Dragon’s Breath","p":["aichi-liu"],"c":"named","y":2026,"h":"outsider-parfums","at":"houses/outsider-parfums.html#part-01","k":"house","s":["S44"],"note":""},{"n":"Draco","p":["aichi-liu"],"c":"house","y":null,"h":"outsider-parfums","at":"houses/outsider-parfums.html#part-02","k":"house","s":["S44","S43"],"note":"Credited to the perfumer of Om Parfums, which makes and sells Outsider."},{"n":"Xocolate Crotch","p":["aichi-liu"],"c":"house","y":null,"h":"outsider-parfums","at":"houses/outsider-parfums.html#part-03","k":"house","s":["S44","S43"],"note":"Credited to the perfumer of Om Parfums, which makes and sells Outsider."},{"n":"Guilty as Charged","p":["aichi-liu"],"c":"house","y":null,"h":"outsider-parfums","at":"houses/outsider-parfums.html#part-04","k":"house","s":["S44","S43"],"note":"Credited to the perfumer of Om Parfums, which makes and sells Outsider."},{"n":"Amaretto Coffee","p":["aichi-liu"],"c":"named","y":null,"h":"outsider-parfums","at":"houses/outsider-parfums.html#part-05","k":"house","s":["S45"],"note":""},{"n":"Guitarist","p":["qimu"],"c":"named","y":null,"h":"qimu-musicians","at":"houses/qimu-and-musicians.html#part-01","k":"house","s":["S108","S41"],"note":""},{"n":"Vocal","p":["qimu"],"c":"named","y":null,"h":"qimu-musicians","at":"houses/qimu-and-musicians.html#part-02","k":"house","s":["S108","S41"],"note":""},{"n":"Bassist","p":["qimu"],"c":"named","y":null,"h":"qimu-musicians","at":"houses/qimu-and-musicians.html#part-03","k":"house","s":["S108","S41"],"note":""},{"n":"Drummer","p":["qimu"],"c":"named","y":null,"h":"qimu-musicians","at":"houses/qimu-and-musicians.html#part-04","k":"house","s":["S41"],"note":""},{"n":"Bad Lily","p":["michael-nordstrand"],"c":"named","y":2024,"h":"tale-parfums","at":"houses/tale-parfums.html#part-01","k":"house","s":["S35","S34"],"note":""},{"n":"Fleurt","p":["chad-hodge"],"c":"named","y":2024,"h":"tale-parfums","at":"houses/tale-parfums.html#part-02","k":"house","s":["S103","S36"],"note":""},{"n":"Rouse","p":["diandra-barsalou"],"c":"named","y":null,"h":"tale-parfums","at":"houses/tale-parfums.html#part-03","k":"house","s":["S104","S36"],"note":""},{"n":"Water Me","p":["chad-hodge"],"c":"named","y":null,"h":"tale-parfums","at":"houses/tale-parfums.html#part-04","k":"house","s":["S34"],"note":""},{"n":"3 Feet 5","p":["lan-xiao"],"c":"named","y":2024,"h":"tombstone","at":"houses/tombstone.html#part-01","k":"house","s":["S96","S38"],"note":""},{"n":"Evergrow","p":["lan-xiao"],"c":"named","y":2025,"h":"tombstone","at":"houses/tombstone.html#part-02","k":"house","s":["S108","S97","S39"],"note":"Named by the owner (the house writes her name Xiao Lan); not on the house's page, Parfumo, Scentissime or ScentAdvice. A reformulation of His Lordship's Backyard Roses (2024)."},{"n":"No Need to Come By","p":["tan-shuai"],"c":"named","y":null,"h":"tombstone","at":"houses/tombstone.html#part-03","k":"house","s":["S98","S40"],"note":""},{"n":"Sing at My Funeral","p":["yenchi-lin"],"c":"named","y":null,"h":"tombstone","at":"houses/tombstone.html#part-04","k":"house","s":["S100","S99","S40"],"note":""},{"n":"Sweet Coffin","p":["lan-xiao"],"c":"named","y":2024,"h":"tombstone","at":"houses/tombstone.html#part-05","k":"house","s":["S102","S101","S37"],"note":"The house writes her name Xiao Lan."},{"n":"Kogen","p":["not-found"],"c":"none","y":2024,"h":"apoteker-tepe","at":"houses/apoteker-tepe.html#part-01","k":"house","s":["S108","S07","S05"],"note":"Made after Pineward took over the line; its perfumer is not publicly available."},{"n":"The Holy Mountain","p":["holladay-penick-saltz"],"c":"named","y":2015,"h":"apoteker-tepe","at":"houses/apoteker-tepe.html#part-02","k":"house","s":["S06","S09"],"note":""},{"n":"Karasu","p":["holladay-penick-saltz"],"c":"named","y":2016,"h":"apoteker-tepe","at":"houses/apoteker-tepe.html#part-04","k":"house","s":["S06","S09"],"note":""},{"n":"The Peradam","p":["holladay-penick-saltz"],"c":"named","y":2015,"h":"apoteker-tepe","at":"houses/apoteker-tepe.html#part-05","k":"house","s":["S06","S09"],"note":""},{"n":"Pale Fire","p":["holladay-penick-saltz"],"c":"named","y":2016,"h":"apoteker-tepe","at":"houses/apoteker-tepe.html#part-06","k":"house","s":["S06","S09"],"note":""},{"n":"Anabasis","p":["holladay-penick-saltz"],"c":"named","y":2015,"h":"apoteker-tepe","at":"houses/apoteker-tepe.html#part-07","k":"house","s":["S06","S09"],"note":""},{"n":"After the Flood","p":["holladay-penick-saltz"],"c":"named","y":2015,"h":"apoteker-tepe","at":"houses/apoteker-tepe.html#part-08","k":"house","s":["S06","S09"],"note":""},{"n":"Brother Night","p":["holladay-penick-saltz"],"c":"named","y":2016,"h":"apoteker-tepe","at":"houses/apoteker-tepe.html#part-03","k":"house","s":["S06","S08","S82","S83"],"note":"Its first version: made in 2016 as a boutique-only release, sold only at the Neon Heart shop in New Orleans; Pineward brought it back in 2022, the year Parfumo and this site's own page give."},{"n":"CV99","p":["not-found"],"c":"none","y":null,"h":"lussur","at":"individual-fragrances/individual-fragrances.html#part-01","k":"individual","s":["S108","S61"],"note":"Its perfumer is not publicly available."},{"n":"De Profundis","p":["christopher-sheldrake"],"c":"named","y":2011,"h":"serge-lutens","at":"individual-fragrances/individual-fragrances.html#part-02","k":"individual","s":["S49"],"note":""},{"n":"Haxan","p":["prin-lomros"],"c":"named","y":2018,"h":"parfum-prissana","at":"individual-fragrances/individual-fragrances.html#part-03","k":"individual","s":["S72"],"note":""},{"n":"Tobacolor","p":["francois-demachy"],"c":"named","y":2021,"h":"dior","at":"individual-fragrances/individual-fragrances.html#part-04","k":"individual","s":["S52"],"note":""},{"n":"Flamenco EDP","p":["ramon-monegal"],"c":"named","y":2017,"h":"ramon-monegal","at":"individual-fragrances/individual-fragrances.html#part-05","k":"individual","s":["S55"],"note":""},{"n":"French Riviera","p":["pierre-montale"],"c":"named","y":2022,"h":"mancera","at":"individual-fragrances/individual-fragrances.html#part-06","k":"individual","s":["S58"],"note":""},{"n":"Velvet Fog","p":["vera-nicchia"],"c":"named","y":null,"h":"casa-goa","at":"individual-fragrances/individual-fragrances.html#part-07","k":"individual","s":["S107","S62"],"note":""},{"n":"House of Ellixirz","p":["georgiana-stefanoaei"],"c":"named","y":2021,"h":"matca","at":"individual-fragrances/individual-fragrances.html#part-08","k":"individual","s":["S108","S63"],"note":""},{"n":"Fir of the Light","p":["jakub-pietrynka"],"c":"named","y":null,"h":"jmp-artisan-perfumes","at":"individual-fragrances/individual-fragrances.html#part-09","k":"individual","s":["S64"],"note":""},{"n":"Fir of the Dark","p":["jakub-pietrynka"],"c":"named","y":2024,"h":"jmp-artisan-perfumes","at":"individual-fragrances/individual-fragrances.html#part-10","k":"individual","s":["S64"],"note":""},{"n":"Quintessentially Amber","p":["sultan-pasha","christian-carbonnel"],"c":"named","y":2025,"h":"sultan-pasha-perfumes","at":"individual-fragrances/individual-fragrances.html#part-11","k":"individual","s":["S66"],"note":""},{"n":"Forbidden Flower","p":["russian-adam"],"c":"named","y":2024,"h":"areej-le-dore","at":"individual-fragrances/individual-fragrances.html#part-12","k":"individual","s":["S68"],"note":""},{"n":"Ore","p":["josh-lobb"],"c":"named","y":2009,"h":"slumberhouse","at":"individual-fragrances/individual-fragrances.html#part-13","k":"individual","s":["S70","S71"],"note":"First made in 2009; remade as an extrait, and again in 2022."},{"n":"Salted Green Mango","p":["prin-lomros"],"c":"named","y":2019,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Oliver","p":["prin-lomros"],"c":"named","y":2018,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Cigar Rum","p":["prin-lomros"],"c":"named","y":2017,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"SM Café","p":["prin-lomros"],"c":"named","y":2019,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Burning Ben","p":["prin-lomros"],"c":"named","y":2018,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Sweet Farewell","p":["prin-lomros"],"c":"named","y":2022,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Gheorghe","p":["prin-lomros"],"c":"named","y":2018,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Sweet Celestials","p":["prin-lomros"],"c":"named","y":2023,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Muscat Jasmine Tea","p":["prin-lomros"],"c":"named","y":2024,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Scotch Peat","p":["prin-lomros"],"c":"named","y":2019,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Sangre Dulce","p":["prin-lomros"],"c":"named","y":2019,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Aroon Sawat","p":["prin-lomros"],"c":"named","y":2019,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Red Lime Soda","p":["prin-lomros"],"c":"named","y":2024,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Sombre","p":["prin-lomros"],"c":"named","y":2019,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Cherry Amaretto","p":["prin-lomros"],"c":"named","y":2023,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Kira Kira","p":["prin-lomros"],"c":"named","y":2020,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Les Mauvais Garçons","p":["prin-lomros"],"c":"named","y":2019,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Comme un Carrousel","p":["prin-lomros"],"c":"named","y":2020,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Caffeine Honey","p":["prin-lomros"],"c":"named","y":2020,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Spring Ambience","p":["prin-lomros"],"c":"named","y":2023,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"A Sorta Fairytale in Hyde Park","p":["prin-lomros"],"c":"named","y":2021,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Roasted Coffee Cigarette Whisky Come and Get Your Suede Honey Baby","p":["prin-lomros"],"c":"named","y":2020,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Wicked John","p":["prin-lomros"],"c":"named","y":2019,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Yuzu Soda","p":["prin-lomros"],"c":"named","y":2021,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Yue Tu 月兔","p":["prin-lomros"],"c":"named","y":2023,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Limonsitano","p":["prin-lomros"],"c":"named","y":2022,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Tokiwa","p":["prin-lomros"],"c":"named","y":2025,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Ember","p":["prin-lomros"],"c":"named","y":2017,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Autumn Tea and Yuzu Vanilla","p":["prin-lomros"],"c":"named","y":2021,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Fume Ma Peau","p":["prin-lomros"],"c":"named","y":2017,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Magenta Pop","p":["prin-lomros"],"c":"named","y":2020,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Euphories","p":["prin-lomros"],"c":"named","y":2021,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Summer Peaches by the Tea Room","p":["prin-lomros"],"c":"named","y":2021,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Concrete Forest","p":["prin-lomros"],"c":"named","y":2023,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Iridescent Sky","p":["prin-lomros"],"c":"named","y":2020,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Lumberjack Cologne","p":["prin-lomros"],"c":"named","y":2019,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Rêve du Matin","p":["prin-lomros"],"c":"named","y":2023,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Eternal Summer","p":["prin-lomros"],"c":"named","y":2020,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Pink Clouds","p":["prin-lomros"],"c":"named","y":2025,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Sweet Tani","p":["prin-lomros"],"c":"named","y":2025,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Fleur de Lune","p":["prin-lomros"],"c":"named","y":2020,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Sweet Muskmelon","p":["prin-lomros"],"c":"named","y":2023,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Virginia","p":["prin-lomros"],"c":"named","y":2018,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Chokedee","p":["prin-lomros"],"c":"named","y":2021,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Cigar Rum Intense","p":["prin-lomros"],"c":"named","y":2019,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"San Clemente","p":["prin-lomros"],"c":"named","y":2018,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"À la folie","p":["prin-lomros"],"c":"named","y":2023,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Cachouli","p":["prin-lomros"],"c":"named","y":2022,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Cigar Rum (2024)","p":["prin-lomros"],"c":"named","y":2024,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Guido","p":["prin-lomros"],"c":"named","y":2024,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Rosa Raimunda","p":["prin-lomros"],"c":"named","y":2024,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"So Fetch!","p":["prin-lomros"],"c":"named","y":2019,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Plunge","p":["prin-lomros"],"c":"named","y":2021,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Soleil de Thé","p":["prin-lomros"],"c":"named","y":2024,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Green Lunar","p":["prin-lomros"],"c":"named","y":2023,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Lights upon Orange Tree","p":["prin-lomros"],"c":"named","y":2021,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Lava Rose","p":["prin-lomros"],"c":"named","y":2019,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Câlin d'Été","p":["prin-lomros"],"c":"named","y":2025,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Cornwall Rose","p":["prin-lomros"],"c":"named","y":2025,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Punk #2077","p":["prin-lomros"],"c":"named","y":2021,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Rosso Amaretto","p":["prin-lomros"],"c":"named","y":2023,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Garden of Eden","p":["prin-lomros"],"c":"named","y":2023,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Maia","p":["prin-lomros"],"c":"named","y":2017,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"La Malila","p":["prin-lomros"],"c":"named","y":2017,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Lom Hom Khao Hom","p":["prin-lomros"],"c":"named","y":2023,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Nobles '17","p":["prin-lomros"],"c":"named","y":2021,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"La Porte","p":["prin-lomros"],"c":"named","y":2023,"h":"strangers-parfumerie","at":null,"k":null,"s":["S72"],"note":""},{"n":"Ma Nishtana","p":["prin-lomros"],"c":"named","y":2019,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Nimitr","p":["prin-lomros"],"c":"named","y":2018,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Nesnás Qareen","p":["prin-lomros"],"c":"named","y":2019,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Natsumeku","p":["prin-lomros"],"c":"named","y":2019,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Sahar","p":["prin-lomros"],"c":"named","y":2024,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Mohragot","p":["prin-lomros"],"c":"named","y":2019,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Dunhuang","p":["prin-lomros"],"c":"named","y":2022,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Chetyre","p":["prin-lomros"],"c":"named","y":null,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Tom Yum","p":["prin-lomros"],"c":"named","y":2019,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Mandarava","p":["prin-lomros"],"c":"named","y":2019,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Thichila","p":["prin-lomros"],"c":"named","y":2019,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Akhetaten","p":["prin-lomros"],"c":"named","y":2024,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Lágrima Sagrada","p":["prin-lomros"],"c":"named","y":2025,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Ayutthaya","p":["prin-lomros"],"c":"named","y":2022,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Maruyama 丸山","p":["prin-lomros"],"c":"named","y":2019,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Nefer","p":["prin-lomros"],"c":"named","y":null,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Le Cirque Bleu","p":["prin-lomros"],"c":"named","y":2017,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Savitri สาวิตรี","p":["prin-lomros"],"c":"named","y":null,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Karuna","p":["prin-lomros"],"c":"named","y":2022,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Tirtha","p":["prin-lomros"],"c":"named","y":2024,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Hayra","p":["prin-lomros"],"c":"named","y":null,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Hirun","p":["prin-lomros"],"c":"named","y":2024,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Ronda","p":["prin-lomros"],"c":"named","y":2024,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Emerald Curry","p":["prin-lomros"],"c":"named","y":2025,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Vallée des Roses","p":["prin-lomros"],"c":"named","y":null,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"L'Ombre d'Hier","p":["prin-lomros"],"c":"named","y":2025,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Gularb Matana","p":["prin-lomros"],"c":"named","y":2024,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Keerati","p":["prin-lomros"],"c":"named","y":2025,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Apsarah","p":["prin-lomros"],"c":"named","y":2018,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Narasimha Attar","p":["prin-lomros"],"c":"named","y":2019,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Narasimha Extrait de Parfum","p":["prin-lomros"],"c":"named","y":null,"h":"parfum-prissana","at":null,"k":null,"s":["S72"],"note":""},{"n":"Mriga มฤค","p":["prin-lomros"],"c":"named","y":null,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Saringkarn ศฤงคาร","p":["prin-lomros"],"c":"named","y":2020,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Mandodari มณโฑ","p":["prin-lomros"],"c":"named","y":2019,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Varuek วฤค","p":["prin-lomros"],"c":"named","y":2021,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Nocturnal Poetry","p":["prin-lomros"],"c":"named","y":2020,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Mongolian Mriga","p":["prin-lomros"],"c":"named","y":2023,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Homa","p":["prin-lomros"],"c":"named","y":2020,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Indigo Night","p":["prin-lomros"],"c":"named","y":2024,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Aran","p":["prin-lomros"],"c":"named","y":2019,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Anatolia Anatolia","p":["prin-lomros"],"c":"named","y":2021,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Arsalan","p":["prin-lomros"],"c":"named","y":2020,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Ganja Kasturi","p":["prin-lomros"],"c":"named","y":2021,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Eshu","p":["prin-lomros"],"c":"named","y":2020,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Oqachol","p":["prin-lomros"],"c":"named","y":2022,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Onthamara","p":["prin-lomros"],"c":"named","y":2022,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Rahassanai","p":["prin-lomros"],"c":"named","y":2022,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Burmite Honey","p":["prin-lomros"],"c":"named","y":2023,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Anatolia","p":["prin-lomros"],"c":"named","y":2019,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Mandodari Mandodari","p":["prin-lomros"],"c":"named","y":2023,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Nilmalee","p":["prin-lomros"],"c":"named","y":2023,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Krissana","p":["prin-lomros"],"c":"named","y":2023,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Rattikarn รัตติกาล","p":["prin-lomros"],"c":"named","y":2023,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Fantôme de la Nuit","p":["prin-lomros"],"c":"named","y":2024,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Kheerin คีรินทร์","p":["prin-lomros"],"c":"named","y":2025,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Nisatiruk นิศาทิรุกข์","p":["prin-lomros"],"c":"named","y":2025,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Naruemit","p":["prin-lomros"],"c":"named","y":2023,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Hürrem Sultan","p":["prin-lomros"],"c":"named","y":2024,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"0125","p":["prin-lomros"],"c":"named","y":2025,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Saringkarn Saringkarn","p":["prin-lomros"],"c":"named","y":2025,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Loup","p":["prin-lomros"],"c":"named","y":2023,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Ahuizotl","p":["prin-lomros"],"c":"named","y":2022,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Pathavi","p":["prin-lomros"],"c":"named","y":2025,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Nilubol","p":["prin-lomros"],"c":"named","y":2023,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Sgàil","p":["prin-lomros"],"c":"named","y":2025,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Persephone","p":["prin-lomros"],"c":"named","y":2025,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"0225 ๐๒๒๕","p":["prin-lomros"],"c":"named","y":2025,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Prajñā","p":["prin-lomros"],"c":"named","y":2026,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Moha","p":["prin-lomros"],"c":"named","y":2026,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Dveṣa","p":["prin-lomros"],"c":"named","y":2026,"h":"prin","at":null,"k":null,"s":["S72"],"note":""},{"n":"Rāga","p":["prin-lomros"],"c":"named","y":2026,"h":"prin","at":null,"k":null,"s":["S72"],"note":""}],"sources":[{"id":"S01","cite":"“Nicholas Nilsson.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumers/nicholas-nilsson"},{"id":"S02","cite":"“Pineward: Interesting Facts.” *Parfumo*, parfumo.net. Accessed 2 Nov. 2026.","url":"https://www.parfumo.net/PerfumeBrand/pineward"},{"id":"S03","cite":"“Pineward Perfumes.” *Scent Verdict*, scentverdict.com. Accessed 2 Nov. 2026.","url":"https://scentverdict.com/brand/pineward-perfumes"},{"id":"S04","cite":"“Pineward Perfumes.” *Perfume Posse*, perfumeposse.com. Accessed 2 Nov. 2026.","url":"https://perfumeposse.com/2021/08/03/pineward-perfumes"},{"id":"S05","cite":"“Apoteker Tepe: All Perfumes & Information.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/Apoteker_Tepe"},{"id":"S06","cite":"“Holladay Saltz.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumers/Holladay_Saltz"},{"id":"S07","cite":"“Kogen.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/Apoteker_Tepe/kogen"},{"id":"S08","cite":"“Apoteker Tepe returns!.” *Basenotes*, basenotes.com. Accessed 2 Nov. 2026.","url":"https://basenotes.com/community/threads/apoteker-tepe-returns.524188/"},{"id":"S09","cite":"The Taste of Aldehydes. “Apoteker Tepe (the years each was made, as the owner wrote them).” *The Taste of Aldehydes*.","url":"SITE:houses/apoteker-tepe.html"},{"id":"S10","cite":"“Adar.” *Scent Split*, scentsplit.com. Accessed 2 Nov. 2026.","url":"https://www.scentsplit.com/collections/adar"},{"id":"S11","cite":"“Adar (Spanish edition of the house page).” *Scent Split*, scentsplit.com. Accessed 2 Nov. 2026.","url":"https://www.scentsplit.com/es/collections/adar"},{"id":"S12","cite":"“Adar – Tyrian.” *The Perfumery Barcelona*, theperfumerybarcelona.com. Accessed 2 Nov. 2026.","url":"https://www.theperfumerybarcelona.com/en/?p=27314"},{"id":"S13","cite":"“Against all Odds.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/adar/against-all-odds"},{"id":"S14","cite":"“Alta Luna.” *Scent Split*, scentsplit.com. Accessed 2 Nov. 2026.","url":"https://www.scentsplit.com/es/products/adar-alta-luna"},{"id":"S15","cite":"“Almost Human: All Perfumes & Information.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/almost-human"},{"id":"S16","cite":"“Almost Human: Brand Profile.” *Pitti Fragranze*, fragranze.pittimmagine.com. Accessed 2 Nov. 2026.","url":"https://fragranze.pittimmagine.com/en/exhibitors/A/almost-human"},{"id":"S17","cite":"“Almost Human – Ritual Code.” *The Perfumery Barcelona*, theperfumerybarcelona.com. Accessed 2 Nov. 2026.","url":"https://www.theperfumerybarcelona.com/en/producto/almost-human-ritual-code/"},{"id":"S18","cite":"“Amaretto Jazz in the Melting Room (2024).” *ScentAdvice*, scentadvice.com. Accessed 2 Nov. 2026.","url":"https://scentadvice.com/amaretto-jazz-in-the-melting-room-2024-toskovat/"},{"id":"S19","cite":"“Ataraxia Vestibule.” *WhatScent*, whatscent.app. Accessed 2 Nov. 2026.","url":"https://whatscent.app/nl/perfume/vestibule-by-ataraxia-1789572525295?hl=nl"},{"id":"S20","cite":"“Ataraxia Perfumery DEITY (Sy Truong) 2025.” *Ça Fleure Bon*, cafleurebon.com. Accessed 2 Nov. 2026.","url":"https://cafleurebon.com/ataraxia-perfumery-deity-sy-truong-2025-plus-divine-honey-giveaway/"},{"id":"S21","cite":"“Spinal Fluid.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/ataraxia/spinal-fluid"},{"id":"S22","cite":"“Spinal Fluid.” *Turin, Luca*, lucaturin.substack.com. Accessed 2 Nov. 2026.","url":"https://lucaturin.substack.com/p/spinal-fluid"},{"id":"S23","cite":"“Toskovat'.” *Scento*, scento.com. Accessed 2 Nov. 2026.","url":"https://www.scento.com/brand/toskovat"},{"id":"S24","cite":"“Toskovat.” *Parfinity*, parfinity.com. Accessed 2 Nov. 2026.","url":"https://www.parfinity.com/en/brand/toskovat"},{"id":"S25","cite":"“Grande Perfumes S.R.L..” *OnCosmetics*, oncosmetics.com. Accessed 2 Nov. 2026.","url":"https://oncosmetics.com/company/grande-perfumes-s-r-l/"},{"id":"S26","cite":"“Cuore Grande.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Parfums/grande/cuore-grande"},{"id":"S27","cite":"“Les Abstraits.” *Sainte Cellier*, saintecellier.com. Accessed 2 Nov. 2026.","url":"https://saintecellier.com/collections/les-abstraits"},{"id":"S28","cite":"“Belle Âme.” *Sainte Cellier*, saintecellier.com. Accessed 2 Nov. 2026.","url":"https://saintecellier.com/products/belle-ame"},{"id":"S29","cite":"“Des Cendres.” *Sainte Cellier*, saintecellier.com. Accessed 2 Nov. 2026.","url":"https://saintecellier.com/en-my/products/des-cendres"},{"id":"S30","cite":"“Philosopher's Walk.” *Sainte Cellier*, saintecellier.com. Accessed 2 Nov. 2026.","url":"https://saintecellier.com/products/philosophers-walk"},{"id":"S31","cite":"“Les Abstraits La Douleur Exquise.” *Noah*, noah.com.au. Accessed 2 Nov. 2026.","url":"https://noah.com.au/products/les-abstraits-la-douleur-exquise"},{"id":"S32","cite":"“Antoine Lie: The Abstract Perfumer Redefining Modern Fragrance.” *Parfinity*, next.parfinity.com. Accessed 2 Nov. 2026.","url":"https://next.parfinity.com/en/perfumer/antoine-lie"},{"id":"S33","cite":"“Antoine Lie.” *Luckyscent*, luckyscent.com. Accessed 2 Nov. 2026.","url":"https://www.luckyscent.com/perfumers/antoine-lie"},{"id":"S34","cite":"“Tale Parfum Bad Lily (Michael Nordstrand) 2024.” *Ça Fleure Bon*, cafleurebon.com. Accessed 2 Nov. 2026.","url":"https://cafleurebon.com/tale-parfum-bad-lily-michael-nordstrand-2024-plus-surreal-muget-giveaway/"},{"id":"S35","cite":"“Bad Lily.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/tale-parfum/bad-lily"},{"id":"S36","cite":"“TALE Parfum Bad Lily Eau de Parfum.” *Stéle*, stele.nyc. Accessed 2 Nov. 2026.","url":"https://stele.nyc/products/tale-bad-lily-eau-de-parfum"},{"id":"S37","cite":"“Sweet Coffin.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/tombstone/sweet-coffin"},{"id":"S38","cite":"“3 Feet 5.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/tombstone/3-feet-5"},{"id":"S39","cite":"“Evergrow.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/tombstone/evergrow"},{"id":"S40","cite":"“Tombstone: Brand Profile.” *Pitti Fragranze*, fragranze.pittimmagine.com. Accessed 2 Nov. 2026.","url":"https://fragranze.pittimmagine.com/en/exhibitors/T/tombstone"},{"id":"S41","cite":"“Qimu & Musicians Drummer.” *WhatScent*, whatscent.app. Accessed 2 Nov. 2026.","url":"https://whatscent.app/perfume/drummer-1783425703668"},{"id":"S42","cite":"“OM Parfum: All Perfumes & Information.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/om-parfum"},{"id":"S43","cite":"“OM Parfum: Info and Facts.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/PerfumeBrand/om-parfum"},{"id":"S44","cite":"“Dragon's Breath.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/outsider-parfum/dragon-s-breath"},{"id":"S45","cite":"“Amaretto Coffee.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/outsider-parfum/amaretto-coffee"},{"id":"S46","cite":"“Lost Tribe.” *Scent Verdict*, scentverdict.com. Accessed 2 Nov. 2026.","url":"https://scentverdict.com/brand/lost-tribe"},{"id":"S47","cite":"“Lost Tribe Pan's Labyrinth v2 Extrait.” *Venba Fragrance*, venbafragrance.com. Accessed 2 Nov. 2026.","url":"https://www.venbafragrance.com/products/lost-tribe-pans-labyrinth-v2-extrait"},{"id":"S48","cite":"“Lost Tribe Fougère Rouge Elixir de Parfum.” *Stéle*, stele.nyc. Accessed 2 Nov. 2026.","url":"https://stele.nyc/products/lost-tribe-fougere-rouge-elixir-de-parfum"},{"id":"S49","cite":"“Serge Lutens de Profundis.” *Surrender to Chance*, surrendertochance.com. Accessed 2 Nov. 2026.","url":"https://surrendertochance.com/serge-lutens-de-profundis/?revpage=2"},{"id":"S50","cite":"“Christopher Sheldrake.” *Wikipedia*, en.wikipedia.org. Accessed 2 Nov. 2026.","url":"https://en.wikipedia.org/wiki/Christopher_Sheldrake"},{"id":"S51","cite":"“Christopher Sheldrake.” *The Fragrance Foundation UK*, fragrancefoundation.org.uk. Accessed 2 Nov. 2026.","url":"https://www.fragrancefoundation.org.uk/christopher-sheldrake"},{"id":"S52","cite":"“Tobacolor by Dior.” *Scento*, scento.com. Accessed 2 Nov. 2026.","url":"https://www.scento.com/perfumes/tobacolor-dior"},{"id":"S53","cite":"“François Demachy.” *Wikipedia*, en.wikipedia.org. Accessed 2 Nov. 2026.","url":"https://en.wikipedia.org/wiki/Fran%C3%A7ois_Demachy"},{"id":"S54","cite":"“François Demachy.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumers/Franois_Demachy"},{"id":"S55","cite":"“Ramon Monegal Flamenco ~ new perfume.” *Now Smell This*, nstperfume.com. Accessed 2 Nov. 2026.","url":"https://nstperfume.com/2017/04/29/ramon-monegal-flamenco-new-perfume/"},{"id":"S56","cite":"“Ramón Monegal: Interesting Facts.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/PerfumeBrand/Ramon_Monegal"},{"id":"S57","cite":"“Myrurgia.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/PerfumeBrand/Myrurgia"},{"id":"S58","cite":"“Mancera French Riviera.” *Scent Verdict*, scentverdict.com. Accessed 2 Nov. 2026.","url":"https://scentverdict.com/perfume/mancera-french-riviera-eau-de-parfum"},{"id":"S59","cite":"“Mancera Catalogue.” *Mancera*, manceraparfums.com. Accessed 2 Nov. 2026.","url":"https://manceraparfums.com/us/upload/Mancera_Catalogue.pdf"},{"id":"S60","cite":"“Mancera.” *Pamco*, pamcogrp.com. Accessed 2 Nov. 2026.","url":"https://www.pamcogrp.com/catalogues/perfume/MANCERA.pdf"},{"id":"S61","cite":"“Introducing Lussur – Italian niche perfumery.” *Basenotes*, basenotes.com. Accessed 2 Nov. 2026.","url":"https://basenotes.com/goto/post?id=6402949"},{"id":"S62","cite":"“Velvet Fog – 50ml.” *Spezieri*, spezieri.com. Accessed 2 Nov. 2026.","url":"https://spezieri.com/en/velvet-fog-50-ml-casa-goa"},{"id":"S63","cite":"“MATCA.” *Fragplace*, fragplace.com. Accessed 2 Nov. 2026.","url":"https://fragplace.com/ja-US/brands/1172/matca.md"},{"id":"S64","cite":"“Jakub Pietrynka.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumers/jakub-pietrynka"},{"id":"S65","cite":"“JMP Artisan Perfumes.” *Luckyscent*, luckyscent.com. Accessed 2 Nov. 2026.","url":"https://www.luckyscent.com/brand/871/jmp-artisan-perfumes?section=1"},{"id":"S66","cite":"“Quintessentially Amber.” *WhatScent*, whatscent.app. Accessed 2 Nov. 2026.","url":"https://whatscent.app/perfume/quintessentially-amber-1784060250942"},{"id":"S67","cite":"“Quintessentially Amber by Sultan Pasha Perfumes.” *Luckyscent*, luckyscent.com. Accessed 2 Nov. 2026.","url":"https://www.luckyscent.com/products/quintessentially-amber-by-sultan-pasha-perfumes"},{"id":"S68","cite":"“Areej Le Dore Forbidden Flower.” *Fragrance Samples UK*, fragrancesamplesuk.com. Accessed 2 Nov. 2026.","url":"https://www.fragrancesamplesuk.com/products/areej-le-dore-fordbidden-flower"},{"id":"S69","cite":"“Areej Le Doré: Interesting Facts.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/Areej_Le_Dore?col_id=2278"},{"id":"S70","cite":"“Niche Fragrance Review: slumberhouse Ore.” *Ça Fleure Bon*, cafleurebon.com. Accessed 2 Nov. 2026.","url":"https://cafleurebon.com/niche-fragrance-review-slumberhouse-ore-better-the-second-time-draw/"},{"id":"S71","cite":"“Josh Lobb.” *Luckyscent*, checkout.luckyscent.com. Accessed 2 Nov. 2026.","url":"https://checkout.luckyscent.com/collections/perfumer-josh-lobb.oembed"},{"id":"S72","cite":"“Prin Lomros.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumers/Prin_Lomros"},{"id":"S73","cite":"“Strangers Parfumerie: All Perfumes & Information.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/Strangers_Parfumerie"},{"id":"S74","cite":"“Strangers Parfumerie.” *Bloom Perfumery*, bloomperfume.com. Accessed 2 Nov. 2026.","url":"https://bloomperfume.com/collections/strangers-parfumerie/tag-sexy"},{"id":"S75","cite":"“Parfum Prissana.” *Luckyscent*, luckyscent.com. Accessed 2 Nov. 2026.","url":"https://www.luckyscent.com/brand/843/parfum-prissana?f=keyword%3D124"},{"id":"S76","cite":"“PRIN.” *Luckyscent*, luckyscent.com. Accessed 2 Nov. 2026.","url":"https://www.luckyscent.com/brand/847/prin"},{"id":"S77","cite":"“Pineward: All Perfumes & Information.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/pineward?o=y_desc"},{"id":"S78","cite":"“Ataraxia Perfumery.” *Thingtesting*, thingtesting.com. Accessed 2 Nov. 2026.","url":"https://thingtesting.com/brands/ataraxia-perfumery"},{"id":"S79","cite":"“Serge Lutens.” *Jarrold*, jarrold.co.uk. Accessed 2 Nov. 2026.","url":"https://jarrold.co.uk/brands/serge-lutens"},{"id":"S80","cite":"“Dior Women's Perfume.” *Harrods*, harrods.com. Accessed 2 Nov. 2026.","url":"https://www.harrods.com/en-tz/designers/dior/perfume/womens-perfume"},{"id":"S81","cite":"“François Demachy.” *The Fragrance Foundation UK*, fragrancefoundation.org.uk. Accessed 2 Nov. 2026.","url":"https://fragrancefoundation.org.uk/francois-demanchy"},{"id":"S82","cite":"“Brother Night by Apoteker Tepe.” *Basenotes*, basenotes.com. Accessed 2 Nov. 2026.","url":"https://basenotes.com/fragrances/brother-night-by-apoteker-tepe.26191067"},{"id":"S83","cite":"“Brother Night by Apoteker Tepe.” *Parfumo*, parfumo.com. Accessed 2 Nov. 2026.","url":"https://www.parfumo.com/Perfumes/Apoteker_Tepe/brother-night"},{"id":"S84","cite":"“Amber Zero – Essence of Depths.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","url":"https://adarperfumes.com/products/amber-zero-essence-of-dephts"},{"id":"S85","cite":"“Aetherialism – Storm Breath.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","url":"https://adarperfumes.com/products/aetherialism-storm-breath"},{"id":"S86","cite":"“Incantu – Drops of Styx.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","url":"https://adarperfumes.com/products/incantu-drops-of-styx"},{"id":"S87","cite":"“Against All Odds – Elixir Absolu.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","url":"https://adarperfumes.com/products/against-all-odds"},{"id":"S88","cite":"“Alpha 11 – Elixir Absolu.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","url":"https://adarperfumes.com/products/alpha11-elixir-absolu"},{"id":"S89","cite":"“Alta Luna – Elixir Absolu.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","url":"https://adarperfumes.com/products/alta-luna-elixir-absolu"},{"id":"S90","cite":"“ADHD – Artistic Functional Neuro Elixir.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","url":"https://adarperfumes.com/products/adhd-neuro-elixir"},{"id":"S91","cite":"“Root Code – Extrait of Heritage.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","url":"https://adarperfumes.com/products/root-code"},{"id":"S92","cite":"“Lignum Dei – The Wood of God.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","url":"https://adarperfumes.com/products/lignum-dei-the-wood-of-god"},{"id":"S93","cite":"“Lithos Diaphanes.” *ADAR*, adarperfumes.com. Accessed 7 Nov. 2026.","url":"https://adarperfumes.com/products/lithos-diaphanes-λίθος-διαφανές"},{"id":"S94","cite":"“My Doll’s Makeup.” *Ataraxia Perfumery*, ataraxiaperfumery.com. Accessed 7 Nov. 2026.","url":"https://ataraxiaperfumery.com/products/my-dolls-makeup"},{"id":"S95","cite":"“Spinal Fluid.” *Ataraxia Perfumery*, ataraxiaperfumery.com. Accessed 7 Nov. 2026.","url":"https://ataraxiaperfumery.com/products/spinal-fluid"},{"id":"S96","cite":"“3 Feet 5, TOMBSTONE Extrait de Parfum.” *Scentissime*, scentissime.com. Accessed 7 Nov. 2026.","url":"https://www.scentissime.com/en/gourmand-perfumes/1224-3-feet-5-3760302981205.html"},{"id":"S97","cite":"“Evergrow.” *Tombstone*, tombstonefragrances.shop. Accessed 7 Nov. 2026.","url":"https://tombstonefragrances.shop/products/evergrow"},{"id":"S98","cite":"“No Need to Come by.” *Tombstone*, tombstonefragrances.shop. Accessed 7 Nov. 2026.","url":"https://tombstonefragrances.shop/products/no-need-to-come-by-1"},{"id":"S99","cite":"“Sing at My Funeral.” *Tombstone*, tombstonefragrances.shop. Accessed 7 Nov. 2026.","url":"https://tombstonefragrances.shop/products/sing-at-my-funeral-1"},{"id":"S100","cite":"“Sing at My Funeral, TOMBSTONE Extrait de Parfum.” *Scentissime*, scentissime.com. Accessed 7 Nov. 2026.","url":"https://www.scentissime.com/en/1225-sing-at-my-funeral-3760302981229.html"},{"id":"S101","cite":"“Sweet Coffin.” *Tombstone*, tombstonefragrances.shop. Accessed 7 Nov. 2026.","url":"https://tombstonefragrances.shop/products/product_96dfccf6-9558-1964-5d89-1505be7abf53"},{"id":"S102","cite":"“Sweet Coffin, TOMBSTONE Extrait de Parfum.” *Scentissime*, scentissime.com. Accessed 7 Nov. 2026.","url":"https://www.scentissime.com/en/1223-sweet-coffin-3760302981212.html"},{"id":"S103","cite":"“Fleurt.” *Sainte Cellier*, saintecellier.com. Accessed 7 Nov. 2026.","url":"https://saintecellier.com/products/fleurt"},{"id":"S104","cite":"“Rouse.” *Sainte Cellier*, saintecellier.com. Accessed 7 Nov. 2026.","url":"https://saintecellier.com/products/rouse"},{"id":"S105","cite":"“Aichi Liu.” *Parfumo*, parfumo.com. Accessed 7 Nov. 2026.","url":"https://www.parfumo.com/Perfumers/aichi-liu"},{"id":"S106","cite":"“Aichi Liu.” *The Scent Base*, thescentbase.com. Accessed 7 Nov. 2026.","url":"https://thescentbase.com/perfumer/aichi-liu"},{"id":"S107","cite":"“Home Goa Velvet Fog 50ml Eau de Parfum.” *Profumix Luxury Brands*, profumixluxurybrands.it. Accessed 7 Nov. 2026.","url":"https://www.profumixluxurybrands.it/en/?p=103693"},{"id":"S108","cite":"The Taste of Aldehydes. “The perfumers of Grande Parfums, Qimu & Musicians, Tombstone and Matca, and the perfumes whose perfumer is not publicly available, as the owner gave them, 8 Nov. 2026.” *The Taste of Aldehydes*.","url":"SITE:perfumers/index.html"}],"counts":{"perfumes":280,"onSite":142,"perfumers":35,"houses":27,"dated":224}};
 
-   TWO VIEWS, each with its own name since 2026-11-08 ("in the blob page ...
-   (make it an official name)"):
-   THE STRINGS (first; "the rays" until 2026-11-08)  image 2: on black, A DOT
-                      FOR EVERY HOUSE A PERFUMER MADE FOR ("i want the dots not
-                      to be perfumes/fragrances, but houses. so prin lomoros
-                      should be 3 dots"), each perfumer's dots a block of
-                      their own with their name over it, down the two sides,
-                      A to Z; and from every dot A STRING to one point low in
-                      the middle — slack, hanging and swaying a little at
-                      rest, PULLED TAUT when its perfumer is pointed at, and
-                      plucked by the hand crossing it ("make the lines that
-                      connect to the node in the bottom center like strings,
-                      that get taught when you interact with them"). Pointed
-                      at, the whole block lights, and a note by the hand says
-                      only who it is and how many houses. Pressed, THE
-                      OPENING: the block's strings snap taut and reel its dots
-                      in to the point while everything else falls slack and
-                      comes apart into its red, green and blue; then the
-                      world opens out of the point through three discs, one
-                      for each colour, a little apart — blue leading on the
-                      upper left, red and gold on the lower right — the world
-                      only whole where all three have passed, and its blob
-                      settling out of a wide aberration into its own.
-   THE WORLD          image 4: a pale poster under a title and a heavy rule,
-                      grain over all of it. In the middle a dark abstract blob
-                      — A PERFUMER, a lobe for every one of their houses, as
-                      big as what they made for it; or, since 2026-11-08, A
-                      HOUSE, a lobe for every perfumer who made for it — seen
-                      through THE LENS; round it, out of focus, ITS HOUSES (a
-                      perfumer's) or ITS PERFUMERS (a house's) as spheres,
-                      and pressing one makes it the middle: it travels in and
-                      unfolds into its blob while the one before folds into a
-                      sphere and takes its place round it, the aberration
-                      widening as they go and settling as they land.
-                      PERFUMERS ARE ROUND AND PLUM, HOUSES ARE CUT AND INK
-                      ("please distinguish the houses blobs and the perfumer
-                      blobs somehow"): a house's lobes are hexagons, faceted
-                      like a cut stone, its dark a cold blue-black where a
-                      perfumer's is a warm plum. The double circle stays on
-                      the last sphere the hand was on. Learn More about it at
-                      the foot: the paragraph and the biography on a sheet
-                      under the poster, the page scrolled to it. RETURN goes
-                      back to the strings; so does Esc.
-   The readings down the left are the perfumer's (or the house's).
-
-   ITS COLOURS since the last round of 2026-11-06: THE LENS — nothing
-   painted, the blob one dark shape that each of the three colours sees a
-   little apart — the red up and to the left, the blue down and to the right,
-   the green between — so its edge is blue-violet above and gold going orange
-   below and its middle plum. The split before it is ?look=split, and TP1
-   BACKUP ?look=backup ("save this version. I like it").
-   HOW IT IS DRAWN: a blob is a field of soft lobes, f = Σ e^(1 − q), worked
-   out a pixel at a time in a small picture and laid down large, which
-   feathers every edge; q is a lobe's distance squared over its radius
-   squared — or, for a house's, its distance from a hexagon's sides. The
-   middle one is worked out again 24 times a second as its lobes drift; the
-   spheres round it once each, at the screen's own sharpness, one a frame.
-
-   A snapshot of the site's Perfumers ledger, written in above: nothing on
-   the site reads this page, and it reads nothing of the site.
-   ============================================================ */
+// ============================================================
+// PERFUMERS — perfumers/index.html only (2026-11-02; rebuilt the same day,
+// later — "turn slowly; and have idle animations ... When you click and zoom
+// in, i want you to be in a fixed place, where you cannot use the
+// scrollwheel. instead of the legend ... a fixed list of perfumers that you
+// can scroll. alphabetical ... when you select something, you select the
+// perfumer then the houses appear ... optimize tf out of it").
+//
+// The owner's picture 1 — a poster of a year round a circle — redrawn as
+// PERFUMER → HOUSE → PERFUME, and their picture 2 — the same poster seen
+// up close, tipped back, the near part sharp and the rest out of focus —
+// as what choosing something does.
+//
+// REMODELLED 2026-11-06 after another picture of the owner's — a poster of
+// the Earth drawn as an architect draws it, its bands of information
+// standing out round it ("It should look like the earth, with then three
+// layers of information in series protruding from it, which is going to be
+// the perfumer, the house and then the perfume. It should look like an
+// architect's sketch of the earth. I want this to occupy the majority of
+// the page ... the zoom length should be fixed, and the scrolling while
+// hovering on the image will cause you to scroll through the perfumes of
+// that house/perfumer").
+//
+// WHAT IT DRAWS, from the middle out (world units; R below):
+//   THE EARTH     in the middle, upright, turning slowly on its axis: drawn
+//                 as an architect's sketch — its coastlines in a hairline
+//                 with two waterlines off them, the land hatched, the
+//                 graticule every fifteen degrees, the latitudes named down
+//                 its left. (The cross through its middle, run out to a
+//                 cross-hair at each end, went on 2026-11-07: "remove the
+//                 crosshairs in the cardinal directions, and the cross going
+//                 through the center of the world".)
+//                 A square marks every country a house is from, a ring every
+//                 country a perfumer is from (the ledger's countries: a pin
+//                 is the country, never a town), and from each house's
+//                 country a line runs to every one of its perfumes' places on
+//                 the rings, as the picture's lines run from its cities.
+//                 (Natural Earth's coastlines, perfumers-earth.js.)
+//   THE THREE RINGS, in series, a cell in each for every perfume:
+//     1 PERFUMER  a cell filled where a source names the perfumer, half
+//                 filled where it is the house's perfumer, empty where none
+//                 is found; the perfumers' names along it (years, By year).
+//     2 HOUSE     a cell in the colour of where the perfume is: gold, an
+//                 individual fragrance written about here; blue-white, a
+//                 house perfume written about here; rose, Prin Lomros'
+//                 houses, not written about here. A chosen perfumer's houses
+//                 are named along it.
+//     3 PERFUME   a bar as long as ITS YEAR — 2009 shortest, 2026 longest,
+//                 the years' rings behind them — ending in its dot; a perfume
+//                 no source dates ends hollow on the dashed ring beyond.
+//                 Now and then a light runs from its house's country through
+//                 the three rings to its dot, which flares.
+//   THE RIM       a tick for every perfume; its number and year are written
+//                 only for what is chosen, a faint line for the rest.
+//   THE LABELS    every perfume's name past the rim — written out only for
+//                 what is chosen, the poster's faint lines for the rest.
+//
+// CHOOSING: a perfumer (on the circle, or in THE LIST down the right, A to
+// Z), then one of its houses, then a perfume, which opens its window. The
+// camera flies to what is chosen, ALWAYS AS CLOSE (the zoom fixed), and the
+// Earth turns to its country; there THE WHEEL, a swipe, the arrow keys or
+// the scrubber beside the chart go through its perfumes one after another
+// (Prin Lomros' 139 among them), the page held still under it; Esc, the list
+// or "The whole chart" go back up. By year, the circle's groups are years.
+//
+// HOW IT IS KEPT SMOOTH — three layers, so that nothing is drawn again only
+// because it moves:
+//   THE ROTOR   (.pf-rotor) the three rings and the rim at rest, drawn ONCE
+//               into a square canvas that the browser TURNS by its
+//               transform: the slow turn costs nothing a frame.
+//   THE SWAY    (.pf-sway) the chart in perspective, the Earth with it —
+//               drawn every frame only while the camera flies; close in,
+//               drawn once, with its out-of-focus copy, and SWAYED by its
+//               transform, slowly. (The Earth stands still close in.)
+//   THE LIVE    (.pf-live) what moves of itself: the Earth on the whole
+//               chart — drawn into a picture of its own only when it has
+//               turned by a third of a pixel, and laid down every frame —
+//               its lines out to the rings, the far field and the dust
+//               drifting, the lights, the names while the chart turns (so
+//               they never stand upside down), what the hand is on.
+// data-view on the stage says which: "turn", "live" (flying) or "still".
+// Nothing is drawn while the chart is off the screen, the tab is hidden or
+// a window is open over it. Every speck is drawn in one colour at a varied
+// globalAlpha, every line batched, every glyph's width measured once.
+//
+// THE CAMERA: a focus point, a zoom, a turn and a tilt, with perspective,
+// eased by two springs one behind the other (`stepCam`) — so a flight sets
+// off gently, lands gently, and turns smoothly when it is sent somewhere
+// else on the way.
+//
+// All of it reads the ledger's data, written by tools/perfumers/build.py
+// from tools/perfumers/LEDGER.md. Nothing here knows a perfume by name.
+//
+// prefers-reduced-motion: nothing moves of itself — the chart does not
+// turn or sway, no lights run, the Earth stands still (turned at once to
+// what is chosen), the camera and the switch go at once.
+// ============================================================
 (function () {
   "use strict";
+
+  const D = LEDGER_SNAPSHOT;
+  const stage = document.querySelector(".pf-stage");
+  if (!D || !stage) return;
+  const root = document.querySelector(".pf");
+  const rotor = stage.querySelector(".pf-rotor");
+  const cvTurn = stage.querySelector(".pf-turn");
+  const swayBox = stage.querySelector(".pf-sway");
+  const cvChart = stage.querySelector(".pf-chart");
+  const cvDof = stage.querySelector(".pf-dof");
+  const cvLive = stage.querySelector(".pf-live");
+  const tctx = cvTurn.getContext("2d");
+  const ctx = cvChart.getContext("2d");
+  const dctx = cvDof.getContext("2d");
+  const lctx = cvLive.getContext("2d");
+  // the chart while the camera flies, drawn at a lower resolution — every
+  // frame of a flight is a whole new drawing, and on a sharp screen most of
+  // its cost is pixels no one can see while it moves; it is drawn sharp
+  // again the frame it lands (2026-11-03 — "make the animation smoother")
+  const cvFly = document.createElement("canvas");
+  cvFly.className = "pf-fly";
+  swayBox.insertBefore(cvFly, cvChart);
+  const fctx = cvFly.getContext("2d");
+  let FLY_K = 1, flying = false;
+  // THE NAMES ON THE RINGS AT REST, a picture of their own in the rotor
+  // (2026-11-07 — "optimize this page as much as you can"): drawn into it a
+  // few times a second and turned with the chart by the browser in between,
+  // where until then they were drawn into the live layer — the whole window,
+  // at the screen's full sharpness — every frame.
+  const cvNames = document.createElement("canvas");
+  cvNames.className = "pf-turn-names";
+  rotor.appendChild(cvNames);
+  const nctx = cvNames.getContext("2d");
+  let namesRot = 0, namesKey = "";
+  const mctx = document.createElement("canvas").getContext("2d");
+  const title = stage.querySelector(".pf-title");
+  const tip = stage.querySelector(".pf-tip");
+  const hint = stage.querySelector(".pf-hint");
+  const backBtn = stage.querySelector(".pf-back");
+  const here = stage.querySelector(".pf-here");
+  const nav = stage.querySelector(".pf-nav");
+  const navList = nav.querySelector(".pf-nav-list");
+  const navScroll = nav.querySelector(".pf-nav-scroll");
+  const navToggle = nav.querySelector(".pf-nav-toggle");
+  const navPath = nav.querySelector(".pf-nav-path");
+  const sortBtns = Array.from(stage.querySelectorAll(".pf-sort-button"));
   const STILL = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const PHONE = window.matchMedia("(max-width: 700px)");
   const TAU = Math.PI * 2;
+
+  // ---- THE GEOMETRY, in world units -----------------------------------
+  // (2026-11-06: the Earth in the middle, and the three rings in series
+  // standing out from it — the perfumer, the house, the perfume)
+  const R = {
+    earth: 468,                // the Earth's radius
+    frame0: 476, frame1: 484,  // its frame, a double circle
+    per0: 494, perCell: 505, per1: 522,   // RING 1, the perfumer: its cells, and its names over them
+    hou0: 530, houCell: 540, hou1: 554,   // RING 2, the house: the same
+    base: 564,                 // RING 3, the perfume: where every bar leaves from
+    y0: 578, y1: 702,          // 2008 … 2026
+    und: 718,                  // the ring of perfumes with no year found
+    tick0: 734, tick1: 742,    // the rim's ticks
+    num: 748,                  // the rim's numbers
+    label: 806,                // the names past the rim
+    dust0: 790, dust1: 1150,
+    fit: 890,                  // what the whole chart is fitted to
+    out: 990,                  // the farthest of the faint lines past the rim: the stage is made as tall as this
+    look: 740,                 // the radius a close look is centred on
+  };
+  R.perMid = (R.perCell + R.per1) / 2 + 0.5;
+  R.houMid = (R.houCell + R.hou1) / 2 + 0.5;
+  const Y_FROM = 2008, Y_TO = 2026;
+  const GAP = 2.4;             // slots of gap before each group
+  const HGAP = 0.7;            // slots of gap between two houses of one group
+  const TOPGAP = 9;            // slots of gap at the top, where the rings are named
+  const SORT_MS = 1700, INTRO_MS = 2100, EM_MS = 650;
+  const TILT = 0.94;           // how far a close look tips the chart back
+  const TURN_S = 260;          // seconds the chart takes to turn once, at rest
+  const SPIN = TAU / TURN_S;
+  const SPRING = 5.8;          // the camera's two springs (per second) — gentler since 2026-11-03 ("make the animation smoother")
+  const REST_PX = 0.35;        // the camera is at rest once nothing is left to move by more than this
+  const DIM = 0.2;             // what is not chosen, of itself
+  const AROUND = 0.46;         // the rest of a chosen perfume's house, of itself
+  const FLIP = 0.07;           // a name on the rim turns over across this band, crossfading
+  // THE FIXED ZOOM (2026-11-06 — "the zoom length should be fixed"): every
+  // choice is looked at from as close as every other, a perfumer of one
+  // perfume and Prin Lomros' 139 alike; what does not fit on the window is
+  // gone through by the wheel
+  const Z_FIX = 1.8, Z_FIX_PHONE = 1.2;
+  const WHEEL_PX = 42;         // a perfume a step of this much of the wheel
+  const SWIPE_PX = 26;         // a perfume a step of this much of a finger
+  // the Earth: how it is seen, how fast it turns, how fast it turns to a choice
+  const EARTH_TILT = 0.4;      // radians: it is seen from a little above its equator
+  const EARTH_SPIN = TAU / 360;   // once in six minutes
+  const EARTH_TO = 1.6;        // per second, turning to what is chosen
+  // a perfume's window (2026-11-03): lit first, then the window drawn out of it
+  const CALL_AFTER = 560;      // ms the perfume is lit before its window comes
+  const CALL_WAIT = 2400;      // at most this long waiting for the chart to settle
+  const CALL_LINE_MS = 320;    // the line drawn out to the window
+  const CALL_GAP = 46;         // from the dot to the window, about
+  // the sway close in: a slow roll about the point looked at, a breath of
+  // scale, a drift of a few pixels — the browser's to draw (`swayBox`)
+  const SWAY = { roll: 0.03, roll2: 0.011, breath: 0.011, dx: 7, dy: 4, rollHz: 1 / 27, roll2Hz: 1 / 11.5, breathHz: 1 / 19, driftHz: 1 / 23 };
+  // THE ALDEHYDE'S COLOURS (2026-11-08 — "make the actual perfumers page
+  // more thematic"; the owner chose perfume and aldehydes): the home page's
+  // gold for the individual fragrances and its violet for the house perfumes
+  // (they were an orange gold and a blue-white), Prin Lomros' rose kept, and
+  // the dust in the aldehyde's gold, violet and warm grey
+  const RGB = { gold: "224,178,82", blue: "185,160,232", rose: "226,88,126", ink: "235,232,226", muted: "141,143,146", sea: "15,17,20", land: "36,38,43", grey: "154,148,140" };
+  const SOLID = {}; Object.keys(RGB).forEach((k) => (SOLID[k] = "rgb(" + RGB[k] + ")"));
+  const GROUND = "#0b0c0d";
+  const F = {
+    label: '400 20px Archivo, "Segoe UI", sans-serif',
+    labelHere: '600 20px Archivo, "Segoe UI", sans-serif',
+    group: '700 20px Archivo, "Segoe UI", sans-serif',
+    house: '500 20px "IBM Plex Mono", ui-monospace, monospace',
+    mono: '400 20px "IBM Plex Mono", ui-monospace, monospace',
+  };
+  const FPX = 20;
+  const TONES = ["rose", "blue", "gold"];
+  const LV = 8;                // the levels emphasis is batched in
+
+  // ---- THE DATA --------------------------------------------------------
+  const PER = {}; D.perfumers.forEach((p) => (PER[p.id] = p));
+  const HOU = {}; D.houses.forEach((h) => (HOU[h.id] = h));
+  const SRC = {}; D.sources.forEach((s) => (SRC[s.id] = s));
+  const cmp = (a, b) => String(a).localeCompare(String(b), "en", { sensitivity: "base" });
+  const perSort = (id) => (id === "not-found" ? "￿" : (PER[id].sort || PER[id].name));
+  const yearKey = (e) => e.p.y || "none";
+
+  const entries = [];
+  D.perfumes.forEach((p) => {
+    p.p.forEach((pid) => {
+      entries.push({
+        p, pid,
+        tone: p.k === "individual" ? "gold" : p.k === "house" ? "blue" : "rose",
+        a: 0, from: 0, to: 0, no: 0,
+        rDot: p.y ? R.y0 + ((p.y - Y_FROM) / (Y_TO - Y_FROM)) * (R.y1 - R.y0) : R.und,
+        em: 1, emFrom: 1, emTo: 1,
+        withWho: false,
+      });
+    });
+  });
+  const N = entries.length;
+  const yearR = (y) => R.y0 + ((y - Y_FROM) / (Y_TO - Y_FROM)) * (R.y1 - R.y0);
+  const byTone = {};
+  TONES.forEach((t) => (byTone[t] = entries.filter((e) => e.tone === t)));
+  // the perfumers in the list's order, which is the chart's A–Z: by surname
+  const PERFUMERS = D.perfumers.slice().sort((a, b) => cmp(perSort(a.id), perSort(b.id)));
+  const named = PERFUMERS.filter((p) => p.id !== "not-found");
+  const entriesOf = (pid) => entries.filter((e) => e.pid === pid);
+  function housesOf(pid) {
+    const m = new Map();
+    entriesOf(pid).forEach((e) => { if (!m.has(e.p.h)) m.set(e.p.h, []); m.get(e.p.h).push(e); });
+    m.forEach((list) => list.sort((x, y) => cmp(x.p.n, y.p.n)));
+    return Array.from(m.entries()).sort((a, b) => cmp(HOU[a[0]].name, HOU[b[0]].name));
+  }
+
+  // ---- WHERE THEY ARE FROM, on the Earth ---------------------------------
+  // Only the countries the ledger gives a house or a perfumer ("from"), each
+  // pinned at the middle of the country — a pin says the country and nothing
+  // nearer; a house or a perfumer the ledger gives no country has no pin.
   const DEG = Math.PI / 180;
+  const COUNTRY = {
+    "United States": [39.5, -98.5], "United Kingdom": [54, -2.4], "France": [46.6, 2.4],
+    "Spain": [40.2, -3.6], "Italy": [42.8, 12.6], "Poland": [52.1, 19.4], "Romania": [45.9, 25],
+    "Thailand": [15.4, 101], "Taiwan": [23.7, 121], "Indonesia": [-2.4, 117.5],
+  };
+  const pins = new Map();      // country -> { name, lat, lon, houses:[], perfumers:[], entries:[] }
+  function pinOf(country) {
+    if (!country || !COUNTRY[country]) return null;
+    if (!pins.has(country)) {
+      const [la, lo] = COUNTRY[country];
+      pins.set(country, { name: country, lat: la * DEG, lon: lo * DEG, houses: [], perfumers: [], entries: [], x: 0, y: 0, z: 0 });
+    }
+    return pins.get(country);
+  }
+  D.houses.forEach((h) => { const p = pinOf(h.from); if (p) p.houses.push(h.id); });
+  D.perfumers.forEach((q) => { const p = pinOf(q.from); if (p) p.perfumers.push(q.id); });
+  entries.forEach((e) => { e.pin = pinOf(HOU[e.p.h].from); if (e.pin) e.pin.entries.push(e); });
+  const PINS = Array.from(pins.values());
+  // the country the Earth turns to for a choice: the house's, or the
+  // perfumer's own, or that of the house most of its perfumes are from
+  function countryOf(list, pid) {
+    const n = new Map();
+    list.forEach((e) => { if (e.pin) n.set(e.pin, (n.get(e.pin) || 0) + 1); });
+    let best = null, bn = 0;
+    n.forEach((v, k) => { if (v > bn) { bn = v; best = k; } });
+    if (best) return best;
+    return pid && PER[pid] ? pinOf(PER[pid].from) : null;
+  }
+
+  // ---- THE TOOLS -------------------------------------------------------
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
-  const lerp = (a, b, t) => a + (b - a) * t;
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const smooth = (t) => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
-  // smootherstep: at rest at both ends, and gentler there than smooth
-  const soft = (t) => { t = clamp(t, 0, 1); return t * t * t * (t * (t * 6 - 15) + 10); };
-  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  function angDist(a, b) { let d = ((a - b) % TAU + TAU) % TAU; return d > Math.PI ? TAU - d : d; }
   function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
-  const hash = (t) => { let h = 2166136261; for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
-  const el = (s) => document.querySelector(s);
-  const cmp = (a, b) => String(a).localeCompare(String(b), "en", { sensitivity: "base" });
+  function esc(s) { return String(s).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]); }
+  const level = (em) => clamp(Math.round(em * LV), 0, LV);
 
-  // ---- THE DATA ---------------------------------------------------------
-  const D = DATA;
-  const CREDIT = ["named by a source", "the house's perfumer", "perfumer not found"];
-  const KIND = ["an individual fragrance written about here", "a house perfume written about here", "one of Prin Lomros' houses, not written about here"];
-  const HOU = D.houses;
-  const PER = D.perfumers.map((p, i) => Object.assign({}, p, { i, list: [], houses: new Map() }));
-  // A HOUSE as a world of its own (2026-11-08 — "when you click on one of the
-  // houses, it takes you to a blob of the house, and then the surrounding
-  // blobs should be blobs of PERFUMERS that worked for that house"): its
-  // perfumes, once each, and who made what for it
-  const HOS = HOU.map((h, i) => Object.assign({}, h, { i, list: [], pers: new Map(), seed: hash("house:" + h.id) }));
-  D.perfumes.forEach((r) => {
-    const e = { n: r[0], c: r[2], y: r[3], h: r[4], k: r[5], s: r[6], who: r[1] };
-    HOS[r[4]].list.push(e);
-    r[1].forEach((q) => PER[q].list.push(Object.assign({ q }, e)));
-  });
-  PER.forEach((p) => {
-    p.list.sort((a, b) => cmp(HOU[a.h].name, HOU[b.h].name) || cmp(a.n, b.n));
-    p.list.forEach((e) => { if (!p.houses.has(e.h)) p.houses.set(e.h, []); p.houses.get(e.h).push(e); });
-    p.none = p.id === "not-found";
-    p.seed = hash(p.id);
-    p.houses.forEach((l, h) => HOS[h].pers.set(p.i, l));
-  });
-  HOS.forEach((ho) => ho.list.sort((a, b) => (a.y || 9999) - (b.y || 9999) || cmp(a.n, b.n)));
-  const ORDER = PER.slice().sort((a, b) => (a.none - b.none) || cmp(a.sort, b.sort));
-  ORDER.forEach((p, k) => (p.k = k));
-  const NP = ORDER.length;
-  const perName = (p) => (p.none ? "Perfumer not found" : p.name);
-  // a world's own name, and what it holds: a perfumer's perfumes or a house's
-  const nameOf = (w) => (w.kind === "per" ? perName(w.p) : w.ho.name);
-  const listOf = (w) => (w.kind === "per" ? w.p.list : w.ho.list);
-  const keyOf = (w) => (w ? w.kind + ":" + (w.kind === "per" ? w.p.id : w.ho.id) : "");
-  const same = (a, b) => !!a && !!b && keyOf(a) === keyOf(b);
+  // ---- ARRANGING: A–Z or by year --------------------------------------
+  let mode = "az";
+  try { if (localStorage.getItem("pf-sort") === "year") mode = "year"; } catch (e) { /* no storage */ }
+  let groups = [], oldGroups = [], order = entries.slice();
+  let slot = 0, gapAngle = 0, sortT0 = -1;
 
-  // ---- THE PAGE ------------------------------------------------------------
-  const cv = document.querySelector(".t1-scene");
-  const ctx0 = cv.getContext("2d");
-  const tip = el(".t1-tip");
-  let W = 0, H = 0, DPR = 1, phone = false;
-  const P = { x: 0, y: 0, r: 100 };
-
-  // ---- THE STRINGS (2026-11-08; "the rays" until then): a dot for every
-  // house a perfumer made for, a block a perfumer, a string from each dot to
-  // the one point low in the middle (image 2) ---------------------------------
-  const map = { dots: [], blocks: [], strings: [], hub: { x: 0, y: 0 }, cell: 14, r: 2.8 };
-  const SEG = 18;                 // the pieces a string is drawn in
-  const SAG = 0.07;               // how far a slack string hangs, of its length
-  function layMap() {
-    // (on a phone the point stands clear of the search at the foot)
-    const top = phone ? H * 0.12 : H * 0.17, bottom = phone ? H * 0.71 : H * 0.76;
-    map.hub = { x: W / 2, y: phone ? H * 0.79 : H * 0.84 };
-    const perSide = phone ? 1 : W < 1100 ? 2 : 3, lanes = perSide * 2;
-    const inner = phone ? 0.06 : 0.085, outer = phone ? 0.05 : 0.05;
-    const laneW = (W * (0.5 - inner - outer)) / perSide;
-    const cell = (map.cell = phone ? 11 : 14);
-    map.r = phone ? 2.2 : 2.8;
-    const ctxM = ctx0;
-    ctxM.font = "400 " + (phone ? 8.5 : 9.5) + 'px "IBM Plex Mono", ui-monospace, monospace';
-    map.dots = []; map.blocks = []; map.strings = [];
-    // the perfumers shared out among the lanes in order, A to Z from the left
-    const per = Math.floor(NP / lanes), extra = NP % lanes;
-    let at = 0;
-    for (let li = 0; li < lanes; li++) {
-      const m = per + (li < extra ? 1 : 0);
-      const side = li < perSide ? 0 : 1;
-      const lx0 = side === 0 ? W * outer + li * laneW : W * (0.5 + inner) + (li - perSide) * laneW;
-      const lx1 = lx0 + laneW - (phone ? 6 : 14);
-      const step = (bottom - top) / Math.max(1, m);
-      // each lane a little off the next, so the blocks are not a grid
-      const off = (((li * 0.618) % 1) - 0.5) * step * 0.45;
-      for (let j = 0; j < m; j++) {
-        const p = ORDER[at++];
-        const hs = Array.from(p.houses.keys()).sort((a, b) => cmp(HOU[a].name, HOU[b].name));
-        const wrap = 4, rows = Math.ceil(hs.length / wrap);
-        const y = clamp(top + step * (j + 0.5) + off, top, bottom - (rows - 1) * cell);
-        const b = { p, side, dots: [], lx0, lx1, ly: y - cell * 0.95, g: 0 };
-        hs.forEach((h, k) => {
-          const col = k % wrap, row = Math.floor(k / wrap);
-          const x = side === 0 ? lx0 + cell * 0.5 + col * cell : lx1 - cell * 0.5 - col * cell;
-          const d = { x, y: y + row * cell, p, h, b, ph: (hash(p.id + HOU[h].id) % 1000) / 1000 };
-          b.dots.push(d); map.dots.push(d);
-        });
-        // its name over it, cut to its lane
-        const name = perName(p).toUpperCase();
-        let t = name;
-        while (t.length > 3 && ctxM.measureText(t).width > lx1 - lx0) t = t.slice(0, -2);
-        b.label = t === name ? name : t.replace(/\s+$/, "") + "…";
-        const lw = ctxM.measureText(b.label).width;
-        const xs = b.dots.map((d) => d.x), ys = b.dots.map((d) => d.y);
-        b.x0 = Math.min(side === 0 ? lx0 : lx1 - lw, Math.min(...xs) - cell / 2);
-        b.x1 = Math.max(side === 0 ? lx0 + lw : lx1, Math.max(...xs) + cell / 2);
-        b.y0 = b.ly - 10; b.y1 = Math.max(...ys) + cell / 2;
-        map.blocks.push(b);
-      }
-    }
-    // a string for every dot
-    const { hub } = map;
-    map.dots.forEach((d, i) => {
-      d.i = i;
-      const R = rng(hash(d.p.id + ":" + d.h));
-      const L = Math.hypot(hub.x - d.x, hub.y - d.y);
-      const s = { d, L, k: 1, kv: 0, a1: 0, a2: 0, p1: 0, p2: 0, sp: 0.35 + R() * 0.45, ph: R() * TAU, touch: 0, pts: new Float32Array(2 * (SEG + 1)) };
-      d.s = s; map.strings.push(s);
+  function arrange(m, animate) {
+    const list = entries.slice();
+    const byWho = (x, y) => cmp(perSort(x.pid), perSort(y.pid)) || cmp(HOU[x.p.h].name, HOU[y.p.h].name) || cmp(x.p.n, y.p.n);
+    if (m === "az") list.sort(byWho);
+    else list.sort((x, y) => (x.p.y || 9999) - (y.p.y || 9999) || byWho(x, y));
+    const keyOf = (e) => (m === "az" ? e.pid : yearKey(e));
+    const gs = [];
+    list.forEach((e) => {
+      const k = keyOf(e);
+      if (!gs.length || gs[gs.length - 1].key !== k) gs.push({ key: k, members: [] });
+      gs[gs.length - 1].members.push(e);
     });
-  }
-  // A STRING: slack, it hangs (gravity) and sways a little; taut, it is
-  // straight; plucked, it rings — two of a string's own shapes, the whole of
-  // it and its halves, dying away. Its slack is on a spring a little under
-  // damped, so a string pulled taut overshoots and twangs.
-  const SPRING = 150, DAMP = 13;
-  function stepStrings(dt, now, t, tautOf) {
-    const { hub } = map;
-    for (const s of map.strings) {
-      const tgt = tautOf(s);
-      s.kv += (-SPRING * (s.k - tgt) - DAMP * s.kv) * dt;
-      s.k += s.kv * dt;
-      if (s.k < -0.3) { s.k = -0.3; s.kv = 0; }
-      const taut = clamp(1 - s.k, 0, 1);
-      const w1 = (11 + 13 * taut) * Math.sqrt(420 / Math.max(80, s.L));
-      s.p1 += w1 * dt; s.p2 += w1 * 2.1 * dt;
-      const die = Math.exp(-dt * (1.5 + (1 - taut) * 2));
-      s.a1 *= die; s.a2 *= die * die;
-      if (Math.abs(s.a1) < 0.02) s.a1 = 0;
-      if (Math.abs(s.a2) < 0.02) s.a2 = 0;
-      const d = s.d, dx = hub.x - d.x, dy = hub.y - d.y, L = s.L || 1;
-      const nx = -dy / L, ny = dx / L;
-      const sag = s.k * L * SAG;
-      const sway = STILL || s.k <= 0 ? 0 : s.k * Math.sin(t * s.sp + s.ph) * L * 0.014;
-      const c1 = Math.cos(s.p1) * s.a1, c2 = Math.cos(s.p2) * s.a2;
-      const pts = s.pts;
-      for (let i = 0; i <= SEG; i++) {
-        const q = i / SEG, bow = 4 * q * (1 - q);
-        const o = sway * bow + c1 * Math.sin(Math.PI * q) + c2 * Math.sin(TAU * q);
-        pts[2 * i] = d.x + dx * q + nx * o;
-        pts[2 * i + 1] = d.y + dy * q + ny * o + sag * bow;
-      }
-    }
-  }
-  // a point along a string, q from its dot (0) to the point (1)
-  function along(s, q) {
-    const f = clamp(q, 0, 1) * SEG, i = Math.min(SEG - 1, Math.floor(f)), u = f - i, p = s.pts;
-    return [lerp(p[2 * i], p[2 * i + 2], u), lerp(p[2 * i + 1], p[2 * i + 3], u)];
-  }
-  // a string drawn from q0 to q1 into the path being made
-  function tracePart(x, s, q0, q1) {
-    if (q1 <= q0) return;
-    const p = s.pts;
-    let [ax, ay] = along(s, q0);
-    x.moveTo(ax, ay);
-    for (let i = Math.ceil(q0 * SEG + 1e-6); i < q1 * SEG; i++) x.lineTo(p[2 * i], p[2 * i + 1]);
-    [ax, ay] = along(s, q1);
-    x.lineTo(ax, ay);
-  }
-  // THE LENS ON THE STRINGS (2026-11-07): every string, dot and light drawn
-  // three times, in pure red, green and blue, added together — the blue a
-  // little up and to the left, the red down and to the right — so where the
-  // three meet they are white, and every edge is fringed blue above, gold
-  // below. `only` draws one colour of the three, for the opening's discs.
-  const LENS_RAYS = [["#ff0000", 1, 0.7, 0], ["#00ff00", 0.32, 0.22, 1], ["#0000ff", -1, -0.7, 2]];
-  function lensed(x, fn, d, only) {
-    if (d === undefined) d = phone ? 1.1 : 1.6;
-    const op = x.globalCompositeOperation;
-    x.globalCompositeOperation = "lighter";
-    for (const [col, kx, ky, c] of LENS_RAYS) {
-      if (only != null && only !== c) continue;
-      x.save(); x.translate(kx * d, ky * d); fn(col, c); x.restore();
-    }
-    x.globalCompositeOperation = op;
-  }
-  // ---- THE BLOBS, as image 4's --------------------------------------------
-  // lobes: [{ x, y, r, sides, rot }] in the blob's own units (the whole about
-  // 1 across its middle); drawn into `cv2` (a canvas `n` pixels square
-  // covering ±EXT), `ca` how far the fringes are thrown, in the same units,
-  // `soft` how wide every edge is feathered
-  const EXT = 1.75;
-  const COL = {
-    haze: [204, 194, 238], blue: [52, 84, 255], cyan: [120, 210, 255], gold: [255, 210, 36], rose: [255, 130, 120],
-    edge: [74, 34, 112], deep: [26, 3, 14],
-  };
-  // a lobe's field: high in its middle, 1 at its edge, gone a little past
-  // twice its radius — so lobes join with soft necks and stay lumps. A
-  // house's lobes are hexagons (2026-11-08 — "please distinguish the houses
-  // blobs and the perfumer blobs somehow"): q is its distance from the
-  // nearest of its three pairs of sides, with a little of the circle's left
-  // in it so its corners are cut, not sharp — a cut stone where a perfumer's
-  // is a drop
-  const K = 1.0;
-  function fieldOf(lobes, n) {
-    const step = (2 * EXT) / n;
-    const L = lobes.length;
-    const lx = new Float32Array(L), ly = new Float32Array(L), ir = new Float32Array(L), ia = new Float32Array(L);
-    const hex = new Uint8Array(L), cs = new Float32Array(L * 6);
-    lobes.forEach((o, i) => {
-      lx[i] = o.x; ly[i] = o.y; ir[i] = 1 / (o.r * o.r);
-      if (o.sides) {
-        hex[i] = 1; const a = o.r * 0.92; ia[i] = 1 / (a * a);
-        for (let j = 0; j < 3; j++) { cs[i * 6 + j * 2] = Math.cos((o.rot || 0) + j * 60 * DEG); cs[i * 6 + j * 2 + 1] = Math.sin((o.rot || 0) + j * 60 * DEG); }
-      }
-    });
-    const fld = new Float32Array(n * n);
-    for (let j = 0; j < n; j++) {
-      const y = -EXT + (j + 0.5) * step;
-      for (let i = 0; i < n; i++) {
-        const x = -EXT + (i + 0.5) * step;
-        let f = 0;
-        for (let k = 0; k < L; k++) {
-          const dx = x - lx[k], dy = y - ly[k], qc = (dx * dx + dy * dy) * ir[k];
-          if (qc > 7) continue;
-          let q = qc;
-          if (hex[k]) {
-            const o = k * 6;
-            const m = Math.max(Math.abs(dx * cs[o] + dy * cs[o + 1]), Math.abs(dx * cs[o + 2] + dy * cs[o + 3]), Math.abs(dx * cs[o + 4] + dy * cs[o + 5]));
-            q = 0.84 * m * m * ia[k] + 0.16 * qc;
-          }
-          if (q < 6) f += Math.exp(K * (1 - q));
-        }
-        fld[j * n + i] = f;
-      }
-    }
-    return fld;
-  }
-  // `shade` lights the core a little towards its upper left, as a sphere is
-  function paintBlob(cv2, n, lobes, ca, soft, shade) {
-    if (cv2.width !== n) { cv2.width = cv2.height = n; }
-    const x2 = cv2.getContext("2d");
-    const img = x2.createImageData(n, n), d = img.data;
-    const step = (2 * EXT) / n;
-    const fld = fieldOf(lobes, n);
-    const at = (i, j) => (i < 0 || j < 0 || i >= n || j >= n ? 0 : fld[j * n + i]);
-    const sm = (a, b, v) => { const t = (v - a) / (b - a); return t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t); };
-    const w = soft || 1, sh = shade || 0;
-    const ox = Math.max(1, Math.round(ca / step)), oy = Math.max(1, Math.round((ca * 1.25) / step));
-    const ox2 = Math.round(ox * 1.9), oy2 = Math.round(oy * 1.9);
-    let r = 0, g = 0, b = 0, a = 0;
-    const over = (c0, c1, c2, al) => { r = c0 * al + r * (1 - al); g = c1 * al + g * (1 - al); b = c2 * al + b * (1 - al); a = al + a * (1 - al); };
-    const H0 = COL.haze, B0 = COL.blue, C0 = COL.cyan, G0 = COL.gold, R0 = COL.rose, E0 = COL.edge, D0 = COL.deep;
-    for (let j = 0; j < n; j++) {
-      const y = -EXT + (j + 0.5) * step;
-      for (let i = 0; i < n; i++) {
-        const fc = fld[j * n + i];
-        const fb = at(i + ox, j + oy), fy = at(i - ox, j - oy);
-        const most = Math.max(fc, fb, fy);
-        if (most < 0.04) continue;
-        const x = -EXT + (i + 0.5) * step;
-        const win = 1 - sm(EXT * 0.6, EXT * 0.97, Math.sqrt(x * x + y * y));
-        if (win <= 0) continue;
-        const core = sm(1 - 0.22 * w, 1 + 0.34 * w, fc);
-        const solid = sm(1.0, 1.4, fc);
-        const blue = sm(0.9 - 0.14 * w, 1.04 + 0.08 * w, fb) * (1 - solid * 0.5);
-        const gold = sm(0.9 - 0.14 * w, 1.04 + 0.08 * w, fy) * (1 - solid * 0.5);
-        const cyan = sm(0.74 - 0.16 * w, 1.0 + 0.06 * w, at(i + ox2, j + oy2)) * 0.32;
-        const rose = sm(0.74 - 0.16 * w, 1.0 + 0.06 * w, at(i - ox2, j - oy2)) * 0.26;
-        const haze = sm(0.04, 1.0, most) * 0.74;
-        r = g = b = a = 0;
-        if (haze > 0) over(H0[0], H0[1], H0[2], haze);
-        if (cyan > 0) over(C0[0], C0[1], C0[2], cyan);
-        if (rose > 0) over(R0[0], R0[1], R0[2], rose);
-        if (blue > 0) over(B0[0], B0[1], B0[2], blue * 0.88);
-        if (gold > 0) over(G0[0], G0[1], G0[2], gold * 0.84);
-        if (core > 0) {
-          const k = sm(1.0, 2.1, fc);
-          const lt = sh ? sh * clamp(0.6 - (x * 0.55 + y * 0.75), 0, 1) * (1 - sm(1.6, 3.2, fc) * 0.4) : 0;
-          const dr = lerp(D0[0], 78, lt), dg = lerp(D0[1], 34, lt), db = lerp(D0[2], 96, lt);
-          over(lerp(E0[0], dr, k), lerp(E0[1], dg, k), lerp(E0[2], db, k), core);
-        }
-        if (a > 0) { const o = (j * n + i) * 4; d[o] = r / a; d[o + 1] = g / a; d[o + 2] = b / a; d[o + 3] = a * win * 255; }
-      }
-    }
-    x2.putImageData(img, 0, 0);
-  }
-  // ---- THE LENS (the very last round of 2026-11-06 — "Maybe experiment with
-  // chromattic abberation to achieve that colour. I think in my reference there
-  // is blue/orange colour average that gives it that vibe"): no colour is
-  // painted at all. The blob is one dark shape, and each of the poster's three
-  // colours sees it a little apart — the red thrown up and to the left, the
-  // blue down and to the right, the green between them and a little softer.
-  // Where only the blue is still light the poster shows blue, above; where
-  // only the red and green are, orange and gold, below; and in the edge's own
-  // falloff, where the green goes a little before the others, the faintest
-  // lavender. Nothing lies round the edge but its fringes (2026-11-07, last —
-  // "not an extra layer"). Its core is not quite black either: a perfumer's
-  // a plum, the red let a little lighter than the rest; a house's (since
-  // 2026-11-08) a cold ink, the blue and green let lighter than the red.
-  // The lens's split, before it, is ?look=split; TP1 BACKUP is ?look=backup.
-  const LOOK = (() => { const v = new URLSearchParams(location.search).get("look"); return v === "backup" || v === "split" ? v : "lens"; })();
-  const GROUND = [226, 234, 230];                   // the poster, about the blob
-  // how dark each colour goes in the blob's middle (red, green, blue)
-  const LENS_DEEP = [0.84, 0.965, 0.92];            // a perfumer's: the plum
-  const LENS_INK = [0.985, 0.935, 0.885];           // a house's: a cold ink
-  const LENS_AT = [1, 0.3, -1];
-  const LENS_SOFT = [1, 1.12, 1];
-  function paintLens(cv2, n, lobes, shift, soft, shade, deep) {
-    if (cv2.width !== n) { cv2.width = cv2.height = n; }
-    const x2 = cv2.getContext("2d");
-    const img = x2.createImageData(n, n), d = img.data;
-    const step = (2 * EXT) / n;
-    const fld = fieldOf(lobes, n);
-    const DEEP = deep || LENS_DEEP;
-    const at = (fx, fy) => {
-      if (fx < 0 || fy < 0 || fx > n - 1 || fy > n - 1) return 0;
-      const i = fx | 0, j = fy | 0, u = fx - i, v = fy - j, i1 = Math.min(n - 1, i + 1), j1 = Math.min(n - 1, j + 1);
-      return (fld[j * n + i] * (1 - u) + fld[j * n + i1] * u) * (1 - v) + (fld[j1 * n + i] * (1 - u) + fld[j1 * n + i1] * u) * v;
-    };
-    const sm = (a, b, v) => { const t = (v - a) / (b - a); return t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t); };
-    const w = soft || 1, sh = shade || 0;
-    const px = shift / step, ax = px * 0.8, ay = px;
-    const dk = [0, 0, 0], f = [0, 0, 0];
-    for (let j = 0; j < n; j++) {
-      const y = -EXT + (j + 0.5) * step;
-      for (let i = 0; i < n; i++) {
-        for (let c = 0; c < 3; c++) f[c] = at(i + ax * LENS_AT[c], j + ay * LENS_AT[c]);
-        const most = Math.max(f[0], f[1], f[2]);
-        if (most < 0.03) continue;
-        const x = -EXT + (i + 0.5) * step;
-        const win = 1 - sm(EXT * 0.6, EXT * 0.97, Math.sqrt(x * x + y * y));
-        if (win <= 0) continue;
-        const lt = sh ? sh * clamp(0.6 - (x * 0.55 + y * 0.75), 0, 1) * (1 - sm(1.6, 3.2, (f[0] + f[2]) / 2) * 0.4) : 0;
-        let a = 0;
-        for (let c = 0; c < 3; c++) {
-          const body = sm(1 - 0.24 * w * LENS_SOFT[c], 1 + 0.36 * w, f[c]) * DEEP[c] * (1 - lt * (c === 1 ? 0.06 : c === 0 ? 0.22 : 0.3));
-          dk[c] = body;
-          if (dk[c] > a) a = dk[c];
-        }
-        if (a <= 0.002) continue;
-        const o = (j * n + i) * 4;
-        d[o] = GROUND[0] * (a - dk[0]) / a;
-        d[o + 1] = GROUND[1] * (a - dk[1]) / a;
-        d[o + 2] = GROUND[2] * (a - dk[2]) / a;
-        d[o + 3] = a * win * 255;
-      }
-    }
-    x2.putImageData(img, 0, 0);
-  }
-  function paintSplit(cv2, n, lobes, shift, soft, shade) {
-    if (cv2.width !== n) { cv2.width = cv2.height = n; }
-    const x2 = cv2.getContext("2d");
-    const img = x2.createImageData(n, n), d = img.data;
-    const step = (2 * EXT) / n;
-    const fld = fieldOf(lobes, n);
-    const at = (fx, fy) => {
-      if (fx < 0 || fy < 0 || fx > n - 1 || fy > n - 1) return 0;
-      const i = fx | 0, j = fy | 0, u = fx - i, v = fy - j, i1 = Math.min(n - 1, i + 1), j1 = Math.min(n - 1, j + 1);
-      return (fld[j * n + i] * (1 - u) + fld[j * n + i1] * u) * (1 - v) + (fld[j1 * n + i] * (1 - u) + fld[j1 * n + i1] * u) * v;
-    };
-    const sm = (a, b, v) => { const t = (v - a) / (b - a); return t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t); };
-    const w = soft || 1, sh = shade || 0;
-    const lo = 1 - 0.24 * w, hi = 1 + 0.36 * w;
-    const px = shift / step, ax = px * 0.8, ay = px;
-    const H0 = COL.haze, E0 = COL.edge, D0 = COL.deep;
-    for (let j = 0; j < n; j++) {
-      const y = -EXT + (j + 0.5) * step;
-      for (let i = 0; i < n; i++) {
-        const fR = at(i + ax, j + ay), fG = at(i + ax * 0.8, j + ay * 0.8), fB = at(i - ax, j - ay);
-        const most = Math.max(fR, fG, fB);
-        if (most < 0.035) continue;
-        const x = -EXT + (i + 0.5) * step;
-        const win = 1 - sm(EXT * 0.6, EXT * 0.97, Math.sqrt(x * x + y * y));
-        if (win <= 0) continue;
-        const mR = sm(lo, hi, fR), mG = sm(lo, hi, fG), mB = sm(lo, hi, fB);
-        const hz = sm(0.035, 1.0, most) * 0.55;
-        const fc = (fR + fB) / 2;
-        const k = sm(1.0, 2.1, fc);
-        const lt = sh ? sh * clamp(0.6 - (x * 0.55 + y * 0.75), 0, 1) * (1 - sm(1.6, 3.2, fc) * 0.4) : 0;
-        const dR = lerp(E0[0], lerp(D0[0], 78, lt), k), dG = lerp(E0[1], lerp(D0[1], 34, lt), k), dB = lerp(E0[2], lerp(D0[2], 96, lt), k);
-        const hR = lerp(GROUND[0], H0[0], hz), hG = lerp(GROUND[1], H0[1], hz), hB = lerp(GROUND[2], H0[2], hz);
-        const oR = hR * (1 - mR) + dR * mR, oB = hB * (1 - mB) + dB * mB;
-        const oG = hG * (1 - mG) + dG * mG - Math.max(0, mB - mG) * 52;
-        const a = Math.max(hz, mR, mG, mB);
-        if (a <= 0.002) continue;
-        const o = (j * n + i) * 4;
-        d[o] = clamp((oR - GROUND[0] * (1 - a)) / a, 0, 255);
-        d[o + 1] = clamp((oG - GROUND[1] * (1 - a)) / a, 0, 255);
-        d[o + 2] = clamp((oB - GROUND[2] * (1 - a)) / a, 0, 255);
-        d[o + 3] = a * win * 255;
-      }
-    }
-    x2.putImageData(img, 0, 0);
-  }
-  // one painter for every look; `kind` the world's ("per" or "house")
-  function paintAny(cv2, n, lobes, shift, soft, shade, kind) {
-    if (LOOK === "backup") paintBlob(cv2, n, lobes, shift, soft * 1.7, shade);
-    else if (LOOK === "split") paintSplit(cv2, n, lobes, shift * 1.25, soft * 1.25, shade);
-    else paintLens(cv2, n, lobes, shift, soft, shade, kind === "house" ? LENS_INK : LENS_DEEP);
-  }
-  // the lobes of a world: a perfumer's, one for every house, as big as what
-  // they made for it; a house's, one for every perfumer who made for it.
-  // Each real lobe keeps which part of the list it is (o.part)
-  function partsOf(w) {
-    if (w.kind === "per") return Array.from(w.p.houses.entries()).map(([h, l]) => ({ n: l.length, say: HOU[h].name, h })).sort((a, b) => cmp(a.say, b.say));
-    return Array.from(w.ho.pers.entries()).map(([q, l]) => ({ n: l.length, say: perName(PER[q]), q })).sort((a, b) => PER[a.q].k - PER[b.q].k);
-  }
-  function lobesOf(w) {
-    const cut = w.kind === "house";
-    const R = rng((cut ? w.ho.seed : w.p.seed) ^ 0x5bd1);
-    const parts = partsOf(w).map((x, i) => Object.assign({ i }, x));
-    const total = parts.reduce((s, x) => s + x.n, 0);
-    // a blob is never quite a circle: small lobes more for a world of one or two
-    while (parts.length < 3) parts.push({ n: Math.max(1, total * (0.16 + R() * 0.22)), i: -1 });
-    const big = parts.slice().sort((a, b) => b.n - a.n);
-    const most = big[0].n;
-    const lobes = [];
-    const lobe = (part, a, d, r, amp) => lobes.push({ part, a, hx: Math.cos(a) * d, hy: Math.sin(a) * d * 1.15, r, x: 0, y: 0, ph: R() * TAU, sp: 0.08 + R() * 0.14, amp, sides: cut ? 6 : 0, rot: R() * TAU });
-    big.forEach((x, k) => {
-      const r = 0.26 + 0.36 * Math.sqrt(x.n / most) * (k ? 0.9 : 1);
-      const a = k ? -2.3 + k * 2.39996 + (R() - 0.5) * 0.7 : -1.9 + (R() - 0.5) * 0.4;
-      const d = k ? 0.36 + 0.26 * R() + (1 - x.n / most) * 0.2 : 0.22;
-      lobe(x.i >= 0 ? x : null, a, d, r, 0.03 + R() * 0.04);
-      const buds = 1 + Math.floor(R() * 2.4);
-      for (let j = 0; j < buds; j++) {
-        const ba = a + (R() - 0.5) * 2.6, bd = d + r * (0.55 + R() * 0.4);
-        lobe(null, ba, Math.min(bd, 0.95), r * (0.32 + R() * 0.26), 0.04 + R() * 0.05);
-      }
-    });
-    lobe(null, 1.4 + (R() - 0.5) * 0.6, 0.32 + R() * 0.12, 0.34 + R() * 0.1, 0.03);
-    let ext = 0;
-    lobes.forEach((o) => (ext = Math.max(ext, Math.hypot(o.hx, o.hy) + o.r)));
-    const k = Math.min(1, 1.05 / ext);
-    lobes.forEach((o) => { o.hx *= k; o.hy *= k; o.r *= k; });
-    driftLobes(lobes, 0);
-    return lobes;
-  }
-  function driftLobes(lobes, t) {
-    lobes.forEach((o) => {
-      o.x = o.hx + (STILL ? 0 : Math.sin(t * o.sp + o.ph) * o.amp);
-      o.y = o.hy + (STILL ? 0 : Math.cos(t * o.sp * 0.83 + o.ph * 1.3) * o.amp);
-      if (o.sides && !STILL) o.rot = (o.rot0 == null ? (o.rot0 = o.rot) : o.rot0) + Math.sin(t * o.sp * 0.6 + o.ph) * 0.12;
-    });
-  }
-  // A SPHERE round it: a perfumer two round lobes, a house two hexagons, a
-  // little off round — the further it is (the less `focus`), the smaller,
-  // the softer, the wider its fringes. Painted at the screen's own sharpness
-  // (2026-11-08 — "the tiny spheres feel pixelated"; they were 24 to 70
-  // pixels across, laid down three to six times as large)
-  const SPH = (focus) => ({ shift: 0.05 + (1 - focus) * 0.045, soft: 1.4 - focus * 0.4 });
-  function sphereLobes(kind, seed) {
-    const R = rng(seed);
-    if (kind === "house") return [{ x: 0, y: 0, r: 0.84, sides: 6, rot: R() * TAU }, { x: (R() - 0.5) * 0.24, y: (R() - 0.5) * 0.24, r: 0.48 + R() * 0.12, sides: 6, rot: R() * TAU }];
-    return [{ x: 0, y: 0, r: 0.86 }, { x: (R() - 0.5) * 0.22, y: (R() - 0.5) * 0.22, r: 0.5 + R() * 0.12 }];
-  }
-  const sizeOf = (r) => (r * 2 * EXT) / 1.1;
-  function paintSphere(b) {
-    const c = document.createElement("canvas");
-    const n = clamp(Math.round(sizeOf(b.r) * DPR * 0.62), 40, 240);
-    const { shift, soft } = SPH(b.focus);
-    paintAny(c, n, b.lobes, shift, soft, 0.9, b.kind);
-    b.img = { c, s: sizeOf(b.r) };
-  }
-
-  // ---- A WORLD: a perfumer, or a house ----------------------------------------
-  // what is in focus: { kind: "per", p } or { kind: "house", ho }
-  let cur = null;
-  let blobs = [];
-  // the room the world has: between the readings and the list
-  const F = { x0: 0, x1: 0, y0: 0, y1: 0 };
-  // where the spheres stand round it, as image 4's — an angle, how far out
-  // (of the room there is), and how near it is (its focus)
-  const SPOTS = [[-2.55, 0.92, 0.9], [2.5, 0.86, 0.72], [-1.6, 0.9, 0.38], [0.72, 0.95, 0.95], [-0.62, 0.88, 0.52], [1.62, 0.92, 0.5], [3.12, 0.96, 0.62], [0.05, 0.94, 0.42], [-1.1, 0.7, 0.3], [2.05, 0.7, 0.32]];
-  // round a perfumer, its houses; round a house, its perfumers
-  function aroundOf(w) {
-    if (w.kind === "per") return partsOf(w).map((x) => ({ kind: "house", ho: HOS[x.h], n: x.n }));
-    return partsOf(w).map((x) => ({ kind: "per", p: PER[x.q], n: x.n }));
-  }
-  function layWorld() {
-    if (!cur) return;
-    const R = rng((cur.kind === "per" ? cur.p.seed : cur.ho.seed) ^ 0x2f17);
-    const around = aroundOf(cur);
-    const Dx = Math.max(P.r * 1.25, (F.x1 - F.x0) / 2), Dy = Math.max(P.r * 1.05, (F.y1 - F.y0) / 2);
-    const turn = (R() - 0.5) * 0.5;
-    blobs = around.slice(0, SPOTS.length).map((a, i) => {
-      const [an, far, focus] = SPOTS[i];
-      const r = ((phone ? 15 : 30) + Math.min(1, Math.sqrt(a.n / 40)) * (phone ? 14 : 34)) * (0.68 + focus * 0.42);
-      const x = P.x + Math.cos(an + turn) * Dx * far, y = P.y + Math.sin(an + turn) * Dy * far;
-      const seed = hash(keyOf(a));
-      return Object.assign(a, {
-        r, focus, x: clamp(x, F.x0 + r * 0.6, F.x1 - r * 0.6), y: clamp(y, F.y0 + r * 0.6, F.y1 - r * 1.2), dx: 0, dy: 0,
-        ph: R() * TAU, sp: 0.1 + R() * 0.16, lobes: sphereLobes(a.kind, seed), img: null, in: 0, lift: 0, wait: i * 0.05,
+    // the gaps: one before every group, a smaller one between two houses of
+    // a group, and a wide one at the top, where the three rings are named
+    let gaps = TOPGAP + (gs.length - 1) * GAP;
+    gs.forEach((g) => g.members.forEach((e, j) => { if (j && e.p.h !== g.members[j - 1].p.h) gaps += HGAP; }));
+    slot = TAU / (N + gaps);
+    gapAngle = -Math.PI / 2;
+    let i = 0, at = TOPGAP / 2;
+    gs.forEach((g, gi) => {
+      if (gi) at += GAP;
+      g.members.forEach((e, j) => {
+        if (j && e.p.h !== g.members[j - 1].p.h) at += HGAP;
+        e.from = e.a;
+        e.to = -Math.PI / 2 + (at + 0.5) * slot;
+        e.no = i + 1;
+        e.g = g;
+        i++; at++;
       });
-    }).sort((a, b) => a.focus - b.focus);
-    cur.lobes = lobesOf(cur);
-    cur.paint = null;
-  }
-  // the middle blob's own picture, worked out again 24 times a second as its
-  // lobes drift, whatever the screen; `boost` widens its aberration (the
-  // opening, a change)
-  function paintCur(w, t, force, boost) {
-    if (!w.paint) { w.paint = document.createElement("canvas"); w.tick = -1; w.boost = 1; }
-    const tick = STILL ? 0 : Math.floor(t * 24);
-    const b = boost || 1;
-    if (!force && tick === w.tick && Math.abs(b - w.boost) < 0.02) return;
-    w.tick = tick; w.boost = b;
-    driftLobes(w.lobes, t);
-    paintAny(w.paint, phone ? 132 : 176, w.lobes, 0.05 * b, 0.95 + (b - 1) * 0.2, 0.45, w.kind);
-  }
-  function drawCur(c, w, x, y, r, t, alpha, boost) {
-    if (alpha <= 0.003) return;
-    paintCur(w, t, false, boost);
-    const s = sizeOf(r);
-    c.save();
-    c.imageSmoothingQuality = "high";
-    c.globalAlpha = alpha;
-    c.drawImage(w.paint, x - s / 2, y - s / 2, s, s);
-    c.restore();
-  }
-  // A TRAVELLER (2026-11-08): a body on its way between a sphere and the
-  // middle — its lobes melting from the one's into the other's as it goes,
-  // painted afresh 24 times a second, the aberration widest half way
-  function mixLobes(A, B, g) {
-    const out = [], ga = soft(g);
-    for (const o of A) { const r = o.r * Math.pow(1 - ga, 1.3); if (r > 0.015) out.push({ x: o.x * (1 - 0.3 * ga), y: o.y * (1 - 0.3 * ga), r, sides: o.sides, rot: o.rot }); }
-    for (const o of B) { const r = o.r * Math.sqrt(ga); if (r > 0.015) out.push({ x: o.x * ga, y: o.y * ga, r, sides: o.sides, rot: o.rot }); }
-    return out.length ? out : [{ x: 0, y: 0, r: 0.5 }];
-  }
-  function drawTraveller(c, tr, g, t, alpha) {
-    if (alpha <= 0.003) return;
-    if (!tr.paint) { tr.paint = document.createElement("canvas"); tr.tick = -1; }
-    const e = ease(g);
-    const x = lerp(tr.x0, tr.x1, e), y = lerp(tr.y0, tr.y1, e), r = lerp(tr.r0, tr.r1, e);
-    const tick = STILL ? 0 : Math.floor(t * 24);
-    if (tick !== tr.tick) {
-      tr.tick = tick;
-      if (tr.liveTo) driftLobes(tr.to, t);
-      if (tr.liveFrom) driftLobes(tr.from, t);
-      const lb = mixLobes(tr.from, tr.to, g);
-      const spike = 1 + 1.7 * Math.sin(Math.PI * clamp(g, 0, 1));
-      const n = clamp(Math.round(sizeOf(r) * DPR * 0.36), 56, phone ? 132 : 176);
-      paintAny(tr.paint, n, lb, lerp(tr.sh0, tr.sh1, g) * spike, lerp(tr.so0, tr.so1, g) + (spike - 1) * 0.15, lerp(0.9, 0.45, g), tr.kind);
-    }
-    const s = sizeOf(r);
-    c.save();
-    c.imageSmoothingQuality = "high";
-    c.globalAlpha = alpha;
-    c.drawImage(tr.paint, x - s / 2, y - s / 2, s, s);
-    c.restore();
+      g.a0 = g.members[0].to - slot / 2;
+      g.a1 = g.members[g.members.length - 1].to + slot / 2;
+      g.label = m === "az" ? PER[g.key].name : g.key === "none" ? "Year not found" : String(g.key);
+      g.id = m === "az" ? g.key : null;
+      // the houses inside it
+      g.houses = [];
+      g.members.forEach((e) => {
+        const last = g.houses[g.houses.length - 1];
+        if (!last || last.h !== e.p.h) g.houses.push({ h: e.p.h, g, members: [e] });
+        else last.members.push(e);
+      });
+      g.houses.forEach((h) => {
+        h.a0 = h.members[0].to - slot / 2;
+        h.a1 = h.members[h.members.length - 1].to + slot / 2;
+      });
+    });
+    oldGroups = animate && !STILL ? groups : [];
+    groups = gs;
+    order = list;
+    measureGroups();
+    if (animate && !STILL) sortT0 = performance.now();
+    else { entries.forEach((e) => (e.a = e.to)); sortT0 = -1; oldGroups = []; }
+    rotorDirty = true; chartDirty = true;
+    kick();
   }
 
-  // ---- WHAT IS IN FOCUS, AND HOW IT CHANGES --------------------------------
-  let view = "rays";                  // "rays" (the strings) or "world"
-  // EVERY CHANGE ITS OWN (2026-11-08 — "please smooth out the animations and
-  // make them page-specific"): one transition at a time, and each of the
-  // three made for what it joins —
-  //   "open"   the strings into a world: the block's strings snap taut and
-  //            reel its dots in to the point while the rest fall slack and
-  //            come apart into red, green and blue; then three discs, one a
-  //            colour, open out of the point a little apart, the world whole
-  //            only inside all three, its blob settling out of a wide
-  //            aberration ("make the animation better, make it revolve
-  //            around chromatic abberation")
-  //   "change" a world into another: the sphere pressed travels in and
-  //            unfolds into the middle's blob, the middle folds into a sphere
-  //            and goes to its place round it, the aberration widest half way
-  //   "close"  a world back to the strings: the three discs close on the
-  //            point, the world coming apart into its colours, and the
-  //            strings fall from taut to slack with a bounce
-  const TR = { kind: null, t0: 0, ms: 0, from: null, chosen: null, cameFrom: null, litT: 0 };
-  const OPEN_MS = 1900, DISC_FROM = 0.27, CLOSE_MS = 1300, CHANGE_MS = 1300;
-  let lastPer = null;                 // the perfumer last in the middle, for ‹ ›
-  function busy() { return TR.kind !== null; }
-  function openWorld(w, quick) {
-    if (busy()) return;
-    layLater();
-    showTip(null); overBlock = null;
-    cur = w; if (w.kind === "per") lastPer = w.p;
-    stick = null; aim = null;
-    layWorld(); writeHud(); writeList();
-    if (STILL || quick) { view = "world"; setBody(); kick(); return; }
-    // what gathers: the perfumer's own dots, or every dot of a house
-    TR.chosen = new Set(map.dots.filter((d) => (w.kind === "per" ? d.p === w.p : d.h === w.ho.i)));
-    for (const d of TR.chosen) { d.s.touch = 0; d.s.a1 += 2.5 + d.ph * 3; }
-    TR.kind = "open"; TR.t0 = performance.now(); TR.ms = OPEN_MS;
-    document.body.classList.add("is-revealing");
-    kick();
+  // ---- TEXT: widths measured once, set true to the perspective ----------
+  const widths = new Map();
+  let widthsEpoch = 0;
+  function wOf(font, txt) {
+    const key = font + "|" + txt;
+    let w = widths.get(key);
+    if (w === undefined) { mctx.font = font; w = mctx.measureText(txt).width; widths.set(key, w); }
+    return w;
   }
-  function opened() {
-    TR.kind = null; TR.chosen = null;
-    view = "world";
-    document.body.classList.remove("is-revealing");
-    document.body.style.removeProperty("--reveal");
-    setBody();
-  }
-  function change(next) {
-    if (busy() || !cur || same(cur, next)) return;
-    if (view !== "world") { openWorld(next); return; }
-    pinned = null; showTip(null);
-    const was = cur, wasBlobs = blobs;
-    const hit = wasBlobs.find((b) => same(b, next));
-    cur = next; if (next.kind === "per") lastPer = next.p;
-    stick = null; aim = null; lightRow();
-    layWorld();
-    const back = blobs.find((b) => same(b, was));
-    if (STILL) { writeHud(); writeList(); kick(); return; }
-    // the sphere pressed comes in; the middle goes out to its place
-    const shIn = hit ? SPH(hit.focus) : SPH(0.6);
-    TR.inT = { kind: next.kind, from: hit ? hit.lobes : sphereLobes(next.kind, hash(keyOf(next))), to: cur.lobes, liveTo: true,
-      x0: hit ? hit.x + hit.dx : P.x, y0: hit ? hit.y + hit.dy : P.y, r0: hit ? hit.r : P.r * 0.3, x1: P.x, y1: P.y, r1: P.r,
-      sh0: shIn.shift, sh1: 0.05, so0: shIn.soft, so1: 0.95 };
-    const shOut = back ? SPH(back.focus) : SPH(0.5);
-    TR.outT = { kind: was.kind, from: was.lobes, to: back ? back.lobes : [{ x: 0, y: 0, r: 0.3 }], liveFrom: true,
-      x0: P.x, y0: P.y, r0: P.r, x1: back ? back.x : P.x, y1: back ? back.y : P.y, r1: back ? back.r : P.r * 0.2,
-      sh0: 0.05, sh1: shOut.shift, so0: 0.95, so1: shOut.soft, gone: !back };
-    TR.back = back || null;
-    TR.old = wasBlobs.filter((b) => b !== hit);
-    // the sphere the middle becomes is painted first, so it is there when it lands
-    if (back) paintSphere(back);
-    TR.kind = "change"; TR.t0 = performance.now(); TR.ms = CHANGE_MS;
-    writeHud(); writeList();
-    kick();
-  }
-  function changed() { TR.kind = null; TR.inT = TR.outT = TR.back = null; TR.old = null; if (cur) cur.paint = null; }
-  // RETURN, always to the strings (2026-11-08 — "make the return button just
-  // go back to the black nodes page"); Esc the same
-  function returnUp() {
-    pinned = null; showTip(null);
-    if (view !== "world" || busy()) return;
-    closeMore(true);
-    if (STILL) { view = "rays"; setBody(); kick(); return; }
-    // the strings come back taut and fall slack as the world closes
-    for (const s of map.strings) { s.k = 0; s.kv = 0; s.touch = performance.now() + CLOSE_MS * 0.42; }
-    TR.cameFrom = cur.kind === "per" ? map.blocks.find((b) => b.p === cur.p) : null;
-    TR.kind = "close"; TR.t0 = performance.now(); TR.ms = CLOSE_MS;
-    document.body.classList.add("is-revealing");
-    kick();
-  }
-  function closed() {
-    TR.kind = null; view = "rays";
-    TR.litT = performance.now();
-    document.body.classList.remove("is-revealing");
-    document.body.style.removeProperty("--reveal");
-    setBody();
-  }
-  function setBody() {
-    if (view !== "world") closeMore(true);
-    document.body.classList.toggle("is-rays", view === "rays");
-    document.body.classList.toggle("is-world", view === "world");
-    el(".t1-return").hidden = view !== "world";
-    el(".t1-more-open").hidden = view !== "world";
-  }
-  // LEARN MORE (2026-11-07; and since 2026-11-08 — "below the blobs, i want
-  // you to remove that paragraph, and then move it to the bottom of the
-  // scrolled page ... make the button say 'Learn More about ________'"): the
-  // paragraph that stood under the blob is the sheet's opening now, under the
-  // poster, and the page scrolls down to it — a perfumer's biography and its
-  // three sources after it, or a house's perfumers and what each made for it
-  const more = el(".t1-more"), moreBtn = el(".t1-more-open");
-  function writeMore(w) {
-    const say = moreBtn.querySelector("[data-v=more-who]");
-    if (w.kind === "per" && w.p.none) say.textContent = "the perfumes without a perfumer";
-    else say.textContent = nameOf(w);
-    more.dataset.who = keyOf(w);
-    const set = (s, v) => { const e = el(s); if (e) e.textContent = v; };
-    const lead = el(".t1-more-lead"), text = el(".t1-more-text"), src = el(".t1-more-sources"), srcHead = el(".t1-more-src-head");
-    const made = el(".t1-more-made");
-    if (w.kind === "per") {
-      const p = w.p;
-      set("[data-v=more-kicker]", p.none ? "About these perfumes" : "About the perfumer");
-      set("[data-v=more-name]", perName(p));
-      set("[data-v=more-sub]", [p.from, p.born ? "born " + p.born : "", p.houses.size + (p.houses.size === 1 ? " house" : " houses")].filter(Boolean).join(" · "));
-      const lines = p.about && p.about.length ? p.about : [p.none ? "The perfumes no source found credits to anyone." : p.name + "."];
-      lead.innerHTML = lines.map((l) => "<p>" + esc(l) + "</p>").join("");
-      text.innerHTML = p.bio ? '<h3 class="t1-more-h">Biography</h3>' + p.bio.t.map((t) => "<p>" + esc(t) + "</p>").join("") : "";
-      made.innerHTML = p.none ? madeHtml(Array.from(p.houses.entries()).map(([h, l]) => [HOU[h].name, l]), "By house") : "";
-      src.innerHTML = p.bio ? p.bio.s.map(([c, u]) => "<li>" + esc(c).replace(/\*(.+?)\*/g, "<cite>$1</cite>") + ' <a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u.replace(/^https?:\/\//, "").replace(/\/$/, "")) + "</a></li>").join("") : "";
-    } else {
-      const ho = w.ho;
-      set("[data-v=more-kicker]", "About the house");
-      set("[data-v=more-name]", ho.name);
-      set("[data-v=more-sub]", [ho.from, ho.founded ? "founded " + ho.founded : "", ho.list.length + (ho.list.length === 1 ? " perfume" : " perfumes")].filter(Boolean).join(" · "));
-      lead.innerHTML = "<p>" + esc(ho.about || ho.name + ".") + "</p>";
-      text.innerHTML = "";
-      made.innerHTML = madeHtml(partsOf(w).map((x) => [perName(PER[x.q]), ho.pers.get(x.q)]), "What was made for it");
-      const used = new Set();
-      ho.list.forEach((e) => e.s.forEach((i) => used.add(i)));
-      src.innerHTML = Array.from(used).map((i) => "<li>" + esc(D.sources[i]) + "</li>").join("");
+  const charsMemo = new Map();
+  function charsOf(font, txt) {
+    const key = font + "|" + txt;
+    let m = charsMemo.get(key);
+    if (!m) {
+      const chars = Array.from(txt);
+      m = { chars, ws: chars.map((ch) => wOf(font, ch)) };
+      charsMemo.set(key, m);
     }
-    srcHead.hidden = !src.innerHTML;
+    return m;
   }
-  function madeHtml(groups, head) {
-    return '<h3 class="t1-more-h">' + esc(head) + "</h3>" + groups.map(([who, l]) =>
-      '<div class="t1-more-group"><p class="t1-more-who">' + esc(who) + " <span>" + l.length + "</span></p><ul>" +
-      l.slice().sort((a, b) => (a.y || 9999) - (b.y || 9999) || cmp(a.n, b.n)).map((e) => "<li>" + esc(e.n) + "<span>" + (e.y || "—") + "</span></li>").join("") + "</ul></div>").join("");
+  const trackOf = (size) => (size > 12 ? 0.32 : 0.24);
+  function arcLen(txt, size, font, track) {
+    const m = charsOf(font, txt);
+    let t = 0;
+    for (const w of m.ws) t += (w * size) / FPX;
+    return t + size * track * (m.chars.length - 1);
   }
-  function openMore() {
-    if (!cur) return;
-    more.hidden = false;
-    document.body.classList.add("is-more");
-    moreBtn.setAttribute("aria-expanded", "true");
-    requestAnimationFrame(() => {
-      const top = more.getBoundingClientRect().top + window.scrollY - 28;
-      window.scrollTo({ top, behavior: STILL ? "auto" : "smooth" });
+  // the perfumers' names along ring 1, the houses' along ring 2 — no taller
+  // than their rings
+  const NAME_SIZES = [10.5, 8.5, 6.5, 5];
+  const HOUSE_SIZES = [9, 7.5, 6, 5, 4, 3.2];
+  function fitSize(txt, a0, a1, sizes, font, track, r) {
+    for (const s of sizes) if (arcLen(txt, s, font, track(s)) < (a1 - a0) * r - 6) return s;
+    return 0;
+  }
+  // a chosen perfumer's houses are written as large as their arcs allow on
+  // the whole chart, and no larger than reads well close in
+  function houseSize(h, z) {
+    let best = 0;
+    for (const s of h.sizes) { if (s * z <= 15) return s; best = s; }
+    return best;
+  }
+  function measureGroups() {
+    groups.forEach((g) => {
+      g.text = g.label.toUpperCase();
+      g.size = fitSize(g.text, g.a0, g.a1, NAME_SIZES, F.group, trackOf, R.perMid);
+      g.houses.forEach((h) => {
+        h.text = HOU[h.h].name.toUpperCase();
+        h.sizes = mode === "az" ? HOUSE_SIZES.filter((sz) => arcLen(h.text, sz, F.house, 0.18) < (h.a1 - h.a0) * R.houMid - 4) : [];
+        h.size = h.sizes[0] || 0;
+      });
+      g.members.forEach((e) => (e.withWho = mode === "year"));
     });
   }
-  function closeMore(now) {
-    moreBtn.setAttribute("aria-expanded", "false");
-    if (more.hidden) return;
-    const done = () => { more.hidden = true; document.body.classList.remove("is-more"); };
-    if (now || STILL || window.scrollY < 2) { window.scrollTo(0, 0); done(); return; }
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    const t0 = performance.now();
-    const wait = () => (window.scrollY < 2 || performance.now() - t0 > 1600 ? done() : requestAnimationFrame(wait));
-    requestAnimationFrame(wait);
-  }
-  moreBtn.addEventListener("click", () => (more.hidden ? openMore() : closeMore()));
-  el(".t1-more-close").addEventListener("click", () => closeMore());
-  // THE READINGS, as few as the owner's pictures keep — and fewer since
-  // 2026-11-08 ("remove the 'the most ___'"; "under the houses on the left,
-  // you should ommit the informatio of the houses"): a perfumer's kicker,
-  // name, country, perfumes and houses; a house's kicker, name, country and
-  // founding, perfumes and perfumers
-  function writeHud() {
-    const set = (s, v) => { const e = el(s); if (e) e.textContent = v; };
-    const house = cur.kind === "house";
-    set("[data-v=kicker]", house ? "House" : "Perfumer");
-    set("[data-v=name]", nameOf(cur));
-    if (house) set("[data-v=sub]", [cur.ho.from, cur.ho.founded ? "founded " + cur.ho.founded : ""].filter(Boolean).join(" · ") || "country not given");
-    else set("[data-v=sub]", cur.p.from || (cur.p.none ? "no source names them" : "country not given"));
-    set("[data-v=count]", String(listOf(cur).length));
-    set("[data-v=houses-say]", house ? "Perfumers" : "Houses");
-    set("[data-v=houses]", String(house ? Array.from(cur.ho.pers.keys()).filter((q) => !PER[q].none).length : cur.p.houses.size));
-    writeMore(cur);
-    if (!STILL) [".t1-hud", ".t1-list"].forEach((s) => { const e = el(s); e.classList.remove("is-fresh"); void e.offsetWidth; e.classList.add("is-fresh"); });
-    const p = lastPer || ORDER[0];
-    set("[data-v=no]", String(p.k + 1).padStart(2, "0") + " / " + NP);
-    const pick = el(".t1-pick");
-    if (+pick.value !== p.i) pick.value = String(p.i);
-    // the page's official names (2026-11-08): the World of whoever is in it
-    set(".t1-head-name", cur.kind === "per" && cur.p.none ? "The perfumes no source credits" : "The World of " + nameOf(cur));
-    el(".t1-hud").setAttribute("aria-label", (house ? "The house " : "The perfumer ") + nameOf(cur));
-  }
 
-  // ---- THE LIST, beside the world: a perfumer's houses, or a house's
-  // perfumers — names only, and what they made between them ------------------
-  const listBox = el(".t1-list");
-  let listRows = [];
-  function writeList() {
-    if (!cur) return;
-    const house = cur.kind === "house";
-    listRows = partsOf(cur).map((x) => (house ? { kind: "per", p: PER[x.q], n: x.n } : { kind: "house", ho: HOS[x.h], n: x.n }));
-    el(".t1-list-rows").innerHTML = listRows.map((r, i) => '<li><button type="button" data-row="' + i + '"><span class="t1-li-no">' + String(i + 1).padStart(2, "0") + '</span><span class="t1-li-name">' + esc(nameOf(r)) + '</span><span class="t1-li-n">' + r.n + "</span></button></li>").join("");
-    el("[data-v=list-say]").textContent = house ? "Its perfumers" : "Its houses";
-    // a house's perfumers counted as its readings count them: "Perfumer not
-    // found" is a row of its own, and no perfumer
-    const n = house ? listRows.filter((r) => !r.p.none).length : listRows.length;
-    el("[data-v=list-n]").textContent = n + (house ? (n === 1 ? " perfumer" : " perfumers") : (n === 1 ? " house" : " houses"));
-    el("[data-v=list-how]").textContent = house ? "press one to open their world" : "press one to open its world";
-    el(".t1-list-rows").scrollTop = 0;
-  }
-  function rowOf(ev) { const b = ev.target.closest && ev.target.closest("[data-row]"); return b ? { b, r: listRows[+b.dataset.row] } : null; }
-  const sphereOf = (r) => blobs.find((x) => same(x, r)) || null;
-  listBox.addEventListener("pointerover", (ev) => {
-    const o = rowOf(ev);
-    if (!o || !ready || busy()) return;
-    aim = sphereOf(o.r); if (aim) stick = aim;
-    lightRow(); kick();
-  });
-  listBox.addEventListener("pointerleave", () => { aim = null; kick(); });
-  listBox.addEventListener("click", (ev) => {
-    const o = rowOf(ev);
-    if (!o) return;
-    aim = null; showTip(null);
-    change(o.r.kind === "per" ? { kind: "per", p: o.r.p } : { kind: "house", ho: o.r.ho });
-  });
-  listBox.addEventListener("focusin", (ev) => { const o = rowOf(ev); if (o) { aim = sphereOf(o.r); if (aim) stick = aim; lightRow(); kick(); } });
+  // ---- THE LAYOUT -------------------------------------------------------
+  let W = 0, H = 0, VH = 800, DPR = 1, OV = 0, S = 0, fitZ = 0.3, phone = false;
+  const L = { ocx: 0.5, ocy: 0.5, oz: 0.3, zx: 0.4, zy: 0.56, zoomH: 600, free: { x0: 0, y0: 0, x1: 0, y1: 0 } };
+  let navOpen = false;
+  let rotorDirty = true, chartDirty = true;
+  const sharp = typeof window.Sharpness === "function"
+    ? window.Sharpness(() => { sizeCanvases(); rotorDirty = chartDirty = true; dofOff(); kick(); })
+    : null;
 
-  // ---- THE HAND --------------------------------------------------------------
-  const hand = { x: -1, y: -1, on: false, lx: -1, ly: -1, lt: 0 };
-  // where the spheres lean to: the hand, followed a little behind
-  const handS = { x: 0, y: 0 };
-  // `aim` the sphere under the hand now; `stick` the last one it was on — the
-  // double circle stays there until the hand is on another (2026-11-08 —
-  // "make it also stay there, unless you hover over another blob")
-  let aim = null, stick = null, pinned = null, overBlock = null;
-  const ret = { x: 0, y: 0, r: 0, vx: 0, vy: 0, vr: 0 };
-  function blobUnder(x, y) {
-    for (let i = blobs.length - 1; i >= 0; i--) { const b = blobs[i]; if (b.img && Math.hypot(x - (b.x + b.dx), y - (b.y + b.dy)) < b.r * 1.15) return b; }
-    return null;
-  }
-  const onMiddle = (x, y) => Math.hypot(x - P.x, y - P.y) < P.r * 0.95;
-  // a block of the strings: its dots, or anywhere in its box
-  function blockUnder(x, y) {
-    let best = null, bd = Math.max(9, map.cell * 0.8);
-    for (const d of map.dots) { const dd = Math.hypot(x - d.x, y - d.y); if (dd < bd) { bd = dd; best = d.b; } }
-    if (best) return best;
-    for (const b of map.blocks) if (x >= b.x0 - 4 && x <= b.x1 + 4 && y >= b.y0 - 4 && y <= b.y1 + 4) return b;
-    return null;
-  }
-  function placeTip(x, y) {
-    const tw = tip.offsetWidth, th = tip.offsetHeight;
-    let px = x + 14, py = y + 14;
-    if (px + tw > W - 10) px = x - tw - 14;
-    if (py + th > H - 10) py = y - th - 14;
-    tip.style.transform = "translate(" + Math.round(Math.max(8, px)) + "px," + Math.round(Math.max(8, py)) + "px)";
-  }
-  function showTip(h) {
-    if (!h) { tip.hidden = true; return; }
-    tip.innerHTML = h.html;
-    tip.hidden = false;
-    placeTip(h.x, h.y);
-  }
-  // what a block says (2026-11-08 — "just show the perfumer's name, and
-  // number of houses")
-  const blockTip = (b) => "<b>" + esc(perName(b.p)) + "</b><span>" + b.p.houses.size + (b.p.houses.size === 1 ? " house" : " houses") + "</span>";
-  const sphereTip = (b) => "<b>" + esc(nameOf(b)) + "</b><span>" + (b.kind === "house" ? "House · press to open its world" : "Perfumer · press to open their world") + "</span>";
-  // the hand pulled across a string plucks it, and pulls it taut a moment
-  function pluck(x0, y0, x1, y1, now) {
-    const sp = Math.hypot(x1 - x0, y1 - y0);
-    if (sp < 1.5 || sp > 400) return;
-    for (const s of map.strings) {
-      if (now - (s.plucked || 0) < 140) continue;
-      const p = s.pts;
-      for (let i = 0; i < SEG; i += 3) {
-        const j = Math.min(SEG, i + 3);
-        const ax = p[2 * i], ay = p[2 * i + 1], bx = p[2 * j], by = p[2 * j + 1];
-        const d1 = (x1 - x0) * (ay - y0) - (y1 - y0) * (ax - x0), d2 = (x1 - x0) * (by - y0) - (y1 - y0) * (bx - x0);
-        const d3 = (bx - ax) * (y0 - ay) - (by - ay) * (x0 - ax), d4 = (bx - ax) * (y1 - ay) - (by - ay) * (x1 - ax);
-        if (d1 * d2 < 0 && d3 * d4 < 0) {
-          const dir = d3 < 0 ? 1 : -1;
-          const was = Math.abs(s.a1) < 0.3;
-          s.a1 += dir * clamp(sp * 0.3, 1.6, 7); s.a2 += dir * clamp(sp * 0.1, 0.4, 2.2);
-          if (was) { s.p1 = -Math.PI / 2; s.p2 = -Math.PI / 2; }
-          s.touch = now + 650; s.plucked = now;
-          break;
-        }
-      }
+  function measure() {
+    phone = PHONE.matches;
+    // THE STAGE A LITTLE TALLER THAN THE WINDOW (2026-11-07 — "make sure that
+    // it extends a little more down"): the chart is sized by the window, as it
+    // was, and the stage made as tall as its farthest faint lines need, so
+    // the circle is whole — it was cut at the window's foot. Everything that
+    // stands over the chart is placed by the window (--pf-vh), not the stage.
+    VH = Math.max(320, window.innerHeight || 0);
+    stage.style.setProperty("--pf-vh", VH + "px");
+    W = stage.clientWidth;
+    if (phone) { if (stage.style.height) stage.style.height = ""; }
+    else {
+      const navW = nav.hidden || nav.classList.contains("is-folded") ? 0 : nav.getBoundingClientRect().width;
+      const roomX = W - (navW ? navW + 30 + 14 : 0);
+      const z0 = Math.max(140, Math.min(roomX, VH - 12)) / (2 * R.fit);
+      const want = Math.max(VH, Math.ceil(2 * R.out * z0 + 24));
+      if (stage.style.height !== want + "px") stage.style.height = want + "px";
     }
-  }
-  window.addEventListener("pointermove", (ev) => { hand.x = ev.clientX; hand.y = ev.clientY; hand.on = true; }, { passive: true });
-  document.addEventListener("pointerout", (ev) => { if (!ev.relatedTarget) { hand.on = false; kick(); } });
-  cv.addEventListener("pointermove", (ev) => {
-    const now = performance.now();
-    const x = ev.clientX, y = ev.clientY;
-    if (view === "rays" && ready && !busy() && hand.lx >= 0 && now - hand.lt < 120) pluck(hand.lx, hand.ly, x, y, now);
-    hand.lx = x; hand.ly = y; hand.lt = now;
-    hand.x = x; hand.y = y; hand.on = true;
-    // nothing answers the hand until the page has come in whole
-    if (busy() || !ready) { cv.style.cursor = "default"; return; }
-    if (view === "rays") {
-      const b = blockUnder(x, y);
-      if (b !== overBlock) {
-        // its strings twang as they are pulled taut
-        if (b) for (const d of b.dots) d.s.a1 += (d.s.a1 >= 0 ? 1 : -1) * (1.4 + d.ph * 1.6);
-        overBlock = b;
-        showTip(b ? { html: blockTip(b), x, y } : null);
-        kick();
-      } else if (b) placeTip(x, y);
-      cv.style.cursor = b ? "pointer" : "default";
-      return;
+    H = stage.clientHeight;
+    DPR = sharp ? sharp.ratio : Math.min(window.devicePixelRatio || 1, 2);
+    OV = Math.ceil(Math.max(W, H) * (phone ? 0.05 : 0.06));
+    const sb = stage.getBoundingClientRect();
+    let x0 = 0, x1 = W, y0 = 0, y1 = H;
+    if (!phone && !nav.hidden && !nav.classList.contains("is-folded")) {
+      const b = nav.getBoundingClientRect();
+      if (b.width) x1 = b.left - sb.left - 14;
     }
-    const was = aim;
-    aim = blobUnder(x, y);
-    if (aim) stick = aim;
-    else if (onMiddle(x, y)) stick = null;
-    cv.style.cursor = aim ? "pointer" : "default";
-    if (aim !== was) lightRow();
-    if (!pinned) {
-      if (aim) showTip({ html: sphereTip(aim), x, y });
-      else if (was) showTip(null);
-    }
-  });
-  function lightRow() {
-    const lit = aim || stick;
-    listBox.querySelectorAll("[data-row]").forEach((b) => {
-      const r = listRows[+b.dataset.row];
-      b.classList.toggle("is-lit", !!(lit && r && same(r, lit)));
-    });
-  }
-  cv.addEventListener("pointerleave", () => {
-    aim = null; overBlock = null; lightRow();
-    if (!pinned) showTip(null);
-    kick();
-  });
-  cv.addEventListener("click", (ev) => {
-    if (busy() || !ready) return;
-    if (view === "rays") {
-      const b = blockUnder(ev.clientX, ev.clientY);
-      if (b) openWorld({ kind: "per", p: b.p });
-      return;
-    }
-    const b = blobUnder(ev.clientX, ev.clientY);
-    if (b) { aim = null; change(b.kind === "per" ? { kind: "per", p: b.p } : { kind: "house", ho: b.ho }); }
-  });
-  el(".t1-return").addEventListener("click", returnUp);
-  const step = (d) => {
-    if (!ready || busy()) return;
-    const p = lastPer || ORDER[NP - 1];
-    const q = ORDER[(p.k + d + NP) % NP];
-    if (view === "rays") openWorld({ kind: "per", p: q });
-    else change({ kind: "per", p: q });
-  };
-  el(".t1-prev").addEventListener("click", () => step(-1));
-  el(".t1-next").addEventListener("click", () => step(1));
-  document.addEventListener("keydown", (ev) => {
-    if (ev.target && ev.target.matches && ev.target.matches("select, input")) return;
-    if (ev.key === "Escape") { ev.preventDefault(); returnUp(); }
-    else if (view === "world" && ev.key === "ArrowRight") { ev.preventDefault(); step(1); }
-    else if (view === "world" && ev.key === "ArrowLeft") { ev.preventDefault(); step(-1); }
-  });
-  const pick = el(".t1-pick");
-  pick.innerHTML = ORDER.map((p) => '<option value="' + p.i + '">' + esc(perName(p)) + "</option>").join("");
-  pick.addEventListener("change", () => {
-    const p = PER[+pick.value];
-    if (view === "rays") openWorld({ kind: "per", p });
-    else change({ kind: "per", p });
-  });
-  // ---- THE SEARCH (2026-11-07): one field at the top right, on the strings
-  // and in the worlds; a perfumer, a house or a perfume, found as it is
-  // typed, each answer saying which. Pressed (or Enter): a perfumer's world,
-  // or — since 2026-11-08, when a house has a world of its own — a house's;
-  // a perfume opens its perfumer's, its house lit there.
-  const findBox = el(".t1-find"), findIn = el(".t1-find input"), findOut = el(".t1-found");
-  const plainOf = (t) => String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-  const FIND = [];
-  ORDER.forEach((p) => FIND.push({ kind: "Perfumer", name: perName(p), say: [p.from, p.houses.size + (p.houses.size === 1 ? " house" : " houses")].filter(Boolean).join(" · "), w: { kind: "per", p } }));
-  HOS.slice().sort((a, b) => cmp(a.name, b.name)).forEach((ho) => FIND.push({ kind: "House", name: ho.name, say: [ho.from, ho.list.length + (ho.list.length === 1 ? " perfume" : " perfumes")].filter(Boolean).join(" · "), w: { kind: "house", ho } }));
-  ORDER.forEach((p) => p.list.forEach((e) => FIND.push({ kind: "Perfume", name: e.n, say: HOU[e.h].name + " · by " + perName(p) + (e.y ? " · " + e.y : ""), w: { kind: "per", p }, h: e.h, e })));
-  FIND.forEach((it) => (it.key = plainOf(it.name)));
-  const KINDS = ["Perfumer", "House", "Perfume"];
-  let found = [], foundAt = -1;
-  function findNow() {
-    const q = plainOf(findIn.value.trim());
-    if (!q) { findOut.hidden = true; findBox.classList.remove("has-found"); found = []; return; }
-    const scoreOf = (k) => (k.startsWith(q) ? 3 : k.split(/[^a-z0-9]+/).some((w) => w.startsWith(q)) ? 2.5 : k.indexOf(q) >= 0 ? 2 : 0);
-    found = FIND.map((it) => ({ it, s: scoreOf(it.key) })).filter((x) => x.s > 0)
-      .sort((a, b) => b.s - a.s || KINDS.indexOf(a.it.kind) - KINDS.indexOf(b.it.kind) || cmp(a.it.name, b.it.name))
-      .slice(0, 8).map((x) => x.it);
-    foundAt = found.length ? 0 : -1;
-    findOut.innerHTML = found.length
-      ? found.map((it, i) => '<li style="--i:' + i + '"><button type="button" data-f="' + i + '"' + (i === 0 ? ' class="is-at"' : "") + "><b>" + it.kind + "</b><span>" + esc(it.name) + "</span><small>" + esc(it.say) + "</small></button></li>").join("")
-      : '<li class="t1-found-none">Nothing by that name on the chart.</li>';
-    findOut.hidden = false;
-    findBox.classList.add("has-found");
-  }
-  function findAt(i) {
-    if (!found.length) return;
-    foundAt = (i + found.length) % found.length;
-    findOut.querySelectorAll("button").forEach((b, k) => b.classList.toggle("is-at", k === foundAt));
-  }
-  function findGo(it) {
-    findIn.value = ""; findOut.hidden = true; findBox.classList.remove("has-found"); found = [];
-    findIn.blur();
-    if (busy()) return;
-    let wait = 0;
-    if (view === "rays") { openWorld(it.w); wait = STILL ? 0 : OPEN_MS + 150; }
-    else if (!same(cur, it.w)) { change(it.w); wait = STILL ? 0 : CHANGE_MS + 100; }
-    if (it.h == null) return;
-    // a perfume's house lit once the world has come: its sphere, its row, and
-    // the perfume by the row
-    setTimeout(() => {
-      if (view !== "world" || !cur || !same(cur, it.w)) return;
-      const ho = { kind: "house", ho: HOS[it.h] };
-      const b = blobs.find((x) => same(x, ho));
-      if (b) { stick = b; lightRow(); }
-      const k = listRows.findIndex((r) => same(r, ho));
-      const row = listBox.querySelector('[data-row="' + k + '"]');
-      if (row) {
-        row.classList.add("is-found");
-        if (it.e) { pinned = ho; tipBeside(row, perfumeTip(it.e)); }
-        setTimeout(() => { row.classList.remove("is-found"); kick(); }, 3200);
-      }
-      kick();
-    }, wait);
-  }
-  function perfumeTip(e) {
-    const who = e.who.map((q) => perName(PER[q])).join(" & ");
-    return "<b>" + esc(e.n) + "</b><span>" + esc(HOU[e.h].name) + " · " + (e.y || "year not found") + "</span><em>" + esc(who) + " — " + CREDIT[e.c] + "</em>";
-  }
-  function tipBeside(b, html) {
-    tip.innerHTML = html;
-    tip.hidden = false;
-    const rc = b.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight;
-    let px, py;
-    if (phone) { px = clamp(rc.left + 8, 8, W - tw - 8); py = rc.top - th - 6; if (py < 8) py = rc.bottom + 6; }
-    else { px = rc.left - tw - 14; py = clamp(rc.top - 6, 8, H - th - 8); if (px < 8) px = rc.right + 14; }
-    tip.style.transform = "translate(" + Math.round(px) + "px," + Math.round(py) + "px)";
-  }
-  // a pinned perfume's note goes with the next press anywhere
-  document.addEventListener("pointerdown", (ev) => { if (pinned && !(ev.target.closest && ev.target.closest(".t1-find"))) { pinned = null; showTip(null); } });
-  findIn.addEventListener("input", findNow);
-  findIn.addEventListener("focus", () => { findBox.classList.add("is-open"); if (findIn.value) findNow(); });
-  findIn.addEventListener("blur", () => setTimeout(() => { if (document.activeElement !== findIn) { findBox.classList.remove("is-open"); findOut.hidden = true; findBox.classList.remove("has-found"); } }, 160));
-  findIn.addEventListener("keydown", (ev) => {
-    ev.stopPropagation();
-    if (ev.key === "ArrowDown") { ev.preventDefault(); findAt(foundAt + 1); }
-    else if (ev.key === "ArrowUp") { ev.preventDefault(); findAt(foundAt - 1); }
-    else if (ev.key === "Enter") { ev.preventDefault(); if (found[foundAt]) findGo(found[foundAt]); }
-    else if (ev.key === "Escape") { findIn.value = ""; findNow(); findIn.blur(); }
-  });
-  findOut.addEventListener("pointerdown", (ev) => ev.preventDefault());
-  findOut.addEventListener("click", (ev) => { const b = ev.target.closest("[data-f]"); if (b) findGo(found[+b.dataset.f]); });
-  el(".t1-find-mark").addEventListener("click", () => findIn.focus());
-  // ---- DRAWING ------------------------------------------------------------
-  function resize() {
-    W = window.innerWidth; H = window.innerHeight;
-    phone = W < 760;
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
-    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
-    cv.style.width = W + "px"; cv.style.height = H + "px";
-    // the room the world has: between the readings on the left and the list
-    // on the right, under the head and over Learn More; on a phone the top
-    // of the window, over the list and the readings
-    if (phone) {
-      F.x0 = 10; F.x1 = W - 10; F.y0 = 92; F.y1 = Math.round(H * 0.45);
-      P.r = Math.min((F.y1 - F.y0) * 0.34, W * 0.25);
-    } else {
-      const edge = W < 1100 ? 32 : 48;
-      const hud = el(".t1-hud").getBoundingClientRect(), list = listBox.getBoundingClientRect();
-      F.x0 = (hud.right > 0 ? hud.right : edge + 250) + 16;
-      F.x1 = (list.left > 0 ? list.left : W - edge - 280) - 16;
-      F.y0 = 112; F.y1 = H - (H < 640 ? 70 : 130);
-      P.r = Math.min((F.y1 - F.y0) * 0.33, (F.x1 - F.x0) * 0.24);
-    }
-    P.x = (F.x0 + F.x1) / 2; P.y = (F.y0 + F.y1) / 2;
-    // Learn More under the world, in the middle of its room
-    const btn = el(".t1-more-open");
-    if (!phone) btn.style.left = Math.round(P.x) + "px"; else btn.style.left = "";
-    ground = null;
-    layMap();
-    if (cur) layWorld();
-  }
-  // the poster: pale, a light behind the world, its corners a little darker
-  let ground = null;
-  function drawGround() {
-    const c = document.createElement("canvas");
-    c.width = cv.width; c.height = cv.height;
-    const x = c.getContext("2d");
-    x.scale(DPR, DPR);
-    let g = x.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, "#e7eeea"); g.addColorStop(1, "#dce5e1");
-    x.fillStyle = g; x.fillRect(0, 0, W, H);
-    const big = Math.max(W, H);
-    g = x.createRadialGradient(P.x, P.y, P.r * 0.6, P.x, P.y, big * 0.8);
-    g.addColorStop(0, "rgba(255,255,255,0.55)"); g.addColorStop(0.45, "rgba(255,255,255,0.12)"); g.addColorStop(1, "rgba(120,140,135,0.22)");
-    x.fillStyle = g; x.fillRect(0, 0, W, H);
-    g = x.createRadialGradient(P.x - P.r * 0.2, P.y - P.r * 0.1, 0, P.x, P.y, P.r * 2.2);
-    g.addColorStop(0, "rgba(200,190,240,0.22)"); g.addColorStop(1, "rgba(200,190,240,0)");
-    x.fillStyle = g; x.fillRect(0, 0, W, H);
-    g = x.createRadialGradient(P.x + P.r * 0.5, P.y + P.r * 0.9, 0, P.x + P.r * 0.5, P.y + P.r * 0.9, P.r * 1.4);
-    g.addColorStop(0, "rgba(255,226,170,0.16)"); g.addColorStop(1, "rgba(255,226,170,0)");
-    x.fillStyle = g; x.fillRect(0, 0, W, H);
-    return c;
-  }
-  // READY (2026-11-07): nothing answers the hand until the strings are all
-  // out and the type has come in; then the page says so (is-ready)
-  let ready = STILL, fontsIn = !document.fonts;
-  if (document.fonts) document.fonts.ready.then(() => { fontsIn = true; layMap(); kick(); });
-  let lightNext = 0, mapT0 = -1;
-  const RAYS_IN = 1800;
-  const lights = [];
-  // what the strings are doing this frame, worked out once and drawn as
-  // often as the lens (or the opening's discs) needs
-  const RS = { intro: 1, dim: 0, lens: 1.6, open: -1, close: -1, gone: 0 };
-  // the strings' slack this frame: taut while their perfumer is pointed at,
-  // a moment after the hand has plucked them, and while they reel in
-  function tautOf(s) {
-    const now = performance.now();
-    if (TR.kind === "open") return TR.chosen.has(s.d) ? 0 : 1.5;
-    if (now < s.touch) return 0;
-    if (overBlock && overBlock === s.d.b && !busy()) return 0;
-    return 1;
-  }
-  function stepRays(now, t, dt) {
-    RS.intro = STILL ? 1 : clamp((now - mapT0) / RAYS_IN, 0, 1);
-    stepStrings(dt, now, t, tautOf);
-    const f = 1 - Math.exp(-dt * 7);
-    for (const b of map.blocks) {
-      let g = overBlock === b && !busy() ? 1 : 0;
-      // the perfumer the world closed on, lit a moment on the way back
-      if (TR.cameFrom === b) g = Math.max(g, TR.kind === "close" ? 1 : 1 - clamp((now - TR.litT) / 1600, 0, 1));
-      b.g += (g - b.g) * f;
-    }
-    RS.dim += ((overBlock && !busy() ? 1 : 0) - RS.dim) * f;
-    RS.open = TR.kind === "open" ? clamp((now - TR.t0) / TR.ms, 0, 1) : -1;
-    // the lens coming apart as the opening gathers, together as the strings come back
-    RS.lens = (phone ? 1.1 : 1.6) * (RS.open >= 0 ? 1 + 2.8 * smooth(RS.open / DISC_FROM) : TR.kind === "close" ? 1 + 2.4 * (1 - smooth((now - TR.t0) / TR.ms)) : 1);
-    // the lights running in, now and then
-    if (!STILL && RS.intro >= 1 && !busy()) {
-      if (t > lightNext && lights.length < 9) { lights.push({ s: map.strings[Math.floor(Math.random() * map.strings.length)], t0: t, dur: 1.5 + Math.random() * 1.3 }); lightNext = t + 0.25 + Math.random() * 0.45; }
-    }
-    for (let i = lights.length - 1; i >= 0; i--) if ((t - lights[i].t0) / lights[i].dur >= 1) lights.splice(i, 1);
-  }
-  // ONE COLOUR OF THE STRINGS (col its pure colour, c which of the three):
-  // the strings, the dots, the point, the lights and what is reeling in
-  function raysPass(x, col, t) {
-    const { hub } = map, open = RS.open;
-    const intro = RS.intro, gone = open >= 0 ? smooth(open / (DISC_FROM * 0.9)) : 0;
-    x.strokeStyle = col; x.fillStyle = col;
-    x.lineCap = "round";
-    // every block's strings at its own strength: lit, dimmed, or falling away
-    for (const b of map.blocks) {
-      let a = (0.22 + 0.63 * b.g) * (1 - 0.6 * RS.dim * (1 - b.g));
-      if (open >= 0) a = 0.22 * (1 - 0.8 * gone);
-      if (a < 0.01) continue;
-      x.globalAlpha = a; x.lineWidth = 0.65 + 0.45 * b.g;
-      x.beginPath();
-      for (const d of b.dots) {
-        const s = d.s;
-        if (open >= 0 && TR.chosen.has(d)) continue;     // drawn reeling in, below
-        const u = intro >= 1 ? 1 : ease(clamp(intro * 1.6 - d.ph * 0.6, 0, 1));
-        if (u <= 0) continue;
-        tracePart(x, s, 1 - u, 1);
-      }
-      x.stroke();
-      // its dots
-      const r = map.r * (1 + 0.5 * b.g);
-      x.globalAlpha = (0.9 * (1 - 0.55 * RS.dim * (1 - b.g)) + 0.1 * b.g) * (open >= 0 ? 1 - 0.8 * gone : 1);
-      x.beginPath();
-      for (const d of b.dots) {
-        if (open >= 0 && TR.chosen.has(d)) continue;
-        if (intro >= 1 || intro * 1.6 - d.ph * 0.6 >= 1) { x.moveTo(d.x + r, d.y); x.arc(d.x, d.y, r, 0, TAU); }
-      }
-      x.fill();
-    }
-    // the chosen: their strings taut, their dots reeling in along them to the
-    // point, each string shortening behind its dot
-    if (open >= 0) {
-      let arrived = 0, n = 0;
-      x.lineWidth = 1.1;
-      for (const d of TR.chosen) {
-        n++;
-        const q = ease(clamp(open / (DISC_FROM * 0.95) * 1.15 - d.ph * 0.15, 0, 1));
-        if (q >= 1) { arrived++; continue; }
-        x.globalAlpha = 0.9;
-        x.beginPath(); tracePart(x, d.s, q, 1); x.stroke();
-        const [px, py] = along(d.s, q);
-        x.globalAlpha = 1;
-        x.beginPath(); x.arc(px, py, map.r * 1.5, 0, TAU); x.fill();
-      }
-      const a = n ? arrived / n : 1;
-      // the point swelling as they arrive
-      x.globalAlpha = 0.95; x.lineWidth = 1.2;
-      x.beginPath(); x.arc(hub.x, hub.y, 4 + 14 * ease(a), 0, TAU); x.stroke();
-      x.globalAlpha = 0.35 * a;
-      x.beginPath(); x.arc(hub.x, hub.y, 10 + 34 * ease(a), 0, TAU); x.stroke();
-    }
-    // the point they all go to
-    const br = 3 + (STILL ? 0 : Math.sin(t * 1.6) * 0.8);
-    x.lineWidth = 1; x.globalAlpha = 0.9 * smooth(intro * 3);
-    x.beginPath(); x.arc(hub.x, hub.y, br, 0, TAU); x.stroke();
-    x.globalAlpha = 0.3 * smooth(intro * 3);
-    x.beginPath(); x.arc(hub.x, hub.y, br * 3.4, 0, TAU); x.stroke();
-    // the lights running in along the strings
-    if (lights.length) {
-      x.lineWidth = 1.4;
-      for (const L of lights) {
-        const u = (t - L.t0) / L.dur, k = ease(clamp(u, 0, 1));
-        x.globalAlpha = Math.sin(Math.PI * clamp(u, 0, 1)) * 0.85;
-        x.beginPath(); tracePart(x, L.s, Math.max(0, k - 0.1), k); x.stroke();
-      }
-    }
-    x.globalAlpha = 1; x.lineCap = "butt";
-  }
-  // the names over the blocks, and round the one pointed at, its corners
-  function raysWords(x, col) {
-    x.font = "400 " + (phone ? 8.5 : 9.5) + 'px "IBM Plex Mono", ui-monospace, monospace';
-    x.textBaseline = "alphabetic";
-    x.fillStyle = col; x.strokeStyle = col;
-    const open = RS.open, gone = open >= 0 ? smooth(open / (DISC_FROM * 0.7)) : 0;
-    const come = smooth((RS.intro - 0.55) / 0.45);
-    for (const b of map.blocks) {
-      const a = (0.42 + 0.58 * b.g) * (1 - 0.55 * RS.dim * (1 - b.g)) * come * (1 - gone);
-      if (a < 0.01) continue;
-      x.globalAlpha = a;
-      x.textAlign = b.side === 0 ? "left" : "right";
-      x.fillText(b.label, b.side === 0 ? b.lx0 : b.lx1, b.ly);
-      // the block lit whole (2026-11-08 — "the entire block and all the dots
-      // get highlighted"): a registration bracket at each of its corners
-      if (b.g > 0.02) {
-        const m = 7 + 3 * (1 - b.g), x0 = b.x0 - m, x1 = b.x1 + m, y0 = b.y0 - m, y1 = b.y1 + m, l = 6;
-        x.globalAlpha = 0.85 * b.g * (1 - gone); x.lineWidth = 1;
-        x.beginPath();
-        x.moveTo(x0, y0 + l); x.lineTo(x0, y0); x.lineTo(x0 + l, y0);
-        x.moveTo(x1 - l, y0); x.lineTo(x1, y0); x.lineTo(x1, y0 + l);
-        x.moveTo(x1, y1 - l); x.lineTo(x1, y1); x.lineTo(x1 - l, y1);
-        x.moveTo(x0 + l, y1); x.lineTo(x0, y1); x.lineTo(x0, y1 - l);
-        x.stroke();
-      }
-    }
-    x.globalAlpha = 1;
-  }
-  // the strings whole: through the lens, the names white over them
-  function drawRays(x, t) {
-    x.setTransform(DPR, 0, 0, DPR, 0, 0);
-    x.globalCompositeOperation = "source-over"; x.globalAlpha = 1;
-    x.fillStyle = "#050505"; x.fillRect(0, 0, W, H);
-    lensed(x, (col) => raysPass(x, col, t), RS.lens);
-    raysWords(x, "#ffffff");
-  }
-  // one colour of the strings alone, for the discs: their ground, the
-  // strings in that colour where the lens throws it, the names in it too
-  const PURE = ["#ff0000", "#00ff00", "#0000ff"], DARK = ["#050000", "#000500", "#000005"];
-  function drawRaysOne(x, c, t) {
-    const op = x.globalCompositeOperation;
-    x.fillStyle = DARK[c]; x.fillRect(0, 0, W, H);
-    lensed(x, (col) => raysPass(x, col, t), RS.lens, c);
-    x.globalCompositeOperation = "lighter";
-    raysWords(x, PURE[c]);
-    x.globalCompositeOperation = op;
-  }
-
-  // THE WORLD: the poster, its spheres out of focus, the blob at the middle.
-  // `c` is drawn into at `sc` pixels a point (the screen's own, or the
-  // opening's smaller picture); `boost` widens the middle's aberration
-  function drawWorldView(c, sc, now, t, dt, boost) {
-    if (!ground) ground = drawGround();
-    c.setTransform(1, 0, 0, 1, 0, 0);
-    c.globalCompositeOperation = "source-over"; c.globalAlpha = 1;
-    c.imageSmoothingQuality = "high";
-    c.drawImage(ground, 0, 0, c.canvas.width, c.canvas.height);
-    c.setTransform(sc, 0, 0, sc, 0, 0);
-    const ch = TR.kind === "change" ? clamp((now - TR.t0) / TR.ms, 0, 1) : -1;
-    // the spheres round it, drifting, the nearer moving more with the hand
-    const fh = STILL ? 1 : 1 - Math.exp(-dt * 3.2);
-    handS.x += ((hand.on ? hand.x / W - 0.5 : 0) - handS.x) * fh;
-    handS.y += ((hand.on ? hand.y / H - 0.5 : 0) - handS.y) * fh;
-    const px = handS.x, py = handS.y;
-    const lean = (b) => {
-      const depth = 0.4 + b.focus;
-      b.dx = (STILL ? 0 : Math.sin(t * b.sp + b.ph) * 9) - px * 18 * depth;
-      b.dy = (STILL ? 0 : Math.cos(t * b.sp * 0.8 + b.ph) * 7) - py * 14 * depth;
+    // the words that stand over the stage: the chart's rings are kept clear
+    // of them, and only its faint outer parts pass under them
+    const clear = [];
+    const box = (el) => {
+      if (!el) return;
+      const b = el.getBoundingClientRect();
+      if (b.width && b.height) clear.push({ x0: b.left - sb.left - 10, y0: b.top - sb.top - 10, x1: b.right - sb.left + 10, y1: b.bottom - sb.top + 10 });
     };
-    // the spheres of the world before, going where they stand
-    if (ch >= 0 && TR.old) {
-      const a = 1 - soft(ch * 1.7);
-      for (const b of TR.old) {
-        if (!b.img || a <= 0.01) continue;
-        lean(b);
-        const s = b.img.s * (1 - 0.12 * soft(ch * 1.7));
-        c.globalAlpha = a * 0.94;
-        c.drawImage(b.img.c, b.x + b.dx - s / 2, b.y + b.dy - s / 2, s, s);
+    const notes = document.querySelector(".pf-notes");
+    if (notes && getComputedStyle(notes).position === "absolute") box(document.querySelector(".pf-notes-left"));
+    if (phone) {
+      const t = title.getBoundingClientRect();
+      y0 = Math.max(0, t.bottom - sb.top + 4);
+      y1 = H - 60;
+    } else {
+      box(title.querySelector(".pf-title-word"));
+      box(title.querySelector(".pf-title-years"));
+      y0 = 6; y1 = H - 6;
+    }
+    // the chart's size is the window's room, never the taller stage's
+    const roomY = phone ? y1 - y0 : Math.min(y1 - y0, VH - 12);
+    L.free = { x0, y0, x1, y1 };
+    // the chart as big as the stage's height lets it be ("I want this to
+    // occupy the majority of the page"), moved right as far as it takes to
+    // keep its rings clear of the title and the intro — and a little smaller
+    // only if that is not enough
+    const hits = (cx, cy, rr) => clear.some((b) => {
+      const dx = Math.max(b.x0 - cx, 0, cx - b.x1), dy = Math.max(b.y0 - cy, 0, cy - b.y1);
+      return dx * dx + dy * dy < rr * rr;
+    });
+    let room = Math.max(140, Math.min(x1 - x0, roomY));
+    let cx = (x0 + x1) / 2;
+    const cy = (y0 + y1) / 2;
+    for (let tries = 0; tries < 16; tries++) {
+      const z = room / (2 * R.fit), rr = R.tick1 * z + 8;
+      cx = (x0 + x1) / 2;
+      while (hits(cx, cy, rr) && cx + rr < x1 - 4) cx += 4;
+      if (!hits(cx, cy, rr)) break;
+      room *= 0.96;
+    }
+    fitZ = room / (2 * R.fit);
+    L.ocx = cx / W;
+    L.ocy = cy / H;
+    L.oz = fitZ;
+    if (phone && navOpen) {
+      // the list up over the lower half: the whole chart stands smaller, above it
+      const y2 = H * 0.48 - 6, room2 = Math.max(120, Math.min(x1 - x0, y2 - y0));
+      L.oz = room2 / (2 * R.fit);
+      L.ocy = (y0 + y2) / 2 / H;
+    }
+    // a close look stands left of the middle of its room, the names
+    // reading out to its right; on a phone, above the list when it is up
+    L.zx = phone ? 0.25 : (0.4 * x1) / W;
+    L.zy = phone ? (navOpen ? 0.26 : 0.46) : (0.56 * Math.min(H, VH)) / H;
+    L.zoomH = phone ? H * (navOpen ? 0.36 : 0.56) : Math.min(H, VH) * 0.8;
+    S = Math.ceil(2 * R.fit * fitZ) + 4;
+    stage.style.setProperty("--chart-x", Math.round(L.ocx * W) + "px");
+  }
+  function sizeCanvases() {
+    if (sharp) DPR = sharp.ratio;
+    const k = DPR;
+    // the chart in perspective is only ever drawn with the page at its top
+    // (anything chosen holds it there), so it is drawn only as tall as the
+    // window, not the taller stage (2026-11-07)
+    const cw = W + 2 * OV, ch = Math.min(H, VH) + 2 * OV;
+    cvChart.width = Math.round(cw * k); cvChart.height = Math.round(ch * k);
+    cvDof.width = Math.round(cw * k * 0.5); cvDof.height = Math.round(ch * k * 0.5);
+    // (on a plain screen too since 2026-11-07: three quarters of its pixels while it moves)
+    // (sharper since 2026-11-08 — "more HD": a plain screen's whole pixel,
+    // and three quarters of a sharp one's, never under 1.25)
+    FLY_K = k > 1.25 ? Math.max(1.25, k * 0.75) : k;
+    cvFly.width = FLY_K < k ? Math.round(cw * FLY_K) : 1; cvFly.height = FLY_K < k ? Math.round(ch * FLY_K) : 1;
+    [cvChart, cvDof, cvFly].forEach((c) => {
+      c.style.left = -OV + "px"; c.style.top = -OV + "px";
+      c.style.width = cw + "px"; c.style.height = ch + "px";
+    });
+    liveK = 0; liveHiUntil = performance.now() + LIVE_HI_MS;
+    liveRes(performance.now());
+    // the rotor drawn finer than a plain screen's pixel, so the browser's
+    // turning of it stays sharp (2026-11-08 — "more HD")
+    ROT_K = (window.devicePixelRatio || 1) > 1 ? k : 1.5;
+    cvTurn.width = Math.round(S * ROT_K); cvTurn.height = Math.round(S * ROT_K);
+    cvNames.width = cvTurn.width; cvNames.height = cvTurn.height;
+    namesKey = "";
+    rotor.style.width = S + "px"; rotor.style.height = S + "px";
+    lastRotor = "";
+  }
+  function resize() {
+    measure();
+    sizeCanvases();
+    rotorDirty = chartDirty = true;
+    dofOff();
+    setGoal(poseFor(), true);
+    if (callE) { sway(clock); placeCallFirst(); }
+    syncScrub();
+    earthKey = "";
+    kick();
+  }
+
+  // ---- THE PROJECTION ---------------------------------------------------
+  const V = { fx: 0, fy: 0, z: 1, rot: 0, c: 1, s: 0, ct: 1, st: 0, F: 1000, cx: 0, cy: 0 };
+  function view(fx, fy, z, rot, tilt, cxPx, cyPx) {
+    V.fx = fx; V.fy = fy; V.z = z; V.rot = rot;
+    V.c = Math.cos(rot); V.s = Math.sin(rot);
+    V.ct = Math.cos(tilt); V.st = Math.sin(tilt);
+    V.F = 1.25 * Math.max(H, 400);
+    V.cx = cxPx; V.cy = cyPx;
+  }
+  function viewCam() { view(cam.fx, cam.fy, Math.exp(cam.lz), cam.rot, cam.tilt, cam.cx * W, cam.cy * H); }
+  // world (x, y) -> screen; o.ok is false behind the eye.
+  function proj(x, y, o) {
+    const dx = x - V.fx, dy = y - V.fy;
+    const u = (dx * V.c - dy * V.s) * V.z;
+    const v = (dx * V.s + dy * V.c) * V.z;
+    const d = V.F - v * V.st;
+    if (d < V.F * 0.16) { o.ok = false; return o; }
+    const k = V.F / d;
+    o.x = V.cx + u * k; o.y = V.cy + v * V.ct * k; o.k = k; o.ok = true;
+    return o;
+  }
+  // screen -> world, on the chart's plane; null above its horizon.
+  function unproj(X, Y) {
+    const xs = X - V.cx, ys = Y - V.cy;
+    const den = V.ct * V.F + ys * V.st;
+    if (den <= 1e-6) return null;
+    const v = (ys * V.F) / den;
+    const u = (xs * (V.F - v * V.st)) / V.F;
+    const uu = u / V.z, vv = v / V.z;
+    return { x: V.fx + uu * V.c + vv * V.s, y: V.fy - uu * V.s + vv * V.c };
+  }
+  const T0 = {}, T1 = {}, T2 = {};
+
+  // ---- THE SURFACE being drawn on: its device transform and its bounds ---
+  const SF = { c: null, a: 1, b: 0, cc: 0, d: 1, e: 0, f: 0, x0: 0, y0: 0, x1: 0, y1: 0 };
+  function surface(c, a, b, cc, d, e, f, x0, y0, x1, y1) {
+    SF.c = c; SF.a = a; SF.b = b; SF.cc = cc; SF.d = d; SF.e = e; SF.f = f;
+    SF.x0 = x0; SF.y0 = y0; SF.x1 = x1; SF.y1 = y1;
+  }
+  function base() { SF.c.setTransform(SF.a, SF.b, SF.cc, SF.d, SF.e, SF.f); }
+  function local(la, lb, lc, ld, le, lf) {
+    const s = SF;
+    s.c.setTransform(s.a * la + s.cc * lb, s.b * la + s.d * lb, s.a * lc + s.cc * ld, s.b * lc + s.d * ld,
+      s.a * le + s.cc * lf + s.e, s.b * le + s.d * lf + s.f);
+  }
+  const inView = (x, y, pad) => x > SF.x0 - pad && x < SF.x1 + pad && y > SF.y0 - pad && y < SF.y1 + pad;
+
+  // Draw txt with its start (or centre) at world (x, y), reading along world
+  // angle `ang`, `size` world units tall. Too small or off the surface: not drawn.
+  function textAt(c, x, y, ang, txt, size, align, font, wPre) {
+    const ux = Math.cos(ang), uy = Math.sin(ang);
+    proj(x, y, T0); if (!T0.ok) return false;
+    proj(x + ux, y + uy, T1); if (!T1.ok) return false;
+    proj(x - uy, y + ux, T2); if (!T2.ok) return false;
+    const jux = T1.x - T0.x, juy = T1.y - T0.y, jvx = T2.x - T0.x, jvy = T2.y - T0.y;
+    if (Math.hypot(jvx, jvy) * size < 1.6) return false;
+    const wWorld = ((wPre === undefined ? wOf(font, txt) : wPre) * size) / FPX;
+    let sx = T0.x, sy = T0.y;
+    if (align === "center") { sx -= (jux * wWorld) / 2; sy -= (juy * wWorld) / 2; }
+    const ex = sx + jux * wWorld, ey = sy + juy * wWorld;
+    if (Math.max(sx, ex) < SF.x0 - 40 || Math.min(sx, ex) > SF.x1 + 40 || Math.max(sy, ey) < SF.y0 - 40 || Math.min(sy, ey) > SF.y1 + 40) return false;
+    const s = size / FPX;
+    local(jux * s, juy * s, jvx * s, jvy * s, sx, sy);
+    c.fillText(txt, 0, 0);
+    return true;
+  }
+  // letters spaced round an arc, upright at the top and at the bottom — and
+  // turned over across the sides by a crossfade, never a jump, as the chart
+  // turns them round
+  // the turn a name's reading way is decided by: the camera's own, or — for
+  // the names drawn into the rotor, unturned — the turn the rotor stands at
+  let flipRot = null;
+  function arcText(c, txt, r, mid, size, font, track, alpha) {
+    if (alpha <= 0.003) return;
+    const wb = READ_FIXED ? 0 : smooth((Math.sin(mid + (flipRot === null ? V.rot : flipRot)) + FLIP) / (2 * FLIP));
+    if (wb < 0.999) { c.globalAlpha = alpha * (1 - wb); arcSprite(c, txt, r, mid, size, font, track, 1) || arcRun(c, txt, r, mid, size, font, track, 1); }
+    if (wb > 0.001) { c.globalAlpha = alpha * wb; arcSprite(c, txt, r, mid, size, font, track, -1) || arcRun(c, txt, r, mid, size, font, track, -1); }
+  }
+  // A NAME ROUND ITS ARC, AS A PICTURE (2026-11-08 — "make it less laggy, and
+  // more HD"): its letters set round the arc once, flat, into a small canvas
+  // of their own, at as many pixels a unit as the screen needs (in steps of
+  // the square root of two), and laid down where the name stands with the
+  // projection there — one picture for the whole name where every letter was
+  // a placing and a drawing of its own, every frame of every flight.
+  const sprites = new Map();
+  function arcSprite(c, txt, r, mid, size, font, track, dir) {
+    const cx = Math.cos(mid) * r, cy = Math.sin(mid) * r;
+    proj(cx, cy, T0); if (!T0.ok) return true;
+    proj(cx + 1, cy, T1); if (!T1.ok) return true;
+    proj(cx, cy + 1, T2); if (!T2.ok) return true;
+    const c1x = T1.x - T0.x, c1y = T1.y - T0.y, c2x = T2.x - T0.x, c2y = T2.y - T0.y;
+    const scr = Math.max(Math.hypot(c1x, c1y), Math.hypot(c2x, c2y));
+    if (scr * size < 1.6) return true;
+    const dev = scr * Math.hypot(SF.a, SF.b);
+    const sc = Math.pow(2, Math.ceil(Math.log2(Math.max(0.5, dev)) * 2) / 2);
+    if (sc > 24) return false;
+    const fill = c.fillStyle;
+    const stem = txt + "|" + font + "|" + size + "|" + r + "|" + dir + "|" + track + "|" + fill + "|";
+    const key = stem + sc;
+    let sp = sprites.get(key);
+    // while the camera flies, a picture already made a step or two finer
+    // serves, rather than one made new every step of the zoom
+    if (!sp && flyingNow) for (const f of [Math.SQRT2, 2]) { const q = sprites.get(stem + sc * f); if (q) { sp = q; break; } }
+    if (!sp) {
+      if (sprites.size > 360) sprites.clear();
+      sp = makeArcSprite(txt, r, size, font, track, dir, sc, fill);
+      sprites.set(key, sp);
+    }
+    const ssc = sp ? sp.sc : sc;
+    if (!sp) return false;
+    // the projection at the name's middle, turned from the picture's frame
+    // (its arc's middle at the top) to where it stands
+    const th = mid + Math.PI / 2, ct = Math.cos(th), st = Math.sin(th);
+    const ja = c1x * ct + c2x * st, jb = c1y * ct + c2y * st, jc = -c1x * st + c2x * ct, jd = -c1y * st + c2y * ct;
+    const ox = sp.x0, oy = sp.y0 + r;
+    const reach = scr * (sp.x1 - sp.x0) * 0.6 + 20;
+    if (T0.x < SF.x0 - reach || T0.x > SF.x1 + reach || T0.y < SF.y0 - reach || T0.y > SF.y1 + reach) return true;
+    local(ja / ssc, jb / ssc, jc / ssc, jd / ssc, T0.x + ja * ox + jc * oy, T0.y + jb * ox + jd * oy);
+    c.drawImage(sp.cv, 0, 0);
+    return true;
+  }
+  function makeArcSprite(txt, r, size, font, track, dir, sc, fill) {
+    const m = charsOf(font, txt);
+    const k = size / FPX, gap = size * track;
+    let total = gap * (m.chars.length - 1);
+    for (const w of m.ws) total += w * k;
+    const half = total / (2 * r);
+    if (half > 1.4) return null;
+    const pad = size * 0.9;
+    const x0 = -r * Math.sin(half) - pad, x1 = r * Math.sin(half) + pad;
+    const y0 = -r - pad, y1 = -r * Math.cos(half) + pad;
+    const W2 = Math.ceil((x1 - x0) * sc), H2 = Math.ceil((y1 - y0) * sc);
+    if (W2 < 1 || H2 < 1 || W2 * H2 > 4e6) return null;
+    const cv = document.createElement("canvas");
+    cv.width = W2; cv.height = H2;
+    const x = cv.getContext("2d");
+    x.font = font; x.fillStyle = fill; x.textBaseline = "middle"; x.textAlign = "left";
+    let a = -Math.PI / 2 - (dir * total) / (2 * r);
+    for (let i = 0; i < m.chars.length; i++) {
+      const w = m.ws[i] * k;
+      const ac = a + (dir * w) / (2 * r);
+      const ang = ac + (dir * Math.PI) / 2, ux = Math.cos(ang), uy = Math.sin(ang);
+      const px = Math.cos(ac) * r - (ux * w) / 2, py = Math.sin(ac) * r - (uy * w) / 2;
+      x.setTransform(sc * ux * k, sc * uy * k, -sc * uy * k, sc * ux * k, sc * (px - x0), sc * (py - y0));
+      x.fillText(m.chars[i], 0, 0);
+      a += (dir * (w + gap)) / r;
+    }
+    return { cv, x0, y0, x1, sc };
+  }
+  function arcRun(c, txt, r, mid, size, font, track, dir) {
+    const m = charsOf(font, txt);
+    const k = size / FPX, gap = size * track;
+    let total = gap * (m.chars.length - 1);
+    for (const w of m.ws) total += w * k;
+    let a = mid - (dir * total) / (2 * r);
+    for (let i = 0; i < m.chars.length; i++) {
+      const w = m.ws[i] * k;
+      const ac = a + (dir * w) / (2 * r);
+      textAt(c, Math.cos(ac) * r, Math.sin(ac) * r, ac + (dir * Math.PI) / 2, m.chars[i], size, "center", font, m.ws[i]);
+      a += (dir * (w + gap)) / r;
+    }
+  }
+
+  // ---- THE STILL THINGS, and the moving ones ------------------------------
+  const rand = rng(20261102);
+  const dust = [];
+  for (let i = 0; i < 2300; i++) {
+    const t = rand();
+    const r = R.dust0 + Math.pow(t, 1.6) * (R.dust1 - R.dust0);
+    const a = rand() * TAU;
+    dust.push(Math.cos(a) * r, Math.sin(a) * r, 0.5 + rand() * 1.4, 0.12 + rand() * 0.5 * (1 - t * 0.6));
+  }
+  // the far field, turning a little on its own and twinkling: r, a, size, alpha, turn, phase, rate
+  const SKY = 300;
+  const sky = new Float32Array(SKY * 7);
+  for (let i = 0; i < SKY; i++) {
+    sky.set([220 + rand() * 1500, rand() * TAU, 0.4 + rand() * 1.0, 0.05 + rand() * 0.2, (rand() - 0.5) * 0.006, rand() * TAU, 0.3 + rand() * 1.2], i * 7);
+  }
+  // the dust drifting past the rim: r, a, size, alpha, turn, swell, phase, rate
+  const DRIFT = 360;
+  const drift = new Float32Array(DRIFT * 8);
+  for (let i = 0; i < DRIFT; i++) {
+    const t = rand();
+    drift.set([R.dust0 - 30 + Math.pow(t, 1.3) * (R.dust1 - R.dust0 + 60), rand() * TAU, 0.6 + rand() * 1.5, 0.18 + rand() * 0.42,
+      (0.004 + rand() * 0.012) * (rand() < 0.3 ? -1 : 1), 4 + rand() * 14, rand() * TAU, 0.15 + rand() * 0.5], i * 8);
+  }
+  // ---- THE EARTH, as an architect draws it -------------------------------
+  // Its coastlines (perfumers-earth.js: Natural Earth's land, public domain)
+  // kept as each point's longitude and the cosine and sine of its latitude,
+  // and turned on the Earth's axis by `spin` — the longitude facing you.
+  // Seen in orthographic projection from EARTH_TILT above the equator:
+  // (x right, y up, z towards you), on a sphere of radius 1.
+  const COAST = (EARTH_SNAPSHOT || []).map((r) => {
+    const n = r.length / 2, lam = new Float32Array(n), cp = new Float32Array(n), sp = new Float32Array(n);
+    const cl = new Float32Array(n), sl = new Float32Array(n);
+    let area = 0;
+    for (let i = 0; i < n; i++) {
+      lam[i] = r[2 * i] * DEG; const ph = r[2 * i + 1] * DEG;
+      cp[i] = Math.cos(ph); sp[i] = Math.sin(ph); cl[i] = Math.cos(lam[i]); sl[i] = Math.sin(lam[i]);
+      const j = (i + 1) % n;
+      area += r[2 * i] * r[2 * j + 1] - r[2 * j] * r[2 * i + 1];
+    }
+    // which way round it runs, so that where it goes behind the Earth it is
+    // joined along the rim on the side of its own land
+    return { n, lam, cp, sp, cl, sl, cw: area < 0 };
+  });
+  const EX = new Float32Array(2048), EY = new Float32Array(2048), EZ = new Float32Array(2048);
+  const cT = Math.cos(EARTH_TILT), sT = Math.sin(EARTH_TILT);
+  let spin = -28 * DEG;        // the Atlantic facing you first, as in the picture
+  let spinTween = null;        // its turn to a choice: { from, to, t0, ms }
+  function turnEarthTo(pin) {
+    if (!pin) { spinTween = null; return; }
+    let to = pin.lon - 0.12;
+    while (to - spin > Math.PI) to -= TAU;
+    while (to - spin < -Math.PI) to += TAU;
+    spinTween = { from: spin, to, t0: performance.now(), ms: STILL ? 0 : 2200 };
+  }
+  const E3 = { x: 0, y: 0, z: 0 };
+  function onEarth(lam, cp, sp, o) {
+    const d = lam - spin, cl = Math.cos(d);
+    o.x = cp * Math.sin(d);
+    o.y = cT * sp - sT * cp * cl;
+    o.z = sT * sp + cT * cp * cl;
+    return o;
+  }
+  PINS.forEach((p) => { p.cp = Math.cos(p.lat); p.sp = Math.sin(p.lat); });
+  function placePins() { for (const p of PINS) { onEarth(p.lon, p.cp, p.sp, E3); p.x = E3.x; p.y = E3.y; p.z = E3.z; } }
+  // a hatch for the land, made once
+  let hatch = null;
+  function hatchFor(c) {
+    if (hatch && hatch.c === c) return hatch.p;
+    const t = document.createElement("canvas");
+    t.width = t.height = 7;
+    const h = t.getContext("2d");
+    h.strokeStyle = SOLID.ink; h.globalAlpha = 0.5; h.lineWidth = 0.6;
+    h.beginPath(); h.moveTo(-1, 8); h.lineTo(8, -1); h.stroke();
+    hatch = { c, p: c.createPattern(t, "repeat") };
+    return hatch.p;
+  }
+  // The Earth drawn through a mapping from its own (x, y) — flat on the
+  // window for its picture, or onto the chart's plane through the camera —
+  // with as much of it as the moment asks for (`fine`: the waterlines and
+  // the hatching).
+  const EM = { flat: true, cx: 0, cy: 0, r: 1, cr: 1, sr: 0 };
+  function emap(x, y, o) {
+    if (EM.flat) { o.x = EM.cx + EM.r * x; o.y = EM.cy - EM.r * y; o.ok = true; o.k = 1; return o; }
+    const ex = R.earth * x, ey = -R.earth * y;
+    return proj(ex * EM.cr - ey * EM.sr, ex * EM.sr + ey * EM.cr, o);
+  }
+  function earthUpright() { EM.flat = false; EM.cr = Math.cos(-V.rot); EM.sr = Math.sin(-V.rot); }
+  // the land as two paths: closed and filled — cut at the rim where it goes
+  // round behind the Earth and joined along the rim the shorter way, so no
+  // straight cut runs across the face — and the coast as a stroke, broken
+  // where it goes behind
+  function landPaths() {
+    const fill = new Path2D(), coast = new Path2D();
+    const cS = Math.cos(spin), sS = Math.sin(spin);
+    for (const r of COAST) {
+      // (the turn by angle addition: no sine or cosine a point)
+      let front = 0;
+      for (let i = 0; i < r.n; i++) {
+        const cd = r.cl[i] * cS + r.sl[i] * sS, sd = r.sl[i] * cS - r.cl[i] * sS, cp = r.cp[i], sp = r.sp[i];
+        EX[i] = cp * sd; EY[i] = cT * sp - sT * cp * cd; EZ[i] = sT * sp + cT * cp * cd;
+        if (EZ[i] >= 0) front++;
+      }
+      if (!front) continue;
+      clipRing(fill, r.n, front === r.n, r.cw);
+      let pen = false;
+      for (let i = 0; i < r.n; i++) {
+        if (EZ[i] < 0) { pen = false; continue; }
+        emap(EX[i], EY[i], T0);
+        if (!T0.ok) { pen = false; continue; }
+        if (pen) coast.lineTo(T0.x, T0.y); else { coast.moveTo(T0.x, T0.y); pen = true; }
+      }
+      if (EZ[0] >= 0 && EZ[r.n - 1] >= 0) { emap(EX[0], EY[0], T0); if (T0.ok) coast.lineTo(T0.x, T0.y); }
+    }
+    return { fill, coast };
+  }
+  // A ring of land on the Earth's face, clipped where it goes round behind:
+  // cut into the pieces that are on the face, and each piece's end on the
+  // rim joined round the rim — the way the ring runs, so its land stays on
+  // the side it is on — to the start of the piece that comes next there.
+  // (ex, ey, ez: the ring turned, z towards you; cw: which way round it runs;
+  // put(x, y, first): a point of the outline, on the face's unit circle.)
+  function clipFace(ex, ey, ez, n, cw, put) {
+    let s0 = -1;
+    for (let i = 0; i < n; i++) if (ez[i] >= 0 && ez[(i - 1 + n) % n] < 0) { s0 = i; break; }
+    if (s0 < 0) return;
+    const cross = (a, b) => {
+      const t = ez[a] / (ez[a] - ez[b]);
+      const px = ex[a] + (ex[b] - ex[a]) * t, py = ey[a] + (ey[b] - ey[a]) * t, m = Math.hypot(px, py) || 1;
+      return [px / m, py / m];
+    };
+    // the pieces on the face, each from where it comes on to where it goes off
+    const pieces = [];
+    let cur = null;
+    for (let k = 0; k < n; k++) {
+      const b = (s0 + k) % n, a = (b - 1 + n) % n;
+      const va = ez[a] >= 0, vb = ez[b] >= 0;
+      if (!va && vb) { const c = cross(a, b); cur = { in: Math.atan2(c[1], c[0]), pts: [c, [ex[b], ey[b]]] }; }
+      else if (va && vb) { if (cur) cur.pts.push([ex[b], ey[b]]); }
+      else if (va && !vb && cur) { const c = cross(a, b); cur.pts.push(c); cur.out = Math.atan2(c[1], c[0]); pieces.push(cur); cur = null; }
+    }
+    if (!pieces.length) return;
+    const used = new Array(pieces.length).fill(false);
+    // how far round the rim, the way the ring runs, from one angle to another
+    const ahead = (from, to) => { let d = cw ? from - to : to - from; while (d < 0) d += TAU; while (d >= TAU) d -= TAU; return d; };
+    for (let s = 0; s < pieces.length; s++) {
+      if (used[s]) continue;
+      let p = s, first = true;
+      for (let guard = 0; guard <= pieces.length; guard++) {
+        used[p] = true;
+        const pc = pieces[p];
+        for (const q of pc.pts) { put(q[0], q[1], first); first = false; }
+        // the piece whose start comes first round the rim from this end
+        let next = -1, best = Infinity;
+        for (let j = 0; j < pieces.length; j++) { const d = ahead(pc.out, pieces[j].in); if (d < best) { best = d; next = j; } }
+        const steps = Math.ceil(best / 0.06);
+        for (let j = 1; j < steps; j++) { const an = pc.out + (cw ? -1 : 1) * (best * j) / steps; put(Math.cos(an), Math.sin(an), false); }
+        if (next < 0 || used[next]) break;
+        p = next;
+      }
+      put(NaN, NaN, false);
+    }
+  }
+  function clipRing(x, n, all, cw) {
+    if (all) {
+      for (let i = 0; i < n; i++) { emap(EX[i], EY[i], T0); if (!i) x.moveTo(T0.x, T0.y); else x.lineTo(T0.x, T0.y); }
+      x.closePath();
+      return;
+    }
+    clipFace(EX, EY, EZ, n, cw, (px, py, first) => {
+      if (px !== px) { x.closePath(); return; }
+      emap(px, py, T0);
+      if (!T0.ok) return;
+      if (first) x.moveTo(T0.x, T0.y); else x.lineTo(T0.x, T0.y);
+    });
+  }
+  // the graticule, every fifteen degrees, the equator and the meridian
+  // facing you a little brighter, and the prime meridian named
+  function gratPath(fine, which) {
+    const p = new Path2D(), bright = new Path2D();
+    const step = fine ? 4 * DEG : 6 * DEG;
+    if (which !== "mer") for (let la = -75; la <= 75; la += 15) {
+      const cp = Math.cos(la * DEG), sp = Math.sin(la * DEG);
+      let pen = false;
+      const into = la === 0 ? bright : p;
+      for (let lo = -180; lo <= 180.001; lo += step / DEG) {
+        onEarth(lo * DEG, cp, sp, E3);
+        if (E3.z < 0) { pen = false; continue; }
+        emap(E3.x, E3.y, T0); if (!T0.ok) { pen = false; continue; }
+        if (pen) into.lineTo(T0.x, T0.y); else { into.moveTo(T0.x, T0.y); pen = true; }
       }
     }
-    const fl = STILL ? 1 : 1 - Math.exp(-dt * 6);
-    for (const b of blobs) {
-      lean(b);
-      // the one the middle becomes is the traveller until it lands
-      if (ch >= 0 && b === TR.back) continue;
-      if (!b.img) continue;
-      // coming in one after another (after the change has turned)
-      const startAt = ch >= 0 ? 0.42 : 0;
-      if (ch < 0 || ch > startAt) b.in = Math.min(1, b.in + dt * (STILL ? 99 : 1.3));
-      b.lift += ((stick === b || aim === b ? 1 : 0) - b.lift) * fl;
-      const k = soft(clamp(b.in * 1.15 - b.wait, 0, 1));
-      if (k <= 0) continue;
-      const s = b.img.s * (0.84 + 0.16 * k) * (1 + 0.06 * b.lift);
-      c.globalAlpha = k * (0.94 + 0.06 * b.lift);
-      c.drawImage(b.img.c, b.x + b.dx - s / 2, b.y + b.dy - s / 2, s, s);
-      // nothing written by it (2026-11-07, last): the list names it and
-      // lights it, and a small note by the hand says which it is
+    if (which !== "par") for (let lo = -180; lo < 180; lo += 15) {
+      let pen = false;
+      const into = lo === 0 ? bright : p;
+      for (let la = -90; la <= 90.001; la += step / DEG) {
+        onEarth(lo * DEG, Math.cos(la * DEG), Math.sin(la * DEG), E3);
+        if (E3.z < 0) { pen = false; continue; }
+        emap(E3.x, E3.y, T0); if (!T0.ok) { pen = false; continue; }
+        if (pen) into.lineTo(T0.x, T0.y); else { into.moveTo(T0.x, T0.y); pen = true; }
+      }
+    }
+    return { p, bright };
+  }
+  // the Earth's disc on the surface: a circle flat, its picture on the
+  // chart's plane otherwise
+  function discPath(r) {
+    const d = new Path2D();
+    if (EM.flat) { d.arc(EM.cx, EM.cy, EM.r * r, 0, TAU); return d; }
+    for (let i = 0; i <= 72; i++) {
+      const a = (i / 72) * TAU;
+      emap(Math.cos(a) * r, Math.sin(a) * r, T0);
+      if (!T0.ok) continue;
+      if (!i) d.moveTo(T0.x, T0.y); else d.lineTo(T0.x, T0.y);
+    }
+    d.closePath();
+    return d;
+  }
+  // The Earth in three parts, so that on the whole chart what does not move
+  // as it turns is drawn once: BACK the sea and the parallels (which a turn
+  // about the pole leaves where they are), LAND the land and the meridians,
+  // FRONT the night side's shade and the rim. Close in, all three at once.
+  function drawEarth(c, alpha, fine, part) {
+    if (alpha <= 0.01 || !COAST.length) return;
+    part = part || "all";
+    const all = part === "all";
+    const z = EM.flat ? EM.r / R.earth : V.z;
+    const disc = discPath(1);
+    c.save();
+    c.globalAlpha = alpha;
+    if (all || part === "back") {
+      c.fillStyle = "rgb(" + RGB.sea + ")";
+      c.fill(disc);
+      const g = gratPath(fine, "par");
+      c.strokeStyle = SOLID.ink; c.lineWidth = 0.6;
+      c.globalAlpha = 0.085 * alpha; c.stroke(g.p);
+      c.globalAlpha = 0.24 * alpha; c.stroke(g.bright);
+    }
+    if (all || part === "land") {
+      const land = landPaths();
+      const k = Math.max(0.55, z * 1.9);
+      if (fine === true) {
+        // a waterline: the coast drawn wide and its middle taken out, the
+        // land laid over its inner half (kept inside the Earth's rim)
+        c.save(); c.clip(disc);
+        c.lineJoin = "bevel";
+        c.globalAlpha = 0.17 * alpha; c.strokeStyle = SOLID.ink; c.lineWidth = 8.4 * k; c.stroke(land.coast);
+        c.globalAlpha = 1; c.strokeStyle = "rgb(" + RGB.sea + ")"; c.lineWidth = 6.2 * k; c.stroke(land.coast);
+        c.restore();
+      } else if (fine === "halo") {
+        // on the turning Earth, a soft edge in its place — one thin stroke,
+        // the land laid over its inner half: the waterline costs too much to
+        // draw again as it turns
+        c.lineJoin = "bevel";
+        c.globalAlpha = 0.16 * alpha; c.strokeStyle = SOLID.ink; c.lineWidth = 3.4 * k; c.stroke(land.coast);
+        c.lineJoin = "miter";
+      }
+      c.globalAlpha = alpha;
+      c.fillStyle = "rgb(" + RGB.land + ")";
+      c.fill(land.fill);
+      if (fine) { c.fillStyle = hatchFor(c); c.globalAlpha = 0.36 * alpha; c.fill(land.fill); }
+      c.lineJoin = "miter";
+      const g = gratPath(fine, "mer");
+      c.strokeStyle = SOLID.ink; c.lineWidth = 0.6;
+      c.globalAlpha = 0.085 * alpha; c.stroke(g.p);
+      c.globalAlpha = 0.24 * alpha; c.stroke(g.bright);
+      c.globalAlpha = 0.7 * alpha; c.lineWidth = Math.max(0.6, z * 1.5); c.stroke(land.coast);
+    }
+    if (all || part === "front") {
+      c.clip(disc);
+      // the night side, shaded off to the lower right
+      proj(0, 0, T1);
+      const cx = EM.flat ? EM.cx : T1.x, cy = EM.flat ? EM.cy : T1.y, rr = EM.flat ? EM.r : R.earth * V.z * T1.k;
+      const sh = c.createRadialGradient(cx - rr * 0.42, cy - rr * 0.46, rr * 0.2, cx, cy, rr * 1.08);
+      sh.addColorStop(0, "rgba(11,12,13,0)");
+      sh.addColorStop(0.62, "rgba(11,12,13,0.12)");
+      sh.addColorStop(1, "rgba(11,12,13,0.62)");
+      c.globalAlpha = alpha; c.fillStyle = sh; c.fill(disc);
+    }
+    c.restore();
+    if (all || part === "front") {
+      // its rim
+      c.strokeStyle = SOLID.ink; c.lineWidth = Math.max(0.7, z * 1.6);
+      c.globalAlpha = 0.6 * alpha; c.stroke(disc);
     }
     c.globalAlpha = 1;
-    if (ch >= 0) {
-      // A CHANGE: the middle going out to its place, the one pressed coming in
-      if (TR.back) { TR.outT.x1 = TR.back.x + TR.back.dx; TR.outT.y1 = TR.back.y + TR.back.dy; }
-      drawTraveller(c, TR.outT, ch, t, TR.outT.gone ? 1 - soft((ch - 0.5) / 0.5) : 1);
-      drawTraveller(c, TR.inT, ch, t, 1);
-      if (ch >= 1) {
-        if (TR.back) { TR.back.in = 1; }
-        changed();
+  }
+  // the pins: a square for a country a house is from, a ring for one a
+  // perfumer is from — those turned towards you
+  function drawPins(c, alpha) {
+    if (alpha <= 0.01) return;
+    const z = EM.flat ? EM.r / R.earth : V.z;
+    const s = clamp(5.4 * z, 3, 7);
+    for (const p of PINS) {
+      if (p.z < 0.02) continue;
+      emap(p.x, p.y, T0); if (!T0.ok) continue;
+      const a = alpha * smooth(p.z / 0.25) * (p.lit ? 1 : 0.8);
+      if (p.houses.length) {
+        c.fillStyle = p.lit ? SOLID.gold : SOLID.ink; c.globalAlpha = a;
+        c.fillRect(T0.x - s / 2, T0.y - s / 2, s, s);
       }
-    } else drawCur(c, cur, P.x, P.y, P.r, t, 1, boost || 1);
-    // THE DOUBLE CIRCLE, as the poster's: round the middle at rest, and on
-    // the last sphere the hand was on until it is on another — on a spring,
-    // so it travels between them and settles rather than jumps (2026-11-08 —
-    // "make the highlighting circle smoother")
-    const on = stick && blobs.includes(stick) && stick.img && ch < 0 ? stick : null;
-    const tx = on ? on.x + on.dx : P.x - P.r * 0.04, ty = on ? on.y + on.dy : P.y - P.r * 0.06, tr = on ? on.r * 1.3 : P.r * 0.8;
-    if (!ret.r) { ret.x = tx; ret.y = ty; ret.r = tr; }
-    if (STILL) { ret.x = tx; ret.y = ty; ret.r = tr; }
-    else {
-      const w = 8.5, h = Math.min(dt, 1 / 30);
-      ret.vx += (w * w * (tx - ret.x) - 2 * w * ret.vx) * h; ret.x += ret.vx * h;
-      ret.vy += (w * w * (ty - ret.y) - 2 * w * ret.vy) * h; ret.y += ret.vy * h;
-      ret.vr += (w * w * (tr - ret.r) - 2 * w * ret.vr) * h; ret.r += ret.vr * h;
+      if (p.perfumers.length) {
+        c.strokeStyle = p.lit ? SOLID.gold : SOLID.rose; c.lineWidth = 1; c.globalAlpha = a;
+        c.beginPath(); c.arc(T0.x, T0.y, s * 1.25, 0, TAU); c.stroke();
+      }
     }
-    c.strokeStyle = "rgba(255,255,255,0.88)"; c.lineWidth = 1;
-    const wob = STILL ? 0 : Math.sin(t * 0.7) * 0.04;
-    c.beginPath(); c.arc(ret.x, ret.y, Math.max(1, ret.r), 0, TAU); c.stroke();
-    c.beginPath(); c.arc(ret.x + ret.r * (0.03 + wob * 0.3), ret.y - ret.r * (0.055 - wob * 0.2), Math.max(1, ret.r * 0.965), 0, TAU); c.stroke();
+    c.globalAlpha = 1;
+  }
+  // The Earth's picture on the whole chart: its back and its front drawn
+  // once for its size, its land and meridians again only when it has turned
+  // by half a pixel, and the whole laid down every frame
+  // (a canvas of its own on the page, under the live layer, so that the
+  // browser lays it down every frame and nothing is copied for it)
+  const earthCv = document.createElement("canvas");
+  earthCv.className = "pf-earth";
+  earthCv.setAttribute("aria-hidden", "true");
+  stage.insertBefore(earthCv, cvLive);
+  const ectx = earthCv.getContext("2d");
+  let lastEarthCss = "";
+  const backCv = document.createElement("canvas"), frontCv = document.createElement("canvas");
+  let earthKey = "", staticKey = "", earthPad = 0;
+  const stats0 = { earth: 0, earthStill: 0 };
+  function earthPicture(r, alpha) {
+    const pad = Math.ceil(Math.max(40, r * 0.16));
+    const size = Math.ceil(2 * (r + pad));
+    const px = Math.round(size * DPR);
+    const sk = [px, Math.round(r * 4), alpha.toFixed(2)].join("|");
+    if (sk !== staticKey) {
+      staticKey = sk; earthKey = "";
+      stats0.earthStill++;
+      for (const [cv, part] of [[backCv, "back"], [frontCv, "front"]]) {
+        cv.width = cv.height = px;
+        const x = cv.getContext("2d");
+        x.setTransform(px / size, 0, 0, px / size, 0, 0);
+        EM.flat = true; EM.cx = size / 2; EM.cy = size / 2; EM.r = r;
+        drawEarth(x, alpha, true, part);
+      }
+    }
+    const key = [sk, Math.round(spin * r * 1.6), PINS.map((p) => (p.lit ? 1 : 0)).join("")].join("|");
+    if (key === earthKey) return;
+    earthKey = key; earthPad = pad;
+    stats0.earth++;
+    if (earthCv.width !== px) { earthCv.width = earthCv.height = px; earthCv.style.width = earthCv.style.height = size + "px"; hatch = null; }
+    const k = px / size;
+    ectx.setTransform(1, 0, 0, 1, 0, 0);
+    ectx.clearRect(0, 0, px, px);
+    ectx.drawImage(backCv, 0, 0);
+    ectx.setTransform(k, 0, 0, k, 0, 0);
+    EM.flat = true; EM.cx = size / 2; EM.cy = size / 2; EM.r = r;
+    placePins();
+    drawEarth(ectx, alpha, "halo", "land");
+    ectx.setTransform(1, 0, 0, 1, 0, 0);
+    ectx.drawImage(frontCv, 0, 0);
+    ectx.setTransform(k, 0, 0, k, 0, 0);
+    drawPins(ectx, alpha);
+  }
+
+  // ---- THE CAMERA, on two springs -----------------------------------------
+  const KEYS = ["fx", "fy", "lz", "rot", "tilt", "cx", "cy"];
+  // how many pixels on the window a unit of each comes to, to say when it is at rest
+  const PX = { fx: 1, fy: 1, lz: 600, rot: 700, tilt: 400, cx: 1000, cy: 800 };
+  const cam = { fx: 0, fy: 0, lz: Math.log(0.3), rot: 0, tilt: 0, cx: 0.5, cy: 0.5 };
+  const lead = Object.assign({}, cam), goal = Object.assign({}, cam);
+  const camV = {}, leadV = {};
+  KEYS.forEach((k) => { camV[k] = 0; leadV[k] = 0; });
+  let labelZ = 1.5;            // the zoom the chosen names are sized for
+  function stepCam(dt) {
+    let moving = false;
+    const w = SPRING;
+    const e = Math.exp(-w * dt);
+    PX.fx = PX.fy = Math.exp(Math.max(cam.lz, goal.lz));
+    PX.cx = W; PX.cy = H;
+    for (const k of KEYS) {
+      let d = lead[k] - goal[k], t1 = (leadV[k] + w * d) * dt;
+      lead[k] = goal[k] + (d + t1) * e; leadV[k] = (leadV[k] - w * t1) * e;
+      d = cam[k] - lead[k]; t1 = (camV[k] + w * d) * dt;
+      cam[k] = lead[k] + (d + t1) * e; camV[k] = (camV[k] - w * t1) * e;
+      const px = PX[k];
+      if (Math.abs(cam[k] - goal[k]) * px > REST_PX || Math.abs(lead[k] - goal[k]) * px > REST_PX || Math.abs(camV[k]) * px > 8) moving = true;
+    }
+    if (!moving) jumpCam();
+    return moving;
+  }
+  function jumpCam() { for (const k of KEYS) { cam[k] = lead[k] = goal[k]; camV[k] = leadV[k] = 0; } }
+  function setGoal(p, jump) {
+    let r = p.rot;
+    while (r - cam.rot > Math.PI) r -= TAU;
+    while (r - cam.rot < -Math.PI) r += TAU;
+    Object.assign(goal, p);
+    goal.rot = r;
+    if (goal.tilt > 0.01) labelZ = Math.exp(goal.lz);
+    if (jump || STILL) jumpCam();
+    kick();
+  }
+  const zoomed = () => goal.tilt > 0.01;
+  // every choice from as close as every other (2026-11-06 — "the zoom
+  // length should be fixed")
+  const zFix = () => (phone ? Z_FIX_PHONE : Z_FIX);
+  function overviewPose() {
+    return { fx: 0, fy: 0, lz: Math.log(L.oz), rot: goal.rot, tilt: 0, cx: L.ocx, cy: L.ocy };
+  }
+  function closePose(ang, r, z) {
+    return { fx: Math.cos(ang) * r, fy: Math.sin(ang) * r, lz: Math.log(z), rot: -0.4 - ang, tilt: TILT, cx: L.zx, cy: L.zy };
+  }
+  // the smallest arc round the circle holding every angle given
+  function coverArc(as) {
+    const n = as.map((a) => ((a % TAU) + TAU) % TAU).sort((x, y) => x - y);
+    if (n.length === 1) return { mid: n[0], span: 0 };
+    let gap = TAU - n[n.length - 1] + n[0], at = 0;
+    for (let i = 1; i < n.length; i++) { const g = n[i] - n[i - 1]; if (g > gap) { gap = g; at = i; } }
+    const span = TAU - gap;
+    return { mid: n[at] + span / 2, span };
+  }
+  // THE SCROLL: where along what is chosen the camera stands, counted in
+  // its perfumes — 0 its first, 1 its second; the wheel, a swipe, the arrow
+  // keys and the scrubber move it ("the scrolling while hovering on the
+  // image will cause you to scroll through the perfumes of that
+  // house/perfumer. This is especially important for big perfumers like
+  // prin lomoros")
+  let scrollS = 0;
+  // how many perfumes the window holds at the fixed zoom
+  const viewN = () => (L.zoomH / zFix()) / (R.label * slot);
+  // where a choice is first looked at: its middle if it fits, else its
+  // beginning, its first perfume near the top of the window
+  function startAt(n) { const v = viewN(); return n <= v * 0.85 ? (n - 1) / 2 : Math.min(n - 1, v * 0.36); }
+  function angleAt(list, s) {
+    const i = clamp(Math.floor(s), 0, list.length - 1), j = Math.min(list.length - 1, i + 1), t = clamp(s - i, 0, 1);
+    const a = list[i].to;
+    let b = list[j].to;
+    while (b - a > Math.PI) b -= TAU;
+    while (a - b > Math.PI) b += TAU;
+    return a + (b - a) * t;
+  }
+  function poseOf(list) {
+    if (!list || !list.length) return overviewPose();
+    return closePose(angleAt(list, clamp(scrollS, 0, list.length - 1)), R.look, zFix());
+  }
+  // where a point of the chart would stand on the window, from a pose
+  function screenUnder(q, x, y) {
+    view(q.fx, q.fy, Math.exp(q.lz), q.rot, q.tilt, q.cx * W, q.cy * H);
+    proj(x, y, T2);
+    const o = { ok: T2.ok, x: T2.x, y: T2.y };
+    viewCam();
+    return o;
+  }
+  function poseFor() {
+    if (!sel.kind || !focusList || !focusList.length) return overviewPose();
+    if (sel.kind === "perfume") {
+      // a perfume is looked at from where its house (or its year) is: the
+      // same place, its name lit there — moved only as far as it takes to
+      // bring its dot onto the window, clear of its edges
+      const p = poseOf(focusList), e = sel.e;
+      const wx = Math.cos(e.to) * e.rDot, wy = Math.sin(e.to) * e.rDot;
+      const F = callRoom(), m = phone ? 34 : 64;
+      for (let i = 0; i <= 6; i++) {
+        const t = i / 6;
+        const q = Object.assign({}, p, { fx: lerp(p.fx, wx, t), fy: lerp(p.fy, wy, t) });
+        const o = screenUnder(q, wx, wy);
+        if (o.ok && o.x > F.x0 + m && o.x < F.x1 - m && o.y > F.y0 + m && o.y < F.y1 - m) return q;
+      }
+      return Object.assign({}, p, { fx: wx, fy: wy });
+    }
+    return poseOf(focusList);
+  }
+
+  // ---- WHAT IS CHOSEN ---------------------------------------------------
+  let sel = { kind: null, pid: null, hid: null, year: null, e: null };
+  // a perfume's window: the one shown (callE), the one waiting to be shown
+  // once the chart has settled, and when the perfume was lit
+  let callE = null, callWait = null, litT0 = -1;
+  let focus = null, focusList = null, emT0 = -1;
+  // the perfume the scroll stands at, close in
+  const scrollAt = () => (focusList && zoomed() && sel.kind !== "perfume" ? focusList[clamp(Math.round(scrollS), 0, focusList.length - 1)] : null);
+
+  // ---- DRAWING THE CHART -------------------------------------------------
+  let intro = STILL ? 1 : 0, introT0 = -1;
+  const labelsOn = () => clamp(intro * 1.6 - 0.6, 0, 1);
+  function growth(e) {
+    if (intro >= 1) return 1;
+    return ease(clamp(intro * 1.55 - (e.no / N) * 0.55, 0, 1));
+  }
+  // how far the chosen names are written: none on the whole chart, all close in
+  const closeAmt = () => clamp((cam.tilt / TILT - 0.35) / 0.5, 0, 1);
+  const labelSize = () => clamp(11.5 / labelZ, 8.4, 12.5);
+  const written = (e) => focus && focus.has(e) && zoomed();
+
+  // Close in, only part of the circle is on the window: the angles round it
+  // that can be seen at all, found once a drawing from the window's edge, so
+  // a ring is walked only where it shows.
+  const VIS = { all: true, a0: 0, a1: 0 };
+  function visibleArc() {
+    if (VIS_FORCE) { VIS.all = VIS_FORCE.all; VIS.a0 = VIS_FORCE.a0; VIS.a1 = VIS_FORCE.a1; return; }
+    VIS.all = true;
+    proj(0, 0, T0);
+    if (V.st < 1e-3 || (T0.ok && inView(T0.x, T0.y, 0))) return;
+    const as = [];
+    const n = 10, w = SF.x1 - SF.x0, h = SF.y1 - SF.y0;
+    for (let i = 0; i <= n; i++) {
+      for (const [x, y] of [[SF.x0 + (w * i) / n, SF.y0], [SF.x0 + (w * i) / n, SF.y1], [SF.x0, SF.y0 + (h * i) / n], [SF.x1, SF.y0 + (h * i) / n]]) {
+        const q = unproj(x, y);
+        if (!q) return;
+        as.push(Math.atan2(q.y, q.x));
+      }
+    }
+    const arc = coverArc(as);
+    if (arc.span > Math.PI * 1.5) return;
+    VIS.all = false;
+    VIS.a0 = arc.mid - arc.span / 2 - 0.08;
+    VIS.a1 = arc.mid + arc.span / 2 + 0.08;
+  }
+  function ringPath(c, r, a0, a1) {
+    if (VIS.all) { ringWalk(c, r, a0, a1); return; }
+    // the parts of [a0, a1] inside the window's arc, taken round the circle
+    const L = VIS.a1 - VIS.a0;
+    let v0 = VIS.a0;
+    while (v0 > a0) v0 -= TAU;
+    while (v0 + TAU <= a0) v0 += TAU;
+    for (let k = 0; k < 2; k++, v0 += TAU) {
+      const lo = Math.max(a0, v0), hi = Math.min(a1, v0 + L);
+      if (hi > lo) ringWalk(c, r, lo, hi);
+    }
+  }
+  function ringWalk(c, r, a0, a1) {
+    const step = clamp((flyingNow ? 8 : 5) / (r * V.z), 0.004, 0.06);
+    let pen = false;
+    for (let a = a0; a <= a1 + 1e-9; a += step) {
+      proj(Math.cos(a) * r, Math.sin(a) * r, T0);
+      if (!T0.ok || !inView(T0.x, T0.y, 260)) { pen = false; continue; }
+      if (!pen) { c.moveTo(T0.x, T0.y); pen = true; } else c.lineTo(T0.x, T0.y);
+    }
+  }
+  function specks(c, arr, col, mul) {
+    if (mul <= 0) return;
+    c.fillStyle = col;
+    const z = V.z, x0 = SF.x0 - 4, x1 = SF.x1 + 4, y0 = SF.y0 - 4, y1 = SF.y1 + 4;
+    // (half of it while the camera flies, each a little larger — the same
+    // haze for half the drawing, 2026-11-08)
+    const by = flyingNow ? 8 : 4, grow = flyingNow ? 1.3 : 1;
+    for (let i = 0; i < arr.length; i += by) {
+      proj(arr[i], arr[i + 1], T0);
+      if (!T0.ok) continue;
+      const X = T0.x, Y = T0.y;
+      if (X < x0 || X > x1 || Y < y0 || Y > y1) continue;
+      const s = Math.max(0.55, arr[i + 2] * z * T0.k * 1.4 * grow);
+      c.globalAlpha = arr[i + 3] * mul;
+      c.fillRect(X - s / 2, Y - s / 2, s, s);
+    }
+    c.globalAlpha = 1;
+  }
+  function sortMix() {
+    if (sortT0 < 0) return [1, 0];
+    const t = clamp((performance.now() - sortT0) / SORT_MS, 0, 1);
+    return [clamp(t * 2 - 1, 0, 1), clamp(1 - t * 2, 0, 1)];
+  }
+  function groupEm(g) { let m = 0; for (const e of g.members) if (e.em > m) m = e.em; return m; }
+
+  // a cell of a ring, for a perfume: a quad between two radii, across
+  // nearly the whole of its slot
+  function cellPath(p, a, r0, r1, half) {
+    const a0 = a - slot * 0.4, a1 = a + slot * 0.4;
+    const c0 = Math.cos(a0), s0 = Math.sin(a0), c1 = Math.cos(a1), s1 = Math.sin(a1);
+    if (half) r1 = (r0 + r1) / 2;
+    proj(c0 * r0, s0 * r0, T0); if (!T0.ok) return;
+    if (!inView(T0.x, T0.y, 30)) return;
+    p.moveTo(T0.x, T0.y);
+    proj(c1 * r0, s1 * r0, T0); p.lineTo(T0.x, T0.y);
+    proj(c1 * r1, s1 * r1, T0); p.lineTo(T0.x, T0.y);
+    proj(c0 * r1, s0 * r1, T0); p.lineTo(T0.x, T0.y);
+    p.closePath();
+  }
+  // how far a perfume has come in as the chart opens: ring by ring, out
+  // from the Earth — the perfumer, then the house, then its bar
+  const stageIn = (g, k) => clamp(g * 3 - k, 0, 1);
+
+  function drawScene(withNames, withEarth) {
+    const c = SF.c, z = V.z, fade = intro;
+    visibleArc();
+    base();
+    c.globalAlpha = 1;
+    c.textBaseline = "middle"; c.textAlign = "left";
+
+    // the dust past the rim
+    specks(c, dust, SOLID.ink, 0.8 * fade);
+
+    // THE EARTH, on the chart itself whenever the chart is drawn in
+    // perspective (on the whole chart at rest it is the live layer's)
+    if (withEarth) {
+      earthUpright();
+      placePins();
+      drawEarth(c, clamp(intro * 2, 0, 1), !flyingNow);
+      drawPins(c, clamp(intro * 2, 0, 1));
+      // (no degrees written on it and no lines from the countries across it
+      // since 2026-11-08 — "please remove these numbers, and any extra random
+      // lines from the globe": drawDegrees and drawFans are out of the code)
+      base();
+      c.textBaseline = "middle"; c.textAlign = "left";
+    }
+
+    // its frame, a double circle
+    c.strokeStyle = SOLID.ink;
+    c.lineWidth = Math.max(0.5, 0.7 * z);
+    c.beginPath(); ringPath(c, R.frame0, -Math.PI / 2, Math.PI * 1.5);
+    c.globalAlpha = 0.34 * fade; c.stroke();
+    c.lineWidth = Math.max(0.5, 0.5 * z);
+    c.beginPath(); ringPath(c, R.frame1, -Math.PI / 2, Math.PI * 1.5);
+    c.globalAlpha = 0.2 * fade; c.stroke();
+
+    // the years' rings behind the bars, every fifth a little brighter
+    c.lineWidth = Math.max(0.5, 0.6 * z);
+    for (const bright of [false, true]) {
+      c.beginPath();
+      for (let y = Y_FROM + 1; y <= Y_TO; y++) if ((y % 5 === 0) === bright) ringPath(c, yearR(y), -Math.PI / 2, Math.PI * 1.5);
+      c.globalAlpha = (bright ? 0.12 : 0.05) * fade;
+      c.stroke();
+    }
+    c.setLineDash([3, 4]);
+    c.beginPath(); ringPath(c, R.und, -Math.PI / 2, Math.PI * 1.5);
+    c.globalAlpha = 0.2 * fade; c.stroke();
+    c.setLineDash([]);
+    // the three rings' edges
     c.beginPath();
-    c.moveTo(ret.x - 3.5, ret.y - 3.5); c.lineTo(ret.x - 1.2, ret.y - 1.2); c.moveTo(ret.x + 3.5, ret.y - 3.5); c.lineTo(ret.x + 1.2, ret.y - 1.2);
-    c.moveTo(ret.x - 3.5, ret.y + 3.5); c.lineTo(ret.x - 1.2, ret.y + 1.2); c.moveTo(ret.x + 3.5, ret.y + 3.5); c.lineTo(ret.x + 1.2, ret.y + 1.2);
-    c.stroke();
-  }
-  // ---- THE DISCS (2026-11-08): the world opening out of the point, or
-  // closing on it, one colour at a time. Each of red, green and blue sees
-  // the world inside a disc of its own and the strings outside it — the
-  // three discs a little apart, as a lens throws the colours: blue's out to
-  // the upper left and leading, red's to the lower right — so the world is
-  // whole only where all three have passed, its edge blue and cyan above,
-  // red and gold below, each edge feathered.
-  let wcv = null, wch = null;
-  const DISC_AT = [1, 0.3, -1], DISC_R = [0.99, 1, 1.01];
-  // as far as the farthest corner, and the feather and the throw past it
-  const farthest = () => Math.max(Math.hypot(map.hub.x, map.hub.y), Math.hypot(W - map.hub.x, map.hub.y), Math.hypot(map.hub.x, H - map.hub.y), Math.hypot(W - map.hub.x, H - map.hub.y));
-  function disc(c, v) {
-    const R = v * (farthest() * 1.12 + 70), o = (6 + R * 0.04) * Math.sin(Math.PI * Math.min(1, v * 1.1)) + R * 0.01;
-    return { x: map.hub.x + DISC_AT[c] * o * 0.8, y: map.hub.y + DISC_AT[c] * o, r: Math.max(0, R * DISC_R[c]), f: 8 + R * 0.05 };
-  }
-  function drawDiscs(now, t, dt, v, boost) {
-    // the world drawn a little smaller than the screen while it opens, and
-    // taken apart into its three colours
-    const ts = Math.min(DPR, 1.25), tw = Math.round(W * ts), th = Math.round(H * ts);
-    if (!wcv || wcv.width !== tw || wcv.height !== th) {
-      wcv = document.createElement("canvas"); wcv.width = tw; wcv.height = th;
-      wch = [0, 1, 2].map(() => { const c = document.createElement("canvas"); c.width = tw; c.height = th; return c; });
+    for (const r of [R.per0, R.per1, R.hou0, R.hou1, R.base]) ringPath(c, r, -Math.PI / 2, Math.PI * 1.5);
+    c.globalAlpha = 0.1 * fade; c.stroke();
+    c.beginPath(); ringPath(c, R.tick1 + 1, -Math.PI / 2, Math.PI * 1.5);
+    c.globalAlpha = 0.16 * fade; c.stroke();
+
+    // the rings and the years named up the gap at the top, as the picture
+    // names its own
+    c.font = F.mono; c.fillStyle = SOLID.ink;
+    const ga = gapAngle;
+    const say = (r, txt, size, alpha) => {
+      c.globalAlpha = alpha * fade;
+      textAt(c, Math.cos(ga) * r, Math.sin(ga) * r, ga + Math.PI / 2, txt, size, "center", F.mono);
+    };
+    say(R.perMid, mode === "az" ? "PERFUMER" : "YEAR", 6, 0.62);
+    say(R.houMid, "HOUSE", 6, 0.62);
+    say(R.base + 7, "PERFUME", 5.4, 0.62);
+    [2010, 2014, 2018, 2022, 2026].forEach((y) => say(yearR(y) - 3, String(y), 5.2, 0.42));
+    say(R.und - 3, "NO YEAR FOUND", 4.6, 0.42);
+    say(R.frame0 - 9, "THE EARTH", 5.4, 0.42);
+    base();
+
+    // RING 1, the perfumer: filled where a source names the perfumer, half
+    // where it is the house's, empty where none is found; RING 2, the house:
+    // in the colour of where the perfume is
+    const fills = {}, halfs = [], empties = [];
+    for (const e of entries) {
+      const g = growth(e);
+      if (g <= 0) continue;
+      const k1 = stageIn(g, 0);
+      if (k1 > 0) {
+        const lv = level(e.em * k1);
+        if (lv) {
+          if (e.p.c === "named") { const q = fills.ink || (fills.ink = []); cellPath(q[lv] || (q[lv] = new Path2D()), e.a, R.per0 + 1.5, R.perCell); }
+          else if (e.p.c === "house") { cellPath(halfs[lv] || (halfs[lv] = new Path2D()), e.a, R.per0 + 1.5, R.perCell); }
+          else cellPath(empties[lv] || (empties[lv] = new Path2D()), e.a, R.per0 + 1.5, R.perCell);
+        }
+      }
+      const k2 = stageIn(g, 0.7);
+      if (k2 > 0) {
+        const lv = level(e.em * k2);
+        if (lv) { const q = fills[e.tone] || (fills[e.tone] = []); cellPath(q[lv] || (q[lv] = new Path2D()), e.a, R.hou0 + 1.5, R.houCell); }
+      }
     }
-    const wx = wcv.getContext("2d");
-    drawWorldView(wx, ts, now, t, dt, boost);
-    for (let c = 0; c < 3; c++) {
-      const x = wch[c].getContext("2d");
-      x.globalCompositeOperation = "source-over"; x.drawImage(wcv, 0, 0);
-      x.globalCompositeOperation = "multiply"; x.fillStyle = PURE[c]; x.fillRect(0, 0, tw, th);
-      x.globalCompositeOperation = "source-over";
+    for (const key of ["ink", "rose", "blue", "gold"]) {
+      const q = fills[key];
+      if (!q) continue;
+      c.fillStyle = SOLID[key];
+      const a = key === "ink" ? 0.5 : key === "rose" ? 0.5 : 0.62;
+      for (let lv = 1; lv <= LV; lv++) if (q[lv]) { c.globalAlpha = (a * lv) / LV; c.fill(q[lv]); }
     }
-    const x = ctx0;
+    c.strokeStyle = SOLID.ink; c.fillStyle = SOLID.ink;
+    c.lineWidth = Math.max(0.5, 0.55 * z);
+    for (let lv = 1; lv <= LV; lv++) {
+      if (halfs[lv]) { c.globalAlpha = (0.42 * lv) / LV; c.fill(halfs[lv]); }
+      if (empties[lv]) { c.globalAlpha = (0.42 * lv) / LV; c.stroke(empties[lv]); }
+    }
+    // a half-filled cell is outlined whole, so its empty half reads
+    const halfLines = [];
+    for (const e of entries) {
+      if (e.p.c !== "house") continue;
+      const lv = level(e.em * stageIn(growth(e), 0));
+      if (lv) cellPath(halfLines[lv] || (halfLines[lv] = new Path2D()), e.a, R.per0 + 1.5, R.perCell);
+    }
+    for (let lv = 1; lv <= LV; lv++) if (halfLines[lv]) { c.globalAlpha = (0.34 * lv) / LV; c.stroke(halfLines[lv]); }
+
+    // a mark where every group begins on ring 1, and every house on ring 2
+    c.beginPath();
+    for (const g of groups) {
+      const a = g.a0;
+      proj(Math.cos(a) * R.frame1, Math.sin(a) * R.frame1, T0); proj(Math.cos(a) * R.per1, Math.sin(a) * R.per1, T1);
+      if (T0.ok && T1.ok && (inView(T0.x, T0.y, 20) || inView(T1.x, T1.y, 20))) { c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); }
+      for (const h of g.houses) {
+        proj(Math.cos(h.a0) * (R.hou0 - 3), Math.sin(h.a0) * (R.hou0 - 3), T0); proj(Math.cos(h.a0) * (R.hou1 + 3), Math.sin(h.a0) * (R.hou1 + 3), T1);
+        if (T0.ok && T1.ok && inView(T0.x, T0.y, 20)) { c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); }
+      }
+    }
+    c.lineWidth = Math.max(0.5, 0.6 * z);
+    c.globalAlpha = 0.3 * clamp(intro * 1.5 - 0.3, 0, 1); c.stroke();
+
+    // RING 3, the perfume: a bar out to its year
+    const lw = clamp(1.05 * z, 0.7, 2.8);
+    c.lineWidth = lw;
+    c.lineCap = "butt";
+    for (const dated of [true, false]) {
+      c.setLineDash(dated ? [] : [1, clamp(3 * z, 2.4, 7)]);
+      for (const tone of TONES) {
+        const paths = [];
+        for (const e of byTone[tone]) {
+          if (!!e.p.y !== dated) continue;
+          const g = stageIn(growth(e), 1.5);
+          if (g <= 0) continue;
+          const ca = Math.cos(e.a), sa = Math.sin(e.a);
+          const r1 = R.base + (e.rDot - R.base) * ease(g);
+          proj(ca * R.base, sa * R.base, T0);
+          proj(ca * r1, sa * r1, T1);
+          if (!T0.ok || !T1.ok) continue;
+          if (!inView(T0.x, T0.y, 40) && !inView(T1.x, T1.y, 40)) continue;
+          const lv = level(e.em);
+          const p = paths[lv] || (paths[lv] = new Path2D());
+          p.moveTo(T0.x, T0.y); p.lineTo(T1.x, T1.y);
+        }
+        c.strokeStyle = tone === "rose" ? SOLID.ink : SOLID[tone];
+        const a = tone === "rose" ? 0.34 : 0.5;
+        for (let lv = 0; lv <= LV; lv++) if (paths[lv]) { c.globalAlpha = (a * lv) / LV; c.stroke(paths[lv]); }
+      }
+    }
+    c.setLineDash([]);
+
+    // the dots at the bars' ends
+    for (const tone of TONES) {
+      const glow = [], core = [], hollow = [];
+      let hw = 0, hn = 0;
+      for (const e of entries) {
+        if (e.tone !== tone || stageIn(growth(e), 1.5) < 0.98) continue;
+        proj(Math.cos(e.a) * e.rDot, Math.sin(e.a) * e.rDot, T0);
+        if (!T0.ok || !inView(T0.x, T0.y, 20)) continue;
+        const rr = Math.max(1.1, (tone === "rose" ? 2.8 : 3.5) * z * T0.k);
+        const lv = level(e.em);
+        if (e.p.y) {
+          const g = glow[lv] || (glow[lv] = new Path2D());
+          g.moveTo(T0.x + rr * 2.6, T0.y); g.arc(T0.x, T0.y, rr * 2.6, 0, TAU);
+          const k = core[lv] || (core[lv] = new Path2D());
+          k.moveTo(T0.x + rr, T0.y); k.arc(T0.x, T0.y, rr, 0, TAU);
+        } else {
+          const h = hollow[lv] || (hollow[lv] = new Path2D());
+          h.moveTo(T0.x + rr, T0.y); h.arc(T0.x, T0.y, rr, 0, TAU);
+          hw += rr * 0.4; hn++;
+        }
+      }
+      c.fillStyle = SOLID[tone]; c.strokeStyle = SOLID[tone];
+      c.lineWidth = Math.max(0.7, hn ? hw / hn : 1);
+      for (let lv = 0; lv <= LV; lv++) {
+        const k = lv / LV;
+        if (glow[lv]) { c.globalAlpha = 0.14 * k; c.fill(glow[lv]); }
+        if (core[lv]) { c.globalAlpha = k; c.fill(core[lv]); }
+        if (hollow[lv]) { c.globalAlpha = k; c.stroke(hollow[lv]); }
+      }
+    }
+
+    // the rim: a tick for every perfume
+    c.beginPath();
+    for (const e of order) {
+      const ca = Math.cos(e.a), sa = Math.sin(e.a);
+      proj(ca * R.tick0, sa * R.tick0, T0);
+      proj(ca * R.tick1, sa * R.tick1, T1);
+      if (!T0.ok || !T1.ok || !inView(T0.x, T0.y, 20)) continue;
+      c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y);
+    }
+    c.lineWidth = Math.max(0.5, 0.5 * z);
+    c.strokeStyle = SOLID.ink; c.globalAlpha = 0.4 * fade; c.stroke();
+
+    drawRim(c);
+    if (withNames) drawNames(c, 1);
+    c.globalAlpha = 1;
+    base();
+  }
+
+  // Where a perfume's words stand along its spoke: its name, then its house
+  // (and, by year, its perfumer), reading outward — or, on the left of the
+  // circle, reading inward so nothing is upside down, ending at the rim's
+  // side as the poster's do.
+  const LP = { flip: false, dir: 0, main: "", sub: "", size: 0, sub2: 0, wMain: 0, wSub: 0, rMain: 0, rSub: 0, font: "" };
+  function placeLabel(e, size) {
+    LP.flip = !READ_FIXED && Math.cos(e.a + V.rot) < 0;
+    LP.dir = LP.flip ? e.a + Math.PI : e.a;
+    LP.main = e.p.n;
+    LP.sub = "  " + HOU[e.p.h].name + (e.withWho && e.pid !== "not-found" ? " · " + PER[e.pid].name : "");
+    LP.size = size; LP.sub2 = size * 0.76;
+    LP.font = e.p.at ? F.labelHere : F.label;
+    if (e.wEpoch !== widthsEpoch || e.wMode !== mode) {
+      e.wMain = wOf(LP.font, LP.main); e.wSub = wOf(F.mono, LP.sub);
+      e.wEpoch = widthsEpoch; e.wMode = mode;
+    }
+    LP.wMain = (e.wMain * size) / FPX;
+    LP.wSub = (e.wSub * LP.sub2) / FPX;
+    if (LP.flip) { LP.rMain = R.label + LP.wMain + LP.wSub; LP.rSub = R.label + LP.wSub; }
+    else { LP.rMain = R.label; LP.rSub = R.label + LP.wMain; }
+    return LP;
+  }
+  // a run of words as a faint line, where they are not written
+  function lineRun(p, a, r0, len) {
+    const ca = Math.cos(a), sa = Math.sin(a);
+    proj(ca * r0, sa * r0, T0); proj(ca * (r0 + len), sa * (r0 + len), T1);
+    if (!T0.ok || !T1.ok || (!inView(T0.x, T0.y, 10) && !inView(T1.x, T1.y, 10))) return;
+    p.moveTo(T0.x, T0.y); p.lineTo(T1.x, T1.y);
+  }
+  function drawRim(c) {
+    const on = labelsOn();
+    if (on <= 0) return;
+    const z = V.z, close = closeAmt();
+    const ls = labelSize();
+    const mains = [], subs = [], nums = [];
+    const chosen = [];
+    for (const e of order) {
+      const w = written(e) ? close : 0;
+      if (w > 0.01) chosen.push(e);
+      if (w > 0.99) continue;
+      const lv = level(e.em * (1 - w));
+      if (!lv) continue;
+      // the faint lines stand the same way round whichever way the words
+      // would read, so turning the chart never shuffles them
+      const P = placeLabel(e, 8.4);
+      lineRun(mains[lv] || (mains[lv] = new Path2D()), e.a, R.label, P.wMain);
+      lineRun(subs[lv] || (subs[lv] = new Path2D()), e.a, R.label + P.wMain + 4, P.wSub * 0.8);
+      lineRun(nums[lv] || (nums[lv] = new Path2D()), e.a, R.num, 13);
+    }
+    c.strokeStyle = SOLID.ink;
+    const strokeAll = (paths, width, alpha) => {
+      c.lineWidth = Math.max(0.5, width);
+      for (let lv = 1; lv <= LV; lv++) if (paths[lv]) { c.globalAlpha = (alpha * lv * on) / LV; c.stroke(paths[lv]); }
+    };
+    strokeAll(mains, 8.4 * 0.36 * z, 0.24);
+    strokeAll(subs, 6.4 * 0.3 * z, 0.13);
+    strokeAll(nums, 5.6 * 0.32 * z, 0.2);
+    if (!chosen.length) return;
+
+    // the chosen, written out: their names, their houses, their numbers
+    c.textBaseline = "middle"; c.textAlign = "left";
+    c.fillStyle = SOLID.ink;
+    for (const font of [F.label, F.labelHere]) {
+      c.font = font;
+      for (const e of chosen) {
+        const P = placeLabel(e, ls);
+        if (P.font !== font) continue;
+        c.globalAlpha = (e.p.at ? 0.95 : 0.66) * close * e.em * on;
+        textAt(c, Math.cos(e.a) * P.rMain, Math.sin(e.a) * P.rMain, P.dir, P.main, P.size, "left", font);
+      }
+    }
+    c.font = F.mono; c.fillStyle = SOLID.muted;
+    for (const e of chosen) {
+      const P = placeLabel(e, ls);
+      c.globalAlpha = 0.72 * close * e.em * on;
+      textAt(c, Math.cos(e.a) * P.rSub, Math.sin(e.a) * P.rSub, P.dir, P.sub, P.sub2, "left", F.mono);
+    }
+    const ns = ls * 0.667;
+    for (const e of chosen) {
+      const flip = !READ_FIXED && Math.cos(e.a + V.rot) < 0;
+      const no = String(e.no).padStart(3, "0");
+      const yr = e.p.y ? " ’" + String(e.p.y).slice(2) : " —";
+      const w = ((wOf(F.mono, no) + wOf(F.mono, yr)) * ns) / FPX;
+      const r0 = flip ? R.num + w : R.num, dir = flip ? e.a + Math.PI : e.a;
+      c.globalAlpha = 0.75 * close * e.em * on;
+      c.fillStyle = SOLID.ink;
+      textAt(c, Math.cos(e.a) * r0, Math.sin(e.a) * r0, dir, no, ns, "left", F.mono);
+      const r1 = flip ? r0 - (wOf(F.mono, no) * ns) / FPX : r0 + (wOf(F.mono, no) * ns) / FPX;
+      c.fillStyle = SOLID.muted;
+      textAt(c, Math.cos(e.a) * r1, Math.sin(e.a) * r1, dir, yr, ns, "left", F.mono);
+    }
+    base();
+  }
+
+  // The groups' names along ring 1 — the perfumers (the years, By year) —
+  // and, for a chosen perfumer, its houses along ring 2, with a square where
+  // each begins.
+  function drawNames(c, mul) {
+    const [gNew, gOld] = sortMix();
+    namesFor(c, oldGroups, gOld * mul);
+    namesFor(c, groups, gNew * mul);
+  }
+  function namesFor(c, gs, alpha) {
+    alpha *= labelsOn();
+    if (alpha <= 0.003) return;
+    const z = V.z;
+    c.textBaseline = "middle"; c.textAlign = "left";
+    const chosenG = mode === "az" && sel.pid && gs === groups ? gs.find((g) => g.id === sel.pid) : null;
+    c.font = F.group;
+    for (const g of gs) {
+      if (!g.size || g.size * z < 2.3) continue;
+      c.fillStyle = g === chosenG ? SOLID.gold : SOLID.ink;
+      const em = gs === groups && focus ? 0.4 + 0.6 * (groupEm(g) - DIM) / (1 - DIM) : 1;
+      arcText(c, g.text, R.perMid, (g.a0 + g.a1) / 2, g.size, F.group, trackOf(g.size), 0.92 * alpha * em);
+    }
+    if (!chosenG) { base(); return; }
+    c.font = F.house;
+    for (const h of chosenG.houses) {
+      const size = houseSize(h, z);
+      if (!size || size * z < 2.3) continue;
+      const on = sel.hid === h.h;
+      c.fillStyle = on ? SOLID.gold : SOLID.ink;
+      arcText(c, h.text, R.houMid, (h.a0 + h.a1) / 2, size, F.house, 0.18, alpha * (sel.hid && !on ? 0.5 : 0.95));
+    }
+    base();
+    for (const h of chosenG.houses) {
+      const a = h.a0 + slot * 0.5;
+      proj(Math.cos(a) * (R.hou1 + 4), Math.sin(a) * (R.hou1 + 4), T0);
+      if (!T0.ok) continue;
+      const sq = Math.max(1.4, 2.8 * z * T0.k);
+      c.fillStyle = sel.hid === h.h ? SOLID.gold : SOLID.ink;
+      c.globalAlpha = 0.85 * alpha;
+      c.fillRect(T0.x - sq / 2, T0.y - sq / 2, sq, sq);
+    }
+    c.globalAlpha = 1;
+  }
+
+  // ---- THE ROTOR: the chart at rest, drawn once, turned by the browser -----
+  let lastRotor = "";
+  const stats = { rotor: 0, chart: 0, live: 0, dof: 0 };
+  let ROT_K = 1;
+  function renderRotor() {
+    rotorDirty = false;
+    stats.rotor++;
+    const k = ROT_K;
+    tctx.setTransform(1, 0, 0, 1, 0, 0);
+    tctx.clearRect(0, 0, cvTurn.width, cvTurn.height);
+    surface(tctx, k, 0, 0, k, 0, 0, 0, 0, S, S);
+    view(0, 0, fitZ, 0, 0, S / 2, S / 2);
+    // (the Earth is not in it: the rotor turns, and the Earth stands upright)
+    drawScene(false, false);
+  }
+  function namesRotor() {
+    const key = [sel.pid, sel.hid, mode, labelsOn().toFixed(3), focus ? 1 : 0, S, ROT_K].join("|");
+    if (key === namesKey && Math.abs(cam.rot - namesRot) < 0.003) return;
+    namesKey = key; namesRot = cam.rot;
+    stats.names = (stats.names || 0) + 1;
+    const k = ROT_K;
+    nctx.setTransform(1, 0, 0, 1, 0, 0);
+    nctx.clearRect(0, 0, cvNames.width, cvNames.height);
+    surface(nctx, k, 0, 0, k, 0, 0, 0, 0, S, S);
+    view(0, 0, fitZ, 0, 0, S / 2, S / 2);
+    flipRot = cam.rot;
+    drawNames(nctx, 1);
+    flipRot = null;
+    nctx.globalAlpha = 1;
+  }
+  // THE LIVE LAYER'S SHARPNESS (2026-11-07 — "optimize"): at rest it holds
+  // only the dust, the far field, the lights and the Earth's lines, which
+  // read the same at a plain screen's pixel, so on a sharper screen it is
+  // drawn at one pixel a point — a quarter of the work on a Retina screen —
+  // and at the screen's own the moment the hand is on something, something
+  // is chosen or anything moves, staying sharp a moment after.
+  const LIVE_HI_MS = 1500;
+  let liveK = 0, liveHiUntil = 0;
+  function liveRes(now) {
+    // at the screen's own sharpness always since 2026-11-08 ("more HD"): it
+    // went down to a plain screen's pixel at rest for a day
+    const want = DPR;
+    if (want === liveK && cvLive.width === Math.round(W * want)) return;
+    liveK = want;
+    cvLive.width = Math.round(W * want); cvLive.height = Math.round(H * want);
+  }
+  function placeRotor() {
+    const x = cam.cx * W - S / 2, y = cam.cy * H - S / 2;
+    const sc = Math.exp(cam.lz) / fitZ;
+    const t = "translate(" + x.toFixed(2) + "px," + y.toFixed(2) + "px) rotate(" + (cam.rot % TAU).toFixed(5) + "rad)" +
+      (Math.abs(sc - 1) > 1e-4 ? " scale(" + sc.toFixed(5) + ")" : "");
+    if (t !== lastRotor) { rotor.style.transform = t; lastRotor = t; }
+  }
+
+  // ---- THE CHART IN PERSPECTIVE ---------------------------------------------
+  let flyingNow = false;
+  function drawChart(lo) {
+    chartDirty = false;
+    stats.chart++;
+    const moving = !!lo;
+    lo = moving && FLY_K < DPR;
+    const k = lo ? FLY_K : DPR, c = lo ? fctx : ctx, cv = lo ? cvFly : cvChart;
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.clearRect(0, 0, cv.width, cv.height);
+    surface(c, k, 0, 0, k, k * OV, k * OV, -OV, -OV, W + OV, Math.min(H, VH) + OV);
+    viewCam();
+    flyingNow = moving;
+    drawScene(true, true);
+    setFlying(lo);
+  }
+  function setFlying(on) {
+    if (on === flying) return;
+    flying = on;
+    stage.classList.toggle("is-flying", on);
+  }
+
+  // ---- THE PLANE, close in (2026-11-10 — "please do eveyrthing you can to
+  // optimize the page of perfumers. It does not work smoothly, especially
+  // when you open up prin lomoros and scroll. it is also low quality. fix
+  // that"). Close in, the camera only ever turns about the chart's middle,
+  // tipped back at one angle from one height: going through what is chosen
+  // is the chart turning under it. So close in the chart is drawn ONCE, flat,
+  // at the screen's own sharpness, onto TILES — squares of the chart's own
+  // plane — and every frame after, the browser lays each tile down tipped
+  // and turned as the camera sees it (a CSS transform in perspective: the
+  // very projection proj() works out), which costs nothing, where the whole
+  // chart in perspective was drawn again every frame — twenty milliseconds
+  // of its writing alone, at a lower sharpness while it moved. A tile nearer
+  // the eye is drawn finer than one far off, and drawn again finer as the
+  // turning brings it nearer; tiles the turning is about to bring in are
+  // drawn ahead, a few a frame; the Earth, upright while the rings turn, has
+  // a picture of its own, drawn only as it moves. Until every tile the
+  // window needs is drawn, and through every flight, the chart is drawn as
+  // it was.
+  const plane = document.createElement("div");
+  plane.className = "pf-plane";
+  plane.setAttribute("aria-hidden", "true");
+  stage.insertBefore(plane, swayBox);
+  const cvEarthZ = document.createElement("canvas");
+  cvEarthZ.className = "pf-earth-close";
+  swayBox.insertBefore(cvEarthZ, cvDof);
+  const ezctx = cvEarthZ.getContext("2d");
+  const TILE = 150;                      // world units a tile is square
+  const LEVELS = [0.6, 0.85, 1.2];       // how fine a tile is drawn, of the screen's pixel there
+  const TILES_MOST = 70;                 // tiles kept, the least used let go
+  const TILE_MS = 6;                     // milliseconds a frame for drawing tiles ahead
+  const P_IN = R.frame0 - 14, P_OUT = R.dust1 + 12;
+  const tiles = new Map();
+  // (?plane=off on the address draws the chart close in as it was, for comparing)
+  const PLANE_OFF = /[?&]plane=off\b/.test(location.search);
+  let planeKey = "", planeZ = 0, planeOn = false, planeStamp = 0, planePrefix = "", earthZKey = "";
+  let READ_FIXED = false, VIS_FORCE = null;
+  const planeState = () => [sel.kind, sel.pid, sel.hid, sel.year, sel.e ? sel.e.no : "", mode, zFix(), DPR, labelZ.toFixed(3), focus ? focus.size : 0, W, H].join("|");
+  function tileOf(i, j) {
+    const id = i + "," + j;
+    let t = tiles.get(id);
+    if (!t) {
+      const x0 = i * TILE, y0 = j * TILE;
+      const cs = [[x0, y0], [x0 + TILE, y0], [x0, y0 + TILE], [x0 + TILE, y0 + TILE], [x0 + TILE / 2, y0], [x0 + TILE / 2, y0 + TILE], [x0, y0 + TILE / 2], [x0 + TILE, y0 + TILE / 2]];
+      const near = Math.hypot(clamp(0, x0, x0 + TILE), clamp(0, y0, y0 + TILE));
+      const far = Math.max(...cs.map(([x, y]) => Math.hypot(x, y)));
+      if (far < P_IN || near > P_OUT) return null;
+      const holds = x0 <= 0 && x0 + TILE >= 0 && y0 <= 0 && y0 + TILE >= 0;
+      const arc = holds ? { all: true } : Object.assign({ all: false }, (() => { const c = coverArc(cs.map(([x, y]) => Math.atan2(y, x))); return { a0: c.mid - c.span / 2 - 0.03, a1: c.mid + c.span / 2 + 0.03 }; })());
+      const cv = document.createElement("canvas");
+      cv.hidden = true;
+      plane.appendChild(cv);
+      t = { id, i, j, x0, y0, arc, cv, ctx: cv.getContext("2d"), key: "", lv: -1, used: 0, shown: false, css: "" };
+      tiles.set(id, t);
+    }
+    return t;
+  }
+  function renderTile(t, lv) {
+    const side = TILE * planeZ, px = Math.max(8, Math.round(side * DPR * LEVELS[lv]));
+    if (t.cv.width !== px) { t.cv.width = t.cv.height = px; }
+    t.cv.style.width = t.cv.style.height = side + "px";
+    const c = t.ctx, k = px / side;
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.clearRect(0, 0, px, px);
+    surface(c, k, 0, 0, k, 0, 0, 0, 0, side, side);
+    view(t.x0, t.y0, planeZ, 0, 0, 0, 0);
+    VIS_FORCE = t.arc; READ_FIXED = true; flyingNow = false;
+    drawScene(true, false);
+    VIS_FORCE = null; READ_FIXED = false;
+    t.key = planeKey; t.lv = lv;
+    stats.tiles = (stats.tiles || 0) + 1;
+  }
+  // the tiles a pose of the camera sees, and how fine each should be: the
+  // window sampled, each point taken back onto the chart's plane
+  const WANT = new Map();
+  function tilesFor(q, out, grow) {
+    view(q.fx, q.fy, Math.exp(q.lz), q.rot, q.tilt, q.cx * W, q.cy * H);
+    const hh = Math.min(H, VH), nx = 14, ny = 10;
+    for (let a = 0; a <= nx; a++) for (let b = 0; b <= ny; b++) {
+      const X = -40 + ((W + 80) * a) / nx, Y = -40 + ((hh + 80) * b) / ny;
+      const w = unproj(X, Y);
+      if (!w) continue;
+      const i0 = Math.floor(w.x / TILE), j0 = Math.floor(w.y / TILE);
+      // how much the eye magnifies the chart there (proj's k, at that height)
+      const k = 1 + ((Y - V.cy) * V.st) / (Math.max(1e-3, V.ct) * V.F);
+      const lv = k > 1.05 ? 2 : k > 0.72 ? 1 : 0;
+      for (let di = -grow; di <= grow; di++) for (let dj = -grow; dj <= grow; dj++) {
+        const id = (i0 + di) + "," + (j0 + dj);
+        const was = out.get(id);
+        const want = di || dj ? Math.max(0, lv - 1) : lv;
+        if (was === undefined || was < want) out.set(id, want);
+      }
+    }
+    viewCam();
+  }
+  // is the plane ready to stand for the chart this frame? Draws what it
+  // must now, and a few ahead.
+  function planeReady() {
+    const key = planeState();
+    if (key !== planeKey || Math.abs(planeZ - zFix()) > 1e-6) {
+      planeKey = key; planeZ = zFix();
+      for (const t of tiles.values()) { t.key = ""; t.lv = -1; }
+    }
+    planeStamp++;
+    WANT.clear();
+    tilesFor(cam, WANT, 0);
+    const now = new Map(WANT);
+    tilesFor(goal, WANT, 0);
+    const t0 = performance.now();
+    let missing = 0, urgent = 0;
+    // first what the window needs now, then what the camera is going to: a
+    // few a frame; and once the plane stands for the chart, any the window
+    // needs this very frame (a turn of the wheel brings in a row or two)
+    for (const pass of [now, WANT]) {
+      for (const [id, lv] of pass) {
+        const [i, j] = id.split(",").map(Number);
+        const t = tileOf(i, j);
+        if (!t) continue;
+        t.used = planeStamp;
+        const fresh = t.key === planeKey;
+        if (fresh && t.lv >= lv) continue;
+        const must = pass === now && !fresh && planeOn && urgent < 6;
+        if (must || performance.now() - t0 < TILE_MS) { renderTile(t, lv); if (must) urgent++; }
+        else if (pass === now && !fresh) missing++;
+      }
+    }
+    viewCam();
+    // the least used let go
+    if (tiles.size > TILES_MOST) {
+      const old = Array.from(tiles.values()).filter((t) => t.used !== planeStamp).sort((a, b) => a.used - b.used);
+      for (const t of old.slice(0, tiles.size - TILES_MOST)) { t.cv.remove(); tiles.delete(t.id); }
+    }
+    return missing === 0;
+  }
+  // every tile the camera sees laid down where it sees it; the rest hidden
+  function placePlane() {
+    const z = Math.exp(cam.lz), F = 1.25 * Math.max(H, 400);
+    const pre = (swayAmt > 0 ? "matrix(" + [M.a, M.b, M.c, M.d, M.e, M.f].map((v) => v.toFixed(5)).join(",") + ") " : "") +
+      "translate(" + (cam.cx * W).toFixed(2) + "px," + (cam.cy * H).toFixed(2) + "px) perspective(" + F.toFixed(1) + "px) rotateX(" + cam.tilt.toFixed(5) + "rad) rotate(" + cam.rot.toFixed(6) + "rad) scale(" + (z / planeZ).toFixed(6) + ") translate(" + (-cam.fx * planeZ).toFixed(2) + "px," + (-cam.fy * planeZ).toFixed(2) + "px) ";
+    const st = Math.sin(cam.tilt), c = Math.cos(cam.rot), sn = Math.sin(cam.rot);
+    for (const t of tiles.values()) {
+      let show = t.key === planeKey && t.used === planeStamp;
+      if (show) {
+        // never a tile reaching round behind the eye
+        for (const [x, y] of [[t.x0, t.y0], [t.x0 + TILE, t.y0], [t.x0, t.y0 + TILE], [t.x0 + TILE, t.y0 + TILE]]) {
+          const dx = x - cam.fx, dy = y - cam.fy, v = (dx * sn + dy * c) * z;
+          if (F - v * st < F * 0.22) { show = false; break; }
+        }
+      }
+      if (show !== t.shown) { t.cv.hidden = !show; t.shown = show; }
+      if (!show) continue;
+      const css = pre + "translate(" + (t.x0 * planeZ).toFixed(2) + "px," + (t.y0 * planeZ).toFixed(2) + "px)";
+      if (css !== t.css) { t.cv.style.transform = css; t.css = css; }
+    }
+    planePrefix = pre;
+    stats.plane = (stats.plane || 0) + 1;
+  }
+  // the Earth close in: upright while the rings turn, a picture of its own on
+  // the window, drawn again only when the camera has moved
+  function earthClose() {
+    viewCam();
+    proj(0, 0, T0);
+    const rr = R.frame1 * V.z * (T0.ok ? T0.k : 1) + 20;
+    const seen = T0.ok && T0.x + rr > -OV && T0.x - rr < W + OV && T0.y + rr > -OV && T0.y - rr < Math.min(H, VH) + OV;
+    const key = seen ? [cam.fx, cam.fy, cam.lz, cam.rot, cam.tilt, cam.cx, cam.cy, spin, W, H, DPR, PINS.map((p) => (p.lit ? 1 : 0)).join("")].map((v) => (typeof v === "number" ? v.toFixed(4) : v)).join("|") : "off";
+    if (key === earthZKey) return;
+    earthZKey = key;
+    const cw = W + 2 * OV, ch = Math.min(H, VH) + 2 * OV;
+    if (cvEarthZ.width !== Math.round(cw * DPR)) {
+      cvEarthZ.width = Math.round(cw * DPR); cvEarthZ.height = Math.round(ch * DPR);
+      cvEarthZ.style.left = -OV + "px"; cvEarthZ.style.top = -OV + "px"; cvEarthZ.style.width = cw + "px"; cvEarthZ.style.height = ch + "px";
+    }
+    ezctx.setTransform(1, 0, 0, 1, 0, 0);
+    ezctx.clearRect(0, 0, cvEarthZ.width, cvEarthZ.height);
+    if (!seen) return;
+    surface(ezctx, DPR, 0, 0, DPR, DPR * OV, DPR * OV, -OV, -OV, W + OV, Math.min(H, VH) + OV);
+    viewCam();
+    earthUpright(); placePins();
+    drawEarth(ezctx, 1, true);
+    drawPins(ezctx, 1);
+    base();
+    stats.earthClose = (stats.earthClose || 0) + 1;
+  }
+  function setPlane(on) {
+    if (on === planeOn) return;
+    planeOn = on;
+    stage.classList.toggle("is-plane", on);
+    if (!on) { for (const t of tiles.values()) if (t.shown) { t.cv.hidden = true; t.shown = false; } earthZKey = ""; chartDirty = true; }
+  }
+
+  // ---- THE OUT-OF-FOCUS COPY, once a close look has settled -----------------
+  let dofDone = false, stillSince = 0;
+  const canFilter = typeof dctx.filter === "string";
+  let small = null;
+  function dofOff() { cvDof.classList.remove("is-on"); dofDone = false; }
+  // the plane taken down onto the window at the copy's size, each tile by
+  // the flat transform that comes nearest its corners (near enough, blurred)
+  let shot = null;
+  function planeShot(w, h) {
+    if (!shot) shot = document.createElement("canvas");
+    shot.width = w; shot.height = h;
+    const x = shot.getContext("2d"), sc = w / (W + 2 * OV);
     x.setTransform(1, 0, 0, 1, 0, 0);
-    x.globalCompositeOperation = "source-over"; x.globalAlpha = 1;
-    x.fillStyle = "#000"; x.fillRect(0, 0, cv.width, cv.height);
-    x.globalCompositeOperation = "lighter";
-    x.setTransform(DPR, 0, 0, DPR, 0, 0);
-    for (let c = 0; c < 3; c++) {
-      const d = disc(c, v), r0 = Math.max(0, d.r - d.f), r1 = d.r;
-      // the strings outside, half in the feather
-      x.save(); x.beginPath(); x.rect(-10, -10, W + 20, H + 20); x.arc(d.x, d.y, r1, 0, TAU, true); x.clip("evenodd");
-      drawRaysOne(x, c, t); x.restore();
-      if (r1 > 0.5) {
-        x.save(); x.beginPath(); x.arc(d.x, d.y, r1, 0, TAU); if (r0 > 0) x.arc(d.x, d.y, r0, 0, TAU, true); x.clip("evenodd");
-        drawRaysOne(x, c, t);
-        x.globalAlpha = 0.5;
-        x.setTransform(1, 0, 0, 1, 0, 0); x.drawImage(wch[c], 0, 0, cv.width, cv.height); x.setTransform(DPR, 0, 0, DPR, 0, 0);
-        x.globalAlpha = 1; x.restore();
-      }
-      // the world inside
-      if (r0 > 0.5) {
-        x.save(); x.beginPath(); x.arc(d.x, d.y, r0, 0, TAU); x.clip();
-        x.setTransform(1, 0, 0, 1, 0, 0); x.drawImage(wch[c], 0, 0, cv.width, cv.height);
-        x.restore();
+    x.drawImage(cvEarthZ, 0, 0, w, h);
+    viewCam();
+    for (const t of tiles.values()) {
+      if (!t.shown) continue;
+      proj(t.x0, t.y0, T0); proj(t.x0 + TILE, t.y0, T1); proj(t.x0, t.y0 + TILE, T2);
+      if (!T0.ok || !T1.ok || !T2.ok) continue;
+      const n = t.cv.width;
+      x.setTransform(((T1.x - T0.x) * sc) / n, ((T1.y - T0.y) * sc) / n, ((T2.x - T0.x) * sc) / n, ((T2.y - T0.y) * sc) / n, (T0.x + OV) * sc, (T0.y + OV) * sc);
+      x.drawImage(t.cv, 0, 0);
+    }
+    return shot;
+  }
+  function renderDof(fromPlane) {
+    dofDone = true;
+    if (STILL) return;
+    stats.dof++;
+    const w = cvDof.width, h = cvDof.height;
+    const src = fromPlane ? planeShot(w, h) : cvChart;
+    dctx.setTransform(1, 0, 0, 1, 0, 0);
+    dctx.globalCompositeOperation = "source-over";
+    dctx.globalAlpha = 1;
+    dctx.fillStyle = GROUND;
+    dctx.fillRect(0, 0, w, h);
+    if (canFilter) {
+      dctx.filter = "blur(" + (1.4 * DPR).toFixed(1) + "px)";
+      dctx.drawImage(src, 0, 0, w, h);
+      dctx.filter = "none";
+    } else {
+      // no canvas filter (an older Safari): blur by drawing small and back
+      if (!small) small = document.createElement("canvas");
+      small.width = Math.max(1, Math.round(w / 4)); small.height = Math.max(1, Math.round(h / 4));
+      const sc = small.getContext("2d");
+      sc.drawImage(src, 0, 0, small.width, small.height);
+      dctx.imageSmoothingQuality = "high";
+      dctx.drawImage(small, 0, 0, w, h);
+    }
+    // cut the part in focus back out, softly: a wide band through the point
+    // looked at, as a lens close to a page has it
+    dctx.globalCompositeOperation = "destination-out";
+    const sc = w / (W + 2 * OV);
+    dctx.save();
+    dctx.translate((OV + cam.cx * W) * sc, (OV + cam.cy * H) * sc);
+    dctx.rotate(-0.18);
+    dctx.scale(1.9, 1);
+    const rad = Math.max(W, H) * 0.3 * sc;
+    const gr = dctx.createRadialGradient(0, 0, rad * 0.35, 0, 0, rad);
+    gr.addColorStop(0, "rgba(0,0,0,1)");
+    gr.addColorStop(1, "rgba(0,0,0,0)");
+    dctx.fillStyle = gr;
+    dctx.fillRect(-w, -h, w * 2, h * 2);
+    dctx.restore();
+    dctx.globalCompositeOperation = "source-over";
+    cvDof.classList.add("is-on");
+  }
+  // how far a point on the window is from the part in focus, as a quiet:
+  // the live specks fade out of it as the copy blurs it
+  function quietAt(X, Y, amt) {
+    if (amt <= 0) return 1;
+    const dx = X - cam.cx * W, dy = Y - cam.cy * H;
+    const c = Math.cos(0.18), s = Math.sin(0.18);
+    const u = (dx * c - dy * s) / 1.9, v = dx * s + dy * c;
+    const d = Math.hypot(u, v) / (Math.max(W, H) * 0.3);
+    return 1 - amt * 0.7 * smooth((d - 0.35) / 0.65);
+  }
+
+  // ---- THE SWAY, close in: the browser's to draw ---------------------------
+  let swayAmt = 0;
+  const M = { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
+  let lastSway = "";
+  function sway(t) {
+    if (swayAmt <= 0) { M.a = 1; M.b = 0; M.c = 0; M.d = 1; M.e = 0; M.f = 0; }
+    else {
+      const th = swayAmt * (SWAY.roll * Math.sin(TAU * SWAY.rollHz * t) + SWAY.roll2 * Math.sin(TAU * SWAY.roll2Hz * t + 1.3));
+      const sc = 1 + swayAmt * SWAY.breath * (0.5 - 0.5 * Math.cos(TAU * SWAY.breathHz * t));
+      const tx = swayAmt * SWAY.dx * Math.sin(TAU * SWAY.driftHz * t + 0.6);
+      const ty = swayAmt * SWAY.dy * Math.sin(TAU * SWAY.driftHz * 0.77 * t + 2.1);
+      const px = cam.cx * W, py = cam.cy * H;
+      const c = Math.cos(th) * sc, s = Math.sin(th) * sc;
+      M.a = c; M.b = s; M.c = -s; M.d = c;
+      M.e = px + tx - (c * px - s * py);
+      M.f = py + ty - (s * px + c * py);
+    }
+    const css = swayAmt <= 0 ? "none" : "matrix(" + [M.a, M.b, M.c, M.d, M.e, M.f].map((v) => v.toFixed(5)).join(",") + ")";
+    if (css !== lastSway) { swayBox.style.transform = css; lastSway = css; }
+  }
+  function unsway(X, Y) {
+    const det = M.a * M.d - M.b * M.c;
+    const x = X - M.e, y = Y - M.f;
+    return { x: (M.d * x - M.c * y) / det, y: (-M.b * x + M.a * y) / det };
+  }
+
+  // ---- THE LIVE LAYER: what moves of itself, and what the hand is on --------
+  let clock = 0, hover = null;
+  const pulses = [];
+  let pulseNext = 1.2;
+  function tendPulses() {
+    if (STILL || intro < 1) return;
+    for (let i = pulses.length - 1; i >= 0; i--) if (clock > pulses[i].t0 + pulses[i].dur + 1) pulses.splice(i, 1);
+    if (clock < pulseNext || pulses.length >= 9) return;
+    const pool = focusList && zoomed() ? focusList : order;
+    const e = pool[Math.floor(Math.random() * pool.length)];
+    if (e) pulses.push({ e, t0: clock, dur: 1.5 + Math.random() * 1.2 });
+    pulseNext = clock + (zoomed() ? 0.5 : 0.28) + Math.random() * 0.55;
+  }
+  function drawLive() {
+    stats.live++;
+    const c = lctx, k = liveK;
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.clearRect(0, 0, cvLive.width, cvLive.height);
+    surface(c, k * M.a, k * M.b, k * M.c, k * M.d, k * M.e, k * M.f, -50, -50, W + 50, H + 50);
+    viewCam();
+    VIS.all = true;
+    base();
+    const t = STILL ? 0 : clock;
+    const z = V.z, fade = intro;
+    const q = cam.tilt / TILT;
+
+    // the far field and the dust past the rim, drifting
+    c.fillStyle = SOLID.ink;
+    for (let i = 0; i < SKY; i++) {
+      const o = i * 7, a = sky[o + 1] + sky[o + 4] * t, r = sky[o];
+      proj(Math.cos(a) * r, Math.sin(a) * r, T0);
+      if (!T0.ok || !inView(T0.x, T0.y, 4)) continue;
+      const s = Math.max(0.5, sky[o + 2] * z * T0.k * 1.4);
+      c.globalAlpha = sky[o + 3] * (0.6 + 0.4 * Math.sin(sky[o + 6] * t + sky[o + 5])) * fade * quietAt(T0.x, T0.y, q);
+      c.fillRect(T0.x - s / 2, T0.y - s / 2, s, s);
+    }
+    // (the dust in the aldehyde's colours since 2026-11-08: most of it its
+    // warm grey, some gold, some violet — a colour set once for each third)
+    for (let tone = 0; tone < 3; tone++) {
+      c.fillStyle = tone === 0 ? SOLID.grey : tone === 1 ? SOLID.gold : SOLID.blue;
+      const lift = tone === 0 ? 1.15 : 0.9;
+      for (let i = tone; i < DRIFT; i += tone === 0 ? 3 : 3) {
+        const o = i * 8, a = drift[o + 1] + drift[o + 4] * t, r = drift[o] + drift[o + 5] * Math.sin(drift[o + 7] * t + drift[o + 6]);
+        proj(Math.cos(a) * r, Math.sin(a) * r, T0);
+        if (!T0.ok || !inView(T0.x, T0.y, 4)) continue;
+        const s = Math.max(0.55, drift[o + 2] * z * T0.k * 1.3);
+        c.globalAlpha = lift * drift[o + 3] * (0.55 + 0.45 * Math.sin(drift[o + 7] * 2.3 * t + drift[o + 6] * 1.7)) * fade * quietAt(T0.x, T0.y, q);
+        c.fillRect(T0.x - s / 2, T0.y - s / 2, s, s);
       }
     }
-    x.globalCompositeOperation = "source-over";
-    x.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    // THE EARTH, on the whole chart: its picture, laid down; its lines out
+    // to the rings, drawn on it — close in it is part of
+    // the chart's own drawing, and only the lights are drawn here
+    if (viewNow === "turn") {
+      proj(0, 0, T0);
+      const ox = T0.x, oy = T0.y;
+      const er = R.earth * z;
+      const ea = clamp(intro * 2, 0, 1);
+      earthPicture(er, ea);
+      const sz = Math.ceil(2 * (er + earthPad));
+      const css = "translate(" + (ox - sz / 2).toFixed(2) + "px," + (oy - sz / 2).toFixed(2) + "px)";
+      if (css !== lastEarthCss) { earthCv.style.transform = css; lastEarthCss = css; }
+      base();
+      EM.flat = true; EM.cx = ox; EM.cy = oy; EM.r = er;
+      drawSillage(c, t, fade);
+    } else {
+      viewCam();
+      earthUpright();
+      placePins();
+    }
+
+    // a glint running round ring 1
+    if (!STILL && intro >= 1) {
+      const a = -Math.PI / 2 + ((t / 24) % 1) * TAU;
+      c.strokeStyle = SOLID.gold;
+      c.lineCap = "round";
+      c.lineWidth = Math.max(1, 3 * z);
+      [[0.32, 0.07], [0.16, 0.12], [0.06, 0.22]].forEach(([len, al]) => {
+        c.beginPath(); ringPath(c, R.frame1 + 1, a - len, a);
+        c.globalAlpha = al; c.stroke();
+      });
+      c.lineCap = "butt";
+    }
+
+    // the lights, out from the Earth's frame through the three rings
+    drawPulses(c, t);
+
+    // (the names on the rings, while the chart turns, are the rotor's own
+    // picture since 2026-11-07: namesRotor)
+
+    // what is chosen, lit, while it is seen on the whole chart (close in its
+    // names are written instead)
+    if (focusList && !sel.e && q < 0.5) { c.globalAlpha = 1; markSpokes(c, focusList, 0.75 * (1 - 2 * q)); }
+    // the perfume the scroll stands at, close in
+    const at = scrollAt();
+    if (at && q > 0.6 && !hover) markAt(c, at);
+    // what is lit, and what the hand is on
+    if (sel.e) { markEntry(c, sel.e); markLit(c, sel.e); }
+    if (callE && callAt.ok) drawCallLine(c);
+    if (hover) drawHover(c);
+    c.globalAlpha = 1;
   }
-  // the spheres painted one a frame, the nearest first, so no frame waits
-  // for all of them
-  function paintSome() {
-    let n = STILL ? 99 : 1;
-    const todo = blobs.filter((b) => !b.img).sort((a, b) => b.focus - a.focus);
-    for (const b of todo) { if (n-- <= 0) break; paintSphere(b); }
-    return todo.length > 0;
+  // THE SILLAGE (2026-11-08 — "make the actual perfumers page more
+  // thematic"; the owner chose perfume and aldehydes): as a perfume leaves a
+  // trail in the air, specks come off every country a house is from while it
+  // faces you — in the aldehyde's gold, violet and warm grey — and rise and
+  // drift out, curling, thinning and fading, a few at a time. On the whole
+  // chart at rest; drawn in the Earth's own frame, so they turn and scale
+  // with it, and let go of it as they rise.
+  const sill = [];
+  let sillNext = 0;
+  function drawSillage(c, t, fade) {
+    if (STILL || intro < 1 || !EM.flat) { sill.length = 0; return; }
+    if (t > sillNext && sill.length < 140) {
+      const from = PINS.filter((p) => p.houses.length && p.z > 0.2);
+      if (from.length) {
+        const p = from[Math.floor(Math.random() * from.length)];
+        const out = Math.atan2(p.y, p.x);
+        sill.push({ x: p.x, y: p.y, t0: t, life: 3.6 + Math.random() * 2.6, dir: out + (Math.random() - 0.5) * 0.9, far: 0.45 + Math.random() * 0.55, rise: 0.3 + Math.random() * 0.4, ph: Math.random() * TAU, tone: Math.random() < 0.4 ? 0 : Math.random() < 0.55 ? 1 : 2, sz: 0.9 + Math.random() * 1.2 });
+      }
+      sillNext = t + 0.05 + Math.random() * 0.08;
+    }
+    for (let i = sill.length - 1; i >= 0; i--) if (t - sill[i].t0 > sill[i].life) sill.splice(i, 1);
+    stats.sill = sill.length;
+    const r = EM.r;
+    for (let tone = 0; tone < 3; tone++) {
+      c.fillStyle = tone === 0 ? SOLID.grey : tone === 1 ? SOLID.gold : SOLID.blue;
+      for (const s of sill) {
+        if (s.tone !== tone) continue;
+        const u = (t - s.t0) / s.life, e = 1 - Math.pow(1 - u, 1.6);
+        const curl = Math.sin(t * 0.9 + s.ph) * 0.06 * e;
+        const d = s.far * e;
+        const x = EM.cx + r * (s.x + Math.cos(s.dir + curl * 4) * d + curl);
+        const y = EM.cy - r * (s.y + Math.sin(s.dir + curl * 4) * d * 0.6 + s.rise * e);
+        const sz = s.sz * (1 + 0.6 * e);
+        c.globalAlpha = fade * smooth(u / 0.12) * (1 - smooth((u - 0.45) / 0.55)) * (tone === 0 ? 0.7 : 0.95);
+        c.fillRect(x - sz / 2, y - sz / 2, sz, sz);
+      }
+    }
+    c.globalAlpha = 1;
   }
-  let clock = 0, last = 0, raf = 0;
+  // A light runs from the Earth's frame (since 2026-11-08; from the perfume's
+  // house's country across the Earth's face until then) on out through the
+  // three rings — the perfumer, the house — to its dot, which flares as it
+  // arrives.
+  function drawPulses(c, t) {
+    if (!pulses.length) return;
+    const z = V.z;
+    c.lineCap = "round";
+    for (const p of pulses) {
+      const e = p.e, u = (t - p.t0) / p.dur;
+      if (u < 0) continue;
+      const ca = Math.cos(e.a), sa = Math.sin(e.a);
+      c.strokeStyle = SOLID[e.tone]; c.fillStyle = SOLID[e.tone];
+      const em = 0.35 + 0.65 * e.em;
+      // (from the Earth's frame out since 2026-11-08: nothing runs across
+      // its face — "any extra random lines from the globe")
+      if (u < 1) {
+        const a = Math.sin(Math.PI * u);
+        c.lineWidth = clamp(1.6 * z, 1, 3);
+        const k = ease(u), r = R.frame1 + (e.rDot - R.frame1) * k;
+        const tail = Math.min(46, r - R.frame1);
+        proj(ca * (r - tail), sa * (r - tail), T0); proj(ca * r, sa * r, T1);
+        if (!T0.ok || !T1.ok || (!inView(T0.x, T0.y, 20) && !inView(T1.x, T1.y, 20))) continue;
+        c.globalAlpha = 0.85 * a * em;
+        c.beginPath(); c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); c.stroke();
+        c.globalAlpha = 0.95 * a * em;
+        c.beginPath(); c.arc(T1.x, T1.y, clamp(2.2 * z * T1.k, 1.2, 4), 0, TAU); c.fill();
+      } else {
+        // its dot flares as the light arrives
+        const v = (t - p.t0 - p.dur) / 1;
+        if (v > 1) continue;
+        proj(ca * e.rDot, sa * e.rDot, T0);
+        if (!T0.ok || !inView(T0.x, T0.y, 30)) continue;
+        const rr = Math.max(1.4, 3.6 * z * T0.k);
+        c.lineWidth = clamp(1.1 * z, 0.7, 2);
+        c.globalAlpha = 0.7 * (1 - v) * em;
+        c.beginPath(); c.arc(T0.x, T0.y, rr * (1.4 + v * 3.2), 0, TAU); c.stroke();
+        c.globalAlpha = 0.35 * (1 - v) * em;
+        c.beginPath(); c.arc(T0.x, T0.y, rr * 1.6, 0, TAU); c.fill();
+      }
+    }
+    c.lineCap = "butt";
+    c.globalAlpha = 1;
+  }
+  // what is lit: its two cells outlined and its bar, in its colour, a ring
+  // round its dot
+  function markSpokes(c, list, alpha) {
+    const z = V.z;
+    for (const tone of TONES) {
+      c.strokeStyle = SOLID[tone];
+      c.globalAlpha = 0.95 * (alpha == null ? 1 : alpha);
+      const cells = new Path2D();
+      c.lineWidth = clamp(1.4 * z, 1, 3.4);
+      c.beginPath();
+      for (const e of list) {
+        if (e.tone !== tone) continue;
+        const ca = Math.cos(e.a), sa = Math.sin(e.a);
+        proj(ca * R.base, sa * R.base, T0); proj(ca * e.rDot, sa * e.rDot, T1);
+        if (!T0.ok || !T1.ok) continue;
+        c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y);
+        const rr = Math.max(2.2, 5.2 * z * T1.k);
+        c.moveTo(T1.x + rr, T1.y); c.arc(T1.x, T1.y, rr, 0, TAU);
+        if (list.length < 90) { cellPath(cells, e.a, R.per0 + 0.5, R.perCell + 1); cellPath(cells, e.a, R.hou0 + 0.5, R.houCell + 1); }
+      }
+      c.stroke();
+      c.lineWidth = Math.max(0.7, 0.8 * z);
+      c.stroke(cells);
+    }
+  }
+  // the perfume the scroll stands at, close in: a bracket at its place on
+  // the rim and its name a little brighter, as the scrubber says
+  function markAt(c, e) {
+    const ca = Math.cos(e.a), sa = Math.sin(e.a);
+    proj(ca * (R.tick0 - 6), sa * (R.tick0 - 6), T0); proj(ca * (R.tick1 + 6), sa * (R.tick1 + 6), T1);
+    if (!T0.ok || !T1.ok) return;
+    c.strokeStyle = SOLID.gold; c.lineWidth = 1.2; c.globalAlpha = 0.9;
+    c.beginPath(); c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); c.stroke();
+    proj(ca * e.rDot, sa * e.rDot, T0);
+    if (T0.ok) {
+      const rr = Math.max(3, 5 * V.z * T0.k);
+      c.globalAlpha = 0.7; c.beginPath(); c.arc(T0.x, T0.y, rr * 1.7, 0, TAU); c.stroke();
+    }
+    if (written(e) && closeAmt() > 0.5) {
+      const P = placeLabel(e, labelSize());
+      c.textBaseline = "middle"; c.textAlign = "left";
+      c.font = P.font; c.fillStyle = SOLID.gold; c.globalAlpha = 0.85 * closeAmt();
+      textAt(c, Math.cos(e.a) * P.rMain, Math.sin(e.a) * P.rMain, P.dir, P.main, P.size, "left", P.font);
+      base();
+    }
+    c.globalAlpha = 1;
+  }
+  function markEntry(c, e) {
+    markSpokes(c, [e]);
+    if (!written(e) || closeAmt() < 0.5) return;
+    const P = placeLabel(e, labelSize());
+    c.textBaseline = "middle"; c.textAlign = "left";
+    c.font = P.font; c.fillStyle = SOLID[e.tone]; c.globalAlpha = closeAmt();
+    textAt(c, Math.cos(e.a) * P.rMain, Math.sin(e.a) * P.rMain, P.dir, P.main, P.size, "left", P.font);
+    base();
+  }
+  // the perfume chosen, lit where it stands: a ring breathing round its dot,
+  // and as it is lit, two going out from it
+  function markLit(c, e) {
+    proj(Math.cos(e.a) * e.rDot, Math.sin(e.a) * e.rDot, T0);
+    if (!T0.ok) return;
+    const rr = Math.max(3, 5.2 * V.z * T0.k);
+    const t = STILL ? 0 : clock;
+    c.strokeStyle = SOLID[e.tone];
+    c.lineWidth = 1;
+    c.globalAlpha = 0.55 + 0.3 * Math.sin(t * 2.2);
+    c.beginPath(); c.arc(T0.x, T0.y, rr * 2.1, 0, TAU); c.stroke();
+    c.fillStyle = SOLID[e.tone];
+    c.globalAlpha = 0.16;
+    c.beginPath(); c.arc(T0.x, T0.y, rr * 2.1, 0, TAU); c.fill();
+    if (litT0 >= 0 && !STILL) {
+      const v = (performance.now() - litT0) / 1200;
+      if (v < 1) {
+        for (const d of [0, 0.3]) {
+          const w = clamp((v - d) / 0.7, 0, 1);
+          if (w <= 0 || w >= 1) continue;
+          c.globalAlpha = 0.85 * (1 - w) * (1 - w);
+          c.beginPath(); c.arc(T0.x, T0.y, rr * (2.1 + ease(w) * 7), 0, TAU); c.stroke();
+        }
+      }
+    }
+    c.globalAlpha = 1;
+  }
+  // the line from the dot out to its window, drawn out as the window comes
+  function drawCallLine(c) {
+    const u = callT0 < 0 ? 1 : clamp((performance.now() - callT0) / CALL_LINE_MS, 0, 1);
+    const nx = clamp(callAt.x, callX, callX + callW), ny = clamp(callAt.y, callY, callY + callH);
+    const a = unsway(callAt.x, callAt.y), b = unsway(nx, ny);
+    const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
+    if (d < 14) return;
+    const r0 = Math.min(d * 0.4, 12), k = ease(u);
+    const sx = a.x + (dx / d) * r0, sy = a.y + (dy / d) * r0;
+    c.strokeStyle = SOLID[callE.tone];
+    c.lineWidth = 1;
+    c.globalAlpha = 0.85;
+    c.beginPath(); c.moveTo(sx, sy); c.lineTo(sx + (b.x - sx) * k, sy + (b.y - sy) * k); c.stroke();
+    if (u >= 1) {
+      c.fillStyle = SOLID[callE.tone];
+      c.fillRect(b.x - 2.5, b.y - 2.5, 5, 5);
+    }
+    c.globalAlpha = 1;
+  }
+  function drawHover(c) {
+    const h = hover;
+    if (h.type === "entry") { markEntry(c, h.e); return; }
+    if (h.type === "pin") { markSpokes(c, h.p.entries.length > 160 ? [] : h.p.entries); drawPinRing(c, h.p); return; }
+    const list = h.type === "group" ? h.g.members : h.type === "house" ? h.h.members : h.list;
+    markSpokes(c, list);
+    const g = h.type === "group" ? h.g : h.type === "house" ? null : h.g;
+    if (g) {
+      c.lineWidth = Math.max(1, 2.2 * V.z);
+      c.strokeStyle = SOLID.gold; c.globalAlpha = 0.8;
+      c.beginPath(); ringPath(c, R.per0 - 3, g.a0 + slot * 0.3, g.a1 - slot * 0.3); c.stroke();
+      if (g.size) {
+        c.font = F.group; c.fillStyle = SOLID.gold;
+        c.textBaseline = "middle"; c.textAlign = "left";
+        arcText(c, g.text, R.perMid, (g.a0 + g.a1) / 2, g.size, F.group, trackOf(g.size), 1);
+      }
+    }
+    if (h.type === "house") {
+      c.lineWidth = Math.max(1, 2.2 * V.z);
+      c.strokeStyle = SOLID.gold; c.globalAlpha = 0.8;
+      c.beginPath(); ringPath(c, R.hou0 - 3, h.h.a0 + slot * 0.3, h.h.a1 - slot * 0.3); c.stroke();
+      if (h.h.size) {
+        c.font = F.house; c.fillStyle = SOLID.gold;
+        c.textBaseline = "middle"; c.textAlign = "left";
+        arcText(c, h.h.text, R.houMid, (h.h.a0 + h.h.a1) / 2, houseSize(h.h, V.z), F.house, 0.18, 1);
+      }
+    }
+    base();
+  }
+  // a country pointed at on the Earth: a ring round its pin
+  function drawPinRing(c, p) {
+    if (p.z < 0.02) return;
+    emap(p.x, p.y, T0); if (!T0.ok) return;
+    c.strokeStyle = SOLID.gold; c.lineWidth = 1; c.globalAlpha = 0.9;
+    c.beginPath(); c.arc(T0.x, T0.y, 11, 0, TAU); c.stroke();
+    c.globalAlpha = 0.4;
+    c.beginPath(); c.arc(T0.x, T0.y, 17, 0, TAU); c.stroke();
+    c.globalAlpha = 1;
+  }
+
+  // ---- THE CLOCK -------------------------------------------------------
+  let raf = 0, last = 0, viewNow = "", seen = true;
+  function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+  const CALM_FPS = 30, CALM_AFTER = 600;
+  // SCROLLING THROUGH WHAT IS CHOSEN, SMOOTHLY (2026-11-08 — "make sure that it
+  // runs smoothly when scrolling (after selectinng a perfumer)"): while the
+  // wheel, a swipe or the keys are going through the perfumes, the chart stays
+  // as it is drawn on the move — nothing drawn again while it waits between
+  // two turns of the wheel, no sharp drawing, out-of-focus copy or sway coming
+  // in and going again at every pause — and only once the scrolling has
+  // rested this long is it drawn sharp and let settle
+  const SCROLL_REST = 420;
+  let lastScrollT = -1e9;
+  let calm = false, lastHand = 0, lastDrawn = 0;
+  function setView(v) {
+    viewNow = v;
+    stage.dataset.view = v;
+  }
   function frame(now) {
     raf = 0;
-    const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
+    if (!W) return;
+    if (sharp) sharp.frame(now);
+    // AT REST, ABOUT THIRTY FRAMES A SECOND (2026-11-07 — "optimize this
+    // page as much as you can"): while nothing is moving but the slow things
+    // — the chart's turn, the dust, the lights, the sway — and the hand has
+    // been still a moment, every other frame is let go; anything the hand
+    // does, and every flight, has every frame.
+    if (calm && now - lastHand > CALM_AFTER && now - lastDrawn < 1000 / CALM_FPS - 4) { kick(); return; }
+    lastDrawn = now;
+    const dt = last ? Math.min(0.064, (now - last) / 1000) : 1 / 60;
     last = now;
-    if (!STILL) clock += dt;
-    const t = clock;
-    if (mapT0 < 0) mapT0 = now;
-    if (!ready && fontsIn && now - mapT0 >= RAYS_IN + 120) { ready = true; document.body.classList.add("is-ready"); }
-    if (cur && laid) paintSome();
-    const raysOn = view === "rays" || TR.kind === "open" || TR.kind === "close";
-    if (raysOn) stepRays(now, t, dt);
-    if (TR.kind === "open") {
-      const u = clamp((now - TR.t0) / TR.ms, 0, 1);
-      // out of the point quickly, as a lens let go, and slowing to rest as it
-      // reaches the corners
-      const xo = clamp((u - DISC_FROM) / (1 - DISC_FROM), 0, 1);
-      const v = 1 - Math.pow(1 - xo, 2.6);
-      // the blob comes out of a wide aberration into its own
-      const boost = 1 + 2.4 * (1 - smooth((v - 0.25) / 0.75));
-      if (u < DISC_FROM) drawRays(ctx0, t);
-      else drawDiscs(now, t, dt, v, boost);
-      document.body.style.setProperty("--reveal", smooth((v - 0.5) / 0.45).toFixed(3));
-      if (u >= 1) opened();
-    } else if (TR.kind === "close") {
-      const u = clamp((now - TR.t0) / TR.ms, 0, 1);
-      // gently from the corners, quicker as it closes on the point
-      const v = 1 - Math.pow(soft(u), 0.8);
-      drawDiscs(now, t, dt, v, 1 + 2.4 * smooth(u * 1.4));
-      document.body.style.setProperty("--reveal", (1 - smooth(u / 0.35)).toFixed(3));
-      if (u >= 1) closed();
-    } else if (view === "rays") drawRays(ctx0, t);
-    else drawWorldView(ctx0, DPR, now, t, dt, 1);
-    if (!STILL && !document.hidden) raf = requestAnimationFrame(frame);
+    const running = !STILL && seen && !document.hidden;
+    if (running) clock += dt;
+
+    // the opening
+    if (intro < 1) {
+      if (introT0 < 0) introT0 = now;
+      intro = clamp((now - introT0) / INTRO_MS, 0, 1);
+    }
+    // the switch's sweep
+    let sorting = false;
+    if (sortT0 >= 0) {
+      const t = clamp((now - sortT0) / SORT_MS, 0, 1);
+      for (let i = 0; i < order.length; i++) {
+        const e = order[i];
+        e.a = e.from + (e.to - e.from) * ease(clamp(t * 1.4 - (i / N) * 0.4, 0, 1));
+      }
+      if (t >= 1) { sortT0 = -1; oldGroups = []; } else sorting = true;
+    }
+    // the emphasis, coming and going
+    let fading = false;
+    if (emT0 >= 0) {
+      const t = clamp((now - emT0) / EM_MS, 0, 1), k = ease(t);
+      for (const e of entries) e.em = e.emFrom + (e.emTo - e.emFrom) * k;
+      if (t >= 1) emT0 = -1; else fading = true;
+    }
+    // the camera; at rest on the whole chart, the chart turns
+    const moving = !STILL && stepCam(dt);
+    if (!moving && !zoomed() && running) {
+      goal.rot += SPIN * dt;
+      cam.rot = lead.rot = goal.rot;
+    }
+    // the Earth: turning slowly on its axis at rest, and turned to the
+    // country of what is chosen (and still while anything is)
+    let earthTurning = false;
+    if (spinTween) {
+      const t = STILL ? 1 : clamp((now - spinTween.t0) / spinTween.ms, 0, 1);
+      spin = spinTween.from + (spinTween.to - spinTween.from) * ease(t);
+      if (t >= 1) spinTween = null; else earthTurning = true;
+    } else if (!sel.kind && running) spin += EARTH_SPIN * dt;
+
+    // flat and centred, a move is only a turn, a slide and a scale — the
+    // rotor's to carry; anything else is drawn as it goes
+    const flat = !zoomed() && cam.tilt < 1e-4 && Math.abs(cam.fx) < 0.01 && Math.abs(cam.fy) < 0.01;
+    const settling = moving || sorting || fading || intro < 1 || (earthTurning && zoomed());
+    const scrolling = now - lastScrollT < SCROLL_REST;
+    const v = settling && !(flat && !sorting && !fading && intro >= 1) ? "live" : zoomed() ? (scrolling ? "live" : "still") : "turn";
+    if (v !== viewNow) {
+      if (v === "turn") { if (rotorDirty) renderRotor(); dofOff(); }
+      if (v === "live") dofOff();
+      if (v === "still") { chartDirty = true; }
+      setView(v);
+    }
+    // the sway comes in slowly once a close look has settled, and goes quickly
+    const swayOn = v === "still" && !STILL;
+    swayAmt += ((swayOn ? 1 : 0) - swayAmt) * (1 - Math.exp(-dt / (swayOn ? 1.8 : 0.32)));
+    if (!swayOn && swayAmt < 0.002) swayAmt = 0;
+    sway(clock);
+    // a perfume's window, once it has been lit a moment and the chart has
+    // (nearly) settled; and wherever it is, beside its dot
+    if (callWait && now - callWait.t0 >= callWait.delay && (!moving || now - callWait.t0 > CALL_WAIT)) {
+      const e = callWait.e;
+      callWait = null;
+      openCall(e);
+    }
+    if (callE) placeCall();
+
+    // close in and settled on what is chosen, the plane stands for the chart
+    // once its tiles are drawn: then nothing of the chart is drawn again
+    const planeWant = !PLANE_OFF && v !== "turn" && zoomed() && !!sel.kind && emT0 < 0 && sortT0 < 0 && intro >= 1 && !STILL &&
+      Math.abs(goal.lz - Math.log(zFix())) < 1e-3 && Math.abs(cam.lz - goal.lz) < 0.004 && Math.abs(goal.tilt - TILT) < 1e-4 && Math.abs(cam.tilt - TILT) < 0.004;
+    const wasPlane = planeOn;
+    setPlane(planeWant && planeReady());
+    if (planeOn) {
+      if (!wasPlane) { stillSince = now; dofOff(); }
+      placePlane(); earthClose(); setFlying(false);
+      rotorDirty = true;
+      if (v === "live") { if (dofDone) dofOff(); stillSince = now; }
+      else if (!dofDone && now - stillSince > 240 && now - lastScrollT > SCROLL_REST + 300) renderDof(true);
+    }
+    else if (v === "live") {
+      // (between two turns of the wheel, with nothing moving, nothing drawn)
+      if (moving || sorting || fading || intro < 1 || earthTurning || !flying) drawChart(moving || scrolling);
+      rotorDirty = true;
+    }
+    else if (v === "turn") { if (rotorDirty) renderRotor(); namesRotor(); placeRotor(); setFlying(false); }
+    else {
+      if (chartDirty) { drawChart(); dofOff(); stillSince = now; }
+      if (!dofDone && now - stillSince > 240 && now - lastScrollT > SCROLL_REST + 300) renderDof();
+    }
+    tendPulses();
+    liveRes(now);
+    drawLive();
+
+    calm = !settling && !hover && !callWait && !down && !STILL;
+    const idle = running && card.hidden && !menuOpen;
+    if (settling || idle || callWait || swayAmt > 0 && running || (v === "still" && !dofDone)) kick();
     else last = 0;
   }
-  function kick() { if (!raf) raf = requestAnimationFrame(frame); }
-  // ---- THE GRAIN, as the poster's: a picture of noise jumped about by its
-  // transform, never drawn again ---------------------------------------------
-  (function grain() {
-    const g = document.createElement("canvas");
-    g.width = g.height = 160;
-    const x = g.getContext("2d"), im = x.createImageData(160, 160), R = rng(3);
-    for (let i = 0; i < im.data.length; i += 4) { const v = R() * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; }
-    x.putImageData(im, 0, 0);
-    el(".t1-grain").style.backgroundImage = "url(" + g.toDataURL() + ")";
-  })();
 
-
-  // ---- BEGIN -----------------------------------------------------------------
-  // the world is not laid before the strings have begun (2026-11-07 — "make
-  // the loading of it smoother"): its pictures are painted once the first
-  // frames are out
-  let laid = false;
-  const layLater = () => { if (!laid) { laid = true; if (!cur) cur = { kind: "per", p: ORDER[0] }; layWorld(); writeHud(); writeList(); } };
-  resize();
-  setBody();
-  // an address naming a perfumer opens their world; "house-" and a house's
-  // name, the house's
-  function fromAddress() {
-    const hsh = decodeURIComponent(location.hash.slice(1));
-    if (!hsh || busy()) return;
-    const p = PER.find((q) => q.id === hsh);
-    const ho = !p && hsh.startsWith("house-") ? HOS.find((h) => h.id === hsh.slice(6)) : null;
-    if (!p && !ho) return;
-    cur = p ? { kind: "per", p } : { kind: "house", ho }; if (p) lastPer = p;
-    laid = true; stick = null; aim = null; closeMore(true);
-    layWorld(); writeHud(); writeList(); view = "world"; setBody(); kick();
+  // ---- WHAT IS UNDER THE HAND --------------------------------------------
+  function groupAt(th) {
+    let best = null, bd = Infinity;
+    for (const g of groups) {
+      const d = Math.max(0, angDist(th, (g.a0 + g.a1) / 2) - (g.a1 - g.a0) / 2);
+      if (d < bd) { bd = d; best = g; }
+    }
+    return bd <= slot * GAP ? best : null;
   }
-  fromAddress();
-  window.addEventListener("hashchange", fromAddress);
-  const idle = window.requestIdleCallback || ((f) => setTimeout(f, 60));
-  setTimeout(() => idle(layLater, { timeout: 600 }), 320);
-  window.addEventListener("resize", () => { resize(); kick(); });
+  function houseAt(g, th) {
+    let best = null, bd = Infinity;
+    for (const h of g.houses) {
+      const d = Math.max(0, angDist(th, (h.a0 + h.a1) / 2) - (h.a1 - h.a0) / 2);
+      if (d < bd) { bd = d; best = h; }
+    }
+    return best;
+  }
+  function hit(X, Y) {
+    const p = unsway(X, Y);
+    viewCam();
+    const w = unproj(p.x, p.y);
+    if (!w) return null;
+    const r = Math.hypot(w.x, w.y);
+    if (r < R.frame1) {
+      // on the Earth, on the whole chart: a country with a pin
+      if (zoomed() || cam.tilt > 0.01) return null;
+      proj(0, 0, T0);
+      const er = R.earth * V.z;
+      let best = null, bd = 14;
+      for (const q of PINS) {
+        if (q.z < 0.05) continue;
+        const d = Math.hypot(T0.x + er * q.x - p.x, T0.y - er * q.y - p.y);
+        if (d < bd) { bd = d; best = q; }
+      }
+      return best ? { type: "pin", p: best } : null;
+    }
+    if (r > R.fit) return null;
+    const th = Math.atan2(w.y, w.x);
+    const g = groupAt(th);
+    if (!g) return null;
+    // a perfume whose name is written can be pressed by its name or its spoke
+    if (closeAmt() > 0.5) {
+      let best = null, bd = Infinity;
+      for (const e of g.members) { if (!written(e)) continue; const d = angDist(th, e.a); if (d < bd) { bd = d; best = e; } }
+      if (best) {
+        const onSpoke = r >= R.base - 6 && r <= best.rDot + 12 && bd * r < 9;
+        const P = placeLabel(best, labelSize());
+        const onLabel = r >= R.tick0 - 4 && r <= R.label + P.wMain + P.wSub + 8 && bd < slot * 0.55;
+        if (onSpoke || onLabel) return { type: "entry", e: best, g, th };
+      }
+    }
+    if (mode === "az" && sel.pid === g.id) return { type: "house", g, h: houseAt(g, th), th };
+    return { type: "group", g, th };
+  }
+  function sameHover(a, b) {
+    if (!a || !b || a.type !== b.type) return a === b;
+    return (a.e || a.h || a.g || a.list || a.p) === (b.e || b.h || b.g || b.list || b.p);
+  }
+  function tipFor(h) {
+    if (h.type === "pin") {
+      const q = h.p, n = q.entries.length;
+      const lines = [];
+      if (q.houses.length) lines.push(q.houses.length + (q.houses.length === 1 ? " house · " : " houses · ") + n + (n === 1 ? " perfume" : " perfumes"));
+      if (q.houses.length) lines.push(q.houses.map((id) => HOU[id].name).join(", "));
+      if (q.perfumers.length) lines.push("from here: " + q.perfumers.map((id) => PER[id].name).join(", "));
+      return "<b>" + esc(q.name) + "</b>" + lines.map((t) => "<span>" + esc(t) + "</span>").join("");
+    }
+    if (h.type === "entry") {
+      const e = h.e, p = e.p;
+      const who = p.p.map((id) => PER[id].name).join(" & ");
+      return "<b>" + esc(p.n) + "</b><span>" + esc(HOU[p.h].name) + " · " + (p.y || "year not found") + "</span><span>" + esc(who) + "</span>";
+    }
+    if (h.type === "house") {
+      const n = h.h.members.length;
+      return "<b>" + esc(HOU[h.h.h].name) + "</b><span>" + n + (n === 1 ? " perfume" : " perfumes") + (sel.hid === h.h.h ? "" : " · choose the house") + "</span>";
+    }
+    const g = h.g, n = g.members.length;
+    const houses = mode === "az" ? g.houses.length : 0;
+    return "<b>" + esc(g.label) + "</b><span>" + n + (n === 1 ? " perfume" : " perfumes") +
+      (houses ? " · " + houses + (houses === 1 ? " house" : " houses") : "") + "</span>";
+  }
+  let tipAt = null;
+  function showTip(h, X, Y) {
+    tip.innerHTML = tipFor(h);
+    tip.hidden = false;
+    tipAt = { x: X, y: Y };
+    placeTip();
+  }
+  function placeTip() {
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    let x = tipAt.x + 16, y = tipAt.y + 16;
+    if (x + tw > W - 8) x = tipAt.x - tw - 16;
+    if (y + th > H - 8) y = tipAt.y - th - 16;
+    tip.style.transform = "translate(" + Math.round(x) + "px," + Math.round(y) + "px)";
+  }
+  function hideTip() { tip.hidden = true; tipAt = null; }
+
+  // ---- THE HAND ----------------------------------------------------------
+  let down = null, handHover = false;
+  const CHROME = "button, a, .pf-nav, .pf-here, .pf-sort, .pf-call, .pf-scrub";
+  function localXY(ev) { const b = stage.getBoundingClientRect(); return { x: ev.clientX - b.left, y: ev.clientY - b.top }; }
+  stage.addEventListener("pointerdown", (ev) => {
+    if (ev.target.closest(CHROME)) return;
+    const p = localXY(ev);
+    down = { x: p.x, y: p.y, ly: p.y, lx: p.x, swiped: false };
+  });
+  stage.addEventListener("pointermove", (ev) => {
+    lastHand = performance.now();
+    if (ev.pointerType === "touch") {
+      // a finger close in goes through the perfumes of what is chosen, as
+      // the wheel does: up for the next, down for the one before
+      if (!down || !sel.kind || !zoomed()) return;
+      const p = localXY(ev);
+      const dy = p.y - down.ly, dx = p.x - down.lx;
+      down.ly = p.y; down.lx = p.x;
+      if (Math.hypot(p.x - down.x, p.y - down.y) > 10) down.swiped = true;
+      if (down.swiped) scrollBy(-(Math.abs(dy) >= Math.abs(dx) ? dy : dx) / SWIPE_PX);
+      return;
+    }
+    if (ev.target.closest(CHROME)) { if (handHover) clearHandHover(); return; }
+    if (viewNow === "live" && zoomed()) return;
+    const p = localXY(ev);
+    const h = hit(p.x, p.y);
+    if (!sameHover(h, hover)) { hover = h; kick(); }
+    handHover = !!h;
+    stage.classList.toggle("is-over", !!h);
+    if (h) showTip(h, p.x, p.y); else hideTip();
+  });
+  function clearHandHover() {
+    handHover = false; hover = null; hideTip();
+    stage.classList.remove("is-over");
+    kick();
+  }
+  stage.addEventListener("pointerleave", () => { if (handHover) clearHandHover(); });
+  stage.addEventListener("pointerup", (ev) => {
+    if (!down) return;
+    const p = localXY(ev), was = down;
+    down = null;
+    if (was.swiped || Math.hypot(p.x - was.x, p.y - was.y) > 10) return;
+    press(hit(p.x, p.y));
+  });
+  stage.addEventListener("pointercancel", () => { down = null; });
+
+  function press(h) {
+    if (!h) { if (callE) dismissCall(); return; }
+    if (h.type === "entry") { choosePerfume(h.e); return; }
+    // pressed inside what is already chosen: the scroll goes to the perfume
+    // nearest to where it was pressed
+    const already = h.type === "house" ? sel.kind === "house" && sel.hid === h.h.h
+      : mode === "az" ? sel.pid === h.g.id && sel.kind === "perfumer" : sel.kind === "year" && sel.year === h.g.key;
+    if (already) { lookAt(h.th); return; }
+    if (h.type === "house") { chooseHouse(h.g.id, h.h.h); return; }
+    if (mode === "az") choosePerfumer(h.g.id);
+    else chooseYear(h.g.key);
+  }
+  // pressed inside what is chosen: the scroll goes to the perfume nearest
+  // to where it was pressed
+  function lookAt(th) {
+    let best = -1, bd = Infinity;
+    (focusList || []).forEach((e, i) => { const d = angDist(th, e.to); if (d < bd) { bd = d; best = i; } });
+    if (best < 0) return;
+    scrollTo(best);
+  }
+
+  // ---- CHOOSING ----------------------------------------------------------
+  function choose(next) {
+    const was = sel;
+    sel = Object.assign({ kind: null, pid: null, hid: null, year: null, e: null }, next || {});
+    // a perfume chosen keeps the scroll where it is: the perspective it is
+    // chosen from is the one it is shown in — and going back up from it
+    // keeps it too
+    const sameParent = (sel.kind === "perfume" || was.kind === "perfume") && was.kind && sel.kind &&
+      was.pid === sel.pid && was.hid === sel.hid && was.year === sel.year;
+    const wasAt = focusList && focusList.length ? focusList[clamp(Math.round(scrollS), 0, focusList.length - 1)] : null;
+    const wasFocus = focus;
+    if (sel.e !== callE) closeCall(true);
+    if (!sel.kind) focus = null;
+    else {
+      let f;
+      if (sel.hid) f = (e) => e.pid === sel.pid && e.p.h === sel.hid;
+      else if (sel.pid) f = (e) => e.pid === sel.pid;
+      else if (sel.year != null) f = (e) => yearKey(e) === sel.year;
+      else f = (e) => e === sel.e;
+      focus = new Set(entries.filter(f));
+    }
+    focusList = focus ? order.filter((e) => focus.has(e)) : null;
+    // where the scroll stands in it: where it stood, for a perfume chosen in
+    // it or going back up from one; at the same perfume, going up from a
+    // house to its perfumer; else at its start
+    if (focusList) {
+      const up = wasFocus && wasAt && focus.has(wasAt) && focus.size > wasFocus.size;
+      if (sameParent) scrollS = clamp(scrollS, 0, focusList.length - 1);
+      else if (up) scrollS = focusList.indexOf(wasAt);
+      else scrollS = startAt(focusList.length);
+    } else scrollS = 0;
+    // the Earth's countries lit, and the Earth turned to the choice's
+    PINS.forEach((q) => (q.lit = !!focus && (q.entries.some((e) => focus.has(e)) || !!(sel.pid && PER[sel.pid] && PER[sel.pid].from === q.name))));
+    if (!sel.kind) spinTween = null;
+    else turnEarthTo(countryOf(sel.e ? [sel.e] : focusList, sel.pid));
+    // a perfume chosen is lit, the rest of its house stepped back a little
+    // and everything else as far as ever
+    for (const e of entries) { e.emFrom = e.em; e.emTo = !focus ? 1 : sel.e ? (e === sel.e ? 1 : focus.has(e) ? AROUND : DIM) : focus.has(e) ? 1 : DIM; }
+    if (STILL) { for (const e of entries) e.em = e.emTo; emT0 = -1; } else emT0 = performance.now();
+    rotorDirty = chartDirty = true;
+    hover = null; hideTip(); handHover = false; stage.classList.remove("is-over");
+    setGoal(poseFor());
+    showChosen();
+    syncScrub();
+    if (sel.kind && window.scrollY > 1) window.scrollTo({ top: 0, behavior: STILL ? "auto" : "smooth" });
+    kick();
+  }
+  const choosePerfumer = (pid) => choose({ kind: "perfumer", pid });
+  const chooseHouse = (pid, hid) => choose({ kind: "house", pid, hid });
+  const chooseYear = (year) => choose({ kind: "year", year });
+  // a perfume chosen: the chart goes (or stays) where its house is seen,
+  // the perfume is lit there, and then its window is drawn out of its dot
+  // (2026-11-03 — "let the popup window be animated with the chart ... the
+  // specific perfume being viewed would be highlighted, then the popup would
+  // appear")
+  function choosePerfume(e, quiet) {
+    const next = { kind: "perfume", e };
+    if (sel.year != null && sel.kind !== null && !sel.pid) next.year = sel.year;
+    else { next.pid = e.pid; next.hid = e.p.h; }
+    if (sel.kind === "perfume" && sel.e === e) { if (!quiet && !callE) callFor(e, 0); return; }
+    choose(next);
+    // brought onto the window if the scroll stands far from it
+    const i = focusList ? focusList.indexOf(e) : -1;
+    if (i >= 0 && Math.abs(i - scrollS) > viewN() * 0.3) { scrollS = i; setGoal(poseFor()); syncScrub(); }
+    litT0 = performance.now();
+    if (phone && navOpen) toggleNav(false);
+    if (!quiet) callFor(e, STILL ? 0 : CALL_AFTER);
+  }
+  function up() {
+    if (sel.kind === "perfume") { closeCall(); if (sel.year != null) chooseYear(sel.year); else chooseHouse(sel.pid, sel.hid); return; }
+    if (sel.kind === "house") { choosePerfumer(sel.pid); return; }
+    choose(null);
+  }
+
+  // what is chosen, said in the title's place, the list and the hint
+  let hereTimer = 0;
+  function showChosen() {
+    const on = !!sel.kind;
+    root.classList.toggle("is-chosen", on);
+    stage.classList.toggle("is-chosen", on);
+    backBtn.hidden = !on;
+    hold(on);
+    const touch = window.matchMedia("(hover: none)").matches;
+    const back = touch ? "" : " · Esc to go back";
+    // the wheel goes through the perfumes of what is chosen — said only
+    // where there are more of them than the window holds
+    const many = focusList && focusList.length > viewN() * 0.85;
+    const through = many ? (touch ? " · swipe for the rest" : " · scroll for the rest") : "";
+    hint.textContent = !on ? (mode === "az" ? (touch ? "Tap a perfumer — on the circle or in the list" : "Choose a perfumer — on the circle or in the list")
+      : (touch ? "Tap a year — or a perfumer in the list" : "Choose a year — or a perfumer in the list"))
+      : sel.kind === "perfumer" ? (mode === "az" ? "Choose a house" : "Choose a perfume") + through + back
+      : sel.kind === "perfume" ? (touch ? "" : "Esc to go back")
+      : "Choose a perfume" + through + back;
+    clearTimeout(hereTimer);
+    if (!on) {
+      here.classList.remove("is-on");
+      hereTimer = setTimeout(() => { here.hidden = true; }, STILL ? 0 : 600);
+    } else {
+      fillHere();
+      if (here.hidden) { here.hidden = false; void here.offsetWidth; }
+      here.classList.add("is-on");
+    }
+    syncNav();
+  }
+  const about = here.querySelector(".pf-here-about");
+  function fillHere() {
+    const k = here.querySelector(".pf-here-kicker"), n = here.querySelector(".pf-here-name"), m = here.querySelector(".pf-here-meta");
+    let kicker = "", name = "", meta = "", aboutSay = "", aboutDo = null;
+    const plural = (x, one, many) => x + " " + (x === 1 ? one : many);
+    if (sel.kind === "perfumer") {
+      const p = PER[sel.pid], list = entriesOf(sel.pid), hs = housesOf(sel.pid);
+      kicker = sel.pid === "not-found" ? "Perfumer" : "Perfumer · " + String(named.indexOf(p) + 1).padStart(2, "0") + " of " + named.length;
+      name = p.name;
+      meta = plural(list.length, "perfume", "perfumes") + " · " + plural(hs.length, "house", "houses");
+      aboutSay = sel.pid === "not-found" ? "About these" : "About " + p.name;
+      aboutDo = () => openCard("perfumer", sel.pid, false);
+    } else if (sel.kind === "house") {
+      const h = HOU[sel.hid], list = entries.filter((e) => e.pid === sel.pid && e.p.h === sel.hid);
+      kicker = "House · " + PER[sel.pid].name;
+      name = h.name;
+      meta = plural(list.length, "perfume", "perfumes") + (h.founded ? " · founded " + h.founded : "");
+      aboutSay = "About the house";
+      aboutDo = () => openCard("house", sel.hid, false);
+    } else if (sel.kind === "year") {
+      const list = entries.filter((e) => yearKey(e) === sel.year);
+      kicker = "Year";
+      name = sel.year === "none" ? "Year not found" : String(sel.year);
+      meta = plural(list.length, "perfume", "perfumes") + " · " + plural(new Set(list.map((e) => e.pid)).size, "perfumer", "perfumers");
+    } else if (sel.kind === "perfume") {
+      const p = sel.e.p;
+      kicker = "Perfume · " + HOU[p.h].name;
+      name = p.n;
+      meta = (p.y || "year not found") + " · " + p.p.map((id) => PER[id].name).join(" & ");
+      aboutSay = "Its window";
+      aboutDo = () => callFor(sel.e, 0);
+    }
+    k.textContent = kicker; n.textContent = name; m.textContent = meta;
+    about.hidden = !aboutDo;
+    about.textContent = aboutSay;
+    about.onclick = aboutDo;
+  }
+
+  // ---- THE LIST OF PERFUMERS ----------------------------------------------
+  const navItems = {};
+  function row(cls, name, n) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "pf-nav-row " + cls;
+    b.innerHTML = '<span class="pf-nav-name">' + esc(name) + '</span><span class="pf-nav-n">' + n + "</span>";
+    return b;
+  }
+  function buildNav() {
+    nav.querySelector(".pf-nav-total").textContent = String(named.length);
+    PERFUMERS.forEach((p) => {
+      const li = document.createElement("li");
+      li.className = "pf-nav-item";
+      li.dataset.per = p.id;
+      const b = row("pf-nav-per", p.name, entriesOf(p.id).length);
+      b.setAttribute("aria-expanded", "false");
+      li.appendChild(b);
+      navList.appendChild(li);
+      navItems[p.id] = li;
+    });
+    nav.hidden = false;
+  }
+  function housesList(li, pid) {
+    let ul = li.querySelector(".pf-nav-houses");
+    if (ul) return ul;
+    ul = document.createElement("ul");
+    ul.className = "pf-nav-houses";
+    ul.hidden = true;
+    housesOf(pid).forEach(([hid, list]) => {
+      const hli = document.createElement("li");
+      hli.className = "pf-nav-hitem";
+      hli.dataset.house = hid;
+      const b = row("pf-nav-house", HOU[hid].name, list.length);
+      b.setAttribute("aria-expanded", "false");
+      hli.appendChild(b);
+      const pul = document.createElement("ul");
+      pul.className = "pf-nav-perfumes";
+      pul.hidden = true;
+      list.forEach((e) => {
+        const pli = document.createElement("li");
+        const pb = document.createElement("button");
+        pb.type = "button";
+        pb.className = "pf-nav-row pf-nav-perfume" + (e.p.at ? " is-here" : "");
+        pb.dataset.entry = String(entries.indexOf(e));
+        pb.innerHTML = '<span class="pf-nav-name">' + esc(e.p.n) + "</span><i>" + (e.p.y || "—") + "</i>";
+        pli.appendChild(pb);
+        pul.appendChild(pli);
+      });
+      hli.appendChild(pul);
+      ul.appendChild(hli);
+    });
+    li.appendChild(ul);
+    return ul;
+  }
+  function reveal(el, show) {
+    if (show === !el.hidden) return;
+    el.hidden = !show;
+    if (show && !STILL) { el.classList.remove("pf-nav-opened"); void el.offsetWidth; el.classList.add("pf-nav-opened"); }
+  }
+  function syncNav() {
+    let target = null;
+    PERFUMERS.forEach((p) => {
+      const li = navItems[p.id];
+      const on = sel.pid === p.id;
+      li.classList.toggle("is-on", on);
+      li.firstChild.setAttribute("aria-expanded", on ? "true" : "false");
+      const ul = on ? housesList(li, p.id) : li.querySelector(".pf-nav-houses");
+      if (ul) reveal(ul, on);
+      if (!on) return;
+      target = li.firstChild;
+      ul.querySelectorAll(".pf-nav-hitem").forEach((hli) => {
+        const hon = sel.hid === hli.dataset.house;
+        hli.classList.toggle("is-on", hon);
+        hli.firstChild.setAttribute("aria-expanded", hon ? "true" : "false");
+        reveal(hli.querySelector(".pf-nav-perfumes"), hon);
+        if (hon) target = hli.firstChild;
+      });
+      ul.querySelectorAll(".pf-nav-perfume").forEach((b) => {
+        const lit = sel.e === entries[+b.dataset.entry];
+        b.classList.toggle("is-lit", lit);
+        if (lit) target = b;
+      });
+    });
+    navPath.textContent = !sel.kind ? "Choose a perfumer"
+      : sel.kind === "year" ? (sel.year === "none" ? "Year not found" : String(sel.year))
+      : [sel.pid && PER[sel.pid].name, sel.hid && HOU[sel.hid].name, sel.e && sel.e.p.n].filter(Boolean).join(" · ") || (sel.e ? sel.e.p.n : "");
+    if (target) {
+      // bring the chosen row into the list's view, never moving the page
+      const sb = navScroll.getBoundingClientRect(), tb = target.getBoundingClientRect();
+      if (tb.top < sb.top + 20 || tb.bottom > sb.bottom - 40) {
+        navScroll.scrollTo({ top: navScroll.scrollTop + tb.top - sb.top - 30, behavior: STILL ? "auto" : "smooth" });
+      }
+    }
+  }
+  navList.addEventListener("click", (ev) => {
+    const b = ev.target.closest("button");
+    if (!b) return;
+    if (b.classList.contains("pf-nav-per")) {
+      const pid = b.parentNode.dataset.per;
+      if (sel.kind === "perfumer" && sel.pid === pid) choose(null);
+      else choosePerfumer(pid);
+    } else if (b.classList.contains("pf-nav-house")) {
+      const hid = b.parentNode.dataset.house, pid = b.closest(".pf-nav-item").dataset.per;
+      if (sel.kind === "house" && sel.hid === hid) choosePerfumer(pid);
+      else chooseHouse(pid, hid);
+    } else if (b.classList.contains("pf-nav-perfume")) {
+      choosePerfume(entries[+b.dataset.entry]);
+    }
+  });
+  // pointed at in the list, it lights on the chart
+  navList.addEventListener("pointerover", (ev) => {
+    if (ev.pointerType === "touch") return;
+    const b = ev.target.closest("button");
+    if (!b) return;
+    let h = null;
+    if (b.classList.contains("pf-nav-per")) {
+      const pid = b.parentNode.dataset.per;
+      h = { type: "list", list: entriesOf(pid), g: mode === "az" ? groups.find((g) => g.id === pid) : null };
+    } else if (b.classList.contains("pf-nav-house")) {
+      const hid = b.parentNode.dataset.house, pid = b.closest(".pf-nav-item").dataset.per;
+      h = { type: "list", list: entries.filter((e) => e.pid === pid && e.p.h === hid), g: null };
+    } else if (b.classList.contains("pf-nav-perfume")) {
+      h = { type: "entry", e: entries[+b.dataset.entry] };
+    }
+    if (h && !(hover && hover.from === b)) { h.from = b; hover = h; kick(); }
+  });
+  navList.addEventListener("pointerleave", () => { if (hover && hover.from) { hover = null; kick(); } });
+  // ---- THE LIST'S SEARCH (2026-11-03 — "Put a search button on the top
+  // right of the perfumers list"): a perfumer, a house or a perfume, found
+  // as it is typed, the list standing aside while it is; one chosen is
+  // chosen on the chart as from the list, and the list comes back to it.
+  // THE FOLD (2026-11-07 — "the table on the right should be collapsible"):
+  // the list and its search fold away together, leaving the list's name and
+  // count, and the chart moves over into the room they leave; kept for the
+  // next visit in this browser. Not on a phone, where the list is a drawer.
+  const foldBtn = nav.querySelector(".pf-nav-fold");
+  let folded = false;
+  try { folded = localStorage.getItem("pf-nav-folded") === "1"; } catch (e) { /* storage refused */ }
+  function setFold(on, quiet) {
+    folded = !!on;
+    nav.classList.toggle("is-folded", folded);
+    foldBtn.setAttribute("aria-expanded", folded ? "false" : "true");
+    foldBtn.setAttribute("aria-label", folded ? "Unfold the list" : "Fold the list away");
+    if (folded && !findBox.hidden) openFind(false);
+    try { localStorage.setItem("pf-nav-folded", folded ? "1" : "0"); } catch (e) { /* storage refused */ }
+    if (quiet) return;
+    // the chart into its new room, on the camera's springs rather than at once
+    measure();
+    rotorDirty = chartDirty = true;
+    dofOff();
+    setGoal(poseFor(), false);
+    syncScrub();
+  }
+  foldBtn.addEventListener("click", () => setFold(!folded));
+  const findBtn = nav.querySelector(".pf-nav-find");
+  const findBox = nav.querySelector(".pf-nav-search");
+  const query = nav.querySelector(".pf-nav-query");
+  const found = nav.querySelector(".pf-nav-found");
+  const findCount = nav.querySelector(".pf-nav-count");
+  const fold = (t) => String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const findables = [];
+  PERFUMERS.forEach((p) => { if (p.id !== "not-found") findables.push({ kind: "perfumer", pid: p.id, name: p.name, sub: entriesOf(p.id).length + " perfumes" }); });
+  const pairs = new Map();
+  entries.forEach((e) => { const k = e.pid + "|" + e.p.h; if (!pairs.has(k)) pairs.set(k, { kind: "house", pid: e.pid, hid: e.p.h, name: HOU[e.p.h].name, sub: e.pid === "not-found" ? "not publicly available" : PER[e.pid].name }); });
+  pairs.forEach((v) => findables.push(v));
+  entries.forEach((e) => findables.push({ kind: "perfume", e, name: e.p.n, sub: HOU[e.p.h].name + " · " + (e.p.y || "year not found") }));
+  findables.forEach((f) => { f.key = fold(f.name); f.subKey = fold(f.sub); });
+  const KIND_RANK = { perfumer: 0, house: 1, perfume: 2 };
+  function search(q) {
+    const t = fold(q.trim());
+    if (!t) return null;
+    const hits = [];
+    for (const f of findables) {
+      const at = f.key.indexOf(t);
+      let rank = -1;
+      if (at === 0) rank = 0;
+      else if (at > 0 && /[^a-z0-9]/.test(f.key[at - 1])) rank = 1;
+      else if (at > 0) rank = 2;
+      else if (f.kind !== "perfumer" && f.subKey.indexOf(t) >= 0) rank = 3;
+      if (rank >= 0) hits.push({ f, rank });
+    }
+    hits.sort((a, b) => a.rank - b.rank || KIND_RANK[a.f.kind] - KIND_RANK[b.f.kind] || cmp(a.f.name, b.f.name));
+    return hits.map((h) => h.f);
+  }
+  const KIND_SAY = { perfumer: "Perfumer", house: "House", perfume: "Perfume" };
+  let foundList = [];
+  function showFound() {
+    const r = search(query.value);
+    if (!r) {
+      found.hidden = true; navList.hidden = false;
+      found.innerHTML = ""; findCount.textContent = "";
+      foundList = [];
+      return;
+    }
+    foundList = r.slice(0, 60);
+    navList.hidden = true; found.hidden = false;
+    findCount.textContent = r.length ? String(r.length) : "";
+    found.innerHTML = foundList.length ? foundList.map((f, i) =>
+      '<li><button type="button" class="pf-nav-row pf-nav-hit pf-nav-hit-' + f.kind + '" data-hit="' + i + '"><span class="pf-nav-name">' + esc(f.name) +
+      '<small>' + KIND_SAY[f.kind] + " · " + esc(f.sub) + "</small></span></button></li>").join("")
+      : '<li class="pf-nav-none">Nothing on the chart by that name.</li>';
+    navScroll.scrollTop = 0;
+  }
+  function openFind(on) {
+    if (on === !findBox.hidden) { if (on) query.focus(); return; }
+    findBox.hidden = !on;
+    findBtn.setAttribute("aria-expanded", on ? "true" : "false");
+    nav.classList.toggle("is-finding", on);
+    if (on) {
+      if (phone && !navOpen) toggleNav(true);
+      query.focus({ preventScroll: true });
+    } else {
+      query.value = "";
+      showFound();
+    }
+  }
+  function takeHit(f) {
+    openFind(false);
+    if (f.kind === "perfumer") choosePerfumer(f.pid);
+    else if (f.kind === "house") chooseHouse(f.pid, f.hid);
+    else choosePerfume(f.e);
+  }
+  findBtn.addEventListener("click", () => openFind(findBox.hidden));
+  query.addEventListener("input", showFound);
+  query.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape") { ev.stopPropagation(); ev.preventDefault(); openFind(false); findBtn.focus({ preventScroll: true }); }
+    else if (ev.key === "Enter") { ev.preventDefault(); if (foundList[0]) takeHit(foundList[0]); }
+    else if (ev.key === "ArrowDown") { const b = found.querySelector("button"); if (b) { ev.preventDefault(); b.focus(); } }
+  });
+  found.addEventListener("click", (ev) => {
+    const b = ev.target.closest("[data-hit]");
+    if (b) takeHit(foundList[+b.dataset.hit]);
+  });
+  found.addEventListener("keydown", (ev) => {
+    const b = ev.target.closest("[data-hit]");
+    if (!b) return;
+    const all = Array.from(found.querySelectorAll("[data-hit]")), i = all.indexOf(b);
+    if (ev.key === "ArrowDown" && all[i + 1]) { ev.preventDefault(); all[i + 1].focus(); }
+    else if (ev.key === "ArrowUp") { ev.preventDefault(); (all[i - 1] || query).focus(); }
+    else if (ev.key === "Escape") { ev.stopPropagation(); ev.preventDefault(); openFind(false); findBtn.focus({ preventScroll: true }); }
+  });
+  found.addEventListener("pointerover", (ev) => {
+    if (ev.pointerType === "touch") return;
+    const b = ev.target.closest("[data-hit]");
+    if (!b) return;
+    const f = foundList[+b.dataset.hit];
+    const h = f.kind === "perfume" ? { type: "entry", e: f.e }
+      : { type: "list", list: f.kind === "house" ? entries.filter((e) => e.pid === f.pid && e.p.h === f.hid) : entriesOf(f.pid), g: null };
+    h.from = b; hover = h; kick();
+  });
+  found.addEventListener("pointerleave", () => { if (hover && hover.from) { hover = null; kick(); } });
+
+  function toggleNav(on) {
+    navOpen = on;
+    nav.classList.toggle("is-open", navOpen);
+    navToggle.setAttribute("aria-expanded", navOpen ? "true" : "false");
+    measure();
+    setGoal(poseFor());
+  }
+  navToggle.addEventListener("click", () => toggleNav(!navOpen));
+
+  // ---- STAYING PUT WHILE SOMETHING IS CHOSEN ("a fixed place, where you
+  // cannot use the scrollwheel"): the wheel and the keys that scroll the page
+  // do nothing over the chart; the list and an open window still scroll.
+  function canScroll(el, dy) {
+    if (!el || el.scrollHeight <= el.clientHeight + 1) return false;
+    return dy < 0 ? el.scrollTop > 0 : el.scrollTop + el.clientHeight < el.scrollHeight - 1;
+  }
+  // listened for only while something is chosen, so the page's own
+  // scrolling never waits on it the rest of the time. Over the chart it goes
+  // through the perfumes of what is chosen (2026-11-06).
+  function holdWheel(ev) {
+    const t = ev.target && ev.target.closest ? ev.target : null;
+    const list = t && t.closest(".pf-nav-scroll");
+    if (list && canScroll(list, ev.deltaY)) return;
+    if (t && t.closest(".pf-card") && canScroll(card, ev.deltaY)) return;
+    if (t && t.closest(".pf-call") && canScroll(callSheet, ev.deltaY)) return;
+    ev.preventDefault();
+    if (!t || !stage.contains(t) || t.closest(".pf-nav, .pf-call, .pf-here, .pf-sort") || !card.hidden) return;
+    let d = ev.deltaY;
+    if (Math.abs(ev.deltaX) > Math.abs(d)) d = ev.deltaX;
+    d *= ev.deltaMode === 1 ? 18 : ev.deltaMode === 2 ? H : 1;
+    scrollBy(d / WHEEL_PX);
+  }
+  // ---- GOING THROUGH THE PERFUMES OF WHAT IS CHOSEN -------------------------
+  function scrollTo(s) {
+    if (!focusList || !focusList.length) return;
+    // a perfume's window is put away first, back to its house, where it was
+    if (sel.kind === "perfume") up();
+    if (!focusList) return;
+    const n = focusList.length;
+    const next = clamp(s, 0, n - 1);
+    if (Math.abs(next - scrollS) < 1e-4) return;
+    scrollS = next;
+    lastScrollT = performance.now();
+    hover = null; hideTip();
+    setGoal(poseFor());
+    syncScrub();
+    kick();
+  }
+  const scrollBy = (d) => scrollTo(scrollS + d);
+  // THE SCRUBBER, beside the chart while something is chosen: a tick for
+  // every perfume of it, a thumb as long as the window holds, the one the
+  // scroll stands at named — pressed or dragged, it goes there
+  const scrub = document.createElement("div");
+  scrub.className = "pf-scrub";
+  scrub.hidden = true;
+  scrub.innerHTML = '<p class="pf-scrub-at" aria-live="polite"><b></b><span></span></p>' +
+    '<div class="pf-scrub-track" role="slider" tabindex="0" aria-label="Go through the perfumes" aria-valuemin="1"><i class="pf-scrub-ticks"></i><i class="pf-scrub-thumb"></i></div>' +
+    '<p class="pf-scrub-say" aria-hidden="true"></p>';
+  stage.appendChild(scrub);
+  const scrubTrack = scrub.querySelector(".pf-scrub-track"), scrubThumb = scrub.querySelector(".pf-scrub-thumb");
+  const scrubTicks = scrub.querySelector(".pf-scrub-ticks");
+  const scrubNo = scrub.querySelector(".pf-scrub-at b"), scrubName = scrub.querySelector(".pf-scrub-at span");
+  const scrubSay = scrub.querySelector(".pf-scrub-say");
+  let scrubFor = null;
+  function syncScrub() {
+    const list = sel.kind && sel.kind !== "perfume" ? focusList : null;
+    const n = list ? list.length : 0;
+    const on = n > 1;
+    if (scrub.hidden === on) scrub.hidden = !on;
+    stage.classList.toggle("has-scrub", on);
+    if (!on) { scrubFor = null; return; }
+    if (scrubFor !== list) {
+      scrubFor = list;
+      // a tick for every perfume, drawn as one gradient
+      const stops = [];
+      for (let i = 0; i < n; i++) { const y = n === 1 ? 50 : (i / (n - 1)) * 100; stops.push("transparent " + Math.max(0, y - 0.0001) + "%", "currentColor " + y + "%", "transparent calc(" + y + "% + 1px)"); }
+      scrubTicks.style.backgroundImage = n <= 160 ? "linear-gradient(to bottom, " + stops.join(", ") + ")" : "none";
+      scrubTrack.setAttribute("aria-valuemax", String(n));
+      scrubSay.textContent = window.matchMedia("(hover: none)").matches ? "Swipe" : "Scroll";
+    }
+    const v = Math.min(1, viewN() / n);
+    const k = n > 1 ? scrollS / (n - 1) : 0.5;
+    scrubThumb.style.height = (v * 100).toFixed(2) + "%";
+    scrubThumb.style.top = (k * (1 - v) * 100).toFixed(2) + "%";
+    const e = list[clamp(Math.round(scrollS), 0, n - 1)];
+    scrubNo.textContent = String(Math.round(scrollS) + 1).padStart(3, "0") + " / " + String(n).padStart(3, "0");
+    scrubName.textContent = e.p.n;
+    scrubTrack.setAttribute("aria-valuenow", String(Math.round(scrollS) + 1));
+    scrubTrack.setAttribute("aria-valuetext", e.p.n);
+  }
+  let scrubDrag = false;
+  function scrubAt(ev) {
+    const b = scrubTrack.getBoundingClientRect();
+    const n = focusList ? focusList.length : 0;
+    if (!n) return;
+    scrollTo(clamp((ev.clientY - b.top) / b.height, 0, 1) * (n - 1));
+  }
+  scrubTrack.addEventListener("pointerdown", (ev) => { ev.preventDefault(); scrubDrag = true; scrubTrack.setPointerCapture(ev.pointerId); scrubAt(ev); });
+  scrubTrack.addEventListener("pointermove", (ev) => { if (scrubDrag) scrubAt(ev); });
+  scrubTrack.addEventListener("pointerup", () => { scrubDrag = false; });
+  scrubTrack.addEventListener("pointercancel", () => { scrubDrag = false; });
+  scrubTrack.addEventListener("keydown", (ev) => {
+    const n = focusList ? focusList.length : 0;
+    const steps = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1, PageDown: Math.max(1, Math.round(viewN() * 0.7)), PageUp: -Math.max(1, Math.round(viewN() * 0.7)) };
+    if (ev.key in steps) { ev.preventDefault(); ev.stopPropagation(); scrollTo(Math.round(scrollS) + steps[ev.key]); }
+    else if (ev.key === "Home") { ev.preventDefault(); ev.stopPropagation(); scrollTo(0); }
+    else if (ev.key === "End") { ev.preventDefault(); ev.stopPropagation(); scrollTo(n - 1); }
+  });
+  let holding = false;
+  function hold(on) {
+    if (on === holding) return;
+    holding = on;
+    if (on) window.addEventListener("wheel", holdWheel, { passive: false });
+    else window.removeEventListener("wheel", holdWheel, { passive: false });
+  }
+  const SCROLL_KEYS = new Set([" ", "PageDown", "PageUp", "ArrowDown", "ArrowUp", "Home", "End"]);
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape") {
+      if (!card.hidden && card.classList.contains("is-open")) { closeCard(); return; }
+      if (sel.kind) { ev.preventDefault(); up(); }
+      return;
+    }
+    if (!sel.kind || !card.hidden || !SCROLL_KEYS.has(ev.key)) return;
+    const a = document.activeElement;
+    if (a && a.closest && (a.closest(".pf-nav-scroll") || a.matches("input, textarea, select, button, summary, a"))) return;
+    ev.preventDefault();
+    // the keys go through the perfumes of what is chosen, as the wheel does
+    const n = focusList ? focusList.length : 0;
+    const page = Math.max(1, Math.round(viewN() * 0.7));
+    const steps = { ArrowDown: 1, ArrowUp: -1, PageDown: page, PageUp: -page, " ": page };
+    if (ev.key in steps) scrollTo(Math.round(scrollS) + (ev.key === " " && ev.shiftKey ? -page : steps[ev.key]));
+    else if (ev.key === "Home") scrollTo(0);
+    else if (ev.key === "End") scrollTo(n - 1);
+  });
+
+  // ---- THE SWITCH --------------------------------------------------------
+  function pressSort(m) {
+    sortBtns.forEach((b) => b.setAttribute("aria-pressed", b.dataset.sort === m ? "true" : "false"));
+  }
+  sortBtns.forEach((b) => b.addEventListener("click", () => {
+    const m = b.dataset.sort;
+    if (m === mode) return;
+    mode = m;
+    try { localStorage.setItem("pf-sort", m); } catch (e) { /* no storage */ }
+    pressSort(m);
+    hover = null; hideTip();
+    arrange(m, true);
+    // a year chosen means nothing A to Z; a perfumer chosen stays chosen
+    if (m === "az" && sel.kind === "year") choose(null);
+    else choose(sel.kind ? sel : null);
+  }));
+  backBtn.addEventListener("click", () => choose(null));
+
+  // ---- THE WINDOW ---------------------------------------------------------
+  const card = document.querySelector(".pf-card");
+  const sheet = card.querySelector(".pf-card-sheet");
+  const body = card.querySelector(".pf-card-body");
+  const cardBack = card.querySelector(".pf-card-back");
+  const cardClose = card.querySelector(".pf-card-close");
+  let stack = [], current = null, opener = null, closeTimer = 0;
+  // (no way into the site from a test page: its perfumes and the site's own
+  // sources are named, not linked)
+  const ROOT = null;
+
+  function citeHtml(s) {
+    const cite = esc(s.cite).replace(/\*(.+?)\*/g, "<cite>$1</cite>");
+    const shown = s.url.startsWith("SITE:") ? "thetasteofaldehydes.com/" + s.url.slice(5) : s.url.replace(/^https?:\/\//, "");
+    if (s.url.startsWith("SITE:")) return cite + " " + esc(shown);
+    return cite + ' <a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(shown) + "</a>";
+  }
+  // number a card's sources in the order it first cites them
+  function numberer() {
+    const ids = [];
+    return {
+      ref(list) {
+        return (list || []).map((id) => {
+          let n = ids.indexOf(id);
+          if (n < 0) { ids.push(id); n = ids.length - 1; }
+          return '<a class="pf-card-ref" href="#" data-ref="' + (n + 1) + '">' + (n + 1) + "</a>";
+        }).join("");
+      },
+      add(list) { (list || []).forEach((id) => { if (ids.indexOf(id) < 0) ids.push(id); }); },
+      list() {
+        if (!ids.length) return "";
+        return '<h3 class="pf-card-sub">Sources</h3><ol class="pf-card-sources">' + ids.map((id, i) =>
+          '<li data-n="' + (i + 1) + '"><b>' + (i + 1) + "</b>" + (SRC[id] ? citeHtml(SRC[id]) : esc(id)) + "</li>").join("") + "</ol>";
+      },
+    };
+  }
+  // a list of perfumes as a plain table — the perfume, then the one other
+  // thing the window is not already about, then its year — each perfume
+  // pressed shown on the chart, lit, with its own small window
+  function table(list, other) {
+    const rows = list.slice().sort((a, b) => (a.p.y || 9999) - (b.p.y || 9999) || cmp(a.p.n, b.p.n));
+    return '<table class="pf-card-table"><thead><tr><th scope="col">Perfume</th><th scope="col">' + (other === "house" ? "House" : "Perfumer") +
+      '</th><th scope="col">Year</th></tr></thead><tbody>' + rows.map((e) =>
+        "<tr><td>" + '<button type="button" class="pf-card-row' + (e.p.at ? " is-here" : "") + '" data-entry="' + entries.indexOf(e) + '">' + esc(e.p.n) + "</button></td>" +
+        "<td>" + (other === "house" ? houseButton(e.p.h) : e.pid === "not-found" ? '<span class="pf-card-none">Not publicly available</span>' : perfumerButton(e.pid)) + "</td>" +
+        "<td>" + (e.p.y || '<span class="pf-card-none">—</span>') + "</td></tr>").join("") + "</tbody></table>";
+  }
+  const perfumerButton = (id) => '<button type="button" class="pf-card-link" data-perfumer="' + esc(id) + '">' + esc(PER[id].name) + "</button>";
+  const houseButton = (id) => '<button type="button" class="pf-card-link" data-house="' + esc(id) + '">' + esc(HOU[id].name) + "</button>";
+
+  // the windows, simple since 2026-11-03 ("Please make the popups simple;
+  // perfumer, perfume, year, and source"): a name, a line about it, its
+  // perfumes as a table, and the sources
+  function renderPerfumer(id) {
+    const p = PER[id], S2 = numberer();
+    const mine = entriesOf(id);
+    const idx = named.indexOf(p);
+    const meta = [];
+    if (p.born) meta.push("Born <b>" + esc(p.born) + "</b>");
+    if (p.from) meta.push(esc(p.from));
+    const aboutTxt = (p.about || []).map((a) => esc(a.t) + S2.ref(a.s)).join(" ");
+    let h = '<p class="pf-card-kicker">' + (id === "not-found" ? "Not publicly available" : "Perfumer · " + String(idx + 1).padStart(2, "0") + " of " + named.length) + "</p>";
+    h += '<h2 class="pf-card-name" id="pf-card-name">' + esc(p.name) + "</h2>";
+    if (meta.length) h += '<p class="pf-card-meta">' + meta.join(" · ") + "</p>";
+    if (aboutTxt) h += '<div class="pf-card-about"><p>' + aboutTxt + "</p></div>";
+    h += '<h3 class="pf-card-sub">' + (mine.length === 1 ? "Perfume" : mine.length + " perfumes") + "</h3>" + table(mine, "house");
+    mine.forEach((e) => S2.add(e.p.s));
+    h += S2.list();
+    return h;
+  }
+  function renderHouse(id) {
+    const ho = HOU[id], S2 = numberer();
+    const list = entries.filter((e) => e.p.h === id);
+    const meta = [];
+    if (ho.founded) meta.push("Founded <b>" + esc(ho.founded) + "</b>");
+    if (ho.from) meta.push(esc(ho.from));
+    let h = '<p class="pf-card-kicker">House</p>';
+    h += '<h2 class="pf-card-name" id="pf-card-name">' + esc(ho.name) + "</h2>";
+    if (meta.length) h += '<p class="pf-card-meta">' + meta.join(" · ") + "</p>";
+    if (ho.about) h += '<div class="pf-card-about"><p>' + esc(ho.about) + S2.ref(ho.s) + "</p></div>";
+    const n = new Set(list.map((e) => e.p)).size;
+    h += '<h3 class="pf-card-sub">' + (n === 1 ? "Perfume" : n + " perfumes") + "</h3>" + table(list, "perfumer");
+
+    list.forEach((e) => S2.add(e.p.s));
+    h += S2.list();
+    return h;
+  }
+  function render(item) {
+    if (item.kind === "perfumer") return renderPerfumer(item.id);
+    return renderHouse(item.id);
+  }
+  function openCard(kind, id, push) {
+    const item = { kind, id };
+    hideTip();
+    clearTimeout(closeTimer);
+    if (card.hidden || !card.classList.contains("is-open")) {
+      stack = [];
+      opener = document.activeElement;
+      body.innerHTML = render(item);
+      current = item;
+      card.hidden = false;
+      void card.offsetWidth;
+      card.classList.add("is-open");
+      sheet.scrollTop = 0; card.scrollTop = 0;
+      sheet.focus({ preventScroll: true });
+    } else {
+      if (push && current) stack.push(current);
+      swap(item);
+    }
+    cardBack.hidden = !stack.length;
+  }
+  function swap(item) {
+    current = item;
+    if (STILL) { body.innerHTML = render(item); card.scrollTop = 0; return; }
+    body.classList.add("is-swapping");
+    setTimeout(() => {
+      body.innerHTML = render(item);
+      card.scrollTop = 0;
+      body.classList.remove("is-swapping");
+    }, 180);
+  }
+  function closeCard() {
+    card.classList.remove("is-open");
+    closeTimer = setTimeout(() => { card.hidden = true; body.innerHTML = ""; kick(); }, STILL ? 0 : 450);
+    if (opener && opener.focus) opener.focus({ preventScroll: true });
+    kick();
+  }
+  card.addEventListener("click", (ev) => {
+    if (!sheet.contains(ev.target)) { closeCard(); return; }
+    const ref = ev.target.closest("[data-ref]");
+    if (ref) {
+      ev.preventDefault();
+      const li = body.querySelector('.pf-card-sources li[data-n="' + ref.dataset.ref + '"]');
+      if (li) {
+        body.querySelectorAll(".pf-card-sources li.is-lit").forEach((x) => x.classList.remove("is-lit"));
+        li.classList.add("is-lit");
+        li.scrollIntoView({ block: "center", behavior: STILL ? "auto" : "smooth" });
+      }
+      return;
+    }
+    const per = ev.target.closest("[data-perfumer]");
+    if (per) { openCard("perfumer", per.dataset.perfumer, true); return; }
+    const ho = ev.target.closest("[data-house]");
+    if (ho) { openCard("house", ho.dataset.house, true); return; }
+    // a perfume in a window's table: the window goes, and the chart shows it
+    const row = ev.target.closest("[data-entry]");
+    if (row) { const e = entries[+row.dataset.entry]; closeCard(); choosePerfume(e); return; }
+  });
+  cardClose.addEventListener("click", closeCard);
+  cardBack.addEventListener("click", () => {
+    const prev = stack.pop();
+    if (prev) swap(prev);
+    cardBack.hidden = !stack.length;
+  });
+
+  // ---- A PERFUME'S WINDOW, drawn out of the chart ---------------------------
+  // (2026-11-03 — "let the popup window be animated with the chart, and the
+  // animation would start from the perspective provided in image 1; such
+  // that the specific perfume being viewed would be highlighted, then the
+  // popup would appear. Please make the popups simple; perfumer, perfume,
+  // year, and source"): no veil and no flight of its own. The chart goes (or
+  // stays) where its house is seen, the perfume is lit there, a line is drawn
+  // out of its dot and the window opens from the end of it — and then stands
+  // beside the dot, carried with the chart as it sways or moves.
+  const call = document.createElement("div");
+  call.className = "pf-call";
+  call.hidden = true;
+  call.innerHTML = '<div class="pf-call-sheet" role="dialog" aria-labelledby="pf-call-name" tabindex="-1">' +
+    '<button type="button" class="pf-call-close" aria-label="Close">×</button><div class="pf-call-body"></div></div>';
+  stage.appendChild(call);
+  const callSheet = call.querySelector(".pf-call-sheet"), callBody = call.querySelector(".pf-call-body");
+  const callAt = { x: 0, y: 0, ok: false };   // its dot, on the window
+  let callT0 = -1, callOff = { dx: 0, dy: 0 }, callW = 0, callH = 0, callX = 0, callY = 0, callTimer = 0, callOpener = null, lastCall = "";
+
+  // a source said simply: where it is, linked, and what it is called there
+  function shortSource(id) {
+    const s = SRC[id];
+    if (!s) return esc(id);
+    const where = /\*(.+?)\*/.exec(s.cite), title = /“(.+?)”/.exec(s.cite);
+    const at = where ? where[1] : s.url.replace(/^(SITE:|https?:\/\/)/, "").split("/")[0];
+    return (s.url.startsWith("SITE:") ? esc(at) : '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(at) + "</a>") +
+      (title ? " <span>" + esc(title[1].replace(/[.,]$/, "")) + "</span>" : "");
+  }
+  function renderCall(e) {
+    const p = e.p, srcs = p.s || [];
+    const who = p.p.map((id) => id === "not-found" ? '<span class="pf-call-none">Not publicly available</span>'
+      : '<button type="button" class="pf-call-link" data-perfumer="' + esc(id) + '">' + esc(PER[id].name) + "</button>").join('<span class="pf-call-and"> &amp; </span>');
+    // written about on the site: its name is the way to it, the arrow kept
+    // on the line of its last word
+    const words = p.n.split(" "), last = words.pop();
+    void last;
+    const name = esc(p.n);
+    return '<dl class="pf-call-facts">' +
+      "<dt>Perfumer</dt><dd>" + who + (p.c === "house" ? '<span class="pf-call-aside">as the house’s perfumer</span>' : "") + "</dd>" +
+      '<dt>Perfume</dt><dd class="pf-call-name" id="pf-call-name">' + name + "</dd>" +
+      "<dt>Year</dt><dd>" + (p.y ? "<b>" + p.y + "</b>" : '<span class="pf-call-none">Not found</span>') + "</dd>" +
+      "<dt>" + (srcs.length > 1 ? "Sources" : "Source") + "</dt><dd>" +
+      (srcs.length ? '<ul class="pf-call-sources">' + srcs.map((id) => "<li>" + shortSource(id) + "</li>").join("") + "</ul>" : "—") + "</dd></dl>";
+  }
+  function callFor(e, delay) {
+    if (!e) return;
+    callWait = { e, t0: performance.now(), delay: STILL ? 0 : delay };
+    kick();
+  }
+  function openCall(e) {
+    if (sel.e !== e) return;
+    clearTimeout(callTimer);
+    if (!call.contains(document.activeElement)) callOpener = document.activeElement;
+    callE = e;
+    callBody.innerHTML = renderCall(e);
+    call.classList.remove("is-open");
+    call.hidden = false;
+    callW = call.offsetWidth; callH = call.offsetHeight;
+    placeCallFirst();
+    callT0 = STILL ? -1 : performance.now();
+    void call.offsetWidth;
+    call.classList.add("is-open");
+    callSheet.focus({ preventScroll: true });
+    hint.textContent = window.matchMedia("(hover: none)").matches ? "" : "Esc to go back";
+    kick();
+  }
+  function closeCall(quick) {
+    callWait = null;
+    if (!callE) return;
+    callE = null;
+    callAt.ok = false;
+    call.classList.remove("is-open");
+    clearTimeout(callTimer);
+    const done = () => { call.hidden = true; callBody.innerHTML = ""; };
+    if (quick || STILL) done(); else callTimer = setTimeout(done, 280);
+    if (call.contains(document.activeElement)) {
+      const o = callOpener;
+      callOpener = null;
+      if (o && o.isConnected && o.focus && o !== document.body) o.focus({ preventScroll: true });
+      else document.activeElement.blur();
+    }
+    kick();
+  }
+  // put away by its ×, a press on nothing, or Esc: back to its house
+  function dismissCall() { if (sel.kind === "perfume") up(); else closeCall(); }
+  function dotOnWindow(e, o) {
+    viewCam();
+    proj(Math.cos(e.a) * e.rDot, Math.sin(e.a) * e.rDot, T2);
+    if (!T2.ok) { o.ok = false; return o; }
+    o.x = M.a * T2.x + M.c * T2.y + M.e;
+    o.y = M.b * T2.x + M.d * T2.y + M.f;
+    o.ok = true;
+    return o;
+  }
+  // which side of its dot it stands: wherever it covers least — the room
+  // left by the list, the notes and the chrome, then the names written out
+  // to the right of the rim, then the nearest
+  function placeCallFirst() {
+    dotOnWindow(callE, callAt);
+    const F = callRoom(), w = callW, h = callH, g = phone ? CALL_GAP * 0.8 : CALL_GAP, d = g * 0.72;
+    const sb = stage.getBoundingClientRect();
+    const blocks = [];
+    document.querySelectorAll(".pf-here, .pf-sort, .pf-back, .pf-hint, .menu-trigger, .page-where").forEach((el) => {
+      if (el.hidden) return;
+      const b = el.getBoundingClientRect();
+      if (b.width && b.height) blocks.push({ x0: b.left - sb.left - 6, y0: b.top - sb.top - 6, x1: b.right - sb.left + 6, y1: b.bottom - sb.top + 6 });
+    });
+    const fx = cam.cx * W, fy = cam.cy * H;
+    const names = { x0: fx - 10, y0: fy - H * 0.42, x1: F.x1, y1: fy + H * 0.42 };
+    const over = (a, b) => Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)) * Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0));
+    const tries = [[-d - w, -d - h], [-g - w, -h / 2], [-d - w, d], [-w / 2, -g - h], [-w / 2, g], [d, -d - h], [g, -h / 2], [d, d]];
+    let best = null, bs = Infinity;
+    tries.forEach(([dx, dy], i) => {
+      const r = { x0: callAt.x + dx, y0: callAt.y + dy, x1: callAt.x + dx + w, y1: callAt.y + dy + h };
+      const inside = Math.max(0, Math.min(r.x1, F.x1 - 8) - Math.max(r.x0, F.x0 + 8)) * Math.max(0, Math.min(r.y1, F.y1 - 8) - Math.max(r.y0, F.y0 + 8));
+      let score = (w * h - inside) * 5 + over(r, names) * 0.6 + i * 40;
+      blocks.forEach((b) => (score += over(r, b) * 4));
+      if (score < bs) { bs = score; best = { dx, dy }; }
+    });
+    callOff = best;
+    lastCall = "";
+    placeCall();
+    // the window opens from where the line meets it
+    const ox = clamp(callAt.x, callX, callX + w) - callX, oy = clamp(callAt.y, callY, callY + h) - callY;
+    callSheet.style.setProperty("--ox", Math.round(ox) + "px");
+    callSheet.style.setProperty("--oy", Math.round(oy) + "px");
+  }
+  // the room it may stand in: the chart's, and the notes' on the left too,
+  // which step aside while anything is chosen
+  const callRoom = () => ({ x0: 0, y0: L.free.y0, x1: L.free.x1, y1: L.free.y1 });
+  function placeCall() {
+    dotOnWindow(callE, callAt);
+    if (!callAt.ok) return;
+    const F = callRoom();
+    const x = clamp(callAt.x + callOff.dx, F.x0 + 8, Math.max(F.x0 + 8, F.x1 - callW - 8));
+    const y = clamp(callAt.y + callOff.dy, F.y0 + 8, Math.max(F.y0 + 8, F.y1 - callH - 8));
+    callX = x; callY = y;
+    const t = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)";
+    if (t !== lastCall) { call.style.transform = t; lastCall = t; }
+  }
+  call.addEventListener("click", (ev) => {
+    if (ev.target.closest(".pf-call-close")) { dismissCall(); return; }
+    const per = ev.target.closest("[data-perfumer]");
+    if (per) { choosePerfumer(per.dataset.perfumer); return; }
+  });
+
+  // ---- THE INDEX AND THE SOURCES AT THE FOOT, each behind its button --------
+  // (the sources since 2026-11-03 — "make the perfumers page sources also
+  // collapsible"): the same <details>, opening and shutting the same way.
+  document.querySelectorAll(".pf-fold").forEach((fold) => {
+    const open = fold.querySelector(".pf-index-open");
+    let timer = 0;
+    open.addEventListener("click", (ev) => {
+      if (STILL) return;
+      ev.preventDefault();
+      clearTimeout(timer);
+      if (fold.open) {
+        fold.classList.remove("is-opening");
+        fold.classList.add("is-closing");
+        timer = setTimeout(() => { fold.open = false; fold.classList.remove("is-closing"); }, 260);
+      } else {
+        fold.classList.remove("is-closing");
+        fold.open = true;
+        fold.classList.add("is-opening");
+        timer = setTimeout(() => fold.classList.remove("is-opening"), 760);
+      }
+    });
+    // an address pointing into it opens it
+    const toHash = () => {
+      const id = decodeURIComponent(location.hash.slice(1));
+      const t = id && document.getElementById(id);
+      if (t && fold.contains(t) && !fold.open) { fold.open = true; t.scrollIntoView(); }
+    };
+    window.addEventListener("hashchange", toHash);
+    toHash();
+  });
+  // the dropdowns at the foot (the legend, the terms, the disclaimer): an
+  // address into one opens it — the title's asterisk is #disclaimer
+  const toDrop = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const t = id && document.getElementById(id);
+    const d = t && t.closest(".pf-drop");
+    if (d && !d.open) d.open = true;
+    if (d) d.scrollIntoView({ behavior: STILL ? "auto" : "smooth", block: "center" });
+  };
+  window.addEventListener("hashchange", toDrop);
+  toDrop();
+  const star = document.querySelector(".pf-star");
+  // (a button here: a test page links nowhere but back to Contact)
+  if (star) star.addEventListener("click", () => {
+    const d = document.getElementById("disclaimer");
+    if (d) { d.open = true; d.scrollIntoView({ behavior: STILL ? "auto" : "smooth", block: "center" }); }
+  });
+  const ic = document.querySelector("[data-index-counts]");
+  if (ic && D.counts) ic.textContent = D.counts.perfumers + " perfumers · " + D.counts.houses + " houses · " + D.counts.perfumes + " perfumes";
+  const sc = document.querySelector("[data-source-count]");
+  if (sc && D.sources) sc.textContent = D.sources.length + " sources";
+  // the index's perfumers open the same window
+  document.querySelectorAll(".pf-entry").forEach((art) => {
+    const id = art.id.replace(/^perfumer-/, "");
+    const h = art.querySelector(".pf-entry-name");
+    if (!h || !PER[id]) return;
+    h.setAttribute("role", "button");
+    h.tabIndex = 0;
+    h.addEventListener("click", () => openCard("perfumer", id, false));
+    h.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); openCard("perfumer", id, false); } });
+  });
+  const counts = document.querySelector("[data-counts]");
+  if (counts && D.counts) {
+    counts.textContent = D.counts.perfumes + " perfumes · " + D.counts.onSite + " written about on The Taste of Aldehydes · " +
+      D.counts.perfumers + " perfumers · " + D.counts.houses + " houses";
+  }
+
+  // ---- NOTHING DRAWN THAT CANNOT BE SEEN -----------------------------------
+  if ("IntersectionObserver" in window) {
+    // (and not while all but a sliver of it is scrolled away, reading the
+    // index under it — 2026-11-07)
+    new IntersectionObserver((list) => {
+      const en = list[list.length - 1];
+      seen = en.isIntersecting && en.intersectionRatio > 0.06;
+      if (seen) { last = 0; kick(); }
+    }, { threshold: [0, 0.06, 0.12] }).observe(stage);
+  }
   document.addEventListener("visibilitychange", () => { if (!document.hidden) { last = 0; kick(); } });
-  if (STILL) {
-    const again = () => requestAnimationFrame(frame);
-    ["click", "keydown", "change", "pointermove"].forEach((e) => document.addEventListener(e, again));
+  // nor under the site's Menu, which stands over the page
+  let menuOpen = false;
+  new MutationObserver(() => {
+    const was = menuOpen;
+    menuOpen = document.body.classList.contains("menu-open");
+    if (was && !menuOpen) { last = 0; kick(); }
+  }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
+  // the stage is never scrolled within itself (where `overflow: clip` is not
+  // known, `hidden` still lets a focus scroll it)
+  stage.addEventListener("scroll", () => { if (stage.scrollTop || stage.scrollLeft) { stage.scrollTop = 0; stage.scrollLeft = 0; } });
+
+  // ---- BEGIN -------------------------------------------------------------
+  pressSort(mode);
+  buildNav();
+  if (folded) setFold(true, true);
+  let resizeQ = 0;
+  window.addEventListener("resize", () => {
+    if (resizeQ) return;
+    resizeQ = requestAnimationFrame(() => { resizeQ = 0; resize(); });
+  });
+  measure();
+  sizeCanvases();
+  arrange(mode, false);
+  Object.assign(goal, overviewPose());
+  goal.rot = 0;
+  jumpCam();
+  showChosen();
+  setView("live");
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => { widths.clear(); charsMemo.clear(); widthsEpoch++; measureGroups(); rotorDirty = chartDirty = true; kick(); });
   }
   kick();
-  const findBody = (id) => blobs.find((x) => (x.kind === "house" ? x.ho.id : x.p.id) === id);
-  window.TestPage1 = {
-    view: () => view,
-    busy: () => TR.kind,
-    now: () => (cur ? { kind: cur.kind, perfumer: cur.kind === "per" ? cur.p.id : null, house: cur.kind === "house" ? cur.ho.id : null, count: listOf(cur).length } : null),
-    dots: () => map.dots.length,
-    perfumers: NP,
-    // a perfumer's dots: where the first stands, and how many
-    dotOf: (id) => { const d = map.dots.find((x) => x.p.id === id); return d ? { x: d.x, y: d.y } : null; },
-    blockOf: (id) => { const b = map.blocks.find((x) => x.p.id === id); return b ? { dots: b.dots.length, x0: b.x0, x1: b.x1, y0: b.y0, y1: b.y1, lit: +b.g.toFixed(2) } : null; },
-    // how slack a perfumer's strings are: 1 hanging, 0 taut
-    slack: (id) => { const ds = map.dots.filter((x) => x.p.id === id); return ds.length ? +(ds.reduce((s, d) => s + d.s.k, 0) / ds.length).toFixed(2) : null; },
-    // how far the middle of a perfumer's first string hangs off the straight
-    sag: (id) => { const d = map.dots.find((x) => x.p.id === id); if (!d) return null; const [mx, my] = along(d.s, 0.5); return +Math.hypot(mx - (d.x + map.hub.x) / 2, my - (d.y + map.hub.y) / 2).toFixed(1); },
-    // how many strings are ringing (plucked, or twanging as they pull taut)
-    ringing: () => map.strings.filter((s) => Math.abs(s.a1) > 0.5).length,
-    houseAt: (id) => { const b = blobs.find((x) => x.kind === "house" && x.ho.id === id); return b ? { x: b.x + b.dx, y: b.y + b.dy } : null; },
-    perfumerAt: (id) => { const b = blobs.find((x) => x.kind === "per" && x.p.id === id); return b ? { x: b.x + b.dx, y: b.y + b.dy } : null; },
-    middle: () => ({ x: P.x, y: P.y }),
-    circle: () => ({ x: +ret.x.toFixed(1), y: +ret.y.toFixed(1), r: +ret.r.toFixed(1), on: stick ? (stick.kind === "house" ? stick.ho.id : stick.p.id) : null }),
-    open: (id, quick) => { const p = PER.find((q) => q.id === id); if (p) openWorld({ kind: "per", p }, quick); },
-    openHouse: (id, quick) => { const ho = HOS.find((q) => q.id === id); if (ho) openWorld({ kind: "house", ho }, quick); },
-    go: (id) => { const b = findBody(id); if (b) change(b.kind === "per" ? { kind: "per", p: b.p } : { kind: "house", ho: b.ho }); },
-    ret: returnUp,
-    lobes: () => (cur && cur.lobes ? cur.lobes.filter((o) => o.part).map((o) => o.part.say) : []),
-    shape: () => (cur && cur.lobes ? (cur.lobes.every((o) => o.sides === 6) ? "cut" : cur.lobes.every((o) => !o.sides) ? "round" : "mixed") : null),
-    list: () => listRows.map((r) => nameOf(r)),
-    spheres: () => blobs.length,
-    sphereKinds: () => blobs.map((b) => b.kind + (b.lobes.every((o) => o.sides === 6) ? ":cut" : ":round")),
-    // how sharp a sphere is painted, against the screen's pixels it covers
-    sharpness: () => blobs.filter((b) => b.img).map((b) => +(b.img.c.width / (b.img.s * DPR)).toFixed(2)),
-    look: () => LOOK,
-    // the colour where the blob's edge begins, walking in from its upper left
-    // and from its lower right (the picture's own colour, before the poster)
-    rim: () => {
-      if (!cur || !cur.paint) return null;
-      const c = cur.paint, n = c.width, d = c.getContext("2d").getImageData(0, 0, n, n).data;
-      const walk = (s) => {
-        for (let k = 0; k < n / 2; k++) {
-          const q = (n / 2 - k) * 0.7071, i = Math.round(n / 2 + s * q), j = Math.round(n / 2 + s * q), o = (j * n + i) * 4;
-          if (d[o + 3] > 150) return [d[o], d[o + 1], d[o + 2]];
-        }
-        return null;
-      };
-      return { upLeft: walk(-1), downRight: walk(1) };
+
+  // for whoever needs to look at it from outside (the tests)
+  window.PerfumersChart = {
+    // its copy of the ledger, for the tests
+    data: () => D,
+    // the plane close in: whether it stands for the chart, and its tiles
+    plane: () => ({ on: planeOn, tiles: tiles.size, shown: Array.from(tiles.values()).filter((t) => t.shown).length }),
+    choose: (kind, a, b) => {
+      if (!kind) choose(null);
+      else if (kind === "perfumer") choosePerfumer(a);
+      else if (kind === "house") chooseHouse(a, b);
+      else if (kind === "year") chooseYear(a);
     },
-    // the middle's darkest colour: a perfumer's plum, a house's ink
-    core: () => {
-      if (!cur || !cur.paint) return null;
-      const c = cur.paint, n = c.width, d = c.getContext("2d").getImageData(0, 0, n, n).data;
-      let best = null, lum = 1e9;
-      for (let o = 0; o < d.length; o += 4) if (d[o + 3] > 240) { const l = d[o] + d[o + 1] + d[o + 2]; if (l < lum) { lum = l; best = [d[o], d[o + 1], d[o + 2]]; } }
-      return best;
+    up,
+    arrange: (m) => { const b = sortBtns.find((x) => x.dataset.sort === m); if (b) b.click(); },
+    state: () => ({
+      mode, n: N, view: viewNow, zoomed: zoomed(), chosen: Object.assign({}, sel, { e: sel.e ? sel.e.p.n : null }),
+      rot: cam.rot, cam: Object.assign({}, cam, { z: Math.exp(cam.lz) }), sway: swayAmt, dof: cvDof.classList.contains("is-on"),
+      pulses: pulses.length, clock, call: callE ? callE.p.n : null, flying,
+      scroll: scrollS, count: focusList ? focusList.length : 0, at: (scrollAt() || {}).p ? scrollAt().p.n : null, viewN: viewN(),
+    }),
+    // where a perfume's dot stands on the window
+    dotOf: (name) => {
+      const e = entries.find((x) => x.p.n === name);
+      if (!e) return null;
+      dotOnWindow(e, T1);
+      const b = stage.getBoundingClientRect();
+      return T1.ok ? { x: b.left + T1.x, y: b.top + T1.y } : null;
+    },
+    stats: () => Object.assign({}, stats, stats0),
+    // going through the perfumes of what is chosen
+    scrollBy, scrollTo,
+    // the Earth: the longitude facing you, and the countries lit
+    earth: () => ({ spin, turning: !!spinTween, lit: PINS.filter((q) => q.lit).map((q) => q.name), pins: PINS.map((q) => q.name), rings: COAST.length }),
+    open: openCard,
+    // where on the window a group (a perfumer A–Z, a year by year) or one of
+    // the chosen perfumer's houses stands, for a test to press
+    pointOf: (key, house) => {
+      const g = groups.find((x) => x.key === key);
+      if (!g) return null;
+      const h = house ? g.houses.find((x) => x.h === house) : null;
+      let a = h ? (h.a0 + h.a1) / 2 : (g.a0 + g.a1) / 2;
+      // close in, where it is on the window: its perfume nearest to where
+      // the scroll stands
+      if (zoomed() && focusList && focusList.length) {
+        const at = angleAt(focusList, scrollS);
+        let best = null, bd = Infinity;
+        for (const e of (h ? h.members : g.members)) { const d = angDist(e.to, at); if (d < bd) { bd = d; best = e; } }
+        if (best) a = best.to;
+      }
+      const r = h ? R.houMid : R.perMid;
+      viewCam();
+      proj(Math.cos(a) * r, Math.sin(a) * r, T0);
+      const b = stage.getBoundingClientRect();
+      return { x: b.left + M.a * T0.x + M.c * T0.y + M.e, y: b.top + M.b * T0.x + M.d * T0.y + M.f };
     },
   };
 })();

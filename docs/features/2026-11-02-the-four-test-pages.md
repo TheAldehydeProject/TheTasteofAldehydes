@@ -891,3 +891,17 @@ it, the middle gives it back). `TestPage1.slack()`, `sag()`, `ringing()`, `circl
 
 - The opening's middle frames are drawn a little under the screen's sharpness (a quarter less on a
   laptop's screen at two) for the second and a half they run; the world is drawn sharp the frame it lands.
+
+## 2026-11-10 — page 1 is the radial poster; Perfumer Worlds the Perfumers page
+
+The owner: "also replace perfumers apge with test page 1, and vice versa" — swapped whole. **Page 1
+is the radial poster** that was the Perfumers page (2026-11-02 to 11-10, [its
+report](2026-11-02-perfumers.md)): its markup, its own styles, and one `page.js` of its Earth, the
+ledger as of 2026-11-10 and its script, with **the plane** close in. Like every test page it links
+nowhere but back to Contact — its index names its perfumes without linking them, its sources are
+written out, its asterisk a button — and is in no menu, search or sitemap. **Perfumer Worlds**, the
+Strings and the World this report followed from 2026-11-06, is the Perfumers page now, with this
+round's changes: the strings worked out as strings are, the opening's colours a beat apart, the swarm,
+Return from anywhere, Learn More glided, the slide, the softer grain, and *Perfumers not found* a
+hexagon whose world is a list. See [Perfumer Worlds, the Perfumers
+page](2026-11-10-perfumer-worlds-the-perfumers-page.md).

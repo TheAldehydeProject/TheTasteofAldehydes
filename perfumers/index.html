@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Perfumers — The Taste of Aldehydes</title>
 <!-- SEARCH ENGINES: begin — what a search engine and a shared link show of this page. -->
-<meta name="description" content="Perfumers: every perfumer behind a perfume on this site, and Prin Lomros’ houses — their houses, their perfumes and the years, on one circle, with sources.">
+<meta name="description" content="Perfumers: every perfumer behind a perfume on this site — a string from each of their houses, and a world for every perfumer and house, with their stories and sources.">
 <link rel="canonical" href="https://thetasteofaldehydes.com/perfumers/">
 <link rel="icon" href="../favicon.svg?v=2026-10-05" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2026-10-05">
-<meta name="theme-color" content="#0b0c0d">
+<meta name="theme-color" content="#050505">
 <meta property="og:site_name" content="The Taste of Aldehydes">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Perfumers">
-<meta property="og:description" content="Perfumers: every perfumer behind a perfume on this site, and Prin Lomros’ houses — their houses, their perfumes and the years, on one circle, with sources.">
+<meta property="og:description" content="Perfumers: every perfumer behind a perfume on this site — a string from each of their houses, and a world for every perfumer and house, with their stories and sources.">
 <meta property="og:url" content="https://thetasteofaldehydes.com/perfumers/">
 <meta property="og:image" content="https://thetasteofaldehydes.com/images/social-card.png">
 <meta property="og:image:width" content="1200">
@@ -22,204 +22,149 @@
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Perfumers">
-<meta name="twitter:description" content="Perfumers: every perfumer behind a perfume on this site, and Prin Lomros’ houses — their houses, their perfumes and the years, on one circle, with sources.">
+<meta name="twitter:description" content="Perfumers: every perfumer behind a perfume on this site — a string from each of their houses, and a world for every perfumer and house, with their stories and sources.">
 <meta name="twitter:image" content="https://thetasteofaldehydes.com/images/social-card.png">
 <meta name="twitter:image:alt" content="The Taste of Aldehydes — perfumes and my notes about them">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://thetasteofaldehydes.com/"}, {"@type": "ListItem", "position": 2, "name": "Perfumers", "item": "https://thetasteofaldehydes.com/perfumers/"}]}</script>
 <!-- SEARCH ENGINES: end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=e563d84973">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=9fc80f1fb9">
+<script>
+  /* The plain index below is the page only without the drawing: held back
+     while it is coming, so it never flashes first, and shown at once if the
+     script never arrives. */
+  document.documentElement.classList.add("js-coming");
+  window.addEventListener("load", function () {
+    if (!document.documentElement.classList.contains("pw-drawn")) document.documentElement.classList.remove("js-coming");
+  });
+</script>
 </head>
 <!--
-  PERFUMERS — what took the Photography page's place in the Menu
-  (2026-11-02: "add a new page called Perfumers. It should replace
-  photographs ... I want it to look like picture 1 and when you click on
-  somewhere then it zooms in on somewhere").
+  PERFUMERS — PERFUMER WORLDS (since 2026-11-10). The owner: "also replace
+  perfumers apge with test page 1, and vice versa" — this was test page 1
+  from 2026-11-06, and the radial poster that stood here from 2026-11-02 is
+  test page 1 now, behind the first unseen square on Contact.
 
-  Picture 1 was a poster: a year laid round a circle, the Earth in the
-  middle, a line out from it for every event, the months in spaced
-  capitals and every day numbered round the rim, the events written out
-  past it. Here the same drawing carries PERFUMER → HOUSE → PERFUME: the
-  perfumers round the circle (A–Z, or by year from the switch at the top
-  right), each perfume a line out from the middle — THE FURTHER OUT, THE
-  MORE RECENT — its number on the rim and its name past it. A click
-  tips the whole chart back and flies down to where you clicked, as
-  picture 2 does, the near part sharp and the rest out of focus.
+  TWO VIEWS. THE STRINGS: on black, a dot for every house a perfumer made
+  for, each perfumer's dots a block with their name over it, down the two
+  sides, A to Z, and from every dot a string to one point low in the middle
+  — hanging slack, pulled taut while its perfumer is pointed at, plucked by
+  the hand; the perfumes no source credits one hexagon high in the middle.
+  A block pressed opens its perfumer's world through three discs, a colour
+  each, blue first and red last. THE WORLD: a pale poster, one dark blob in
+  the middle — a perfumer, round and plum, a lobe for every house; or a
+  house, cut and ink, a lobe for every perfumer — and round it, out of
+  focus, its houses or its perfumers, a swarm of specks round the last the
+  hand was on; Learn More under it; Return to the strings. perfumer-worlds.js
+  says the rest.
 
-  NOTHING ON THIS PAGE IS WRITTEN BY HAND BUT THE WORDS AROUND THE CHART.
+  NOTHING ON THIS PAGE IS WRITTEN BY HAND BUT THE WORDS AROUND THE DRAWING.
   Every perfume, perfumer, year, house and source is in
-  tools/perfumers/LEDGER.md, the store of facts the owner asked for
-  ("a separate text document ... the perfume, its perfumer(s) and the
-  year of creation, and the house of that perfume. Based on that, create
-  this page"). tools/perfumers/build.py reads it and writes
-  perfumers-data.js, which perfumers.js draws, and the index and the
-  sources at the foot of this page, between their markers. Edit the
-  ledger, never those.
+  tools/perfumers/LEDGER.md, and every perfumer's biography in
+  tools/perfumers/BIOS.md; tools/perfumers/build.py reads them and writes
+  perfumers-data.js, which perfumer-worlds.js draws, and the index and the
+  sources at the foot of this page, between their markers. Edit the ledger,
+  never those.
 
-  WITHOUT JAVASCRIPT the page is its index and its sources: every
+  WITHOUT JAVASCRIPT the page is that index and those sources: every
   perfumer, their houses and their perfumes, each linked to where it is
-  written about on the site — the index behind its button, a <details>,
-  which opens without the script.
+  written about on the site.
 -->
-<body class="perfumers-page dark-surface">
+<body class="worlds-page is-rays dark-surface">
 
 <p class="page-where">Perfumers</p>
 
-<main class="pf">
+<canvas class="pw-scene" aria-hidden="true"></canvas>
+<div class="pw-grain" aria-hidden="true"></div>
+<main class="t1">
+  <div class="pw-rays-ui">
+    <header class="pw-rays-head">
+      <h1>Perfumer Worlds</h1>
+    </header>
+  </div>
 
-  <section class="pf-stage" aria-label="The perfumers, drawn round a circle">
-    <div class="pf-rotor" aria-hidden="true"><canvas class="pf-turn"></canvas></div>
-    <div class="pf-sway" aria-hidden="true">
-      <canvas class="pf-chart"></canvas>
-      <canvas class="pf-dof"></canvas>
-    </div>
-    <canvas class="pf-live" aria-hidden="true"></canvas>
-
-    <header class="pf-title">
-      <h1 class="pf-title-word">Perfumers<a class="pf-star" href="#disclaimer" aria-label="The disclaimer, at the foot of the page">*</a></h1>
-      <p class="pf-title-years" aria-hidden="true">2009 — 2026</p>
+  <div class="pw-world-ui">
+    <header class="pw-head">
+      <h2>Perfumer Worlds <span>· <span class="pw-head-name"></span></span></h2>
     </header>
 
-    <!-- WHAT IS CHOSEN: written by perfumers.js where the title stands while
-         a perfumer, a house, a year or a perfume is chosen. -->
-    <div class="pf-here" hidden>
-      <p class="pf-here-kicker"></p>
-      <p class="pf-here-name"></p>
-      <p class="pf-here-meta"></p>
-      <button type="button" class="pf-here-about"></button>
-    </div>
+    <section class="pw-hud" aria-label="The perfumer in focus" aria-live="polite">
+      <dl class="pw-read pw-read-who">
+        <dt><span class="pw-kicker" data-v="kicker"></span></dt>
+        <dd class="pw-world"><span data-v="name"></span><span class="pw-sub" data-v="sub"></span></dd>
+      </dl>
+      <dl class="pw-read">
+        <dt>Perfumes<span class="pw-bar"></span></dt>
+        <dd><span data-v="count"></span></dd>
+      </dl>
+      <dl class="pw-read">
+        <dt><span data-v="houses-say">Houses</span><span class="pw-bar"></span></dt>
+        <dd><span data-v="houses"></span></dd>
+      </dl>
+    </section>
 
-    <div class="pf-sort" role="group" aria-label="Arrange the chart">
-      <span class="pf-sort-say">Arrange</span>
-      <button type="button" class="pf-sort-button" data-sort="az" aria-pressed="true">A–Z</button>
-      <button type="button" class="pf-sort-button" data-sort="year" aria-pressed="false">By year</button>
-    </div>
+    <section class="pw-list" aria-label="What is in the world">
+      <p class="pw-list-head"><span data-v="list-say">Its houses</span><b data-v="list-n"></b></p>
+      <p class="pw-list-how" data-v="list-how"></p>
+      <ol class="pw-list-rows"></ol>
+    </section>
+    <!-- PERFUMERS NOT FOUND (2026-11-10 — "it should be a list, not the same
+         as the blobs. same format, but no blobs. same theme too, maybe add
+         some chroamtic abberation to that too"): in the middle of its world,
+         in a hexagon drawn through the lens, the perfumes no source credits -->
+    <section class="pw-nf" aria-label="The perfumes no source credits">
+      <p class="pw-nf-kicker">Perfumers not found <span data-v="nf-n"></span></p>
+      <table class="pw-nf-table">
+        <thead><tr><th scope="col">No.</th><th scope="col">Perfume</th><th scope="col">House</th><th scope="col">Year</th></tr></thead>
+        <tbody class="pw-nf-rows"></tbody>
+      </table>
+      <p class="pw-nf-say">No source found names who made these. The houses either side say the rest.</p>
+    </section>
+    <button type="button" class="pw-more-open" aria-expanded="false" aria-controls="pw-more" hidden>Learn More about <span data-v="more-who"></span> <span aria-hidden="true">↓</span></button>
+    <button type="button" class="pw-return" hidden>↩ Return</button>
+  </div>
+  <div class="pw-tip" role="tooltip" hidden></div>
+  <!-- THE SEARCH (2026-11-07): a perfumer, a house or a perfume, and on to the perfumer's world -->
+  <div class="pw-find" role="search">
+    <span class="pw-find-mark" aria-hidden="true"></span>
+    <input type="search" placeholder="Find a perfumer, a house or a perfume" aria-label="Find a perfumer, a house or a perfume" autocomplete="off" spellcheck="false">
+    <ul class="pw-found" hidden></ul>
+  </div>
+  <nav class="pw-ways" aria-label="The perfumers">
+    <button type="button" class="pw-prev" aria-label="The perfumer before">‹</button>
+    <span class="pw-no" data-v="no"></span>
+    <button type="button" class="pw-next" aria-label="The next perfumer">›</button>
+    <select class="pw-pick" aria-label="Every perfumer"></select>
+  </nav>
+</main>
+<!-- LEARN MORE: on a sheet under the poster — the paragraph that stood under
+     the blob until 2026-11-08, then a perfumer's biography and its sources,
+     or a house's perfumers and what each made for it -->
+<section class="pw-more" id="pw-more" aria-label="Learn more" hidden>
+  <div class="pw-more-in">
+    <header class="pw-more-head">
+      <p class="pw-more-kicker" data-v="more-kicker">About the perfumer</p>
+      <button type="button" class="pw-more-close">Back up <span aria-hidden="true">↑</span></button>
+    </header>
+    <h2 class="pw-more-name" data-v="more-name"></h2>
+    <p class="pw-more-sub" data-v="more-sub"></p>
+    <div class="pw-more-lead"></div>
+    <div class="pw-more-text"></div>
+    <div class="pw-more-made"></div>
+    <h3 class="pw-more-src-head">Sources</h3>
+    <ol class="pw-more-sources"></ol>
+  </div>
+</section>
 
-    <!-- THE PERFUMERS, A TO Z: where the legend stood (the legend is at the
-         foot now). Built by perfumers.js from the ledger's data; a perfumer
-         chosen opens to its houses, a house to its perfumes. -->
-    <nav class="pf-nav" aria-label="Perfumers, A to Z" hidden>
-      <div class="pf-nav-head">
-        <h2 class="pf-nav-title">Perfumers</h2>
-        <span class="pf-nav-total"></span>
-        <!-- the search, at the list's top right (2026-11-03): a perfumer, a
-             house or a perfume, found as it is typed -->
-        <button type="button" class="pf-nav-find" aria-expanded="false" aria-controls="pf-nav-search" aria-label="Search the list">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.6" cy="6.6" r="4.6"/><path d="M10 10l4.4 4.4"/></svg>
-        </button>
-        <!-- the fold (2026-11-07 — "the table on the right should be
-             collapsible"): the list and its search fold away together, the
-             chart taking the room; remembered for the next visit -->
-        <button type="button" class="pf-nav-fold" aria-expanded="true" aria-controls="pf-nav-body" aria-label="Fold the list away">
-          <span class="pf-nav-fold-mark" aria-hidden="true"></span>
-        </button>
-        <button type="button" class="pf-nav-toggle" aria-expanded="false">
-          <span class="pf-nav-path">Choose a perfumer</span>
-          <span class="pf-nav-chev" aria-hidden="true"></span>
-        </button>
-      </div>
-      <div class="pf-nav-body" id="pf-nav-body">
-      <div class="pf-nav-search" id="pf-nav-search" hidden>
-        <input type="search" class="pf-nav-query" placeholder="A perfumer, a house, a perfume" aria-label="Search the perfumers, their houses and their perfumes" autocomplete="off" spellcheck="false">
-        <span class="pf-nav-count" aria-live="polite"></span>
-      </div>
-      <div class="pf-nav-scroll">
-        <ul class="pf-nav-list"></ul>
-        <ul class="pf-nav-found" hidden></ul>
-      </div>
-      </div>
-    </nav>
-
-    <button type="button" class="pf-back" hidden>
-      <span class="pf-back-mark" aria-hidden="true"></span>The whole chart
-    </button>
-
-    <p class="pf-hint" aria-hidden="true">Choose a perfumer — on the circle or in the list</p>
-    <div class="pf-tip" aria-hidden="true" hidden></div>
-  </section>
-
-  <!-- UNDER THE CHART (2026-11-07 — the owner: "below the main perfumers
-       thing (the planet), i want you to put: Intro, legend, terms and
-       disclaimer, below that the index and below that the credits"): the
-       intro, and beside it the legend, the terms and the disclaimer; the
-       index and the sources follow in the foot. -->
-  <section class="pf-notes" aria-label="About the chart">
-    <div class="pf-notes-col pf-notes-left">
-      <h2 class="pf-notes-head">Intro</h2>
-      <p>Every perfume written about on this site, traced back to the person who made it — and the whole
-        catalogue of Prin Lomros, whose Haxan is one of them.</p>
-      <p>The Earth stands in the middle, and three rings stand out from it, a place in each for every perfume:
-        <strong>its perfumer, its house, and the perfume itself</strong> — a bar out to its year, the further
-        out, the more recent. Choose a perfumer — on the circle or in the list — and their houses appear;
-        scroll, and go through their perfumes.</p>
-    </div>
-
-    <!-- THE LEGEND, THE TERMS AND THE DISCLAIMER (2026-11-03 — the owner: "The
-         legend, and the terms should be drop downs too, and should be subtle";
-         and of the disclaimer, "on the left at the bottom ... drop down, like
-         the terms and legend, and should be demarcated by an asterisk that is
-         also present on the title"): three quiet <details>, a hairline and a
-         word each, shut until pressed; the title's asterisk opens the last. -->
-    <div class="pf-drops">
-      <details class="pf-drop pf-legend-box">
-        <summary><span class="pf-drop-word">Legend</span><span class="pf-drop-say">what the marks mean</span><span class="pf-drop-mark" aria-hidden="true"></span></summary>
-        <div class="pf-drop-body">
-        <ul class="pf-legend">
-          <li><span class="pf-key pf-key-earth" aria-hidden="true"></span><b>The Earth</b> — in the middle, turning to what is chosen</li>
-          <li><span class="pf-key pf-key-pin" aria-hidden="true"></span><b>A house's country</b> — the country the ledger gives, never a town</li>
-          <li><span class="pf-key pf-key-from" aria-hidden="true"></span><b>A perfumer's country</b></li>
-          <li><span class="pf-key pf-key-line pf-key-faint" aria-hidden="true"></span><b>A line</b> from a house's country to each of its perfumes on the rings</li>
-          <li><span class="pf-key pf-key-cell" aria-hidden="true"></span><b>Ring 1, the perfumer</b> — named by a source</li>
-          <li><span class="pf-key pf-key-cell pf-key-half" aria-hidden="true"></span><b>The house's perfumer</b> — no nose named for this one</li>
-          <li><span class="pf-key pf-key-cell pf-key-empty" aria-hidden="true"></span><b>Not publicly available</b> — no perfumer named</li>
-          <li><span class="pf-key pf-key-cell pf-key-gold" aria-hidden="true"></span><b>Ring 2, the house</b> — an individual fragrance written about here</li>
-          <li><span class="pf-key pf-key-cell pf-key-blue" aria-hidden="true"></span>a house perfume written about here</li>
-          <li><span class="pf-key pf-key-cell pf-key-rose" aria-hidden="true"></span>Prin Lomros' houses, not written about here</li>
-          <li><span class="pf-key pf-key-bar" aria-hidden="true"></span><b>Ring 3, the perfume</b> — a bar as long as its year, 2009 shortest to 2026</li>
-          <li><span class="pf-key pf-key-dot pf-key-hollow" aria-hidden="true"></span><b>Year not found</b> — on the dashed ring</li>
-        </ul>
-        <p class="pf-counts" data-counts>280 perfumes · 142 written about on The Taste of Aldehydes · 35 perfumers · 27 houses</p>
-        </div>
-      </details>
-      <details class="pf-drop pf-terms">
-        <summary><span class="pf-drop-word">Terms</span><span class="pf-drop-say">the words the chart uses</span><span class="pf-drop-mark" aria-hidden="true"></span></summary>
-        <div class="pf-drop-body">
-        <dl>
-          <dt>Perfumer</dt><dd>The person who composes a perfume; also called its nose.</dd>
-          <dt>House</dt><dd>The name a perfume is made and sold under.</dd>
-          <dt>Named</dt><dd>A source names this perfumer as the maker of this perfume.</dd>
-          <dt>The house's perfumer</dt><dd>A source names this person as the house's own, or only, perfumer — but none names the nose of this one perfume.</dd>
-          <dt>Not publicly available</dt><dd>Who made it is not publicly available. The chart leaves it empty rather than guess.</dd>
-          <dt>Not found</dt><dd>No source found gives the year. The chart leaves it on the dashed ring rather than guess.</dd>
-          <dt>Year</dt><dd>The year a source gives for a perfume's first release; a later version is noted beside it.</dd>
-        </dl>
-        </div>
-      </details>
-      <details class="pf-drop pf-disclaimer" id="disclaimer">
-        <summary><span class="pf-drop-word"><span class="pf-drop-star" aria-hidden="true">*</span>Disclaimer</span><span class="pf-drop-say">where the chart's facts come from</span><span class="pf-drop-mark" aria-hidden="true"></span></summary>
-        <div class="pf-drop-body">
-          <p>Who made a perfume, and when, is taken only from the sources at the foot of this page. Where none
-            could be found the chart says so rather than guess — a hollow mark has no year, and the perfumes no
-            source credits stand together under <em>Not publicly available</em>.</p>
-        </div>
-      </details>
-    </div>
-  </section>
-
-  <section class="pf-foot">
-    <!-- THE INDEX, behind one big button (2026-11-02, later: "move the index
-         down a few, and make it a big button that you can press to open the
-         actual index"). A <details>, so it opens without the script too. -->
-    <details class="pf-fold pf-index">
-      <summary class="pf-index-open">
-        <span class="pf-index-mark" aria-hidden="true"></span>
-        <h2 class="pf-index-word">Index</h2>
-        <span class="pf-index-say">Every perfumer, their houses and their perfumes<span class="pf-index-counts" data-index-counts>35 perfumers · 27 houses · 280 perfumes</span></span>
-        <span class="pf-index-cue" aria-hidden="true"><span class="pf-index-cue-open">Open</span><span class="pf-index-cue-shut">Close</span></span>
-      </summary>
-      <div class="pf-index-cols">
+<!-- WITHOUT THE DRAWING: every perfumer, their houses and their perfumes, and the sources. -->
+<section class="pw-plain" aria-labelledby="pw-plain-title">
+  <h2 id="pw-plain-title">Every perfumer, their houses and their perfumes</h2>
+  <p class="pw-plain-lead">Every perfume written about on this site, traced back to the person who made it — and the whole
+    catalogue of Prin Lomros, whose Haxan is one of them. Who made a perfume, and when, is taken only from the
+    sources below; where none could be found, it is said rather than guessed.</p>
+  <div class="pw-plain-index">
       <!-- THE INDEX: begin — written by tools/perfumers/build.py from tools/perfumers/LEDGER.md; never by hand. -->
       <article class="pf-entry" id="perfumer-russian-adam">
         <h3 class="pf-entry-name">Russian Adam <span class="pf-entry-count">1</span></h3>
@@ -738,21 +683,9 @@
         </ul>
       </article>
       <!-- THE INDEX: end -->
-      </div>
-    </details>
-
-    <!-- THE SOURCES, behind a button of their own (2026-11-03 — the owner:
-         "make the perfumers page sources also collapsible"): a <details> as
-         the index is, shut until pressed, and open without the script too;
-         an address into it (#source-s05) opens it. -->
-    <details class="pf-fold pf-sources">
-      <summary class="pf-index-open pf-sources-open">
-        <span class="pf-index-mark" aria-hidden="true"></span>
-        <h2 class="pf-index-word">Sources</h2>
-        <span class="pf-index-say">Where every perfumer, house and year on the chart comes from, in MLA 8<span class="pf-index-counts" data-source-count>108 sources</span></span>
-        <span class="pf-index-cue" aria-hidden="true"><span class="pf-index-cue-open">Open</span><span class="pf-index-cue-shut">Close</span></span>
-      </summary>
-      <ol class="pf-source-list">
+  </div>
+  <h2>Sources</h2>
+  <ol class="pw-plain-sources">
       <!-- THE SOURCES: begin — written by tools/perfumers/build.py; MLA 8, in the order the ledger numbers them. -->
         <li id="source-s01"><span class="pf-source-no">01</span> “Nicholas Nilsson.” <cite>Parfumo</cite>, parfumo.com. Accessed 2 Nov. 2026. <a href="https://www.parfumo.com/Perfumers/nicholas-nilsson">www.parfumo.com/Perfumers/nicholas-nilsson</a></li>
         <li id="source-s02"><span class="pf-source-no">02</span> “Pineward: Interesting Facts.” <cite>Parfumo</cite>, parfumo.net. Accessed 2 Nov. 2026. <a href="https://www.parfumo.net/PerfumeBrand/pineward">www.parfumo.net/PerfumeBrand/pineward</a></li>
@@ -863,27 +796,12 @@
         <li id="source-s107"><span class="pf-source-no">107</span> “Home Goa Velvet Fog 50ml Eau de Parfum.” <cite>Profumix Luxury Brands</cite>, profumixluxurybrands.it. Accessed 7 Nov. 2026. <a href="https://www.profumixluxurybrands.it/en/?p=103693">www.profumixluxurybrands.it/en/?p=103693</a></li>
         <li id="source-s108"><span class="pf-source-no">108</span> The Taste of Aldehydes. “The perfumers of Grande Parfums, Qimu &amp; Musicians, Tombstone and Matca, and the perfumes whose perfumer is not publicly available, as the owner gave them, 8 Nov. 2026.” <cite>The Taste of Aldehydes</cite>. <a href="../perfumers/index.html">thetasteofaldehydes.com/perfumers/index.html</a></li>
       <!-- THE SOURCES: end -->
-      </ol>
-    </details>
-  </section>
-
-</main>
-
-<!-- THE WINDOW: a perfumer, a house or a perfume, opened from the chart or the index. -->
-<div class="pf-card" hidden>
-  <div class="pf-card-sheet" role="dialog" aria-modal="true" aria-labelledby="pf-card-name" tabindex="-1">
-    <div class="pf-card-bar">
-      <button type="button" class="pf-card-back" hidden>‹ Back</button>
-      <button type="button" class="pf-card-close" aria-label="Close">×</button>
-    </div>
-    <div class="pf-card-body"></div>
-  </div>
-</div>
+  </ol>
+</section>
 
 <script>window.SITE_ROOT = "../";</script>
 <script src="../nav.js?v=ddedcc2da4"></script>
-<script src="../perfumers-earth.js?v=7ab61e7ee6"></script>
-<script src="../perfumers-data.js?v=a91a2c24f6"></script>
-<script src="../perfumers.js?v=45fd2388ea"></script>
+<script src="../perfumers-data.js?v=8d4e2403c5"></script>
+<script src="../perfumer-worlds.js?v=82c93c32e9"></script>
 </body>
 </html>

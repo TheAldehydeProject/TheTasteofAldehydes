@@ -14200,1237 +14200,350 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
 }
 
 /* ==========================================================================
-   PERFUMERS — perfumers/index.html only (2026-11-02). The page that took
-   Photography's place in the Menu: a poster of the perfumers drawn round a
-   circle (perfumers.js), after the owner's picture 1, with its words in the
-   corners and its index, terms and sources at the foot, as the poster has
-   them. Dark, as the poster is: its own tokens, scoped to the page.
+   PERFUMERS — PERFUMER WORLDS, perfumers/index.html only (since 2026-11-10;
+   test page 1 from 2026-11-06 until the owner swapped the two: "also replace
+   perfumers apge with test page 1, and vice versa"). Its styles as it stood
+   on its test page, scoped to its body (.worlds-page); its tokens there.
+   The radial poster that stood here before carries its own on test page 1.
    ========================================================================== */
-body.perfumers-page {
-  --pf-ground: #0b0c0d;
-  --pf-ink: #ebe8e2;
-  --pf-muted: #8d8f92;
-  --pf-faint: #5d6064;
-  --pf-rule: rgba(235, 232, 226, 0.14);
-  --pf-gold: #e0b252;
-  --pf-blue: #b9a0e8;
-  --pf-rose: #e2587e;
-  --bg: var(--pf-ground);
-  --bg-2: #141517;
-  --line: rgba(235, 232, 226, 0.16);
-  --ink: var(--pf-ink);
-  --ink-rgb: 235, 232, 226;
-  --muted: var(--pf-muted);
-  background: var(--pf-ground);
-  color: var(--pf-ink);
-}
-.perfumers-page .menu-trigger { color: #e6e3dc; }
-.perfumers-page .page-where { color: var(--pf-muted); border-left-color: var(--pf-rule); }
-/* THE MENU KEPT CLEAR ON A WIDE WINDOW TOO (2026-11-03): this is the one page
-   whose writing — the notes, the legend, the terms, the sources — runs the
-   width of the window, under the Menu and the page's name beside it. Both
-   take the phone's ground here at every width (the word where it was: the
-   box's padding taken back out of `left`); over the chart's own dark it is
-   not seen at all. */
-@media (min-width: 701px) {
-  .perfumers-page .menu-trigger,
-  .perfumers-page .page-where {
-    border-radius: 3px;
-    background: linear-gradient(var(--chrome-ground), var(--chrome-ground)), var(--chrome-ground);
-    box-shadow: 0 0 12px 7px var(--chrome-ground);
+  body.worlds-page {
+    --ground: #e6eae7;
+    --ink: #1c1d22;
+    --muted: #6d7177;
+    --faint: #a3a8ab;
+    --blue: #2f5bea;
+    --gold: #d8a23a;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --sans: "Archivo", "Segoe UI", sans-serif;
   }
-  .perfumers-page .menu-trigger { left: 14px; padding: 4px 8px 5px; }
-  .perfumers-page .page-where { padding-right: 9px; border-radius: 0 3px 3px 0; }
-  body.perfumers-page.menu-open .menu-trigger,
-  body.perfumers-page.menu-open .page-where { background: none; box-shadow: none; }
-}
-/* No blur behind them here, at any width (2026-11-03 — "make the animation
-   smoother"): a blur over the chart, which moves under it, is the browser
-   blurring that corner again every frame the chart is drawn; the ground laid
-   twice is near enough opaque without it. */
-.perfumers-page .menu-trigger,
-.perfumers-page .page-where,
-.perfumers-page .pf-sort { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-
-.pf { position: relative; }
-
-/* THE STAGE: the whole window, the chart drawn over all of it — in layers,
-   so that what only turns is turned by the browser rather than drawn again
-   (2026-11-02, later: "optimize tf out of it"):
-     .pf-rotor  the whole chart at rest, drawn once into a square canvas and
-                TURNED by its transform — the chart turning slowly costs the
-                page nothing a frame;
-     .pf-sway   the chart drawn in perspective (flying, and close in) with
-                its out-of-focus copy; close in, it is SWAYED by its
-                transform, never drawn again for it;
-     .pf-live   what moves of itself: the globe, the far field, the dust
-                drifting, the lights running out along the spokes, the names
-                on the rim while the chart turns, what the hand is on.
-   data-view on the stage says which is shown: turn, live or still. */
-.pf-stage {
-  position: relative;
-  height: 100vh;
-  height: 100svh;
-  min-height: 520px;
-  overflow: hidden;
-  /* clipped, never scrolled: its canvases reach past its edges, and a
-     container that is only hidden can still be scrolled by a focus or a
-     scrollIntoView, which shifted the whole chart and its list */
-  overflow: clip;
-  touch-action: pan-y;
-  cursor: default;
-  --chart-x: 50%;
-}
-.pf-stage.is-over { cursor: pointer; }
-.pf-stage.is-chosen { touch-action: none; }
-.pf-stage canvas { position: absolute; display: block; }
-.pf-rotor { position: absolute; left: 0; top: 0; transform-origin: 50% 50%; will-change: transform; pointer-events: none; }
-.pf-rotor canvas { position: static; width: 100%; height: 100%; }
-/* the names on the rings, the rotor's second picture (2026-11-07) */
-.pf-rotor canvas.pf-turn-names { position: absolute; left: 0; top: 0; }
-.pf-sway { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform-origin: 0 0; will-change: transform; pointer-events: none; }
-.pf-stage[data-view="turn"] .pf-sway,
-.pf-stage:not([data-view="turn"]) .pf-rotor { display: none; }
-.pf-live { left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
-/* the Earth on the whole chart, a picture of its own (2026-11-06): drawn
-   again only as it turns, laid down by the browser every frame */
-.pf-stage canvas.pf-earth { left: 0; top: 0; transform-origin: 0 0; will-change: transform; pointer-events: none; }
-.pf-stage:not([data-view="turn"]) .pf-earth { display: none; }
-.pf-fly { visibility: hidden; pointer-events: none; }
-.pf-stage.is-flying .pf-fly { visibility: visible; }
-.pf-stage.is-flying .pf-chart, .pf-stage.is-flying .pf-dof { visibility: hidden; }
-.pf-dof { opacity: 0; transition: opacity 0.2s ease; pointer-events: none; }
-.pf-dof.is-on { opacity: 1; transition-duration: 0.9s; }
-
-/* THE TITLE, top left under the Menu, as the poster's is. It gives its
-   place to what is chosen. */
-.pf-title {
-  position: absolute;
-  top: 74px;
-  left: 34px;
-  width: 250px;
-  z-index: 2;
-  pointer-events: none;
-  transition: opacity 0.6s ease, transform 0.8s var(--menu-ease);
-}
-.pf-title-word {
-  margin: 0;
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: 40px;
-  line-height: 0.95;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--pf-ink);
-}
-.pf-title-years {
-  margin: 6px 0 0;
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: 30px;
-  letter-spacing: 0.06em;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(235, 232, 226, 0.55);
-}
-.pf.is-chosen .pf-title { opacity: 0; transform: translateY(-8px); }
-
-/* WHAT IS CHOSEN, in the title's place: a kicker, its name, how many, and
-   the way to its window. */
-.pf-here {
-  position: absolute;
-  top: 74px;
-  left: 34px;
-  z-index: 2;
-  width: 300px;
-  padding: 0 0 14px;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.5s ease, transform 0.7s var(--menu-ease);
-  pointer-events: none;
-}
-.pf-here[hidden] { display: none; }
-.pf-here.is-on { opacity: 1; transform: none; pointer-events: auto; }
-.pf-here::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  left: -60px;
-  top: -50px;
-  right: -60px;
-  bottom: -40px;
-  background: radial-gradient(closest-side, rgba(11, 12, 13, 0.82), rgba(11, 12, 13, 0));
-  pointer-events: none;
-}
-.pf-here-kicker {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin: 0 0 8px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--pf-gold);
-}
-.pf-here-kicker::before { content: ""; flex: none; width: 9px; height: 9px; border: 1px solid currentColor; box-sizing: border-box; }
-.pf-here-name {
-  margin: 0;
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: 30px;
-  line-height: 1.02;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--pf-ink);
-}
-.pf-here-meta { margin: 9px 0 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; color: var(--pf-muted); }
-.pf-here-about {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 14px 0 0;
-  padding: 7px 12px 8px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--pf-ink);
-  background: rgba(11, 12, 13, 0.6);
-  border: 1px solid var(--pf-rule);
-  cursor: pointer;
-  transition: border-color 0.3s ease, color 0.3s ease;
-}
-.pf-here-about::after { content: "→"; color: var(--pf-gold); }
-.pf-here-about:hover { color: var(--pf-gold); border-color: rgba(224, 178, 82, 0.55); }
-.pf-here-about[hidden] { display: none; }
-
-/* THE SWITCH, top right: A–Z or by year. */
-.pf-sort {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  gap: 0;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-}
-.pf-sort-say { margin-right: 12px; color: var(--pf-muted); text-transform: uppercase; }
-.pf-sort-button {
-  font: inherit;
-  letter-spacing: inherit;
-  color: var(--pf-muted);
-  background: transparent;
-  border: 1px solid var(--pf-rule);
-  padding: 6px 12px;
-  cursor: pointer;
-  transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease;
-}
-.pf-sort-button + .pf-sort-button { border-left: 0; }
-.pf-sort-button:hover { color: var(--pf-ink); border-color: rgba(235, 232, 226, 0.34); }
-.pf-sort-button[aria-pressed="true"] { color: var(--pf-ground); background: var(--pf-ink); border-color: var(--pf-ink); }
-
-/* THE PERFUMERS, A TO Z — in the legend's old place, down the right, the
-   list scrolling in its own box ("instead of the legend, I want you to add
-   a fixed list of perfumers that you can scroll. alphabetical"). A
-   perfumer chosen opens to its houses, a house to its perfumes. */
-.pf-nav {
-  position: absolute;
-  z-index: 3;
-  right: 30px;
-  top: 74px;
-  bottom: 30px;
-  width: 256px;
-  display: flex;
-  flex-direction: column;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--pf-muted);
-}
-.pf-nav[hidden] { display: none; }
-.pf-nav-body { flex: 1; min-height: 0; display: flex; flex-direction: column; }
-/* THE FOLD (2026-11-07): the list and its search folded away, the list's
-   name, its count and the fold left standing; the ground behind it goes with
-   them. */
-.pf-nav-fold {
-  flex: none;
-  align-self: center;
-  position: relative;
-  width: 26px;
-  height: 26px;
-  margin-left: 6px;
-  padding: 0;
-  border: 1px solid var(--pf-rule);
-  background: none;
-  color: var(--pf-muted);
-  cursor: pointer;
-  transition: color 0.3s ease, border-color 0.3s ease;
-}
-.pf-nav-fold:hover, .pf-nav-fold:focus-visible { color: var(--pf-gold); border-color: rgba(224, 178, 82, 0.55); }
-.pf-nav-fold-mark { position: absolute; left: 8px; top: 8px; width: 8px; height: 8px; }
-.pf-nav-fold-mark::before, .pf-nav-fold-mark::after {
-  content: ""; position: absolute; left: 0; top: 3.5px; width: 8px; height: 1px; background: currentColor;
-  transition: transform 0.4s var(--menu-ease);
-}
-.pf-nav-fold-mark::after { transform: rotate(0deg); }
-.pf-nav.is-folded .pf-nav-fold-mark::after { transform: rotate(90deg); }
-.pf-nav.is-folded { bottom: auto; height: auto; }
-.pf-nav.is-folded .pf-nav-body,
-.pf-nav.is-folded .pf-nav-find { display: none; }
-.pf-nav.is-folded .pf-nav-head { border-bottom-color: transparent; }
-.pf-nav.is-folded .pf-nav-fold { margin-left: auto; }
-.pf-nav.is-folded::before { bottom: -10px; }
-.pf-nav-body > .pf-nav-search { flex: none; }
-.pf-nav-body > .pf-nav-scroll { flex: 1; min-height: 0; }
-/* placed by the window, not by the stage, which is taller than it on a
-   wide window (2026-11-07, --pf-vh from perfumers.js) */
-@media (min-width: 701px) {
-  .pf-nav { bottom: auto; height: calc(var(--pf-vh, 100vh) - 104px); }
-  .pf-back { bottom: auto; top: calc(var(--pf-vh, 100vh) - 26px); transform: translate(-50%, -100%); }
-  .pf-hint { bottom: auto; top: calc(var(--pf-vh, 100vh) - 30px); transform: translate(-50%, -100%); }
-  .pf-stage.is-chosen .pf-hint { bottom: auto; top: calc(var(--pf-vh, 100vh) - 66px); }
-  .pf-scrub { top: calc(var(--pf-vh, 100vh) * 0.26); bottom: auto; height: calc(var(--pf-vh, 100vh) * 0.52); }
-}
-@media (max-width: 700px) {
-  .pf-nav-fold { display: none; }
-}
-/* a ground behind the list, so a long name on the chart passes under it
-   rather than through its words */
-.pf-nav::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: -14px;
-  bottom: -30px;
-  left: -56px;
-  right: -30px;
-  background: linear-gradient(90deg, rgba(11, 12, 13, 0), rgba(11, 12, 13, 0.9) 50px);
-  pointer-events: none;
-}
-.pf-nav-head { flex: none; display: flex; align-items: baseline; gap: 10px; padding: 0 0 12px; border-bottom: 1px solid var(--pf-rule); }
-.pf-nav-title { margin: 0; font-family: var(--sans); font-weight: 700; font-size: 15px; letter-spacing: 0.06em; color: var(--pf-ink); }
-.pf-nav-total { font-size: 10.5px; color: var(--pf-faint); }
-.pf-nav-toggle { display: none; }
-/* the list's search (2026-11-03): a small hairline square at the top right of
-   its head, a magnifying glass in it; pressed, a field under the head, and
-   what it finds in the list's place */
-.pf-nav-find {
-  align-self: center;
-  margin-left: auto;
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  display: grid;
-  place-items: center;
-  color: var(--pf-muted);
-  background: none;
-  border: 1px solid var(--pf-rule);
-  border-radius: 2px;
-  cursor: pointer;
-  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
-}
-.pf-nav-find svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; }
-.pf-nav-find:hover, .pf-nav-find:focus-visible, .pf-nav-find[aria-expanded="true"] { color: var(--pf-gold); border-color: rgba(224, 178, 82, 0.55); }
-.pf-nav-find[aria-expanded="true"] { background: rgba(224, 178, 82, 0.08); }
-.pf-nav-search {
-  flex: none;
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 0 9px;
-  border-bottom: 1px solid var(--pf-rule);
-  animation: pf-nav-in 0.4s var(--menu-ease) both;
-}
-.pf-nav-search[hidden] { display: none; }
-.pf-nav-query {
-  flex: 1 1 auto;
-  min-width: 0;
-  margin: 0;
-  padding: 4px 0;
-  font-family: var(--sans);
-  font-size: 13px;
-  color: var(--pf-ink);
-  background: none;
-  border: 0;
-  border-bottom: 1px solid rgba(224, 178, 82, 0.4);
-  border-radius: 0;
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-}
-.pf-nav-query::placeholder { color: var(--pf-faint); }
-.pf-nav-query::-webkit-search-cancel-button { -webkit-appearance: none; display: none; }
-.pf-nav-query:focus { border-bottom-color: var(--pf-gold); }
-.pf-nav-count { flex: none; font-size: 10px; color: var(--pf-faint); min-width: 2ch; text-align: right; }
-.pf-nav-found { list-style: none; margin: 0; padding: 0; }
-.pf-nav-found[hidden], .pf-nav-list[hidden] { display: none; }
-.pf-nav-row.pf-nav-hit { padding-top: 6px; padding-bottom: 6px; font-family: var(--sans); font-size: 12.5px; }
-.pf-nav-hit small { display: block; margin-top: 1px; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.03em; color: var(--pf-faint); }
-.pf-nav-row.pf-nav-hit-perfumer { font-weight: 500; font-size: 13px; }
-.pf-nav-hit-house .pf-nav-name { text-transform: none; }
-.pf-nav-row.pf-nav-hit-perfume::before { width: 4px; height: 4px; margin-top: -2px; left: 3px; border-radius: 50%; border: 0; background: rgba(235, 232, 226, 0.3); }
-.pf-nav-none { padding: 10px 2px; font-family: var(--sans); font-size: 12px; color: var(--pf-faint); }
-.pf-nav-scroll {
-  position: relative;
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 8px 6px 28px 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(235, 232, 226, 0.18) transparent;
-  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14px, #000 calc(100% - 30px), transparent 100%);
-  mask-image: linear-gradient(180deg, transparent 0, #000 14px, #000 calc(100% - 30px), transparent 100%);
-}
-.pf-nav-scroll::-webkit-scrollbar { width: 4px; }
-.pf-nav-scroll::-webkit-scrollbar-thumb { background: rgba(235, 232, 226, 0.18); }
-.pf-nav-list, .pf-nav-houses, .pf-nav-perfumes { list-style: none; margin: 0; padding: 0; }
-.pf-nav-row {
-  position: relative;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  width: 100%;
-  margin: 0;
-  padding: 5px 2px 5px 18px;
-  font: inherit;
-  text-align: left;
-  color: var(--pf-ink);
-  background: none;
-  border: 0;
-  cursor: pointer;
-  transition: color 0.25s ease;
-}
-.pf-nav-row::before {
-  content: "";
-  position: absolute;
-  left: 2px;
-  top: 50%;
-  width: 7px;
-  height: 7px;
-  margin-top: -4px;
-  border: 1px solid rgba(235, 232, 226, 0.28);
-  box-sizing: border-box;
-  transition: border-color 0.25s ease, background 0.25s ease, transform 0.35s var(--menu-ease);
-}
-.pf-nav-name { min-width: 0; overflow-wrap: anywhere; }
-.pf-nav-n { flex: none; font-family: var(--mono); font-size: 10px; color: var(--pf-faint); transition: color 0.25s ease; }
-.pf-nav-per { font-family: var(--sans); font-weight: 500; font-size: 13px; letter-spacing: 0.01em; }
-.pf-nav-row:hover, .pf-nav-row:focus-visible, .pf-nav-row.is-hot { color: var(--pf-gold); }
-.pf-nav-row:hover::before, .pf-nav-row.is-hot::before { border-color: var(--pf-gold); }
-.pf-nav-row:hover .pf-nav-n { color: var(--pf-muted); }
-.is-on > .pf-nav-row { color: var(--pf-gold); }
-.is-on > .pf-nav-row::before { border-color: var(--pf-gold); background: var(--pf-gold); transform: rotate(45deg); }
-.is-on > .pf-nav-row .pf-nav-n { color: var(--pf-gold); }
-.pf-nav-houses {
-  margin: 2px 0 8px 5px;
-  padding: 2px 0 2px 9px;
-  border-left: 1px solid rgba(224, 178, 82, 0.35);
-}
-.pf-nav-houses[hidden], .pf-nav-perfumes[hidden] { display: none; }
-.pf-nav-house { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #d9d6cf; }
-.pf-nav-perfumes { margin: 1px 0 6px 5px; padding: 0 0 0 9px; border-left: 1px solid var(--pf-rule); }
-.pf-nav-perfume { font-family: var(--sans); font-size: 12px; padding-top: 3px; padding-bottom: 3px; color: #cfccc5; }
-.pf-nav-perfume::before { width: 4px; height: 4px; margin-top: -2px; left: 3px; border-radius: 50%; border: 0; background: rgba(235, 232, 226, 0.3); }
-.pf-nav-perfume.is-here::before { background: var(--pf-gold); }
-.pf-nav-perfume.is-lit { color: var(--pf-gold); }
-.pf-nav-perfume i { font-style: normal; font-family: var(--mono); font-size: 10px; color: var(--pf-faint); flex: none; }
-.pf-nav-opened { animation: pf-nav-in 0.45s var(--menu-ease) both; }
-@keyframes pf-nav-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
-
-/* THE WAY BACK OUT, once something is chosen. */
-.pf-back {
-  position: absolute;
-  left: var(--chart-x);
-  bottom: 26px;
-  z-index: 3;
-  transform: translateX(-50%);
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 16px 9px;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--pf-ink);
-  background: rgba(11, 12, 13, 0.82);
-  border: 1px solid var(--pf-rule);
-  cursor: pointer;
-  transition: border-color 0.3s ease;
-}
-.pf-back[hidden] { display: none; }
-.pf-back:hover { border-color: rgba(235, 232, 226, 0.4); }
-.pf-back-mark { width: 9px; height: 9px; border: 1px solid currentColor; position: relative; }
-.pf-back-mark::after { content: ""; position: absolute; inset: 2px; background: currentColor; }
-
-.pf-hint {
-  position: absolute;
-  left: var(--chart-x);
-  bottom: 30px;
-  z-index: 2;
-  margin: 0;
-  transform: translateX(-50%);
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--pf-muted);
-  pointer-events: none;
-  white-space: nowrap;
-  transition: opacity 0.6s ease;
-}
-.pf-stage.is-chosen .pf-hint { bottom: 66px; padding: 5px 12px 6px; background: rgba(11, 12, 13, 0.78); }
-.pf-hint:empty { display: none; }
-
-/* THE SCRUBBER (2026-11-06 — "the scrolling while hovering on the image will
-   cause you to scroll through the perfumes of that house/perfumer"): beside
-   the chart while something is chosen, a tick for every perfume of it, a
-   thumb as long as the window holds of them, and the one the scroll stands
-   at named over it; pressed or dragged, the chart goes there. */
-.pf-scrub {
-  position: absolute;
-  z-index: 3;
-  top: 26%;
-  bottom: 22%;
-  right: calc(30px + 256px + 26px);
-  width: 120px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  font-family: var(--mono);
-  color: var(--pf-muted);
-  pointer-events: none;
-  opacity: 0;
-  transform: translateX(8px);
-  animation: pf-scrub-in 0.6s var(--menu-ease) 0.35s forwards;
-}
-.pf-scrub[hidden] { display: none; }
-@keyframes pf-scrub-in { to { opacity: 1; transform: none; } }
-.pf-scrub-at {
-  margin: 0 0 10px;
-  text-align: right;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  line-height: 1.45;
-  max-width: 160px;
-}
-.pf-scrub-at b { display: block; font-weight: 500; color: var(--pf-gold); }
-.pf-scrub-at span { display: block; color: var(--pf-ink); font-family: var(--sans); font-size: 11.5px; letter-spacing: 0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pf-scrub-track {
-  position: relative;
-  flex: 1;
-  width: 18px;
-  cursor: ns-resize;
-  pointer-events: auto;
-  touch-action: none;
-  outline-offset: 3px;
-}
-.pf-scrub-track::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px solid var(--pf-rule); }
-.pf-scrub-ticks { position: absolute; left: 4px; right: 4px; top: 0; bottom: 0; color: rgba(235, 232, 226, 0.28); }
-.pf-scrub-thumb {
-  position: absolute;
-  left: 2px;
-  right: 2px;
-  min-height: 10px;
-  box-sizing: border-box;
-  border: 1px solid var(--pf-gold);
-  background: rgba(224, 178, 82, 0.12);
-  transition: top 0.25s var(--menu-ease), height 0.25s var(--menu-ease);
-}
-.pf-scrub-say { margin: 10px 0 0; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; }
-@media (prefers-reduced-motion: reduce) {
-  .pf-scrub { animation: none; opacity: 1; transform: none; }
-  .pf-scrub-thumb { transition: none; }
-}
-@media (max-width: 1179px) { .pf-scrub { right: calc(22px + 220px + 20px); } }
-
-/* WHAT THE HAND IS ON, beside it. */
-.pf-tip {
-  position: absolute;
-  z-index: 4;
-  left: 0;
-  top: 0;
-  max-width: 300px;
-  padding: 8px 11px 9px;
-  font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.5;
-  color: var(--pf-ink);
-  background: rgba(14, 15, 17, 0.9);
-  border: 1px solid var(--pf-rule);
-  pointer-events: none;
-  white-space: nowrap;
-}
-.pf-tip[hidden] { display: none; }
-.pf-tip b { font-family: var(--sans); font-weight: 600; font-size: 12.5px; letter-spacing: 0.01em; }
-.pf-tip span { display: block; color: var(--pf-muted); }
-
-/* UNDER THE CHART (2026-11-07 — "below the main perfumers thing (the
-   planet), i want you to put: Intro, legend, terms and disclaimer, below
-   that the index and below that the credits"): the intro on the left and
-   the legend, the terms and the disclaimer beside it, at every width under
-   the stage — they stood over the stage's lower left, beside the circle,
-   until then. */
-.pf-notes {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-  gap: 34px 72px;
-  align-items: start;
-  padding: 64px 34px 0;
-  border-top: 1px solid var(--pf-rule);
-  font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.65;
-  color: var(--pf-muted);
-}
-.pf-notes p { margin: 0 0 10px; max-width: 60ch; }
-.pf-notes strong, .pf-notes b { color: var(--pf-ink); font-weight: 500; }
-.pf-notes em { font-style: italic; color: var(--pf-ink); }
-.pf-notes-head {
-  margin: 0 0 12px;
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: 0.06em;
-  color: var(--pf-ink);
-}
-.pf-notes .pf-drops { grid-column: auto; max-width: none; margin-top: 2px; }
-@media (max-width: 900px) {
-  .pf-notes { grid-template-columns: minmax(0, 1fr); gap: 30px; padding: 48px 26px 0; }
-}
-@media (max-width: 1179px) {
-  .pf-nav { width: 220px; right: 22px; }
-}
-@media (max-width: 700px) {
-  .pf-notes { padding: 34px 20px 0; }
-  .pf-scrub { right: 12px; top: 30%; bottom: 140px; width: 96px; }
-  .pf-scrub-say { display: none; }
-  .pf-scrub-at span { font-size: 10.5px; }
-  .pf-nav.is-open ~ .pf-scrub { bottom: calc(52% + 20px); top: 22%; }
-  .pf-title { top: 64px; left: 20px; width: 180px; }
-  .pf-title-word { font-size: 28px; }
-  .pf-title-years { font-size: 20px; }
-  .pf-here { top: 64px; left: 20px; width: calc(100% - 40px); }
-  .pf-here::before { left: -30px; right: -10px; }
-  .pf-here-name { font-size: 22px; }
-  .pf-here-meta { margin-top: 6px; font-size: 10.5px; }
-  .pf-here-about { margin-top: 10px; }
-  .pf-sort { top: 16px; right: 14px; padding: 4px; background: linear-gradient(var(--chrome-ground), var(--chrome-ground)), var(--chrome-ground); border-radius: 3px; }
-  .pf-sort-say { display: none; }
-  .pf-hint { bottom: 70px; font-size: 9.5px; }
-  .pf-stage.is-chosen .pf-hint { bottom: 112px; }
-  .pf-back { bottom: 68px; }
-
-  /* the list is a drawer at the foot of the window on a phone: its bar
-     always there, saying where you are; pressed, the list comes up over
-     the lower half of the chart, and the chart looks closer above it. */
-  .pf-nav {
-    left: 0;
-    right: 0;
-    top: auto;
-    bottom: 0;
-    width: auto;
-    height: 52%;
-    padding: 0 16px;
-    background: rgba(14, 15, 17, 0.97);
-    border-top: 1px solid var(--pf-rule);
-    transform: translateY(calc(100% - 56px));
-    transition: transform 0.55s var(--menu-ease);
+  .worlds-page * { box-sizing: border-box; }
+  body.worlds-page { margin: 0; height: 100%; }
+  body.worlds-page { background: #050505; color: var(--ink); font-family: var(--sans); overflow: hidden; }
+  body.worlds-page.is-world { background: var(--ground); }
+  .worlds-page .pw-scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: manipulation; }
+  .worlds-page /* the poster's grain: a picture of noise jumped about by its transform —
+     over the world as the poster's is, .worlds-page and a breath of it over the rays */
+  .pw-grain {
+    position: fixed; inset: -60%; pointer-events: none; opacity: 0.06; mix-blend-mode: multiply;
+    animation: pw-grain 1.8s steps(6) infinite; will-change: transform; transition: opacity 0.6s;
   }
-  .pf-nav::before { display: none; }
-  .pf-nav.is-open { transform: none; }
-  .pf-nav.is-open ~ .pf-back { bottom: calc(52% + 12px); }
-  .pf-nav.is-open ~ .pf-hint { opacity: 0; }
-  .pf-nav-head { position: relative; height: 56px; box-sizing: border-box; align-items: center; padding: 0; }
-  .pf-nav-title { font-size: 13px; }
-  .pf-nav-toggle {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    padding: 0 2px 0 40%;
-    font: inherit;
-    color: var(--pf-ink);
-    background: none;
-    border: 0;
-    cursor: pointer;
+  body.worlds-page.is-rays .pw-grain { opacity: 0.05; mix-blend-mode: screen; }
+  @keyframes pw-grain {
+    0% { transform: translate(0, 0); } 17% { transform: translate(-6%, 4%); } 33% { transform: translate(5%, -6%); }
+    50% { transform: translate(-3%, 7%); } 67% { transform: translate(7%, 2%); } 83% { transform: translate(-5%, -5%); } 100% { transform: translate(0, 0); }
   }
-  .pf-nav-path { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10.5px; letter-spacing: 0.04em; color: var(--pf-gold); }
-  .pf-nav-find { position: relative; z-index: 1; margin-left: 4px; width: 30px; height: 30px; }
-  .pf-nav-search { padding: 8px 0; }
-  .pf-nav-query { font-size: 16px; }
-  .pf-nav-chev { flex: none; width: 8px; height: 8px; border-left: 1px solid var(--pf-ink); border-top: 1px solid var(--pf-ink); transform: translateY(2px) rotate(45deg); transition: transform 0.4s var(--menu-ease); }
-  .pf-nav.is-open .pf-nav-chev { transform: translateY(-2px) rotate(225deg); }
-  .pf-nav-scroll { padding-bottom: 40px; }
-}
+  .worlds-page .t1 { position: fixed; inset: 0; pointer-events: none; }
+  .worlds-page .t1 a, .worlds-page .t1 button, .worlds-page .t1 select, .worlds-page .t1 input, .worlds-page .pw-found { pointer-events: auto; }
+  .worlds-page .pw-world-ui { transition: opacity 0.5s; }
+  .worlds-page .pw-rays-ui { transition: opacity 0.5s; }
+  body.worlds-page.is-rays .pw-world-ui { opacity: 0; visibility: hidden; }
+  body.worlds-page.is-world .pw-rays-ui { opacity: 0; visibility: hidden; }
+  .worlds-page /* the world's words come in with the world as it opens out of the strings, .worlds-page and go with it as it closes (2026-11-07; 2026-11-08) */
+  body.is-revealing .pw-world-ui { visibility: visible; opacity: var(--reveal, 0); transition: none; }
+  body.worlds-page.is-revealing .pw-rays-ui { visibility: visible; opacity: calc(1 - var(--reveal, 0)); transition: none; }
 
-/* THE FOOT: the index behind its button, then the legend and the terms,
-   then the sources — the poster's lists along its foot and its glossary.
-   The index stands a little way down from the chart, on its own. */
-.pf-foot {
-  display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(220px, 1fr);
-  gap: 56px 56px;
-  padding: 72px 34px 90px;
-  font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.55;
-  color: var(--pf-muted);
-}
-.pf-index { grid-column: 1 / -1; }
-.pf-index-open {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 24px;
-  padding: 20px 28px 21px;
-  list-style: none;
-  cursor: pointer;
-  border: 1px solid var(--pf-rule);
-  background:
-    linear-gradient(90deg, rgba(224, 178, 82, 0) 4%, rgba(224, 178, 82, 0.55) 30%, rgba(185, 160, 232, 0.5) 72%, rgba(185, 160, 232, 0) 96%) top / 100% 1px no-repeat,
-    linear-gradient(180deg, rgba(30, 31, 34, 0.55), rgba(17, 18, 20, 0.55));
-  transition: border-color 0.4s ease, background-color 0.4s ease;
-}
-.pf-index-open::-webkit-details-marker { display: none; }
-.pf-index-open::marker { content: ""; }
-.pf-index-open::before,
-.pf-index-open::after {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border: 0 solid rgba(224, 178, 82, 0.9);
-  transition: width 0.5s var(--menu-ease), height 0.5s var(--menu-ease);
-}
-.pf-index-open::before { left: -1px; top: -1px; border-left-width: 1px; border-top-width: 1px; }
-.pf-index-open::after { right: -1px; bottom: -1px; border-right-width: 1px; border-bottom-width: 1px; }
-.pf-index-open:hover { border-color: rgba(235, 232, 226, 0.3); }
-.pf-index-open:hover::before, .pf-index-open:hover::after { width: 24px; height: 24px; }
-.pf-index-open:focus-visible { outline: 1px solid var(--pf-gold); outline-offset: 4px; }
-.pf-index-mark {
-  position: relative;
-  width: 32px;
-  height: 32px;
-  border: 1px solid rgba(235, 232, 226, 0.4);
-  border-radius: 50%;
-  transition: border-color 0.4s ease, transform 0.6s var(--menu-ease);
-}
-.pf-index-mark::before,
-.pf-index-mark::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 12px;
-  height: 1px;
-  margin: -0.5px 0 0 -6px;
-  background: var(--pf-ink);
-  transition: transform 0.6s var(--menu-ease);
-}
-.pf-index-mark::after { transform: rotate(90deg); }
-.pf-fold[open] .pf-index-mark { transform: rotate(180deg); border-color: var(--pf-gold); }
-.pf-fold[open] .pf-index-mark::after { transform: rotate(0deg); }
-.pf-index-open:hover .pf-index-mark { border-color: var(--pf-gold); }
-.pf-index-word {
-  margin: 0;
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: clamp(22px, 2.5vw, 34px);
-  line-height: 0.9;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--pf-ink);
-  transition: color 0.4s ease;
-}
-.pf-index-open:hover .pf-index-word { color: #fff8ec; }
-.pf-index-say { display: flex; flex-direction: column; gap: 6px; font-size: 11px; letter-spacing: 0.04em; color: var(--pf-muted); }
-.pf-index-counts { color: var(--pf-ink); letter-spacing: 0.06em; }
-.pf-index-cue { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pf-gold); }
-.pf-index-cue-shut { display: none; }
-.pf-fold[open] .pf-index-cue-open { display: none; }
-.pf-fold[open] .pf-index-cue-shut { display: inline; }
-.pf-index-cols { columns: 3 220px; column-gap: 40px; padding: 48px 0 10px; }
-.pf-index.is-opening .pf-index-cols,
-.pf-sources.is-opening .pf-source-list { animation: pf-index-in 0.7s var(--menu-ease) both; }
-.pf-index.is-closing .pf-index-cols,
-.pf-sources.is-closing .pf-source-list { animation: pf-index-out 0.28s ease both; }
-@keyframes pf-index-in { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
-@keyframes pf-index-out { from { opacity: 1; } to { opacity: 0; transform: translateY(-8px); } }
-.pf-entry { break-inside: avoid; margin: 0 0 24px; }
-.pf-entry-name {
-  margin: 0 0 6px;
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--pf-ink);
-}
-.pf-entry-name[role="button"] { cursor: pointer; }
-.pf-entry-name[role="button"]:hover { color: var(--pf-gold); }
-.pf-entry-count {
-  display: inline-block;
-  margin-left: 6px;
-  padding: 0 5px;
-  font-family: var(--mono);
-  font-weight: 400;
-  font-size: 10px;
-  letter-spacing: 0;
-  border: 1px solid var(--pf-rule);
-  border-radius: 9px;
-  color: var(--pf-muted);
-  vertical-align: 2px;
-}
-.pf-entry-house { margin: 10px 0 3px; color: var(--pf-ink); letter-spacing: 0.06em; text-transform: uppercase; font-size: 10px; }
-.pf-entry-list { list-style: none; margin: 0; padding: 0; }
-.pf-entry-list li { display: flex; justify-content: space-between; gap: 10px; padding: 1px 0; border-bottom: 1px dotted rgba(235, 232, 226, 0.08); }
-.pf-entry-perfume a { color: var(--pf-ink); text-decoration: none; border-bottom: 1px solid rgba(224, 178, 82, 0.5); }
-.pf-entry-perfume a:hover { color: var(--pf-gold); }
-.pf-entry-year { flex: none; color: var(--pf-faint); }
-/* THE LEGEND, THE TERMS AND THE DISCLAIMER as quiet dropdowns (2026-11-03 —
-   "should be drop downs too, and should be subtle"): a hairline, a word in
-   spaced capitals, a line of what is in it, and a small plus that turns to a
-   minus; what is in it comes in a little below. The disclaimer is marked with
-   the asterisk the title carries. */
-.pf-drops { grid-column: 1 / -1; max-width: 760px; }
-.pf-drop { border-top: 1px solid var(--pf-rule); }
-.pf-drop:last-child { border-bottom: 1px solid var(--pf-rule); }
-.pf-drop summary {
-  display: flex;
-  align-items: baseline;
-  gap: 18px;
-  padding: 13px 2px 12px;
-  list-style: none;
-  cursor: pointer;
-  color: var(--pf-muted);
-}
-.pf-drop summary::-webkit-details-marker { display: none; }
-.pf-drop summary::marker { content: ""; }
-.pf-drop-word {
-  min-width: 120px;
-  font-family: var(--sans);
-  font-weight: 600;
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(235, 232, 226, 0.72);
-  transition: color 0.3s ease;
-}
-.pf-drop-star { margin-right: 6px; color: var(--pf-gold); }
-.pf-drop-say { flex: 1; font-size: 10px; letter-spacing: 0.04em; color: var(--pf-faint); }
-.pf-drop-mark { position: relative; width: 9px; height: 9px; align-self: center; }
-.pf-drop-mark::before, .pf-drop-mark::after { content: ""; position: absolute; left: 0; top: 4px; width: 9px; height: 1px; background: var(--pf-muted); transition: transform 0.4s var(--menu-ease), background-color 0.3s ease; }
-.pf-drop-mark::after { transform: rotate(90deg); }
-.pf-drop[open] .pf-drop-mark::after { transform: rotate(0deg); }
-.pf-drop summary:hover .pf-drop-word, .pf-drop[open] .pf-drop-word { color: var(--pf-ink); }
-.pf-drop summary:hover .pf-drop-mark::before, .pf-drop summary:hover .pf-drop-mark::after { background: var(--pf-gold); }
-.pf-drop summary:focus-visible { outline: 1px solid var(--pf-gold); outline-offset: 2px; }
-.pf-drop-body { padding: 4px 2px 22px; color: var(--pf-muted); }
-.pf-drop[open] .pf-drop-body { animation: pf-drop-in 0.45s var(--menu-ease) both; }
-@keyframes pf-drop-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
-@media (max-width: 520px) {
-  .pf-drop-word { min-width: 0; }
-  .pf-drop-say { font-size: 9.5px; text-align: right; }
-}
-.pf-drop-body p { margin: 0 0 10px; max-width: 62ch; }
-.pf-drop-body em { font-style: italic; color: var(--pf-ink); }
-/* the title's asterisk: the way to the disclaimer */
-.pf-star {
-  pointer-events: auto;
-  margin-left: 0.06em;
-  font-size: 0.55em;
-  vertical-align: 0.62em;
-  color: var(--pf-gold);
-  text-decoration: none;
-  transition: color 0.3s ease, text-shadow 0.3s ease;
-}
-.pf-star:hover, .pf-star:focus-visible { color: #ffd08a; text-shadow: 0 0 10px rgba(224, 178, 82, 0.6); outline: none; }
-.pf-legend { list-style: none; margin: 0; padding: 0; columns: 2 250px; column-gap: 40px; }
-.pf-legend li { position: relative; padding-left: 28px; margin: 0 0 7px; break-inside: avoid; }
-.pf-legend b { color: var(--pf-ink); font-weight: 500; }
-.pf-key { position: absolute; left: 0; top: 0.45em; display: block; width: 18px; height: 9px; }
-.pf-key-dot::after { content: ""; position: absolute; left: 4px; top: 0; width: 9px; height: 9px; border-radius: 50%; }
-.pf-key-gold::after { background: var(--pf-gold); box-shadow: 0 0 6px rgba(224, 178, 82, 0.7); }
-.pf-key-blue::after { background: var(--pf-blue); box-shadow: 0 0 6px rgba(185, 160, 232, 0.6); }
-.pf-key-rose::after { background: var(--pf-rose); box-shadow: 0 0 6px rgba(226, 88, 126, 0.6); }
-.pf-key-hollow::after { border: 1px solid var(--pf-ink); box-sizing: border-box; }
-.pf-key-line::after { content: ""; position: absolute; left: 0; right: 0; top: 4px; border-top: 1px solid var(--pf-ink); }
-.pf-key-dash::after { border-top-style: dashed; }
-.pf-key-dot-line::after { border-top-style: dotted; }
-.pf-key-ring::after { content: ""; position: absolute; left: 1px; top: -3px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(235, 232, 226, 0.35); box-sizing: border-box; }
-/* the Earth's marks and the three rings (2026-11-06) */
-.pf-key-earth::after { content: ""; position: absolute; left: 1px; top: -4px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(235, 232, 226, 0.6); box-sizing: border-box;
-  background: repeating-linear-gradient(135deg, rgba(235, 232, 226, 0.22) 0 1px, transparent 1px 3px); }
-.pf-key-pin::after { content: ""; position: absolute; left: 6px; top: 1px; width: 6px; height: 6px; background: var(--pf-ink); }
-.pf-key-from::after { content: ""; position: absolute; left: 4px; top: -1px; width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--pf-rose); box-sizing: border-box; }
-.pf-key-faint::after { border-top-color: rgba(235, 232, 226, 0.45); }
-.pf-key-cell::after { content: ""; position: absolute; left: 5px; top: 0; width: 7px; height: 9px; background: rgba(235, 232, 226, 0.6); box-sizing: border-box; }
-.pf-key-half::after { background: linear-gradient(to top, rgba(235, 232, 226, 0.6) 50%, transparent 50%); border: 1px solid rgba(235, 232, 226, 0.5); }
-.pf-key-empty::after { background: none; border: 1px solid rgba(235, 232, 226, 0.55); }
-.pf-key-cell.pf-key-gold::after { background: var(--pf-gold); box-shadow: none; border-radius: 0; left: 5px; width: 7px; }
-.pf-key-cell.pf-key-blue::after { background: var(--pf-blue); box-shadow: none; border-radius: 0; left: 5px; width: 7px; }
-.pf-key-cell.pf-key-rose::after { background: var(--pf-rose); box-shadow: none; border-radius: 0; left: 5px; width: 7px; }
-.pf-key-bar::after { content: ""; position: absolute; left: 0; right: 4px; top: 4px; border-top: 2px solid rgba(235, 232, 226, 0.7); }
-.pf-key-bar::before { content: ""; position: absolute; right: 0; top: 2px; width: 6px; height: 6px; border-radius: 50%; background: var(--pf-blue); }
-.pf-counts { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--pf-rule); color: var(--pf-ink); }
-.pf-terms dl { margin: 0; }
-.pf-terms dt { margin: 12px 0 2px; font-family: var(--sans); font-weight: 600; font-size: 12px; color: var(--pf-ink); }
-.pf-terms dt:first-child { margin-top: 0; }
-.pf-terms dd { margin: 0; }
-.pf-sources { grid-column: 1 / -1; }
-/* THE SOURCES' BUTTON (2026-11-03): the index's, a size down — it is the
-   second thing at the foot, and the last. Both smaller since 2026-11-08
-   ("make the index button smaller, and the sources too"). */
-.pf-sources-open { padding: 15px 28px 16px; gap: 22px; }
-.pf-sources-open .pf-index-word { font-size: clamp(17px, 1.8vw, 24px); }
-.pf-sources-open .pf-index-mark { width: 26px; height: 26px; }
-.pf-source-list { margin: 0; padding: 40px 0 0; list-style: none; columns: 2 360px; column-gap: 48px; }
-.pf-source-list li { break-inside: avoid; margin: 0 0 7px; padding-left: 34px; text-indent: -34px; overflow-wrap: anywhere; }
-.pf-source-no { display: inline-block; width: 34px; text-indent: 0; color: var(--pf-gold); }
-.pf-source-list cite { font-style: italic; color: var(--pf-ink); }
-.pf-source-list a { color: var(--pf-muted); }
-.pf-source-list li:target { color: var(--pf-ink); }
-@media (max-width: 900px) {
-  .pf-foot { grid-template-columns: 1fr; gap: 44px; padding: 56px 20px 70px; }
-  .pf-index-open { grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px 16px; padding: 18px 18px 19px; }
-  .pf-index-say { grid-column: 1 / -1; grid-row: 2; }
-  .pf-index-cue { grid-column: 3; grid-row: 1; }
-  .pf-index-mark { width: 30px; height: 30px; }
-}
+  .worlds-page /* THE RAYS' WORDS: white on the black */
+  .pw-rays-head { position: absolute; top: 34px; left: 48px; right: 48px; display: flex; justify-content: space-between; align-items: baseline; color: #f3f3f1; }
+  .worlds-page .pw-rays-head h1 { margin: 0; font: 700 13px/1.2 var(--sans); letter-spacing: 0.01em; }
+  .worlds-page .pw-rays-head h1 span { font-weight: 400; color: rgba(243, 243, 241, 0.5); }
 
-/* THE WINDOW: a perfumer, a house or a perfume. The About me sheet's dark
-   glass, its gold-into-violet hairline (the aldehyde's, since 2026-11-08)
-   and registration ticks, over the
-   page out of focus. */
-.pf-card {
-  position: fixed;
-  inset: 0;
-  z-index: 70;
-  display: grid;
-  padding: 28px;
-  overflow-y: auto;
-}
-.pf-card[hidden] { display: none; }
-.pf-card::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: rgba(8, 8, 9, 0.5);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  opacity: 0;
-  transition: opacity 0.45s ease;
-}
-.pf-card.is-open::before { opacity: 1; }
-.pf-card-sheet {
-  position: relative;
-  margin: auto;
-  width: min(640px, 100%);
-  box-sizing: border-box;
-  padding: 18px 44px 40px;
-  color: var(--pf-ink);
-  background:
-    linear-gradient(90deg, rgba(224, 178, 82, 0) 4%, rgba(224, 178, 82, 0.65) 32%, rgba(185, 160, 232, 0.55) 70%, rgba(185, 160, 232, 0) 96%) top / 100% 1px no-repeat,
-    linear-gradient(180deg, rgba(30, 31, 34, 0.94), rgba(17, 18, 20, 0.97));
-  border: 1px solid rgba(235, 232, 226, 0.12);
-  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6);
-  outline: none;
-  opacity: 0;
-  transform: translateY(14px) scale(0.985);
-  transition: opacity 0.5s ease, transform 0.7s var(--menu-ease);
-}
-.pf-card.is-open .pf-card-sheet { opacity: 1; transform: none; }
-.pf-card-sheet::before,
-.pf-card-sheet::after {
-  content: "";
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  border: 0 solid rgba(224, 178, 82, 0.9);
-}
-.pf-card-sheet::before { left: -1px; top: -1px; border-left-width: 1px; border-top-width: 1px; }
-.pf-card-sheet::after { right: -1px; bottom: -1px; border-right-width: 1px; border-bottom-width: 1px; }
-.pf-card-bar { display: flex; justify-content: space-between; align-items: center; min-height: 30px; margin: 0 -26px 10px; }
-.pf-card-back, .pf-card-close {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--pf-muted);
-  background: none;
-  border: 0;
-  padding: 6px 4px;
-  cursor: pointer;
-}
-.pf-card-close { margin-left: auto; font-size: 20px; line-height: 1; }
-.pf-card-back:hover, .pf-card-close:hover { color: var(--pf-ink); }
-.pf-card-back[hidden] { display: none; }
-.pf-card-body { opacity: 1; transition: opacity 0.25s ease; }
-.pf-card-body.is-swapping { opacity: 0; }
-.pf-card-kicker {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 10px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--pf-gold);
-}
-.pf-card-kicker::before { content: ""; width: 9px; height: 9px; border: 1px solid currentColor; box-sizing: border-box; }
-.pf-card-name {
-  margin: 0;
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 30px;
-  line-height: 1.1;
-  letter-spacing: 0.01em;
-}
-.pf-card-meta {
-  margin: 10px 0 0;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  color: var(--pf-muted);
-}
-.pf-card-meta b { color: var(--pf-ink); font-weight: 500; }
-.pf-card-about { margin: 22px 0 0; font-family: var(--sans); font-size: 14.5px; line-height: 1.65; color: #d9d6cf; }
-.pf-card-about p { margin: 0 0 10px; }
-.pf-card-ref {
-  font-family: var(--mono);
-  font-size: 9.5px;
-  vertical-align: super;
-  line-height: 0;
-  margin-left: 2px;
-  color: var(--pf-gold);
-  text-decoration: none;
-}
-.pf-card-ref + .pf-card-ref::before { content: ","; color: var(--pf-muted); margin-right: 1px; }
-.pf-card-note {
-  margin: 16px 0 0;
-  padding: 10px 12px;
-  border: 1px solid var(--pf-rule);
-  font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.55;
-  color: var(--pf-muted);
-}
-.pf-card-sub {
-  margin: 28px 0 10px;
-  padding-top: 14px;
-  border-top: 1px solid var(--pf-rule);
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--pf-muted);
-}
-.pf-card-house { margin: 14px 0 6px; }
-.pf-card-house:first-of-type { margin-top: 0; }
-.pf-card-link {
-  font: inherit;
-  color: var(--pf-ink);
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-  text-align: left;
-  border-bottom: 1px solid rgba(235, 232, 226, 0.25);
-}
-.pf-card-link:hover { color: var(--pf-gold); border-bottom-color: currentColor; }
-.pf-card-house > .pf-card-link { font-family: var(--sans); font-weight: 600; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; }
-.pf-card-chips { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 0; padding: 0; list-style: none; }
-.pf-card-chip {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  padding: 3px 8px 4px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: #cfccc5;
-  border: 1px solid rgba(235, 232, 226, 0.12);
-  background: rgba(255, 255, 255, 0.02);
-  cursor: pointer;
-}
-.pf-card-chip:hover { border-color: rgba(235, 232, 226, 0.4); color: var(--pf-ink); }
-.pf-card-chip i { font-style: normal; color: var(--pf-faint); }
-.pf-card-chip.is-here { border-color: rgba(224, 178, 82, 0.45); color: var(--pf-ink); }
-.pf-card-chip.is-here::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--pf-gold); align-self: center; }
-.pf-card-go {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 22px 0 0;
-  padding: 9px 14px 10px;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--pf-ground);
-  background: var(--pf-ink);
-  text-decoration: none;
-}
-.pf-card-go:hover { background: var(--pf-gold); }
-.pf-card-people { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0; }
-/* a window's perfumes, as a plain table (2026-11-03) */
-.pf-card-table { width: 100%; border-collapse: collapse; font-family: var(--sans); font-size: 13px; }
-.pf-card-table th {
-  padding: 0 10px 7px 0;
-  font-family: var(--mono);
-  font-size: 9.5px;
-  font-weight: 400;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-align: left;
-  color: var(--pf-faint);
-  border-bottom: 1px solid var(--pf-rule);
-}
-.pf-card-table th:last-child, .pf-card-table td:last-child { width: 1%; padding-right: 0; text-align: right; font-family: var(--mono); font-size: 11px; color: var(--pf-muted); white-space: nowrap; }
-.pf-card-table td { padding: 7px 10px 7px 0; vertical-align: baseline; border-bottom: 1px solid rgba(235, 232, 226, 0.06); color: #cfccc5; }
-.pf-card-table td:nth-child(2) { font-size: 12px; }
-.pf-card-row {
-  position: relative;
-  margin: 0;
-  padding: 0 0 0 12px;
-  font: inherit;
-  text-align: left;
-  color: var(--pf-ink);
-  background: none;
-  border: 0;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-.pf-card-row::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px; border-radius: 50%; background: rgba(235, 232, 226, 0.28); }
-.pf-card-row.is-here::before { background: var(--pf-gold); }
-.pf-card-row:hover, .pf-card-row:focus-visible { color: var(--pf-gold); }
-.pf-card-table .pf-card-link { font-size: inherit; }
-.pf-card-none { color: var(--pf-faint); }
-.pf-card-sources { margin: 0; padding: 0; list-style: none; font-family: var(--mono); font-size: 10.5px; line-height: 1.55; color: var(--pf-muted); }
-.pf-card-sources li { margin: 0 0 6px; padding-left: 24px; text-indent: -24px; overflow-wrap: anywhere; }
-.pf-card-sources li:target, .pf-card-sources li.is-lit { color: var(--pf-ink); }
-.pf-card-sources b { display: inline-block; width: 24px; text-indent: 0; color: var(--pf-gold); font-weight: 400; }
-.pf-card-sources cite { font-style: italic; color: #cfccc5; }
-.pf-card-sources a { color: var(--pf-muted); }
-/* A PERFUME'S WINDOW, drawn out of the chart (2026-11-03): small, beside its
-   dot, no veil; it opens from the end of the line drawn out to it (--ox,
-   --oy, set by perfumers.js) and is carried with the chart. Perfumer,
-   perfume, year and source, and nothing else. */
-.pf-call {
-  position: absolute;
-  z-index: 4;
-  left: 0;
-  top: 0;
-  width: min(300px, calc(100% - 32px));
-  will-change: transform;
-  pointer-events: none;
-}
-.pf-call[hidden] { display: none; }
-.pf-call-sheet {
-  position: relative;
-  box-sizing: border-box;
-  max-height: min(420px, 62vh);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 14px 18px 15px;
-  color: var(--pf-ink);
-  background: rgba(16, 17, 19, 0.94);
-  border: 1px solid rgba(235, 232, 226, 0.16);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
-  outline: none;
-  pointer-events: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(235, 232, 226, 0.18) transparent;
-  opacity: 0;
-  clip-path: circle(0 at var(--ox, 0) var(--oy, 0));
-  transition: clip-path 0.24s ease-in, opacity 0.24s ease;
-}
-.pf-call.is-open .pf-call-sheet {
-  opacity: 1;
-  clip-path: circle(150% at var(--ox, 0) var(--oy, 0));
-  transition: clip-path 0.62s var(--menu-ease) 0.26s, opacity 0.2s ease 0.26s;
-}
-.pf-call-sheet::before {
-  content: "";
-  position: absolute;
-  left: -1px;
-  top: -1px;
-  width: 10px;
-  height: 10px;
-  border: 0 solid var(--pf-gold);
-  border-left-width: 1px;
-  border-top-width: 1px;
-}
-.pf-call-close {
-  position: absolute;
-  top: 4px;
-  right: 6px;
-  padding: 4px 6px;
-  font-size: 17px;
-  line-height: 1;
-  color: var(--pf-muted);
-  background: none;
-  border: 0;
-  cursor: pointer;
-}
-.pf-call-close:hover, .pf-call-close:focus-visible { color: var(--pf-ink); }
-.pf-call-facts { display: grid; grid-template-columns: auto 1fr; gap: 9px 14px; margin: 0; padding-right: 18px; }
-.pf-call-facts dt {
-  padding-top: 2px;
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--pf-faint);
-}
-.pf-call-facts dd { margin: 0; min-width: 0; font-family: var(--sans); font-size: 13px; line-height: 1.4; color: #d9d6cf; overflow-wrap: anywhere; }
-.pf-call-facts dd b { font-family: var(--mono); font-weight: 400; color: var(--pf-ink); }
-.pf-call-name { font-size: 17px !important; font-weight: 500; line-height: 1.25 !important; color: var(--pf-ink) !important; }
-.pf-call-read { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(224, 178, 82, 0.45); transition: color 0.2s ease, border-color 0.2s ease; }
-.pf-call-tail { white-space: nowrap; }
-.pf-call-go { color: var(--pf-gold); }
-.pf-call-read:hover, .pf-call-read:focus-visible { color: var(--pf-gold); border-bottom-color: currentColor; }
-.pf-call-link {
-  margin: 0;
-  padding: 0;
-  font: inherit;
-  color: var(--pf-ink);
-  background: none;
-  border: 0;
-  border-bottom: 1px solid var(--pf-rule);
-  cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease;
-}
-.pf-call-link:hover, .pf-call-link:focus-visible { color: var(--pf-gold); border-bottom-color: currentColor; }
-.pf-call-and { color: var(--pf-faint); }
-.pf-call-aside { display: block; margin-top: 2px; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.04em; color: var(--pf-faint); }
-.pf-call-none { color: var(--pf-faint); }
-.pf-call-sources { margin: 0; padding: 0; list-style: none; font-size: 12px; }
-.pf-call-sources li { margin: 0 0 4px; }
-.pf-call-sources li:last-child { margin-bottom: 0; }
-.pf-call-sources a { color: var(--pf-ink); text-decoration: none; border-bottom: 1px solid var(--pf-rule); }
-.pf-call-sources a:hover, .pf-call-sources a:focus-visible { color: var(--pf-gold); border-bottom-color: currentColor; }
-.pf-call-sources span { color: var(--pf-muted); }
+  .worlds-page /* THE POSTER'S HEAD: a title and a date over a heavy rule */
+  .pw-head { position: absolute; top: 36px; left: 48px; right: 48px; display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 14px; border-bottom: 3px solid #2a1d22; }
+  .worlds-page .pw-head h2 { margin: 0; font: 700 13px/1.2 var(--sans); letter-spacing: 0.01em; }
+  .worlds-page .pw-head h2 span { font-weight: 400; color: var(--muted); }
 
-@media (max-width: 700px) {
-  .pf-call { width: min(290px, calc(100% - 24px)); }
-  .pf-call-sheet { padding: 12px 14px 13px; }
-  .pf-card { padding: 12px; }
-  .pf-card-sheet { padding: 12px 20px 30px; }
-  .pf-card-bar { margin: 0 -8px 8px; }
-  .pf-card-name { font-size: 24px; }
+  .worlds-page /* THE READINGS, .worlds-page down the left, .worlds-page as the planet's */
+  .pw-hud { position: absolute; left: 48px; top: 50%; transform: translateY(-46%); width: 250px; }
+  .worlds-page .pw-read { margin: 0 0 24px; }
+  .worlds-page .pw-read dt { position: relative; font: 400 12.5px var(--sans); color: #3c3f45; padding-bottom: 7px; }
+  .worlds-page .pw-bar { position: relative; display: block; height: 1px; background: #2a2c31; margin-bottom: 9px; }
+  .worlds-page .pw-read dd { margin: 0; font: 300 30px/1.1 var(--sans); letter-spacing: -0.01em; }
+  .worlds-page .pw-read dd small { font: 400 13px var(--sans); color: var(--muted); margin-left: 6px; letter-spacing: 0; }
+  .worlds-page .pw-read .pw-world { font-size: 26px; font-weight: 400; overflow-wrap: anywhere; }
+  .worlds-page .pw-kicker { display: block; margin-bottom: 4px; font: 500 10px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .worlds-page .pw-read .pw-sub { display: block; margin-top: 5px; font: 400 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.02em; }
+  .worlds-page .pw-gaugebox { display: flex; align-items: center; gap: 16px; margin-top: 4px; }
+  .worlds-page .pw-gauge { width: 68px; height: 68px; transform: rotate(135deg); flex: none; }
+  .worlds-page .pw-gauge circle { fill: none; stroke-width: 6; }
+  .worlds-page .pw-gauge .pw-gauge-bed { stroke: rgba(28, 29, 34, 0.08); stroke-dasharray: 75 100; }
+  .worlds-page .pw-gauge .pw-gauge-arc { stroke: var(--blue); stroke-dasharray: 30 100; transition: stroke-dasharray 0.9s cubic-bezier(.2,.7,.2,1); }
+  .worlds-page .pw-gauge .pw-gauge-arc2 { stroke: rgba(47, 91, 234, 0.35); stroke-dasharray: 0 30 10 100; transition: stroke-dasharray 0.9s cubic-bezier(.2,.7,.2,1); }
+  .worlds-page .pw-shares { font: 400 11px/1.35 var(--mono); color: var(--muted); }
+  .worlds-page .pw-shares p { margin: 0 0 3px; }
+  .worlds-page .pw-shares b { font-weight: 500; color: var(--ink); margin-right: 6px; }
+
+  .worlds-page /* THE LIST, .worlds-page on the right: its houses, .worlds-page or the perfumes made for the house */
+  .pw-list { position: absolute; right: 48px; top: 112px; bottom: 128px; width: 280px; display: flex; flex-direction: column; pointer-events: auto; }
+  .worlds-page .pw-list-head { margin: 0 0 4px; padding-bottom: 8px; border-bottom: 1px solid #2a2c31; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .worlds-page .pw-list-head span { font: 400 12.5px var(--sans); color: #3c3f45; }
+  .worlds-page .pw-list-head b { font: 500 10px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .worlds-page .pw-list-how { margin: 0 0 6px; font: 400 10px var(--mono); color: var(--faint); letter-spacing: 0.03em; }
+  .worlds-page .pw-list-rows { margin: 0; padding: 0 4px 0 0; list-style: none; overflow-y: auto; flex: 0 1 auto; min-height: 0; scrollbar-width: thin; scrollbar-color: rgba(28, 29, 34, 0.25) transparent;
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent); -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent); padding-bottom: 20px; }
+  .worlds-page .pw-list-rows button { position: relative; width: 100%; display: grid; grid-template-columns: 2.6em 1fr auto; align-items: baseline; gap: 0 8px; padding: 7px 4px 8px 2px; background: none; border: 0; border-bottom: 1px solid rgba(28, 29, 34, 0.12); text-align: left; cursor: pointer; color: var(--ink); font: 400 13px/1.25 var(--sans); }
+  .worlds-page .pw-list-rows button:hover, .worlds-page .pw-list-rows button:focus-visible, .worlds-page .pw-list-rows button.is-pinned, .worlds-page .pw-list-rows button.is-lit { background: rgba(255, 255, 255, 0.45); }
+  .worlds-page .pw-list-rows button:focus-visible { outline: 1px solid var(--ink); outline-offset: -1px; }
+  .worlds-page .pw-li-no { font: 500 10px var(--mono); color: var(--muted); letter-spacing: 0.06em; }
+  .worlds-page .pw-li-name { min-width: 0; overflow-wrap: anywhere; }
+  .worlds-page .pw-li-name small { display: block; margin-top: 2px; font: 400 10px var(--mono); color: var(--muted); letter-spacing: 0.02em; }
+  .worlds-page .pw-li-n { font: 400 11px var(--mono); color: #3c3f45; }
+  .worlds-page .pw-li-bar { position: absolute; left: 2.6em; bottom: -1px; height: 2px; background: var(--blue); opacity: 0.8; }
+  .worlds-page .pw-li-mark { position: absolute; right: -2px; top: 11px; width: 5px; height: 5px; border-radius: 50%; border: 1px solid #2a2c31; }
+  .worlds-page .pw-li-mark.pw-c0 { background: #2a2c31; }
+  .worlds-page .pw-li-mark.pw-c1 { background: linear-gradient(90deg, #2a2c31 50%, transparent 50%); }
+  .worlds-page .pw-list-rows .pw-li-n { margin-right: 8px; }
+
+
+  .worlds-page /* PERFUMERS NOT FOUND, .worlds-page its world (2026-11-10): a list in the middle, .worlds-page in the
+     poster's type, .worlds-page its letters thrown a hair apart as the lens throws the
+     blobs' — blue above, .worlds-page gold below */
+  .pw-nf { position: absolute; left: 50%; top: 50%; width: var(--nf-w, 420px); transform: translate(-50%, -50%); opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0s 0.4s; }
+  body.worlds-page.is-nf .pw-nf { opacity: 1; visibility: visible; transition: opacity 0.8s ease 0.35s, visibility 0s; }
+  .worlds-page .pw-nf-kicker { margin: 0 0 10px; display: flex; justify-content: space-between; gap: 10px; font: 500 10px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); padding-bottom: 8px; border-bottom: 2px solid #2a1d22; }
+  .worlds-page .pw-nf-kicker span { color: var(--muted); letter-spacing: 0.06em; }
+  .worlds-page .pw-nf-table { width: 100%; border-collapse: collapse; }
+  .worlds-page .pw-nf-table th { text-align: left; font: 500 9.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 0 6px 7px 0; border-bottom: 1px solid #2a2c31; }
+  .worlds-page .pw-nf-table td { padding: 9px 6px 9px 0; border-bottom: 1px solid rgba(28, 29, 34, 0.14); font: 400 14px/1.3 var(--sans); color: var(--ink); vertical-align: baseline;
+    text-shadow: -0.7px -0.8px 0 rgba(47, 91, 234, 0.42), 0.7px 0.8px 0 rgba(255, 170, 40, 0.5); }
+  .worlds-page .pw-nf-table td.pw-nf-name { font-size: 16px; font-weight: 500; }
+  .worlds-page .pw-nf-table td.pw-nf-no, .worlds-page .pw-nf-table td.pw-nf-year { font: 400 11px var(--mono); color: #3c3f45; }
+  .worlds-page .pw-nf-table td.pw-nf-house { font: 400 12px var(--sans); color: #3c3f45; }
+  body.worlds-page.is-nf .pw-nf-rows tr { animation: pw-row 0.7s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(0.45s + var(--i, 0) * 0.08s); }
+  .worlds-page .pw-nf-say { margin: 12px 0 0; font: 400 10.5px/1.5 var(--mono); color: var(--muted); letter-spacing: 0.02em; }
+  @media (max-width: 760px) { .worlds-page .pw-nf-table td { font-size: 13px; } .worlds-page .pw-nf-table td.pw-nf-name { font-size: 14px; } }
+  @media (prefers-reduced-motion: reduce) { .worlds-page .pw-nf, body.worlds-page.is-nf .pw-nf { transition: none; } body.worlds-page.is-nf .pw-nf-rows tr { animation: none; } }
+
+  .worlds-page /* LEARN MORE (2026-11-07; under the world since 2026-11-08, .worlds-page the three
+     lines gone into the sheet — "make the button say 'Learn More about
+     ________'"): the button, .worlds-page and the sheet it opens under the poster, .worlds-page which
+     the page scrolls down to */
+  .pw-more-open { position: absolute; bottom: 64px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px 10px; font: 500 11px var(--mono); letter-spacing: 0.04em; color: var(--ink); background: rgba(250, 251, 250, 0.55); border: 1px solid rgba(28, 29, 34, 0.3); cursor: pointer; white-space: nowrap; transition: border-color 0.4s, background 0.4s; }
+  .worlds-page .pw-more-open:hover, .worlds-page .pw-more-open:focus-visible, .worlds-page .pw-more-open[aria-expanded="true"] { border-color: var(--ink); background: rgba(250, 251, 250, 0.9); }
+  .worlds-page .pw-more-open[hidden] { display: none; }
+  body.worlds-page.is-more { overflow-y: auto; }
+  .worlds-page .pw-more { position: relative; z-index: 5; margin-top: 100vh; min-height: 100vh; background: var(--ground); border-top: 3px solid #2a1d22; box-shadow: 0 -30px 60px rgba(40, 45, 50, 0.12); }
+  .worlds-page .pw-more[hidden] { display: none; }
+  .worlds-page .pw-more-in { max-width: 760px; margin: 0 auto; padding: 46px 48px 90px; color: #2c2e33; animation: pw-up 0.9s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes pw-up { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+  .worlds-page .pw-more-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid #2a2c31; }
+  .worlds-page .pw-more-kicker { margin: 0; font: 500 10px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .worlds-page .pw-more-close { font: 500 10.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); background: none; border: 1px solid rgba(28, 29, 34, 0.3); padding: 6px 11px 7px; cursor: pointer; }
+  .worlds-page .pw-more-close:hover { border-color: var(--ink); }
+  .worlds-page .pw-more-name { margin: 34px 0 6px; font: 300 44px/1.05 var(--sans); letter-spacing: -0.01em; color: var(--ink); }
+  .worlds-page .pw-more-sub { margin: 0 0 30px; font: 400 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.02em; }
+  .worlds-page .pw-more-lead p { margin: 0 0 14px; font: 400 18px/1.6 var(--sans); color: var(--ink); }
+  .worlds-page .pw-more-h { margin: 38px 0 14px; padding-top: 14px; border-top: 1px solid rgba(28, 29, 34, 0.18); font: 500 10px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .worlds-page .pw-more-text p { margin: 0 0 16px; font: 400 15px/1.7 var(--sans); }
+  .worlds-page .pw-more-group { margin: 0 0 18px; }
+  .worlds-page .pw-more-who { margin: 0 0 6px; font: 500 14px var(--sans); color: var(--ink); }
+  .worlds-page .pw-more-who span { margin-left: 6px; font: 400 10.5px var(--mono); color: var(--muted); }
+  .worlds-page .pw-more-group ul { margin: 0; padding: 0; list-style: none; columns: 2; column-gap: 28px; }
+  .worlds-page .pw-more-group li { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; border-bottom: 1px solid rgba(28, 29, 34, 0.1); font: 400 13px/1.35 var(--sans); break-inside: avoid; }
+  .worlds-page .pw-more-group li span { font: 400 10.5px var(--mono); color: var(--muted); }
+  .worlds-page .pw-more-src-head[hidden] { display: none; }
+  .worlds-page .pw-more-src-head { margin: 40px 0 10px; padding-top: 14px; border-top: 1px solid rgba(28, 29, 34, 0.18); font: 500 10px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .worlds-page .pw-more-sources { margin: 0; padding: 0 0 0 1.6em; font: 400 11.5px/1.6 var(--sans); color: #3c3f45; }
+  .worlds-page .pw-more-sources li { margin-bottom: 8px; padding-left: 4px; }
+  .worlds-page .pw-more-sources cite { font-style: italic; }
+  .worlds-page .pw-more-sources a { color: var(--blue); text-decoration: none; overflow-wrap: anywhere; font: 400 10.5px var(--mono); }
+  .worlds-page .pw-more-sources a:hover { text-decoration: underline; }
+  .worlds-page /* the readings come in softly when they change (2026-11-07) */
+  .is-fresh { animation: pw-fresh 0.9s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes pw-fresh { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+  @media (min-width: 761px) {
+    .worlds-page .pw-hud.is-fresh { animation-name: pw-fresh-hud; }
+    @keyframes pw-fresh-hud { from { opacity: 0; transform: translateY(-46%) translateX(-6px); } to { opacity: 1; transform: translateY(-46%); } }
+  }
+  .worlds-page .pw-list.is-fresh .pw-list-rows li { animation: pw-row 0.6s cubic-bezier(.2,.7,.2,1) both; }
+  .worlds-page .pw-list.is-fresh .pw-list-rows li:nth-child(2) { animation-delay: 0.05s; }
+  .worlds-page .pw-list.is-fresh .pw-list-rows li:nth-child(3) { animation-delay: 0.1s; }
+  .worlds-page .pw-list.is-fresh .pw-list-rows li:nth-child(n+4) { animation-delay: 0.14s; }
+  @keyframes pw-row { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .worlds-page /* coming in (2026-11-07 — "make the loading of it smoother"): the words
+     over the rays come up after the rays have begun, .worlds-page and nothing can be
+     pressed until the page is ready */
+  .pw-rays-ui { animation: pw-in 1.2s ease 0.5s both; }
+  @keyframes pw-in { from { opacity: 0; } to { opacity: 1; } }
+  body.worlds-page:not(.is-ready) .t1 a, body.worlds-page:not(.is-ready) .t1 button, body.worlds-page:not(.is-ready) .t1 select, body.worlds-page:not(.is-ready) .t1 input, body.worlds-page:not(.is-ready) .pw-list { pointer-events: none; }
+  body.worlds-page:not(.is-ready) .pw-ways { opacity: 0.45; }
+  .worlds-page .pw-ways { transition: opacity 0.6s; }
+  .worlds-page /* THE SEARCH (2026-11-07): at the top right, .worlds-page on the rays and in the worlds —
+     a field over a hairline that runs blue into gold as it is used, .worlds-page its
+     answers coming down one after another, .worlds-page each saying what it is */
+  .pw-find { position: absolute; top: 24px; right: 48px; width: 250px; z-index: 6; transition: width 0.5s cubic-bezier(.2,.7,.2,1); }
+  .worlds-page .pw-find.is-open { width: 320px; }
+  body.worlds-page.is-world .pw-find { right: 168px; top: 26px; }
+  .worlds-page .pw-find-mark { position: absolute; left: 0; top: 9px; width: 11px; height: 11px; border: 1.3px solid currentColor; border-radius: 50%; cursor: pointer; color: rgba(243, 243, 241, 0.7); }
+  .worlds-page .pw-find-mark::after { content: ""; position: absolute; left: 9px; top: 9px; width: 5px; height: 1.3px; background: currentColor; transform: rotate(45deg); transform-origin: 0 0; }
+  body.worlds-page.is-world .pw-find-mark { color: var(--muted); }
+  .worlds-page .pw-find input { width: 100%; box-sizing: border-box; padding: 6px 4px 7px 22px; font: 400 11px var(--mono); letter-spacing: 0.03em; color: #f3f3f1; background: transparent; border: 0; border-bottom: 1px solid rgba(243, 243, 241, 0.25); outline: none; border-radius: 0; }
+  .worlds-page .pw-find input::placeholder { color: rgba(243, 243, 241, 0.45); }
+  .worlds-page .pw-find input::-webkit-search-cancel-button { -webkit-appearance: none; }
+  body.worlds-page.is-world .pw-find input { color: var(--ink); border-bottom-color: rgba(28, 29, 34, 0.3); }
+  body.worlds-page.is-world .pw-find input::placeholder { color: var(--muted); }
+  .worlds-page /* the lens's colours drawn along under it as it is used */
+  .pw-find::after { content: ""; position: absolute; left: 0; right: 0; top: 30px; height: 1px; background: linear-gradient(90deg, #4a5cff, #b48cff 40%, #ffc450 75%, #ff5c40); transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.7s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
+  .worlds-page .pw-find.is-open::after { transform: scaleX(1); }
+  .worlds-page .pw-found { position: absolute; left: 0; right: 0; top: calc(100% + 8px); margin: 0; padding: 4px 0; list-style: none; background: rgba(10, 10, 12, 0.94); border: 1px solid rgba(255, 255, 255, 0.14); max-height: min(60vh, 420px); overflow-y: auto; }
+  body.worlds-page.is-world .pw-found { background: rgba(250, 251, 250, 0.96); border-color: rgba(28, 29, 34, 0.16); box-shadow: 0 14px 34px rgba(30, 35, 40, 0.14); }
+  .worlds-page .pw-found[hidden] { display: none; }
+  .worlds-page .pw-found li { animation: pw-found-in 0.42s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 0.04s); }
+  @keyframes pw-found-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  .worlds-page .pw-found button { display: grid; grid-template-columns: 74px 1fr; gap: 1px 8px; width: 100%; padding: 7px 10px 8px; text-align: left; background: none; border: 0; cursor: pointer; color: #f3f3f1; }
+  body.worlds-page.is-world .pw-found button { color: var(--ink); }
+  .worlds-page .pw-found button b { grid-row: 1 / 3; font: 500 9px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: rgba(243, 243, 241, 0.5); padding-top: 3px; }
+  body.worlds-page.is-world .pw-found button b { color: var(--muted); }
+  .worlds-page .pw-found button span { font: 400 13px/1.25 var(--sans); }
+  .worlds-page .pw-found button small { font: 400 10px var(--mono); color: rgba(243, 243, 241, 0.5); letter-spacing: 0.02em; }
+  body.worlds-page.is-world .pw-found button small { color: var(--muted); }
+  .worlds-page .pw-found button:hover, .worlds-page .pw-found button.is-at { background: rgba(255, 255, 255, 0.08); }
+  body.worlds-page.is-world .pw-found button:hover, body.worlds-page.is-world .pw-found button.is-at { background: rgba(28, 29, 34, 0.06); }
+  .worlds-page .pw-found button.is-at b { color: #ffc450; }
+  body.worlds-page.is-world .pw-found button.is-at b { color: #b07a14; }
+  .worlds-page .pw-found-none { padding: 9px 12px; font: 400 11px var(--mono); color: rgba(243, 243, 241, 0.55); }
+  body.worlds-page.is-world .pw-found-none { color: var(--muted); }
+  .worlds-page /* a house asked for, .worlds-page lit in the list a moment */
+  .pw-list-rows button.is-found { animation: pw-lit 3.2s ease both; }
+  @keyframes pw-lit { 0% { background: rgba(255, 196, 80, 0); } 15% { background: rgba(255, 196, 80, 0.32); } 100% { background: rgba(255, 196, 80, 0); } }
+  .worlds-page /* the tip a perfume brings */
+  .pw-tip { position: absolute; left: 0; top: 0; max-width: 290px; padding: 9px 11px 10px; background: rgba(250, 251, 250, 0.95); border: 1px solid rgba(28, 29, 34, 0.14); box-shadow: 0 10px 30px rgba(30, 35, 40, 0.12); font: 400 11px/1.45 var(--sans); color: #34363b; pointer-events: none; }
+  body.worlds-page.is-rays .pw-tip { background: rgba(14, 14, 14, 0.92); border-color: rgba(255, 255, 255, 0.18); color: #d9d9d6; box-shadow: none; }
+  .worlds-page .pw-tip[hidden] { display: none; }
+  .worlds-page .pw-tip:not([hidden]) { animation: pw-tip-in 0.22s ease both; }
+  @keyframes pw-tip-in { from { opacity: 0; } to { opacity: 1; } }
+  .worlds-page .pw-tip b { display: block; font: 600 13px var(--sans); color: var(--ink); }
+  body.worlds-page.is-rays .pw-tip b { color: #fff; }
+  .worlds-page .pw-tip span { display: block; margin: 2px 0 3px; font: 400 10px var(--mono); color: var(--muted); }
+  body.worlds-page.is-rays .pw-tip span { color: rgba(255, 255, 255, 0.55); }
+  .worlds-page .pw-tip em { display: block; font-style: normal; }
+
+  .worlds-page /* THE FOOT: back to Contact, .worlds-page RETURN a level, .worlds-page and the way through */
+  .pw-back { position: absolute; left: 48px; bottom: 30px; font: 500 10.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: rgba(243, 243, 241, 0.55); text-decoration: none; }
+  body.worlds-page.is-world .pw-back { color: var(--muted); }
+  .worlds-page .pw-back:hover { color: #fff; }
+  body.worlds-page.is-world .pw-back:hover { color: var(--ink); }
+  .worlds-page .pw-return { position: absolute; left: 48px; top: 88px; display: inline-flex; align-items: center; gap: 9px; padding: 7px 12px 8px; font: 500 10.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); background: rgba(250, 251, 250, 0.55); border: 1px solid rgba(28, 29, 34, 0.3); cursor: pointer; }
+  .worlds-page .pw-return:hover { border-color: var(--ink); background: rgba(250, 251, 250, 0.9); }
+  .worlds-page .pw-return[hidden] { display: none; }
+  .worlds-page .pw-ways { position: absolute; right: 48px; bottom: 26px; display: flex; align-items: center; gap: 10px; font: 400 11px var(--mono); color: var(--muted); }
+  .worlds-page .pw-ways button { font: 500 11px var(--mono); color: var(--ink); background: none; border: 1px solid rgba(28, 29, 34, 0.25); padding: 6px 10px; cursor: pointer; }
+  body.worlds-page.is-rays .pw-ways button, body.worlds-page.is-rays .pw-pick { color: #eee; border-color: rgba(255, 255, 255, 0.28); }
+  body.worlds-page.is-rays .pw-ways { color: rgba(255, 255, 255, 0.5); }
+  .worlds-page .pw-ways button:hover { border-color: var(--ink); }
+  .worlds-page .pw-pick { max-width: 220px; font: 400 11px var(--mono); color: var(--ink); background: transparent; border: 1px solid rgba(28, 29, 34, 0.25); padding: 6px 8px; border-radius: 0; }
+  .worlds-page .pw-pick option { color: #111; }
+  .worlds-page .pw-no { min-width: 7ch; text-align: center; }
+  @media (max-width: 1100px) {
+    .worlds-page .pw-hud { width: 210px; left: 32px; }
+    .worlds-page .pw-read dd { font-size: 25px; }
+    .worlds-page .pw-head, .worlds-page .pw-rays-head { left: 32px; right: 32px; }
+    .worlds-page .pw-back, .worlds-page .pw-return { left: 32px; }
+    .worlds-page .pw-ways { right: 32px; }
+    .worlds-page .pw-list { right: 32px; width: 240px; }
+  }
+  @media (max-width: 760px) {
+    .worlds-page .pw-head, .worlds-page .pw-rays-head { top: 16px; left: 16px; right: 16px; }
+    .worlds-page .pw-head { padding-bottom: 10px; border-bottom-width: 2px; }
+    .worlds-page .pw-head h2, .worlds-page .pw-rays-head h1 { font-size: 11.5px; }
+    .worlds-page .pw-head h2 span, .worlds-page .pw-rays-head h1 span { display: none; }
+    .worlds-page .pw-return { left: 16px; top: 52px; padding: 5px 9px 6px; }
+    .worlds-page .pw-hud { left: 16px; right: 16px; width: auto; top: auto; bottom: 74px; transform: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+    .worlds-page .pw-read { margin-bottom: 12px; }
+    .worlds-page .pw-read dd { font-size: 20px; }
+    .worlds-page .pw-read .pw-world { font-size: 18px; }
+    .worlds-page .pw-read dt { font-size: 11px; padding-bottom: 5px; }
+    .worlds-page .pw-bar { margin-bottom: 6px; }
+    .worlds-page .pw-read-who { grid-column: 1 / -1; }
+    .worlds-page .pw-read-years { display: none; }
+    .worlds-page .pw-credit { grid-column: 1 / -1; }
+    .worlds-page .pw-gauge { width: 46px; height: 46px; }
+    .worlds-page .pw-credit { display: none; }
+    .worlds-page .pw-list { left: 16px; right: 16px; width: auto; top: 46vh; bottom: 226px; }
+    .worlds-page .pw-list-how { display: none; }
+    .worlds-page .pw-list-rows button { padding: 6px 4px 6px 2px; font-size: 12.5px; }
+    .worlds-page .pw-back { left: 16px; bottom: 22px; }
+    .worlds-page .pw-ways { right: 16px; left: 110px; bottom: 16px; justify-content: flex-end; gap: 6px; }
+    .worlds-page .pw-pick { max-width: 130px; }
+  }
+  @media (max-height: 640px) and (min-width: 761px) {
+    .worlds-page .pw-read { margin-bottom: 12px; }
+    .worlds-page .pw-list { bottom: 64px; }
+    .worlds-page .pw-more-open { bottom: 22px; }
+  }
+  @media (max-width: 760px) {
+    .worlds-page .pw-find, .worlds-page .pw-find.is-open { left: 16px; right: 16px !important; width: auto; top: auto; bottom: 64px; }
+    .worlds-page /* the readings and the list stand up out of the search's way */
+    .pw-hud { bottom: 116px; }
+    .worlds-page .pw-list { bottom: 268px; }
+    body.worlds-page.is-world .pw-find { top: auto; bottom: 64px; }
+    .worlds-page .pw-find input { font-size: 16px; padding-left: 24px; background: rgba(10, 10, 12, 0.7); }
+    body.worlds-page.is-world .pw-find input { background: rgba(250, 251, 250, 0.85); }
+    .worlds-page .pw-find-mark { top: 12px; left: 6px; }
+    .worlds-page .pw-find::after { top: auto; bottom: 0; }
+    .worlds-page .pw-found { top: auto; bottom: calc(100% + 8px); max-height: 46vh; }
+    .worlds-page .pw-more-open { left: auto !important; right: 16px; bottom: auto; top: 52px; transform: none; padding: 5px 9px 6px; max-width: calc(100vw - 140px); overflow: hidden; text-overflow: ellipsis; }
+    .worlds-page .pw-more-group ul { columns: 1; }
+    .worlds-page .pw-more-in { padding: 34px 20px 70px; }
+    .worlds-page .pw-more-name { font-size: 34px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .worlds-page .pw-grain { animation: none; }
+    .worlds-page .is-fresh, .worlds-page .pw-list.is-fresh .pw-list-rows li, .worlds-page .pw-rays-ui, .worlds-page .pw-more-in, .worlds-page .pw-found li, .worlds-page .pw-list-rows button.is-found { animation: none; }
+    .worlds-page .pw-find, .worlds-page .pw-find::after { transition: none; }
+    .worlds-page .pw-gauge .pw-gauge-arc, .worlds-page .pw-gauge .pw-gauge-arc2 { transition: none; }
+    .worlds-page .pw-tip:not([hidden]) { animation: none; }
+  }
+
+/* ---- ON THE SITE (2026-11-10): the Menu and the page's name stand in its
+   top left corner, light on the strings and in ink on the poster, so the
+   heads stand a line lower, clear of them; on a phone the Menu has the
+   chrome's ground behind it as everywhere ---- */
+body.worlds-page.is-rays { --chrome-ground: rgba(11, 12, 15, 0.62); }
+body.worlds-page.is-world { --chrome-ground: rgba(230, 234, 231, 0.84); }
+body.worlds-page.is-rays:not(.menu-open) .menu-trigger { color: #ece8e2; }
+body.worlds-page.is-rays .page-where { color: rgba(236, 232, 226, 0.55); border-left-color: rgba(236, 232, 226, 0.2); }
+body.worlds-page.is-world .page-where { color: var(--muted); border-left-color: rgba(28, 29, 34, 0.25); }
+@media (min-width: 761px) {
+  .worlds-page .pw-rays-head, .worlds-page .pw-head { top: 64px; }
+  .worlds-page .pw-return { top: 118px; }
+  .worlds-page .pw-list { top: 142px; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .pf-card::before, .pf-card-sheet, .pf-card-body, .pf-dof, .pf-title, .pf-notes-col, .pf-here, .pf-nav, .pf-call-sheet, .pf-call.is-open .pf-call-sheet,
-  .pf-index-mark, .pf-index-mark::before, .pf-index-mark::after { transition: none; }
-  .pf-nav-opened, .pf-nav-search, .pf-index.is-opening .pf-index-cols, .pf-index.is-closing .pf-index-cols,
-  .pf-sources.is-opening .pf-source-list, .pf-sources.is-closing .pf-source-list { animation: none; }
+@media (max-width: 760px) {
+  .worlds-page .pw-rays-head, .worlds-page .pw-head { top: 52px; }
+  .worlds-page .pw-return, .worlds-page .pw-more-open { top: 86px; }
+  /* the perfumes no source credits: their list a little smaller, its
+     houses under the hexagon */
+  body.worlds-page.is-nf .pw-list { top: 60vh; }
+  .worlds-page .pw-nf-table th:first-child, .worlds-page .pw-nf-table td.pw-nf-no { display: none; }
+  .worlds-page .pw-nf-table td { font-size: 12px; padding: 7px 5px 7px 0; }
+  .worlds-page .pw-nf-table td.pw-nf-name { font-size: 13px; }
+  .worlds-page .pw-nf-say { display: none; }
 }
+/* the perfumers' list beside the world, and the links in what it says */
+.worlds-page .pw-more-made a, .worlds-page .pw-nf-name a { color: inherit; text-decoration: none; background-image: linear-gradient(currentColor, currentColor); background-size: 0% 1px; background-position: 0 100%; background-repeat: no-repeat; transition: background-size 0.4s var(--menu-ease); }
+.worlds-page .pw-more-made a:hover, .worlds-page .pw-more-made a:focus-visible, .worlds-page .pw-nf-name a:hover, .worlds-page .pw-nf-name a:focus-visible { background-size: 100% 1px; }
+.worlds-page .pw-more-page { margin: 0 0 8px; }
+.worlds-page .pw-more-page a { font: 500 11px var(--mono); letter-spacing: 0.04em; color: var(--blue); text-decoration: none; }
+.worlds-page .pw-more-page a:hover { text-decoration: underline; }
+
+/* ---- WITHOUT THE DRAWING: every perfumer, their houses and their perfumes,
+   and the sources — what a reader without the script reads and what the
+   site's search finds, written by tools/perfumers/build.py from the ledger.
+   Held back while the drawing is coming, and put away once it has come ---- */
+html.js-coming .worlds-page .pw-plain, html.pw-drawn .worlds-page .pw-plain { display: none; }
+html:not(.js-coming):not(.pw-drawn) body.worlds-page { overflow: auto; height: auto; }
+html:not(.js-coming):not(.pw-drawn) .worlds-page :is(.pw-scene, .pw-grain, .pw, .pw-more) { display: none; }
+.worlds-page .pw-plain { max-width: 1100px; margin: 0 auto; padding: 120px 48px 90px; color: #e9e7e2; }
+.worlds-page .pw-plain h1 { margin: 0 0 8px; font: 700 34px/1.1 var(--sans); }
+.worlds-page .pw-plain > h2 { margin: 48px 0 18px; padding-bottom: 10px; border-bottom: 1px solid rgba(236, 232, 226, 0.2); font: 500 11px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: rgba(236, 232, 226, 0.6); }
+.worlds-page .pw-plain-lead { margin: 0; max-width: 640px; font: 400 15px/1.6 var(--sans); color: rgba(236, 232, 226, 0.75); }
+.worlds-page .pw-plain-index { columns: 3 260px; column-gap: 36px; }
+.worlds-page .pf-entry { break-inside: avoid; margin: 0 0 22px; }
+.worlds-page .pf-entry-name { margin: 0 0 4px; font: 600 15px/1.3 var(--sans); color: #f3f1ec; }
+.worlds-page .pf-entry-count, .worlds-page .pf-entry-year { font: 400 10.5px var(--mono); color: rgba(236, 232, 226, 0.5); }
+.worlds-page .pf-entry-house { margin: 6px 0 2px; font: 500 10px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: rgba(236, 232, 226, 0.55); }
+.worlds-page .pf-entry-list { margin: 0; padding: 0; list-style: none; font: 400 13px/1.5 var(--sans); }
+.worlds-page .pf-entry-list a, .worlds-page .pw-plain-sources a { color: #e9e7e2; }
+.worlds-page .pw-plain-sources { margin: 0; padding: 0; list-style: none; font: 400 12px/1.6 var(--sans); color: rgba(236, 232, 226, 0.75); }
+.worlds-page .pw-plain-sources li { margin: 0 0 6px; }
+.worlds-page .pf-source-no { font: 400 10.5px var(--mono); color: rgba(236, 232, 226, 0.5); margin-right: 6px; }

@@ -9,7 +9,9 @@ THE PERFUMERS PAGE, BUILT FROM ITS LEDGER.
 hand: every perfume, its perfumer(s), its year and its house; what is known of
 each perfumer and each house; and the sources. This reads it and writes
 
-  perfumers-data.js          what perfumers.js draws (window.PERFUMERS_DATA);
+  perfumers-data.js          what perfumer-worlds.js draws (window.PERFUMERS_DATA),
+                             with every perfumer's biography from
+                             tools/perfumers/BIOS.md (since 2026-11-10);
   perfumers/index.html       the index and the sources at the foot of the page,
                              between its INDEX and SOURCES markers — what a
                              reader without the drawing reads, and what the
@@ -33,6 +35,7 @@ import unicodedata
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 LEDGER = os.path.join(ROOT, "tools", "perfumers", "LEDGER.md")
+BIOS = os.path.join(ROOT, "tools", "perfumers", "BIOS.md")
 DATA = os.path.join(ROOT, "perfumers-data.js")
 PAGE = os.path.join(ROOT, "perfumers", "index.html")
 NONE_ID = "not-found"
@@ -199,6 +202,33 @@ def main():
     }
     print("Ledger: %(perfumes)d perfumes (%(onSite)d on the site, %(dated)d dated), "
           "%(perfumers)d perfumers, %(houses)d houses." % counts)
+
+    # THE BIOGRAPHIES (2026-11-10, when Perfumer Worlds became the Perfumers
+    # page): each perfumer's block in BIOS.md, its paragraphs and its three
+    # sources, carried in the data under `bio`. A perfumer with no block yet is
+    # said, and has none.
+    bios, name = {}, None
+    if os.path.exists(BIOS):
+        for line in open(BIOS, encoding="utf-8"):
+            line = line.rstrip("\n")
+            if line.startswith("### "):
+                name = line[4:].strip(); bios[name] = {"t": [], "s": []}
+            elif name and line.startswith("- text: "):
+                bios[name]["t"].append(line[8:].strip())
+            elif name and line.startswith("- source: "):
+                cite, _, url = line[10:].rpartition(" | ")
+                bios[name]["s"].append([cite.strip(), url.strip()])
+    no_bio = []
+    for p in perfumers:
+        if p["id"] == NONE_ID:
+            continue
+        b = bios.get(p["name"])
+        if b and b["t"]:
+            p["bio"] = b
+        else:
+            no_bio.append(p["name"])
+    if no_bio:
+        print("No biography in BIOS.md yet for: " + ", ".join(no_bio))
     if check_only:
         return
 

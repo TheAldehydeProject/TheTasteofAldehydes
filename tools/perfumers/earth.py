@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""THE EARTH ON THE PERFUMERS PAGE — writes perfumers-earth.js.
+"""THE EARTH OF THE RADIAL POSTER — writes its coastlines.
+
+(The poster was the Perfumers page from 2026-11-02 to 2026-11-10, when the
+owner swapped it with test page 1; it is test page 1 now, and carries these
+rings at the head of its page.js, as `const EARTH_SNAPSHOT = [...]`. This
+writes them to tools/perfumers/earth-rings.js; to draw them again, put what
+it writes in that line's place. They were perfumers-earth.js at the site's
+root until then.)
 
 The Perfumers page draws the Earth in its middle as an architect's sketch
 (2026-11-06 — "It should look like the earth, with then three layers of
@@ -16,8 +23,7 @@ Run by hand, never by the site:
 It decodes the TopoJSON, simplifies every ring a little (Douglas-Peucker,
 to a tenth of a degree), drops the islands too small to be drawn at the
 page's size, rounds every point to a tenth of a degree and writes the rings
-as flat lists of longitude, latitude into perfumers-earth.js. Then run
-tools/versions.py. Nothing in it needs installing.
+as flat lists of longitude, latitude. Then run tools/versions.py. Nothing in it needs installing.
 """
 import json
 import math
@@ -26,7 +32,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
-OUT = os.path.join(ROOT, "perfumers-earth.js")
+OUT = os.path.join(HERE, "earth-rings.js")
 
 TOLERANCE = 0.18      # degrees: how far a simplified ring may stray
 SMALLEST = 0.9        # square degrees: a ring smaller than this is left out
@@ -127,7 +133,7 @@ def main():
         f.write("// Natural Earth's land at 1:110m (public domain), through world-atlas 2.0.2.\n")
         f.write("// Every ring a flat list of longitude, latitude, in degrees. Never edit\n")
         f.write("// this by hand: run the tool (then tools/versions.py).\n")
-        f.write("window.PERFUMERS_EARTH = " + body + ";\n")
+        f.write("const EARTH_SNAPSHOT = " + body + ";\n")
     print("%d rings, %d points, %d bytes -> %s" % (len(rings), pts, len(body), os.path.relpath(OUT, ROOT)))
 
 
