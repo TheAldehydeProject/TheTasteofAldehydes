@@ -14221,9 +14221,9 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   body.worlds-page { background: #050505; color: var(--ink); font-family: var(--sans); overflow: hidden; }
   body.worlds-page.is-world { background: var(--ground); }
   .worlds-page .pw-scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: manipulation; }
-  .worlds-page /* the poster's grain: a picture of noise jumped about by its transform —
-     over the world as the poster's is, .worlds-page and a breath of it over the rays */
-  .pw-grain {
+  /* the poster's grain: a picture of noise jumped about by its transform —
+     over the world as the poster's is, and a breath of it over the rays */
+  .worlds-page .pw-grain {
     position: fixed; inset: -60%; pointer-events: none; opacity: 0.06; mix-blend-mode: multiply;
     animation: pw-grain 1.8s steps(6) infinite; will-change: transform; transition: opacity 0.6s;
   }
@@ -14238,22 +14238,22 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   .worlds-page .pw-rays-ui { transition: opacity 0.5s; }
   body.worlds-page.is-rays .pw-world-ui { opacity: 0; visibility: hidden; }
   body.worlds-page.is-world .pw-rays-ui { opacity: 0; visibility: hidden; }
-  .worlds-page /* the world's words come in with the world as it opens out of the strings, .worlds-page and go with it as it closes (2026-11-07; 2026-11-08) */
-  body.is-revealing .pw-world-ui { visibility: visible; opacity: var(--reveal, 0); transition: none; }
+  /* the world's words come in with the world as it opens out of the strings, and go with it as it closes (2026-11-07; 2026-11-08) */
+  body.worlds-page.is-revealing .pw-world-ui { visibility: visible; opacity: var(--reveal, 0); transition: none; }
   body.worlds-page.is-revealing .pw-rays-ui { visibility: visible; opacity: calc(1 - var(--reveal, 0)); transition: none; }
 
-  .worlds-page /* THE RAYS' WORDS: white on the black */
-  .pw-rays-head { position: absolute; top: 34px; left: 48px; right: 48px; display: flex; justify-content: space-between; align-items: baseline; color: #f3f3f1; }
+  /* THE RAYS' WORDS: white on the black */
+  .worlds-page .pw-rays-head { position: absolute; top: 34px; left: 48px; right: 48px; display: flex; justify-content: space-between; align-items: baseline; color: #f3f3f1; }
   .worlds-page .pw-rays-head h1 { margin: 0; font: 700 13px/1.2 var(--sans); letter-spacing: 0.01em; }
   .worlds-page .pw-rays-head h1 span { font-weight: 400; color: rgba(243, 243, 241, 0.5); }
 
-  .worlds-page /* THE POSTER'S HEAD: a title and a date over a heavy rule */
-  .pw-head { position: absolute; top: 36px; left: 48px; right: 48px; display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 14px; border-bottom: 3px solid #2a1d22; }
+  /* THE POSTER'S HEAD: a title and a date over a heavy rule */
+  .worlds-page .pw-head { position: absolute; top: 36px; left: 48px; right: 48px; display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 14px; border-bottom: 3px solid #2a1d22; }
   .worlds-page .pw-head h2 { margin: 0; font: 700 13px/1.2 var(--sans); letter-spacing: 0.01em; }
   .worlds-page .pw-head h2 span { font-weight: 400; color: var(--muted); }
 
-  .worlds-page /* THE READINGS, .worlds-page down the left, .worlds-page as the planet's */
-  .pw-hud { position: absolute; left: 48px; top: 50%; transform: translateY(-46%); width: 250px; }
+  /* THE READINGS, down the left, as the planet's */
+  .worlds-page .pw-hud { position: absolute; left: 48px; top: 50%; transform: translateY(-46%); width: 250px; }
   .worlds-page .pw-read { margin: 0 0 24px; }
   .worlds-page .pw-read dt { position: relative; font: 400 12.5px var(--sans); color: #3c3f45; padding-bottom: 7px; }
   .worlds-page .pw-bar { position: relative; display: block; height: 1px; background: #2a2c31; margin-bottom: 9px; }
@@ -14272,8 +14272,8 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   .worlds-page .pw-shares p { margin: 0 0 3px; }
   .worlds-page .pw-shares b { font-weight: 500; color: var(--ink); margin-right: 6px; }
 
-  .worlds-page /* THE LIST, .worlds-page on the right: its houses, .worlds-page or the perfumes made for the house */
-  .pw-list { position: absolute; right: 48px; top: 112px; bottom: 128px; width: 280px; display: flex; flex-direction: column; pointer-events: auto; }
+  /* THE LIST, on the right: its houses, or the perfumes made for the house */
+  .worlds-page .pw-list { position: absolute; right: 48px; top: 112px; bottom: 128px; width: 280px; display: flex; flex-direction: column; pointer-events: auto; }
   .worlds-page .pw-list-head { margin: 0 0 4px; padding-bottom: 8px; border-bottom: 1px solid #2a2c31; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
   .worlds-page .pw-list-head span { font: 400 12.5px var(--sans); color: #3c3f45; }
   .worlds-page .pw-list-head b { font: 500 10px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
@@ -14294,17 +14294,17 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   .worlds-page .pw-list-rows .pw-li-n { margin-right: 8px; }
 
 
-  .worlds-page /* PERFUMERS NOT FOUND, .worlds-page its world (2026-11-10): a list in the middle, .worlds-page in the
-     poster's type, .worlds-page its letters thrown a hair apart as the lens throws the
-     blobs' — blue above, .worlds-page gold below */
-  .pw-nf { position: absolute; left: 50%; top: 50%; width: var(--nf-w, 420px); transform: translate(-50%, -50%); opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0s 0.4s; }
+  /* PERFUMERS NOT FOUND, its world (2026-11-10): a plain list in the middle,
+     in the poster's type (later that day — "i dont want it to be a hexagon,
+     rather make it just a list. a normal list": no hexagon round it, and no
+     fringe on its letters) */
+  .worlds-page .pw-nf { position: absolute; left: 50%; top: 50%; width: var(--nf-w, 420px); transform: translate(-50%, -50%); opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0s 0.4s; }
   body.worlds-page.is-nf .pw-nf { opacity: 1; visibility: visible; transition: opacity 0.8s ease 0.35s, visibility 0s; }
   .worlds-page .pw-nf-kicker { margin: 0 0 10px; display: flex; justify-content: space-between; gap: 10px; font: 500 10px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); padding-bottom: 8px; border-bottom: 2px solid #2a1d22; }
   .worlds-page .pw-nf-kicker span { color: var(--muted); letter-spacing: 0.06em; }
   .worlds-page .pw-nf-table { width: 100%; border-collapse: collapse; }
   .worlds-page .pw-nf-table th { text-align: left; font: 500 9.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 0 6px 7px 0; border-bottom: 1px solid #2a2c31; }
-  .worlds-page .pw-nf-table td { padding: 9px 6px 9px 0; border-bottom: 1px solid rgba(28, 29, 34, 0.14); font: 400 14px/1.3 var(--sans); color: var(--ink); vertical-align: baseline;
-    text-shadow: -0.7px -0.8px 0 rgba(47, 91, 234, 0.42), 0.7px 0.8px 0 rgba(255, 170, 40, 0.5); }
+  .worlds-page .pw-nf-table td { padding: 9px 6px 9px 0; border-bottom: 1px solid rgba(28, 29, 34, 0.14); font: 400 14px/1.3 var(--sans); color: var(--ink); vertical-align: baseline; }
   .worlds-page .pw-nf-table td.pw-nf-name { font-size: 16px; font-weight: 500; }
   .worlds-page .pw-nf-table td.pw-nf-no, .worlds-page .pw-nf-table td.pw-nf-year { font: 400 11px var(--mono); color: #3c3f45; }
   .worlds-page .pw-nf-table td.pw-nf-house { font: 400 12px var(--sans); color: #3c3f45; }
@@ -14313,11 +14313,11 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   @media (max-width: 760px) { .worlds-page .pw-nf-table td { font-size: 13px; } .worlds-page .pw-nf-table td.pw-nf-name { font-size: 14px; } }
   @media (prefers-reduced-motion: reduce) { .worlds-page .pw-nf, body.worlds-page.is-nf .pw-nf { transition: none; } body.worlds-page.is-nf .pw-nf-rows tr { animation: none; } }
 
-  .worlds-page /* LEARN MORE (2026-11-07; under the world since 2026-11-08, .worlds-page the three
+  /* LEARN MORE (2026-11-07; under the world since 2026-11-08, the three
      lines gone into the sheet — "make the button say 'Learn More about
-     ________'"): the button, .worlds-page and the sheet it opens under the poster, .worlds-page which
+     ________'"): the button, and the sheet it opens under the poster, which
      the page scrolls down to */
-  .pw-more-open { position: absolute; bottom: 64px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px 10px; font: 500 11px var(--mono); letter-spacing: 0.04em; color: var(--ink); background: rgba(250, 251, 250, 0.55); border: 1px solid rgba(28, 29, 34, 0.3); cursor: pointer; white-space: nowrap; transition: border-color 0.4s, background 0.4s; }
+  .worlds-page .pw-more-open { position: absolute; bottom: 64px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px 10px; font: 500 11px var(--mono); letter-spacing: 0.04em; color: var(--ink); background: rgba(250, 251, 250, 0.55); border: 1px solid rgba(28, 29, 34, 0.3); cursor: pointer; white-space: nowrap; transition: border-color 0.4s, background 0.4s; }
   .worlds-page .pw-more-open:hover, .worlds-page .pw-more-open:focus-visible, .worlds-page .pw-more-open[aria-expanded="true"] { border-color: var(--ink); background: rgba(250, 251, 250, 0.9); }
   .worlds-page .pw-more-open[hidden] { display: none; }
   body.worlds-page.is-more { overflow-y: auto; }
@@ -14347,8 +14347,8 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   .worlds-page .pw-more-sources cite { font-style: italic; }
   .worlds-page .pw-more-sources a { color: var(--blue); text-decoration: none; overflow-wrap: anywhere; font: 400 10.5px var(--mono); }
   .worlds-page .pw-more-sources a:hover { text-decoration: underline; }
-  .worlds-page /* the readings come in softly when they change (2026-11-07) */
-  .is-fresh { animation: pw-fresh 0.9s cubic-bezier(.2,.7,.2,1) both; }
+  /* the readings come in softly when they change (2026-11-07) */
+  .worlds-page .is-fresh { animation: pw-fresh 0.9s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes pw-fresh { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
   @media (min-width: 761px) {
     .worlds-page .pw-hud.is-fresh { animation-name: pw-fresh-hud; }
@@ -14359,18 +14359,18 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   .worlds-page .pw-list.is-fresh .pw-list-rows li:nth-child(3) { animation-delay: 0.1s; }
   .worlds-page .pw-list.is-fresh .pw-list-rows li:nth-child(n+4) { animation-delay: 0.14s; }
   @keyframes pw-row { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-  .worlds-page /* coming in (2026-11-07 — "make the loading of it smoother"): the words
-     over the rays come up after the rays have begun, .worlds-page and nothing can be
+  /* coming in (2026-11-07 — "make the loading of it smoother"): the words
+     over the rays come up after the rays have begun, and nothing can be
      pressed until the page is ready */
-  .pw-rays-ui { animation: pw-in 1.2s ease 0.5s both; }
+  .worlds-page .pw-rays-ui { animation: pw-in 1.2s ease 0.5s both; }
   @keyframes pw-in { from { opacity: 0; } to { opacity: 1; } }
   body.worlds-page:not(.is-ready) .t1 a, body.worlds-page:not(.is-ready) .t1 button, body.worlds-page:not(.is-ready) .t1 select, body.worlds-page:not(.is-ready) .t1 input, body.worlds-page:not(.is-ready) .pw-list { pointer-events: none; }
   body.worlds-page:not(.is-ready) .pw-ways { opacity: 0.45; }
   .worlds-page .pw-ways { transition: opacity 0.6s; }
-  .worlds-page /* THE SEARCH (2026-11-07): at the top right, .worlds-page on the rays and in the worlds —
-     a field over a hairline that runs blue into gold as it is used, .worlds-page its
-     answers coming down one after another, .worlds-page each saying what it is */
-  .pw-find { position: absolute; top: 24px; right: 48px; width: 250px; z-index: 6; transition: width 0.5s cubic-bezier(.2,.7,.2,1); }
+  /* THE SEARCH (2026-11-07): at the top right, on the rays and in the worlds —
+     a field over a hairline that runs blue into gold as it is used, its
+     answers coming down one after another, each saying what it is */
+  .worlds-page .pw-find { position: absolute; top: 24px; right: 48px; width: 250px; z-index: 6; transition: width 0.5s cubic-bezier(.2,.7,.2,1); }
   .worlds-page .pw-find.is-open { width: 320px; }
   body.worlds-page.is-world .pw-find { right: 168px; top: 26px; }
   .worlds-page .pw-find-mark { position: absolute; left: 0; top: 9px; width: 11px; height: 11px; border: 1.3px solid currentColor; border-radius: 50%; cursor: pointer; color: rgba(243, 243, 241, 0.7); }
@@ -14381,8 +14381,8 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   .worlds-page .pw-find input::-webkit-search-cancel-button { -webkit-appearance: none; }
   body.worlds-page.is-world .pw-find input { color: var(--ink); border-bottom-color: rgba(28, 29, 34, 0.3); }
   body.worlds-page.is-world .pw-find input::placeholder { color: var(--muted); }
-  .worlds-page /* the lens's colours drawn along under it as it is used */
-  .pw-find::after { content: ""; position: absolute; left: 0; right: 0; top: 30px; height: 1px; background: linear-gradient(90deg, #4a5cff, #b48cff 40%, #ffc450 75%, #ff5c40); transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.7s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
+  /* the lens's colours drawn along under it as it is used */
+  .worlds-page .pw-find::after { content: ""; position: absolute; left: 0; right: 0; top: 30px; height: 1px; background: linear-gradient(90deg, #4a5cff, #b48cff 40%, #ffc450 75%, #ff5c40); transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.7s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
   .worlds-page .pw-find.is-open::after { transform: scaleX(1); }
   .worlds-page .pw-found { position: absolute; left: 0; right: 0; top: calc(100% + 8px); margin: 0; padding: 4px 0; list-style: none; background: rgba(10, 10, 12, 0.94); border: 1px solid rgba(255, 255, 255, 0.14); max-height: min(60vh, 420px); overflow-y: auto; }
   body.worlds-page.is-world .pw-found { background: rgba(250, 251, 250, 0.96); border-color: rgba(28, 29, 34, 0.16); box-shadow: 0 14px 34px rgba(30, 35, 40, 0.14); }
@@ -14402,11 +14402,11 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   body.worlds-page.is-world .pw-found button.is-at b { color: #b07a14; }
   .worlds-page .pw-found-none { padding: 9px 12px; font: 400 11px var(--mono); color: rgba(243, 243, 241, 0.55); }
   body.worlds-page.is-world .pw-found-none { color: var(--muted); }
-  .worlds-page /* a house asked for, .worlds-page lit in the list a moment */
-  .pw-list-rows button.is-found { animation: pw-lit 3.2s ease both; }
+  /* a house asked for, lit in the list a moment */
+  .worlds-page .pw-list-rows button.is-found { animation: pw-lit 3.2s ease both; }
   @keyframes pw-lit { 0% { background: rgba(255, 196, 80, 0); } 15% { background: rgba(255, 196, 80, 0.32); } 100% { background: rgba(255, 196, 80, 0); } }
-  .worlds-page /* the tip a perfume brings */
-  .pw-tip { position: absolute; left: 0; top: 0; max-width: 290px; padding: 9px 11px 10px; background: rgba(250, 251, 250, 0.95); border: 1px solid rgba(28, 29, 34, 0.14); box-shadow: 0 10px 30px rgba(30, 35, 40, 0.12); font: 400 11px/1.45 var(--sans); color: #34363b; pointer-events: none; }
+  /* the tip a perfume brings */
+  .worlds-page .pw-tip { position: absolute; left: 0; top: 0; max-width: 290px; padding: 9px 11px 10px; background: rgba(250, 251, 250, 0.95); border: 1px solid rgba(28, 29, 34, 0.14); box-shadow: 0 10px 30px rgba(30, 35, 40, 0.12); font: 400 11px/1.45 var(--sans); color: #34363b; pointer-events: none; }
   body.worlds-page.is-rays .pw-tip { background: rgba(14, 14, 14, 0.92); border-color: rgba(255, 255, 255, 0.18); color: #d9d9d6; box-shadow: none; }
   .worlds-page .pw-tip[hidden] { display: none; }
   .worlds-page .pw-tip:not([hidden]) { animation: pw-tip-in 0.22s ease both; }
@@ -14417,8 +14417,8 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   body.worlds-page.is-rays .pw-tip span { color: rgba(255, 255, 255, 0.55); }
   .worlds-page .pw-tip em { display: block; font-style: normal; }
 
-  .worlds-page /* THE FOOT: back to Contact, .worlds-page RETURN a level, .worlds-page and the way through */
-  .pw-back { position: absolute; left: 48px; bottom: 30px; font: 500 10.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: rgba(243, 243, 241, 0.55); text-decoration: none; }
+  /* THE FOOT: back to Contact, RETURN a level, and the way through */
+  .worlds-page .pw-back { position: absolute; left: 48px; bottom: 30px; font: 500 10.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: rgba(243, 243, 241, 0.55); text-decoration: none; }
   body.worlds-page.is-world .pw-back { color: var(--muted); }
   .worlds-page .pw-back:hover { color: #fff; }
   body.worlds-page.is-world .pw-back:hover { color: var(--ink); }
@@ -14472,8 +14472,8 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   }
   @media (max-width: 760px) {
     .worlds-page .pw-find, .worlds-page .pw-find.is-open { left: 16px; right: 16px !important; width: auto; top: auto; bottom: 64px; }
-    .worlds-page /* the readings and the list stand up out of the search's way */
-    .pw-hud { bottom: 116px; }
+    /* the readings and the list stand up out of the search's way */
+    .worlds-page .pw-hud { bottom: 116px; }
     .worlds-page .pw-list { bottom: 268px; }
     body.worlds-page.is-world .pw-find { top: auto; bottom: 64px; }
     .worlds-page .pw-find input { font-size: 16px; padding-left: 24px; background: rgba(10, 10, 12, 0.7); }
@@ -14511,9 +14511,7 @@ body.worlds-page.is-world .page-where { color: var(--muted); border-left-color: 
 @media (max-width: 760px) {
   .worlds-page .pw-rays-head, .worlds-page .pw-head { top: 52px; }
   .worlds-page .pw-return, .worlds-page .pw-more-open { top: 86px; }
-  /* the perfumes no source credits: their list a little smaller, its
-     houses under the hexagon */
-  body.worlds-page.is-nf .pw-list { top: 60vh; }
+  /* the perfumes no source credits: their list a little smaller */
   .worlds-page .pw-nf-table th:first-child, .worlds-page .pw-nf-table td.pw-nf-no { display: none; }
   .worlds-page .pw-nf-table td { font-size: 12px; padding: 7px 5px 7px 0; }
   .worlds-page .pw-nf-table td.pw-nf-name { font-size: 13px; }

@@ -141,19 +141,23 @@ test("a string hangs slack, is taut at once and only while its perfumer is point
 
 /* 2026-11-10 — "replace the node which says perfumer not found with a hexagon,
    which says perfumers not found. it should be a list, not the same as the
-   blobs. same format, but no blobs": one hexagon high in the middle; its
-   world a list of the perfumes no source credits, no blob and no spheres,
-   its houses beside it as in every world. */
-test("the perfumes no source credits are one hexagon, and their world is a list, not a blob", async ({ page }) => {
+   blobs. same format, but no blobs"; and later that day, "make the perfumers
+   not found note on the botton right. in page, i dont want it to be a
+   hexagon, rather make it just a list. a normal list": one hexagon at the
+   bottom right of the strings; its world a plain list of the perfumes no
+   source credits — no blob, no spheres, nothing drawn round it — its houses
+   beside it as in every world. */
+test("the perfumes no source credits are one hexagon at the bottom right, and their world is a plain list", async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.goto(PAGE);
   await ready(page);
   const n = await page.evaluate(() => window.PERFUMERS_DATA.perfumes.filter((x) => x.p.includes("not-found")).length);
   const d = await W(page, "dotOf", "not-found");
-  expect(Math.abs(d.x - 640), "high in the middle").toBeLessThan(2);
-  await page.mouse.move(d.x, d.y - 14);
+  expect(d.x, "on the right").toBeGreaterThan(1280 - 120);
+  expect(d.y, "low, level with the point").toBeGreaterThan(800 * 0.75);
+  await page.mouse.move(d.x + 12, d.y);
   await expect(page.locator(".pw-tip b")).toHaveText("Perfumers not found");
-  await page.mouse.click(d.x, d.y - 14);
+  await page.mouse.click(d.x + 12, d.y);
   await expect.poll(() => W(page, "view"), { timeout: 5000 }).toBe("world");
   expect(await W(page, "now")).toEqual({ kind: "per", perfumer: "not-found", house: null, count: n });
   await expect(page.locator("body")).toHaveClass(/is-nf/);
@@ -161,6 +165,18 @@ test("the perfumes no source credits are one hexagon, and their world is a list,
   expect(await W(page, "spheres"), "no spheres").toBe(0);
   await expect(page.locator(".pw-nf")).toBeVisible();
   await expect(page.locator(".pw-nf-rows tr")).toHaveCount(n);
+  // a plain list: nothing drawn round it, and no fringe on its letters
+  expect(await page.locator(".pw-nf-name").first().evaluate((el) => getComputedStyle(el).textShadow)).toBe("none");
+  const drawn = await page.evaluate(() => {
+    const c = document.querySelector(".pw-scene"), x = c.getContext("2d"), k = c.width / innerWidth;
+    const box = document.querySelector(".pw-nf").getBoundingClientRect();
+    // the ground a little outside the list, where the hexagon's lines stood
+    const g = x.getImageData(Math.round((box.left - 30) * k), Math.round(box.top * k), Math.round(20 * k), Math.round(box.height * k)).data;
+    let dark = 0;
+    for (let i = 0; i < g.length; i += 4) if (g[i] + g[i + 1] + g[i + 2] < 400) dark++;
+    return dark;
+  });
+  expect(drawn, "nothing drawn round it").toBe(0);
   await expect(page.locator(".pw-head-name")).toHaveText("Perfumers not found");
   await expect(page.locator("[data-v=name]")).toHaveText("Perfumers not found");
   await expect(page.locator(".pw-more-open")).toBeHidden();

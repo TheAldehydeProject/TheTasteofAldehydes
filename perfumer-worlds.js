@@ -191,55 +191,25 @@
       }
     }
     // a string for every dot
-    if (notFound) layNotFound(top);
+    if (notFound) layNotFound();
     map.dots.forEach((d, i) => { d.i = i; d.s = makeString(d); map.strings.push(d.s); });
   }
-  // A STRING: slack, it hangs (gravity) and sways a little; taut, it is
-  // straight; plucked, it rings — two of a string's own shapes, the whole of
-  // it and its halves, dying away. Its slack is on a spring a little under
-  // damped, so a string pulled taut overshoots and twangs.
-  const SPRING = 150, DAMP = 13;
-  function stepStrings(dt, now, t, tautOf) {
-    const { hub } = map;
-    for (const s of map.strings) {
-      const tgt = tautOf(s);
-      s.kv += (-SPRING * (s.k - tgt) - DAMP * s.kv) * dt;
-      s.k += s.kv * dt;
-      if (s.k < -0.3) { s.k = -0.3; s.kv = 0; }
-      const taut = clamp(1 - s.k, 0, 1);
-      const w1 = (11 + 13 * taut) * Math.sqrt(420 / Math.max(80, s.L));
-      s.p1 += w1 * dt; s.p2 += w1 * 2.1 * dt;
-      const die = Math.exp(-dt * (1.5 + (1 - taut) * 2));
-      s.a1 *= die; s.a2 *= die * die;
-      if (Math.abs(s.a1) < 0.02) s.a1 = 0;
-      if (Math.abs(s.a2) < 0.02) s.a2 = 0;
-      const d = s.d, dx = hub.x - d.x, dy = hub.y - d.y, L = s.L || 1;
-      const nx = -dy / L, ny = dx / L;
-      const sag = s.k * L * SAG;
-      const sway = STILL || s.k <= 0 ? 0 : s.k * Math.sin(t * s.sp + s.ph) * L * 0.014;
-      const c1 = Math.cos(s.p1) * s.a1, c2 = Math.cos(s.p2) * s.a2;
-      const pts = s.pts;
-      for (let i = 0; i <= SEG; i++) {
-        const q = i / SEG, bow = 4 * q * (1 - q);
-        const o = sway * bow + c1 * Math.sin(Math.PI * q) + c2 * Math.sin(TAU * q);
-        pts[2 * i] = d.x + dx * q + nx * o;
-        pts[2 * i + 1] = d.y + dy * q + ny * o + sag * bow;
-      }
-    }
-  }
   // PERFUMERS NOT FOUND (2026-11-10 — "replace the node which says perfumer
-  // not found with a hexagon, which says perfumers not found"): one hexagon,
-  // high in the middle between the two sides, its name over it, and one
-  // string from it down to the point — a block of its own with a dot of its
-  // own, so it is pointed at, lit and pressed as a block is
-  function layNotFound(top) {
+  // not found with a hexagon, which says perfumers not found"; at the bottom
+  // right since later that day — "make the perfumers not found note on the
+  // botton right"): one hexagon low on the right, level with the point, its
+  // name over it, and one string from it in to the point — a block of its own
+  // with a dot of its own, so it is pointed at, lit and pressed as a block is
+  function layNotFound() {
     const p = ORDER.find((q) => q.none);
-    const r = phone ? 11 : 15;
-    const x = W / 2, y = Math.max(phone ? 96 : 110, top + (phone ? 4 : 10));
-    const b = { p, side: 0, hex: true, hx: x, hy: y, hr: r, dots: [], lx0: x - 90, lx1: x + 90, ly: y - r - 12, g: 0, label: "PERFUMERS NOT FOUND" };
-    const d = { x, y: y + r, p, h: -1, b, ph: 0.5 };
+    const r = phone ? 10 : 14;
+    const lw = map.labelW ? map.labelW("PERFUMERS NOT FOUND") : 120;
+    // as far right as its name, over it, lets it stand on the window
+    const x = W - Math.max(phone ? 30 : 82, lw / 2 + (phone ? 10 : 16)), y = map.hub.y - (phone ? 6 : 4);
+    const b = { p, side: 1, hex: true, hx: x, hy: y, hr: r, dots: [], lx0: x - 90, lx1: x + 90, ly: y - r - 12, g: 0, label: "PERFUMERS NOT FOUND" };
+    // its string tied on at its left side
+    const d = { x: x - r * 0.87, y, p, h: -1, b, ph: 0.5 };
     b.dots.push(d); map.dots.push(d);
-    const lw = map.labelW ? map.labelW(b.label) : 120;
     b.x0 = x - Math.max(r + 6, lw / 2); b.x1 = x + Math.max(r + 6, lw / 2);
     b.y0 = b.ly - 10; b.y1 = y + r + 6;
     map.blocks.push(b);
@@ -266,9 +236,8 @@
     // it hangs across its own line, the downward way
     const nx = dx >= 0 ? -dy / L : dy / L, ny = dx >= 0 ? dx / L : -dx / L;
     // its weight across its line; and the tension that, slack, lets it hang SAG of its length
-    // (the hexagon's hangs straight down, and so hangs barely at all)
-    const load = GRAV * Math.max(d.b.hex ? 0.06 : 0.35, ny);
-    const c0 = (load * L) / (8 * (d.b.hex ? 0.012 : SAG));
+    const load = GRAV * Math.max(0.35, ny);
+    const c0 = (load * L) / (8 * SAG);
     const s = { d, L, nx, ny, load, c0, T: c0, k: 1, ring: 0, sp: 0.35 + R() * 0.45, ph: R() * TAU, plucked: 0,
       u: new Float32Array(SEG + 1), w: new Float32Array(SEG + 1), pts: new Float32Array(2 * (SEG + 1)) };
     restString(s, 1);
@@ -657,9 +626,10 @@
     return partsOf(w).map((x) => ({ kind: "per", p: PER[x.q], n: x.n }));
   }
   // the world of the perfumes no source credits (2026-11-10 — "it should be a
-  // list, not the same as the blobs. same format, but no blobs"): no blob
-  // and no spheres, a list in the middle in a hexagon, the readings and its
-  // houses either side as in every world
+  // list, not the same as the blobs. same format, but no blobs"; and later
+  // that day, "i dont want it to be a hexagon, rather make it just a list. a
+  // normal list"): no blob, no spheres and nothing drawn, a plain list in the
+  // middle, the readings and its houses either side as in every world
   const isNf = (w) => !!w && w.kind === "per" && w.p.none;
   function layWorld() {
     if (!cur) return;
@@ -779,8 +749,8 @@
     const box = el(".pw-nf");
     if (!box) return;
     box.style.left = Math.round(P.x) + "px"; box.style.top = Math.round(P.y) + "px";
-    // as wide as the hexagon is across its middle, less a margin
-    box.style.setProperty("--nf-w", Math.round(Math.min(phone ? W - 60 : 420, Math.max(phone ? 200 : 220, nfR() * (phone ? 1.42 : 1.32)))) + "px");
+    // a list as wide as the room lets it be, and no wider than reads well
+    box.style.setProperty("--nf-w", Math.round(Math.min(phone ? W - 32 : 480, (F.x1 - F.x0) * 0.9)) + "px");
   }
 
   // ---- WHAT IS IN FOCUS, AND HOW IT CHANGES --------------------------------
@@ -843,11 +813,12 @@
     if (STILL) { writeHud(); writeList(); kick(); return; }
     const side = (F.x1 - F.x0) * 0.5 + P.r * 0.4;
     TR.slide = dir || 0;
-    TR.inT = TR.outT = TR.hexIn = TR.hexOut = null;
+    TR.inT = TR.outT = null;
     // the one pressed comes in: from its sphere, or from the side it slides in from
     const x0 = hit ? hit.x + hit.dx : P.x + (dir || 0) * side, y0 = hit ? hit.y + hit.dy : P.y;
-    if (toNf) TR.hexIn = { x0, y0, r0: hit ? hit.r * 0.92 : P.r * 0.3 };
-    else {
+    // (into the perfumes no source credits, nothing travels: their list
+    // comes in where the blob was)
+    if (!toNf) {
       const shIn = hit ? SPH(hit.focus) : SPH(0.6);
       TR.inT = { kind: next.kind, from: hit && !hit.nf ? hit.lobes : sphereLobes(next.kind, hash(keyOf(next))), to: cur.lobes, liveTo: true,
         x0, y0, r0: hit ? hit.r : P.r * (dir ? 0.42 : 0.3), x1: P.x, y1: P.y, r1: P.r,
@@ -855,8 +826,7 @@
     }
     // the middle goes out: to its place round the new one, or off the other side
     const x1 = back ? back.x : P.x - (dir || 0) * side, y1 = back ? back.y : P.y;
-    if (wasNf) TR.hexOut = { x1, y1, r1: back ? back.r * 0.92 : P.r * 0.3, gone: !back };
-    else {
+    if (!wasNf) {
       const shOut = back ? SPH(back.focus) : SPH(0.5);
       TR.outT = { kind: was.kind, from: was.lobes, to: back && !back.nf ? back.lobes : [{ x: 0, y: 0, r: 0.3 }], liveFrom: true,
         x0: P.x, y0: P.y, r0: P.r, x1, y1, r1: back ? back.r : P.r * (dir ? 0.4 : 0.2),
@@ -870,7 +840,7 @@
     writeHud(); writeList();
     kick();
   }
-  function changed() { TR.kind = null; TR.inT = TR.outT = TR.hexIn = TR.hexOut = TR.back = null; TR.old = null; TR.slide = 0; if (cur) cur.paint = null; }
+  function changed() { TR.kind = null; TR.inT = TR.outT = TR.back = null; TR.old = null; TR.slide = 0; if (cur) cur.paint = null; }
   // RETURN, always to the strings (2026-11-08 — "make the return button just
   // go back to the black nodes page"); Esc the same — and since 2026-11-10
   // ("i want the top left return button to always point you to the nodes
@@ -1571,18 +1541,16 @@
     c.globalAlpha = 1;
     if (ch >= 0) {
       // A CHANGE: the middle going out to its place, the one pressed coming in
-      if (TR.back) { const o = TR.outT || TR.hexOut; o.x1 = TR.back.x + TR.back.dx; o.y1 = TR.back.y + TR.back.dy; }
+      if (TR.back && TR.outT) { TR.outT.x1 = TR.back.x + TR.back.dx; TR.outT.y1 = TR.back.y + TR.back.dy; }
       if (TR.outT) drawTraveller(c, TR.outT, ch, t, TR.outT.gone ? 1 - soft((ch - (slide ? 0.3 : 0.5)) / (slide ? 0.55 : 0.5)) : 1);
       if (TR.inT) drawTraveller(c, TR.inT, ch, t, slide ? smooth(ch / 0.35) : 1);
-      // the hexagon of the perfumes no source credits, coming in or going out
-      if (TR.hexIn) { const h = TR.hexIn, e = ease(ch); drawHexLens(c, lerp(h.x0, P.x, e), lerp(h.y0, P.y, e), lerp(h.r0, nfR(), e), smooth(ch / 0.3), t, lerp(0.8, 1.2, e), 0.04); }
-      if (TR.hexOut) { const h = TR.hexOut, e = ease(ch); drawHexLens(c, lerp(P.x, h.x1, e), lerp(P.y, h.y1, e), lerp(nfR(), h.r1, e), h.gone ? 1 - smooth((ch - 0.3) / 0.6) : 1, t, lerp(1.2, 0.8, e), 0.04); }
       if (ch >= 1) {
         if (TR.back) { TR.back.in = 1; }
         changed();
       }
     } else if (cur.lobes) drawCur(c, cur, P.x, P.y, P.r, t, 1, boost || 1);
-    else drawHexLens(c, P.x, P.y, nfR(), 1, t, 1.2, 0.04);
+    // (the perfumes no source credits: their list, and nothing drawn — "i dont
+    // want it to be a hexagon, rather make it just a list. a normal list")
     drawSwarm(c, dt, t, ch);
   }
 
@@ -1593,8 +1561,6 @@
     c.globalAlpha = alpha;
     c.drawImage(b.img.c, x - s / 2, y - s / 2, s, s);
   }
-  // how big the not-found world's hexagon is: round its list
-  const nfR = () => (phone ? Math.min((F.x1 - F.x0) * 0.45, (F.y1 - F.y0) * 0.56) : Math.min(P.r * 1.5, (F.x1 - F.x0) * 0.47, (F.y1 - F.y0) * 0.56));
   // THE SWARM (2026-11-10 — "remove the circle that goes around the things,
   // and instead make it something more thematic; something more
   // particulate"; it was a double circle, after the poster's): a ring of fine

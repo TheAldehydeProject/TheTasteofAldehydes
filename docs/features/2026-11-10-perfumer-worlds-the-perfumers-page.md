@@ -63,12 +63,15 @@ every perfumer slide**: the next world comes in from that side, the last goes ou
 spheres with it. **The grain is softer**: a narrower, lighter noise, fainter, jumping more slowly.
 **The line under the Strings' title is gone.**
 
-**Perfumers not found.** The block of the perfumes no source credits is **one hexagon** high in the
-middle, between the two sides, with one string straight down to the point, named *PERFUMERS NOT
-FOUND*, drawn through the lens. Its world is **a list, not a blob**: no blob and no spheres, the
-perfumes in a table in the middle (the perfume, its house, its year) in a hexagon drawn through the
-lens, the letters thrown a hair apart blue and gold; its readings and its houses either side, as in
-every world. Round a house, the same hexagon stands for it among the house's perfumers.
+**Perfumers not found.** The block of the perfumes no source credits is **one hexagon at the bottom
+right** of the Strings, level with the point, with one string in to it, named *PERFUMERS NOT FOUND*,
+drawn through the lens. Its world is **a plain list**: no blob, no spheres and nothing drawn, the
+perfumes in a table in the middle (the perfume, its house, its year) ruled as the list beside it is;
+its readings and its houses either side, as in every world. Round a house, the same small hexagon
+stands for it among the house's perfumers. (For the first hour of the round it stood high in the
+middle, its string straight down, and its list was framed in a large hexagon with its letters thrown
+a hair apart blue and gold — the owner then: "make the perfumers not found note on the botton right.
+in page, i dont want it to be a hexagon, rather make it just a list. a normal list.")
 
 **The poster's plane.** Close in on what is chosen, the poster's camera only ever turns about the
 chart's middle at one height and tilt — going through Prin Lomros' perfumes is the chart turning
@@ -103,6 +106,10 @@ and through every flight, the chart is drawn as it was; `?plane=off` draws it th
   frame. The plane draws the writing once. Tiles near the eye are drawn finer (0.6, 0.85 or 1.2 of the
   screen's pixel by how much the eye magnifies them there), and drawn again finer as the turning
   brings them nearer; 70 kept at most. The out-of-focus copy is made from the tiles.
+- **Its styles were moved with a scoping pass that, where a rule's comment held a comma, put the
+  page's name inside the comment** — harmless for a rule starting with a class, but a rule starting
+  with `body` then matched nothing: the World's words fading in with the opening (`is-revealing`)
+  did not, for an hour. Repaired the same round, and the comments cleaned.
 - **Without the script**, the page is its index and its sources, written by `build.py` between the
   same markers as on the poster, so the site's search and a reader without the drawing still find
   every perfumer — held back while the drawing comes (`js-coming`), put away once it has (`pw-drawn`).
@@ -111,7 +118,8 @@ and through every flight, the chart is drawn as it was; `?plane=off` draws it th
 
 `npm test -- tests/perfumers.spec.js` — the strings and worlds with the live ledger and the Menu; a
 string taut within a fifth of a second of being pointed at, slack at once when let go, and a pluck
-leaving it slack; the hexagon and its list (no blob, no spheres); the swarm staying on the last sphere,
+leaving it slack; the hexagon at the bottom right and its plain list (no blob, no spheres, nothing drawn round it, no
+fringe on its letters); the swarm staying on the last sphere,
 never the middle, nothing written; blue ahead of the rest as a world opens, and Return or Esc from the
 middle of an opening or a change; Learn More gliding, not jumping, to exactly the top, *Back up*, the
 perfumes linked; › sliding; the lens and the softer grain; the search; the index without the script;
