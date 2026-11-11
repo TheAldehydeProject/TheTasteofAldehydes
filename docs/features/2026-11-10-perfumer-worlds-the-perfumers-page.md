@@ -128,9 +128,13 @@ on Prin Lomros it stands on tiles in perspective, and the wheel draws nothing of
 
 ## Known issues / TODO
 
-- **Four perfumers have no biography yet** — Marius Pana, Lorenzo Orlandi Berti, Alexandru Marian and
-  Georgiana Ștefănoaei, added from the owner's word on 2026-11-08 — so Learn More shows the ledger's
-  line about them and no more; `build.py` says so each time it runs.
+- **The four perfumers added from the owner's word on 2026-11-08 have biographies since 2026-11-11**
+  (the owner, asked: "Research what I can"): Marius Pana (Jinkoh Store, which he founded in 2019,
+  and Kinamic's Qiyun series), Lorenzo Orlandi Berti (Atelier Fragranze Milano), Alexandru Marian
+  (Grande Parfums, which he founded and runs alone) and Georgiana Ștefănoaei (Matca, in Sibiu) —
+  each from up to six sources read, the three that say most kept, nothing written that a source does
+  not say. Two hosts, Parfinity and Scent Verdict, could not be opened from the machine they were
+  written on, so what those pages say was read through the search engine's reading of them.
 - The headless browser the tests run in has no graphics card, so it cannot say how many frames a
   second the plane makes on a real screen; what it can say is that the page's own work a frame of
   scrolling fell from about 21 ms to about 5.

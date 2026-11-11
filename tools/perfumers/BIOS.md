@@ -226,3 +226,32 @@ Up to six sources were read for each perfumer. These are the three that describe
 - text: Nothing more about her was found in the sources read.
 - source: “Home Goa Velvet Fog 50ml Eau de Parfum.” *Profumix Luxury Brands*, profumixluxurybrands.it. Accessed 7 Nov. 2026. | https://www.profumixluxurybrands.it/en/?p=103693
 - source: “Velvet Fog – 50ml.” *Spezieri*, spezieri.com. Accessed 2 Nov. 2026. | https://spezieri.com/en/velvet-fog-50-ml-casa-goa
+
+### Marius Pana
+- text: Marius Pana is a perfumer who works with agarwood, the resinous wood oud is made from. He founded Jinkoh Store in 2019, which Fragrantica files as a Romanian house of artisanal, natural perfumery, its first perfumes from 2019 and its newest from 2024, with him as the nose of all of them.
+- text: Kinamic, a house of agarwood perfumes, chose him for its Qiyun series, for what it calls his mastery of Far Eastern olfactory philosophy and his deep understanding of agarwood. Fragrantica knows sixty-five perfumes by him, among them Ancient Oud, Karak & Shisha and Vanilla Ash.
+- source: “Qiyun by Marius Pana.” *Kinamic*, kinamic.ae. Accessed 11 Nov. 2026. | https://kinamic.ae/pages/qiyun-by-marius-pana
+- source: “Jinkoh Store Perfumes and Colognes.” *Fragrantica*, fragrantica.com. Accessed 11 Nov. 2026. | https://www.fragrantica.com/designers/Jinkoh-Store.html
+- source: “Nose Marius Pana.” *Fragrantica*, fragrantica.com. Accessed 11 Nov. 2026. | https://www.fragrantica.com/noses/Marius_Pana.html
+
+### Lorenzo Orlandi Berti
+- text: Lorenzo Orlandi Berti is an Italian perfumer who grew up in Montepulciano, in Tuscany. At twenty he took the Professione Olfatto course run by Mouillettes & Co, and he joined Atelier Fragranze Milano as an intern.
+- text: Over five years there he went from laboratory assistant to production director and then to junior perfumer, working beside Luca Maffei and Paolo Cerizza. In a 2024 interview with Kosmetica he tells how a perfume is made at the atelier, from its brief to its budget, and says his way of working has become less spontaneous and more deliberate since he became a junior nose.
+- text: His best-known perfume so far is Fig Tzatziki, made with Luca Maffei for Sãlum; he has also made perfumes for A13, Egōscentrique, Grande, Masca Parfums, Necalli, Roccobarocco, Spiritica and Susurri. Some listings credit him as Lorenzo Berti.
+- source: “Lorenzo Orlandi Berti (Atelier Fragranze Milano) racconta come si crea un profumo.” *Kosmetica*, 14 May 2024, kosmeticanews.it. Accessed 11 Nov. 2026. | https://www.kosmeticanews.it/lorenzo-orlandi-berti-atelier-fragranze-milano-cosi-si-crea-un-profumo/
+- source: “Lorenzo Orlandi Berti.” *Parfinity*, parfinity.com. Accessed 11 Nov. 2026. | https://www.parfinity.com/en/perfumer/lorenzo-orlandi-berti
+- source: “Spiritica Yuzuyakuza, Yuzu Leather Extrait.” *Passion Parfum*, passion-parfum.com. Accessed 11 Nov. 2026. | https://passion-parfum.com/en/products/spiritica-yuzuyakuza-extrait-de-parfum-41
+
+### Alexandru Marian
+- text: Alexandru Marian — Alex Marian — founded Grande Parfums, a Romanian house, about five years ago, when there were few Romanian perfume brands, and runs it alone. Resinous notes are his signature, in most of the house's perfumes, and he names quality, experience and travel as the ideas behind it.
+- text: A press release of 2021 says the house makes its perfumes in limited editions only, every bottle numbered, its alcohol distilled four times from plums, and quotes him wanting to bring quality, not quantity. Fragrantica names him among the house's perfumers, with Marius Pana, Flavius Calaj and Lorenzo Berti.
+- source: “Artizanii mirosurilor. Cine sunt antreprenorii români care construiesc poveşti şi businessuri parfumate.” *Ziarul Financiar*, 28 Apr. 2026, zf.ro. Accessed 11 Nov. 2026. | https://da.zf.ro/dupa-afaceri/style/artizanii-mirosurilor-cine-sunt-antreprenorii-romani-care-22948083
+- source: “5 branduri românești de parfumuri de nișă, sub umbrela Nichesent.ro.” *Domus PR*, Oct. 2021, domus-pr.ro. Accessed 11 Nov. 2026. | https://domus-pr.ro/2021/10/5-branduri-romanesti-parfumuri-nisa-umbrela-nichesent-calaj-perfume-a13-niche-grande-perfume-emozioni-fragrances/
+- source: “Grande Perfumes and Colognes.” *Fragrantica*, fragrantica.com. Accessed 11 Nov. 2026. | https://www.fragrantica.com/designers/Grande.html
+
+### Georgiana Ștefănoaei
+- text: Georgiana Ștefănoaei founded Matca, a natural perfume atelier in Sibiu, with Sebastian Țiplea; the house's own story calls it the work of a visual artist and a full-time aficionado of the comforting scents that come from nature. She studied communication and public relations; she writes the perfumes' formulas, and he makes the house's look.
+- text: They began it in 2019 and launched its first perfumes in September 2020, made from natural ingredients and blended and bottled by hand in Sibiu — in their dining room at first, then in a workshop, then in a larger one. By 2024 Matca was sold in seventeen shops, two of them in Austria and Norway, with ten perfumes among the thirty things it makes.
+- source: “Afaceri de la zero. Georgiana Ştefănoaei şi Sebastian Ţiplea au pornit din pasiune un atelier de parfumerie în Sibiu şi vor să ducă brandul Matca în toată Europa.” *Ziarul Financiar*, zf.ro. Accessed 11 Nov. 2026. | https://www.zf.ro/afaceri-de-la-zero/afaceri-de-la-zero-georgiana-stefanoaei-si-sebastian-tiplea-au-20278426
+- source: “Our Story.” *Matca*, matcanaturals.com. Accessed 11 Nov. 2026. | https://www.matcanaturals.com/pages/our-story
+- source: “Afaceri de la Zero. Cum au crescut? Brandul de parfumuri Matca, dezvoltat de Georgiana Ştefănoaei şi Sebastian Ţiplea, a ajuns în 17 magazine, dintre care două se află în Austria şi Norvegia.” *Ziarul Financiar*, zf.ro. Accessed 11 Nov. 2026. | https://www.zf.ro/afaceri-de-la-zero/afaceri-de-la-zero-cum-au-crescut-brandul-de-parfumuri-matca-22523756
