@@ -270,12 +270,14 @@ test("while the chart flies it is drawn at a lower resolution, and sharp once it
   await atRest(page, "turn");
   await page.evaluate(() => window.PerfumersChart.choose("perfumer", "nicholas-nilsson"));
   await expect.poll(async () => (await state(page)).flying).toBe(true);
-  await expect(page.locator(".pf-fly")).toBeVisible();
+  // one of the flight's two pictures, the lower one or (going fast, since
+  // 2026-11-11) the lower still
+  await expect(page.locator(".pf-fly:visible")).toHaveCount(1);
   await atRest(page, "still");
   expect((await state(page)).flying).toBe(false);
   // sharp once it lands: the chart itself, or its plane
   await expect.poll(() => page.evaluate(() => window.PerfumersChart.plane().on || getComputedStyle(document.querySelector(".pf-chart")).visibility === "visible")).toBe(true);
-  await expect(page.locator(".pf-fly")).toBeHidden();
+  await expect(page.locator(".pf-fly:visible")).toHaveCount(0);
   await page.close();
 });
 
