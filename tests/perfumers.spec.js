@@ -54,8 +54,13 @@ test("the strings first, a dot a house; a block opens its perfumer's world, a ho
   expect((await W(page, "blockOf", "aichi-liu")).dots).toBe(2);
   expect((await W(page, "blockOf", "not-found")).dots).toBe(1);
   await expect(page.locator(".pw-return")).toBeHidden();
-  // the line under the title is gone (2026-11-10 — "the second picture should be ommited")
-  await expect(page.locator(".pw-rays-head h1")).toHaveText("Perfumer Worlds");
+  // the line under the title is gone (2026-11-10 — "the second picture should
+  // be ommited"), and the title with it (2026-11-11 — "remove the phrase
+  // perfumer world or whatever is on the top left"): the page's heading is
+  // there for a screen reader alone
+  await expect(page.locator(".pw-rays-head h1")).toHaveText("Perfumers");
+  await expect(page.locator(".pw-rays-head h1")).toHaveClass(/visually-hidden/);
+  expect(await page.locator("body").innerText()).not.toContain("Perfumer Worlds");
   // a block pressed: its perfumer's world, round, its houses round it, cut
   const b = await W(page, "blockOf", "aichi-liu");
   await page.mouse.click((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);
@@ -344,6 +349,41 @@ test("the lens — blue above, gold below, plum or ink — and the grain soft", 
   expect(ink[2], "a house's dark is cold").toBeGreaterThan(ink[0]);
   const grain = await page.locator(".pw-grain").evaluate((el) => +getComputedStyle(el).opacity);
   expect(grain, "the grain soft").toBeLessThan(0.08);
+  expect(errors).toEqual([]);
+});
+
+/* The noise (2026-11-11 — "i want the object to have an overlay of noise,
+   not for it to be noisy itself"; "make it involved with the page ... When
+   you actually hover with the noise, make the page change its noise overlay
+   levels"; "inherently moving ... blinking and flickering"): on the graphics
+   card (?gl=on, as the tests' browser has none) the blobs are drawn clean
+   and the noise laid over them as a second picture; the hand in it lifts it
+   and the page's own grain, and they settle once it leaves. The page's
+   grain flickers of itself. */
+test("the noise is an overlay round the blobs, and the hand in it lifts the page's grain", async ({ page }) => {
+  test.setTimeout(90000);
+  const errors = collectPageErrors(page);
+  await page.goto(PAGE + "?gl=on#prin-lomros");
+  await expect.poll(() => W(page, "view"), { timeout: 15000 }).toBe("world");
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.noise().grains), { timeout: 15000 }).toBeGreaterThan(0);
+  const rest = await page.evaluate(() => window.PerfumerWorlds.noise());
+  expect(rest.on).toBe(true);
+  expect(rest.lift).toBeLessThan(1.2);
+  // the clean blob: the lens's colours at its edge, untouched by the noise
+  const rim = await W(page, "rim");
+  expect(rim.upLeft[2]).toBeGreaterThan(rim.upLeft[0] + 100);
+  // the hand onto the blob's edge
+  const box = await page.evaluate(() => { const c = document.querySelector(".pw-scene").getBoundingClientRect(); return { x: c.left + c.width / 2, y: c.top + c.height / 2 }; });
+  for (let i = 0; i < 12; i++) { await page.mouse.move(box.x - 175 + i * 2, box.y - 10 + i); await page.waitForTimeout(60); }
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.noise().lift), { timeout: 15000 }).toBeGreaterThan(1.5);
+  const lifted = await page.locator(".pw-grain").evaluate((el) => +getComputedStyle(el).getPropertyValue("--grain-lift"));
+  expect(lifted, "the page's grain lifted with it").toBeGreaterThan(1.4);
+  // away from it, it settles
+  await page.mouse.move(8, 8);
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.noise().over), { timeout: 20000 }).toBeLessThan(0.1);
+  // the page's grain flickers of itself
+  const anim = await page.locator(".pw-grain").evaluate((el) => getComputedStyle(el).animationName);
+  expect(anim).toContain("pw-grain-flick");
   expect(errors).toEqual([]);
 });
 

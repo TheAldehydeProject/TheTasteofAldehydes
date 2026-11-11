@@ -10,18 +10,22 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="../../favicon.svg?v=2026-10-05" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../../apple-touch-icon.png?v=2026-10-05">
-<meta name="theme-color" content="#0b0c0d">
+<meta name="theme-color" content="#0d0b0a">
 <!-- SEARCH ENGINES: end -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@400;500&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&display=swap" rel="stylesheet">
+<script>if (/[?&]colours=was\b/.test(location.search)) document.documentElement.classList.add("colours-was");</script>
 <style>
   /* what the site's stylesheet gave the poster, and the poster's own */
   :root {
     --sans: "Archivo", -apple-system, "Segoe UI", sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+    /* the poster's names (2026-11-11 — "please also change the font top
+       left"): a Didone, as a perfume's label is set */
+    --serif: "Bodoni Moda", "Bodoni 72", Didot, "Didot LT STD", Georgia, serif;
     --menu-ease: cubic-bezier(0.32, 0.08, 0.24, 1);
-    --chrome-ground: rgba(11, 12, 15, 0.62);
+    --chrome-ground: rgba(13, 11, 10, 0.62);
   }
   * { box-sizing: border-box; }
   html { height: 100%; margin: 0; }
@@ -29,9 +33,9 @@
   h1, h2, h3 { font-family: var(--sans); font-weight: 600; margin: 0; }
   dl { margin: 0; }
   /* the way back, where the site's Menu stood */
-  .tp-back { position: fixed; top: 22px; left: 14px; z-index: 30; padding: 4px 8px 5px; border-radius: 3px; font: 500 10.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: #e6e3dc; text-decoration: none;
+  .tp-back { position: fixed; top: 22px; left: 14px; z-index: 30; padding: 4px 8px 5px; border-radius: 3px; font: 500 10.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--pf-ink); text-decoration: none;
     background: linear-gradient(var(--chrome-ground), var(--chrome-ground)), var(--chrome-ground); box-shadow: 0 0 12px 7px var(--chrome-ground); }
-  .tp-back:hover { color: #ffd08a; }
+  .tp-back:hover { color: var(--pf-gold-light); }
   button.pf-star { background: none; border: 0; padding: 0; margin: 0 0 0 0.06em; font-family: inherit; font-weight: inherit; line-height: 1; letter-spacing: inherit; cursor: pointer; }
   .pf-title-word { white-space: nowrap; }
   .pf-source-url { font: 400 10.5px var(--mono); color: var(--pf-muted); overflow-wrap: anywhere; }
@@ -42,25 +46,54 @@
    corners and its index, terms and sources at the foot, as the poster has
    them. Dark, as the poster is: its own tokens, scoped to the page.
    ========================================================================== */
+/* THE NIGHT ATLAS (2026-11-11 — "play with the colour scheme a little, it
+   can be different too"): a warm black, parchment, brass, verdigris and
+   madder — page.js draws the chart in the same. ?colours=was shows the
+   colours it had (colours-was on <html>). */
 body.perfumers-page {
-  --pf-ground: #0b0c0d;
-  --pf-ink: #ebe8e2;
+  --pf-ground-rgb: 13, 11, 10;
+  --pf-ink-rgb: 240, 232, 215;
+  --pf-gold-rgb: 228, 186, 106;
+  --pf-blue-rgb: 120, 196, 176;
+  --pf-rose-rgb: 222, 104, 82;
+  --pf-raised-rgb: 36, 31, 26;
+  --pf-sunk-rgb: 20, 17, 14;
+  --pf-ink-2: #d8cfbd;
+  --pf-muted: #9c9384;
+  --pf-faint: #686055;
+  --pf-gold-light: #ffdca0;
+  --bg-2: #19150f;
+}
+html.colours-was body.perfumers-page {
+  --pf-ground-rgb: 11, 12, 13;
+  --pf-ink-rgb: 235, 232, 226;
+  --pf-gold-rgb: 224, 178, 82;
+  --pf-blue-rgb: 185, 160, 232;
+  --pf-rose-rgb: 226, 88, 126;
+  --pf-raised-rgb: 30, 31, 34;
+  --pf-sunk-rgb: 15, 16, 18;
+  --pf-ink-2: #d4d1ca;
   --pf-muted: #8d8f92;
   --pf-faint: #5d6064;
-  --pf-rule: rgba(235, 232, 226, 0.14);
-  --pf-gold: #e0b252;
-  --pf-blue: #b9a0e8;
-  --pf-rose: #e2587e;
-  --bg: var(--pf-ground);
+  --pf-gold-light: #ffd08a;
   --bg-2: #141517;
-  --line: rgba(235, 232, 226, 0.16);
+}
+body.perfumers-page {
+  --pf-ground: rgb(var(--pf-ground-rgb));
+  --pf-ink: rgb(var(--pf-ink-rgb));
+  --pf-gold: rgb(var(--pf-gold-rgb));
+  --pf-blue: rgb(var(--pf-blue-rgb));
+  --pf-rose: rgb(var(--pf-rose-rgb));
+  --pf-rule: rgba(var(--pf-ink-rgb), 0.14);
+  --bg: var(--pf-ground);
+  --line: rgba(var(--pf-ink-rgb), 0.16);
   --ink: var(--pf-ink);
-  --ink-rgb: 235, 232, 226;
+  --ink-rgb: var(--pf-ink-rgb);
   --muted: var(--pf-muted);
   background: var(--pf-ground);
   color: var(--pf-ink);
 }
-.perfumers-page .menu-trigger { color: #e6e3dc; }
+.perfumers-page .menu-trigger { color: var(--pf-ink); }
 .perfumers-page .page-where { color: var(--pf-muted); border-left-color: var(--pf-rule); }
 /* THE MENU KEPT CLEAR ON A WIDE WINDOW TOO (2026-11-03): this is the one page
    whose writing — the notes, the legend, the terms, the sources — runs the
@@ -134,6 +167,9 @@ body.perfumers-page {
 .pf-stage:not([data-view="turn"]) .pf-earth { display: none; }
 .pf-fly { visibility: hidden; pointer-events: none; }
 .pf-stage.is-flying .pf-fly { visibility: visible; }
+.pf-stage .pf-fly-fast, .pf-stage.is-flying:not(.is-fast) .pf-fly-fast { visibility: hidden; }
+.pf-stage.is-flying.is-fast .pf-fly-fast { visibility: visible; }
+.pf-stage.is-flying.is-fast .pf-fly:not(.pf-fly-fast) { visibility: hidden; }
 .pf-stage.is-flying .pf-chart, .pf-stage.is-flying .pf-dof { visibility: hidden; }
 .pf-dof { opacity: 0; transition: opacity 0.2s ease; pointer-events: none; }
 .pf-dof.is-on { opacity: 1; transition-duration: 0.9s; }
@@ -148,7 +184,7 @@ body.perfumers-page {
 .pf-plane canvas[hidden] { display: none; }
 .pf-stage canvas.pf-earth-close { position: absolute; pointer-events: none; }
 .pf-stage:not(.is-plane) .pf-plane, .pf-stage:not(.is-plane) .pf-earth-close { visibility: hidden; }
-.pf-stage.is-plane .pf-chart, .pf-stage.is-plane .pf-fly { visibility: hidden; }
+.pf-stage.is-plane .pf-chart, .pf-stage.is-plane .pf-fly, .pf-stage.is-plane .pf-fly-fast { visibility: hidden; }
 
 /* THE TITLE, top left under the Menu, as the poster's is. It gives its
    place to what is chosen. */
@@ -163,23 +199,29 @@ body.perfumers-page {
 }
 .pf-title-word {
   margin: 0;
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: 40px;
-  line-height: 0.95;
-  letter-spacing: 0.06em;
+  font-family: var(--serif);
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-size: 52px;
+  line-height: 0.9;
+  letter-spacing: 0.045em;
   text-transform: uppercase;
   color: var(--pf-ink);
 }
 .pf-title-years {
-  margin: 6px 0 0;
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: 30px;
-  letter-spacing: 0.06em;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(235, 232, 226, 0.55);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 21px;
+  letter-spacing: 0.03em;
+  color: var(--pf-gold);
 }
+/* a hairline after the years, out towards the chart */
+.pf-title-years::after { content: ""; flex: none; width: 46px; border-top: 1px solid rgba(var(--pf-gold-rgb), 0.5); }
 .pf.is-chosen .pf-title { opacity: 0; transform: translateY(-8px); }
 
 /* WHAT IS CHOSEN, in the title's place: a kicker, its name, how many, and
@@ -206,7 +248,7 @@ body.perfumers-page {
   top: -50px;
   right: -60px;
   bottom: -40px;
-  background: radial-gradient(closest-side, rgba(11, 12, 13, 0.82), rgba(11, 12, 13, 0));
+  background: radial-gradient(closest-side, rgba(var(--pf-ground-rgb), 0.82), rgba(var(--pf-ground-rgb), 0));
   pointer-events: none;
 }
 .pf-here-kicker {
@@ -223,12 +265,12 @@ body.perfumers-page {
 .pf-here-kicker::before { content: ""; flex: none; width: 9px; height: 9px; border: 1px solid currentColor; box-sizing: border-box; }
 .pf-here-name {
   margin: 0;
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: 30px;
-  line-height: 1.02;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-family: var(--serif);
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-size: 38px;
+  line-height: 1;
+  letter-spacing: 0.01em;
   color: var(--pf-ink);
 }
 .pf-here-meta { margin: 9px 0 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; color: var(--pf-muted); }
@@ -243,13 +285,13 @@ body.perfumers-page {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--pf-ink);
-  background: rgba(11, 12, 13, 0.6);
+  background: rgba(var(--pf-ground-rgb), 0.6);
   border: 1px solid var(--pf-rule);
   cursor: pointer;
   transition: border-color 0.3s ease, color 0.3s ease;
 }
 .pf-here-about::after { content: "→"; color: var(--pf-gold); }
-.pf-here-about:hover { color: var(--pf-gold); border-color: rgba(224, 178, 82, 0.55); }
+.pf-here-about:hover { color: var(--pf-gold); border-color: rgba(var(--pf-gold-rgb), 0.55); }
 .pf-here-about[hidden] { display: none; }
 
 /* THE SWITCH, top right: A–Z or by year. */
@@ -277,7 +319,7 @@ body.perfumers-page {
   transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease;
 }
 .pf-sort-button + .pf-sort-button { border-left: 0; }
-.pf-sort-button:hover { color: var(--pf-ink); border-color: rgba(235, 232, 226, 0.34); }
+.pf-sort-button:hover { color: var(--pf-ink); border-color: rgba(var(--pf-ink-rgb), 0.34); }
 .pf-sort-button[aria-pressed="true"] { color: var(--pf-ground); background: var(--pf-ink); border-color: var(--pf-ink); }
 
 /* THE PERFUMERS, A TO Z — in the legend's old place, down the right, the
@@ -316,7 +358,7 @@ body.perfumers-page {
   cursor: pointer;
   transition: color 0.3s ease, border-color 0.3s ease;
 }
-.pf-nav-fold:hover, .pf-nav-fold:focus-visible { color: var(--pf-gold); border-color: rgba(224, 178, 82, 0.55); }
+.pf-nav-fold:hover, .pf-nav-fold:focus-visible { color: var(--pf-gold); border-color: rgba(var(--pf-gold-rgb), 0.55); }
 .pf-nav-fold-mark { position: absolute; left: 8px; top: 8px; width: 8px; height: 8px; }
 .pf-nav-fold-mark::before, .pf-nav-fold-mark::after {
   content: ""; position: absolute; left: 0; top: 3.5px; width: 8px; height: 1px; background: currentColor;
@@ -354,7 +396,7 @@ body.perfumers-page {
   bottom: -30px;
   left: -56px;
   right: -30px;
-  background: linear-gradient(90deg, rgba(11, 12, 13, 0), rgba(11, 12, 13, 0.9) 50px);
+  background: linear-gradient(90deg, rgba(var(--pf-ground-rgb), 0), rgba(var(--pf-ground-rgb), 0.9) 50px);
   pointer-events: none;
 }
 .pf-nav-head { flex: none; display: flex; align-items: baseline; gap: 10px; padding: 0 0 12px; border-bottom: 1px solid var(--pf-rule); }
@@ -380,8 +422,8 @@ body.perfumers-page {
   transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
 }
 .pf-nav-find svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; }
-.pf-nav-find:hover, .pf-nav-find:focus-visible, .pf-nav-find[aria-expanded="true"] { color: var(--pf-gold); border-color: rgba(224, 178, 82, 0.55); }
-.pf-nav-find[aria-expanded="true"] { background: rgba(224, 178, 82, 0.08); }
+.pf-nav-find:hover, .pf-nav-find:focus-visible, .pf-nav-find[aria-expanded="true"] { color: var(--pf-gold); border-color: rgba(var(--pf-gold-rgb), 0.55); }
+.pf-nav-find[aria-expanded="true"] { background: rgba(var(--pf-gold-rgb), 0.08); }
 .pf-nav-search {
   flex: none;
   position: relative;
@@ -403,7 +445,7 @@ body.perfumers-page {
   color: var(--pf-ink);
   background: none;
   border: 0;
-  border-bottom: 1px solid rgba(224, 178, 82, 0.4);
+  border-bottom: 1px solid rgba(var(--pf-gold-rgb), 0.4);
   border-radius: 0;
   outline: none;
   -webkit-appearance: none;
@@ -419,7 +461,7 @@ body.perfumers-page {
 .pf-nav-hit small { display: block; margin-top: 1px; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.03em; color: var(--pf-faint); }
 .pf-nav-row.pf-nav-hit-perfumer { font-weight: 500; font-size: 13px; }
 .pf-nav-hit-house .pf-nav-name { text-transform: none; }
-.pf-nav-row.pf-nav-hit-perfume::before { width: 4px; height: 4px; margin-top: -2px; left: 3px; border-radius: 50%; border: 0; background: rgba(235, 232, 226, 0.3); }
+.pf-nav-row.pf-nav-hit-perfume::before { width: 4px; height: 4px; margin-top: -2px; left: 3px; border-radius: 50%; border: 0; background: rgba(var(--pf-ink-rgb), 0.3); }
 .pf-nav-none { padding: 10px 2px; font-family: var(--sans); font-size: 12px; color: var(--pf-faint); }
 .pf-nav-scroll {
   position: relative;
@@ -429,12 +471,12 @@ body.perfumers-page {
   overscroll-behavior: contain;
   padding: 8px 6px 28px 0;
   scrollbar-width: thin;
-  scrollbar-color: rgba(235, 232, 226, 0.18) transparent;
+  scrollbar-color: rgba(var(--pf-ink-rgb), 0.18) transparent;
   -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14px, #000 calc(100% - 30px), transparent 100%);
   mask-image: linear-gradient(180deg, transparent 0, #000 14px, #000 calc(100% - 30px), transparent 100%);
 }
 .pf-nav-scroll::-webkit-scrollbar { width: 4px; }
-.pf-nav-scroll::-webkit-scrollbar-thumb { background: rgba(235, 232, 226, 0.18); }
+.pf-nav-scroll::-webkit-scrollbar-thumb { background: rgba(var(--pf-ink-rgb), 0.18); }
 .pf-nav-list, .pf-nav-houses, .pf-nav-perfumes { list-style: none; margin: 0; padding: 0; }
 .pf-nav-row {
   position: relative;
@@ -461,7 +503,7 @@ body.perfumers-page {
   width: 7px;
   height: 7px;
   margin-top: -4px;
-  border: 1px solid rgba(235, 232, 226, 0.28);
+  border: 1px solid rgba(var(--pf-ink-rgb), 0.28);
   box-sizing: border-box;
   transition: border-color 0.25s ease, background 0.25s ease, transform 0.35s var(--menu-ease);
 }
@@ -477,20 +519,24 @@ body.perfumers-page {
 .pf-nav-houses {
   margin: 2px 0 8px 5px;
   padding: 2px 0 2px 9px;
-  border-left: 1px solid rgba(224, 178, 82, 0.35);
+  border-left: 1px solid rgba(var(--pf-gold-rgb), 0.35);
 }
 .pf-nav-houses[hidden], .pf-nav-perfumes[hidden] { display: none; }
-.pf-nav-house { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #d9d6cf; }
+.pf-nav-house { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--pf-ink-2); }
 .pf-nav-perfumes { margin: 1px 0 6px 5px; padding: 0 0 0 9px; border-left: 1px solid var(--pf-rule); }
-.pf-nav-perfume { font-family: var(--sans); font-size: 12px; padding-top: 3px; padding-bottom: 3px; color: #cfccc5; }
-.pf-nav-perfume::before { width: 4px; height: 4px; margin-top: -2px; left: 3px; border-radius: 50%; border: 0; background: rgba(235, 232, 226, 0.3); }
+.pf-nav-perfume { font-family: var(--sans); font-size: 12px; padding-top: 3px; padding-bottom: 3px; color: var(--pf-ink-2); }
+.pf-nav-perfume::before { width: 4px; height: 4px; margin-top: -2px; left: 3px; border-radius: 50%; border: 0; background: rgba(var(--pf-ink-rgb), 0.3); }
 .pf-nav-perfume.is-here::before { background: var(--pf-gold); }
 .pf-nav-perfume.is-lit { color: var(--pf-gold); }
 .pf-nav-perfume i { font-style: normal; font-family: var(--mono); font-size: 10px; color: var(--pf-faint); flex: none; }
 .pf-nav-opened { animation: pf-nav-in 0.45s var(--menu-ease) both; }
 @keyframes pf-nav-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 
-/* THE WAY BACK OUT, once something is chosen. */
+/* RETURN, the way back out once something is chosen (2026-11-11 — "improve
+   the button on the bottom that says return"): the chart drawn small, its
+   outer ring turning under the hand, the word in the poster's Didone, where
+   it goes in small capitals, and Esc. Framed by registration marks (THE
+   REGISTRATION FRAME, at the foot of these styles). */
 .pf-back {
   position: absolute;
   left: var(--chart-x);
@@ -499,22 +545,29 @@ body.perfumers-page {
   transform: translateX(-50%);
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 16px 9px;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  gap: 13px;
+  padding: 9px 14px 9px 11px;
   color: var(--pf-ink);
-  background: rgba(11, 12, 13, 0.82);
-  border: 1px solid var(--pf-rule);
   cursor: pointer;
-  transition: border-color 0.3s ease;
+  animation: pf-back-in 0.6s var(--menu-ease) both;
 }
+@keyframes pf-back-in { from { opacity: 0; } to { opacity: 1; } }
 .pf-back[hidden] { display: none; }
-.pf-back:hover { border-color: rgba(235, 232, 226, 0.4); }
-.pf-back-mark { width: 9px; height: 9px; border: 1px solid currentColor; position: relative; }
-.pf-back-mark::after { content: ""; position: absolute; inset: 2px; background: currentColor; }
+.pf-back-mark { flex: none; width: 30px; height: 30px; overflow: visible; fill: none; stroke: currentColor; }
+.pf-back-ring { stroke-width: 1; stroke-dasharray: 1.6 3.2; opacity: 0.7; transform-origin: 15px 15px; transition: opacity 0.3s ease; }
+.pf-back-mid { stroke-width: 0.8; opacity: 0.45; }
+.pf-back-earth { stroke-width: 1; fill: rgba(var(--pf-ink-rgb), 0.12); }
+.pf-back-ticks { stroke-width: 0.8; opacity: 0.55; }
+.pf-back-words { display: flex; flex-direction: column; align-items: flex-start; line-height: 1; }
+.pf-back-word { font-family: var(--serif); font-optical-sizing: auto; font-style: italic; font-weight: 500; font-size: 19px; letter-spacing: 0.01em; }
+.pf-back-to { margin-top: 5px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pf-muted); transition: color 0.3s ease; }
+.pf-back-key { margin-left: 4px; padding: 2px 5px 3px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--pf-faint); border: 1px solid rgba(var(--pf-ink-rgb), 0.16); border-radius: 2px; }
+.pf-back:hover, .pf-back:focus-visible { color: var(--pf-gold-light); }
+.pf-back:hover .pf-back-to, .pf-back:focus-visible .pf-back-to { color: var(--pf-gold); }
+.pf-back:hover .pf-back-ring, .pf-back:focus-visible .pf-back-ring { opacity: 1; animation: pf-back-turn 5s linear infinite; }
+@keyframes pf-back-turn { to { transform: rotate(360deg); } }
+@media (hover: none) { .pf-back-key { display: none; } }
+@media (prefers-reduced-motion: reduce) { .pf-back { animation: none; } .pf-back:hover .pf-back-ring { animation: none; } }
 
 .pf-hint {
   position: absolute;
@@ -532,7 +585,7 @@ body.perfumers-page {
   white-space: nowrap;
   transition: opacity 0.6s ease;
 }
-.pf-stage.is-chosen .pf-hint { bottom: 66px; padding: 5px 12px 6px; background: rgba(11, 12, 13, 0.78); }
+.pf-stage.is-chosen .pf-hint { bottom: 66px; padding: 5px 12px 6px; background: rgba(var(--pf-ground-rgb), 0.78); }
 .pf-hint:empty { display: none; }
 
 /* THE SCRUBBER (2026-11-06 — "the scrolling while hovering on the image will
@@ -579,7 +632,7 @@ body.perfumers-page {
   outline-offset: 3px;
 }
 .pf-scrub-track::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px solid var(--pf-rule); }
-.pf-scrub-ticks { position: absolute; left: 4px; right: 4px; top: 0; bottom: 0; color: rgba(235, 232, 226, 0.28); }
+.pf-scrub-ticks { position: absolute; left: 4px; right: 4px; top: 0; bottom: 0; color: rgba(var(--pf-ink-rgb), 0.28); }
 .pf-scrub-thumb {
   position: absolute;
   left: 2px;
@@ -587,7 +640,7 @@ body.perfumers-page {
   min-height: 10px;
   box-sizing: border-box;
   border: 1px solid var(--pf-gold);
-  background: rgba(224, 178, 82, 0.12);
+  background: rgba(var(--pf-gold-rgb), 0.12);
   transition: top 0.25s var(--menu-ease), height 0.25s var(--menu-ease);
 }
 .pf-scrub-say { margin: 10px 0 0; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; }
@@ -609,7 +662,7 @@ body.perfumers-page {
   font-size: 11px;
   line-height: 1.5;
   color: var(--pf-ink);
-  background: rgba(14, 15, 17, 0.9);
+  background: rgba(var(--pf-sunk-rgb), 0.9);
   border: 1px solid var(--pf-rule);
   pointer-events: none;
   white-space: nowrap;
@@ -685,7 +738,7 @@ body.perfumers-page {
     width: auto;
     height: 52%;
     padding: 0 16px;
-    background: rgba(14, 15, 17, 0.97);
+    background: rgba(var(--pf-sunk-rgb), 0.97);
     border-top: 1px solid var(--pf-rule);
     transform: translateY(calc(100% - 56px));
     transition: transform 0.55s var(--menu-ease);
@@ -744,8 +797,8 @@ body.perfumers-page {
   cursor: pointer;
   border: 1px solid var(--pf-rule);
   background:
-    linear-gradient(90deg, rgba(224, 178, 82, 0) 4%, rgba(224, 178, 82, 0.55) 30%, rgba(185, 160, 232, 0.5) 72%, rgba(185, 160, 232, 0) 96%) top / 100% 1px no-repeat,
-    linear-gradient(180deg, rgba(30, 31, 34, 0.55), rgba(17, 18, 20, 0.55));
+    linear-gradient(90deg, rgba(var(--pf-gold-rgb), 0) 4%, rgba(var(--pf-gold-rgb), 0.55) 30%, rgba(var(--pf-blue-rgb), 0.5) 72%, rgba(var(--pf-blue-rgb), 0) 96%) top / 100% 1px no-repeat,
+    linear-gradient(180deg, rgba(var(--pf-raised-rgb), 0.55), rgba(var(--pf-sunk-rgb), 0.55));
   transition: border-color 0.4s ease, background-color 0.4s ease;
 }
 .pf-index-open::-webkit-details-marker { display: none; }
@@ -756,19 +809,19 @@ body.perfumers-page {
   position: absolute;
   width: 16px;
   height: 16px;
-  border: 0 solid rgba(224, 178, 82, 0.9);
+  border: 0 solid rgba(var(--pf-gold-rgb), 0.9);
   transition: width 0.5s var(--menu-ease), height 0.5s var(--menu-ease);
 }
 .pf-index-open::before { left: -1px; top: -1px; border-left-width: 1px; border-top-width: 1px; }
 .pf-index-open::after { right: -1px; bottom: -1px; border-right-width: 1px; border-bottom-width: 1px; }
-.pf-index-open:hover { border-color: rgba(235, 232, 226, 0.3); }
+.pf-index-open:hover { border-color: rgba(var(--pf-ink-rgb), 0.3); }
 .pf-index-open:hover::before, .pf-index-open:hover::after { width: 24px; height: 24px; }
 .pf-index-open:focus-visible { outline: 1px solid var(--pf-gold); outline-offset: 4px; }
 .pf-index-mark {
   position: relative;
   width: 32px;
   height: 32px;
-  border: 1px solid rgba(235, 232, 226, 0.4);
+  border: 1px solid rgba(var(--pf-ink-rgb), 0.4);
   border-radius: 50%;
   transition: border-color 0.4s ease, transform 0.6s var(--menu-ease);
 }
@@ -799,7 +852,7 @@ body.perfumers-page {
   color: var(--pf-ink);
   transition: color 0.4s ease;
 }
-.pf-index-open:hover .pf-index-word { color: #fff8ec; }
+.pf-index-open:hover .pf-index-word { color: var(--pf-gold-light); }
 .pf-index-say { display: flex; flex-direction: column; gap: 6px; font-size: 11px; letter-spacing: 0.04em; color: var(--pf-muted); }
 .pf-index-counts { color: var(--pf-ink); letter-spacing: 0.06em; }
 .pf-index-cue { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pf-gold); }
@@ -840,8 +893,8 @@ body.perfumers-page {
 }
 .pf-entry-house { margin: 10px 0 3px; color: var(--pf-ink); letter-spacing: 0.06em; text-transform: uppercase; font-size: 10px; }
 .pf-entry-list { list-style: none; margin: 0; padding: 0; }
-.pf-entry-list li { display: flex; justify-content: space-between; gap: 10px; padding: 1px 0; border-bottom: 1px dotted rgba(235, 232, 226, 0.08); }
-.pf-entry-perfume a { color: var(--pf-ink); text-decoration: none; border-bottom: 1px solid rgba(224, 178, 82, 0.5); }
+.pf-entry-list li { display: flex; justify-content: space-between; gap: 10px; padding: 1px 0; border-bottom: 1px dotted rgba(var(--pf-ink-rgb), 0.08); }
+.pf-entry-perfume a { color: var(--pf-ink); text-decoration: none; border-bottom: 1px solid rgba(var(--pf-gold-rgb), 0.5); }
 .pf-entry-perfume a:hover { color: var(--pf-gold); }
 .pf-entry-year { flex: none; color: var(--pf-faint); }
 /* THE LEGEND, THE TERMS AND THE DISCLAIMER as quiet dropdowns (2026-11-03 —
@@ -870,7 +923,7 @@ body.perfumers-page {
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(235, 232, 226, 0.72);
+  color: rgba(var(--pf-ink-rgb), 0.72);
   transition: color 0.3s ease;
 }
 .pf-drop-star { margin-right: 6px; color: var(--pf-gold); }
@@ -901,33 +954,33 @@ body.perfumers-page {
   text-decoration: none;
   transition: color 0.3s ease, text-shadow 0.3s ease;
 }
-.pf-star:hover, .pf-star:focus-visible { color: #ffd08a; text-shadow: 0 0 10px rgba(224, 178, 82, 0.6); outline: none; }
+.pf-star:hover, .pf-star:focus-visible { color: var(--pf-gold-light); text-shadow: 0 0 10px rgba(var(--pf-gold-rgb), 0.6); outline: none; }
 .pf-legend { list-style: none; margin: 0; padding: 0; columns: 2 250px; column-gap: 40px; }
 .pf-legend li { position: relative; padding-left: 28px; margin: 0 0 7px; break-inside: avoid; }
 .pf-legend b { color: var(--pf-ink); font-weight: 500; }
 .pf-key { position: absolute; left: 0; top: 0.45em; display: block; width: 18px; height: 9px; }
 .pf-key-dot::after { content: ""; position: absolute; left: 4px; top: 0; width: 9px; height: 9px; border-radius: 50%; }
-.pf-key-gold::after { background: var(--pf-gold); box-shadow: 0 0 6px rgba(224, 178, 82, 0.7); }
-.pf-key-blue::after { background: var(--pf-blue); box-shadow: 0 0 6px rgba(185, 160, 232, 0.6); }
-.pf-key-rose::after { background: var(--pf-rose); box-shadow: 0 0 6px rgba(226, 88, 126, 0.6); }
+.pf-key-gold::after { background: var(--pf-gold); box-shadow: 0 0 6px rgba(var(--pf-gold-rgb), 0.7); }
+.pf-key-blue::after { background: var(--pf-blue); box-shadow: 0 0 6px rgba(var(--pf-blue-rgb), 0.6); }
+.pf-key-rose::after { background: var(--pf-rose); box-shadow: 0 0 6px rgba(var(--pf-rose-rgb), 0.6); }
 .pf-key-hollow::after { border: 1px solid var(--pf-ink); box-sizing: border-box; }
 .pf-key-line::after { content: ""; position: absolute; left: 0; right: 0; top: 4px; border-top: 1px solid var(--pf-ink); }
 .pf-key-dash::after { border-top-style: dashed; }
 .pf-key-dot-line::after { border-top-style: dotted; }
-.pf-key-ring::after { content: ""; position: absolute; left: 1px; top: -3px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(235, 232, 226, 0.35); box-sizing: border-box; }
+.pf-key-ring::after { content: ""; position: absolute; left: 1px; top: -3px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(var(--pf-ink-rgb), 0.35); box-sizing: border-box; }
 /* the Earth's marks and the three rings (2026-11-06) */
-.pf-key-earth::after { content: ""; position: absolute; left: 1px; top: -4px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(235, 232, 226, 0.6); box-sizing: border-box;
-  background: repeating-linear-gradient(135deg, rgba(235, 232, 226, 0.22) 0 1px, transparent 1px 3px); }
+.pf-key-earth::after { content: ""; position: absolute; left: 1px; top: -4px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(var(--pf-ink-rgb), 0.6); box-sizing: border-box;
+  background: repeating-linear-gradient(135deg, rgba(var(--pf-ink-rgb), 0.22) 0 1px, transparent 1px 3px); }
 .pf-key-pin::after { content: ""; position: absolute; left: 6px; top: 1px; width: 6px; height: 6px; background: var(--pf-ink); }
 .pf-key-from::after { content: ""; position: absolute; left: 4px; top: -1px; width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--pf-rose); box-sizing: border-box; }
-.pf-key-faint::after { border-top-color: rgba(235, 232, 226, 0.45); }
-.pf-key-cell::after { content: ""; position: absolute; left: 5px; top: 0; width: 7px; height: 9px; background: rgba(235, 232, 226, 0.6); box-sizing: border-box; }
-.pf-key-half::after { background: linear-gradient(to top, rgba(235, 232, 226, 0.6) 50%, transparent 50%); border: 1px solid rgba(235, 232, 226, 0.5); }
-.pf-key-empty::after { background: none; border: 1px solid rgba(235, 232, 226, 0.55); }
+.pf-key-faint::after { border-top-color: rgba(var(--pf-ink-rgb), 0.45); }
+.pf-key-cell::after { content: ""; position: absolute; left: 5px; top: 0; width: 7px; height: 9px; background: rgba(var(--pf-ink-rgb), 0.6); box-sizing: border-box; }
+.pf-key-half::after { background: linear-gradient(to top, rgba(var(--pf-ink-rgb), 0.6) 50%, transparent 50%); border: 1px solid rgba(var(--pf-ink-rgb), 0.5); }
+.pf-key-empty::after { background: none; border: 1px solid rgba(var(--pf-ink-rgb), 0.55); }
 .pf-key-cell.pf-key-gold::after { background: var(--pf-gold); box-shadow: none; border-radius: 0; left: 5px; width: 7px; }
 .pf-key-cell.pf-key-blue::after { background: var(--pf-blue); box-shadow: none; border-radius: 0; left: 5px; width: 7px; }
 .pf-key-cell.pf-key-rose::after { background: var(--pf-rose); box-shadow: none; border-radius: 0; left: 5px; width: 7px; }
-.pf-key-bar::after { content: ""; position: absolute; left: 0; right: 4px; top: 4px; border-top: 2px solid rgba(235, 232, 226, 0.7); }
+.pf-key-bar::after { content: ""; position: absolute; left: 0; right: 4px; top: 4px; border-top: 2px solid rgba(var(--pf-ink-rgb), 0.7); }
 .pf-key-bar::before { content: ""; position: absolute; right: 0; top: 2px; width: 6px; height: 6px; border-radius: 50%; background: var(--pf-blue); }
 .pf-counts { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--pf-rule); color: var(--pf-ink); }
 .pf-terms dl { margin: 0; }
@@ -972,7 +1025,7 @@ body.perfumers-page {
   content: "";
   position: fixed;
   inset: 0;
-  background: rgba(8, 8, 9, 0.5);
+  background: rgba(var(--pf-ground-rgb), 0.5);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   opacity: 0;
@@ -987,9 +1040,9 @@ body.perfumers-page {
   padding: 18px 44px 40px;
   color: var(--pf-ink);
   background:
-    linear-gradient(90deg, rgba(224, 178, 82, 0) 4%, rgba(224, 178, 82, 0.65) 32%, rgba(185, 160, 232, 0.55) 70%, rgba(185, 160, 232, 0) 96%) top / 100% 1px no-repeat,
-    linear-gradient(180deg, rgba(30, 31, 34, 0.94), rgba(17, 18, 20, 0.97));
-  border: 1px solid rgba(235, 232, 226, 0.12);
+    linear-gradient(90deg, rgba(var(--pf-gold-rgb), 0) 4%, rgba(var(--pf-gold-rgb), 0.65) 32%, rgba(var(--pf-blue-rgb), 0.55) 70%, rgba(var(--pf-blue-rgb), 0) 96%) top / 100% 1px no-repeat,
+    linear-gradient(180deg, rgba(var(--pf-raised-rgb), 0.94), rgba(var(--pf-sunk-rgb), 0.97));
+  border: 1px solid rgba(var(--pf-ink-rgb), 0.12);
   box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6);
   outline: none;
   opacity: 0;
@@ -1003,7 +1056,7 @@ body.perfumers-page {
   position: absolute;
   width: 14px;
   height: 14px;
-  border: 0 solid rgba(224, 178, 82, 0.9);
+  border: 0 solid rgba(var(--pf-gold-rgb), 0.9);
 }
 .pf-card-sheet::before { left: -1px; top: -1px; border-left-width: 1px; border-top-width: 1px; }
 .pf-card-sheet::after { right: -1px; bottom: -1px; border-right-width: 1px; border-bottom-width: 1px; }
@@ -1051,7 +1104,7 @@ body.perfumers-page {
   color: var(--pf-muted);
 }
 .pf-card-meta b { color: var(--pf-ink); font-weight: 500; }
-.pf-card-about { margin: 22px 0 0; font-family: var(--sans); font-size: 14.5px; line-height: 1.65; color: #d9d6cf; }
+.pf-card-about { margin: 22px 0 0; font-family: var(--sans); font-size: 14.5px; line-height: 1.65; color: var(--pf-ink-2); }
 .pf-card-about p { margin: 0 0 10px; }
 .pf-card-ref {
   font-family: var(--mono);
@@ -1092,7 +1145,7 @@ body.perfumers-page {
   padding: 0;
   cursor: pointer;
   text-align: left;
-  border-bottom: 1px solid rgba(235, 232, 226, 0.25);
+  border-bottom: 1px solid rgba(var(--pf-ink-rgb), 0.25);
 }
 .pf-card-link:hover { color: var(--pf-gold); border-bottom-color: currentColor; }
 .pf-card-house > .pf-card-link { font-family: var(--sans); font-weight: 600; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; }
@@ -1104,14 +1157,14 @@ body.perfumers-page {
   padding: 3px 8px 4px;
   font-family: var(--mono);
   font-size: 10.5px;
-  color: #cfccc5;
-  border: 1px solid rgba(235, 232, 226, 0.12);
+  color: var(--pf-ink-2);
+  border: 1px solid rgba(var(--pf-ink-rgb), 0.12);
   background: rgba(255, 255, 255, 0.02);
   cursor: pointer;
 }
-.pf-card-chip:hover { border-color: rgba(235, 232, 226, 0.4); color: var(--pf-ink); }
+.pf-card-chip:hover { border-color: rgba(var(--pf-ink-rgb), 0.4); color: var(--pf-ink); }
 .pf-card-chip i { font-style: normal; color: var(--pf-faint); }
-.pf-card-chip.is-here { border-color: rgba(224, 178, 82, 0.45); color: var(--pf-ink); }
+.pf-card-chip.is-here { border-color: rgba(var(--pf-gold-rgb), 0.45); color: var(--pf-ink); }
 .pf-card-chip.is-here::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--pf-gold); align-self: center; }
 .pf-card-go {
   display: inline-flex;
@@ -1143,7 +1196,7 @@ body.perfumers-page {
   border-bottom: 1px solid var(--pf-rule);
 }
 .pf-card-table th:last-child, .pf-card-table td:last-child { width: 1%; padding-right: 0; text-align: right; font-family: var(--mono); font-size: 11px; color: var(--pf-muted); white-space: nowrap; }
-.pf-card-table td { padding: 7px 10px 7px 0; vertical-align: baseline; border-bottom: 1px solid rgba(235, 232, 226, 0.06); color: #cfccc5; }
+.pf-card-table td { padding: 7px 10px 7px 0; vertical-align: baseline; border-bottom: 1px solid rgba(var(--pf-ink-rgb), 0.06); color: var(--pf-ink-2); }
 .pf-card-table td:nth-child(2) { font-size: 12px; }
 .pf-card-row {
   position: relative;
@@ -1157,7 +1210,7 @@ body.perfumers-page {
   cursor: pointer;
   transition: color 0.2s ease;
 }
-.pf-card-row::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px; border-radius: 50%; background: rgba(235, 232, 226, 0.28); }
+.pf-card-row::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px; border-radius: 50%; background: rgba(var(--pf-ink-rgb), 0.28); }
 .pf-card-row.is-here::before { background: var(--pf-gold); }
 .pf-card-row:hover, .pf-card-row:focus-visible { color: var(--pf-gold); }
 .pf-card-table .pf-card-link { font-size: inherit; }
@@ -1166,7 +1219,7 @@ body.perfumers-page {
 .pf-card-sources li { margin: 0 0 6px; padding-left: 24px; text-indent: -24px; overflow-wrap: anywhere; }
 .pf-card-sources li:target, .pf-card-sources li.is-lit { color: var(--pf-ink); }
 .pf-card-sources b { display: inline-block; width: 24px; text-indent: 0; color: var(--pf-gold); font-weight: 400; }
-.pf-card-sources cite { font-style: italic; color: #cfccc5; }
+.pf-card-sources cite { font-style: italic; color: var(--pf-ink-2); }
 .pf-card-sources a { color: var(--pf-muted); }
 /* A PERFUME'S WINDOW, drawn out of the chart (2026-11-03): small, beside its
    dot, no veil; it opens from the end of the line drawn out to it (--ox,
@@ -1190,13 +1243,13 @@ body.perfumers-page {
   overscroll-behavior: contain;
   padding: 14px 18px 15px;
   color: var(--pf-ink);
-  background: rgba(16, 17, 19, 0.94);
-  border: 1px solid rgba(235, 232, 226, 0.16);
+  background: rgba(var(--pf-sunk-rgb), 0.94);
+  border: 1px solid rgba(var(--pf-ink-rgb), 0.16);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
   outline: none;
   pointer-events: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(235, 232, 226, 0.18) transparent;
+  scrollbar-color: rgba(var(--pf-ink-rgb), 0.18) transparent;
   opacity: 0;
   clip-path: circle(0 at var(--ox, 0) var(--oy, 0));
   transition: clip-path 0.24s ease-in, opacity 0.24s ease;
@@ -1239,10 +1292,10 @@ body.perfumers-page {
   text-transform: uppercase;
   color: var(--pf-faint);
 }
-.pf-call-facts dd { margin: 0; min-width: 0; font-family: var(--sans); font-size: 13px; line-height: 1.4; color: #d9d6cf; overflow-wrap: anywhere; }
+.pf-call-facts dd { margin: 0; min-width: 0; font-family: var(--sans); font-size: 13px; line-height: 1.4; color: var(--pf-ink-2); overflow-wrap: anywhere; }
 .pf-call-facts dd b { font-family: var(--mono); font-weight: 400; color: var(--pf-ink); }
 .pf-call-name { font-size: 17px !important; font-weight: 500; line-height: 1.25 !important; color: var(--pf-ink) !important; }
-.pf-call-read { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(224, 178, 82, 0.45); transition: color 0.2s ease, border-color 0.2s ease; }
+.pf-call-read { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(var(--pf-gold-rgb), 0.45); transition: color 0.2s ease, border-color 0.2s ease; }
 .pf-call-tail { white-space: nowrap; }
 .pf-call-go { color: var(--pf-gold); }
 .pf-call-read:hover, .pf-call-read:focus-visible { color: var(--pf-gold); border-bottom-color: currentColor; }
@@ -1283,6 +1336,123 @@ body.perfumers-page {
   .pf-sources.is-opening .pf-source-list, .pf-sources.is-closing .pf-source-list { animation: none; }
 }
 
+
+/* ==========================================================================
+   ON THEME (2026-11-11 — "rework every part of this page that is not on
+   theme, and make it on theme"): the poster's controls drawn as the chart
+   is — not boxes and filled buttons but registration marks at their
+   corners, hairlines, the mono for readings and the Didone for names.
+   ========================================================================== */
+@property --rl { syntax: "<length>"; inherits: false; initial-value: 7px; }
+@property --rc { syntax: "<color>"; inherits: false; initial-value: rgba(240, 232, 215, 0.42); }
+/* THE REGISTRATION FRAME: a mark at each corner, drawn out and turned brass
+   under the hand */
+.tp-back, .pf-back, .pf-here-about, .pf-sort, .pf-tip, .pf-nav-find, .pf-nav-fold {
+  --rc: rgba(var(--pf-ink-rgb), 0.42);
+  --rl: 7px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background:
+    linear-gradient(var(--rc), var(--rc)) left top / var(--rl) 1px no-repeat,
+    linear-gradient(var(--rc), var(--rc)) left top / 1px var(--rl) no-repeat,
+    linear-gradient(var(--rc), var(--rc)) right top / var(--rl) 1px no-repeat,
+    linear-gradient(var(--rc), var(--rc)) right top / 1px var(--rl) no-repeat,
+    linear-gradient(var(--rc), var(--rc)) left bottom / var(--rl) 1px no-repeat,
+    linear-gradient(var(--rc), var(--rc)) left bottom / 1px var(--rl) no-repeat,
+    linear-gradient(var(--rc), var(--rc)) right bottom / var(--rl) 1px no-repeat,
+    linear-gradient(var(--rc), var(--rc)) right bottom / 1px var(--rl) no-repeat,
+    var(--rg, rgba(var(--pf-ground-rgb), 0.74));
+  transition: --rl 0.4s var(--menu-ease), --rc 0.3s ease, color 0.3s ease, opacity 0.5s ease;
+}
+.tp-back:hover, .tp-back:focus-visible,
+.pf-back:hover, .pf-back:focus-visible,
+.pf-here-about:hover, .pf-here-about:focus-visible,
+.pf-nav-find:hover, .pf-nav-find:focus-visible, .pf-nav-find[aria-expanded="true"],
+.pf-nav-fold:hover, .pf-nav-fold:focus-visible {
+  --rc: rgba(var(--pf-gold-rgb), 0.85);
+  --rl: 11px;
+  outline: none;
+}
+.pf-nav-find, .pf-nav-fold { --rl: 5px; --rg: transparent; }
+.pf-nav-find:hover, .pf-nav-fold:hover, .pf-nav-find[aria-expanded="true"] { --rl: 8px; }
+.pf-tip { --rg: rgba(var(--pf-sunk-rgb), 0.92); --rc: rgba(var(--pf-gold-rgb), 0.6); }
+.pf-tip b { font-family: var(--serif); font-optical-sizing: auto; font-weight: 500; font-size: 15px; letter-spacing: 0.01em; }
+/* the way back to Contact, where the Menu stood */
+.tp-back { padding: 6px 10px 7px; color: var(--pf-ink-2); }
+.tp-back:hover, .tp-back:focus-visible { color: var(--pf-gold-light); }
+/* About …, under what is chosen */
+.pf-here-about { padding: 8px 13px 9px; }
+.pf-here-about:hover, .pf-here-about:focus-visible { border-color: transparent; }
+.pf-here-kicker::before { border-radius: 50%; }
+/* THE SWITCH: the two words in one frame, a hairline between them, the one
+   on marked by a brass lozenge — nothing filled */
+.pf-sort { padding: 2px 4px; --rg: rgba(var(--pf-ground-rgb), 0.6); }
+.pf-sort-say { margin: 0 6px 0 8px; font-size: 9.5px; letter-spacing: 0.16em; color: var(--pf-faint); }
+.pf-sort-button { position: relative; padding: 7px 12px 7px 22px; border: 0; background: none; color: var(--pf-muted); }
+.pf-sort-button + .pf-sort-button { border-left: 0; }
+.pf-sort-button + .pf-sort-button::after { content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; border-left: 1px solid var(--pf-rule); }
+.pf-sort-button::before { content: ""; position: absolute; left: 9px; top: 50%; width: 5px; height: 5px; margin-top: -3px; border: 1px solid currentColor; transform: rotate(45deg); opacity: 0.5; transition: background 0.3s ease, opacity 0.3s ease; }
+.pf-sort-button:hover { color: var(--pf-ink); border-color: transparent; }
+.pf-sort-button[aria-pressed="true"] { color: var(--pf-gold); background: none; border-color: transparent; }
+.pf-sort-button[aria-pressed="true"]::before { background: currentColor; opacity: 1; }
+/* THE LIST: its name in the Didone; a perfumer marked by a ring and a house
+   by a square, as their countries are pinned on the Earth; a perfume a dot */
+.pf-nav-title { font-family: var(--serif); font-optical-sizing: auto; font-weight: 500; font-size: 22px; letter-spacing: 0.01em; }
+.pf-nav-row.pf-nav-per::before, .pf-nav-row.pf-nav-hit-perfumer::before { border-radius: 50%; }
+.is-on > .pf-nav-row.pf-nav-per::before { transform: none; }
+.pf-nav-row.pf-nav-house::before { width: 6px; height: 6px; margin-top: -3px; }
+.pf-nav-head { border-bottom-color: rgba(var(--pf-gold-rgb), 0.3); }
+/* THE HINT, as a caption is set under an engraved plate: a hairline either
+   side */
+.pf-hint { display: flex; align-items: center; gap: 12px; font-size: 9.5px; letter-spacing: 0.18em; }
+.pf-hint::before, .pf-hint::after { content: ""; flex: none; width: 34px; border-top: 1px solid rgba(var(--pf-ink-rgb), 0.22); }
+.pf-stage.is-chosen .pf-hint { padding: 9px 26px; background: radial-gradient(closest-side, rgba(var(--pf-ground-rgb), 0.92), rgba(var(--pf-ground-rgb), 0.6) 70%, rgba(var(--pf-ground-rgb), 0)); }
+/* THE SCRUBBER: what is in the window, its thumb a bracket rather than a box */
+.pf-scrub-at b { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em; }
+.pf-scrub-at span { font-family: var(--serif); font-optical-sizing: auto; font-style: italic; font-size: 13px; color: var(--pf-muted); }
+.pf-scrub-thumb { border: 0; background: rgba(var(--pf-gold-rgb), 0.08); border-top: 1px solid var(--pf-gold); border-bottom: 1px solid var(--pf-gold); }
+.pf-scrub-thumb::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px solid var(--pf-gold); }
+/* WHAT IS CHOSEN, and the windows: marked as their pins are — a perfumer a
+   ring, a house a square, a perfume a dot, a year a lozenge — their names
+   in the Didone */
+.pf-here[data-kind="house"] .pf-here-kicker::before, .pf-card-kicker.is-house::before { border-radius: 0; }
+.pf-here[data-kind="perfume"] .pf-here-kicker::before { width: 6px; height: 6px; border: 0; background: currentColor; }
+.pf-here[data-kind="year"] .pf-here-kicker::before { width: 7px; height: 7px; border-radius: 0; transform: rotate(45deg); }
+.pf-card-kicker::before { border-radius: 50%; }
+.pf-card-name { font-family: var(--serif); font-optical-sizing: auto; font-weight: 500; font-size: 40px; line-height: 1.02; letter-spacing: 0.005em; }
+.pf-call-name { font-family: var(--serif) !important; font-optical-sizing: auto; font-size: 19px !important; }
+.pf-card-sheet::before, .pf-card-sheet::after { width: 18px; height: 18px; }
+/* the window's other two corners marked too */
+.pf-card-body::before, .pf-card-body::after { content: ""; position: absolute; width: 18px; height: 18px; border: 0 solid rgba(var(--pf-gold-rgb), 0.9); pointer-events: none; }
+.pf-card-body::before { right: -1px; top: -1px; border-right-width: 1px; border-top-width: 1px; }
+.pf-card-body::after { left: -1px; bottom: -1px; border-left-width: 1px; border-bottom-width: 1px; }
+.pf-call-sheet::after { content: ""; position: absolute; right: -1px; bottom: -1px; width: 10px; height: 10px; border: 0 solid var(--pf-gold); border-right-width: 1px; border-bottom-width: 1px; }
+/* THE FOOT in the same hand: its headings and the two great buttons'
+   words in the Didone */
+.pf-notes-head { font-family: var(--serif); font-optical-sizing: auto; font-weight: 500; font-size: 24px; letter-spacing: 0.01em; }
+.pf-index-word { font-family: var(--serif); font-optical-sizing: auto; font-weight: 500; letter-spacing: 0.06em; }
+.pf-drop-word { font-family: var(--serif); font-optical-sizing: auto; font-weight: 500; font-size: 15px; letter-spacing: 0.08em; }
+/* on a phone: the title smaller, the years kept on one line, the hint's
+   hairlines left out where it all but fills the width */
+.pf-title-years { white-space: nowrap; }
+@media (max-width: 700px) {
+  .pf-title { width: auto; }
+  .pf-title-word { font-size: 32px; }
+  .pf-title-years { margin-top: 9px; font-size: 17px; gap: 10px; }
+  .pf-title-years::after { width: 30px; }
+  .pf-here-name { font-size: 28px; }
+  .pf-hint::before, .pf-hint::after { width: 14px; }
+}
+/* (the Return and the hint placed by the window on a wide one: two rules
+   earlier gave each a top and a bottom both, stretching them down the
+   stage, which no one saw while they were plain words) */
+@media (min-width: 701px) {
+  .pf-back { bottom: auto; top: calc(var(--pf-vh, 100vh) - 22px); transform: translate(-50%, -100%); }
+  .pf-hint, .pf-stage.is-chosen .pf-hint { bottom: auto; transform: translate(-50%, -100%); }
+  .pf-hint { top: calc(var(--pf-vh, 100vh) - 30px); }
+  .pf-stage.is-chosen .pf-hint { top: calc(var(--pf-vh, 100vh) - 92px); }
+}
 </style>
 </head>
 <!--
@@ -1401,8 +1571,13 @@ body.perfumers-page {
       </div>
     </nav>
 
+    <!-- RETURN (2026-11-11 — "improve the button on the bottom that says
+         return"): the whole chart drawn small — its rings round the Earth —
+         beside the word, framed by registration marks, Esc beside it -->
     <button type="button" class="pf-back" hidden>
-      <span class="pf-back-mark" aria-hidden="true"></span>The whole chart
+      <svg class="pf-back-mark" viewBox="0 0 30 30" aria-hidden="true"><circle class="pf-back-ring" cx="15" cy="15" r="13.5"/><circle class="pf-back-mid" cx="15" cy="15" r="9.6"/><circle class="pf-back-earth" cx="15" cy="15" r="5.6"/><path class="pf-back-ticks" d="M15 0v3.4M15 26.6V30M0 15h3.4M26.6 15H30"/></svg>
+      <span class="pf-back-words"><span class="pf-back-word">Return</span><span class="pf-back-to">to the whole chart</span></span>
+      <kbd class="pf-back-key" aria-hidden="true">Esc</kbd>
     </button>
 
     <p class="pf-hint" aria-hidden="true">Choose a perfumer — on the circle or in the list</p>
@@ -2149,6 +2324,6 @@ body.perfumers-page {
   </div>
 </div>
 
-<script src="page.js?v=7e5f9b948c"></script>
+<script src="page.js?v=a2a3f1770e"></script>
 </body>
 </html>

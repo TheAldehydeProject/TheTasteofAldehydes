@@ -133,6 +133,15 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
   swayBox.insertBefore(cvFly, cvChart);
   const fctx = cvFly.getContext("2d");
   let FLY_K = 1, flying = false;
+  // and a coarser one still for the fast middle of a flight (2026-11-11):
+  // what moves quickly is not seen in its pixels, and every frame of it is
+  // a whole new drawing — it goes back to the finer one as the camera slows
+  // to land
+  const cvFast = document.createElement("canvas");
+  cvFast.className = "pf-fly pf-fly-fast";
+  swayBox.insertBefore(cvFast, cvChart);
+  const qctx = cvFast.getContext("2d");
+  let FAST_K = 1, fast = false, camSpeed = 0;
   // THE NAMES ON THE RINGS AT REST, a picture of their own in the rotor
   // (2026-11-07 — "optimize this page as much as you can"): drawn into it a
   // few times a second and turned with the chart by the browser in between,
@@ -217,9 +226,18 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
   // gold for the individual fragrances and its violet for the house perfumes
   // (they were an orange gold and a blue-white), Prin Lomros' rose kept, and
   // the dust in the aldehyde's gold, violet and warm grey
-  const RGB = { gold: "224,178,82", blue: "185,160,232", rose: "226,88,126", ink: "235,232,226", muted: "141,143,146", sea: "15,17,20", land: "36,38,43", grey: "154,148,140" };
+  // THE NIGHT ATLAS (2026-11-11 — "play with the colour scheme a little, it
+  // can be different too"): the chart as an engraved plate at night — a warm
+  // black, parchment for the ink, brass for the individual fragrances,
+  // verdigris for the house perfumes on the site, madder for Prin Lomros',
+  // the Earth's sea and land warmed with it. ?colours=was shows the colours
+  // it had (the aldehyde's gold and violet, and rose, on a cold black).
+  const COLOURS_WAS = /[?&]colours=was\b/.test(location.search);
+  const RGB = COLOURS_WAS
+    ? { gold: "224,178,82", blue: "185,160,232", rose: "226,88,126", ink: "235,232,226", muted: "141,143,146", sea: "15,17,20", land: "36,38,43", grey: "154,148,140", ground: "11,12,13" }
+    : { gold: "228,186,106", blue: "120,196,176", rose: "222,104,82", ink: "240,232,215", muted: "156,147,132", sea: "17,15,13", land: "43,37,31", grey: "164,152,134", ground: "13,11,10" };
   const SOLID = {}; Object.keys(RGB).forEach((k) => (SOLID[k] = "rgb(" + RGB[k] + ")"));
-  const GROUND = "#0b0c0d";
+  const GROUND = SOLID.ground;
   const F = {
     label: '400 20px Archivo, "Segoe UI", sans-serif',
     labelHere: '600 20px Archivo, "Segoe UI", sans-serif',
@@ -535,7 +553,9 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     // and three quarters of a sharp one's, never under 1.25)
     FLY_K = k > 1.25 ? Math.max(1.25, k * 0.75) : k;
     cvFly.width = FLY_K < k ? Math.round(cw * FLY_K) : 1; cvFly.height = FLY_K < k ? Math.round(ch * FLY_K) : 1;
-    [cvChart, cvDof, cvFly].forEach((c) => {
+    FAST_K = Math.max(0.75, k * 0.5);
+    cvFast.width = Math.round(cw * FAST_K); cvFast.height = Math.round(ch * FAST_K);
+    [cvChart, cvDof, cvFly, cvFast].forEach((c) => {
       c.style.left = -OV + "px"; c.style.top = -OV + "px";
       c.style.width = cw + "px"; c.style.height = ch + "px";
     });
@@ -647,6 +667,7 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
   // projection there — one picture for the whole name where every letter was
   // a placing and a drawing of its own, every frame of every flight.
   const sprites = new Map();
+  let spritesMade = 0;
   function arcSprite(c, txt, r, mid, size, font, track, dir) {
     const cx = Math.cos(mid) * r, cy = Math.sin(mid) * r;
     proj(cx, cy, T0); if (!T0.ok) return true;
@@ -664,8 +685,12 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     let sp = sprites.get(key);
     // while the camera flies, a picture already made a step or two finer
     // serves, rather than one made new every step of the zoom
-    if (!sp && flyingNow) for (const f of [Math.SQRT2, 2]) { const q = sprites.get(stem + sc * f); if (q) { sp = q; break; } }
+    if (!sp && flyingNow) for (const f of [Math.SQRT2, 2, Math.SQRT1_2, 0.5]) { const q = sprites.get(stem + sc * f); if (q) { sp = q; break; } }
+    // (and, flying, no more than two made new a frame: the rest written a
+    // letter at a time this frame, as they were before)
+    if (!sp && flyingNow && spritesMade >= 2) return false;
     if (!sp) {
+      spritesMade++;
       if (sprites.size > 360) sprites.clear();
       sp = makeArcSprite(txt, r, size, font, track, dir, sc, fill);
       sprites.set(key, sp);
@@ -777,7 +802,7 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     let to = pin.lon - 0.12;
     while (to - spin > Math.PI) to -= TAU;
     while (to - spin < -Math.PI) to += TAU;
-    spinTween = { from: spin, to, t0: performance.now(), ms: STILL ? 0 : 2200 };
+    spinTween = { from: spin, to, t0: performance.now(), ms: STILL ? 0 : 1500 };
   }
   const E3 = { x: 0, y: 0, z: 0 };
   function onEarth(lam, cp, sp, o) {
@@ -962,9 +987,9 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
       c.globalAlpha = 0.085 * alpha; c.stroke(g.p);
       c.globalAlpha = 0.24 * alpha; c.stroke(g.bright);
     }
-    if (all || part === "land") {
-      const land = landPaths();
-      const k = Math.max(0.55, z * 1.9);
+    const land = all || part === "land" || part === "shore" || part === "lands" ? landPaths() : null;
+    const k = Math.max(0.55, z * 1.9);
+    if (all || part === "land" || part === "shore") {
       if (fine === true) {
         // a waterline: the coast drawn wide and its middle taken out, the
         // land laid over its inner half (kept inside the Earth's rim)
@@ -981,6 +1006,9 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
         c.globalAlpha = 0.16 * alpha; c.strokeStyle = SOLID.ink; c.lineWidth = 3.4 * k; c.stroke(land.coast);
         c.lineJoin = "miter";
       }
+    }
+    // (the close picture draws "shore" and "lands" on two frames)
+    if (all || part === "land" || part === "lands") {
       c.globalAlpha = alpha;
       c.fillStyle = "rgb(" + RGB.land + ")";
       c.fill(land.fill);
@@ -998,9 +1026,9 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
       proj(0, 0, T1);
       const cx = EM.flat ? EM.cx : T1.x, cy = EM.flat ? EM.cy : T1.y, rr = EM.flat ? EM.r : R.earth * V.z * T1.k;
       const sh = c.createRadialGradient(cx - rr * 0.42, cy - rr * 0.46, rr * 0.2, cx, cy, rr * 1.08);
-      sh.addColorStop(0, "rgba(11,12,13,0)");
-      sh.addColorStop(0.62, "rgba(11,12,13,0.12)");
-      sh.addColorStop(1, "rgba(11,12,13,0.62)");
+      sh.addColorStop(0, "rgba(" + RGB.ground + ",0)");
+      sh.addColorStop(0.62, "rgba(" + RGB.ground + ",0.12)");
+      sh.addColorStop(1, "rgba(" + RGB.ground + ",0.62)");
       c.globalAlpha = alpha; c.fillStyle = sh; c.fill(disc);
     }
     c.restore();
@@ -1091,7 +1119,7 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
   KEYS.forEach((k) => { camV[k] = 0; leadV[k] = 0; });
   let labelZ = 1.5;            // the zoom the chosen names are sized for
   function stepCam(dt) {
-    let moving = false;
+    let moving = false, speed = 0;
     const w = SPRING;
     const e = Math.exp(-w * dt);
     PX.fx = PX.fy = Math.exp(Math.max(cam.lz, goal.lz));
@@ -1102,8 +1130,10 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
       d = cam[k] - lead[k]; t1 = (camV[k] + w * d) * dt;
       cam[k] = lead[k] + (d + t1) * e; camV[k] = (camV[k] - w * t1) * e;
       const px = PX[k];
+      speed += Math.abs(camV[k]) * px;
       if (Math.abs(cam[k] - goal[k]) * px > REST_PX || Math.abs(lead[k] - goal[k]) * px > REST_PX || Math.abs(camV[k]) * px > 8) moving = true;
     }
+    camSpeed = speed;
     if (!moving) jumpCam();
     return moving;
   }
@@ -1206,7 +1236,10 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     return ease(clamp(intro * 1.55 - (e.no / N) * 0.55, 0, 1));
   }
   // how far the chosen names are written: none on the whole chart, all close in
-  const closeAmt = () => clamp((cam.tilt / TILT - 0.35) / 0.5, 0, 1);
+  // (a tile is drawn as the chart will stand once landed, whatever the camera
+  // is doing while it is drawn)
+  let TILE_DRAW = false;
+  const closeAmt = () => (TILE_DRAW ? 1 : clamp((cam.tilt / TILT - 0.35) / 0.5, 0, 1));
   const labelSize = () => clamp(11.5 / labelZ, 8.4, 12.5);
   const written = (e) => focus && focus.has(e) && zoomed();
 
@@ -1699,8 +1732,12 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     chartDirty = false;
     stats.chart++;
     const moving = !!lo;
+    // fast: quicker than about a fifth of the window a second
+    const quick = moving && camSpeed > Math.max(W, H) * 0.22 && FAST_K < Math.min(FLY_K, DPR);
     lo = moving && FLY_K < DPR;
-    const k = lo ? FLY_K : DPR, c = lo ? fctx : ctx, cv = lo ? cvFly : cvChart;
+    const k = quick ? FAST_K : lo ? FLY_K : DPR, c = quick ? qctx : lo ? fctx : ctx, cv = quick ? cvFast : lo ? cvFly : cvChart;
+    if (quick !== fast) { fast = quick; stage.classList.toggle("is-fast", quick); }
+    lo = lo || quick;
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.clearRect(0, 0, cv.width, cv.height);
     surface(c, k, 0, 0, k, k * OV, k * OV, -OV, -OV, W + OV, Math.min(H, VH) + OV);
@@ -1710,6 +1747,7 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     setFlying(lo);
   }
   function setFlying(on) {
+    if (!on && fast) { fast = false; stage.classList.remove("is-fast"); }
     if (on === flying) return;
     flying = on;
     stage.classList.toggle("is-flying", on);
@@ -1780,9 +1818,10 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     c.clearRect(0, 0, px, px);
     surface(c, k, 0, 0, k, 0, 0, 0, 0, side, side);
     view(t.x0, t.y0, planeZ, 0, 0, 0, 0);
-    VIS_FORCE = t.arc; READ_FIXED = true; flyingNow = false;
+    VIS_FORCE = t.arc; READ_FIXED = true; TILE_DRAW = true;
+    const wasFlying = flyingNow; flyingNow = false;
     drawScene(true, false);
-    VIS_FORCE = null; READ_FIXED = false;
+    VIS_FORCE = null; READ_FIXED = false; TILE_DRAW = false; flyingNow = wasFlying;
     t.key = planeKey; t.lv = lv;
     stats.tiles = (stats.tiles || 0) + 1;
   }
@@ -1811,6 +1850,33 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
   }
   // is the plane ready to stand for the chart this frame? Draws what it
   // must now, and a few ahead.
+  // THE PLANE MADE READY ON THE WAY IN (2026-11-11 — "it sometimes lag when
+  // going from overview into deep view"): from the moment the camera sets
+  // off for a close look, the tiles that look will need are drawn a few
+  // milliseconds a frame, so that it lands on a plane already drawn — until
+  // then they were all drawn in the frames it landed in, with the Earth's
+  // close picture and the out-of-focus copy, which is where it stuttered
+  function planeAhead(ms) {
+    const key = planeState();
+    if (key !== planeKey || Math.abs(planeZ - zFix()) > 1e-6) {
+      planeKey = key; planeZ = zFix();
+      for (const t of tiles.values()) { t.key = ""; t.lv = -1; }
+    }
+    WANT.clear();
+    tilesFor(goal, WANT, 0);
+    const t0 = performance.now();
+    let left = 0;
+    for (const [id, lv] of WANT) {
+      const [i, j] = id.split(",").map(Number);
+      const t = tileOf(i, j);
+      if (!t) continue;
+      t.used = planeStamp;
+      if (t.key === planeKey && t.lv >= lv) continue;
+      if (performance.now() - t0 < ms) renderTile(t, lv); else left++;
+    }
+    viewCam();
+    return left;
+  }
   function planeReady() {
     const key = planeState();
     if (key !== planeKey || Math.abs(planeZ - zFix()) > 1e-6) {
@@ -1873,29 +1939,47 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
   }
   // the Earth close in: upright while the rings turn, a picture of its own on
   // the window, drawn again only when the camera has moved
-  function earthClose() {
-    viewCam();
+  // (drawn for a pose: the camera's, or — on the way in — where it will land)
+  // (drawn in four steps on four frames while the flight is still going —
+  // its back, the shore, the lands, its front and pins — so no one frame
+  // pays for it all, 2026-11-11; it is not seen until the plane stands;
+  // `whole` finishes it at once)
+  const EARTH_STEPS = ["back", "shore", "lands", "front"];
+  let earthZStep = EARTH_STEPS.length;
+  function earthClose(q, oneStep) {
+    q = q || cam;
+    const camView = () => view(q.fx, q.fy, Math.exp(q.lz), q.rot, q.tilt, q.cx * W, q.cy * H);
+    camView();
     proj(0, 0, T0);
     const rr = R.frame1 * V.z * (T0.ok ? T0.k : 1) + 20;
     const seen = T0.ok && T0.x + rr > -OV && T0.x - rr < W + OV && T0.y + rr > -OV && T0.y - rr < Math.min(H, VH) + OV;
-    const key = seen ? [cam.fx, cam.fy, cam.lz, cam.rot, cam.tilt, cam.cx, cam.cy, spin, W, H, DPR, PINS.map((p) => (p.lit ? 1 : 0)).join("")].map((v) => (typeof v === "number" ? v.toFixed(4) : v)).join("|") : "off";
-    if (key === earthZKey) return;
-    earthZKey = key;
-    const cw = W + 2 * OV, ch = Math.min(H, VH) + 2 * OV;
-    if (cvEarthZ.width !== Math.round(cw * DPR)) {
-      cvEarthZ.width = Math.round(cw * DPR); cvEarthZ.height = Math.round(ch * DPR);
-      cvEarthZ.style.left = -OV + "px"; cvEarthZ.style.top = -OV + "px"; cvEarthZ.style.width = cw + "px"; cvEarthZ.style.height = ch + "px";
+    const key = seen ? [q.fx, q.fy, q.lz, q.rot, q.tilt, q.cx, q.cy, spin, W, H, DPR, PINS.map((p) => (p.lit ? 1 : 0)).join("")].map((v) => (typeof v === "number" ? v.toFixed(4) : v)).join("|") : "off";
+    if (key === earthZKey && earthZStep >= EARTH_STEPS.length) { viewCam(); return; }
+    if (key !== earthZKey) {
+      earthZKey = key;
+      earthZStep = 0;
+      const cw = W + 2 * OV, ch = Math.min(H, VH) + 2 * OV;
+      if (cvEarthZ.width !== Math.round(cw * DPR)) {
+        cvEarthZ.width = Math.round(cw * DPR); cvEarthZ.height = Math.round(ch * DPR);
+        cvEarthZ.style.left = -OV + "px"; cvEarthZ.style.top = -OV + "px"; cvEarthZ.style.width = cw + "px"; cvEarthZ.style.height = ch + "px";
+      }
+      ezctx.setTransform(1, 0, 0, 1, 0, 0);
+      ezctx.clearRect(0, 0, cvEarthZ.width, cvEarthZ.height);
+      if (!seen) { earthZStep = EARTH_STEPS.length; viewCam(); return; }
     }
-    ezctx.setTransform(1, 0, 0, 1, 0, 0);
-    ezctx.clearRect(0, 0, cvEarthZ.width, cvEarthZ.height);
-    if (!seen) return;
     surface(ezctx, DPR, 0, 0, DPR, DPR * OV, DPR * OV, -OV, -OV, W + OV, Math.min(H, VH) + OV);
-    viewCam();
+    camView();
     earthUpright(); placePins();
-    drawEarth(ezctx, 1, true);
-    drawPins(ezctx, 1);
+    do {
+      drawEarth(ezctx, 1, true, EARTH_STEPS[earthZStep]);
+      earthZStep++;
+    } while (!oneStep && earthZStep < EARTH_STEPS.length);
+    if (earthZStep >= EARTH_STEPS.length) {
+      drawPins(ezctx, 1);
+      stats.earthClose = (stats.earthClose || 0) + 1;
+    }
     base();
-    stats.earthClose = (stats.earthClose || 0) + 1;
+    viewCam();
   }
   function setPlane(on) {
     if (on === planeOn) return;
@@ -1906,7 +1990,6 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
 
   // ---- THE OUT-OF-FOCUS COPY, once a close look has settled -----------------
   let dofDone = false, stillSince = 0;
-  const canFilter = typeof dctx.filter === "string";
   let small = null;
   function dofOff() { cvDof.classList.remove("is-on"); dofDone = false; }
   // the plane taken down onto the window at the copy's size, each tile by
@@ -1934,25 +2017,24 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     if (STILL) return;
     stats.dof++;
     const w = cvDof.width, h = cvDof.height;
-    const src = fromPlane ? planeShot(w, h) : cvChart;
     dctx.setTransform(1, 0, 0, 1, 0, 0);
     dctx.globalCompositeOperation = "source-over";
     dctx.globalAlpha = 1;
     dctx.fillStyle = GROUND;
     dctx.fillRect(0, 0, w, h);
-    if (canFilter) {
-      dctx.filter = "blur(" + (1.4 * DPR).toFixed(1) + "px)";
-      dctx.drawImage(src, 0, 0, w, h);
-      dctx.filter = "none";
-    } else {
-      // no canvas filter (an older Safari): blur by drawing small and back
-      if (!small) small = document.createElement("canvas");
-      small.width = Math.max(1, Math.round(w / 4)); small.height = Math.max(1, Math.round(h / 4));
-      const sc = small.getContext("2d");
-      sc.drawImage(src, 0, 0, small.width, small.height);
-      dctx.imageSmoothingQuality = "high";
-      dctx.drawImage(small, 0, 0, w, h);
-    }
+    // blurred by drawing it small and back (since 2026-11-11: the canvas's
+    // own blur took fifty milliseconds, in the frame the camera landed in)
+    if (!small) small = document.createElement("canvas");
+    const sw = Math.max(1, Math.round(w / 3)), shh = Math.max(1, Math.round(h / 3));
+    if (small.width !== sw || small.height !== shh) { small.width = sw; small.height = shh; }
+    const sx = small.getContext("2d");
+    sx.imageSmoothingQuality = "high";
+    sx.clearRect(0, 0, sw, shh);
+    // (the plane's tiles laid straight into the small picture)
+    if (fromPlane) sx.drawImage(planeShot(sw, shh), 0, 0);
+    else sx.drawImage(cvChart, 0, 0, sw, shh);
+    dctx.imageSmoothingQuality = "high";
+    dctx.drawImage(small, 0, 0, w, h);
     // cut the part in focus back out, softly: a wide band through the point
     // looked at, as a lens close to a page has it
     dctx.globalCompositeOperation = "destination-out";
@@ -2073,7 +2155,7 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
       if (css !== lastEarthCss) { earthCv.style.transform = css; lastEarthCss = css; }
       base();
       EM.flat = true; EM.cx = ox; EM.cy = oy; EM.r = er;
-      drawSillage(c, t, fade);
+      drawFans(c, fade);
     } else {
       viewCam();
       earthUpright();
@@ -2102,51 +2184,44 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     // what is chosen, lit, while it is seen on the whole chart (close in its
     // names are written instead)
     if (focusList && !sel.e && q < 0.5) { c.globalAlpha = 1; markSpokes(c, focusList, 0.75 * (1 - 2 * q)); }
-    // the perfume the scroll stands at, close in
-    const at = scrollAt();
-    if (at && q > 0.6 && !hover) markAt(c, at);
+    // (the perfume the scroll stood at was marked here, close in, until
+    // 2026-11-11 — "it shouldnt be, it should just be a scrolling of the disc
+    // object (orbit)": the scroll only turns the chart)
     // what is lit, and what the hand is on
     if (sel.e) { markEntry(c, sel.e); markLit(c, sel.e); }
     if (callE && callAt.ok) drawCallLine(c);
     if (hover) drawHover(c);
     c.globalAlpha = 1;
   }
-  // THE SILLAGE (2026-11-08 — "make the actual perfumers page more
-  // thematic"; the owner chose perfume and aldehydes): as a perfume leaves a
-  // trail in the air, specks come off every country a house is from while it
-  // faces you — in the aldehyde's gold, violet and warm grey — and rise and
-  // drift out, curling, thinning and fading, a few at a time. On the whole
-  // chart at rest; drawn in the Earth's own frame, so they turn and scale
-  // with it, and let go of it as they rise.
-  const sill = [];
-  let sillNext = 0;
-  function drawSillage(c, t, fade) {
-    if (STILL || intro < 1 || !EM.flat) { sill.length = 0; return; }
-    if (t > sillNext && sill.length < 140) {
-      const from = PINS.filter((p) => p.houses.length && p.z > 0.2);
-      if (from.length) {
-        const p = from[Math.floor(Math.random() * from.length)];
-        const out = Math.atan2(p.y, p.x);
-        sill.push({ x: p.x, y: p.y, t0: t, life: 3.6 + Math.random() * 2.6, dir: out + (Math.random() - 0.5) * 0.9, far: 0.45 + Math.random() * 0.55, rise: 0.3 + Math.random() * 0.4, ph: Math.random() * TAU, tone: Math.random() < 0.4 ? 0 : Math.random() < 0.55 ? 1 : 2, sz: 0.9 + Math.random() * 1.2 });
-      }
-      sillNext = t + 0.05 + Math.random() * 0.08;
+  // THE LINES FROM THE COUNTRIES (back on 2026-11-11 — "return the lines
+  // that connect the perfumers to the countries, instead of the particles.
+  // that was better"; the sillage stood here from 2026-11-08): a hairline
+  // from every house's country to each of its perfumes' places on the
+  // Earth's frame, faded as the country turns away from you, batched by how
+  // lit it is, so a few strokes draw them all. On the whole chart at rest.
+  function drawFans(c, alpha) {
+    if (alpha <= 0.02 || !EM.flat) { stats.fans = 0; return; }
+    const paths = [];
+    let n = 0;
+    for (const e of entries) {
+      const p = e.pin;
+      if (!p || p.z < 0.02 || growth(e) < 0.6) continue;
+      emap(p.x, p.y, T0); if (!T0.ok) continue;
+      proj(Math.cos(e.a) * R.frame1, Math.sin(e.a) * R.frame1, T1); if (!T1.ok) continue;
+      const lv = level(e.em * smooth(p.z / 0.35));
+      if (!lv) continue;
+      const q = paths[lv] || (paths[lv] = new Path2D());
+      q.moveTo(T0.x, T0.y); q.lineTo(T1.x, T1.y);
+      n++;
     }
-    for (let i = sill.length - 1; i >= 0; i--) if (t - sill[i].t0 > sill[i].life) sill.splice(i, 1);
-    stats.sill = sill.length;
-    const r = EM.r;
-    for (let tone = 0; tone < 3; tone++) {
-      c.fillStyle = tone === 0 ? SOLID.grey : tone === 1 ? SOLID.gold : SOLID.blue;
-      for (const s of sill) {
-        if (s.tone !== tone) continue;
-        const u = (t - s.t0) / s.life, e = 1 - Math.pow(1 - u, 1.6);
-        const curl = Math.sin(t * 0.9 + s.ph) * 0.06 * e;
-        const d = s.far * e;
-        const x = EM.cx + r * (s.x + Math.cos(s.dir + curl * 4) * d + curl);
-        const y = EM.cy - r * (s.y + Math.sin(s.dir + curl * 4) * d * 0.6 + s.rise * e);
-        const sz = s.sz * (1 + 0.6 * e);
-        c.globalAlpha = fade * smooth(u / 0.12) * (1 - smooth((u - 0.45) / 0.55)) * (tone === 0 ? 0.7 : 0.95);
-        c.fillRect(x - sz / 2, y - sz / 2, sz, sz);
-      }
+    stats.fans = n;
+    c.lineWidth = 0.6;
+    for (let lv = 1; lv <= LV; lv++) {
+      if (!paths[lv]) continue;
+      const k = lv / LV;
+      c.strokeStyle = k > 0.9 && focus ? SOLID.gold : SOLID.ink;
+      c.globalAlpha = alpha * (focus ? 0.05 + 0.3 * k * k : 0.15 * k);
+      c.stroke(paths[lv]);
     }
     c.globalAlpha = 1;
   }
@@ -2218,28 +2293,6 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
       c.lineWidth = Math.max(0.7, 0.8 * z);
       c.stroke(cells);
     }
-  }
-  // the perfume the scroll stands at, close in: a bracket at its place on
-  // the rim and its name a little brighter, as the scrubber says
-  function markAt(c, e) {
-    const ca = Math.cos(e.a), sa = Math.sin(e.a);
-    proj(ca * (R.tick0 - 6), sa * (R.tick0 - 6), T0); proj(ca * (R.tick1 + 6), sa * (R.tick1 + 6), T1);
-    if (!T0.ok || !T1.ok) return;
-    c.strokeStyle = SOLID.gold; c.lineWidth = 1.2; c.globalAlpha = 0.9;
-    c.beginPath(); c.moveTo(T0.x, T0.y); c.lineTo(T1.x, T1.y); c.stroke();
-    proj(ca * e.rDot, sa * e.rDot, T0);
-    if (T0.ok) {
-      const rr = Math.max(3, 5 * V.z * T0.k);
-      c.globalAlpha = 0.7; c.beginPath(); c.arc(T0.x, T0.y, rr * 1.7, 0, TAU); c.stroke();
-    }
-    if (written(e) && closeAmt() > 0.5) {
-      const P = placeLabel(e, labelSize());
-      c.textBaseline = "middle"; c.textAlign = "left";
-      c.font = P.font; c.fillStyle = SOLID.gold; c.globalAlpha = 0.85 * closeAmt();
-      textAt(c, Math.cos(e.a) * P.rMain, Math.sin(e.a) * P.rMain, P.dir, P.main, P.size, "left", P.font);
-      base();
-    }
-    c.globalAlpha = 1;
   }
   function markEntry(c, e) {
     markSpokes(c, [e]);
@@ -2435,6 +2488,14 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
 
     // close in and settled on what is chosen, the plane stands for the chart
     // once its tiles are drawn: then nothing of the chart is drawn again
+    spritesMade = 0;
+    // on the way into a close look, its tiles and its Earth made ready
+    const planeSoon = !PLANE_OFF && zoomed() && !!sel.kind && emT0 < 0 && sortT0 < 0 && intro >= 1 && !STILL &&
+      Math.abs(goal.lz - Math.log(zFix())) < 1e-3 && Math.abs(goal.tilt - TILT) < 1e-4;
+    if (planeSoon && !planeOn && moving) {
+      planeAhead(4);
+      if (!spinTween) earthClose(goal, true);
+    }
     const planeWant = !PLANE_OFF && v !== "turn" && zoomed() && !!sel.kind && emT0 < 0 && sortT0 < 0 && intro >= 1 && !STILL &&
       Math.abs(goal.lz - Math.log(zFix())) < 1e-3 && Math.abs(cam.lz - goal.lz) < 0.004 && Math.abs(goal.tilt - TILT) < 1e-4 && Math.abs(cam.tilt - TILT) < 0.004;
     const wasPlane = planeOn;
@@ -2767,6 +2828,8 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
       aboutDo = () => callFor(sel.e, 0);
     }
     k.textContent = kicker; n.textContent = name; m.textContent = meta;
+    // (what kind it is, for its mark: a ring, a square, a dot, a lozenge)
+    if (here.dataset.kind !== sel.kind) here.dataset.kind = sel.kind || "";
     about.hidden = !aboutDo;
     about.textContent = aboutSay;
     about.onclick = aboutDo;
@@ -3080,13 +3143,13 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
   const scrub = document.createElement("div");
   scrub.className = "pf-scrub";
   scrub.hidden = true;
-  scrub.innerHTML = '<p class="pf-scrub-at" aria-live="polite"><b></b><span></span></p>' +
+  scrub.innerHTML = '<p class="pf-scrub-at"><b></b><span></span></p>' +
     '<div class="pf-scrub-track" role="slider" tabindex="0" aria-label="Go through the perfumes" aria-valuemin="1"><i class="pf-scrub-ticks"></i><i class="pf-scrub-thumb"></i></div>' +
     '<p class="pf-scrub-say" aria-hidden="true"></p>';
   stage.appendChild(scrub);
   const scrubTrack = scrub.querySelector(".pf-scrub-track"), scrubThumb = scrub.querySelector(".pf-scrub-thumb");
   const scrubTicks = scrub.querySelector(".pf-scrub-ticks");
-  const scrubNo = scrub.querySelector(".pf-scrub-at b"), scrubName = scrub.querySelector(".pf-scrub-at span");
+  const scrubNo = scrub.querySelector(".pf-scrub-at b"), scrubOf = scrub.querySelector(".pf-scrub-at span");
   const scrubSay = scrub.querySelector(".pf-scrub-say");
   let scrubFor = null;
   function syncScrub() {
@@ -3109,11 +3172,17 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     const k = n > 1 ? scrollS / (n - 1) : 0.5;
     scrubThumb.style.height = (v * 100).toFixed(2) + "%";
     scrubThumb.style.top = (k * (1 - v) * 100).toFixed(2) + "%";
-    const e = list[clamp(Math.round(scrollS), 0, n - 1)];
-    scrubNo.textContent = String(Math.round(scrollS) + 1).padStart(3, "0") + " / " + String(n).padStart(3, "0");
-    scrubName.textContent = e.p.n;
+    // what is in the window, as a span — no one perfume of it singled out
+    // (2026-11-11: the scroll is the chart turning, nothing more)
+    const half = Math.min(n, viewN()) / 2;
+    const from = clamp(Math.round(scrollS - half + 0.5), 0, n - 1), to = clamp(Math.round(scrollS + half - 0.5), from, n - 1);
+    const pad = (k) => String(k).padStart(3, "0");
+    const span = from === to ? pad(from + 1) : pad(from + 1) + "–" + pad(to + 1);
+    if (scrubNo.textContent !== span) scrubNo.textContent = span;
+    const of = "of " + pad(n);
+    if (scrubOf.textContent !== of) scrubOf.textContent = of;
     scrubTrack.setAttribute("aria-valuenow", String(Math.round(scrollS) + 1));
-    scrubTrack.setAttribute("aria-valuetext", e.p.n);
+    scrubTrack.setAttribute("aria-valuetext", "perfumes " + (from + 1) + " to " + (to + 1) + " of " + n);
   }
   let scrubDrag = false;
   function scrubAt(ev) {
@@ -3254,7 +3323,7 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     const meta = [];
     if (ho.founded) meta.push("Founded <b>" + esc(ho.founded) + "</b>");
     if (ho.from) meta.push(esc(ho.from));
-    let h = '<p class="pf-card-kicker">House</p>';
+    let h = '<p class="pf-card-kicker is-house">House</p>';
     h += '<h2 class="pf-card-name" id="pf-card-name">' + esc(ho.name) + "</h2>";
     if (meta.length) h += '<p class="pf-card-meta">' + meta.join(" · ") + "</p>";
     if (ho.about) h += '<div class="pf-card-about"><p>' + esc(ho.about) + S2.ref(ho.s) + "</p></div>";

@@ -604,6 +604,8 @@
     // the perfumes no source credits are no blob: a hexagon drawn as a line,
     // through the lens, every frame (drawHexLens)
     if (b.nf) { b.img = { c: null, s: sizeOf(b.r), hex: true }; return; }
+    // on the graphics card, nothing to paint beforehand (2026-11-11)
+    if (useGL) { b.img = { c: null, s: sizeOf(b.r), gl: true }; return; }
     const c = document.createElement("canvas");
     const n = clamp(Math.round(sizeOf(b.r) * DPR * 0.62), 40, 240);
     const { shift, soft } = SPH(b.focus);
@@ -669,8 +671,16 @@
     driftLobes(w.lobes, t);
     paintAny(w.paint, phone ? 132 : 176, w.lobes, 0.05 * b, 0.95 + (b - 1) * 0.2, 0.45, w.kind);
   }
+  const deepOf = (kind) => (kind === "house" ? LENS_INK : LENS_DEEP);
   function drawCur(c, w, x, y, r, t, alpha, boost) {
     if (alpha <= 0.003) return;
+    if (useGL) {
+      // every frame, its lobes where they have drifted to
+      driftLobes(w.lobes, t);
+      const b = boost || 1, ca = caOf(w, x, y, 0.05 * b, t, frameDt);
+      GLB.blob({ lobes: w.lobes, x, y, s: sizeOf(r), alpha, shx: ca.x, shy: ca.y, soft: 0.95 + (b - 1) * 0.2, shade: 0.45, deep: deepOf(w.kind), grain: 1 });
+      return;
+    }
     paintCur(w, t, false, boost);
     const s = sizeOf(r);
     c.save();
@@ -693,6 +703,14 @@
     if (!tr.paint) { tr.paint = document.createElement("canvas"); tr.tick = -1; }
     const e = ease(g);
     const x = lerp(tr.x0, tr.x1, e), y = lerp(tr.y0, tr.y1, e), r = lerp(tr.r0, tr.r1, e);
+    if (useGL) {
+      if (tr.liveTo) driftLobes(tr.to, t);
+      if (tr.liveFrom) driftLobes(tr.from, t);
+      const spike = 1 + 1.2 * Math.sin(Math.PI * clamp(g, 0, 1));
+      const ca = caOf(tr, x, y, lerp(tr.sh0, tr.sh1, g) * spike, t, frameDt);
+      GLB.blob({ lobes: mixLobes(tr.from, tr.to, g), x, y, s: sizeOf(r), alpha, shx: ca.x, shy: ca.y, soft: lerp(tr.so0, tr.so1, g) + (spike - 1) * 0.15, shade: lerp(0.9, 0.45, g), deep: deepOf(tr.kind), grain: 1 });
+      return;
+    }
     const tick = STILL ? 0 : Math.floor(t * 24);
     if (tick !== tr.tick) {
       tr.tick = tick;
@@ -751,6 +769,337 @@
     box.style.left = Math.round(P.x) + "px"; box.style.top = Math.round(P.y) + "px";
     // a list as wide as the room lets it be, and no wider than reads well
     box.style.setProperty("--nf-w", Math.round(Math.min(phone ? W - 32 : 480, (F.x1 - F.x0) * 0.9)) + "px");
+  }
+
+  // ---- THE BLOBS ON THE GRAPHICS CARD (2026-11-11 — "make the objects feel
+  // more fluid and HD!!!! they feel relatively low quality"; and "change the
+  // chromattic abberation to be a little more dynamic, and not so strong (as
+  // in the edges are too big) ... return the noise, which should be strongest
+  // around the objects and the chromatic abberation"). Until then every blob
+  // was worked out a pixel at a time on the processor, in a picture 176
+  // pixels across laid down three times as large, and the middle one again
+  // 24 to 30 times a second — soft, and stepping. Here the same field, the
+  // same lens and the same colours are worked out by the graphics card for
+  // every pixel of the screen, every frame: as sharp as the screen, and moving
+  // as smoothly as it does. What it adds:
+  //   - THE ABERRATION ALIVE: its colours thrown apart along a line from the
+  //     lens's own middle — which drifts towards the hand — through the
+  //     blob, as a real lens throws them (the farther out, the farther
+  //     apart); breathing a little; and widening along the way a blob moves
+  //     while it moves. Narrower than it was, at rest.
+  //   - THE NOISE, an overlay over the blob and the page round it, through a
+  //     mask feathered round the blob: the page's grain gathered there,
+  //     lightening and darkening what it lies over and bringing no colour of
+  //     its own (later the same day; it was a grain of light and dark specks
+  //     laid over the edge for a few hours, and the edge itself let go into
+  //     noise for one).
+  //   - A SLOW WARP of the space the lobes are seen in, so their edges flow.
+  // One draw for each blob, into a canvas the size of the drawing, laid into
+  // the drawing at once. Without WebGL, or with ?gl=off, the processor's way
+  // as it was.
+  const GL_OFF = /[?&]gl=off\b/.test(location.search), GL_ON = /[?&]gl=on\b/.test(location.search);
+  const CA_K = 0.6;                  // the aberration at rest, of what it was
+  const GRAIN_AMP = 0.4;             // how far the overlay's noise goes either side of grey, at most
+  const MOST_LOBES = 32;
+  const BLOB_VS = [
+    "attribute vec2 aQ;",
+    "uniform vec2 uC; uniform float uS; uniform vec2 uRes;",
+    "varying vec2 vP;",
+    "void main() {",
+    "  vP = aQ * " + EXT.toFixed(3) + ";",
+    "  vec2 px = uC + aQ * uS;",
+    "  vec2 cl = px / uRes * 2.0 - 1.0;",
+    "  gl_Position = vec4(cl.x, -cl.y, 0.0, 1.0);",
+    "}",
+  ].join("\n");
+  const blobFS = (prec) => [
+    "precision " + prec + " float;",
+    "varying vec2 vP;",
+    "uniform int uN;",
+    "uniform vec4 uL[" + MOST_LOBES + "];",   // x, y, r, 1/r²
+    "uniform vec4 uE[" + MOST_LOBES + "];",   // a hexagon's first two sides' normals
+    "uniform vec4 uF[" + MOST_LOBES + "];",   // its third, whether it is one, 1/(0.92r)²
+    "uniform vec2 uSh;",
+    "uniform float uSoft, uShade, uAlpha, uT, uGrain, uPx, uWarp, uPass, uHandR, uHandAmt, uLevel, uStir, uAmp;",
+    "uniform vec2 uHand;",
+    "uniform float uTg;",
+    "uniform vec3 uDeep, uGround;",
+    "float hash(vec2 q) { return fract(sin(dot(q, vec2(12.9898, 78.233))) * 43758.5453); }",
+    "float vnoise(vec2 q) {",
+    "  vec2 i = floor(q), f = fract(q); f = f * f * (3.0 - 2.0 * f);",
+    "  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);",
+    "}",
+    "float grainAt(vec2 cell, float tt) {",
+    "  float k = floor(tt), fk = fract(tt);",
+    "  float ng = hash(cell + k * vec2(17.31, 7.77)) - 0.5;",
+    "  float lit = step(0.5, hash(cell * 0.71 + k * vec2(3.7, 11.3)));",
+    "  float blink = mix(1.0, sin(3.14159 * fk), 0.65);",
+    "  return sign(ng) * pow(abs(ng) * 2.0, 1.5) * 0.5 * (0.3 + 0.7 * lit) * blink;",
+    "}",
+    "float field(vec2 p) {",
+    "  float f = 0.0;",
+    "  for (int i = 0; i < " + MOST_LOBES + "; i++) {",
+    "    if (i >= uN) break;",
+    "    vec4 L = uL[i];",
+    "    vec2 d = p - L.xy;",
+    "    float qc = dot(d, d) * L.w;",
+    "    if (qc > 7.0) continue;",
+    "    float q = qc;",
+    "    vec4 F = uF[i];",
+    "    if (F.z > 0.5) {",
+    "      vec4 E = uE[i];",
+    "      float m = max(abs(d.x * E.x + d.y * E.y), max(abs(d.x * E.z + d.y * E.w), abs(d.x * F.x + d.y * F.y)));",
+    "      q = 0.84 * m * m * F.w + 0.16 * qc;",
+    "    }",
+    "    if (q < 6.0) f += exp(1.0 - q);",
+    "  }",
+    "  return f;",
+    "}",
+    "void main() {",
+    "  vec2 p = vP;",
+    "  p += uWarp * vec2(sin(p.y * 4.7 + uT * 0.9) + 0.5 * sin(p.x * 8.3 - uT * 1.3),",
+    "                    cos(p.x * 4.3 - uT * 0.8) + 0.5 * cos(p.y * 7.7 + uT * 1.1));",
+    "  float fr = field(p + uSh), fg = field(p + uSh * 0.3), fb = field(p - uSh);",
+    "  float rr = length(vP);",
+    "  float win = 1.0 - smoothstep(" + (EXT * 0.6).toFixed(3) + ", " + (EXT * 0.97).toFixed(3) + ", rr);",
+    "  float w = uSoft;",
+    "  vec3 cov = smoothstep(vec3(1.0 - 0.24 * w, 1.0 - 0.27 * w, 1.0 - 0.24 * w), vec3(1.0 + 0.36 * w), vec3(fr, fg, fb));",
+    // THE NOISE, AN OVERLAY (2026-11-11, later — "it should not be of a
+    // different colour, it should be an effect of the page (background and
+    // foreground)"; "i want the object to have an overlay of noise, not for
+    // it to be noisy itself"; "too strong too regular, make it involved with
+    // the page too ... When you actually hover with the noise, make the page
+    // change its noise overlay levels"): the blob is drawn clean, and in a
+    // second pass this draws only the noise — grey, a few grains lighter or
+    // darker, most hardly at all — through a mask feathered round the blob,
+    // most at its edge and where its colours part. Laid over the drawing as
+    // an overlay, it lightens and darkens what is there, the blob and the
+    // page alike, and brings no colour of its own. Not even: it gathers in
+    // slow clumps carried with the blob, every grain changing on a clock of
+    // its own; and it answers — swelling and quickening round the hand while
+    // the hand is in it, stirred by its speed, and up while a world opens or
+    // changes (uLevel, uStir, uHand, from the page).
+    "  if (uPass > 0.5) {",
+    "    float most = max(fr, max(fg, fb)), least = min(fr, min(fg, fb));",
+    "    vec2 fc = gl_FragCoord.xy;",
+    "    vec2 hd = (fc - uHand) / uHandR;",
+    "    float hl = uHandAmt * exp(-dot(hd, hd));",
+    "    float near = smoothstep(0.08 - 0.05 * hl, 0.95, most);",
+    "    float inside = smoothstep(1.0, 1.8, least);",
+    "    float ca = clamp(abs(fr - fb) * 1.2 + abs(fg - 0.5 * (fr + fb)) * 0.6, 0.0, 1.0);",
+    "    float clump = 0.6 * vnoise(p * 3.1 + vec2(uTg * 0.11, -uTg * 0.07)) + 0.4 * vnoise(p * 7.3 - vec2(uTg * 0.19, uTg * 0.13));",
+    // alive of itself, as film grain is on a blank screen ("inherently moving
+    // (not spacially but rather intrinsically) ... blinking and flickering"):
+    // every grain lives a beat of its own, a tenth of a second or so, coming
+    // and going in it, lit or only faint, and the whole of it flickers as a
+    // projector's light does — none of it moving across the page
+    "    float fl = 1.0 + 0.22 * (hash(vec2(floor(uTg * 13.0), 7.1)) - 0.5) + 0.07 * sin(uTg * 2.3) + 0.05 * sin(uTg * 5.9);",
+    "    float m = uGrain * (near * (1.0 - 0.45 * inside) + 0.45 * ca) * (0.45 + 0.9 * clump) * uLevel * (1.0 + 0.9 * hl) * fl;",
+    "    m = clamp(m, 0.0, 1.0) * win * uAlpha;",
+    "    vec2 cell = floor(fc / uPx);",
+    "    float ph = hash(cell * 1.37 + 3.1);",
+    "    float r0 = 7.0 + 10.0 * ph;",
+    // (quicker round the hand: a second grain at twice and more the rate,
+    // mixed in — one rate changing would sweep every grain through its beats)
+    "    float sp = mix(grainAt(cell, uTg * r0 + ph * 9.0), grainAt(cell + 31.0, uTg * r0 * 2.3 + ph * 5.0), clamp(hl * 1.2 + uStir * 0.6, 0.0, 1.0));",
+    "    float g = 0.5 + sp * uAmp * (0.6 + 0.8 * clump) * (1.0 + 0.8 * hl + 0.3 * uStir) * fl;",
+    "    gl_FragColor = vec4(vec3(g) * m, m);",
+    "    return;",
+    "  }",
+    "  float lt = uShade * clamp(0.6 - (vP.x * 0.55 + vP.y * 0.75), 0.0, 1.0) * (1.0 - smoothstep(1.6, 3.2, (fr + fb) * 0.5) * 0.4);",
+    "  float br = cov.r * uDeep.r * (1.0 - lt * 0.22);",
+    "  float bg = cov.g * uDeep.g * (1.0 - lt * 0.06);",
+    "  float bb = cov.b * uDeep.b * (1.0 - lt * 0.3);",
+    "  float a = max(br, max(bg, bb));",
+    "  vec3 col = uGround * (vec3(a) - vec3(br, bg, bb));",   // premultiplied
+    "  vec4 o = vec4(col, a);",
+    "  gl_FragColor = o * win * uAlpha;",
+    "}",
+  ].join("\n");
+  const GLB = (function () {
+    const no = { ok: false };
+    if (GL_OFF || LOOK !== "lens") return no;
+    const cv = document.createElement("canvas");
+    let gl = null;
+    try { gl = cv.getContext("webgl", { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, preserveDrawingBuffer: false }); } catch (e) { gl = null; }
+    if (!gl || gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS) < MOST_LOBES * 3 + 12) return no;
+    // a card the browser only pretends to have — drawn on the processor, as on
+    // a machine with none, and in the tests' browser — is the processor's way
+    // again, which is quicker there (?gl=on draws on it all the same)
+    const dbg = gl.getExtension("WEBGL_debug_renderer_info");
+    const rend = String(dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+    if (/swiftshader|llvmpipe|softpipe|software|basic render/i.test(rend) && !GL_ON) return no;
+    const hp = gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT);
+    const prec = hp && hp.precision > 0 ? "highp" : "mediump";
+    const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null; };
+    const vs = sh(gl.VERTEX_SHADER, BLOB_VS), fs = sh(gl.FRAGMENT_SHADER, blobFS(prec));
+    if (!vs || !fs) return no;
+    const pr = gl.createProgram();
+    gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
+    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return no;
+    gl.useProgram(pr);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    const aQ = gl.getAttribLocation(pr, "aQ");
+    gl.enableVertexAttribArray(aQ);
+    gl.vertexAttribPointer(aQ, 2, gl.FLOAT, false, 0, 0);
+    const U = {};
+    ["uC", "uS", "uRes", "uN", "uL", "uE", "uF", "uSh", "uSoft", "uShade", "uAlpha", "uT", "uGrain", "uPx", "uWarp", "uPass", "uHand", "uHandR", "uHandAmt", "uLevel", "uStir", "uAmp", "uTg", "uDeep", "uGround"].forEach((k) => (U[k] = gl.getUniformLocation(pr, k)));
+    gl.uniform3f(U.uGround, GROUND[0] / 255, GROUND[1] / 255, GROUND[2] / 255);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    const L = new Float32Array(MOST_LOBES * 4), E = new Float32Array(MOST_LOBES * 4), Fv = new Float32Array(MOST_LOBES * 4);
+    let sc = 1, drawn = 0, lost = false;
+    const kept = [];
+    cv.addEventListener("webglcontextlost", (e) => { e.preventDefault(); lost = true; });
+    const R60 = Math.PI / 3;
+    function lobesIn(lobes) {
+      let list = lobes;
+      if (list.length > MOST_LOBES) list = list.slice().sort((a, b) => b.r - a.r).slice(0, MOST_LOBES);
+      for (let i = 0; i < list.length; i++) {
+        const o = list[i], k = i * 4;
+        L[k] = o.x; L[k + 1] = o.y; L[k + 2] = o.r; L[k + 3] = 1 / (o.r * o.r);
+        if (o.sides) {
+          const r0 = o.rot || 0;
+          E[k] = Math.cos(r0); E[k + 1] = Math.sin(r0); E[k + 2] = Math.cos(r0 + R60); E[k + 3] = Math.sin(r0 + R60);
+          const a = o.r * 0.92;
+          Fv[k] = Math.cos(r0 + 2 * R60); Fv[k + 1] = Math.sin(r0 + 2 * R60); Fv[k + 2] = 1; Fv[k + 3] = 1 / (a * a);
+        } else { Fv[k + 2] = 0; }
+      }
+      gl.uniform4fv(U.uL, L); gl.uniform4fv(U.uE, E); gl.uniform4fv(U.uF, Fv);
+      gl.uniform1i(U.uN, list.length);
+    }
+    return {
+      ok: true,
+      canvas: cv,
+      lost: () => lost,
+      // a new picture as big as the one it will be laid into
+      begin(w, h, scale, t) {
+        sc = scale; drawn = 0;
+        if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+        gl.viewport(0, 0, w, h);
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform2f(U.uRes, w, h);
+        gl.uniform1f(U.uT, t);
+        gl.uniform1f(U.uPx, Math.max(1, Math.round(scale * 1.1)));
+        gl.uniform1f(U.uPass, 0);
+        kept.length = 0;
+      },
+      // one blob: its lobes, where (points), its whole width (points), and
+      // how it is seen
+      blob(o) {
+        lobesIn(o.lobes);
+        gl.uniform2f(U.uC, o.x * sc, o.y * sc);
+        gl.uniform1f(U.uS, (o.s / 2) * sc);
+        // (the blob's own units run down the page, as the processor's did)
+        gl.uniform2f(U.uSh, o.shx, o.shy);
+        gl.uniform1f(U.uSoft, o.soft);
+        gl.uniform1f(U.uShade, o.shade);
+        gl.uniform1f(U.uAlpha, o.alpha);
+        gl.uniform1f(U.uGrain, o.grain == null ? 1 : o.grain);
+        gl.uniform1f(U.uWarp, o.warp == null ? 0.012 : o.warp);
+        gl.uniform3f(U.uDeep, o.deep[0], o.deep[1], o.deep[2]);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        drawn++;
+        kept.push(o);
+      },
+      // the noise over every blob drawn since begin(), in the same picture,
+      // once that picture has been laid down: to be laid over the drawing as
+      // an overlay
+      grain(o) {
+        const list = kept.slice();
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform1f(U.uPass, 1);
+        gl.uniform2f(U.uHand, o.hx * sc, cv.height - o.hy * sc);
+        gl.uniform1f(U.uHandR, o.hr * sc);
+        gl.uniform1f(U.uHandAmt, o.hand);
+        gl.uniform1f(U.uLevel, o.level);
+        gl.uniform1f(U.uStir, o.stir);
+        gl.uniform1f(U.uAmp, GRAIN_AMP);
+        // (the grain's own clock, kept small: a phone's card counts coarsely)
+        gl.uniform1f(U.uTg, o.t % 600);
+        for (const o of list) { if ((o.grain == null ? 1 : o.grain) > 0) this.blob(o); }
+        gl.uniform1f(U.uPass, 0);
+        kept.length = 0;
+        return list.length;
+      },
+      count: () => drawn,
+      // how far into the noise a point (on the page) is: the field of every
+      // blob drawn since begin(), there — 0 out in the page, 1 at an edge
+      noiseAt(x, y) {
+        let most = 0;
+        for (const o of kept) {
+          if ((o.grain == null ? 1 : o.grain) <= 0) continue;
+          const h = o.s / 2, ux = ((x - o.x) / h) * EXT, uy = ((y - o.y) / h) * EXT;
+          if (Math.abs(ux) > EXT || Math.abs(uy) > EXT) continue;
+          let f = 0;
+          for (const L of o.lobes) { const q = ((ux - L.x) * (ux - L.x) + (uy - L.y) * (uy - L.y)) / (L.r * L.r); if (q < 6) f += Math.exp(1 - q); }
+          most = Math.max(most, smooth((f - 0.05) / 0.65) * (o.alpha == null ? 1 : o.alpha));
+        }
+        return most;
+      },
+      // what one blob looks like, alone, n pixels square, with no grain and
+      // nothing moving — for the tests' rim() and core()
+      still(o, n) {
+        this.begin(n, n, 1, 0);
+        this.blob(Object.assign({}, o, { x: n / 2, y: n / 2, s: n, grain: 0, warp: 0, alpha: 1 }));
+        const px = new Uint8Array(n * n * 4);
+        gl.readPixels(0, 0, n, n, gl.RGBA, gl.UNSIGNED_BYTE, px);
+        // turned the page's way up, and taken out of premultiplied colour
+        const out = new Uint8ClampedArray(n * n * 4);
+        for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+          const s = ((n - 1 - j) * n + i) * 4, d = (j * n + i) * 4, a = px[s + 3];
+          out[d] = a ? (px[s] * 255) / a : 0; out[d + 1] = a ? (px[s + 1] * 255) / a : 0; out[d + 2] = a ? (px[s + 2] * 255) / a : 0; out[d + 3] = a;
+        }
+        return out;
+      },
+    };
+  })();
+  let useGL = GLB.ok;
+  let frameDt = 1 / 60;
+  // how long laying the card's picture in takes, the last frames: if it is
+  // ever slow, the processor's way from then on
+  const glCost = [];
+  function glTimed(ms) {
+    glCost.push(ms);
+    if (glCost.length > 24) glCost.shift();
+    if (glCost.length === 24 && !GL_ON && glCost.reduce((a, b) => a + b, 0) / 24 > 28) glLost();
+  }
+  // the card lost (a phone putting it away): the processor's way from then on
+  function glLost() {
+    useGL = false;
+    blobs.forEach((b) => { if (b.img && b.img.gl) b.img = null; });
+    if (cur) cur.paint = null;
+  }
+  // THE LENS'S MIDDLE: the point the aberration throws the colours away from,
+  // drifting a little towards the hand
+  const lensC = { x: 0, y: 0, set: false };
+  const lastAt = new WeakMap();
+  // where on the screen, how far it is thrown at rest (blob units), and the
+  // thing itself (for its speed): the aberration as a vector
+  function caOf(key, x, y, base, t, dt) {
+    let dx = 0.8, dy = 1;
+    const R0 = Math.max(W, H) * 0.5;
+    if (!STILL) {
+      const rx = (x - lensC.x) / R0, ry = (y - lensC.y) / R0;
+      dx = 0.8 * 0.75 + rx * 0.85; dy = 0.75 + ry * 0.85;
+    }
+    let l = Math.hypot(dx, dy);
+    const want = clamp(l, 0.75, 1.5);
+    dx *= want / l; dy *= want / l;
+    let m = base * CA_K;
+    if (!STILL) m *= 1 + 0.17 * Math.sin(t * 0.55 + (key && key.ph ? key.ph : x * 0.01));
+    let vx = 0, vy = 0;
+    if (key && !STILL && dt > 0) {
+      const p = lastAt.get(key);
+      if (p) { vx = (x - p.x) / dt; vy = (y - p.y) / dt; }
+      lastAt.set(key, { x, y });
+    }
+    // moving, it is thrown wider along the way it goes
+    const sp = Math.hypot(vx, vy), k = clamp(sp / 900, 0, 1) * 0.035 * CA_K / Math.max(1, sp);
+    return { x: dx * m + vx * k, y: dy * m + vy * k };
   }
 
   // ---- WHAT IS IN FOCUS, AND HOW IT CHANGES --------------------------------
@@ -1488,6 +1837,28 @@
     x.globalCompositeOperation = op;
   }
 
+  // THE NOISE ANSWERING (2026-11-11 — "i want the noise to actually somehow
+  // react to the page itself. When you actually hover with the noise, make
+  // the page change its noise overlay levels"): how far the hand is in the
+  // noise round a blob, eased — it comes up quickly and lets go slowly; how
+  // fast the hand goes; and whether a world is opening or changing. They
+  // swell the overlay round the hand, quicken it, and lift the page's own
+  // grain with it (--grain-lift on .pw-grain).
+  const NZ = { over: 0, stir: 0, level: 1, hx: -1, hy: -1, lift: 1, shown: 1, grains: 0 };
+  const grainEl = el(".pw-grain");
+  function noiseFrame(dt) {
+    const inN = hand.on && !STILL ? GLB.noiseAt(hand.x, hand.y) : 0;
+    NZ.over += (inN - NZ.over) * (1 - Math.exp(-dt * (inN > NZ.over ? 4.5 : 1.1)));
+    const sp = hand.on && NZ.hx >= 0 ? Math.hypot(hand.x - NZ.hx, hand.y - NZ.hy) / Math.max(dt, 0.008) : 0;
+    NZ.hx = hand.on ? hand.x : -1; NZ.hy = hand.on ? hand.y : -1;
+    NZ.stir += (clamp(sp / 1500, 0, 1) * (0.3 + 0.7 * NZ.over) - NZ.stir) * (1 - Math.exp(-dt * 2.6));
+    const moving = TR.kind ? 1 : 0;
+    NZ.level += (1 + 0.4 * moving + 0.35 * NZ.stir - NZ.level) * (1 - Math.exp(-dt * 1.6));
+    NZ.lift = 1 + 1.1 * NZ.over + 0.5 * NZ.stir + 0.3 * moving;
+    if (Math.abs(NZ.lift - NZ.shown) > 0.03) { NZ.shown = NZ.lift; grainEl.style.setProperty("--grain-lift", NZ.lift.toFixed(2)); }
+    return { hx: hand.x, hy: hand.y, hr: 160, hand: NZ.over, level: NZ.level, stir: NZ.stir, t: performance.now() / 1000 };
+  }
+
   // THE WORLD: the poster, its spheres out of focus, the blob at the middle.
   // `c` is drawn into at `sc` pixels a point (the screen's own, or the
   // opening's smaller picture); `boost` widens the middle's aberration
@@ -1499,6 +1870,18 @@
     c.drawImage(ground, 0, 0, c.canvas.width, c.canvas.height);
     c.setTransform(sc, 0, 0, sc, 0, 0);
     const ch = TR.kind === "change" ? clamp((now - TR.t0) / TR.ms, 0, 1) : -1;
+    // the blobs on the graphics card: a picture of them all, laid in once
+    // they are drawn, and what is drawn over them after it
+    if (useGL && GLB.lost()) glLost();
+    frameDt = dt;
+    const later = [];
+    if (useGL) {
+      GLB.begin(c.canvas.width, c.canvas.height, sc, STILL ? 0 : t);
+      // the lens's middle drifting a third of the way to the hand
+      const lx = P.x + (hand.on ? (hand.x - P.x) * 0.35 : 0), ly = P.y + (hand.on ? (hand.y - P.y) * 0.35 : 0);
+      if (!lensC.set || STILL) { lensC.x = lx; lensC.y = ly; lensC.set = true; }
+      else { const k = 1 - Math.exp(-dt * 1.4); lensC.x += (lx - lensC.x) * k; lensC.y += (ly - lensC.y) * k; }
+    }
     // the spheres round it, drifting, the nearer moving more with the hand
     const fh = STILL ? 1 : 1 - Math.exp(-dt * 3.2);
     handS.x += ((hand.on ? hand.x / W - 0.5 : 0) - handS.x) * fh;
@@ -1518,7 +1901,7 @@
         if (!b.img || a <= 0.01) continue;
         lean(b);
         const s = b.img.s * (1 - 0.12 * soft(ch * 1.7));
-        sphereAt(c, b, b.x + b.dx - slide * 140 * soft(ch), b.y + b.dy, s, a * 0.94, t);
+        sphereAt(c, b, b.x + b.dx - slide * 140 * soft(ch), b.y + b.dy, s, a * 0.94, t, later);
       }
     }
     const fl = STILL ? 1 : 1 - Math.exp(-dt * 6);
@@ -1534,7 +1917,7 @@
       const k = soft(clamp(b.in * 1.15 - b.wait, 0, 1));
       if (k <= 0) continue;
       const s = b.img.s * (0.84 + 0.16 * k) * (1 + 0.06 * b.lift);
-      sphereAt(c, b, b.x + b.dx + slide * 140 * (1 - k), b.y + b.dy, s, k * (0.94 + 0.06 * b.lift), t);
+      sphereAt(c, b, b.x + b.dx + slide * 140 * (1 - k), b.y + b.dy, s, k * (0.94 + 0.06 * b.lift), t, later);
       // nothing written by it (2026-11-07, last): the list names it and
       // lights it, and a small note by the hand says which it is
     }
@@ -1549,6 +1932,24 @@
         changed();
       }
     } else if (cur.lobes) drawCur(c, cur, P.x, P.y, P.r, t, 1, boost || 1);
+    if (useGL) {
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      c.globalAlpha = 1;
+      const g0 = performance.now();
+      c.drawImage(GLB.canvas, 0, 0);
+      c.setTransform(sc, 0, 0, sc, 0, 0);
+      for (const f of later) f();
+      // the noise, over the blobs and the page round them (see GRAIN_AMP),
+      // answering the hand and the page
+      if (!STILL && (NZ.grains = GLB.grain(noiseFrame(dt)))) {
+        c.setTransform(1, 0, 0, 1, 0, 0);
+        c.globalCompositeOperation = "overlay";
+        c.drawImage(GLB.canvas, 0, 0);
+        c.globalCompositeOperation = "source-over";
+        c.setTransform(sc, 0, 0, sc, 0, 0);
+      }
+      glTimed(performance.now() - g0);
+    }
     // (the perfumes no source credits: their list, and nothing drawn — "i dont
     // want it to be a hexagon, rather make it just a list. a normal list")
     drawSwarm(c, dt, t, ch);
@@ -1556,8 +1957,17 @@
 
   // a sphere where it stands: its picture, or the hexagon of the perfumes no
   // source credits
-  function sphereAt(c, b, x, y, s, alpha, t) {
-    if (b.img.hex) { drawHexLens(c, x, y, b.r * 0.92 * (s / b.img.s), alpha, t, 0.9, 0.05); return; }
+  function sphereAt(c, b, x, y, s, alpha, t, later) {
+    if (b.img.hex) {
+      const f = () => drawHexLens(c, x, y, b.r * 0.92 * (s / b.img.s), alpha, t, 0.9, 0.05);
+      if (useGL) later.push(f); else f();
+      return;
+    }
+    if (b.img.gl) {
+      const sp = SPH(b.focus), ca = caOf(b, x, y, sp.shift, t, frameDt);
+      GLB.blob({ lobes: b.lobes, x, y, s, alpha, shx: ca.x, shy: ca.y, soft: sp.soft, shade: 0.9, deep: deepOf(b.kind), grain: 0.9 + 0.25 * b.lift });
+      return;
+    }
     c.globalAlpha = alpha;
     c.drawImage(b.img.c, x - s / 2, y - s / 2, s, s);
   }
@@ -1787,6 +2197,18 @@
     ["click", "keydown", "change", "pointermove"].forEach((e) => document.addEventListener(e, again));
   }
   kick();
+  // the middle blob alone, as it is drawn at rest: from the card, or the
+  // processor's picture of it
+  function curPicture() {
+    if (!cur || !cur.lobes) return null;
+    if (useGL) {
+      const n = 400, sh = 0.05 * CA_K;
+      return { n, d: GLB.still({ lobes: cur.lobes, shx: 0.8 * sh, shy: sh, soft: 0.95, shade: 0.45, deep: deepOf(cur.kind) }, n) };
+    }
+    if (!cur.paint) return null;
+    const c = cur.paint, n = c.width;
+    return { n, d: c.getContext("2d").getImageData(0, 0, n, n).data };
+  }
   const findBody = (id) => blobs.find((x) => (x.kind === "house" ? x.ho.id : x.p.id) === id);
   window.PerfumerWorlds = {
     view: () => view,
@@ -1818,13 +2240,19 @@
     spheres: () => blobs.length,
     sphereKinds: () => blobs.map((b) => b.kind + (b.lobes.every((o) => o.sides === 6) ? ":cut" : ":round")),
     // how sharp a sphere is painted, against the screen's pixels it covers
-    sharpness: () => blobs.filter((b) => b.img).map((b) => +(b.img.c.width / (b.img.s * DPR)).toFixed(2)),
+    sharpness: () => blobs.filter((b) => b.img && !b.img.hex).map((b) => (b.img.gl ? 1 : +(b.img.c.width / (b.img.s * DPR)).toFixed(2))),
+    // whether the blobs are drawn on the graphics card, and how many last frame
+    gl: () => ({ on: useGL, drawn: useGL ? GLB.count() : 0 }),
+    // the noise over the blobs: how far the hand is in it, and the page's
+    // grain lifted with it
+    noise: () => ({ on: useGL, over: +NZ.over.toFixed(3), level: +NZ.level.toFixed(3), lift: +NZ.lift.toFixed(3), grains: NZ.grains }),
     look: () => LOOK,
     // the colour where the blob's edge begins, walking in from its upper left
     // and from its lower right (the picture's own colour, before the poster)
     rim: () => {
-      if (!cur || !cur.paint) return null;
-      const c = cur.paint, n = c.width, d = c.getContext("2d").getImageData(0, 0, n, n).data;
+      const pic = curPicture();
+      if (!pic) return null;
+      const { d, n } = pic;
       const walk = (s) => {
         for (let k = 0; k < n / 2; k++) {
           const q = (n / 2 - k) * 0.7071, i = Math.round(n / 2 + s * q), j = Math.round(n / 2 + s * q), o = (j * n + i) * 4;
@@ -1836,8 +2264,9 @@
     },
     // the middle's darkest colour: a perfumer's plum, a house's ink
     core: () => {
-      if (!cur || !cur.paint) return null;
-      const c = cur.paint, n = c.width, d = c.getContext("2d").getImageData(0, 0, n, n).data;
+      const pic = curPicture();
+      if (!pic) return null;
+      const d = pic.d;
       let best = null, lum = 1e9;
       for (let o = 0; o < d.length; o += 4) if (d[o + 3] > 240) { const l = d[o] + d[o + 1] + d[o + 2]; if (l < lum) { lum = l; best = [d[o], d[o + 1], d[o + 2]]; } }
       return best;

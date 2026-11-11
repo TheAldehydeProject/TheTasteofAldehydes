@@ -30,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=436603faba">
+<link rel="stylesheet" href="../style.css?v=a44773f258">
 <script>
   /* The plain index below is the page only without the drawing: held back
      while it is coming, so it never flashes first, and shown at once if the
@@ -81,13 +81,15 @@
 <main class="t1">
   <div class="pw-rays-ui">
     <header class="pw-rays-head">
-      <h1>Perfumer Worlds</h1>
+      <!-- (no title drawn since 2026-11-11 — "remove the phrase perfumer world
+           or whatever is on the top left"; the page's name for a screen reader) -->
+      <h1 class="visually-hidden">Perfumers</h1>
     </header>
   </div>
 
   <div class="pw-world-ui">
     <header class="pw-head">
-      <h2>Perfumer Worlds <span>· <span class="pw-head-name"></span></span></h2>
+      <h2><span class="pw-head-name"></span></h2>
     </header>
 
     <section class="pw-hud" aria-label="The perfumer in focus" aria-live="polite">
@@ -802,6 +804,6 @@
 <script>window.SITE_ROOT = "../";</script>
 <script src="../nav.js?v=ddedcc2da4"></script>
 <script src="../perfumers-data.js?v=9676db7614"></script>
-<script src="../perfumer-worlds.js?v=53cb6240d9"></script>
+<script src="../perfumer-worlds.js?v=da459ae973"></script>
 </body>
 </html>

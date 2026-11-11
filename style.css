@@ -14224,10 +14224,20 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   /* the poster's grain: a picture of noise jumped about by its transform —
      over the world as the poster's is, and a breath of it over the rays */
   .worlds-page .pw-grain {
-    position: fixed; inset: -60%; pointer-events: none; opacity: 0.06; mix-blend-mode: multiply;
-    animation: pw-grain 1.8s steps(6) infinite; will-change: transform; transition: opacity 0.6s;
+    position: fixed; inset: -60%; pointer-events: none; opacity: calc(0.06 * var(--grain-lift, 1) * var(--grain-flick, 1)); mix-blend-mode: multiply;
+    animation: pw-grain 0.84s steps(7) infinite, pw-grain-flick 1.3s steps(9) infinite; will-change: transform; transition: opacity 0.6s;
   }
   body.worlds-page.is-rays .pw-grain { opacity: 0.05; mix-blend-mode: screen; }
+  /* (lifted by the hand in the World's noise — --grain-lift, from the script, 2026-11-11) */
+  /* alive of itself (2026-11-11 — "inherently moving (not spacially but
+     rather intrinsically) ... blinking and flickering"): jumped to a new
+     place eight times a second, and its strength flickering as a
+     projector's light does */
+  @property --grain-flick { syntax: "<number>"; inherits: false; initial-value: 1; }
+  @keyframes pw-grain-flick {
+    0% { --grain-flick: 1; } 11% { --grain-flick: 0.82; } 22% { --grain-flick: 1.14; } 33% { --grain-flick: 0.93; } 44% { --grain-flick: 1.22; }
+    55% { --grain-flick: 0.86; } 66% { --grain-flick: 1.06; } 77% { --grain-flick: 0.78; } 88% { --grain-flick: 1.12; } 100% { --grain-flick: 1; }
+  }
   @keyframes pw-grain {
     0% { transform: translate(0, 0); } 17% { transform: translate(-6%, 4%); } 33% { transform: translate(5%, -6%); }
     50% { transform: translate(-3%, 7%); } 67% { transform: translate(7%, 2%); } 83% { transform: translate(-5%, -5%); } 100% { transform: translate(0, 0); }
@@ -14250,7 +14260,7 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   /* THE POSTER'S HEAD: a title and a date over a heavy rule */
   .worlds-page .pw-head { position: absolute; top: 36px; left: 48px; right: 48px; display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 14px; border-bottom: 3px solid #2a1d22; }
   .worlds-page .pw-head h2 { margin: 0; font: 700 13px/1.2 var(--sans); letter-spacing: 0.01em; }
-  .worlds-page .pw-head h2 span { font-weight: 400; color: var(--muted); }
+  .worlds-page .pw-head h2 span { font-weight: 500; color: var(--ink); }
 
   /* THE READINGS, down the left, as the planet's */
   .worlds-page .pw-hud { position: absolute; left: 48px; top: 50%; transform: translateY(-46%); width: 250px; }
@@ -14445,7 +14455,7 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
     .worlds-page .pw-head, .worlds-page .pw-rays-head { top: 16px; left: 16px; right: 16px; }
     .worlds-page .pw-head { padding-bottom: 10px; border-bottom-width: 2px; }
     .worlds-page .pw-head h2, .worlds-page .pw-rays-head h1 { font-size: 11.5px; }
-    .worlds-page .pw-head h2 span, .worlds-page .pw-rays-head h1 span { display: none; }
+    .worlds-page .pw-head h2 span { font-weight: 500; }
     .worlds-page .pw-return { left: 16px; top: 52px; padding: 5px 9px 6px; }
     .worlds-page .pw-hud { left: 16px; right: 16px; width: auto; top: auto; bottom: 74px; transform: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
     .worlds-page .pw-read { margin-bottom: 12px; }

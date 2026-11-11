@@ -6,7 +6,10 @@ Files touched: `perfumers/index.html` (Perfumer Worlds now), `perfumer-worlds.js
 live data), `test-pages/1/index.html` and `test-pages/1/page.js` (the radial poster now, with its
 plane), `perfumers.js` and `perfumers-earth.js` (taken out of the site's root — test page 1 carries
 them), `tools/perfumers/earth.py`, `tools/seo.py`, `tests/perfumers.spec.js` (new, Perfumer Worlds'),
-`tests/poster.spec.js` (was `perfumers.spec.js`), `tests/test-pages.spec.js`.
+`tests/poster.spec.js` (was `perfumers.spec.js`), `tests/test-pages.spec.js`; and on 2026-11-11
+`perfumer-worlds.js` (its blobs drawn on the graphics card, the noise over them), `style.css`,
+`perfumers/index.html`, `test-pages/1/index.html` and `test-pages/1/page.js` (the poster re-dressed),
+`tools/seo.py`.
 
 ## What changed
 
@@ -83,6 +86,77 @@ frame to about 5, and stays at the screen's full sharpness instead of the lower 
 Earth, upright while the rings turn, has a picture of its own close in. Until every tile is drawn,
 and through every flight, the chart is drawn as it was; `?plane=off` draws it that way for comparing.
 
+## 2026-11-11 — the blobs on the graphics card, the noise over them; the poster re-dressed
+
+The owner: "optimize the new TP one even further; it sometimes lag when going from overview into
+deep view ... when you scroll in the detailed view, you have a highlighting function where one of
+the perfumes is highlighted. it shouldnt be, it should just be a scrolling of the disc object
+(orbit). i want you to also improve the button on the bottom that says return. please also change
+the font top left. i also want you to just rework every part of this page that is not on theme, and
+make it on theme. but, return the lines that connect the perfumers to the countries, instead of the
+particles. that was better. Also play with the colour scheme a little, it can be different too.
+from the current perfumers webpage, i want you to change the chromattic abberation to be a little
+more dynamic, and not so strong (as in the edges are too big). i also want you to optimize hovering
+the houses. I also want you to remove the phrase perfumer world or whatever is on the top left. also
+return the noise, which should be strongest around the objects and the chromatic abberation, and
+also make the objects feel more fluid and HD!!!!" — and, on the noise, over four messages: "make it
+via a mask of noise that is feathered around the object; and it should not be of a different
+colour, it should be an effect of the page (background and foreground)"; "nononono ... i want the
+object to have an overlay of noise, not for it to be noisy itself"; "too strong too regular, make it
+involved with the page too please ... When you actually hover with the noise, make the page change
+its noise overlay levels"; "better. I also want you to include a character of the noise that means
+it is inherenty moving (n ot spacially but rather intrinsically) ... blinking and flickering".
+
+**Perfumer Worlds — the blobs on the graphics card.** Every blob — the middle one, the spheres
+round it, a traveller between worlds — is worked out by the graphics card for every pixel of the
+screen, every frame, in a small shader of the page's own (`GLB` in the script, `?gl=off` the
+processor's way as it was): as sharp as the screen, and moving as smoothly as it does, its lobes'
+space warped a breath so the edges flow. On a machine that only pretends to have a card (the
+tests' browser) it is the processor's way, unless `?gl=on`; and if laying the card's picture in is
+ever slow, the processor's way from then on. **The aberration is alive and thinner**: three fifths
+of what it was at rest, thrown along a line from the lens's own middle — which drifts a third of
+the way towards the hand — through the blob, breathing a little, widening along the way a blob
+moves while it moves. **The houses' hover is smooth**, the spheres drawn by the card.
+
+**The noise, an overlay.** The blob is drawn clean, and a second picture draws only the noise —
+grey, a few grains lighter or darker, most hardly at all — through a mask feathered round each
+blob, most at its edge and where its colours part, a little less over it, going out into the page;
+laid over the drawing as an *overlay*, so it lightens and darkens what is there, the blob and the
+page alike, and brings no colour of its own. It gathers in slow clumps carried with the blob;
+**every grain blinks on a beat of its own**, seven to seventeen times a second, bright or barely,
+and the whole flickers a little as a projector's light does — none of it moving across the page.
+**It answers**: the hand in it (the blobs' own field worked out where the hand is, `noiseAt`)
+swells and quickens it round the hand, a fast hand stirs it, a world opening or changing lifts
+it — and **the page's own grain** (`.pw-grain`) **rises with it**, to about twice its strength
+while the hand is in the noise (`--grain-lift`), settling slowly once it leaves; that grain jumps
+eight times a second now and flickers too (`--grain-flick`, a registered property animated).
+(For a few hours it was light and dark specks laid over the edge, then the edge itself let go into
+noise — both "bad".) **The title top left is gone** — the page's heading is there for a screen
+reader alone; a world's head names it plainly.
+
+**Test page 1, the radial poster.** **Into the deep view without a stall**: the plane's tiles for
+where the camera is going are drawn during the flight, a few milliseconds a frame (`planeAhead`);
+the close Earth's picture over four frames while it is still hidden (`EARTH_STEPS`); the
+out-of-focus copy made from a picture a third of the size; names set round their arcs at most two a
+frame while flying; and a fast flight drawn on a canvas of half the sharpness (`cvFast`). The worst
+frame of the flight into Prin Lomros went from 51 ms of the page's own work to 28. **The scroll only
+turns the disc**: nothing is marked where it stands (`markAt` is out of the code), and the scrubber
+says which perfumes are in the window, *009–038 of 139*. **The lines from the countries are back**
+(`drawFans`), the sillage's specks out of the code. **On theme**: the title in **Bodoni Moda**, a
+Didone as a perfume's label is set, the years in its italic in brass, a hairline after them; the
+chosen name, the list's name, the windows' names and the foot's headings in it too; every button
+framed by **registration marks** at its corners, drawn out and turned brass under the hand, not
+boxes; the A–Z / By year switch two words in one frame with a brass lozenge by the one on; a
+perfumer marked by a ring and a house by a square, in the list, over what is chosen and in the
+windows, as their countries are pinned on the Earth; the hint set as a caption under an engraved
+plate. **Return** (it said *The whole chart*): the chart drawn small — its rings round the Earth,
+the outer turning under the hand — *Return* in the Didone's italic, *to the whole chart* under it,
+and Esc. Two older rules gave it and the hint a top and a bottom both, stretching each down the
+stage — unseen while they were plain words; they are placed by the window now. **The colours, the
+night atlas**: a warm black, parchment, brass for the individual fragrances, verdigris for the
+house perfumes on the site, madder for Prin Lomros', the Earth warmed with them — the old ones (the
+aldehyde's gold and violet, rose, a cold black) at `?colours=was`.
+
 ## Why / key decisions
 
 - **The swap is the pages whole, not their links** — the owner's choice. So the new Perfumers page is
@@ -123,8 +197,12 @@ fringe on its letters); the swarm staying on the last sphere,
 never the middle, nothing written; blue ahead of the rest as a world opens, and Return or Esc from the
 middle of an opening or a change; Learn More gliding, not jumping, to exactly the top, *Back up*, the
 perfumes linked; › sliding; the lens and the softer grain; the search; the index without the script;
-a phone. `npm test -- tests/poster.spec.js` — the poster at `/test-pages/1/`, and its plane: close in
-on Prin Lomros it stands on tiles in perspective, and the wheel draws nothing of the chart again.
+a phone; and with `?gl=on`, the noise an overlay round the blobs, the hand in it lifting the page's
+grain and its flicker. `npm test -- tests/poster.spec.js` — the poster at `/test-pages/1/`, and its plane: close in
+on Prin Lomros it stands on tiles in perspective, and the wheel draws nothing of the chart again;
+the scrubber naming a span, not a perfume; the lines from the countries and no sillage; the night
+atlas's colours, the old at `?colours=was`; the title in the Didone; Return placed above the hint
+and going all the way back.
 
 ## Known issues / TODO
 
@@ -135,6 +213,9 @@ on Prin Lomros it stands on tiles in perspective, and the wheel draws nothing of
   each from up to six sources read, the three that say most kept, nothing written that a source does
   not say. Two hosts, Parfinity and Scent Verdict, could not be opened from the machine they were
   written on, so what those pages say was read through the search engine's reading of them.
+- **The noise lives on the graphics card alone**: on the processor's way (a machine with no card,
+  or `?gl=off`) the blobs are drawn as they were, with the page's grain only. The tests reach the
+  card's way with `?gl=on`, drawn in software, slowly — they say it works, not how it looks.
 - The headless browser the tests run in has no graphics card, so it cannot say how many frames a
   second the plane makes on a real screen; what it can say is that the page's own work a frame of
   scrolling fell from about 21 ms to about 5.

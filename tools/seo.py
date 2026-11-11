@@ -143,7 +143,7 @@ THEME = {
  "houses/tombstone.html": "#ecebe8",
  "search/index.html": "#191c21",
  "perfumers/index.html": "#050505",
- "test-pages/1/index.html": "#0b0c0d", "test-pages/2/index.html": "#0b0b16",
+ "test-pages/1/index.html": "#0d0b0a", "test-pages/2/index.html": "#0b0b16",
  "test-pages/3/index.html": "#262628", "test-pages/4/index.html": "#c9cbce",
 }
 for essay in ["theory-01", "theory-02", "theory-03", "resins-in-perfumery", "skin",

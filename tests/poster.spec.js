@@ -315,9 +315,14 @@ test("close in, the zoom is fixed, and the wheel goes through the perfumes of wh
   expect(b.at).not.toBe(a.at);
   expect(b.cam.z).toBeCloseTo(a.cam.z, 5);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
-  // the scrubber says where it is
+  // the scrubber says which perfumes are in the window — a span, no one
+  // perfume of it singled out (2026-11-11 — "when you scroll in the detailed
+  // view, you have a highlighting function where one of the perfumes is
+  // highlighted. it shouldnt be, it should just be a scrolling of the disc")
   await expect(page.locator(".pf-scrub")).toBeVisible();
-  await expect(page.locator(".pf-scrub-at span")).toHaveText(b.at);
+  await expect(page.locator(".pf-scrub-at b")).toHaveText(/^\d{3}–\d{3}$/);
+  await expect(page.locator(".pf-scrub-at span")).toHaveText("of 139");
+  expect(await page.locator(".pf-scrub-at span").textContent()).not.toBe(b.at);
   // the keys do the same, and End goes to its last perfume
   await page.keyboard.press("End");
   await expect.poll(async () => (await state(page)).scroll).toBe(138);
@@ -623,13 +628,19 @@ test("at rest the names are drawn a few times a second, and the live layer about
 // sillage rising off the houses' countries; the two buttons at the foot a
 // size or two down; and on a sharp screen the live layer at its sharpness at
 // rest, the flights at three quarters of it, not a plain screen's pixel.
-test("the aldehyde's gold and violet, the sillage rising, the buttons smaller, and the layers drawn sharp", async ({ page, browser }) => {
+// (Since 2026-11-11 the colours are the night atlas's — brass and verdigris,
+// the aldehyde's gold and violet behind ?colours=was — and the lines from
+// the countries are back in the sillage's place: "return the lines that
+// connect the perfumers to the countries, instead of the particles. that was
+// better".)
+test("the night atlas's colours, the lines from the countries, the buttons smaller, and the layers drawn sharp", async ({ page, browser }) => {
   await page.goto(PAGE);
   await atRest(page, "turn");
-  const v = await page.evaluate(() => { const s = getComputedStyle(document.body); return [s.getPropertyValue("--pf-gold").trim(), s.getPropertyValue("--pf-blue").trim()]; });
-  expect(v).toEqual(["#e0b252", "#b9a0e8"]);
+  const tones = () => page.evaluate(() => { const s = getComputedStyle(document.body); return [s.getPropertyValue("--pf-gold").trim(), s.getPropertyValue("--pf-blue").trim()]; });
+  expect(await tones()).toEqual(["rgb(228, 186, 106)", "rgb(120, 196, 176)"]);
   await page.mouse.move(5, 880);
-  await expect.poll(() => stats(page).then((s) => s.sill || 0), { timeout: 8000 }).toBeGreaterThan(8);
+  await expect.poll(() => stats(page).then((s) => s.fans || 0), { timeout: 8000 }).toBeGreaterThan(50);
+  expect((await stats(page)).sill, "no sillage").toBeUndefined();
   const sizes = await page.evaluate(() => [".pf-index .pf-index-word", ".pf-sources .pf-index-word"].map((s) => parseFloat(getComputedStyle(document.querySelector(s)).fontSize)));
   expect(sizes[0], "the index's word").toBeLessThanOrEqual(36);
   expect(sizes[1], "the sources' word").toBeLessThanOrEqual(26);
@@ -645,4 +656,32 @@ test("the aldehyde's gold and violet, the sillage rising, the buttons smaller, a
   const k = await p2.evaluate(() => { const c = document.querySelector(".pf-live"); return c.width / innerWidth; });
   expect(k, "the live layer at the screen's sharpness at rest").toBeGreaterThan(1.4);
   await ctx.close();
+});
+
+/* 2026-11-11 — "please also change the font top left ... improve the button
+   on the bottom that says return ... rework every part of this page that is
+   not on theme ... play with the colour scheme": the title in a Didone, the
+   colours the night atlas's (the old ones at ?colours=was), and Return the
+   chart drawn small, its word, where it goes and Esc — still going all the
+   way back. */
+test("the title in the Didone, the old colours at ?colours=was, and Return", async ({ page }) => {
+  await page.goto(PAGE + "?colours=was");
+  await atRest(page, "turn");
+  const was = await page.evaluate(() => { const s = getComputedStyle(document.body); return [s.getPropertyValue("--pf-gold").trim(), s.getPropertyValue("--pf-blue").trim()]; });
+  expect(was).toEqual(["rgb(224, 178, 82)", "rgb(185, 160, 232)"]);
+  const font = await page.locator(".pf-title-word").evaluate((el) => getComputedStyle(el).fontFamily);
+  expect(font).toContain("Bodoni Moda");
+  await page.evaluate(() => window.PerfumersChart.choose("perfumer", "aichi-liu"));
+  await atRest(page, "still");
+  const back = page.locator(".pf-back");
+  await expect(back).toBeVisible();
+  await expect(back).toHaveAccessibleName(/Return to the whole chart/);
+  await expect(back.locator("svg.pf-back-mark")).toHaveCount(1);
+  // above the hint, and neither stretched down the stage
+  const [b, h] = await Promise.all([back.boundingBox(), page.locator(".pf-hint").boundingBox()]);
+  expect(b.height).toBeLessThan(70);
+  expect(h.height).toBeLessThan(40);
+  expect(h.y + h.height).toBeLessThanOrEqual(b.y + 1);
+  await back.click();
+  await expect.poll(async () => (await state(page)).chosen.kind).toBeNull();
 });
