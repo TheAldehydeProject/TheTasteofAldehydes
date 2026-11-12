@@ -161,6 +161,9 @@ body.perfumers-page {
 .pf-stage[data-view="turn"] .pf-sway,
 .pf-stage:not([data-view="turn"]) .pf-rotor { display: none; }
 .pf-live { left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+/* (while the chart flies, what the live layer draws is in the flight's own
+   picture, and its canvas is empty — not laid down at all, 2026-11-12) */
+.pf-stage.is-flying .pf-live { visibility: hidden; }
 /* the Earth on the whole chart, a picture of its own (2026-11-06): drawn
    again only as it turns, laid down by the browser every frame */
 .pf-stage canvas.pf-earth { left: 0; top: 0; transform-origin: 0 0; will-change: transform; pointer-events: none; }
@@ -182,6 +185,9 @@ body.perfumers-page {
 .pf-plane { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; }
 .pf-plane canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; backface-visibility: hidden; will-change: transform; }
 .pf-plane canvas[hidden] { display: none; }
+/* the crossfade's old pictures, over the new (2026-11-12) */
+.pf-xfade { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; }
+.pf-xfade canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; backface-visibility: hidden; }
 .pf-stage canvas.pf-earth-close { position: absolute; pointer-events: none; }
 .pf-stage:not(.is-plane) .pf-plane, .pf-stage:not(.is-plane) .pf-earth-close { visibility: hidden; }
 .pf-stage.is-plane .pf-chart, .pf-stage.is-plane .pf-fly, .pf-stage.is-plane .pf-fly-fast { visibility: hidden; }
@@ -2324,6 +2330,6 @@ body.perfumers-page {
   </div>
 </div>
 
-<script src="page.js?v=a2a3f1770e"></script>
+<script src="page.js?v=aad8e8b51d"></script>
 </body>
 </html>

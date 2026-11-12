@@ -803,6 +803,15 @@ const SITE_LINKS = [
         const light = lightOfImage(node, x, y);
         if (light !== null) return light < 115;
       }
+      // A DRAWING THAT SAYS WHERE IT IS DARK (2026-11-11): a canvas paints
+      // no background, so a dark shape drawn on it on a pale page left the
+      // cursor black on black — the Perfumers page's blobs. A canvas may
+      // carry `darkAt(x, y)`, true where what it draws there is dark, false
+      // where it is light, null where it has nothing to say.
+      if (node.tagName === "CANVAS" && typeof node.darkAt === "function") {
+        const said = node.darkAt(x, y);
+        if (said === true || said === false) return said;
+      }
       const found = colourOf(getComputedStyle(node).backgroundColor);
       if (found && found.a > 0.5) {
         return 0.2126 * found.r + 0.7152 * found.g + 0.0722 * found.b < 115;

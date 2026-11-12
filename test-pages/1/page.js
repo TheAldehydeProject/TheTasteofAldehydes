@@ -132,7 +132,7 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
   cvFly.className = "pf-fly";
   swayBox.insertBefore(cvFly, cvChart);
   const fctx = cvFly.getContext("2d");
-  let FLY_K = 1, flying = false;
+  let FLY_K = 1, flying = false, flightT0 = -1e9, movedLast = false;
   // and a coarser one still for the fast middle of a flight (2026-11-11):
   // what moves quickly is not seen in its pixels, and every frame of it is
   // a whole new drawing — it goes back to the finer one as the camera slows
@@ -1732,8 +1732,10 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     chartDirty = false;
     stats.chart++;
     const moving = !!lo;
-    // fast: quicker than about a fifth of the window a second
-    const quick = moving && camSpeed > Math.max(W, H) * 0.22 && FAST_K < Math.min(FLY_K, DPR);
+    // fast: quicker than about a tenth of the window a second (a fifth until
+    // 2026-11-12), or in the flight's first few frames, while the chart turns
+    // from the rotor's picture into its drawing
+    const quick = moving && (camSpeed > Math.max(W, H) * 0.1 || performance.now() - flightT0 < 180) && FAST_K < Math.min(FLY_K, DPR);
     lo = moving && FLY_K < DPR;
     const k = quick ? FAST_K : lo ? FLY_K : DPR, c = quick ? qctx : lo ? fctx : ctx, cv = quick ? cvFast : lo ? cvFly : cvChart;
     if (quick !== fast) { fast = quick; stage.classList.toggle("is-fast", quick); }
@@ -1745,6 +1747,7 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     flyingNow = moving;
     drawScene(true, true);
     setFlying(lo);
+    if (lo) drawLive({ c, k });
   }
   function setFlying(on) {
     if (!on && fast) { fast = false; stage.classList.remove("is-fast"); }
@@ -1775,6 +1778,63 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
   plane.className = "pf-plane";
   plane.setAttribute("aria-hidden", "true");
   stage.insertBefore(plane, swayBox);
+  // THE CROSSFADE (2026-11-12 — "optimize the movement when clickinga house
+  // from the general view. I want you to make it go as smooth as possible"):
+  // close in, a choice that leaves the camera where it is — a house of the
+  // perfumer looked at, a perfume in it — changed the chart's colours over
+  // two thirds of a second by drawing the whole chart again, at its full
+  // sharpness, every frame. Now the chart takes its new colours at once,
+  // drawn once, and what stood on the window before — the plane's tiles, or
+  // the chart's last picture, and the Earth's — fades out over it: the
+  // browser's work alone, a picture's opacity a frame.
+  const XF_MS = 650;
+  const xfBox = document.createElement("div");
+  xfBox.className = "pf-xfade";
+  xfBox.setAttribute("aria-hidden", "true");
+  stage.insertBefore(xfBox, cvLive);
+  let xf = null;
+  const samePose = (a, b) => Math.abs(a.lz - b.lz) < 1e-3 && Math.abs(a.tilt - b.tilt) < 1e-3 && angDist(a.rot, b.rot) < 1e-3 &&
+    Math.abs(a.fx - b.fx) < 0.5 && Math.abs(a.fy - b.fy) < 0.5 && Math.abs(a.cx - b.cx) < 1e-3 && Math.abs(a.cy - b.cy) < 1e-3;
+  function shotOf(src) {
+    const c = document.createElement("canvas");
+    c.width = src.width; c.height = src.height;
+    c.style.cssText = "left:" + src.style.left + ";top:" + src.style.top + ";width:" + src.style.width + ";height:" + src.style.height;
+    c.getContext("2d").drawImage(src, 0, 0);
+    return c;
+  }
+  function endXfade() {
+    if (!xf) return;
+    xfBox.textContent = "";
+    xfBox.style.opacity = swayBox.style.opacity = plane.style.opacity = "";
+    xf = null;
+  }
+  // the old going as the new comes, so the two are never both whole at once
+  function xfadeAt(u) {
+    const k = ease(u);
+    xfBox.style.opacity = (1 - k).toFixed(3);
+    swayBox.style.opacity = plane.style.opacity = k.toFixed(3);
+  }
+  function beginXfade() {
+    endXfade();
+    const t0 = performance.now();
+    if (planeOn) {
+      for (const t of Array.from(tiles.values())) if (t.shown) { xfBox.appendChild(t.cv); tiles.delete(t.id); }
+      if (earthZStep >= EARTH_STEPS.length && earthZKey !== "off" && cvEarthZ.width > 1) xfBox.appendChild(shotOf(cvEarthZ));
+      if (cvDof.classList.contains("is-on")) xfBox.appendChild(shotOf(cvDof));
+      setPlane(false);
+    } else if (viewNow === "still" && !flying) {
+      xfBox.appendChild(shotOf(cvChart));
+      if (cvDof.classList.contains("is-on")) xfBox.appendChild(shotOf(cvDof));
+    } else return false;
+    // the new colours at once, and the Earth already turned
+    for (const e of entries) e.em = e.emTo;
+    emT0 = -1;
+    if (spinTween) { spin = spinTween.to; spinTween = null; }
+    xf = { t0 };
+    xfadeAt(0);
+    stats.xfade = (stats.xfade || 0) + 1;
+    return true;
+  }
   const cvEarthZ = document.createElement("canvas");
   cvEarthZ.className = "pf-earth-close";
   swayBox.insertBefore(cvEarthZ, cvDof);
@@ -2103,12 +2163,27 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     if (e) pulses.push({ e, t0: clock, dur: 1.5 + Math.random() * 1.2 });
     pulseNext = clock + (zoomed() ? 0.5 : 0.28) + Math.random() * 0.55;
   }
-  function drawLive() {
+  // (into: while the chart flies, all of this is drawn into the flight's own
+  // picture, at its sharpness, and the live layer's canvas — the screen's
+  // whole size at its full sharpness — is left empty and hidden, so the
+  // browser lays down one picture a frame and not two; 2026-11-12 — "optimize
+  // the movement when clickinga house from the general view ... optimize
+  // optimize optimize")
+  let liveEmpty = false;
+  function drawLive(into) {
     stats.live++;
-    const c = lctx, k = liveK;
-    c.setTransform(1, 0, 0, 1, 0, 0);
-    c.clearRect(0, 0, cvLive.width, cvLive.height);
-    surface(c, k * M.a, k * M.b, k * M.c, k * M.d, k * M.e, k * M.f, -50, -50, W + 50, H + 50);
+    let c, k;
+    if (into) {
+      c = into.c; k = into.k;
+      surface(c, k, 0, 0, k, k * OV, k * OV, -OV, -OV, W + OV, Math.min(H, VH) + OV);
+      stats.liveInto = (stats.liveInto || 0) + 1;
+    } else {
+      c = lctx; k = liveK;
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      c.clearRect(0, 0, cvLive.width, cvLive.height);
+      liveEmpty = false;
+      surface(c, k * M.a, k * M.b, k * M.c, k * M.d, k * M.e, k * M.f, -50, -50, W + 50, H + 50);
+    }
     viewCam();
     VIS.all = true;
     base();
@@ -2447,6 +2522,8 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     }
     // the camera; at rest on the whole chart, the chart turns
     const moving = !STILL && stepCam(dt);
+    if (moving && !movedLast) flightT0 = now;
+    movedLast = moving;
     if (!moving && !zoomed() && running) {
       goal.rot += SPIN * dt;
       cam.rot = lead.rot = goal.rot;
@@ -2517,13 +2594,21 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
       if (chartDirty) { drawChart(); dofOff(); stillSince = now; }
       if (!dofDone && now - stillSince > 240 && now - lastScrollT > SCROLL_REST + 300) renderDof();
     }
+    if (xf) {
+      const u = clamp((now - xf.t0) / XF_MS, 0, 1);
+      xfadeAt(u);
+      if (u >= 1) endXfade();
+    }
     tendPulses();
     liveRes(now);
-    drawLive();
+    if (flying) {
+      // (its own drawing went into the flight's picture)
+      if (!liveEmpty) { lctx.setTransform(1, 0, 0, 1, 0, 0); lctx.clearRect(0, 0, cvLive.width, cvLive.height); liveEmpty = true; }
+    } else drawLive();
 
     calm = !settling && !hover && !callWait && !down && !STILL;
     const idle = running && card.hidden && !menuOpen;
-    if (settling || idle || callWait || swayAmt > 0 && running || (v === "still" && !dofDone)) kick();
+    if (settling || idle || callWait || xf || swayAmt > 0 && running || (v === "still" && !dofDone)) kick();
     else last = 0;
   }
 
@@ -2733,6 +2818,8 @@ const LEDGER_SNAPSHOT = {"perfumers":[{"id":"nicholas-nilsson","name":"Nicholas 
     rotorDirty = chartDirty = true;
     hover = null; hideTip(); handHover = false; stage.classList.remove("is-over");
     setGoal(poseFor());
+    if (!STILL && sel.kind && zoomed() && viewNow !== "turn" && samePose(goal, cam)) beginXfade();
+    else endXfade();
     showChosen();
     syncScrub();
     if (sel.kind && window.scrollY > 1) window.scrollTo({ top: 0, behavior: STILL ? "auto" : "smooth" });

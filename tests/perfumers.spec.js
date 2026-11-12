@@ -315,6 +315,13 @@ test("Learn More glides all the way up and Back up all the way back; ‹ › sli
   await expect.poll(() => page.evaluate(() => Math.round(document.querySelector(".pw-more").getBoundingClientRect().top)), { timeout: 3000 }).toBe(0);
   await expect(page.locator(".pw-more-close")).toHaveText(/^Back up/);
   await expect(page.locator("[data-v=more-name]")).toHaveText("Antoine Lie");
+  // frosted glass (2026-11-11 — "let the page with information about the
+  // perfumers be like a semi-translucent page; and it blurs out everything in
+  // the background"): the World seen through it, out of focus
+  const glass = await page.locator(".pw-more").evaluate((el) => { const s = getComputedStyle(el); return { bg: s.backgroundColor, blur: s.backdropFilter || s.webkitBackdropFilter }; });
+  const alpha = +((glass.bg.match(/[\d.]+/g) || [])[3] || 1);
+  expect(alpha, "the sheet lets the World through").toBeLessThan(0.8);
+  expect(glass.blur).toContain("blur");
   await expect(page.locator(".pw-more-sources li")).not.toHaveCount(0);
   // a perfume written about on the site is the way to it
   await expect(page.locator(".pw-more-made a").first()).toHaveAttribute("href", /^\.\.\/houses\/les-abstraits\.html#part-\d\d$/);
@@ -386,6 +393,28 @@ test("the noise is an overlay round the blobs, and the hand in it lifts the page
   expect(anim).toContain("pw-grain-flick");
   expect(errors).toEqual([]);
 });
+
+/* The cursor over the World's dark blobs (2026-11-11 — "make sure the
+   cursor is white when hovering black things in this page too"): the
+   drawing tells the site's cursor where it is dark, and over the middle
+   blob the cursor is light; over the paper, dark. */
+test("the cursor is light over the World's blobs and dark over its paper", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto(PAGE + "#prin-lomros");
+  await expect.poll(() => W(page, "view"), { timeout: 15000 }).toBe("world");
+  await page.waitForTimeout(800);
+  const said = await page.evaluate(() => { const c = document.querySelector(".pw-scene"); return [c.darkAt(innerWidth / 2, innerHeight / 2), c.darkAt(innerWidth - 40, innerHeight - 40)]; });
+  expect(said).toEqual([true, null]);
+  const c = await page.evaluate(() => ({ x: innerWidth / 2, y: innerHeight / 2 }));
+  await page.mouse.move(c.x + 9, c.y + 9);
+  await page.mouse.move(c.x, c.y);
+  await expect(page.locator(".cursor-ring")).toHaveClass(/on-dark/);
+  await page.mouse.move(innerWidthOf(c) - 60, c.y * 2 - 140);
+  await page.mouse.move(innerWidthOf(c) - 70, c.y * 2 - 150);
+  await expect(page.locator(".cursor-ring")).not.toHaveClass(/on-dark/);
+  expect(errors).toEqual([]);
+});
+const innerWidthOf = (c) => c.x * 2;
 
 /* The search, as on the test page: a perfumer, a house or a perfume. */
 test("the search takes you to a perfumer, a house, or a perfume's perfumer with its house lit", async ({ page }) => {

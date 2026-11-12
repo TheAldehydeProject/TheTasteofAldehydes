@@ -157,6 +157,47 @@ night atlas**: a warm black, parchment, brass for the individual fragrances, ver
 house perfumes on the site, madder for Prin Lomros', the Earth warmed with them — the old ones (the
 aldehyde's gold and violet, rose, a cold black) at `?colours=was`.
 
+## 2026-11-12 — the sheet of glass, the cursor over the blobs, the poster's flight into a house
+
+The owner: "when you scroll, i want the background to appear when you scroll to the lower parts, i
+want it to be visible. let the page with information about the perfumers be like a semi-translucent
+page; and it blurs out everything in the background. also make sure the cursor is white when
+hovering black things in this page too. also for the TP1, i want you to actually optimize the
+movement when clickinga house from the general view. I want you to make it go as smooth as possible.
+optimize optimize optimize."
+
+**The sheet, frosted glass.** Learn More's sheet is the World's paper at three fifths and a blur of
+26 pixels over whatever is behind it (`backdrop-filter`), so the World — drawn on a canvas fixed to
+the window, and never stopped while the sheet is up — goes on moving behind it, out of focus,
+however far down it is read.
+
+**The cursor over the blobs.** The site's cursor reads the colour under it — a background, a
+picture — and a canvas has neither, so over the World's dark blobs on its pale paper it stayed
+black. Since this round **a canvas can say where it is dark**: `canvas.darkAt(x, y)`, true, false or
+null, asked by `nav.js`'s `isDarkAt` like a picture is read. The World records every blob it draws
+each frame and answers from their own field (`seen`, `seenBlob`, `darkAt` in the script): inside one,
+dark; elsewhere, nothing to say, and the paper answers.
+
+**The poster's flight, smoother.** Measured, the page's own scripts were a seventh of the browser's
+work in a flight; the rest was laying down large pictures. Three things:
+
+- **One picture a frame while it flies**: the live layer — the dust, the lights, what the hand is on —
+  is drawn into the flight's own picture at its sharpness, and the live layer's own canvas (the
+  window's whole size at the screen's full sharpness) stands empty and hidden until the camera
+  lands (`drawLive(into)`, `liveEmpty`). Half of all frames of the flight from the whole chart into
+  Nicholas Nilsson now come in a sixtieth of a second (they took a thirtieth).
+- **The lighter picture for more of it**: the half-sharp flight canvas from a tenth of the window a
+  second (a fifth until now), and for the first frames of every flight, while the chart turns from
+  the rotor's picture into its drawing (`flightT0`).
+- **A house close in is a crossfade** (`beginXfade`, `XF_MS`): the camera does not move when a house of
+  the perfumer it looks at is chosen — the chart only changes its colours — and those colours were
+  faded by drawing the whole chart again, at its full sharpness, every frame for two thirds of a
+  second (seventeen drawings of seven million pixels). Now the chart takes its new colours at once,
+  drawn once, and what stood on the window — the plane's tiles, the Earth's picture, the out-of-focus
+  copy, or the chart's last picture — is moved into a box over it (`.pf-xfade`) and fades out as the
+  new one fades in: a picture's opacity a frame. Any choice close in that leaves the camera where it
+  is fades so — a perfume, a house, going back up.
+
 ## Why / key decisions
 
 - **The swap is the pages whole, not their links** — the owner's choice. So the new Perfumers page is
@@ -198,11 +239,12 @@ never the middle, nothing written; blue ahead of the rest as a world opens, and 
 middle of an opening or a change; Learn More gliding, not jumping, to exactly the top, *Back up*, the
 perfumes linked; › sliding; the lens and the softer grain; the search; the index without the script;
 a phone; and with `?gl=on`, the noise an overlay round the blobs, the hand in it lifting the page's
-grain and its flicker. `npm test -- tests/poster.spec.js` — the poster at `/test-pages/1/`, and its plane: close in
+grain and its flicker; the sheet frosted glass; the cursor light over a blob and dark over the paper. `npm test -- tests/poster.spec.js` — the poster at `/test-pages/1/`, and its plane: close in
 on Prin Lomros it stands on tiles in perspective, and the wheel draws nothing of the chart again;
 the scrubber naming a span, not a perfume; the lines from the countries and no sillage; the night
 atlas's colours, the old at `?colours=was`; the title in the Didone; Return placed above the hint
-and going all the way back.
+and going all the way back; a house chosen close in a crossfade, the chart drawn once; the live
+layer drawn into the flight's picture, its canvas hidden while the chart flies.
 
 ## Known issues / TODO
 
@@ -216,6 +258,10 @@ and going all the way back.
 - **The noise lives on the graphics card alone**: on the processor's way (a machine with no card,
   or `?gl=off`) the blobs are drawn as they were, with the page's grain only. The tests reach the
   card's way with `?gl=on`, drawn in software, slowly — they say it works, not how it looks.
+- **The tests' browser cannot say how smooth it is on a real screen**: it has no graphics card, so
+  laying down the close look's forty tiles in perspective takes it about 66 ms a frame even at rest.
+  What it can say is what the page asks of the browser — one picture drawn for a house chosen close
+  in instead of seventeen, one large picture a frame in flight instead of two.
 - The headless browser the tests run in has no graphics card, so it cannot say how many frames a
   second the plane makes on a real screen; what it can say is that the page's own work a frame of
   scrolling fell from about 21 ms to about 5.

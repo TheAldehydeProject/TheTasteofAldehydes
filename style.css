@@ -14331,7 +14331,11 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   .worlds-page .pw-more-open:hover, .worlds-page .pw-more-open:focus-visible, .worlds-page .pw-more-open[aria-expanded="true"] { border-color: var(--ink); background: rgba(250, 251, 250, 0.9); }
   .worlds-page .pw-more-open[hidden] { display: none; }
   body.worlds-page.is-more { overflow-y: auto; }
-  .worlds-page .pw-more { position: relative; z-index: 5; margin-top: 100vh; min-height: 100vh; background: var(--ground); border-top: 3px solid #2a1d22; box-shadow: 0 -30px 60px rgba(40, 45, 50, 0.12); }
+  /* the sheet a pane of frosted glass (2026-11-11 — "let the page with
+     information about the perfumers be like a semi-translucent page; and it
+     blurs out everything in the background"): the World goes on behind it,
+     out of focus, however far down it is read */
+  .worlds-page .pw-more { position: relative; z-index: 5; margin-top: 100vh; min-height: 100vh; background: rgba(230, 234, 231, 0.6); -webkit-backdrop-filter: blur(26px) saturate(1.12); backdrop-filter: blur(26px) saturate(1.12); border-top: 3px solid #2a1d22; box-shadow: 0 -30px 60px rgba(40, 45, 50, 0.1); }
   .worlds-page .pw-more[hidden] { display: none; }
   .worlds-page .pw-more-in { max-width: 760px; margin: 0 auto; padding: 46px 48px 90px; color: #2c2e33; animation: pw-up 0.9s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes pw-up { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }

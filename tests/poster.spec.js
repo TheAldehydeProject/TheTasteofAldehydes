@@ -687,3 +687,37 @@ test("the title in the Didone, the old colours at ?colours=was, and Return", asy
   await back.click();
   await expect.poll(async () => (await state(page)).chosen.kind).toBeNull();
 });
+
+/* 2026-11-12 — "optimize the movement when clickinga house from the general
+   view. I want you to make it go as smooth as possible": close in, a house
+   chosen where the camera already looks takes its colours at once and the
+   old picture fades out over it — the chart drawn once, not every frame of
+   a fade; and while the chart flies in from the whole chart, the live
+   layer's drawing goes into the flight's own picture and its canvas stands
+   empty, hidden. */
+test("a house chosen close in is a crossfade, and a flight draws one picture a frame", async ({ page }) => {
+  await page.goto(PAGE);
+  await atRest(page, "turn");
+  // the flight in: the live layer drawn into the flight's picture
+  const p = await page.evaluate(() => window.PerfumersChart.pointOf("nicholas-nilsson"));
+  await page.mouse.click(p.x, p.y);
+  await expect.poll(async () => (await state(page)).flying).toBe(true);
+  await expect(page.locator(".pf-live")).toBeHidden();
+  await atRest(page, "still");
+  expect((await stats(page)).liveInto || 0, "the live layer drawn into the flight").toBeGreaterThan(0);
+  await expect(page.locator(".pf-live")).toBeVisible();
+  // the house, where the camera already looks
+  await expect.poll(() => page.evaluate(() => window.PerfumersChart.plane().on), { timeout: 15000 }).toBe(true);
+  const before = await stats(page);
+  const cam = (await state(page)).cam;
+  const h = await page.evaluate(() => window.PerfumersChart.pointOf("nicholas-nilsson", "pineward"));
+  await page.mouse.click(h.x, h.y);
+  await expect.poll(async () => (await state(page)).chosen.hid).toBe("pineward");
+  const s = await stats(page);
+  expect(s.xfade, "a crossfade").toBe((before.xfade || 0) + 1);
+  expect((await state(page)).cam.rot).toBeCloseTo(cam.rot, 4);
+  await page.waitForTimeout(800);
+  expect((await stats(page)).chart - before.chart, "the chart drawn once, not every frame").toBeLessThanOrEqual(2);
+  await expect.poll(() => page.evaluate(() => window.PerfumersChart.plane().on), { timeout: 15000 }).toBe(true);
+  expect(await page.locator(".pf-xfade canvas").count(), "the old pictures gone").toBe(0);
+});

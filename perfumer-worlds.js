@@ -600,6 +600,24 @@
     return [{ x: 0, y: 0, r: 0.86 }, { x: (R() - 0.5) * 0.22, y: (R() - 0.5) * 0.22, r: 0.5 + R() * 0.12 }];
   }
   const sizeOf = (r) => (r * 2 * EXT) / 1.1;
+  // WHERE THE BLOBS ARE DARK, for the cursor (2026-11-11 — "make sure the
+  // cursor is white when hovering black things in this page too"): every
+  // blob drawn this frame, where and how big, and the site's cursor asks
+  // the drawing (`darkAt` on its canvas, read by nav.js) whether the point
+  // under it is inside one — its own field, as the drawing works it out
+  const seen = [];
+  function seenBlob(lobes, x, y, s, alpha) { if (lobes && alpha > 0.4) seen.push({ lobes, x, y, s }); }
+  function darkAt(px, py) {
+    if (view !== "world" || TR.kind === "open" || TR.kind === "close") return null;
+    for (const o of seen) {
+      const h = o.s / 2, ux = ((px - o.x) / h) * EXT, uy = ((py - o.y) / h) * EXT;
+      if (Math.abs(ux) > EXT || Math.abs(uy) > EXT) continue;
+      let f = 0;
+      for (const L of o.lobes) { const q = ((ux - L.x) * (ux - L.x) + (uy - L.y) * (uy - L.y)) / (L.r * L.r); if (q < 6) f += Math.exp(1 - q); }
+      if (f > 0.95) return true;
+    }
+    return null;
+  }
   function paintSphere(b) {
     // the perfumes no source credits are no blob: a hexagon drawn as a line,
     // through the lens, every frame (drawHexLens)
@@ -674,6 +692,7 @@
   const deepOf = (kind) => (kind === "house" ? LENS_INK : LENS_DEEP);
   function drawCur(c, w, x, y, r, t, alpha, boost) {
     if (alpha <= 0.003) return;
+    seenBlob(w.lobes, x, y, sizeOf(r), alpha);
     if (useGL) {
       // every frame, its lobes where they have drifted to
       driftLobes(w.lobes, t);
@@ -703,6 +722,7 @@
     if (!tr.paint) { tr.paint = document.createElement("canvas"); tr.tick = -1; }
     const e = ease(g);
     const x = lerp(tr.x0, tr.x1, e), y = lerp(tr.y0, tr.y1, e), r = lerp(tr.r0, tr.r1, e);
+    seenBlob(g < 0.5 ? tr.from : tr.to, x, y, sizeOf(r), alpha);
     if (useGL) {
       if (tr.liveTo) driftLobes(tr.to, t);
       if (tr.liveFrom) driftLobes(tr.from, t);
@@ -1874,6 +1894,7 @@
     // they are drawn, and what is drawn over them after it
     if (useGL && GLB.lost()) glLost();
     frameDt = dt;
+    seen.length = 0;
     const later = [];
     if (useGL) {
       GLB.begin(c.canvas.width, c.canvas.height, sc, STILL ? 0 : t);
@@ -1958,6 +1979,7 @@
   // a sphere where it stands: its picture, or the hexagon of the perfumes no
   // source credits
   function sphereAt(c, b, x, y, s, alpha, t, later) {
+    if (!b.img.hex) seenBlob(b.lobes, x, y, s, alpha);
     if (b.img.hex) {
       const f = () => drawHexLens(c, x, y, b.r * 0.92 * (s / b.img.s), alpha, t, 0.9, 0.05);
       if (useGL) later.push(f); else f();
@@ -2162,6 +2184,8 @@
     el(".pw-grain").style.backgroundImage = "url(" + g.toDataURL() + ")";
   })();
 
+  // the site's cursor asks the drawing where it is dark (nav.js, isDarkAt)
+  cv.darkAt = darkAt;
 
   // ---- BEGIN -----------------------------------------------------------------
   // the world is not laid before the strings have begun (2026-11-07 — "make
