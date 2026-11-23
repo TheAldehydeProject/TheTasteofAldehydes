@@ -264,6 +264,79 @@ the mask's box drawn exactly to its edge, which left a faint rectangle on the st
 small mask was read against what lay outside it as it was enlarged — it is made a little past the
 box now.
 
+### Later the same day — smoother, twice over, with diagnostics between
+
+The owner: "better with the graduality of the elements, but i want you you make it smoother. try to
+smooth it out as best as you can, then run diagnostics, and then smooth it out more then
+diagnostis again".
+
+**The diagnostics** (kept in the session's scratch folder, not in the repository — they drive the
+page from outside):
+
+- *Performance*, on the real clock, with Chrome's own trace: every frame's interval while a world
+  opens, the slowest, the longest task and what it was made of, and the main thread's time on
+  script, style, layout and paint — at 1440 × 900, twice the screen's pixels, for Prin Lomros and
+  Aichi Liu, twice each.
+- *Smoothness*, on the page's own clock — `performance.now` and the frames' time replaced, moved on
+  16 milliseconds once a frame however many loops the page runs, and held for a look at each frame:
+  how far the edge moved and how much its speed changed, every part's opacity and place, the Menu's,
+  the page name's and ‹ ›'s colours, the search's place, the grain, and how much of the picture
+  changed since the frame before (a pop is a frame that changes far more than those either side).
+  Two traps found on the way: a clock moved on 16 milliseconds a *callback* ran three times fast in
+  uneven jumps; and the grain's strength is kept in 255 steps, each shifting the whole screen a
+  fraction of a level as it fades, so the picture is measured with the grain hidden and the grain
+  read on its own.
+
+**Round 1.**
+
+- **The mixing only where the ring is** (`TILE`): the screen looked at in squares — inside all three
+  discs, the world as it is; outside all three, the strings as they are; only the squares the ring
+  crosses mixed. The mixing had been nine tenths of a frame, done over the whole box the discs
+  reach. Each draw is clipped to its squares, never cut into them (cut, the soft mask reads
+  differently either side and the squares show), and the world's picture is changed before it is
+  drawn from, never between (each change between copies it whole). Pixel for pixel the same as
+  before, compared frame by frame.
+- **The discs' curve** leaves rest as it arrives at it (`discCurve`, x²(6 − 8x + 3x²)): the one
+  before set off at a third of its speed at once — the edge went 0, 1.1, 4.4 pixels a frame.
+  **The opening a little longer**, 2.1 → 2.4 seconds.
+- **Each part** over 0.9 of a second on a curve still at both ends (`soft`), rising on one that slows
+  as it arrives; the rows and readings a little further apart.
+- **The chrome** over 0.7 of a second, setting off a little before the edge reaches it
+  (`RV_EARLY`), half way as the ring passes under it; **the search slides by a transform**, not laid
+  out again every frame.
+- **The grain** lifted by a world opening eased in and out (`NZ.mv`) — it rose by a third at once and
+  dropped as suddenly when it ended (the graphics card's way only).
+
+**Round 2.**
+
+- **The first frame after the press**: every other perfumer's strings stood back up to their rest
+  brightness for a frame before fading, and the block pressed let go of its light in a sixtieth of a
+  second; now the rest stay as dim as they were and the one pressed keeps its light, and both go with
+  the strings.
+- **The hand's label fades out** over a quarter of a second as a world opens (`showTip(null, true)`,
+  `.pw-tip.is-going`); it was gone the frame the block was pressed.
+- **The point swells as the dots come**, by how far each has come, not how many have (three dots,
+  three steps).
+- Each part over 1.1 seconds, the chrome over 0.85; the squares 32 pixels (64 and 24 measured the
+  same or slower); the grain's half-way change back to straight with the disc (it measured gentler).
+
+**What the diagnostics said** (Prin Lomros; before → round 1 → round 2):
+
+| | before | round 1 | round 2 |
+|---|---|---|---|
+| the edge's biggest change of speed in one frame | 3.3 px | 0.9 px | 0.9 px |
+| a part's biggest change in one frame | 0.037 | 0.034 | 0.028 |
+| the Menu's colour, biggest change in one frame (of 255) | 10.4 | 8.9 | 7.5 |
+| the search, biggest move in one frame | 6.0 px | 5.2 px | 4.3 px |
+| the worst frame against its neighbours (grain hidden) | — | 1.2 × (the first frame) | 1.2 × (none stands out) |
+| the slowest frame (test browser) | 183–217 ms | 141–150 ms | 117–125 ms |
+| the longest task | 170–197 ms | 110–125 ms | 105–115 ms |
+| full layouts while it opens | 11 | 7 | 8 |
+
+The test browser draws in software, so its frames are far slower than a laptop's — half of every
+frame there is the canvas being copied out to the screen, which a graphics card does not do; the
+numbers are for comparing one round with the next, not for what is seen.
+
 ## Why / key decisions
 
 - **The swap is the pages whole, not their links** — the owner's choice. So the new Perfumers page is

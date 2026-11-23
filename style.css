@@ -14426,6 +14426,9 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   .worlds-page .pw-tip[hidden] { display: none; }
   .worlds-page .pw-tip:not([hidden]) { animation: pw-tip-in 0.22s ease both; }
   @keyframes pw-tip-in { from { opacity: 0; } to { opacity: 1; } }
+  /* and out, when a world opens under it (2026-11-23) */
+  .worlds-page .pw-tip.is-going { animation: pw-tip-out 0.24s ease both; }
+  @keyframes pw-tip-out { from { opacity: 1; } to { opacity: 0; } }
   .worlds-page .pw-tip b { display: block; font: 600 13px var(--sans); color: var(--ink); }
   body.worlds-page.is-rays .pw-tip b { color: #fff; }
   .worlds-page .pw-tip span { display: block; margin: 2px 0 3px; font: 400 10px var(--mono); color: var(--muted); }
@@ -14551,7 +14554,8 @@ body.worlds-page.is-revealing .pw-ways button, body.worlds-page.is-revealing .pw
   border-color: color-mix(in srgb, rgba(28, 29, 34, 0.25) calc(var(--k, 0) * 100%), rgba(255, 255, 255, 0.28));
 }
 @media (min-width: 761px) {
-  body.worlds-page.is-revealing .pw-find { right: calc(48px + 120px * var(--k, 0)); top: calc(24px + 2px * var(--k, 0)); }
+  /* moved by a transform, not laid out again every frame (2026-11-23, later) */
+  body.worlds-page.is-revealing .pw-find { right: 48px; top: 24px; translate: calc(-120px * var(--k, 0)) calc(2px * var(--k, 0)); }
 }
 @media (max-width: 760px) {
   body.worlds-page.is-revealing .pw-find input { background: color-mix(in srgb, rgba(250, 251, 250, 0.85) calc(var(--k, 0) * 100%), rgba(10, 10, 12, 0.7)); }

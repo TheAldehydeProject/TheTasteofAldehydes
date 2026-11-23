@@ -1145,14 +1145,14 @@
   //            point, the world coming apart into its colours, and the
   //            strings fall from taut to slack with a bounce
   const TR = { kind: null, t0: 0, ms: 0, from: null, chosen: null, cameFrom: null, litT: 0 };
-  const OPEN_MS = 2100, DISC_FROM = 0.2, CLOSE_MS = 1450, CHANGE_MS = 1300, SLIDE_MS = 1150;
+  const OPEN_MS = 2400, DISC_FROM = 0.2, CLOSE_MS = 1450, CHANGE_MS = 1300, SLIDE_MS = 1150;
   let lastPer = null;                 // the perfumer last in the middle, for ‹ ›
   function busy() { return TR.kind !== null; }
   function openWorld(w, quick) {
     if (busy()) return;
     revealFinish();
     layLater();
-    showTip(null); overBlock = null;
+    showTip(null, true); overBlock = null;
     cur = w; if (w.kind === "per") lastPer = w.p;
     stick = null; aim = null;
     layWorld(); writeHud(); writeList();
@@ -1195,15 +1195,19 @@
   // disc closes back over it.
   let openEdge = null;                // green's disc, while one is open
   const RV = { parts: [], chrome: [], dawn: -1, g: -1, tail: false };
-  const RV_PAST = 14, RV_DUR = 650, RV_DUR_CHROME = 480, RV_RISE = 8;
+  // (later the same day — "smooth it out as best as you can": each part over
+  // longer and on a curve still at both ends, the chrome setting off a little
+  // before the edge reaches it, so it is half way as the ring passes under it)
+  const RV_PAST = 14, RV_DUR = 1100, RV_DUR_CHROME = 850, RV_EARLY = 90, RV_RISE = 8;
+  const rise = (x) => { x = clamp(x, 0, 1); return 1 - Math.pow(1 - x, 3); };
   function revealParts() {
     RV.parts.length = 0; RV.chrome.length = 0;
     const at = (e) => { const r = e.getBoundingClientRect(); return r.width || r.height ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null; };
-    const add = (list, e, lag, dur) => { const p = e && at(e); if (p) list.push({ e, x: p.x, y: p.y, k: -1, t: -1, lag, dur }); };
-    [".pw-head", ".pw-list-head", ".pw-list-how", ".pw-nf", ".pw-return", ".pw-more-open"].forEach((s) => add(RV.parts, el(s), 0, RV_DUR));
-    document.querySelectorAll(".pw-read").forEach((e, i) => add(RV.parts, e, i * 90, RV_DUR));
-    document.querySelectorAll(".pw-list-rows li").forEach((e, i) => add(RV.parts, e, 60 + Math.min(i, 14) * 45, RV_DUR));
-    [".menu-trigger", ".page-where", ".pw-find", ".pw-ways"].forEach((s) => add(RV.chrome, el(s), 0, RV_DUR_CHROME));
+    const add = (list, e, lag, dur, ahead) => { const p = e && at(e); if (p) list.push({ e, x: p.x, y: p.y, k: -1, u: 0, t: -1, lag, dur, ahead }); };
+    [".pw-head", ".pw-list-head", ".pw-list-how", ".pw-nf", ".pw-return", ".pw-more-open"].forEach((s) => add(RV.parts, el(s), 0, RV_DUR, -RV_PAST));
+    document.querySelectorAll(".pw-read").forEach((e, i) => add(RV.parts, e, i * 110, RV_DUR, -RV_PAST));
+    document.querySelectorAll(".pw-list-rows li").forEach((e, i) => add(RV.parts, e, 70 + Math.min(i, 14) * 55, RV_DUR, -RV_PAST));
+    [".menu-trigger", ".page-where", ".pw-find", ".pw-ways"].forEach((s) => add(RV.chrome, el(s), 0, RV_DUR_CHROME, RV_EARLY));
   }
   // each part's share of the way: from when the disc reached it (or as the
   // disc closes back over it; or all of them at `force`, 0 or 1)
@@ -1211,21 +1215,23 @@
     const closing = TR.kind === "close";
     const kOf = (p) => {
       if (force >= 0) return force;
-      if (closing) return Math.min(p.k < 0 ? 1 : p.k, d ? smooth((d.r - Math.hypot(p.x - d.x, p.y - d.y) + 20) / 170) : 0);
-      if (p.t < 0 && (!d || d.r >= Math.hypot(p.x - d.x, p.y - d.y) + RV_PAST)) p.t = now + p.lag;
-      return p.t < 0 ? 0 : smooth((now - p.t) / p.dur);
+      if (closing) return Math.min(p.k < 0 ? 1 : p.k, d ? soft((d.r - Math.hypot(p.x - d.x, p.y - d.y) + 20) / 170) : 0);
+      if (p.t < 0 && (!d || d.r >= Math.hypot(p.x - d.x, p.y - d.y) - p.ahead)) p.t = now + p.lag;
+      p.u = p.t < 0 ? 0 : clamp((now - p.t) / p.dur, 0, 1);
+      return soft(p.u);
     };
     for (const p of RV.parts) {
       const k = kOf(p);
-      if (Math.abs(k - p.k) < 0.003 && k > 0 && k < 1) continue;
+      if (Math.abs(k - p.k) < 0.002 && k > 0 && k < 1) continue;
       if (k === p.k) continue;
       p.k = k;
       p.e.style.opacity = k.toFixed(3);
-      p.e.style.translate = "0 " + ((1 - k) * RV_RISE).toFixed(2) + "px";
+      // rising as it comes, slowing as it arrives (closing, as it goes)
+      p.e.style.translate = "0 " + ((1 - (closing ? k : rise(p.u))) * RV_RISE).toFixed(2) + "px";
     }
     for (const p of RV.chrome) {
       const k = kOf(p);
-      if (Math.abs(k - p.k) < 0.003 && k > 0 && k < 1) continue;
+      if (Math.abs(k - p.k) < 0.002 && k > 0 && k < 1) continue;
       if (k === p.k) continue;
       p.k = k; p.e.style.setProperty("--k", k.toFixed(3));
     }
@@ -1519,8 +1525,17 @@
     if (py + th > H - 10) py = y - th - 14;
     tip.style.transform = "translate(" + Math.round(Math.max(8, px)) + "px," + Math.round(Math.max(8, py)) + "px)";
   }
-  function showTip(h) {
-    if (!h) { tip.hidden = true; return; }
+  // (`fade`: let go over a quarter of a second — a world opening, 2026-11-23 —
+  // rather than gone the frame the block is pressed)
+  let tipGoing = 0;
+  function showTip(h, fade) {
+    if (!h) {
+      if (fade && !STILL && !tip.hidden) {
+        if (!tipGoing) { tip.classList.add("is-going"); tipGoing = setTimeout(() => { tipGoing = 0; tip.hidden = true; tip.classList.remove("is-going"); }, 240); }
+      } else { clearTimeout(tipGoing); tipGoing = 0; tip.classList.remove("is-going"); tip.hidden = true; }
+      return;
+    }
+    clearTimeout(tipGoing); tipGoing = 0; tip.classList.remove("is-going");
     tip.innerHTML = h.html;
     tip.hidden = false;
     placeTip(h.x, h.y);
@@ -1791,13 +1806,18 @@
     RS.intro = STILL ? 1 : clamp((now - mapT0) / RAYS_IN, 0, 1);
     stepStrings(dt, now, t, pullOf);
     const f = 1 - Math.exp(-dt * 16);
+    // the block pressed keeps its light while its world opens, and the rest
+    // stay as dim as they were — both go with the strings (2026-11-23: they
+    // let go in a sixtieth of a second as it was pressed)
+    const opening = TR.kind === "open";
     for (const b of map.blocks) {
       let g = overBlock === b && !busy() ? 1 : 0;
+      if (opening && TR.chosen && TR.chosen.has(b.dots[0])) g = b.g;
       // the perfumer the world closed on, lit a moment on the way back
       if (TR.cameFrom === b) g = Math.max(g, TR.kind === "close" ? 1 : 1 - clamp((now - TR.litT) / 1600, 0, 1));
       b.g += (g - b.g) * f;
     }
-    RS.dim += ((overBlock && !busy() ? 1 : 0) - RS.dim) * f;
+    if (!opening) RS.dim += ((overBlock && !busy() ? 1 : 0) - RS.dim) * f;
     RS.open = TR.kind === "open" ? clamp((now - TR.t0) / TR.ms, 0, 1) : -1;
     // the lens coming apart as the opening gathers, together as the strings come back
     RS.lens = (phone ? 1.1 : 1.6) * (RS.open >= 0 ? 1 + 2.8 * smooth(RS.open / DISC_FROM) : TR.kind === "close" ? 1 + 2.4 * (1 - smooth((now - TR.t0) / TR.ms)) : 1);
@@ -1817,7 +1837,8 @@
     // every block's strings at its own strength: lit, dimmed, or falling away
     for (const b of map.blocks) {
       let a = (0.22 + 0.63 * b.g) * (1 - 0.6 * RS.dim * (1 - b.g));
-      if (open >= 0) a = 0.22 * (1 - 0.8 * gone);
+      // (as they were, going: they stood back up to their rest a frame first)
+      if (open >= 0) a *= 1 - 0.8 * gone;
       if (a < 0.01) continue;
       x.globalAlpha = a; x.lineWidth = 0.65 + 0.45 * b.g;
       x.beginPath();
@@ -1848,7 +1869,10 @@
       for (const d of TR.chosen) {
         n++;
         const q = ease(clamp(open / (DISC_FROM * 0.95) * 1.15 - d.ph * 0.15, 0, 1));
-        if (q >= 1) { arrived++; continue; }
+        // (how far each has come, not how many have: with three dots the point
+        // swelled in three steps — 2026-11-23)
+        arrived += q;
+        if (q >= 1) continue;
         x.globalAlpha = 0.9;
         x.beginPath(); tracePart(x, d.s, q, 1); x.stroke();
         const [px, py] = along(d.s, q);
@@ -1941,7 +1965,7 @@
   // fast the hand goes; and whether a world is opening or changing. They
   // swell the overlay round the hand, quicken it, and lift the page's own
   // grain with it (--grain-lift on .pw-grain).
-  const NZ = { over: 0, stir: 0, level: 1, hx: -1, hy: -1, lift: 1, shown: 1, grains: 0 };
+  const NZ = { over: 0, stir: 0, level: 1, hx: -1, hy: -1, lift: 1, shown: 1, grains: 0, mv: 0 };
   const grainEl = el(".pw-grain");
   function noiseFrame(dt) {
     const inN = hand.on && !STILL ? GLB.noiseAt(hand.x, hand.y) : 0;
@@ -1949,9 +1973,11 @@
     const sp = hand.on && NZ.hx >= 0 ? Math.hypot(hand.x - NZ.hx, hand.y - NZ.hy) / Math.max(dt, 0.008) : 0;
     NZ.hx = hand.on ? hand.x : -1; NZ.hy = hand.on ? hand.y : -1;
     NZ.stir += (clamp(sp / 1500, 0, 1) * (0.3 + 0.7 * NZ.over) - NZ.stir) * (1 - Math.exp(-dt * 2.6));
-    const moving = TR.kind ? 1 : 0;
-    NZ.level += (1 + 0.4 * moving + 0.35 * NZ.stir - NZ.level) * (1 - Math.exp(-dt * 1.6));
-    NZ.lift = 1 + 1.1 * NZ.over + 0.5 * NZ.stir + 0.3 * moving;
+    // a world opening or changing, eased in and out (it lifted the grain by
+    // a third at once, and dropped it as suddenly when it ended)
+    NZ.mv += ((TR.kind ? 1 : 0) - NZ.mv) * (1 - Math.exp(-dt * 2.2));
+    NZ.level += (1 + 0.4 * NZ.mv + 0.35 * NZ.stir - NZ.level) * (1 - Math.exp(-dt * 1.6));
+    NZ.lift = 1 + 1.1 * NZ.over + 0.5 * NZ.stir + 0.3 * NZ.mv;
     if (Math.abs(NZ.lift - NZ.shown) > 0.03) { NZ.shown = NZ.lift; grainEl.style.setProperty("--grain-lift", NZ.lift.toFixed(2)); }
     return { hx: hand.x, hy: hand.y, hr: 160, hand: NZ.over, level: NZ.level, stir: NZ.stir, t: performance.now() / 1000 };
   }
@@ -2149,8 +2175,11 @@
   const LAG = [0.024, 0.012, 0];
   // as far as the farthest corner, and the feather and the throw past it
   const farthest = () => Math.max(Math.hypot(map.hub.x, map.hub.y), Math.hypot(W - map.hub.x, map.hub.y), Math.hypot(map.hub.x, H - map.hub.y), Math.hypot(W - map.hub.x, H - map.hub.y));
-  // the discs' curve: at rest at both ends, quickest a little before half way
-  const discCurve = (x) => { x = clamp(x, 0, 1); return 1 - Math.pow(1 - Math.pow(x, 1.45), 2.3); };
+  // the discs' curve: at rest at both ends, quickest a third of the way —
+  // and leaving rest as it arrives at it, gathering speed evenly (2026-11-23,
+  // later — "make it smoother": the curve before set off with a jolt, at
+  // once a third of its speed, x^1.45 being steep at nothing)
+  const discCurve = (x) => { x = clamp(x, 0, 1); return x * x * (6 - 8 * x + 3 * x * x); };
   function disc(c, v) {
     const R = v * (farthest() * 1.12 + 70), o = (4 + R * 0.025) * Math.sin(Math.PI * Math.min(1, v * 1.1)) + R * 0.006;
     return { x: map.hub.x + DISC_AT[c] * o * 0.8, y: map.hub.y + DISC_AT[c] * o, r: Math.max(0, R * DISC_R[c]), f: 8 + R * 0.05 };
@@ -2164,10 +2193,17 @@
   // colour a disc: the strings are multiplied by it, the world by its
   // opposite, and the two added, so every colour of the page is the
   // world's inside its own disc and the strings' outside, feathered at its
-  // edge, the two always making the whole of one. (Laying the world down
-  // as it is in the square inside all three, and mixing only round it, was
-  // slower: more, smaller pieces cost more than the one box.)
-  const MASK_AT = 0.5;
+  // edge, the two always making the whole of one.
+  //   ONLY WHERE THE RING IS (later the same day — "smooth it out as best
+  // as you can"): the screen is looked at in squares (TILE): a square inside
+  // all three discs is the world as it is, a square outside all three the
+  // strings as they are, and only the squares the ring crosses are mixed —
+  // the mixing was nine tenths of a frame, done over the whole box the discs
+  // reach. Each draw is clipped to its squares rather than cut into them
+  // (cut, the soft mask is read differently either side of a cut, and the
+  // squares show), and the world's picture is changed before it is drawn
+  // from, never between (each change between would copy it whole again).
+  const MASK_AT = 0.5, TILE = 32;
   let wcv = null, mk = null, mki = null;
   const canvasOf = (w, h) => { const c = document.createElement("canvas"); c.width = w; c.height = h; return c; };
   function drawDiscs(now, t, dt, vs, boost) {
@@ -2184,43 +2220,65 @@
     // every corner inside every disc: the world alone
     const corner = (d) => Math.max(Math.hypot(d.x, d.y), Math.hypot(W - d.x, d.y), Math.hypot(d.x, H - d.y), Math.hypot(W - d.x, H - d.y));
     if (D.every((d) => d.r - d.f >= corner(d))) { x.drawImage(wcv, 0, 0); x.setTransform(DPR, 0, 0, DPR, 0, 0); return; }
-    // the box the discs reach, on the mask's grid
-    let bx0 = W, by0 = H, bx1 = 0, by1 = 0;
-    for (const d of D) { bx0 = Math.min(bx0, d.x - d.r); by0 = Math.min(by0, d.y - d.r); bx1 = Math.max(bx1, d.x + d.r); by1 = Math.max(by1, d.y + d.r); }
-    const q = 1 / MASK_AT;
-    bx0 = Math.max(0, Math.floor(bx0 * MASK_AT) * q); by0 = Math.max(0, Math.floor(by0 * MASK_AT) * q);
-    bx1 = Math.min(mw * q, Math.ceil(bx1 * MASK_AT) * q); by1 = Math.min(mh * q, Math.ceil(by1 * MASK_AT) * q);
     drawRays(x, t);
     x.setTransform(1, 0, 0, 1, 0, 0);
-    if (bx1 - bx0 < 1 || by1 - by0 < 1) { x.setTransform(DPR, 0, 0, DPR, 0, 0); return; }
-    // the strings' mask: a colour black inside its disc, whole outside it —
-    // and the world's, its opposite; made a little past the box, which is
-    // read as it is enlarged (or its edge is drawn as a line)
-    const m = mk.getContext("2d"), mi = mki.getContext("2d");
-    const ex0 = Math.max(0, bx0 - 3 * q), ey0 = Math.max(0, by0 - 3 * q), ex1 = Math.min(mw * q, bx1 + 3 * q), ey1 = Math.min(mh * q, by1 + 3 * q);
-    m.setTransform(MASK_AT, 0, 0, MASK_AT, 0, 0);
-    m.globalCompositeOperation = "source-over"; m.fillStyle = "#000"; m.fillRect(ex0, ey0, ex1 - ex0, ey1 - ey0);
-    m.globalCompositeOperation = "lighter";
-    for (let c = 0; c < 3; c++) {
-      const d = D[c], R = Math.max(0.5, d.r), g = m.createRadialGradient(d.x, d.y, 0, d.x, d.y, R);
-      g.addColorStop(0, "#000"); g.addColorStop(Math.max(0, d.r - d.f) / R, "#000"); g.addColorStop(1, PURE[c]);
-      m.fillStyle = g; m.fillRect(ex0, ey0, ex1 - ex0, ey1 - ey0);
+    // the squares: the ring's, and those inside all three, as runs along each row
+    const ring = new Path2D(), core = new Path2D();
+    let any = false, anyCore = false;
+    const M = 3;   // the mask is soft by a pixel or two of its own either side
+    for (let y0 = 0; y0 < H; y0 += TILE) {
+      const y1 = Math.min(H, y0 + TILE);
+      let run = -1, kind = 0;
+      const flush = (xe) => {
+        if (run < 0) return;
+        const r = [run * DPR, y0 * DPR, (xe - run) * DPR, (y1 - y0) * DPR];
+        if (kind === 1) { ring.rect(...r); any = true; } else if (kind === 2) { core.rect(...r); anyCore = true; }
+        run = -1;
+      };
+      for (let x0 = 0; x0 < W; x0 += TILE) {
+        const x1 = Math.min(W, x0 + TILE);
+        let inAll = true, outAll = true;
+        for (const d of D) {
+          const nx = Math.max(x0, Math.min(d.x, x1)) - d.x, ny = Math.max(y0, Math.min(d.y, y1)) - d.y;
+          const fx = Math.max(Math.abs(x0 - d.x), Math.abs(x1 - d.x)), fy = Math.max(Math.abs(y0 - d.y), Math.abs(y1 - d.y));
+          if (Math.hypot(nx, ny) < d.r + M) outAll = false;
+          if (Math.hypot(fx, fy) > d.r - d.f - M) inAll = false;
+        }
+        const k = outAll ? 0 : inAll ? 2 : 1;
+        if (k !== kind) { flush(x0); kind = k; if (k) run = x0; }
+      }
+      flush(W);
     }
-    m.globalCompositeOperation = "source-over";
-    mi.setTransform(1, 0, 0, 1, 0, 0);
-    const sx = bx0 * MASK_AT, sy = by0 * MASK_AT, sw = (bx1 - bx0) * MASK_AT, sh = (by1 - by0) * MASK_AT;
-    const fx = ex0 * MASK_AT, fy = ey0 * MASK_AT, fw = (ex1 - ex0) * MASK_AT, fh = (ey1 - ey0) * MASK_AT;
-    mi.globalCompositeOperation = "source-over"; mi.fillStyle = "#fff"; mi.fillRect(fx, fy, fw, fh);
-    mi.globalCompositeOperation = "difference"; mi.drawImage(mk, fx, fy, fw, fh, fx, fy, fw, fh);
-    mi.globalCompositeOperation = "source-over";
-    // laid over the page at its own sharpness
-    const dx = bx0 * DPR, dy = by0 * DPR, dw = (bx1 - bx0) * DPR, dh = (by1 - by0) * DPR;
-    x.imageSmoothingEnabled = true; wx.imageSmoothingEnabled = true;
-    wx.setTransform(1, 0, 0, 1, 0, 0);
-    x.globalCompositeOperation = "multiply"; x.drawImage(mk, sx, sy, sw, sh, dx, dy, dw, dh);
-    wx.globalCompositeOperation = "multiply"; wx.drawImage(mki, sx, sy, sw, sh, dx, dy, dw, dh);
-    x.globalCompositeOperation = "lighter"; x.drawImage(wcv, dx, dy, dw, dh, dx, dy, dw, dh);
-    wx.globalCompositeOperation = "source-over";
+    if (any) {
+      // the strings' mask: a colour black inside its disc, whole outside it —
+      // and the world's, its opposite
+      const m = mk.getContext("2d"), mi = mki.getContext("2d");
+      m.setTransform(MASK_AT, 0, 0, MASK_AT, 0, 0);
+      m.globalCompositeOperation = "source-over"; m.fillStyle = "#000"; m.fillRect(0, 0, W, H);
+      m.globalCompositeOperation = "lighter";
+      for (let c = 0; c < 3; c++) {
+        const d = D[c], R = Math.max(0.5, d.r), g = m.createRadialGradient(d.x, d.y, 0, d.x, d.y, R);
+        g.addColorStop(0, "#000"); g.addColorStop(Math.max(0, d.r - d.f) / R, "#000"); g.addColorStop(1, PURE[c]);
+        m.fillStyle = g; m.fillRect(0, 0, W, H);
+      }
+      m.globalCompositeOperation = "source-over";
+      mi.setTransform(1, 0, 0, 1, 0, 0);
+      mi.globalCompositeOperation = "source-over"; mi.fillStyle = "#fff"; mi.fillRect(0, 0, mw, mh);
+      mi.globalCompositeOperation = "difference"; mi.drawImage(mk, 0, 0);
+      mi.globalCompositeOperation = "source-over";
+      // the world's colours kept by the ring (before anything is drawn from it)
+      x.imageSmoothingEnabled = true; wx.imageSmoothingEnabled = true;
+      wx.setTransform(1, 0, 0, 1, 0, 0);
+      wx.save(); wx.clip(ring);
+      wx.globalCompositeOperation = "multiply"; wx.drawImage(mki, 0, 0, mw, mh, 0, 0, mw / MASK_AT * DPR, mh / MASK_AT * DPR);
+      wx.restore();
+      // the strings' let go, and the world's laid in
+      x.save(); x.clip(ring);
+      x.globalCompositeOperation = "multiply"; x.drawImage(mk, 0, 0, mw, mh, 0, 0, mw / MASK_AT * DPR, mh / MASK_AT * DPR);
+      x.globalCompositeOperation = "lighter"; x.drawImage(wcv, 0, 0);
+      x.restore();
+    }
+    if (anyCore) { x.save(); x.clip(core); x.globalCompositeOperation = "source-over"; x.drawImage(wcv, 0, 0); x.restore(); }
     x.globalCompositeOperation = "source-over";
     x.setTransform(DPR, 0, 0, DPR, 0, 0);
   }
@@ -2385,6 +2443,7 @@
     opening: () => ({
       parts: RV.parts.length, hidden: RV.parts.filter((p) => p.k <= 0).length, coming: RV.parts.filter((p) => p.k > 0 && p.k < 1).length,
       whole: RV.parts.filter((p) => p.k >= 1).length, tail: RV.tail, sharp: wcv ? +(wcv.width / cv.width).toFixed(2) : 0,
+      edge: openEdge ? +openEdge.r.toFixed(2) : null, grain: NZ.lift,
     }),
     // the colour where the blob's edge begins, walking in from its upper left
     // and from its lower right (the picture's own colour, before the poster)
