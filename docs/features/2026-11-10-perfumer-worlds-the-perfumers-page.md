@@ -198,6 +198,72 @@ work in a flight; the rest was laying down large pictures. Three things:
   new one fades in: a picture's opacity a frame. Any choice close in that leaves the camera where it
   is fades so — a perfume, a house, going back up.
 
+## 2026-11-23 — the opening smoothed, the World's parts coming as it opens
+
+The owner: "I WANT YOU to look into the perfumrs page, to smooth out the transition from thegrid
+page into the blob page, and i want you to make sure that when you actually click it the elements
+of the blob page develop gradually and not just pop in after the transition finishes loading."
+
+What the opening did, frame by frame (side by side with the live version, frames taken on the
+page's own clock):
+
+- **The World's words came in as one block**, late — at 45% of green's disc and on its own curve —
+  and the readings, the list and the head all at once.
+- **Return, Learn More, the ‹ › bar's colours, the Menu's, the page's name's and the search's were
+  changed only once the opening had ended** (`setBody`, at `opened()`): for the second half of it the
+  Menu and the search stood white on the World's pale paper, unreadable, and then Return and Learn
+  More appeared, the search jumped 120 pixels to the left, and the grain changed from a light speck
+  to a dark one.
+- **The World was drawn at a smaller size while it opened** (1.25 pixels a point; the screen's own
+  is 2 on most laptops) **and came sharp with a jump** when it had.
+- **It was heavy**: every frame took the World apart into its three colours and laid each back
+  through two clips, drawing the strings six times (twice a colour) — 40 to 60 milliseconds a frame
+  in the test browser, and its first frame 150 to 190, most of it the World's paper being made then.
+
+Now:
+
+- **The discs drawn through a mask** (`drawDiscs`, `MASK_AT`): where each colour's disc has reached is
+  one small picture at half the size — it is all soft edges — black in that colour inside its disc and
+  whole outside, feathered at its edge; the strings, drawn once, are multiplied by it, the World by its
+  opposite (`difference` against white), and the two added. Every colour of the page is the World's
+  inside its own disc and the strings' outside, and the two always make the whole of one, so the
+  three colours a beat apart are kept — **softer** at their edge than the hard bands they were. The
+  World is drawn **at the screen's own sharpness** the whole way. Three passes over the box the discs
+  reach, where there were about two dozen: 21 to 43 milliseconds a frame in the test browser, the
+  last, largest ones up to 70 to 96, and the first 43. Once every corner is inside every disc, the World
+  alone. Its paper is made ahead, while the page is idle (`layLater`, and after a resize).
+- **The World's parts come as the discs reach them** (`revealParts`, `revealTo`, `RV` in the script):
+  each reading, the head, each row of the list, Return and Learn More is on the page from the first
+  frame, unseen, and begins to come up — rising eight pixels — once green's disc has passed over its
+  middle, over two thirds of a second (`RV_DUR`); the readings and the rows of the list one after
+  another (`lag`), the nearer the point the sooner. So Learn More, under the World, comes first, then
+  the readings, the list row by row, the head and Return; and on a phone, where the strings meet low
+  down, the search and the readings first and the head last.
+- **The chrome the two views share turns as the disc passes it**: the Menu (and on a phone its
+  ground), the page's name, the search (its colours, and moving over to where the World has it) and
+  ‹ › go from the strings' colours to the World's by `--k`, set by the script on each and read by the
+  stylesheet with `color-mix` (THE OPENING, in `style.css`) — at `--k` 1 exactly the World's, so
+  nothing changes when the opening ends. The grain goes out and comes back as the World's half way
+  (`--gfade`, `.is-dawn`).
+- **The last of them finish over the World** (`RV.tail`): the parts in the far corners are reached
+  near the end, and take their two thirds of a second after the discs have landed, rather than
+  jumping to whole. Anything begun meanwhile — Return, ‹ ›, a row — finishes them at once
+  (`revealFinish`).
+- **The spheres come as the disc reaches them too**: each begins to come in once green's disc has
+  got to it (`openEdge` in `drawWorldView`).
+- **Closing** (Return, or Esc from the middle of an opening), each part goes as the disc closes back
+  over it, never coming back up on the way; the shared chrome turns back the same way.
+- **The cursor** knows during either: dark where the strings still are, the World's answer inside
+  green's disc (`darkAt`) — it changed when the opening ended.
+- **Learn More pressed while it opens** opens the sheet once it has (`TR.thenMore`).
+
+Tried and not kept: **the square inside all three discs laid down as it is**, the strings clipped
+round it and the mask worked only in the four bands round it — measured slower (141 to 173
+milliseconds against 76 to 96, twice each), more, smaller pieces costing more than the one box; and
+the mask's box drawn exactly to its edge, which left a faint rectangle on the strings where the
+small mask was read against what lay outside it as it was enlarged — it is made a little past the
+box now.
+
 ## Why / key decisions
 
 - **The swap is the pages whole, not their links** — the owner's choice. So the new Perfumers page is
@@ -239,7 +305,12 @@ never the middle, nothing written; blue ahead of the rest as a world opens, and 
 middle of an opening or a change; Learn More gliding, not jumping, to exactly the top, *Back up*, the
 perfumes linked; › sliding; the lens and the softer grain; the search; the index without the script;
 a phone; and with `?gl=on`, the noise an overlay round the blobs, the hand in it lifting the page's
-grain and its flicker; the sheet frosted glass; the cursor light over a blob and dark over the paper. `npm test -- tests/poster.spec.js` — the poster at `/test-pages/1/`, and its plane: close in
+grain and its flicker; the sheet frosted glass; the cursor light over a blob and dark over the paper;
+and the opening (2026-11-23): Return on the page, unseen, from its first frame, the World's parts
+arriving at different moments while it opens, the World in the discs at the screen's own sharpness,
+and nothing of the opening left on the page once it has (`PerfumerWorlds.opening()`). To see it frame
+by frame, hold the page's clock — replace `performance.now` and the frames' time with your own and
+move it on 16 milliseconds a frame — and take a picture at each moment. `npm test -- tests/poster.spec.js` — the poster at `/test-pages/1/`, and its plane: close in
 on Prin Lomros it stands on tiles in perspective, and the wheel draws nothing of the chart again;
 the scrubber naming a span, not a perfume; the lines from the countries and no sillage; the night
 atlas's colours, the old at `?colours=was`; the title in the Didone; Return placed above the hint

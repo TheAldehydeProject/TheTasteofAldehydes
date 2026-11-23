@@ -292,6 +292,46 @@ test("the opening's colours come a beat apart, and Return goes back to the strin
   expect(errors).toEqual([]);
 });
 
+/* 2026-11-23 — "smooth out the transition from the grid page into the blob
+   page, and i want you to make sure that when you actually click it the
+   elements of the blob page develop gradually and not just pop in after the
+   transition finishes loading": while the discs open, the world's parts are
+   on the page and come up one after another as the discs reach them — some
+   there while others are still to come — Return among them from the start;
+   the world in the discs is drawn at the screen's own sharpness (it was
+   drawn smaller, and came sharp with a jump at the end); and once it has
+   opened, nothing of the opening is left on the page. */
+test("the world's parts come up one after another as it opens, and nothing is left of the opening once it has", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto(PAGE);
+  await ready(page);
+  const b = await W(page, "blockOf", "prin-lomros");
+  await page.mouse.click((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);
+  expect(await W(page, "busy")).toBe("open");
+  // Return is on the page from the first frame, not yet seen
+  await expect(page.locator(".pw-return")).toBeVisible();
+  expect(+(await page.locator(".pw-return").evaluate((e) => getComputedStyle(e).opacity))).toBeLessThan(0.05);
+  let apart = false, sharp = 0;
+  for (let i = 0; i < 400 && !apart; i++) {
+    const o = await W(page, "opening");
+    if ((await W(page, "busy")) !== "open") break;
+    sharp = Math.max(sharp, o.sharp);
+    // some whole or coming while others are not there yet
+    if (o.parts > 6 && o.hidden > 0 && o.whole + o.coming > 0) apart = true;
+  }
+  expect(apart, "parts arriving at different moments").toBe(true);
+  expect(sharp, "the world in the discs at the screen's own sharpness").toBe(1);
+  await expect.poll(() => W(page, "view"), { timeout: 6000 }).toBe("world");
+  await expect.poll(async () => (await W(page, "opening")).parts, { timeout: 4000 }).toBe(0);
+  await expect(page.locator("body")).not.toHaveClass(/is-revealing/);
+  for (const s of [".pw-read", ".pw-return", ".pw-list-rows li", ".pw-head"]) {
+    expect(await page.locator(s).first().evaluate((e) => e.style.opacity + e.style.translate), s).toBe("");
+  }
+  expect(await page.locator(".pw-find").evaluate((e) => e.style.getPropertyValue("--k"))).toBe("");
+  expect(await page.locator(".menu-trigger").evaluate((e) => getComputedStyle(e).color)).toBe("rgb(28, 29, 34)");
+  expect(errors).toEqual([]);
+});
+
 /* 2026-11-10 — "when you click on learn more abou [house], i want that to
    scroll smoother, slightly slower, and all the way up, rather than almost
    all the way up. change the text "back to the world" to simple "back up"";

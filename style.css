@@ -14248,9 +14248,10 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   .worlds-page .pw-rays-ui { transition: opacity 0.5s; }
   body.worlds-page.is-rays .pw-world-ui { opacity: 0; visibility: hidden; }
   body.worlds-page.is-world .pw-rays-ui { opacity: 0; visibility: hidden; }
-  /* the world's words come in with the world as it opens out of the strings, and go with it as it closes (2026-11-07; 2026-11-08) */
-  body.worlds-page.is-revealing .pw-world-ui { visibility: visible; opacity: var(--reveal, 0); transition: none; }
-  body.worlds-page.is-revealing .pw-rays-ui { visibility: visible; opacity: calc(1 - var(--reveal, 0)); transition: none; }
+  /* the world's words come in with the world as it opens out of the strings,
+     and go with it as it closes (2026-11-07; 2026-11-08) — each part of its
+     own as the discs reach it since 2026-11-23: see THE OPENING further down */
+  body.worlds-page.is-revealing .pw-world-ui { visibility: visible; opacity: 1; transition: none; }
 
   /* THE RAYS' WORDS: white on the black */
   .worlds-page .pw-rays-head { position: absolute; top: 34px; left: 48px; right: 48px; display: flex; justify-content: space-between; align-items: baseline; color: #f3f3f1; }
@@ -14517,6 +14518,46 @@ body.worlds-page.is-world { --chrome-ground: rgba(230, 234, 231, 0.84); }
 body.worlds-page.is-rays:not(.menu-open) .menu-trigger { color: #ece8e2; }
 body.worlds-page.is-rays .page-where { color: rgba(236, 232, 226, 0.55); border-left-color: rgba(236, 232, 226, 0.2); }
 body.worlds-page.is-world .page-where { color: var(--muted); border-left-color: rgba(28, 29, 34, 0.25); }
+/* ---- THE OPENING (2026-11-23 — "make sure that when you actually click it
+   the elements of the blob page develop gradually and not just pop in after
+   the transition finishes loading"): while a world opens out of the strings
+   (and closes back into them) its parts are on the page, each brought up by
+   perfumer-worlds.js as the discs reach it — an opacity and a rise of its
+   own — and the chrome the two views share, the Menu, the page's name, the
+   search and ‹ ›, turns from the strings' colours to the world's by `--k`,
+   its own share of the way, which the script sets on it; the search moves
+   over to where the world has it. The grain goes out and comes back in the
+   world's way half way (`--gfade`, `.is-dawn`). At `--k` 1 each is exactly
+   what the world has, so nothing changes when the opening ends. ---- */
+body.worlds-page.is-revealing .pw-nf { transition: none; }
+body.worlds-page.is-revealing:not(.menu-open) .menu-trigger {
+  color: color-mix(in srgb, var(--ink) calc(var(--k, 0) * 100%), #ece8e2);
+  --chrome-ground: color-mix(in srgb, rgba(230, 234, 231, 0.84) calc(var(--k, 0) * 100%), rgba(11, 12, 15, 0.62));
+  transition: opacity 0.2s ease;
+}
+body.worlds-page.is-revealing .page-where {
+  color: color-mix(in srgb, var(--muted) calc(var(--k, 0) * 100%), rgba(236, 232, 226, 0.55));
+  border-left-color: color-mix(in srgb, rgba(28, 29, 34, 0.25) calc(var(--k, 0) * 100%), rgba(236, 232, 226, 0.2));
+}
+body.worlds-page.is-revealing .pw-find-mark { color: color-mix(in srgb, var(--muted) calc(var(--k, 0) * 100%), rgba(243, 243, 241, 0.7)); }
+body.worlds-page.is-revealing .pw-find input {
+  color: color-mix(in srgb, var(--ink) calc(var(--k, 0) * 100%), #f3f3f1);
+  border-bottom-color: color-mix(in srgb, rgba(28, 29, 34, 0.3) calc(var(--k, 0) * 100%), rgba(243, 243, 241, 0.25));
+}
+body.worlds-page.is-revealing .pw-find input::placeholder { color: color-mix(in srgb, var(--muted) calc(var(--k, 0) * 100%), rgba(243, 243, 241, 0.45)); }
+body.worlds-page.is-revealing .pw-ways { color: color-mix(in srgb, var(--muted) calc(var(--k, 0) * 100%), rgba(255, 255, 255, 0.5)); }
+body.worlds-page.is-revealing .pw-ways button, body.worlds-page.is-revealing .pw-pick {
+  color: color-mix(in srgb, var(--ink) calc(var(--k, 0) * 100%), #eee);
+  border-color: color-mix(in srgb, rgba(28, 29, 34, 0.25) calc(var(--k, 0) * 100%), rgba(255, 255, 255, 0.28));
+}
+@media (min-width: 761px) {
+  body.worlds-page.is-revealing .pw-find { right: calc(48px + 120px * var(--k, 0)); top: calc(24px + 2px * var(--k, 0)); }
+}
+@media (max-width: 760px) {
+  body.worlds-page.is-revealing .pw-find input { background: color-mix(in srgb, rgba(250, 251, 250, 0.85) calc(var(--k, 0) * 100%), rgba(10, 10, 12, 0.7)); }
+}
+body.worlds-page.is-revealing .pw-grain { transition: none; opacity: calc(0.05 * var(--gfade, 1)); mix-blend-mode: screen; }
+body.worlds-page.is-revealing .pw-grain.is-dawn { opacity: calc(0.06 * var(--grain-lift, 1) * var(--grain-flick, 1) * var(--gfade, 1)); mix-blend-mode: multiply; }
 @media (min-width: 761px) {
   .worlds-page .pw-rays-head, .worlds-page .pw-head { top: 64px; }
   .worlds-page .pw-return { top: 118px; }
