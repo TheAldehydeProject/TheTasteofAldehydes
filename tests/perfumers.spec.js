@@ -495,6 +495,34 @@ test("the blobs stay on the graphics card: fewer numbers, a slow card, and a car
   await ctx.close();
 });
 
+/* Without a card (2026-11-24 — the owner: "compare to other devices, see if
+   they have the same provlems. If yes, fix them too"): a device with none to
+   draw on (as the tests' browser) painted the middle 176 pixels across and
+   laid it down as large as the blob. At rest it is painted as sharp as the
+   screen now, a few rows a frame, and each new picture mixed into the last
+   — the blob is see-through, so laid one over the other its middle went
+   darker while they crossed. */
+test("without a card the middle is painted as sharp as the screen at rest, and its middle never darkens as the pictures change", async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto(PAGE + "#prin-lomros");
+  await expect.poll(() => W(page, "view"), { timeout: 15000 }).toBe("world");
+  expect((await W(page, "gl")).on, "the tests' browser has no card").toBe(false);
+  await expect.poll(() => W(page, "middleSharp"), { timeout: 10000 }).toBeGreaterThan(0.9);
+  // (the first sharp picture fading in over the small one, which differs from
+  // it by a few levels in places)
+  await page.waitForTimeout(600);
+  // the colour in the middle of the blob, every frame for two seconds — the
+  // sharp pictures giving way to one another all the while
+  const col = await page.evaluate(() => new Promise((res) => {
+    const m = window.PerfumerWorlds.middle(), cv = document.querySelector(".pw-scene"), x = cv.getContext("2d");
+    const k = cv.width / cv.getBoundingClientRect().width, out = [];
+    const f = () => { const d = x.getImageData(Math.round(m.x * k), Math.round(m.y * k), 1, 1).data; out.push(d[0] + d[1] + d[2]); if (out.length < 120) requestAnimationFrame(f); else res(out); };
+    requestAnimationFrame(f);
+  }));
+  expect(Math.max(...col) - Math.min(...col), "the middle's colour steady").toBeLessThanOrEqual(3);
+  expect(errors).toEqual([]);
+});
+
 /* The cursor over the World's dark blobs (2026-11-11 — "make sure the
    cursor is white when hovering black things in this page too"): the
    drawing tells the site's cursor where it is dark, and over the middle

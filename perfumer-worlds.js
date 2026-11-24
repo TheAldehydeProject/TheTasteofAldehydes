@@ -347,7 +347,9 @@
   // in it so its corners are cut, not sharp — a cut stone where a perfumer's
   // is a drop
   const K = 1.0;
-  function fieldOf(lobes, n) {
+  // (`into`, `j0`, `j1`: only rows j0 to j1 of it, into a field begun
+  // before — the processor's sharp picture, a few rows a frame)
+  function fieldOf(lobes, n, into, j0, j1) {
     const step = (2 * EXT) / n;
     const L = lobes.length;
     const lx = new Float32Array(L), ly = new Float32Array(L), ir = new Float32Array(L), ia = new Float32Array(L);
@@ -359,8 +361,8 @@
         for (let j = 0; j < 3; j++) { cs[i * 6 + j * 2] = Math.cos((o.rot || 0) + j * 60 * DEG); cs[i * 6 + j * 2 + 1] = Math.sin((o.rot || 0) + j * 60 * DEG); }
       }
     });
-    const fld = new Float32Array(n * n);
-    for (let j = 0; j < n; j++) {
+    const fld = into || new Float32Array(n * n);
+    for (let j = j0 || 0, je = j1 == null ? n : j1; j < je; j++) {
       const y = -EXT + (j + 0.5) * step;
       for (let i = 0; i < n; i++) {
         const x = -EXT + (i + 0.5) * step;
@@ -454,9 +456,13 @@
   function paintLens(cv2, n, lobes, shift, soft, shade, deep) {
     if (cv2.width !== n) { cv2.width = cv2.height = n; }
     const x2 = cv2.getContext("2d");
-    const img = x2.createImageData(n, n), d = img.data;
+    const img = x2.createImageData(n, n);
+    lensRows(img.data, fieldOf(lobes, n), n, 0, n, shift, soft, shade, deep);
+    x2.putImageData(img, 0, 0);
+  }
+  // rows j0 to j1 of the lens's picture, from the whole field
+  function lensRows(d, fld, n, j0, j1, shift, soft, shade, deep) {
     const step = (2 * EXT) / n;
-    const fld = fieldOf(lobes, n);
     const DEEP = deep || LENS_DEEP;
     const at = (fx, fy) => {
       if (fx < 0 || fy < 0 || fx > n - 1 || fy > n - 1) return 0;
@@ -467,7 +473,7 @@
     const w = soft || 1, sh = shade || 0;
     const px = shift / step, ax = px * 0.8, ay = px;
     const dk = [0, 0, 0], f = [0, 0, 0];
-    for (let j = 0; j < n; j++) {
+    for (let j = j0; j < j1; j++) {
       const y = -EXT + (j + 0.5) * step;
       for (let i = 0; i < n; i++) {
         for (let c = 0; c < 3; c++) f[c] = at(i + ax * LENS_AT[c], j + ay * LENS_AT[c]);
@@ -491,7 +497,6 @@
         d[o + 3] = a * win * 255;
       }
     }
-    x2.putImageData(img, 0, 0);
   }
   function paintSplit(cv2, n, lobes, shift, soft, shade) {
     if (cv2.width !== n) { cv2.width = cv2.height = n; }
@@ -542,7 +547,10 @@
   function paintAny(cv2, n, lobes, shift, soft, shade, kind) {
     if (LOOK === "backup") paintBlob(cv2, n, lobes, shift, soft * 1.7, shade);
     else if (LOOK === "split") paintSplit(cv2, n, lobes, shift * 1.25, soft * 1.25, shade);
-    else paintLens(cv2, n, lobes, shift, soft, shade, kind === "house" ? LENS_INK : LENS_DEEP);
+    // (its colours laid apart as far as the card lays them, CA_K of the
+    // way, since 2026-11-24: they were the processor's way's alone at the
+    // whole, the thick cyan and gold bands of the owner's iPad picture)
+    else paintLens(cv2, n, lobes, shift * CA_K, soft, shade, kind === "house" ? LENS_INK : LENS_DEEP);
   }
   // the lobes of a world: a perfumer's, one for every house, as big as what
   // they made for it; a house's, one for every perfumer who made for it.
@@ -704,13 +712,87 @@
       GLB.blob({ lobes: w.lobes, x, y, s: sizeOf(r), alpha, shx: ca.x, shy: ca.y, soft: 0.95 + (b - 1) * 0.2, shade: 0.45, deep: deepOf(w.kind), grain: 1 });
       return;
     }
-    paintCur(w, t, false, boost);
     const s = sizeOf(r);
     c.save();
     c.imageSmoothingQuality = "high";
+    // at rest, the sharp picture once there is one (see THE PROCESSOR'S
+    // SHARP PICTURE), over the last while it fades in
+    const hi = sharpCur(w, t, boost, s);
+    let pic;
+    if (!hi) { paintCur(w, t, false, boost); pic = w.paint; }
+    else if (hi.k >= 1) pic = hi.show;
+    else {
+      // the two mixed in a picture of their own and laid down once: laid
+      // one over the other, the blob being see-through, its middle went
+      // darker while they crossed
+      const base = hi.was || (paintCur(w, t, false, boost), w.paint);
+      const m = HI.mix || (HI.mix = document.createElement("canvas")), n = hi.show.width;
+      if (m.width !== n) m.width = m.height = n;
+      const mx = m.getContext("2d");
+      mx.globalCompositeOperation = "source-over"; mx.globalAlpha = 1;
+      mx.clearRect(0, 0, n, n);
+      mx.imageSmoothingQuality = "high";
+      mx.globalAlpha = 1 - hi.k; mx.drawImage(base, 0, 0, n, n);
+      mx.globalCompositeOperation = "lighter"; mx.globalAlpha = hi.k; mx.drawImage(hi.show, 0, 0);
+      pic = m;
+    }
     c.globalAlpha = alpha;
-    c.drawImage(w.paint, x - s / 2, y - s / 2, s, s);
+    c.drawImage(pic, x - s / 2, y - s / 2, s, s);
     c.restore();
+  }
+  // THE PROCESSOR'S SHARP PICTURE (2026-11-24 — the owner, of the iPad's soft
+  // blobs: "compare to other devices, see if they have the same provlems. If
+  // yes, fix them too"): on a device with no card to draw on — none at all,
+  // one the browser only pretends to have (a machine whose card it does not
+  // trust), an iPhone or iPad in Lockdown Mode — the middle blob is the
+  // picture above, 176 pixels across (132 on a phone), laid down as large as
+  // the blob: two and a half times on an iPad, seven on a laptop, and soft.
+  // Painted whole as sharp as the screen it would take 12 to 40 milliseconds,
+  // more than a frame has. So while it stands still (its aberration its own,
+  // no world opening or changing) it is painted again as sharp as the
+  // screen's pixels it covers (up to SHARP_MOST across), a few rows a frame
+  // (SHARP_MS of each), into a picture of its own, faded in over the last
+  // once it is whole (SHARP_FADE) — and again, a moment after (SHARP_AGAIN),
+  // where its lobes have drifted to: they move a few pixels a second, so a
+  // picture a little behind them is never seen to be.
+  const SHARP_MOST = 560, SHARP_MS = 3, SHARP_FADE = 260, SHARP_AGAIN = 160;
+  const HI = { w: null, n: 0, job: null, show: null, was: null, t0: 0, cvs: [] };
+  function sharpCur(w, t, boost, s) {
+    const n = Math.min(SHARP_MOST, Math.round(s * DPR));
+    const rest = LOOK === "lens" && Math.abs((boost || 1) - 1) < 0.01 && n > (phone ? 132 : 176) * 1.2;
+    if (!rest) { HI.job = null; if (HI.w !== w) { HI.w = null; HI.show = HI.was = null; } return null; }
+    if (HI.w !== w || HI.n !== n) { HI.w = w; HI.n = n; HI.job = null; HI.show = HI.was = null; HI.cvs = []; }
+    const now = performance.now();
+    const k = HI.show ? (STILL ? 1 : clamp((now - HI.t0) / SHARP_FADE, 0, 1)) : 0;
+    if (k >= 1) HI.was = null;
+    // a new picture: the lobes where they are now, held while it is painted
+    if (!HI.job && (!HI.show || (!STILL && k >= 1 && now - HI.t0 > SHARP_FADE + SHARP_AGAIN))) {
+      driftLobes(w.lobes, t);
+      const J = HI.jbuf && HI.jbuf.n === n ? HI.jbuf : (HI.jbuf = { n, fld: new Float32Array(n * n), img: new ImageData(n, n) });
+      J.img.data.fill(0);
+      HI.job = { lobes: w.lobes.map((o) => ({ x: o.x, y: o.y, r: o.r, sides: o.sides, rot: o.rot })), J, jf: 0, js: 0 };
+    }
+    // a few rows of it a frame: the field first, then the colours (all of it
+    // at once with reduced motion, where no frame comes after this one)
+    const job = HI.job;
+    if (job) {
+      const t1 = now + (STILL ? 1e9 : SHARP_MS), J = job.J, ROWS = 8;
+      while (performance.now() < t1) {
+        if (job.jf < n) { const e = Math.min(n, job.jf + ROWS); fieldOf(job.lobes, n, J.fld, job.jf, e); job.jf = e; }
+        else if (job.js < n) { const e = Math.min(n, job.js + ROWS); lensRows(J.img.data, J.fld, n, job.js, e, 0.05 * CA_K, 0.95, 0.45, deepOf(w.kind)); job.js = e; }
+        else break;
+      }
+      if (job.js >= n) {
+        const cv2 = HI.cvs.find((c) => c !== HI.show) || (HI.cvs.push(document.createElement("canvas")), HI.cvs[HI.cvs.length - 1]);
+        if (cv2.width !== n) cv2.width = cv2.height = n;
+        cv2.getContext("2d").putImageData(J.img, 0, 0);
+        HI.was = HI.show; HI.show = cv2; HI.t0 = now; HI.job = null;
+        if (HI.cvs.length > 2) HI.cvs = [HI.was, HI.show].filter(Boolean);
+      }
+    }
+    if (!HI.show) return null;
+    const kk = STILL ? 1 : clamp((performance.now() - HI.t0) / SHARP_FADE, 0, 1);
+    return { show: HI.show, was: HI.was, k: kk * kk * (3 - 2 * kk) };
   }
   // A TRAVELLER (2026-11-08): a body on its way between a sphere and the
   // middle — its lobes melting from the one's into the other's as it goes,
@@ -2473,8 +2555,9 @@
       const n = 400, sh = 0.05 * CA_K;
       return { n, d: GLB.still({ lobes: cur.lobes, shx: 0.8 * sh, shy: sh, soft: 0.95, shade: 0.45, deep: deepOf(cur.kind) }, n) };
     }
-    if (!cur.paint) return null;
-    const c = cur.paint, n = c.width;
+    const c = cur.paint || HI.show;
+    if (!c) return null;
+    const n = c.width;
     return { n, d: c.getContext("2d").getImageData(0, 0, n, n).data };
   }
   const findBody = (id) => blobs.find((x) => (x.kind === "house" ? x.ho.id : x.p.id) === id);
@@ -2513,6 +2596,14 @@
     // and, since 2026-11-24, why not if not, how many lobes the device's
     // card holds, how sharp its picture is drawn (of the screen's), the box it
     // is drawn in, and how long laying it in takes (milliseconds, on average)
+    // how sharp the middle is drawn, against the screen's pixels it covers
+    // (on the card, the screen's own; the processor's way, its picture)
+    middleSharp: () => {
+      if (!cur || !cur.lobes) return null;
+      if (useGL) return 1;
+      const c = HI.w === cur && HI.show ? HI.show : cur.paint;
+      return c ? +(c.width / (sizeOf(P.r) * DPR)).toFixed(2) : 0;
+    },
     gl: () => ({ on: useGL, drawn: useGL ? GLB.count() : 0, why: glWhy, lobes: GLB.lobes || 0, uniforms: GLB.uniforms || 0,
       renderer: GLB.renderer || "", sharp: +glSharp.toFixed(2), box: glBoxNow, cost: +glAvg.toFixed(1), back: GLB.ok ? GLB.back() : 0 }),
     // the noise over the blobs: how far the hand is in it, and the page's

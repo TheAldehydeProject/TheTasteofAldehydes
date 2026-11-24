@@ -374,10 +374,50 @@ line says which of the three it is (or a fourth).
 pixel for pixel**, at rest and frame for frame through an opening on a held clock (one frame differs
 by one level of 255 in places); a card faked to hold 64 draws 13 lobes, 30 is refused and says so; a
 card made slow to lay in steps 1 → 0.8 → 0.64 → 0.51 → 0.5 and stays on the card; a card taken away
-goes to the processor saying *lost*, and comes back when given back. **Left as it was:** the
-processor's own way (a device with no card at all, or `?gl=off`) still paints the middle at 176
-pixels — painting it larger thirty times a second is what slowed the opening before, and the test
-browser draws that way.
+goes to the processor saying *lost*, and comes back when given back.
+
+### The same day — other devices compared, and the processor's way made sharp
+
+Asked whether to put it live, the owner: *"Can you compare to other devices, see if they have the
+same provlems. If yes, fix them too."* No real devices can be reached from here, so each kind was
+worked through from how its browser draws, and the failing ones faked in the test browser (the
+card's numbers, its slowness, its loss; no card at all is what the test browser is). The owner's
+picture, looked at again, was **the processor's way** — the thick cyan and gold bands are its own —
+on a landscape iPad, where the middle blob is several hundred points across.
+
+| device | how the blobs were drawn | the same problem? | now |
+|---|---|---|---|
+| iPad, iPhone (Safari) | the card, given up when its picture was slow to lay in (Safari copies it out of the card) or the card taken away (short of memory) | **yes** — the owner's | kept on the card (above) |
+| Mac (Safari), and most of all a large Retina screen (5K is 15 million pixels) | the same copy as an iPad | **yes**, the likeliest after the iPad | kept on the card (above) |
+| Firefox | on some machines its canvas copies the card's picture too | **likely** | kept on the card (above) |
+| Chrome and Edge (Windows, Mac, Android) | the card's picture laid in on the card, no copy | no | as it was |
+| no card it will use — an iPhone or iPad in Lockdown Mode, a browser with WebGL off, a machine whose card the browser does not trust (old drivers, Windows' basic display driver, a virtual machine) | the processor's way: the middle 176 pixels across (132 on a phone) laid down 2½ to 7 times as large, its colours laid apart the whole way | **yes** | sharp at rest, and its colours as the card's (below) |
+| a phone with a screen of 3 (most iPhones, many Androids) | drawn at 2, the site's own rule for its 3D drawings (`window.Sharpness`, 2026-10-01) | a little, by the rule | as it was — the rule's |
+| an old card holding few numbers | refused | rare | fewer lobes (above) |
+
+**The processor's way, sharp** (`sharpCur`, `HI`, `SHARP_*` in `perfumer-worlds.js`; `world.js` in
+the build): while the middle blob stands still — its aberration its own, no world opening or
+changing — it is painted again **as sharp as the screen's pixels it covers** (up to 560 across), a
+few rows a frame (**3 milliseconds of each**: `fieldOf` and `lensRows` take a range of rows now),
+into a picture of its own, and **mixed into the last** over a quarter of a second once whole, then
+again a moment later where its lobes have drifted to (a few pixels a second). Painted whole it takes
+12 to 40 ms, more than a frame. The two pictures are mixed in a picture of their own and laid down
+once: laid one over the other — the first try — the blob, being see-through, went darker in its
+middle while they crossed, which a frame-by-frame reading of its colour caught. With reduced motion
+it is painted whole at once (no frame comes after). Measured in the test browser at rest, laptop
+(2×), iPad and a plain screen: the frames as quick as before or quicker (the small picture is no
+longer painted thirty times a second at rest), the middle's colour steady to the level, the same as
+before.
+
+**Its colours as the card's** (`paintAny`): the processor's way laid the blob's red, green and blue
+apart the whole way (`shift`), the card only `CA_K` (0.6) of it since 2026-11-11, when its
+aberration was made thinner — the processor's was never thinned with it. Now both are, so a device
+without a card looks as one with a card does, less the card's noise.
+
+**Left as they were:** the spheres round the middle on the processor's way (painted once each at
+three fifths of the screen, out of focus by design, one a frame as a world opens — sharper would
+slow the opening); a phone at 2 of its 3 (the site's rule); and a page zoomed in with two fingers,
+which enlarges the drawing as it is, on the card or not.
 
 ## Why / key decisions
 
@@ -425,7 +465,9 @@ and the opening (2026-11-23): Return on the page, unseen, from its first frame, 
 arriving at different moments while it opens, the World in the discs at the screen's own sharpness,
 and nothing of the opening left on the page once it has (`PerfumerWorlds.opening()`). And (2026-11-24) the blobs staying on the card on a card faked to hold
 64 uniforms (13 lobes), taken away and given back, and made slow to lay in (less sharp, never below
-the screen's point, never off the card) — `PerfumerWorlds.gl()`; on a device, `?gl=why`. To see it frame
+the screen's point, never off the card) — `PerfumerWorlds.gl()`; on a device, `?gl=why`; and without
+a card, the middle painted as sharp as the screen at rest and its middle's colour steady as the
+pictures change (`PerfumerWorlds.middleSharp()`). To see it frame
 by frame, hold the page's clock — replace `performance.now` and the frames' time with your own and
 move it on 16 milliseconds a frame — and take a picture at each moment. `npm test -- tests/poster.spec.js` — the poster at `/test-pages/1/`, and its plane: close in
 on Prin Lomros it stands on tiles in perspective, and the wheel draws nothing of the chart again;
