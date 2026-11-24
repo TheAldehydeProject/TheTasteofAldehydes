@@ -504,7 +504,8 @@ test("the blobs stay on the graphics card: fewer numbers, a slow card, and a car
    darker while they crossed. */
 test("without a card the middle is painted as sharp as the screen at rest, and its middle never darkens as the pictures change", async ({ page }) => {
   const errors = collectPageErrors(page);
-  await page.goto(PAGE + "#prin-lomros");
+  // (clear: the noise, when noisy, flickers over the middle of its own)
+  await page.goto(PAGE + "?finish=clear#prin-lomros");
   await expect.poll(() => W(page, "view"), { timeout: 15000 }).toBe("world");
   expect((await W(page, "gl")).on, "the tests' browser has no card").toBe(false);
   await expect.poll(() => W(page, "middleSharp"), { timeout: 10000 }).toBeGreaterThan(0.9);
@@ -521,6 +522,84 @@ test("without a card the middle is painted as sharp as the screen at rest, and i
   }));
   expect(Math.max(...col) - Math.min(...col), "the middle's colour steady").toBeLessThanOrEqual(3);
   expect(errors).toEqual([]);
+});
+
+/* The finish (2026-11-24 — "it starts of fuzzy and noisy and then snaps into
+   normal and diffuse and clear boundaries ... I like both versions but why
+   the snap? Can you put these two as toggles on the top right"): Noisy and
+   Clear at the top right of a World, never on the Strings; Clear takes the
+   noise off, on the card and on the processor's way alike; the choice is
+   kept; and the card taken away leaves the look as it was, faded across. */
+test("the finish: Noisy or Clear at the top right of a World, on the card and off it, kept, and kept when the card is taken away", async ({ page }) => {
+  test.setTimeout(120000);
+  const errors = collectPageErrors(page);
+  await page.addInitScript(() => {
+    const gc = HTMLCanvasElement.prototype.getContext;
+    window.__cards = [];
+    HTMLCanvasElement.prototype.getContext = function (k, o) { const x = gc.call(this, k, o); if (k === "webgl" && x) window.__cards.push(x); return x; };
+    // (the choice forgotten once, at the start — not at the reload)
+    try { if (!sessionStorage.getItem("finish-cleared")) { localStorage.removeItem("pw-finish"); sessionStorage.setItem("finish-cleared", "1"); } } catch (e) {}
+  });
+  await page.goto(PAGE + "?gl=on#prin-lomros");
+  await expect.poll(() => W(page, "view"), { timeout: 15000 }).toBe("world");
+  const finish = page.locator(".pw-finish");
+  await expect(finish).toBeVisible();
+  // at the top right, level with the search and clear of it
+  const at = await page.evaluate(() => { const f = document.querySelector(".pw-finish").getBoundingClientRect(), s = document.querySelector(".pw-find").getBoundingClientRect(); return { right: innerWidth - f.right, top: f.top, gap: f.left - s.right }; });
+  expect(at.right).toBeLessThan(60);
+  expect(at.top).toBeLessThan(40);
+  expect(at.gap).toBeGreaterThan(0);
+  // noisy to begin with: the noise over the blobs
+  expect((await W(page, "finish")).look).toBe("noisy");
+  await expect(finish.locator("[data-finish=noisy]")).toHaveAttribute("aria-pressed", "true");
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.noise().grains), { timeout: 10000 }).toBeGreaterThan(0);
+  // clear: none
+  await finish.locator("[data-finish=clear]").click();
+  await expect(finish.locator("[data-finish=clear]")).toHaveAttribute("aria-pressed", "true");
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.finish().k), { timeout: 5000 }).toBe(0);
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.noise().grains), { timeout: 5000 }).toBe(0);
+  // kept
+  await page.reload();
+  await expect.poll(() => W(page, "view"), { timeout: 15000 }).toBe("world");
+  expect((await W(page, "finish")).look).toBe("clear");
+  // noisy again, then the card taken away: the processor's way with its own
+  // noise, the picture before faded across
+  await page.locator(".pw-finish [data-finish=noisy]").click();
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.noise().grains), { timeout: 10000 }).toBeGreaterThan(0);
+  await page.evaluate(() => window.__cards[window.__cards.length - 1].getExtension("WEBGL_lose_context").loseContext());
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.gl().why), { timeout: 5000 }).toBe("lost");
+  const lost = await W(page, "finish");
+  expect(lost.look).toBe("noisy");
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.finish().baked), { timeout: 10000 }).toBe(true);
+  // and, not given back, a card asked for again a moment later
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.gl().on), { timeout: 10000 }).toBe(true);
+  expect(await page.evaluate(() => window.__cards.length)).toBeGreaterThan(1);
+  // not on the strings
+  await page.locator(".pw-return").click();
+  await expect.poll(() => W(page, "view"), { timeout: 10000 }).toBe("rays");
+  await expect(finish).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+/* With reduced motion (2026-11-24): the page was counted ready from the
+   start and never said so to the stylesheet, so nothing on it could be
+   pressed. Now a world opens at once and its buttons answer. */
+test("with reduced motion the page's buttons can be pressed", async ({ browser }) => {
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce" });
+  const page = await ctx.newPage();
+  await serveDependenciesLocally(page);
+  const errors = collectPageErrors(page);
+  await page.goto(PAGE);
+  await expect(page.locator("body")).toHaveClass(/is-ready/);
+  const b = await W(page, "blockOf", "prin-lomros");
+  await page.mouse.click((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);
+  await expect.poll(() => W(page, "view"), { timeout: 5000 }).toBe("world");
+  await page.locator(".pw-finish [data-finish=clear]").click();
+  expect((await W(page, "finish")).look).toBe("clear");
+  await page.locator(".pw-return").click();
+  await expect.poll(() => W(page, "view"), { timeout: 5000 }).toBe("rays");
+  expect(errors).toEqual([]);
+  await ctx.close();
 });
 
 /* The cursor over the World's dark blobs (2026-11-11 — "make sure the

@@ -14443,6 +14443,17 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
   .worlds-page .pw-return { position: absolute; left: 48px; top: 88px; display: inline-flex; align-items: center; gap: 9px; padding: 7px 12px 8px; font: 500 10.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); background: rgba(250, 251, 250, 0.55); border: 1px solid rgba(28, 29, 34, 0.3); cursor: pointer; }
   .worlds-page .pw-return:hover { border-color: var(--ink); background: rgba(250, 251, 250, 0.9); }
   .worlds-page .pw-return[hidden] { display: none; }
+  /* THE FINISH (2026-11-24 — "I like both versions ... Can you put these two
+     as toggles on the top right"): Noisy or Clear, a hairline box of two
+     halves at the top right, level with the search, the one chosen filled in
+     ink */
+  .worlds-page .pw-finish { position: absolute; right: 48px; top: 26px; display: inline-flex; border: 1px solid rgba(28, 29, 34, 0.3); background: rgba(250, 251, 250, 0.55); }
+  .worlds-page .pw-finish[hidden] { display: none; }
+  .worlds-page .pw-finish:hover { border-color: var(--ink); }
+  .worlds-page .pw-finish button { font: 500 9.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); background: none; border: 0; padding: 8px 10px; cursor: pointer; transition: background-color 0.25s, color 0.25s; }
+  .worlds-page .pw-finish button + button { border-left: 1px solid rgba(28, 29, 34, 0.3); }
+  .worlds-page .pw-finish button:hover { background: rgba(250, 251, 250, 0.9); }
+  .worlds-page .pw-finish button[aria-pressed="true"] { background: var(--ink); color: #f3f4f2; cursor: default; }
   .worlds-page .pw-ways { position: absolute; right: 48px; bottom: 26px; display: flex; align-items: center; gap: 10px; font: 400 11px var(--mono); color: var(--muted); }
   .worlds-page .pw-ways button { font: 500 11px var(--mono); color: var(--ink); background: none; border: 1px solid rgba(28, 29, 34, 0.25); padding: 6px 10px; cursor: pointer; }
   body.worlds-page.is-rays .pw-ways button, body.worlds-page.is-rays .pw-pick { color: #eee; border-color: rgba(255, 255, 255, 0.28); }
@@ -14456,6 +14467,7 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
     .worlds-page .pw-read dd { font-size: 25px; }
     .worlds-page .pw-head, .worlds-page .pw-rays-head { left: 32px; right: 32px; }
     .worlds-page .pw-back, .worlds-page .pw-return { left: 32px; }
+    .worlds-page .pw-finish { right: 32px; }
     .worlds-page .pw-ways { right: 32px; }
     .worlds-page .pw-list { right: 32px; width: 240px; }
   }
@@ -14465,6 +14477,8 @@ body.tepe-page { position: relative; }     /* the margins' lines are laid down t
     .worlds-page .pw-head h2, .worlds-page .pw-rays-head h1 { font-size: 11.5px; }
     .worlds-page .pw-head h2 span { font-weight: 500; }
     .worlds-page .pw-return { left: 16px; top: 52px; padding: 5px 9px 6px; }
+    .worlds-page .pw-finish { right: 16px; top: 20px; }
+    .worlds-page .pw-finish button { font-size: 9px; padding: 6px 8px; }
     .worlds-page .pw-hud { left: 16px; right: 16px; width: auto; top: auto; bottom: 74px; transform: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
     .worlds-page .pw-read { margin-bottom: 12px; }
     .worlds-page .pw-read dd { font-size: 20px; }

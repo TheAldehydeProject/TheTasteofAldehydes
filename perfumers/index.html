@@ -30,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=544995ceb5">
+<link rel="stylesheet" href="../style.css?v=b4d5975cb7">
 <script>
   /* The plain index below is the page only without the drawing: held back
      while it is coming, so it never flashes first, and shown at once if the
@@ -126,6 +126,12 @@
     </section>
     <button type="button" class="pw-more-open" aria-expanded="false" aria-controls="pw-more" hidden>Learn More about <span data-v="more-who"></span> <span aria-hidden="true">↓</span></button>
     <button type="button" class="pw-return" hidden>↩ Return</button>
+    <!-- THE FINISH (2026-11-24 — "I like both versions ... Can you put these
+         two as toggles on the top right"): NOISY, the noise over the blobs, or
+         CLEAR, their edges clean; remembered in the browser -->
+    <div class="pw-finish" role="group" aria-label="How the blobs are finished" hidden>
+      <button type="button" data-finish="noisy" aria-pressed="true">Noisy</button><button type="button" data-finish="clear" aria-pressed="false">Clear</button>
+    </div>
   </div>
   <div class="pw-tip" role="tooltip" hidden></div>
   <!-- THE SEARCH (2026-11-07): a perfumer, a house or a perfume, and on to the perfumer's world -->
@@ -804,6 +810,6 @@
 <script>window.SITE_ROOT = "../";</script>
 <script src="../nav.js?v=96aa0e079f"></script>
 <script src="../perfumers-data.js?v=9676db7614"></script>
-<script src="../perfumer-worlds.js?v=17662fc93c"></script>
+<script src="../perfumer-worlds.js?v=e6bbf9ca50"></script>
 </body>
 </html>

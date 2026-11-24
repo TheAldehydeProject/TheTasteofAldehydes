@@ -641,6 +641,8 @@
     const { shift, soft } = SPH(b.focus);
     paintAny(c, n, b.lobes, shift, soft, 0.9, b.kind);
     b.img = { c, s: sizeOf(b.r) };
+    // and its noise, while the finish is noisy (THE FINISH)
+    if (FIN.noisy && LOOK === "lens") b.img.grains = grainFor(b.lobes, shift * CA_K, b.img.s, b.ph || 0, phone ? 220 : 320);
   }
 
   // ---- A WORLD: a perfumer, or a house ----------------------------------------
@@ -739,6 +741,11 @@
     c.globalAlpha = alpha;
     c.drawImage(pic, x - s / 2, y - s / 2, s, s);
     c.restore();
+    // its noise, on the processor's way (THE FINISH): over the sharp picture,
+    // coming in with the first
+    // (baked from where its lobes are, if the finish was made noisy since)
+    if (hi && !HI.grains && FIN.noisy && FIN.budget-- > 0) HI.grains = grainFor(w.lobes, 0.05 * CA_K, s, t * 0.11, HI.n);
+    if (hi && HI.grains) layGrain(c, HI.grains, x, y, s, alpha * (hi.was ? 1 : hi.k), t);
   }
   // THE PROCESSOR'S SHARP PICTURE (2026-11-24 — the owner, of the iPad's soft
   // blobs: "compare to other devices, see if they have the same provlems. If
@@ -756,17 +763,21 @@
   // where its lobes have drifted to: they move a few pixels a second, so a
   // picture a little behind them is never seen to be.
   const SHARP_MOST = 560, SHARP_MS = 3, SHARP_FADE = 260, SHARP_AGAIN = 160;
+  // (the first of them painted with more of each frame, and faded in over
+  // the small picture more slowly, so the sharpening is not seen as a snap)
+  const SHARP_MS_FIRST = 7, SHARP_FADE_FIRST = 650;
   const HI = { w: null, n: 0, job: null, show: null, was: null, t0: 0, cvs: [] };
   function sharpCur(w, t, boost, s) {
     const n = Math.min(SHARP_MOST, Math.round(s * DPR));
     const rest = LOOK === "lens" && Math.abs((boost || 1) - 1) < 0.01 && n > (phone ? 132 : 176) * 1.2;
     if (!rest) { HI.job = null; if (HI.w !== w) { HI.w = null; HI.show = HI.was = null; } return null; }
-    if (HI.w !== w || HI.n !== n) { HI.w = w; HI.n = n; HI.job = null; HI.show = HI.was = null; HI.cvs = []; }
+    if (HI.w !== w || HI.n !== n) { HI.w = w; HI.n = n; HI.job = null; HI.show = HI.was = null; HI.cvs = []; HI.grains = null; }
     const now = performance.now();
-    const k = HI.show ? (STILL ? 1 : clamp((now - HI.t0) / SHARP_FADE, 0, 1)) : 0;
+    const fade = HI.first ? SHARP_FADE_FIRST : SHARP_FADE;
+    const k = HI.show ? (STILL ? 1 : clamp((now - HI.t0) / fade, 0, 1)) : 0;
     if (k >= 1) HI.was = null;
     // a new picture: the lobes where they are now, held while it is painted
-    if (!HI.job && (!HI.show || (!STILL && k >= 1 && now - HI.t0 > SHARP_FADE + SHARP_AGAIN))) {
+    if (!HI.job && (!HI.show || (!STILL && k >= 1 && now - HI.t0 > fade + SHARP_AGAIN))) {
       driftLobes(w.lobes, t);
       const J = HI.jbuf && HI.jbuf.n === n ? HI.jbuf : (HI.jbuf = { n, fld: new Float32Array(n * n), img: new ImageData(n, n) });
       J.img.data.fill(0);
@@ -776,7 +787,7 @@
     // at once with reduced motion, where no frame comes after this one)
     const job = HI.job;
     if (job) {
-      const t1 = now + (STILL ? 1e9 : SHARP_MS), J = job.J, ROWS = 8;
+      const t1 = now + (STILL ? 1e9 : HI.show ? SHARP_MS : SHARP_MS_FIRST), J = job.J, ROWS = 8;
       while (performance.now() < t1) {
         if (job.jf < n) { const e = Math.min(n, job.jf + ROWS); fieldOf(job.lobes, n, J.fld, job.jf, e); job.jf = e; }
         else if (job.js < n) { const e = Math.min(n, job.js + ROWS); lensRows(J.img.data, J.fld, n, job.js, e, 0.05 * CA_K, 0.95, 0.45, deepOf(w.kind)); job.js = e; }
@@ -786,12 +797,19 @@
         const cv2 = HI.cvs.find((c) => c !== HI.show) || (HI.cvs.push(document.createElement("canvas")), HI.cvs[HI.cvs.length - 1]);
         if (cv2.width !== n) cv2.width = cv2.height = n;
         cv2.getContext("2d").putImageData(J.img, 0, 0);
+        HI.first = !HI.show;
         HI.was = HI.show; HI.show = cv2; HI.t0 = now; HI.job = null;
+        // and its noise, baked from the same lobes, while the finish is noisy
+        // — every other second (the lobes move a few pixels in that time,
+        // and the noise is soft-edged; baked with every picture it cost a
+        // frame in each)
+        if (!FIN.noisy) HI.grains = null;
+        else if (!HI.grains || now - (HI.grainsAt || 0) > 2000) { HI.grains = grainFor(job.lobes, 0.05 * CA_K, s, t * 0.11, n); HI.grainsAt = now; }
         if (HI.cvs.length > 2) HI.cvs = [HI.was, HI.show].filter(Boolean);
       }
     }
     if (!HI.show) return null;
-    const kk = STILL ? 1 : clamp((performance.now() - HI.t0) / SHARP_FADE, 0, 1);
+    const kk = STILL ? 1 : clamp((performance.now() - HI.t0) / (HI.first ? SHARP_FADE_FIRST : SHARP_FADE), 0, 1);
     return { show: HI.show, was: HI.was, k: kk * kk * (3 - 2 * kk) };
   }
   // A TRAVELLER (2026-11-08): a body on its way between a sphere and the
@@ -1038,7 +1056,9 @@
   // (an iPad short of memory, many tabs open), which kept the processor's way
   // until the page was opened again — it is taken back when the browser gives
   // it back. ?gl=why on the address says which way it is drawing, and why.
-  const GLB = (function () {
+  // (Made by a function, so a card taken away and not given back can be
+  // asked for again: a new canvas, a new card — glRetry, in the drawing.)
+  function makeGLB() {
     const no = (why, more) => Object.assign({ ok: false, why }, more);
     if (GL_OFF) return no("?gl=off");
     if (LOOK !== "lens") return no("?look=" + LOOK);
@@ -1198,7 +1218,8 @@
         return out;
       },
     };
-  })();
+  }
+  let GLB = makeGLB();
   let useGL = GLB.ok;
   let glWhy = GLB.ok ? "" : GLB.why;
   let frameDt = 1 / 60;
@@ -1208,7 +1229,11 @@
   // never below the screen's own point; a step back up once it is quick.
   // (Until 2026-11-24 a slow card was given up for the processor's way, a
   // picture six times blurrier on an iPad.)
-  let glSharp = 1;
+  // (Measured only while nothing is opening or changing — an opening's
+  // frames are its own — and taken back up a step only as a world opens or
+  // changes, where the picture changes anyway: back up at rest, then down
+  // again, it went sharp and soft by turns, which read as a snap.)
+  let glSharp = 1, glUp = false;
   const glCost = [];
   function glTimed(ms) {
     glCost.push(ms);
@@ -1218,15 +1243,17 @@
     glAvg = avg;
     if (GL_ON) return;
     const least = 1 / DPR;
-    if (avg > 22 && glSharp > least) glSharp = Math.max(least, glSharp * 0.8);
-    else if (avg < 9 && glSharp < 1) glSharp = Math.min(1, glSharp / 0.8);
+    if (avg > 22 && glSharp > least) { glSharp = Math.max(least, glSharp * 0.8); glUp = false; }
+    else if (avg < 9 && glSharp < 1) glUp = true;
   }
+  function glStepUp() { if (glUp) { glSharp = Math.min(1, glSharp / 0.8); glUp = false; } }
   let glAvg = 0;
   let glBoxNow = null;
   // the card taken away (a phone short of memory): the processor's way until
   // it is given back (glBack, from the drawing)
+  let glLostAt = 0, glTries = 0;
   function glLost(why) {
-    useGL = false;
+    useGL = false; glLostAt = performance.now();
     glWhy = why || "lost";
     blobs.forEach((b) => { if (b.img && b.img.gl) b.img = null; });
     if (cur) cur.paint = null;
@@ -1313,7 +1340,7 @@
     // its parts there from the start, each hidden until the discs reach it
     // (they came in together late, and Return and Learn More once it had
     // opened); the readings' and the list's own coming in is the discs'
-    el(".pw-return").hidden = false; el(".pw-more-open").hidden = isNf(cur);
+    el(".pw-return").hidden = false; el(".pw-more-open").hidden = isNf(cur); el(".pw-finish").hidden = isNf(cur);
     [".pw-hud", ".pw-list"].forEach((s) => el(s).classList.remove("is-fresh"));
     revealParts(); revealTo(null, 0, 0);
     kick();
@@ -1353,7 +1380,7 @@
     RV.parts.length = 0; RV.chrome.length = 0;
     const at = (e) => { const r = e.getBoundingClientRect(); return r.width || r.height ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null; };
     const add = (list, e, lag, dur, ahead) => { const p = e && at(e); if (p) list.push({ e, x: p.x, y: p.y, k: -1, u: 0, t: -1, lag, dur, ahead }); };
-    [".pw-head", ".pw-list-head", ".pw-list-how", ".pw-nf", ".pw-return", ".pw-more-open"].forEach((s) => add(RV.parts, el(s), 0, RV_DUR, -RV_PAST));
+    [".pw-head", ".pw-list-head", ".pw-list-how", ".pw-nf", ".pw-return", ".pw-more-open", ".pw-finish"].forEach((s) => add(RV.parts, el(s), 0, RV_DUR, -RV_PAST));
     document.querySelectorAll(".pw-read").forEach((e, i) => add(RV.parts, e, i * 110, RV_DUR, -RV_PAST));
     document.querySelectorAll(".pw-list-rows li").forEach((e, i) => add(RV.parts, e, 70 + Math.min(i, 14) * 55, RV_DUR, -RV_PAST));
     [".menu-trigger", ".page-where", ".pw-find", ".pw-ways"].forEach((s) => add(RV.chrome, el(s), 0, RV_DUR_CHROME, RV_EARLY));
@@ -1491,6 +1518,7 @@
     document.body.classList.toggle("dark-surface", view === "rays");
     el(".pw-return").hidden = view !== "world";
     el(".pw-more-open").hidden = view !== "world" || isNf(cur);
+    el(".pw-finish").hidden = view !== "world" || isNf(cur);
   }
   // LEARN MORE (2026-11-07; and since 2026-11-08 — "below the blobs, i want
   // you to remove that paragraph, and then move it to the bottom of the
@@ -1609,6 +1637,7 @@
     // the page's official names (2026-11-08): the World of whoever is in it
     set(".pw-head-name", isNf(cur) ? "Perfumers not found" : "The World of " + nameOf(cur));
     el(".pw-more-open").hidden = view !== "world" || isNf(cur);
+    el(".pw-finish").hidden = view !== "world" || isNf(cur);
     el(".pw-hud").setAttribute("aria-label", (house ? "The house " : "The perfumer ") + nameOf(cur));
   }
 
@@ -1935,6 +1964,10 @@
   // READY (2026-11-07): nothing answers the hand until the strings are all
   // out and the type has come in; then the page says so (is-ready)
   let ready = STILL, fontsIn = !document.fonts;
+  // (with reduced motion it is ready from the start — and says so: it was
+  // counted ready and never told the stylesheet, and no button on the page
+  // could be pressed, 2026-11-24)
+  if (STILL) document.body.classList.add("is-ready");
   if (document.fonts) document.fonts.ready.then(() => { fontsIn = true; layMap(); kick(); });
   let lightNext = 0, mapT0 = -1;
   const RAYS_IN = 1800;
@@ -2117,18 +2150,20 @@
   const NZ = { over: 0, stir: 0, level: 1, hx: -1, hy: -1, lift: 1, shown: 1, grains: 0, mv: 0 };
   const grainEl = el(".pw-grain");
   function noiseFrame(dt) {
-    const inN = hand.on && !STILL ? GLB.noiseAt(hand.x, hand.y) : 0;
+    const inN = hand.on && !STILL && useGL ? GLB.noiseAt(hand.x, hand.y) : 0;
     NZ.over += (inN - NZ.over) * (1 - Math.exp(-dt * (inN > NZ.over ? 4.5 : 1.1)));
-    const sp = hand.on && NZ.hx >= 0 ? Math.hypot(hand.x - NZ.hx, hand.y - NZ.hy) / Math.max(dt, 0.008) : 0;
+    const sp = !STILL && hand.on && NZ.hx >= 0 ? Math.hypot(hand.x - NZ.hx, hand.y - NZ.hy) / Math.max(dt, 0.008) : 0;
     NZ.hx = hand.on ? hand.x : -1; NZ.hy = hand.on ? hand.y : -1;
     NZ.stir += (clamp(sp / 1500, 0, 1) * (0.3 + 0.7 * NZ.over) - NZ.stir) * (1 - Math.exp(-dt * 2.6));
     // a world opening or changing, eased in and out (it lifted the grain by
     // a third at once, and dropped it as suddenly when it ended)
     NZ.mv += ((TR.kind ? 1 : 0) - NZ.mv) * (1 - Math.exp(-dt * 2.2));
     NZ.level += (1 + 0.4 * NZ.mv + 0.35 * NZ.stir - NZ.level) * (1 - Math.exp(-dt * 1.6));
-    NZ.lift = 1 + 1.1 * NZ.over + 0.5 * NZ.stir + 0.3 * NZ.mv;
+    // (the page's grain lifted with the blobs' only while they are noisy)
+    NZ.lift = 1 + (1.1 * NZ.over + 0.5 * NZ.stir + 0.3 * NZ.mv) * FIN.k;
     if (Math.abs(NZ.lift - NZ.shown) > 0.03) { NZ.shown = NZ.lift; grainEl.style.setProperty("--grain-lift", NZ.lift.toFixed(2)); }
-    return { hx: hand.x, hy: hand.y, hr: 160, hand: NZ.over, level: NZ.level, stir: NZ.stir, t: performance.now() / 1000 };
+    // (still, with reduced motion: the noise stands as it is, unflickering)
+    return { hx: hand.x, hy: hand.y, hr: 160, hand: NZ.over, level: NZ.level * FIN.k, stir: NZ.stir, t: STILL ? 0 : performance.now() / 1000 };
   }
 
   // THE WORLD: the poster, its spheres out of focus, the blob at the middle.
@@ -2144,8 +2179,22 @@
     const ch = TR.kind === "change" ? clamp((now - TR.t0) / TR.ms, 0, 1) : -1;
     // the blobs on the graphics card: a picture of them all, laid in once
     // they are drawn, and what is drawn over them after it
-    if (useGL && GLB.lost()) glLost("lost");
-    else if (!useGL && glWhy === "lost" && GLB.ok && !GLB.lost()) glBack();
+    // THE CARD TAKEN AWAY, AND ASKED FOR AGAIN (2026-11-24): taken, the
+    // processor's way, the picture before faded across it rather than cut;
+    // given back — or, a second and a half on, a new card asked for, three
+    // times at most — the card's way again, faded across the same way
+    finishStep();
+    FIN.budget = 1;
+    if (useGL && GLB.lost()) { glLost("lost"); xfFrom(c); }
+    else if (!useGL && glWhy === "lost") {
+      if (GLB.ok && !GLB.lost()) { glBack(); xfFrom(c); }
+      else if (performance.now() - glLostAt > 1500 && glTries < 3) {
+        glTries++; glLostAt = performance.now();
+        const g = makeGLB();
+        if (g.ok) { GLB = g; glBack(); xfFrom(c); }
+      }
+    }
+    if (TR.kind) glStepUp();
     frameDt = dt;
     seen.length = 0;
     const later = [];
@@ -2226,19 +2275,46 @@
       c.setTransform(sc, 0, 0, sc, 0, 0);
       for (const f of later) f();
       // the noise, over the blobs and the page round them (see GRAIN_AMP),
-      // answering the hand and the page
-      if (!STILL && (NZ.grains = GLB.grain(noiseFrame(dt)))) {
+      // answering the hand and the page — while the finish is noisy (THE
+      // FINISH), coming and going with it
+      const nf = noiseFrame(dt);
+      NZ.grains = 0;
+      if (FIN.k > 0.004 && (NZ.grains = GLB.grain(nf))) {
         c.setTransform(1, 0, 0, 1, 0, 0);
         c.globalCompositeOperation = "overlay";
         lay();
         c.globalCompositeOperation = "source-over";
         c.setTransform(sc, 0, 0, sc, 0, 0);
       }
-      glTimed(performance.now() - g0);
-    }
+      if (!TR.kind) glTimed(performance.now() - g0);
+    } else noiseFrame(dt);
     // (the perfumes no source credits: their list, and nothing drawn — "i dont
     // want it to be a hexagon, rather make it just a list. a normal list")
     drawSwarm(c, dt, t, ch);
+    xfOver(c);
+  }
+  // the picture before a change of way, faded out over the next (XF_MS)
+  const XF = { cv: null, t0: 0 }, XF_MS = 450;
+  function xfFrom(c) {
+    const src = c.canvas;
+    if (!src.width || !src.height) return;
+    if (!XF.cv) XF.cv = document.createElement("canvas");
+    if (XF.cv.width !== src.width || XF.cv.height !== src.height) { XF.cv.width = src.width; XF.cv.height = src.height; }
+    const x = XF.cv.getContext("2d");
+    x.globalCompositeOperation = "copy";
+    x.drawImage(src, 0, 0);
+    XF.t0 = performance.now(); XF.on = true;
+  }
+  function xfOver(c) {
+    if (!XF.on) return;
+    const k = STILL ? 1 : clamp((performance.now() - XF.t0) / XF_MS, 0, 1);
+    if (k >= 1) { XF.on = false; return; }
+    c.save();
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.globalCompositeOperation = "source-over";
+    c.globalAlpha = 1 - smooth(k);
+    c.drawImage(XF.cv, 0, 0, c.canvas.width, c.canvas.height);
+    c.restore();
   }
 
   // a sphere where it stands: its picture, or the hexagon of the perfumes no
@@ -2257,6 +2333,12 @@
     }
     c.globalAlpha = alpha;
     c.drawImage(b.img.c, x - s / 2, y - s / 2, s, s);
+    // its noise, on the processor's way (THE FINISH) — baked one sphere a
+    // frame when the finish is made noisy after it was painted
+    if (FIN.k > 0.004) {
+      if (!b.img.grains && FIN.noisy && FIN.budget-- > 0) b.img.grains = grainFor(b.lobes, SPH(b.focus).shift * CA_K, b.img.s, b.ph || 0, phone ? 220 : 320);
+      layGrain(c, b.img.grains, x, y, s, alpha * (0.9 + 0.25 * b.lift), t);
+    }
   }
   // THE SWARM (2026-11-10 — "remove the circle that goes around the things,
   // and instead make it something more thematic; something more
@@ -2320,6 +2402,173 @@
     }
     c.globalCompositeOperation = op;
     c.globalAlpha = 1;
+  }
+  // ---- THE FINISH (2026-11-24 — the owner, on an iPad: "now it starts of
+  // fuzzy and noisy and then snaps into normal and diffuse and clear
+  // boundaries. Why is this? I like both versions but why the snap? Can you
+  // put these two as toggles on the top right pleas?"): the two looks the
+  // blobs had, a choice at the top right of a World — NOISY, the noise laid
+  // over the blobs as an overlay (the card's, since 2026-11-11), and CLEAR,
+  // none, their edges diffuse and clean (what the processor's way drew). The
+  // snap was the one turning into the other: the iPad began on its graphics
+  // card, Safari took the card away from the page a moment later, and the
+  // processor's way drew no noise. Now each look is drawn either way — on
+  // the processor, a noise of its own, baked three times over round each
+  // blob and stepped through as the card's flickers — so what is seen is
+  // what is chosen, whichever way the page draws; a change of way is faded
+  // across (XF, in the drawing); and a card taken away is asked for again
+  // (glRetry). Remembered in the browser; ?finish=clear or ?finish=noisy on
+  // the address for a test. ---------------------------------------------------
+  const FINISH_KEY = "pw-finish";
+  const FIN = { noisy: true, k: 1, from: 1, t0: -1e9, tiles: new Map(), beat: -1, pick: 0 };
+  try { if (localStorage.getItem(FINISH_KEY) === "clear") FIN.noisy = false; } catch (e) { /* none kept */ }
+  if (/[?&]finish=clear\b/.test(location.search)) FIN.noisy = false;
+  if (/[?&]finish=noisy\b/.test(location.search)) FIN.noisy = true;
+  FIN.k = FIN.noisy ? 1 : 0;
+  const finishEl = el(".pw-finish");
+  function showFinish() {
+    finishEl.dataset.finish = FIN.noisy ? "noisy" : "clear";
+    finishEl.querySelectorAll("button[data-finish]").forEach((b) => b.setAttribute("aria-pressed", String((b.dataset.finish === "noisy") === FIN.noisy)));
+  }
+  finishEl.addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-finish]");
+    if (!b) return;
+    if ((b.dataset.finish === "noisy") === FIN.noisy) return;
+    FIN.noisy = b.dataset.finish === "noisy";
+    FIN.from = FIN.k; FIN.t0 = performance.now();
+    try { localStorage.setItem(FINISH_KEY, FIN.noisy ? "noisy" : "clear"); } catch (err) { /* not kept */ }
+    showFinish();
+    kick();
+  });
+  showFinish();
+  // how much of the noise there is: eased to the choice over FINISH_MS, on
+  // the clock (at once with reduced motion)
+  const FINISH_MS = 420;
+  function finishStep() {
+    const want = FIN.noisy ? 1 : 0;
+    const u = STILL ? 1 : clamp((performance.now() - FIN.t0) / FINISH_MS, 0, 1);
+    FIN.k = FIN.from + (want - FIN.from) * smooth(u);
+    return FIN.k;
+  }
+
+  // THE PROCESSOR'S NOISE, as near the card's as a canvas comes: grains about
+  // a point each (`k` pixels), most of them hardly anything, some lighter or
+  // darker, three pictures of them to step through
+  const hsh = (x, y) => { const s = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453; return s - Math.floor(s); };
+  function vnoise(x, y) {
+    const i = Math.floor(x), j = Math.floor(y);
+    let u = x - i, v = y - j;
+    u = u * u * (3 - 2 * u); v = v * v * (3 - 2 * v);
+    const a = hsh(i, j), b = hsh(i + 1, j), c = hsh(i, j + 1), d = hsh(i + 1, j + 1);
+    return (a * (1 - u) + b * u) * (1 - v) + (c * (1 - u) + d * u) * v;
+  }
+  function grainTiles(k) {
+    let set = FIN.tiles.get(k);
+    if (set) return set;
+    set = [];
+    const n = 96, R = rng(11 + k * 7);
+    for (let v = 0; v < 3; v++) {
+      const s0 = document.createElement("canvas");
+      s0.width = s0.height = n;
+      const x0 = s0.getContext("2d"), im = x0.createImageData(n, n), d = im.data;
+      for (let i = 0; i < n * n; i++) {
+        // (the card's grainAt: most grains faint, a few struck hard)
+        const ng = R() - 0.5, lit = R() < 0.5 ? 1 : 0.3;
+        const sp = Math.sign(ng) * Math.pow(Math.abs(ng) * 2, 1.5) * 0.5 * lit;
+        const g = clamp(0.5 + sp * GRAIN_AMP * 1.1, 0, 1) * 255;
+        d[i * 4] = d[i * 4 + 1] = d[i * 4 + 2] = g; d[i * 4 + 3] = 255;
+      }
+      x0.putImageData(im, 0, 0);
+      const c = document.createElement("canvas");
+      c.width = c.height = n * k;
+      const x = c.getContext("2d");
+      x.imageSmoothingEnabled = false;
+      x.drawImage(s0, 0, 0, n * k, n * k);
+      set.push(c);
+    }
+    FIN.tiles.set(k, set);
+    return set;
+  }
+  // where the noise lies round a blob, as the card's pass lays it: out to
+  // where its field is a twelfth of its edge's, most about the edge, less
+  // inside, more where its colours part, in slow clumps — `m` pixels square
+  function finishMask(lobes, shift, m, seed) {
+    const fld = fieldOf(lobes, m), step = (2 * EXT) / m, off = shift / step;
+    const c = document.createElement("canvas");
+    c.width = c.height = m;
+    const x = c.getContext("2d"), im = x.createImageData(m, m), d = im.data;
+    const at = (i, j) => fld[clamp(Math.round(j), 0, m - 1) * m + clamp(Math.round(i), 0, m - 1)];
+    const sm = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+    for (let j = 0; j < m; j++) {
+      const py = -EXT + (j + 0.5) * step;
+      for (let i = 0; i < m; i++) {
+        const f = fld[j * m + i];
+        const fr = at(i + off * 0.8, j + off), fb = at(i - off * 0.8, j - off);
+        const most = Math.max(f, fr, fb);
+        if (most < 0.06) continue;
+        const px = -EXT + (i + 0.5) * step;
+        const win = 1 - sm(EXT * 0.6, EXT * 0.97, Math.hypot(px, py));
+        if (win <= 0) continue;
+        const least = Math.min(f, fr, fb);
+        const near = sm(0.08, 0.95, most), inside = sm(1.0, 1.8, least);
+        const ca = clamp(Math.abs(fr - fb) * 1.2, 0, 1);
+        const clump = 0.6 * vnoise(px * 3.1 + seed, py * 3.1) + 0.4 * vnoise(px * 7.3, py * 7.3 - seed);
+        const a = clamp((near * (1 - 0.45 * inside) + 0.45 * ca) * (0.45 + 0.9 * clump), 0, 1) * win;
+        const o = (j * m + i) * 4;
+        d[o] = d[o + 1] = d[o + 2] = 255; d[o + 3] = a * 255;
+      }
+    }
+    x.putImageData(im, 0, 0);
+    return c;
+  }
+  // the noise over a blob, baked: three pictures `n` pixels square, each the
+  // mask filled with grains of its own, `k` pixels a grain
+  function bakeGrain(mask, n, k) {
+    const tiles = grainTiles(k), out = [];
+    for (let v = 0; v < tiles.length; v++) {
+      const c = document.createElement("canvas");
+      c.width = c.height = n;
+      const x = c.getContext("2d");
+      x.imageSmoothingQuality = "high";
+      x.drawImage(mask, 0, 0, n, n);
+      // (the grains laid in one fill over the whole picture: laid a tile at
+      // a time, "source-in" let each tile wipe out what lay outside it, and
+      // the noise came out empty)
+      x.globalCompositeOperation = "source-in";
+      const t = tiles[v], w = t.width;
+      const ox = Math.floor(hsh(v + n, k) * w), oy = Math.floor(hsh(k, v * 3 + n) * w);
+      x.translate(-ox, -oy);
+      x.fillStyle = x.createPattern(t, "repeat");
+      x.fillRect(ox, oy, n, n);
+      out.push(c);
+    }
+    return out;
+  }
+  // a blob's noise on the processor's way: for a sphere's picture `s` points
+  // across, its three baked pictures (no larger than a few hundred pixels)
+  function grainFor(lobes, shift, s, seed, most) {
+    const n = Math.max(48, Math.min(most, Math.round(s * DPR)));
+    const k = Math.max(1, Math.round((n / s) * 1.1));
+    return { n, list: bakeGrain(finishMask(lobes, shift, phone ? 56 : 72, seed), n, k) };
+  }
+  // laid over a blob drawn at (x, y), `s` across: a picture of it a beat, the
+  // beats about thirteen a second, the whole flickering a little as the
+  // card's does (none of it moving with reduced motion)
+  function layGrain(c, grains, x, y, s, alpha, t) {
+    if (!grains || FIN.k <= 0.004 || alpha <= 0.004) return;
+    const beat = STILL ? 0 : Math.floor(t * 13);
+    if (beat !== FIN.beat) { FIN.beat = beat; FIN.pick = (FIN.pick + 1 + Math.floor(hsh(beat, 3.3) * 2)) % 3; }
+    const v = grains.list[FIN.pick % grains.list.length];
+    const fl = STILL ? 1 : 1 + 0.22 * (hsh(beat, 7.1) - 0.5) + 0.07 * Math.sin(t * 2.3) + 0.05 * Math.sin(t * 5.9);
+    c.save();
+    c.globalCompositeOperation = "overlay";
+    // (grains enlarged as they are, square: smoothed — the page draws its
+    // blobs smoothed as well as it can — the noise doubled a frame's cost
+    // where there is no card, and came out soft)
+    c.imageSmoothingEnabled = false;
+    c.globalAlpha = clamp(alpha * FIN.k * fl, 0, 1);
+    c.drawImage(v, x - s / 2, y - s / 2, s, s);
+    c.restore();
   }
   // ---- THE DISCS (2026-11-08): the world opening out of the point, or
   // closing on it, one colour at a time. Each of red, green and blue sees
@@ -2604,6 +2853,9 @@
       const c = HI.w === cur && HI.show ? HI.show : cur.paint;
       return c ? +(c.width / (sizeOf(P.r) * DPR)).toFixed(2) : 0;
     },
+    // the finish (2026-11-24): noisy or clear, how much of the noise is
+    // there now, and whether the processor's way has its noise baked
+    finish: () => ({ look: FIN.noisy ? "noisy" : "clear", k: +FIN.k.toFixed(3), baked: !!(HI.grains) || blobs.some((b) => b.img && b.img.grains), xf: !!XF.on }),
     gl: () => ({ on: useGL, drawn: useGL ? GLB.count() : 0, why: glWhy, lobes: GLB.lobes || 0, uniforms: GLB.uniforms || 0,
       renderer: GLB.renderer || "", sharp: +glSharp.toFixed(2), box: glBoxNow, cost: +glAvg.toFixed(1), back: GLB.ok ? GLB.back() : 0 }),
     // the noise over the blobs: how far the hand is in it, and the page's
@@ -2655,7 +2907,7 @@
       const g = window.PerfumerWorlds.gl(), b = g.box;
       say.textContent = (g.on ? "graphics card" : "processor") + (g.why ? " — " + g.why : "") +
         "\nlobes " + (g.on ? g.lobes : "-") + " of " + MOST_LOBES + " · uniforms " + g.uniforms + " · pixel ratio " + DPR +
-        "\nsharp " + g.sharp + " · cost " + g.cost + " ms" + (b ? " · box " + Math.round(b.w) + "×" + Math.round(b.h) : "") + (g.back ? " · given back " + g.back : "") +
+        "\nfinish " + (FIN.noisy ? "noisy" : "clear") + " · sharp " + g.sharp + " · cost " + g.cost + " ms" + (b ? " · box " + Math.round(b.w) + "×" + Math.round(b.h) : "") + (g.back ? " · given back " + g.back : "") +
         "\n" + g.renderer;
     };
     tell();

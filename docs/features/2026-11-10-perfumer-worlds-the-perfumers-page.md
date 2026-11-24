@@ -419,6 +419,64 @@ three fifths of the screen, out of focus by design, one a frame as a world opens
 slow the opening); a phone at 2 of its 3 (the site's rule); and a page zoomed in with two fingers,
 which enlarges the drawing as it is, on the card or not.
 
+### Later the same day — the finish: Noisy or Clear, and no snap
+
+The owner, on the iPad once it was live: *"Better but now it starts of fuzzy and noisy and then snaps
+into normal and diffuse and clear boundaries. Why is this? I like both versions but why the snap? Can
+you put these two as toggles on the top right pleas?"*
+
+**Why the snap.** The two looks were the page's two ways of drawing. *Fuzzy and noisy* is the
+graphics card's: its noise laid over the blobs as an overlay, feathered round their edges (since
+2026-11-11). *Diffuse with clear boundaries* is the processor's, which drew no noise. The only thing
+in the page that turns the one into the other part way through is the browser taking the card away
+from it (`webglcontextlost`): the iPad began on its card, Safari took the card a moment later — it
+does this to a page when it is short of memory, and the owner's iPad had a dozen tabs open — and
+the page went on with the processor, in the other look, from one frame to the next.
+
+**What changed** (`finish.js` in the build, `THE FINISH` in `perfumer-worlds.js`; the toggle in
+`perfumers/index.html`; `THE FINISH` in `style.css`):
+
+- **The finish**, at the top right of a World (`.pw-finish`): two halves of a hairline box,
+  **Noisy** and **Clear**, the one chosen filled in ink — level with the search and clear of it on a
+  computer and an iPad, beside the Menu on a phone. Hidden on the Strings and in the list of the
+  perfumes no source credits (no blobs there). Coming up with the World's other parts as it opens.
+  Noisy to begin with; **remembered** in the browser (`pw-finish`); `?finish=clear` or
+  `?finish=noisy` on the address for a test. The noise comes and goes over 0.42 s when it is
+  changed (`FINISH_MS`).
+- **Both looks drawn either way**, so what is seen is what is chosen whichever way the page draws.
+  On the card, Clear simply leaves the noise's pass out (and the page's grain is no longer lifted
+  by it). On the processor's way, Noisy is **a noise of its own, as near the card's as a canvas
+  comes**: where it lies round a blob worked out as the card's pass works it out (out to where the
+  blob's field is a twelfth of its edge's, most about the edge, less inside, more where its colours
+  part, in slow clumps — `finishMask`), filled with grains about a point each in three pictures
+  (`grainTiles`, `bakeGrain`), and laid over the blob as an overlay a picture a beat, about thirteen
+  beats a second, the whole flickering a little as the card's does (`layGrain`). Baked for the middle
+  with its sharp picture (every other second at most) and for each sphere as it is painted.
+- **A change of way is faded across**: the picture before is laid over the next and faded out over
+  0.45 s (`XF`, `xfFrom`, `xfOver`) — when the card is taken away, and when it comes back.
+- **A card taken away is asked for again**: if the browser does not give it back within a second and
+  a half, a new canvas and a new card are made (`makeGLB`, three times at most).
+- **The card's sharpness no longer steps up and down at rest**: it was measured through the
+  opening too, whose frames are slow of themselves, and stepped back up at rest, which on a slow
+  card meant soft, sharp, soft by turns. Now it is measured only at rest, and taken back up a step
+  only as a world opens or changes, where the picture changes anyway (`glUp`, `glStepUp`).
+- **The processor's first sharp picture** is painted with more of each frame (7 ms) and faded in over
+  0.65 s (`SHARP_MS_FIRST`, `SHARP_FADE_FIRST`), so the sharpening after a world opens is not a snap
+  of its own.
+- **With reduced motion every button on the page can be pressed again** — the page counted itself
+  ready from the start and never told the stylesheet (`is-ready`), which holds every button back
+  until it is; found while testing the finish, and older than it.
+
+**Checked**: the four looks side by side (card and processor, Noisy and Clear) — the processor's
+Noisy beside the card's, grain on the edge and round it; the card faked away and not given back — the
+look stays noisy, the processor's noise baked, the picture faded across, and a new card in use 1.5 s
+later; with and without reduced motion, on the card and off it, a world opened from the Strings, the
+finish changed and Return pressed — no error. **Two things measured and changed on the way**: the
+processor's noise first came out empty (laid a tile at a time with `source-in`, each tile wiped out
+what lay outside it — laid in one fill now), and laid with the page's high-quality smoothing it
+doubled a frame's cost where there is no card (laid unsmoothed now: the grains square and crisp, the
+frames as quick as the live page's but for the noise's own small cost; Clear as quick as before).
+
 ## Why / key decisions
 
 - **The swap is the pages whole, not their links** — the owner's choice. So the new Perfumers page is
@@ -467,7 +525,10 @@ and nothing of the opening left on the page once it has (`PerfumerWorlds.opening
 64 uniforms (13 lobes), taken away and given back, and made slow to lay in (less sharp, never below
 the screen's point, never off the card) — `PerfumerWorlds.gl()`; on a device, `?gl=why`; and without
 a card, the middle painted as sharp as the screen at rest and its middle's colour steady as the
-pictures change (`PerfumerWorlds.middleSharp()`). To see it frame
+pictures change (`PerfumerWorlds.middleSharp()`). And (later that day) the finish: Noisy or Clear at the top right of a
+World, hidden on the Strings, Clear taking the noise off, kept over a reload, and kept when the card
+is taken away — the processor's noise baked and a new card asked for (`PerfumerWorlds.finish()`); and
+with reduced motion, the page's buttons pressable. To see it frame
 by frame, hold the page's clock — replace `performance.now` and the frames' time with your own and
 move it on 16 milliseconds a frame — and take a picture at each moment. `npm test -- tests/poster.spec.js` — the poster at `/test-pages/1/`, and its plane: close in
 on Prin Lomros it stands on tiles in perspective, and the wheel draws nothing of the chart again;
