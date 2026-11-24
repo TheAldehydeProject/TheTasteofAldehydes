@@ -328,7 +328,9 @@ test("the world's parts come up one after another as it opens, and nothing is le
     expect(await page.locator(s).first().evaluate((e) => e.style.opacity + e.style.translate), s).toBe("");
   }
   expect(await page.locator(".pw-find").evaluate((e) => e.style.getPropertyValue("--k"))).toBe("");
-  expect(await page.locator(".menu-trigger").evaluate((e) => getComputedStyle(e).color)).toBe("rgb(28, 29, 34)");
+  // (the same ink the moment the opening ends, written as a colour mix until
+  // the Menu's own transition has settled it — so it is waited for)
+  await expect.poll(() => page.locator(".menu-trigger").evaluate((e) => getComputedStyle(e).color), { timeout: 3000 }).toBe("rgb(28, 29, 34)");
   expect(errors).toEqual([]);
 });
 
@@ -432,6 +434,65 @@ test("the noise is an overlay round the blobs, and the hand in it lifts the page
   const anim = await page.locator(".pw-grain").evaluate((el) => getComputedStyle(el).animationName);
   expect(anim).toContain("pw-grain-flick");
   expect(errors).toEqual([]);
+});
+
+/* On every device (2026-11-24 — the owner, on an iPad: "Its very low
+   definition. Can you fix that?"): the blobs went to the processor's way, a
+   small picture laid down large, when a device's card held fewer numbers than
+   the drawing read, when laying its picture in was slow, or when the card was
+   taken away. Now: a card holding 64 is drawn with fewer lobes; a slow one
+   less sharp, never off the card; one taken away is taken back when it is
+   given back; and the card's picture is only the box the blobs stand in. */
+test("the blobs stay on the graphics card: fewer numbers, a slow card, and a card taken away and given back", async ({ page, browser }) => {
+  test.setTimeout(120000);
+  const errors = collectPageErrors(page);
+  await page.addInitScript(() => {
+    const gp = WebGLRenderingContext.prototype.getParameter;
+    WebGLRenderingContext.prototype.getParameter = function (k) { return k === this.MAX_FRAGMENT_UNIFORM_VECTORS ? 64 : gp.call(this, k); };
+    const gc = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (k, o) { const x = gc.call(this, k, o); if (k === "webgl" && x) window.__card = x; return x; };
+  });
+  await page.goto(PAGE + "?gl=on#prin-lomros");
+  await expect.poll(() => W(page, "view"), { timeout: 15000 }).toBe("world");
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.gl().drawn), { timeout: 15000 }).toBeGreaterThan(0);
+  const g = await W(page, "gl");
+  expect(g.on, "on the card with 64").toBe(true);
+  expect(g.lobes, "as many lobes as 64 hold").toBe(13);
+  expect(g.box.w * g.box.h, "the card's picture only the blobs' box").toBeLessThan(1280 * 800 * 0.8);
+  // taken away, and given back
+  await page.evaluate(() => { window.__lose = window.__card.getExtension("WEBGL_lose_context"); window.__lose.loseContext(); });
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.gl().why), { timeout: 10000 }).toBe("lost");
+  await page.evaluate(() => window.__lose.restoreContext());
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.gl().on), { timeout: 10000 }).toBe(true);
+  await expect.poll(() => page.evaluate(() => window.PerfumerWorlds.gl().drawn), { timeout: 10000 }).toBeGreaterThan(0);
+  expect((await W(page, "gl")).back).toBe(1);
+  expect(errors).toEqual([]);
+  // a slow card (laying its picture in made to take 30ms a frame, the card
+  // made to say it is real): drawn less sharp, never below the screen's own
+  // point, and never given up
+  const ctx = await browser.newContext({ viewport: { width: 520, height: 420 }, deviceScaleFactor: 2 });
+  const slow = await ctx.newPage();
+  await serveDependenciesLocally(slow);
+  const errs = collectPageErrors(slow);
+  await slow.addInitScript(() => {
+    const gp = WebGLRenderingContext.prototype.getParameter;
+    WebGLRenderingContext.prototype.getParameter = function (k) { const v = gp.call(this, k); return typeof v === "string" && /swiftshader|llvmpipe|software/i.test(v) ? "Apple GPU" : v; };
+    const gc = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (k, o) { if (k === "webgl") this.__card = true; return gc.call(this, k, o); };
+    const di = CanvasRenderingContext2D.prototype.drawImage;
+    CanvasRenderingContext2D.prototype.drawImage = function (src, ...a) {
+      if (src && src.__card) { const t = performance.now(); while (performance.now() - t < 15) {} }
+      return di.call(this, src, ...a);
+    };
+  });
+  await slow.goto(PAGE + "#prin-lomros");
+  await expect.poll(() => slow.evaluate(() => window.PerfumerWorlds.view()), { timeout: 15000 }).toBe("world");
+  await expect.poll(() => slow.evaluate(() => window.PerfumerWorlds.gl().sharp), { timeout: 60000 }).toBeLessThan(1);
+  const s = await slow.evaluate(() => window.PerfumerWorlds.gl());
+  expect(s.on, "still on the card").toBe(true);
+  expect(s.sharp, "never below the screen's own point").toBeGreaterThanOrEqual(0.5);
+  expect(errs).toEqual([]);
+  await ctx.close();
 });
 
 /* The cursor over the World's dark blobs (2026-11-11 — "make sure the

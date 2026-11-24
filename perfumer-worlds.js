@@ -824,7 +824,7 @@
   const GL_OFF = /[?&]gl=off\b/.test(location.search), GL_ON = /[?&]gl=on\b/.test(location.search);
   const CA_K = 0.6;                  // the aberration at rest, of what it was
   const GRAIN_AMP = 0.4;             // how far the overlay's noise goes either side of grey, at most
-  const MOST_LOBES = 32;
+  const MOST_LOBES = 32;             // the most a blob is drawn with (fewer where a device holds fewer)
   const BLOB_VS = [
     "attribute vec2 aQ;",
     "uniform vec2 uC; uniform float uS; uniform vec2 uRes;",
@@ -836,16 +836,17 @@
     "  gl_Position = vec4(cl.x, -cl.y, 0.0, 1.0);",
     "}",
   ].join("\n");
-  const blobFS = (prec) => [
+  const blobFS = (prec, NL) => [
     "precision " + prec + " float;",
     "varying vec2 vP;",
     "uniform int uN;",
-    "uniform vec4 uL[" + MOST_LOBES + "];",   // x, y, r, 1/r²
-    "uniform vec4 uE[" + MOST_LOBES + "];",   // a hexagon's first two sides' normals
-    "uniform vec4 uF[" + MOST_LOBES + "];",   // its third, whether it is one, 1/(0.92r)²
+    "uniform vec4 uL[" + NL + "];",   // x, y, r, 1/r²
+    "uniform vec4 uE[" + NL + "];",   // a hexagon's first two sides' normals
+    "uniform vec4 uF[" + NL + "];",   // its third, whether it is one, 1/(0.92r)²
     "uniform vec2 uSh;",
     "uniform float uSoft, uShade, uAlpha, uT, uGrain, uPx, uWarp, uPass, uHandR, uHandAmt, uLevel, uStir, uAmp;",
     "uniform vec2 uHand;",
+    "uniform vec2 uOff;",   // where the picture's corner is on the screen's, in its pixels
     "uniform float uTg;",
     "uniform vec3 uDeep, uGround;",
     "float hash(vec2 q) { return fract(sin(dot(q, vec2(12.9898, 78.233))) * 43758.5453); }",
@@ -862,7 +863,7 @@
     "}",
     "float field(vec2 p) {",
     "  float f = 0.0;",
-    "  for (int i = 0; i < " + MOST_LOBES + "; i++) {",
+    "  for (int i = 0; i < " + NL + "; i++) {",
     "    if (i >= uN) break;",
     "    vec4 L = uL[i];",
     "    vec2 d = p - L.xy;",
@@ -905,7 +906,7 @@
     // changes (uLevel, uStir, uHand, from the page).
     "  if (uPass > 0.5) {",
     "    float most = max(fr, max(fg, fb)), least = min(fr, min(fg, fb));",
-    "    vec2 fc = gl_FragCoord.xy;",
+    "    vec2 fc = gl_FragCoord.xy + uOff;",
     "    vec2 hd = (fc - uHand) / uHandR;",
     "    float hl = uHandAmt * exp(-dot(hd, hd));",
     "    float near = smoothstep(0.08 - 0.05 * hl, 0.95, most);",
@@ -940,47 +941,75 @@
     "  gl_FragColor = o * win * uAlpha;",
     "}",
   ].join("\n");
+  // ON EVERY DEVICE (2026-11-24 — the owner, on an iPad: "Its very low
+  // definition. Can you fix that?"): the blobs fell back to the processor's
+  // way there — a picture 176 pixels across, laid down six times as large —
+  // for one of three reasons, each of which is met here rather than given in
+  // to: a device holding fewer of the numbers a drawing reads (uniforms) than
+  // the 108 thirty-two lobes want, which refused the card outright — the
+  // drawing is now made for as many lobes as the device holds; the card's
+  // picture slow to lay into the page (Safari copies it back out of the card
+  // to do so), which gave the card up for good after half a second — the
+  // picture is now only as big as the box the blobs stand in, and when it is
+  // still slow it is drawn a step less sharp (never below the screen's own
+  // point), never on the processor; and the card taken away from the page
+  // (an iPad short of memory, many tabs open), which kept the processor's way
+  // until the page was opened again — it is taken back when the browser gives
+  // it back. ?gl=why on the address says which way it is drawing, and why.
   const GLB = (function () {
-    const no = { ok: false };
-    if (GL_OFF || LOOK !== "lens") return no;
+    const no = (why, more) => Object.assign({ ok: false, why }, more);
+    if (GL_OFF) return no("?gl=off");
+    if (LOOK !== "lens") return no("?look=" + LOOK);
     const cv = document.createElement("canvas");
     let gl = null;
     try { gl = cv.getContext("webgl", { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, preserveDrawingBuffer: false }); } catch (e) { gl = null; }
-    if (!gl || gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS) < MOST_LOBES * 3 + 12) return no;
+    if (!gl) return no("no WebGL");
+    const most = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
+    // three arrays of lobes and about two dozen single numbers
+    const NL = Math.min(MOST_LOBES, Math.floor((most - 24) / 3));
+    const dbg = gl.getExtension("WEBGL_debug_renderer_info");
+    const rend = String(dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+    if (NL < 8) return no("too few uniforms", { uniforms: most, renderer: rend });
     // a card the browser only pretends to have — drawn on the processor, as on
     // a machine with none, and in the tests' browser — is the processor's way
     // again, which is quicker there (?gl=on draws on it all the same)
-    const dbg = gl.getExtension("WEBGL_debug_renderer_info");
-    const rend = String(dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
-    if (/swiftshader|llvmpipe|softpipe|software|basic render/i.test(rend) && !GL_ON) return no;
-    const hp = gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT);
-    const prec = hp && hp.precision > 0 ? "highp" : "mediump";
-    const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null; };
-    const vs = sh(gl.VERTEX_SHADER, BLOB_VS), fs = sh(gl.FRAGMENT_SHADER, blobFS(prec));
-    if (!vs || !fs) return no;
-    const pr = gl.createProgram();
-    gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
-    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return no;
-    gl.useProgram(pr);
-    const buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-    const aQ = gl.getAttribLocation(pr, "aQ");
-    gl.enableVertexAttribArray(aQ);
-    gl.vertexAttribPointer(aQ, 2, gl.FLOAT, false, 0, 0);
-    const U = {};
-    ["uC", "uS", "uRes", "uN", "uL", "uE", "uF", "uSh", "uSoft", "uShade", "uAlpha", "uT", "uGrain", "uPx", "uWarp", "uPass", "uHand", "uHandR", "uHandAmt", "uLevel", "uStir", "uAmp", "uTg", "uDeep", "uGround"].forEach((k) => (U[k] = gl.getUniformLocation(pr, k)));
-    gl.uniform3f(U.uGround, GROUND[0] / 255, GROUND[1] / 255, GROUND[2] / 255);
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    const L = new Float32Array(MOST_LOBES * 4), E = new Float32Array(MOST_LOBES * 4), Fv = new Float32Array(MOST_LOBES * 4);
-    let sc = 1, drawn = 0, lost = false;
+    if (/swiftshader|llvmpipe|softpipe|software|basic render/i.test(rend) && !GL_ON) return no("software renderer", { uniforms: most, renderer: rend });
+    let pr = null, U = {}, failed = "";
+    // the program, the square it is drawn on and where its numbers go —
+    // made again if the card is taken away and given back
+    function setup() {
+      const hp = gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT);
+      const prec = hp && hp.precision > 0 ? "highp" : "mediump";
+      const sh = (type, src) => { const x = gl.createShader(type); gl.shaderSource(x, src); gl.compileShader(x); return gl.getShaderParameter(x, gl.COMPILE_STATUS) ? x : null; };
+      const vs = sh(gl.VERTEX_SHADER, BLOB_VS), fs = sh(gl.FRAGMENT_SHADER, blobFS(prec, NL));
+      if (!vs || !fs) { failed = "shader"; return false; }
+      pr = gl.createProgram();
+      gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
+      if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) { failed = "link"; return false; }
+      gl.useProgram(pr);
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+      const aQ = gl.getAttribLocation(pr, "aQ");
+      gl.enableVertexAttribArray(aQ);
+      gl.vertexAttribPointer(aQ, 2, gl.FLOAT, false, 0, 0);
+      U = {};
+      ["uC", "uS", "uRes", "uN", "uL", "uE", "uF", "uSh", "uSoft", "uShade", "uAlpha", "uT", "uGrain", "uPx", "uWarp", "uPass", "uHand", "uHandR", "uHandAmt", "uLevel", "uStir", "uAmp", "uTg", "uDeep", "uGround", "uOff"].forEach((k) => (U[k] = gl.getUniformLocation(pr, k)));
+      gl.uniform3f(U.uGround, GROUND[0] / 255, GROUND[1] / 255, GROUND[2] / 255);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      return true;
+    }
+    if (!setup()) return no(failed + " failed", { uniforms: most, renderer: rend });
+    const L = new Float32Array(NL * 4), E = new Float32Array(NL * 4), Fv = new Float32Array(NL * 4);
+    let sc = 1, ox = 0, oy = 0, fullH = 0, drawn = 0, lost = false, back = 0;
     const kept = [];
     cv.addEventListener("webglcontextlost", (e) => { e.preventDefault(); lost = true; });
+    cv.addEventListener("webglcontextrestored", () => { if (setup()) { lost = false; back++; } });
     const R60 = Math.PI / 3;
     function lobesIn(lobes) {
       let list = lobes;
-      if (list.length > MOST_LOBES) list = list.slice().sort((a, b) => b.r - a.r).slice(0, MOST_LOBES);
+      if (list.length > NL) list = list.slice().sort((a, b) => b.r - a.r).slice(0, NL);
       for (let i = 0; i < list.length; i++) {
         const o = list[i], k = i * 4;
         L[k] = o.x; L[k + 1] = o.y; L[k + 2] = o.r; L[k + 3] = 1 / (o.r * o.r);
@@ -997,10 +1026,16 @@
     return {
       ok: true,
       canvas: cv,
+      lobes: NL, uniforms: most, renderer: rend,
       lost: () => lost,
-      // a new picture as big as the one it will be laid into
-      begin(w, h, scale, t) {
-        sc = scale; drawn = 0;
+      // how many times the card has been given back after being taken away
+      back: () => back,
+      // a new picture, w × h of the card's pixels, `scale` of them a point,
+      // its top left corner (bx, by) of them in from the screen's, which is
+      // `full` of them high — so the grain, laid by the screen's pixels,
+      // stands still however the box moves
+      begin(w, h, scale, t, bx, by, full) {
+        sc = scale; ox = (bx || 0) / scale; oy = (by || 0) / scale; fullH = full || h; drawn = 0;
         if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
         gl.viewport(0, 0, w, h);
         gl.clearColor(0, 0, 0, 0);
@@ -1009,13 +1044,14 @@
         gl.uniform1f(U.uT, t);
         gl.uniform1f(U.uPx, Math.max(1, Math.round(scale * 1.1)));
         gl.uniform1f(U.uPass, 0);
+        gl.uniform2f(U.uOff, bx || 0, fullH - h - (by || 0));
         kept.length = 0;
       },
       // one blob: its lobes, where (points), its whole width (points), and
       // how it is seen
       blob(o) {
         lobesIn(o.lobes);
-        gl.uniform2f(U.uC, o.x * sc, o.y * sc);
+        gl.uniform2f(U.uC, (o.x - ox) * sc, (o.y - oy) * sc);
         gl.uniform1f(U.uS, (o.s / 2) * sc);
         // (the blob's own units run down the page, as the processor's did)
         gl.uniform2f(U.uSh, o.shx, o.shy);
@@ -1036,7 +1072,7 @@
         const list = kept.slice();
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform1f(U.uPass, 1);
-        gl.uniform2f(U.uHand, o.hx * sc, cv.height - o.hy * sc);
+        gl.uniform2f(U.uHand, o.hx * sc, fullH - o.hy * sc);
         gl.uniform1f(U.uHandR, o.hr * sc);
         gl.uniform1f(U.uHandAmt, o.hand);
         gl.uniform1f(U.uLevel, o.level);
@@ -1067,7 +1103,7 @@
       // what one blob looks like, alone, n pixels square, with no grain and
       // nothing moving — for the tests' rim() and core()
       still(o, n) {
-        this.begin(n, n, 1, 0);
+        this.begin(n, n, 1, 0, 0, 0, n);
         this.blob(Object.assign({}, o, { x: n / 2, y: n / 2, s: n, grain: 0, warp: 0, alpha: 1 }));
         const px = new Uint8Array(n * n * 4);
         gl.readPixels(0, 0, n, n, gl.RGBA, gl.UNSIGNED_BYTE, px);
@@ -1082,20 +1118,51 @@
     };
   })();
   let useGL = GLB.ok;
+  let glWhy = GLB.ok ? "" : GLB.why;
   let frameDt = 1 / 60;
-  // how long laying the card's picture in takes, the last frames: if it is
-  // ever slow, the processor's way from then on
+  // HOW SHARP THE CARD'S PICTURE IS, of the screen's own pixels: the whole of
+  // them, and a step less (four fifths each time) while laying the picture in
+  // takes long — 22 milliseconds a frame or more, on average over 24 frames —
+  // never below the screen's own point; a step back up once it is quick.
+  // (Until 2026-11-24 a slow card was given up for the processor's way, a
+  // picture six times blurrier on an iPad.)
+  let glSharp = 1;
   const glCost = [];
   function glTimed(ms) {
     glCost.push(ms);
-    if (glCost.length > 24) glCost.shift();
-    if (glCost.length === 24 && !GL_ON && glCost.reduce((a, b) => a + b, 0) / 24 > 28) glLost();
+    if (glCost.length < 24) return;
+    const avg = glCost.reduce((a, b) => a + b, 0) / glCost.length;
+    glCost.length = 0;
+    glAvg = avg;
+    if (GL_ON) return;
+    const least = 1 / DPR;
+    if (avg > 22 && glSharp > least) glSharp = Math.max(least, glSharp * 0.8);
+    else if (avg < 9 && glSharp < 1) glSharp = Math.min(1, glSharp / 0.8);
   }
-  // the card lost (a phone putting it away): the processor's way from then on
-  function glLost() {
+  let glAvg = 0;
+  let glBoxNow = null;
+  // the card taken away (a phone short of memory): the processor's way until
+  // it is given back (glBack, from the drawing)
+  function glLost(why) {
     useGL = false;
+    glWhy = why || "lost";
     blobs.forEach((b) => { if (b.img && b.img.gl) b.img = null; });
     if (cur) cur.paint = null;
+  }
+  function glBack() {
+    useGL = true; glWhy = "";
+    blobs.forEach((b) => { if (b.img && !b.img.gl && !b.img.hex) b.img = null; });
+    glCost.length = 0;
+  }
+  // the box the blobs stand in this frame, in points (or none)
+  function glBox(ch) {
+    if (ch >= 0) return { x0: 0, y0: 0, x1: W, y1: H };   // (a change: they travel)
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    const add = (x, y, s) => { const h = s / 2 + 34; x0 = Math.min(x0, x - h); y0 = Math.min(y0, y - h); x1 = Math.max(x1, x + h); y1 = Math.max(y1, y + h); };
+    for (const b of blobs) if (!b.nf) add(b.x, b.y, sizeOf(b.r) * 1.06);
+    if (cur && cur.lobes) add(P.x, P.y, sizeOf(P.r));
+    x0 = Math.max(0, Math.floor(x0)); y0 = Math.max(0, Math.floor(y0)); x1 = Math.min(W, Math.ceil(x1)); y1 = Math.min(H, Math.ceil(y1));
+    return x1 - x0 >= 2 && y1 - y0 >= 2 ? { x0, y0, x1, y1 } : null;
   }
   // THE LENS'S MIDDLE: the point the aberration throws the colours away from,
   // drifting a little towards the hand
@@ -1995,12 +2062,22 @@
     const ch = TR.kind === "change" ? clamp((now - TR.t0) / TR.ms, 0, 1) : -1;
     // the blobs on the graphics card: a picture of them all, laid in once
     // they are drawn, and what is drawn over them after it
-    if (useGL && GLB.lost()) glLost();
+    if (useGL && GLB.lost()) glLost("lost");
+    else if (!useGL && glWhy === "lost" && GLB.ok && !GLB.lost()) glBack();
     frameDt = dt;
     seen.length = 0;
     const later = [];
+    // the card's picture: only the box the blobs stand in, at glSharp of the
+    // screen's sharpness (whole card pixels, so it lands on the screen's)
+    let gb = null;
     if (useGL) {
-      GLB.begin(c.canvas.width, c.canvas.height, sc, STILL ? 0 : t);
+      const box = glBox(ch) || { x0: 0, y0: 0, x1: 2, y1: 2 };
+      const gs = sc * glSharp, full = Math.round(H * gs);
+      const bx = Math.floor(box.x0 * gs), by = Math.floor(box.y0 * gs);
+      const gw = Math.max(2, Math.min(Math.round(W * gs), Math.ceil(box.x1 * gs)) - bx), gh = Math.max(2, Math.min(full, Math.ceil(box.y1 * gs)) - by);
+      gb = { bx, by, gw, gh, gs };
+      glBoxNow = { x: +(bx / gs).toFixed(1), y: +(by / gs).toFixed(1), w: +(gw / gs).toFixed(1), h: +(gh / gs).toFixed(1), px: gw * gh, sharp: +glSharp.toFixed(2) };
+      GLB.begin(gw, gh, gs, STILL ? 0 : t, bx, by, full);
       // the lens's middle drifting a third of the way to the hand
       const lx = P.x + (hand.on ? (hand.x - P.x) * 0.35 : 0), ly = P.y + (hand.on ? (hand.y - P.y) * 0.35 : 0);
       if (!lensC.set || STILL) { lensC.x = lx; lensC.y = ly; lensC.set = true; }
@@ -2062,7 +2139,8 @@
       c.setTransform(1, 0, 0, 1, 0, 0);
       c.globalAlpha = 1;
       const g0 = performance.now();
-      c.drawImage(GLB.canvas, 0, 0);
+      const lay = () => c.drawImage(GLB.canvas, 0, 0, gb.gw, gb.gh, (gb.bx / gb.gs) * sc, (gb.by / gb.gs) * sc, (gb.gw / gb.gs) * sc, (gb.gh / gb.gs) * sc);
+      lay();
       c.setTransform(sc, 0, 0, sc, 0, 0);
       for (const f of later) f();
       // the noise, over the blobs and the page round them (see GRAIN_AMP),
@@ -2070,7 +2148,7 @@
       if (!STILL && (NZ.grains = GLB.grain(noiseFrame(dt)))) {
         c.setTransform(1, 0, 0, 1, 0, 0);
         c.globalCompositeOperation = "overlay";
-        c.drawImage(GLB.canvas, 0, 0);
+        lay();
         c.globalCompositeOperation = "source-over";
         c.setTransform(sc, 0, 0, sc, 0, 0);
       }
@@ -2432,7 +2510,11 @@
     // how sharp a sphere is painted, against the screen's pixels it covers
     sharpness: () => blobs.filter((b) => b.img && !b.img.hex).map((b) => (b.img.gl ? 1 : +(b.img.c.width / (b.img.s * DPR)).toFixed(2))),
     // whether the blobs are drawn on the graphics card, and how many last frame
-    gl: () => ({ on: useGL, drawn: useGL ? GLB.count() : 0 }),
+    // and, since 2026-11-24, why not if not, how many lobes the device's
+    // card holds, how sharp its picture is drawn (of the screen's), the box it
+    // is drawn in, and how long laying it in takes (milliseconds, on average)
+    gl: () => ({ on: useGL, drawn: useGL ? GLB.count() : 0, why: glWhy, lobes: GLB.lobes || 0, uniforms: GLB.uniforms || 0,
+      renderer: GLB.renderer || "", sharp: +glSharp.toFixed(2), box: glBoxNow, cost: +glAvg.toFixed(1), back: GLB.ok ? GLB.back() : 0 }),
     // the noise over the blobs: how far the hand is in it, and the page's
     // grain lifted with it
     noise: () => ({ on: useGL, over: +NZ.over.toFixed(3), level: +NZ.level.toFixed(3), lift: +NZ.lift.toFixed(3), grains: NZ.grains }),
@@ -2470,4 +2552,22 @@
       return best;
     },
   };
+  // ?gl=why on the address (2026-11-24): a small line at the foot saying how
+  // the blobs are being drawn on this device, and why — for a device whose
+  // blobs look soft
+  if (/[?&]gl=why\b/.test(location.search)) {
+    const say = document.createElement("div");
+    say.setAttribute("aria-hidden", "true");
+    say.style.cssText = "position:fixed;left:8px;bottom:8px;z-index:2147483646;pointer-events:none;font:11px/1.35 ui-monospace,Menlo,monospace;color:#fff;background:rgba(0,0,0,0.72);padding:5px 8px;max-width:calc(100vw - 32px);white-space:pre-wrap";
+    document.body.appendChild(say);
+    const tell = () => {
+      const g = window.PerfumerWorlds.gl(), b = g.box;
+      say.textContent = (g.on ? "graphics card" : "processor") + (g.why ? " — " + g.why : "") +
+        "\nlobes " + (g.on ? g.lobes : "-") + " of " + MOST_LOBES + " · uniforms " + g.uniforms + " · pixel ratio " + DPR +
+        "\nsharp " + g.sharp + " · cost " + g.cost + " ms" + (b ? " · box " + Math.round(b.w) + "×" + Math.round(b.h) : "") + (g.back ? " · given back " + g.back : "") +
+        "\n" + g.renderer;
+    };
+    tell();
+    setInterval(tell, 500);
+  }
 })();

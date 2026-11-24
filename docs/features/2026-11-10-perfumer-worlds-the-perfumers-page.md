@@ -337,6 +337,48 @@ The test browser draws in software, so its frames are far slower than a laptop's
 frame there is the canvas being copied out to the screen, which a graphics card does not do; the
 numbers are for comparing one round with the next, not for what is seen.
 
+## 2026-11-24 — sharp on an iPad: the blobs kept on the graphics card
+
+The owner, with a picture from an iPad: *"Its very low definition. Can you fix that?"* The picture
+was the World drawn **the processor's way**: the middle blob painted 176 pixels across and laid down
+about five times as large, soft all over. The graphics card's way is sharp at any size — but the page
+gave it up for the processor's on three counts, any of which an iPad can meet. Each is now met
+rather than given in to (`perfumer-worlds.js`; the part in the scratch build is `gl.js`):
+
+- **A card that holds fewer numbers** (uniforms — the values a drawing on the card reads) than the
+  108 that thirty-two lobes want was refused outright. The drawing is now made for **as many lobes as
+  the device holds** (`NL`, from `MAX_FRAGMENT_UNIFORM_VECTORS`; 13 on a card holding 64, the least an
+  older device gives), the largest lobes kept; it is refused only under 8.
+- **A card slow to lay its picture into the page** — Safari copies a card's picture back out to lay
+  it into a canvas, and a full iPad screen is five million pixels, twice a frame (the blobs and the
+  noise) — was given up for good once laying it in averaged 28 milliseconds over 24 frames. Two
+  things instead: **the card's picture is only the box the blobs stand in** (`glBox`: every sphere and
+  the middle, with room for their drift; the whole screen only during a change, when they travel) —
+  about a third of the screen in a perfumer's world; and when it is still slow — 22 ms or more on
+  average over 24 frames — it is drawn **a step less sharp** (four fifths each time, `glSharp`),
+  **never below the screen's own point** (`1 / DPR`, a plain screen's sharpness, still far sharper
+  than the 176-pixel picture), and a step back up once it is quick. It never goes to the processor
+  for slowness. The noise is laid by the screen's pixels (`uOff`), so it stands still however the box
+  moves.
+- **A card taken away** (the browser does this to a page when the device is short of memory — an
+  iPad with many tabs open) kept the processor's way until the page was opened again. The drawing is
+  now **made again when the browser gives the card back** (`webglcontextrestored`, `setup()`), and
+  the page goes back to it (`glBack`).
+
+**`?gl=why`** on the address puts a small line at the foot saying which way the blobs are drawn and,
+if the processor's, why — the lobes, the device's uniforms, its pixel ratio, how sharp the card's
+picture is, what laying it in costs, the box, and the card's name. If the iPad is still soft, that
+line says which of the three it is (or a fourth).
+
+**Checked:** with `?gl=on` the World drawn by the old script and the new is **the same picture,
+pixel for pixel**, at rest and frame for frame through an opening on a held clock (one frame differs
+by one level of 255 in places); a card faked to hold 64 draws 13 lobes, 30 is refused and says so; a
+card made slow to lay in steps 1 → 0.8 → 0.64 → 0.51 → 0.5 and stays on the card; a card taken away
+goes to the processor saying *lost*, and comes back when given back. **Left as it was:** the
+processor's own way (a device with no card at all, or `?gl=off`) still paints the middle at 176
+pixels — painting it larger thirty times a second is what slowed the opening before, and the test
+browser draws that way.
+
 ## Why / key decisions
 
 - **The swap is the pages whole, not their links** — the owner's choice. So the new Perfumers page is
@@ -381,7 +423,9 @@ a phone; and with `?gl=on`, the noise an overlay round the blobs, the hand in it
 grain and its flicker; the sheet frosted glass; the cursor light over a blob and dark over the paper;
 and the opening (2026-11-23): Return on the page, unseen, from its first frame, the World's parts
 arriving at different moments while it opens, the World in the discs at the screen's own sharpness,
-and nothing of the opening left on the page once it has (`PerfumerWorlds.opening()`). To see it frame
+and nothing of the opening left on the page once it has (`PerfumerWorlds.opening()`). And (2026-11-24) the blobs staying on the card on a card faked to hold
+64 uniforms (13 lobes), taken away and given back, and made slow to lay in (less sharp, never below
+the screen's point, never off the card) — `PerfumerWorlds.gl()`; on a device, `?gl=why`. To see it frame
 by frame, hold the page's clock — replace `performance.now` and the frames' time with your own and
 move it on 16 milliseconds a frame — and take a picture at each moment. `npm test -- tests/poster.spec.js` — the poster at `/test-pages/1/`, and its plane: close in
 on Prin Lomros it stands on tiles in perspective, and the wheel draws nothing of the chart again;
